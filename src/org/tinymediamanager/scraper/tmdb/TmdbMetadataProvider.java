@@ -87,8 +87,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     }
     MediaMetadata.updateMDValue(md, MetadataKey.RELEASE_DATE, releaseDate);
 
-    // posters and fanart (search without lang)
-    List<Artwork> movieImages = tmdb.getMovieImages(Integer.parseInt(result.getId()), "");
+    // posters and fanart (first search with lang)
+    List<Artwork> movieImages = tmdb.getMovieImages(Integer.parseInt(result.getId()), Globals.searchLanguage);
+    // posters and fanart (without lang)
+    List<Artwork> movieImages_wo_lang = tmdb.getMovieImages(Integer.parseInt(result.getId()), "");
+    movieImages.addAll(movieImages_wo_lang);
 
     for (Artwork image : movieImages) {
       String path = baseUrl + "original" + image.getFilePath();
@@ -110,13 +113,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
       }
-      if (castMember.getPersonType() == PersonType.CREW) {
+      else if (castMember.getPersonType() == PersonType.CREW) {
         if (castMember.getJob().equals("Director")) {
           cm.setType(CastMember.DIRECTOR);
         }
-        if (castMember.getJob().equals("Author")) {
+        else if (castMember.getJob().equals("Author")) {
           cm.setType(CastMember.WRITER);
         }
+        else {
+          continue;
+        }
+      }
+      else {
+        continue;
       }
 
       cm.setName(castMember.getName());

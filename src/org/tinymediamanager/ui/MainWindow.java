@@ -12,50 +12,38 @@ import com.jgoodies.forms.layout.RowSpec;
 
 public class MainWindow {
 
-	private JFrame frame;
+  private JFrame frame;
 
-	/**
-	 * Create the application.
-	 */
-	public MainWindow() {
-		initialize();
-		frame.setVisible(true);
-	}
+  /**
+   * Create the application.
+   */
+  public MainWindow() {
+    initialize();
+    frame.setVisible(true);
+  }
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 1091, 720);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(
-				new FormLayout(new ColumnSpec[] {
-						FormFactory.RELATED_GAP_COLSPEC,
-						ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-						FormFactory.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("fill:default:grow"), }));
+  /**
+   * Initialize the contents of the frame.
+   */
+  private void initialize() {
+    frame = new JFrame();
+    frame.setBounds(100, 100, 1200, 720);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.getContentPane().setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
-		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.setUI(new TmmTabbedPaneUI());
-		tabbedPane.setTabPlacement(JTabbedPane.LEFT);
-		frame.getContentPane().add(tabbedPane, "2, 2, fill, fill");
+    JTabbedPane tabbedPane = new JTabbedPane();
+    tabbedPane.setUI(new TmmTabbedPaneUI());
+    tabbedPane.setTabPlacement(JTabbedPane.LEFT);
+    frame.getContentPane().add(tabbedPane, "2, 2, fill, fill");
 
-		JPanel panelMovies = new MoviePanel();// new JPanel();
-		tabbedPane
-				.addTab("",
-						new ImageIcon(
-								MainWindow.class
-										.getResource("/org/tinymediamanager/ui/images/show_reel.png")),
-						panelMovies, null);
+    JPanel panelMovies = new MoviePanel();// new JPanel();
+    tabbedPane.addTab("", new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")), panelMovies, null);
 
-		JPanel panelSettings = new SettingsPanel();// JPanel();
-		tabbedPane
-				.addTab("",
-						new ImageIcon(
-								MainWindow.class
-										.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")),
-						panelSettings, null);
-	}
+    JPanel panelSettings = new SettingsPanel();// JPanel();
+    tabbedPane.addTab("", new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelSettings,
+        null);
+  }
 
 }

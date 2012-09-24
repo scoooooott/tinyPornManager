@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -97,10 +98,25 @@ public class Movie extends AbstractModelObject {
     return nfoFilename;
   }
 
+  public Boolean getHasNfoFile() {
+    if (!StringUtils.isEmpty(nfoFilename)) {
+      return true;
+    }
+    return false;
+  }
+
+  public Boolean getHasImages() {
+    if (!StringUtils.isEmpty(poster)) {
+      return true;
+    }
+    return false;
+  }
+
   public void setNfoFilename(String newValue) {
     String oldValue = this.nfoFilename;
     this.nfoFilename = newValue;
     firePropertyChange("nfoFilename", oldValue, newValue);
+    firePropertyChange("hasNfoFile", false, true);
   }
 
   public String getNameForUi() {
@@ -387,16 +403,17 @@ public class Movie extends AbstractModelObject {
       switch (member.getType()) {
         case CastMember.ACTOR:
           castMember.setType(CastType.ACTOR);
+          addToCast(castMember);
           break;
         case CastMember.DIRECTOR:
           castMember.setType(CastType.DIRECTOR);
+          addToCast(castMember);
           break;
         case CastMember.WRITER:
           castMember.setType(CastType.WRITER);
+          addToCast(castMember);
           break;
       }
-
-      addToCast(castMember);
     }
 
     // write NFO and saving images
@@ -439,6 +456,7 @@ public class Movie extends AbstractModelObject {
     String oldValue = this.poster;
     this.poster = newValue;
     firePropertyChange("poster", oldValue, newValue);
+    firePropertyChange("hasImages", false, true);
   }
 
   public void setPosterUrl(String newValue) {

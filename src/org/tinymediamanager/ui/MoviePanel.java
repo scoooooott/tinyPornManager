@@ -66,9 +66,9 @@ public class MoviePanel extends JPanel {
     JPanel panelMovieList = new JPanel();
     splitPane.setLeftComponent(panelMovieList);
     panelMovieList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("115px:grow"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("19px"), FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:max(276dlu;default):grow"), }));
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+        ColumnSpec.decode("max(200px;default):grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("19px"),
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(200px;default):grow"), }));
 
     JButton btnUpdateDataSources = new JButton("UDS");
     btnUpdateDataSources.setAction(actionUpdateDataSources);
@@ -92,20 +92,26 @@ public class MoviePanel extends JPanel {
 
     JPanel panelMovieDetails = new JPanel();
     splitPane.setRightComponent(panelMovieDetails);
-    panelMovieDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("455px"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(67dlu;default):grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("30px"), FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("fill:max(461px;default):grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("bottom:162px:grow"), }));
+    panelMovieDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("400px:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:250px"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50px"), RowSpec.decode("fill:max(461px;default):grow"),
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+
+    JPanel panelMovieHeader = new JPanel();
+    panelMovieHeader.setBorder(null);
+    panelMovieDetails.add(panelMovieHeader, "2, 2, 3, 1, fill, fill");
+    panelMovieHeader.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("400px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("right:250px"), }, new RowSpec[] { RowSpec.decode("30px"), FormFactory.DEFAULT_ROWSPEC, }));
 
     lblMovieName = new JLabel("");
+    panelMovieHeader.add(lblMovieName, "1, 1, 3, 1, left, top");
     lblMovieName.setFont(new Font("Dialog", Font.BOLD, 20));
-    panelMovieDetails.add(lblMovieName, "2, 2, 3, 1, left, top");
 
     lblOriginalName = new JLabel("");
-    panelMovieDetails.add(lblOriginalName, "2, 3");
+    panelMovieHeader.add(lblOriginalName, "1, 2");
 
     JLayeredPane layeredPaneImages = new JLayeredPane();
-    panelMovieDetails.add(layeredPaneImages, "2, 4, 3, 1, fill, fill");
+    panelMovieDetails.add(layeredPaneImages, "2, 3, 3, 1, fill, fill");
     layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:100px"),
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"), RowSpec.decode("top:150px"),
         RowSpec.decode("fill:default:grow"), }));
@@ -118,13 +124,13 @@ public class MoviePanel extends JPanel {
     layeredPaneImages.add(lblMoviePoster, "2, 2, fill, fill");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
-    panelMovieDetails.add(scrollPaneOverview, "2, 6, fill, fill");
+    panelMovieDetails.add(scrollPaneOverview, "2, 5, fill, fill");
 
     textPane = new JTextPane();
     scrollPaneOverview.setViewportView(textPane);
 
     JScrollPane scrollPaneMovieCast = new JScrollPane();
-    panelMovieDetails.add(scrollPaneMovieCast, "4, 6, fill, fill");
+    panelMovieDetails.add(scrollPaneMovieCast, "4, 5, fill, fill");
 
     tableCast = new JTable();
     scrollPaneMovieCast.setViewportView(tableCast);
@@ -148,21 +154,26 @@ public class MoviePanel extends JPanel {
       }
     });
 
-    // NFO column
-    table.getTableHeader().getColumnModel().getColumn(1).setHeaderRenderer(new IconRenderer());
-    table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(20);
-    URL imageURL = MoviePanel.class.getResource("images/File.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(1).setHeaderValue(new ImageIcon(imageURL));
-    }
+    // year column
+    table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
+    table.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
+    table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
 
-    // Poster column
+    // NFO column
     table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer());
     table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
+    URL imageURL = MoviePanel.class.getResource("images/File.png");
+    if (imageURL != null) {
+      table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
+    }
+
+    // poster column
+    table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer());
+    table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
     imageURL = null;
     imageURL = MoviePanel.class.getResource("images/Image.png");
     if (imageURL != null) {
-      table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
+      table.getColumnModel().getColumn(3).setHeaderValue(new ImageIcon(imageURL));
     }
 
   }
@@ -224,17 +235,20 @@ public class MoviePanel extends JPanel {
         table);
     //
     BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("MovieName").setEditable(false);
+    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Title").setEditable(false);
     //
-    BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("nfoFilename");
-    JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding = jTableBinding.addColumnBinding(movieBeanProperty_1);
+    BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
+    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false);
+    //
+    BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("hasNfoFile");
+    JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding = jTableBinding.addColumnBinding(movieBeanProperty_2);
     columnBinding.setColumnName("NFO");
     columnBinding.setEditable(false);
     columnBinding.setColumnClass(ImageIcon.class);
     columnBinding.setConverter(new ImageIconConverter());
     //
-    BeanProperty<Movie, String> movieBeanProperty_2 = BeanProperty.create("poster");
-    JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding_1 = jTableBinding.addColumnBinding(movieBeanProperty_2);
+    BeanProperty<Movie, Boolean> movieBeanProperty_3 = BeanProperty.create("hasImages");
+    JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding_1 = jTableBinding.addColumnBinding(movieBeanProperty_3);
     columnBinding_1.setColumnName("Poster");
     columnBinding_1.setEditable(false);
     columnBinding_1.setColumnClass(ImageIcon.class);
@@ -249,15 +263,15 @@ public class MoviePanel extends JPanel {
         jTextPaneBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<JTable, List<MovieCast>> jTableBeanProperty_3 = BeanProperty.create("selectedElement.cast");
+    BeanProperty<JTable, List<MovieCast>> jTableBeanProperty_3 = BeanProperty.create("selectedElement.actors");
     JTableBinding<MovieCast, JTable, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
         tableCast);
     //
     BeanProperty<MovieCast, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding_1.addColumnBinding(movieCastBeanProperty).setColumnName("New Column");
+    jTableBinding_1.addColumnBinding(movieCastBeanProperty).setColumnName("Name");
     //
     BeanProperty<MovieCast, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding_1.addColumnBinding(movieCastBeanProperty_1).setColumnName("New Column");
+    jTableBinding_1.addColumnBinding(movieCastBeanProperty_1).setColumnName("Role");
     //
     jTableBinding_1.bind();
     //
