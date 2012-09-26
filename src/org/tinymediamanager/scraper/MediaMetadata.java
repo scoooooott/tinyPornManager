@@ -10,6 +10,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 public class MediaMetadata {
 
+  public enum ArtworkSize {
+    SMALL, MEDIUM, ORIGINAL
+  }
+
   public static final int          ACTOR       = 0;
   public static final int          WRITER      = 1;
   public static final int          DIRECTOR    = 2;
@@ -182,7 +186,8 @@ public class MediaMetadata {
   private int toInt(String value) {
     try {
       return Integer.parseInt(value);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return 0;
     }
   }
@@ -214,7 +219,8 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toFloat(value, defValue);
-    } else {
+    }
+    else {
       return defValue;
     }
   }
@@ -223,7 +229,8 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toInt(value, defValue);
-    } else {
+    }
+    else {
       return defValue;
     }
   }
@@ -255,11 +262,19 @@ public class MediaMetadata {
   }
 
   public void setIMDBID(String imdbid) {
-    set(MetadataKey.DESCRIPTION, imdbid);
+    set(MetadataKey.IMDB_ID, imdbid);
   }
 
   public String getIMDBID() {
     return get(MetadataKey.IMDB_ID);
+  }
+
+  public void setTMDBID(String tmdbid) {
+    set(MetadataKey.TMDB_ID, tmdbid);
+  }
+
+  public String getTMDBID() {
+    return get(MetadataKey.TMDB_ID);
   }
 
   public void setPlot(String plot) {

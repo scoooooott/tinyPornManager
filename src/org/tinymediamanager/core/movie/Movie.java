@@ -56,6 +56,7 @@ public class Movie extends AbstractModelObject {
   private String                originalName;
   private String                year;
   private String                imdbId;
+  private int                   tmdbId;
   private String                overview;
   private String                tagline;
   private float                 rating;
@@ -91,6 +92,7 @@ public class Movie extends AbstractModelObject {
     poster = new String();
     path = new String();
     nfoFilename = new String();
+    tmdbId = 0;
     setScraped(false);
   }
 
@@ -222,6 +224,16 @@ public class Movie extends AbstractModelObject {
 
   public String getImdbId() {
     return imdbId;
+  }
+
+  public int getTmdbId() {
+    return tmdbId;
+  }
+
+  public void setTmdbId(int newValue) {
+    int oldValue = this.tmdbId;
+    this.tmdbId = newValue;
+    firePropertyChange("tmdbid", oldValue, newValue);
   }
 
   public String getName() {
@@ -374,6 +386,7 @@ public class Movie extends AbstractModelObject {
     setOriginalName(metadata.getOriginalTitle());
     setOverview(metadata.getPlot());
     setImdbId(metadata.getIMDBID());
+    setTmdbId(Integer.parseInt(metadata.getTMDBID()));
     setYear(metadata.getYear());
     setRating(metadata.getRating());
     setRuntime(Integer.parseInt(metadata.getRuntime()));

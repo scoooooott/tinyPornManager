@@ -13,6 +13,7 @@ import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaMetadata.ArtworkSize;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataKey;
@@ -61,6 +62,65 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     return null;
   }
 
+  public MediaMetadata getArtwork(int tmdbId, ArtworkSize size) throws Exception {
+    log.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
+
+    MediaMetadata md = new MediaMetadata();
+
+    String baseUrl = tmdb.getConfiguration().getBaseUrl();
+
+    // posters and fanart (first search with lang)
+    List<Artwork> movieImages = tmdb.getMovieImages(tmdbId, Globals.searchLanguage);
+    // posters and fanart (without lang)
+    List<Artwork> movieImages_wo_lang = tmdb.getMovieImages(tmdbId, "");
+    movieImages.addAll(movieImages_wo_lang);
+
+    for (Artwork image : movieImages) {
+      String path = "";
+
+      // artwork is a poster
+      if (image.getArtworkType() == ArtworkType.POSTER) {
+        switch (size) {
+          case SMALL:
+            path = baseUrl + "w154" + image.getFilePath();
+            break;
+
+          case MEDIUM:
+            path = baseUrl + "w342" + image.getFilePath();
+            break;
+
+          case ORIGINAL:
+          default:
+            path = baseUrl + "original" + image.getFilePath();
+            break;
+        }
+        processMediaArt(md, MediaArtifactType.POSTER, "Poster", path);
+      }
+
+      // artwork is a fanart
+      if (image.getArtworkType() == ArtworkType.BACKDROP) {
+        switch (size) {
+          case SMALL:
+            path = baseUrl + "w300" + image.getFilePath();
+            break;
+
+          case MEDIUM:
+            path = baseUrl + "w780" + image.getFilePath();
+            break;
+
+          case ORIGINAL:
+          default:
+            path = baseUrl + "original" + image.getFilePath();
+            break;
+        }
+        processMediaArt(md, MediaArtifactType.BACKGROUND, "Background", path);
+      }
+
+    }
+
+    return md;
+  }
+
   @Override
   public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
     log.debug("TMDB: getMetadata(): " + result);
@@ -70,6 +130,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     MovieDb movie = tmdb.getMovieInfo(Integer.parseInt(result.getId()), Globals.searchLanguage);
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
+    MediaMetadata.updateMDValue(md, MetadataKey.TMDB_ID, String.valueOf(movie.getId()));
     MediaMetadata.updateMDValue(md, MetadataKey.PLOT, movie.getOverview());
     MediaMetadata.updateMDValue(md, MetadataKey.MEDIA_TITLE, movie.getTitle());
     MediaMetadata.updateMDValue(md, MetadataKey.ORIGINAL_TITLE, movie.getOriginalTitle());
