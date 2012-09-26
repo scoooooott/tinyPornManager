@@ -365,6 +365,12 @@ public class MoviePanel extends JPanel {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			int row = table.getSelectedRow();
+			row = table.convertRowIndexToModel(row);
+			Movie movie = movieList.getMovies().get(row);
+			MovieEditor dialogMovieEditor = new MovieEditor(movie);
+			dialogMovieEditor.pack();
+			dialogMovieEditor.setVisible(true);
 		}
 	}
 }
