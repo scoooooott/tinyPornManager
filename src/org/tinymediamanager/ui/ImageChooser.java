@@ -1,34 +1,36 @@
 package org.tinymediamanager.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.SoftBevelBorder;
 
-import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
-import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaMetadata.ArtworkSize;
+import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -37,237 +39,254 @@ import com.jgoodies.forms.layout.RowSpec;
 
 public class ImageChooser extends JDialog {
 
-	public enum ImageType {
-		POSTER, FANART
-	}
+  public enum ImageType {
+    POSTER, FANART
+  }
 
-	private final JPanel contentPanel = new JPanel();
-	private JProgressBar progressBar;
-	private JLabel lblProgressAction;
-	private JPanel panelImages;
+  private final JPanel        contentPanel = new JPanel();
+  private JProgressBar        progressBar;
+  private JLabel              lblProgressAction;
+  private JPanel              panelImages;
 
-	private String imageUrl;
-	private ImageType type;
+  private ImageLabel          imageLabel;
+  private ImageType           type;
 
-	private ImageLabel markedImage = null;
+  private ButtonGroup         buttonGroup  = new ButtonGroup();
+  private List<JToggleButton> buttons      = new ArrayList<JToggleButton>();
+  private DownloadTask        task;
 
-	private final Action actionOK = new SwingAction();
-	private final Action actionCancel = new SwingAction_1();
+  private final Action        actionOK     = new SwingAction();
+  private final Action        actionCancel = new SwingAction_1();
 
-	/**
-	 * Create the dialog.
-	 */
-	public ImageChooser(String imdbId, int tmdbId, String imageUrl,
-			ImageType type) {
-		setModal(true);
-		this.imageUrl = imageUrl;
-		this.type = type;
+  /**
+   * Create the dialog.
+   */
+  public ImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel) {
+    setModal(true);
+    this.imageLabel = imageLabel;
+    this.type = type;
 
-		setBounds(100, 100, 679, 452);
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("258px:grow"), }, new RowSpec[] {
-				FormFactory.LINE_GAP_ROWSPEC,
-				RowSpec.decode("fill:266px:grow"), }));
-		{
-			JScrollPane scrollPane = new JScrollPane();
-			scrollPane
-					.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			contentPanel.add(scrollPane, "2, 2, fill, fill");
-			{
-				panelImages = new JPanel();
-				scrollPane.setViewportView(panelImages);
-				scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-				panelImages.setLayout(new WrapLayout(FlowLayout.LEFT));
-			}
-		}
-		{
-			JPanel buttonPane = new JPanel();
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			buttonPane.setLayout(new FormLayout(new ColumnSpec[] {
-					FormFactory.RELATED_GAP_COLSPEC,
-					ColumnSpec.decode("100px"),
-					FormFactory.RELATED_GAP_COLSPEC,
-					ColumnSpec.decode("default:grow"),
-					FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("47px"),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-					ColumnSpec.decode("65px"), }, new RowSpec[] {
-					FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
-			{
-				progressBar = new JProgressBar();
-				buttonPane.add(progressBar, "2, 2");
-			}
-			{
-				lblProgressAction = new JLabel("");
-				buttonPane.add(lblProgressAction, "4, 2");
-			}
-			{
-				JButton okButton = new JButton("OK");
-				okButton.setAction(actionOK);
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton, "6, 2, left, top");
-				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setAction(actionCancel);
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton, "8, 2, left, top");
-			}
-		}
+    setBounds(100, 100, 968, 590);
+    getContentPane().setLayout(new BorderLayout());
+    getContentPane().add(contentPanel, BorderLayout.CENTER);
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
+    {
+      JScrollPane scrollPane = new JScrollPane();
+      scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      contentPanel.add(scrollPane, "2, 2, fill, fill");
+      {
+        panelImages = new JPanel();
+        scrollPane.setViewportView(panelImages);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        panelImages.setLayout(new WrapLayout(FlowLayout.LEFT));
+      }
+    }
+    {
+      JPanel buttonPane = new JPanel();
+      getContentPane().add(buttonPane, BorderLayout.SOUTH);
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
+      {
+        progressBar = new JProgressBar();
+        buttonPane.add(progressBar, "2, 2");
+      }
+      {
+        lblProgressAction = new JLabel("");
+        buttonPane.add(lblProgressAction, "4, 2");
+      }
+      {
+        JButton okButton = new JButton("OK");
+        okButton.setAction(actionOK);
+        okButton.setActionCommand("OK");
+        buttonPane.add(okButton, "6, 2, fill, top");
+        getRootPane().setDefaultButton(okButton);
+      }
+      {
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setAction(actionCancel);
+        cancelButton.setActionCommand("Cancel");
+        buttonPane.add(cancelButton, "8, 2, fill, top");
+      }
+    }
 
-		DownloadTask task = new DownloadTask(imdbId, tmdbId);
-		task.execute();
-	}
+    task = new DownloadTask(imdbId, tmdbId);
+    task.execute();
+  }
 
-	private class SwingAction extends AbstractAction {
-		public SwingAction() {
-			putValue(NAME, "OK");
-			putValue(SHORT_DESCRIPTION, "Set selected image");
-		}
+  private class SwingAction extends AbstractAction {
+    public SwingAction() {
+      putValue(NAME, "OK");
+      putValue(SHORT_DESCRIPTION, "Set selected image");
+    }
 
-		public void actionPerformed(ActionEvent e) {
-			setVisible(true);
-		}
-	}
+    public void actionPerformed(ActionEvent e) {
+      TmdbArtwork artwork = null;
+      // get selected button
+      for (JToggleButton button : buttons) {
+        if (button.isSelected()) {
+          Object clientProperty = button.getClientProperty("TmdbArtwork");
+          if (clientProperty instanceof TmdbArtwork) {
+            artwork = (TmdbArtwork) clientProperty;
+            break;
+          }
+        }
+      }
 
-	private void startProgressBar(String description) {
-		lblProgressAction.setText(description);
-		progressBar.setVisible(true);
-		progressBar.setIndeterminate(true);
-	}
+      if (artwork != null) {
+        // switch (type) {
 
-	private void stopProgressBar() {
-		lblProgressAction.setText("");
-		progressBar.setVisible(false);
-		progressBar.setIndeterminate(false);
-	}
+        // case POSTER:
+        imageLabel.setImageUrl(artwork.getUrlForOriginalArtwork());
+        // movieToChange.writeImages(true, false);
+        // break;
 
-	private void addImage(ImageLabel image, String description) {
-		GridBagLayout gbl = new GridBagLayout();
+        // case FANART:
+        // movieToChange.setFanartUrl(artwork.getUrlForOriginalArtwork());
+        // movieToChange.writeImages(false, true);
+        // break;
+        // }
+      }
+      task.cancel(true);
+      setVisible(false);
+    }
+  }
 
-		switch (type) {
-		case FANART:
-			gbl.columnWidths = new int[] { 300 };
-			gbl.rowHeights = new int[] { 150 };
-			break;
+  private void startProgressBar(String description) {
+    lblProgressAction.setText(description);
+    progressBar.setVisible(true);
+    progressBar.setIndeterminate(true);
+  }
 
-		case POSTER:
-		default:
-			gbl.columnWidths = new int[] { 150 };
-			gbl.rowHeights = new int[] { 250 };
-			break;
+  private void stopProgressBar() {
+    lblProgressAction.setText("");
+    progressBar.setVisible(false);
+    progressBar.setIndeterminate(false);
+  }
 
-		}
+  private void addImage(BufferedImage originalImage, TmdbArtwork tmdbArtwork) {
+    int imageType = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+    Point size = null;
 
-		gbl.columnWeights = new double[] { Double.MIN_VALUE };
-		gbl.rowWeights = new double[] { Double.MIN_VALUE };
-		JPanel imagePanel = new JPanel();
-		imagePanel.setLayout(gbl);
+    GridBagLayout gbl = new GridBagLayout();
 
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.insets = new Insets(5, 5, 5, 5);
+    switch (type) {
+      case FANART:
+        gbl.columnWidths = new int[] { 300 };
+        gbl.rowHeights = new int[] { 150 };
+        size = ImageLabel.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
+        break;
 
-		image.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				ImageLabel image = (ImageLabel) arg0.getComponent();
-				if (markedImage != null) {
-					markedImage.setBorder(null);
-					markedImage.setBackground(null);
-				}
-				image.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null,
-						null, null, null));
-				image.setBackground(Color.BLUE);
-				markedImage = image;
-			}
-		});
+      case POSTER:
+      default:
+        gbl.columnWidths = new int[] { 150 };
+        gbl.rowHeights = new int[] { 250 };
+        size = ImageLabel.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
+        break;
 
-		imagePanel.add(image, gbc);
-		// imagePanel.add(new JLabel(description));
+    }
 
-		panelImages.add(imagePanel);
-		panelImages.validate();
-		panelImages.getParent().validate();
-		// contentPanel.add(image);
+    gbl.columnWeights = new double[] { Double.MIN_VALUE };
+    gbl.rowWeights = new double[] { Double.MIN_VALUE };
+    JPanel imagePanel = new JPanel();
+    imagePanel.setLayout(gbl);
 
-		// this.pack();
-	}
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.insets = new Insets(5, 5, 5, 5);
 
-	private class SwingAction_1 extends AbstractAction {
-		public SwingAction_1() {
-			putValue(NAME, "Cancel");
-			putValue(SHORT_DESCRIPTION, "Cancel");
-		}
+    JToggleButton button = new JToggleButton();
+    BufferedImage resizedImage = new BufferedImage(size.x, size.y, imageType);
+    Graphics2D g = resizedImage.createGraphics();
+    g.drawImage(originalImage, 0, 0, size.x, size.y, null);
+    g.dispose();
+    ImageIcon imageIcon = new ImageIcon(resizedImage);
+    button.setIcon(imageIcon);
+    button.putClientProperty("TmdbArtwork", tmdbArtwork);
 
-		public void actionPerformed(ActionEvent e) {
-			setVisible(false);
-		}
-	}
+    buttonGroup.add(button);
+    buttons.add(button);
+    imagePanel.add(button, gbc);
 
-	private class DownloadTask extends SwingWorker<Void, Void> {
+    panelImages.add(imagePanel);
+    panelImages.validate();
+    panelImages.getParent().validate();
 
-		private String imdbId;
-		private int tmdbId;
+  }
 
-		public DownloadTask(String imdbId, int tmdbId) {
-			this.imdbId = imdbId;
-			this.tmdbId = tmdbId;
-		}
+  private class SwingAction_1 extends AbstractAction {
+    public SwingAction_1() {
+      putValue(NAME, "Cancel");
+      putValue(SHORT_DESCRIPTION, "Cancel");
+    }
 
-		@Override
-		public Void doInBackground() {
-			startProgressBar("Downloading images");
+    public void actionPerformed(ActionEvent e) {
+      task.cancel(true);
+      setVisible(false);
+    }
+  }
 
-			TmdbMetadataProvider tmdb = TmdbMetadataProvider.getInstance();
-			try {
-				MediaMetadata metadata = tmdb.getArtwork(tmdbId,
-						ArtworkSize.SMALL);
+  private class DownloadTask extends SwingWorker<Void, Void> {
 
-				switch (type) {
-				case POSTER:
-					// poster
-					List<MediaArt> art = metadata
-							.getMediaArt(MediaArtifactType.POSTER);
-					for (MediaArt poster : art) {
-						ImageLabel image = new ImageLabel();
-						image.setImageUrl(poster.getDownloadUrl());
-						addImage(image, "");
-					}
-					break;
+    private String imdbId;
+    private int    tmdbId;
 
-				case FANART:
-					// fanart
-					art = metadata.getMediaArt(MediaArtifactType.BACKGROUND);
-					for (MediaArt poster : art) {
-						ImageLabel image = new ImageLabel();
-						image.setImageUrl(poster.getDownloadUrl());
-						addImage(image, "");
-					}
-					break;
-				}
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    public DownloadTask(String imdbId, int tmdbId) {
+      this.imdbId = imdbId;
+      this.tmdbId = tmdbId;
+    }
 
-			return null;
-		}
+    @Override
+    public Void doInBackground() {
+      startProgressBar("Downloading images");
 
-		/*
-		 * Executed in event dispatching thread
-		 */
-		@Override
-		public void done() {
-			stopProgressBar();
-		}
-	}
+      TmdbMetadataProvider tmdb = TmdbMetadataProvider.getInstance();
+      try {
+        List<TmdbArtwork> artwork = null;
+        switch (type) {
+          case POSTER:
+            // poster
+            artwork = tmdb.getArtwork(tmdbId, MediaArtifactType.POSTER);
+            break;
+
+          case FANART:
+            // fanart
+            artwork = tmdb.getArtwork(tmdbId, MediaArtifactType.BACKGROUND);
+            break;
+        }
+
+        for (TmdbArtwork tmdbArtwork : artwork) {
+          if (task.isCancelled()) {
+            return null;
+          }
+          CachedUrl cachedUrl = new CachedUrl(tmdbArtwork.getUrlForSmallArtwork());
+          BufferedImage bufferedImage = ImageIO.read(cachedUrl.getInputStream(null, true));
+          addImage(bufferedImage, tmdbArtwork);
+        }
+
+      }
+      catch (NumberFormatException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+
+      return null;
+    }
+
+    /*
+     * Executed in event dispatching thread
+     */
+    @Override
+    public void done() {
+      stopProgressBar();
+    }
+  }
 }

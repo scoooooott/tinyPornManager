@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.tinymediamanager.core.movie.MovieCast.CastType;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
 
 @XmlRootElement(name = "movie")
@@ -134,8 +133,8 @@ public class MovieToXbmcNfoConnector {
         movie.setRuntime(xbmc.getRuntime());
         movie.setPosterUrl(xbmc.getThumb());
         movie.setImdbId(xbmc.getId());
+        movie.setDirector(xbmc.getDirector());
 
-        movie.addToCast(new MovieCast(xbmc.getDirector(), CastType.DIRECTOR));
         for (Actor actor : xbmc.getActors()) {
           movie.addToCast(new MovieCast(actor.getName(), actor.getRole()));
         }

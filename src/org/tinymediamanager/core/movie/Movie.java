@@ -67,6 +67,8 @@ public class Movie extends AbstractModelObject {
   private String                poster;
   private String                path;
   private String                nfoFilename;
+  private String                director;
+  private String                writer;
 
   @Transient
   private boolean               scraped;
@@ -92,6 +94,8 @@ public class Movie extends AbstractModelObject {
     poster = new String();
     path = new String();
     nfoFilename = new String();
+    setDirector(new String());
+    setWriter(new String());
     tmdbId = 0;
     setScraped(false);
   }
@@ -142,13 +146,13 @@ public class Movie extends AbstractModelObject {
         firePropertyChange("actors", null, this.getCast());
         break;
 
-      case DIRECTOR:
-        firePropertyChange("director", null, this.getCast());
-        break;
-
-      case WRITER:
-        firePropertyChange("writer", null, this.getCast());
-        break;
+    // case DIRECTOR:
+    // firePropertyChange("director", null, this.getCast());
+    // break;
+    //
+    // case WRITER:
+    // firePropertyChange("writer", null, this.getCast());
+    // break;
     }
 
   }
@@ -196,17 +200,6 @@ public class Movie extends AbstractModelObject {
   }
 
   public String getDirector() {
-    String director = new String();
-    List<MovieCast> actors = getCast();
-
-    for (MovieCast cast : actors) {
-      if (cast.getType() == CastType.DIRECTOR) {
-        if (director.length() != 0) {
-          director += ", ";
-        }
-        director += cast.getName();
-      }
-    }
     return director;
   }
 
@@ -273,17 +266,6 @@ public class Movie extends AbstractModelObject {
   }
 
   public String getWriter() {
-    String writer = new String();
-    List<MovieCast> actors = getCast();
-
-    for (MovieCast cast : actors) {
-      if (cast.getType() == CastType.WRITER) {
-        if (writer.length() != 0) {
-          writer += ", ";
-        }
-        writer += cast.getName();
-      }
-    }
     return writer;
   }
 
@@ -348,13 +330,13 @@ public class Movie extends AbstractModelObject {
         firePropertyChange("actors", null, this.getCast());
         break;
 
-      case DIRECTOR:
-        firePropertyChange("director", null, this.getCast());
-        break;
-
-      case WRITER:
-        firePropertyChange("writer", null, this.getCast());
-        break;
+    // case DIRECTOR:
+    // firePropertyChange("director", null, this.getCast());
+    // break;
+    //
+    // case WRITER:
+    // firePropertyChange("writer", null, this.getCast());
+    // break;
     }
 
   }
@@ -409,6 +391,8 @@ public class Movie extends AbstractModelObject {
     // cast
     castObservable.clear();
     List<CastMember> cast = metadata.getCastMembers();
+    String director = new String();
+    String writer = new String();
     for (CastMember member : cast) {
       MovieCast castMember = new MovieCast();
       castMember.setName(member.getName());
@@ -419,25 +403,35 @@ public class Movie extends AbstractModelObject {
           addToCast(castMember);
           break;
         case CastMember.DIRECTOR:
-          castMember.setType(CastType.DIRECTOR);
-          addToCast(castMember);
+          if (!StringUtils.isEmpty(director)) {
+            director += ", ";
+          }
+          director += member.getName();
           break;
         case CastMember.WRITER:
-          castMember.setType(CastType.WRITER);
-          addToCast(castMember);
+          if (!StringUtils.isEmpty(writer)) {
+            writer += ", ";
+          }
+          writer += member.getName();
           break;
       }
     }
+    setDirector(director);
+    setWriter(writer);
 
     // write NFO and saving images
     writeNFO();
-    writeImages();
+    writeImages(true, true);
 
     // update DB
-    Globals.entityManager.getTransaction().begin();
-    Globals.entityManager.persist(this);
-    Globals.entityManager.getTransaction().commit();
+    saveToDb();
 
+  }
+
+  public void removeAllActors() {
+    castObservable.clear();
+    firePropertyChange("cast", null, this.getCast());
+    firePropertyChange("actors", null, this.getCast());
   }
 
   public void setName(String newValue) {
@@ -508,7 +502,7 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("nameForUi", oldValue, newValue);
   }
 
-  public void writeImages() {
+  public void writeImages(boolean poster, boolean fanart) {
     byte tmp_buffer[] = new byte[4096];
     int n;
     FileOutputStream outputStream = null;
@@ -517,42 +511,65 @@ public class Movie extends AbstractModelObject {
     String filename = null;
 
     // poster
-    try {
-      url = new CachedUrl(getPosterUrl());
-      filename = this.path + File.separator + "movie.tbn";
-      outputStream = new FileOutputStream(filename);
-      is = url.getInputStream(null, true);
-      while ((n = is.read(tmp_buffer)) > 0) {
-        outputStream.write(tmp_buffer, 0, n);
-        outputStream.flush();
+    if (poster) {
+      try {
+        url = new CachedUrl(getPosterUrl());
+        filename = this.path + File.separator + "movie.tbn";
+        outputStream = new FileOutputStream(filename);
+        is = url.getInputStream(null, true);
+        while ((n = is.read(tmp_buffer)) > 0) {
+          outputStream.write(tmp_buffer, 0, n);
+          outputStream.flush();
+        }
+        setPoster(filename);
       }
-      setPoster(filename);
-    }
-    catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 
     // fanart
-    try {
-      url = new CachedUrl(getFanartUrl());
-      filename = this.path + File.separator + "fanart.jpg";
-      outputStream = new FileOutputStream(filename);
-      is = url.getInputStream(null, true);
-      while ((n = is.read(tmp_buffer)) > 0) {
-        outputStream.write(tmp_buffer, 0, n);
-        outputStream.flush();
+    if (fanart) {
+      try {
+        url = new CachedUrl(getFanartUrl());
+        filename = this.path + File.separator + "fanart.jpg";
+        outputStream = new FileOutputStream(filename);
+        is = url.getInputStream(null, true);
+        while ((n = is.read(tmp_buffer)) > 0) {
+          outputStream.write(tmp_buffer, 0, n);
+          outputStream.flush();
+        }
+        setFanart(filename);
       }
-      setFanart(filename);
-    }
-    catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
   }
 
   public void writeNFO() {
     setNfoFilename(MovieToXbmcNfoConnector.setData(this));
+  }
+
+  public void setDirector(String newValue) {
+    String oldValue = this.director;
+    this.director = newValue;
+    firePropertyChange("director", oldValue, newValue);
+  }
+
+  public void setWriter(String newValue) {
+    String oldValue = this.writer;
+    this.writer = newValue;
+    firePropertyChange("writer", oldValue, newValue);
+  }
+
+  public void saveToDb() {
+    // update DB
+    Globals.entityManager.getTransaction().begin();
+    Globals.entityManager.persist(this);
+    Globals.entityManager.getTransaction().commit();
   }
 
 }

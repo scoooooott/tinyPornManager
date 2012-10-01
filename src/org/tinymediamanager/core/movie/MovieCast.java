@@ -8,7 +8,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 public class MovieCast extends AbstractModelObject {
 
   public enum CastType {
-    ACTOR, DIRECTOR, WRITER
+    ACTOR
   }
 
   private String   name;

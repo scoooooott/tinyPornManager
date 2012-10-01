@@ -2,6 +2,7 @@ package org.tinymediamanager.ui;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 
@@ -37,12 +38,14 @@ public class ImageLabel extends JLabel {
       File file = new File(imagePath);
       if (file.exists()) {
         this.originalImage = ImageIO.read(file);
-      } else {
+      }
+      else {
         originalImage = null;
       }
 
       this.repaint();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -66,7 +69,8 @@ public class ImageLabel extends JLabel {
       this.originalImage = ImageIO.read(cachedUrl.getInputStream(null, true));
 
       this.repaint();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -79,20 +83,43 @@ public class ImageLabel extends JLabel {
       int originalHeight = originalImage.getHeight(null);
 
       // calculate new height/width
-      int newWidth, newHeight;
+      Point size = calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
+      int newWidth = size.x;
+      int newHeight = size.y;
 
-      // calculate on available height
-      newHeight = this.getHeight();
-      newWidth = newHeight * originalWidth / originalHeight;
-
-      if (newWidth > this.getWidth()) {
-        // calculate on available height
-        newWidth = this.getWidth();
-        newHeight = newWidth * originalHeight / originalWidth;
-      }
+      // int newWidth, newHeight;
+      // // calculate on available height
+      // newHeight = this.getHeight();
+      // newWidth = newHeight * originalWidth / originalHeight;
+      //
+      // if (newWidth > this.getWidth()) {
+      // // calculate on available height
+      // newWidth = this.getWidth();
+      // newHeight = newWidth * originalHeight / originalWidth;
+      // }
 
       g.drawImage(originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, newWidth, newHeight, this);
     }
+  }
+
+  public static Point calculateSize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, boolean respectFactor) {
+    Point size = new Point();
+    if (respectFactor) {
+      // calculate on available height
+      size.y = maxHeight;
+      size.x = size.y * originalWidth / originalHeight;
+
+      if (size.x > maxWidth) {
+        // calculate on available height
+        size.x = maxWidth;
+        size.y = size.x * originalHeight / originalWidth;
+      }
+    }
+    else {
+      size.x = maxWidth;
+      size.y = maxHeight;
+    }
+    return size;
   }
 
 }

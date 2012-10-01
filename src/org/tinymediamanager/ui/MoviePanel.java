@@ -17,6 +17,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.JToolBar;
 import javax.swing.RowFilter;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
@@ -67,28 +68,24 @@ public class MoviePanel extends JPanel {
     JPanel panelMovieList = new JPanel();
     splitPane.setLeftComponent(panelMovieList);
     panelMovieList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default):grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("19px"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(200px;default):grow"), }));
+        ColumnSpec.decode("max(200px;default):grow"), }, new RowSpec[] { RowSpec.decode("26px"), FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:max(200px;default):grow"), }));
 
-    JButton btnUpdateDataSources = new JButton("UDS");
-    btnUpdateDataSources.setAction(actionUpdateDataSources);
-    panelMovieList.add(btnUpdateDataSources, "2, 2");
+    JToolBar toolBar = new JToolBar();
+    toolBar.setRollover(true);
+    toolBar.setFloatable(false);
+    panelMovieList.add(toolBar, "2, 1, fill, fill");
 
-    JButton btnScrape = new JButton("SCR");
-    btnScrape.setAction(actionScrape);
-    panelMovieList.add(btnScrape, "4, 2");
-
-    JButton btnEdit = new JButton("EDIT");
-    btnEdit.setAction(actionEditMovie);
-    panelMovieList.add(btnEdit, "6, 2");
+    JButton buttonUpdateDataSources = toolBar.add(actionUpdateDataSources);
+    JButton buttonScrape = toolBar.add(actionScrape);
+    JButton buttonEdit = toolBar.add(actionEditMovie);
 
     textField = new JTextField();
-    panelMovieList.add(textField, "8, 2, right, top");
+    panelMovieList.add(textField, "3, 1, right, bottom");
     textField.setColumns(10);
 
     JScrollPane scrollPane = new JScrollPane();
-    panelMovieList.add(scrollPane, "2, 4, 7, 1, fill, fill");
+    panelMovieList.add(scrollPane, "2, 3, 2, 1, fill, fill");
 
     table = new JTable();
     table.setFont(new Font("Dialog", Font.PLAIN, 11));
@@ -185,7 +182,8 @@ public class MoviePanel extends JPanel {
 
   private class SwingAction extends AbstractAction {
     public SwingAction() {
-      putValue(NAME, "UDS");
+      // putValue(NAME, "UDS");
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
       putValue(SHORT_DESCRIPTION, "Update data sources");
     }
 
@@ -196,8 +194,9 @@ public class MoviePanel extends JPanel {
 
   private class SwingAction_1 extends AbstractAction {
     public SwingAction_1() {
-      putValue(NAME, "SCR");
-      putValue(SHORT_DESCRIPTION, "Scrape movie");
+      // putValue(NAME, "SCR");
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(SHORT_DESCRIPTION, "Search & scrape movie");
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -305,7 +304,8 @@ public class MoviePanel extends JPanel {
 
   private class SwingAction_2 extends AbstractAction {
     public SwingAction_2() {
-      putValue(NAME, "EDIT");
+      // putValue(NAME, "EDIT");
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
       putValue(SHORT_DESCRIPTION, "Edit movie");
     }
 
@@ -318,4 +318,5 @@ public class MoviePanel extends JPanel {
       dialogMovieEditor.setVisible(true);
     }
   }
+
 }

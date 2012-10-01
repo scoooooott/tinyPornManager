@@ -13,7 +13,6 @@ import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaMetadata.ArtworkSize;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataKey;
@@ -62,12 +61,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     return null;
   }
 
-  public MediaMetadata getArtwork(int tmdbId, ArtworkSize size) throws Exception {
+  public List<TmdbArtwork> getArtwork(int tmdbId, MediaArtifactType type) throws Exception {
     log.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
 
-    MediaMetadata md = new MediaMetadata();
-
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
+    List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
 
     // posters and fanart (first search with lang)
     List<Artwork> movieImages = tmdb.getMovieImages(tmdbId, Globals.searchLanguage);
@@ -79,46 +77,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
       String path = "";
 
       // artwork is a poster
-      if (image.getArtworkType() == ArtworkType.POSTER) {
-        switch (size) {
-          case SMALL:
-            path = baseUrl + "w154" + image.getFilePath();
-            break;
-
-          case MEDIUM:
-            path = baseUrl + "w342" + image.getFilePath();
-            break;
-
-          case ORIGINAL:
-          default:
-            path = baseUrl + "original" + image.getFilePath();
-            break;
-        }
-        processMediaArt(md, MediaArtifactType.POSTER, "Poster", path);
+      if (image.getArtworkType() == ArtworkType.POSTER && type == MediaArtifactType.POSTER) {
+        TmdbArtwork poster = new TmdbArtwork(MediaArtifactType.POSTER, baseUrl, image.getFilePath());
+        artwork.add(poster);
       }
 
       // artwork is a fanart
-      if (image.getArtworkType() == ArtworkType.BACKDROP) {
-        switch (size) {
-          case SMALL:
-            path = baseUrl + "w300" + image.getFilePath();
-            break;
-
-          case MEDIUM:
-            path = baseUrl + "w780" + image.getFilePath();
-            break;
-
-          case ORIGINAL:
-          default:
-            path = baseUrl + "original" + image.getFilePath();
-            break;
-        }
-        processMediaArt(md, MediaArtifactType.BACKGROUND, "Background", path);
+      if (image.getArtworkType() == ArtworkType.BACKDROP && type == MediaArtifactType.BACKGROUND) {
+        TmdbArtwork backdrop = new TmdbArtwork(MediaArtifactType.BACKGROUND, baseUrl, image.getFilePath());
+        artwork.add(backdrop);
       }
-
     }
 
-    return md;
+    return artwork;
   }
 
   @Override
