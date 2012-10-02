@@ -58,8 +58,8 @@ public class MoviePanel extends JPanel {
    * Create the panel.
    */
   public MoviePanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("248px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:27px:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("248px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:27px:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JSplitPane splitPane = new JSplitPane();
     splitPane.setContinuousLayout(true);
@@ -200,12 +200,13 @@ public class MoviePanel extends JPanel {
     }
 
     public void actionPerformed(ActionEvent e) {
-      int row = table.getSelectedRow();
-      row = table.convertRowIndexToModel(row);
-      Movie movie = movieList.getMovies().get(row);
-      MovieChooser dialogMovieChooser = new MovieChooser(movie);
-      dialogMovieChooser.pack();
-      dialogMovieChooser.setVisible(true);
+      for (int row : table.getSelectedRows()) {
+        row = table.convertRowIndexToModel(row);
+        Movie movie = movieList.getMovies().get(row);
+        MovieChooser dialogMovieChooser = new MovieChooser(movie);
+        dialogMovieChooser.pack();
+        dialogMovieChooser.setVisible(true);
+      }
     }
 
   }
@@ -310,12 +311,13 @@ public class MoviePanel extends JPanel {
     }
 
     public void actionPerformed(ActionEvent e) {
-      int row = table.getSelectedRow();
-      row = table.convertRowIndexToModel(row);
-      Movie movie = movieList.getMovies().get(row);
-      MovieEditor dialogMovieEditor = new MovieEditor(movie);
-      dialogMovieEditor.pack();
-      dialogMovieEditor.setVisible(true);
+      for (int row : table.getSelectedRows()) {
+        row = table.convertRowIndexToModel(row);
+        Movie movie = movieList.getMovies().get(row);
+        MovieEditor dialogMovieEditor = new MovieEditor(movie);
+        // dialogMovieEditor.pack();
+        dialogMovieEditor.setVisible(true);
+      }
     }
   }
 

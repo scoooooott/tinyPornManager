@@ -33,6 +33,7 @@ public class Settings extends AbstractModelObject {
   private final static String PROXY_PORT        = "proxyPort";
   private final static String PROXY_USERNAME    = "proxyUsername";
   private final static String PROXY_PASSWORD    = "proxyPassword";
+  private final static String IMAGE_TMDB_LANGU  = "imageTmdbLanguage";
 
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
@@ -47,6 +48,8 @@ public class Settings extends AbstractModelObject {
   private String              proxyUsername;
   private String              proxyPassword;
 
+  private String              imageTmdbLangugage;
+
   private Settings() {
   }
 
@@ -59,16 +62,19 @@ public class Settings extends AbstractModelObject {
         Unmarshaller um = context.createUnmarshaller();
         try {
           Settings.instance = (Settings) um.unmarshal(new FileReader(CONFIG_FILE));
-        } catch (FileNotFoundException e) {
-          // e.printStackTrace();
-          Settings.instance = new Settings();
-          Settings.instance.writeDefaultSettings();
-        } catch (IOException e) {
+        }
+        catch (FileNotFoundException e) {
           // e.printStackTrace();
           Settings.instance = new Settings();
           Settings.instance.writeDefaultSettings();
         }
-      } catch (JAXBException e) {
+        catch (IOException e) {
+          // e.printStackTrace();
+          Settings.instance = new Settings();
+          Settings.instance.writeDefaultSettings();
+        }
+      }
+      catch (JAXBException e) {
         e.printStackTrace();
       }
 
@@ -117,16 +123,20 @@ public class Settings extends AbstractModelObject {
       w = new FileWriter(CONFIG_FILE);
       m.marshal(this, w);
 
-    } catch (JAXBException e) {
+    }
+    catch (JAXBException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    } finally {
+    }
+    finally {
       try {
         w.close();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -139,6 +149,8 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".avi");
     addVideoFileTypes(".mp4");
     addVideoFileTypes(".mkv");
+
+    setImageTmdbLangugage("de");
 
     saveSettings();
   }
@@ -186,5 +198,16 @@ public class Settings extends AbstractModelObject {
     String oldValue = this.proxyPassword;
     this.proxyPassword = newValue;
     firePropertyChange(PROXY_PASSWORD, oldValue, newValue);
+  }
+
+  @XmlElement(name = IMAGE_TMDB_LANGU)
+  public String getImageTmdbLangugage() {
+    return imageTmdbLangugage;
+  }
+
+  public void setImageTmdbLangugage(String newValue) {
+    String oldValue = this.imageTmdbLangugage;
+    this.imageTmdbLangugage = newValue;
+    firePropertyChange(IMAGE_TMDB_LANGU, oldValue, newValue);
   }
 }

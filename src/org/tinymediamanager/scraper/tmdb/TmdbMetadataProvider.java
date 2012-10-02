@@ -12,6 +12,7 @@ import org.tinymediamanager.scraper.HasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -31,10 +32,17 @@ import com.moviejukebox.themoviedb.tools.ApiUrl;
 
 public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIMDBID {
 
-  private static final Logger               log      = Logger.getLogger(TmdbMetadataProvider.class);
-  private static final TmdbMetadataProvider instance = new TmdbMetadataProvider();
+  private static final Logger               log                = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final TmdbMetadataProvider instance           = new TmdbMetadataProvider();
+  public static final List<MediaLanguages>  supportedLanguages = new ArrayList<MediaLanguages>();
 
   private TheMovieDb                        tmdb;
+
+  static {
+    supportedLanguages.add(new MediaLanguages("de", "Deutsch"));
+    supportedLanguages.add(new MediaLanguages("en", "English"));
+    supportedLanguages.add(new MediaLanguages("fr", "Français"));
+  }
 
   private TmdbMetadataProvider() {
     try {
@@ -51,7 +59,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
 
   @Override
   public MediaMetadata getMetadataForIMDBId(String imdbid) {
-
+    // TODO getMetadataForIMDBId
     return null;
   }
 
@@ -59,6 +67,23 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
   public ProviderInfo getInfo() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  public List<TmdbArtwork> getArtwork(String imdbId, MediaArtifactType type) throws Exception {
+    log.debug("TMDB: getArtwork(imdbId): " + imdbId);
+
+    List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
+
+    // get the tmdbid for this imdbid
+    MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.searchLanguage);
+    int tmdbId = movieInfo.getId();
+
+    // get images if a tmdb id has been found
+    if (tmdbId > 0) {
+      artwork = getArtwork(tmdbId, type);
+    }
+
+    return artwork;
   }
 
   public List<TmdbArtwork> getArtwork(int tmdbId, MediaArtifactType type) throws Exception {
@@ -127,6 +152,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
 
     for (Artwork image : movieImages) {
       String path = baseUrl + "original" + image.getFilePath();
+
       if (image.getArtworkType() == ArtworkType.POSTER) {
         processMediaArt(md, MediaArtifactType.POSTER, "Poster", path);
       }

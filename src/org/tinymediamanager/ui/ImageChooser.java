@@ -27,6 +27,7 @@ import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
@@ -250,12 +251,26 @@ public class ImageChooser extends JDialog {
         switch (type) {
           case POSTER:
             // poster
-            artwork = tmdb.getArtwork(tmdbId, MediaArtifactType.POSTER);
+            if (tmdbId > 0) {
+              // retrieve via TMDB ID
+              artwork = tmdb.getArtwork(tmdbId, MediaArtifactType.POSTER);
+            }
+            if (!StringUtils.isEmpty(imdbId)) {
+              // retrieve via IMDB ID
+              artwork = tmdb.getArtwork(imdbId, MediaArtifactType.POSTER);
+            }
             break;
 
           case FANART:
             // fanart
-            artwork = tmdb.getArtwork(tmdbId, MediaArtifactType.BACKGROUND);
+            if (tmdbId > 0) {
+              // retrieve via TMDB ID
+              artwork = tmdb.getArtwork(tmdbId, MediaArtifactType.BACKGROUND);
+            }
+            if (!StringUtils.isEmpty(imdbId)) {
+              // retrieve via IMDB ID
+              artwork = tmdb.getArtwork(imdbId, MediaArtifactType.BACKGROUND);
+            }
             break;
         }
 
