@@ -30,229 +30,267 @@ import com.moviejukebox.themoviedb.model.Person;
 import com.moviejukebox.themoviedb.model.PersonType;
 import com.moviejukebox.themoviedb.tools.ApiUrl;
 
-public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIMDBID {
+public class TmdbMetadataProvider implements IMediaMetadataProvider,
+		HasFindByIMDBID {
 
-  private static final Logger               log                = Logger.getLogger(TmdbMetadataProvider.class);
-  private static final TmdbMetadataProvider instance           = new TmdbMetadataProvider();
-  public static final List<MediaLanguages>  supportedLanguages = new ArrayList<MediaLanguages>();
+	private static final Logger log = Logger
+			.getLogger(TmdbMetadataProvider.class);
+	private static final TmdbMetadataProvider instance = new TmdbMetadataProvider();
+	public static final List<MediaLanguages> supportedLanguages = new ArrayList<MediaLanguages>();
+	public static final List<String> supportedPosterSizes = new ArrayList<String>();
+	public static final List<String> supportedFanartSizes = new ArrayList<String>();
 
-  private TheMovieDb                        tmdb;
+	private TheMovieDb tmdb;
 
-  static {
-    supportedLanguages.add(new MediaLanguages("de", "Deutsch"));
-    supportedLanguages.add(new MediaLanguages("en", "English"));
-    supportedLanguages.add(new MediaLanguages("fr", "Français"));
-  }
+	static {
+		supportedLanguages.add(new MediaLanguages("de", "Deutsch"));
+		supportedLanguages.add(new MediaLanguages("en", "English"));
+		supportedLanguages.add(new MediaLanguages("fr", "Français"));
 
-  private TmdbMetadataProvider() {
-    try {
-      tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    }
-    catch (MovieDbException e) {
-      e.printStackTrace();
-    }
-  }
+		supportedPosterSizes.add("w92");
+		supportedPosterSizes.add("w154");
+		supportedPosterSizes.add("w185");
+		supportedPosterSizes.add("w342");
+		supportedPosterSizes.add("w500");
+		supportedPosterSizes.add("original");
 
-  public static TmdbMetadataProvider getInstance() {
-    return instance;
-  }
+		supportedFanartSizes.add("w300");
+		supportedFanartSizes.add("w780");
+		supportedFanartSizes.add("w1280");
+		supportedFanartSizes.add("original");
+	}
 
-  @Override
-  public MediaMetadata getMetadataForIMDBId(String imdbid) {
-    // TODO getMetadataForIMDBId
-    return null;
-  }
+	private TmdbMetadataProvider() {
+		try {
+			tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
+		} catch (MovieDbException e) {
+			e.printStackTrace();
+		}
+	}
 
-  @Override
-  public ProviderInfo getInfo() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+	public static TmdbMetadataProvider getInstance() {
+		return instance;
+	}
 
-  public List<TmdbArtwork> getArtwork(String imdbId, MediaArtifactType type) throws Exception {
-    log.debug("TMDB: getArtwork(imdbId): " + imdbId);
+	@Override
+	public MediaMetadata getMetadataForIMDBId(String imdbid) {
+		// TODO getMetadataForIMDBId
+		return null;
+	}
 
-    List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
+	@Override
+	public ProviderInfo getInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    // get the tmdbid for this imdbid
-    MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.searchLanguage);
-    int tmdbId = movieInfo.getId();
+	public List<TmdbArtwork> getArtwork(String imdbId, MediaArtifactType type)
+			throws Exception {
+		log.debug("TMDB: getArtwork(imdbId): " + imdbId);
 
-    // get images if a tmdb id has been found
-    if (tmdbId > 0) {
-      artwork = getArtwork(tmdbId, type);
-    }
+		List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
 
-    return artwork;
-  }
+		// get the tmdbid for this imdbid
+		MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId,
+				Globals.searchLanguage);
+		int tmdbId = movieInfo.getId();
 
-  public List<TmdbArtwork> getArtwork(int tmdbId, MediaArtifactType type) throws Exception {
-    log.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
+		// get images if a tmdb id has been found
+		if (tmdbId > 0) {
+			artwork = getArtwork(tmdbId, type);
+		}
 
-    String baseUrl = tmdb.getConfiguration().getBaseUrl();
-    List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
+		return artwork;
+	}
 
-    // posters and fanart (first search with lang)
-    List<Artwork> movieImages = tmdb.getMovieImages(tmdbId, Globals.searchLanguage);
-    // posters and fanart (without lang)
-    List<Artwork> movieImages_wo_lang = tmdb.getMovieImages(tmdbId, "");
-    movieImages.addAll(movieImages_wo_lang);
+	public List<TmdbArtwork> getArtwork(int tmdbId, MediaArtifactType type)
+			throws Exception {
+		log.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
 
-    for (Artwork image : movieImages) {
-      String path = "";
+		String baseUrl = tmdb.getConfiguration().getBaseUrl();
+		List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
 
-      // artwork is a poster
-      if (image.getArtworkType() == ArtworkType.POSTER && type == MediaArtifactType.POSTER) {
-        TmdbArtwork poster = new TmdbArtwork(MediaArtifactType.POSTER, baseUrl, image.getFilePath());
-        artwork.add(poster);
-      }
+		// posters and fanart (first search with lang)
+		List<Artwork> movieImages = tmdb.getMovieImages(tmdbId,
+				Globals.settings.getImageTmdbLangugage());
+		// posters and fanart (without lang)
+		List<Artwork> movieImages_wo_lang = tmdb.getMovieImages(tmdbId, "");
+		movieImages.addAll(movieImages_wo_lang);
 
-      // artwork is a fanart
-      if (image.getArtworkType() == ArtworkType.BACKDROP && type == MediaArtifactType.BACKGROUND) {
-        TmdbArtwork backdrop = new TmdbArtwork(MediaArtifactType.BACKGROUND, baseUrl, image.getFilePath());
-        artwork.add(backdrop);
-      }
-    }
+		for (Artwork image : movieImages) {
+			String path = "";
 
-    return artwork;
-  }
+			// artwork is a poster
+			if (image.getArtworkType() == ArtworkType.POSTER
+					&& type == MediaArtifactType.POSTER) {
+				TmdbArtwork poster = new TmdbArtwork(MediaArtifactType.POSTER,
+						baseUrl, image.getFilePath());
+				artwork.add(poster);
+			}
 
-  @Override
-  public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
-    log.debug("TMDB: getMetadata(): " + result);
+			// artwork is a fanart
+			if (image.getArtworkType() == ArtworkType.BACKDROP
+					&& type == MediaArtifactType.BACKGROUND) {
+				TmdbArtwork backdrop = new TmdbArtwork(
+						MediaArtifactType.BACKGROUND, baseUrl,
+						image.getFilePath());
+				artwork.add(backdrop);
+			}
+		}
 
-    MediaMetadata md = new MediaMetadata();
+		return artwork;
+	}
 
-    MovieDb movie = tmdb.getMovieInfo(Integer.parseInt(result.getId()), Globals.searchLanguage);
-    String baseUrl = tmdb.getConfiguration().getBaseUrl();
+	@Override
+	public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
+		log.debug("TMDB: getMetadata(): " + result);
 
-    MediaMetadata.updateMDValue(md, MetadataKey.TMDB_ID, String.valueOf(movie.getId()));
-    MediaMetadata.updateMDValue(md, MetadataKey.PLOT, movie.getOverview());
-    MediaMetadata.updateMDValue(md, MetadataKey.MEDIA_TITLE, movie.getTitle());
-    MediaMetadata.updateMDValue(md, MetadataKey.ORIGINAL_TITLE, movie.getOriginalTitle());
-    MediaMetadata.updateMDValue(md, MetadataKey.USER_RATING, String.valueOf(movie.getVoteAverage()));
-    MediaMetadata.updateMDValue(md, MetadataKey.RUNNING_TIME, String.valueOf(movie.getRuntime()));
-    MediaMetadata.updateMDValue(md, MetadataKey.TAGLINE, movie.getTagline());
-    if (movie.getImdbID() != null && movie.getImdbID().contains("tt")) {
-      MediaMetadata.updateMDValue(md, MetadataKey.IMDB_ID, movie.getImdbID());
-    }
+		MediaMetadata md = new MediaMetadata();
 
-    // parse release date to year
-    String releaseDate = movie.getReleaseDate();
-    if (releaseDate.length() > 3) {
-      MediaMetadata.updateMDValue(md, MetadataKey.YEAR, releaseDate.substring(0, 4));
-    }
-    MediaMetadata.updateMDValue(md, MetadataKey.RELEASE_DATE, releaseDate);
+		MovieDb movie = tmdb.getMovieInfo(Integer.parseInt(result.getId()),
+				Globals.searchLanguage);
+		String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
-    // posters and fanart (first search with lang)
-    List<Artwork> movieImages = tmdb.getMovieImages(Integer.parseInt(result.getId()), Globals.searchLanguage);
-    // posters and fanart (without lang)
-    List<Artwork> movieImages_wo_lang = tmdb.getMovieImages(Integer.parseInt(result.getId()), "");
-    movieImages.addAll(movieImages_wo_lang);
+		MediaMetadata.updateMDValue(md, MetadataKey.TMDB_ID,
+				String.valueOf(movie.getId()));
+		MediaMetadata.updateMDValue(md, MetadataKey.PLOT, movie.getOverview());
+		MediaMetadata.updateMDValue(md, MetadataKey.MEDIA_TITLE,
+				movie.getTitle());
+		MediaMetadata.updateMDValue(md, MetadataKey.ORIGINAL_TITLE,
+				movie.getOriginalTitle());
+		MediaMetadata.updateMDValue(md, MetadataKey.USER_RATING,
+				String.valueOf(movie.getVoteAverage()));
+		MediaMetadata.updateMDValue(md, MetadataKey.RUNNING_TIME,
+				String.valueOf(movie.getRuntime()));
+		MediaMetadata
+				.updateMDValue(md, MetadataKey.TAGLINE, movie.getTagline());
+		if (movie.getImdbID() != null && movie.getImdbID().contains("tt")) {
+			MediaMetadata.updateMDValue(md, MetadataKey.IMDB_ID,
+					movie.getImdbID());
+		}
 
-    for (Artwork image : movieImages) {
-      String path = baseUrl + "original" + image.getFilePath();
+		// parse release date to year
+		String releaseDate = movie.getReleaseDate();
+		if (releaseDate.length() > 3) {
+			MediaMetadata.updateMDValue(md, MetadataKey.YEAR,
+					releaseDate.substring(0, 4));
+		}
+		MediaMetadata.updateMDValue(md, MetadataKey.RELEASE_DATE, releaseDate);
 
-      if (image.getArtworkType() == ArtworkType.POSTER) {
-        processMediaArt(md, MediaArtifactType.POSTER, "Poster", path);
-      }
+		// posters and fanart (first search with lang)
+		List<Artwork> movieImages = tmdb.getMovieImages(
+				Integer.parseInt(result.getId()),
+				Globals.settings.getImageTmdbLangugage());
+		// posters and fanart (without lang)
+		List<Artwork> movieImages_wo_lang = tmdb.getMovieImages(
+				Integer.parseInt(result.getId()), "");
+		movieImages.addAll(movieImages_wo_lang);
 
-      if (image.getArtworkType() == ArtworkType.BACKDROP) {
-        processMediaArt(md, MediaArtifactType.BACKGROUND, "Background", path);
-      }
+		for (Artwork image : movieImages) {
+			String path = baseUrl + "original" + image.getFilePath();
 
-    }
+			if (image.getArtworkType() == ArtworkType.POSTER) {
+				processMediaArt(md, MediaArtifactType.POSTER, "Poster", path);
+			}
 
-    // cast
-    List<Person> cast = tmdb.getMovieCasts(Integer.parseInt(result.getId()));
-    for (Person castMember : cast) {
-      CastMember cm = new CastMember();
-      if (castMember.getPersonType() == PersonType.CAST) {
-        cm.setType(CastMember.ACTOR);
-        cm.setCharacter(castMember.getCharacter());
-      }
-      else if (castMember.getPersonType() == PersonType.CREW) {
-        if (castMember.getJob().equals("Director")) {
-          cm.setType(CastMember.DIRECTOR);
-        }
-        else if (castMember.getJob().equals("Author")) {
-          cm.setType(CastMember.WRITER);
-        }
-        else {
-          continue;
-        }
-      }
-      else {
-        continue;
-      }
+			if (image.getArtworkType() == ArtworkType.BACKDROP) {
+				processMediaArt(md, MediaArtifactType.BACKGROUND, "Background",
+						path);
+			}
 
-      cm.setName(castMember.getName());
-      cm.setPart(castMember.getDepartment());
-      md.addCastMember(cm);
-    }
+		}
 
-    // TODO Metadata fertig machen
+		// cast
+		List<Person> cast = tmdb
+				.getMovieCasts(Integer.parseInt(result.getId()));
+		for (Person castMember : cast) {
+			CastMember cm = new CastMember();
+			if (castMember.getPersonType() == PersonType.CAST) {
+				cm.setType(CastMember.ACTOR);
+				cm.setCharacter(castMember.getCharacter());
+			} else if (castMember.getPersonType() == PersonType.CREW) {
+				if (castMember.getJob().equals("Director")) {
+					cm.setType(CastMember.DIRECTOR);
+				} else if (castMember.getJob().equals("Author")) {
+					cm.setType(CastMember.WRITER);
+				} else {
+					continue;
+				}
+			} else {
+				continue;
+			}
 
-    return md;
-  }
+			cm.setName(castMember.getName());
+			cm.setPart(castMember.getDepartment());
+			md.addCastMember(cm);
+		}
 
-  @Override
-  public List<MediaSearchResult> search(SearchQuery query) throws Exception {
-    List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
-    String searchString = query.get(SearchQuery.Field.QUERY);
+		// TODO Metadata fertig machen
 
-    log.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
-    ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
-    URL url = tmdbSearchMovie.getQueryUrl(searchString, Globals.searchLanguage, 1);
-    log.debug(url.toString());
+		return md;
+	}
 
-    List<MovieDb> moviesFound = tmdb.searchMovie(searchString, Globals.searchLanguage, false);
+	@Override
+	public List<MediaSearchResult> search(SearchQuery query) throws Exception {
+		List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
+		String searchString = query.get(SearchQuery.Field.QUERY);
 
-    if (moviesFound == null) {
-      return resultList;
-    }
+		log.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
+		ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
+		URL url = tmdbSearchMovie.getQueryUrl(searchString,
+				Globals.searchLanguage, 1);
+		log.debug(url.toString());
 
-    log.debug("found " + moviesFound.size() + " results");
+		List<MovieDb> moviesFound = tmdb.searchMovie(searchString,
+				Globals.searchLanguage, false);
 
-    for (MovieDb movie : moviesFound) {
-      MediaSearchResult sr = new MediaSearchResult();
+		if (moviesFound == null) {
+			return resultList;
+		}
 
-      sr.setId(Integer.toString(movie.getId()));
-      sr.setIMDBId(movie.getImdbID());
-      sr.setTitle(movie.getTitle());
-      sr.setOriginalTitle(movie.getOriginalTitle());
+		log.debug("found " + moviesFound.size() + " results");
 
-      // parse release date to year
-      String releaseDate = movie.getReleaseDate();
-      if (releaseDate != null && releaseDate.length() > 3) {
-        sr.setYear(movie.getReleaseDate().substring(0, 4));
-      }
+		for (MovieDb movie : moviesFound) {
+			MediaSearchResult sr = new MediaSearchResult();
 
-      // populate extra args
-      MetadataUtil.copySearchQueryToSearchResult(query, sr);
+			sr.setId(Integer.toString(movie.getId()));
+			sr.setIMDBId(movie.getImdbID());
+			sr.setTitle(movie.getTitle());
+			sr.setOriginalTitle(movie.getOriginalTitle());
 
-      sr.setScore(MetadataUtil.calculateScore(searchString, movie.getTitle()));
-      resultList.add(sr);
-    }
-    Collections.sort(resultList);
-    Collections.reverse(resultList);
+			// parse release date to year
+			String releaseDate = movie.getReleaseDate();
+			if (releaseDate != null && releaseDate.length() > 3) {
+				sr.setYear(movie.getReleaseDate().substring(0, 4));
+			}
 
-    return resultList;
-  }
+			// populate extra args
+			MetadataUtil.copySearchQueryToSearchResult(query, sr);
 
-  @Override
-  public MediaType[] getSupportedSearchTypes() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+			sr.setScore(MetadataUtil.calculateScore(searchString,
+					movie.getTitle()));
+			resultList.add(sr);
+		}
+		Collections.sort(resultList);
+		Collections.reverse(resultList);
 
-  private void processMediaArt(MediaMetadata md, MediaArtifactType type, String label, String image) {
-    MediaArt ma = new MediaArt();
-    ma.setDownloadUrl(image);
-    ma.setLabel(label);
-    // ma.setProviderId(getInfo().getId());
-    ma.setType(type);
-    md.addMediaArt(ma);
-  }
+		return resultList;
+	}
+
+	@Override
+	public MediaType[] getSupportedSearchTypes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private void processMediaArt(MediaMetadata md, MediaArtifactType type,
+			String label, String image) {
+		MediaArt ma = new MediaArt();
+		ma.setDownloadUrl(image);
+		ma.setLabel(label);
+		// ma.setProviderId(getInfo().getId());
+		ma.setType(type);
+		md.addMediaArt(ma);
+	}
 
 }

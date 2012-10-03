@@ -22,17 +22,7 @@ public class TinyMediaManager {
 					UIManager.setLookAndFeel(nativeLF);
 
 					// proxy settings
-					if (Globals.settings.getProxyHost() != null
-							&& !Globals.settings.getProxyHost().isEmpty()) {
-						System.setProperty("proxyPort",
-								Globals.settings.getProxyPort());
-						System.setProperty("proxyHost",
-								Globals.settings.getProxyHost());
-						System.setProperty("http.proxyUser",
-								Globals.settings.getProxyUsername());
-						System.setProperty("http.proxyPassword",
-								Globals.settings.getProxyPassword());
-					}
+					Globals.settings.setProxy();
 
 					MainWindow window = new MainWindow();
 				} catch (Exception e) {
