@@ -28,6 +28,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
@@ -44,20 +45,20 @@ public class ImageChooser extends JDialog {
     POSTER, FANART
   }
 
-  private final JPanel        contentPanel = new JPanel();
-  private JProgressBar        progressBar;
-  private JLabel              lblProgressAction;
-  private JPanel              panelImages;
+  private final JPanel contentPanel = new JPanel();
+  private JProgressBar progressBar;
+  private JLabel lblProgressAction;
+  private JPanel panelImages;
 
-  private ImageLabel          imageLabel;
-  private ImageType           type;
+  private ImageLabel imageLabel;
+  private ImageType type;
 
-  private ButtonGroup         buttonGroup  = new ButtonGroup();
-  private List<JToggleButton> buttons      = new ArrayList<JToggleButton>();
-  private DownloadTask        task;
+  private ButtonGroup buttonGroup = new ButtonGroup();
+  private List<JToggleButton> buttons = new ArrayList<JToggleButton>();
+  private DownloadTask task;
 
-  private final Action        actionOK     = new SwingAction();
-  private final Action        actionCancel = new SwingAction_1();
+  private final Action actionOK = new SwingAction();
+  private final Action actionCancel = new SwingAction_1();
 
   /**
    * Create the dialog.
@@ -70,8 +71,8 @@ public class ImageChooser extends JDialog {
     setBounds(100, 100, 968, 590);
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), }, new RowSpec[] {
+        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
     {
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -86,10 +87,9 @@ public class ImageChooser extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC,
+          ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
       {
         progressBar = new JProgressBar();
         buttonPane.add(progressBar, "2, 2");
@@ -137,18 +137,16 @@ public class ImageChooser extends JDialog {
       }
 
       if (artwork != null) {
-        // switch (type) {
+        switch (type) {
 
-        // case POSTER:
-        imageLabel.setImageUrl(artwork.getUrlForOriginalArtwork());
-        // movieToChange.writeImages(true, false);
-        // break;
+          case POSTER:
+            imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbPosterSize()));
+            break;
 
-        // case FANART:
-        // movieToChange.setFanartUrl(artwork.getUrlForOriginalArtwork());
-        // movieToChange.writeImages(false, true);
-        // break;
-        // }
+          case FANART:
+            imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbFanartSize()));
+            break;
+        }
       }
       task.cancel(true);
       setVisible(false);
@@ -234,7 +232,7 @@ public class ImageChooser extends JDialog {
   private class DownloadTask extends SwingWorker<Void, Void> {
 
     private String imdbId;
-    private int    tmdbId;
+    private int tmdbId;
 
     public DownloadTask(String imdbId, int tmdbId) {
       this.imdbId = imdbId;
@@ -283,12 +281,10 @@ public class ImageChooser extends JDialog {
           addImage(bufferedImage, tmdbArtwork);
         }
 
-      }
-      catch (NumberFormatException e) {
+      } catch (NumberFormatException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }

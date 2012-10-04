@@ -19,36 +19,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 @XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractModelObject {
-  private static Settings     instance;
+  private static Settings instance;
 
-  private final static String CONFIG_FILE       = "config" + File.separator + "config.xml";
+  private final static String CONFIG_FILE = "config" + File.separator + "config.xml";
   private final static String MOVIE_DATA_SOURCE = "movieDataSource";
-  private final static String PATH              = "path";
-  private final static String VIDEO_FILE_TYPE   = "videoFileTypes";
-  private final static String FILETYPE          = "filetype";
-  private final static String PROXY_HOST        = "proxyHost";
-  private final static String PROXY_PORT        = "proxyPort";
-  private final static String PROXY_USERNAME    = "proxyUsername";
-  private final static String PROXY_PASSWORD    = "proxyPassword";
-  private final static String IMAGE_TMDB_LANGU  = "imageTmdbLanguage";
+  private final static String PATH = "path";
+  private final static String VIDEO_FILE_TYPE = "videoFileTypes";
+  private final static String FILETYPE = "filetype";
+  private final static String PROXY_HOST = "proxyHost";
+  private final static String PROXY_PORT = "proxyPort";
+  private final static String PROXY_USERNAME = "proxyUsername";
+  private final static String PROXY_PASSWORD = "proxyPassword";
+  private final static String IMAGE_TMDB_LANGU = "imageTmdbLanguage";
+  private final static String IMAGE_TMDB_POSTER = "imageTmdbPosterSize";
+  private final static String IMAGE_TMDB_FANART = "imageTmdbFanartSize";
 
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String>  videoFileTypes    = new ArrayList<String>();
+  private final List<String> videoFileTypes = new ArrayList<String>();
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>  movieDataSources  = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String> movieDataSources = ObservableCollections.observableList(new ArrayList<String>());
 
-  private String              proxyHost;
-  private String              proxyPort;
-  private String              proxyUsername;
-  private String              proxyPassword;
+  private String proxyHost;
+  private String proxyPort;
+  private String proxyUsername;
+  private String proxyPassword;
 
-  private String              imageTmdbLangugage;
+  private Languages imageTmdbLangugage;
+  private PosterSizes imageTmdbPosterSize;
+  private FanartSizes imageTmdbFanartSize;
 
   private Settings() {
   }
@@ -62,19 +70,16 @@ public class Settings extends AbstractModelObject {
         Unmarshaller um = context.createUnmarshaller();
         try {
           Settings.instance = (Settings) um.unmarshal(new FileReader(CONFIG_FILE));
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
+          // e.printStackTrace();
+          Settings.instance = new Settings();
+          Settings.instance.writeDefaultSettings();
+        } catch (IOException e) {
           // e.printStackTrace();
           Settings.instance = new Settings();
           Settings.instance.writeDefaultSettings();
         }
-        catch (IOException e) {
-          // e.printStackTrace();
-          Settings.instance = new Settings();
-          Settings.instance.writeDefaultSettings();
-        }
-      }
-      catch (JAXBException e) {
+      } catch (JAXBException e) {
         e.printStackTrace();
       }
 
@@ -123,20 +128,16 @@ public class Settings extends AbstractModelObject {
       w = new FileWriter(CONFIG_FILE);
       m.marshal(this, w);
 
-    }
-    catch (JAXBException e) {
+    } catch (JAXBException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    }
-    finally {
+    } finally {
       try {
         w.close();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -152,7 +153,9 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".mp4");
     addVideoFileTypes(".mkv");
 
-    setImageTmdbLangugage("de");
+    setImageTmdbLangugage(Languages.en);
+    setImageTmdbPosterSize(PosterSizes.w342);
+    setImageTmdbFanartSize(FanartSizes.original);
 
     saveSettings();
   }
@@ -203,12 +206,12 @@ public class Settings extends AbstractModelObject {
   }
 
   @XmlElement(name = IMAGE_TMDB_LANGU)
-  public String getImageTmdbLangugage() {
+  public Languages getImageTmdbLangugage() {
     return imageTmdbLangugage;
   }
 
-  public void setImageTmdbLangugage(String newValue) {
-    String oldValue = this.imageTmdbLangugage;
+  public void setImageTmdbLangugage(Languages newValue) {
+    Languages oldValue = this.imageTmdbLangugage;
     this.imageTmdbLangugage = newValue;
     firePropertyChange(IMAGE_TMDB_LANGU, oldValue, newValue);
   }
@@ -220,5 +223,27 @@ public class Settings extends AbstractModelObject {
       System.setProperty("http.proxyUser", getProxyUsername());
       System.setProperty("http.proxyPassword", getProxyPassword());
     }
+  }
+
+  @XmlElement(name = IMAGE_TMDB_POSTER)
+  public TmdbMetadataProvider.PosterSizes getImageTmdbPosterSize() {
+    return imageTmdbPosterSize;
+  }
+
+  public void setImageTmdbPosterSize(TmdbMetadataProvider.PosterSizes newValue) {
+    TmdbMetadataProvider.PosterSizes oldValue = this.imageTmdbPosterSize;
+    this.imageTmdbPosterSize = newValue;
+    firePropertyChange(IMAGE_TMDB_POSTER, oldValue, newValue);
+  }
+
+  @XmlElement(name = IMAGE_TMDB_FANART)
+  public FanartSizes getImageTmdbFanartSize() {
+    return imageTmdbFanartSize;
+  }
+
+  public void setImageTmdbFanartSize(FanartSizes newValue) {
+    FanartSizes oldValue = this.imageTmdbFanartSize;
+    this.imageTmdbFanartSize = newValue;
+    firePropertyChange(IMAGE_TMDB_FANART, oldValue, newValue);
   }
 }

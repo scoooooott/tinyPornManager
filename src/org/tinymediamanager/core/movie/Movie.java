@@ -29,57 +29,57 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 @Entity
 public class Movie extends AbstractModelObject {
 
-  protected final static String NFO_FILE          = "movie.nfo";
-  protected final static String TITLE             = "title";
-  protected final static String ORIGINAL_TITLE    = "originaltitle";
-  protected final static String RATING            = "rating";
-  protected final static String YEAR              = "year";
-  protected final static String OUTLINE           = "outline";
-  protected final static String PLOT              = "plot";
-  protected final static String TAGLINE           = "tagline";
-  protected final static String RUNTIME           = "runtime";
-  protected final static String THUMB             = "thumb";
-  protected final static String THUMB_PATH        = "thumbpath";
-  protected final static String ID                = "id";
-  protected final static String IMDB_ID           = "imdbid";
+  protected final static String NFO_FILE = "movie.nfo";
+  protected final static String TITLE = "title";
+  protected final static String ORIGINAL_TITLE = "originaltitle";
+  protected final static String RATING = "rating";
+  protected final static String YEAR = "year";
+  protected final static String OUTLINE = "outline";
+  protected final static String PLOT = "plot";
+  protected final static String TAGLINE = "tagline";
+  protected final static String RUNTIME = "runtime";
+  protected final static String THUMB = "thumb";
+  protected final static String THUMB_PATH = "thumbpath";
+  protected final static String ID = "id";
+  protected final static String IMDB_ID = "imdbid";
   protected final static String FILENAME_AND_PATH = "filenameandpath";
-  protected final static String PATH              = "path";
-  protected final static String DIRECTOR          = "director";
-  protected final static String ACTOR             = "actor";
-  protected final static String NAME              = "name";
-  protected final static String ROLE              = "role";
+  protected final static String PATH = "path";
+  protected final static String DIRECTOR = "director";
+  protected final static String ACTOR = "actor";
+  protected final static String NAME = "name";
+  protected final static String ROLE = "role";
 
   @Id
   @GeneratedValue
-  private Long                  id;
-  private String                name;
-  private String                originalName;
-  private String                year;
-  private String                imdbId;
-  private int                   tmdbId;
-  private String                overview;
-  private String                tagline;
-  private float                 rating;
-  private int                   runtime;
-  private String                fanartUrl;
-  private String                fanart;
-  private String                posterUrl;
-  private String                poster;
-  private String                path;
-  private String                nfoFilename;
-  private String                director;
-  private String                writer;
+  private Long id;
+  private String name;
+  private String originalName;
+  private String year;
+  private String imdbId;
+  private int tmdbId;
+  private String overview;
+  private String tagline;
+  private float rating;
+  private int runtime;
+  private String fanartUrl;
+  private String fanart;
+  private String posterUrl;
+  private String poster;
+  private String path;
+  private String nfoFilename;
+  private String director;
+  private String writer;
 
   @Transient
-  private boolean               scraped;
+  private boolean scraped;
 
-  private List<String>          movieFiles        = new ArrayList<String>();
+  private List<String> movieFiles = new ArrayList<String>();
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieCast>       cast              = new ArrayList<MovieCast>();
+  private List<MovieCast> cast = new ArrayList<MovieCast>();
 
   @Transient
-  private List<MovieCast>       castObservable    = ObservableCollections.observableList(cast);
+  private List<MovieCast> castObservable = ObservableCollections.observableList(cast);
 
   public Movie() {
     name = new String();
@@ -463,7 +463,6 @@ public class Movie extends AbstractModelObject {
     String oldValue = this.poster;
     this.poster = newValue;
     firePropertyChange("poster", oldValue, newValue);
-    firePropertyChange("hasImages", false, true);
   }
 
   public void setPosterUrl(String newValue) {
@@ -521,9 +520,9 @@ public class Movie extends AbstractModelObject {
           outputStream.write(tmp_buffer, 0, n);
           outputStream.flush();
         }
+        outputStream.close();
         setPoster(filename);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
@@ -540,9 +539,9 @@ public class Movie extends AbstractModelObject {
           outputStream.write(tmp_buffer, 0, n);
           outputStream.flush();
         }
+        outputStream.close();
         setFanart(filename);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }

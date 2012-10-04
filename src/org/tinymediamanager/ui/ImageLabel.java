@@ -15,8 +15,8 @@ import com.bric.image.pixel.Scaling;
 public class ImageLabel extends JLabel {
 
   private BufferedImage originalImage;
-  private String        imageUrl;
-  private String        imagePath;
+  private String imageUrl;
+  private String imagePath;
 
   public ImageLabel() {
     super("");
@@ -27,7 +27,9 @@ public class ImageLabel extends JLabel {
   }
 
   public void setImagePath(String newValue) {
+    String oldValue = this.imagePath;
     this.imagePath = newValue;
+    firePropertyChange("imagePath", oldValue, newValue);
 
     if (newValue == null) {
       originalImage = null;
@@ -38,8 +40,7 @@ public class ImageLabel extends JLabel {
     File file = new File(imagePath);
     if (file.exists()) {
       this.originalImage = com.bric.image.ImageLoader.createImage(file);// ImageIO.read(file);
-    }
-    else {
+    } else {
       originalImage = null;
     }
 
@@ -51,7 +52,9 @@ public class ImageLabel extends JLabel {
   }
 
   public void setImageUrl(String newValue) {
+    String oldValue = this.imageUrl;
     this.imageUrl = newValue;
+    firePropertyChange("imageUrl", oldValue, newValue);
 
     if (newValue == null) {
       originalImage = null;
@@ -65,8 +68,7 @@ public class ImageLabel extends JLabel {
                                                                                       // true));
 
       this.repaint();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -98,8 +100,7 @@ public class ImageLabel extends JLabel {
         size.x = maxWidth;
         size.y = size.x * originalHeight / originalWidth;
       }
-    }
-    else {
+    } else {
       size.x = maxWidth;
       size.y = maxHeight;
     }

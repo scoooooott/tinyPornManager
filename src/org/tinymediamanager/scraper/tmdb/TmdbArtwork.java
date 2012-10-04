@@ -1,12 +1,14 @@
 package org.tinymediamanager.scraper.tmdb;
 
 import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 public class TmdbArtwork {
 
   private MediaArtifactType type;
-  private String            baseUrl;
-  private String            filePath;
+  private String baseUrl;
+  private String filePath;
 
   public TmdbArtwork(MediaArtifactType type, String baseUrl, String filePath) {
     this.type = type;
@@ -66,4 +68,16 @@ public class TmdbArtwork {
 
   }
 
+  public String getUrlForSpecialArtwork(String size) {
+    String url = baseUrl + size + filePath;
+    return url;
+  }
+
+  public String getUrlForSpecialArtwork(PosterSizes size) {
+    return getUrlForSpecialArtwork(size.name());
+  }
+
+  public String getUrlForSpecialArtwork(FanartSizes size) {
+    return getUrlForSpecialArtwork(size.name());
+  }
 }
