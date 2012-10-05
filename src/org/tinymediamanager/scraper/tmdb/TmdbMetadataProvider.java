@@ -24,6 +24,7 @@ import com.moviejukebox.themoviedb.MovieDbException;
 import com.moviejukebox.themoviedb.TheMovieDb;
 import com.moviejukebox.themoviedb.model.Artwork;
 import com.moviejukebox.themoviedb.model.ArtworkType;
+import com.moviejukebox.themoviedb.model.Genre;
 import com.moviejukebox.themoviedb.model.MovieDb;
 import com.moviejukebox.themoviedb.model.Person;
 import com.moviejukebox.themoviedb.model.PersonType;
@@ -95,8 +96,17 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
   }
 
   @Override
-  public MediaMetadata getMetadataForIMDBId(String imdbid) {
-    // TODO getMetadataForIMDBId
+  public MediaMetadata getMetadataForIMDBId(String imdbId) throws Exception {
+    log.debug("TMDB: getMetadataForIMDBId(imdbId): " + imdbId);
+
+    // get the tmdbid for this imdbid
+    MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.searchLanguage);
+    int tmdbId = movieInfo.getId();
+
+    // get images if a tmdb id has been found
+    if (tmdbId > 0) {
+      return getMetaData(tmdbId);
+    }
     return null;
   }
 
@@ -154,13 +164,12 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     return artwork;
   }
 
-  @Override
-  public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
-    log.debug("TMDB: getMetadata(): " + result);
+  public MediaMetadata getMetaData(int tmdbId) throws Exception {
+    log.debug("TMDB: getMetadata(tmdbId): " + tmdbId);
 
     MediaMetadata md = new MediaMetadata();
 
-    MovieDb movie = tmdb.getMovieInfo(Integer.parseInt(result.getId()), Globals.searchLanguage);
+    MovieDb movie = tmdb.getMovieInfo(tmdbId, Globals.searchLanguage);
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
     MediaMetadata.updateMDValue(md, MetadataKey.TMDB_ID, String.valueOf(movie.getId()));
@@ -182,9 +191,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     MediaMetadata.updateMDValue(md, MetadataKey.RELEASE_DATE, releaseDate);
 
     // posters and fanart (first search with lang)
-    List<Artwork> movieImages = tmdb.getMovieImages(Integer.parseInt(result.getId()), Globals.settings.getImageTmdbLangugage().name());
+    List<Artwork> movieImages = tmdb.getMovieImages(tmdbId, Globals.settings.getImageTmdbLangugage().name());
     // posters and fanart (without lang)
-    List<Artwork> movieImages_wo_lang = tmdb.getMovieImages(Integer.parseInt(result.getId()), "");
+    List<Artwork> movieImages_wo_lang = tmdb.getMovieImages(tmdbId, "");
     movieImages.addAll(movieImages_wo_lang);
 
     for (Artwork image : movieImages) {
@@ -201,7 +210,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     }
 
     // cast
-    List<Person> cast = tmdb.getMovieCasts(Integer.parseInt(result.getId()));
+    List<Person> cast = tmdb.getMovieCasts(tmdbId);
     for (Person castMember : cast) {
       CastMember cm = new CastMember();
       if (castMember.getPersonType() == PersonType.CAST) {
@@ -224,9 +233,21 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
       md.addCastMember(cm);
     }
 
-    // TODO Metadata fertig machen
+    // genres
+    List<Genre> genres = movie.getGenres();
+    for (Genre genre : genres) {
+      md.addGenre(genre.getName());
+    }
 
     return md;
+  }
+
+  @Override
+  public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
+    log.debug("TMDB: getMetadata(result): " + result);
+    int tmdbId = Integer.parseInt(result.getId());
+
+    return getMetaData(tmdbId);
   }
 
   @Override

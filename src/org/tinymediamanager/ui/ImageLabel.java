@@ -1,5 +1,6 @@
 package org.tinymediamanager.ui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -81,10 +82,15 @@ public class ImageLabel extends JLabel {
       int originalHeight = originalImage.getHeight(null);
 
       // calculate new height/width
-      Point size = calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
+      Point size = calculateSize(this.getWidth() - 8, this.getHeight() - 8, originalWidth, originalHeight, true);
       int newWidth = size.x;
       int newHeight = size.y;
-      g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 0, 0, newWidth, newHeight, this);
+
+      g.setColor(Color.BLACK);
+      g.drawRect(0, 0, size.x + 7, size.y + 7);
+      g.setColor(Color.WHITE);
+      g.fillRect(1, 1, size.x + 6, size.y + 6);
+      g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 4, 4, newWidth, newHeight, this);
     }
   }
 
