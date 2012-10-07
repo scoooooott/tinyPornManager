@@ -13,6 +13,7 @@ import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaMetadata.Genres;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataKey;
@@ -32,16 +33,10 @@ import com.moviejukebox.themoviedb.tools.ApiUrl;
 
 public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIMDBID {
 
-  private static final Logger log = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger               log      = Logger.getLogger(TmdbMetadataProvider.class);
   private static final TmdbMetadataProvider instance = new TmdbMetadataProvider();
-  // public static final List<MediaLanguages> supportedLanguages = new
-  // ArrayList<MediaLanguages>();
-  // public static final List<String> supportedPosterSizes = new
-  // ArrayList<String>();
-  // public static final List<String> supportedFanartSizes = new
-  // ArrayList<String>();
 
-  private TheMovieDb tmdb;
+  private TheMovieDb                        tmdb;
 
   public enum PosterSizes {
     w92, w154, w185, w342, w500, original
@@ -65,28 +60,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     }
   }
 
-  // static {
-  // supportedLanguages.add(new MediaLanguages("de", "Deutsch"));
-  // supportedLanguages.add(new MediaLanguages("en", "English"));
-  // supportedLanguages.add(new MediaLanguages("fr", "Français"));
-
-  // supportedPosterSizes.add("w92");
-  // supportedPosterSizes.add("w154");
-  // supportedPosterSizes.add("w185");
-  // supportedPosterSizes.add("w342");
-  // supportedPosterSizes.add("w500");
-  // supportedPosterSizes.add("original");
-
-  // supportedFanartSizes.add("w300");
-  // supportedFanartSizes.add("w780");
-  // supportedFanartSizes.add("w1280");
-  // supportedFanartSizes.add("original");
-  // }
-
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    } catch (MovieDbException e) {
+    }
+    catch (MovieDbException e) {
       e.printStackTrace();
     }
   }
@@ -100,7 +78,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     log.debug("TMDB: getMetadataForIMDBId(imdbId): " + imdbId);
 
     // get the tmdbid for this imdbid
-    MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.searchLanguage);
+    MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
     int tmdbId = movieInfo.getId();
 
     // get images if a tmdb id has been found
@@ -122,7 +100,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
 
     // get the tmdbid for this imdbid
-    MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.searchLanguage);
+    MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
     int tmdbId = movieInfo.getId();
 
     // get images if a tmdb id has been found
@@ -169,7 +147,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
 
     MediaMetadata md = new MediaMetadata();
 
-    MovieDb movie = tmdb.getMovieInfo(tmdbId, Globals.searchLanguage);
+    MovieDb movie = tmdb.getMovieInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
     MediaMetadata.updateMDValue(md, MetadataKey.TMDB_ID, String.valueOf(movie.getId()));
@@ -216,15 +194,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
       if (castMember.getPersonType() == PersonType.CAST) {
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
-      } else if (castMember.getPersonType() == PersonType.CREW) {
+      }
+      else if (castMember.getPersonType() == PersonType.CREW) {
         if (castMember.getJob().equals("Director")) {
           cm.setType(CastMember.DIRECTOR);
-        } else if (castMember.getJob().equals("Author")) {
+        }
+        else if (castMember.getJob().equals("Author")) {
           cm.setType(CastMember.WRITER);
-        } else {
+        }
+        else {
           continue;
         }
-      } else {
+      }
+      else {
         continue;
       }
 
@@ -236,10 +218,156 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     // genres
     List<Genre> genres = movie.getGenres();
     for (Genre genre : genres) {
-      md.addGenre(genre.getName());
+      addGenre(genre, md);
     }
 
     return md;
+  }
+
+  private void addGenre(Genre genre, MediaMetadata md) {
+    switch (genre.getId()) {
+      case 28:
+        md.addGenre(Genres.ACTION);
+        break;
+
+      case 12:
+        md.addGenre(Genres.ADVENTURE);
+        break;
+
+      case 16:
+        md.addGenre(Genres.ANIMATION);
+        break;
+
+      case 35:
+        md.addGenre(Genres.COMEDY);
+        break;
+
+      case 80:
+        md.addGenre(Genres.CRIME);
+        break;
+
+      case 105:
+        md.addGenre(Genres.DISASTER);
+        break;
+
+      case 99:
+        md.addGenre(Genres.DOCUMENTARY);
+        break;
+
+      case 18:
+        md.addGenre(Genres.DRAMA);
+        break;
+
+      case 82:
+        md.addGenre(Genres.EASTERN);
+        break;
+
+      case 2916:
+        md.addGenre(Genres.EROTIC);
+        break;
+
+      case 10751:
+        md.addGenre(Genres.FAMILY);
+        break;
+
+      case 10750:
+        md.addGenre(Genres.FAN_FILM);
+        break;
+
+      case 14:
+        md.addGenre(Genres.FANTASY);
+        break;
+
+      case 10753:
+        md.addGenre(Genres.FILM_NOIR);
+        break;
+
+      case 10769:
+        md.addGenre(Genres.FOREIGN);
+        break;
+
+      case 36:
+        md.addGenre(Genres.HISTORY);
+        break;
+
+      case 10595:
+        md.addGenre(Genres.HOLIDAY);
+        break;
+
+      case 27:
+        md.addGenre(Genres.HORROR);
+        break;
+
+      case 10756:
+        md.addGenre(Genres.INDIE);
+        break;
+
+      case 10402:
+        md.addGenre(Genres.MUSIC);
+        break;
+
+      case 22:
+        md.addGenre(Genres.MUSICAL);
+        break;
+
+      case 9648:
+        md.addGenre(Genres.MYSTERY);
+        break;
+
+      case 10754:
+        md.addGenre(Genres.NEO_NOIR);
+        break;
+
+      case 1115:
+        md.addGenre(Genres.ROAD_MOVIE);
+        break;
+
+      case 10749:
+        md.addGenre(Genres.ROMANCE);
+        break;
+
+      case 878:
+        md.addGenre(Genres.SCIENCE_FICTION);
+        break;
+
+      case 10755:
+        md.addGenre(Genres.SHORT);
+        break;
+
+      case 9805:
+        md.addGenre(Genres.SPORT);
+        break;
+
+      case 10758:
+        md.addGenre(Genres.SPORTING_EVENT);
+        break;
+
+      case 10757:
+        md.addGenre(Genres.SPORTS_FILM);
+        break;
+
+      case 10748:
+        md.addGenre(Genres.SUSPENSE);
+        break;
+
+      case 10770:
+        md.addGenre(Genres.TV_MOVIE);
+        break;
+
+      case 53:
+        md.addGenre(Genres.THRILLER);
+        break;
+
+      case 10752:
+        md.addGenre(Genres.WAR);
+        break;
+
+      case 37:
+        md.addGenre(Genres.WESTERN);
+        break;
+
+    }
+
   }
 
   @Override
@@ -257,10 +385,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
 
     log.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
-    URL url = tmdbSearchMovie.getQueryUrl(searchString, Globals.searchLanguage, 1);
+    URL url = tmdbSearchMovie.getQueryUrl(searchString, Globals.settings.getScraperTmdbLanguage().name(), 1);
     log.debug(url.toString());
 
-    List<MovieDb> moviesFound = tmdb.searchMovie(searchString, Globals.searchLanguage, false);
+    List<MovieDb> moviesFound = tmdb.searchMovie(searchString, Globals.settings.getScraperTmdbLanguage().name(), false);
 
     if (moviesFound == null) {
       return resultList;

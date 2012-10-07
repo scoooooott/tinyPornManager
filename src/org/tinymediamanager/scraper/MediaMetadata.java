@@ -14,6 +14,39 @@ public class MediaMetadata {
     SMALL, MEDIUM, ORIGINAL
   }
 
+  public enum Genres {
+    ACTION("Action"), ADVENTURE("Adventure"), ANIMATION("Animation"), COMEDY("Comdey"), CRIME("Crime"), DISASTER("Disaster"), DOCUMENTARY(
+        "Documentary"), DRAMA("Drama"), EASTERN("Eastern"), EROTIC("Erotic"), FAMILY("Family"), FAN_FILM("Fan Film"), FANTASY("Fantasy"), FILM_NOIR(
+        "Film Noir"), FOREIGN("Foreign"), HISTORY("History"), HOLIDAY("Holiday"), HORROR("Horror"), INDIE("Indie"), MUSIC("Music"),
+    MUSICAL("Musical"), MYSTERY("Mystery"), NEO_NOIR("Neo Noir"), ROAD_MOVIE("Road Movie"), ROMANCE("Romance"), SCIENCE_FICTION("Science Fiction"),
+    SHORT("Short"), SPORT("Sport"), SPORTING_EVENT("Sporting Event"), SPORTS_FILM("Sports Film"), SUSPENSE("Suspense"), TV_MOVIE("TV Movie"),
+    THRILLER("Thriller"), WAR("War"), WESTERN("Western");
+
+    private String name;
+
+    private Genres() {
+      this.name = "";
+    }
+
+    private Genres(String name) {
+      this.name = name;
+    }
+
+    public String toString() {
+      return this.name;
+    }
+
+    public static Genres getGenre(String name) {
+      for (Genres genre : values()) {
+        if (genre.name.equals(name)) {
+          return genre;
+        }
+      }
+      return null;
+    }
+
+  }
+
   public static final int          ACTOR       = 0;
   public static final int          WRITER      = 1;
   public static final int          DIRECTOR    = 2;
@@ -23,7 +56,7 @@ public class MediaMetadata {
   private Map<MetadataKey, String> store       = new HashMap<MetadataKey, String>();
   private List<CastMember>         castMembers = new ArrayList<CastMember>();
   private List<MediaArt>           fanart      = new ArrayList<MediaArt>();
-  private List<String>             genres      = new ArrayList<String>();
+  private List<Genres>             genres      = new ArrayList<Genres>();
 
   public MediaMetadata() {
   }
@@ -44,7 +77,7 @@ public class MediaMetadata {
     set(MetadataKey.COMPANY, company);
   }
 
-  public List<String> getGenres() {
+  public List<Genres> getGenres() {
     return genres;
   }
 
@@ -140,11 +173,8 @@ public class MediaMetadata {
 
   }
 
-  public void addGenre(String genre) {
-    if (genre == null || genre.trim().length() == 0)
-      return;
+  public void addGenre(Genres genre) {
     genres.add(genre);
-
   }
 
   public void addCastMember(CastMember cm) {
@@ -156,7 +186,6 @@ public class MediaMetadata {
 
   public void addMediaArt(MediaArt ma) {
     fanart.add(ma);
-
   }
 
   public void setDescription(String plot) {

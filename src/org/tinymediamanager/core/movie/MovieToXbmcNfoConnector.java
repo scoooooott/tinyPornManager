@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
+import org.tinymediamanager.scraper.MediaMetadata.Genres;
 
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
@@ -42,8 +43,12 @@ public class MovieToXbmcNfoConnector {
   @XmlAnyElement(lax = true)
   private List<Actor>         actors;
 
+  @XmlElement(name = "genre")
+  private List<String>        genres;
+
   public MovieToXbmcNfoConnector() {
     actors = new ArrayList<MovieToXbmcNfoConnector.Actor>();
+    genres = new ArrayList<String>();
   }
 
   public static String setData(Movie movie) {
@@ -78,6 +83,10 @@ public class MovieToXbmcNfoConnector {
     xbmc.setDirector(movie.getDirector());
     for (MovieCast cast : movie.getActors()) {
       xbmc.addActor(cast.getName(), cast.getCharacter());
+    }
+
+    for (Genres genre : movie.getGenres()) {
+      xbmc.addGenre(genre.toString());
     }
 
     // and marshall it
@@ -139,6 +148,13 @@ public class MovieToXbmcNfoConnector {
           movie.addToCast(new MovieCast(actor.getName(), actor.getRole()));
         }
 
+        for (String genre : xbmc.getGenres()) {
+          Genres genreFound = Genres.getGenre(genre);
+          if (genreFound != null) {
+            movie.addGenre(genreFound);
+          }
+        }
+
         movie.setNfoFilename(nfoFilename);
 
       }
@@ -156,6 +172,14 @@ public class MovieToXbmcNfoConnector {
     }
 
     return movie;
+  }
+
+  public void addGenre(String genre) {
+    genres.add(genre);
+  }
+
+  public List<String> getGenres() {
+    return this.genres;
   }
 
   public void addActor(String name, String role) {

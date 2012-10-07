@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="lib/jackson-mapper-lgpl-1.9.9.jar"/>
 	<classpathentry kind="lib" path="lib/objectdb.jar"/>
 	<classpathentry kind="lib" path="lib/Scaling-bin.jar"/>
+	<classpathentry kind="lib" path="lib/thetvdbapi-1.4-SNAPSHOT-r123.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
