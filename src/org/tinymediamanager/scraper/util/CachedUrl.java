@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.scraper.util;
 
 import java.io.File;
@@ -16,23 +31,55 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+/**
+ * The Class CachedUrl.
+ */
 public class CachedUrl extends Url {
 
-  private static final Logger log             = Logger.getLogger(CachedUrl.class);
-  private static final int    CACHE_EXPIRY    = 1800;
-  // factor that the cache of image file is longer
-  private static final int    IMAGE_FACTOR    = 1000;
-  private static final String IMAGE_PATTERN   = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
-  private static final String CACHE_DIR       = "cache/url";
+  /** The Constant log. */
+  private static final Logger log = Logger.getLogger(CachedUrl.class);
 
-  private String              urlId           = null;
-  private File                propFile        = null;
-  private Properties          props           = null;
-  public File                 urlCacheDir     = null;
-  private boolean             followRedirects = false;
-  private Pattern             pattern;
-  private Matcher             matcher;
+  /** The Constant CACHE_EXPIRY. */
+  private static final int CACHE_EXPIRY = 1800;
 
+  /** factor that the cache of image file is longer */
+  private static final int IMAGE_FACTOR = 1000;
+
+  /** The Constant IMAGE_PATTERN. */
+  private static final String IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
+
+  /** The Constant CACHE_DIR. */
+  private static final String CACHE_DIR = "cache/url";
+
+  /** The url id. */
+  private String urlId = null;
+
+  /** The prop file. */
+  private File propFile = null;
+
+  /** The props. */
+  private Properties props = null;
+
+  /** The url cache dir. */
+  public File urlCacheDir = null;
+
+  /** The follow redirects. */
+  private boolean followRedirects = false;
+
+  /** The pattern. */
+  private Pattern pattern;
+
+  /** The matcher. */
+  private Matcher matcher;
+
+  /**
+   * Instantiates a new cached url.
+   * 
+   * @param url
+   *          the url
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
   public CachedUrl(String url) throws IOException {
     super(url);
 
@@ -70,6 +117,13 @@ public class CachedUrl extends Url {
     }
   }
 
+  /**
+   * Gets the cached file name.
+   * 
+   * @param url
+   *          the url
+   * @return the cached file name
+   */
   private String getCachedFileName(String url) {
     try {
       if (url == null)
@@ -85,35 +139,45 @@ public class CachedUrl extends Url {
     }
   }
 
+  /**
+   * Checks if is expired.
+   * 
+   * @param cachedFile
+   *          the cached file
+   * @return true, if is expired
+   */
   public boolean isExpired(File cachedFile) {
     int expirySecs = CACHE_EXPIRY;
     if (isImageFile()) {
       expirySecs = expirySecs * IMAGE_FACTOR;
     }
     return isExpired(cachedFile, expirySecs);
-    // long secs = CACHE_EXPIRY;
-    // long diff = (System.currentTimeMillis() - cachedFile.lastModified()) /
-    // 1000;
-    // boolean expired = (diff > secs);
-    // if (expired) {
-    // log.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile +
-    // "; LastModified: " + cachedFile.lastModified() + "; Current Time: "
-    // + System.currentTimeMillis() + "; Expiry: " + secs + "s; Diff: " + diff +
-    // "s");
-    // }
-    // return expired;
   }
 
+  /**
+   * Checks if is expired.
+   * 
+   * @param cachedFile
+   *          the cached file
+   * @param expirySecs
+   *          the expiry secs
+   * @return true, if is expired
+   */
   public static boolean isExpired(File cachedFile, long expirySecs) {
     long diff = (System.currentTimeMillis() - cachedFile.lastModified()) / 1000;
     boolean expired = (diff > expirySecs);
     if (expired) {
-      log.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile + "; LastModified: " + cachedFile.lastModified() + "; Current Time: "
-          + System.currentTimeMillis() + "; Expiry: " + expirySecs + "s; Diff: " + diff + "s");
+      log.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile + "; LastModified: " + cachedFile.lastModified() + "; Current Time: " + System.currentTimeMillis()
+          + "; Expiry: " + expirySecs + "s; Diff: " + diff + "s");
     }
     return expired;
   }
 
+  /**
+   * Gets the cache dir.
+   * 
+   * @return the cache dir
+   */
   private File getCacheDir() {
     if (urlCacheDir == null) {
       urlCacheDir = new File(CACHE_DIR);
@@ -123,43 +187,96 @@ public class CachedUrl extends Url {
     return urlCacheDir;
   }
 
+  /**
+   * Gets the original url.
+   * 
+   * @return the original url
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
   public URL getOriginalUrl() throws IOException {
     return new URL(props.getProperty("url"));
   }
 
+  /**
+   * Gets the property file.
+   * 
+   * @return the property file
+   */
   public File getPropertyFile() {
     return propFile;
   }
 
+  /**
+   * Gets the cached file.
+   * 
+   * @return the cached file
+   */
   public File getCachedFile() {
     return getCachedFile(props);
   }
 
+  /**
+   * Gets the cached file.
+   * 
+   * @param props
+   *          the props
+   * @return the cached file
+   */
   public static File getCachedFile(Properties props) {
     return new File(props.getProperty("file"));
   }
 
+  /**
+   * Checks if is image file.
+   * 
+   * @return true, if is image file
+   */
   private boolean isImageFile() {
     String filename = props.getProperty("file");
     matcher = pattern.matcher(filename);
     return matcher.matches();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.util.Url#hasMoved()
+   */
   @Override
   public boolean hasMoved() {
     return Boolean.parseBoolean(props.getProperty("moved", "false"));
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.util.Url#getMovedUrl()
+   */
   @Override
   public URL getMovedUrl() throws IOException {
     return new URL(props.getProperty("movedUrl"));
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.util.Url#getUrl()
+   */
   @Override
   public URL getUrl() throws IOException {
     return getUrl(null);
   }
 
+  /**
+   * Gets the url.
+   * 
+   * @param handler
+   *          the handler
+   * @return the url
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
   public URL getUrl(CookieHandler handler) throws IOException {
     File f = getCachedFile();
     if (!f.exists() || f.length() == 0) {
@@ -170,6 +287,14 @@ public class CachedUrl extends Url {
     return f.toURI().toURL();
   }
 
+  /**
+   * Cache.
+   * 
+   * @param handler
+   *          the handler
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
   public void cache(CookieHandler handler) throws IOException {
     log.debug("Caching Url: " + getOriginalUrl().toExternalForm());
     URL u = getOriginalUrl();
@@ -219,6 +344,13 @@ public class CachedUrl extends Url {
     log.debug("Properties for cached url are now stored: " + getPropertyFile().getAbsolutePath());
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.tinymediamanager.scraper.util.Url#getInputStream(org.tinymediamanager
+   * .scraper.util.CookieHandler, boolean)
+   */
   @Override
   public InputStream getInputStream(CookieHandler handler, boolean followRedirects) throws IOException {
     this.followRedirects = followRedirects;
@@ -232,6 +364,7 @@ public class CachedUrl extends Url {
    * Will remove a url from the cache, in the event that url caching is enabled.
    * 
    * @param dataUrl
+   *          the data url
    */
   public static void remove(String dataUrl) {
     try {
@@ -242,6 +375,9 @@ public class CachedUrl extends Url {
     }
   }
 
+  /**
+   * Removes the.
+   */
   private void remove() {
     try {
       log.debug("Removing Cached Url: " + this.getOriginalUrl().toExternalForm());
@@ -260,6 +396,11 @@ public class CachedUrl extends Url {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#toString()
+   */
   @Override
   public String toString() {
     return "CachedUrl: " + (props != null ? props.getProperty("url") : "N/A") + "; UrlId: " + urlId;

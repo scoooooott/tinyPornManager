@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
@@ -8,32 +23,50 @@ import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 
+/**
+ * The Class MovieList.
+ */
 public class MovieList extends AbstractModelObject {
 
-  private static MovieList       instance;
-  private final Settings         settings       = Settings.getInstance();
+  /** The Constant logger. */
+  private static final Logger logger = Logger.getLogger(MovieList.class);
 
-  private final List<Movie>      movieList      = ObservableCollections.observableList(new ArrayList<Movie>());
-  private List<MovieJobConfig>   moviesToScrape = new ArrayList<MovieJobConfig>();
+  /** The instance. */
+  private static MovieList instance;
 
+  /** The settings. */
+  private final Settings settings = Settings.getInstance();
+
+  /** The movie list. */
+  private final List<Movie> movieList = ObservableCollections.observableList(new ArrayList<Movie>());
+
+  /** The movies to scrape. */
+  private List<MovieJobConfig> moviesToScrape = new ArrayList<MovieJobConfig>();
+
+  /** The metadata provider. */
   private IMediaMetadataProvider metadataProvider;
 
+  /**
+   * Instantiates a new movie list.
+   */
   private MovieList() {
-    // Set up a simple configuration that logs on the console.
-    BasicConfigurator.configure();
-
     // load existing movies from database
     loadMoviesFromDatabase();
 
   }
 
+  /**
+   * Gets the single instance of MovieList.
+   * 
+   * @return single instance of MovieList
+   */
   public static MovieList getInstance() {
     if (MovieList.instance == null) {
       MovieList.instance = new MovieList();
@@ -41,21 +74,41 @@ public class MovieList extends AbstractModelObject {
     return MovieList.instance;
   }
 
+  /**
+   * Adds the movie.
+   * 
+   * @param movie
+   *          the movie
+   */
   public void addMovie(Movie movie) {
     movieList.add(movie);
     firePropertyChange("movies", null, movieList);
   }
 
+  /**
+   * Removes the movie.
+   * 
+   * @param movie
+   *          the movie
+   */
   public void removeMovie(Movie movie) {
     movieList.remove(movie);
     firePropertyChange("movies", null, movieList);
   }
 
+  /**
+   * Gets the movies.
+   * 
+   * @return the movies
+   */
   public List<Movie> getMovies() {
     return movieList;
   }
 
   // load movielist from database
+  /**
+   * Load movies from database.
+   */
   private void loadMoviesFromDatabase() {
     try {
       TypedQuery<Movie> query = Globals.entityManager.createQuery("SELECT movie FROM Movie movie", Movie.class);
@@ -65,13 +118,15 @@ public class MovieList extends AbstractModelObject {
         movie.setObservableCastList();
         addMovie(movie);
       }
-    }
-    catch (PersistenceException e) {
-      e.printStackTrace();
+    } catch (PersistenceException e) {
+      logger.error(e.getStackTrace());
     }
   }
 
   // Search for new media
+  /**
+   * Update data sources.
+   */
   public void updateDataSources() {
     Globals.entityManager.getTransaction().begin();
     // each datasource
@@ -87,6 +142,12 @@ public class MovieList extends AbstractModelObject {
   }
 
   // check if there is a movie in this dir
+  /**
+   * Find movie in directory.
+   * 
+   * @param dir
+   *          the dir
+   */
   private void findMovieInDirectory(File dir) {
     // check if there are any videofiles in that subdir
     FilenameFilter filter = new FilenameFilter() {
@@ -143,8 +204,7 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
-    }
-    else {
+    } else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -154,91 +214,13 @@ public class MovieList extends AbstractModelObject {
     }
   }
 
-  // // scrape single movie
-  // public void searchMovie(Movie movieToScrape, int scrapeSetting) {
-  // try {
-  // List<MovieChooserModel> moviesFound = new ArrayList<MovieChooserModel>();
-  // List<MediaSearchResult> result = metadataProvider
-  // .search(new SearchQuery(MediaType.MOVIE,
-  // SearchQuery.Field.QUERY, movieToScrape.getName()));
-  // for (MediaSearchResult res : result) {
-  // MovieChooserModel movieFound = new MovieChooserModel(
-  // this.metadataProvider, res);
-  // moviesFound.add(movieFound);
-  // // System.out.println(res.getTitle() + "  " + res.getScore());
-  // // MediaMetadata meta = pr.getMetaData(res);
-  // // String movieDetail = mp.getDetails(new XbmcUrl(res.getUrl()),
-  // // res.getIMDBId());
-  // // movieDetail.charAt(0);
-  //
-  // }
-  // movieToScrape.setMoviesFound(moviesFound);
-  // // chooseMovie(movieToScrape);
-  // } catch (Exception e) {
-  // // TODO Auto-generated catch block
-  // e.printStackTrace();
-  // }
-  // // try {
-  // // List<net.sf.jtmdb.Movie> movies =
-  // // net.sf.jtmdb.Movie.search(movieToScrape.getName());
-  // // if (movies != null) {
-  // // if ((movies.size() > 1 || movies.size() == 0)
-  // // && (scrapeSetting == MovieJobConfig.CHOOSE_MOVIE || scrapeSetting ==
-  // // MovieJobConfig.CHOOSE_MOVIE_AND_IMAGES)) {
-  // // // more than one movie found (or none) - display moviechooser window
-  // // // (if ths user does not force best match)
-  // // List<MovieChooserModel> moviesFound = new
-  // // ArrayList<MovieChooserModel>();
-  // // for (net.sf.jtmdb.Movie movie : movies) {
-  // // MovieChooserModel movieFound = new MovieChooserModel(movie);
-  // // moviesFound.add(movieFound);
-  // // }
-  // // movieToScrape.setMoviesFound(moviesFound);
-  // // chooseMovie(movieToScrape);
-  // //
-  // // } else {
-  // // // only one movie found
-  // // Iterator<net.sf.jtmdb.Movie> iterMovie = movies.iterator();
-  // // if (iterMovie.hasNext()) {
-  // // net.sf.jtmdb.Movie movie = iterMovie.next();
-  // // movieToScrape.setTmdbMovie(net.sf.jtmdb.Movie.getInfo(movie.getID()));
-  // // scrapeMovieData(movieToScrape);
-  // // }
-  // // }
-  // // }
-  // // } catch (Exception e) {
-  // // e.printStackTrace();
-  // // }
-  // }
-
-  // // scrape single movie
-  // public void scrapeMovieData(Movie movieToScrape, MovieChooserModel
-  // chosenMovie) {
-  // // movieToScrape.scrapeFromTMDB();
-  // // movieToScrape.getImagesFromTMDB();
-  //
-  //
-  // }
-
-  // search movie
-  public void searchForMovie(Movie movieToScrape, String name) {
-    // try {
-    // List<net.sf.jtmdb.Movie> movies = net.sf.jtmdb.Movie.search(name);
-    // if (movies != null) {
-    // List<MovieChooserModel> moviesFound = new
-    // ArrayList<MovieChooserModel>();
-    // for (net.sf.jtmdb.Movie movie : movies) {
-    // MovieChooserModel movieFound = new MovieChooserModel(movie);
-    // moviesFound.add(movieFound);
-    // }
-    // movieToScrape.setMoviesFound(moviesFound);
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-  }
-
-  // get path for each movie
+  /**
+   * Gets the movie by path.
+   * 
+   * @param path
+   *          the path
+   * @return the movie by path
+   */
   private Movie getMovieByPath(String path) {
 
     for (Movie movie : movieList) {
@@ -250,6 +232,14 @@ public class MovieList extends AbstractModelObject {
     return null;
   }
 
+  /**
+   * Adds the movie to scrape list.
+   * 
+   * @param movie
+   *          the movie
+   * @param scrapeSetting
+   *          the scrape setting
+   */
   public void addMovieToScrapeList(Movie movie, int scrapeSetting) {
     moviesToScrape.add(new MovieJobConfig(movie, scrapeSetting));
   }

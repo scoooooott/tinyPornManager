@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
@@ -18,39 +33,82 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.scraper.MediaMetadata.Genres;
 
+/**
+ * The Class MovieToXbmcNfoConnector.
+ */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
 public class MovieToXbmcNfoConnector {
 
+  /** The Constant logger. */
+  private static final Logger logger = Logger.getLogger(MovieToXbmcNfoConnector.class);
+
+  /** The Constant NFO_NAME. */
   private final static String NFO_NAME = "movie.nfo";
 
-  private String              title;
-  private String              originaltitle;
-  private float               rating;
-  private String              year;
-  private String              outline;
-  private String              plot;
-  private String              tagline;
-  private int                 runtime;
-  private String              thumb;
-  private String              id;
-  private String              filenameandpath;
-  private String              director;
+  /** The title. */
+  private String title;
 
+  /** The originaltitle. */
+  private String originaltitle;
+
+  /** The rating. */
+  private float rating;
+
+  /** The year. */
+  private String year;
+
+  /** The outline. */
+  private String outline;
+
+  /** The plot. */
+  private String plot;
+
+  /** The tagline. */
+  private String tagline;
+
+  /** The runtime. */
+  private int runtime;
+
+  /** The thumb. */
+  private String thumb;
+
+  /** The id. */
+  private String id;
+
+  /** The filenameandpath. */
+  private String filenameandpath;
+
+  /** The director. */
+  private String director;
+
+  /** The actors. */
   @XmlAnyElement(lax = true)
-  private List<Actor>         actors;
+  private List<Actor> actors;
 
+  /** The genres. */
   @XmlElement(name = "genre")
-  private List<String>        genres;
+  private List<String> genres;
 
+  /**
+   * Instantiates a new movie to xbmc nfo connector.
+   */
   public MovieToXbmcNfoConnector() {
     actors = new ArrayList<MovieToXbmcNfoConnector.Actor>();
     genres = new ArrayList<String>();
   }
 
+  /**
+   * Sets the data.
+   * 
+   * @param movie
+   *          the movie
+   * @return the string
+   */
   public static String setData(Movie movie) {
     MovieToXbmcNfoConnector xbmc = new MovieToXbmcNfoConnector();
     // set data
@@ -64,8 +122,7 @@ public class MovieToXbmcNfoConnector {
     int spaceIndex = 0;
     if (xbmc.getPlot().length() > 200) {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
-    }
-    else {
+    } else {
       spaceIndex = xbmc.getPlot().length();
     }
 
@@ -101,21 +158,15 @@ public class MovieToXbmcNfoConnector {
       w = new FileWriter(nfoFilename);
       m.marshal(xbmc, w);
 
-    }
-    catch (JAXBException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    finally {
+    } catch (JAXBException e) {
+      logger.error(e.getStackTrace());
+    } catch (IOException e) {
+      logger.error(e.getStackTrace());
+    } finally {
       try {
         w.close();
-      }
-      catch (Exception e) {
-        e.printStackTrace();
+      } catch (Exception e) {
+        logger.error(e.getStackTrace());
       }
     }
 
@@ -123,6 +174,13 @@ public class MovieToXbmcNfoConnector {
 
   }
 
+  /**
+   * Gets the data.
+   * 
+   * @param nfoFilename
+   *          the nfo filename
+   * @return the data
+   */
   public static Movie getData(String nfoFilename) {
     // try to parse XML
     JAXBContext context;
@@ -157,177 +215,367 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      }
-      catch (FileNotFoundException e) {
-        // e.printStackTrace();
+      } catch (FileNotFoundException e) {
+        return null;
+      } catch (IOException e) {
         return null;
       }
-      catch (IOException e) {
-        // e.printStackTrace();
-        return null;
-      }
-    }
-    catch (JAXBException e) {
+    } catch (JAXBException e) {
       return null;
     }
 
     return movie;
   }
 
+  /**
+   * Adds the genre.
+   * 
+   * @param genre
+   *          the genre
+   */
   public void addGenre(String genre) {
     genres.add(genre);
   }
 
+  /**
+   * Gets the genres.
+   * 
+   * @return the genres
+   */
   public List<String> getGenres() {
     return this.genres;
   }
 
+  /**
+   * Adds the actor.
+   * 
+   * @param name
+   *          the name
+   * @param role
+   *          the role
+   */
   public void addActor(String name, String role) {
     Actor actor = new Actor(name, role);
     actors.add(actor);
   }
 
+  /**
+   * Gets the actors.
+   * 
+   * @return the actors
+   */
   public List<Actor> getActors() {
     return actors;
   }
 
+  /**
+   * Gets the title.
+   * 
+   * @return the title
+   */
   @XmlElement(name = "title")
   public String getTitle() {
     return title;
   }
 
+  /**
+   * Sets the title.
+   * 
+   * @param title
+   *          the new title
+   */
   public void setTitle(String title) {
     this.title = title;
   }
 
+  /**
+   * Gets the originaltitle.
+   * 
+   * @return the originaltitle
+   */
   @XmlElement(name = "originaltitle")
   public String getOriginaltitle() {
     return originaltitle;
   }
 
+  /**
+   * Sets the originaltitle.
+   * 
+   * @param originaltitle
+   *          the new originaltitle
+   */
   public void setOriginaltitle(String originaltitle) {
     this.originaltitle = originaltitle;
   }
 
+  /**
+   * Gets the rating.
+   * 
+   * @return the rating
+   */
   @XmlElement(name = "rating")
   public float getRating() {
     return rating;
   }
 
+  /**
+   * Sets the rating.
+   * 
+   * @param rating
+   *          the new rating
+   */
   public void setRating(float rating) {
     this.rating = rating;
   }
 
+  /**
+   * Gets the year.
+   * 
+   * @return the year
+   */
   @XmlElement(name = "year")
   public String getYear() {
     return year;
   }
 
+  /**
+   * Sets the year.
+   * 
+   * @param year
+   *          the new year
+   */
   public void setYear(String year) {
     this.year = year;
   }
 
+  /**
+   * Gets the outline.
+   * 
+   * @return the outline
+   */
   @XmlElement(name = "outline")
   public String getOutline() {
     return outline;
   }
 
+  /**
+   * Sets the outline.
+   * 
+   * @param outline
+   *          the new outline
+   */
   public void setOutline(String outline) {
     this.outline = outline;
   }
 
+  /**
+   * Gets the plot.
+   * 
+   * @return the plot
+   */
   @XmlElement(name = "plot")
   public String getPlot() {
     return plot;
   }
 
+  /**
+   * Sets the plot.
+   * 
+   * @param plot
+   *          the new plot
+   */
   public void setPlot(String plot) {
     this.plot = plot;
   }
 
+  /**
+   * Gets the tagline.
+   * 
+   * @return the tagline
+   */
   @XmlElement(name = "tagline")
   public String getTagline() {
     return tagline;
   }
 
+  /**
+   * Sets the tagline.
+   * 
+   * @param tagline
+   *          the new tagline
+   */
   public void setTagline(String tagline) {
     this.tagline = tagline;
   }
 
+  /**
+   * Gets the runtime.
+   * 
+   * @return the runtime
+   */
   @XmlElement(name = "runtime")
   public int getRuntime() {
     return runtime;
   }
 
+  /**
+   * Sets the runtime.
+   * 
+   * @param runtime
+   *          the new runtime
+   */
   public void setRuntime(int runtime) {
     this.runtime = runtime;
   }
 
+  /**
+   * Gets the thumb.
+   * 
+   * @return the thumb
+   */
   @XmlElement(name = "thumb")
   public String getThumb() {
     return thumb;
   }
 
+  /**
+   * Sets the thumb.
+   * 
+   * @param thumb
+   *          the new thumb
+   */
   public void setThumb(String thumb) {
     this.thumb = thumb;
   }
 
+  /**
+   * Gets the id.
+   * 
+   * @return the id
+   */
   @XmlElement(name = "id")
   public String getId() {
     return id;
   }
 
+  /**
+   * Sets the id.
+   * 
+   * @param id
+   *          the new id
+   */
   public void setId(String id) {
     this.id = id;
   }
 
+  /**
+   * Gets the filenameandpath.
+   * 
+   * @return the filenameandpath
+   */
   @XmlElement(name = "filenameandpath")
   public String getFilenameandpath() {
     return filenameandpath;
   }
 
+  /**
+   * Sets the filenameandpath.
+   * 
+   * @param filenameandpath
+   *          the new filenameandpath
+   */
   public void setFilenameandpath(String filenameandpath) {
     this.filenameandpath = filenameandpath;
   }
 
+  /**
+   * Gets the director.
+   * 
+   * @return the director
+   */
   @XmlElement(name = "director")
   public String getDirector() {
     return director;
   }
 
+  /**
+   * Sets the director.
+   * 
+   * @param director
+   *          the new director
+   */
   public void setDirector(String director) {
     this.director = director;
   }
 
   // inner class actor to represent actors
+  /**
+   * The Class Actor.
+   */
   @XmlRootElement(name = "actor")
   public static class Actor {
 
+    /** The name. */
     private String name;
+
+    /** The role. */
     private String role;
 
+    /**
+     * Instantiates a new actor.
+     */
     public Actor() {
     }
 
+    /**
+     * Instantiates a new actor.
+     * 
+     * @param name
+     *          the name
+     * @param role
+     *          the role
+     */
     public Actor(String name, String role) {
       this.name = name;
       this.role = role;
     }
 
+    /**
+     * Gets the name.
+     * 
+     * @return the name
+     */
     @XmlElement(name = "name")
     public String getName() {
       return name;
     }
 
+    /**
+     * Sets the name.
+     * 
+     * @param name
+     *          the new name
+     */
     public void setName(String name) {
       this.name = name;
     }
 
+    /**
+     * Gets the role.
+     * 
+     * @return the role
+     */
     @XmlElement(name = "role")
     public String getRole() {
       return role;
     }
 
+    /**
+     * Sets the role.
+     * 
+     * @param role
+     *          the new role
+     */
     public void setRole(String role) {
       this.role = role;
     }

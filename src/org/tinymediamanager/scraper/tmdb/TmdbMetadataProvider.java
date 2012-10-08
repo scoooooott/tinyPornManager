@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.scraper.tmdb;
 
 import java.net.URL;
@@ -31,51 +46,117 @@ import com.moviejukebox.themoviedb.model.Person;
 import com.moviejukebox.themoviedb.model.PersonType;
 import com.moviejukebox.themoviedb.tools.ApiUrl;
 
+/**
+ * The Class TmdbMetadataProvider.
+ */
 public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIMDBID {
 
-  private static final Logger               log      = Logger.getLogger(TmdbMetadataProvider.class);
+  /** The Constant logger. */
+  private static final Logger logger = Logger.getLogger(TmdbMetadataProvider.class);
+
+  /** The Constant instance. */
   private static final TmdbMetadataProvider instance = new TmdbMetadataProvider();
 
-  private TheMovieDb                        tmdb;
+  /** The tmdb. */
+  private TheMovieDb tmdb;
 
+  /**
+   * The Enum PosterSizes.
+   */
   public enum PosterSizes {
-    w92, w154, w185, w342, w500, original
+
+    /** The w92. */
+    w92,
+    /** The w154. */
+    w154,
+    /** The w185. */
+    w185,
+    /** The w342. */
+    w342,
+    /** The w500. */
+    w500,
+    /** The original. */
+    original
   }
 
+  /**
+   * The Enum FanartSizes.
+   */
   public enum FanartSizes {
-    w300, w780, w1280, original
+
+    /** The w300. */
+    w300,
+    /** The w780. */
+    w780,
+    /** The w1280. */
+    w1280,
+    /** The original. */
+    original
   }
 
+  /**
+   * The Enum Languages.
+   */
   public enum Languages {
-    de("Deutsch"), en("English");
 
+    /** The de. */
+    de("Deutsch"),
+    /** The en. */
+    en("English");
+
+    /** The title. */
     private String title;
 
+    /**
+     * Instantiates a new languages.
+     * 
+     * @param title
+     *          the title
+     */
     private Languages(String title) {
       this.title = title;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Enum#toString()
+     */
     public String toString() {
       return this.title;
     }
   }
 
+  /**
+   * Instantiates a new tmdb metadata provider.
+   */
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    }
-    catch (MovieDbException e) {
-      e.printStackTrace();
+    } catch (MovieDbException e) {
+      logger.error(e.getStackTrace());
     }
   }
 
+  /**
+   * Gets the single instance of TmdbMetadataProvider.
+   * 
+   * @return single instance of TmdbMetadataProvider
+   */
   public static TmdbMetadataProvider getInstance() {
     return instance;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.tinymediamanager.scraper.HasFindByIMDBID#getMetadataForIMDBId(java.
+   * lang.String)
+   */
   @Override
   public MediaMetadata getMetadataForIMDBId(String imdbId) throws Exception {
-    log.debug("TMDB: getMetadataForIMDBId(imdbId): " + imdbId);
+    logger.debug("TMDB: getMetadataForIMDBId(imdbId): " + imdbId);
 
     // get the tmdbid for this imdbid
     MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
@@ -88,14 +169,30 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     return null;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getInfo()
+   */
   @Override
   public ProviderInfo getInfo() {
     // TODO Auto-generated method stub
     return null;
   }
 
+  /**
+   * Gets the artwork.
+   * 
+   * @param imdbId
+   *          the imdb id
+   * @param type
+   *          the type
+   * @return the artwork
+   * @throws Exception
+   *           the exception
+   */
   public List<TmdbArtwork> getArtwork(String imdbId, MediaArtifactType type) throws Exception {
-    log.debug("TMDB: getArtwork(imdbId): " + imdbId);
+    logger.debug("TMDB: getArtwork(imdbId): " + imdbId);
 
     List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
 
@@ -111,8 +208,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     return artwork;
   }
 
+  /**
+   * Gets the artwork.
+   * 
+   * @param tmdbId
+   *          the tmdb id
+   * @param type
+   *          the type
+   * @return the artwork
+   * @throws Exception
+   *           the exception
+   */
   public List<TmdbArtwork> getArtwork(int tmdbId, MediaArtifactType type) throws Exception {
-    log.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
+    logger.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
 
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
     List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
@@ -142,8 +250,17 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     return artwork;
   }
 
+  /**
+   * Gets the meta data.
+   * 
+   * @param tmdbId
+   *          the tmdb id
+   * @return the meta data
+   * @throws Exception
+   *           the exception
+   */
   public MediaMetadata getMetaData(int tmdbId) throws Exception {
-    log.debug("TMDB: getMetadata(tmdbId): " + tmdbId);
+    logger.debug("TMDB: getMetadata(tmdbId): " + tmdbId);
 
     MediaMetadata md = new MediaMetadata();
 
@@ -194,19 +311,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
       if (castMember.getPersonType() == PersonType.CAST) {
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
-      }
-      else if (castMember.getPersonType() == PersonType.CREW) {
+      } else if (castMember.getPersonType() == PersonType.CREW) {
         if (castMember.getJob().equals("Director")) {
           cm.setType(CastMember.DIRECTOR);
-        }
-        else if (castMember.getJob().equals("Author")) {
+        } else if (castMember.getJob().equals("Author")) {
           cm.setType(CastMember.WRITER);
-        }
-        else {
+        } else {
           continue;
         }
-      }
-      else {
+      } else {
         continue;
       }
 
@@ -224,6 +337,14 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     return md;
   }
 
+  /**
+   * Adds the genre.
+   * 
+   * @param genre
+   *          the genre
+   * @param md
+   *          the md
+   */
   private void addGenre(Genre genre, MediaMetadata md) {
     switch (genre.getId()) {
       case 28:
@@ -370,23 +491,36 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
 
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetaData(org.
+   * tinymediamanager.scraper.MediaSearchResult)
+   */
   @Override
   public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
-    log.debug("TMDB: getMetadata(result): " + result);
+    logger.debug("TMDB: getMetadata(result): " + result);
     int tmdbId = Integer.parseInt(result.getId());
 
     return getMetaData(tmdbId);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.tinymediamanager.scraper.IMediaMetadataProvider#search(org.tinymediamanager
+   * .scraper.SearchQuery)
+   */
   @Override
   public List<MediaSearchResult> search(SearchQuery query) throws Exception {
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = query.get(SearchQuery.Field.QUERY);
 
-    log.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
+    logger.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
     URL url = tmdbSearchMovie.getQueryUrl(searchString, Globals.settings.getScraperTmdbLanguage().name(), 1);
-    log.debug(url.toString());
+    logger.debug(url.toString());
 
     List<MovieDb> moviesFound = tmdb.searchMovie(searchString, Globals.settings.getScraperTmdbLanguage().name(), false);
 
@@ -394,7 +528,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
       return resultList;
     }
 
-    log.debug("found " + moviesFound.size() + " results");
+    logger.debug("found " + moviesFound.size() + " results");
 
     for (MovieDb movie : moviesFound) {
       MediaSearchResult sr = new MediaSearchResult();
@@ -422,12 +556,31 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     return resultList;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.tinymediamanager.scraper.IMediaMetadataProvider#getSupportedSearchTypes
+   * ()
+   */
   @Override
   public MediaType[] getSupportedSearchTypes() {
     // TODO Auto-generated method stub
     return null;
   }
 
+  /**
+   * Process media art.
+   * 
+   * @param md
+   *          the md
+   * @param type
+   *          the type
+   * @param label
+   *          the label
+   * @param image
+   *          the image
+   */
   private void processMediaArt(MediaMetadata md, MediaArtifactType type, String label, String image) {
     MediaArt ma = new MediaArt();
     ma.setDownloadUrl(image);

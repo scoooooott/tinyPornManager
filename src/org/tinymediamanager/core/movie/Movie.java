@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
@@ -14,8 +29,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -27,63 +44,153 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaMetadata.Genres;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
+/**
+ * The Class Movie.
+ */
 @Entity
 public class Movie extends AbstractModelObject {
 
-  protected final static String NFO_FILE          = "movie.nfo";
-  protected final static String TITLE             = "title";
-  protected final static String ORIGINAL_TITLE    = "originaltitle";
-  protected final static String RATING            = "rating";
-  protected final static String YEAR              = "year";
-  protected final static String OUTLINE           = "outline";
-  protected final static String PLOT              = "plot";
-  protected final static String TAGLINE           = "tagline";
-  protected final static String RUNTIME           = "runtime";
-  protected final static String THUMB             = "thumb";
-  protected final static String THUMB_PATH        = "thumbpath";
-  protected final static String ID                = "id";
-  protected final static String IMDB_ID           = "imdbid";
-  protected final static String FILENAME_AND_PATH = "filenameandpath";
-  protected final static String PATH              = "path";
-  protected final static String DIRECTOR          = "director";
-  protected final static String ACTOR             = "actor";
-  protected final static String NAME              = "name";
-  protected final static String ROLE              = "role";
-  protected final static String GENRE             = "genre";
+  /** The Constant NFO_FILE. */
+  protected final static String NFO_FILE = "movie.nfo";
 
+  /** The Constant TITLE. */
+  protected final static String TITLE = "title";
+
+  /** The Constant ORIGINAL_TITLE. */
+  protected final static String ORIGINAL_TITLE = "originaltitle";
+
+  /** The Constant RATING. */
+  protected final static String RATING = "rating";
+
+  /** The Constant YEAR. */
+  protected final static String YEAR = "year";
+
+  /** The Constant OUTLINE. */
+  protected final static String OUTLINE = "outline";
+
+  /** The Constant PLOT. */
+  protected final static String PLOT = "plot";
+
+  /** The Constant TAGLINE. */
+  protected final static String TAGLINE = "tagline";
+
+  /** The Constant RUNTIME. */
+  protected final static String RUNTIME = "runtime";
+
+  /** The Constant THUMB. */
+  protected final static String THUMB = "thumb";
+
+  /** The Constant THUMB_PATH. */
+  protected final static String THUMB_PATH = "thumbpath";
+
+  /** The Constant ID. */
+  protected final static String ID = "id";
+
+  /** The Constant IMDB_ID. */
+  protected final static String IMDB_ID = "imdbid";
+
+  /** The Constant FILENAME_AND_PATH. */
+  protected final static String FILENAME_AND_PATH = "filenameandpath";
+
+  /** The Constant PATH. */
+  protected final static String PATH = "path";
+
+  /** The Constant DIRECTOR. */
+  protected final static String DIRECTOR = "director";
+
+  /** The Constant ACTOR. */
+  protected final static String ACTOR = "actor";
+
+  /** The Constant NAME. */
+  protected final static String NAME = "name";
+
+  /** The Constant ROLE. */
+  protected final static String ROLE = "role";
+
+  /** The Constant GENRE. */
+  protected final static String GENRE = "genre";
+
+  /** The Constant logger. */
+  @XmlTransient
+  private static final Logger logger = Logger.getLogger(Movie.class);
+
+  /** The id. */
   @Id
   @GeneratedValue
-  private Long                  id;
-  private String                name;
-  private String                originalName;
-  private String                year;
-  private String                imdbId;
-  private int                   tmdbId;
-  private String                overview;
-  private String                tagline;
-  private float                 rating;
-  private int                   runtime;
-  private String                fanartUrl;
-  private String                fanart;
-  private String                posterUrl;
-  private String                poster;
-  private String                path;
-  private String                nfoFilename;
-  private String                director;
-  private String                writer;
+  private Long id;
 
+  /** The name. */
+  private String name;
+
+  /** The original name. */
+  private String originalName;
+
+  /** The year. */
+  private String year;
+
+  /** The imdb id. */
+  private String imdbId;
+
+  /** The tmdb id. */
+  private int tmdbId;
+
+  /** The overview. */
+  private String overview;
+
+  /** The tagline. */
+  private String tagline;
+
+  /** The rating. */
+  private float rating;
+
+  /** The runtime. */
+  private int runtime;
+
+  /** The fanart url. */
+  private String fanartUrl;
+
+  /** The fanart. */
+  private String fanart;
+
+  /** The poster url. */
+  private String posterUrl;
+
+  /** The poster. */
+  private String poster;
+
+  /** The path. */
+  private String path;
+
+  /** The nfo filename. */
+  private String nfoFilename;
+
+  /** The director. */
+  private String director;
+
+  /** The writer. */
+  private String writer;
+
+  /** The scraped. */
   @Transient
-  private boolean               scraped;
+  private boolean scraped;
 
-  private List<String>          movieFiles        = new ArrayList<String>();
-  private List<Genres>          genres            = new ArrayList<Genres>();
+  /** The movie files. */
+  private List<String> movieFiles = new ArrayList<String>();
 
+  /** The genres. */
+  private List<Genres> genres = new ArrayList<Genres>();
+
+  /** The cast. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieCast>       cast              = new ArrayList<MovieCast>();
+  private List<MovieCast> cast = new ArrayList<MovieCast>();
 
+  /** The cast observable. */
   @Transient
-  private List<MovieCast>       castObservable    = ObservableCollections.observableList(cast);
+  private List<MovieCast> castObservable = ObservableCollections.observableList(cast);
 
+  /**
+   * Instantiates a new movie.
+   */
   public Movie() {
     name = new String();
     originalName = new String();
@@ -103,10 +210,20 @@ public class Movie extends AbstractModelObject {
     setScraped(false);
   }
 
+  /**
+   * Gets the nfo filename.
+   * 
+   * @return the nfo filename
+   */
   public String getNfoFilename() {
     return nfoFilename;
   }
 
+  /**
+   * Gets the checks for nfo file.
+   * 
+   * @return the checks for nfo file
+   */
   public Boolean getHasNfoFile() {
     if (!StringUtils.isEmpty(nfoFilename)) {
       return true;
@@ -114,6 +231,11 @@ public class Movie extends AbstractModelObject {
     return false;
   }
 
+  /**
+   * Gets the checks for images.
+   * 
+   * @return the checks for images
+   */
   public Boolean getHasImages() {
     if (!StringUtils.isEmpty(poster)) {
       return true;
@@ -121,6 +243,12 @@ public class Movie extends AbstractModelObject {
     return false;
   }
 
+  /**
+   * Sets the nfo filename.
+   * 
+   * @param newValue
+   *          the new nfo filename
+   */
   public void setNfoFilename(String newValue) {
     String oldValue = this.nfoFilename;
     this.nfoFilename = newValue;
@@ -128,6 +256,11 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("hasNfoFile", false, true);
   }
 
+  /**
+   * Gets the name for ui.
+   * 
+   * @return the name for ui
+   */
   public String getNameForUi() {
     String nameForUi = new String(name);
     if (year != null && !year.isEmpty()) {
@@ -136,10 +269,19 @@ public class Movie extends AbstractModelObject {
     return nameForUi;
   }
 
+  /**
+   * Sets the observable cast list.
+   */
   public void setObservableCastList() {
     castObservable = ObservableCollections.observableList(cast);
   }
 
+  /**
+   * Adds the to cast.
+   * 
+   * @param obj
+   *          the obj
+   */
   public void addToCast(MovieCast obj) {
     castObservable.add(obj);
     firePropertyChange("cast", null, this.getCast());
@@ -148,26 +290,32 @@ public class Movie extends AbstractModelObject {
       case ACTOR:
         firePropertyChange("actors", null, this.getCast());
         break;
-
-    // case DIRECTOR:
-    // firePropertyChange("director", null, this.getCast());
-    // break;
-    //
-    // case WRITER:
-    // firePropertyChange("writer", null, this.getCast());
-    // break;
     }
 
   }
 
+  /**
+   * Adds the to files.
+   * 
+   * @param newFile
+   *          the new file
+   */
   public void addToFiles(String newFile) {
     movieFiles.add(newFile);
   }
 
+  /**
+   * Gets the movie files.
+   * 
+   * @return the movie files
+   */
   public List<String> getMovieFiles() {
     return this.movieFiles;
   }
 
+  /**
+   * Find images.
+   */
   private void findImages() {
     // try to find images in movie path
 
@@ -186,6 +334,11 @@ public class Movie extends AbstractModelObject {
     }
   }
 
+  /**
+   * Gets the actors.
+   * 
+   * @return the actors
+   */
   public List<MovieCast> getActors() {
     List<MovieCast> actors = getCast();
 
@@ -198,84 +351,187 @@ public class Movie extends AbstractModelObject {
     return actors;
   }
 
+  /**
+   * Gets the cast.
+   * 
+   * @return the cast
+   */
   public List<MovieCast> getCast() {
     return this.castObservable;
   }
 
+  /**
+   * Gets the director.
+   * 
+   * @return the director
+   */
   public String getDirector() {
     return director;
   }
 
+  /**
+   * Gets the fanart.
+   * 
+   * @return the fanart
+   */
   public String getFanart() {
     return fanart;
   }
 
+  /**
+   * Gets the fanart url.
+   * 
+   * @return the fanart url
+   */
   public String getFanartUrl() {
     return fanartUrl;
   }
 
+  /**
+   * Gets the id.
+   * 
+   * @return the id
+   */
   public Long getId() {
     return id;
   }
 
+  /**
+   * Gets the imdb id.
+   * 
+   * @return the imdb id
+   */
   public String getImdbId() {
     return imdbId;
   }
 
+  /**
+   * Gets the tmdb id.
+   * 
+   * @return the tmdb id
+   */
   public int getTmdbId() {
     return tmdbId;
   }
 
+  /**
+   * Sets the tmdb id.
+   * 
+   * @param newValue
+   *          the new tmdb id
+   */
   public void setTmdbId(int newValue) {
     int oldValue = this.tmdbId;
     this.tmdbId = newValue;
     firePropertyChange("tmdbid", oldValue, newValue);
   }
 
+  /**
+   * Gets the name.
+   * 
+   * @return the name
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Gets the original name.
+   * 
+   * @return the original name
+   */
   public String getOriginalName() {
     return originalName;
   }
 
+  /**
+   * Gets the overview.
+   * 
+   * @return the overview
+   */
   public String getOverview() {
     return overview;
   }
 
+  /**
+   * Gets the path.
+   * 
+   * @return the path
+   */
   public String getPath() {
     return path;
   }
 
+  /**
+   * Gets the poster.
+   * 
+   * @return the poster
+   */
   public String getPoster() {
     return poster;
   }
 
+  /**
+   * Gets the poster url.
+   * 
+   * @return the poster url
+   */
   public String getPosterUrl() {
     return posterUrl;
   }
 
+  /**
+   * Gets the rating.
+   * 
+   * @return the rating
+   */
   public float getRating() {
     return rating;
   }
 
+  /**
+   * Gets the runtime.
+   * 
+   * @return the runtime
+   */
   public int getRuntime() {
     return runtime;
   }
 
+  /**
+   * Gets the tagline.
+   * 
+   * @return the tagline
+   */
   public String getTagline() {
     return tagline;
   }
 
+  /**
+   * Gets the writer.
+   * 
+   * @return the writer
+   */
   public String getWriter() {
     return writer;
   }
 
+  /**
+   * Gets the year.
+   * 
+   * @return the year
+   */
   public String getYear() {
     return year;
   }
 
+  /**
+   * Checks for file.
+   * 
+   * @param filename
+   *          the filename
+   * @return true, if successful
+   */
   public boolean hasFile(String filename) {
     for (String fileName : movieFiles) {
       if (fileName.compareTo(filename) == 0) {
@@ -286,9 +542,19 @@ public class Movie extends AbstractModelObject {
   }
 
   // when loading from Database
+  /**
+   * On load.
+   */
   void onLoad() {
   }
 
+  /**
+   * Parses the nfo.
+   * 
+   * @param path
+   *          the path
+   * @return the movie
+   */
   public static Movie parseNFO(String path) {
     // check if there are any NFOs in that directory
     FilenameFilter filter = new FilenameFilter() {
@@ -324,6 +590,12 @@ public class Movie extends AbstractModelObject {
     return movie;
   }
 
+  /**
+   * Removes the from cast.
+   * 
+   * @param obj
+   *          the obj
+   */
   public void removeFromCast(MovieCast obj) {
     castObservable.remove(obj);
     firePropertyChange("cast", null, this.getCast());
@@ -344,28 +616,58 @@ public class Movie extends AbstractModelObject {
 
   }
 
+  /**
+   * Sets the fanart.
+   * 
+   * @param newValue
+   *          the new fanart
+   */
   public void setFanart(String newValue) {
     String oldValue = this.fanart;
     this.fanart = newValue;
     firePropertyChange("fanart", oldValue, newValue);
   }
 
+  /**
+   * Sets the fanart url.
+   * 
+   * @param newValue
+   *          the new fanart url
+   */
   public void setFanartUrl(String newValue) {
     String oldValue = fanartUrl;
     fanartUrl = newValue;
     firePropertyChange("fanartUrl", oldValue, newValue);
   }
 
+  /**
+   * Sets the id.
+   * 
+   * @param id
+   *          the new id
+   */
   public void setId(Long id) {
     this.id = id;
   }
 
+  /**
+   * Sets the imdb id.
+   * 
+   * @param newValue
+   *          the new imdb id
+   */
   public void setImdbId(String newValue) {
     String oldValue = imdbId;
     imdbId = newValue;
     firePropertyChange("imdbId", oldValue, newValue);
   }
 
+  /**
+   * Sets the metadata.
+   * 
+   * @param metadata
+   *          the new metadata
+   */
   public void setMetadata(MediaMetadata metadata) {
     setName(metadata.getMediaTitle());
     setOriginalName(metadata.getOriginalTitle());
@@ -437,12 +739,21 @@ public class Movie extends AbstractModelObject {
 
   }
 
+  /**
+   * Removes the all actors.
+   */
   public void removeAllActors() {
     castObservable.clear();
     firePropertyChange("cast", null, this.getCast());
     firePropertyChange("actors", null, this.getCast());
   }
 
+  /**
+   * Sets the name.
+   * 
+   * @param newValue
+   *          the new name
+   */
   public void setName(String newValue) {
     String oldValue = name;
     name = newValue;
@@ -450,59 +761,119 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("nameForUi", oldValue, newValue);
   }
 
+  /**
+   * Sets the original name.
+   * 
+   * @param newValue
+   *          the new original name
+   */
   public void setOriginalName(String newValue) {
     String oldValue = originalName;
     originalName = newValue;
     firePropertyChange("originalName", oldValue, newValue);
   }
 
+  /**
+   * Sets the overview.
+   * 
+   * @param newValue
+   *          the new overview
+   */
   public void setOverview(String newValue) {
     String oldValue = overview;
     overview = newValue;
     firePropertyChange("overview", oldValue, newValue);
   }
 
+  /**
+   * Sets the path.
+   * 
+   * @param newValue
+   *          the new path
+   */
   public void setPath(String newValue) {
     String oldValue = path;
     path = newValue;
     firePropertyChange("path", oldValue, newValue);
   }
 
+  /**
+   * Sets the poster.
+   * 
+   * @param newValue
+   *          the new poster
+   */
   public void setPoster(String newValue) {
     String oldValue = this.poster;
     this.poster = newValue;
     firePropertyChange("poster", oldValue, newValue);
   }
 
+  /**
+   * Sets the poster url.
+   * 
+   * @param newValue
+   *          the new poster url
+   */
   public void setPosterUrl(String newValue) {
     String oldValue = posterUrl;
     posterUrl = newValue;
     firePropertyChange("posterUrl", oldValue, newValue);
   }
 
+  /**
+   * Sets the rating.
+   * 
+   * @param newValue
+   *          the new rating
+   */
   public void setRating(float newValue) {
     float oldValue = rating;
     rating = newValue;
     firePropertyChange("rating", oldValue, newValue);
   }
 
+  /**
+   * Sets the runtime.
+   * 
+   * @param newValue
+   *          the new runtime
+   */
   public void setRuntime(int newValue) {
     int oldValue = this.runtime;
     this.runtime = newValue;
     firePropertyChange("runtime", oldValue, newValue);
   }
 
+  /**
+   * Sets the scraped.
+   * 
+   * @param newValue
+   *          the new scraped
+   */
   private void setScraped(boolean newValue) {
     this.scraped = newValue;
 
   }
 
+  /**
+   * Sets the tagline.
+   * 
+   * @param newValue
+   *          the new tagline
+   */
   public void setTagline(String newValue) {
     String oldValue = this.tagline;
     this.tagline = newValue;
     firePropertyChange("tagline", oldValue, newValue);
   }
 
+  /**
+   * Sets the year.
+   * 
+   * @param newValue
+   *          the new year
+   */
   public void setYear(String newValue) {
     String oldValue = year;
     year = newValue;
@@ -510,6 +881,14 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("nameForUi", oldValue, newValue);
   }
 
+  /**
+   * Write images.
+   * 
+   * @param poster
+   *          the poster
+   * @param fanart
+   *          the fanart
+   */
   public void writeImages(boolean poster, boolean fanart) {
     byte tmp_buffer[] = new byte[4096];
     int n;
@@ -531,10 +910,8 @@ public class Movie extends AbstractModelObject {
         }
         outputStream.close();
         setPoster(filename);
-      }
-      catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      } catch (IOException e) {
+        logger.error(e.getStackTrace());
       }
     }
 
@@ -551,30 +928,46 @@ public class Movie extends AbstractModelObject {
         }
         outputStream.close();
         setFanart(filename);
-      }
-      catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      } catch (IOException e) {
+        logger.error(e.getStackTrace());
       }
     }
   }
 
+  /**
+   * Write nfo.
+   */
   public void writeNFO() {
     setNfoFilename(MovieToXbmcNfoConnector.setData(this));
   }
 
+  /**
+   * Sets the director.
+   * 
+   * @param newValue
+   *          the new director
+   */
   public void setDirector(String newValue) {
     String oldValue = this.director;
     this.director = newValue;
     firePropertyChange("director", oldValue, newValue);
   }
 
+  /**
+   * Sets the writer.
+   * 
+   * @param newValue
+   *          the new writer
+   */
   public void setWriter(String newValue) {
     String oldValue = this.writer;
     this.writer = newValue;
     firePropertyChange("writer", oldValue, newValue);
   }
 
+  /**
+   * Save to db.
+   */
   public void saveToDb() {
     // update DB
     Globals.entityManager.getTransaction().begin();
@@ -582,15 +975,32 @@ public class Movie extends AbstractModelObject {
     Globals.entityManager.getTransaction().commit();
   }
 
+  /**
+   * Gets the genres.
+   * 
+   * @return the genres
+   */
   public List<Genres> getGenres() {
     return genres;
   }
 
+  /**
+   * Adds the genre.
+   * 
+   * @param newValue
+   *          the new value
+   */
   public void addGenre(Genres newValue) {
     genres.add(newValue);
     firePropertyChange(GENRE, null, newValue);
   }
 
+  /**
+   * Removes the genre.
+   * 
+   * @param genre
+   *          the genre
+   */
   public void removeGenre(Genres genre) {
     genres.remove(genre);
     firePropertyChange(GENRE, null, genre);

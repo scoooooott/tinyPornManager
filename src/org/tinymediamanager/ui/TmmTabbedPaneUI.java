@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.Color;
@@ -15,22 +30,47 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
+/**
+ * The Class TmmTabbedPaneUI.
+ */
 public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
-  private Color   selectColor;
-  private int     inclTab       = 12;
-  private int     anchoFocoV    = inclTab;
-  private int     anchoFocoH    = 4;
-  private int     anchoCarpetas = 18;
+
+  /** The select color. */
+  private Color selectColor;
+
+  /** The incl tab. */
+  private int inclTab = 12;
+
+  /** The ancho foco v. */
+  private int anchoFocoV = inclTab;
+
+  /** The ancho foco h. */
+  private int anchoFocoH = 4;
+
+  /** The ancho carpetas. */
+  private int anchoCarpetas = 18;
 
   /**
    * En este poligono se guarda la forma de la pesta�a. Es muy importante.
    */
   private Polygon shape;
 
+  /**
+   * Creates the ui.
+   * 
+   * @param c
+   *          the c
+   * @return the component ui
+   */
   public static ComponentUI createUI(JComponent c) {
     return new TmmTabbedPaneUI();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.plaf.basic.BasicTabbedPaneUI#installDefaults()
+   */
   protected void installDefaults() {
     super.installDefaults();
 
@@ -38,13 +78,27 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
     tabAreaInsets.right = anchoCarpetas;
   }
 
-  protected void layoutLabel(int tabPlacement, FontMetrics metrics, int tabIndex, String title, Icon icon, Rectangle tabRect, Rectangle iconRect,
-      Rectangle textRect, boolean isSelected) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.plaf.basic.BasicTabbedPaneUI#layoutLabel(int,
+   * java.awt.FontMetrics, int, java.lang.String, javax.swing.Icon,
+   * java.awt.Rectangle, java.awt.Rectangle, java.awt.Rectangle, boolean)
+   */
+  protected void layoutLabel(int tabPlacement, FontMetrics metrics, int tabIndex, String title, Icon icon, Rectangle tabRect, Rectangle iconRect, Rectangle textRect,
+      boolean isSelected) {
     Rectangle tabRectPeq = new Rectangle(tabRect);
     // tabRectPeq.width -= inclTab;
     super.layoutLabel(tabPlacement, metrics, tabIndex, title, icon, tabRectPeq, iconRect, textRect, isSelected);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * javax.swing.plaf.basic.BasicTabbedPaneUI#paintTabArea(java.awt.Graphics,
+   * int, int)
+   */
   protected void paintTabArea(Graphics g, int tabPlacement, int selectedIndex) {
     if (runCount > 1) {
       int lines[] = new int[runCount];
@@ -65,8 +119,7 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
           if (i < lines.length - 2) {
             carp.addPoint(tabPane.getWidth() - 2 * fila, lines[i + 1]);
             carp.addPoint(0, lines[i + 1]);
-          }
-          else {
+          } else {
             carp.addPoint(tabPane.getWidth() - 2 * fila, lines[i] + rects[selectedIndex].height);
             carp.addPoint(0, lines[i] + rects[selectedIndex].height);
           }
@@ -79,8 +132,7 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
           g.setColor(darkShadow.darker());
           g.drawPolygon(carp);
         }
-      }
-      else {
+      } else {
         int fila = 0;
         for (int i = 0; i < lines.length - 1; i++, fila++) {
           Polygon carp = new Polygon();
@@ -105,6 +157,13 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
     super.paintTabArea(g, tabPlacement, selectedIndex);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * javax.swing.plaf.basic.BasicTabbedPaneUI#paintTabBackground(java.awt.Graphics
+   * , int, int, int, int, int, int, boolean)
+   */
   protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
     // Este es el primer metodo al que se llama, asi que aqui preparamos el
     // shape que dibujara despues todo...
@@ -147,8 +206,7 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
       // System.out.println("Tab is Selected");
       g2D.setColor(tabPane.getBackground());
       // g2D.setPaint(gradientShadow);
-    }
-    else {
+    } else {
       // g2D.setPaint( gradientShadow);
       g2D.setColor(tabPane.getBackgroundAt(tabIndex));
       // g2D.setColor(selectColor);
@@ -171,8 +229,16 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
   }
 
   /**
-   * Este metodo devuelve un tama�o mas grande de lo necesario, haciendoer hueco
-   * para la decoracion.
+   * Este metodo devuelve un tama�o mas grande de lo necesario, haciendoer
+   * hueco para la decoracion.
+   * 
+   * @param tabPlacement
+   *          the tab placement
+   * @param tabIndex
+   *          the tab index
+   * @param metrics
+   *          the metrics
+   * @return the int
    */
   protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
     return 8 + inclTab + super.calculateTabWidth(tabPlacement, tabIndex, metrics);
@@ -181,27 +247,65 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
   /**
    * Este metodo devuelve un tama�o mas grande de lo necesario, haciendo el
    * hueco para la decoracion.
+   * 
+   * @param tabPlacement
+   *          the tab placement
+   * @param tabIndex
+   *          the tab index
+   * @param fontHeight
+   *          the font height
+   * @return the int
    */
   protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
     if (tabPlacement == LEFT || tabPlacement == RIGHT) {
       return super.calculateTabHeight(tabPlacement, tabIndex, fontHeight);
-    }
-    else {
+    } else {
       return anchoFocoH + super.calculateTabHeight(tabPlacement, tabIndex, fontHeight);
     }
   }
 
   /**
    * Este metodo dibuja el borde.
+   * 
+   * @param g
+   *          the g
+   * @param tabPlacement
+   *          the tab placement
+   * @param tabIndex
+   *          the tab index
+   * @param x
+   *          the x
+   * @param y
+   *          the y
+   * @param w
+   *          the w
+   * @param h
+   *          the h
+   * @param isSelected
+   *          the is selected
    */
   protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
   }
 
   /**
-   * Este metodo dibuja una se�al amarilla en la solapa que tiene el foco
+   * Este metodo dibuja una se�al amarilla en la solapa que tiene el foco.
+   * 
+   * @param g
+   *          the g
+   * @param tabPlacement
+   *          the tab placement
+   * @param rects
+   *          the rects
+   * @param tabIndex
+   *          the tab index
+   * @param iconRect
+   *          the icon rect
+   * @param textRect
+   *          the text rect
+   * @param isSelected
+   *          the is selected
    */
-  protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect,
-      boolean isSelected) {
+  protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect, boolean isSelected) {
     if (/* tabPane.hasFocus() && */isSelected) {
       g.setColor(UIManager.getColor("ScrollBar.thumbShadow"));
       g.drawPolygon(shape);
@@ -214,6 +318,7 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
    * 
    * @param fila
    *          int la fila a pintar
+   * @return the color
    */
   protected Color hazAlfa(int fila) {
     int alfa = 0;

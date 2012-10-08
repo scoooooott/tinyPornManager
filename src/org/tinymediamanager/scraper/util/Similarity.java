@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.scraper.util;
 
 import java.util.ArrayList;
@@ -12,10 +27,20 @@ import org.apache.log4j.Logger;
  * 
  */
 public class Similarity {
-  private static Similarity   instance = new Similarity();
-  private static final Logger log      = Logger.getLogger(Similarity.class);
 
-  /** @return an array of adjacent letter pairs contained in the input string */
+  /** The instance. */
+  private static Similarity instance = new Similarity();
+
+  /** The Constant log. */
+  private static final Logger log = Logger.getLogger(Similarity.class);
+
+  /**
+   * Letter pairs.
+   * 
+   * @param str
+   *          the str
+   * @return an array of adjacent letter pairs contained in the input string
+   */
   private String[] letterPairs(String str) {
 
     int numPairs = str.length() - 1;
@@ -34,7 +59,13 @@ public class Similarity {
     return pairs;
   }
 
-  /** @return an ArrayList of 2-character Strings. */
+  /**
+   * Word letter pairs.
+   * 
+   * @param str
+   *          the str
+   * @return an ArrayList of 2-character Strings.
+   */
   @SuppressWarnings("unchecked")
   private ArrayList wordLetterPairs(String str) {
 
@@ -63,7 +94,15 @@ public class Similarity {
     return allPairs;
   }
 
-  /** @return lexical similarity value in the range [0,1] */
+  /**
+   * Compare strings.
+   * 
+   * @param str1
+   *          the str1
+   * @param str2
+   *          the str2
+   * @return lexical similarity value in the range [0,1]
+   */
   @SuppressWarnings("unchecked")
   public float compareStrings(String str1, String str2) {
     if (str1 == null || str2 == null)
@@ -127,6 +166,11 @@ public class Similarity {
     }
   }
 
+  /**
+   * Gets the single instance of Similarity.
+   * 
+   * @return single instance of Similarity
+   */
   public static Similarity getInstance() {
     return instance;
   }

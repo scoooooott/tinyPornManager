@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.BorderLayout;
@@ -37,30 +52,65 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The Class MovieEditor.
+ */
 public class MovieEditor extends JDialog {
 
-  private final JPanel    contentPanel      = new JPanel();
-  private Movie           movieToEdit;
-  private JTextField      tfTitle;
-  private JTextField      tfOriginalTitle;
-  private JTextField      tfYear;
-  private JTextPane       tpPlot;
-  private JTextField      tfDirector;
-  private JTable          table;
-  private JLabel          lblMoviePath;
-  private ImageLabel      lblPoster;
-  private ImageLabel      lblFanart;
+  /** The content panel. */
+  private final JPanel contentPanel = new JPanel();
 
-  private List<MovieCast> cast              = ObservableCollections.observableList(new ArrayList<MovieCast>());
-  private final Action    actionOK          = new SwingAction();
-  private final Action    actionCancel      = new SwingAction_1();
+  /** The movie to edit. */
+  private Movie movieToEdit;
+
+  /** The tf title. */
+  private JTextField tfTitle;
+
+  /** The tf original title. */
+  private JTextField tfOriginalTitle;
+
+  /** The tf year. */
+  private JTextField tfYear;
+
+  /** The tp plot. */
+  private JTextPane tpPlot;
+
+  /** The tf director. */
+  private JTextField tfDirector;
+
+  /** The table. */
+  private JTable table;
+
+  /** The lbl movie path. */
+  private JLabel lblMoviePath;
+
+  /** The lbl poster. */
+  private ImageLabel lblPoster;
+
+  /** The lbl fanart. */
+  private ImageLabel lblFanart;
+
+  /** The cast. */
+  private List<MovieCast> cast = ObservableCollections.observableList(new ArrayList<MovieCast>());
+
+  /** The action ok. */
+  private final Action actionOK = new SwingAction();
+
+  /** The action cancel. */
+  private final Action actionCancel = new SwingAction_1();
   // private final Action actionChangePoster = new SwingAction_2();
   // private final Action actionChangeFanart = new SwingAction_3();
-  private final Action    actionAddActor    = new SwingAction_4();
-  private final Action    actionRemoveActor = new SwingAction_5();
+  /** The action add actor. */
+  private final Action actionAddActor = new SwingAction_4();
+
+  /** The action remove actor. */
+  private final Action actionRemoveActor = new SwingAction_5();
 
   /**
    * Create the dialog.
+   * 
+   * @param movie
+   *          the movie
    */
   public MovieEditor(Movie movie) {
     setModal(true);
@@ -70,14 +120,12 @@ public class MovieEditor extends JDialog {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("400px:grow"), FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"),
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:125px:grow"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("400px:grow"), FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"),
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:125px:grow"), }));
     {
       lblMoviePath = new JLabel("");
       contentPanel.add(lblMoviePath, "2, 2, 5, 1");
@@ -181,9 +229,10 @@ public class MovieEditor extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      buttonPane
+          .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+              ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
+              FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JButton okButton = new JButton("OK");
         okButton.setAction(actionOK);
@@ -220,12 +269,25 @@ public class MovieEditor extends JDialog {
     initDataBindings();
   }
 
+  /**
+   * The Class SwingAction.
+   */
   private class SwingAction extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action.
+     */
     public SwingAction() {
       putValue(NAME, "OK");
       putValue(SHORT_DESCRIPTION, "Change movie");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       movieToEdit.setName(tfTitle.getText());
       movieToEdit.setOriginalName(tfOriginalTitle.getText());
@@ -253,12 +315,25 @@ public class MovieEditor extends JDialog {
     }
   }
 
+  /**
+   * The Class SwingAction_1.
+   */
   private class SwingAction_1 extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action_1.
+     */
     public SwingAction_1() {
       putValue(NAME, "CANCEL");
       putValue(SHORT_DESCRIPTION, "Discard changes");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
     }
@@ -290,26 +365,52 @@ public class MovieEditor extends JDialog {
   // }
   // }
 
+  /**
+   * The Class SwingAction_4.
+   */
   private class SwingAction_4 extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action_4.
+     */
     public SwingAction_4() {
       // putValue(NAME, "SwingAction_4");
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Add-User.png")));
       putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       MovieCast actor = new MovieCast("unknown actor", "unknown role");
       cast.add(actor);
     }
   }
 
+  /**
+   * The Class SwingAction_5.
+   */
   private class SwingAction_5 extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action_5.
+     */
     public SwingAction_5() {
       // putValue(NAME, "SwingAction_5");
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove-User.png")));
       putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       int row = table.getSelectedRow();
       row = table.convertRowIndexToModel(row);
@@ -317,6 +418,9 @@ public class MovieEditor extends JDialog {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     JTableBinding<MovieCast, List<MovieCast>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, table);
     //

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.BorderLayout;
@@ -25,6 +40,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -44,23 +60,48 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The Class MovieChooser.
+ */
 public class MovieChooser extends JDialog implements ActionListener {
+  /** The Constant logger. */
+  private static final Logger logger = Logger.getLogger(MovieChooser.class);
 
+  /** The content panel. */
   private final JPanel contentPanel = new JPanel();
 
+  /** The movie to scrape. */
   private Movie movieToScrape;
+
+  /** The text field search string. */
   private JTextField textFieldSearchString;
+
+  /** The table. */
   private JTable table;
+
+  /** The lbl movie name. */
   private JLabel lblMovieName;
+
+  /** The tp movie description. */
   private JTextPane tpMovieDescription;
+
+  /** The lbl movie poster. */
   private ImageLabel lblMoviePoster;
+
+  /** The lbl progress action. */
   private JLabel lblProgressAction;
+
+  /** The progress bar. */
   private JProgressBar progressBar;
 
+  /** The movies found. */
   private List<MovieChooserModel> moviesFound = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
 
   /**
    * Create the dialog.
+   * 
+   * @param movie
+   *          the movie
    */
   public MovieChooser(Movie movie) {
     setModal(true);
@@ -196,6 +237,12 @@ public class MovieChooser extends JDialog implements ActionListener {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+   */
   public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
       int row = table.getSelectedRow();
@@ -208,31 +255,61 @@ public class MovieChooser extends JDialog implements ActionListener {
 
   }
 
+  /**
+   * Search movie.
+   * 
+   * @param searchTerm
+   *          the search term
+   */
   private void searchMovie(String searchTerm) {
     SearchTask task = new SearchTask(searchTerm);
     task.execute();
   }
 
+  /**
+   * Start progress bar.
+   * 
+   * @param description
+   *          the description
+   */
   private void startProgressBar(String description) {
     lblProgressAction.setText(description);
     progressBar.setVisible(true);
     progressBar.setIndeterminate(true);
   }
 
+  /**
+   * Stop progress bar.
+   */
   private void stopProgressBar() {
     lblProgressAction.setText("");
     progressBar.setVisible(false);
     progressBar.setIndeterminate(false);
   }
 
+  /**
+   * The Class SearchTask.
+   */
   private class SearchTask extends SwingWorker<Void, Void> {
 
+    /** The search term. */
     private String searchTerm;
 
+    /**
+     * Instantiates a new search task.
+     * 
+     * @param searchTerm
+     *          the search term
+     */
     public SearchTask(String searchTerm) {
       this.searchTerm = searchTerm;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#doInBackground()
+     */
     @Override
     public Void doInBackground() {
       startProgressBar("searching for: " + searchTerm);
@@ -245,8 +322,7 @@ public class MovieChooser extends JDialog implements ActionListener {
         }
 
       } catch (Exception e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
+        logger.error(e1.getStackTrace());
       }
 
       return null;
@@ -255,20 +331,40 @@ public class MovieChooser extends JDialog implements ActionListener {
     /*
      * Executed in event dispatching thread
      */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#done()
+     */
     @Override
     public void done() {
       stopProgressBar();
     }
   }
 
+  /**
+   * The Class ScrapeTask.
+   */
   private class ScrapeTask extends SwingWorker<Void, Void> {
 
+    /** The model. */
     private MovieChooserModel model;
 
+    /**
+     * Instantiates a new scrape task.
+     * 
+     * @param model
+     *          the model
+     */
     public ScrapeTask(MovieChooserModel model) {
       this.model = model;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#doInBackground()
+     */
     @Override
     public Void doInBackground() {
       startProgressBar("scraping: " + model.getName());
@@ -280,12 +376,20 @@ public class MovieChooser extends JDialog implements ActionListener {
     /*
      * Executed in event dispatching thread
      */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#done()
+     */
     @Override
     public void done() {
       stopProgressBar();
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, moviesFound, table);
     //

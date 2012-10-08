@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import javax.swing.ImageIcon;
@@ -10,8 +25,12 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The Class MainWindow.
+ */
 public class MainWindow {
 
+  /** The frame. */
   private JFrame frame;
 
   /**
@@ -30,8 +49,8 @@ public class MainWindow {
     frame.setBounds(100, 100, 1200, 720);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("fill:default:grow"), }));
 
     JTabbedPane tabbedPane = new JTabbedPane();
     tabbedPane.setUI(new TmmTabbedPaneUI());
@@ -42,8 +61,7 @@ public class MainWindow {
     tabbedPane.addTab("", new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")), panelMovies, null);
 
     JPanel panelSettings = new SettingsPanel();// JPanel();
-    tabbedPane.addTab("", new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelSettings,
-        null);
+    tabbedPane.addTab("", new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelSettings, null);
   }
 
 }

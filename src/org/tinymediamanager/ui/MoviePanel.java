@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.Font;
@@ -39,20 +54,48 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The Class MoviePanel.
+ */
 public class MoviePanel extends JPanel {
+
+  /** The movie list. */
   private MovieList movieList = MovieList.getInstance();
 
+  /** The text field. */
   private JTextField textField;
+
+  /** The table. */
   private JTable table;
+
+  /** The action update data sources. */
   private final Action actionUpdateDataSources = new SwingAction();
+
+  /** The action scrape. */
   private final Action actionScrape = new SwingAction_1();
+
+  /** The text pane. */
   private JTextPane textPane;
+
+  /** The lbl movie name. */
   private JLabel lblMovieName;
+
+  /** The lbl movie background. */
   private ImageLabel lblMovieBackground;
+
+  /** The lbl movie poster. */
   private ImageLabel lblMoviePoster;
+
+  /** The table cast. */
   private JTable tableCast;
+
+  /** The lbl original name. */
   private JLabel lblOriginalName;
+
+  /** The action edit movie. */
   private final Action actionEditMovie = new SwingAction_2();
+
+  /** The panel rating. */
   private StarRater panelRating;
 
   /**
@@ -182,25 +225,51 @@ public class MoviePanel extends JPanel {
 
   }
 
+  /**
+   * The Class SwingAction.
+   */
   private class SwingAction extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action.
+     */
     public SwingAction() {
       // putValue(NAME, "UDS");
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
       putValue(SHORT_DESCRIPTION, "Update data sources");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       movieList.updateDataSources();
     }
   }
 
+  /**
+   * The Class SwingAction_1.
+   */
   private class SwingAction_1 extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action_1.
+     */
     public SwingAction_1() {
       // putValue(NAME, "SCR");
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
       putValue(SHORT_DESCRIPTION, "Search & scrape movie");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       for (int row : table.getSelectedRows()) {
         row = table.convertRowIndexToModel(row);
@@ -235,13 +304,26 @@ public class MoviePanel extends JPanel {
     sorter.setRowFilter(rf);
   }
 
+  /**
+   * The Class SwingAction_2.
+   */
   private class SwingAction_2 extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action_2.
+     */
     public SwingAction_2() {
       // putValue(NAME, "EDIT");
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
       putValue(SHORT_DESCRIPTION, "Edit movie");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       for (int row : table.getSelectedRows()) {
         row = table.convertRowIndexToModel(row);
@@ -253,6 +335,9 @@ public class MoviePanel extends JPanel {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<MovieList, List<Movie>> movieListBeanProperty = BeanProperty.create("movies");
     JTableBinding<Movie, MovieList, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieList, movieListBeanProperty, table);

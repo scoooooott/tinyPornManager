@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.BorderLayout;
@@ -28,6 +43,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
@@ -39,29 +55,69 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The Class ImageChooser.
+ */
 public class ImageChooser extends JDialog {
 
+  /** The Constant logger. */
+  private static final Logger logger = Logger.getLogger(ImageChooser.class);
+
+  /**
+   * The Enum ImageType.
+   */
   public enum ImageType {
-    POSTER, FANART
+
+    /** The poster. */
+    POSTER,
+    /** The fanart. */
+    FANART
   }
 
+  /** The content panel. */
   private final JPanel contentPanel = new JPanel();
+
+  /** The progress bar. */
   private JProgressBar progressBar;
+
+  /** The lbl progress action. */
   private JLabel lblProgressAction;
+
+  /** The panel images. */
   private JPanel panelImages;
 
+  /** The image label. */
   private ImageLabel imageLabel;
+
+  /** The type. */
   private ImageType type;
 
+  /** The button group. */
   private ButtonGroup buttonGroup = new ButtonGroup();
+
+  /** The buttons. */
   private List<JToggleButton> buttons = new ArrayList<JToggleButton>();
+
+  /** The task. */
   private DownloadTask task;
 
+  /** The action ok. */
   private final Action actionOK = new SwingAction();
+
+  /** The action cancel. */
   private final Action actionCancel = new SwingAction_1();
 
   /**
    * Create the dialog.
+   * 
+   * @param imdbId
+   *          the imdb id
+   * @param tmdbId
+   *          the tmdb id
+   * @param type
+   *          the type
+   * @param imageLabel
+   *          the image label
    */
   public ImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel) {
     setModal(true);
@@ -117,12 +173,25 @@ public class ImageChooser extends JDialog {
     task.execute();
   }
 
+  /**
+   * The Class SwingAction.
+   */
   private class SwingAction extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action.
+     */
     public SwingAction() {
       putValue(NAME, "OK");
       putValue(SHORT_DESCRIPTION, "Set selected image");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       TmdbArtwork artwork = null;
       // get selected button
@@ -153,18 +222,35 @@ public class ImageChooser extends JDialog {
     }
   }
 
+  /**
+   * Start progress bar.
+   * 
+   * @param description
+   *          the description
+   */
   private void startProgressBar(String description) {
     lblProgressAction.setText(description);
     progressBar.setVisible(true);
     progressBar.setIndeterminate(true);
   }
 
+  /**
+   * Stop progress bar.
+   */
   private void stopProgressBar() {
     lblProgressAction.setText("");
     progressBar.setVisible(false);
     progressBar.setIndeterminate(false);
   }
 
+  /**
+   * Adds the image.
+   * 
+   * @param originalImage
+   *          the original image
+   * @param tmdbArtwork
+   *          the tmdb artwork
+   */
   private void addImage(BufferedImage originalImage, TmdbArtwork tmdbArtwork) {
     int imageType = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
     Point size = null;
@@ -217,28 +303,60 @@ public class ImageChooser extends JDialog {
 
   }
 
+  /**
+   * The Class SwingAction_1.
+   */
   private class SwingAction_1 extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action_1.
+     */
     public SwingAction_1() {
       putValue(NAME, "Cancel");
       putValue(SHORT_DESCRIPTION, "Cancel");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       task.cancel(true);
       setVisible(false);
     }
   }
 
+  /**
+   * The Class DownloadTask.
+   */
   private class DownloadTask extends SwingWorker<Void, Void> {
 
+    /** The imdb id. */
     private String imdbId;
+
+    /** The tmdb id. */
     private int tmdbId;
 
+    /**
+     * Instantiates a new download task.
+     * 
+     * @param imdbId
+     *          the imdb id
+     * @param tmdbId
+     *          the tmdb id
+     */
     public DownloadTask(String imdbId, int tmdbId) {
       this.imdbId = imdbId;
       this.tmdbId = tmdbId;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#doInBackground()
+     */
     @Override
     public Void doInBackground() {
       startProgressBar("Downloading images");
@@ -282,11 +400,9 @@ public class ImageChooser extends JDialog {
         }
 
       } catch (NumberFormatException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        logger.error(e.getStackTrace());
       } catch (Exception e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        logger.error(e.getStackTrace());
       }
 
       return null;
@@ -294,6 +410,11 @@ public class ImageChooser extends JDialog {
 
     /*
      * Executed in event dispatching thread
+     */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#done()
      */
     @Override
     public void done() {

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.scraper.util;
 
 import java.io.UnsupportedEncodingException;
@@ -7,65 +22,101 @@ import java.net.URLEncoder;
 
 import org.apache.log4j.Logger;
 
+/**
+ * The Class UrlUtil.
+ */
 public class UrlUtil {
-    private static final Logger log = Logger.getLogger(UrlUtil.class);
 
-    /**
-     * Returns the the entire Url Path except the filename, like doing a basedir
-     * on a filename.
-     * 
-     * @param url
-     * @return
-     */
-    public static String getBaseUrl(String url) {
-        String path = getPathName(url);
-        if (path != null && path.contains("/")) {
-            path = path.substring(0, path.lastIndexOf("/"));
-        }
-        return getDomainUrl(url) + path;
+  /** The Constant log. */
+  private static final Logger log = Logger.getLogger(UrlUtil.class);
+
+  /**
+   * Returns the the entire Url Path except the filename, like doing a basedir
+   * on a filename.
+   * 
+   * @param url
+   *          the url
+   * @return the base url
+   */
+  public static String getBaseUrl(String url) {
+    String path = getPathName(url);
+    if (path != null && path.contains("/")) {
+      path = path.substring(0, path.lastIndexOf("/"));
     }
+    return getDomainUrl(url) + path;
+  }
 
-    public static String getDomainUrl(String url) {
-        URL u;
-        try {
-            u = new URL(url);
-            return String.format("%s://%s/", u.getProtocol(), u.getHost());
-        } catch (MalformedURLException e) {
-            log.error("Failed to get domain url for: " + url);
-        }
-        return null;
+  /**
+   * Gets the domain url.
+   * 
+   * @param url
+   *          the url
+   * @return the domain url
+   */
+  public static String getDomainUrl(String url) {
+    URL u;
+    try {
+      u = new URL(url);
+      return String.format("%s://%s/", u.getProtocol(), u.getHost());
+    } catch (MalformedURLException e) {
+      log.error("Failed to get domain url for: " + url);
     }
+    return null;
+  }
 
-    public static String joinUrlPath(String baseUrl, String path) {
-        StringBuffer sb = new StringBuffer(baseUrl);
-        if (baseUrl.endsWith("/") && path.startsWith("/")) {
-            path = path.substring(1);
-        }
-        sb.append(path);
-
-        return sb.toString();
+  /**
+   * Join url path.
+   * 
+   * @param baseUrl
+   *          the base url
+   * @param path
+   *          the path
+   * @return the string
+   */
+  public static String joinUrlPath(String baseUrl, String path) {
+    StringBuffer sb = new StringBuffer(baseUrl);
+    if (baseUrl.endsWith("/") && path.startsWith("/")) {
+      path = path.substring(1);
     }
+    sb.append(path);
 
-    public static String getPathName(String url) {
-        URL u;
-        try {
-            u = new URL(url);
-            return u.getPath();
-        } catch (MalformedURLException e) {
-            log.error("getPathName() Failed! " + url, e);
-        }
-        return null;
-    }
+    return sb.toString();
+  }
 
-    public static String encode(String data) {
-        if (data==null) return "";
-        try {
-            return URLEncoder.encode(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            log.warn("Failed to url encode data: " + data + " as UTF-8; will try again using default encoding", e);
-            return URLEncoder.encode(data);
-        }
+  /**
+   * Gets the path name.
+   * 
+   * @param url
+   *          the url
+   * @return the path name
+   */
+  public static String getPathName(String url) {
+    URL u;
+    try {
+      u = new URL(url);
+      return u.getPath();
+    } catch (MalformedURLException e) {
+      log.error("getPathName() Failed! " + url, e);
     }
-    
+    return null;
+  }
+
+  /**
+   * Encode.
+   * 
+   * @param data
+   *          the data
+   * @return the string
+   */
+  public static String encode(String data) {
+    if (data == null)
+      return "";
+    try {
+      return URLEncoder.encode(data, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      log.warn("Failed to url encode data: " + data + " as UTF-8; will try again using default encoding", e);
+      return URLEncoder.encode(data);
+    }
+  }
+
 }
-

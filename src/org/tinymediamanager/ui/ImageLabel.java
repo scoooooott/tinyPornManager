@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.Color;
@@ -9,24 +24,50 @@ import java.io.IOException;
 
 import javax.swing.JLabel;
 
+import org.apache.log4j.Logger;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.bric.image.pixel.Scaling;
 
+/**
+ * The Class ImageLabel.
+ */
 public class ImageLabel extends JLabel {
 
+  /** The Constant logger. */
+  private static final Logger logger = Logger.getLogger(ImageLabel.class);
+
+  /** The original image. */
   private BufferedImage originalImage;
+
+  /** The image url. */
   private String imageUrl;
+
+  /** The image path. */
   private String imagePath;
 
+  /**
+   * Instantiates a new image label.
+   */
   public ImageLabel() {
     super("");
   }
 
+  /**
+   * Gets the image path.
+   * 
+   * @return the image path
+   */
   public String getImagePath() {
     return imagePath;
   }
 
+  /**
+   * Sets the image path.
+   * 
+   * @param newValue
+   *          the new image path
+   */
   public void setImagePath(String newValue) {
     String oldValue = this.imagePath;
     this.imagePath = newValue;
@@ -48,10 +89,21 @@ public class ImageLabel extends JLabel {
     this.repaint();
   }
 
+  /**
+   * Gets the image url.
+   * 
+   * @return the image url
+   */
   public String getImageUrl() {
     return imageUrl;
   }
 
+  /**
+   * Sets the image url.
+   * 
+   * @param newValue
+   *          the new image url
+   */
   public void setImageUrl(String newValue) {
     String oldValue = this.imageUrl;
     this.imageUrl = newValue;
@@ -70,11 +122,15 @@ public class ImageLabel extends JLabel {
 
       this.repaint();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error(e.getStackTrace());
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+   */
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
     if (originalImage != null) {
@@ -94,6 +150,21 @@ public class ImageLabel extends JLabel {
     }
   }
 
+  /**
+   * Calculate size.
+   * 
+   * @param maxWidth
+   *          the max width
+   * @param maxHeight
+   *          the max height
+   * @param originalWidth
+   *          the original width
+   * @param originalHeight
+   *          the original height
+   * @param respectFactor
+   *          the respect factor
+   * @return the point
+   */
   public static Point calculateSize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, boolean respectFactor) {
     Point size = new Point();
     if (respectFactor) {
