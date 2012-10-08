@@ -38,13 +38,13 @@ public class ImageLabel extends JLabel {
   private static final Logger logger = Logger.getLogger(ImageLabel.class);
 
   /** The original image. */
-  private BufferedImage originalImage;
+  private BufferedImage       originalImage;
 
   /** The image url. */
-  private String imageUrl;
+  private String              imageUrl;
 
   /** The image path. */
-  private String imagePath;
+  private String              imagePath;
 
   /**
    * Instantiates a new image label.
@@ -82,7 +82,8 @@ public class ImageLabel extends JLabel {
     File file = new File(imagePath);
     if (file.exists()) {
       this.originalImage = com.bric.image.ImageLoader.createImage(file);// ImageIO.read(file);
-    } else {
+    }
+    else {
       originalImage = null;
     }
 
@@ -121,7 +122,8 @@ public class ImageLabel extends JLabel {
                                                                                       // true));
 
       this.repaint();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       logger.error(e.getStackTrace());
     }
   }
@@ -177,7 +179,8 @@ public class ImageLabel extends JLabel {
         size.x = maxWidth;
         size.y = size.x * originalHeight / originalWidth;
       }
-    } else {
+    }
+    else {
       size.x = maxWidth;
       size.y = maxHeight;
     }
