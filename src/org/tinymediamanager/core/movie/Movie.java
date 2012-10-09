@@ -51,142 +51,141 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 public class Movie extends AbstractModelObject {
 
   /** The Constant NFO_FILE. */
-  protected final static String NFO_FILE = "movie.nfo";
+  protected final static String NFO_FILE          = "movie.nfo";
 
   /** The Constant TITLE. */
-  protected final static String TITLE = "title";
+  protected final static String TITLE             = "title";
 
   /** The Constant ORIGINAL_TITLE. */
-  protected final static String ORIGINAL_TITLE = "originaltitle";
+  protected final static String ORIGINAL_TITLE    = "originaltitle";
 
   /** The Constant RATING. */
-  protected final static String RATING = "rating";
+  protected final static String RATING            = "rating";
 
   /** The Constant YEAR. */
-  protected final static String YEAR = "year";
+  protected final static String YEAR              = "year";
 
   /** The Constant OUTLINE. */
-  protected final static String OUTLINE = "outline";
+  protected final static String OUTLINE           = "outline";
 
   /** The Constant PLOT. */
-  protected final static String PLOT = "plot";
+  protected final static String PLOT              = "plot";
 
   /** The Constant TAGLINE. */
-  protected final static String TAGLINE = "tagline";
+  protected final static String TAGLINE           = "tagline";
 
   /** The Constant RUNTIME. */
-  protected final static String RUNTIME = "runtime";
+  protected final static String RUNTIME           = "runtime";
 
   /** The Constant THUMB. */
-  protected final static String THUMB = "thumb";
+  protected final static String THUMB             = "thumb";
 
   /** The Constant THUMB_PATH. */
-  protected final static String THUMB_PATH = "thumbpath";
+  protected final static String THUMB_PATH        = "thumbpath";
 
   /** The Constant ID. */
-  protected final static String ID = "id";
+  protected final static String ID                = "id";
 
   /** The Constant IMDB_ID. */
-  protected final static String IMDB_ID = "imdbid";
+  protected final static String IMDB_ID           = "imdbid";
 
   /** The Constant FILENAME_AND_PATH. */
   protected final static String FILENAME_AND_PATH = "filenameandpath";
 
   /** The Constant PATH. */
-  protected final static String PATH = "path";
+  protected final static String PATH              = "path";
 
   /** The Constant DIRECTOR. */
-  protected final static String DIRECTOR = "director";
+  protected final static String DIRECTOR          = "director";
 
   /** The Constant ACTOR. */
-  protected final static String ACTOR = "actor";
+  protected final static String ACTOR             = "actor";
 
   /** The Constant NAME. */
-  protected final static String NAME = "name";
+  protected final static String NAME              = "name";
 
   /** The Constant ROLE. */
-  protected final static String ROLE = "role";
+  protected final static String ROLE              = "role";
 
   /** The Constant GENRE. */
-  protected final static String GENRE = "genre";
+  protected final static String GENRE             = "genre";
 
   /** The Constant logger. */
   @XmlTransient
-  private static final Logger logger = Logger.getLogger(Movie.class);
+  private static final Logger   logger            = Logger.getLogger(Movie.class);
 
   /** The id. */
   @Id
   @GeneratedValue
-  private Long id;
+  private Long                  id;
 
   /** The name. */
-  private String name;
+  private String                name;
 
   /** The original name. */
-  private String originalName;
+  private String                originalName;
 
   /** The year. */
-  private String year;
+  private String                year;
 
   /** The imdb id. */
-  private String imdbId;
+  private String                imdbId;
 
   /** The tmdb id. */
-  private int tmdbId;
+  private int                   tmdbId;
 
   /** The overview. */
-  private String overview;
+  private String                overview;
 
   /** The tagline. */
-  private String tagline;
+  private String                tagline;
 
   /** The rating. */
-  private float rating;
+  private float                 rating;
 
   /** The runtime. */
-  private int runtime;
+  private int                   runtime;
 
   /** The fanart url. */
-  private String fanartUrl;
+  private String                fanartUrl;
 
   /** The fanart. */
-  private String fanart;
+  private String                fanart;
 
   /** The poster url. */
-  private String posterUrl;
+  private String                posterUrl;
 
   /** The poster. */
-  private String poster;
+  private String                poster;
 
   /** The path. */
-  private String path;
+  private String                path;
 
   /** The nfo filename. */
-  private String nfoFilename;
+  private String                nfoFilename;
 
   /** The director. */
-  private String director;
+  private String                director;
 
   /** The writer. */
-  private String writer;
+  private String                writer;
 
   /** The scraped. */
-  @Transient
-  private boolean scraped;
+  private boolean               scraped;
 
   /** The movie files. */
-  private List<String> movieFiles = new ArrayList<String>();
+  private List<String>          movieFiles        = new ArrayList<String>();
 
   /** The genres. */
-  private List<Genres> genres = new ArrayList<Genres>();
+  private List<Genres>          genres            = new ArrayList<Genres>();
 
   /** The cast. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieCast> cast = new ArrayList<MovieCast>();
+  private List<MovieCast>       cast              = new ArrayList<MovieCast>();
 
   /** The cast observable. */
   @Transient
-  private List<MovieCast> castObservable = ObservableCollections.observableList(cast);
+  private List<MovieCast>       castObservable    = ObservableCollections.observableList(cast);
 
   /**
    * Instantiates a new movie.
@@ -208,6 +207,15 @@ public class Movie extends AbstractModelObject {
     setWriter(new String());
     tmdbId = 0;
     setScraped(false);
+  }
+
+  /**
+   * checks if this movie has been scraped
+   * 
+   * @return isScraped
+   */
+  public boolean isScraped() {
+    return scraped;
   }
 
   /**
@@ -668,6 +676,9 @@ public class Movie extends AbstractModelObject {
    * @param metadata
    *          the new metadata
    */
+  /**
+   * @param metadata
+   */
   public void setMetadata(MediaMetadata metadata) {
     setName(metadata.getMediaTitle());
     setOriginalName(metadata.getOriginalTitle());
@@ -729,6 +740,9 @@ public class Movie extends AbstractModelObject {
     for (Genres genre : metadata.getGenres()) {
       addGenre(genre);
     }
+
+    // set scraped
+    this.scraped = true;
 
     // write NFO and saving images
     writeNFO();
@@ -911,7 +925,8 @@ public class Movie extends AbstractModelObject {
         }
         outputStream.close();
         setPoster(filename);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         logger.error(e.getStackTrace());
       }
     }
@@ -929,7 +944,8 @@ public class Movie extends AbstractModelObject {
         }
         outputStream.close();
         setFanart(filename);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         logger.error(e.getStackTrace());
       }
     }
