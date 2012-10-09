@@ -26,7 +26,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -39,6 +41,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
 
+import org.gpl.JSplitButton.JSplitButton;
+import org.gpl.JSplitButton.action.SplitButtonActionListener;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -122,6 +126,32 @@ public class MoviePanel extends JPanel {
     JButton buttonUpdateDataSources = toolBar.add(actionUpdateDataSources);
     JButton buttonScrape = toolBar.add(actionScrape);
     JButton buttonEdit = toolBar.add(actionEditMovie);
+
+    /* TEST BEGIN */
+    JSplitButton btnNewButton = new JSplitButton(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    // register for listener
+    btnNewButton.addSplitButtonActionListener(new SplitButtonActionListener() {
+
+      public void buttonClicked(ActionEvent e) {
+        System.out.println("Button Clicked");
+      }
+
+      public void splitButtonClicked(ActionEvent e) {
+        System.out.println("Split Part licked");
+      }
+    });
+    JPopupMenu popup = new JPopupMenu("popup");
+    JMenuItem item = new JMenuItem("1");
+    popup.add(item);
+    item = new JMenuItem("2");
+    popup.add(item);
+    item = new JMenuItem("3");
+    popup.add(item);
+    item = new JMenuItem("4");
+    popup.add(item);
+    btnNewButton.setPopupMenu(popup);
+    toolBar.add(btnNewButton);
+    /* TEST END */
 
     textField = new JTextField();
     panelMovieList.add(textField, "3, 1, right, bottom");

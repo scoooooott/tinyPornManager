@@ -806,7 +806,8 @@ public class Movie extends AbstractModelObject {
   public void setPoster(String newValue) {
     String oldValue = this.poster;
     this.poster = newValue;
-    firePropertyChange("poster", oldValue, newValue);
+    // firePropertyChange("poster", oldValue, newValue);
+    firePropertyChange("poster", "-", newValue);
   }
 
   /**

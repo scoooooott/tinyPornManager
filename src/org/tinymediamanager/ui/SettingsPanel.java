@@ -142,8 +142,8 @@ public class SettingsPanel extends JPanel {
     JPanel panelMovieSettings = new JPanel();
     tabbedPane.addTab("Movies", null, panelMovieSettings, null);
     panelMovieSettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(121dlu;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
+        ColumnSpec.decode("max(121dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
 
     JPanel panelMovieDataSources = new JPanel();
     panelMovieDataSources.setBorder(new TitledBorder(null, "Data Sources", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -186,6 +186,11 @@ public class SettingsPanel extends JPanel {
       }
     });
     panelMovieSourcesButtons.add(btnRemove, "2, 4, fill, top");
+
+    JPanel panel = new JPanel();
+    panelMovieSettings.add(panel, "4, 2, fill, fill");
+    panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     JPanel panelMovieScrapers = new JPanel();
     panelMovieScrapers.setBorder(new TitledBorder(null, "Scrapers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
