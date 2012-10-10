@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.CastMember;
@@ -52,13 +53,13 @@ import com.moviejukebox.themoviedb.tools.ApiUrl;
 public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIMDBID {
 
   /** The Constant logger. */
-  private static final Logger logger = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger               logger   = Logger.getLogger(TmdbMetadataProvider.class);
 
   /** The Constant instance. */
   private static final TmdbMetadataProvider instance = new TmdbMetadataProvider();
 
   /** The tmdb. */
-  private TheMovieDb tmdb;
+  private TheMovieDb                        tmdb;
 
   /**
    * The Enum PosterSizes.
@@ -133,7 +134,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    } catch (MovieDbException e) {
+    }
+    catch (MovieDbException e) {
       logger.error(e.getStackTrace());
     }
   }
@@ -280,7 +282,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
 
     // parse release date to year
     String releaseDate = movie.getReleaseDate();
-    if (releaseDate.length() > 3) {
+    if (!StringUtils.isEmpty(releaseDate) && releaseDate.length() > 3) {
       MediaMetadata.updateMDValue(md, MetadataKey.YEAR, releaseDate.substring(0, 4));
     }
     MediaMetadata.updateMDValue(md, MetadataKey.RELEASE_DATE, releaseDate);
@@ -311,15 +313,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
       if (castMember.getPersonType() == PersonType.CAST) {
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
-      } else if (castMember.getPersonType() == PersonType.CREW) {
+      }
+      else if (castMember.getPersonType() == PersonType.CREW) {
         if (castMember.getJob().equals("Director")) {
           cm.setType(CastMember.DIRECTOR);
-        } else if (castMember.getJob().equals("Author")) {
+        }
+        else if (castMember.getJob().equals("Author")) {
           cm.setType(CastMember.WRITER);
-        } else {
+        }
+        else {
           continue;
         }
-      } else {
+      }
+      else {
         continue;
       }
 

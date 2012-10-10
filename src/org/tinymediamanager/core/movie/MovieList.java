@@ -29,6 +29,10 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.SearchQuery;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
 /**
  * The Class MovieList.
@@ -57,6 +61,9 @@ public class MovieList extends AbstractModelObject {
    * Instantiates a new movie list.
    */
   private MovieList() {
+    // set metadataProvider
+    metadataProvider = TmdbMetadataProvider.getInstance();
+
     // load existing movies from database
     loadMoviesFromDatabase();
 
@@ -258,34 +265,23 @@ public class MovieList extends AbstractModelObject {
     moviesToScrape.add(new MovieJobConfig(movie, scrapeSetting));
   }
 
-  // // scrape all selected movies
-  // public void searchMovies() {
-  // if (movieScraperJob == null) {
-  // movieScraperJob = new Job("Scraping movies") {
-  // @Override
-  // protected IStatus run(IProgressMonitor monitor) {
-  // while (moviesToScrape.size() > 0) {
-  // MovieJobConfig job = moviesToScrape.get(0);
-  // searchMovie(job.getMovie(), job.getScrapeSetting());
-  // moviesToScrape.remove(job);
-  // }
-  // return Status.OK_STATUS;
-  // }
-  // };
-  // }
-  // movieScraperJob.schedule();
-  // }
-  //
-  // // show moviechooser window in UIJob
-  // private void chooseMovie(Movie movieToScrape) {
-  // if (movieChooserJob == null) {
-  // movieChooserJob = new MovieChooserJob("Choose movie");
-  // movieChooserJob.setRule(Globals.uiJob);
-  // }
-  // movieChooserJob.addMovie(movieToScrape);
-  // }
-  //
-  // public IMediaMetadataProvider getMetadataProvider() {
-  // return this.metadataProvider;
-  // }
+  public List<MediaSearchResult> searchMovie(String searchTerm) {
+    List<MediaSearchResult> searchResult = null;
+    try {
+      searchResult = metadataProvider.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
+    }
+    catch (Exception e) {
+      logger.error(e.getStackTrace());
+    }
+
+    return searchResult;
+  }
+
+  public void scrapeMovie(Movie movie) {
+
+  }
+
+  public IMediaMetadataProvider getMetadataProvider() {
+    return metadataProvider;
+  }
 }

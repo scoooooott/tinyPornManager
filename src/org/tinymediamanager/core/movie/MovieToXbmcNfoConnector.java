@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.scraper.MediaMetadata.Genres;
@@ -45,54 +46,54 @@ import org.tinymediamanager.scraper.MediaMetadata.Genres;
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger logger = Logger.getLogger(MovieToXbmcNfoConnector.class);
+  private static final Logger logger   = Logger.getLogger(MovieToXbmcNfoConnector.class);
 
   /** The Constant NFO_NAME. */
   private final static String NFO_NAME = "movie.nfo";
 
   /** The title. */
-  private String title;
+  private String              title;
 
   /** The originaltitle. */
-  private String originaltitle;
+  private String              originaltitle;
 
   /** The rating. */
-  private float rating;
+  private float               rating;
 
   /** The year. */
-  private String year;
+  private String              year;
 
   /** The outline. */
-  private String outline;
+  private String              outline;
 
   /** The plot. */
-  private String plot;
+  private String              plot;
 
   /** The tagline. */
-  private String tagline;
+  private String              tagline;
 
   /** The runtime. */
-  private int runtime;
+  private int                 runtime;
 
   /** The thumb. */
-  private String thumb;
+  private String              thumb;
 
   /** The id. */
-  private String id;
+  private String              id;
 
   /** The filenameandpath. */
-  private String filenameandpath;
+  private String              filenameandpath;
 
   /** The director. */
-  private String director;
+  private String              director;
 
   /** The actors. */
   @XmlAnyElement(lax = true)
-  private List<Actor> actors;
+  private List<Actor>         actors;
 
   /** The genres. */
   @XmlElement(name = "genre")
-  private List<String> genres;
+  private List<String>        genres;
 
   /**
    * Instantiates a new movie to xbmc nfo connector.
@@ -120,13 +121,15 @@ public class MovieToXbmcNfoConnector {
 
     // outline is only the first 200 characters of the plot
     int spaceIndex = 0;
-    if (xbmc.getPlot().length() > 200) {
+    if (!StringUtils.isEmpty(xbmc.getPlot()) && xbmc.getPlot().length() > 200) {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
-    } else {
+      xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
+    }
+    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
       spaceIndex = xbmc.getPlot().length();
+      xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     }
 
-    xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     xbmc.setTagline(movie.getTagline());
     xbmc.setRuntime(movie.getRuntime());
     xbmc.setThumb(movie.getPosterUrl());
@@ -158,14 +161,18 @@ public class MovieToXbmcNfoConnector {
       w = new FileWriter(nfoFilename);
       m.marshal(xbmc, w);
 
-    } catch (JAXBException e) {
+    }
+    catch (JAXBException e) {
       logger.error(e.getStackTrace());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       logger.error(e.getStackTrace());
-    } finally {
+    }
+    finally {
       try {
         w.close();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         logger.error(e.getStackTrace());
       }
     }
@@ -215,12 +222,15 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      } catch (FileNotFoundException e) {
-        return null;
-      } catch (IOException e) {
+      }
+      catch (FileNotFoundException e) {
         return null;
       }
-    } catch (JAXBException e) {
+      catch (IOException e) {
+        return null;
+      }
+    }
+    catch (JAXBException e) {
       return null;
     }
 

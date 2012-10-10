@@ -913,7 +913,7 @@ public class Movie extends AbstractModelObject {
     String filename = null;
 
     // poster
-    if (poster) {
+    if (poster && !StringUtils.isEmpty(getPosterUrl())) {
       try {
         url = new CachedUrl(getPosterUrl());
         filename = this.path + File.separator + "movie.tbn";
@@ -927,12 +927,12 @@ public class Movie extends AbstractModelObject {
         setPoster(filename);
       }
       catch (IOException e) {
-        logger.error(e.getStackTrace());
+        logger.error("writeImages - poster", e);
       }
     }
 
     // fanart
-    if (fanart) {
+    if (fanart && !StringUtils.isEmpty(getFanartUrl())) {
       try {
         url = new CachedUrl(getFanartUrl());
         filename = this.path + File.separator + "fanart.jpg";
@@ -946,7 +946,7 @@ public class Movie extends AbstractModelObject {
         setFanart(filename);
       }
       catch (IOException e) {
-        logger.error(e.getStackTrace());
+        logger.error("writeImages - fanart", e);
       }
     }
   }

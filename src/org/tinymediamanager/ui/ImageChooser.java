@@ -75,37 +75,37 @@ public class ImageChooser extends JDialog {
   }
 
   /** The content panel. */
-  private final JPanel contentPanel = new JPanel();
+  private final JPanel        contentPanel = new JPanel();
 
   /** The progress bar. */
-  private JProgressBar progressBar;
+  private JProgressBar        progressBar;
 
   /** The lbl progress action. */
-  private JLabel lblProgressAction;
+  private JLabel              lblProgressAction;
 
   /** The panel images. */
-  private JPanel panelImages;
+  private JPanel              panelImages;
 
   /** The image label. */
-  private ImageLabel imageLabel;
+  private ImageLabel          imageLabel;
 
   /** The type. */
-  private ImageType type;
+  private ImageType           type;
 
   /** The button group. */
-  private ButtonGroup buttonGroup = new ButtonGroup();
+  private ButtonGroup         buttonGroup  = new ButtonGroup();
 
   /** The buttons. */
-  private List<JToggleButton> buttons = new ArrayList<JToggleButton>();
+  private List<JToggleButton> buttons      = new ArrayList<JToggleButton>();
 
   /** The task. */
-  private DownloadTask task;
+  private DownloadTask        task;
 
   /** The action ok. */
-  private final Action actionOK = new SwingAction();
+  private final Action        actionOK     = new SwingAction();
 
   /** The action cancel. */
-  private final Action actionCancel = new SwingAction_1();
+  private final Action        actionCancel = new SwingAction_1();
 
   /**
    * Create the dialog.
@@ -127,8 +127,8 @@ public class ImageChooser extends JDialog {
     setBounds(100, 100, 968, 590);
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), }, new RowSpec[] {
-        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
     {
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -143,9 +143,10 @@ public class ImageChooser extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC,
-          ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
       {
         progressBar = new JProgressBar();
         buttonPane.add(progressBar, "2, 2");
@@ -337,7 +338,7 @@ public class ImageChooser extends JDialog {
     private String imdbId;
 
     /** The tmdb id. */
-    private int tmdbId;
+    private int    tmdbId;
 
     /**
      * Instantiates a new download task.
@@ -391,7 +392,7 @@ public class ImageChooser extends JDialog {
         }
 
         for (TmdbArtwork tmdbArtwork : artwork) {
-          if (task.isCancelled()) {
+          if (isCancelled()) {
             return null;
           }
           CachedUrl cachedUrl = new CachedUrl(tmdbArtwork.getUrlForSmallArtwork());
@@ -399,9 +400,11 @@ public class ImageChooser extends JDialog {
           addImage(bufferedImage, tmdbArtwork);
         }
 
-      } catch (NumberFormatException e) {
+      }
+      catch (NumberFormatException e) {
         logger.error(e.getStackTrace());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         logger.error(e.getStackTrace());
       }
 
