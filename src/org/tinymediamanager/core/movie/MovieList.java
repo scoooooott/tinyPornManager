@@ -40,19 +40,19 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 public class MovieList extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger    logger         = Logger.getLogger(MovieList.class);
+  private static final Logger logger = Logger.getLogger(MovieList.class);
 
   /** The instance. */
-  private static MovieList       instance;
+  private static MovieList instance;
 
   /** The settings. */
-  private final Settings         settings       = Settings.getInstance();
+  private final Settings settings = Settings.getInstance();
 
   /** The movie list. */
-  private final List<Movie>      movieList      = ObservableCollections.observableList(new ArrayList<Movie>());
+  private final List<Movie> movieList = ObservableCollections.observableList(new ArrayList<Movie>());
 
   /** The movies to scrape. */
-  private List<MovieJobConfig>   moviesToScrape = new ArrayList<MovieJobConfig>();
+  private List<MovieJobConfig> moviesToScrape = new ArrayList<MovieJobConfig>();
 
   /** The metadata provider. */
   private IMediaMetadataProvider metadataProvider;
@@ -137,8 +137,7 @@ public class MovieList extends AbstractModelObject {
         movie.setObservableCastList();
         addMovie(movie);
       }
-    }
-    catch (PersistenceException e) {
+    } catch (PersistenceException e) {
       logger.error(e.getStackTrace());
     }
   }
@@ -224,8 +223,7 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
-    }
-    else {
+    } else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -266,19 +264,17 @@ public class MovieList extends AbstractModelObject {
   }
 
   public List<MediaSearchResult> searchMovie(String searchTerm) {
+    // remove - from searchstring
+    searchTerm = searchTerm.replace('-', ' ');
+
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = metadataProvider.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.error(e.getStackTrace());
     }
 
     return searchResult;
-  }
-
-  public void scrapeMovie(Movie movie) {
-
   }
 
   public IMediaMetadataProvider getMetadataProvider() {

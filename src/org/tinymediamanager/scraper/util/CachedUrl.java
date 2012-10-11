@@ -37,40 +37,40 @@ import org.apache.log4j.Logger;
 public class CachedUrl extends Url {
 
   /** The Constant log. */
-  private static final Logger log             = Logger.getLogger(CachedUrl.class);
+  private static final Logger log = Logger.getLogger(CachedUrl.class);
 
   /** The Constant CACHE_EXPIRY. */
-  private static final int    CACHE_EXPIRY    = 1800;
+  private static final int CACHE_EXPIRY = 1800;
 
   /** factor that the cache of image file is longer */
-  private static final int    IMAGE_FACTOR    = 1000;
+  private static final int IMAGE_FACTOR = 1000;
 
   /** The Constant IMAGE_PATTERN. */
-  private static final String IMAGE_PATTERN   = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
+  private static final String IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
 
   /** The Constant CACHE_DIR. */
-  private static final String CACHE_DIR       = "cache/url";
+  private static final String CACHE_DIR = "cache/url";
 
   /** The url id. */
-  private String              urlId           = null;
+  private String urlId = null;
 
   /** The prop file. */
-  private File                propFile        = null;
+  private File propFile = null;
 
   /** The props. */
-  private Properties          props           = null;
+  private Properties props = null;
 
   /** The url cache dir. */
-  public File                 urlCacheDir     = null;
+  public File urlCacheDir = null;
 
   /** The follow redirects. */
-  private boolean             followRedirects = false;
+  private boolean followRedirects = false;
 
   /** The pattern. */
-  private Pattern             pattern;
+  private Pattern pattern;
 
   /** The matcher. */
-  private Matcher             matcher;
+  private Matcher matcher;
 
   /**
    * Instantiates a new cached url.
@@ -95,8 +95,7 @@ public class CachedUrl extends Url {
         log.info("Removing Cached Url File: " + f);
         FileUtils.deleteQuietly(f);
       }
-    }
-    else {
+    } else {
       File f = propFile.getParentFile();
       FileUtils.mkdirsQuietly(f);
       log.debug("Creating a new cached url for: " + url);
@@ -134,8 +133,7 @@ public class CachedUrl extends Url {
       // limited use
       byte[] key = DigestUtils.md5(url);
       return new String(Hex.encodeHex(key));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       log.error("Failed to create cached filename for url: " + url, e);
       throw new RuntimeException(e);
     }
@@ -169,8 +167,8 @@ public class CachedUrl extends Url {
     long diff = (System.currentTimeMillis() - cachedFile.lastModified()) / 1000;
     boolean expired = (diff > expirySecs);
     if (expired) {
-      log.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile + "; LastModified: " + cachedFile.lastModified() + "; Current Time: "
-          + System.currentTimeMillis() + "; Expiry: " + expirySecs + "s; Diff: " + diff + "s");
+      log.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile + "; LastModified: " + cachedFile.lastModified() + "; Current Time: " + System.currentTimeMillis()
+          + "; Expiry: " + expirySecs + "s; Diff: " + diff + "s");
     }
     return expired;
   }
@@ -283,8 +281,7 @@ public class CachedUrl extends Url {
     File f = getCachedFile();
     if (!f.exists() || f.length() == 0) {
       cache(handler);
-    }
-    else {
+    } else {
       log.debug("Cached File exists: " + f.getAbsolutePath() + " so we'll just use it.");
     }
     return f.toURI().toURL();
@@ -306,7 +303,7 @@ public class CachedUrl extends Url {
     if (c instanceof HttpURLConnection) {
       HttpURLConnection conn = (HttpURLConnection) c;
       conn.setInstanceFollowRedirects(followRedirects);
-      conn.setReadTimeout(5000);
+      // conn.setReadTimeout(5000);
       log.debug("User Agent: " + System.getProperty("http.agent"));
       conn.setRequestProperty("User-Agent", Url.HTTP_USER_AGENT);
       InputStream is = conn.getInputStream();
@@ -328,8 +325,7 @@ public class CachedUrl extends Url {
         fos.close();
         log.debug("Url " + u.toExternalForm() + " Cached To: " + f.getAbsolutePath());
         log.debug(String.format("Url: %s moved to %s", u.toExternalForm(), redirectUrl));
-      }
-      else if (rc == HttpURLConnection.HTTP_OK) {
+      } else if (rc == HttpURLConnection.HTTP_OK) {
         handleCookies(u, c, handler);
         File f = getCachedFile();
         FileOutputStream fos = new FileOutputStream(f);
@@ -337,12 +333,10 @@ public class CachedUrl extends Url {
         fos.flush();
         fos.close();
         log.debug("Url " + u.toExternalForm() + " Cached To: " + f.getAbsolutePath());
-      }
-      else {
+      } else {
         throw new IOException("Http Response Code: " + rc + "; Message: " + conn.getResponseMessage());
       }
-    }
-    else {
+    } else {
       // do nothing... we can't cache local urls
       log.warn("Cannot Cache Url Connection Type; " + c.getClass().getName());
 
@@ -377,8 +371,7 @@ public class CachedUrl extends Url {
     try {
       CachedUrl cu = new CachedUrl(dataUrl);
       cu.remove();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       log.error("Unabled to remove cached data url: " + dataUrl);
     }
   }
@@ -400,8 +393,7 @@ public class CachedUrl extends Url {
         // now remove the propfile
         FileUtils.deleteQuietly(propFile);
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
     }
   }
 
