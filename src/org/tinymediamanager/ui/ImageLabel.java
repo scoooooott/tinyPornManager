@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import javax.swing.JLabel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
@@ -73,7 +74,7 @@ public class ImageLabel extends JLabel {
     this.imagePath = newValue;
     firePropertyChange("imagePath", oldValue, newValue);
 
-    if (newValue == null) {
+    if (StringUtils.isEmpty(newValue)) {
       originalImage = null;
       this.repaint();
       return;
