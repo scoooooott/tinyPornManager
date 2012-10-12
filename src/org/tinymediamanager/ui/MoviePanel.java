@@ -18,7 +18,9 @@ package org.tinymediamanager.ui;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -107,8 +109,11 @@ public class MoviePanel extends JPanel {
   /** The action edit movie. */
   private final Action actionEditMovie = new EditAction();
 
-  /** The action scrape unscraped movied. */
+  /** The action scrape unscraped movies. */
   private final Action actionScrapeUnscraped = new UnscrapedScrapeAction();
+
+  /** The action scrape selected movies. */
+  private final Action actionScrapeSelected = new SelectedScrapeAction();
 
   /** The panel rating. */
   private StarRater panelRating;
@@ -121,18 +126,23 @@ public class MoviePanel extends JPanel {
 
   /** The scrape task */
   private ScrapeTask scrapeTask;
+
+  /** The label rating */
   private JLabel lblRating;
+
+  /** The button cancelScraper */
+  private JButton btnCancelScraper;
 
   /**
    * Create the panel.
    */
   public MoviePanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("248px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:27px:grow"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("bottom:24px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("248px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:27px:grow"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("bottom:24px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JSplitPane splitPane = new JSplitPane();
     splitPane.setContinuousLayout(true);
-    add(splitPane, "1, 2, fill, fill");
+    add(splitPane, "2, 2, fill, fill");
 
     JPanel panelMovieList = new JPanel();
     splitPane.setLeftComponent(panelMovieList);
@@ -146,14 +156,11 @@ public class MoviePanel extends JPanel {
     panelMovieList.add(toolBar, "2, 1, fill, fill");
 
     JButton buttonUpdateDataSources = toolBar.add(actionUpdateDataSources);
-    // JButton buttonScrape = toolBar.add(actionScrape);
-
     JSplitButton buttonScrape = new JSplitButton(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
     buttonScrape.setHorizontalAlignment(JButton.LEFT);
-    // buttonScrape.setPreferredSize(new Dimension(41,
-    // buttonUpdateDataSources.getPreferredSize().height));
     buttonScrape.setMargin(new Insets(2, 2, 2, 14));
     buttonScrape.setSplitWidth(18);
+
     // register for listener
     buttonScrape.addSplitButtonActionListener(new SplitButtonActionListener() {
 
@@ -162,14 +169,13 @@ public class MoviePanel extends JPanel {
       }
 
       public void splitButtonClicked(ActionEvent e) {
-        System.out.println("Popup menu item [" + e.getActionCommand() + "] was pressed.");
       }
     });
     JPopupMenu popup = new JPopupMenu("popup");
     JMenuItem item = new JMenuItem(actionScrapeUnscraped);
 
     popup.add(item);
-    item = new JMenuItem("Scrape selected movies - force best match");
+    item = new JMenuItem(actionScrapeSelected);
     popup.add(item);
     buttonScrape.setPopupMenu(popup);
     toolBar.add(buttonScrape);
@@ -248,13 +254,30 @@ public class MoviePanel extends JPanel {
     table.setRowSorter(sorter);
 
     JPanel panel = new JPanel();
-    add(panel, "1, 4, right, bottom");
+    add(panel, "2, 4, right, bottom");
 
     lblProgressAction = new JLabel("");
     panel.add(lblProgressAction);
 
     progressBar = new JProgressBar();
+    progressBar.setVisible(false);
     panel.add(progressBar);
+
+    btnCancelScraper = new JButton("");
+    btnCancelScraper.setVisible(false);
+    btnCancelScraper.setContentAreaFilled(false);
+    btnCancelScraper.setBorderPainted(false);
+    btnCancelScraper.setBorder(null);
+    btnCancelScraper.setMargin(new Insets(0, 0, 0, 0));
+    btnCancelScraper.setIcon(new ImageIcon(MoviePanel.class.getResource("/org/tinymediamanager/ui/images/Button_Stop.png")));
+    btnCancelScraper.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        scrapeTask.cancel(true);
+      }
+    });
+
+    panel.add(btnCancelScraper);
 
     textField.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
@@ -361,8 +384,6 @@ public class MoviePanel extends JPanel {
      */
     public UnscrapedScrapeAction() {
       putValue(NAME, "Scrape unscraped movies - force best match");
-      // putValue(LARGE_ICON_KEY, new
-      // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
       putValue(SHORT_DESCRIPTION, "Search & scrape all unscraped movies");
     }
 
@@ -377,6 +398,38 @@ public class MoviePanel extends JPanel {
       List<Movie> unscrapedMovies = movieList.getUnscrapedMovies();
       scrapeTask = new ScrapeTask(unscrapedMovies);
       scrapeTask.execute();
+    }
+  }
+
+  /**
+   * The Class UnscrapedScrapeAction.
+   */
+  private class SelectedScrapeAction extends AbstractAction {
+
+    /**
+     * Instantiates a new UnscrapedScrapeAction.
+     */
+    public SelectedScrapeAction() {
+      putValue(NAME, "Scrape selected movies - force best match");
+      putValue(SHORT_DESCRIPTION, "Search & scrape all selected movies");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      List<Movie> selectedMovies = new ArrayList<Movie>();
+      for (int row : table.getSelectedRows()) {
+        row = table.convertRowIndexToModel(row);
+        selectedMovies.add(movieList.getMovies().get(row));
+      }
+      if (selectedMovies.size() > 0) {
+        scrapeTask = new ScrapeTask(selectedMovies);
+        scrapeTask.execute();
+      }
     }
   }
 
@@ -411,7 +464,6 @@ public class MoviePanel extends JPanel {
      * Instantiates a new EditAction.
      */
     public EditAction() {
-      // putValue(NAME, "EDIT");
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
       putValue(SHORT_DESCRIPTION, "Edit movie");
     }
@@ -504,8 +556,8 @@ public class MoviePanel extends JPanel {
   private void startProgressBar(String description, int value) {
     lblProgressAction.setText(description);
     progressBar.setVisible(true);
-    progressBar.setIndeterminate(true);
     progressBar.setValue(value);
+    btnCancelScraper.setVisible(true);
   }
 
   /**
@@ -514,7 +566,7 @@ public class MoviePanel extends JPanel {
   private void stopProgressBar() {
     lblProgressAction.setText("");
     progressBar.setVisible(false);
-    progressBar.setIndeterminate(false);
+    btnCancelScraper.setVisible(false);
   }
 
   protected void initDataBindings() {

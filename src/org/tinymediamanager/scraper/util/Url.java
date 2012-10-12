@@ -22,15 +22,22 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
+import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.log4j.Logger;
 
 /**
  * The Class Url.
  */
 public class Url {
-  // private UrlConfiguration cfg = new UrlConfiguration();
   /** The log. */
-  private Logger log = Logger.getLogger(Url.class);
+  private static final Logger log = Logger.getLogger(Url.class);
+
+  private static final CacheConfig cacheConfig = new CacheConfig();
+
+  static {
+    cacheConfig.setMaxCacheEntries(1000);
+    cacheConfig.setMaxObjectSize(150000);
+  }
 
   /** The url. */
   private String url = null;
