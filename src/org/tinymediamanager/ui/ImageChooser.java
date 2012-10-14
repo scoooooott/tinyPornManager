@@ -20,14 +20,15 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -61,7 +62,7 @@ import com.jgoodies.forms.layout.RowSpec;
 public class ImageChooser extends JDialog {
 
   /** The Constant logger. */
-  private static final Logger logger = Logger.getLogger(ImageChooser.class);
+  private static final Logger LOGGER = Logger.getLogger(ImageChooser.class);
 
   /**
    * The Enum ImageType.
@@ -396,16 +397,24 @@ public class ImageChooser extends JDialog {
             return null;
           }
           CachedUrl cachedUrl = new CachedUrl(tmdbArtwork.getUrlForSmallArtwork());
-          BufferedImage bufferedImage = ImageIO.read(cachedUrl.getInputStream(null, true));
+          Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+          BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
+
+          // // performance of image loading isnt a problem here, so we use
+          // // ImageIO.read (so we can use HttpClient for faster network
+          // // performance
+          // BufferedImage bufferedImage =
+          // ImageIO.read(cachedUrl.getInputStream());
+
           addImage(bufferedImage, tmdbArtwork);
         }
 
       }
       catch (NumberFormatException e) {
-        logger.error(e.getStackTrace());
+        LOGGER.error("DownloadTask", e);
       }
       catch (Exception e) {
-        logger.error(e.getStackTrace());
+        LOGGER.error("DownloadTask", e);
       }
 
       return null;

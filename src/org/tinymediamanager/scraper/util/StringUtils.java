@@ -84,7 +84,8 @@ public class StringUtils {
       int v = Integer.parseInt(encodeString);
       String format = "%0" + padding + "d";
       return String.format(format, v);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return encodeString;
     }
   }

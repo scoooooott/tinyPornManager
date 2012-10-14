@@ -17,7 +17,9 @@ package org.tinymediamanager.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +38,7 @@ import com.bric.image.pixel.Scaling;
 public class ImageLabel extends JLabel {
 
   /** The Constant logger. */
-  private static final Logger logger = Logger.getLogger(ImageLabel.class);
+  private static final Logger LOGGER = Logger.getLogger(ImageLabel.class);
 
   /** The original image. */
   private BufferedImage       originalImage;
@@ -82,7 +84,12 @@ public class ImageLabel extends JLabel {
 
     File file = new File(imagePath);
     if (file.exists()) {
-      this.originalImage = com.bric.image.ImageLoader.createImage(file);// ImageIO.read(file);
+      try {
+        this.originalImage = com.bric.image.ImageLoader.createImage(file);// ImageIO.read(file);
+      }
+      catch (Exception e) {
+        LOGGER.error("setImagePath", e);
+      }
     }
     else {
       originalImage = null;
@@ -119,13 +126,14 @@ public class ImageLabel extends JLabel {
 
     try {
       CachedUrl cachedUrl = new CachedUrl(imageUrl);
-      this.originalImage = com.bric.image.ImageLoader.createImage(cachedUrl.getUrl());// ImageIO.read(cachedUrl.getInputStream(null,
-                                                                                      // true));
+      Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+      this.originalImage = com.bric.image.ImageLoader.createImage(image);// ImageIO.read(cachedUrl.getInputStream(null,
+                                                                         // true));
 
       this.repaint();
     }
     catch (IOException e) {
-      logger.error(e.getStackTrace());
+      LOGGER.error("setImageUrl", e);
     }
   }
 

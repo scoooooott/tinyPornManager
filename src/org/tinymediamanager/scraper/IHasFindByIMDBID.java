@@ -16,16 +16,18 @@
 package org.tinymediamanager.scraper;
 
 /**
- * The Interface HasFindByIMDBID.
+ * The Interface IHasFindByIMDBID.
  */
-public interface HasFindByIMDBID {
-  
+public interface IHasFindByIMDBID {
+
   /**
    * Gets the metadata for imdb id.
-   *
-   * @param imdbid the imdbid
+   * 
+   * @param imdbid
+   *          the imdbid
    * @return the metadata for imdb id
-   * @throws Exception the exception
+   * @throws Exception
+   *           the exception
    */
   public MediaMetadata getMetadataForIMDBId(String imdbid) throws Exception;
 }

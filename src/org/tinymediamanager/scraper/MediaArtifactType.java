@@ -19,54 +19,60 @@ package org.tinymediamanager.scraper;
  * The Enum MediaArtifactType.
  */
 public enum MediaArtifactType {
-    
-    /** The background. */
-    BACKGROUND("Backgrounds"),
-    
-    /** The banner. */
-    BANNER("Banners"),
-    
-    /** The poster. */
-    POSTER("Posters"),
-    
-    /** The actor. */
-    ACTOR("Actors");
-    
-    /** The dir. */
-    private String dir;
-    
-    /**
-     * Instantiates a new media artifact type.
-     *
-     * @param dir the dir
-     */
-    MediaArtifactType(String dir) {
-        this.dir=dir;
-    }
-    
-    /**
-     * Dir name.
-     *
-     * @return the string
-     */
-    public String dirName() {
-        return dir;
-    }
 
-    /**
-     * To media artifact type.
-     *
-     * @param artifactType the artifact type
-     * @return the media artifact type
-     */
-    public static MediaArtifactType toMediaArtifactType(String artifactType) {
-        if (artifactType==null) return null;
-        artifactType=artifactType.toLowerCase();
-        if (artifactType.startsWith("background")) return BACKGROUND;
-        if (artifactType.startsWith("banner")) return BANNER;
-        if (artifactType.startsWith("poster")) return POSTER;
-        if (artifactType.startsWith("actor")) return ACTOR;
-        return null;
-    }
+  /** The background. */
+  BACKGROUND("Backgrounds"),
+
+  /** The banner. */
+  BANNER("Banners"),
+
+  /** The poster. */
+  POSTER("Posters"),
+
+  /** The actor. */
+  ACTOR("Actors");
+
+  /** The dir. */
+  private String dir;
+
+  /**
+   * Instantiates a new media artifact type.
+   * 
+   * @param dir
+   *          the dir
+   */
+  MediaArtifactType(String dir) {
+    this.dir = dir;
+  }
+
+  /**
+   * Dir name.
+   * 
+   * @return the string
+   */
+  public String dirName() {
+    return dir;
+  }
+
+  /**
+   * To media artifact type.
+   * 
+   * @param artifactType
+   *          the artifact type
+   * @return the media artifact type
+   */
+  public static MediaArtifactType toMediaArtifactType(String artifactType) {
+    if (artifactType == null)
+      return null;
+    artifactType = artifactType.toLowerCase();
+    if (artifactType.startsWith("background"))
+      return BACKGROUND;
+    if (artifactType.startsWith("banner"))
+      return BANNER;
+    if (artifactType.startsWith("poster"))
+      return POSTER;
+    if (artifactType.startsWith("actor"))
+      return ACTOR;
+    return null;
+  }
 }
-

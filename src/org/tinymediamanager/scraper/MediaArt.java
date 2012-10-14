@@ -27,25 +27,25 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 public class MediaArt {
 
   /** The Constant logger. */
-  private static final Logger logger = Logger.getLogger(MediaArt.class);
+  private static final Logger LOGGER           = Logger.getLogger(MediaArt.class);
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
+  private static final long   serialVersionUID = 1L;
 
   /** The download url. */
-  private String downloadUrl;
+  private String              downloadUrl;
 
   /** The provider id. */
-  private String providerId;
+  private String              providerId;
 
   /** The type. */
-  private MediaArtifactType type;
+  private MediaArtifactType   type;
 
   /** The label. */
-  private String label;
+  private String              label;
 
   /** The season. */
-  private int season;
+  private int                 season;
 
   /**
    * Instantiates a new media art.
@@ -157,9 +157,10 @@ public class MediaArt {
     CachedUrl url;
     try {
       url = new CachedUrl(getDownloadUrl());
-      return url.getInputStream(null, true);
-    } catch (IOException e) {
-      logger.error(e.getStackTrace());
+      return url.getInputStream();
+    }
+    catch (IOException e) {
+      LOGGER.error("getImageIS", e);
     }
     return null;
 

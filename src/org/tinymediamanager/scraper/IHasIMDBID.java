@@ -16,9 +16,9 @@
 package org.tinymediamanager.scraper;
 
 /**
- * The Interface HasIMDBID.
+ * The Interface IHasIMDBID.
  */
-public interface HasIMDBID {
+public interface IHasIMDBID {
 
   /**
    * Gets the iMDB id.

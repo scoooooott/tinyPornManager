@@ -32,13 +32,13 @@ import org.tinymediamanager.scraper.util.Similarity;
  * The Class MetadataUtil.
  */
 public class MetadataUtil {
-  
+
   /** The Constant log. */
-  private static final Logger log              = Logger.getLogger(MetadataUtil.class);
+  private static final Logger LOGGER           = Logger.getLogger(MetadataUtil.class);
 
   /** The Constant MOVIE_MEDIA_TYPE. */
   public static final String  MOVIE_MEDIA_TYPE = "Movie";
-  
+
   /** The Constant TV_MEDIA_TYPE. */
   public static final String  TV_MEDIA_TYPE    = "TV";
 
@@ -49,8 +49,9 @@ public class MetadataUtil {
    * Given a metadata id, id:###, return 2 parts, the id, and the ####
    * 
    * if the id is not a valid id, then only a 1 element array will be returned.
-   *
-   * @param id the id
+   * 
+   * @param id
+   *          the id
    * @return the metadata id parts
    */
   public static String[] getMetadataIdParts(String id) {
@@ -68,9 +69,11 @@ public class MetadataUtil {
    * uses 2 passes to find the best match. the first pass uses the matchTitle as
    * is, and the second pass uses the matchTitle will non search characters
    * removed.
-   *
-   * @param searchTitle the search title
-   * @param matchTitle the match title
+   * 
+   * @param searchTitle
+   *          the search title
+   * @param matchTitle
+   *          the match title
    * @return the best out of the 2 scored attempts
    */
   public static float calculateScore(String searchTitle, String matchTitle) {
@@ -87,9 +90,11 @@ public class MetadataUtil {
    * 
    * Compressed Scoring is useful when you are comparing a Sage recording
    * (csimiami to "CSI: Miami")
-   *
-   * @param searchTitle the search title
-   * @param matchTitle the match title
+   * 
+   * @param searchTitle
+   *          the search title
+   * @param matchTitle
+   *          the match title
    * @return the best out of the 3 scored attempts
    */
   public static float calculateCompressedScore(String searchTitle, String matchTitle) {
@@ -102,12 +107,16 @@ public class MetadataUtil {
   }
 
   /**
-   * Sets the RELEASE_DATE in a consistent YYYY-MM-dd format using the passed in.
-   *
-   * @param md metadata object
-   * @param strDate date in
-   * @param dateInFormat date in format using {@link SimpleDateFormat} notation
-   * {@link SimpleDateFormat} mask that is passed in.
+   * Sets the RELEASE_DATE in a consistent YYYY-MM-dd format using the passed
+   * in.
+   * 
+   * @param md
+   *          metadata object
+   * @param strDate
+   *          date in
+   * @param dateInFormat
+   *          date in format using {@link SimpleDateFormat} notation
+   *          {@link SimpleDateFormat} mask that is passed in.
    */
   public static void setReleaseDateFromFormattedDate(MediaMetadata md, String strDate, String dateInFormat) {
     if (strDate == null || dateInFormat == null) {
@@ -124,15 +133,16 @@ public class MetadataUtil {
       md.setString(MetadataKey.RELEASE_DATE, out);
     }
     catch (Exception e) {
-      log.warn("Failed to parse/format release dates; dateIn: " + strDate + "; dateInFormat: " + dateInFormat);
+      LOGGER.warn("Failed to parse/format release dates; dateIn: " + strDate + "; dateInFormat: " + dateInFormat);
       md.setString(MetadataKey.RELEASE_DATE, null);
     }
   }
 
   /**
    * Gets the release date.
-   *
-   * @param md the md
+   * 
+   * @param md
+   *          the md
    * @return the release date
    */
   public static Date getReleaseDate(MediaMetadata md) {
@@ -148,15 +158,16 @@ public class MetadataUtil {
       return d;
     }
     catch (Exception e) {
-      log.warn("Failed to parse a date from the metadata date: " + date);
+      LOGGER.warn("Failed to parse a date from the metadata date: " + date);
     }
     return null;
   }
 
   /**
    * Convert time to millisseconds for sage.
-   *
-   * @param time the time
+   * 
+   * @param time
+   *          the time
    * @return the string
    */
   public static String convertTimeToMillissecondsForSage(String time) {
@@ -165,9 +176,11 @@ public class MetadataUtil {
 
   /**
    * Parses the running time.
-   *
-   * @param in the in
-   * @param regex the regex
+   * 
+   * @param in
+   *          the in
+   * @param regex
+   *          the regex
    * @return the string
    */
   public static String parseRunningTime(String in, String regex) {
@@ -179,15 +192,16 @@ public class MetadataUtil {
       return convertTimeToMillissecondsForSage(m.group(1));
     }
     else {
-      log.warn("Could not find Running Time in " + in + "; using Regex: " + regex);
+      LOGGER.warn("Could not find Running Time in " + in + "; using Regex: " + regex);
       return null;
     }
   }
 
   /**
    * Gets the bare title.
-   *
-   * @param name the name
+   * 
+   * @param name
+   *          the name
    * @return the bare title
    */
   public static String getBareTitle(String name) {
@@ -198,9 +212,11 @@ public class MetadataUtil {
 
   /**
    * Copy search query to search result.
-   *
-   * @param query the query
-   * @param sr the sr
+   * 
+   * @param query
+   *          the query
+   * @param sr
+   *          the sr
    */
   public static void copySearchQueryToSearchResult(SearchQuery query, MediaSearchResult sr) {
     for (SearchQuery.Field f : SearchQuery.Field.values()) {
@@ -215,14 +231,17 @@ public class MetadataUtil {
 
   /**
    * Search by id.
-   *
-   * @param prov the prov
-   * @param query the query
-   * @param id the id
+   * 
+   * @param prov
+   *          the prov
+   * @param query
+   *          the query
+   * @param id
+   *          the id
    * @return the list
    */
   public static List<MediaSearchResult> searchById(IMediaMetadataProvider prov, SearchQuery query, String id) {
-    log.debug("searchById() for: " + query);
+    LOGGER.debug("searchById() for: " + query);
     MediaSearchResult res = new MediaSearchResult(prov.getInfo().getId(), id, query.get(SearchQuery.Field.RAW_TITLE),
         query.get(SearchQuery.Field.YEAR), 1.0f);
     MetadataUtil.copySearchQueryToSearchResult(query, res);
@@ -237,10 +256,10 @@ public class MetadataUtil {
       res.setScore(1.0f);
       res.setTitle(md.getMediaTitle());
       res.setYear(md.getYear());
-      log.info("searchById() was sucessful for: " + id);
+      LOGGER.info("searchById() was sucessful for: " + id);
     }
     catch (Exception e) {
-      log.warn("searchById() failed for: " + query, e);
+      LOGGER.warn("searchById() failed for: " + query, e);
       return null;
     }
 
@@ -249,8 +268,9 @@ public class MetadataUtil {
 
   /**
    * Checks for metadata.
-   *
-   * @param result the result
+   * 
+   * @param result
+   *          the result
    * @return true, if successful
    */
   public static boolean hasMetadata(MediaSearchResult result) {
@@ -259,8 +279,9 @@ public class MetadataUtil {
 
   /**
    * Gets the metadata.
-   *
-   * @param result the result
+   * 
+   * @param result
+   *          the result
    * @return the metadata
    */
   public static MediaMetadata getMetadata(MediaSearchResult result) {
@@ -273,11 +294,12 @@ public class MetadataUtil {
   /**
    * For the purposes of searching it will, keep only alpha numeric characters
    * and '&.
-   *
-   * @param s the s
+   * 
+   * @param s
+   *          the s
    * @return the string
    */
-  private static String removeNonSearchCharacters(String s) {
+  public static String removeNonSearchCharacters(String s) {
     if (s == null)
       return null;
     return (s.replaceAll("[^A-Za-z0-9&']", " ")).replaceAll("[\\ ]+", " ");

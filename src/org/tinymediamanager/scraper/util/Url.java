@@ -17,36 +17,31 @@ package org.tinymediamanager.scraper.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.net.ProxySelector;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.Map;
 
-import org.apache.http.impl.client.cache.CacheConfig;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.log4j.Logger;
+import org.tinymediamanager.Globals;
 
 /**
  * The Class Url.
  */
 public class Url {
   /** The log. */
-  private static final Logger log = Logger.getLogger(Url.class);
-
-  private static final CacheConfig cacheConfig = new CacheConfig();
-
-  static {
-    cacheConfig.setMaxCacheEntries(1000);
-    cacheConfig.setMaxObjectSize(150000);
-  }
+  private static final Logger   LOGGER          = Logger.getLogger(Url.class);
 
   /** The url. */
-  private String url = null;
-
-  /** The moved url. */
-  private String movedUrl = null;
+  protected String              url             = null;
 
   /** The Constant HTTP_USER_AGENT. */
-  protected static final String HTTP_USER_AGENT = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008072820 Firefox/9.0.1";
+  protected static final String HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
 
   /**
    * Instantiates a new url.
@@ -56,17 +51,6 @@ public class Url {
    */
   public Url(String url) {
     this.url = url;
-  }
-
-  /**
-   * Gets the moved url.
-   * 
-   * @return the moved url
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   */
-  public URL getMovedUrl() throws IOException {
-    return new URL(movedUrl);
   }
 
   /**
@@ -81,37 +65,6 @@ public class Url {
   }
 
   /**
-   * Checks for moved.
-   * 
-   * @return true, if successful
-   */
-  public boolean hasMoved() {
-    return movedUrl != null;
-  }
-
-  /**
-   * Send cookies.
-   * 
-   * @param url
-   *          the url
-   * @param conn
-   *          the conn
-   * @param handler
-   *          the handler
-   */
-  protected void sendCookies(URL url, URLConnection conn, CookieHandler handler) {
-    if (handler != null) {
-      Map<String, String> cookies = handler.getCookiesToSend(url.toExternalForm());
-      if (cookies != null) {
-        for (String key : cookies.keySet()) {
-          log.debug("Sending Cookie: " + key + "=" + cookies.get(key) + " to " + url.toExternalForm());
-          conn.setRequestProperty("Cookie", String.format("%s=%s", key, cookies.get(key)));
-        }
-      }
-    }
-  }
-
-  /**
    * Gets the input stream.
    * 
    * @param handler
@@ -122,58 +75,28 @@ public class Url {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public InputStream getInputStream(CookieHandler handler, boolean followRedirects) throws IOException {
-    URL u = getUrl();
-
-    URLConnection conn = u.openConnection();
-    if (conn instanceof HttpURLConnection) {
-      log.debug("Setting Follow Redirects: " + followRedirects);
-      ((HttpURLConnection) conn).setInstanceFollowRedirects(followRedirects);
-      conn.setRequestProperty("User-Agent", HTTP_USER_AGENT);
-    }
-    sendCookies(u, conn, handler);
-
-    // get the stream
-    InputStream is = conn.getInputStream();
-    if (conn instanceof HttpURLConnection) {
-      int rc = ((HttpURLConnection) conn).getResponseCode();
-      if (rc == HttpURLConnection.HTTP_MOVED_PERM || rc == HttpURLConnection.HTTP_MOVED_TEMP) {
-        movedUrl = conn.getHeaderField("Location");
-        if (movedUrl != null) {
-          int p = movedUrl.indexOf('?');
-          if (p != -1) {
-            movedUrl = movedUrl.substring(0, p);
-          }
-          log.debug("Found a Moved Url: " + u.toExternalForm() + "; Moved: " + movedUrl);
-        }
-      }
+  public InputStream getInputStream() throws IOException {
+    DefaultHttpClient httpclient = new DefaultHttpClient();
+    if (!StringUtils.isEmpty(Globals.settings.getProxyHost())) {
+      ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(httpclient.getConnectionManager().getSchemeRegistry(),
+          ProxySelector.getDefault());
+      httpclient.setRoutePlanner(routePlanner);
     }
 
-    handleCookies(u, conn, handler);
-    return is;
+    HttpGet httpget = new HttpGet(url);
+
+    LOGGER.debug("getting " + url);
+    HttpResponse response = httpclient.execute(httpget);
+    HttpEntity entity = response.getEntity();
+
+    if (entity != null) {
+      return entity.getContent();
+    }
+    return null;
   }
 
-  /**
-   * Handle cookies.
-   * 
-   * @param u
-   *          the u
-   * @param conn
-   *          the conn
-   * @param handler
-   *          the handler
-   */
-  protected void handleCookies(URL u, URLConnection conn, CookieHandler handler) {
-    if (handler != null) {
-      // process the response cookies
-      String headerName = null;
-      for (int i = 1; (headerName = conn.getHeaderFieldKey(i)) != null; i++) {
-        if (headerName.equals("Set-Cookie")) {
-          String cookie = conn.getHeaderField(i);
-          handler.handleSetCookie(u.toExternalForm(), cookie);
-        }
-      }
-    }
+  public byte[] getBytes() throws IOException {
+    InputStream is = getInputStream();
+    return IOUtils.toByteArray(is);
   }
-
 }

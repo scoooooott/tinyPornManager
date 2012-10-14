@@ -31,6 +31,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.SearchQuery;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
@@ -40,19 +41,16 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 public class MovieList extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger logger = Logger.getLogger(MovieList.class);
+  private static final Logger    LOGGER    = Logger.getLogger(MovieList.class);
 
   /** The instance. */
-  private static MovieList instance;
+  private static MovieList       instance;
 
   /** The settings. */
-  private final Settings settings = Settings.getInstance();
+  private final Settings         settings  = Settings.getInstance();
 
   /** The movie list. */
-  private final List<Movie> movieList = ObservableCollections.observableList(new ArrayList<Movie>());
-
-  /** The movies to scrape. */
-  private List<MovieJobConfig> moviesToScrape = new ArrayList<MovieJobConfig>();
+  private final List<Movie>      movieList = ObservableCollections.observableList(new ArrayList<Movie>());
 
   /** The metadata provider. */
   private IMediaMetadataProvider metadataProvider;
@@ -137,8 +135,9 @@ public class MovieList extends AbstractModelObject {
         movie.setObservableCastList();
         addMovie(movie);
       }
-    } catch (PersistenceException e) {
-      logger.error(e.getStackTrace());
+    }
+    catch (PersistenceException e) {
+      LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
 
@@ -223,7 +222,8 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
-    } else {
+    }
+    else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -251,27 +251,16 @@ public class MovieList extends AbstractModelObject {
     return null;
   }
 
-  /**
-   * Adds the movie to scrape list.
-   * 
-   * @param movie
-   *          the movie
-   * @param scrapeSetting
-   *          the scrape setting
-   */
-  public void addMovieToScrapeList(Movie movie, int scrapeSetting) {
-    moviesToScrape.add(new MovieJobConfig(movie, scrapeSetting));
-  }
-
   public List<MediaSearchResult> searchMovie(String searchTerm) {
-    // remove - from searchstring
-    searchTerm = searchTerm.replace('-', ' ');
+    // format searchstring
+    searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = metadataProvider.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    } catch (Exception e) {
-      logger.error(e.getStackTrace());
+    }
+    catch (Exception e) {
+      LOGGER.error("searchMovie", e);
     }
 
     return searchResult;

@@ -31,6 +31,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -112,7 +113,7 @@ public class Movie extends AbstractModelObject {
 
   /** The Constant logger. */
   @XmlTransient
-  private static final Logger   logger            = Logger.getLogger(Movie.class);
+  private static final Logger   LOGGER            = Logger.getLogger(Movie.class);
 
   /** The id. */
   @Id
@@ -922,17 +923,18 @@ public class Movie extends AbstractModelObject {
         url = new CachedUrl(getPosterUrl());
         filename = this.path + File.separator + "movie.tbn";
         outputStream = new FileOutputStream(filename);
-        is = url.getInputStream(null, true);
-        while ((n = is.read(tmp_buffer)) > 0) {
-          outputStream.write(tmp_buffer, 0, n);
-          outputStream.flush();
-        }
+        is = url.getInputStream();
+        IOUtils.copy(is, outputStream);
+        // while ((n = is.read(tmp_buffer)) > 0) {
+        // outputStream.write(tmp_buffer, 0, n);
+        // outputStream.flush();
+        // }
         outputStream.close();
         is.close();
         setPoster(filename);
       }
       catch (IOException e) {
-        logger.error("writeImages - poster", e);
+        LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
     }
@@ -945,17 +947,18 @@ public class Movie extends AbstractModelObject {
         url = new CachedUrl(getFanartUrl());
         filename = this.path + File.separator + "fanart.jpg";
         outputStream = new FileOutputStream(filename);
-        is = url.getInputStream(null, true);
-        while ((n = is.read(tmp_buffer)) > 0) {
-          outputStream.write(tmp_buffer, 0, n);
-          outputStream.flush();
-        }
+        is = url.getInputStream();
+        IOUtils.copy(is, outputStream);
+        // while ((n = is.read(tmp_buffer)) > 0) {
+        // outputStream.write(tmp_buffer, 0, n);
+        // outputStream.flush();
+        // }
         outputStream.close();
         is.close();
         setFanart(filename);
       }
       catch (IOException e) {
-        logger.error("writeImages - fanart", e);
+        LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
     }

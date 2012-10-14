@@ -40,7 +40,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -62,38 +61,36 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MovieChooser.
  */
 public class MovieChooser extends JDialog implements ActionListener {
-  /** The Constant logger. */
-  private static final Logger logger = Logger.getLogger(MovieChooser.class);
 
   /** The content panel. */
-  private final JPanel contentPanel = new JPanel();
+  private final JPanel            contentPanel = new JPanel();
 
   /** The movie to scrape. */
-  private Movie movieToScrape;
+  private Movie                   movieToScrape;
 
   /** The text field search string. */
-  private JTextField textFieldSearchString;
+  private JTextField              textFieldSearchString;
 
   /** The table. */
-  private JTable table;
+  private JTable                  table;
 
   /** The lbl movie name. */
-  private JLabel lblMovieName;
+  private JLabel                  lblMovieName;
 
   /** The tp movie description. */
-  private JTextPane tpMovieDescription;
+  private JTextPane               tpMovieDescription;
 
   /** The lbl movie poster. */
-  private ImageLabel lblMoviePoster;
+  private ImageLabel              lblMoviePoster;
 
   /** The lbl progress action. */
-  private JLabel lblProgressAction;
+  private JLabel                  lblProgressAction;
 
   /** The progress bar. */
-  private JProgressBar progressBar;
+  private JProgressBar            progressBar;
 
   /** The movies found. */
-  private List<MovieChooserModel> moviesFound = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private List<MovieChooserModel> moviesFound  = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
 
   /**
    * Create the dialog.
@@ -107,14 +104,14 @@ public class MovieChooser extends JDialog implements ActionListener {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(500px;default):grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(500px;default):grow"), }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     {
       JPanel panelSearchField = new JPanel();
       contentPanel.add(panelSearchField, "1, 2, fill, fill");
-      panelSearchField.setLayout(new FormLayout(
-          new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), ColumnSpec.decode("right:default"), },
-          new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+      panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+          ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
       {
         textFieldSearchString = new JTextField();
         panelSearchField.add(textFieldSearchString, "2, 1, fill, default");
@@ -139,8 +136,9 @@ public class MovieChooser extends JDialog implements ActionListener {
       {
         JPanel panelSearchResults = new JPanel();
         splitPane.setLeftComponent(panelSearchResults);
-        panelSearchResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(250px;default):grow"), }, new RowSpec[] {
-            FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:max(212px;default):grow"), }));
+        panelSearchResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+            ColumnSpec.decode("max(250px;default):grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+            RowSpec.decode("fill:max(212px;default):grow"), }));
         {
           table = new JTable();
           table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -163,7 +161,8 @@ public class MovieChooser extends JDialog implements ActionListener {
                     task.execute();
 
                   }
-                } catch (Exception ex) {
+                }
+                catch (Exception ex) {
 
                 }
               }
@@ -175,9 +174,9 @@ public class MovieChooser extends JDialog implements ActionListener {
       {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
-        panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { RowSpec.decode("30px"), RowSpec.decode("250px"),
-            FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
+        panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+            RowSpec.decode("30px"), RowSpec.decode("250px"), FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
         {
           lblMovieName = new JLabel("");
           lblMovieName.setFont(new Font("Dialog", Font.BOLD, 20));
@@ -205,9 +204,9 @@ public class MovieChooser extends JDialog implements ActionListener {
         JButton okButton = new JButton("OK");
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
-        buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("default:grow"), ColumnSpec.decode("54px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("81px"), }, new RowSpec[] {
-            FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
+        buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), ColumnSpec.decode("54px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+            ColumnSpec.decode("81px"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
         {
           progressBar = new JProgressBar();
           buttonPane.add(progressBar, "2, 2");
@@ -384,7 +383,8 @@ public class MovieChooser extends JDialog implements ActionListener {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, moviesFound, table);
+    JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+        moviesFound, table);
     //
     BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
     jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setColumnName("New Column");
@@ -393,19 +393,20 @@ public class MovieChooser extends JDialog implements ActionListener {
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1, tpMovieDescription,
-        jTextPaneBeanProperty);
+    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
+        tpMovieDescription, jTextPaneBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2, lblMoviePoster,
-        imageLabelBeanProperty);
+    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2,
+        lblMoviePoster, imageLabelBeanProperty);
     autoBinding_2.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3, lblMovieName, jLabelBeanProperty);
+    AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
+        lblMovieName, jLabelBeanProperty);
     autoBinding_3.bind();
   }
 }

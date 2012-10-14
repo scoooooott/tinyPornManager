@@ -52,7 +52,7 @@ public class TinyMediaManager {
           PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
 
           // initialize database
-          EntityManagerFactory emf = Persistence.createEntityManagerFactory("$objectdb/db/tmm.odb");
+          EntityManagerFactory emf = Persistence.createEntityManagerFactory("tmm.odb");
           Globals.entityManager = emf.createEntityManager();
 
           // proxy settings
@@ -61,7 +61,8 @@ public class TinyMediaManager {
           // launch application
           MainWindow window = new MainWindow();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
         }
       }

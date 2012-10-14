@@ -46,7 +46,7 @@ import org.tinymediamanager.scraper.MediaMetadata.Genres;
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger logger   = Logger.getLogger(MovieToXbmcNfoConnector.class);
+  private static final Logger LOGGER   = Logger.getLogger(MovieToXbmcNfoConnector.class);
 
   /** The Constant NFO_NAME. */
   private final static String NFO_NAME = "movie.nfo";
@@ -163,17 +163,17 @@ public class MovieToXbmcNfoConnector {
 
     }
     catch (JAXBException e) {
-      logger.error(e.getStackTrace());
+      LOGGER.error("setData", e);
     }
     catch (IOException e) {
-      logger.error(e.getStackTrace());
+      LOGGER.error("setData", e);
     }
     finally {
       try {
         w.close();
       }
       catch (Exception e) {
-        logger.error(e.getStackTrace());
+        LOGGER.error("setData", e);
       }
     }
 

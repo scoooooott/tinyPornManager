@@ -17,46 +17,49 @@ package org.tinymediamanager.scraper.util;
 
 /**
  * A Pair is simple container containing 2 paired values and types.
- *
- * @param <First> the generic type
- * @param <Second> the generic type
+ * 
+ * @param <First>
+ *          the generic type
+ * @param <Second>
+ *          the generic type
  * @author seans
  */
 public class Pair<First, Second> {
-    
-    /** The first. */
-    private First first;
-    
-    /** The second. */
-    private Second second;
-    
-    /**
-     * Instantiates a new pair.
-     *
-     * @param f the f
-     * @param s the s
-     */
-    public Pair(First f, Second s) {
-        this.first = f;
-        this.second=s;
-    }
-    
-    /**
-     * First.
-     *
-     * @return the first
-     */
-    public First first() {
-        return first;
-    }
-    
-    /**
-     * Second.
-     *
-     * @return the second
-     */
-    public Second second() {
-        return second;
-    }
-}
 
+  /** The first. */
+  private First  first;
+
+  /** The second. */
+  private Second second;
+
+  /**
+   * Instantiates a new pair.
+   * 
+   * @param f
+   *          the f
+   * @param s
+   *          the s
+   */
+  public Pair(First f, Second s) {
+    this.first = f;
+    this.second = s;
+  }
+
+  /**
+   * First.
+   * 
+   * @return the first
+   */
+  public First first() {
+    return first;
+  }
+
+  /**
+   * Second.
+   * 
+   * @return the second
+   */
+  public Second second() {
+    return second;
+  }
+}

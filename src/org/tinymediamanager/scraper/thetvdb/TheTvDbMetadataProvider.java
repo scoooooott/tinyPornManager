@@ -3,7 +3,7 @@ package org.tinymediamanager.scraper.thetvdb;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.tinymediamanager.scraper.HasFindByIMDBID;
+import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
@@ -14,9 +14,9 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
 import com.moviejukebox.thetvdb.TheTVDB;
 
-public class TheTvDbMetadataProvider implements IMediaMetadataProvider, HasFindByIMDBID {
+public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IHasFindByIMDBID {
 
-  private static final Logger                  log      = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger                  LOGGER   = Logger.getLogger(TmdbMetadataProvider.class);
   private static final TheTvDbMetadataProvider instance = new TheTvDbMetadataProvider();
 
   private TheTvDbMetadataProvider() {

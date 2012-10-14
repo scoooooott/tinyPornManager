@@ -32,34 +32,34 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 public class MovieChooserModel extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger logger = Logger.getLogger(MovieChooserModel.class);
+  private static final Logger    LOGGER  = Logger.getLogger(MovieChooserModel.class);
 
   /** The metadata provider. */
   private IMediaMetadataProvider metadataProvider;
 
   /** The result. */
-  private MediaSearchResult result;
+  private MediaSearchResult      result;
 
   /** The metadata. */
-  private MediaMetadata metadata;
+  private MediaMetadata          metadata;
 
   /** The name. */
-  private String name;
+  private String                 name;
 
   /** The overview. */
-  private String overview;
+  private String                 overview;
 
   /** The year. */
-  private String year;
+  private String                 year;
 
   /** The combined name. */
-  private String combinedName;
+  private String                 combinedName;
 
   /** The poster url. */
-  private String posterUrl;
+  private String                 posterUrl;
 
   /** The scraped. */
-  private boolean scraped = false;
+  private boolean                scraped = false;
 
   /* new scraper logic */
   /**
@@ -206,10 +206,12 @@ public class MovieChooserModel extends AbstractModelObject {
 
       scraped = true;
 
-    } catch (IOException e) {
-      logger.error(e.getStackTrace());
-    } catch (Exception e) {
-      logger.error(e.getStackTrace());
+    }
+    catch (IOException e) {
+      LOGGER.error("scrapeMedia", e);
+    }
+    catch (Exception e) {
+      LOGGER.error("scrapeMedia", e);
     }
 
   }

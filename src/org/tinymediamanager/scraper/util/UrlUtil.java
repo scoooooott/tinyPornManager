@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 public class UrlUtil {
 
   /** The Constant log. */
-  private static final Logger log = Logger.getLogger(UrlUtil.class);
+  private static final Logger LOGGER = Logger.getLogger(UrlUtil.class);
 
   /**
    * Returns the the entire Url Path except the filename, like doing a basedir
@@ -58,8 +58,9 @@ public class UrlUtil {
     try {
       u = new URL(url);
       return String.format("%s://%s/", u.getProtocol(), u.getHost());
-    } catch (MalformedURLException e) {
-      log.error("Failed to get domain url for: " + url);
+    }
+    catch (MalformedURLException e) {
+      LOGGER.error("Failed to get domain url for: " + url);
     }
     return null;
   }
@@ -95,8 +96,9 @@ public class UrlUtil {
     try {
       u = new URL(url);
       return u.getPath();
-    } catch (MalformedURLException e) {
-      log.error("getPathName() Failed! " + url, e);
+    }
+    catch (MalformedURLException e) {
+      LOGGER.error("getPathName() Failed! " + url, e);
     }
     return null;
   }
@@ -113,8 +115,9 @@ public class UrlUtil {
       return "";
     try {
       return URLEncoder.encode(data, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      log.warn("Failed to url encode data: " + data + " as UTF-8; will try again using default encoding", e);
+    }
+    catch (UnsupportedEncodingException e) {
+      LOGGER.warn("Failed to url encode data: " + data + " as UTF-8; will try again using default encoding", e);
       return URLEncoder.encode(data);
     }
   }

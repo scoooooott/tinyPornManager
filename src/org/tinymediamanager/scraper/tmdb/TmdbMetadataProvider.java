@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.CastMember;
-import org.tinymediamanager.scraper.HasFindByIMDBID;
+import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
@@ -50,10 +50,10 @@ import com.moviejukebox.themoviedb.tools.ApiUrl;
 /**
  * The Class TmdbMetadataProvider.
  */
-public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIMDBID {
+public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByIMDBID {
 
   /** The Constant logger. */
-  private static final Logger               logger   = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger               LOGGER   = Logger.getLogger(TmdbMetadataProvider.class);
 
   /** The Constant instance. */
   private static final TmdbMetadataProvider instance = new TmdbMetadataProvider();
@@ -136,7 +136,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
     }
     catch (MovieDbException e) {
-      logger.error(e.getStackTrace());
+      LOGGER.error("TmdbMetadataProvider", e);
     }
   }
 
@@ -158,7 +158,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
    */
   @Override
   public MediaMetadata getMetadataForIMDBId(String imdbId) throws Exception {
-    logger.debug("TMDB: getMetadataForIMDBId(imdbId): " + imdbId);
+    LOGGER.debug("TMDB: getMetadataForIMDBId(imdbId): " + imdbId);
 
     // get the tmdbid for this imdbid
     MovieDb movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
@@ -194,7 +194,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
    *           the exception
    */
   public List<TmdbArtwork> getArtwork(String imdbId, MediaArtifactType type) throws Exception {
-    logger.debug("TMDB: getArtwork(imdbId): " + imdbId);
+    LOGGER.debug("TMDB: getArtwork(imdbId): " + imdbId);
 
     List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
 
@@ -222,7 +222,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
    *           the exception
    */
   public List<TmdbArtwork> getArtwork(int tmdbId, MediaArtifactType type) throws Exception {
-    logger.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
+    LOGGER.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
 
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
     List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
@@ -262,7 +262,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
    *           the exception
    */
   public MediaMetadata getMetaData(int tmdbId) throws Exception {
-    logger.debug("TMDB: getMetadata(tmdbId): " + tmdbId);
+    LOGGER.debug("TMDB: getMetadata(tmdbId): " + tmdbId);
 
     MediaMetadata md = new MediaMetadata();
 
@@ -505,7 +505,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
    */
   @Override
   public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
-    logger.debug("TMDB: getMetadata(result): " + result);
+    LOGGER.debug("TMDB: getMetadata(result): " + result);
     int tmdbId = Integer.parseInt(result.getId());
 
     return getMetaData(tmdbId);
@@ -523,10 +523,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = query.get(SearchQuery.Field.QUERY);
 
-    logger.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
+    LOGGER.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
     URL url = tmdbSearchMovie.getQueryUrl(searchString, Globals.settings.getScraperTmdbLanguage().name(), 1);
-    logger.debug(url.toString());
+    LOGGER.debug(url.toString());
 
     List<MovieDb> moviesFound = tmdb.searchMovie(searchString, Globals.settings.getScraperTmdbLanguage().name(), false);
 
@@ -534,7 +534,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, HasFindByIM
       return resultList;
     }
 
-    logger.debug("found " + moviesFound.size() + " results");
+    LOGGER.debug("found " + moviesFound.size() + " results");
 
     for (MovieDb movie : moviesFound) {
       MediaSearchResult sr = new MediaSearchResult();
