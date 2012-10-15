@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project tinyMediaManager with libraries in sub-folder">
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
+	<target name="create_run_jar">
+		<jar destfile="C:/private/workspace/tinyMediaManager/build/tmm.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
+				<attribute name="Class-Path" value=". lib/commons-lang3-3.1.jar lib/log4j-1.2.16.jar lib/themoviedbapi-3.2-SNAPSHOT-r169.jar lib/beansbinding-1.2.1.jar lib/jdom.jar lib/commons-codec-1.6.jar lib/commons-io-2.1.jar lib/jackson-core-lgpl-1.9.9.jar lib/jackson-mapper-lgpl-1.9.9.jar lib/objectdb.jar lib/Scaling-bin.jar lib/thetvdbapi-1.4-SNAPSHOT-r123.jar lib/forms-1.3.0.jar lib/JSplitButton_1.2.jar lib/commons-logging-1.1.1.jar lib/fluent-hc-4.2.1.jar lib/httpclient-4.2.1.jar lib/httpclient-cache-4.2.1.jar lib/httpcore-4.2.1.jar lib/httpmime-4.2.1.jar" />
+			</manifest>
+			<fileset dir="C:/private/workspace/tinyMediaManager/bin" />
+		</jar>
+		<delete dir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<mkdir dir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/commons-lang3-3.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/log4j-1.2.16.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/themoviedbapi-3.2-SNAPSHOT-r169.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/beansbinding-1.2.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/jdom.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/commons-codec-1.6.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/commons-io-2.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/jackson-core-lgpl-1.9.9.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/jackson-mapper-lgpl-1.9.9.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/objectdb.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/Scaling-bin.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/thetvdbapi-1.4-SNAPSHOT-r123.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/forms-1.3.0.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/JSplitButton_1.2.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/commons-logging-1.1.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/fluent-hc-4.2.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/httpclient-4.2.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/httpclient-cache-4.2.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/httpcore-4.2.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+		<copy file="C:/private/workspace/tinyMediaManager/lib/httpmime-4.2.1.jar" todir="C:/private/workspace/tinyMediaManager/build/lib" />
+	</target>
+
+	<target name='package-app' depends='create_run_jar'>
+		<taskdef name='appbundler' classname='com.joshondesign.appbundler.BundlerTask' classpath='build/classes;lib/XMLLib.jar' />
+		<appbundler bundle="bundle.xml" target="win" destdir="dist" libdir="build/lib;lib;build" />
+	</target>
+
+</project>
