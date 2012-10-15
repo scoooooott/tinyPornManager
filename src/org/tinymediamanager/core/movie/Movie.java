@@ -52,68 +52,74 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 public class Movie extends AbstractModelObject {
 
   /** The Constant NFO_FILE. */
-  protected final static String NFO_FILE          = "movie.nfo";
+  protected final static String NFO_FILE           = "movie.nfo";
 
   /** The Constant TITLE. */
-  protected final static String TITLE             = "title";
+  protected final static String TITLE              = "title";
 
   /** The Constant ORIGINAL_TITLE. */
-  protected final static String ORIGINAL_TITLE    = "originaltitle";
+  protected final static String ORIGINAL_TITLE     = "originaltitle";
 
   /** The Constant RATING. */
-  protected final static String RATING            = "rating";
+  protected final static String RATING             = "rating";
 
   /** The Constant YEAR. */
-  protected final static String YEAR              = "year";
+  protected final static String YEAR               = "year";
 
   /** The Constant OUTLINE. */
-  protected final static String OUTLINE           = "outline";
+  protected final static String OUTLINE            = "outline";
 
   /** The Constant PLOT. */
-  protected final static String PLOT              = "plot";
+  protected final static String PLOT               = "plot";
 
   /** The Constant TAGLINE. */
-  protected final static String TAGLINE           = "tagline";
+  protected final static String TAGLINE            = "tagline";
 
   /** The Constant RUNTIME. */
-  protected final static String RUNTIME           = "runtime";
+  protected final static String RUNTIME            = "runtime";
 
   /** The Constant THUMB. */
-  protected final static String THUMB             = "thumb";
+  protected final static String THUMB              = "thumb";
 
   /** The Constant THUMB_PATH. */
-  protected final static String THUMB_PATH        = "thumbpath";
+  protected final static String THUMB_PATH         = "thumbpath";
 
   /** The Constant ID. */
-  protected final static String ID                = "id";
+  protected final static String ID                 = "id";
 
   /** The Constant IMDB_ID. */
-  protected final static String IMDB_ID           = "imdbid";
+  protected final static String IMDB_ID            = "imdbid";
 
   /** The Constant FILENAME_AND_PATH. */
-  protected final static String FILENAME_AND_PATH = "filenameandpath";
+  protected final static String FILENAME_AND_PATH  = "filenameandpath";
 
   /** The Constant PATH. */
-  protected final static String PATH              = "path";
+  protected final static String PATH               = "path";
 
   /** The Constant DIRECTOR. */
-  protected final static String DIRECTOR          = "director";
+  protected final static String DIRECTOR           = "director";
+
+  /** The Constant WRITER. */
+  protected final static String WRITER             = "writer";
 
   /** The Constant ACTOR. */
-  protected final static String ACTOR             = "actor";
+  protected final static String ACTOR              = "actor";
+
+  /** The Constant Production Company */
+  protected final static String PRODUCTION_COMPANY = "productionCompany";
 
   /** The Constant NAME. */
-  protected final static String NAME              = "name";
+  protected final static String NAME               = "name";
 
   /** The Constant ROLE. */
-  protected final static String ROLE              = "role";
+  protected final static String ROLE               = "role";
 
   /** The Constant GENRE. */
-  protected final static String GENRE             = "genre";
+  protected final static String GENRE              = "genre";
 
   /** The Constant logger. */
   @XmlTransient
-  private static final Logger   LOGGER            = Logger.getLogger(Movie.class);
+  private static final Logger   LOGGER             = Logger.getLogger(Movie.class);
 
   /** The id. */
   @Id
@@ -171,22 +177,25 @@ public class Movie extends AbstractModelObject {
   /** The writer. */
   private String                writer;
 
+  /** The production company */
+  private String                productionCompany;
+
   /** The scraped. */
   private boolean               scraped;
 
   /** The movie files. */
-  private List<String>          movieFiles        = new ArrayList<String>();
+  private List<String>          movieFiles         = new ArrayList<String>();
 
   /** The genres. */
-  private List<Genres>          genres            = new ArrayList<Genres>();
+  private List<Genres>          genres             = new ArrayList<Genres>();
 
   /** The cast. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieCast>       cast              = new ArrayList<MovieCast>();
+  private List<MovieCast>       cast               = new ArrayList<MovieCast>();
 
   /** The cast observable. */
   @Transient
-  private List<MovieCast>       castObservable    = ObservableCollections.observableList(cast);
+  private List<MovieCast>       castObservable     = ObservableCollections.observableList(cast);
 
   /**
    * Instantiates a new movie.
@@ -691,6 +700,7 @@ public class Movie extends AbstractModelObject {
     setRating(metadata.getRating());
     setRuntime(Integer.parseInt(metadata.getRuntime()));
     setTagline(metadata.getTagline());
+    setProductionCompany(metadata.getCompany());
 
     // poster
     List<MediaArt> art = metadata.getMediaArt(MediaArtifactType.POSTER);
@@ -980,7 +990,7 @@ public class Movie extends AbstractModelObject {
   public void setDirector(String newValue) {
     String oldValue = this.director;
     this.director = newValue;
-    firePropertyChange("director", oldValue, newValue);
+    firePropertyChange(DIRECTOR, oldValue, newValue);
   }
 
   /**
@@ -992,7 +1002,17 @@ public class Movie extends AbstractModelObject {
   public void setWriter(String newValue) {
     String oldValue = this.writer;
     this.writer = newValue;
-    firePropertyChange("writer", oldValue, newValue);
+    firePropertyChange(WRITER, oldValue, newValue);
+  }
+
+  public String getProductionCompany() {
+    return productionCompany;
+  }
+
+  public void setProductionCompany(String newValue) {
+    String oldValue = this.productionCompany;
+    this.productionCompany = newValue;
+    firePropertyChange(PRODUCTION_COMPANY, oldValue, newValue);
   }
 
   /**

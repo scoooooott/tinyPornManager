@@ -58,53 +58,55 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieEditor extends JDialog {
 
   /** The content panel. */
-  private final JPanel contentPanel = new JPanel();
+  private final JPanel    contentPanel      = new JPanel();
 
   /** The movie to edit. */
-  private Movie movieToEdit;
+  private Movie           movieToEdit;
 
   /** The tf title. */
-  private JTextField tfTitle;
+  private JTextField      tfTitle;
 
   /** The tf original title. */
-  private JTextField tfOriginalTitle;
+  private JTextField      tfOriginalTitle;
 
   /** The tf year. */
-  private JTextField tfYear;
+  private JTextField      tfYear;
 
   /** The tp plot. */
-  private JTextPane tpPlot;
+  private JTextPane       tpPlot;
 
   /** The tf director. */
-  private JTextField tfDirector;
+  private JTextField      tfDirector;
 
   /** The table. */
-  private JTable table;
+  private JTable          table;
 
   /** The lbl movie path. */
-  private JLabel lblMoviePath;
+  private JLabel          lblMoviePath;
 
   /** The lbl poster. */
-  private ImageLabel lblPoster;
+  private ImageLabel      lblPoster;
 
   /** The lbl fanart. */
-  private ImageLabel lblFanart;
+  private ImageLabel      lblFanart;
 
   /** The cast. */
-  private List<MovieCast> cast = ObservableCollections.observableList(new ArrayList<MovieCast>());
+  private List<MovieCast> cast              = ObservableCollections.observableList(new ArrayList<MovieCast>());
 
   /** The action ok. */
-  private final Action actionOK = new SwingAction();
+  private final Action    actionOK          = new SwingAction();
 
   /** The action cancel. */
-  private final Action actionCancel = new SwingAction_1();
-  // private final Action actionChangePoster = new SwingAction_2();
-  // private final Action actionChangeFanart = new SwingAction_3();
+  private final Action    actionCancel      = new SwingAction_1();
+
   /** The action add actor. */
-  private final Action actionAddActor = new SwingAction_4();
+  private final Action    actionAddActor    = new SwingAction_4();
 
   /** The action remove actor. */
-  private final Action actionRemoveActor = new SwingAction_5();
+  private final Action    actionRemoveActor = new SwingAction_5();
+  private JTextField      tfWriter;
+  private JTextField      tfRuntime;
+  private JTextField      tfProductionCompanies;
 
   /**
    * Create the dialog.
@@ -120,15 +122,19 @@ public class MovieEditor extends JDialog {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("400px:grow"), FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"),
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:125px:grow"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("40px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:125px:grow"), }));
     {
       lblMoviePath = new JLabel("");
-      contentPanel.add(lblMoviePath, "2, 2, 5, 1");
+      contentPanel.add(lblMoviePath, "2, 2, 11, 1");
     }
     {
       JLabel lblTitle = new JLabel("Title");
@@ -136,7 +142,7 @@ public class MovieEditor extends JDialog {
     }
     {
       tfTitle = new JTextField();
-      contentPanel.add(tfTitle, "4, 4, fill, default");
+      contentPanel.add(tfTitle, "4, 4, 7, 1, fill, default");
       tfTitle.setColumns(10);
     }
     {
@@ -150,7 +156,7 @@ public class MovieEditor extends JDialog {
         }
       });
       lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      contentPanel.add(lblPoster, "6, 4, 1, 9, fill, fill");
+      contentPanel.add(lblPoster, "12, 4, 1, 9, fill, fill");
     }
     {
       JLabel lblOriginalTitle = new JLabel("Originaltitle");
@@ -158,7 +164,7 @@ public class MovieEditor extends JDialog {
     }
     {
       tfOriginalTitle = new JTextField();
-      contentPanel.add(tfOriginalTitle, "4, 6, fill, top");
+      contentPanel.add(tfOriginalTitle, "4, 6, 7, 1, fill, top");
       tfOriginalTitle.setColumns(10);
     }
     {
@@ -171,12 +177,25 @@ public class MovieEditor extends JDialog {
       tfYear.setColumns(10);
     }
     {
+      JLabel lblRuntime = new JLabel("Runtime");
+      contentPanel.add(lblRuntime, "6, 8, right, default");
+    }
+    {
+      tfRuntime = new JTextField();
+      contentPanel.add(tfRuntime, "8, 8, fill, default");
+      tfRuntime.setColumns(10);
+    }
+    {
+      JLabel lblMin = new JLabel("min");
+      contentPanel.add(lblMin, "10, 8");
+    }
+    {
       JLabel lblPlot = new JLabel("Plot");
       contentPanel.add(lblPlot, "2, 10, right, top");
     }
     {
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "4, 10, fill, fill");
+      contentPanel.add(scrollPane, "4, 10, 7, 1, fill, fill");
       {
         tpPlot = new JTextPane();
         scrollPane.setViewportView(tpPlot);
@@ -188,16 +207,34 @@ public class MovieEditor extends JDialog {
     }
     {
       tfDirector = new JTextField();
-      contentPanel.add(tfDirector, "4, 12, fill, top");
+      contentPanel.add(tfDirector, "4, 12, 7, 1, fill, top");
       tfDirector.setColumns(10);
     }
     {
+      JLabel lblWriter = new JLabel("Writer");
+      contentPanel.add(lblWriter, "2, 14, right, default");
+    }
+    {
+      tfWriter = new JTextField();
+      contentPanel.add(tfWriter, "4, 14, 7, 1, fill, top");
+      tfWriter.setColumns(10);
+    }
+    {
+      JLabel lblCompany = new JLabel("Production");
+      contentPanel.add(lblCompany, "2, 16, right, default");
+    }
+    {
+      tfProductionCompanies = new JTextField();
+      contentPanel.add(tfProductionCompanies, "4, 16, 7, 1, fill, default");
+      tfProductionCompanies.setColumns(10);
+    }
+    {
       JLabel lblActors = new JLabel("Actors");
-      contentPanel.add(lblActors, "2, 14, right, default");
+      contentPanel.add(lblActors, "2, 18, right, default");
     }
     {
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "4, 14, 1, 5, fill, fill");
+      contentPanel.add(scrollPane, "4, 18, 7, 5, fill, fill");
       {
         table = new JTable();
         scrollPane.setViewportView(table);
@@ -214,25 +251,24 @@ public class MovieEditor extends JDialog {
           dialog.setVisible(true);
         }
       });
-      contentPanel.add(lblFanart, "6, 14, 1, 5, fill, fill");
+      contentPanel.add(lblFanart, "12, 18, 1, 5, fill, fill");
     }
     {
       JButton btnAddActor = new JButton("Add Actor");
       btnAddActor.setAction(actionAddActor);
-      contentPanel.add(btnAddActor, "2, 16, right, top");
+      contentPanel.add(btnAddActor, "2, 20, right, top");
     }
     {
       JButton btnRemoveActor = new JButton("Remove Actor");
       btnRemoveActor.setAction(actionRemoveActor);
-      contentPanel.add(btnRemoveActor, "2, 18, right, top");
+      contentPanel.add(btnRemoveActor, "2, 22, right, top");
     }
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane
-          .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-              ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
-              FormFactory.RELATED_GAP_ROWSPEC, }));
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"),
+          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JButton okButton = new JButton("OK");
         okButton.setAction(actionOK);
@@ -253,10 +289,13 @@ public class MovieEditor extends JDialog {
       tfTitle.setText(movie.getName());
       tfOriginalTitle.setText(movie.getOriginalName());
       tfYear.setText(movie.getYear());
+      tfRuntime.setText(String.valueOf(movie.getRuntime()));
       tpPlot.setText(movie.getOverview());
       tfDirector.setText(movie.getDirector());
+      tfWriter.setText(movie.getWriter());
       lblPoster.setImagePath(movie.getPoster());
       lblFanart.setImagePath(movie.getFanart());
+      tfProductionCompanies.setText(movie.getProductionCompany());
 
       for (MovieCast origCast : movie.getActors()) {
         MovieCast actor = new MovieCast();
@@ -292,6 +331,7 @@ public class MovieEditor extends JDialog {
       movieToEdit.setName(tfTitle.getText());
       movieToEdit.setOriginalName(tfOriginalTitle.getText());
       movieToEdit.setYear(tfYear.getText());
+      movieToEdit.setRuntime(Integer.parseInt(tfRuntime.getText()));
 
       if (!StringUtils.isEmpty(lblPoster.getImageUrl()) && lblPoster.getImageUrl() != movieToEdit.getPosterUrl()) {
         movieToEdit.setPosterUrl(lblPoster.getImageUrl());
@@ -302,6 +342,10 @@ public class MovieEditor extends JDialog {
         movieToEdit.setFanartUrl(lblFanart.getImageUrl());
         movieToEdit.writeImages(false, true);
       }
+
+      movieToEdit.setDirector(tfDirector.getText());
+      movieToEdit.setWriter(tfWriter.getText());
+      movieToEdit.setProductionCompany(tfProductionCompanies.getText());
 
       movieToEdit.removeAllActors();
       for (MovieCast actor : cast) {

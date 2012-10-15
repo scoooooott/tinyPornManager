@@ -45,6 +45,7 @@ import com.moviejukebox.themoviedb.model.Genre;
 import com.moviejukebox.themoviedb.model.MovieDb;
 import com.moviejukebox.themoviedb.model.Person;
 import com.moviejukebox.themoviedb.model.PersonType;
+import com.moviejukebox.themoviedb.model.ProductionCompany;
 import com.moviejukebox.themoviedb.tools.ApiUrl;
 
 /**
@@ -276,9 +277,20 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     MediaMetadata.updateMDValue(md, MetadataKey.USER_RATING, String.valueOf(movie.getVoteAverage()));
     MediaMetadata.updateMDValue(md, MetadataKey.RUNNING_TIME, String.valueOf(movie.getRuntime()));
     MediaMetadata.updateMDValue(md, MetadataKey.TAGLINE, movie.getTagline());
+
     if (movie.getImdbID() != null && movie.getImdbID().contains("tt")) {
       MediaMetadata.updateMDValue(md, MetadataKey.IMDB_ID, movie.getImdbID());
     }
+
+    // production companies
+    StringBuilder productionCompanies = new StringBuilder("");
+    for (ProductionCompany company : movie.getProductionCompanies()) {
+      if (!StringUtils.isEmpty(productionCompanies)) {
+        productionCompanies.append(", ");
+      }
+      productionCompanies.append(company.getName());
+    }
+    MediaMetadata.updateMDValue(md, MetadataKey.COMPANY, productionCompanies.toString());
 
     // parse release date to year
     String releaseDate = movie.getReleaseDate();
@@ -286,6 +298,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       MediaMetadata.updateMDValue(md, MetadataKey.YEAR, releaseDate.substring(0, 4));
     }
     MediaMetadata.updateMDValue(md, MetadataKey.RELEASE_DATE, releaseDate);
+
+    // get certification
+    // tmdb.getMovieReleaseInfo(tmdbId,
+    // Globals.settings.getScraperTmdbCountry().name());
 
     // posters and fanart (first search with lang)
     List<Artwork> movieImages = tmdb.getMovieImages(tmdbId, Globals.settings.getImageTmdbLangugage().name());
@@ -315,10 +331,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         cm.setCharacter(castMember.getCharacter());
       }
       else if (castMember.getPersonType() == PersonType.CREW) {
-        if (castMember.getJob().equals("Director")) {
+        if ("Director".equals(castMember.getJob())) {
           cm.setType(CastMember.DIRECTOR);
         }
-        else if (castMember.getJob().equals("Author")) {
+        else if ("Writing".equals(castMember.getDepartment())) {
           cm.setType(CastMember.WRITER);
         }
         else {
