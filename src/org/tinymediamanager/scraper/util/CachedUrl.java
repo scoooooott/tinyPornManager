@@ -17,19 +17,15 @@ package org.tinymediamanager.scraper.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 
@@ -62,27 +58,29 @@ public class CachedUrl extends Url {
 
   @Override
   public InputStream getInputStream() throws IOException {
-    DefaultHttpClient httpClient = new DefaultHttpClient();
-    if (Globals.settings.useProxy()) {
-      List l = null;
-      try {
-        ProxySelector pl = ProxySelector.getDefault();
-        l = ProxySelector.getDefault().select(new URI("http://foo/bar"));
-      } catch (URISyntaxException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      setProxy(httpClient, Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()), Globals.settings.getProxyUsername(),
-          Globals.settings.getProxyPassword());
-    }
-
+    DefaultHttpClient httpClient = getHttpClient();
+    BasicHttpContext localContext = new BasicHttpContext();
     CachingHttpClient cachingClient = new CachingHttpClient(httpClient, cacheConfig);
-    HttpContext localContext = new BasicHttpContext();
-    HttpGet httpget = new HttpGet(url);
 
+    HttpGet httpget = new HttpGet(url);
     LOGGER.debug("getting " + url);
-    HttpResponse response = cachingClient.execute(httpget, localContext);
+
+    HttpResponse response = null;
+    if (Globals.settings.useProxy()) {
+      HttpHost proxy = new HttpHost(Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()));
+      response = cachingClient.execute(httpget, localContext);
+    } else {
+      response = cachingClient.execute(httpget, localContext);
+    }
+    LOGGER.debug(response.getStatusLine().toString());
     HttpEntity entity = response.getEntity();
+
+    // AuthState proxyAuthState = (AuthState)
+    // localContext.getAttribute(ClientContext.PROXY_AUTH_STATE);
+    // LOGGER.debug("Proxy auth state: " + proxyAuthState.getState());
+    // LOGGER.debug("Proxy auth scheme: " + proxyAuthState.getAuthScheme());
+    // LOGGER.debug("Proxy auth credentials: " +
+    // proxyAuthState.getCredentials());
 
     if (entity != null) {
       return entity.getContent();

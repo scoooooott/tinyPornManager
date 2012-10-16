@@ -394,6 +394,9 @@ public class Settings extends AbstractModelObject {
       System.setProperty("proxyHost", getProxyHost());
       System.setProperty("http.proxyUser", getProxyUsername());
       System.setProperty("http.proxyPassword", getProxyPassword());
+      System.setProperty("https.proxyUser", getProxyUsername());
+      System.setProperty("https.proxyPassword", getProxyPassword());
+      // System.setProperty("java.net.useSystemProxies", "true");
     }
   }
 

@@ -53,7 +53,7 @@ public class MediaMetadata {
     /** The animation. */
     ANIMATION("Animation"),
     /** The comedy. */
-    COMEDY("Comdey"),
+    COMEDY("Comedy"),
     /** The crime. */
     CRIME("Crime"),
     /** The disaster. */
@@ -165,31 +165,31 @@ public class MediaMetadata {
   }
 
   /** The Constant ACTOR. */
-  public static final int          ACTOR       = 0;
+  public static final int ACTOR = 0;
 
   /** The Constant WRITER. */
-  public static final int          WRITER      = 1;
+  public static final int WRITER = 1;
 
   /** The Constant DIRECTOR. */
-  public static final int          DIRECTOR    = 2;
+  public static final int DIRECTOR = 2;
 
   /** The Constant OTHER. */
-  public static final int          OTHER       = 99;
+  public static final int OTHER = 99;
 
   /** The Constant ALL. */
-  public static final int          ALL         = 999;
+  public static final int ALL = 999;
 
   /** The store. */
-  private Map<MetadataKey, String> store       = new HashMap<MetadataKey, String>();
+  private Map<MetadataKey, String> store = new HashMap<MetadataKey, String>();
 
   /** The cast members. */
-  private List<CastMember>         castMembers = new ArrayList<CastMember>();
+  private List<CastMember> castMembers = new ArrayList<CastMember>();
 
   /** The fanart. */
-  private List<MediaArt>           fanart      = new ArrayList<MediaArt>();
+  private List<MediaArt> fanart = new ArrayList<MediaArt>();
 
   /** The genres. */
-  private List<Genres>             genres      = new ArrayList<Genres>();
+  private List<Genres> genres = new ArrayList<Genres>();
 
   /**
    * Instantiates a new media metadata.
@@ -531,8 +531,7 @@ public class MediaMetadata {
   private int toInt(String value) {
     try {
       return Integer.parseInt(value);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       return 0;
     }
   }
@@ -594,8 +593,7 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toFloat(value, defValue);
-    }
-    else {
+    } else {
       return defValue;
     }
   }
@@ -613,8 +611,7 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toInt(value, defValue);
-    }
-    else {
+    } else {
       return defValue;
     }
   }

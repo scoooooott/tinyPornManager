@@ -41,16 +41,16 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 public class MovieList extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger    LOGGER    = Logger.getLogger(MovieList.class);
+  private static final Logger LOGGER = Logger.getLogger(MovieList.class);
 
   /** The instance. */
-  private static MovieList       instance;
+  private static MovieList instance;
 
   /** The settings. */
-  private final Settings         settings  = Settings.getInstance();
+  private final Settings settings = Settings.getInstance();
 
   /** The movie list. */
-  private final List<Movie>      movieList = ObservableCollections.observableList(new ArrayList<Movie>());
+  private final List<Movie> movieList = ObservableCollections.observableList(new ArrayList<Movie>());
 
   /** The metadata provider. */
   private IMediaMetadataProvider metadataProvider;
@@ -135,28 +135,38 @@ public class MovieList extends AbstractModelObject {
         movie.setObservableCastList();
         addMovie(movie);
       }
-    }
-    catch (PersistenceException e) {
+    } catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
 
-  // Search for new media
+  // // Search for new media
+  // /**
+  // * Update data sources.
+  // */
+  // public void updateDataSources() {
+  // Globals.entityManager.getTransaction().begin();
+  // // each datasource
+  // for (String path : settings.getMovieDataSource()) {
+  // // each subdir
+  // for (File subdir : new File(path).listFiles()) {
+  // if (subdir.isDirectory()) {
+  // findMovieInDirectory(subdir);
+  // }
+  // }
+  // }
+  // Globals.entityManager.getTransaction().commit();
+  // }
+
   /**
-   * Update data sources.
+   * find movies in path
    */
-  public void updateDataSources() {
-    Globals.entityManager.getTransaction().begin();
-    // each datasource
-    for (String path : settings.getMovieDataSource()) {
-      // each subdir
-      for (File subdir : new File(path).listFiles()) {
-        if (subdir.isDirectory()) {
-          findMovieInDirectory(subdir);
-        }
+  public void findMoviesInPath(String path) {
+    for (File subdir : new File(path).listFiles()) {
+      if (subdir.isDirectory()) {
+        findMovieInDirectory(subdir);
       }
     }
-    Globals.entityManager.getTransaction().commit();
   }
 
   // check if there is a movie in this dir
@@ -209,7 +219,9 @@ public class MovieList extends AbstractModelObject {
         }
         // persist movie
         if (movie != null) {
+          Globals.entityManager.getTransaction().begin();
           Globals.entityManager.persist(movie);
+          Globals.entityManager.getTransaction().commit();
           addMovie(movie);
         }
       }
@@ -222,8 +234,7 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
-    }
-    else {
+    } else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -258,8 +269,7 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = metadataProvider.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 

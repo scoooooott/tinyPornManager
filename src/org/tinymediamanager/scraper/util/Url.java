@@ -25,10 +25,15 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 
@@ -78,16 +83,12 @@ public class Url {
    *           Signals that an I/O exception has occurred.
    */
   public InputStream getInputStream() throws IOException {
-    DefaultHttpClient httpclient = new DefaultHttpClient();
-    if ((Globals.settings.useProxy())) {
-      setProxy(httpclient, Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()), Globals.settings.getProxyUsername(),
-          Globals.settings.getProxyPassword());
-    }
+    DefaultHttpClient httpclient = getHttpClient();
+    BasicHttpContext localContext = new BasicHttpContext();
 
     HttpGet httpget = new HttpGet(url);
-
     LOGGER.debug("getting " + url);
-    HttpResponse response = httpclient.execute(httpget);
+    HttpResponse response = httpclient.execute(httpget, localContext);
     HttpEntity entity = response.getEntity();
 
     if (entity != null) {
@@ -102,14 +103,39 @@ public class Url {
     return bytes;
   }
 
-  protected void setProxy(DefaultHttpClient httpClient, String host, int port, String user, String password) {
+  protected DefaultHttpClient getHttpClient() {
+    DefaultHttpClient client = new DefaultHttpClient();
+
+    HttpParams params = client.getParams();
+    HttpConnectionParams.setConnectionTimeout(params, 5000);
+    HttpConnectionParams.setSoTimeout(params, 5000);
+    HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
+
+    if ((Globals.settings.useProxy())) {
+      setProxy(client);
+    }
+
+    return client;
+  }
+
+  protected void setProxy(DefaultHttpClient httpClient) {
+    HttpHost proxyHost = new HttpHost(Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()));
+
     // authenticate
-    if (!StringUtils.isEmpty(user) && !StringUtils.isEmpty(password)) {
-      httpClient.getCredentialsProvider().setCredentials(new AuthScope(host, port), new UsernamePasswordCredentials(user, password));
+    if (!StringUtils.isEmpty(Globals.settings.getProxyUsername()) && !StringUtils.isEmpty(Globals.settings.getProxyPassword())) {
+      if (Globals.settings.getProxyUsername().contains("\\")) {
+        // use NTLM
+        int offset = Globals.settings.getProxyUsername().indexOf("\\");
+        String domain = Globals.settings.getProxyUsername().substring(0, offset);
+        String username = Globals.settings.getProxyUsername().substring(offset + 1, Globals.settings.getProxyUsername().length());
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
+      } else {
+        httpClient.getCredentialsProvider()
+            .setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
+      }
     }
 
     // set proxy
-    HttpHost proxy = new HttpHost(host, port);
-    httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+    httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
   }
 }
