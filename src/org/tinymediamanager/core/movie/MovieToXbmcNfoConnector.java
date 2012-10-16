@@ -87,6 +87,9 @@ public class MovieToXbmcNfoConnector {
   /** The director. */
   private String              director;
 
+  /** The sudio. */
+  private String              studio;
+
   /** The actors. */
   @XmlAnyElement(lax = true)
   private List<Actor>         actors;
@@ -134,6 +137,7 @@ public class MovieToXbmcNfoConnector {
     xbmc.setRuntime(movie.getRuntime());
     xbmc.setThumb(movie.getPosterUrl());
     xbmc.setId(movie.getImdbId());
+    xbmc.setStudio(movie.getProductionCompany());
 
     // filename and path
     if (movie.getMovieFiles().size() > 0) {
@@ -208,6 +212,7 @@ public class MovieToXbmcNfoConnector {
         movie.setPosterUrl(xbmc.getThumb());
         movie.setImdbId(xbmc.getId());
         movie.setDirector(xbmc.getDirector());
+        movie.setProductionCompany(xbmc.getStudio());
 
         for (Actor actor : xbmc.getActors()) {
           movie.addToCast(new MovieCast(actor.getName(), actor.getRole()));
@@ -518,6 +523,15 @@ public class MovieToXbmcNfoConnector {
     this.director = director;
   }
 
+  @XmlElement(name = "studio")
+  public String getStudio() {
+    return studio;
+  }
+
+  public void setStudio(String studio) {
+    this.studio = studio;
+  }
+
   // inner class actor to represent actors
   /**
    * The Class Actor.
@@ -591,4 +605,5 @@ public class MovieToXbmcNfoConnector {
     }
 
   }
+
 }

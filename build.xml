@@ -35,8 +35,21 @@
 	</target>
 
 	<target name='package-app' depends='create_run_jar'>
-		<taskdef name='appbundler' classname='com.joshondesign.appbundler.BundlerTask' classpath='AppBundler/classes;AppBundler/XMLLib.jar' />
+		<taskdef name='appbundler' classname='com.joshondesign.appbundler.BundlerTask' classpath='AppBundler/classes;AppBundler/XMLLib.jar;lib/commons-lang3-3.1.jar' />
 		<appbundler bundle="bundle.xml" target="win" destdir="dist" libdir="build/lib;lib;build" />
+		<appbundler bundle="bundle.xml" target="mac" destdir="dist" libdir="build/lib;lib;build" />
+		
+		<!-- Linux -->
+		<delete dir="dist/linux/lib" />
+    <delete dir="dist/linux" />
+    <mkdir dir="dist/linux" />
+		<mkdir dir="dist/linux/lib" />
+    <copy todir="dist/linux/lib">
+      <fileset dir="build/lib" includes="*" />
+    </copy>
+		<copy file="build/tmm.jar" todir="dist/linux" />
+		<copy file="AppBundler/tinyMediaManager.sh" todir="dist/linux" />
+		<chmod file="dist/linux/tinyMediaManager.sh" perm="ugo+rx"/>
 	</target>
 
 </project>

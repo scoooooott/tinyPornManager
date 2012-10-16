@@ -201,7 +201,7 @@ public class MovieChooser extends JDialog implements ActionListener {
       JPanel buttonPane = new JPanel();
       contentPanel.add(buttonPane, "1, 6");
       {
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton("Ok");
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
         buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),

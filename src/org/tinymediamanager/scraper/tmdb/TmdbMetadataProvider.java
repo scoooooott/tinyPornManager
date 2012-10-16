@@ -46,6 +46,7 @@ import com.moviejukebox.themoviedb.model.MovieDb;
 import com.moviejukebox.themoviedb.model.Person;
 import com.moviejukebox.themoviedb.model.PersonType;
 import com.moviejukebox.themoviedb.model.ProductionCompany;
+import com.moviejukebox.themoviedb.model.ReleaseInfo;
 import com.moviejukebox.themoviedb.tools.ApiUrl;
 
 /**
@@ -300,8 +301,12 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     MediaMetadata.updateMDValue(md, MetadataKey.RELEASE_DATE, releaseDate);
 
     // get certification
-    // tmdb.getMovieReleaseInfo(tmdbId,
-    // Globals.settings.getScraperTmdbCountry().name());
+    List<ReleaseInfo> releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
+    for (ReleaseInfo info : releaseInfo) {
+      if ("DE".equals(info.getCountry())) {
+        MediaMetadata.updateMDValue(md, MetadataKey.MPAA_RATING, info.getCertification());
+      }
+    }
 
     // posters and fanart (first search with lang)
     List<Artwork> movieImages = tmdb.getMovieImages(tmdbId, Globals.settings.getImageTmdbLangugage().name());

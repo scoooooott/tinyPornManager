@@ -35,7 +35,7 @@ import org.tinymediamanager.Globals;
 public class CachedUrl extends Url {
 
   /** The Constant log. */
-  private static final Logger LOGGER = Logger.getLogger(CachedUrl.class);
+  private static final Logger      LOGGER      = Logger.getLogger(CachedUrl.class);
 
   private static final CacheConfig cacheConfig = new CacheConfig();
 
@@ -69,10 +69,11 @@ public class CachedUrl extends Url {
     if (Globals.settings.useProxy()) {
       HttpHost proxy = new HttpHost(Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()));
       response = cachingClient.execute(httpget, localContext);
-    } else {
+    }
+    else {
       response = cachingClient.execute(httpget, localContext);
     }
-    LOGGER.debug(response.getStatusLine().toString());
+    // LOGGER.debug(response.getStatusLine().toString());
     HttpEntity entity = response.getEntity();
 
     // AuthState proxyAuthState = (AuthState)

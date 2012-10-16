@@ -144,8 +144,8 @@ public class SettingsPanel extends JPanel {
     tabbedPane.addTab("Movies", null, panelMovieSettings, null);
     panelMovieSettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(121dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default"), }));
 
     JPanel panelMovieDataSources = new JPanel();
     panelMovieDataSources.setBorder(new TitledBorder(null, "Data Sources", TitledBorder.LEADING, TitledBorder.TOP, null, null));
