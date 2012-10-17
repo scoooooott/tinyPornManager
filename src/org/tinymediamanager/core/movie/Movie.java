@@ -714,6 +714,7 @@ public class Movie extends AbstractModelObject {
     setProductionCompany(metadata.getCompany());
 
     // certifications
+    certifications.clear();
     for (Certification certification : metadata.getCertifications()) {
       MovieCertification cert = new MovieCertification(certification.getCountry(), certification.getCertification());
       certifications.add(cert);
@@ -959,7 +960,8 @@ public class Movie extends AbstractModelObject {
         outputStream.close();
         is.close();
         setPoster(filename);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -982,7 +984,8 @@ public class Movie extends AbstractModelObject {
         outputStream.close();
         is.close();
         setFanart(filename);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }

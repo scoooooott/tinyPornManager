@@ -201,8 +201,8 @@ public class MoviePanel extends JPanel {
     JPanel panelMovieDetails = new JPanel();
     splitPane.setRightComponent(panelMovieDetails);
     panelMovieDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("400px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:250px"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:default"), RowSpec.decode("fill:400px:grow"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:100px:grow"), }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:250px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:default"), RowSpec.decode("fill:400px:grow(3)"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:100px:grow"), }));
 
     JPanel panelMovieHeader = new JPanel();
     panelMovieHeader.setBorder(null);

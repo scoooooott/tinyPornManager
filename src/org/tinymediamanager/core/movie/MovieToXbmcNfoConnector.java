@@ -98,6 +98,15 @@ public class MovieToXbmcNfoConnector {
   @XmlElement(name = "genre")
   private List<String>        genres;
 
+  /** The mpaa certification */
+  private String              mpaa;
+
+  /** The certifications */
+  private String              certifications;
+
+  /** the credits */
+  private String              credits;
+
   /**
    * Instantiates a new movie to xbmc nfo connector.
    */
@@ -126,8 +135,14 @@ public class MovieToXbmcNfoConnector {
     int spaceIndex = 0;
     if (!StringUtils.isEmpty(xbmc.getPlot()) && xbmc.getPlot().length() > 200) {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
-      xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
-    } else if (!StringUtils.isEmpty(xbmc.getPlot())) {
+      if (spaceIndex > 0) {
+        xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
+      }
+      else {
+        xbmc.setOutline(xbmc.getPlot());
+      }
+    }
+    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
       spaceIndex = xbmc.getPlot().length();
       xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     }
@@ -138,12 +153,28 @@ public class MovieToXbmcNfoConnector {
     xbmc.setId(movie.getImdbId());
     xbmc.setStudio(movie.getProductionCompany());
 
+    // certifications
+    StringBuilder certifications = new StringBuilder();
+    for (MovieCertification certification : movie.getCertifications()) {
+      if (!StringUtils.isEmpty(certifications)) {
+        certifications.append(" / ");
+      }
+      certifications.append(certification.getCountry() + ":" + certification.getCertification());
+
+      // MPAA is stored separate
+      if ("US".equals(certification.getCountry())) {
+        xbmc.setMpaa(certification.getCertification());
+      }
+    }
+    xbmc.setCertifications(certifications.toString());
+
     // filename and path
     if (movie.getMovieFiles().size() > 0) {
       xbmc.setFilenameandpath(movie.getPath() + File.separator + movie.getMovieFiles().get(0));
     }
 
     xbmc.setDirector(movie.getDirector());
+    xbmc.setCredits(movie.getWriter());
     for (MovieCast cast : movie.getActors()) {
       xbmc.addActor(cast.getName(), cast.getCharacter());
     }
@@ -164,14 +195,18 @@ public class MovieToXbmcNfoConnector {
       w = new FileWriter(nfoFilename);
       m.marshal(xbmc, w);
 
-    } catch (JAXBException e) {
+    }
+    catch (JAXBException e) {
       LOGGER.error("setData", e);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOGGER.error("setData", e);
-    } finally {
+    }
+    finally {
       try {
         w.close();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("setData", e);
       }
     }
@@ -207,7 +242,11 @@ public class MovieToXbmcNfoConnector {
         movie.setPosterUrl(xbmc.getThumb());
         movie.setImdbId(xbmc.getId());
         movie.setDirector(xbmc.getDirector());
+        movie.setWriter(xbmc.getCredits());
         movie.setProductionCompany(xbmc.getStudio());
+        if (!StringUtils.isEmpty(xbmc.getMpaa())) {
+          movie.addCertification(new MovieCertification("US", xbmc.getMpaa()));
+        }
 
         for (Actor actor : xbmc.getActors()) {
           movie.addToCast(new MovieCast(actor.getName(), actor.getRole()));
@@ -222,12 +261,15 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      } catch (FileNotFoundException e) {
-        return null;
-      } catch (IOException e) {
+      }
+      catch (FileNotFoundException e) {
         return null;
       }
-    } catch (JAXBException e) {
+      catch (IOException e) {
+        return null;
+      }
+    }
+    catch (JAXBException e) {
       return null;
     }
 
@@ -522,6 +564,33 @@ public class MovieToXbmcNfoConnector {
 
   public void setStudio(String studio) {
     this.studio = studio;
+  }
+
+  @XmlElement(name = "mpaa")
+  public String getMpaa() {
+    return mpaa;
+  }
+
+  public void setMpaa(String mpaa) {
+    this.mpaa = mpaa;
+  }
+
+  @XmlElement(name = "certification")
+  public String getCertifications() {
+    return certifications;
+  }
+
+  public void setCertifications(String certifications) {
+    this.certifications = certifications;
+  }
+
+  @XmlElement(name = "credits")
+  public String getCredits() {
+    return credits;
+  }
+
+  public void setCredits(String credits) {
+    this.credits = credits;
   }
 
   // inner class actor to represent actors

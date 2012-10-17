@@ -100,7 +100,7 @@ public class MovieChooser extends JDialog implements ActionListener {
    */
   public MovieChooser(Movie movie) {
     setModal(true);
-    setBounds(100, 100, 858, 643);
+    setBounds(100, 100, 977, 643);
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -179,7 +179,7 @@ public class MovieChooser extends JDialog implements ActionListener {
             RowSpec.decode("30px"), RowSpec.decode("250px"), FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
         {
           lblMovieName = new JLabel("");
-          lblMovieName.setFont(new Font("Dialog", Font.BOLD, 20));
+          lblMovieName.setFont(new Font("Dialog", Font.BOLD, 16));
           panelSearchDetail.add(lblMovieName, "2, 1, 3, 1, fill, top");
         }
         {
@@ -205,8 +205,8 @@ public class MovieChooser extends JDialog implements ActionListener {
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
         buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), ColumnSpec.decode("54px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-            ColumnSpec.decode("81px"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+            ColumnSpec.decode("100px"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
         {
           progressBar = new JProgressBar();
           buttonPane.add(progressBar, "2, 2");
