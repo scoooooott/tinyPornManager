@@ -61,8 +61,7 @@ public class TinyMediaManager {
           // launch application
           MainWindow window = new MainWindow();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
         }
       }

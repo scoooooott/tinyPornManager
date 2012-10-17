@@ -36,7 +36,10 @@
 
 	<target name='package-app' depends='create_run_jar'>
 		<taskdef name='appbundler' classname='com.joshondesign.appbundler.BundlerTask' classpath='AppBundler/classes;AppBundler/XMLLib.jar;lib/commons-lang3-3.1.jar' />
+		<!-- Windows -->
 		<appbundler bundle="bundle.xml" target="win" destdir="dist" libdir="build/lib;lib;build" />
+		
+		<!-- Mac OSX -->
 		<appbundler bundle="bundle.xml" target="mac" destdir="dist" libdir="build/lib;lib;build" />
 		
 		<!-- Linux -->

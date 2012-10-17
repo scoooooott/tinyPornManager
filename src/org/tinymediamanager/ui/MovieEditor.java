@@ -49,6 +49,7 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieCertification;
 import org.tinymediamanager.scraper.MediaMetadata.Genres;
 import org.tinymediamanager.ui.ImageChooser.ImageType;
 
@@ -63,62 +64,66 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieEditor extends JDialog {
 
   /** The content panel. */
-  private final JPanel    contentPanel      = new JPanel();
+  private final JPanel             contentPanel      = new JPanel();
 
   /** The movie to edit. */
-  private Movie           movieToEdit;
+  private Movie                    movieToEdit;
 
   /** The tf title. */
-  private JTextField      tfTitle;
+  private JTextField               tfTitle;
 
   /** The tf original title. */
-  private JTextField      tfOriginalTitle;
+  private JTextField               tfOriginalTitle;
 
   /** The tf year. */
-  private JTextField      tfYear;
+  private JTextField               tfYear;
 
   /** The tp plot. */
-  private JTextPane       tpPlot;
+  private JTextPane                tpPlot;
 
   /** The tf director. */
-  private JTextField      tfDirector;
+  private JTextField               tfDirector;
 
   /** The table. */
-  private JTable          tableActors;
+  private JTable                   tableActors;
 
   /** The lbl movie path. */
-  private JLabel          lblMoviePath;
+  private JLabel                   lblMoviePath;
 
   /** The lbl poster. */
-  private ImageLabel      lblPoster;
+  private ImageLabel               lblPoster;
 
   /** The lbl fanart. */
-  private ImageLabel      lblFanart;
+  private ImageLabel               lblFanart;
 
   /** The cast. */
-  private List<MovieCast> cast              = ObservableCollections.observableList(new ArrayList<MovieCast>());
+  private List<MovieCast>          cast              = ObservableCollections.observableList(new ArrayList<MovieCast>());
 
   /** The genres. */
-  private List<Genres>    genres            = ObservableCollections.observableList(new ArrayList<Genres>());
+  private List<Genres>             genres            = ObservableCollections.observableList(new ArrayList<Genres>());
+
+  /** The certifications */
+  private List<MovieCertification> certifications    = ObservableCollections.observableList(new ArrayList<MovieCertification>());
 
   /** The action ok. */
-  private final Action    actionOK          = new SwingAction();
+  private final Action             actionOK          = new SwingAction();
 
   /** The action cancel. */
-  private final Action    actionCancel      = new SwingAction_1();
+  private final Action             actionCancel      = new SwingAction_1();
 
   /** The action add actor. */
-  private final Action    actionAddActor    = new SwingAction_4();
+  private final Action             actionAddActor    = new SwingAction_4();
 
   /** The action remove actor. */
-  private final Action    actionRemoveActor = new SwingAction_5();
-  private JTextField      tfWriter;
-  private JTextField      tfRuntime;
-  private JTextField      tfProductionCompanies;
-  private JList           listGenres;
-  private final Action    actionAddGenre    = new SwingAction_2();
-  private final Action    actionRemoveGenre = new SwingAction_3();
-  private JComboBox       cbGenres;
+  private final Action             actionRemoveActor = new SwingAction_5();
+  private JTextField               tfWriter;
+  private JTextField               tfRuntime;
+  private JTextField               tfProductionCompanies;
+  private JList                    listGenres;
+  private final Action             actionAddGenre    = new SwingAction_2();
+  private final Action             actionRemoveGenre = new SwingAction_3();
+  private JComboBox                cbGenres;
+  private JTable                   tableCertification;
 
   /**
    * Create the dialog.
@@ -134,17 +139,15 @@ public class MovieEditor extends JDialog {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("40px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:30px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:default:grow(2)"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("40px"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(150px;default)"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"),
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow(2)"), }));
     {
       lblMoviePath = new JLabel("");
       contentPanel.add(lblMoviePath, "2, 2, 11, 1");
@@ -302,9 +305,10 @@ public class MovieEditor extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      buttonPane
+          .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+              ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
+              FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JButton okButton = new JButton("OK");
         okButton.setAction(actionOK);
@@ -343,6 +347,18 @@ public class MovieEditor extends JDialog {
         cbGenres = new JComboBox(Genres.values());
         contentPanel.add(cbGenres, "10, 24");
       }
+      {
+        JLabel lblCertification = new JLabel("Certification");
+        contentPanel.add(lblCertification, "2, 26");
+      }
+      {
+        JScrollPane scrollPane = new JScrollPane();
+        contentPanel.add(scrollPane, "4, 26, 3, 3, fill, fill");
+        {
+          tableCertification = new JTable();
+          scrollPane.setViewportView(tableCertification);
+        }
+      }
 
       for (MovieCast origCast : movie.getActors()) {
         MovieCast actor = new MovieCast();
@@ -354,6 +370,11 @@ public class MovieEditor extends JDialog {
 
       for (Genres genre : movie.getGenres()) {
         genres.add(genre);
+      }
+
+      for (MovieCertification origCertification : movie.getCertifications()) {
+        MovieCertification certification = new MovieCertification(origCertification.getCountry(), origCertification.getCertification());
+        certifications.add(certification);
       }
     }
     initDataBindings();
@@ -406,6 +427,11 @@ public class MovieEditor extends JDialog {
       movieToEdit.removeAllGenres();
       for (Genres genre : genres) {
         movieToEdit.addGenre(genre);
+      }
+
+      movieToEdit.removeAllCertifications();
+      for (MovieCertification certification : certifications) {
+        movieToEdit.addCertification(certification);
       }
 
       movieToEdit.saveToDb();
@@ -488,21 +514,6 @@ public class MovieEditor extends JDialog {
     }
   }
 
-  protected void initDataBindings() {
-    JTableBinding<MovieCast, List<MovieCast>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
-    //
-    BeanProperty<MovieCast, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName("Name");
-    //
-    BeanProperty<MovieCast, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName("Role");
-    //
-    jTableBinding.bind();
-    //
-    JListBinding<Genres, List<Genres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
-    jListBinding.bind();
-  }
-
   private class SwingAction_2 extends AbstractAction {
     public SwingAction_2() {
       // putValue(NAME, "SwingAction_2");
@@ -531,5 +542,31 @@ public class MovieEditor extends JDialog {
         genres.remove(newGenre);
       }
     }
+  }
+
+  protected void initDataBindings() {
+    JTableBinding<MovieCast, List<MovieCast>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
+    //
+    BeanProperty<MovieCast, String> movieCastBeanProperty = BeanProperty.create("name");
+    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName("Name");
+    //
+    BeanProperty<MovieCast, String> movieCastBeanProperty_1 = BeanProperty.create("character");
+    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName("Role");
+    //
+    jTableBinding.bind();
+    //
+    JListBinding<Genres, List<Genres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
+    jListBinding.bind();
+    //
+    JTableBinding<MovieCertification, List<MovieCertification>, JTable> jTableBinding_1 = SwingBindings
+        .createJTableBinding(UpdateStrategy.READ, certifications, tableCertification);
+    //
+    BeanProperty<MovieCertification, String> movieCertificationBeanProperty = BeanProperty.create("country");
+    jTableBinding_1.addColumnBinding(movieCertificationBeanProperty).setColumnName("Country");
+    //
+    BeanProperty<MovieCertification, String> movieCertificationBeanProperty_1 = BeanProperty.create("certification");
+    jTableBinding_1.addColumnBinding(movieCertificationBeanProperty_1).setColumnName("Certification");
+    //
+    jTableBinding_1.bind();
   }
 }

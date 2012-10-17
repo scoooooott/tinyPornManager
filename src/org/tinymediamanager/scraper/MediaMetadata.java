@@ -161,7 +161,6 @@ public class MediaMetadata {
       }
       return null;
     }
-
   }
 
   /** The Constant ACTOR. */
@@ -190,6 +189,9 @@ public class MediaMetadata {
 
   /** The genres. */
   private List<Genres> genres = new ArrayList<Genres>();
+
+  /** The certifications. */
+  private List<Certification> certifications = new ArrayList<Certification>();
 
   /**
    * Instantiates a new media metadata.
@@ -799,6 +801,14 @@ public class MediaMetadata {
     if (md.get(key) == null && !StringUtils.isEmpty(value)) {
       md.set(key, value);
     }
+  }
+
+  public void addCertification(Certification certification) {
+    certifications.add(certification);
+  }
+
+  public List<Certification> getCertifications() {
+    return certifications;
   }
 
 }

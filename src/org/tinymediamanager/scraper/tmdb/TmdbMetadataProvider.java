@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.CastMember;
+import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArt;
@@ -55,13 +56,13 @@ import com.moviejukebox.themoviedb.tools.ApiUrl;
 public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByIMDBID {
 
   /** The Constant logger. */
-  private static final Logger               LOGGER   = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger LOGGER = Logger.getLogger(TmdbMetadataProvider.class);
 
   /** The Constant instance. */
   private static final TmdbMetadataProvider instance = new TmdbMetadataProvider();
 
   /** The tmdb. */
-  private TheMovieDb                        tmdb;
+  private TheMovieDb tmdb;
 
   /**
    * The Enum PosterSizes.
@@ -136,8 +137,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    }
-    catch (MovieDbException e) {
+    } catch (MovieDbException e) {
       LOGGER.error("TmdbMetadataProvider", e);
     }
   }
@@ -303,7 +303,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     // get certification
     List<ReleaseInfo> releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
     for (ReleaseInfo info : releaseInfo) {
-      if ("DE".equals(info.getCountry())) {
+      Certification certification = new Certification(info.getCountry(), info.getCertification());
+      md.addCertification(certification);
+
+      // MPAA is an extra case for certification
+      if ("US".equals(info.getCountry())) {
         MediaMetadata.updateMDValue(md, MetadataKey.MPAA_RATING, info.getCertification());
       }
     }
@@ -334,19 +338,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       if (castMember.getPersonType() == PersonType.CAST) {
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
-      }
-      else if (castMember.getPersonType() == PersonType.CREW) {
+      } else if (castMember.getPersonType() == PersonType.CREW) {
         if ("Director".equals(castMember.getJob())) {
           cm.setType(CastMember.DIRECTOR);
-        }
-        else if ("Writing".equals(castMember.getDepartment())) {
+        } else if ("Writing".equals(castMember.getDepartment())) {
           cm.setType(CastMember.WRITER);
-        }
-        else {
+        } else {
           continue;
         }
-      }
-      else {
+      } else {
         continue;
       }
 
