@@ -137,12 +137,10 @@ public class MovieToXbmcNfoConnector {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
         xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
-      }
-      else {
+      } else {
         xbmc.setOutline(xbmc.getPlot());
       }
-    }
-    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
+    } else if (!StringUtils.isEmpty(xbmc.getPlot())) {
       spaceIndex = xbmc.getPlot().length();
       xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     }
@@ -195,18 +193,14 @@ public class MovieToXbmcNfoConnector {
       w = new FileWriter(nfoFilename);
       m.marshal(xbmc, w);
 
-    }
-    catch (JAXBException e) {
+    } catch (JAXBException e) {
       LOGGER.error("setData", e);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOGGER.error("setData", e);
-    }
-    finally {
+    } finally {
       try {
         w.close();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.error("setData", e);
       }
     }
@@ -248,8 +242,13 @@ public class MovieToXbmcNfoConnector {
           movie.addCertification(new MovieCertification("US", xbmc.getMpaa()));
         }
 
-        for (Actor actor : xbmc.getActors()) {
-          movie.addToCast(new MovieCast(actor.getName(), actor.getRole()));
+        for (Object obj : xbmc.getActors()) {
+          // every unused XML element will be shown as an actor - we have to
+          // test it this way; else the program will crash
+          if (obj instanceof Actor) {
+            Actor actor = (Actor) obj;
+            movie.addToCast(new MovieCast(actor.getName(), actor.getRole()));
+          }
         }
 
         for (String genre : xbmc.getGenres()) {
@@ -261,15 +260,15 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
+        LOGGER.error("setData", e);
+        return null;
+      } catch (IOException e) {
+        LOGGER.error("setData", e);
         return null;
       }
-      catch (IOException e) {
-        return null;
-      }
-    }
-    catch (JAXBException e) {
+    } catch (JAXBException e) {
+      LOGGER.error("setData", e);
       return null;
     }
 
