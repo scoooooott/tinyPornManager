@@ -369,7 +369,15 @@ public class MovieEditor extends JDialog {
       lblFanart.setImagePath(movie.getFanart());
       tfProductionCompanies.setText(movie.getProductionCompany());
       spRuntime.setValue(new Integer(movie.getRuntime()));
-      spYear.setValue(Integer.valueOf(movie.getYear()));
+
+      int year = 0;
+      try {
+        year = Integer.valueOf(movie.getYear());
+      }
+      catch (Exception e) {
+      }
+      spYear.setValue(year);
+
       spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
       spRating.setModel(new SpinnerNumberModel(movie.getRating(), 0.0, 10.0, 0.1));
 
