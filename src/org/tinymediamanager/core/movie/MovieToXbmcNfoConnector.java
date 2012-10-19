@@ -98,13 +98,13 @@ public class MovieToXbmcNfoConnector {
   @XmlElement(name = "genre")
   private List<String>        genres;
 
-  /** The mpaa certification */
+  /** The mpaa certification. */
   private String              mpaa;
 
-  /** The certifications */
+  /** The certifications. */
   private String              certifications;
 
-  /** the credits */
+  /** the credits. */
   private String              credits;
 
   /**
@@ -556,38 +556,82 @@ public class MovieToXbmcNfoConnector {
     this.director = director;
   }
 
+  /**
+   * Gets the studio.
+   * 
+   * @return the studio
+   */
   @XmlElement(name = "studio")
   public String getStudio() {
     return studio;
   }
 
+  /**
+   * Sets the studio.
+   * 
+   * @param studio
+   *          the new studio
+   */
   public void setStudio(String studio) {
     this.studio = studio;
   }
 
+  /**
+   * Gets the mpaa.
+   * 
+   * @return the mpaa
+   */
   @XmlElement(name = "mpaa")
   public String getMpaa() {
     return mpaa;
   }
 
+  /**
+   * Sets the mpaa.
+   * 
+   * @param mpaa
+   *          the new mpaa
+   */
   public void setMpaa(String mpaa) {
     this.mpaa = mpaa;
   }
 
+  /**
+   * Gets the certifications.
+   * 
+   * @return the certifications
+   */
   @XmlElement(name = "certification")
   public String getCertifications() {
     return certifications;
   }
 
+  /**
+   * Sets the certifications.
+   * 
+   * @param certifications
+   *          the new certifications
+   */
   public void setCertifications(String certifications) {
     this.certifications = certifications;
   }
 
+  /**
+   * Gets the credits.
+   * 
+   * @return the credits
+   */
   @XmlElement(name = "credits")
   public String getCredits() {
     return credits;
   }
 
+  /**
+   * Sets the credits.
+   * 
+   * @param credits
+   *          the new credits
+   */
   public void setCredits(String credits) {
     this.credits = credits;
   }

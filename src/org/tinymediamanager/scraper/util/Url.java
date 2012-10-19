@@ -73,14 +73,9 @@ public class Url {
 
   /**
    * Gets the input stream.
-   * 
-   * @param handler
-   *          the handler
-   * @param followRedirects
-   *          the follow redirects
+   *
    * @return the input stream
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
+   * @throws IOException Signals that an I/O exception has occurred.
    */
   public InputStream getInputStream() throws IOException {
     DefaultHttpClient httpclient = getHttpClient();
@@ -97,12 +92,23 @@ public class Url {
     return null;
   }
 
+  /**
+   * Gets the bytes.
+   *
+   * @return the bytes
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
   public byte[] getBytes() throws IOException {
     InputStream is = getInputStream();
     byte[] bytes = IOUtils.toByteArray(is);
     return bytes;
   }
 
+  /**
+   * Gets the http client.
+   *
+   * @return the http client
+   */
   protected DefaultHttpClient getHttpClient() {
     DefaultHttpClient client = new DefaultHttpClient();
 
@@ -118,6 +124,11 @@ public class Url {
     return client;
   }
 
+  /**
+   * Sets the proxy.
+   *
+   * @param httpClient the new proxy
+   */
   protected void setProxy(DefaultHttpClient httpClient) {
     HttpHost proxyHost = new HttpHost(Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()));
 

@@ -41,16 +41,16 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 public class MovieList extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(MovieList.class);
+  private static final Logger    LOGGER    = Logger.getLogger(MovieList.class);
 
   /** The instance. */
-  private static MovieList instance;
+  private static MovieList       instance;
 
   /** The settings. */
-  private final Settings settings = Settings.getInstance();
+  private final Settings         settings  = Settings.getInstance();
 
   /** The movie list. */
-  private final List<Movie> movieList = ObservableCollections.observableList(new ArrayList<Movie>());
+  private final List<Movie>      movieList = ObservableCollections.observableList(new ArrayList<Movie>());
 
   /** The metadata provider. */
   private IMediaMetadataProvider metadataProvider;
@@ -60,9 +60,11 @@ public class MovieList extends AbstractModelObject {
    */
   private MovieList() {
     // set metadataProvider
+    LOGGER.debug("get instance of TmdbMetadataProvider");
     metadataProvider = TmdbMetadataProvider.getInstance();
 
     // load existing movies from database
+    LOGGER.debug("load movies from database");
     loadMoviesFromDatabase();
 
   }
@@ -90,6 +92,11 @@ public class MovieList extends AbstractModelObject {
     firePropertyChange("movies", null, movieList);
   }
 
+  /**
+   * Gets the unscraped movies.
+   * 
+   * @return the unscraped movies
+   */
   public List<Movie> getUnscrapedMovies() {
     List<Movie> unscrapedMovies = new ArrayList<Movie>();
 
@@ -130,7 +137,11 @@ public class MovieList extends AbstractModelObject {
     try {
       TypedQuery<Movie> query = Globals.entityManager.createQuery("SELECT movie FROM Movie movie", Movie.class);
       List<Movie> movies = query.getResultList();
-      // List<Movie> movies = MovieJdbcDAO.getInstance().getAllMovies();
+      if (movies != null) {
+        LOGGER.debug("found " + movies.size() + " movies in database");
+      } else {
+        LOGGER.debug("found nothing in database");
+      }
       for (Movie movie : movies) {
         movie.setObservableCastList();
         addMovie(movie);
@@ -140,28 +151,14 @@ public class MovieList extends AbstractModelObject {
     }
   }
 
-  // // Search for new media
-  // /**
-  // * Update data sources.
-  // */
-  // public void updateDataSources() {
-  // Globals.entityManager.getTransaction().begin();
-  // // each datasource
-  // for (String path : settings.getMovieDataSource()) {
-  // // each subdir
-  // for (File subdir : new File(path).listFiles()) {
-  // if (subdir.isDirectory()) {
-  // findMovieInDirectory(subdir);
-  // }
-  // }
-  // }
-  // Globals.entityManager.getTransaction().commit();
-  // }
-
   /**
-   * find movies in path
+   * find movies in path.
+   * 
+   * @param path
+   *          the path
    */
   public void findMoviesInPath(String path) {
+    LOGGER.debug("find movies in path " + path);
     for (File subdir : new File(path).listFiles()) {
       if (subdir.isDirectory()) {
         findMovieInDirectory(subdir);
@@ -177,6 +174,7 @@ public class MovieList extends AbstractModelObject {
    *          the dir
    */
   private void findMovieInDirectory(File dir) {
+    LOGGER.debug("find movies in directory " + dir.getPath());
     // check if there are any videofiles in that subdir
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
@@ -201,9 +199,11 @@ public class MovieList extends AbstractModelObject {
     File[] videoFiles = dir.listFiles(filter);
     // movie files found in directory?
     if (videoFiles.length > 0) {
+      LOGGER.debug("found video files in " + dir.getPath());
       // does this path exists for an other movie?
       Movie movie = getMovieByPath(dir.getPath());
       if (movie == null) {
+        LOGGER.debug("no movie exists in path " + dir.getPath());
         // movie did not exist - try to parse a NFO file
         movie = Movie.parseNFO(dir.getPath());
         if (movie == null) {
@@ -219,6 +219,7 @@ public class MovieList extends AbstractModelObject {
         }
         // persist movie
         if (movie != null) {
+          LOGGER.debug("store movie " + dir.getPath());
           Globals.entityManager.getTransaction().begin();
           Globals.entityManager.persist(movie);
           Globals.entityManager.getTransaction().commit();
@@ -262,6 +263,13 @@ public class MovieList extends AbstractModelObject {
     return null;
   }
 
+  /**
+   * Search movie.
+   * 
+   * @param searchTerm
+   *          the search term
+   * @return the list
+   */
   public List<MediaSearchResult> searchMovie(String searchTerm) {
     // format searchstring
     searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
@@ -276,6 +284,11 @@ public class MovieList extends AbstractModelObject {
     return searchResult;
   }
 
+  /**
+   * Gets the metadata provider.
+   * 
+   * @return the metadata provider
+   */
   public IMediaMetadataProvider getMetadataProvider() {
     return metadataProvider;
   }

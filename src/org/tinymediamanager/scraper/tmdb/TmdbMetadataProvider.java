@@ -38,7 +38,6 @@ import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.ProviderInfo;
 import org.tinymediamanager.scraper.SearchQuery;
 
-import com.moviejukebox.themoviedb.MovieDbException;
 import com.moviejukebox.themoviedb.TheMovieDb;
 import com.moviejukebox.themoviedb.model.Artwork;
 import com.moviejukebox.themoviedb.model.ArtworkType;
@@ -56,13 +55,13 @@ import com.moviejukebox.themoviedb.tools.ApiUrl;
 public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByIMDBID {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger         LOGGER = Logger.getLogger(TmdbMetadataProvider.class);
 
   /** The Constant instance. */
-  private static final TmdbMetadataProvider instance = new TmdbMetadataProvider();
+  private static TmdbMetadataProvider instance;
 
   /** The tmdb. */
-  private TheMovieDb tmdb;
+  private TheMovieDb                  tmdb;
 
   /**
    * The Enum PosterSizes.
@@ -137,7 +136,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    } catch (MovieDbException e) {
+    } catch (Exception e) {
       LOGGER.error("TmdbMetadataProvider", e);
     }
   }
@@ -148,6 +147,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
    * @return single instance of TmdbMetadataProvider
    */
   public static TmdbMetadataProvider getInstance() {
+    if (instance == null) {
+      instance = new TmdbMetadataProvider();
+    }
     return instance;
   }
 

@@ -37,6 +37,7 @@ public class CachedUrl extends Url {
   /** The Constant log. */
   private static final Logger      LOGGER      = Logger.getLogger(CachedUrl.class);
 
+  /** The Constant cacheConfig. */
   private static final CacheConfig cacheConfig = new CacheConfig();
 
   static {
@@ -56,6 +57,9 @@ public class CachedUrl extends Url {
     super(url);
   }
 
+  /* (non-Javadoc)
+   * @see org.tinymediamanager.scraper.util.Url#getInputStream()
+   */
   @Override
   public InputStream getInputStream() throws IOException {
     DefaultHttpClient httpClient = getHttpClient();

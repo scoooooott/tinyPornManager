@@ -106,7 +106,7 @@ public class Movie extends AbstractModelObject {
   /** The Constant ACTOR. */
   protected final static String    ACTOR              = "actor";
 
-  /** The Constant Production Company */
+  /** The Constant Production Company. */
   protected final static String    PRODUCTION_COMPANY = "productionCompany";
 
   /** The Constant NAME. */
@@ -181,10 +181,10 @@ public class Movie extends AbstractModelObject {
   /** The writer. */
   private String                   writer;
 
-  /** The production company */
+  /** The production company. */
   private String                   productionCompany;
 
-  /** The certification */
+  /** The certification. */
   // private String certification;
 
   /** The scraped. */
@@ -204,7 +204,7 @@ public class Movie extends AbstractModelObject {
   @Transient
   private List<MovieCast>          castObservable     = ObservableCollections.observableList(cast);
 
-  /** the certifications */
+  /** the certifications. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<MovieCertification> certifications     = new ArrayList<MovieCertification>();
 
@@ -231,7 +231,7 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * checks if this movie has been scraped
+   * checks if this movie has been scraped.
    * 
    * @return isScraped
    */
@@ -352,14 +352,20 @@ public class Movie extends AbstractModelObject {
     String poster = path + File.separator + "movie.tbn";
     File imageFile = new File(poster);
     if (imageFile.exists()) {
+      LOGGER.debug("found poster " + imageFile.getPath());
       setPoster(poster);
+    } else {
+      LOGGER.debug("no poster found");
     }
 
     // fanart - fanart.jpg
     String fanart = path + File.separator + "fanart.jpg";
     imageFile = new File(fanart);
     if (imageFile.exists()) {
+      LOGGER.debug("found fanart " + imageFile.getPath());
       setFanart(fanart);
+    } else {
+      LOGGER.debug("no fanart found");
     }
   }
 
@@ -585,6 +591,7 @@ public class Movie extends AbstractModelObject {
    * @return the movie
    */
   public static Movie parseNFO(String path) {
+    LOGGER.debug("try to find a nfo for " + path);
     // check if there are any NFOs in that directory
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
@@ -606,8 +613,10 @@ public class Movie extends AbstractModelObject {
     File directory = new File(path);
     File[] nfoFiles = directory.listFiles(filter);
     for (File file : nfoFiles) {
+      LOGGER.debug("parsing nfo" + file.getPath());
       movie = MovieToXbmcNfoConnector.getData(file.getPath());
       if (movie == null) {
+        LOGGER.debug("did not find movie informations in nfo");
         continue;
       }
 
@@ -960,8 +969,7 @@ public class Movie extends AbstractModelObject {
         outputStream.close();
         is.close();
         setPoster(filename);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -984,8 +992,7 @@ public class Movie extends AbstractModelObject {
         outputStream.close();
         is.close();
         setFanart(filename);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
@@ -1023,10 +1030,21 @@ public class Movie extends AbstractModelObject {
     firePropertyChange(WRITER, oldValue, newValue);
   }
 
+  /**
+   * Gets the production company.
+   * 
+   * @return the production company
+   */
   public String getProductionCompany() {
     return productionCompany;
   }
 
+  /**
+   * Sets the production company.
+   * 
+   * @param newValue
+   *          the new production company
+   */
   public void setProductionCompany(String newValue) {
     String oldValue = this.productionCompany;
     this.productionCompany = newValue;
@@ -1074,25 +1092,48 @@ public class Movie extends AbstractModelObject {
     firePropertyChange(GENRE, null, genre);
   }
 
+  /**
+   * Removes the all genres.
+   */
   public void removeAllGenres() {
     genres.clear();
     firePropertyChange(GENRE, null, genres);
   }
 
+  /**
+   * Gets the certifications.
+   * 
+   * @return the certifications
+   */
   public List<MovieCertification> getCertifications() {
     return certifications;
   }
 
+  /**
+   * Adds the certification.
+   * 
+   * @param newValue
+   *          the new value
+   */
   public void addCertification(MovieCertification newValue) {
     this.certifications.add(newValue);
     firePropertyChange(CERTIFICATIONS, null, newValue);
   }
 
+  /**
+   * Sets the certifications.
+   * 
+   * @param newValue
+   *          the new certifications
+   */
   public void setCertifications(List<MovieCertification> newValue) {
     this.certifications = newValue;
     firePropertyChange(CERTIFICATIONS, null, newValue);
   }
 
+  /**
+   * Removes the all certifications.
+   */
   public void removeAllCertifications() {
     certifications.clear();
     firePropertyChange(CERTIFICATIONS, null, certifications);

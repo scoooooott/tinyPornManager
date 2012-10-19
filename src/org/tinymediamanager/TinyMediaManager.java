@@ -23,6 +23,7 @@ import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.tinymediamanager.ui.MainWindow;
 
@@ -30,6 +31,8 @@ import org.tinymediamanager.ui.MainWindow;
  * The Class TinyMediaManager.
  */
 public class TinyMediaManager {
+
+  private static final Logger LOGGER = Logger.getLogger(TinyMediaManager.class);
 
   /**
    * The main method.
@@ -40,29 +43,46 @@ public class TinyMediaManager {
   public static void main(String[] args) {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
+        EntityManagerFactory emf = null;
         try {
+          // get logger configuration
+          PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
+          LOGGER.debug("starting tinyMediaManager");
+
           // Get the native look and feel class name
           String nativeLF = UIManager.getSystemLookAndFeelClassName();
 
           // Install the look and feel
           UIManager.setLookAndFeel(nativeLF);
 
-          // default console logger
-          // BasicConfigurator.configure();
-          PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
-
           // initialize database
-          EntityManagerFactory emf = Persistence.createEntityManagerFactory("tmm.odb");
+          LOGGER.debug("initialize database");
+          emf = Persistence.createEntityManagerFactory("tmm.odb");
           Globals.entityManager = emf.createEntityManager();
+          LOGGER.debug("database opened");
 
           // proxy settings
-          Globals.settings.setProxy();
+          if (Globals.settings.useProxy()) {
+            LOGGER.debug("setting proxy");
+            Globals.settings.setProxy();
+          }
 
           // launch application
           MainWindow window = new MainWindow();
 
         } catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
+          LOGGER.error("start of tmm", e);
+          // } finally {
+          // try {
+          // if (Globals.entityManager != null) {
+          // Globals.entityManager.close();
+          // }
+          // if (emf != null) {
+          // emf.close();
+          // }
+          // } catch (Exception e) {
+          // }
         }
       }
     });
