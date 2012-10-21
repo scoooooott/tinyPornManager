@@ -125,7 +125,7 @@ public class ImageChooser extends JDialog {
     this.imageLabel = imageLabel;
     this.type = type;
 
-    setBounds(100, 100, 968, 590);
+    setBounds(5, 5, 968, 590);
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), },

@@ -40,6 +40,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -61,6 +62,8 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MovieChooser.
  */
 public class MovieChooser extends JDialog implements ActionListener {
+  /** The static LOGGER */
+  private static final Logger     LOGGER       = Logger.getLogger(MovieChooser.class);
 
   /** The content panel. */
   private final JPanel            contentPanel = new JPanel();
@@ -100,7 +103,7 @@ public class MovieChooser extends JDialog implements ActionListener {
    */
   public MovieChooser(Movie movie) {
     setModal(true);
-    setBounds(100, 100, 977, 643);
+    setBounds(5, 5, 977, 643);
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);

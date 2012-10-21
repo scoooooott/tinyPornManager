@@ -37,7 +37,16 @@
 	<target name='package-app' depends='create_run_jar'>
 		<taskdef name='appbundler' classname='com.joshondesign.appbundler.BundlerTask' classpath='AppBundler/classes;AppBundler/XMLLib.jar;lib/commons-lang3-3.1.jar' />
 		<!-- Windows -->
-		<appbundler bundle="bundle.xml" target="win" destdir="dist" libdir="build/lib;lib;build" />
+		<!--<appbundler bundle="bundle.xml" target="win" destdir="dist" libdir="build/lib;lib;build" />-->
+		<delete dir="dist/win/lib" />
+		<delete dir="dist/win" />
+		<mkdir dir="dist/win" />
+		<mkdir dir="dist/win/lib" />
+		<copy todir="dist/win/lib">
+		  <fileset dir="build/lib" includes="*" />
+		</copy>
+		<copy file="build/tmm.jar" todir="dist/win" />
+		<copy file="AppBundler/tinyMediaManager.bat" todir="dist/win" />
 		
 		<!-- Mac OSX -->
 		<appbundler bundle="bundle.xml" target="mac" destdir="dist" libdir="build/lib;lib;build" />

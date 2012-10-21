@@ -1,0 +1,1 @@
+java -jar lib/tmm.jar -Dsun.java2d.opengl=true -Dsun.java2d.d3d=false -Dsun.java2d.noddraw=true

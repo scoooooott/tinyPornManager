@@ -16,6 +16,8 @@
 package org.tinymediamanager;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 import org.tinymediamanager.core.Settings;
 
@@ -25,8 +27,20 @@ import org.tinymediamanager.core.Settings;
 public class Globals {
 
   /** The settings. */
-  public static Settings settings = Settings.getInstance();
+  public static Settings              settings = Settings.getInstance();
+
+  private static EntityManagerFactory emf;
 
   /** The entity manager. */
-  public static EntityManager entityManager;
+  public static EntityManager         entityManager;
+
+  public static void startDatabase() throws Exception {
+    emf = Persistence.createEntityManagerFactory("tmm.odb");
+    entityManager = emf.createEntityManager();
+  }
+
+  public static void shutdownDatabase() throws Exception {
+    entityManager.close();
+    emf.close();
+  }
 }

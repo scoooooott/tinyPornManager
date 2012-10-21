@@ -1,0 +1,11 @@
+# The URL from which the client is downloaded
+appbase = http://myapplication.com/myapp/
+
+# UI Configuration
+ui.name = tinyMediaManager
+
+# Application jar files
+code = tmm.jar
+
+# The main entry point for the application
+class = org.tinymediamanager.TinyMediaManager

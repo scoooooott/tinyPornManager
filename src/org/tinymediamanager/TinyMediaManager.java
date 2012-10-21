@@ -18,8 +18,6 @@ package org.tinymediamanager;
 
 import java.awt.EventQueue;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -43,11 +41,11 @@ public class TinyMediaManager {
   public static void main(String[] args) {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
-        EntityManagerFactory emf = null;
         try {
           // get logger configuration
           PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
           LOGGER.debug("starting tinyMediaManager");
+          LOGGER.debug("default encoding " + System.getProperty("file.encoding"));
 
           // Get the native look and feel class name
           String nativeLF = UIManager.getSystemLookAndFeelClassName();
@@ -57,8 +55,7 @@ public class TinyMediaManager {
 
           // initialize database
           LOGGER.debug("initialize database");
-          emf = Persistence.createEntityManagerFactory("tmm.odb");
-          Globals.entityManager = emf.createEntityManager();
+          Globals.startDatabase();
           LOGGER.debug("database opened");
 
           // proxy settings
@@ -70,19 +67,13 @@ public class TinyMediaManager {
           // launch application
           MainWindow window = new MainWindow();
 
-        } catch (Exception e) {
+        }
+        catch (javax.persistence.PersistenceException e) {
+          JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
-          // } finally {
-          // try {
-          // if (Globals.entityManager != null) {
-          // Globals.entityManager.close();
-          // }
-          // if (emf != null) {
-          // emf.close();
-          // }
-          // } catch (Exception e) {
-          // }
         }
       }
     });

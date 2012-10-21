@@ -136,7 +136,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("TmdbMetadataProvider", e);
     }
   }
@@ -340,15 +341,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       if (castMember.getPersonType() == PersonType.CAST) {
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
-      } else if (castMember.getPersonType() == PersonType.CREW) {
+      }
+      else if (castMember.getPersonType() == PersonType.CREW) {
         if ("Director".equals(castMember.getJob())) {
           cm.setType(CastMember.DIRECTOR);
-        } else if ("Writing".equals(castMember.getDepartment())) {
+        }
+        else if ("Writing".equals(castMember.getDepartment())) {
           cm.setType(CastMember.WRITER);
-        } else {
+        }
+        else {
           continue;
         }
-      } else {
+      }
+      else {
         continue;
       }
 
@@ -549,7 +554,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     LOGGER.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
     URL url = tmdbSearchMovie.getQueryUrl(searchString, Globals.settings.getScraperTmdbLanguage().name(), 1);
-    LOGGER.debug(url.toString());
+    LOGGER.debug(url.toString().replace("&api_key=6247670ec93f4495a36297ff88f7cd15", "&<API_KEY>"));
 
     List<MovieDb> moviesFound = tmdb.searchMovie(searchString, Globals.settings.getScraperTmdbLanguage().name(), false);
 

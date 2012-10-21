@@ -63,9 +63,10 @@ public class MovieList extends AbstractModelObject {
     LOGGER.debug("get instance of TmdbMetadataProvider");
     metadataProvider = TmdbMetadataProvider.getInstance();
 
-    // load existing movies from database
-    LOGGER.debug("load movies from database");
-    loadMoviesFromDatabase();
+    // // load existing movies from database
+    // LOGGER.debug("load movies from database");
+    // loadMoviesFromDatabase();
+    // LOGGER.debug("loaded movies from Database");
 
   }
 
@@ -133,20 +134,32 @@ public class MovieList extends AbstractModelObject {
   /**
    * Load movies from database.
    */
-  private void loadMoviesFromDatabase() {
+  public void loadMoviesFromDatabase() {
     try {
       TypedQuery<Movie> query = Globals.entityManager.createQuery("SELECT movie FROM Movie movie", Movie.class);
       List<Movie> movies = query.getResultList();
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
-      } else {
+      }
+      else {
         LOGGER.debug("found nothing in database");
       }
-      for (Movie movie : movies) {
-        movie.setObservableCastList();
-        addMovie(movie);
-      }
-    } catch (PersistenceException e) {
+      // LOGGER.debug(movies);
+      for (Object obj : movies)
+        if (obj instanceof Movie) {
+          Movie movie = (Movie) obj;
+          // LOGGER.debug(movie);
+          movie.setObservableCastList();
+          addMovie(movie);
+        }
+        else {
+          LOGGER.error("retrieved no movie: " + obj);
+        }
+    }
+    catch (PersistenceException e) {
+      LOGGER.error("loadMoviesFromDatabase", e);
+    }
+    catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -235,7 +248,8 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
-    } else {
+    }
+    else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -277,7 +291,8 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = metadataProvider.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 
