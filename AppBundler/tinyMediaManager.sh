@@ -1,2 +1,2 @@
 #!/bin/bash
-java -jar tmm.jar
+java -jar getdown.jar .

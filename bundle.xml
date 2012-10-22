@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <app name="tinyMediaManager">
-    <jar name="tmm.jar" 
-        main-class="org.tinymediamanager.TinyMediaManager"/>
+    <jar name="getdown.jar" main-class="com.threerings.getdown.launcher.Getdown"/>
+    <jar name="tmm.jar" />
     <jar name="commons-lang3-3.1.jar" />
     <jar name="log4j-1.2.16.jar" />
     <jar name="themoviedbapi-3.2-SNAPSHOT-r169.jar" />

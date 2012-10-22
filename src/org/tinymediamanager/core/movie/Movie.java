@@ -348,13 +348,14 @@ public class Movie extends AbstractModelObject {
   private void findImages() {
     // try to find images in movie path
 
-    // poster - movie.tbn
-    String poster = path + File.separator + "movie.tbn";
+    // poster - folder.jpg
+    String poster = path + File.separator + "folder.jpg";
     File imageFile = new File(poster);
     if (imageFile.exists()) {
       LOGGER.debug("found poster " + imageFile.getPath());
       setPoster(poster);
-    } else {
+    }
+    else {
       LOGGER.debug("no poster found");
     }
 
@@ -364,7 +365,8 @@ public class Movie extends AbstractModelObject {
     if (imageFile.exists()) {
       LOGGER.debug("found fanart " + imageFile.getPath());
       setFanart(fanart);
-    } else {
+    }
+    else {
       LOGGER.debug("no fanart found");
     }
   }
@@ -944,8 +946,6 @@ public class Movie extends AbstractModelObject {
    *          the fanart
    */
   public void writeImages(boolean poster, boolean fanart) {
-    byte tmp_buffer[] = new byte[4096];
-    int n;
     FileOutputStream outputStream = null;
     InputStream is = null;
     CachedUrl url = null;
@@ -958,18 +958,15 @@ public class Movie extends AbstractModelObject {
         oldFilename = getPoster();
         setPoster("");
         url = new CachedUrl(getPosterUrl());
-        filename = this.path + File.separator + "movie.tbn";
+        filename = this.path + File.separator + "folder.jpg";
         outputStream = new FileOutputStream(filename);
         is = url.getInputStream();
         IOUtils.copy(is, outputStream);
-        // while ((n = is.read(tmp_buffer)) > 0) {
-        // outputStream.write(tmp_buffer, 0, n);
-        // outputStream.flush();
-        // }
         outputStream.close();
         is.close();
         setPoster(filename);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -985,14 +982,11 @@ public class Movie extends AbstractModelObject {
         outputStream = new FileOutputStream(filename);
         is = url.getInputStream();
         IOUtils.copy(is, outputStream);
-        // while ((n = is.read(tmp_buffer)) > 0) {
-        // outputStream.write(tmp_buffer, 0, n);
-        // outputStream.flush();
-        // }
         outputStream.close();
         is.close();
         setFanart(filename);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
