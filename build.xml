@@ -72,6 +72,21 @@
 		<copy file="AppBundler/LICENSE" todir="dist/linux" />
 		<copy file="AppBundler/tinyMediaManager.sh" todir="dist/linux" />
 		<chmod file="dist/linux/tinyMediaManager.sh" perm="ugo+rx"/>
+		
+		<!-- getdown -->
+		<delete dir="dist/getdown/lib" />
+		<delete dir="dist/getdown" />
+		<mkdir dir="dist/getdown" />
+		<mkdir dir="dist/getdown/lib" />
+		<copy todir="dist/getdown/lib">
+		  <fileset dir="build/lib" includes="*" />
+		</copy>
+		<copy file="build/tmm.jar" todir="dist/getdown" />
+		<copy file="AppBundler/getdown.txt" todir="dist/getdown" />
+		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask"
+		         classpath="AppBundler/getdown-tools-1.2.jar"/>
+		<digest appdir="dist/getdown"/>
+		
 	</target>
 
 </project>
