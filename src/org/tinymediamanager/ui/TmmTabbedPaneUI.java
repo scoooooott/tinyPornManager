@@ -36,19 +36,19 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
 
   /** The select color. */
-  private Color selectColor;
+  private Color   selectColor;
 
   /** The incl tab. */
-  private int inclTab = 12;
+  private int     inclTab       = 2;
 
   /** The ancho foco v. */
-  private int anchoFocoV = inclTab;
+  private int     anchoFocoV    = inclTab;
 
   /** The ancho foco h. */
-  private int anchoFocoH = 4;
+  private int     anchoFocoH    = 4;
 
   /** The ancho carpetas. */
-  private int anchoCarpetas = 18;
+  private int     anchoCarpetas = 18;
 
   /**
    * En este poligono se guarda la forma de la pesta�a. Es muy importante.
@@ -241,7 +241,7 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
    * @return the int
    */
   protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
-    return 8 + inclTab + super.calculateTabWidth(tabPlacement, tabIndex, metrics);
+    return super.calculateTabWidth(tabPlacement, tabIndex, metrics);
   }
 
   /**
