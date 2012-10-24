@@ -35,10 +35,13 @@ public class MovieCast extends AbstractModelObject {
   }
 
   /** The name. */
-  private String name;
+  private String   name;
 
   /** The character. */
-  private String character;
+  private String   character;
+
+  /** The thumbnail. */
+  private String   thumb;
 
   /** The type. */
   private CastType type;
@@ -140,6 +143,27 @@ public class MovieCast extends AbstractModelObject {
     String oldValue = character;
     character = newValue;
     firePropertyChange("name", oldValue, newValue);
+  }
+
+  /**
+   * Gets the thumb.
+   * 
+   * @return the thumb
+   */
+  public String getThumb() {
+    return thumb;
+  }
+
+  /**
+   * Sets the thumb.
+   * 
+   * @param thumb
+   *          the new thumb
+   */
+  public void setThumb(String newValue) {
+    String oldValue = this.thumb;
+    thumb = newValue;
+    firePropertyChange("thumb", oldValue, newValue);
   }
 
 }

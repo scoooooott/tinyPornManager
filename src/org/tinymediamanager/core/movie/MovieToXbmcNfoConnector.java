@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.scraper.MediaMetadata.Genres;
@@ -137,12 +140,10 @@ public class MovieToXbmcNfoConnector {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
         xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
-      }
-      else {
+      } else {
         xbmc.setOutline(xbmc.getPlot());
       }
-    }
-    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
+    } else if (!StringUtils.isEmpty(xbmc.getPlot())) {
       spaceIndex = xbmc.getPlot().length();
       xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     }
@@ -192,21 +193,29 @@ public class MovieToXbmcNfoConnector {
       Marshaller m = context.createMarshaller();
       m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      w = new FileWriter(nfoFilename);
+      // w = new FileWriter(nfoFilename);
+      w = new StringWriter();
       m.marshal(xbmc, w);
+      StringBuilder sb = new StringBuilder(w.toString());
+      w.close();
 
-    }
-    catch (JAXBException e) {
+      // on windows make windows conform linebreaks
+      if (SystemUtils.IS_OS_WINDOWS) {
+        sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
+      }
+
+      w = new FileWriter(nfoFilename);
+      String xml = sb.toString();
+      IOUtils.write(xml, w);
+
+    } catch (JAXBException e) {
       LOGGER.error("setData", e);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOGGER.error("setData", e);
-    }
-    finally {
+    } finally {
       try {
         w.close();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.error("setData", e);
       }
     }
@@ -266,17 +275,14 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
+        LOGGER.error("setData", e);
+        return null;
+      } catch (IOException e) {
         LOGGER.error("setData", e);
         return null;
       }
-      catch (IOException e) {
-        LOGGER.error("setData", e);
-        return null;
-      }
-    }
-    catch (JAXBException e) {
+    } catch (JAXBException e) {
       LOGGER.error("setData", e);
       return null;
     }

@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
@@ -47,83 +50,83 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 public class Settings extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(Settings.class);
+  private static final Logger LOGGER             = Logger.getLogger(Settings.class);
 
   /** The instance. */
-  private static Settings instance;
+  private static Settings     instance;
 
   /** The Constant CONFIG_FILE. */
-  private final static String CONFIG_FILE = "config.xml";
+  private final static String CONFIG_FILE        = "config.xml";
 
   /** The Constant MOVIE_DATA_SOURCE. */
-  private final static String MOVIE_DATA_SOURCE = "movieDataSource";
+  private final static String MOVIE_DATA_SOURCE  = "movieDataSource";
 
   /** The Constant PATH. */
-  private final static String PATH = "path";
+  private final static String PATH               = "path";
 
   /** The Constant VIDEO_FILE_TYPE. */
-  private final static String VIDEO_FILE_TYPE = "videoFileTypes";
+  private final static String VIDEO_FILE_TYPE    = "videoFileTypes";
 
   /** The Constant FILETYPE. */
-  private final static String FILETYPE = "filetype";
+  private final static String FILETYPE           = "filetype";
 
   /** The Constant PROXY_HOST. */
-  private final static String PROXY_HOST = "proxyHost";
+  private final static String PROXY_HOST         = "proxyHost";
 
   /** The Constant PROXY_PORT. */
-  private final static String PROXY_PORT = "proxyPort";
+  private final static String PROXY_PORT         = "proxyPort";
 
   /** The Constant PROXY_USERNAME. */
-  private final static String PROXY_USERNAME = "proxyUsername";
+  private final static String PROXY_USERNAME     = "proxyUsername";
 
   /** The Constant PROXY_PASSWORD. */
-  private final static String PROXY_PASSWORD = "proxyPassword";
+  private final static String PROXY_PASSWORD     = "proxyPassword";
 
   /** The Constant SCRAPER_TMDB_LANGU. */
   private final static String SCRAPER_TMDB_LANGU = "scraperTmdbLanguage";
 
   /** The Constant IMAGE_TMDB_LANGU. */
-  private final static String IMAGE_TMDB_LANGU = "imageTmdbLanguage";
+  private final static String IMAGE_TMDB_LANGU   = "imageTmdbLanguage";
 
   /** The Constant IMAGE_TMDB_POSTER. */
-  private final static String IMAGE_TMDB_POSTER = "imageTmdbPosterSize";
+  private final static String IMAGE_TMDB_POSTER  = "imageTmdbPosterSize";
 
   /** The Constant IMAGE_TMDB_FANART. */
-  private final static String IMAGE_TMDB_FANART = "imageTmdbFanartSize";
+  private final static String IMAGE_TMDB_FANART  = "imageTmdbFanartSize";
 
   /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String> videoFileTypes = new ArrayList<String>();
+  private final List<String>  videoFileTypes     = new ArrayList<String>();
 
   /** The movie data sources. */
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String> movieDataSources = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>  movieDataSources   = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The proxy host. */
-  private String proxyHost;
+  private String              proxyHost;
 
   /** The proxy port. */
-  private String proxyPort;
+  private String              proxyPort;
 
   /** The proxy username. */
-  private String proxyUsername;
+  private String              proxyUsername;
 
   /** The proxy password. */
-  private String proxyPassword;
+  private String              proxyPassword;
 
   /** The scraper tmdb language. */
-  private Languages scraperTmdbLanguage;
+  private Languages           scraperTmdbLanguage;
 
   /** The image tmdb langugage. */
-  private Languages imageTmdbLangugage;
+  private Languages           imageTmdbLangugage;
 
   /** The image tmdb poster size. */
-  private PosterSizes imageTmdbPosterSize;
+  private PosterSizes         imageTmdbPosterSize;
 
   /** The image tmdb fanart size. */
-  private FanartSizes imageTmdbFanartSize;
+  private FanartSizes         imageTmdbFanartSize;
 
   /**
    * Instantiates a new settings.
@@ -237,8 +240,20 @@ public class Settings extends AbstractModelObject {
       Marshaller m = context.createMarshaller();
       m.setProperty("jaxb.encoding", "Unicode");
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      w = new FileWriter(CONFIG_FILE);
+      // w = new FileWriter(CONFIG_FILE);
+      w = new StringWriter();
       m.marshal(this, w);
+      StringBuilder sb = new StringBuilder(w.toString());
+      w.close();
+
+      // on windows make windows conform linebreaks
+      if (SystemUtils.IS_OS_WINDOWS) {
+        sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
+      }
+
+      w = new FileWriter(CONFIG_FILE);
+      String xml = sb.toString();
+      IOUtils.write(xml, w);
 
     } catch (JAXBException e) {
       LOGGER.error("saveSettings", e);

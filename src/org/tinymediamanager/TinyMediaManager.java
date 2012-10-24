@@ -65,13 +65,11 @@ public class TinyMediaManager {
           }
 
           // launch application
-          MainWindow window = new MainWindow();
+          MainWindow window = new MainWindow("tinyMediaManager " + org.tinymediamanager.ReleaseInfo.getVersion());
 
-        }
-        catch (javax.persistence.PersistenceException e) {
+        } catch (javax.persistence.PersistenceException e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
         }
