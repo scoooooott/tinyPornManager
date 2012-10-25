@@ -354,8 +354,7 @@ public class Movie extends AbstractModelObject {
     if (imageFile.exists()) {
       LOGGER.debug("found poster " + imageFile.getPath());
       setPoster(poster);
-    }
-    else {
+    } else {
       LOGGER.debug("no poster found");
     }
 
@@ -365,8 +364,7 @@ public class Movie extends AbstractModelObject {
     if (imageFile.exists()) {
       LOGGER.debug("found fanart " + imageFile.getPath());
       setFanart(fanart);
-    }
-    else {
+    } else {
       LOGGER.debug("no fanart found");
     }
   }
@@ -887,6 +885,7 @@ public class Movie extends AbstractModelObject {
     float oldValue = rating;
     rating = newValue;
     firePropertyChange("rating", oldValue, newValue);
+    firePropertyChange("hasRating", false, true);
   }
 
   /**
@@ -965,8 +964,7 @@ public class Movie extends AbstractModelObject {
         outputStream.close();
         is.close();
         setPoster(filename);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -985,8 +983,7 @@ public class Movie extends AbstractModelObject {
         outputStream.close();
         is.close();
         setFanart(filename);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
@@ -1133,4 +1130,10 @@ public class Movie extends AbstractModelObject {
     firePropertyChange(CERTIFICATIONS, null, certifications);
   }
 
+  public boolean getHasRating() {
+    if (rating > 0) {
+      return true;
+    }
+    return false;
+  }
 }
