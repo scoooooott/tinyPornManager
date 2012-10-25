@@ -306,6 +306,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     // get certification
     List<ReleaseInfo> releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
     for (ReleaseInfo info : releaseInfo) {
+      if (StringUtils.isEmpty(info.getCertification())) {
+        continue;
+      }
+
       Certification certification = new Certification(info.getCountry(), info.getCertification());
       md.addCertification(certification);
 

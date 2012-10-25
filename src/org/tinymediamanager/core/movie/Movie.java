@@ -354,7 +354,8 @@ public class Movie extends AbstractModelObject {
     if (imageFile.exists()) {
       LOGGER.debug("found poster " + imageFile.getPath());
       setPoster(poster);
-    } else {
+    }
+    else {
       LOGGER.debug("no poster found");
     }
 
@@ -364,7 +365,8 @@ public class Movie extends AbstractModelObject {
     if (imageFile.exists()) {
       LOGGER.debug("found fanart " + imageFile.getPath());
       setFanart(fanart);
-    } else {
+    }
+    else {
       LOGGER.debug("no fanart found");
     }
   }
@@ -458,7 +460,7 @@ public class Movie extends AbstractModelObject {
   public void setTmdbId(int newValue) {
     int oldValue = this.tmdbId;
     this.tmdbId = newValue;
-    firePropertyChange("tmdbid", oldValue, newValue);
+    firePropertyChange("tmdbId", oldValue, newValue);
   }
 
   /**
@@ -723,10 +725,10 @@ public class Movie extends AbstractModelObject {
     setProductionCompany(metadata.getCompany());
 
     // certifications
-    certifications.clear();
+    removeAllCertifications();
     for (Certification certification : metadata.getCertifications()) {
       MovieCertification cert = new MovieCertification(certification.getCountry(), certification.getCertification());
-      certifications.add(cert);
+      addCertification(cert);
     }
 
     // poster
@@ -744,7 +746,8 @@ public class Movie extends AbstractModelObject {
     }
 
     // cast
-    castObservable.clear();
+    removeAllActors();
+    ;
     List<CastMember> cast = metadata.getCastMembers();
     String director = new String();
     String writer = new String();
@@ -775,7 +778,7 @@ public class Movie extends AbstractModelObject {
     setWriter(writer);
 
     // genres
-    genres.clear();
+    removeAllGenres();
     for (Genres genre : metadata.getGenres()) {
       addGenre(genre);
     }
@@ -964,7 +967,8 @@ public class Movie extends AbstractModelObject {
         outputStream.close();
         is.close();
         setPoster(filename);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -983,7 +987,8 @@ public class Movie extends AbstractModelObject {
         outputStream.close();
         is.close();
         setFanart(filename);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
@@ -1070,6 +1075,7 @@ public class Movie extends AbstractModelObject {
   public void addGenre(Genres newValue) {
     genres.add(newValue);
     firePropertyChange(GENRE, null, newValue);
+    firePropertyChange("genresAsString", null, newValue);
   }
 
   /**
@@ -1081,6 +1087,7 @@ public class Movie extends AbstractModelObject {
   public void removeGenre(Genres genre) {
     genres.remove(genre);
     firePropertyChange(GENRE, null, genre);
+    firePropertyChange("genresAsString", null, genre);
   }
 
   /**
@@ -1089,6 +1096,7 @@ public class Movie extends AbstractModelObject {
   public void removeAllGenres() {
     genres.clear();
     firePropertyChange(GENRE, null, genres);
+    firePropertyChange("genresAsString", null, genres);
   }
 
   /**
@@ -1109,6 +1117,7 @@ public class Movie extends AbstractModelObject {
   public void addCertification(MovieCertification newValue) {
     this.certifications.add(newValue);
     firePropertyChange(CERTIFICATIONS, null, newValue);
+    firePropertyChange("certificationsAsString", null, newValue);
   }
 
   /**
@@ -1120,6 +1129,7 @@ public class Movie extends AbstractModelObject {
   public void setCertifications(List<MovieCertification> newValue) {
     this.certifications = newValue;
     firePropertyChange(CERTIFICATIONS, null, newValue);
+    firePropertyChange("certificationsAsString", null, newValue);
   }
 
   /**
@@ -1128,6 +1138,13 @@ public class Movie extends AbstractModelObject {
   public void removeAllCertifications() {
     certifications.clear();
     firePropertyChange(CERTIFICATIONS, null, certifications);
+    firePropertyChange("certificationsAsString", null, certifications);
+  }
+
+  public void removeCertification(MovieCertification newValue) {
+    certifications.remove(newValue);
+    firePropertyChange(CERTIFICATIONS, null, newValue);
+    firePropertyChange("certificationsAsString", null, newValue);
   }
 
   public boolean getHasRating() {
@@ -1135,5 +1152,27 @@ public class Movie extends AbstractModelObject {
       return true;
     }
     return false;
+  }
+
+  public String getGenresAsString() {
+    StringBuilder sb = new StringBuilder();
+    for (Genres genre : genres) {
+      if (!StringUtils.isEmpty(sb)) {
+        sb.append(", ");
+      }
+      sb.append(genre.toString());
+    }
+    return sb.toString();
+  }
+
+  public String getCertificationsAsString() {
+    StringBuilder sb = new StringBuilder();
+    for (MovieCertification cert : certifications) {
+      if (!StringUtils.isEmpty(sb)) {
+        sb.append(" / ");
+      }
+      sb.append(cert.getCountry() + ":" + cert.getCertification());
+    }
+    return sb.toString();
   }
 }
