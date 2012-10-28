@@ -52,7 +52,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieCertification;
-import org.tinymediamanager.scraper.MediaMetadata.Genres;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.ImageChooser.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -102,7 +102,7 @@ public class MovieEditor extends JDialog {
   private List<MovieCast>          cast              = ObservableCollections.observableList(new ArrayList<MovieCast>());
 
   /** The genres. */
-  private List<Genres>             genres            = ObservableCollections.observableList(new ArrayList<Genres>());
+  private List<MediaGenres>        genres            = ObservableCollections.observableList(new ArrayList<MediaGenres>());
 
   /** The certifications. */
   private List<MovieCertification> certifications    = ObservableCollections.observableList(new ArrayList<MovieCertification>());
@@ -160,15 +160,18 @@ public class MovieEditor extends JDialog {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:80px:grow"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:80px:grow"), }));
     {
       lblMoviePath = new JLabel("");
       contentPanel.add(lblMoviePath, "2, 2, 11, 1");
@@ -332,10 +335,9 @@ public class MovieEditor extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane
-          .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-              ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
-              FormFactory.RELATED_GAP_ROWSPEC, }));
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"),
+          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JButton okButton = new JButton("OK");
         okButton.setAction(actionOK);
@@ -358,7 +360,7 @@ public class MovieEditor extends JDialog {
       contentPanel.add(btnRemoveGenre, "8, 24, right, top");
     }
     {
-      cbGenres = new JComboBox(Genres.values());
+      cbGenres = new JComboBox(MediaGenres.values());
       contentPanel.add(cbGenres, "10, 26");
     }
     {
@@ -389,7 +391,8 @@ public class MovieEditor extends JDialog {
       int year = 0;
       try {
         year = Integer.valueOf(movie.getYear());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
       }
       spYear.setValue(year);
 
@@ -404,7 +407,7 @@ public class MovieEditor extends JDialog {
         cast.add(actor);
       }
 
-      for (Genres genre : movie.getGenres()) {
+      for (MediaGenres genre : movie.getGenres()) {
         genres.add(genre);
       }
 
@@ -461,7 +464,7 @@ public class MovieEditor extends JDialog {
       }
 
       movieToEdit.removeAllGenres();
-      for (Genres genre : genres) {
+      for (MediaGenres genre : genres) {
         movieToEdit.addGenre(genre);
       }
 
@@ -570,7 +573,7 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      Genres newGenre = (Genres) cbGenres.getSelectedItem();
+      MediaGenres newGenre = (MediaGenres) cbGenres.getSelectedItem();
       // add genre if it is not already in the list
       if (!genres.contains(newGenre)) {
         genres.add(newGenre);
@@ -598,7 +601,7 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      Genres newGenre = (Genres) listGenres.getSelectedValue();
+      MediaGenres newGenre = (MediaGenres) listGenres.getSelectedValue();
       // remove genre
       if (newGenre != null) {
         genres.remove(newGenre);
@@ -620,11 +623,11 @@ public class MovieEditor extends JDialog {
     //
     jTableBinding.bind();
     //
-    JListBinding<Genres, List<Genres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
+    JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
-    JTableBinding<MovieCertification, List<MovieCertification>, JTable> jTableBinding_1 = SwingBindings
-        .createJTableBinding(UpdateStrategy.READ, certifications, tableCertification);
+    JTableBinding<MovieCertification, List<MovieCertification>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+        certifications, tableCertification);
     //
     BeanProperty<MovieCertification, String> movieCertificationBeanProperty = BeanProperty.create("country");
     jTableBinding_1.addColumnBinding(movieCertificationBeanProperty).setColumnName("Country");

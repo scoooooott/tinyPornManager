@@ -42,8 +42,8 @@ import org.tinymediamanager.scraper.CastMember;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaMetadata.Genres;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
@@ -194,7 +194,7 @@ public class Movie extends AbstractModelObject {
   private List<String>             movieFiles         = new ArrayList<String>();
 
   /** The genres. */
-  private List<Genres>             genres             = new ArrayList<Genres>();
+  private List<MediaGenres>        genres             = new ArrayList<MediaGenres>();
 
   /** The cast. */
   @OneToMany(cascade = CascadeType.ALL)
@@ -779,7 +779,7 @@ public class Movie extends AbstractModelObject {
 
     // genres
     removeAllGenres();
-    for (Genres genre : metadata.getGenres()) {
+    for (MediaGenres genre : metadata.getGenres()) {
       addGenre(genre);
     }
 
@@ -1062,7 +1062,7 @@ public class Movie extends AbstractModelObject {
    * 
    * @return the genres
    */
-  public List<Genres> getGenres() {
+  public List<MediaGenres> getGenres() {
     return genres;
   }
 
@@ -1072,7 +1072,7 @@ public class Movie extends AbstractModelObject {
    * @param newValue
    *          the new value
    */
-  public void addGenre(Genres newValue) {
+  public void addGenre(MediaGenres newValue) {
     genres.add(newValue);
     firePropertyChange(GENRE, null, newValue);
     firePropertyChange("genresAsString", null, newValue);
@@ -1084,7 +1084,7 @@ public class Movie extends AbstractModelObject {
    * @param genre
    *          the genre
    */
-  public void removeGenre(Genres genre) {
+  public void removeGenre(MediaGenres genre) {
     genres.remove(genre);
     firePropertyChange(GENRE, null, genre);
     firePropertyChange("genresAsString", null, genre);
@@ -1156,7 +1156,7 @@ public class Movie extends AbstractModelObject {
 
   public String getGenresAsString() {
     StringBuilder sb = new StringBuilder();
-    for (Genres genre : genres) {
+    for (MediaGenres genre : genres) {
       if (!StringUtils.isEmpty(sb)) {
         sb.append(", ");
       }

@@ -8,6 +8,10 @@
 	<buildnumber file="buildnumber.txt" />
 	
 	<target name="create_run_jar">
+    <delete dir="build/lib" />
+    <delete dir="build" />
+    <mkdir dir="build" />
+    <mkdir dir="build/lib" />
 		<jar destfile="build/tmm.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
@@ -15,10 +19,6 @@
 			</manifest>
 			<fileset dir="bin" />
 		</jar>
-		<delete dir="build/lib" />
-		<delete dir="build" />
-		<mkdir dir="build" />
-		<mkdir dir="build/lib" />
 		<copy file="lib/commons-lang3-3.1.jar" todir="build/lib" />
 		<copy file="lib/log4j-1.2.16.jar" todir="build/lib" />
 		<copy file="lib/themoviedbapi-3.2-SNAPSHOT-r169.jar" todir="build/lib" />
@@ -95,6 +95,7 @@
 		  <fileset dir="build/lib" includes="*" />
 		</copy>
 		<copy file="build/tmm.jar" todir="dist/getdown" />
+		<copy file="build/tmm.properties" todir="dist/getdown" />
 		<copy file="AppBundler/getdown.txt" todir="dist/getdown" />
 		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask"
 		         classpath="AppBundler/getdown-tools-1.2.jar"/>

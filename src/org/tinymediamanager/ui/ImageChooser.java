@@ -34,8 +34,10 @@ import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -48,6 +50,8 @@ import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
+import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
+import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
@@ -138,8 +142,8 @@ public class ImageChooser extends JDialog {
     setBounds(5, 5, 968, 590);
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), }, new RowSpec[] {
-        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
     {
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -154,9 +158,10 @@ public class ImageChooser extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC,
-          ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
       {
         progressBar = new JProgressBar();
         buttonPane.add(progressBar, "2, 2");
@@ -205,26 +210,52 @@ public class ImageChooser extends JDialog {
      */
     public void actionPerformed(ActionEvent e) {
       TmdbArtwork artwork = null;
+      PosterSizes posterSize = null;
+      FanartSizes fanartSize = null;
       // get selected button
       for (JToggleButton button : buttons) {
         if (button.isSelected()) {
           Object clientProperty = button.getClientProperty("TmdbArtwork");
           if (clientProperty instanceof TmdbArtwork) {
             artwork = (TmdbArtwork) clientProperty;
+            clientProperty = button.getClientProperty("TmdbArtworkSize");
+            // try to get the size
+            if (clientProperty instanceof JComboBox) {
+              JComboBox cb = (JComboBox) clientProperty;
+              ImageResolution resolution = (ImageResolution) cb.getSelectedItem();
+              posterSize = resolution.getPosterSize();
+              fanartSize = resolution.getFanartSize();
+            }
             break;
           }
         }
+      }
+
+      // nothing selected
+      if (artwork == null) {
+        JOptionPane.showMessageDialog(null, "no image selected!");
+        return;
       }
 
       if (artwork != null) {
         switch (type) {
 
           case POSTER:
-            imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbPosterSize()));
+            if (posterSize != null) {
+              imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(posterSize));
+            }
+            else {
+              imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbPosterSize()));
+            }
             break;
 
           case FANART:
-            imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbFanartSize()));
+            if (fanartSize != null) {
+              imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(fanartSize));
+            }
+            else {
+              imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbFanartSize()));
+            }
             break;
         }
       }
@@ -267,12 +298,14 @@ public class ImageChooser extends JDialog {
     Point size = null;
 
     GridBagLayout gbl = new GridBagLayout();
+    List<ImageResolution> resolutions = null;
 
     switch (type) {
       case FANART:
         gbl.columnWidths = new int[] { 300 };
         gbl.rowHeights = new int[] { 150 };
         size = ImageLabel.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
+        resolutions = ImageResolution.getFanartResolutions(tmdbArtwork.getHeight(), tmdbArtwork.getWidth());
         break;
 
       case POSTER:
@@ -280,6 +313,7 @@ public class ImageChooser extends JDialog {
         gbl.columnWidths = new int[] { 150 };
         gbl.rowHeights = new int[] { 250 };
         size = ImageLabel.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
+        resolutions = ImageResolution.getPosterResolutions(tmdbArtwork.getHeight(), tmdbArtwork.getWidth());
         break;
 
     }
@@ -307,6 +341,13 @@ public class ImageChooser extends JDialog {
     buttonGroup.add(button);
     buttons.add(button);
     imagePanel.add(button, gbc);
+
+    gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    JComboBox cb = new JComboBox(resolutions.toArray());
+    button.putClientProperty("TmdbArtworkSize", cb);
+    imagePanel.add(cb, gbc);
 
     panelImages.add(imagePanel);
     panelImages.validate();
@@ -418,9 +459,11 @@ public class ImageChooser extends JDialog {
           addImage(bufferedImage, tmdbArtwork);
         }
 
-      } catch (NumberFormatException e) {
+      }
+      catch (NumberFormatException e) {
         LOGGER.error("DownloadTask", e);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("DownloadTask", e);
       }
 
@@ -438,6 +481,118 @@ public class ImageChooser extends JDialog {
     @Override
     public void done() {
       stopProgressBar();
+    }
+  }
+
+  private static class ImageResolution {
+    private PosterSizes posterSize;
+    private FanartSizes fanartSize;
+
+    int                 height;
+    int                 width;
+
+    private ImageResolution(PosterSizes posterSize, int fullHeight, int fullWidth) {
+      this.posterSize = posterSize;
+      switch (this.posterSize) {
+        case w92:
+          this.width = 92;
+          break;
+
+        case w154:
+          this.width = 154;
+          break;
+
+        case w185:
+          this.width = 185;
+          break;
+
+        case w342:
+          this.width = 342;
+          break;
+
+        case w500:
+          this.width = 500;
+          break;
+
+        case original:
+          this.width = fullWidth;
+          this.height = fullHeight;
+          break;
+      }
+
+      if (posterSize != PosterSizes.original) {
+        calculateHeight(fullHeight, fullWidth);
+      }
+    }
+
+    private ImageResolution(FanartSizes fanartSize, int fullHeight, int fullWidth) {
+      this.fanartSize = fanartSize;
+      switch (this.fanartSize) {
+        case w300:
+          this.width = 300;
+          break;
+
+        case w780:
+          this.width = 780;
+          break;
+
+        case w1280:
+          this.width = 1280;
+          break;
+
+        case original:
+          this.width = fullWidth;
+          this.height = fullHeight;
+          break;
+      }
+
+      if (fanartSize != FanartSizes.original) {
+        calculateHeight(fullHeight, fullWidth);
+      }
+    }
+
+    private void calculateHeight(int fullHeight, int fullWidth) {
+      this.height = fullHeight * this.width / fullWidth;
+    }
+
+    public String toString() {
+      return new String(this.width + "x" + this.height);
+    }
+
+    public PosterSizes getPosterSize() {
+      return this.posterSize;
+    }
+
+    public FanartSizes getFanartSize() {
+      return this.fanartSize;
+    }
+
+    public static List<ImageResolution> getPosterResolutions(int fullHeight, int fullWidth) {
+      List<ImageResolution> resolutions = new ArrayList<ImageChooser.ImageResolution>();
+      for (PosterSizes size : PosterSizes.values()) {
+        // default should be the first in line
+        if (size == Globals.settings.getImageTmdbPosterSize()) {
+          resolutions.add(0, new ImageResolution(size, fullHeight, fullWidth));
+        }
+        else {
+          resolutions.add(new ImageResolution(size, fullHeight, fullWidth));
+        }
+      }
+      return resolutions;
+    }
+
+    public static List<ImageResolution> getFanartResolutions(int fullHeight, int fullWidth) {
+      List<ImageResolution> resolutions = new ArrayList<ImageChooser.ImageResolution>();
+      for (FanartSizes size : FanartSizes.values()) {
+        // default should be the first in line
+        if (size == Globals.settings.getImageTmdbFanartSize()) {
+          resolutions.add(0, new ImageResolution(size, fullHeight, fullWidth));
+        }
+        else {
+          resolutions.add(new ImageResolution(size, fullHeight, fullWidth));
+        }
+      }
+      return resolutions;
     }
   }
 }

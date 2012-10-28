@@ -16,22 +16,59 @@
 package org.tinymediamanager.scraper.tmdb;
 
 import org.tinymediamanager.scraper.MediaArtifactType;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 /**
  * The Class TmdbArtwork.
  */
 public class TmdbArtwork {
 
+  /**
+   * The Enum PosterSizes.
+   */
+  public enum PosterSizes {
+
+    /** The w92. */
+    w92,
+    /** The w154. */
+    w154,
+    /** The w185. */
+    w185,
+    /** The w342. */
+    w342,
+    /** The w500. */
+    w500,
+    /** The original. */
+    original
+
+  }
+
+  /**
+   * The Enum FanartSizes.
+   */
+  public enum FanartSizes {
+
+    /** The w300. */
+    w300,
+    /** The w780. */
+    w780,
+    /** The w1280. */
+    w1280,
+    /** The original. */
+    original
+  }
+
   /** The type. */
   private MediaArtifactType type;
 
   /** The base url. */
-  private String baseUrl;
+  private String            baseUrl;
 
   /** The file path. */
-  private String filePath;
+  private String            filePath;
+
+  private int               width;
+
+  private int               height;
 
   /**
    * Instantiates a new tmdb artwork.
@@ -163,5 +200,21 @@ public class TmdbArtwork {
    */
   public String getUrlForSpecialArtwork(FanartSizes size) {
     return getUrlForSpecialArtwork(size.name());
+  }
+
+  public int getWidth() {
+    return width;
+  }
+
+  public void setWidth(int width) {
+    this.width = width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
+
+  public void setHeight(int height) {
+    this.height = height;
   }
 }

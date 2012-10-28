@@ -41,157 +41,35 @@ public class MediaMetadata {
     ORIGINAL
   }
 
-  /**
-   * The Enum Genres.
-   */
-  public enum Genres {
-
-    /** The action. */
-    ACTION("Action"),
-    /** The adventure. */
-    ADVENTURE("Adventure"),
-    /** The animation. */
-    ANIMATION("Animation"),
-    /** The comedy. */
-    COMEDY("Comedy"),
-    /** The crime. */
-    CRIME("Crime"),
-    /** The disaster. */
-    DISASTER("Disaster"),
-    /** The documentary. */
-    DOCUMENTARY("Documentary"),
-    /** The drama. */
-    DRAMA("Drama"),
-    /** The eastern. */
-    EASTERN("Eastern"),
-    /** The erotic. */
-    EROTIC("Erotic"),
-    /** The family. */
-    FAMILY("Family"),
-    /** The fan film. */
-    FAN_FILM("Fan Film"),
-    /** The fantasy. */
-    FANTASY("Fantasy"),
-    /** The film noir. */
-    FILM_NOIR("Film Noir"),
-    /** The foreign. */
-    FOREIGN("Foreign"),
-    /** The history. */
-    HISTORY("History"),
-    /** The holiday. */
-    HOLIDAY("Holiday"),
-    /** The horror. */
-    HORROR("Horror"),
-    /** The indie. */
-    INDIE("Indie"),
-    /** The music. */
-    MUSIC("Music"),
-    /** The musical. */
-    MUSICAL("Musical"),
-    /** The mystery. */
-    MYSTERY("Mystery"),
-    /** The neo noir. */
-    NEO_NOIR("Neo Noir"),
-    /** The road movie. */
-    ROAD_MOVIE("Road Movie"),
-    /** The romance. */
-    ROMANCE("Romance"),
-    /** The science fiction. */
-    SCIENCE_FICTION("Science Fiction"),
-    /** The short. */
-    SHORT("Short"),
-    /** The sport. */
-    SPORT("Sport"),
-    /** The sporting event. */
-    SPORTING_EVENT("Sporting Event"),
-    /** The sports film. */
-    SPORTS_FILM("Sports Film"),
-    /** The suspense. */
-    SUSPENSE("Suspense"),
-    /** The tv movie. */
-    TV_MOVIE("TV Movie"),
-    /** The thriller. */
-    THRILLER("Thriller"),
-    /** The war. */
-    WAR("War"),
-    /** The western. */
-    WESTERN("Western");
-
-    /** The name. */
-    private String name;
-
-    /**
-     * Instantiates a new genres.
-     */
-    private Genres() {
-      this.name = "";
-    }
-
-    /**
-     * Instantiates a new genres.
-     * 
-     * @param name
-     *          the name
-     */
-    private Genres(String name) {
-      this.name = name;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
-     */
-    public String toString() {
-      return this.name;
-    }
-
-    /**
-     * Gets the genre.
-     * 
-     * @param name
-     *          the name
-     * @return the genre
-     */
-    public static Genres getGenre(String name) {
-      for (Genres genre : values()) {
-        if (genre.name.equals(name)) {
-          return genre;
-        }
-      }
-      return null;
-    }
-  }
-
   /** The Constant ACTOR. */
-  public static final int ACTOR = 0;
+  public static final int          ACTOR          = 0;
 
   /** The Constant WRITER. */
-  public static final int WRITER = 1;
+  public static final int          WRITER         = 1;
 
   /** The Constant DIRECTOR. */
-  public static final int DIRECTOR = 2;
+  public static final int          DIRECTOR       = 2;
 
   /** The Constant OTHER. */
-  public static final int OTHER = 99;
+  public static final int          OTHER          = 99;
 
   /** The Constant ALL. */
-  public static final int ALL = 999;
+  public static final int          ALL            = 999;
 
   /** The store. */
-  private Map<MetadataKey, String> store = new HashMap<MetadataKey, String>();
+  private Map<MetadataKey, String> store          = new HashMap<MetadataKey, String>();
 
   /** The cast members. */
-  private List<CastMember> castMembers = new ArrayList<CastMember>();
+  private List<CastMember>         castMembers    = new ArrayList<CastMember>();
 
   /** The fanart. */
-  private List<MediaArt> fanart = new ArrayList<MediaArt>();
+  private List<MediaArt>           fanart         = new ArrayList<MediaArt>();
 
   /** The genres. */
-  private List<Genres> genres = new ArrayList<Genres>();
+  private List<MediaGenres>        genres         = new ArrayList<MediaGenres>();
 
   /** The certifications. */
-  private List<Certification> certifications = new ArrayList<Certification>();
+  private List<Certification>      certifications = new ArrayList<Certification>();
 
   /**
    * Instantiates a new media metadata.
@@ -242,7 +120,7 @@ public class MediaMetadata {
    * 
    * @return the genres
    */
-  public List<Genres> getGenres() {
+  public List<MediaGenres> getGenres() {
     return genres;
   }
 
@@ -446,7 +324,7 @@ public class MediaMetadata {
    * @param genre
    *          the genre
    */
-  public void addGenre(Genres genre) {
+  public void addGenre(MediaGenres genre) {
     genres.add(genre);
   }
 
@@ -533,7 +411,8 @@ public class MediaMetadata {
   private int toInt(String value) {
     try {
       return Integer.parseInt(value);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return 0;
     }
   }
@@ -595,7 +474,8 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toFloat(value, defValue);
-    } else {
+    }
+    else {
       return defValue;
     }
   }
@@ -613,7 +493,8 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toInt(value, defValue);
-    } else {
+    }
+    else {
       return defValue;
     }
   }

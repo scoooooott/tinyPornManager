@@ -29,8 +29,8 @@ import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.MediaMetadata.Genres;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataKey;
@@ -62,40 +62,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
   /** The tmdb. */
   private TheMovieDb                  tmdb;
-
-  /**
-   * The Enum PosterSizes.
-   */
-  public enum PosterSizes {
-
-    /** The w92. */
-    w92,
-    /** The w154. */
-    w154,
-    /** The w185. */
-    w185,
-    /** The w342. */
-    w342,
-    /** The w500. */
-    w500,
-    /** The original. */
-    original
-  }
-
-  /**
-   * The Enum FanartSizes.
-   */
-  public enum FanartSizes {
-
-    /** The w300. */
-    w300,
-    /** The w780. */
-    w780,
-    /** The w1280. */
-    w1280,
-    /** The original. */
-    original
-  }
 
   /**
    * The Enum Languages.
@@ -244,12 +210,16 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       // artwork is a poster
       if (image.getArtworkType() == ArtworkType.POSTER && type == MediaArtifactType.POSTER) {
         TmdbArtwork poster = new TmdbArtwork(MediaArtifactType.POSTER, baseUrl, image.getFilePath());
+        poster.setWidth(image.getWidth());
+        poster.setHeight(image.getHeight());
         artwork.add(poster);
       }
 
       // artwork is a fanart
       if (image.getArtworkType() == ArtworkType.BACKDROP && type == MediaArtifactType.BACKGROUND) {
         TmdbArtwork backdrop = new TmdbArtwork(MediaArtifactType.BACKGROUND, baseUrl, image.getFilePath());
+        backdrop.setWidth(image.getWidth());
+        backdrop.setHeight(image.getHeight());
         artwork.add(backdrop);
       }
     }
@@ -306,12 +276,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     // get certification
     List<ReleaseInfo> releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
     for (ReleaseInfo info : releaseInfo) {
+      // do not use any empty certifications
       if (StringUtils.isEmpty(info.getCertification())) {
         continue;
       }
 
-      Certification certification = new Certification(info.getCountry(), info.getCertification());
-      md.addCertification(certification);
+      // only use the certification of the desired country (if any country has
+      // been chosen)
+      if (Globals.settings.getCertificationCountry() == null
+          || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
+
+        Certification certification = new Certification(info.getCountry(), info.getCertification());
+        md.addCertification(certification);
+      }
 
       // MPAA is an extra case for certification
       if ("US".equals(info.getCountry())) {
@@ -366,9 +343,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       md.addCastMember(cm);
     }
 
-    // genres
-    List<Genre> genres = movie.getGenres();
-    for (Genre genre : genres) {
+    // MediaGenres
+    List<Genre> MediaGenres = movie.getGenres();
+    for (Genre genre : MediaGenres) {
       addGenre(genre, md);
     }
 
@@ -386,143 +363,143 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   private void addGenre(Genre genre, MediaMetadata md) {
     switch (genre.getId()) {
       case 28:
-        md.addGenre(Genres.ACTION);
+        md.addGenre(MediaGenres.ACTION);
         break;
 
       case 12:
-        md.addGenre(Genres.ADVENTURE);
+        md.addGenre(MediaGenres.ADVENTURE);
         break;
 
       case 16:
-        md.addGenre(Genres.ANIMATION);
+        md.addGenre(MediaGenres.ANIMATION);
         break;
 
       case 35:
-        md.addGenre(Genres.COMEDY);
+        md.addGenre(MediaGenres.COMEDY);
         break;
 
       case 80:
-        md.addGenre(Genres.CRIME);
+        md.addGenre(MediaGenres.CRIME);
         break;
 
       case 105:
-        md.addGenre(Genres.DISASTER);
+        md.addGenre(MediaGenres.DISASTER);
         break;
 
       case 99:
-        md.addGenre(Genres.DOCUMENTARY);
+        md.addGenre(MediaGenres.DOCUMENTARY);
         break;
 
       case 18:
-        md.addGenre(Genres.DRAMA);
+        md.addGenre(MediaGenres.DRAMA);
         break;
 
       case 82:
-        md.addGenre(Genres.EASTERN);
+        md.addGenre(MediaGenres.EASTERN);
         break;
 
       case 2916:
-        md.addGenre(Genres.EROTIC);
+        md.addGenre(MediaGenres.EROTIC);
         break;
 
       case 10751:
-        md.addGenre(Genres.FAMILY);
+        md.addGenre(MediaGenres.FAMILY);
         break;
 
       case 10750:
-        md.addGenre(Genres.FAN_FILM);
+        md.addGenre(MediaGenres.FAN_FILM);
         break;
 
       case 14:
-        md.addGenre(Genres.FANTASY);
+        md.addGenre(MediaGenres.FANTASY);
         break;
 
       case 10753:
-        md.addGenre(Genres.FILM_NOIR);
+        md.addGenre(MediaGenres.FILM_NOIR);
         break;
 
       case 10769:
-        md.addGenre(Genres.FOREIGN);
+        md.addGenre(MediaGenres.FOREIGN);
         break;
 
       case 36:
-        md.addGenre(Genres.HISTORY);
+        md.addGenre(MediaGenres.HISTORY);
         break;
 
       case 10595:
-        md.addGenre(Genres.HOLIDAY);
+        md.addGenre(MediaGenres.HOLIDAY);
         break;
 
       case 27:
-        md.addGenre(Genres.HORROR);
+        md.addGenre(MediaGenres.HORROR);
         break;
 
       case 10756:
-        md.addGenre(Genres.INDIE);
+        md.addGenre(MediaGenres.INDIE);
         break;
 
       case 10402:
-        md.addGenre(Genres.MUSIC);
+        md.addGenre(MediaGenres.MUSIC);
         break;
 
       case 22:
-        md.addGenre(Genres.MUSICAL);
+        md.addGenre(MediaGenres.MUSICAL);
         break;
 
       case 9648:
-        md.addGenre(Genres.MYSTERY);
+        md.addGenre(MediaGenres.MYSTERY);
         break;
 
       case 10754:
-        md.addGenre(Genres.NEO_NOIR);
+        md.addGenre(MediaGenres.NEO_NOIR);
         break;
 
       case 1115:
-        md.addGenre(Genres.ROAD_MOVIE);
+        md.addGenre(MediaGenres.ROAD_MOVIE);
         break;
 
       case 10749:
-        md.addGenre(Genres.ROMANCE);
+        md.addGenre(MediaGenres.ROMANCE);
         break;
 
       case 878:
-        md.addGenre(Genres.SCIENCE_FICTION);
+        md.addGenre(MediaGenres.SCIENCE_FICTION);
         break;
 
       case 10755:
-        md.addGenre(Genres.SHORT);
+        md.addGenre(MediaGenres.SHORT);
         break;
 
       case 9805:
-        md.addGenre(Genres.SPORT);
+        md.addGenre(MediaGenres.SPORT);
         break;
 
       case 10758:
-        md.addGenre(Genres.SPORTING_EVENT);
+        md.addGenre(MediaGenres.SPORTING_EVENT);
         break;
 
       case 10757:
-        md.addGenre(Genres.SPORTS_FILM);
+        md.addGenre(MediaGenres.SPORTS_FILM);
         break;
 
       case 10748:
-        md.addGenre(Genres.SUSPENSE);
+        md.addGenre(MediaGenres.SUSPENSE);
         break;
 
       case 10770:
-        md.addGenre(Genres.TV_MOVIE);
+        md.addGenre(MediaGenres.TV_MOVIE);
         break;
 
       case 53:
-        md.addGenre(Genres.THRILLER);
+        md.addGenre(MediaGenres.THRILLER);
         break;
 
       case 10752:
-        md.addGenre(Genres.WAR);
+        md.addGenre(MediaGenres.WAR);
         break;
 
       case 37:
-        md.addGenre(Genres.WESTERN);
+        md.addGenre(MediaGenres.WESTERN);
         break;
 
     }

@@ -38,10 +38,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
+import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
+import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 /**
  * The Class Settings.
@@ -50,59 +50,62 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 public class Settings extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger LOGGER             = Logger.getLogger(Settings.class);
+  private static final Logger LOGGER                = Logger.getLogger(Settings.class);
 
   /** The instance. */
   private static Settings     instance;
 
   /** The Constant CONFIG_FILE. */
-  private final static String CONFIG_FILE        = "config.xml";
+  private final static String CONFIG_FILE           = "config.xml";
 
   /** The Constant MOVIE_DATA_SOURCE. */
-  private final static String MOVIE_DATA_SOURCE  = "movieDataSource";
+  private final static String MOVIE_DATA_SOURCE     = "movieDataSource";
 
   /** The Constant PATH. */
-  private final static String PATH               = "path";
+  private final static String PATH                  = "path";
 
   /** The Constant VIDEO_FILE_TYPE. */
-  private final static String VIDEO_FILE_TYPE    = "videoFileTypes";
+  private final static String VIDEO_FILE_TYPE       = "videoFileTypes";
 
   /** The Constant FILETYPE. */
-  private final static String FILETYPE           = "filetype";
+  private final static String FILETYPE              = "filetype";
 
   /** The Constant PROXY_HOST. */
-  private final static String PROXY_HOST         = "proxyHost";
+  private final static String PROXY_HOST            = "proxyHost";
 
   /** The Constant PROXY_PORT. */
-  private final static String PROXY_PORT         = "proxyPort";
+  private final static String PROXY_PORT            = "proxyPort";
 
   /** The Constant PROXY_USERNAME. */
-  private final static String PROXY_USERNAME     = "proxyUsername";
+  private final static String PROXY_USERNAME        = "proxyUsername";
 
   /** The Constant PROXY_PASSWORD. */
-  private final static String PROXY_PASSWORD     = "proxyPassword";
+  private final static String PROXY_PASSWORD        = "proxyPassword";
 
   /** The Constant SCRAPER_TMDB_LANGU. */
-  private final static String SCRAPER_TMDB_LANGU = "scraperTmdbLanguage";
+  private final static String SCRAPER_TMDB_LANGU    = "scraperTmdbLanguage";
 
   /** The Constant IMAGE_TMDB_LANGU. */
-  private final static String IMAGE_TMDB_LANGU   = "imageTmdbLanguage";
+  private final static String IMAGE_TMDB_LANGU      = "imageTmdbLanguage";
 
   /** The Constant IMAGE_TMDB_POSTER. */
-  private final static String IMAGE_TMDB_POSTER  = "imageTmdbPosterSize";
+  private final static String IMAGE_TMDB_POSTER     = "imageTmdbPosterSize";
 
   /** The Constant IMAGE_TMDB_FANART. */
-  private final static String IMAGE_TMDB_FANART  = "imageTmdbFanartSize";
+  private final static String IMAGE_TMDB_FANART     = "imageTmdbFanartSize";
+
+  /** The Constant CERTIFICATION_COUNTRY. */
+  private final static String CERTIFICATION_COUNTRY = "certificationCountry";
 
   /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String>  videoFileTypes     = new ArrayList<String>();
+  private final List<String>  videoFileTypes        = new ArrayList<String>();
 
   /** The movie data sources. */
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>  movieDataSources   = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>  movieDataSources      = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The proxy host. */
   private String              proxyHost;
@@ -128,6 +131,9 @@ public class Settings extends AbstractModelObject {
   /** The image tmdb fanart size. */
   private FanartSizes         imageTmdbFanartSize;
 
+  /** The country for certification */
+  private CountryCode         certificationCountry;
+
   /**
    * Instantiates a new settings.
    */
@@ -148,16 +154,19 @@ public class Settings extends AbstractModelObject {
         Unmarshaller um = context.createUnmarshaller();
         try {
           Settings.instance = (Settings) um.unmarshal(new FileReader(CONFIG_FILE));
-        } catch (FileNotFoundException e) {
-          // e.printStackTrace();
-          Settings.instance = new Settings();
-          Settings.instance.writeDefaultSettings();
-        } catch (IOException e) {
+        }
+        catch (FileNotFoundException e) {
           // e.printStackTrace();
           Settings.instance = new Settings();
           Settings.instance.writeDefaultSettings();
         }
-      } catch (JAXBException e) {
+        catch (IOException e) {
+          // e.printStackTrace();
+          Settings.instance = new Settings();
+          Settings.instance.writeDefaultSettings();
+        }
+      }
+      catch (JAXBException e) {
         LOGGER.error("getInstance", e);
       }
 
@@ -255,14 +264,18 @@ public class Settings extends AbstractModelObject {
       String xml = sb.toString();
       IOUtils.write(xml, w);
 
-    } catch (JAXBException e) {
+    }
+    catch (JAXBException e) {
       LOGGER.error("saveSettings", e);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOGGER.error("saveSettings", e);
-    } finally {
+    }
+    finally {
       try {
         w.close();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("saveSettings", e);
       }
     }
@@ -431,7 +444,7 @@ public class Settings extends AbstractModelObject {
    * @return the image tmdb poster size
    */
   @XmlElement(name = IMAGE_TMDB_POSTER)
-  public TmdbMetadataProvider.PosterSizes getImageTmdbPosterSize() {
+  public PosterSizes getImageTmdbPosterSize() {
     return imageTmdbPosterSize;
   }
 
@@ -441,8 +454,8 @@ public class Settings extends AbstractModelObject {
    * @param newValue
    *          the new image tmdb poster size
    */
-  public void setImageTmdbPosterSize(TmdbMetadataProvider.PosterSizes newValue) {
-    TmdbMetadataProvider.PosterSizes oldValue = this.imageTmdbPosterSize;
+  public void setImageTmdbPosterSize(PosterSizes newValue) {
+    PosterSizes oldValue = this.imageTmdbPosterSize;
     this.imageTmdbPosterSize = newValue;
     firePropertyChange(IMAGE_TMDB_POSTER, oldValue, newValue);
   }
@@ -489,5 +502,16 @@ public class Settings extends AbstractModelObject {
     Languages oldValue = this.scraperTmdbLanguage;
     this.scraperTmdbLanguage = newValue;
     firePropertyChange(SCRAPER_TMDB_LANGU, oldValue, newValue);
+  }
+
+  @XmlElement(name = CERTIFICATION_COUNTRY)
+  public CountryCode getCertificationCountry() {
+    return certificationCountry;
+  }
+
+  public void setCertificationCountry(CountryCode newValue) {
+    CountryCode oldValue = this.certificationCountry;
+    certificationCountry = newValue;
+    firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
 }

@@ -43,7 +43,6 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
-import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
@@ -168,6 +167,7 @@ public class MoviePanel extends JPanel {
   private JLabel              lblTmdbId;
   private JLabel              lblRuntimeT;
   private JLabel              lblRuntime;
+  private JLabel              lblMinutes;
 
   /**
    * Create the panel.
@@ -234,7 +234,6 @@ public class MoviePanel extends JPanel {
     table = new JTable();
     table.setFont(new Font("Dialog", Font.PLAIN, 11));
     scrollPane.setViewportView(table);
-    table.setBorder(UIManager.getBorder("Tree.editorBorder"));
 
     JPanel panelRight = new JPanel();
     splitPaneHorizontal.setRightComponent(panelRight);
@@ -303,61 +302,64 @@ public class MoviePanel extends JPanel {
 
     panelDetails = new JPanel();
     tabbedPaneMovieDetails.addTab("Details", null, panelDetails, null);
-    panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(39dlu;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(165dlu;default):grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
-
-    lblMoviePathT = new JLabel("Path");
-    panelDetails.add(lblMoviePathT, "2, 2");
-
-    lblMoviePath = new JLabel("");
-    lblMoviePathT.setLabelFor(lblMoviePath);
-    panelDetails.add(lblMoviePath, "4, 2");
-
-    lblProductionT = new JLabel("Production");
-    panelDetails.add(lblProductionT, "2, 4");
-
-    lblProduction = new JLabel("");
-    lblProductionT.setLabelFor(lblProduction);
-    panelDetails.add(lblProduction, "4, 4");
+    panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblGenresT = new JLabel("Genres");
-    panelDetails.add(lblGenresT, "2, 6");
+    panelDetails.add(lblGenresT, "2, 2");
+    lblGenresT.setLabelFor(lblGenres);
 
     lblGenres = new JLabel("");
-    lblGenresT.setLabelFor(lblGenres);
-    panelDetails.add(lblGenres, "4, 6");
+    panelDetails.add(lblGenres, "4, 2, 3, 1");
+
+    lblRuntimeT = new JLabel("Runtime");
+    panelDetails.add(lblRuntimeT, "2, 4");
+    lblRuntimeT.setLabelFor(lblRuntime);
+
+    lblRuntime = new JLabel("");
+    panelDetails.add(lblRuntime, "4, 4");
+
+    lblMinutes = new JLabel("min");
+    panelDetails.add(lblMinutes, "6, 4");
 
     lblCertificationT = new JLabel("Certification");
-    panelDetails.add(lblCertificationT, "2, 8");
+    panelDetails.add(lblCertificationT, "2, 6");
+    lblCertificationT.setLabelFor(lblCertification);
 
     lblCertification = new JLabel("");
-    lblCertificationT.setLabelFor(lblCertification);
-    panelDetails.add(lblCertification, "4, 8");
+    panelDetails.add(lblCertification, "4, 6, 3, 1");
+
+    lblProductionT = new JLabel("Production");
+    panelDetails.add(lblProductionT, "2, 8");
+    lblProductionT.setLabelFor(lblProduction);
+
+    lblProduction = new JLabel("");
+    panelDetails.add(lblProduction, "4, 8, 3, 1");
 
     lblImdbIdT = new JLabel("IMDB Id");
     panelDetails.add(lblImdbIdT, "2, 10");
 
     lblImdbId = new JLabel("");
     lblImdbIdT.setLabelFor(lblImdbId);
-    panelDetails.add(lblImdbId, "4, 10");
+    panelDetails.add(lblImdbId, "4, 10, 3, 1");
 
     lblTmdbIdT = new JLabel("TMDB Id");
     panelDetails.add(lblTmdbIdT, "2, 12");
 
     lblTmdbId = new JLabel("");
     lblTmdbIdT.setLabelFor(lblTmdbId);
-    panelDetails.add(lblTmdbId, "4, 12");
+    panelDetails.add(lblTmdbId, "4, 12, 3, 1");
 
-    lblRuntimeT = new JLabel("Runtime");
-    panelDetails.add(lblRuntimeT, "2, 14");
+    lblMoviePathT = new JLabel("Path");
+    panelDetails.add(lblMoviePathT, "2, 14");
+    lblMoviePathT.setLabelFor(lblMoviePath);
 
-    lblRuntime = new JLabel("");
-    lblRuntimeT.setLabelFor(lblRuntime);
-    panelDetails.add(lblRuntime, "4, 14");
+    lblMoviePath = new JLabel("");
+    panelDetails.add(lblMoviePath, "4, 14, 3, 1");
 
     panelOverview = new JPanel();
     tabbedPaneMovieDetails.addTab("Overview", null, panelOverview, null);
@@ -470,6 +472,9 @@ public class MoviePanel extends JPanel {
 
     TableRowSorter sorter = new TableRowSorter(table.getModel());
     table.setRowSorter(sorter);
+
+    // moviename column
+    table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
 
     // year column
     table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);

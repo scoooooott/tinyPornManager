@@ -39,7 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
-import org.tinymediamanager.scraper.MediaMetadata.Genres;
+import org.tinymediamanager.scraper.MediaGenres;
 
 /**
  * The Class MovieToXbmcNfoConnector.
@@ -140,10 +140,12 @@ public class MovieToXbmcNfoConnector {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
         xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
-      } else {
+      }
+      else {
         xbmc.setOutline(xbmc.getPlot());
       }
-    } else if (!StringUtils.isEmpty(xbmc.getPlot())) {
+    }
+    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
       spaceIndex = xbmc.getPlot().length();
       xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     }
@@ -180,7 +182,7 @@ public class MovieToXbmcNfoConnector {
       xbmc.addActor(cast.getName(), cast.getCharacter());
     }
 
-    for (Genres genre : movie.getGenres()) {
+    for (MediaGenres genre : movie.getGenres()) {
       xbmc.addGenre(genre.toString());
     }
 
@@ -208,14 +210,18 @@ public class MovieToXbmcNfoConnector {
       String xml = sb.toString();
       IOUtils.write(xml, w);
 
-    } catch (JAXBException e) {
+    }
+    catch (JAXBException e) {
       LOGGER.error("setData", e);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOGGER.error("setData", e);
-    } finally {
+    }
+    finally {
       try {
         w.close();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.error("setData", e);
       }
     }
@@ -267,7 +273,7 @@ public class MovieToXbmcNfoConnector {
         }
 
         for (String genre : xbmc.getGenres()) {
-          Genres genreFound = Genres.getGenre(genre);
+          MediaGenres genreFound = MediaGenres.getGenre(genre);
           if (genreFound != null) {
             movie.addGenre(genreFound);
           }
@@ -275,14 +281,17 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      } catch (FileNotFoundException e) {
-        LOGGER.error("setData", e);
-        return null;
-      } catch (IOException e) {
+      }
+      catch (FileNotFoundException e) {
         LOGGER.error("setData", e);
         return null;
       }
-    } catch (JAXBException e) {
+      catch (IOException e) {
+        LOGGER.error("setData", e);
+        return null;
+      }
+    }
+    catch (JAXBException e) {
       LOGGER.error("setData", e);
       return null;
     }

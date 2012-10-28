@@ -41,10 +41,11 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
+import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -85,6 +86,7 @@ public class SettingsPanel extends JPanel {
 
   /** The cb scraper tmdb language. */
   private JComboBox      cbScraperTmdbLanguage;
+  private JComboBox      cbCountry;
 
   /**
    * Create the panel.
@@ -196,9 +198,9 @@ public class SettingsPanel extends JPanel {
     JPanel panelMovieScrapers = new JPanel();
     panelMovieScrapers.setBorder(new TitledBorder(null, "Scrapers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     panelMovieSettings.add(panelMovieScrapers, "4, 2");
-    panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("171px"), FormFactory.RELATED_GAP_COLSPEC,
+    panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("50px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JCheckBox cbScraperTmdb = new JCheckBox("The Movie Database");
     cbScraperTmdb.setEnabled(false);
@@ -210,6 +212,12 @@ public class SettingsPanel extends JPanel {
 
     cbScraperTmdbLanguage = new JComboBox(TmdbMetadataProvider.Languages.values());
     panelMovieScrapers.add(cbScraperTmdbLanguage, "3, 4");
+
+    JLabel lblCountry = new JLabel("get country specific data for");
+    panelMovieScrapers.add(lblCountry, "1, 6, right, default");
+
+    cbCountry = new JComboBox(CountryCode.values());
+    panelMovieScrapers.add(cbCountry, "3, 6, fill, default");
 
     JPanel panelMovieImages = new JPanel();
     panelMovieImages.setBorder(new TitledBorder(null, "Poster and Fanart", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -265,13 +273,11 @@ public class SettingsPanel extends JPanel {
         settings.saveSettings();
       }
     });
+
     initDataBindings();
 
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<Settings, String> settingsBeanProperty = BeanProperty.create("proxyHost");
     BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
@@ -326,5 +332,10 @@ public class SettingsPanel extends JPanel {
     AutoBinding<Settings, Languages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_8, cbScraperTmdbLanguage, jComboBoxBeanProperty);
     autoBinding_7.bind();
+    //
+    BeanProperty<Settings, String> settingsBeanProperty_9 = BeanProperty.create("certificationCountry");
+    AutoBinding<Settings, String, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_9, cbCountry, jComboBoxBeanProperty);
+    autoBinding_8.bind();
   }
 }

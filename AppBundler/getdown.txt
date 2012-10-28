@@ -6,6 +6,7 @@ ui.name = tinyMediaManager
 
 # Application jar files
 code = tmm.jar
+code = tmm.properties
 code = lib/commons-lang3-3.1.jar
 code = lib/log4j-1.2.16.jar
 code = lib/themoviedbapi-3.2-SNAPSHOT-r169.jar
