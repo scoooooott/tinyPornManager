@@ -286,8 +286,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       if (Globals.settings.getCertificationCountry() == null
           || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
 
-        Certification certification = new Certification(info.getCountry(), info.getCertification());
-        md.addCertification(certification);
+        // Certification certification = new Certification(info.getCountry(),
+        // info.getCertification());
+        // md.addCertification(certification);
+        md.addCertification(Certification.getCertification(info.getCountry(), info.getCertification()));
       }
 
       // MPAA is an extra case for certification

@@ -53,160 +53,156 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 public class Movie extends AbstractModelObject {
 
   /** The Constant NFO_FILE. */
-  protected final static String    NFO_FILE           = "movie.nfo";
+  protected final static String NFO_FILE           = "movie.nfo";
 
   /** The Constant TITLE. */
-  protected final static String    TITLE              = "title";
+  protected final static String TITLE              = "title";
 
   /** The Constant ORIGINAL_TITLE. */
-  protected final static String    ORIGINAL_TITLE     = "originaltitle";
+  protected final static String ORIGINAL_TITLE     = "originaltitle";
 
   /** The Constant RATING. */
-  protected final static String    RATING             = "rating";
+  protected final static String RATING             = "rating";
 
   /** The Constant YEAR. */
-  protected final static String    YEAR               = "year";
+  protected final static String YEAR               = "year";
 
   /** The Constant OUTLINE. */
-  protected final static String    OUTLINE            = "outline";
+  protected final static String OUTLINE            = "outline";
 
   /** The Constant PLOT. */
-  protected final static String    PLOT               = "plot";
+  protected final static String PLOT               = "plot";
 
   /** The Constant TAGLINE. */
-  protected final static String    TAGLINE            = "tagline";
+  protected final static String TAGLINE            = "tagline";
 
   /** The Constant RUNTIME. */
-  protected final static String    RUNTIME            = "runtime";
+  protected final static String RUNTIME            = "runtime";
 
   /** The Constant THUMB. */
-  protected final static String    THUMB              = "thumb";
+  protected final static String THUMB              = "thumb";
 
   /** The Constant THUMB_PATH. */
-  protected final static String    THUMB_PATH         = "thumbpath";
+  protected final static String THUMB_PATH         = "thumbpath";
 
   /** The Constant ID. */
-  protected final static String    ID                 = "id";
+  protected final static String ID                 = "id";
 
   /** The Constant IMDB_ID. */
-  protected final static String    IMDB_ID            = "imdbid";
+  protected final static String IMDB_ID            = "imdbid";
 
   /** The Constant FILENAME_AND_PATH. */
-  protected final static String    FILENAME_AND_PATH  = "filenameandpath";
+  protected final static String FILENAME_AND_PATH  = "filenameandpath";
 
   /** The Constant PATH. */
-  protected final static String    PATH               = "path";
+  protected final static String PATH               = "path";
 
   /** The Constant DIRECTOR. */
-  protected final static String    DIRECTOR           = "director";
+  protected final static String DIRECTOR           = "director";
 
   /** The Constant WRITER. */
-  protected final static String    WRITER             = "writer";
+  protected final static String WRITER             = "writer";
 
   /** The Constant ACTOR. */
-  protected final static String    ACTOR              = "actor";
+  protected final static String ACTOR              = "actor";
 
   /** The Constant Production Company. */
-  protected final static String    PRODUCTION_COMPANY = "productionCompany";
+  protected final static String PRODUCTION_COMPANY = "productionCompany";
 
   /** The Constant NAME. */
-  protected final static String    NAME               = "name";
+  protected final static String NAME               = "name";
 
   /** The Constant ROLE. */
-  protected final static String    ROLE               = "role";
+  protected final static String ROLE               = "role";
 
   /** The Constant GENRE. */
-  protected final static String    GENRE              = "genre";
+  protected final static String GENRE              = "genre";
 
   /** The Constant CERTIFICATION. */
-  protected final static String    CERTIFICATIONS     = "certifications";
+  protected final static String CERTIFICATION      = "certification";
 
   /** The Constant logger. */
   @XmlTransient
-  private static final Logger      LOGGER             = Logger.getLogger(Movie.class);
+  private static final Logger   LOGGER             = Logger.getLogger(Movie.class);
 
   /** The id. */
   @Id
   @GeneratedValue
-  private Long                     id;
+  private Long                  id;
 
   /** The name. */
-  private String                   name;
+  private String                name;
 
   /** The original name. */
-  private String                   originalName;
+  private String                originalName;
 
   /** The year. */
-  private String                   year;
+  private String                year;
 
   /** The imdb id. */
-  private String                   imdbId;
+  private String                imdbId;
 
   /** The tmdb id. */
-  private int                      tmdbId;
+  private int                   tmdbId;
 
   /** The overview. */
-  private String                   overview;
+  private String                overview;
 
   /** The tagline. */
-  private String                   tagline;
+  private String                tagline;
 
   /** The rating. */
-  private float                    rating;
+  private float                 rating;
 
   /** The runtime. */
-  private int                      runtime;
+  private int                   runtime;
 
   /** The fanart url. */
-  private String                   fanartUrl;
+  private String                fanartUrl;
 
   /** The fanart. */
-  private String                   fanart;
+  private String                fanart;
 
   /** The poster url. */
-  private String                   posterUrl;
+  private String                posterUrl;
 
   /** The poster. */
-  private String                   poster;
+  private String                poster;
 
   /** The path. */
-  private String                   path;
+  private String                path;
 
   /** The nfo filename. */
-  private String                   nfoFilename;
+  private String                nfoFilename;
 
   /** The director. */
-  private String                   director;
+  private String                director;
 
   /** The writer. */
-  private String                   writer;
+  private String                writer;
 
   /** The production company. */
-  private String                   productionCompany;
+  private String                productionCompany;
 
   /** The certification. */
-  // private String certification;
+  private Certification         certification;
 
   /** The scraped. */
-  private boolean                  scraped;
+  private boolean               scraped;
 
   /** The movie files. */
-  private List<String>             movieFiles         = new ArrayList<String>();
+  private List<String>          movieFiles         = new ArrayList<String>();
 
   /** The genres. */
-  private List<MediaGenres>        genres             = new ArrayList<MediaGenres>();
+  private List<MediaGenres>     genres             = new ArrayList<MediaGenres>();
 
   /** The cast. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieCast>          cast               = new ArrayList<MovieCast>();
+  private List<MovieCast>       cast               = new ArrayList<MovieCast>();
 
   /** The cast observable. */
   @Transient
-  private List<MovieCast>          castObservable     = ObservableCollections.observableList(cast);
-
-  /** the certifications. */
-  @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieCertification> certifications     = new ArrayList<MovieCertification>();
+  private List<MovieCast>       castObservable     = ObservableCollections.observableList(cast);
 
   /**
    * Instantiates a new movie.
@@ -725,10 +721,9 @@ public class Movie extends AbstractModelObject {
     setProductionCompany(metadata.getCompany());
 
     // certifications
-    removeAllCertifications();
     for (Certification certification : metadata.getCertifications()) {
-      MovieCertification cert = new MovieCertification(certification.getCountry(), certification.getCertification());
-      addCertification(cert);
+      setCertification(certification);
+      break;
     }
 
     // poster
@@ -1104,20 +1099,8 @@ public class Movie extends AbstractModelObject {
    * 
    * @return the certifications
    */
-  public List<MovieCertification> getCertifications() {
-    return certifications;
-  }
-
-  /**
-   * Adds the certification.
-   * 
-   * @param newValue
-   *          the new value
-   */
-  public void addCertification(MovieCertification newValue) {
-    this.certifications.add(newValue);
-    firePropertyChange(CERTIFICATIONS, null, newValue);
-    firePropertyChange("certificationsAsString", null, newValue);
+  public Certification getCertification() {
+    return certification;
   }
 
   /**
@@ -1126,25 +1109,9 @@ public class Movie extends AbstractModelObject {
    * @param newValue
    *          the new certifications
    */
-  public void setCertifications(List<MovieCertification> newValue) {
-    this.certifications = newValue;
-    firePropertyChange(CERTIFICATIONS, null, newValue);
-    firePropertyChange("certificationsAsString", null, newValue);
-  }
-
-  /**
-   * Removes the all certifications.
-   */
-  public void removeAllCertifications() {
-    certifications.clear();
-    firePropertyChange(CERTIFICATIONS, null, certifications);
-    firePropertyChange("certificationsAsString", null, certifications);
-  }
-
-  public void removeCertification(MovieCertification newValue) {
-    certifications.remove(newValue);
-    firePropertyChange(CERTIFICATIONS, null, newValue);
-    firePropertyChange("certificationsAsString", null, newValue);
+  public void setCertification(Certification newValue) {
+    this.certification = newValue;
+    firePropertyChange(CERTIFICATION, null, newValue);
   }
 
   public boolean getHasRating() {
@@ -1161,17 +1128,6 @@ public class Movie extends AbstractModelObject {
         sb.append(", ");
       }
       sb.append(genre.toString());
-    }
-    return sb.toString();
-  }
-
-  public String getCertificationsAsString() {
-    StringBuilder sb = new StringBuilder();
-    for (MovieCertification cert : certifications) {
-      if (!StringUtils.isEmpty(sb)) {
-        sb.append(" / ");
-      }
-      sb.append(cert.getCountry() + ":" + cert.getCertification());
     }
     return sb.toString();
   }

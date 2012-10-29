@@ -15,10 +15,13 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +50,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.gpl.JSplitButton.JSplitButton;
 import org.gpl.JSplitButton.action.SplitButtonActionListener;
@@ -139,7 +143,7 @@ public class MoviePanel extends JPanel {
   private JButton             btnCancelScraper;
 
   /** The lbl movie path. */
-  private JLabel              lblMoviePath;
+  private LinkLabel           lblMoviePath;
   private JPanel              panelProgressBar;
   private JPanel              panelMovieCount;
   private JLabel              lblMovieCount;
@@ -163,8 +167,8 @@ public class MoviePanel extends JPanel {
   private JLabel              lblCertification;
   private JLabel              lblImdbIdT;
   private JLabel              lblTmdbIdT;
-  private JLabel              lblImdbId;
-  private JLabel              lblTmdbId;
+  private LinkLabel           lblImdbId;
+  private LinkLabel           lblTmdbId;
   private JLabel              lblRuntimeT;
   private JLabel              lblRuntime;
   private JLabel              lblMinutes;
@@ -303,11 +307,12 @@ public class MoviePanel extends JPanel {
     panelDetails = new JPanel();
     tabbedPaneMovieDetails.addTab("Details", null, panelDetails, null);
     panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.BUTTON_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblGenresT = new JLabel("Genres");
     panelDetails.add(lblGenresT, "2, 2");
@@ -343,23 +348,62 @@ public class MoviePanel extends JPanel {
     lblImdbIdT = new JLabel("IMDB Id");
     panelDetails.add(lblImdbIdT, "2, 10");
 
-    lblImdbId = new JLabel("");
+    lblImdbId = new LinkLabel("");
+    lblImdbId.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        try {
+          Desktop.getDesktop().browse(new URI("http://www.imdb.com/title/" + lblImdbId.getNormalText()));
+        }
+        catch (Exception e) {
+          LOGGER.error("browse to imdbid", e);
+        }
+      }
+    });
     lblImdbIdT.setLabelFor(lblImdbId);
-    panelDetails.add(lblImdbId, "4, 10, 3, 1");
+
+    panelDetails.add(lblImdbId, "4, 10, 3, 1, left, default");
 
     lblTmdbIdT = new JLabel("TMDB Id");
     panelDetails.add(lblTmdbIdT, "2, 12");
 
-    lblTmdbId = new JLabel("");
+    lblTmdbId = new LinkLabel("");
     lblTmdbIdT.setLabelFor(lblTmdbId);
-    panelDetails.add(lblTmdbId, "4, 12, 3, 1");
+    lblTmdbId.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        try {
+          Desktop.getDesktop().browse(new URI("http://www.themoviedb.org/movie/" + lblTmdbId.getNormalText()));
+        }
+        catch (Exception e) {
+          LOGGER.error("browse to tmdbid", e);
+        }
+      }
+    });
+    panelDetails.add(lblTmdbId, "4, 12, 3, 1, left, default");
 
     lblMoviePathT = new JLabel("Path");
     panelDetails.add(lblMoviePathT, "2, 14");
     lblMoviePathT.setLabelFor(lblMoviePath);
 
-    lblMoviePath = new JLabel("");
-    panelDetails.add(lblMoviePath, "4, 14, 3, 1");
+    lblMoviePath = new LinkLabel("");
+    lblMoviePath.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+          try {
+            // get the location from the label
+            File path = new File(lblMoviePath.getNormalText());
+            // check whether this location exists
+            if (path.exists()) {
+              Desktop.getDesktop().open(path);
+            }
+          }
+          catch (Exception ex) {
+            LOGGER.error("open filemanager", ex);
+          }
+        }
+      }
+    });
+
+    panelDetails.add(lblMoviePath, "4, 14, 3, 1, left, default");
 
     panelOverview = new JPanel();
     tabbedPaneMovieDetails.addTab("Overview", null, panelOverview, null);
@@ -397,15 +441,6 @@ public class MoviePanel extends JPanel {
 
     lblActors = new JLabel("Actors");
     panelMovieCast.add(lblActors, "2, 6, default, top");
-    // panelMovieCast.setLayout(new FormLayout(new ColumnSpec[] {
-    // ColumnSpec.decode("452px:grow"),},
-    // new RowSpec[] {
-    // FormFactory.LINE_GAP_ROWSPEC,
-    // FormFactory.DEFAULT_ROWSPEC,
-    // FormFactory.RELATED_GAP_ROWSPEC,
-    // FormFactory.DEFAULT_ROWSPEC,
-    // FormFactory.RELATED_GAP_ROWSPEC,
-    // RowSpec.decode("fill:default:grow"),}));
 
     JScrollPane scrollPaneMovieCast = new JScrollPane();
     lblActors.setLabelFor(scrollPaneMovieCast);
@@ -1036,11 +1071,6 @@ public class MoviePanel extends JPanel {
         lblGenres, jLabelBeanProperty);
     autoBinding_13.bind();
     //
-    BeanProperty<JTable, String> jTableBeanProperty_13 = BeanProperty.create("selectedElement.certificationsAsString");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_13,
-        lblCertification, jLabelBeanProperty);
-    autoBinding_14.bind();
-    //
     BeanProperty<JTable, String> jTableBeanProperty_14 = BeanProperty.create("selectedElement.imdbId");
     AutoBinding<JTable, String, JLabel, String> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_14,
         lblImdbId, jLabelBeanProperty);
@@ -1055,5 +1085,10 @@ public class MoviePanel extends JPanel {
     AutoBinding<JTable, Integer, JLabel, String> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_16,
         lblRuntime, jLabelBeanProperty);
     autoBinding_17.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty_13 = BeanProperty.create("selectedElement.certification.name");
+    AutoBinding<JTable, String, JLabel, String> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_13,
+        lblCertification, jLabelBeanProperty);
+    autoBinding_14.bind();
   }
 }

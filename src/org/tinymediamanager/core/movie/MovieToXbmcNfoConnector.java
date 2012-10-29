@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
+import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 
 /**
@@ -157,19 +158,8 @@ public class MovieToXbmcNfoConnector {
     xbmc.setStudio(movie.getProductionCompany());
 
     // certifications
-    StringBuilder certifications = new StringBuilder();
-    for (MovieCertification certification : movie.getCertifications()) {
-      if (!StringUtils.isEmpty(certifications)) {
-        certifications.append(" / ");
-      }
-      certifications.append(certification.getCountry() + ":" + certification.getCertification());
-
-      // MPAA is stored separate
-      if ("US".equals(certification.getCountry())) {
-        xbmc.setMpaa(certification.getCertification());
-      }
-    }
-    xbmc.setCertifications(certifications.toString());
+    xbmc.setCertifications(movie.getCertification().toString());
+    xbmc.setMpaa(movie.getCertification().toString());
 
     // filename and path
     if (movie.getMovieFiles().size() > 0) {
@@ -260,7 +250,7 @@ public class MovieToXbmcNfoConnector {
         movie.setWriter(xbmc.getCredits());
         movie.setProductionCompany(xbmc.getStudio());
         if (!StringUtils.isEmpty(xbmc.getMpaa())) {
-          movie.addCertification(new MovieCertification("US", xbmc.getMpaa()));
+          movie.setCertification(Certification.findCertification(xbmc.getMpaa()));
         }
 
         for (Object obj : xbmc.getActors()) {
