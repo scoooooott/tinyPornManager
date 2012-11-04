@@ -33,6 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -146,6 +147,10 @@ public class MovieEditor extends JDialog {
   private JSpinner          spRating;
 
   private JComboBox         cbCertification;
+  private JTextField        tfImdbId;
+  private JTextField        tfTmdbId;
+  private JLabel            lblImdbId;
+  private JLabel            lblTmdbId;
 
   /**
    * Create the dialog.
@@ -161,20 +166,22 @@ public class MovieEditor extends JDialog {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"),
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    contentPanel.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("100px:grow"), FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("right:300px:grow"), }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(150px;default)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"),
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
     {
       lblMoviePath = new JLabel("");
-      contentPanel.add(lblMoviePath, "2, 2, 11, 1");
+      contentPanel.add(lblMoviePath, "2, 2, 13, 1");
     }
     {
       JLabel lblTitle = new JLabel("Title");
@@ -182,7 +189,7 @@ public class MovieEditor extends JDialog {
     }
     {
       tfTitle = new JTextField();
-      contentPanel.add(tfTitle, "4, 4, 7, 1, fill, default");
+      contentPanel.add(tfTitle, "4, 4, 9, 1, fill, default");
       tfTitle.setColumns(10);
     }
     {
@@ -196,7 +203,7 @@ public class MovieEditor extends JDialog {
         }
       });
       lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      contentPanel.add(lblPoster, "12, 4, 1, 11, fill, fill");
+      contentPanel.add(lblPoster, "14, 4, 1, 13, fill, fill");
     }
     {
       JLabel lblOriginalTitle = new JLabel("Originaltitle");
@@ -204,7 +211,7 @@ public class MovieEditor extends JDialog {
     }
     {
       tfOriginalTitle = new JTextField();
-      contentPanel.add(tfOriginalTitle, "4, 6, 7, 1, fill, top");
+      contentPanel.add(tfOriginalTitle, "4, 6, 9, 1, fill, top");
       tfOriginalTitle.setColumns(10);
     }
     {
@@ -217,15 +224,15 @@ public class MovieEditor extends JDialog {
     }
     {
       JLabel lblRuntime = new JLabel("Runtime");
-      contentPanel.add(lblRuntime, "6, 8, right, default");
+      contentPanel.add(lblRuntime, "8, 8, right, default");
     }
     {
       spRuntime = new JSpinner();
-      contentPanel.add(spRuntime, "8, 8, fill, default");
+      contentPanel.add(spRuntime, "10, 8, fill, default");
     }
     {
       JLabel lblMin = new JLabel("min");
-      contentPanel.add(lblMin, "10, 8");
+      contentPanel.add(lblMin, "12, 8");
     }
     {
       JLabel lblRating = new JLabel("Rating");
@@ -237,22 +244,42 @@ public class MovieEditor extends JDialog {
     }
     {
       JLabel lblCertification = new JLabel("Certification");
-      contentPanel.add(lblCertification, "6, 10, right, default");
+      contentPanel.add(lblCertification, "8, 10, right, default");
     }
     {
       cbCertification = new JComboBox();
       for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
-      contentPanel.add(cbCertification, "8, 10, 3, 1, fill, default");
+      contentPanel.add(cbCertification, "10, 10, 3, 1, fill, default");
+    }
+    {
+      lblImdbId = new JLabel("IMDB Id");
+      contentPanel.add(lblImdbId, "2, 12, right, default");
+    }
+    {
+      tfImdbId = new JTextField();
+      lblImdbId.setLabelFor(tfImdbId);
+      contentPanel.add(tfImdbId, "4, 12, 3, 1, fill, default");
+      tfImdbId.setColumns(10);
+    }
+    {
+      lblTmdbId = new JLabel("TMDB Id");
+      contentPanel.add(lblTmdbId, "8, 12, right, default");
+    }
+    {
+      tfTmdbId = new JTextField();
+      lblTmdbId.setLabelFor(tfTmdbId);
+      contentPanel.add(tfTmdbId, "10, 12, 3, 1, fill, default");
+      tfTmdbId.setColumns(10);
     }
     {
       JLabel lblPlot = new JLabel("Plot");
-      contentPanel.add(lblPlot, "2, 12, right, top");
+      contentPanel.add(lblPlot, "2, 14, right, top");
     }
     {
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "4, 12, 7, 1, fill, fill");
+      contentPanel.add(scrollPane, "4, 14, 9, 1, fill, fill");
       {
         tpPlot = new JTextPane();
         scrollPane.setViewportView(tpPlot);
@@ -260,38 +287,38 @@ public class MovieEditor extends JDialog {
     }
     {
       JLabel lblDirector = new JLabel("Director");
-      contentPanel.add(lblDirector, "2, 14, right, default");
+      contentPanel.add(lblDirector, "2, 16, right, default");
     }
     {
       tfDirector = new JTextField();
-      contentPanel.add(tfDirector, "4, 14, 7, 1, fill, top");
+      contentPanel.add(tfDirector, "4, 16, 9, 1, fill, top");
       tfDirector.setColumns(10);
     }
     {
       JLabel lblWriter = new JLabel("Writer");
-      contentPanel.add(lblWriter, "2, 16, right, default");
+      contentPanel.add(lblWriter, "2, 18, right, default");
     }
     {
       tfWriter = new JTextField();
-      contentPanel.add(tfWriter, "4, 16, 7, 1, fill, top");
+      contentPanel.add(tfWriter, "4, 18, 9, 1, fill, top");
       tfWriter.setColumns(10);
     }
     {
       JLabel lblCompany = new JLabel("Production");
-      contentPanel.add(lblCompany, "2, 18, right, default");
+      contentPanel.add(lblCompany, "2, 20, right, default");
     }
     {
       tfProductionCompanies = new JTextField();
-      contentPanel.add(tfProductionCompanies, "4, 18, 7, 1, fill, default");
+      contentPanel.add(tfProductionCompanies, "4, 20, 9, 1, fill, default");
       tfProductionCompanies.setColumns(10);
     }
     {
       JLabel lblActors = new JLabel("Actors");
-      contentPanel.add(lblActors, "2, 20, right, default");
+      contentPanel.add(lblActors, "2, 22, right, default");
     }
     {
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "4, 20, 3, 7, fill, fill");
+      contentPanel.add(scrollPane, "4, 22, 5, 7, fill, fill");
       {
         tableActors = new JTable();
         scrollPane.setViewportView(tableActors);
@@ -308,22 +335,22 @@ public class MovieEditor extends JDialog {
           dialog.setVisible(true);
         }
       });
-      contentPanel.add(lblFanart, "12, 16, 1, 11, fill, fill");
+      contentPanel.add(lblFanart, "14, 18, 1, 11, fill, fill");
     }
     {
       JLabel lblGenres = new JLabel("Genres");
-      contentPanel.add(lblGenres, "8, 20, right, default");
+      contentPanel.add(lblGenres, "10, 22, right, default");
     }
     {
       JButton btnAddActor = new JButton("Add Actor");
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(actionAddActor);
       btnAddActor.setIcon(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Add-User.png")));
-      contentPanel.add(btnAddActor, "2, 22, right, top");
+      contentPanel.add(btnAddActor, "2, 24, right, top");
     }
     {
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "10, 20, 1, 5, fill, fill");
+      contentPanel.add(scrollPane, "12, 22, 1, 5, fill, fill");
       {
         listGenres = new JList();
         scrollPane.setViewportView(listGenres);
@@ -334,14 +361,14 @@ public class MovieEditor extends JDialog {
       btnAddGenre.setAction(actionAddGenre);
       btnAddGenre.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
-      contentPanel.add(btnAddGenre, "8, 22, right, top");
+      contentPanel.add(btnAddGenre, "10, 24, right, top");
     }
     {
       JButton btnRemoveActor = new JButton("Remove Actor");
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(actionRemoveActor);
       btnRemoveActor.setIcon(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove-User.png")));
-      contentPanel.add(btnRemoveActor, "2, 24, right, top");
+      contentPanel.add(btnRemoveActor, "2, 26, right, top");
     }
     {
       JPanel buttonPane = new JPanel();
@@ -368,17 +395,19 @@ public class MovieEditor extends JDialog {
       btnRemoveGenre.setAction(actionRemoveGenre);
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveGenre.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
-      contentPanel.add(btnRemoveGenre, "8, 24, right, top");
+      contentPanel.add(btnRemoveGenre, "10, 26, right, top");
     }
     {
       cbGenres = new JComboBox(MediaGenres.values());
-      contentPanel.add(cbGenres, "10, 26");
+      contentPanel.add(cbGenres, "12, 28");
     }
 
     {
       lblMoviePath.setText(movie.getPath() + File.separator + movie.getMovieFiles().get(0));
       tfTitle.setText(movie.getName());
       tfOriginalTitle.setText(movie.getOriginalName());
+      tfImdbId.setText(movie.getImdbId());
+      tfTmdbId.setText(String.valueOf(movie.getTmdbId()));
       tpPlot.setText(movie.getOverview());
       tfDirector.setText(movie.getDirector());
       tfWriter.setText(movie.getWriter());
@@ -439,6 +468,14 @@ public class MovieEditor extends JDialog {
       movieToEdit.setOriginalName(tfOriginalTitle.getText());
       movieToEdit.setYear(String.valueOf(spYear.getValue()));
       movieToEdit.setRuntime((Integer) spRuntime.getValue());
+      movieToEdit.setImdbId(tfImdbId.getText());
+      try {
+        movieToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
+      }
+      catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(null, "wrong format: TMDB Id");
+        return;
+      }
 
       Object certification = cbCertification.getSelectedItem();
       if (certification instanceof Certification) {

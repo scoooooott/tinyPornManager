@@ -136,7 +136,8 @@ public class MovieList extends AbstractModelObject {
       List<Movie> movies = query.getResultList();
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
-      } else {
+      }
+      else {
         LOGGER.debug("found nothing in database");
       }
       // LOGGER.debug(movies);
@@ -146,12 +147,15 @@ public class MovieList extends AbstractModelObject {
           // LOGGER.debug(movie);
           movie.setObservableCastList();
           addMovie(movie);
-        } else {
+        }
+        else {
           LOGGER.error("retrieved no movie: " + obj);
         }
-    } catch (PersistenceException e) {
+    }
+    catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -166,7 +170,7 @@ public class MovieList extends AbstractModelObject {
     LOGGER.debug("find movies in path " + path);
     for (File subdir : new File(path).listFiles()) {
       if (subdir.isDirectory()) {
-        findMovieInDirectory(subdir);
+        findMovieInDirectory(subdir, path);
       }
     }
   }
@@ -178,7 +182,7 @@ public class MovieList extends AbstractModelObject {
    * @param dir
    *          the dir
    */
-  private void findMovieInDirectory(File dir) {
+  private void findMovieInDirectory(File dir, String dataSource) {
     LOGGER.debug("find movies in directory " + dir.getPath());
     // check if there are any videofiles in that subdir
     FilenameFilter filter = new FilenameFilter() {
@@ -224,6 +228,7 @@ public class MovieList extends AbstractModelObject {
         }
         // persist movie
         if (movie != null) {
+          movie.setDataSource(dataSource);
           LOGGER.debug("store movie " + dir.getPath());
           Globals.entityManager.getTransaction().begin();
           Globals.entityManager.persist(movie);
@@ -240,11 +245,12 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
-    } else {
+    }
+    else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
-          findMovieInDirectory(subdir);
+          findMovieInDirectory(subdir, dataSource);
         }
       }
     }
@@ -282,7 +288,8 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 

@@ -18,8 +18,8 @@ package org.tinymediamanager.scraper;
 /**
  * The Enum MetadataKey.
  */
-public enum MetadataKey {
 
+public enum MetadataKey {
   /** The media title. */
   MEDIA_TITLE("MediaTitle", ""),
   /** The album. */
@@ -99,7 +99,9 @@ public enum MetadataKey {
   /** The tagline. */
   TAGLINE("Tagline", ""),
   /** The tmdb id. */
-  TMDB_ID("TMDBId", "");
+  TMDB_ID("TMDBId", ""),
+  /** The votes. */
+  VOTE_COUNT("VoteCount", "");
 
   /** The desc. */
   private String id, desc;

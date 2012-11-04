@@ -38,11 +38,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
+import org.tinymediamanager.core.movie.MovieConnectors;
+import org.tinymediamanager.core.movie.MovieFanartNaming;
+import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Settings.
  */
@@ -50,89 +55,134 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 public class Settings extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger LOGGER                = Logger.getLogger(Settings.class);
+  private static final Logger           LOGGER                 = Logger.getLogger(Settings.class);
 
   /** The instance. */
-  private static Settings     instance;
+  private static Settings               instance;
 
   /** The Constant CONFIG_FILE. */
-  private final static String CONFIG_FILE           = "config.xml";
+  private final static String           CONFIG_FILE            = "config.xml";
 
   /** The Constant MOVIE_DATA_SOURCE. */
-  private final static String MOVIE_DATA_SOURCE     = "movieDataSource";
+  private final static String           MOVIE_DATA_SOURCE      = "movieDataSource";
 
   /** The Constant PATH. */
-  private final static String PATH                  = "path";
+  private final static String           PATH                   = "path";
 
   /** The Constant VIDEO_FILE_TYPE. */
-  private final static String VIDEO_FILE_TYPE       = "videoFileTypes";
+  private final static String           VIDEO_FILE_TYPE        = "videoFileTypes";
 
   /** The Constant FILETYPE. */
-  private final static String FILETYPE              = "filetype";
+  private final static String           FILETYPE               = "filetype";
 
   /** The Constant PROXY_HOST. */
-  private final static String PROXY_HOST            = "proxyHost";
+  private final static String           PROXY_HOST             = "proxyHost";
 
   /** The Constant PROXY_PORT. */
-  private final static String PROXY_PORT            = "proxyPort";
+  private final static String           PROXY_PORT             = "proxyPort";
 
   /** The Constant PROXY_USERNAME. */
-  private final static String PROXY_USERNAME        = "proxyUsername";
+  private final static String           PROXY_USERNAME         = "proxyUsername";
 
   /** The Constant PROXY_PASSWORD. */
-  private final static String PROXY_PASSWORD        = "proxyPassword";
+  private final static String           PROXY_PASSWORD         = "proxyPassword";
 
   /** The Constant SCRAPER_TMDB_LANGU. */
-  private final static String SCRAPER_TMDB_LANGU    = "scraperTmdbLanguage";
+  private final static String           SCRAPER_TMDB_LANGU     = "scraperTmdbLanguage";
 
   /** The Constant IMAGE_TMDB_LANGU. */
-  private final static String IMAGE_TMDB_LANGU      = "imageTmdbLanguage";
+  private final static String           IMAGE_TMDB_LANGU       = "imageTmdbLanguage";
 
   /** The Constant IMAGE_TMDB_POSTER. */
-  private final static String IMAGE_TMDB_POSTER     = "imageTmdbPosterSize";
+  private final static String           IMAGE_TMDB_POSTER      = "imageTmdbPosterSize";
 
   /** The Constant IMAGE_TMDB_FANART. */
-  private final static String IMAGE_TMDB_FANART     = "imageTmdbFanartSize";
+  private final static String           IMAGE_TMDB_FANART      = "imageTmdbFanartSize";
 
   /** The Constant CERTIFICATION_COUNTRY. */
-  private final static String CERTIFICATION_COUNTRY = "certificationCountry";
+  private final static String           CERTIFICATION_COUNTRY  = "certificationCountry";
+
+  /** The Constant MOVIE_CONNECTOR. */
+  private final static String           MOVIE_CONNECTOR        = "movieConnector";
+
+  /** The Constant MOVIE_NFO_FILENAME. */
+  private final static String           MOVIE_NFO_FILENAME     = "movieNfoFilename";
+
+  /** The Constant MOVIE_POSTER_FILENAME. */
+  private final static String           MOVIE_POSTER_FILENAME  = "moviePosterFilename";
+
+  /** The Constant MOVIE_FANART_FILENAME. */
+  private final static String           MOVIE_FANART_FILENAME  = "movieFanartFilename";
+
+  /** The Constant FILENAME. */
+  private final static String           FILENAME               = "filename";
+
+  /** The Constant MOVIE_RENAMER_PATHNAME. */
+  private final static String           MOVIE_RENAMER_PATHNAME = "movieRenamerPathname";
+
+  /** The Constant MOVIE_RENAMER_FILENAME. */
+  private final static String           MOVIE_RENAMER_FILENAME = "movieRenamerFilename";
 
   /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String>  videoFileTypes        = new ArrayList<String>();
+  private final List<String>            videoFileTypes         = new ArrayList<String>();
 
   /** The movie data sources. */
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>  movieDataSources      = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>            movieDataSources       = ObservableCollections.observableList(new ArrayList<String>());
+
+  /** The movie nfo filenames. */
+  @XmlElementWrapper(name = MOVIE_NFO_FILENAME)
+  @XmlElement(name = FILENAME)
+  private final List<MovieNfoNaming>    movieNfoFilenames      = new ArrayList<MovieNfoNaming>();
+
+  /** The movie poster filenames. */
+  @XmlElementWrapper(name = MOVIE_POSTER_FILENAME)
+  @XmlElement(name = FILENAME)
+  private final List<MoviePosterNaming> moviePosterFilenames   = new ArrayList<MoviePosterNaming>();
+
+  /** The movie fanart filenames. */
+  @XmlElementWrapper(name = MOVIE_FANART_FILENAME)
+  @XmlElement(name = FILENAME)
+  private final List<MovieFanartNaming> movieFanartFilenames   = new ArrayList<MovieFanartNaming>();
 
   /** The proxy host. */
-  private String              proxyHost;
+  private String                        proxyHost;
 
   /** The proxy port. */
-  private String              proxyPort;
+  private String                        proxyPort;
 
   /** The proxy username. */
-  private String              proxyUsername;
+  private String                        proxyUsername;
 
   /** The proxy password. */
-  private String              proxyPassword;
+  private String                        proxyPassword;
 
   /** The scraper tmdb language. */
-  private Languages           scraperTmdbLanguage;
+  private Languages                     scraperTmdbLanguage;
 
   /** The image tmdb langugage. */
-  private Languages           imageTmdbLangugage;
+  private Languages                     imageTmdbLangugage;
 
   /** The image tmdb poster size. */
-  private PosterSizes         imageTmdbPosterSize;
+  private PosterSizes                   imageTmdbPosterSize;
 
   /** The image tmdb fanart size. */
-  private FanartSizes         imageTmdbFanartSize;
+  private FanartSizes                   imageTmdbFanartSize;
 
-  /** The country for certification */
-  private CountryCode         certificationCountry;
+  /** The country for certification. */
+  private CountryCode                   certificationCountry;
+
+  /** The movie connector. */
+  private MovieConnectors               movieConnector;
+
+  /** The movie renamer pathname. */
+  private String                        movieRenamerPathname;
+
+  /** The movie renamer filename. */
+  private String                        movieRenamerFilename;
 
   /**
    * Instantiates a new settings.
@@ -183,7 +233,6 @@ public class Settings extends AbstractModelObject {
   public void addMovieDataSources(String path) {
     movieDataSources.add(path);
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
-
   }
 
   /**
@@ -204,6 +253,135 @@ public class Settings extends AbstractModelObject {
    */
   public List<String> getMovieDataSource() {
     return movieDataSources;
+  }
+
+  /**
+   * Adds the movie nfo filename.
+   * 
+   * @param filename
+   *          the filename
+   */
+  public void addMovieNfoFilename(MovieNfoNaming filename) {
+    if (!movieNfoFilenames.contains(filename)) {
+      movieNfoFilenames.add(filename);
+      firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
+    }
+  }
+
+  /**
+   * Removes the movie nfo filename.
+   * 
+   * @param filename
+   *          the filename
+   */
+  public void removeMovieNfoFilename(MovieNfoNaming filename) {
+    if (movieNfoFilenames.contains(filename)) {
+      movieNfoFilenames.remove(filename);
+      firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
+    }
+  }
+
+  /**
+   * Clear movie nfo filenames.
+   */
+  public void clearMovieNfoFilenames() {
+    movieNfoFilenames.clear();
+    firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
+  }
+
+  /**
+   * Gets the movie nfo filenames.
+   * 
+   * @return the movie nfo filenames
+   */
+  public List<MovieNfoNaming> getMovieNfoFilenames() {
+    return this.movieNfoFilenames;
+  }
+
+  /**
+   * Adds the movie poster filename.
+   * 
+   * @param filename
+   *          the filename
+   */
+  public void addMoviePosterFilename(MoviePosterNaming filename) {
+    if (!moviePosterFilenames.contains(filename)) {
+      moviePosterFilenames.add(filename);
+      firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
+    }
+  }
+
+  /**
+   * Removes the movie poster filename.
+   * 
+   * @param filename
+   *          the filename
+   */
+  public void removeMoviePosterFilename(MoviePosterNaming filename) {
+    if (moviePosterFilenames.contains(filename)) {
+      moviePosterFilenames.remove(filename);
+      firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
+    }
+  }
+
+  /**
+   * Clear movie poster filenames.
+   */
+  public void clearMoviePosterFilenames() {
+    moviePosterFilenames.clear();
+    firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
+  }
+
+  /**
+   * Gets the movie poster filenames.
+   * 
+   * @return the movie poster filenames
+   */
+  public List<MoviePosterNaming> getMoviePosterFilenames() {
+    return this.moviePosterFilenames;
+  }
+
+  /**
+   * Adds the movie fanart filename.
+   * 
+   * @param filename
+   *          the filename
+   */
+  public void addMovieFanartFilename(MovieFanartNaming filename) {
+    if (!movieFanartFilenames.contains(filename)) {
+      movieFanartFilenames.add(filename);
+      firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
+    }
+  }
+
+  /**
+   * Removes the movie fanart filename.
+   * 
+   * @param filename
+   *          the filename
+   */
+  public void removeMovieFanartFilename(MovieFanartNaming filename) {
+    if (movieFanartFilenames.contains(filename)) {
+      movieFanartFilenames.remove(filename);
+      firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
+    }
+  }
+
+  /**
+   * Clear movie fanart filenames.
+   */
+  public void clearMovieFanartFilenames() {
+    movieFanartFilenames.clear();
+    firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
+  }
+
+  /**
+   * Gets the movie fanart filenames.
+   * 
+   * @return the movie fanart filenames
+   */
+  public List<MovieFanartNaming> getMovieFanartFilenames() {
+    return this.movieFanartFilenames;
   }
 
   /**
@@ -249,7 +427,6 @@ public class Settings extends AbstractModelObject {
       Marshaller m = context.createMarshaller();
       m.setProperty("jaxb.encoding", "Unicode");
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      // w = new FileWriter(CONFIG_FILE);
       w = new StringWriter();
       m.marshal(this, w);
       StringBuilder sb = new StringBuilder(w.toString());
@@ -293,11 +470,23 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".avi");
     addVideoFileTypes(".mp4");
     addVideoFileTypes(".mkv");
+    addVideoFileTypes(".wmv");
+    addVideoFileTypes(".ts");
+    addVideoFileTypes(".mpeg");
+    addVideoFileTypes(".divx");
+    addVideoFileTypes(".h264");
+    addVideoFileTypes(".mov");
 
     setScraperTmdbLanguage(Languages.en);
     setImageTmdbLangugage(Languages.en);
     setImageTmdbPosterSize(PosterSizes.w342);
     setImageTmdbFanartSize(FanartSizes.original);
+
+    setCertificationCountry(CountryCode.US);
+    setMovieConnector(MovieConnectors.XBMC);
+    addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
+    addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
+    addMovieFanartFilename(MovieFanartNaming.FILENAME_JPG);
 
     saveSettings();
   }
@@ -429,7 +618,9 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Should we use a proxy
+   * Should we use a proxy.
+   * 
+   * @return true, if successful
    */
   public boolean useProxy() {
     if (!StringUtils.isEmpty(getProxyHost()) && !StringUtils.isEmpty(getProxyPort())) {
@@ -504,14 +695,69 @@ public class Settings extends AbstractModelObject {
     firePropertyChange(SCRAPER_TMDB_LANGU, oldValue, newValue);
   }
 
+  /**
+   * Gets the certification country.
+   * 
+   * @return the certification country
+   */
   @XmlElement(name = CERTIFICATION_COUNTRY)
   public CountryCode getCertificationCountry() {
     return certificationCountry;
   }
 
+  /**
+   * Sets the certification country.
+   * 
+   * @param newValue
+   *          the new certification country
+   */
   public void setCertificationCountry(CountryCode newValue) {
     CountryCode oldValue = this.certificationCountry;
     certificationCountry = newValue;
     firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
+  }
+
+  /**
+   * Gets the movie connector.
+   * 
+   * @return the movie connector
+   */
+  @XmlElement(name = MOVIE_CONNECTOR)
+  public MovieConnectors getMovieConnector() {
+    return movieConnector;
+  }
+
+  /**
+   * Sets the movie connector.
+   * 
+   * @param newValue
+   *          the new movie connector
+   */
+  public void setMovieConnector(MovieConnectors newValue) {
+    MovieConnectors oldValue = this.movieConnector;
+    this.movieConnector = newValue;
+    firePropertyChange(MOVIE_CONNECTOR, oldValue, newValue);
+  }
+
+  @XmlElement(name = MOVIE_RENAMER_PATHNAME)
+  public String getMovieRenamerPathname() {
+    return movieRenamerPathname;
+  }
+
+  public void setMovieRenamerPathname(String newValue) {
+    String oldValue = this.movieRenamerPathname;
+    this.movieRenamerPathname = newValue;
+    firePropertyChange(MOVIE_RENAMER_PATHNAME, oldValue, newValue);
+  }
+
+  @XmlElement(name = MOVIE_RENAMER_FILENAME)
+  public String getMovieRenamerFilename() {
+    return movieRenamerFilename;
+  }
+
+  public void setMovieRenamerFilename(String newValue) {
+    String oldValue = this.movieRenamerFilename;
+    this.movieRenamerFilename = newValue;
+    firePropertyChange(MOVIE_RENAMER_FILENAME, oldValue, newValue);
   }
 }

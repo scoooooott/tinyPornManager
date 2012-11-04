@@ -31,6 +31,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
@@ -40,22 +41,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
+import org.tinymediamanager.core.movie.MovieToMpNfoConnector.Actor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 
+// TODO: Auto-generated Javadoc
 /**
- * The Class MovieToXbmcNfoConnector.
+ * The Class MovieTompNfoConnector.
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
-public class MovieToXbmcNfoConnector {
+public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER   = Logger.getLogger(MovieToXbmcNfoConnector.class);
+  private static final Logger LOGGER = Logger.getLogger(MovieToMpNfoConnector.class);
 
-  /** The Constant NFO_NAME. */
-  private final static String NFO_NAME = "movie.nfo";
+  // /** The Constant NFO_NAME. */
+  // private final static String NFO_NAME = "movie.nfo";
 
   /** The title. */
   private String              title;
@@ -87,6 +89,11 @@ public class MovieToXbmcNfoConnector {
   /** The thumb. */
   private String              thumb;
 
+  /** The fanarts. */
+  @XmlElementWrapper(name = "fanart")
+  @XmlElement(name = "thumb")
+  private List<String>        fanart;
+
   /** The id. */
   private String              id;
 
@@ -104,24 +111,23 @@ public class MovieToXbmcNfoConnector {
   private List<Actor>         actors;
 
   /** The genres. */
+  @XmlElementWrapper(name = "genres")
   @XmlElement(name = "genre")
   private List<String>        genres;
 
   /** The mpaa certification. */
   private String              mpaa;
 
-  /** The certifications. */
-  private String              certifications;
-
   /** the credits. */
   private String              credits;
 
   /**
-   * Instantiates a new movie to xbmc nfo connector.
+   * Instantiates a new movie to mp nfo connector.
    */
-  public MovieToXbmcNfoConnector() {
-    actors = new ArrayList<MovieToXbmcNfoConnector.Actor>();
+  public MovieToMpNfoConnector() {
+    actors = new ArrayList<MovieToMpNfoConnector.Actor>();
     genres = new ArrayList<String>();
+    fanart = new ArrayList<String>();
   }
 
   /**
@@ -132,56 +138,56 @@ public class MovieToXbmcNfoConnector {
    * @return the string
    */
   public static String setData(Movie movie) {
-    MovieToXbmcNfoConnector xbmc = new MovieToXbmcNfoConnector();
+    MovieToMpNfoConnector mp = new MovieToMpNfoConnector();
     // set data
-    xbmc.setTitle(movie.getName());
-    xbmc.setOriginaltitle(movie.getOriginalName());
-    xbmc.setRating(movie.getRating());
-    xbmc.setVotes(movie.getVotes());
-    xbmc.setYear(movie.getYear());
-    xbmc.setPlot(movie.getOverview());
+    mp.setTitle(movie.getName());
+    mp.setOriginaltitle(movie.getOriginalName());
+    mp.setRating(movie.getRating());
+    mp.setVotes(movie.getVotes());
+    mp.setYear(movie.getYear());
+    mp.setPlot(movie.getOverview());
 
     // outline is only the first 200 characters of the plot
     int spaceIndex = 0;
-    if (!StringUtils.isEmpty(xbmc.getPlot()) && xbmc.getPlot().length() > 200) {
-      spaceIndex = xbmc.getPlot().indexOf(" ", 200);
+    if (!StringUtils.isEmpty(mp.getPlot()) && mp.getPlot().length() > 200) {
+      spaceIndex = mp.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
-        xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
+        mp.setOutline(mp.getPlot().substring(0, spaceIndex));
       }
       else {
-        xbmc.setOutline(xbmc.getPlot());
+        mp.setOutline(mp.getPlot());
       }
     }
-    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
-      spaceIndex = xbmc.getPlot().length();
-      xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
+    else if (!StringUtils.isEmpty(mp.getPlot())) {
+      spaceIndex = mp.getPlot().length();
+      mp.setOutline(mp.getPlot().substring(0, spaceIndex));
     }
 
-    xbmc.setTagline(movie.getTagline());
-    xbmc.setRuntime(movie.getRuntime());
-    xbmc.setThumb(movie.getPosterUrl());
-    xbmc.setId(movie.getImdbId());
-    xbmc.setStudio(movie.getProductionCompany());
+    mp.setTagline(movie.getTagline());
+    mp.setRuntime(movie.getRuntime());
+    mp.setThumb(movie.getPoster());
+    mp.addFanart(movie.getFanart());
+    mp.setId(movie.getImdbId());
+    mp.setStudio(movie.getProductionCompany());
 
-    // certifications
+    // certification
     if (movie.getCertification() != null) {
-      xbmc.setMpaa(movie.getCertification().toString());
-      xbmc.setCertifications(movie.getCertification().toString());
+      mp.setMpaa(movie.getCertification().toString());
     }
 
     // filename and path
     if (movie.getMovieFiles().size() > 0) {
-      xbmc.setFilenameandpath(movie.getPath() + File.separator + movie.getMovieFiles().get(0));
+      mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMovieFiles().get(0));
     }
 
-    xbmc.setDirector(movie.getDirector());
-    xbmc.setCredits(movie.getWriter());
+    mp.setDirector(movie.getDirector());
+    mp.setCredits(movie.getWriter());
     for (MovieCast cast : movie.getActors()) {
-      xbmc.addActor(cast.getName(), cast.getCharacter());
+      mp.addActor(cast.getName(), cast.getCharacter());
     }
 
     for (MediaGenres genre : movie.getGenres()) {
-      xbmc.addGenre(genre.toString());
+      mp.addGenre(genre.toString());
     }
 
     // and marshall it
@@ -203,13 +209,13 @@ public class MovieToXbmcNfoConnector {
             nfoFilename = movie.getPath() + File.separator + "movie.nfo";
             break;
         }
-        context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+        context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         // w = new FileWriter(nfoFilename);
         w = new StringWriter();
-        m.marshal(xbmc, w);
+        m.marshal(mp, w);
         StringBuilder sb = new StringBuilder(w.toString());
         w.close();
 
@@ -255,29 +261,33 @@ public class MovieToXbmcNfoConnector {
     JAXBContext context;
     Movie movie = null;
     try {
-      context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+      context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
       Unmarshaller um = context.createUnmarshaller();
       try {
-        MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(new FileReader(nfoFilename));
+        MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(new FileReader(nfoFilename));
         movie = new Movie();
-        movie.setName(xbmc.getTitle());
-        movie.setOriginalName(xbmc.getOriginaltitle());
-        movie.setRating(xbmc.getRating());
-        movie.setVotes(xbmc.getVotes());
-        movie.setYear(xbmc.getYear());
-        movie.setOverview(xbmc.getPlot());
-        movie.setTagline(xbmc.getTagline());
-        movie.setRuntime(xbmc.getRuntime());
-        movie.setPosterUrl(xbmc.getThumb());
-        movie.setImdbId(xbmc.getId());
-        movie.setDirector(xbmc.getDirector());
-        movie.setWriter(xbmc.getCredits());
-        movie.setProductionCompany(xbmc.getStudio());
-        if (!StringUtils.isEmpty(xbmc.getMpaa())) {
-          movie.setCertification(Certification.findCertification(xbmc.getMpaa()));
+        movie.setName(mp.getTitle());
+        movie.setOriginalName(mp.getOriginaltitle());
+        movie.setRating(mp.getRating());
+        movie.setVotes(mp.getVotes());
+        movie.setYear(mp.getYear());
+        movie.setOverview(mp.getPlot());
+        movie.setTagline(mp.getTagline());
+        movie.setRuntime(mp.getRuntime());
+        movie.setPoster(mp.getThumb());
+        for (String fanart : mp.getFanart()) {
+          movie.setFanart(fanart);
+          break;
+        }
+        movie.setImdbId(mp.getId());
+        movie.setDirector(mp.getDirector());
+        movie.setWriter(mp.getCredits());
+        movie.setProductionCompany(mp.getStudio());
+        if (!StringUtils.isEmpty(mp.getMpaa())) {
+          movie.setCertification(Certification.findCertification(mp.getMpaa()));
         }
 
-        for (Object obj : xbmc.getActors()) {
+        for (Object obj : mp.getActors()) {
           // every unused XML element will be shown as an actor - we have to
           // test it this way; else the program will crash
           if (obj instanceof Actor) {
@@ -286,7 +296,7 @@ public class MovieToXbmcNfoConnector {
           }
         }
 
-        for (String genre : xbmc.getGenres()) {
+        for (String genre : mp.getGenres()) {
           MediaGenres genreFound = MediaGenres.getGenre(genre);
           if (genreFound != null) {
             movie.addGenre(genreFound);
@@ -555,11 +565,30 @@ public class MovieToXbmcNfoConnector {
   }
 
   /**
+   * Gets the fanart.
+   * 
+   * @return the fanart
+   */
+  public List<String> getFanart() {
+    return fanart;
+  }
+
+  /**
+   * Adds the fanart.
+   * 
+   * @param fanart
+   *          the fanart
+   */
+  public void addFanart(String fanart) {
+    this.fanart.add(fanart);
+  }
+
+  /**
    * Gets the id.
    * 
    * @return the id
    */
-  @XmlElement(name = "id")
+  @XmlElement(name = "imdb")
   public String getId() {
     return id;
   }
@@ -652,26 +681,6 @@ public class MovieToXbmcNfoConnector {
    */
   public void setMpaa(String mpaa) {
     this.mpaa = mpaa;
-  }
-
-  /**
-   * Gets the certifications.
-   * 
-   * @return the certifications
-   */
-  @XmlElement(name = "certification")
-  public String getCertifications() {
-    return certifications;
-  }
-
-  /**
-   * Sets the certifications.
-   * 
-   * @param certifications
-   *          the new certifications
-   */
-  public void setCertifications(String certifications) {
-    this.certifications = certifications;
   }
 
   /**

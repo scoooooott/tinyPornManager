@@ -31,6 +31,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,8 +53,8 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 @Entity
 public class Movie extends AbstractModelObject {
 
-  /** The Constant NFO_FILE. */
-  protected final static String NFO_FILE           = "movie.nfo";
+  // /** The Constant NFO_FILE. */
+  // protected final static String NFO_FILE = "movie.nfo";
 
   /** The Constant TITLE. */
   protected final static String TITLE              = "title";
@@ -63,6 +64,9 @@ public class Movie extends AbstractModelObject {
 
   /** The Constant RATING. */
   protected final static String RATING             = "rating";
+
+  /** The Constant VOTES */
+  protected final static String VOTES              = "votes";
 
   /** The Constant YEAR. */
   protected final static String YEAR               = "year";
@@ -121,6 +125,10 @@ public class Movie extends AbstractModelObject {
   /** The Constant CERTIFICATION. */
   protected final static String CERTIFICATION      = "certification";
 
+  protected final static String DATA_SOURCE        = "dataSource";
+
+  protected final static String MOVIE_FILES        = "movieFiles";
+
   /** The Constant logger. */
   @XmlTransient
   private static final Logger   LOGGER             = Logger.getLogger(Movie.class);
@@ -153,6 +161,9 @@ public class Movie extends AbstractModelObject {
 
   /** The rating. */
   private float                 rating;
+
+  /** The votes. */
+  private int                   votes;
 
   /** The runtime. */
   private int                   runtime;
@@ -190,6 +201,9 @@ public class Movie extends AbstractModelObject {
   /** The scraped. */
   private boolean               scraped;
 
+  /** The data source. */
+  private String                dataSource;
+
   /** The movie files. */
   private List<String>          movieFiles         = new ArrayList<String>();
 
@@ -222,6 +236,7 @@ public class Movie extends AbstractModelObject {
     nfoFilename = new String();
     setDirector(new String());
     setWriter(new String());
+    certification = Certification.NOT_RATED;
     tmdbId = 0;
     setScraped(false);
   }
@@ -329,6 +344,11 @@ public class Movie extends AbstractModelObject {
     movieFiles.add(newFile);
   }
 
+  public void setMovieFiles(List<String> newValue) {
+    this.movieFiles = newValue;
+    firePropertyChange(MOVIE_FILES, null, newValue);
+  }
+
   /**
    * Gets the movie files.
    * 
@@ -336,6 +356,16 @@ public class Movie extends AbstractModelObject {
    */
   public List<String> getMovieFiles() {
     return this.movieFiles;
+  }
+
+  public String getDataSource() {
+    return dataSource;
+  }
+
+  public void setDataSource(String newValue) {
+    String oldValue = this.dataSource;
+    this.dataSource = newValue;
+    firePropertyChange(DATA_SOURCE, oldValue, newValue);
   }
 
   /**
@@ -349,7 +379,7 @@ public class Movie extends AbstractModelObject {
     File imageFile = new File(poster);
     if (imageFile.exists()) {
       LOGGER.debug("found poster " + imageFile.getPath());
-      setPoster(poster);
+      setPoster(FilenameUtils.getName(poster));
     }
     else {
       LOGGER.debug("no poster found");
@@ -360,7 +390,7 @@ public class Movie extends AbstractModelObject {
     imageFile = new File(fanart);
     if (imageFile.exists()) {
       LOGGER.debug("found fanart " + imageFile.getPath());
-      setFanart(fanart);
+      setFanart(FilenameUtils.getName(fanart));
     }
     else {
       LOGGER.debug("no fanart found");
@@ -408,7 +438,12 @@ public class Movie extends AbstractModelObject {
    * @return the fanart
    */
   public String getFanart() {
-    return fanart;
+    if (!StringUtils.isEmpty(fanart)) {
+      return path + File.separator + fanart;
+    }
+    else {
+      return fanart;
+    }
   }
 
   /**
@@ -501,7 +536,12 @@ public class Movie extends AbstractModelObject {
    * @return the poster
    */
   public String getPoster() {
-    return poster;
+    if (!StringUtils.isEmpty(poster)) {
+      return path + File.separator + poster;
+    }
+    else {
+      return poster;
+    }
   }
 
   /**
@@ -520,6 +560,16 @@ public class Movie extends AbstractModelObject {
    */
   public float getRating() {
     return rating;
+  }
+
+  public int getVotes() {
+    return votes;
+  }
+
+  public void setVotes(int newValue) {
+    int oldValue = this.votes;
+    this.votes = newValue;
+    firePropertyChange(VOTES, oldValue, newValue);
   }
 
   /**
@@ -612,7 +662,16 @@ public class Movie extends AbstractModelObject {
     File[] nfoFiles = directory.listFiles(filter);
     for (File file : nfoFiles) {
       LOGGER.debug("parsing nfo" + file.getPath());
-      movie = MovieToXbmcNfoConnector.getData(file.getPath());
+      switch (Globals.settings.getMovieConnector()) {
+        case XBMC:
+          movie = MovieToXbmcNfoConnector.getData(file.getPath());
+          break;
+
+        case MP:
+          movie = MovieToMpNfoConnector.getData(file.getPath());
+          break;
+      }
+
       if (movie == null) {
         LOGGER.debug("did not find movie informations in nfo");
         continue;
@@ -715,7 +774,8 @@ public class Movie extends AbstractModelObject {
     setImdbId(metadata.getIMDBID());
     setTmdbId(Integer.parseInt(metadata.getTMDBID()));
     setYear(metadata.getYear());
-    setRating(metadata.getRating());
+    setRating(metadata.getUserRating());
+    setVotes(metadata.getVoteCount());
     setRuntime(Integer.parseInt(metadata.getRuntime()));
     setTagline(metadata.getTagline());
     setProductionCompany(metadata.getCompany());
@@ -757,13 +817,13 @@ public class Movie extends AbstractModelObject {
           break;
         case CastMember.DIRECTOR:
           if (!StringUtils.isEmpty(director)) {
-            director += ", ";
+            director += "/ ";
           }
           director += member.getName();
           break;
         case CastMember.WRITER:
           if (!StringUtils.isEmpty(writer)) {
-            writer += ", ";
+            writer += "/ ";
           }
           writer += member.getName();
           break;
@@ -952,16 +1012,55 @@ public class Movie extends AbstractModelObject {
     // poster
     if (poster && !StringUtils.isEmpty(getPosterUrl())) {
       try {
-        oldFilename = getPoster();
-        setPoster("");
-        url = new CachedUrl(getPosterUrl());
-        filename = this.path + File.separator + "folder.jpg";
-        outputStream = new FileOutputStream(filename);
-        is = url.getInputStream();
-        IOUtils.copy(is, outputStream);
-        outputStream.close();
-        is.close();
-        setPoster(filename);
+        int i = 0;
+        for (MoviePosterNaming name : Globals.settings.getMoviePosterFilenames()) {
+          if (++i == 1) {
+            oldFilename = getPoster();
+            setPoster("");
+          }
+          url = new CachedUrl(getPosterUrl());
+          // filename = this.path + File.separator + "folder.jpg";
+          filename = this.path + File.separator;
+          switch (name) {
+            case FILENAME_TBN:
+              filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", ".tbn");
+              break;
+
+            case FILENAME_JPG:
+              filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", ".jpg");
+              break;
+
+            case MOVIE_JPG:
+              filename = filename + "movie.jpg";
+              break;
+
+            case MOVIE_TBN:
+              filename = filename + "movie.tbn";
+              break;
+
+            case POSTER_JPG:
+              filename = filename + "poster.jpg";
+              break;
+
+            case POSTER_TBN:
+              filename = filename + "poster.tbn";
+              break;
+
+            case FOLDER_JPG:
+              filename = filename + "folder.jpg";
+              break;
+          }
+          LOGGER.debug("writing poster " + filename);
+          outputStream = new FileOutputStream(filename);
+          is = url.getInputStream();
+          IOUtils.copy(is, outputStream);
+          outputStream.close();
+          is.close();
+          if (i == 1) {
+            LOGGER.debug("set poster " + FilenameUtils.getName(filename));
+            setPoster(FilenameUtils.getName(filename));
+          }
+        }
       }
       catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
@@ -972,16 +1071,35 @@ public class Movie extends AbstractModelObject {
     // fanart
     if (fanart && !StringUtils.isEmpty(getFanartUrl())) {
       try {
-        oldFilename = getFanart();
-        setFanart("");
-        url = new CachedUrl(getFanartUrl());
-        filename = this.path + File.separator + "fanart.jpg";
-        outputStream = new FileOutputStream(filename);
-        is = url.getInputStream();
-        IOUtils.copy(is, outputStream);
-        outputStream.close();
-        is.close();
-        setFanart(filename);
+        int i = 0;
+        for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
+          if (++i == 1) {
+            oldFilename = getFanart();
+            setFanart("");
+          }
+          url = new CachedUrl(getFanartUrl());
+          // filename = this.path + File.separator + "fanart.jpg";
+          filename = this.path + File.separator;
+          switch (name) {
+            case FILENAME_JPG:
+              filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", "-fanart.jpg");
+              break;
+
+            case FANART_JPG:
+              filename = filename + "fanart.jpg";
+              break;
+          }
+          LOGGER.debug("writing fanart " + filename);
+          outputStream = new FileOutputStream(filename);
+          is = url.getInputStream();
+          IOUtils.copy(is, outputStream);
+          outputStream.close();
+          is.close();
+          if (i == 1) {
+            LOGGER.debug("set poster " + FilenameUtils.getName(filename));
+            setFanart(FilenameUtils.getName(filename));
+          }
+        }
       }
       catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
@@ -994,7 +1112,12 @@ public class Movie extends AbstractModelObject {
    * Write nfo.
    */
   public void writeNFO() {
-    setNfoFilename(MovieToXbmcNfoConnector.setData(this));
+    if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
+      setNfoFilename(MovieToMpNfoConnector.setData(this));
+    }
+    else {
+      setNfoFilename(MovieToXbmcNfoConnector.setData(this));
+    }
   }
 
   /**

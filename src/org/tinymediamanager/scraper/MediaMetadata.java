@@ -224,8 +224,8 @@ public class MediaMetadata {
    * 
    * @return the user rating
    */
-  public String getUserRating() {
-    return (String) get(MetadataKey.USER_RATING);
+  public float getUserRating() {
+    return Float.valueOf(get(MetadataKey.USER_RATING));
   }
 
   /**
@@ -234,8 +234,16 @@ public class MediaMetadata {
    * @param userRating
    *          the new user rating
    */
-  public void setUserRating(String userRating) {
-    set(MetadataKey.USER_RATING, userRating);
+  public void setUserRating(float userRating) {
+    set(MetadataKey.USER_RATING, String.valueOf(userRating));
+  }
+
+  public int getVoteCount() {
+    return Integer.valueOf(get(MetadataKey.VOTE_COUNT));
+  }
+
+  public void setVoteCount(int voteCount) {
+    set(MetadataKey.VOTE_COUNT, String.valueOf(voteCount));
   }
 
   /**
@@ -629,25 +637,25 @@ public class MediaMetadata {
     return get(MetadataKey.OUTLINE);
   }
 
-  /**
-   * Sets the rating.
-   * 
-   * @param rating
-   *          the new rating
-   */
-  public void setRating(float rating) {
-    set(MetadataKey.USER_RATING, String.valueOf(rating));
-  }
-
-  /**
-   * Gets the rating.
-   * 
-   * @return the rating
-   */
-  public float getRating() {
-    float rating = Float.valueOf(get(MetadataKey.USER_RATING));
-    return rating;
-  }
+  // /**
+  // * Sets the rating.
+  // *
+  // * @param rating
+  // * the new rating
+  // */
+  // public void setRating(float rating) {
+  // set(MetadataKey.USER_RATING, String.valueOf(rating));
+  // }
+  //
+  // /**
+  // * Gets the rating.
+  // *
+  // * @return the rating
+  // */
+  // public float getRating() {
+  // float rating = Float.valueOf(get(MetadataKey.USER_RATING));
+  // return rating;
+  // }
 
   /**
    * Sets the tagline.

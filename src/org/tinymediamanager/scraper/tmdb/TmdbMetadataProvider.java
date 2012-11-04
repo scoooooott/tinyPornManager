@@ -252,6 +252,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     MediaMetadata.updateMDValue(md, MetadataKey.RUNNING_TIME, String.valueOf(movie.getRuntime()));
     MediaMetadata.updateMDValue(md, MetadataKey.TAGLINE, movie.getTagline());
 
+    md.setVoteCount(movie.getVoteCount());
+
     if (movie.getImdbID() != null && movie.getImdbID().contains("tt")) {
       MediaMetadata.updateMDValue(md, MetadataKey.IMDB_ID, movie.getImdbID());
     }

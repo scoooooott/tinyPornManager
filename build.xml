@@ -16,6 +16,7 @@
 			<manifest>
 				<attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
 				<attribute name="Class-Path" value=". lib/commons-lang3-3.1.jar lib/log4j-1.2.16.jar lib/themoviedbapi-3.2-SNAPSHOT-r169.jar lib/beansbinding-1.2.1.jar lib/jdom.jar lib/commons-codec-1.6.jar lib/commons-io-2.1.jar lib/jackson-core-lgpl-1.9.9.jar lib/jackson-mapper-lgpl-1.9.9.jar lib/objectdb.jar lib/Scaling-bin.jar lib/thetvdbapi-1.4-SNAPSHOT-r123.jar lib/forms-1.3.0.jar lib/JSplitButton_1.2.jar lib/commons-logging-1.1.1.jar lib/fluent-hc-4.2.1.jar lib/httpclient-4.2.1.jar lib/httpclient-cache-4.2.1.jar lib/httpcore-4.2.1.jar lib/httpmime-4.2.1.jar" />
+				<attribute name="SplashScreen-Image" value="org/tinymediamanager/ui/images/splashscreen.png" />
 			</manifest>
 			<fileset dir="bin" />
 		</jar>
@@ -69,6 +70,8 @@
 		<copy file="AppBundler/digest.txt" todir="dist/win" />
 		<copy file="AppBundler/LICENSE" todir="dist/win" />
 		<copy file="AppBundler/tinyMediaManager.bat" todir="dist/win" />
+		<copy file="AppBundler/tmm.png" todir="dist/win" />
+		<copy file="AppBundler/splashscreen.png" todir="dist/win" />
 				
 		<!-- Linux -->
 		<delete dir="dist/linux/lib" />
@@ -85,6 +88,8 @@
 		<copy file="AppBundler/LICENSE" todir="dist/linux" />
 		<copy file="AppBundler/tinyMediaManager.sh" todir="dist/linux" />
 		<chmod file="dist/linux/tinyMediaManager.sh" perm="ugo+rx"/>
+		<copy file="AppBundler/tmm.png" todir="dist/linux" />
+		<copy file="AppBundler/splashscreen.png" todir="dist/linux" />
 		
 		<!-- getdown -->
 		<delete dir="dist/getdown/lib" />
@@ -97,6 +102,8 @@
 		<copy file="build/tmm.jar" todir="dist/getdown" />
 		<copy file="build/tmm.properties" todir="dist/getdown" />
 		<copy file="AppBundler/getdown.txt" todir="dist/getdown" />
+		<copy file="AppBundler/tmm.png" todir="dist/getdown" />
+		<copy file="AppBundler/splashscreen.png" todir="dist/getdown" />
 		<taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask"
 		         classpath="AppBundler/getdown-tools-1.2.jar"/>
 		<digest appdir="dist/getdown"/>

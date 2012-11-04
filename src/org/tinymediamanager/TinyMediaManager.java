@@ -23,6 +23,7 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.ui.MainWindow;
 
 /**
@@ -40,12 +41,10 @@ public class TinyMediaManager {
    */
   public static void main(String[] args) {
     EventQueue.invokeLater(new Runnable() {
+      private TinyMediaManagerSplash splash;
+
       public void run() {
         try {
-          // get logger configuration
-          PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
-          LOGGER.debug("starting tinyMediaManager");
-          LOGGER.debug("default encoding " + System.getProperty("file.encoding"));
 
           // Get the native look and feel class name
           String nativeLF = UIManager.getSystemLookAndFeelClassName();
@@ -53,7 +52,18 @@ public class TinyMediaManager {
           // Install the look and feel
           UIManager.setLookAndFeel(nativeLF);
 
+          // // initialize splash screen
+          // StartupWorker worker = new StartupWorker();
+          // worker.execute();
+
+          // get logger configuration
+          // updateProgress("loading logger", 10);
+          PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
+          LOGGER.debug("starting tinyMediaManager");
+          LOGGER.debug("default encoding " + System.getProperty("file.encoding"));
+
           // initialize database
+          // updateProgress("initialize database", 20);
           LOGGER.debug("initialize database");
           Globals.startDatabase();
           LOGGER.debug("database opened");
@@ -64,12 +74,22 @@ public class TinyMediaManager {
             Globals.settings.setProxy();
           }
 
+          // load database
+          // updateProgress("loading database", 30);
+          MovieList movieList = MovieList.getInstance();
+          movieList.loadMoviesFromDatabase();
+
           // launch application
+          // updateProgress("loading ui", 90);
           MainWindow window = new MainWindow("tinyMediaManager " + org.tinymediamanager.ReleaseInfo.getVersion());
 
-        } catch (javax.persistence.PersistenceException e) {
+          // stopSplash();
+
+        }
+        catch (javax.persistence.PersistenceException e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
         }

@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -30,6 +31,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -41,6 +44,10 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.movie.MovieConnectors;
+import org.tinymediamanager.core.movie.MovieFanartNaming;
+import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
@@ -87,6 +94,9 @@ public class SettingsPanel extends JPanel {
   /** The cb scraper tmdb language. */
   private JComboBox      cbScraperTmdbLanguage;
   private JComboBox      cbCountry;
+  private JComboBox      cbNfoFormat;
+  private JTextField     tfMoviePath;
+  private JTextField     tfMovieFilename;
 
   /**
    * Create the panel.
@@ -98,14 +108,14 @@ public class SettingsPanel extends JPanel {
     JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
     add(tabbedPane, "2, 2, fill, fill");
 
-    JPanel panelGeneralSettings = new JPanel();
-    tabbedPane.addTab("General", null, panelGeneralSettings, null);
-    panelGeneralSettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+    JPanel tabGeneralSettings = new JPanel();
+    tabbedPane.addTab("General", null, tabGeneralSettings, null);
+    tabGeneralSettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     JPanel panelProxySettings = new JPanel();
     panelProxySettings.setBorder(new TitledBorder(null, "Proxy Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelGeneralSettings.add(panelProxySettings, "2, 2, left, top");
+    tabGeneralSettings.add(panelProxySettings, "2, 2, left, top");
     panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -142,31 +152,38 @@ public class SettingsPanel extends JPanel {
     lblProxyPassword.setLabelFor(tfProxyPassword);
     panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
 
+    JPanel tabMovieSettings = new JPanel();
+    tabbedPane.addTab("Movies", null, tabMovieSettings, null);
+    tabMovieSettings.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("422px:grow"), },
+        new RowSpec[] { RowSpec.decode("fill:66px:grow"), }));
+
+    JScrollPane scrollPaneMovieDetails = new JScrollPane();
+    tabMovieSettings.add(scrollPaneMovieDetails, "1, 1, fill, fill");
+
     JPanel panelMovieSettings = new JPanel();
-    tabbedPane.addTab("Movies", null, panelMovieSettings, null);
-    panelMovieSettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("400px"),
+    scrollPaneMovieDetails.setViewportView(panelMovieSettings);
+    panelMovieSettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(121dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:default"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     JPanel panelMovieDataSources = new JPanel();
     panelMovieDataSources.setBorder(new TitledBorder(null, "Data Sources", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     panelMovieSettings.add(panelMovieDataSources, "2, 2, fill, top");
-    panelMovieDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("130px:grow"), }));
+    panelMovieDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("130px:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     JScrollPane scrollPane = new JScrollPane();
-    panelMovieDataSources.add(scrollPane, "2, 2, fill, fill");
+    panelMovieDataSources.add(scrollPane, "2, 2, 3, 1, fill, fill");
 
     tableMovieSources = new JTable();
     scrollPane.setViewportView(tableMovieSources);
 
     JPanel panelMovieSourcesButtons = new JPanel();
-    panelMovieDataSources.add(panelMovieSourcesButtons, "4, 2");
+    panelMovieDataSources.add(panelMovieSourcesButtons, "6, 2");
     panelMovieSourcesButtons
         .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
             FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -195,36 +212,29 @@ public class SettingsPanel extends JPanel {
     });
     panelMovieSourcesButtons.add(btnRemove, "2, 4, fill, top");
 
-    JPanel panelMovieScrapers = new JPanel();
-    panelMovieScrapers.setBorder(new TitledBorder(null, "Scrapers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelMovieSettings.add(panelMovieScrapers, "4, 2");
-    panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("50px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    JLabel lblNfoFormat = new JLabel("NFO format");
+    panelMovieDataSources.add(lblNfoFormat, "2, 4, right, default");
 
-    JCheckBox cbScraperTmdb = new JCheckBox("The Movie Database");
-    cbScraperTmdb.setEnabled(false);
-    cbScraperTmdb.setSelected(true);
-    panelMovieScrapers.add(cbScraperTmdb, "1, 2");
+    cbNfoFormat = new JComboBox(MovieConnectors.values());
+    panelMovieDataSources.add(cbNfoFormat, "4, 4, fill, default");
 
-    JLabel lblScraperTmdbLanguage = new JLabel("Language");
-    panelMovieScrapers.add(lblScraperTmdbLanguage, "1, 4, right, default");
+    JLabel lblNfoFileNaming = new JLabel("NFO file naming");
+    panelMovieDataSources.add(lblNfoFileNaming, "2, 6");
 
-    cbScraperTmdbLanguage = new JComboBox(TmdbMetadataProvider.Languages.values());
-    panelMovieScrapers.add(cbScraperTmdbLanguage, "3, 4");
+    final JCheckBox cbMovieNfoFilename1 = new JCheckBox("<filename>.nfo");
+    panelMovieDataSources.add(cbMovieNfoFilename1, "4, 6");
 
-    JLabel lblCountry = new JLabel("get country specific data for");
-    panelMovieScrapers.add(lblCountry, "1, 6, right, default");
-
-    cbCountry = new JComboBox(CountryCode.values());
-    panelMovieScrapers.add(cbCountry, "3, 6, fill, default");
+    final JCheckBox cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
+    panelMovieDataSources.add(cbMovieNfoFilename2, "4, 7");
 
     JPanel panelMovieImages = new JPanel();
     panelMovieImages.setBorder(new TitledBorder(null, "Poster and Fanart", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelMovieSettings.add(panelMovieImages, "2, 4");
-    panelMovieImages.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelMovieSettings.add(panelMovieImages, "4, 2, 1, 3, fill, top");
+    panelMovieImages.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSource = new JLabel("Source");
     panelMovieImages.add(lblSource, "2, 2");
@@ -260,21 +270,200 @@ public class SettingsPanel extends JPanel {
     cbImageTmdbFanartSize = new JComboBox(FanartSizes.values());
     panelMovieImagesTmdb.add(cbImageTmdbFanartSize, "4, 6, fill, default");
 
+    JLabel lblPosterFilename = new JLabel("Poster file naming");
+    panelMovieImages.add(lblPosterFilename, "2, 6");
+
+    final JCheckBox cbMoviePosterFilename1 = new JCheckBox("<movie filename>.tbn");
+    panelMovieImages.add(cbMoviePosterFilename1, "4, 6");
+
+    final JCheckBox cbMoviePosterFilename4 = new JCheckBox("poster.jpg");
+    panelMovieImages.add(cbMoviePosterFilename4, "6, 6");
+
+    final JCheckBox cbMoviePosterFilename7 = new JCheckBox("<movie filename>.jpg");
+    panelMovieImages.add(cbMoviePosterFilename7, "4, 7");
+
+    final JCheckBox cbMoviePosterFilename5 = new JCheckBox("poster.tbn");
+    panelMovieImages.add(cbMoviePosterFilename5, "6, 7");
+
+    final JCheckBox cbMoviePosterFilename2 = new JCheckBox("movie.jpg");
+    panelMovieImages.add(cbMoviePosterFilename2, "4, 8");
+
+    final JCheckBox cbMoviePosterFilename6 = new JCheckBox("folder.jpg");
+    panelMovieImages.add(cbMoviePosterFilename6, "6, 8");
+
+    final JCheckBox cbMoviePosterFilename3 = new JCheckBox("movie.tbn");
+    panelMovieImages.add(cbMoviePosterFilename3, "4, 9");
+
+    JLabel lblFanartFileNaming = new JLabel("Fanart file naming");
+    panelMovieImages.add(lblFanartFileNaming, "2, 11");
+
+    final JCheckBox cbMovieFanartFilename1 = new JCheckBox("<movie filename>-fanart.jpg");
+    panelMovieImages.add(cbMovieFanartFilename1, "4, 11");
+
+    final JCheckBox cbMovieFanartFilename2 = new JCheckBox("fanart.jpg");
+    panelMovieImages.add(cbMovieFanartFilename2, "4, 12");
+
+    JPanel panelMovieScrapers = new JPanel();
+    panelMovieScrapers.setBorder(new TitledBorder(null, "Scrapers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelMovieSettings.add(panelMovieScrapers, "2, 4, fill, top");
+    panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("50px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    JCheckBox cbScraperTmdb = new JCheckBox("The Movie Database");
+    cbScraperTmdb.setEnabled(false);
+    cbScraperTmdb.setSelected(true);
+    panelMovieScrapers.add(cbScraperTmdb, "1, 2");
+
+    JLabel lblScraperTmdbLanguage = new JLabel("Language");
+    panelMovieScrapers.add(lblScraperTmdbLanguage, "1, 4, right, default");
+
+    cbScraperTmdbLanguage = new JComboBox(TmdbMetadataProvider.Languages.values());
+    panelMovieScrapers.add(cbScraperTmdbLanguage, "3, 4");
+
+    JLabel lblCountry = new JLabel("Certification country");
+    panelMovieScrapers.add(lblCountry, "1, 6, right, default");
+
+    cbCountry = new JComboBox(CountryCode.values());
+    panelMovieScrapers.add(cbCountry, "3, 6, fill, default");
+
+    JPanel panel_1 = new JPanel();
+    panel_1.setBorder(new TitledBorder(null, "Renamer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelMovieSettings.add(panel_1, "2, 6, fill, fill");
+    panel_1.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+
+    JLabel lblMoviePath = new JLabel("Folder name");
+    panel_1.add(lblMoviePath, "2, 2, right, default");
+
+    tfMoviePath = new JTextField();
+    panel_1.add(tfMoviePath, "4, 2, fill, default");
+    tfMoviePath.setColumns(10);
+
+    JTextPane txtpntTitle = new JTextPane();
+    txtpntTitle.setFont(new Font("Dialog", Font.PLAIN, 10));
+    txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
+    txtpntTitle.setText("Available pattern:\n$T = Title\n$O = OriginalTitle\n$1 = first letter of the title\n$Y = Year");
+    txtpntTitle.setEditable(false);
+    panel_1.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
+
+    JLabel lblMovieFilename = new JLabel("File name");
+    panel_1.add(lblMovieFilename, "2, 4, right, fill");
+
+    tfMovieFilename = new JTextField();
+    lblMovieFilename.setLabelFor(tfMovieFilename);
+    panel_1.add(tfMovieFilename, "4, 4, fill, default");
+    tfMovieFilename.setColumns(10);
+
+    JTextPane txtrChooseAFolder = new JTextPane();
+    txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
+    txtrChooseAFolder
+        .setText("Choose a folder and file renaming pattern.\nExample:\nDatasource = /media/movies\nFolder name = $1/$T [$Y]\nFile name = $T\nResult:\nFolder name = /media/movies/A/Aladdin [1992]/\nFile name = Aladdin.avi");
+    txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
+    panel_1.add(txtrChooseAFolder, "2, 6, 3, 1, fill, fill");
+
     JPanel panel = new JPanel();
     add(panel, "2, 4, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
 
     JButton btnSaveSettings = new JButton("Save");
-    panel.add(btnSaveSettings, "4, 2");
+    panel.add(btnSaveSettings, "4, 1");
     btnSaveSettings.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
+        // set NFO filenames
+        settings.clearMovieNfoFilenames();
+        if (cbMovieNfoFilename1.isSelected()) {
+          settings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
+        }
+        if (cbMovieNfoFilename2.isSelected()) {
+          settings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
+        }
+
+        // set poster filenames
+        settings.clearMoviePosterFilenames();
+        if (cbMoviePosterFilename1.isSelected()) {
+          settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_TBN);
+        }
+        if (cbMoviePosterFilename2.isSelected()) {
+          settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_JPG);
+        }
+        if (cbMoviePosterFilename3.isSelected()) {
+          settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_TBN);
+        }
+        if (cbMoviePosterFilename4.isSelected()) {
+          settings.addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
+        }
+        if (cbMoviePosterFilename5.isSelected()) {
+          settings.addMoviePosterFilename(MoviePosterNaming.POSTER_TBN);
+        }
+        if (cbMoviePosterFilename6.isSelected()) {
+          settings.addMoviePosterFilename(MoviePosterNaming.FOLDER_JPG);
+        }
+        if (cbMoviePosterFilename7.isSelected()) {
+          settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
+        }
+
+        // set fanart filenames
+        settings.clearMovieFanartFilenames();
+        if (cbMovieFanartFilename1.isSelected()) {
+          settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_JPG);
+        }
+        if (cbMovieFanartFilename2.isSelected()) {
+          settings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
+        }
+
+        // save settings
         settings.saveSettings();
       }
     });
 
     initDataBindings();
+
+    // NFO filenames
+    List<MovieNfoNaming> movieNfoFilenames = settings.getMovieNfoFilenames();
+    if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
+      cbMovieNfoFilename1.setSelected(true);
+    }
+
+    if (movieNfoFilenames.contains(MovieNfoNaming.MOVIE_NFO)) {
+      cbMovieNfoFilename2.setSelected(true);
+    }
+
+    // poster filenames
+    List<MoviePosterNaming> moviePosterFilenames = settings.getMoviePosterFilenames();
+    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_TBN)) {
+      cbMoviePosterFilename1.setSelected(true);
+    }
+    if (moviePosterFilenames.contains(MoviePosterNaming.MOVIE_JPG)) {
+      cbMoviePosterFilename2.setSelected(true);
+    }
+    if (moviePosterFilenames.contains(MoviePosterNaming.MOVIE_TBN)) {
+      cbMoviePosterFilename3.setSelected(true);
+    }
+    if (moviePosterFilenames.contains(MoviePosterNaming.POSTER_JPG)) {
+      cbMoviePosterFilename4.setSelected(true);
+    }
+    if (moviePosterFilenames.contains(MoviePosterNaming.POSTER_TBN)) {
+      cbMoviePosterFilename5.setSelected(true);
+    }
+    if (moviePosterFilenames.contains(MoviePosterNaming.FOLDER_JPG)) {
+      cbMoviePosterFilename6.setSelected(true);
+    }
+    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_JPG)) {
+      cbMoviePosterFilename7.setSelected(true);
+    }
+
+    // fanart filenames
+    List<MovieFanartNaming> movieFanartFilenames = settings.getMovieFanartFilenames();
+    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_JPG)) {
+      cbMovieFanartFilename1.setSelected(true);
+    }
+    if (movieFanartFilenames.contains(MovieFanartNaming.FANART_JPG)) {
+      cbMovieFanartFilename2.setSelected(true);
+    }
 
   }
 
@@ -333,9 +522,26 @@ public class SettingsPanel extends JPanel {
         settingsBeanProperty_8, cbScraperTmdbLanguage, jComboBoxBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_9 = BeanProperty.create("certificationCountry");
-    AutoBinding<Settings, String, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    BeanProperty<Settings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("certificationCountry");
+    AutoBinding<Settings, CountryCode, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, cbCountry, jComboBoxBeanProperty);
     autoBinding_8.bind();
+    //
+    BeanProperty<Settings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieConnector");
+    AutoBinding<Settings, MovieConnectors, JComboBox, Object> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
+    autoBinding_9.bind();
+    //
+    BeanProperty<Settings, String> settingsBeanProperty_11 = BeanProperty.create("movieRenamerPathname");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_3 = BeanProperty.create("text");
+    AutoBinding<Settings, String, JTextField, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_11, tfMoviePath, jTextFieldBeanProperty_3);
+    autoBinding_10.bind();
+    //
+    BeanProperty<Settings, String> settingsBeanProperty_12 = BeanProperty.create("movieRenamerFilename");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_4 = BeanProperty.create("text");
+    AutoBinding<Settings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
+    autoBinding_11.bind();
   }
 }

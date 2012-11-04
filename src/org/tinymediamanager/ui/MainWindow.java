@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -44,7 +45,6 @@ public class MainWindow extends JFrame {
   public MainWindow(String name) {
     super(name);
     initialize();
-    // frame.setVisible(true);
     setVisible(true);
   }
 
@@ -52,13 +52,13 @@ public class MainWindow extends JFrame {
    * Initialize the contents of the frame.
    */
   private void initialize() {
-    // frame = new JFrame("tinyMediaManager " +
-    // org.tinymediamanager.ReleaseInfo.getVersion());
+    // set the logo
+    setIconImage(Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png")));
     setBounds(5, 5, 1100, 700);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:default:grow"), }));
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
     JTabbedPane tabbedPane = new JTabbedPane();
     tabbedPane.setUI(new TmmTabbedPaneUI());
@@ -69,14 +69,16 @@ public class MainWindow extends JFrame {
     tabbedPane.addTab("", new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")), panelMovies, null);
 
     JPanel panelSettings = new SettingsPanel();// JPanel();
-    tabbedPane.addTab("", new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelSettings, null);
+    tabbedPane.addTab("", new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelSettings,
+        null);
 
     // shutdown listener - to clean database connections safetly
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         try {
           Globals.shutdownDatabase();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
         }
         dispose();
         System.exit(0); // calling the method is a must
