@@ -2,7 +2,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>getdown.jar</jar>
-  <outfile>..\dist\win\tinyMediaManager.exe</outfile>
+  <outfile>../dist/win/tinyMediaManager.exe</outfile>
   <errTitle></errTitle>
   <cmdLine>.</cmdLine>
   <chdir></chdir>

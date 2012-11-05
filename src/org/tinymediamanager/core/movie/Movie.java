@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.MovieCast.CastType;
 import org.tinymediamanager.scraper.CastMember;
 import org.tinymediamanager.scraper.Certification;
@@ -57,81 +58,83 @@ public class Movie extends AbstractModelObject {
   // protected final static String NFO_FILE = "movie.nfo";
 
   /** The Constant TITLE. */
-  protected final static String TITLE              = "title";
+  protected final static String TITLE                = "title";
 
   /** The Constant ORIGINAL_TITLE. */
-  protected final static String ORIGINAL_TITLE     = "originaltitle";
+  protected final static String ORIGINAL_TITLE       = "originaltitle";
 
   /** The Constant RATING. */
-  protected final static String RATING             = "rating";
+  protected final static String RATING               = "rating";
 
   /** The Constant VOTES */
-  protected final static String VOTES              = "votes";
+  protected final static String VOTES                = "votes";
 
   /** The Constant YEAR. */
-  protected final static String YEAR               = "year";
+  protected final static String YEAR                 = "year";
 
   /** The Constant OUTLINE. */
-  protected final static String OUTLINE            = "outline";
+  protected final static String OUTLINE              = "outline";
 
   /** The Constant PLOT. */
-  protected final static String PLOT               = "plot";
+  protected final static String PLOT                 = "plot";
 
   /** The Constant TAGLINE. */
-  protected final static String TAGLINE            = "tagline";
+  protected final static String TAGLINE              = "tagline";
 
   /** The Constant RUNTIME. */
-  protected final static String RUNTIME            = "runtime";
+  protected final static String RUNTIME              = "runtime";
 
   /** The Constant THUMB. */
-  protected final static String THUMB              = "thumb";
+  protected final static String THUMB                = "thumb";
 
   /** The Constant THUMB_PATH. */
-  protected final static String THUMB_PATH         = "thumbpath";
+  protected final static String THUMB_PATH           = "thumbpath";
 
   /** The Constant ID. */
-  protected final static String ID                 = "id";
+  protected final static String ID                   = "id";
 
   /** The Constant IMDB_ID. */
-  protected final static String IMDB_ID            = "imdbid";
+  protected final static String IMDB_ID              = "imdbid";
 
   /** The Constant FILENAME_AND_PATH. */
-  protected final static String FILENAME_AND_PATH  = "filenameandpath";
+  protected final static String FILENAME_AND_PATH    = "filenameandpath";
 
   /** The Constant PATH. */
-  protected final static String PATH               = "path";
+  protected final static String PATH                 = "path";
 
   /** The Constant DIRECTOR. */
-  protected final static String DIRECTOR           = "director";
+  protected final static String DIRECTOR             = "director";
 
   /** The Constant WRITER. */
-  protected final static String WRITER             = "writer";
+  protected final static String WRITER               = "writer";
 
   /** The Constant ACTOR. */
-  protected final static String ACTOR              = "actor";
+  protected final static String ACTOR                = "actor";
 
   /** The Constant Production Company. */
-  protected final static String PRODUCTION_COMPANY = "productionCompany";
+  protected final static String PRODUCTION_COMPANY   = "productionCompany";
 
   /** The Constant NAME. */
-  protected final static String NAME               = "name";
+  protected final static String NAME                 = "name";
 
   /** The Constant ROLE. */
-  protected final static String ROLE               = "role";
+  protected final static String ROLE                 = "role";
 
   /** The Constant GENRE. */
-  protected final static String GENRE              = "genre";
+  protected final static String GENRE                = "genre";
 
   /** The Constant CERTIFICATION. */
-  protected final static String CERTIFICATION      = "certification";
+  protected final static String CERTIFICATION        = "certification";
 
-  protected final static String DATA_SOURCE        = "dataSource";
+  protected final static String DATA_SOURCE          = "dataSource";
 
-  protected final static String MOVIE_FILES        = "movieFiles";
+  protected final static String MOVIE_FILES          = "movieFiles";
+
+  protected final static String MEDIA_FILES          = "mediaFiles";
 
   /** The Constant logger. */
   @XmlTransient
-  private static final Logger   LOGGER             = Logger.getLogger(Movie.class);
+  private static final Logger   LOGGER               = Logger.getLogger(Movie.class);
 
   /** The id. */
   @Id
@@ -205,18 +208,24 @@ public class Movie extends AbstractModelObject {
   private String                dataSource;
 
   /** The movie files. */
-  private List<String>          movieFiles         = new ArrayList<String>();
+  private List<String>          movieFiles           = new ArrayList<String>();
 
   /** The genres. */
-  private List<MediaGenres>     genres             = new ArrayList<MediaGenres>();
+  private List<MediaGenres>     genres               = new ArrayList<MediaGenres>();
 
   /** The cast. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieCast>       cast               = new ArrayList<MovieCast>();
+  private List<MovieCast>       cast                 = new ArrayList<MovieCast>();
 
   /** The cast observable. */
   @Transient
-  private List<MovieCast>       castObservable     = ObservableCollections.observableList(cast);
+  private List<MovieCast>       castObservable       = ObservableCollections.observableList(cast);
+
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<MediaFile>       mediaFiles           = new ArrayList<MediaFile>();
+
+  @Transient
+  private List<MediaFile>       mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
   /**
    * Instantiates a new movie.
@@ -312,8 +321,9 @@ public class Movie extends AbstractModelObject {
   /**
    * Sets the observable cast list.
    */
-  public void setObservableCastList() {
+  public void setObservables() {
     castObservable = ObservableCollections.observableList(cast);
+    mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
   }
 
   /**
@@ -334,6 +344,20 @@ public class Movie extends AbstractModelObject {
 
   }
 
+  public void addToMediaFiles(MediaFile obj) {
+    mediaFilesObservable.add(obj);
+    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+  }
+
+  public List<MediaFile> getMediaFiles() {
+    return this.mediaFilesObservable;
+  }
+
+  public void removeFromMediaFiles(MediaFile obj) {
+    mediaFilesObservable.remove(obj);
+    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+  }
+
   /**
    * Adds the to files.
    * 
@@ -342,6 +366,8 @@ public class Movie extends AbstractModelObject {
    */
   public void addToFiles(String newFile) {
     movieFiles.add(newFile);
+
+    addToMediaFiles(new MediaFile(getPath(), newFile));
   }
 
   public void setMovieFiles(List<String> newValue) {

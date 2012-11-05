@@ -62,6 +62,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
@@ -178,6 +179,11 @@ public class MoviePanel extends JPanel {
   private JLabel              lblVoteCountT;
   private JButton             btnRen;
   private final Action        actionRename            = new RenameAction();
+  private JPanel              panelMediaInformation;
+  private JLabel              lblFilesT;
+  private JScrollPane         scrollPaneFiles;
+  private JTable              tableFiles;
+  private JLabel              lblPath2;
 
   /**
    * Create the panel.
@@ -465,6 +471,29 @@ public class MoviePanel extends JPanel {
 
     tableCast = new JTable();
     scrollPaneMovieCast.setViewportView(tableCast);
+
+    panelMediaInformation = new JPanel();
+    tabbedPaneMovieDetails.addTab("Media Information", null, panelMediaInformation, null);
+    panelMediaInformation.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(207dlu;default):grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+
+    JLabel lblPathT2 = new JLabel("Path");
+    panelMediaInformation.add(lblPathT2, "2, 2");
+
+    lblPath2 = new JLabel("");
+    lblPathT2.setLabelFor(lblPath2);
+    panelMediaInformation.add(lblPath2, "4, 2");
+
+    lblFilesT = new JLabel("Files");
+    panelMediaInformation.add(lblFilesT, "2, 4, default, top");
+
+    scrollPaneFiles = new JScrollPane();
+    panelMediaInformation.add(scrollPaneFiles, "4, 4, fill, fill");
+
+    tableFiles = new JTable();
+    lblFilesT.setLabelFor(tableFiles);
+    scrollPaneFiles.setViewportView(tableFiles);
 
     JPanel panelStatus = new JPanel();
     add(panelStatus, "2, 3, fill, fill");
@@ -906,81 +935,31 @@ public class MoviePanel extends JPanel {
     }
   }
 
-  // /**
-  // * The Class LoadingTask.
-  // */
-  // private class LoadingTask extends SwingWorker<Void, Void> {
-  //
-  // /**
-  // * Instantiates a new scrape task.
-  // *
-  // * @param moviesToScrape
-  // * the movies to scrape
-  // */
-  // public LoadingTask() {
-  // }
-  //
-  // /*
-  // * (non-Javadoc)
-  // *
-  // * @see javax.swing.SwingWorker#doInBackground()
-  // */
-  // @Override
-  // public Void doInBackground() {
-  // startProgressBar("Loading movies from database");
-  // LOGGER.debug("Loading movies from database");
-  // movieList.loadMoviesFromDatabase();
-  // LOGGER.debug("Loaded movies from database");
-  //
-  // LOGGER.debug("selecting first movie");
-  // if (movieList.getMovies() != null && movieList.getMovies().size() > 0) {
-  // ListSelectionModel selectionModel = table.getSelectionModel();
-  // if (selectionModel.isSelectionEmpty()) {
-  // selectionModel.setSelectionInterval(0, 0);
-  // }
-  // }
-  //
-  // return null;
-  // }
-  //
-  // /*
-  // * Executed in event dispatching thread
-  // */
-  // /*
-  // * (non-Javadoc)
-  // *
-  // * @see javax.swing.SwingWorker#done()
-  // */
-  // @Override
-  // public void done() {
-  // stopProgressBar();
-  // }
-  //
-  // /**
-  // * Start progress bar.
-  // *
-  // * @param description
-  // * the description
-  // * @param value
-  // * the value
-  // */
-  // private void startProgressBar(String description) {
-  // lblProgressAction.setText(description);
-  // progressBar.setVisible(true);
-  // progressBar.setIndeterminate(true);
-  // btnCancelScraper.setVisible(false);
-  // }
-  //
-  // /**
-  // * Stop progress bar.
-  // */
-  // private void stopProgressBar() {
-  // lblProgressAction.setText("");
-  // progressBar.setVisible(false);
-  // progressBar.setIndeterminate(false);
-  // btnCancelScraper.setVisible(false);
-  // }
-  // }
+  private class RenameAction extends AbstractAction {
+    public RenameAction() {
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
+      putValue(SHORT_DESCRIPTION, "rename selected movies");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      // check if renaming options are set
+      if (StringUtils.isEmpty(Globals.settings.getMovieRenamerPathname()) || StringUtils.isEmpty(Globals.settings.getMovieRenamerFilename())) {
+        JOptionPane.showMessageDialog(null, "renaming options are not set");
+        return;
+      }
+      // check is renaming options make sense
+      if (!Globals.settings.getMovieRenamerPathname().contains("$") || !Globals.settings.getMovieRenamerFilename().contains("$")) {
+        JOptionPane.showMessageDialog(null, "renaming options without pattern are not allowed");
+        return;
+      }
+
+      for (int row : table.getSelectedRows()) {
+        row = table.convertRowIndexToModel(row);
+        Movie movie = movieList.getMovies().get(row);
+        MovieRenamer.renameMovie(movie);
+      }
+    }
+  }
 
   protected void initDataBindings() {
     BeanProperty<MovieList, List<Movie>> movieListBeanProperty = BeanProperty.create("movies");
@@ -1128,31 +1107,22 @@ public class MoviePanel extends JPanel {
     AutoBinding<JTable, Boolean, JLabel, Boolean> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_7,
         lblVoteCount, jLabelBeanProperty_1);
     autoBinding_20.bind();
-  }
-
-  private class RenameAction extends AbstractAction {
-    public RenameAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-      putValue(SHORT_DESCRIPTION, "rename selected movies");
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      // check if renaming options are set
-      if (StringUtils.isEmpty(Globals.settings.getMovieRenamerPathname()) || StringUtils.isEmpty(Globals.settings.getMovieRenamerFilename())) {
-        JOptionPane.showMessageDialog(null, "renaming options are not set");
-        return;
-      }
-      // check is renaming options make sense
-      if (!Globals.settings.getMovieRenamerPathname().contains("$") || !Globals.settings.getMovieRenamerFilename().contains("$")) {
-        JOptionPane.showMessageDialog(null, "renaming options without pattern are not allowed");
-        return;
-      }
-
-      for (int row : table.getSelectedRows()) {
-        row = table.convertRowIndexToModel(row);
-        Movie movie = movieList.getMovies().get(row);
-        MovieRenamer.renameMovie(movie);
-      }
-    }
+    //
+    AutoBinding<JTable, String, JLabel, String> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_8,
+        lblPath2, jLabelBeanProperty);
+    autoBinding_21.bind();
+    //
+    BeanProperty<JTable, List<MediaFile>> jTableBeanProperty_18 = BeanProperty.create("selectedElement.mediaFiles");
+    JTableBinding<MediaFile, JTable, JTable> jTableBinding_2 = SwingBindings.createJTableBinding(UpdateStrategy.READ, table, jTableBeanProperty_18,
+        tableFiles);
+    //
+    BeanProperty<MediaFile, String> mediaFileBeanProperty = BeanProperty.create("filename");
+    jTableBinding_2.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
+    //
+    BeanProperty<MediaFile, Long> mediaFileBeanProperty_1 = BeanProperty.create("filesize");
+    jTableBinding_2.addColumnBinding(mediaFileBeanProperty_1).setColumnName("Size").setEditable(false);
+    //
+    jTableBinding_2.setEditable(false);
+    jTableBinding_2.bind();
   }
 }

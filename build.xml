@@ -49,6 +49,7 @@
 	</target>
 
 	<target name='package-app' depends='create_run_jar'>
+		
     <!-- getdown -->
     <delete dir="dist/getdown/lib" />
     <delete dir="dist/getdown" />
@@ -68,13 +69,14 @@
 		
 		<!-- Mac OSX -->
 		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="AppBundler/jarbundler-2.2.0.jar" />
-		<jarbundler dir="dist/mac" name="tinyMediaManager" mainclass="com.threerings.getdown.launcher.Getdown" arguments=".">
+		<jarbundler dir="dist/mac" name="tinyMediaManager" icon="AppBundler/tmm.icns" mainclass="com.threerings.getdown.launcher.Getdown" arguments="." 
+      bundleid="org.tinyMediaManager.tinymediamanager" infostring="tinyMediaManager" jvmversion="1.6+" shortname="tMM" workingdirectory="$JAVAROOT" >
       <jarfileset dir="AppBundler">
         <include name="**/getdown.jar" />
       	<include name="**/getdown.txt" />
       	<include name="**/splashscreen.png" />
       </jarfileset>
-
+			
 			<jarfileset dir="build">
 			    <include name="**/*" />
 			</jarfileset>
@@ -84,6 +86,7 @@
       </jarfileset>			
 
 		</jarbundler>		
+		<copy file ="AppBundler/JavaApplicationStub" todir="dist/mac/tinyMediaManager.app/Contents/MacOS" />
 		
 		<!-- Windows -->
 		<property name="launch4j.dir" location="AppBundler/launch4j" />
