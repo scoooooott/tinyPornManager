@@ -30,6 +30,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
@@ -42,10 +43,10 @@ import org.tinymediamanager.Globals;
  */
 public class Url {
   /** The log. */
-  private static final Logger LOGGER = Logger.getLogger(Url.class);
+  private static final Logger   LOGGER          = Logger.getLogger(Url.class);
 
   /** The url. */
-  protected String url = null;
+  protected String              url             = null;
 
   /** The Constant HTTP_USER_AGENT. */
   protected static final String HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
@@ -73,9 +74,10 @@ public class Url {
 
   /**
    * Gets the input stream.
-   *
+   * 
    * @return the input stream
-   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
    */
   public InputStream getInputStream() throws IOException {
     DefaultHttpClient httpclient = getHttpClient();
@@ -94,9 +96,10 @@ public class Url {
 
   /**
    * Gets the bytes.
-   *
+   * 
    * @return the bytes
-   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
    */
   public byte[] getBytes() throws IOException {
     InputStream is = getInputStream();
@@ -106,7 +109,7 @@ public class Url {
 
   /**
    * Gets the http client.
-   *
+   * 
    * @return the http client
    */
   protected DefaultHttpClient getHttpClient() {
@@ -116,6 +119,7 @@ public class Url {
     HttpConnectionParams.setConnectionTimeout(params, 5000);
     HttpConnectionParams.setSoTimeout(params, 5000);
     HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
+    client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler());
 
     if ((Globals.settings.useProxy())) {
       setProxy(client);
@@ -126,8 +130,9 @@ public class Url {
 
   /**
    * Sets the proxy.
-   *
-   * @param httpClient the new proxy
+   * 
+   * @param httpClient
+   *          the new proxy
    */
   protected void setProxy(DefaultHttpClient httpClient) {
     HttpHost proxyHost = new HttpHost(Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()));
