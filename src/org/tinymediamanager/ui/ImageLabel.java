@@ -73,6 +73,11 @@ public class ImageLabel extends JLabel {
    */
   public void setImagePath(String newValue) {
     String oldValue = this.imagePath;
+
+    if (!StringUtils.isEmpty(oldValue) && oldValue.equals(newValue)) {
+      return;
+    }
+
     this.imagePath = newValue;
     firePropertyChange("imagePath", oldValue, newValue);
 

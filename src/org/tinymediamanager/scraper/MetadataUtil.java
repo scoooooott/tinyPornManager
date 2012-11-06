@@ -302,7 +302,8 @@ public class MetadataUtil {
   public static String removeNonSearchCharacters(String s) {
     if (s == null)
       return null;
-    return (s.replaceAll("[^A-Za-z0-9&']", " ")).replaceAll("[\\ ]+", " ");
+    // return (s.replaceAll("[^A-Za-z0-9&']", " ")).replaceAll("[\\ ]+", " ");
+    return s.replaceAll("[\\[\\]-_.:|]", " ");
   }
 
 }
