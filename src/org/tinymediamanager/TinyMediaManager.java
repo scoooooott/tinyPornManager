@@ -47,10 +47,15 @@ public class TinyMediaManager {
         try {
 
           // Get the native look and feel class name
-          String nativeLF = UIManager.getSystemLookAndFeelClassName();
+          String laf = UIManager.getSystemLookAndFeelClassName();
+
+          // Get the look and feel class name
+          // String laf = "com.jtattoo.plaf.smart.SmartLookAndFeel";
+          // String laf =
+          // "de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel";
 
           // Install the look and feel
-          UIManager.setLookAndFeel(nativeLF);
+          UIManager.setLookAndFeel(laf);
 
           // // initialize splash screen
           // StartupWorker worker = new StartupWorker();
@@ -85,11 +90,9 @@ public class TinyMediaManager {
 
           // stopSplash();
 
-        }
-        catch (javax.persistence.PersistenceException e) {
+        } catch (javax.persistence.PersistenceException e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
         }

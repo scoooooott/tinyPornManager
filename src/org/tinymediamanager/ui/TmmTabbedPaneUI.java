@@ -26,7 +26,6 @@ import java.util.Arrays;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
@@ -306,10 +305,10 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
    *          the is selected
    */
   protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect, boolean isSelected) {
-    if (/* tabPane.hasFocus() && */isSelected) {
-      g.setColor(UIManager.getColor("ScrollBar.thumbShadow"));
-      g.drawPolygon(shape);
-    }
+    // if (/* tabPane.hasFocus() && */isSelected) {
+    // g.setColor(UIManager.getColor("ScrollBar.thumbShadow"));
+    // g.drawPolygon(shape);
+    // }
   }
 
   /**
