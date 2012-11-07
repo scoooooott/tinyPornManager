@@ -5,9 +5,9 @@ appbase = http://tinymediamanager.googlecode.com/svn/dist
 ui.name = tinyMediaManager updater
 ui.background = splashscreen.png
 ui.icon = tmm.png
-ui.progress = 20, 480, 760, 30
+ui.progress = 20, 300, 460, 25
 ui.progress_text = FFFFFF
-ui.status = 40, 440, 740, 30
+ui.status = 40, 260, 440, 30
 ui.status_text = FFFFFF
 
 # Application jar files

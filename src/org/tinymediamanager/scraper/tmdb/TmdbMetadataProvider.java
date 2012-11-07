@@ -262,9 +262,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     StringBuilder productionCompanies = new StringBuilder("");
     for (ProductionCompany company : movie.getProductionCompanies()) {
       if (!StringUtils.isEmpty(productionCompanies)) {
+
         productionCompanies.append(", ");
       }
-      productionCompanies.append(company.getName());
+      productionCompanies.append(company.getName().trim());
     }
     MediaMetadata.updateMDValue(md, MetadataKey.COMPANY, productionCompanies.toString());
 
@@ -344,6 +345,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
       cm.setName(castMember.getName());
       cm.setPart(castMember.getDepartment());
+      if (!StringUtils.isEmpty(castMember.getProfilePath())) {
+        cm.setImageUrl(baseUrl + "w185" + castMember.getProfilePath());
+      }
       md.addCastMember(cm);
     }
 

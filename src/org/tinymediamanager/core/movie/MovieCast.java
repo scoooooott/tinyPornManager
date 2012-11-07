@@ -50,8 +50,9 @@ public class MovieCast extends AbstractModelObject {
    * Instantiates a new movie cast.
    */
   public MovieCast() {
-    this.name = new String();
-    this.character = new String();
+    this.name = "";
+    this.character = "";
+    this.thumb = "";
   }
 
   /**
@@ -65,7 +66,8 @@ public class MovieCast extends AbstractModelObject {
   public MovieCast(String name, CastType castType) {
     this.name = name;
     this.type = castType;
-    this.character = new String();
+    this.character = "";
+    this.thumb = "";
   }
 
   /**
@@ -80,6 +82,7 @@ public class MovieCast extends AbstractModelObject {
     this.name = name;
     this.character = character;
     this.type = CastType.ACTOR;
+    this.thumb = "";
   }
 
   /**

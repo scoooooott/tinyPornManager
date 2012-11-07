@@ -828,7 +828,6 @@ public class Movie extends AbstractModelObject {
 
     // cast
     removeAllActors();
-    ;
     List<CastMember> cast = metadata.getCastMembers();
     String director = new String();
     String writer = new String();
@@ -836,6 +835,7 @@ public class Movie extends AbstractModelObject {
       MovieCast castMember = new MovieCast();
       castMember.setName(member.getName());
       castMember.setCharacter(member.getCharacter());
+      castMember.setThumb(member.getImageUrl());
       switch (member.getType()) {
         case CastMember.ACTOR:
           castMember.setType(CastType.ACTOR);
@@ -843,13 +843,13 @@ public class Movie extends AbstractModelObject {
           break;
         case CastMember.DIRECTOR:
           if (!StringUtils.isEmpty(director)) {
-            director += "/ ";
+            director += ", ";
           }
           director += member.getName();
           break;
         case CastMember.WRITER:
           if (!StringUtils.isEmpty(writer)) {
-            writer += "/ ";
+            writer += ", ";
           }
           writer += member.getName();
           break;

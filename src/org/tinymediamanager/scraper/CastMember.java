@@ -18,44 +18,48 @@ package org.tinymediamanager.scraper;
 import java.util.LinkedList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class CastMember.
  */
 public class CastMember {
-  
+
   /** The id. */
   private String          id;
-  
+
   /** The name. */
   private String          name;
-  
+
   /** The part. */
   private String          part;
-  
+
   /** The character. */
   private String          character;
 
   /** The provider data url. */
   private String          providerDataUrl;
-  
+
+  /** The image url. */
+  private String          imageUrl;
+
   /** The type. */
   private int             type;
-  
+
   /** The fanart. */
   private List<String>    fanart   = new LinkedList<String>();
 
   /** The Constant ACTOR. */
   public static final int ACTOR    = 0;
-  
+
   /** The Constant WRITER. */
   public static final int WRITER   = 1;
-  
+
   /** The Constant DIRECTOR. */
   public static final int DIRECTOR = 2;
-  
+
   /** The Constant OTHER. */
   public static final int OTHER    = 99;
-  
+
   /** The Constant ALL. */
   public static final int ALL      = 999;
 
@@ -67,8 +71,9 @@ public class CastMember {
 
   /**
    * Instantiates a new cast member.
-   *
-   * @param type the type
+   * 
+   * @param type
+   *          the type
    */
   public CastMember(int type) {
     setType(type);
@@ -76,7 +81,7 @@ public class CastMember {
 
   /**
    * Gets the id.
-   *
+   * 
    * @return the id
    */
   public String getId() {
@@ -85,8 +90,9 @@ public class CastMember {
 
   /**
    * Sets the id.
-   *
-   * @param id the new id
+   * 
+   * @param id
+   *          the new id
    */
   public void setId(String id) {
     this.id = id;
@@ -94,7 +100,7 @@ public class CastMember {
 
   /**
    * Gets the name.
-   *
+   * 
    * @return the name
    */
   public String getName() {
@@ -103,8 +109,9 @@ public class CastMember {
 
   /**
    * Sets the name.
-   *
-   * @param name the new name
+   * 
+   * @param name
+   *          the new name
    */
   public void setName(String name) {
     this.name = name;
@@ -112,7 +119,7 @@ public class CastMember {
 
   /**
    * Gets the part.
-   *
+   * 
    * @return the part
    */
   public String getPart() {
@@ -121,8 +128,9 @@ public class CastMember {
 
   /**
    * Sets the part.
-   *
-   * @param part the new part
+   * 
+   * @param part
+   *          the new part
    */
   public void setPart(String part) {
     this.part = part;
@@ -130,7 +138,7 @@ public class CastMember {
 
   /**
    * Gets the provider data url.
-   *
+   * 
    * @return the provider data url
    */
   public String getProviderDataUrl() {
@@ -139,8 +147,9 @@ public class CastMember {
 
   /**
    * Sets the provider data url.
-   *
-   * @param providerDataUrl the new provider data url
+   * 
+   * @param providerDataUrl
+   *          the new provider data url
    */
   public void setProviderDataUrl(String providerDataUrl) {
     this.providerDataUrl = providerDataUrl;
@@ -148,7 +157,7 @@ public class CastMember {
 
   /**
    * Gets the type.
-   *
+   * 
    * @return the type
    */
   public int getType() {
@@ -157,8 +166,9 @@ public class CastMember {
 
   /**
    * Sets the type.
-   *
-   * @param type the new type
+   * 
+   * @param type
+   *          the new type
    */
   public void setType(int type) {
     this.type = type;
@@ -166,8 +176,9 @@ public class CastMember {
 
   /**
    * Adds the fanart.
-   *
-   * @param url the url
+   * 
+   * @param url
+   *          the url
    */
   public void addFanart(String url) {
     if (url != null) {
@@ -177,7 +188,7 @@ public class CastMember {
 
   /**
    * Gets the character.
-   *
+   * 
    * @return the character
    */
   public String getCharacter() {
@@ -186,11 +197,31 @@ public class CastMember {
 
   /**
    * Sets the character.
-   *
-   * @param character the new character
+   * 
+   * @param character
+   *          the new character
    */
   public void setCharacter(String character) {
     this.character = character;
+  }
+
+  /**
+   * Gets the image url.
+   * 
+   * @return the image url
+   */
+  public String getImageUrl() {
+    return imageUrl;
+  }
+
+  /**
+   * Sets the image url.
+   * 
+   * @param imageUrl
+   *          the new image url
+   */
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
   }
 
 }

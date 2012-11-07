@@ -76,6 +76,7 @@
         <include name="**/getdown.jar" />
       	<include name="**/getdown.txt" />
       	<include name="**/splashscreen.png" />
+      	<include name="**/tmm.png" />
       </jarfileset>
 			
 			<jarfileset dir="build">
@@ -108,6 +109,7 @@
 		<copy file="AppBundler/digest.txt" todir="dist/win" />
 		<copy file="AppBundler/LICENSE" todir="dist/win" />
 		<copy file="AppBundler/splashscreen.png" todir="dist/win" />
+		<copy file="AppBundler/tmm.png" todir="dist/win" />
 				
 		<!-- Linux -->
 		<delete dir="dist/linux/lib" />
