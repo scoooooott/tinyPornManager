@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">  
+  <appender name="console" class="org.apache.log4j.ConsoleAppender"> 
+    <layout class="org.apache.log4j.PatternLayout"> 
+      <!-- Pattern to output the caller's file name and line number -->
+      <param name="ConversionPattern" value="%5p [%t] (%F:%L) - %m%n"/> 
+    </layout> 
+  </appender> 
+  
+  <appender name="file" class="org.apache.log4j.RollingFileAppender"> 
+    <param name="file" value="log/tmm.log" />
+    <param name="append" value="true" />
+    <param name="encoding" value="UTF-8" />
+    <param name="maxFileSize" value="1024KB"/>
+    <param name="maxBackupIndex" value="5"/>
+
+    <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+      <param name="FileNamePattern" value="log/tmm.%d.log.gz" />
+    </rollingPolicy>
+
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%p %t %c - %m%n" />
+    </layout>
+  </appender> 
+  
+  <logger name="org.tinymediamanager">
+    <level value="debug"/> 
+    <appender-ref ref="console" /> 
+    <appender-ref ref="file" /> 
+  </logger>
+  
+  <logger name="com.moviejukebox.themoviedb">
+    <level value="error"/> 
+    <appender-ref ref="console" /> 
+    <appender-ref ref="file" /> 
+  </logger>
+
+  <root> 
+    <priority value ="warn" /> 
+    <appender-ref ref="console" /> 
+    <appender-ref ref="file" /> 
+  </root>
+  
+</log4j:configuration>

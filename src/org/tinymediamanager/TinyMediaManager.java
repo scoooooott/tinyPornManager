@@ -64,6 +64,7 @@ public class TinyMediaManager {
           // get logger configuration
           // updateProgress("loading logger", 10);
           PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
+          // DOMConfigurator.configure(TinyMediaManager.class.getResource("log4j.xml"));
           LOGGER.debug("starting tinyMediaManager");
           LOGGER.debug("default encoding " + System.getProperty("file.encoding"));
 

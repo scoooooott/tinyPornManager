@@ -27,7 +27,7 @@ public class ReleaseInfo {
 
   static {
     try {
-      FileInputStream fileInputStream = new FileInputStream("tmm.properties");
+      FileInputStream fileInputStream = new FileInputStream("version");
       Properties releaseInfoProp = new Properties();
       releaseInfoProp.load(fileInputStream);
       version = releaseInfoProp.getProperty("version");

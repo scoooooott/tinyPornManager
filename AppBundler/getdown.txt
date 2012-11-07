@@ -12,8 +12,7 @@ ui.status_text = FFFFFF
 
 # Application jar files
 code = tmm.jar
-code = tmm.properties
-code = tmm.png
+code = version
 code = splashscreen.png
 code = lib/commons-lang3-3.1.jar
 code = lib/log4j-1.2.16.jar

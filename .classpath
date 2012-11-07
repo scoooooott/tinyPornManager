@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/themoviedbapi-3.2-SNAPSHOT-r169.jar"/>
-	<classpathentry kind="lib" path="lib/beansbinding-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
-	<classpathentry kind="lib" path="lib/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="lib/commons-io-2.1.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-lgpl-1.9.9.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-mapper-lgpl-1.9.9.jar"/>
 	<classpathentry kind="lib" path="lib/objectdb.jar"/>
 	<classpathentry kind="lib" path="lib/Scaling-bin.jar"/>
-	<classpathentry kind="lib" path="lib/thetvdbapi-1.4-SNAPSHOT-r123.jar"/>
-	<classpathentry kind="lib" path="lib/forms-1.3.0.jar"/>
-	<classpathentry kind="lib" path="lib/JSplitButton_1.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/fluent-hc-4.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-4.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-cache-4.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/httpcore-4.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/httpmime-4.2.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_27"/>
+	<classpathentry kind="lib" path="lib/beansbinding.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/forms.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-cache.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore.jar"/>
+	<classpathentry kind="lib" path="lib/httpmime.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-lgpl.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-mapper-lgpl.jar"/>
+	<classpathentry kind="lib" path="lib/JSplitButton.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/themoviedbapi.jar"/>
+	<classpathentry kind="lib" path="lib/thetvdbapi.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

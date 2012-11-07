@@ -49,11 +49,36 @@ public class ImageLabel extends JLabel {
   /** The image path. */
   private String              imagePath;
 
+  /** The draw border. */
+  private boolean             drawBorder;
+
+  private boolean             drawFullWidth;
+
   /**
    * Instantiates a new image label.
    */
   public ImageLabel() {
     super("");
+    this.drawBorder = true;
+    this.drawFullWidth = false;
+  }
+
+  /**
+   * Instantiates a new image label.
+   */
+  public ImageLabel(boolean drawBorder) {
+    super("");
+    this.drawBorder = drawBorder;
+    this.drawFullWidth = false;
+  }
+
+  /**
+   * Instantiates a new image label.
+   */
+  public ImageLabel(boolean drawBorder, boolean drawFullWidth) {
+    super("");
+    this.drawBorder = drawBorder;
+    this.drawFullWidth = drawFullWidth;
   }
 
   /**
@@ -91,12 +116,10 @@ public class ImageLabel extends JLabel {
     if (file.exists()) {
       try {
         this.originalImage = com.bric.image.ImageLoader.createImage(file);// ImageIO.read(file);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.error("setImagePath", e);
       }
-    }
-    else {
+    } else {
       originalImage = null;
     }
 
@@ -136,8 +159,7 @@ public class ImageLabel extends JLabel {
                                                                          // true));
 
       this.repaint();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOGGER.error("setImageUrl", e);
     }
   }
@@ -154,15 +176,26 @@ public class ImageLabel extends JLabel {
       int originalHeight = originalImage.getHeight(null);
 
       // calculate new height/width
-      Point size = calculateSize(this.getWidth() - 8, this.getHeight() - 8, originalWidth, originalHeight, true);
-      int newWidth = size.x;
-      int newHeight = size.y;
+      int newWidth = 0;
+      int newHeight = 0;
 
-      g.setColor(Color.BLACK);
-      g.drawRect(0, 0, size.x + 7, size.y + 7);
-      g.setColor(Color.WHITE);
-      g.fillRect(1, 1, size.x + 6, size.y + 6);
-      g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 4, 4, newWidth, newHeight, this);
+      if (drawBorder) {
+        Point size = calculateSize(this.getWidth() - 8, this.getHeight() - 8, originalWidth, originalHeight, true);
+        newWidth = size.x;
+        newHeight = size.y;
+
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, size.x + 7, size.y + 7);
+        g.setColor(Color.WHITE);
+        g.fillRect(1, 1, size.x + 6, size.y + 6);
+        g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 4, 4, newWidth, newHeight, this);
+      } else {
+        Point size = calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
+        newWidth = size.x;
+        newHeight = size.y;
+        g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 0, 0, newWidth, newHeight, this);
+      }
+
     }
   }
 
@@ -193,8 +226,7 @@ public class ImageLabel extends JLabel {
         size.x = maxWidth;
         size.y = size.x * originalHeight / originalWidth;
       }
-    }
-    else {
+    } else {
       size.x = maxWidth;
       size.y = maxHeight;
     }

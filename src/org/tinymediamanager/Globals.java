@@ -15,11 +15,15 @@
  */
 package org.tinymediamanager;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.ui.MainWindow;
 
 /**
  * The Class Globals.
@@ -43,4 +47,7 @@ public class Globals {
     entityManager.close();
     emf.close();
   }
+
+  /** The logo */
+  public final static Image logo = Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
 }

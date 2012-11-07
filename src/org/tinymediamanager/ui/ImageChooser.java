@@ -126,6 +126,7 @@ public class ImageChooser extends JDialog {
    */
   public ImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel) {
     setModal(true);
+    setIconImage(Globals.logo);
     this.imageLabel = imageLabel;
     this.type = type;
 
@@ -142,8 +143,8 @@ public class ImageChooser extends JDialog {
     setBounds(5, 5, 968, 590);
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), }, new RowSpec[] {
+        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
     {
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -158,10 +159,9 @@ public class ImageChooser extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC,
+          ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
       {
         progressBar = new JProgressBar();
         buttonPane.add(progressBar, "2, 2");
@@ -243,8 +243,7 @@ public class ImageChooser extends JDialog {
           case POSTER:
             if (posterSize != null) {
               imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(posterSize));
-            }
-            else {
+            } else {
               imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbPosterSize()));
             }
             break;
@@ -252,8 +251,7 @@ public class ImageChooser extends JDialog {
           case FANART:
             if (fanartSize != null) {
               imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(fanartSize));
-            }
-            else {
+            } else {
               imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbFanartSize()));
             }
             break;
@@ -459,11 +457,9 @@ public class ImageChooser extends JDialog {
           addImage(bufferedImage, tmdbArtwork);
         }
 
-      }
-      catch (NumberFormatException e) {
+      } catch (NumberFormatException e) {
         LOGGER.error("DownloadTask", e);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.error("DownloadTask", e);
       }
 
@@ -573,8 +569,7 @@ public class ImageChooser extends JDialog {
         // default should be the first in line
         if (size == Globals.settings.getImageTmdbPosterSize()) {
           resolutions.add(0, new ImageResolution(size, fullHeight, fullWidth));
-        }
-        else {
+        } else {
           resolutions.add(new ImageResolution(size, fullHeight, fullWidth));
         }
       }
@@ -587,8 +582,7 @@ public class ImageChooser extends JDialog {
         // default should be the first in line
         if (size == Globals.settings.getImageTmdbFanartSize()) {
           resolutions.add(0, new ImageResolution(size, fullHeight, fullWidth));
-        }
-        else {
+        } else {
           resolutions.add(new ImageResolution(size, fullHeight, fullWidth));
         }
       }
