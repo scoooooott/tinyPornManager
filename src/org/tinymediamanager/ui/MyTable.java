@@ -8,7 +8,6 @@ import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -209,8 +208,9 @@ public class MyTable extends JTable {
     JScrollPane scrollPane = new JScrollPane(table);
     scrollPane.setViewport(new StripedViewport(table));
     scrollPane.getViewport().setView(table);
-    scrollPane.setBorder(BorderFactory.createEmptyBorder());
+    // scrollPane.setBorder(BorderFactory.createEmptyBorder());
     scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, createCornerComponent(table));
+    // scrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     return scrollPane;
   }
 
