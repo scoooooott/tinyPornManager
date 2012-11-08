@@ -45,18 +45,7 @@ public class TinyMediaManager {
 
       public void run() {
         try {
-
-          // Get the native look and feel class name
-          String laf = UIManager.getSystemLookAndFeelClassName();
-
-          // Get the look and feel class name
-          // String laf = "com.jtattoo.plaf.smart.SmartLookAndFeel";
-          // String laf =
-          // "de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel";
-
-          // Install the look and feel
-          UIManager.setLookAndFeel(laf);
-
+          setLookAndFeel();
           // // initialize splash screen
           // StartupWorker worker = new StartupWorker();
           // worker.execute();
@@ -97,6 +86,17 @@ public class TinyMediaManager {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
         }
+      }
+
+      private void setLookAndFeel() throws Exception {
+        // Get the native look and feel class name
+        // String laf = UIManager.getSystemLookAndFeelClassName();
+
+        // Get the look and feel class name
+        String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
+
+        // Install the look and feel
+        UIManager.setLookAndFeel(laf);
       }
     });
   }

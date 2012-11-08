@@ -16,10 +16,14 @@
 package org.tinymediamanager.ui;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -105,8 +109,7 @@ public class ImageLabel extends JLabel {
 
     if (newValue == null) {
       originalImage = null;
-    }
-    else {
+    } else {
 
       this.imagePath = newValue;
       firePropertyChange("imagePath", oldValue, newValue);
@@ -121,12 +124,11 @@ public class ImageLabel extends JLabel {
       if (file.exists()) {
         try {
           this.originalImage = com.bric.image.ImageLoader.createImage(file);// ImageIO.read(file);
+        } catch (Exception e) {
+          // LOGGER.error("setImagePath", e);
+          originalImage = null;
         }
-        catch (Exception e) {
-          LOGGER.error("setImagePath", e);
-        }
-      }
-      else {
+      } else {
         originalImage = null;
       }
     }
@@ -166,11 +168,11 @@ public class ImageLabel extends JLabel {
       this.originalImage = com.bric.image.ImageLoader.createImage(image);// ImageIO.read(cachedUrl.getInputStream(null,
                                                                          // true));
 
-      this.repaint();
+    } catch (IOException e) {
+      originalImage = null;
+      // LOGGER.error("setImageUrl", e);
     }
-    catch (IOException e) {
-      LOGGER.error("setImageUrl", e);
-    }
+    this.repaint();
   }
 
   /*
@@ -198,14 +200,43 @@ public class ImageLabel extends JLabel {
         g.setColor(Color.WHITE);
         g.fillRect(1, 1, size.x + 6, size.y + 6);
         g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 4, 4, newWidth, newHeight, this);
-      }
-      else {
+      } else {
         Point size = calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
         newWidth = size.x;
         newHeight = size.y;
         g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 0, 0, newWidth, newHeight, this);
       }
 
+    } else {
+      // draw border and background
+      g.setColor(Color.BLACK);
+      g.drawRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
+      g.setColor(getParent().getBackground());
+      g.fillRect(1, 1, this.getWidth() - 2, this.getHeight() - 2);
+
+      // calculate diagonal
+      int diagonalSize = (int) Math.sqrt(this.getWidth() * this.getWidth() + this.getHeight() * this.getHeight());
+
+      // draw text
+      String text = "no image found";
+      Graphics2D g2 = (Graphics2D) g;
+      AffineTransform orig = g2.getTransform();
+      AffineTransform at = new AffineTransform(orig);
+      at.translate(0, this.getHeight());
+      at.rotate(this.getWidth(), -this.getHeight());
+      g2.setTransform(at);
+      g2.setColor(Color.BLACK);
+      Font font = new Font("Arial", Font.PLAIN, 18);
+      g2.setFont(font);
+
+      FontMetrics fm = g2.getFontMetrics();
+      int x = (diagonalSize - fm.stringWidth(text)) / 2;
+      int y = (fm.getAscent() - fm.getDescent()) / 2;
+
+      g2.drawString(text, x, y);
+      // g2.drawLine(0, 0, diagonalSize, 0);
+      at.translate(0, -this.getHeight());
+      g2.setTransform(orig);
     }
   }
 
@@ -236,8 +267,7 @@ public class ImageLabel extends JLabel {
         size.x = maxWidth;
         size.y = size.x * originalHeight / originalWidth;
       }
-    }
-    else {
+    } else {
       size.x = maxWidth;
       size.y = maxHeight;
     }

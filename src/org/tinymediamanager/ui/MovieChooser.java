@@ -129,7 +129,7 @@ public class MovieChooser extends JDialog implements ActionListener {
         panelSearchField.add(btnSearch, "3, 1");
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
-            searchMovie(textFieldSearchString.getText());
+            searchMovie(textFieldSearchString.getText(), "");
           }
         });
         getRootPane().setDefaultButton(btnSearch);
@@ -234,7 +234,11 @@ public class MovieChooser extends JDialog implements ActionListener {
       progressBar.setVisible(false);
       initDataBindings();
       textFieldSearchString.setText(movieToScrape.getName());
-      searchMovie(textFieldSearchString.getText());
+      // searchMovie(textFieldSearchString.getText(),
+      // movieToScrape.getImdbId());
+
+      // initial search only by name
+      searchMovie(textFieldSearchString.getText(), "");
     }
   }
 
@@ -262,8 +266,8 @@ public class MovieChooser extends JDialog implements ActionListener {
    * @param searchTerm
    *          the search term
    */
-  private void searchMovie(String searchTerm) {
-    SearchTask task = new SearchTask(searchTerm);
+  private void searchMovie(String searchTerm, String imdbId) {
+    SearchTask task = new SearchTask(searchTerm, imdbId);
     task.execute();
   }
 
@@ -295,6 +299,7 @@ public class MovieChooser extends JDialog implements ActionListener {
 
     /** The search term. */
     private String searchTerm;
+    private String imdbId;
 
     /**
      * Instantiates a new search task.
@@ -302,8 +307,9 @@ public class MovieChooser extends JDialog implements ActionListener {
      * @param searchTerm
      *          the search term
      */
-    public SearchTask(String searchTerm) {
+    public SearchTask(String searchTerm, String imdbId) {
       this.searchTerm = searchTerm;
+      this.imdbId = imdbId;
     }
 
     /*
@@ -315,7 +321,7 @@ public class MovieChooser extends JDialog implements ActionListener {
     public Void doInBackground() {
       startProgressBar("searching for: " + searchTerm);
       MovieList movieList = MovieList.getInstance();
-      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm);
+      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId);
       moviesFound.clear();
       for (MediaSearchResult result : searchResult) {
         moviesFound.add(new MovieChooserModel(movieList.getMetadataProvider(), result));

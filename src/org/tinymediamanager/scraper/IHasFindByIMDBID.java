@@ -30,4 +30,15 @@ public interface IHasFindByIMDBID {
    *           the exception
    */
   public MediaMetadata getMetadataForIMDBId(String imdbid) throws Exception;
+
+  /**
+   * Search by imdb id.
+   * 
+   * @param imdbid
+   *          the imdbid
+   * @return the media search result
+   * @throws Exception
+   *           the exception
+   */
+  public MediaSearchResult searchByImdbId(String imdbid) throws Exception;
 }

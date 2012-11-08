@@ -57,4 +57,12 @@ public class Utils {
     }
     return filename;
   }
+
+  public static boolean isValidImdbId(String imdbId) {
+    if (StringUtils.isEmpty(imdbId)) {
+      return false;
+    }
+
+    return imdbId.matches("tt\\d{7}");
+  }
 }

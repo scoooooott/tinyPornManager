@@ -28,6 +28,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -140,8 +141,7 @@ public class MovieList extends AbstractModelObject {
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
         movieList = ObservableCollections.observableList(new ArrayList<Movie>(movies.size()));
-      }
-      else {
+      } else {
         LOGGER.debug("found nothing in database");
       }
       // LOGGER.debug(movies);
@@ -151,15 +151,12 @@ public class MovieList extends AbstractModelObject {
           // LOGGER.debug(movie);
           movie.setObservables();
           addMovie(movie);
-        }
-        else {
+        } else {
           LOGGER.error("retrieved no movie: " + obj);
         }
-    }
-    catch (PersistenceException e) {
+    } catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -249,8 +246,7 @@ public class MovieList extends AbstractModelObject {
         }
       }
 
-    }
-    else {
+    } else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -283,17 +279,60 @@ public class MovieList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
+   * @param ImdbId
+   *          the imdb id
    * @return the list
    */
-  public List<MediaSearchResult> searchMovie(String searchTerm) {
+  public List<MediaSearchResult> searchMovie(String searchTerm, String ImdbId) {
+    List<MediaSearchResult> sr = searchMovieByImdbId(ImdbId);
+    if (sr == null || sr.size() == 0) {
+      sr = searchMovie(searchTerm);
+    }
+
+    return sr;
+  }
+
+  /**
+   * Search movie.
+   * 
+   * @param searchTerm
+   *          the search term
+   * @return the list
+   */
+  private List<MediaSearchResult> searchMovie(String searchTerm) {
     // format searchstring
     searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
+    } catch (Exception e) {
+      LOGGER.error("searchMovie", e);
     }
-    catch (Exception e) {
+
+    return searchResult;
+  }
+
+  /**
+   * Search movie.
+   * 
+   * @param searchTerm
+   *          the search term
+   * @return the list
+   */
+  private List<MediaSearchResult> searchMovieByImdbId(String imdbId) {
+
+    List<MediaSearchResult> searchResult = null;
+    try {
+      if (getMetadataProvider() instanceof IHasFindByIMDBID) {
+        IHasFindByIMDBID provider = (IHasFindByIMDBID) getMetadataProvider();
+        MediaSearchResult result = provider.searchByImdbId(imdbId);
+        if (result != null) {
+          searchResult = new ArrayList<MediaSearchResult>(1);
+          searchResult.add(result);
+        }
+      }
+    } catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 

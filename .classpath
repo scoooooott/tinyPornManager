@@ -21,5 +21,6 @@
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/themoviedbapi.jar"/>
 	<classpathentry kind="lib" path="lib/thetvdbapi.jar"/>
+	<classpathentry kind="lib" path="lib/JTattoo.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
