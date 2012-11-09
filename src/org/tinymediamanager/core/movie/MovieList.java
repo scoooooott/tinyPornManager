@@ -215,7 +215,7 @@ public class MovieList extends AbstractModelObject {
       if (movie == null) {
         LOGGER.debug("no movie exists in path " + dir.getPath());
         // movie did not exist - try to parse a NFO file
-        movie = Movie.parseNFO(dir.getPath());
+        movie = Movie.parseNFO(dir.getPath(), videoFiles);
         if (movie == null) {
           // movie did not exist - create new one
           movie = new Movie();
@@ -226,25 +226,25 @@ public class MovieList extends AbstractModelObject {
           // name
           movie.setName(name);
           movie.setPath(dir.getPath());
+          movie.addToFiles(videoFiles);
+          movie.findImages();
         }
         // persist movie
         if (movie != null) {
           movie.setDataSource(dataSource);
           LOGGER.debug("store movie " + dir.getPath());
-          Globals.entityManager.getTransaction().begin();
-          Globals.entityManager.persist(movie);
-          Globals.entityManager.getTransaction().commit();
+          movie.saveToDb();
           addMovie(movie);
         }
       }
 
-      for (File file : videoFiles) {
-        // check if that file exists for that movie
-        if (!movie.hasFile(file.getName())) {
-          // create new movie file
-          movie.addToFiles(file.getName());
-        }
-      }
+      // for (File file : videoFiles) {
+      // // check if that file exists for that movie
+      // if (!movie.hasFile(file.getName())) {
+      // // create new movie file
+      // movie.addToFiles(file.getName());
+      // }
+      // }
 
     } else {
       // no - dig deeper

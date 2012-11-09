@@ -44,7 +44,7 @@ public class MainWindow extends JFrame {
   public MainWindow(String name) {
     super(name);
     initialize();
-    setVisible(true);
+    // setVisible(true);
   }
 
   /**

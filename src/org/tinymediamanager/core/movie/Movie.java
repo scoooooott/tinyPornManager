@@ -366,8 +366,17 @@ public class Movie extends AbstractModelObject {
    */
   public void addToFiles(String newFile) {
     movieFiles.add(newFile);
-
     addToMediaFiles(new MediaFile(getPath(), newFile));
+  }
+
+  public void addToFiles(File[] videoFiles) {
+    for (File file : videoFiles) {
+      // check if that file exists for that movie
+      if (!hasFile(file.getName())) {
+        // create new movie file
+        addToFiles(file.getName());
+      }
+    }
   }
 
   public void setMovieFiles(List<String> newValue) {
@@ -397,30 +406,53 @@ public class Movie extends AbstractModelObject {
   /**
    * Find images.
    */
-  private void findImages() {
+  public void findImages() {
     // try to find images in movie path
 
-    // poster - folder.jpg
-    String poster = path + File.separator + "folder.jpg";
-    File imageFile = new File(poster);
-    if (imageFile.exists()) {
-      LOGGER.debug("found poster " + imageFile.getPath());
-      setPoster(FilenameUtils.getName(poster));
-    }
-    else {
-      LOGGER.debug("no poster found");
-    }
+    // find poster
+    findPoster();
 
     // fanart - fanart.jpg
     String fanart = path + File.separator + "fanart.jpg";
-    imageFile = new File(fanart);
+    File imageFile = new File(fanart);
     if (imageFile.exists()) {
       LOGGER.debug("found fanart " + imageFile.getPath());
       setFanart(FilenameUtils.getName(fanart));
-    }
-    else {
+    } else {
       LOGGER.debug("no fanart found");
     }
+  }
+
+  private void findPoster() {
+    String movieFileName = null;
+
+    if (getMediaFiles().size() > 0) {
+      MediaFile mediaFile = getMediaFiles().get(0);
+      movieFileName = mediaFile.getFilename();
+    }
+
+    // <movie filename>.jpg
+    if (!StringUtils.isEmpty(movieFileName)) {
+      String poster = path + File.separator + FilenameUtils.getBaseName(movieFileName) + ".jpg";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+
+    // <movie filename>.tbn
+    if (!StringUtils.isEmpty(movieFileName)) {
+      String poster = path + File.separator + FilenameUtils.getBaseName(movieFileName) + ".tbn";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+
   }
 
   /**
@@ -466,8 +498,7 @@ public class Movie extends AbstractModelObject {
   public String getFanart() {
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
-    }
-    else {
+    } else {
       return fanart;
     }
   }
@@ -564,8 +595,7 @@ public class Movie extends AbstractModelObject {
   public String getPoster() {
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
-    }
-    else {
+    } else {
       return poster;
     }
   }
@@ -664,7 +694,7 @@ public class Movie extends AbstractModelObject {
    *          the path
    * @return the movie
    */
-  public static Movie parseNFO(String path) {
+  public static Movie parseNFO(String path, File[] videoFiles) {
     LOGGER.debug("try to find a nfo for " + path);
     // check if there are any NFOs in that directory
     FilenameFilter filter = new FilenameFilter() {
@@ -704,6 +734,7 @@ public class Movie extends AbstractModelObject {
       }
 
       movie.setPath(path);
+      movie.addToFiles(videoFiles);
       movie.findImages();
       break;
     }
@@ -1087,8 +1118,7 @@ public class Movie extends AbstractModelObject {
             setPoster(FilenameUtils.getName(filename));
           }
         }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -1126,8 +1156,7 @@ public class Movie extends AbstractModelObject {
             setFanart(FilenameUtils.getName(filename));
           }
         }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
@@ -1140,8 +1169,7 @@ public class Movie extends AbstractModelObject {
   public void writeNFO() {
     if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
-    }
-    else {
+    } else {
       setNfoFilename(MovieToXbmcNfoConnector.setData(this));
     }
   }

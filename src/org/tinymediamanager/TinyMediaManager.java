@@ -19,8 +19,10 @@ package org.tinymediamanager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -37,7 +39,7 @@ import org.tinymediamanager.ui.MainWindow;
 public class TinyMediaManager {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(TinyMediaManager.class);
+  private static final Logger LOGGER = Logger.getLogger(TinyMediaManager.class); ;
 
   /**
    * The main method.
@@ -47,15 +49,25 @@ public class TinyMediaManager {
    */
   public static void main(String[] args) {
     EventQueue.invokeLater(new Runnable() {
-      private SplashScreen splash;
-
       public void run() {
         try {
           // set look and feel
           setLookAndFeel();
 
           // init splash
-          splash = SplashScreen.getSplashScreen();
+          SplashScreen splash = SplashScreen.getSplashScreen();
+          Graphics2D g2 = null;
+          if (splash != null) {
+            g2 = splash.createGraphics();
+            if (g2 != null) {
+              Font font = new Font("Dialog", Font.PLAIN, 14);
+              g2.setFont(font);
+            } else {
+              LOGGER.debug("got no graphics from splash");
+            }
+          } else {
+            LOGGER.debug("no splash found");
+          }
           long timeStart = System.currentTimeMillis();
 
           // // initialize splash screen
@@ -63,14 +75,21 @@ public class TinyMediaManager {
           // worker.execute();
 
           // get logger configuration
-          updateProgress("loading logger");
+          if (g2 != null) {
+            updateProgress(g2, "loading logger");
+            splash.update();
+          }
           PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
           // DOMConfigurator.configure(TinyMediaManager.class.getResource("log4j.xml"));
           LOGGER.debug("starting tinyMediaManager");
           LOGGER.debug("default encoding " + System.getProperty("file.encoding"));
 
           // initialize database
-          updateProgress("initialize database");
+          if (g2 != null) {
+            updateProgress(g2, "initialize database");
+            splash.update();
+          }
+
           LOGGER.debug("initialize database");
           Globals.startDatabase();
           LOGGER.debug("database opened");
@@ -82,29 +101,38 @@ public class TinyMediaManager {
           }
 
           // load database
-          updateProgress("loading movies");
+          if (g2 != null) {
+            updateProgress(g2, "loading movies");
+            splash.update();
+          }
+
           MovieList movieList = MovieList.getInstance();
           movieList.loadMoviesFromDatabase();
 
           // launch application
-          updateProgress("loading ui");
+          if (g2 != null) {
+            updateProgress(g2, "loading ui");
+            splash.update();
+          }
           long timeEnd = System.currentTimeMillis();
           if ((timeEnd - timeStart) > 3000) {
             try {
               Thread.sleep(3000 - (timeEnd - timeStart));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
           }
           MainWindow window = new MainWindow("tinyMediaManager " + org.tinymediamanager.ReleaseInfo.getVersion());
 
-          // stopSplash();
+          if (g2 != null) {
+            updateProgress(g2, "finished starting");
+            splash.update();
+          }
 
-        }
-        catch (javax.persistence.PersistenceException e) {
+          window.setVisible(true);
+
+        } catch (javax.persistence.PersistenceException e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
         }
@@ -116,19 +144,13 @@ public class TinyMediaManager {
        * @param text
        *          the text
        */
-      private void updateProgress(String text) {
-        if (splash != null) {
-          Graphics2D g2 = splash.createGraphics();
-          if (g2 != null) {
-            g2.setComposite(AlphaComposite.Clear);
-            g2.fillRect(20, 200, 480, 300);
-            g2.setPaintMode();
-            g2.setColor(Color.WHITE);
-            g2.drawString(text + "...", 20, 300);
-            splash.update();
-          }
-        }
-
+      private void updateProgress(Graphics2D g2, String text) {
+        LOGGER.debug("graphics found");
+        g2.setComposite(AlphaComposite.Clear);
+        g2.fillRect(20, 200, 480, 300);
+        g2.setPaintMode();
+        g2.setColor(Color.WHITE);
+        g2.drawString(text + "...", 20, 300);
       }
 
       /**
@@ -140,9 +162,16 @@ public class TinyMediaManager {
       private void setLookAndFeel() throws Exception {
         // Get the native look and feel class name
         // String laf = UIManager.getSystemLookAndFeelClassName();
+        Properties props = new Properties();
+        props.setProperty("controlTextFont", "Dialog 12");
+        props.setProperty("systemTextFont", "Dialog 12");
+        props.setProperty("userTextFont", "Dialog 12");
+        props.setProperty("menuTextFont", "Dialog 12");
+        props.setProperty("windowTitleFont", "Dialog bold 12");
+        props.setProperty("subTextFont", "Dialog 10");
 
         // Get the look and feel class name
-        com.jtattoo.plaf.luna.LunaLookAndFeel.setTheme("Default");
+        com.jtattoo.plaf.luna.LunaLookAndFeel.setTheme(props);
         String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
 
         // Install the look and feel
