@@ -369,7 +369,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       CastMember cm = new CastMember();
       cm.setType(CastMember.ACTOR);
       cm.setName(DOMUtils.getElementValue(actor, "name"));
-      cm.setPart(DOMUtils.getElementValue(actor, "role"));
+      cm.setCharacter(DOMUtils.getElementValue(actor, "role"));
       md.addCastMember(cm);
     }
 

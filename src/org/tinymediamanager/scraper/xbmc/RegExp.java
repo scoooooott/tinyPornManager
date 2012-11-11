@@ -6,79 +6,76 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 public class RegExp implements RegExpContainer {
-    private String input, output;
-    private int dest;
-    private String conditional;
-    private boolean appendBuffer = false;
-    private List<RegExp> children = new ArrayList<RegExp>();
-    private Expression expression;
-   
-    public RegExp() {
-    }
-   
-    public void addRegExp(RegExp regexp) {
-        children.add(regexp);
-    }
-   
-    public RegExp[] getRegExps() {
-        return children.toArray(new RegExp[children.size()]);
-    }
-   
-    public boolean hasRegExps() {
-        return children!=null && children.size()>0;
-    }
+  private String       input, output;
+  private int          dest;
+  private String       conditional;
+  private boolean      appendBuffer = false;
+  private List<RegExp> children     = new ArrayList<RegExp>();
+  private Expression   expression;
 
-    public String getInput() {
-        return input;
-    }
+  public RegExp() {
+  }
 
-    public String getOutput() {
-        return output;
-    }
+  public void addRegExp(RegExp regexp) {
+    children.add(regexp);
+  }
 
-    public int getDest() {
-        return dest;
-    }
+  public RegExp[] getRegExps() {
+    return children.toArray(new RegExp[children.size()]);
+  }
 
+  public boolean hasRegExps() {
+    return children != null && children.size() > 0;
+  }
 
-    public void setInput(String input) {
-        if (StringUtils.isEmpty(input)) input="$$1";
-        this.input = input;
-    }
+  public String getInput() {
+    return input;
+  }
 
+  public String getOutput() {
+    return output;
+  }
 
-    public void setOutput(String output) {
-        this.output = output;
-    }
+  public int getDest() {
+    return dest;
+  }
 
+  public void setInput(String input) {
+    if (StringUtils.isEmpty(input))
+      input = "$$1";
+    this.input = input;
+  }
 
-    public void setDest(int dest) {
-        this.dest = dest;
-    }
+  public void setOutput(String output) {
+    this.output = output;
+  }
 
-    public Expression getExpression() {
-        return expression;
-    }
+  public void setDest(int dest) {
+    this.dest = dest;
+  }
 
-    public void setExpression(Expression expression) {
-        this.expression = expression;
-    }
+  public Expression getExpression() {
+    return expression;
+  }
 
-    public boolean isAppendBuffer() {
-        return appendBuffer;
-    }
+  public void setExpression(Expression expression) {
+    this.expression = expression;
+  }
 
-    public void setAppendBuffer(boolean appendBuffer) {
-        this.appendBuffer = appendBuffer;
-    }
+  public boolean isAppendBuffer() {
+    return appendBuffer;
+  }
 
-    public String getConditional() {
-        return conditional;
-    }
+  public void setAppendBuffer(boolean appendBuffer) {
+    this.appendBuffer = appendBuffer;
+  }
 
-    public void setConditional(String conditional) {
-        this.conditional = conditional;
-    }
+  public String getConditional() {
+    return conditional;
+  }
+
+  public void setConditional(String conditional) {
+    this.conditional = conditional;
+  }
 
 }
-
