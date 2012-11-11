@@ -16,6 +16,7 @@
 package org.tinymediamanager.core;
 
 import java.io.File;
+import java.text.DecimalFormat;
 
 import javax.persistence.Entity;
 
@@ -32,13 +33,15 @@ import org.apache.commons.io.FilenameUtils;
 public class MediaFile extends AbstractModelObject {
 
   /** The Constant PATH. */
-  private static final String PATH     = "path";
+  private static final String PATH           = "path";
 
   /** The Constant FILENAME. */
-  private static final String FILENAME = "filename";
+  private static final String FILENAME       = "filename";
 
   /** The Constant FILESIZE. */
-  private static final String FILESIZE = "filesize";
+  private static final String FILESIZE       = "filesize";
+
+  private static final String FILESIZE_IN_MB = "filesizeInMegabytes";
 
   /** The path. */
   private String              path;
@@ -48,6 +51,11 @@ public class MediaFile extends AbstractModelObject {
 
   /** The filesize. */
   private long                filesize;
+
+  public MediaFile() {
+    this.path = "";
+    this.filename = "";
+  }
 
   /**
    * Instantiates a new media file.
@@ -140,10 +148,16 @@ public class MediaFile extends AbstractModelObject {
    * @param newValue
    *          the new filesize
    */
-  private void setFilesize(long newValue) {
+  public void setFilesize(long newValue) {
     long oldValue = this.filesize;
     this.filesize = newValue;
     firePropertyChange(FILESIZE, oldValue, newValue);
+    firePropertyChange(FILESIZE_IN_MB, oldValue, newValue);
+  }
+
+  public String getFilesizeInMegabytes() {
+    DecimalFormat df = new DecimalFormat("#0.00");
+    return df.format(filesize / (1024.0 * 1024.0)) + " M";
   }
 
 }

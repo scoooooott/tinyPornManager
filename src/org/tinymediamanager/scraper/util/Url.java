@@ -43,13 +43,15 @@ import org.tinymediamanager.Globals;
  */
 public class Url {
   /** The log. */
-  private static final Logger   LOGGER          = Logger.getLogger(Url.class);
+  private static final Logger      LOGGER          = Logger.getLogger(Url.class);
+
+  private static DefaultHttpClient client;
 
   /** The url. */
-  protected String              url             = null;
+  protected String                 url             = null;
 
   /** The Constant HTTP_USER_AGENT. */
-  protected static final String HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
+  protected static final String    HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
 
   /**
    * Instantiates a new url.
@@ -58,6 +60,19 @@ public class Url {
    *          the url
    */
   public Url(String url) {
+    if (client == null) {
+      client = new DefaultHttpClient();
+
+      HttpParams params = client.getParams();
+      HttpConnectionParams.setConnectionTimeout(params, 5000);
+      HttpConnectionParams.setSoTimeout(params, 5000);
+      HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
+      client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler());
+
+      if ((Globals.settings.useProxy())) {
+        setProxy(client);
+      }
+    }
     this.url = url;
   }
 
@@ -113,17 +128,17 @@ public class Url {
    * @return the http client
    */
   protected DefaultHttpClient getHttpClient() {
-    DefaultHttpClient client = new DefaultHttpClient();
-
-    HttpParams params = client.getParams();
-    HttpConnectionParams.setConnectionTimeout(params, 5000);
-    HttpConnectionParams.setSoTimeout(params, 5000);
-    HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
-    client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler());
-
-    if ((Globals.settings.useProxy())) {
-      setProxy(client);
-    }
+    // DefaultHttpClient client = new DefaultHttpClient();
+    //
+    // HttpParams params = client.getParams();
+    // HttpConnectionParams.setConnectionTimeout(params, 5000);
+    // HttpConnectionParams.setSoTimeout(params, 5000);
+    // HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
+    // client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler());
+    //
+    // if ((Globals.settings.useProxy())) {
+    // setProxy(client);
+    // }
 
     return client;
   }
@@ -144,14 +159,20 @@ public class Url {
         int offset = Globals.settings.getProxyUsername().indexOf("\\");
         String domain = Globals.settings.getProxyUsername().substring(0, offset);
         String username = Globals.settings.getProxyUsername().substring(offset + 1, Globals.settings.getProxyUsername().length());
-        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
-      } else {
-        httpClient.getCredentialsProvider()
-            .setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
+            new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
+      }
+      else {
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
+            new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
       }
     }
 
     // set proxy
     httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+  }
+
+  public String toString() {
+    return url;
   }
 }

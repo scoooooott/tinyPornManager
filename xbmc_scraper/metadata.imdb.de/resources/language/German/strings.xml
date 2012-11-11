@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<strings>
+	<string id="1000">Updates/Infos</string>
+	<string id="1001">mehr als die ersten beiden Genres importieren</string>
+	<string id="1002">Infos zu allen am Film beteiligten anfügen</string>
+	<string id="1003">Fanart von TMDB aktivieren</string>
+	<string id="1004">Cover/Poster von TMDB sammeln</string>
+	<string id="1005">Cover/Poster von MoviePosterDB einfügen</string>
+	<string id="1006">IMDb Thumbnailgröße [Pixel]</string>
+	<string id="1007">Handlung von OFDB abfragen wenn IMDB keine enthält</string>
+	<string id="1008">den Filmtitel von OFDB verwenden</string>
+	<string id="1009">Handlung von OFDB bevorzugen, auch wenn IMDB nicht leer ist</string>
+	<string id="1010">Trailer (themoviedb.org)</string>
+	<string id="1011">Handlung von IMDB.com nutzen, wenn sonst keine gefunden wurde</string>
+	<string id="1012">Trailer Alternative von HD-Trailers.net</string>
+	<string id="1013">Sprache der themoviedb.org Trailer</string>
+	<string id="1014">Trailer von OFDB/filmtrailer.com in Format</string>
+    <string id="1015">Handlung von moviemaze.de</string>
+	<string id="1016">Trailer von moviemaze.de</string>
+    <string id="1017">Handlung von themoviedb.org</string>
+	<string id="1018">Sprache der themoviedb.org Handlung</string>
+	<string id="1019">den Filmtitel von imdb.com verwenden</string>
+	<string id="100">Allgemein</string>
+    <string id="101">Plot/Titel</string>
+    <string id="102">Trailer</string>
+</strings>

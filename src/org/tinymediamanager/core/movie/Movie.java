@@ -413,14 +413,8 @@ public class Movie extends AbstractModelObject {
     findPoster();
 
     // fanart - fanart.jpg
-    String fanart = path + File.separator + "fanart.jpg";
-    File imageFile = new File(fanart);
-    if (imageFile.exists()) {
-      LOGGER.debug("found fanart " + imageFile.getPath());
-      setFanart(FilenameUtils.getName(fanart));
-    } else {
-      LOGGER.debug("no fanart found");
-    }
+    findFanart();
+
   }
 
   private void findPoster() {
@@ -453,6 +447,102 @@ public class Movie extends AbstractModelObject {
       }
     }
 
+    // movie.jpg
+    {
+      String poster = path + File.separator + "movie.jpg";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+
+    // movie.tbn
+    {
+      String poster = path + File.separator + "movie.tbn";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+
+    // poster.jpg
+    {
+      String poster = path + File.separator + "poster.jpg";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+
+    // poster.tbn
+    {
+      String poster = path + File.separator + "poster.tbn";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+
+    // movie.jpg
+    {
+      String poster = path + File.separator + "movie.jpg";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+
+    // folder.jpg
+    {
+      String poster = path + File.separator + "folder.jpg";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+  }
+
+  private void findFanart() {
+    String movieFileName = null;
+
+    if (getMediaFiles().size() > 0) {
+      MediaFile mediaFile = getMediaFiles().get(0);
+      movieFileName = mediaFile.getFilename();
+    }
+
+    // <movie filename>-fanart.jpg
+    if (!StringUtils.isEmpty(movieFileName)) {
+      String fanart = path + File.separator + FilenameUtils.getBaseName(movieFileName) + "-fanart.jpg";
+      File imageFile = new File(fanart);
+      if (imageFile.exists()) {
+        setFanart(FilenameUtils.getName(fanart));
+        LOGGER.debug("found fanart " + imageFile.getPath());
+        return;
+      }
+    }
+
+    // fanart.jpg
+    {
+      String fanart = path + File.separator + "fanart.jpg";
+      File imageFile = new File(fanart);
+      if (imageFile.exists()) {
+        setFanart(FilenameUtils.getName(fanart));
+        LOGGER.debug("found fanart " + imageFile.getPath());
+        return;
+      }
+    }
   }
 
   /**
@@ -498,7 +588,8 @@ public class Movie extends AbstractModelObject {
   public String getFanart() {
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
-    } else {
+    }
+    else {
       return fanart;
     }
   }
@@ -595,7 +686,8 @@ public class Movie extends AbstractModelObject {
   public String getPoster() {
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
-    } else {
+    }
+    else {
       return poster;
     }
   }
@@ -829,7 +921,9 @@ public class Movie extends AbstractModelObject {
     setOriginalName(metadata.getOriginalTitle());
     setOverview(metadata.getPlot());
     setImdbId(metadata.getIMDBID());
-    setTmdbId(Integer.parseInt(metadata.getTMDBID()));
+    if (!StringUtils.isEmpty(metadata.getTMDBID())) {
+      setTmdbId(Integer.parseInt(metadata.getTMDBID()));
+    }
     setYear(metadata.getYear());
     setRating(metadata.getUserRating());
     setVotes(metadata.getVoteCount());
@@ -1118,7 +1212,8 @@ public class Movie extends AbstractModelObject {
             setPoster(FilenameUtils.getName(filename));
           }
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -1156,7 +1251,8 @@ public class Movie extends AbstractModelObject {
             setFanart(FilenameUtils.getName(filename));
           }
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
@@ -1169,7 +1265,8 @@ public class Movie extends AbstractModelObject {
   public void writeNFO() {
     if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
-    } else {
+    }
+    else {
       setNfoFilename(MovieToXbmcNfoConnector.setData(this));
     }
   }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <!-- settings labels -->
+    <string id="30000">Ligar créditos de elenco completo</string>
+    <string id="30001">Ligar fanart de themoviedb.org</string>
+    <string id="30002">Ligar posters de themoviedb.org</string>
+    <string id="30003">Ligar posters de IMPAwards</string>
+    <string id="30004">Ligar posters de MoviePosterDB</string>
+    <string id="30006">Ligar trailers de HD-Trailers.net</string>
+    <string id="30007">Poster IMDb &amp; Tamanho de miniatura(s) do actor</string>
+</strings>
+

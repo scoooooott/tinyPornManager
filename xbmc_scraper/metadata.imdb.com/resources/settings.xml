@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+  <category label="128">
+    <setting label="30008" type="labelenum" values="Keep Original|USA / International|Argentina|Austria|Belgium|Brazil|Bulgaria|Canada|China|Colombia|Chile|Croatia|Czech Republic|Denmark|Finland|France|Germany|Greece|Hong Kong|Hungary|Iceland|India|Israel|Italy|Japan|Mexico|Netherlands|Norway|Pakistan|Poland|Portugal|Romania|Russia|Serbia|Singapore|Slovenia|Spain|Sweden|Switzerland|Thailand|Turkey|Uruguay|Venezuela" id="imdbakatitles" default="Keep Original"/>
+    <setting label="30000" type="bool" id="fullcredits" default="false"/>
+    <setting label="30013" type="bool" id="tmdbset" default="true"/>
+    <setting label="30007" type="labelenum" values="192|256|384|512|1024" id="imdbscale" default="1024"/>
+    <setting label="certprefix" type="text" id="certprefix" default="Rated " visible="false"/>
+  </category>
+
+   <category label="30011">
+    <setting label="30002" type="bool" id="tmdbthumbs" default="true"/>
+    <setting label="tmdblang" type="labelenum" values="en" id="language" default="en" visible="false"/>
+    <setting label="30003" type="bool" id="impawards" default="false"/>
+    <setting label="30004" type="bool" id="movieposterdb" default="false"/>
+    <setting type="sep"/>
+    <setting label="30001" type="bool" id="fanart" default="true"/>
+  </category>
+
+  <category label="30012">
+    <setting label="30006" type="labelenum" values="No|480p|720p|1080p" id="TrailerQ" default="No"/>
+    <setting label="30009" type="bool" id="tmdbtrailer" default="true"/>
+    <setting label="30005" type="bool" id="ytrailer" default="false"/>
+  </category>
+
+</settings>

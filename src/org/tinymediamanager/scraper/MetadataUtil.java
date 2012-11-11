@@ -189,7 +189,7 @@ public class MetadataUtil {
     Pattern p = Pattern.compile(regex);
     Matcher m = p.matcher(in);
     if (m.find()) {
-      return convertTimeToMillissecondsForSage(m.group(1));
+      return m.group(1);
     }
     else {
       LOGGER.warn("Could not find Running Time in " + in + "; using Regex: " + regex);

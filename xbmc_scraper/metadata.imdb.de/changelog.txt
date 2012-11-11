@@ -1,0 +1,96 @@
+[B]3.1.2[/B] (2011-08-21)
+- added plot from tmdb
+- added option to use imdb.com title
+
+[B]3.1.1[/B] (2011-08-07)
+- fix nfourl lookup with uppercase url (titel, year and rating missing on autoscan)
+- more caching (imdb.com link to moviemaze)
+- extra repository for the addon, remove repository link from addon
+
+[B]3.1.0[/B] (2011-08-06)
+- fix newlines in imdb plot ("in ihren augen")
+- added german trailer from ofdb/filmtrailer.com
+- add moviemaze.de plot and trailer
+- enable caching of ofdb/tmdb/moviemaze pages
+
+[B]3.0.6.4[/B] (2011-08-04)
+- plot from imdb.com, if no other found (english)
+- trailer from HD-Trailers.net, if no other found (english)
+- reorder settings
+- add repository for this addon
+
+[B]3.0.6[/B] (2011-07-30)
+- tmdb trailer
+
+[B]3.0.5.1a[/B] (2011-04-22)
+- added option to always use ofdb plot
+
+[B]3.0.5.1[/B] (2011-03-19)
+- fixed rating
+- fixed "director" field showing all of the assistants
+- fixed "original title"
+ 
+[B]3.0.5[/B] (2010-09-19)
+- linebreaks corrected to LF on whole project
+- Headline in imdb_de Scraper file reduced to new Dharma format
+- NfoUrl tag adapted to format from imdb.com Scraper
+- movietitle is now the same as the title for sorting the movies
+- checked and used entities now in every RegEx (changed mostly " to &qout;)
+- support for country infos and corresponding tag
+- use of common functions for TMDB and MoviePoster Queries
+
+[B]3.0.4[/B] (2010-08-07)
+- option to use the title from OFDB added (e.g. Evangelion: 2.0 You Can (Not) Advance results otherwise in Evangerion shin gekijôban: Ha)
+- new icon with better readable URL at the edge
+
+[B]3.0.3[/B] (2010-07-24)
+- Links to ohost removed and to github included in all files
+- project hosted on github because of problems with ohost and better integration in XBMC
+- corrected handling of movies without entry (in OFDb) (e.g. "A Gamer's Day" => resulting in tt1606722)
+- corrected cleaning of buffers (resulting in recursive calls, e.g. "White Wall (2010)")
+- changed ID of scraper to metadata.imdb.de
+
+[B]3.0.2[/B] (2010-07-15)
+- changed default setting to import only the first 15 actors from IMDb
+
+[B]3.0.1[/B] (2010-07-12)
+- changed the dir in the zip for getting the installation via AddOn menu running
+
+[B]3.0.0[/B] (2010-07-12)
+- initial version for XBMC v10.x (Dharma)
+
+[B]2.0.2[/B] (2010-08-07)
+- Links to ohost removed and to github included in all files
+- project hosted on github because of problems with ohost and better integration in XBMC
+- corrected cleaning of buffers (resulting in recursive calls, e.g. "White Wall (2010)")
+- changed default setting to import only the first 15 actors from IMDb
+- option to use the title from OFDB added (e.g. Evangelion: 2.0 You Can (Not) Advance results otherwise in Evangerion shin gekijôban: Ha)
+
+[B]2.0.1[/B] (2010-07-12)
+- changed the file name of the icon
+
+[B]2.0.0[/B] (2010-07-11)
+- rework of complete structure of xml file
+- all known tags are working again
+- ignoring HTML tags in plot of OFDB (e.g. "The Rock - Fels der Entscheidung (1996)")
+
+[B]1.1.1[/B] (2010-07-03)
+- added more options to control what should be scraped
+
+[B]1.1.0[/B] (2006-06-18)
+- corrected import of thumbs with preview
+
+[B]1.0.2[/B] (2006-06-18)
+- import of runtime corrected
+- import of mpaa for germany and certification for all other countries
+
+[B]1.0.1[/B] (2010-06-18)
+- importing of year corrected if quarter is given (e.g. "Insomnia (2002)")
+- option for importing two or all genres
+- trimming of whitespaces at beginning and end of plot
+
+[B]1.0.0[/B] (2010-06-13)
+- first try of importing all known tags
+
+[B]0.0.1[/B] (2010-06-04)
+- initial version for XBMC v9.x (Camelot)

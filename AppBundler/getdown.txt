@@ -42,4 +42,7 @@ class = org.tinymediamanager.TinyMediaManager
 allow_offline = true
 
 # jvm args
+jvmarg = -Xms64m 
+jvmarg = -Xmx512m
 jvmarg = -splash:splashscreen.png
+jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true

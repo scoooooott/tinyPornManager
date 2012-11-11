@@ -239,6 +239,9 @@ public class MediaMetadata {
   }
 
   public int getVoteCount() {
+    if (StringUtils.isEmpty(get(MetadataKey.VOTE_COUNT))) {
+      return 0;
+    }
     return Integer.valueOf(get(MetadataKey.VOTE_COUNT));
   }
 

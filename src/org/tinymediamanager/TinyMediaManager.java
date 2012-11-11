@@ -22,6 +22,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
+import java.io.File;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -54,6 +55,13 @@ public class TinyMediaManager {
           // set look and feel
           setLookAndFeel();
 
+          // check old version
+          File file = new File("lib/beansbinding-1.2.1.jar");
+          if (file.exists()) {
+            JOptionPane.showMessageDialog(null, "Update from Alpha is not supported. Please download the actual version");
+            return;
+          }
+
           // init splash
           SplashScreen splash = SplashScreen.getSplashScreen();
           Graphics2D g2 = null;
@@ -62,17 +70,15 @@ public class TinyMediaManager {
             if (g2 != null) {
               Font font = new Font("Dialog", Font.PLAIN, 14);
               g2.setFont(font);
-            } else {
+            }
+            else {
               LOGGER.debug("got no graphics from splash");
             }
-          } else {
+          }
+          else {
             LOGGER.debug("no splash found");
           }
           long timeStart = System.currentTimeMillis();
-
-          // // initialize splash screen
-          // StartupWorker worker = new StartupWorker();
-          // worker.execute();
 
           // get logger configuration
           if (g2 != null) {
@@ -118,7 +124,8 @@ public class TinyMediaManager {
           if ((timeEnd - timeStart) > 3000) {
             try {
               Thread.sleep(3000 - (timeEnd - timeStart));
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
             }
           }
           MainWindow window = new MainWindow("tinyMediaManager " + org.tinymediamanager.ReleaseInfo.getVersion());
@@ -130,9 +137,11 @@ public class TinyMediaManager {
 
           window.setVisible(true);
 
-        } catch (javax.persistence.PersistenceException e) {
+        }
+        catch (javax.persistence.PersistenceException e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
         }
@@ -145,7 +154,7 @@ public class TinyMediaManager {
        *          the text
        */
       private void updateProgress(Graphics2D g2, String text) {
-        LOGGER.debug("graphics found");
+        // LOGGER.debug("graphics found");
         g2.setComposite(AlphaComposite.Clear);
         g2.fillRect(20, 200, 480, 300);
         g2.setPaintMode();
