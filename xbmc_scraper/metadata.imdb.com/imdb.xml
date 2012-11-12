@@ -83,7 +83,7 @@
 			<RegExp input="$$2" output="&lt;chain function=&quot;GetIMDBPlotById&quot;&gt;$$2&lt;/chain&gt;" dest="5+">
 				<expression/>
 			</RegExp>
-			<RegExp conditional="!fullcredits" input="$$2" output="&lt;chain function=&quot;GetIMDBCastById&quot;&gt;$$2&lt;/chain&gt;" dest="5+">
+			<RegExp conditional="!fullcredits" input="$$2" output="&lt;chain function=&quot;GetIMDBScaledCastById&quot;&gt;$$2&lt;/chain&gt;" dest="5+">
 				<expression/>
 			</RegExp>
 			<RegExp conditional="!fullcredits" input="$$2" output="&lt;chain function=&quot;GetIMDBDirectorsById&quot;&gt;$$2&lt;/chain&gt;" dest="5+">
