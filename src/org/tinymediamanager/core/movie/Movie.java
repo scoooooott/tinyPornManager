@@ -588,8 +588,7 @@ public class Movie extends AbstractModelObject {
   public String getFanart() {
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
-    }
-    else {
+    } else {
       return fanart;
     }
   }
@@ -686,8 +685,7 @@ public class Movie extends AbstractModelObject {
   public String getPoster() {
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
-    }
-    else {
+    } else {
       return poster;
     }
   }
@@ -922,12 +920,22 @@ public class Movie extends AbstractModelObject {
     setOverview(metadata.getPlot());
     setImdbId(metadata.getIMDBID());
     if (!StringUtils.isEmpty(metadata.getTMDBID())) {
-      setTmdbId(Integer.parseInt(metadata.getTMDBID()));
+      try {
+        setTmdbId(Integer.parseInt(metadata.getTMDBID()));
+      } catch (Exception e) {
+        setTmdbId(0);
+      }
     }
     setYear(metadata.getYear());
     setRating(metadata.getUserRating());
     setVotes(metadata.getVoteCount());
-    setRuntime(Integer.parseInt(metadata.getRuntime()));
+
+    try {
+      setRuntime(Integer.parseInt(metadata.getRuntime()));
+    } catch (Exception e) {
+      setRuntime(0);
+    }
+
     setTagline(metadata.getTagline());
     setProductionCompany(metadata.getCompany());
 
@@ -1212,8 +1220,7 @@ public class Movie extends AbstractModelObject {
             setPoster(FilenameUtils.getName(filename));
           }
         }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -1251,8 +1258,7 @@ public class Movie extends AbstractModelObject {
             setFanart(FilenameUtils.getName(filename));
           }
         }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
@@ -1265,8 +1271,7 @@ public class Movie extends AbstractModelObject {
   public void writeNFO() {
     if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
-    }
-    else {
+    } else {
       setNfoFilename(MovieToXbmcNfoConnector.setData(this));
     }
   }

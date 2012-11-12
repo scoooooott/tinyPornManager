@@ -19,3 +19,4 @@ Scaling-bin.jar
 themoviedbapi-3.2-SNAPSHOT-r169.jar
 thetvdbapi-1.4-SNAPSHOT-r123.jar
 JTattoo201208.jar 
+htmlparser.jar

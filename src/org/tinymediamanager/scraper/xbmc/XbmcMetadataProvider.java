@@ -13,6 +13,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.CastMember;
 import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -51,8 +52,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     XbmcScraper scr;
     try {
       scr = parser.parseScraper(new File(providerXml));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("Failed to Load XBMC Scraper: " + providerXml);
       throw new RuntimeException("Failed to Load XBMC Scraper: " + providerXml, e);
     }
@@ -81,22 +81,18 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         if ("movies".equalsIgnoreCase(type)) {
           LOGGER.debug("Using Movies for Provider:  " + scraper.getId() + "; content type: " + type);
           types.add(MediaType.MOVIE);
-        }
-        else if ("tvshows".equalsIgnoreCase(type)) {
+        } else if ("tvshows".equalsIgnoreCase(type)) {
           LOGGER.debug("Using TV for Provider:  " + scraper.getId() + "; content type: " + type);
           types.add(MediaType.TV);
-        }
-        else if ("music".equalsIgnoreCase(type)) {
+        } else if ("music".equalsIgnoreCase(type)) {
           types.add(MediaType.MUSIC);
-        }
-        else {
+        } else {
           LOGGER.debug("Unknown XBMC Scraper type: " + type);
         }
       }
 
       supportedSearchTypes = types.toArray(new MediaType[types.size()]);
-    }
-    else {
+    } else {
       LOGGER.warn("No Content Type for provider: " + scraper.getId());
       supportedSearchTypes = new MediaType[0];
     }
@@ -126,8 +122,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     if (result.getMediaType() == MediaType.TV) {
       md.set(MetadataKey.MEDIA_TYPE, MetadataUtil.TV_MEDIA_TYPE);
       processXmlContentForTV(xmlDetails, md, result);
-    }
-    else {
+    } else {
       processXmlContent(xmlDetails, md);
     }
 
@@ -183,8 +178,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           sr.addExtraArg("xbmcprovider", "imdb");
           sr.addExtraArg("imdbid", id);
           sr.setIMDBId(id);
-        }
-        else if (u.toExternalForm().indexOf("thetvdb.com") != -1) {
+        } else if (u.toExternalForm().indexOf("thetvdb.com") != -1) {
           sr.addExtraArg("xbmcprovider", "tvdb");
           sr.addExtraArg("tvdbid", id);
         }
@@ -196,8 +190,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         sr.setYear(y);
         sr.setScore(MetadataUtil.calculateScore(arg, t));
         l.add(sr);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.error("Error process an xml node!  Ignoring it from the search results.");
       }
     }
@@ -213,8 +206,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       sr.setUrl(createDetailUrl(imdbid));
       try {
         return getMetaData(sr);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.warn("Failed to search by IMDB URL: " + sr.getUrl(), e);
       }
     }
@@ -260,8 +252,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     String episodeUrl = DOMUtils.getElementValue(xml.getDocumentElement(), "episodeguide");
     if (StringUtils.isEmpty(episodeUrl)) {
       LOGGER.error("No Episode Data!");
-    }
-    else {
+    } else {
       if (!StringUtils.isEmpty(result.getExtra().get(SearchQuery.Field.SEASON.name()))) {
         int findEpisode = NumberUtils.toInt(result.getExtra().get(SearchQuery.Field.EPISODE.name()));
         int findSeason = NumberUtils.toInt(result.getExtra().get(SearchQuery.Field.SEASON.name()));
@@ -323,8 +314,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           md.set(MetadataKey.EPISODE, String.valueOf(findEpisode));
           md.set(MetadataKey.RELEASE_DATE, DOMUtils.getElementValue(el, "aired"));
           md.set(MetadataKey.EPISODE_TITLE, DOMUtils.getElementValue(el, "title"));
-        }
-        else if (findDisc > 0) {
+        } else if (findDisc > 0) {
           md.set(MetadataKey.DVD_DISC, String.format("%1$02d", findDisc));
         }
 
@@ -348,8 +338,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       NodeList thumbs = fanart.getElementsByTagName("thumb");
       if (thumbs != null && thumbs.getLength() > 0) {
         processMediaArt(md, MediaArtifactType.BACKGROUND, "Backgrounds", thumbs, url);
-      }
-      else {
+      } else {
         if (!StringUtils.isEmpty(url)) {
           processMediaArt(md, MediaArtifactType.BACKGROUND, "Background", url);
         }
@@ -419,8 +408,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     }
     if (plot != null) {
       md.setPlot(plot);
-    }
-    else {
+    } else {
       updateMDValue(md, MetadataKey.PLOT, DOMUtils.getElementValue(details, "plot"));
     }
 
@@ -494,13 +482,18 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
    */
   private Document parseXmlString(String xml) throws Exception {
     DocumentBuilder parser = factory.newDocumentBuilder();
+
+    xml = Utils.replaceAcutesHTML(xml);
+
     Document doc = null;
     for (String charset : new String[] { "UTF-8", "ISO-8859-1", "US-ASCII" }) {
       try {
+        // doc = parser.parse(new
+        // ByteArrayInputStream(StringEscapeUtils.unescapeHtml4(xml).getBytes(charset)));
+        // doc = parser.parse(new ByteArrayInputStream(xml.getBytes(charset)));
         doc = parser.parse(new ByteArrayInputStream(xml.getBytes(charset)));
         break;
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         LOGGER.error("Failed to parse xml using charset: " + charset, t);
       }
     }
@@ -530,8 +523,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       Matcher m = mpaaRatingParser.matcher(imdbString);
       if (m.find()) {
         return m.group(1);
-      }
-      else {
+      } else {
         return imdbString;
       }
     }

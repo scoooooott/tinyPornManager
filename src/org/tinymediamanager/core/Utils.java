@@ -65,4 +65,27 @@ public class Utils {
 
     return imdbId.matches("tt\\d{7}");
   }
+
+  public static String replaceAcutesHTML(String str) {
+    str = str.replaceAll("&aacute;", "á");
+    str = str.replaceAll("&eacute;", "é");
+    str = str.replaceAll("&iacute;", "í");
+    str = str.replaceAll("&oacute;", "ó");
+    str = str.replaceAll("&uacute;", "ú");
+    str = str.replaceAll("&Aacute;", "Á");
+    str = str.replaceAll("&Eacute;", "É");
+    str = str.replaceAll("&Iacute;", "Í");
+    str = str.replaceAll("&Oacute;", "Ó");
+    str = str.replaceAll("&Uacute;", "Ú");
+    str = str.replaceAll("&ntilde;", "ñ");
+    str = str.replaceAll("&Ntilde;", "Ñ");
+
+    return str;
+  }
+
+  public static String unquote(String str) {
+    if (str == null)
+      return null;
+    return str.replaceFirst("^\\\"(.*)\\\"$", "$1");
+  }
 }

@@ -14,6 +14,7 @@ ui.status_text = FFFFFF
 code = tmm.jar
 code = version
 code = splashscreen.png
+code = objectdb.conf
 code = lib/commons-lang3.jar
 code = lib/log4j.jar
 code = lib/themoviedbapi.jar

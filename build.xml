@@ -61,6 +61,7 @@
     </copy>
     <copy file="build/tmm.jar" todir="dist/getdown" />
     <copy file="build/version" todir="dist/getdown" />
+		<copy file="objectdb.conf" todir="dist/getdown" />
     <copy file="AppBundler/getdown.txt" todir="dist/getdown" />
     <copy file="AppBundler/tmm.png" todir="dist/getdown" />
     <copy file="AppBundler/splashscreen.png" todir="dist/getdown" />
@@ -72,7 +73,11 @@
 		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="AppBundler/jarbundler-2.2.0.jar" />
 		<jarbundler dir="dist/mac" name="tinyMediaManager" icon="AppBundler/tmm.icns" mainclass="com.threerings.getdown.launcher.Getdown" arguments="." 
       bundleid="org.tinyMediaManager.tinymediamanager" infostring="tinyMediaManager" jvmversion="1.6+" shortname="tMM" workingdirectory="$JAVAROOT" vmoptions="-Dapple.awt.graphics.UseQuartz=true">
-      <jarfileset dir="AppBundler">
+      <jarfileset dir=".">
+			  <include name="**/objectdb.conf" />
+			</jarfileset>
+			
+			<jarfileset dir="AppBundler">
         <include name="**/getdown.jar" />
       	<include name="**/getdown.txt" />
       	<include name="**/splashscreen.png" />
@@ -104,6 +109,7 @@
 		</copy>
 		<copy file="build/tmm.jar" todir="dist/win" />
 		<copy file="build/version" todir="dist/win" />
+		<copy file="objectdb.conf" todir="dist/win" />
 		<copy file="AppBundler/getdown.jar" todir="dist/win" />
 		<copy file="AppBundler/getdown.txt" todir="dist/win" />
 		<copy file="AppBundler/digest.txt" todir="dist/win" />
@@ -121,6 +127,7 @@
     </copy>
 		<copy file="build/tmm.jar" todir="dist/linux" />
 		<copy file="build/version" todir="dist/linux" />
+		<copy file="objectdb.conf" todir="dist/linux" />
 		<copy file="AppBundler/getdown.jar" todir="dist/linux" />
 		<copy file="AppBundler/getdown.txt" todir="dist/linux" />
 		<copy file="AppBundler/digest.txt" todir="dist/linux" />

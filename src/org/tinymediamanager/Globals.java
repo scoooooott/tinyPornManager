@@ -39,6 +39,7 @@ public class Globals {
   public static EntityManager         entityManager;
 
   public static void startDatabase() throws Exception {
+    System.setProperty("objectdb.conf", "objectdb.conf");
     emf = Persistence.createEntityManagerFactory("tmm.odb");
     entityManager = emf.createEntityManager();
   }

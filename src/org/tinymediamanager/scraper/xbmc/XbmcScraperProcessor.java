@@ -45,8 +45,7 @@ public class XbmcScraperProcessor {
 
     mergeOptions(this.options);
 
-    log.debug("XbmcScraperProcessor created using Scraper: " + scraper.getName() + "; Content: " + scraper.getContent() + "; Complete Logging: "
-        + !truncateLogging);
+    log.debug("XbmcScraperProcessor created using Scraper: " + scraper.getName() + "; Content: " + scraper.getContent() + "; Complete Logging: " + !truncateLogging);
 
     clearBuffers();
   }
@@ -152,8 +151,7 @@ public class XbmcScraperProcessor {
   }
 
   private void executeExpression(RegExp r) {
-    log.debug(String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s", r.getExpression().getExpression(), r.getDest(),
-        r.getInput(), r.getOutput()));
+    log.debug(String.format("Processing Expression: %s; Dest: %s; Input: %s; Output: %s", r.getExpression().getExpression(), r.getDest(), r.getInput(), r.getOutput()));
     Expression exp = r.getExpression();
 
     String in = getBuffer(r.getInput());
