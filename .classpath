@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="lib/thetvdbapi.jar"/>
 	<classpathentry kind="lib" path="lib/JTattoo.jar"/>
 	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
+	<classpathentry kind="lib" path="lib/jsoup.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
