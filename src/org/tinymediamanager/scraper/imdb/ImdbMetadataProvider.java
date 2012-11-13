@@ -17,9 +17,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.MediaArt;
+import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.ProviderInfo;
 import org.tinymediamanager.scraper.SearchQuery;
 import org.tinymediamanager.scraper.util.CachedUrl;
@@ -30,43 +33,50 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   private static final Map<String, ImdbSiteDefinition> IMDB_SITES = new HashMap<String, ImdbSiteDefinition>();
 
   static {
-    IMDB_SITES.put("us", new ImdbSiteDefinition("http://www.imdb.com/", "ISO-8859-1", "Director|Directed by", "Cast", "Release Date", "Runtime", "Country", "Company", "Genre",
-        "Quotes", "Plot", "Rated", "Certification", "Original Air Date", "Writer|Writing credits", "Taglines"));
+    IMDB_SITES.put("us", new ImdbSiteDefinition("http://www.imdb.com/", "ISO-8859-1", "Director|Directed by", "Cast", "Release Date", "Runtime",
+        "Country", "Company", "Genre", "Quotes", "Plot", "Rated", "Certification", "Original Air Date", "Writer|Writing credits", "Taglines"));
 
-    IMDB_SITES.put("fr", new ImdbSiteDefinition("http://www.imdb.fr/", "ISO-8859-1", "R&#xE9;alisateur|R&#xE9;alis&#xE9; par", "Ensemble", "Date de sortie", "Dur&#xE9;e", "Pays",
-        "Soci&#xE9;t&#xE9;", "Genre", "Citation", "Intrigue", "Rated", "Classification", "Date de sortie", "Sc&#xE9;naristes|Sc&#xE9;naristes", "Taglines"));
+    IMDB_SITES.put("fr", new ImdbSiteDefinition("http://www.imdb.fr/", "ISO-8859-1", "R&#xE9;alisateur|R&#xE9;alis&#xE9; par", "Ensemble",
+        "Date de sortie", "Dur&#xE9;e", "Pays", "Soci&#xE9;t&#xE9;", "Genre", "Citation", "Intrigue", "Rated", "Classification", "Date de sortie",
+        "Sc&#xE9;naristes|Sc&#xE9;naristes", "Taglines"));
 
-    IMDB_SITES.put("es", new ImdbSiteDefinition("http://www.imdb.es/", "ISO-8859-1", "Director|Dirigida por", "Reparto", "Fecha de Estreno", "Duraci&#xF3;n", "Pa&#xED;s",
-        "Compa&#xF1;&#xED;a", "G&#xE9;nero", "Quotes", "Trama", "Rated", "Clasificaci&#xF3;n", "Fecha de Estreno", "Escritores|Cr&#xE9;ditos del gui&#xF3;n", "Taglines"));
+    IMDB_SITES.put("es", new ImdbSiteDefinition("http://www.imdb.es/", "ISO-8859-1", "Director|Dirigida por", "Reparto", "Fecha de Estreno",
+        "Duraci&#xF3;n", "Pa&#xED;s", "Compa&#xF1;&#xED;a", "G&#xE9;nero", "Quotes", "Trama", "Rated", "Clasificaci&#xF3;n", "Fecha de Estreno",
+        "Escritores|Cr&#xE9;ditos del gui&#xF3;n", "Taglines"));
 
-    IMDB_SITES.put("de", new ImdbSiteDefinition("http://www.imdb.de/", "ISO-8859-1", "Regisseur|Regie", "Besetzung", "Premierendatum", "L&#xE4;nge", "Land", "Firma", "Genre",
-        "Quotes", "Handlung", "Rated", "Altersfreigabe", "Premierendatum", "Guionista|Buch", "Taglines"));
+    IMDB_SITES.put("de", new ImdbSiteDefinition("http://www.imdb.de/", "ISO-8859-1", "Regisseur|Regie", "Besetzung", "Premierendatum", "L&#xE4;nge",
+        "Land", "Firma", "Genre", "Quotes", "Handlung", "Rated", "Altersfreigabe", "Premierendatum", "Guionista|Buch", "Taglines"));
 
-    IMDB_SITES.put("it", new ImdbSiteDefinition("http://www.imdb.it/", "ISO-8859-1", "Regista|Registi|Regia di", "Cast", "Data di uscita", "Durata", "Nazionalit&#xE0;",
-        "Compagnia", "Genere", "Quotes", "Trama", "Rated", "Certification", "Data di uscita", "Sceneggiatore|Scritto da", "Taglines"));
+    IMDB_SITES.put("it", new ImdbSiteDefinition("http://www.imdb.it/", "ISO-8859-1", "Regista|Registi|Regia di", "Cast", "Data di uscita", "Durata",
+        "Nazionalit&#xE0;", "Compagnia", "Genere", "Quotes", "Trama", "Rated", "Certification", "Data di uscita", "Sceneggiatore|Scritto da",
+        "Taglines"));
 
-    IMDB_SITES.put("pt", new ImdbSiteDefinition("http://www.imdb.pt/", "ISO-8859-1", "Diretor|Dirigido por", "Elenco", "Data de Lan&#xE7;amento", "Dura&#xE7;&#xE3;o", "Pa&#xED;s",
-        "Companhia", "G&#xEA;nero", "Quotes", "Argumento", "Rated", "Certifica&#xE7;&#xE3;o", "Data de Lan&#xE7;amento", "Roteirista|Cr&#xE9;ditos como roteirista", "Taglines"));
+    IMDB_SITES.put("pt", new ImdbSiteDefinition("http://www.imdb.pt/", "ISO-8859-1", "Diretor|Dirigido por", "Elenco", "Data de Lan&#xE7;amento",
+        "Dura&#xE7;&#xE3;o", "Pa&#xED;s", "Companhia", "G&#xEA;nero", "Quotes", "Argumento", "Rated", "Certifica&#xE7;&#xE3;o",
+        "Data de Lan&#xE7;amento", "Roteirista|Cr&#xE9;ditos como roteirista", "Taglines"));
 
     // Use this as a workaround for English speakers abroad who get localised
     // versions of imdb.com
-    IMDB_SITES.put("labs", new ImdbSiteDefinition("http://akas.imdb.com/", "ISO-8859-1", "Director|Directors|Directed by", "Cast", "Release Date", "Runtime", "Country",
-        "Production Co", "Genres", "Quotes", "Storyline", "Rated", "Certification", "Original Air Date", "Writer|Writers|Writing credits", "Taglines"));
+    IMDB_SITES.put("labs", new ImdbSiteDefinition("http://akas.imdb.com/", "ISO-8859-1", "Director|Directors|Directed by", "Cast", "Release Date",
+        "Runtime", "Country", "Production Co", "Genres", "Quotes", "Storyline", "Rated", "Certification", "Original Air Date",
+        "Writer|Writers|Writing credits", "Taglines"));
 
     // TODO: Leaving this as labs.imdb.com for the time being, but will be
     // updated to www.imdb.com
-    IMDB_SITES.put("us2", new ImdbSiteDefinition("http://labs.imdb.com/", "ISO-8859-1", "Director|Directors|Directed by", "Cast", "Release Date", "Runtime", "Country",
-        "Production Co", "Genres", "Quotes", "Storyline", "Rated", "Certification", "Original Air Date", "Writer|Writers|Writing credits", "Taglines"));
+    IMDB_SITES.put("us2", new ImdbSiteDefinition("http://labs.imdb.com/", "ISO-8859-1", "Director|Directors|Directed by", "Cast", "Release Date",
+        "Runtime", "Country", "Production Co", "Genres", "Quotes", "Storyline", "Rated", "Certification", "Original Air Date",
+        "Writer|Writers|Writing credits", "Taglines"));
 
     // Not 100% sure these are correct
-    IMDB_SITES.put("it2", new ImdbSiteDefinition("http://www.imdb.it/", "ISO-8859-1", "Regista|Registi|Regia di", "Attori", "Data di uscita", "Durata", "Nazionalit&#xE0;",
-        "Compagnia", "Genere", "Quotes", "Trama", "Rated", "Certification", "Data di uscita", "Sceneggiatore|Scritto da", "Taglines"));
+    IMDB_SITES.put("it2", new ImdbSiteDefinition("http://www.imdb.it/", "ISO-8859-1", "Regista|Registi|Regia di", "Attori", "Data di uscita",
+        "Durata", "Nazionalit&#xE0;", "Compagnia", "Genere", "Quotes", "Trama", "Rated", "Certification", "Data di uscita",
+        "Sceneggiatore|Scritto da", "Taglines"));
   }
 
   private ImdbSiteDefinition                           imdbSite;
 
   public ImdbMetadataProvider() {
-    imdbSite = IMDB_SITES.get("labs");
+    imdbSite = IMDB_SITES.get("de");
   }
 
   /*
@@ -77,9 +87,103 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
    * .lang.String)
    */
   @Override
-  public MediaMetadata getMetadataForIMDBId(String imdbid) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+  public MediaMetadata getMetadataForIMDBId(String imdbId) throws Exception {
+    LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
+
+    MediaMetadata md = new MediaMetadata();
+
+    // build the url
+    StringBuilder sb = new StringBuilder(imdbSite.getSite());
+    sb.append("title/");
+    sb.append(imdbId);
+    sb.append("/combined");
+
+    Document doc;
+    try {
+      CachedUrl url = new CachedUrl(sb.toString());
+      doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+    }
+    catch (Exception e) {
+      LOGGER.debug("tried to fetch imdb movie page", e);
+      return md;
+    }
+
+    /*
+     * title and year have the following structure
+     * 
+     * <div id="tn15title"><h1>Merida - Legende der Highlands <span>(<a
+     * href="/year/2012/">2012</a>) <span class="pro-link">...</span> <span
+     * class="title-extra">Brave <i>(original title)</i></span> </span></h1>
+     * </div>
+     */
+
+    // parse title and year
+    Element title = doc.getElementById("tn15title");
+    if (title != null) {
+      Element element = null;
+      // title
+      Elements elements = title.getElementsByTag("h1");
+      if (elements.size() > 0) {
+        element = elements.first();
+        String movieTitle = element.ownText().trim();
+        md.setMediaTitle(movieTitle);
+      }
+
+      // year and original title
+      elements = title.getElementsByTag("span");
+      if (elements.size() > 0) {
+        element = elements.first();
+        String content = element.text();
+
+        // search year
+        Pattern yearPattern = Pattern.compile("\\(([0-9]{4})|/\\)");
+        Matcher matcher = yearPattern.matcher(element.text());
+        while (matcher.find()) {
+          if (matcher.group(1) != null) {
+            String movieYear = matcher.group(1);
+            md.setYear(movieYear);
+            break;
+          }
+        }
+
+        // original title
+        Elements span = element.getElementsByClass("title-extra");
+        if (span.size() > 0) {
+          Element titleExtra = span.first();
+          String originalTitle = titleExtra.ownText();
+          if (!StringUtils.isEmpty(originalTitle)) {
+            md.setOriginalTitle(originalTitle);
+          }
+        }
+      }
+
+    }
+
+    // poster
+    Element poster = doc.getElementById("primary-poster");
+    if (poster != null) {
+      String posterUrl = poster.attr("src");
+      posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX195_");
+      posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY195_");
+      processMediaArt(md, MediaArtifactType.POSTER, "Poster", posterUrl);
+    }
+
+    // parse all items coming by <div class="info">
+    Elements elements = doc.getElementsByClass("info");
+    for (Element element : elements) {
+      // only parse divs
+      if (!"div".equals(element.tag())) {
+        continue;
+      }
+
+    }
+
+    // TODO plot from http://www.imdb.de/title/<imdbid>/plotsummary
+
+    // TODO parse originaltitle from "Auch bekannt als" or
+    // http://www.imdb.de/title/<imdbid>/releaseinfo
+
+    return md;
   }
 
   /*
@@ -114,8 +218,15 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
    */
   @Override
   public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    if (result.getMetadata() != null) {
+      LOGGER.debug("IMDB: getMetadata(result) from cache: " + result);
+      return result.getMetadata();
+    }
+    else {
+      LOGGER.debug("IMDB: getMetadata(result): " + result);
+      String imdbId = result.getIMDBId();
+      return getMetadataForIMDBId(imdbId);
+    }
   }
 
   /*
@@ -144,6 +255,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
      * example "Star Trek"
      */
 
+    Pattern imdbIdPattern = Pattern.compile("/title/(tt[0-9]{7})/");
+
     List<MediaSearchResult> result = new ArrayList<MediaSearchResult>();
 
     String searchTerm = query.get(SearchQuery.Field.QUERY);
@@ -152,15 +265,12 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     sb.append("find?q=");
     try {
       sb.append(URLEncoder.encode(searchTerm, imdbSite.getCharset().displayName()));
-    } catch (UnsupportedEncodingException ex) {
+    }
+    catch (UnsupportedEncodingException ex) {
       // Failed to encode the movie name for some reason!
       LOGGER.debug("Failed to encode search term: " + searchTerm);
       sb.append(searchTerm);
     }
-
-    // if (StringTools.isValidString(year)) {
-    // sb.append("+%28").append(year).append("%29");
-    // }
 
     sb.append(";s=tt;site=aka");
 
@@ -169,16 +279,44 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     try {
       CachedUrl url = new CachedUrl(sb.toString());
       doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.debug("tried to fetch search response", e);
       return result;
     }
 
     // check if it was directly redirected to the site
-    // ToDo
+    Elements elements = doc.getElementsByAttributeValue("rel", "canonical");
+    for (Element element : elements) {
+      // we have been redirected to the movie site
+      String movieName = null;
+      String movieId = null;
+
+      String href = element.attr("href");
+      Matcher matcher = imdbIdPattern.matcher(href);
+      while (matcher.find()) {
+        if (matcher.group(1) != null) {
+          movieId = matcher.group(1);
+        }
+      }
+
+      // TODO parse redirect
+
+      // if no movie name/id was found - continue
+      if (StringUtils.isEmpty(movieName) || StringUtils.isEmpty(movieId)) {
+        continue;
+      }
+
+      MediaSearchResult sr = new MediaSearchResult();
+      sr.setTitle(movieName);
+      sr.setIMDBId(movieId);
+      result.add(sr);
+
+      return result;
+    }
 
     // parse results
-    Elements elements = doc.getElementsByAttributeValue("valign", "top");
+    elements = doc.getElementsByAttributeValue("valign", "top");
     for (Element element : elements) {
       // we only want the td's
       if (!"td".equalsIgnoreCase(element.tagName())) {
@@ -199,9 +337,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
         // parse id
         String href = a.attr("href");
-        if (!StringUtils.isEmpty(href) && href.contains("/title/tt")) {
-          int length = href.length();
-          movieId = href.substring(7, length - 1);
+        Matcher matcher = imdbIdPattern.matcher(href);
+        while (matcher.find()) {
+          if (matcher.group(1) != null) {
+            movieId = matcher.group(1);
+          }
         }
 
         break;
@@ -226,6 +366,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         }
       }
 
+      // populate extra args
+      MetadataUtil.copySearchQueryToSearchResult(query, sr);
+
+      sr.setScore(MetadataUtil.calculateScore(searchTerm, movieName));
+
       result.add(sr);
 
     }
@@ -244,6 +389,27 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   public MediaType[] getSupportedSearchTypes() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  /**
+   * Process media art.
+   * 
+   * @param md
+   *          the md
+   * @param type
+   *          the type
+   * @param label
+   *          the label
+   * @param image
+   *          the image
+   */
+  private void processMediaArt(MediaMetadata md, MediaArtifactType type, String label, String image) {
+    MediaArt ma = new MediaArt();
+    ma.setDownloadUrl(image);
+    ma.setLabel(label);
+    // ma.setProviderId(getInfo().getId());
+    ma.setType(type);
+    md.addMediaArt(ma);
   }
 
 }
