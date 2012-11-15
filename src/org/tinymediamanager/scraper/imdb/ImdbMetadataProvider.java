@@ -150,7 +150,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       Elements elements = title.getElementsByTag("h1");
       if (elements.size() > 0) {
         element = elements.first();
-        String movieTitle = element.ownText().trim();
+        String movieTitle = cleanString(element.ownText());
         md.setMediaTitle(movieTitle);
       }
 
@@ -172,12 +172,18 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         }
 
         // original title
-        Elements span = element.getElementsByClass("title-extra");
-        if (span.size() > 0) {
-          Element titleExtra = span.first();
-          String originalTitle = titleExtra.ownText();
-          if (!StringUtils.isEmpty(originalTitle)) {
-            md.setOriginalTitle(originalTitle);
+        if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
+          // original title = title
+          md.setOriginalTitle(md.getMediaTitle());
+        } else {
+          // try to parse the title out of "title-extra"
+          Elements span = element.getElementsByClass("title-extra");
+          if (span.size() > 0) {
+            Element titleExtra = span.first();
+            String originalTitle = titleExtra.ownText();
+            if (!StringUtils.isEmpty(originalTitle)) {
+              md.setOriginalTitle(originalTitle);
+            }
           }
         }
       }
@@ -193,14 +199,82 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       processMediaArt(md, MediaArtifactType.POSTER, "Poster", posterUrl);
     }
 
+    /*
+     * <div class="starbar-meta"> <b>7.4/10</b> &nbsp;&nbsp;<a href="ratings"
+     * class="tn15more">52,871 votes</a>&nbsp;&raquo; </div>
+     */
+
+    // rating and rating count
+    Element ratingElement = doc.getElementById("tn15rating");
+    if (ratingElement != null) {
+      Elements elements = ratingElement.getElementsByClass("starbar-meta");
+      if (elements.size() > 0) {
+        Element div = elements.get(0);
+
+        // rating comes in <b> tag
+        Elements b = div.getElementsByTag("b");
+        if (b.size() == 1) {
+          String ratingAsString = b.text();
+          Pattern ratingPattern = Pattern.compile("([0-9]\\.[0-9])/10");
+          Matcher matcher = ratingPattern.matcher(ratingAsString);
+          while (matcher.find()) {
+            if (matcher.group(1) != null) {
+              float rating = 0;
+              try {
+                rating = Float.valueOf(matcher.group(1));
+              } catch (Exception e) {
+              }
+              md.setUserRating(rating);
+              break;
+            }
+          }
+        }
+
+        // count
+        Elements a = div.getElementsByAttributeValue("href", "ratings");
+        if (a.size() == 1) {
+          String countAsString = a.text().replaceAll("[.,]|votes", "").trim();
+          int voteCount = 0;
+          try {
+            voteCount = Integer.parseInt(countAsString);
+          } catch (Exception e) {
+          }
+          md.setVoteCount(voteCount);
+        }
+      }
+    }
+
     // parse all items coming by <div class="info">
     Elements elements = doc.getElementsByClass("info");
     for (Element element : elements) {
       // only parse divs
-      if (!"div".equals(element.tag())) {
+      if (!"div".equals(element.tag().getName())) {
         continue;
       }
 
+      // elements with h5 are the titles of the values
+      Elements h5 = element.getElementsByTag("h5");
+      if (h5.size() > 0) {
+        Element firstH5 = h5.first();
+        String h5Title = firstH5.text();
+
+        /*
+         * <div class="info"><h5>Tagline:</h5><div class="info-content"> (7) To
+         * Defend Us... <a class="tn15more inline"
+         * href="/title/tt0472033/taglines" onClick=
+         * "(new Image()).src='/rg/title-tease/taglines/images/b.gif?link=/title/tt0472033/taglines';"
+         * >See more</a>&nbsp;&raquo; </div></div>
+         */
+        // tagline
+        if (h5Title.matches("(?i)" + imdbSite.getTagline() + "(.*)")) {
+          Elements div = element.getElementsByClass("info-content");
+          if (div.size() > 0) {
+            Element taglineElement = div.first();
+            String tagline = cleanString(taglineElement.ownText().replaceAll("»", ""));
+            md.setTagline(tagline);
+          }
+        }
+      }
     }
 
     // TODO plot from http://www.imdb.de/title/<imdbid>/plotsummary
@@ -434,4 +508,13 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     md.addMediaArt(ma);
   }
 
+  private String cleanString(String oldString) {
+    if (StringUtils.isEmpty(oldString)) {
+      return "";
+    }
+    // remove non breaking spaces
+    String newString = oldString.replace(String.valueOf((char) 160), " ");
+    // and trim
+    return StringUtils.trim(newString);
+  }
 }

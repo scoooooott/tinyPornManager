@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 
 import org.junit.Test;
+import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -149,7 +150,10 @@ public class ImdbMetadataProviderTest {
     assertNotNull("MediaMetadata", md);
 
     // check moviedetails
-    checkMovieDetails("9", "2009", "9", md);
+    checkMovieDetails("9", "2009", "9", 7.0, 63365, "(7) To Defend Us...", md);
+
+    // check poster
+    checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg", md);
 
     /*
      * scrape akas.imdb.com - 12 Monkeys - tt0114746
@@ -170,16 +174,60 @@ public class ImdbMetadataProviderTest {
     assertNotNull("MediaMetadata", md);
 
     // check moviedetails
-    checkMovieDetails("Twelve Monkeys", "1995", "Twelve Monkeys", md);
+    checkMovieDetails("Twelve Monkeys", "1995", "Twelve Monkeys", 8.1, 262821, "The future is history.", md);
+
+    // check poster
+    checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTQ4OTM3NzkyN15BMl5BanBnXkFtZTcwMzIwMzgyMQ@@._V1._SX195_SY195_.jpg", md);
+
+    /*
+     * scrape akas.imdb.com - Brave - tt1217209
+     */
+    mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
+    sr = new MediaSearchResult();
+    sr.setIMDBId("tt1217209");
+    sr.setTitle("Brave");
+    sr.setYear("2012");
+
+    md = null;
+    try {
+      md = mp.getMetaData(sr);
+    } catch (Exception e) {
+    }
+
+    // did we get metadata?
+    assertNotNull("MediaMetadata", md);
+
+    // check moviedetails
+    checkMovieDetails("Brave", "2012", "Brave", 7.4, 52871, "Change your fate.", md);
+
+    // check poster
+    checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMzgwODk3ODA1NF5BMl5BanBnXkFtZTcwNjU3NjQ0Nw@@._V1._SX195_SY195_.jpg", md);
 
   }
 
-  private void checkMovieDetails(String title, String year, String originalTitle, MediaMetadata md) {
+  private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, MediaMetadata md) {
     // title
-    assertEquals("title", title, md.getMediaTitle());
+    assertEquals(title, md.getMediaTitle());
     // year
     assertEquals("year", year, md.getYear());
     // original title
     assertEquals("originalTitle", originalTitle, md.getOriginalTitle());
+    // rating
+    assertEquals("rating", rating, md.getUserRating(), 0.01);
+    // count (only check if parsed cout count is smaller than the given
+    // votecount)
+    if (voteCount > md.getVoteCount()) {
+      assertEquals("count", voteCount, md.getVoteCount());
+    }
+    // tagline
+    assertEquals("tagline", tagline, md.getTagline());
+  }
+
+  private void checkMoviePoster(String url, MediaMetadata md) {
+    // check poster
+    List<MediaArt> mediaArt = md.getFanart();
+    assertEquals("fanart count", 1, mediaArt.size());
+    MediaArt art = mediaArt.get(0);
+    assertEquals("poster", url, art.getDownloadUrl());
   }
 }

@@ -225,7 +225,8 @@ public class MediaMetadata {
    * @return the user rating
    */
   public float getUserRating() {
-    return Float.valueOf(get(MetadataKey.USER_RATING));
+    return getFloat(MetadataKey.USER_RATING, 0.0f);
+    // return Float.valueOf(get(MetadataKey.USER_RATING));
   }
 
   /**
@@ -422,8 +423,7 @@ public class MediaMetadata {
   private int toInt(String value) {
     try {
       return Integer.parseInt(value);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       return 0;
     }
   }
@@ -485,8 +485,7 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toFloat(value, defValue);
-    }
-    else {
+    } else {
       return defValue;
     }
   }
@@ -504,8 +503,7 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toInt(value, defValue);
-    }
-    else {
+    } else {
       return defValue;
     }
   }
