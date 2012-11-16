@@ -2,11 +2,14 @@ package org.tinymediamanager.scraper.imdb;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaArt;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -114,6 +117,27 @@ public class ImdbMetadataProviderTest {
     // check 10. result (Inglorious Relations - 2008 - tt1378268)
     result = results.get(9);
     checkSearchResult("Inglorious Relations", "2008", "tt1378268", result);
+
+    /*
+     * test on akas.imdb.com - "16 Blocks" (redirect to page)
+     */
+    results = null;
+    try {
+      mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
+      results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "16 Blocks"));
+    } catch (Exception e) {
+    }
+
+    // did we get a result?
+    assertNotNull("Result", results);
+
+    // result count
+    assertEquals("Result count", 1, results.size());
+
+    // check first result (16 Blocks - 2006 - tt0450232)
+    result = results.get(0);
+    checkSearchResult("16 Blocks", "2006", "tt0450232", result);
+
   }
 
   private void checkSearchResult(String title, String year, String imdbId, MediaSearchResult result) {
@@ -155,6 +179,22 @@ public class ImdbMetadataProviderTest {
     // check poster
     checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg", md);
 
+    // check genres
+    List<MediaGenres> genres = new ArrayList<MediaGenres>();
+    genres.add(MediaGenres.ANIMATION);
+    genres.add(MediaGenres.ACTION);
+    genres.add(MediaGenres.ADVENTURE);
+    genres.add(MediaGenres.FANTASY);
+    genres.add(MediaGenres.MYSTERY);
+    genres.add(MediaGenres.SCIENCE_FICTION);
+    genres.add(MediaGenres.THRILLER);
+    checkGenres(genres, md);
+
+    // check plot
+    checkPlot(
+        "In a world destroyed in a war between man and machine, a hand-stitched doll with the number 9 written on its back comes to life. The world he has awakened in is frightening, but he quickly learns that he is not alone and that there are others like him, also with a single digit written on their back. The first one he encounters is 2 who tells him something of what happened to the world. 2 is also thrilled with the disk 9 is carrying, one with three unique symbols on the front. 9 soon learns that the disk and some of the other dolls who are prepared to die for the good of humankind may be the last hope for man's salvation.",
+        md);
+
     /*
      * scrape akas.imdb.com - 12 Monkeys - tt0114746
      */
@@ -178,6 +218,18 @@ public class ImdbMetadataProviderTest {
 
     // check poster
     checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTQ4OTM3NzkyN15BMl5BanBnXkFtZTcwMzIwMzgyMQ@@._V1._SX195_SY195_.jpg", md);
+
+    // check genres
+    genres = new ArrayList<MediaGenres>();
+    genres.add(MediaGenres.MYSTERY);
+    genres.add(MediaGenres.SCIENCE_FICTION);
+    genres.add(MediaGenres.THRILLER);
+    checkGenres(genres, md);
+
+    // check plot
+    checkPlot(
+        "An unknown and lethal virus has wiped out five billion people in 1996. Only 1% of the population has survived by the year 2035, and is forced to live underground. A convict (James Cole) reluctantly volunteers to be sent back in time to 1996 to gather information about the origin of the epidemic (who he's told was spread by a mysterious \"Army of the Twelve Monkeys\") and locate the virus before it mutates so that scientists can study it. Unfortunately Cole is mistakenly sent to 1990, six years earlier than expected, and is arrested and locked up in a mental institution, where he meets Dr. Kathryn Railly, a psychiatrist, and Jeffrey Goines, the insane son of a famous scientist and virus expert.",
+        md);
 
     /*
      * scrape akas.imdb.com - Brave - tt1217209
@@ -203,11 +255,26 @@ public class ImdbMetadataProviderTest {
     // check poster
     checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMzgwODk3ODA1NF5BMl5BanBnXkFtZTcwNjU3NjQ0Nw@@._V1._SX195_SY195_.jpg", md);
 
+    // check genres
+    genres = new ArrayList<MediaGenres>();
+    genres.add(MediaGenres.ANIMATION);
+    genres.add(MediaGenres.ACTION);
+    genres.add(MediaGenres.ADVENTURE);
+    genres.add(MediaGenres.COMEDY);
+    genres.add(MediaGenres.FAMILY);
+    genres.add(MediaGenres.FANTASY);
+    checkGenres(genres, md);
+
+    // check plot
+    checkPlot(
+        "Set in Scotland in a rugged and mythical time, \"Brave\" features Merida, an aspiring archer and impetuous daughter of royalty. Merida makes a reckless choice that unleashes unintended peril and forces her to spring into action to set things right.",
+        md);
+
   }
 
   private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, MediaMetadata md) {
     // title
-    assertEquals(title, md.getMediaTitle());
+    assertEquals("title ", title, md.getMediaTitle());
     // year
     assertEquals("year", year, md.getYear());
     // original title
@@ -229,5 +296,22 @@ public class ImdbMetadataProviderTest {
     assertEquals("fanart count", 1, mediaArt.size());
     MediaArt art = mediaArt.get(0);
     assertEquals("poster", url, art.getDownloadUrl());
+  }
+
+  private void checkGenres(List<MediaGenres> genres, MediaMetadata md) {
+    // cehck not null
+    assertNotNull("genres", md.getGenres());
+
+    // check the size
+    assertEquals("genres count", genres.size(), md.getGenres().size());
+
+    // check each genre if there is a counterpart in metadata
+    for (MediaGenres genre : genres) {
+      assertTrue("contains genre", md.getGenres().contains(genre));
+    }
+  }
+
+  private void checkPlot(String plot, MediaMetadata md) {
+    assertEquals("plot", plot, md.getPlot());
   }
 }

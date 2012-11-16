@@ -9,78 +9,89 @@ package org.tinymediamanager.scraper;
  */
 public enum MediaGenres {
   /** The action. */
-  ACTION("Action"),
+  ACTION("Action", new String[] {}),
   /** The adventure. */
-  ADVENTURE("Adventure"),
+  ADVENTURE("Adventure", new String[] {}),
   /** The animation. */
-  ANIMATION("Animation"),
+  ANIMATION("Animation", new String[] {}),
+  /** The Biography. */
+  BIOGRAPHY("Biography", new String[] {}),
   /** The comedy. */
-  COMEDY("Comedy"),
+  COMEDY("Comedy", new String[] {}),
   /** The crime. */
-  CRIME("Crime"),
+  CRIME("Crime", new String[] {}),
   /** The disaster. */
-  DISASTER("Disaster"),
+  DISASTER("Disaster", new String[] {}),
   /** The documentary. */
-  DOCUMENTARY("Documentary"),
+  DOCUMENTARY("Documentary", new String[] {}),
   /** The drama. */
-  DRAMA("Drama"),
+  DRAMA("Drama", new String[] {}),
   /** The eastern. */
-  EASTERN("Eastern"),
+  EASTERN("Eastern", new String[] {}),
   /** The erotic. */
-  EROTIC("Erotic"),
+  EROTIC("Erotic", new String[] {}),
   /** The family. */
-  FAMILY("Family"),
+  FAMILY("Family", new String[] {}),
   /** The fan film. */
-  FAN_FILM("Fan Film"),
+  FAN_FILM("Fan Film", new String[] {}),
   /** The fantasy. */
-  FANTASY("Fantasy"),
+  FANTASY("Fantasy", new String[] {}),
   /** The film noir. */
-  FILM_NOIR("Film Noir"),
+  FILM_NOIR("Film Noir", new String[] { "Film-Noir" }),
   /** The foreign. */
-  FOREIGN("Foreign"),
+  FOREIGN("Foreign", new String[] {}),
+  /** The game show. */
+  GAME_SHOW("Gameshow", new String[] { "Game-Show" }),
   /** The history. */
-  HISTORY("History"),
+  HISTORY("History", new String[] {}),
   /** The holiday. */
-  HOLIDAY("Holiday"),
+  HOLIDAY("Holiday", new String[] {}),
   /** The horror. */
-  HORROR("Horror"),
+  HORROR("Horror", new String[] {}),
   /** The indie. */
-  INDIE("Indie"),
+  INDIE("Indie", new String[] {}),
   /** The music. */
-  MUSIC("Music"),
+  MUSIC("Music", new String[] {}),
   /** The musical. */
-  MUSICAL("Musical"),
+  MUSICAL("Musical", new String[] {}),
   /** The mystery. */
-  MYSTERY("Mystery"),
+  MYSTERY("Mystery", new String[] {}),
   /** The neo noir. */
-  NEO_NOIR("Neo Noir"),
+  NEO_NOIR("Neo Noir", new String[] {}),
+  /** The news. */
+  NEWS("News", new String[] {}),
+  /** The reality tv. */
+  REALITY_TV("Reality TV", new String[] { "Reality-TV" }),
   /** The road movie. */
-  ROAD_MOVIE("Road Movie"),
+  ROAD_MOVIE("Road Movie", new String[] {}),
   /** The romance. */
-  ROMANCE("Romance"),
+  ROMANCE("Romance", new String[] {}),
   /** The science fiction. */
-  SCIENCE_FICTION("Science Fiction"),
+  SCIENCE_FICTION("Science Fiction", new String[] { "Sci-Fi" }),
   /** The short. */
-  SHORT("Short"),
+  SHORT("Short", new String[] {}),
   /** The sport. */
-  SPORT("Sport"),
+  SPORT("Sport", new String[] {}),
   /** The sporting event. */
-  SPORTING_EVENT("Sporting Event"),
+  SPORTING_EVENT("Sporting Event", new String[] {}),
   /** The sports film. */
-  SPORTS_FILM("Sports Film"),
+  SPORTS_FILM("Sports Film", new String[] {}),
   /** The suspense. */
-  SUSPENSE("Suspense"),
+  SUSPENSE("Suspense", new String[] {}),
+  /** The talk show. */
+  TALK_SHOW("Talk show", new String[] { "Talk-Show" }),
   /** The tv movie. */
-  TV_MOVIE("TV Movie"),
+  TV_MOVIE("TV Movie", new String[] {}),
   /** The thriller. */
-  THRILLER("Thriller"),
+  THRILLER("Thriller", new String[] {}),
   /** The war. */
-  WAR("War"),
+  WAR("War", new String[] {}),
   /** The western. */
-  WESTERN("Western");
+  WESTERN("Western", new String[] {});
 
   /** The name. */
-  private String name;
+  private String   name;
+  private String[] alternateNames;
 
   /**
    * Instantiates a new genres.
@@ -95,8 +106,9 @@ public enum MediaGenres {
    * @param name
    *          the name
    */
-  private MediaGenres(String name) {
+  private MediaGenres(String name, String[] alternateNames) {
     this.name = name;
+    this.alternateNames = alternateNames;
   }
 
   /*
@@ -117,8 +129,15 @@ public enum MediaGenres {
    */
   public static MediaGenres getGenre(String name) {
     for (MediaGenres genre : values()) {
+      // check if the name matches
       if (genre.name.equals(name)) {
         return genre;
+      }
+      // check if one of the possible names matches
+      for (String notation : genre.alternateNames) {
+        if (notation.equalsIgnoreCase(name)) {
+          return genre;
+        }
       }
     }
     return null;

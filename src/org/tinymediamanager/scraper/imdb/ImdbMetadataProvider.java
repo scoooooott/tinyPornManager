@@ -17,6 +17,7 @@ import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -117,6 +118,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
 
     MediaMetadata md = new MediaMetadata();
+    md.setIMDBID(imdbId);
 
     // build the url
     StringBuilder sb = new StringBuilder(imdbSite.getSite());
@@ -266,7 +268,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
          * >See more</a>&nbsp;&raquo; </div></div>
          */
         // tagline
-        if (h5Title.matches("(?i)" + imdbSite.getTagline() + "(.*)")) {
+        if (h5Title.matches("(?i)" + imdbSite.getTagline() + ".*")) {
           Elements div = element.getElementsByClass("info-content");
           if (div.size() > 0) {
             Element taglineElement = div.first();
@@ -274,13 +276,67 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
             md.setTagline(tagline);
           }
         }
+
+        /*
+         * <div class="info-content"><a
+         * href="/Sections/Genres/Animation/">Animation</a> | <a
+         * href="/Sections/Genres/Action/">Action</a> | <a
+         * href="/Sections/Genres/Adventure/">Adventure</a> | <a
+         * href="/Sections/Genres/Fantasy/">Fantasy</a> | <a
+         * href="/Sections/Genres/Mystery/">Mystery</a> | <a
+         * href="/Sections/Genres/Sci-Fi/">Sci-Fi</a> | <a
+         * href="/Sections/Genres/Thriller/">Thriller</a> <a
+         * class="tn15more inline" href="/title/tt0472033/keywords" onClick=
+         * "(new Image()).src='/rg/title-tease/keywords/images/b.gif?link=/title/tt0472033/keywords';"
+         * > See more</a>&nbsp;&raquo; </div>
+         */
+        // genres are only scraped from akas.imdb.com
+        if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
+          if (h5Title.matches("(?i)" + imdbSite.getGenre() + "(.*)")) {
+            Elements div = element.getElementsByClass("info-content");
+            if (div.size() > 0) {
+              Elements a = div.first().getElementsByTag("a");
+              for (Element anchor : a) {
+                if (anchor.attr("href").matches("/Sections/Genres/.*")) {
+                  MediaGenres genre = MediaGenres.getGenre(anchor.ownText());
+                  if (genre != null && !md.getGenres().contains(genre)) {
+                    md.addGenre(genre);
+                  }
+                }
+              }
+            }
+          }
+        }
       }
+    }
+
+    /*
+     * plot from /plotsummary
+     */
+    // build the url
+    sb = new StringBuilder(imdbSite.getSite());
+    sb.append("title/");
+    sb.append(imdbId);
+    sb.append("/plotsummary");
+
+    doc = null;
+    try {
+      CachedUrl url = new CachedUrl(sb.toString());
+      doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+    } catch (Exception e) {
+      LOGGER.debug("tried to fetch imdb plot page", e);
+      return md;
+    }
+
+    Elements plotpar = doc.getElementsByClass("plotpar");
+    if (plotpar.size() > 0) {
+      String plot = cleanString(plotpar.get(0).ownText());
+      md.setPlot(plot);
     }
 
     // TODO plot from http://www.imdb.de/title/<imdbid>/plotsummary
 
-    // TODO parse originaltitle from "Auch bekannt als" or
-    // http://www.imdb.de/title/<imdbid>/releaseinfo
+    // TODO genres for other imdbsites
 
     return md;
   }
@@ -384,6 +440,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     // check if it was directly redirected to the site
     Elements elements = doc.getElementsByAttributeValue("rel", "canonical");
     for (Element element : elements) {
+      MediaMetadata md = null;
       // we have been redirected to the movie site
       String movieName = null;
       String movieId = null;
@@ -396,7 +453,13 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         }
       }
 
-      // TODO parse redirect
+      // get full information
+      if (!StringUtils.isEmpty(movieId)) {
+        md = getMetadataForIMDBId(movieId);
+        if (!StringUtils.isEmpty(md.getMediaTitle())) {
+          movieName = md.getMediaTitle();
+        }
+      }
 
       // if no movie name/id was found - continue
       if (StringUtils.isEmpty(movieName) || StringUtils.isEmpty(movieId)) {
@@ -406,6 +469,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       MediaSearchResult sr = new MediaSearchResult();
       sr.setTitle(movieName);
       sr.setIMDBId(movieId);
+      sr.setYear(md.getYear());
+      sr.setMetadata(md);
       result.add(sr);
 
       return result;
@@ -517,4 +582,5 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     // and trim
     return StringUtils.trim(newString);
   }
+
 }
