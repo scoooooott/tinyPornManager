@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
@@ -35,6 +36,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.SearchQuery;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
 /**
  * The Class MovieList.
@@ -84,6 +86,7 @@ public class MovieList extends AbstractModelObject {
   public void addMovie(Movie movie) {
     int oldValue = movieList.size();
     movieList.add(movie);
+    movie.setDateAdded(new Date());
     firePropertyChange("movies", null, movieList);
     firePropertyChange("movieCount", oldValue, movieList.size());
   }
@@ -352,10 +355,31 @@ public class MovieList extends AbstractModelObject {
    * @return the metadata provider
    */
   public IMediaMetadataProvider getMetadataProvider() {
+    // check if instance is corresponding to the selected scraper
+    MovieScrapers scraper = Globals.settings.getMovieScraper();
+    if (metadataProvider != null) {
+      if (metadataProvider instanceof ImdbMetadataProvider && scraper != MovieScrapers.IMDB) {
+        metadataProvider = null;
+      }
+      if (metadataProvider instanceof TmdbMetadataProvider && scraper != MovieScrapers.TMDB) {
+        metadataProvider = null;
+      }
+    }
+    // create new scraper instance
     if (metadataProvider == null) {
-      // LOGGER.debug("get instance of TmdbMetadataProvider");
-      // metadataProvider = TmdbMetadataProvider.getInstance();
-      // LOGGER.debug("get instance of XbmcMetadataProvider");
+      switch (scraper) {
+        case IMDB:
+          LOGGER.debug("get instance of ImdbMetadataProvider");
+          metadataProvider = new ImdbMetadataProvider();
+          break;
+
+        case TMDB:
+        default:
+          LOGGER.debug("get instance of TmdbMetadataProvider");
+          metadataProvider = TmdbMetadataProvider.getInstance();
+          LOGGER.debug("get instance of XbmcMetadataProvider");
+      }
+      //
       // try {
       // metadataProvider = new XbmcMetadataProvider(new
       // XbmcScraperParser().parseScraper(new
@@ -367,9 +391,8 @@ public class MovieList extends AbstractModelObject {
       // LOGGER.error("tried to get xmbc scraper", e);
       // }
 
-      LOGGER.debug("get instance of ImdbMetadataProvider");
-      metadataProvider = new ImdbMetadataProvider();
     }
+
     return metadataProvider;
   }
 

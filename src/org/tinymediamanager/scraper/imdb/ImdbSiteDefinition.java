@@ -21,23 +21,34 @@ import java.nio.charset.Charset;
 import org.apache.commons.lang3.StringUtils;
 
 public enum ImdbSiteDefinition {
-  IMDB_COM("http://akas.imdb.com/", "ISO-8859-1", "Tagline", "Genre"), IMDB_DE("http://www.imdb.de/", "ISO-8859-1", "", ""), ;
+  IMDB_COM("http://akas.imdb.com/", "ISO-8859-1", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification");
+  // IMDB_DE("http://www.imdb.de/", "ISO-8859-1", "", "", "", "", "", "");
 
-  private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre) {
+  private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies,
+      String writers, String certification) {
     this.site = site;
     if (StringUtils.isBlank(charsetName)) {
       this.charset = Charset.defaultCharset();
-    } else {
+    }
+    else {
       this.charset = Charset.forName(charsetName);
     }
     this.tagline = tagline;
     this.genre = genre;
+    this.runtime = runtime;
+    this.productionCompanies = productionCompanies;
+    this.writer = writers;
+    this.certification = certification;
   }
 
   private String  site;
   private Charset charset;
   private String  tagline;
   private String  genre;
+  private String  runtime;
+  private String  productionCompanies;
+  private String  writer;
+  private String  certification;
 
   public String getSite() {
     return site;
@@ -54,7 +65,85 @@ public enum ImdbSiteDefinition {
   public String getGenre() {
     return genre;
   }
+
+  public String getRuntime() {
+    return runtime;
+  }
+
+  public String getProductionCompanies() {
+    return productionCompanies;
+  }
+
+  public String getWriter() {
+    return writer;
+  }
+
+  public String getCertification() {
+    return certification;
+  }
 }
+
+// IMDB_SITES.put("us", new ImdbSiteDefinition("http://www.imdb.com/",
+// "ISO-8859-1", "Director|Directed by", "Cast", "Release Date", "Runtime",
+// "Country", "Company", "Genre",
+// "Quotes", "Plot", "Rated", "Certification", "Original Air Date",
+// "Writer|Writing credits", "Taglines"));
+//
+// IMDB_SITES.put("fr", new ImdbSiteDefinition("http://www.imdb.fr/",
+// "ISO-8859-1", "R&#xE9;alisateur|R&#xE9;alis&#xE9; par", "Ensemble",
+// "Date de sortie", "Dur&#xE9;e", "Pays",
+// "Soci&#xE9;t&#xE9;", "Genre", "Citation", "Intrigue", "Rated",
+// "Classification", "Date de sortie", "Sc&#xE9;naristes|Sc&#xE9;naristes",
+// "Taglines"));
+//
+// IMDB_SITES.put("es", new ImdbSiteDefinition("http://www.imdb.es/",
+// "ISO-8859-1", "Director|Dirigida por", "Reparto", "Fecha de Estreno",
+// "Duraci&#xF3;n", "Pa&#xED;s",
+// "Compa&#xF1;&#xED;a", "G&#xE9;nero", "Quotes", "Trama", "Rated",
+// "Clasificaci&#xF3;n", "Fecha de Estreno",
+// "Escritores|Cr&#xE9;ditos del gui&#xF3;n", "Taglines"));
+//
+// IMDB_SITES.put("de", new ImdbSiteDefinition("http://www.imdb.de/",
+// "ISO-8859-1", "Regisseur|Regie", "Besetzung", "Premierendatum",
+// "L&#xE4;nge", "Land", "Firma", "Genre",
+// "Quotes", "Handlung", "Rated", "Altersfreigabe", "Premierendatum",
+// "Guionista|Buch", "Taglines"));
+//
+// IMDB_SITES.put("it", new ImdbSiteDefinition("http://www.imdb.it/",
+// "ISO-8859-1", "Regista|Registi|Regia di", "Cast", "Data di uscita",
+// "Durata", "Nazionalit&#xE0;",
+// "Compagnia", "Genere", "Quotes", "Trama", "Rated", "Certification",
+// "Data di uscita", "Sceneggiatore|Scritto da", "Taglines"));
+//
+// IMDB_SITES.put("pt", new ImdbSiteDefinition("http://www.imdb.pt/",
+// "ISO-8859-1", "Diretor|Dirigido por", "Elenco", "Data de Lan&#xE7;amento",
+// "Dura&#xE7;&#xE3;o", "Pa&#xED;s",
+// "Companhia", "G&#xEA;nero", "Quotes", "Argumento", "Rated",
+// "Certifica&#xE7;&#xE3;o", "Data de Lan&#xE7;amento",
+// "Roteirista|Cr&#xE9;ditos como roteirista", "Taglines"));
+//
+// // Use this as a workaround for English speakers abroad who get localised
+// // versions of imdb.com
+// IMDB_SITES.put("labs", new ImdbSiteDefinition("http://akas.imdb.com/",
+// "ISO-8859-1", "Director|Directors|Directed by", "Cast", "Release Date",
+// "Runtime", "Country",
+// "Production Co", "Genres", "Quotes", "Storyline", "Rated", "Certification",
+// "Original Air Date", "Writer|Writers|Writing credits", "Taglines"));
+//
+// // TODO: Leaving this as labs.imdb.com for the time being, but will be
+// // updated to www.imdb.com
+// IMDB_SITES.put("us2", new ImdbSiteDefinition("http://labs.imdb.com/",
+// "ISO-8859-1", "Director|Directors|Directed by", "Cast", "Release Date",
+// "Runtime", "Country",
+// "Production Co", "Genres", "Quotes", "Storyline", "Rated", "Certification",
+// "Original Air Date", "Writer|Writers|Writing credits", "Taglines"));
+//
+// // Not 100% sure these are correct
+// IMDB_SITES.put("it2", new ImdbSiteDefinition("http://www.imdb.it/",
+// "ISO-8859-1", "Regista|Registi|Regia di", "Attori", "Data di uscita",
+// "Durata", "Nazionalit&#xE0;",
+// "Compagnia", "Genere", "Quotes", "Trama", "Rated", "Certification",
+// "Data di uscita", "Sceneggiatore|Scritto da", "Taglines"));
 
 // public class ImdbSiteDefinition {
 // private String site;

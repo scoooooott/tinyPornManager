@@ -33,17 +33,29 @@ public class Globals {
   /** The settings. */
   public static Settings              settings = Settings.getInstance();
 
+  /** The emf. */
   private static EntityManagerFactory emf;
 
   /** The entity manager. */
   public static EntityManager         entityManager;
 
+  /**
+   * Start database.
+   * 
+   * @throws Exception
+   *           the exception
+   */
   public static void startDatabase() throws Exception {
-    System.setProperty("objectdb.conf", "objectdb.conf");
     emf = Persistence.createEntityManagerFactory("tmm.odb");
     entityManager = emf.createEntityManager();
   }
 
+  /**
+   * Shutdown database.
+   * 
+   * @throws Exception
+   *           the exception
+   */
   public static void shutdownDatabase() throws Exception {
     entityManager.close();
     emf.close();

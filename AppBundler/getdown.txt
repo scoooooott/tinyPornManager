@@ -35,6 +35,7 @@ code = lib/httpclient-cache.jar
 code = lib/httpcore.jar
 code = lib/httpmime.jar
 code = lib/JTattoo.jar
+code = lib/jsoup.jar
 
 # The main entry point for the application
 class = org.tinymediamanager.TinyMediaManager

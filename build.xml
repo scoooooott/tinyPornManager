@@ -15,7 +15,7 @@
 		<jar destfile="build/tmm.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
-				<attribute name="Class-Path" value=". lib/commons-lang3.jar lib/log4j.jar lib/themoviedbapi.jar lib/beansbinding.jar lib/jdom.jar lib/commons-codec.jar lib/commons-io.jar lib/jackson-core-lgpl.jar lib/jackson-mapper-lgpl.jar lib/objectdb.jar lib/Scaling-bin.jar lib/thetvdbapi.jar lib/forms.jar lib/JSplitButton.jar lib/commons-logging.jar lib/httpclient.jar lib/httpclient-cache.jar lib/httpcore.jar lib/httpmime.jar lib/JTattoo.jar" />
+				<attribute name="Class-Path" value=". lib/commons-lang3.jar lib/log4j.jar lib/themoviedbapi.jar lib/beansbinding.jar lib/jdom.jar lib/commons-codec.jar lib/commons-io.jar lib/jackson-core-lgpl.jar lib/jackson-mapper-lgpl.jar lib/objectdb.jar lib/Scaling-bin.jar lib/thetvdbapi.jar lib/forms.jar lib/JSplitButton.jar lib/commons-logging.jar lib/httpclient.jar lib/httpclient-cache.jar lib/httpcore.jar lib/httpmime.jar lib/JTattoo.jar lib/jsoup.jar" />
 				<attribute name="SplashScreen-Image" value="org/tinymediamanager/ui/images/splashscreen.png" />
 			</manifest>
 			<fileset dir="bin" />
@@ -41,6 +41,7 @@
 		<copy file="lib/httpcore.jar" todir="build/lib" />
 		<copy file="lib/httpmime.jar" todir="build/lib" />
 		<copy file="lib/JTattoo.jar" todir="build/lib" />
+		<copy file="lib/jsoup.jar" todir="build/lib" />
 		
 		<!-- buildinfo -->
     <propertyfile file="build/version"
@@ -112,7 +113,7 @@
 		<copy file="objectdb.conf" todir="dist/win" />
 		<copy file="AppBundler/getdown.jar" todir="dist/win" />
 		<copy file="AppBundler/getdown.txt" todir="dist/win" />
-		<copy file="AppBundler/digest.txt" todir="dist/win" />
+		<copy file="dist/getdown/digest.txt" todir="dist/win" />
 		<copy file="AppBundler/LICENSE" todir="dist/win" />
 		<copy file="AppBundler/splashscreen.png" todir="dist/win" />
 		<copy file="AppBundler/tmm.png" todir="dist/win" />
@@ -130,7 +131,7 @@
 		<copy file="objectdb.conf" todir="dist/linux" />
 		<copy file="AppBundler/getdown.jar" todir="dist/linux" />
 		<copy file="AppBundler/getdown.txt" todir="dist/linux" />
-		<copy file="AppBundler/digest.txt" todir="dist/linux" />
+		<copy file="dist/getdown/digest.txt" todir="dist/linux" />
 		<copy file="AppBundler/LICENSE" todir="dist/linux" />
 		<copy file="AppBundler/tinyMediaManager.sh" todir="dist/linux" />
 		<chmod file="dist/linux/tinyMediaManager.sh" perm="ugo+rx"/>

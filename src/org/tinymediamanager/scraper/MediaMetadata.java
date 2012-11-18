@@ -186,8 +186,8 @@ public class MediaMetadata {
    * 
    * @return the runtime
    */
-  public String getRuntime() {
-    return (String) get(MetadataKey.RUNNING_TIME);
+  public int getRuntime() {
+    return getInt(MetadataKey.RUNNING_TIME, 0);
   }
 
   /**
@@ -196,8 +196,8 @@ public class MediaMetadata {
    * @param runtime
    *          the new runtime
    */
-  public void setRuntime(String runtime) {
-    set(MetadataKey.RUNNING_TIME, runtime);
+  public void setRuntime(int runtime) {
+    set(MetadataKey.RUNNING_TIME, String.valueOf(runtime));
   }
 
   /**
@@ -364,6 +364,23 @@ public class MediaMetadata {
   }
 
   /**
+   * Clear media art.
+   */
+  public void clearMediaArt() {
+    fanart.clear();
+  }
+
+  /**
+   * Adds the media art.
+   * 
+   * @param art
+   *          the art
+   */
+  public void addMediaArt(List<MediaArt> art) {
+    fanart.addAll(art);
+  }
+
+  /**
    * Sets the description.
    * 
    * @param plot
@@ -423,7 +440,8 @@ public class MediaMetadata {
   private int toInt(String value) {
     try {
       return Integer.parseInt(value);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return 0;
     }
   }
@@ -485,7 +503,8 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toFloat(value, defValue);
-    } else {
+    }
+    else {
       return defValue;
     }
   }
@@ -503,7 +522,8 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toInt(value, defValue);
-    } else {
+    }
+    else {
       return defValue;
     }
   }

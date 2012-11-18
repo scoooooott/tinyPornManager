@@ -20,11 +20,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -48,6 +50,7 @@ import org.tinymediamanager.core.movie.MovieConnectors;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
+import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
@@ -65,38 +68,40 @@ import com.jgoodies.forms.layout.RowSpec;
 public class SettingsPanel extends JPanel {
 
   /** The settings. */
-  private Settings       settings = Settings.getInstance();
+  private Settings          settings           = Settings.getInstance();
 
   /** The tf proxy host. */
-  private JTextField     tfProxyHost;
+  private JTextField        tfProxyHost;
 
   /** The tf proxy port. */
-  private JTextField     tfProxyPort;
+  private JTextField        tfProxyPort;
 
   /** The tf proxy username. */
-  private JTextField     tfProxyUsername;
+  private JTextField        tfProxyUsername;
 
   /** The tf proxy password. */
-  private JPasswordField tfProxyPassword;
+  private JPasswordField    tfProxyPassword;
 
   /** The table movie sources. */
-  private JTable         tableMovieSources;
+  private JTable            tableMovieSources;
 
   /** The cb image tmdb poster size. */
-  private JComboBox      cbImageTmdbPosterSize;
+  private JComboBox         cbImageTmdbPosterSize;
 
   /** The cb image tmdb fanart size. */
-  private JComboBox      cbImageTmdbFanartSize;
+  private JComboBox         cbImageTmdbFanartSize;
 
   /** The cb image tmdb language. */
-  private JComboBox      cbImageTmdbLanguage;
+  private JComboBox         cbImageTmdbLanguage;
 
   /** The cb scraper tmdb language. */
-  private JComboBox      cbScraperTmdbLanguage;
-  private JComboBox      cbCountry;
-  private JComboBox      cbNfoFormat;
-  private JTextField     tfMoviePath;
-  private JTextField     tfMovieFilename;
+  private JComboBox         cbScraperTmdbLanguage;
+  private JComboBox         cbCountry;
+  private JComboBox         cbNfoFormat;
+  private JTextField        tfMoviePath;
+  private JTextField        tfMovieFilename;
+  private final ButtonGroup buttonGroupScraper = new ButtonGroup();
+  private JCheckBox         cbImdbTranslateableContent;
 
   /**
    * Create the panel.
@@ -107,50 +112,6 @@ public class SettingsPanel extends JPanel {
 
     JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
     add(tabbedPane, "2, 2, fill, fill");
-
-    JPanel tabGeneralSettings = new JPanel();
-    tabbedPane.addTab("General", null, tabGeneralSettings, null);
-    tabGeneralSettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
-
-    JPanel panelProxySettings = new JPanel();
-    panelProxySettings.setBorder(new TitledBorder(null, "Proxy Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    tabGeneralSettings.add(panelProxySettings, "2, 2, left, top");
-    panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-
-    JLabel lblProxyHost = new JLabel("Host");
-    panelProxySettings.add(lblProxyHost, "2, 2, right, default");
-
-    tfProxyHost = new JTextField();
-    lblProxyHost.setLabelFor(tfProxyHost);
-    panelProxySettings.add(tfProxyHost, "4, 2, fill, default");
-    tfProxyHost.setColumns(10);
-
-    JLabel lblProxyPort = new JLabel("Port");
-    panelProxySettings.add(lblProxyPort, "2, 4, right, default");
-
-    tfProxyPort = new JTextField();
-    lblProxyPort.setLabelFor(tfProxyPort);
-    panelProxySettings.add(tfProxyPort, "4, 4, fill, default");
-    tfProxyPort.setColumns(10);
-
-    JLabel lblProxyUser = new JLabel("Username");
-    panelProxySettings.add(lblProxyUser, "2, 6, right, default");
-
-    tfProxyUsername = new JTextField();
-    lblProxyUser.setLabelFor(tfProxyUsername);
-    panelProxySettings.add(tfProxyUsername, "4, 6, fill, default");
-    tfProxyUsername.setColumns(10);
-
-    JLabel lblProxyPassword = new JLabel("Password");
-    panelProxySettings.add(lblProxyPassword, "2, 8, right, default");
-
-    tfProxyPassword = new JPasswordField();
-    lblProxyPassword.setLabelFor(tfProxyPassword);
-    panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
 
     JPanel tabMovieSettings = new JPanel();
     tabbedPane.addTab("Movies", null, tabMovieSettings, null);
@@ -172,7 +133,7 @@ public class SettingsPanel extends JPanel {
     panelMovieSettings.add(panelMovieDataSources, "2, 2, fill, top");
     panelMovieDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("130px:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("60px:grow"),
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
@@ -207,7 +168,13 @@ public class SettingsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         int row = tableMovieSources.convertRowIndexToModel(tableMovieSources.getSelectedRow());
         String path = Globals.settings.getMovieDataSource().get(row);
-        Globals.settings.removeMovieDataSources(path);
+        String[] choices = { "Continue", "Abort" };
+        int decision = JOptionPane.showOptionDialog(null, "If you remove " + path
+            + " from your data sources, all movies inside this path will also be removed. Continue?", "Remove datasource", JOptionPane.YES_NO_OPTION,
+            JOptionPane.PLAIN_MESSAGE, null, choices, "Abort");
+        if (decision == 0) {
+          Globals.settings.removeMovieDataSources(path);
+        }
       }
     });
     panelMovieSourcesButtons.add(btnRemove, "2, 4, fill, top");
@@ -307,11 +274,12 @@ public class SettingsPanel extends JPanel {
     panelMovieScrapers.setBorder(new TitledBorder(null, "Scrapers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     panelMovieSettings.add(panelMovieScrapers, "2, 4, fill, top");
     panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("50px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JCheckBox cbScraperTmdb = new JCheckBox("The Movie Database");
-    cbScraperTmdb.setEnabled(false);
+    buttonGroupScraper.add(cbScraperTmdb);
     cbScraperTmdb.setSelected(true);
     panelMovieScrapers.add(cbScraperTmdb, "1, 2");
 
@@ -326,6 +294,16 @@ public class SettingsPanel extends JPanel {
 
     cbCountry = new JComboBox(CountryCode.values());
     panelMovieScrapers.add(cbCountry, "3, 6, fill, default");
+
+    final JCheckBox cbScraperImdb = new JCheckBox("IMDB");
+    buttonGroupScraper.add(cbScraperImdb);
+    panelMovieScrapers.add(cbScraperImdb, "1, 8");
+
+    JLabel lblEperimental = new JLabel("experimental!");
+    panelMovieScrapers.add(lblEperimental, "3, 8");
+
+    cbImdbTranslateableContent = new JCheckBox("Plot/Title/Tagline from TMDB");
+    panelMovieScrapers.add(cbImdbTranslateableContent, "3, 10");
 
     JPanel panel_1 = new JPanel();
     panel_1.setBorder(new TitledBorder(null, "Renamer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -363,6 +341,50 @@ public class SettingsPanel extends JPanel {
         .setText("Choose a folder and file renaming pattern.\nExample:\nDatasource = /media/movies\nFolder name = $1/$T [$Y]\nFile name = $T\nResult:\nFolder name = /media/movies/A/Aladdin [1992]/\nFile name = Aladdin.avi");
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
     panel_1.add(txtrChooseAFolder, "2, 6, 3, 1, fill, fill");
+
+    JPanel tabGeneralSettings = new JPanel();
+    tabbedPane.addTab("General", null, tabGeneralSettings, null);
+    tabGeneralSettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+
+    JPanel panelProxySettings = new JPanel();
+    panelProxySettings.setBorder(new TitledBorder(null, "Proxy Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    tabGeneralSettings.add(panelProxySettings, "2, 2, left, top");
+    panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    JLabel lblProxyHost = new JLabel("Host");
+    panelProxySettings.add(lblProxyHost, "2, 2, right, default");
+
+    tfProxyHost = new JTextField();
+    lblProxyHost.setLabelFor(tfProxyHost);
+    panelProxySettings.add(tfProxyHost, "4, 2, fill, default");
+    tfProxyHost.setColumns(10);
+
+    JLabel lblProxyPort = new JLabel("Port");
+    panelProxySettings.add(lblProxyPort, "2, 4, right, default");
+
+    tfProxyPort = new JTextField();
+    lblProxyPort.setLabelFor(tfProxyPort);
+    panelProxySettings.add(tfProxyPort, "4, 4, fill, default");
+    tfProxyPort.setColumns(10);
+
+    JLabel lblProxyUser = new JLabel("Username");
+    panelProxySettings.add(lblProxyUser, "2, 6, right, default");
+
+    tfProxyUsername = new JTextField();
+    lblProxyUser.setLabelFor(tfProxyUsername);
+    panelProxySettings.add(tfProxyUsername, "4, 6, fill, default");
+    tfProxyUsername.setColumns(10);
+
+    JLabel lblProxyPassword = new JLabel("Password");
+    panelProxySettings.add(lblProxyPassword, "2, 8, right, default");
+
+    tfProxyPassword = new JPasswordField();
+    lblProxyPassword.setLabelFor(tfProxyPassword);
+    panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
 
     JPanel panel = new JPanel();
     add(panel, "2, 4, fill, fill");
@@ -415,6 +437,14 @@ public class SettingsPanel extends JPanel {
           settings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
         }
 
+        // save scraper
+        if (cbScraperImdb.isSelected()) {
+          settings.setMovieScraper(MovieScrapers.IMDB);
+        }
+        else {
+          settings.setMovieScraper(MovieScrapers.TMDB);
+        }
+
         // save settings
         settings.saveSettings();
       }
@@ -465,6 +495,16 @@ public class SettingsPanel extends JPanel {
       cbMovieFanartFilename2.setSelected(true);
     }
 
+    MovieScrapers movieScraper = settings.getMovieScraper();
+    switch (movieScraper) {
+      case IMDB:
+        cbScraperImdb.setSelected(true);
+        break;
+
+      case TMDB:
+      default:
+        cbScraperTmdb.setSelected(true);
+    }
   }
 
   protected void initDataBindings() {
@@ -543,5 +583,11 @@ public class SettingsPanel extends JPanel {
     AutoBinding<Settings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
     autoBinding_11.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_13 = BeanProperty.create("imdbScrapeForeignLanguage");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_13, cbImdbTranslateableContent, jCheckBoxBeanProperty);
+    autoBinding_12.bind();
   }
 }

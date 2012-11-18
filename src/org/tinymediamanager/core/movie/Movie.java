@@ -21,6 +21,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -48,6 +49,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Movie.
  */
@@ -66,7 +68,7 @@ public class Movie extends AbstractModelObject {
   /** The Constant RATING. */
   protected final static String RATING               = "rating";
 
-  /** The Constant VOTES */
+  /** The Constant VOTES. */
   protected final static String VOTES                = "votes";
 
   /** The Constant YEAR. */
@@ -126,11 +128,17 @@ public class Movie extends AbstractModelObject {
   /** The Constant CERTIFICATION. */
   protected final static String CERTIFICATION        = "certification";
 
+  /** The Constant DATA_SOURCE. */
   protected final static String DATA_SOURCE          = "dataSource";
 
+  /** The Constant MOVIE_FILES. */
   protected final static String MOVIE_FILES          = "movieFiles";
 
+  /** The Constant MEDIA_FILES. */
   protected final static String MEDIA_FILES          = "mediaFiles";
+
+  /** The Constant DATE_ADDED. */
+  protected final static String DATE_ADDED           = "dateAdded";
 
   /** The Constant logger. */
   @XmlTransient
@@ -207,6 +215,9 @@ public class Movie extends AbstractModelObject {
   /** The data source. */
   private String                dataSource;
 
+  /** The date added. */
+  private Date                  dateAdded;
+
   /** The movie files. */
   private List<String>          movieFiles           = new ArrayList<String>();
 
@@ -221,9 +232,11 @@ public class Movie extends AbstractModelObject {
   @Transient
   private List<MovieCast>       castObservable       = ObservableCollections.observableList(cast);
 
+  /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<MediaFile>       mediaFiles           = new ArrayList<MediaFile>();
 
+  /** The media files observable. */
   @Transient
   private List<MediaFile>       mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
@@ -344,15 +357,32 @@ public class Movie extends AbstractModelObject {
 
   }
 
+  /**
+   * Adds the to media files.
+   * 
+   * @param obj
+   *          the obj
+   */
   public void addToMediaFiles(MediaFile obj) {
     mediaFilesObservable.add(obj);
     firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
   }
 
+  /**
+   * Gets the media files.
+   * 
+   * @return the media files
+   */
   public List<MediaFile> getMediaFiles() {
     return this.mediaFilesObservable;
   }
 
+  /**
+   * Removes the from media files.
+   * 
+   * @param obj
+   *          the obj
+   */
   public void removeFromMediaFiles(MediaFile obj) {
     mediaFilesObservable.remove(obj);
     firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
@@ -369,6 +399,12 @@ public class Movie extends AbstractModelObject {
     addToMediaFiles(new MediaFile(getPath(), newFile));
   }
 
+  /**
+   * Adds the to files.
+   * 
+   * @param videoFiles
+   *          the video files
+   */
   public void addToFiles(File[] videoFiles) {
     for (File file : videoFiles) {
       // check if that file exists for that movie
@@ -379,6 +415,12 @@ public class Movie extends AbstractModelObject {
     }
   }
 
+  /**
+   * Sets the movie files.
+   * 
+   * @param newValue
+   *          the new movie files
+   */
   public void setMovieFiles(List<String> newValue) {
     this.movieFiles = newValue;
     firePropertyChange(MOVIE_FILES, null, newValue);
@@ -393,10 +435,21 @@ public class Movie extends AbstractModelObject {
     return this.movieFiles;
   }
 
+  /**
+   * Gets the data source.
+   * 
+   * @return the data source
+   */
   public String getDataSource() {
     return dataSource;
   }
 
+  /**
+   * Sets the data source.
+   * 
+   * @param newValue
+   *          the new data source
+   */
   public void setDataSource(String newValue) {
     String oldValue = this.dataSource;
     this.dataSource = newValue;
@@ -417,6 +470,9 @@ public class Movie extends AbstractModelObject {
 
   }
 
+  /**
+   * Find poster.
+   */
   private void findPoster() {
     String movieFileName = null;
 
@@ -514,6 +570,9 @@ public class Movie extends AbstractModelObject {
     }
   }
 
+  /**
+   * Find fanart.
+   */
   private void findFanart() {
     String movieFileName = null;
 
@@ -588,7 +647,8 @@ public class Movie extends AbstractModelObject {
   public String getFanart() {
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
-    } else {
+    }
+    else {
       return fanart;
     }
   }
@@ -685,7 +745,8 @@ public class Movie extends AbstractModelObject {
   public String getPoster() {
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
-    } else {
+    }
+    else {
       return poster;
     }
   }
@@ -708,10 +769,21 @@ public class Movie extends AbstractModelObject {
     return rating;
   }
 
+  /**
+   * Gets the votes.
+   * 
+   * @return the votes
+   */
   public int getVotes() {
     return votes;
   }
 
+  /**
+   * Sets the votes.
+   * 
+   * @param newValue
+   *          the new votes
+   */
   public void setVotes(int newValue) {
     int oldValue = this.votes;
     this.votes = newValue;
@@ -782,6 +854,8 @@ public class Movie extends AbstractModelObject {
    * 
    * @param path
    *          the path
+   * @param videoFiles
+   *          the video files
    * @return the movie
    */
   public static Movie parseNFO(String path, File[] videoFiles) {
@@ -922,19 +996,15 @@ public class Movie extends AbstractModelObject {
     if (!StringUtils.isEmpty(metadata.getTMDBID())) {
       try {
         setTmdbId(Integer.parseInt(metadata.getTMDBID()));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         setTmdbId(0);
       }
     }
     setYear(metadata.getYear());
     setRating(metadata.getUserRating());
     setVotes(metadata.getVoteCount());
-
-    try {
-      setRuntime(Integer.parseInt(metadata.getRuntime()));
-    } catch (Exception e) {
-      setRuntime(0);
-    }
+    setRuntime(metadata.getRuntime());
 
     setTagline(metadata.getTagline());
     setProductionCompany(metadata.getCompany());
@@ -1220,7 +1290,8 @@ public class Movie extends AbstractModelObject {
             setPoster(FilenameUtils.getName(filename));
           }
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -1258,7 +1329,8 @@ public class Movie extends AbstractModelObject {
             setFanart(FilenameUtils.getName(filename));
           }
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
@@ -1271,7 +1343,8 @@ public class Movie extends AbstractModelObject {
   public void writeNFO() {
     if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
-    } else {
+    }
+    else {
       setNfoFilename(MovieToXbmcNfoConnector.setData(this));
     }
   }
@@ -1393,6 +1466,11 @@ public class Movie extends AbstractModelObject {
     firePropertyChange(CERTIFICATION, null, newValue);
   }
 
+  /**
+   * Gets the checks for rating.
+   * 
+   * @return the checks for rating
+   */
   public boolean getHasRating() {
     if (rating > 0) {
       return true;
@@ -1400,6 +1478,11 @@ public class Movie extends AbstractModelObject {
     return false;
   }
 
+  /**
+   * Gets the genres as string.
+   * 
+   * @return the genres as string
+   */
   public String getGenresAsString() {
     StringBuilder sb = new StringBuilder();
     for (MediaGenres genre : genres) {
@@ -1409,5 +1492,26 @@ public class Movie extends AbstractModelObject {
       sb.append(genre.toString());
     }
     return sb.toString();
+  }
+
+  /**
+   * Gets the date added.
+   * 
+   * @return the date added
+   */
+  public Date getDateAdded() {
+    return dateAdded;
+  }
+
+  /**
+   * Sets the date added.
+   * 
+   * @param newValue
+   *          the new date added
+   */
+  public void setDateAdded(Date newValue) {
+    Date oldValue = this.dateAdded;
+    this.dateAdded = newValue;
+    firePropertyChange(DATE_ADDED, oldValue, newValue);
   }
 }

@@ -58,6 +58,9 @@ public class MovieChooserModel extends AbstractModelObject {
   /** The poster url. */
   private String                 posterUrl;
 
+  /** The tagline. */
+  private String                 tagline;
+
   /** The scraped. */
   private boolean                scraped = false;
 
@@ -193,6 +196,7 @@ public class MovieChooserModel extends AbstractModelObject {
     try {
       metadata = metadataProvider.getMetaData(result);
       setOverview(metadata.getPlot());
+      setTagline(metadata.getTagline());
 
       // poster for preview
       List<MediaArt> mediaArt = metadata.getFanart();
@@ -235,6 +239,16 @@ public class MovieChooserModel extends AbstractModelObject {
    */
   public boolean isScraped() {
     return scraped;
+  }
+
+  public void setTagline(String newValue) {
+    String oldValue = this.tagline;
+    this.tagline = newValue;
+    firePropertyChange("tagline", oldValue, newValue);
+  }
+
+  public String getTagline() {
+    return tagline;
   }
 
 }
