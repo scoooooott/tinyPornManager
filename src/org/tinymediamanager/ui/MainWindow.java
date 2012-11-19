@@ -77,9 +77,11 @@ public class MainWindow extends JFrame {
     setBounds(5, 5, 1100, 700);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("fill:default:grow"), }));
 
-    JTabbedPane tabbedPane = new JTabbedPane();
+    // JTabbedPane tabbedPane = new JTabbedPane();
+    JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
     // tabbedPane.setUI(new TmmTabbedPaneUI());
     // tabbedPane.setTabPlacement(JTabbedPane.LEFT);
     getContentPane().add(tabbedPane, "1, 2, fill, fill");
@@ -88,14 +90,16 @@ public class MainWindow extends JFrame {
     // tabbedPane.addTab("", new
     // ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")),
     // panelMovies, null);
-    tabbedPane.addTab("Movies", panelMovies);
+    // tabbedPane.addTab("Movies", panelMovies);
+    VerticalTextIcon.addTab(tabbedPane, "Movies", panelMovies);
 
     JPanel panelSettings = new SettingsPanel();// JPanel();
     // tabbedPane.addTab("", new
     // ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")),
     // panelSettings,
     // null);
-    tabbedPane.addTab("Settings", panelSettings);
+    // tabbedPane.addTab("Settings", panelSettings);
+    VerticalTextIcon.addTab(tabbedPane, "Settings", panelSettings);
 
     // shutdown listener - to clean database connections safetly
     addWindowListener(new WindowAdapter() {
@@ -108,7 +112,8 @@ public class MainWindow extends JFrame {
           if (cache.exists()) {
             FileUtils.deleteDirectory(cache);
           }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
         }
         Globals.executor.shutdownNow();
         dispose();

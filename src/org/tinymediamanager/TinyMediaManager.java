@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.io.File;
 import java.util.Properties;
@@ -155,11 +156,15 @@ public class TinyMediaManager {
        */
       private void updateProgress(Graphics2D g2, String text) {
         // LOGGER.debug("graphics found");
+        Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
         g2.setComposite(AlphaComposite.Clear);
         g2.fillRect(20, 200, 480, 300);
         g2.setPaintMode();
         g2.setColor(Color.WHITE);
         g2.drawString(text + "...", 20, 300);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
       }
 
       /**
