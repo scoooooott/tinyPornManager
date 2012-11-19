@@ -153,12 +153,10 @@ public class MovieToMpNfoConnector {
       spaceIndex = mp.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
         mp.setOutline(mp.getPlot().substring(0, spaceIndex));
-      }
-      else {
+      } else {
         mp.setOutline(mp.getPlot());
       }
-    }
-    else if (!StringUtils.isEmpty(mp.getPlot())) {
+    } else if (!StringUtils.isEmpty(mp.getPlot())) {
       spaceIndex = mp.getPlot().length();
       mp.setOutline(mp.getPlot().substring(0, spaceIndex));
     }
@@ -183,7 +181,7 @@ public class MovieToMpNfoConnector {
     mp.setDirector(movie.getDirector());
     mp.setCredits(movie.getWriter());
     for (MovieCast cast : movie.getActors()) {
-      mp.addActor(cast.getName(), cast.getCharacter());
+      mp.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
     }
 
     for (MediaGenres genre : movie.getGenres()) {
@@ -228,18 +226,14 @@ public class MovieToMpNfoConnector {
         String xml = sb.toString();
         IOUtils.write(xml, w);
 
-      }
-      catch (JAXBException e) {
+      } catch (JAXBException e) {
         LOGGER.error("setData", e);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("setData", e);
-      }
-      finally {
+      } finally {
         try {
           w.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("setData", e);
         }
       }
@@ -292,7 +286,9 @@ public class MovieToMpNfoConnector {
           // test it this way; else the program will crash
           if (obj instanceof Actor) {
             Actor actor = (Actor) obj;
-            movie.addToCast(new MovieCast(actor.getName(), actor.getRole()));
+            MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
+            cast.setThumb(actor.getThumb());
+            movie.addToCast(cast);
           }
         }
 
@@ -305,17 +301,14 @@ public class MovieToMpNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
+        LOGGER.error("setData", e);
+        return null;
+      } catch (IOException e) {
         LOGGER.error("setData", e);
         return null;
       }
-      catch (IOException e) {
-        LOGGER.error("setData", e);
-        return null;
-      }
-    }
-    catch (JAXBException e) {
+    } catch (JAXBException e) {
       LOGGER.error("setData", e);
       return null;
     }
@@ -350,8 +343,8 @@ public class MovieToMpNfoConnector {
    * @param role
    *          the role
    */
-  public void addActor(String name, String role) {
-    Actor actor = new Actor(name, role);
+  public void addActor(String name, String role, String thumb) {
+    Actor actor = new Actor(name, role, thumb);
     actors.add(actor);
   }
 
@@ -716,6 +709,9 @@ public class MovieToMpNfoConnector {
     /** The role. */
     private String role;
 
+    /** The thumb. */
+    private String thumb;
+
     /**
      * Instantiates a new actor.
      */
@@ -730,9 +726,10 @@ public class MovieToMpNfoConnector {
      * @param role
      *          the role
      */
-    public Actor(String name, String role) {
+    public Actor(String name, String role, String thumb) {
       this.name = name;
       this.role = role;
+      this.thumb = thumb;
     }
 
     /**
@@ -773,6 +770,26 @@ public class MovieToMpNfoConnector {
      */
     public void setRole(String role) {
       this.role = role;
+    }
+
+    /**
+     * Gets the thumb.
+     * 
+     * @return the thumb
+     */
+    @XmlElement(name = "thumb")
+    public String getThumb() {
+      return thumb;
+    }
+
+    /**
+     * Sets the thumb.
+     * 
+     * @param thumb
+     *          the new thumb
+     */
+    public void setThumb(String thumb) {
+      this.thumb = thumb;
     }
 
   }

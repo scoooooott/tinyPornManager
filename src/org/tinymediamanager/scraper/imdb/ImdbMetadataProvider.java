@@ -19,6 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,21 +100,54 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     MediaMetadata md = new MediaMetadata();
     md.setIMDBID(imdbId);
 
-    // build the url
+    ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(Globals.executor);
+    ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(Globals.executor);
+    ExecutorCompletionService<List<MediaArt>> compSvcTmdbArtwork = new ExecutorCompletionService<List<MediaArt>>(Globals.executor);
+
+    // worker for imdb request (/combined)
     StringBuilder sb = new StringBuilder(imdbSite.getSite());
     sb.append("title/");
     sb.append(imdbId);
     sb.append("/combined");
+    Callable<Document> worker = new ImdbWorker(sb.toString());
+    // Future<Document> futureCombined = executor.submit(worker);
+    Future<Document> futureCombined = compSvcImdb.submit(worker);
+
+    // worker for imdb request (/plotsummary)
+    Future<Document> futurePlotsummary = null;
+    if (!Globals.settings.isImdbScrapeForeignLanguage()) {
+      sb = new StringBuilder(imdbSite.getSite());
+      sb.append("title/");
+      sb.append(imdbId);
+      sb.append("/plotsummary");
+
+      worker = new ImdbWorker(sb.toString());
+      // futurePlotsummary = executor.submit(worker);
+      futurePlotsummary = compSvcImdb.submit(worker);
+    }
+
+    // worker for tmdb request
+    Future<MediaMetadata> futureTmdb = null;
+    if (Globals.settings.isImdbScrapeForeignLanguage()) {
+      Callable<MediaMetadata> worker2 = new TmdbWorker(imdbId);
+      // futureTmdb = executor.submit(worker2);
+      futureTmdb = compSvcTmdb.submit(worker2);
+    }
+
+    // worker for artwork
+    Callable<List<MediaArt>> workerArtwork = new TmdbArtworkWorker(imdbId);
+    Future<List<MediaArt>> futureArtwork = compSvcTmdbArtwork.submit(workerArtwork);
 
     Document doc;
-    try {
-      CachedUrl url = new CachedUrl(sb.toString());
-      doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
-    }
-    catch (Exception e) {
-      LOGGER.debug("tried to fetch imdb movie page", e);
-      return md;
-    }
+    doc = futureCombined.get();
+    // try {
+    // CachedUrl url = new CachedUrl(sb.toString());
+    // doc = Jsoup.parse(url.getInputStream(),
+    // imdbSite.getCharset().displayName(), "");
+    // } catch (Exception e) {
+    // LOGGER.debug("tried to fetch imdb movie page", e);
+    // return md;
+    // }
 
     /*
      * title and year have the following structure
@@ -155,8 +191,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
           // original title = title
           md.setOriginalTitle(md.getMediaTitle());
-        }
-        else {
+        } else {
           // try to parse the title out of "title-extra"
           Elements span = element.getElementsByClass("title-extra");
           if (span.size() > 0) {
@@ -203,8 +238,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               float rating = 0;
               try {
                 rating = Float.valueOf(matcher.group(1));
-              }
-              catch (Exception e) {
+              } catch (Exception e) {
               }
               md.setUserRating(rating);
               break;
@@ -219,8 +253,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           int voteCount = 0;
           try {
             voteCount = Integer.parseInt(countAsString);
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
           }
           md.setVoteCount(voteCount);
         }
@@ -270,7 +303,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
          * >See more</a>&nbsp;&raquo; </div></div>
          */
         // tagline
-        if (h5Title.matches("(?i)" + imdbSite.getTagline() + ".*")) {
+        if (h5Title.matches("(?i)" + imdbSite.getTagline() + ".*") && !Globals.settings.isImdbScrapeForeignLanguage()) {
           Elements div = element.getElementsByClass("info-content");
           if (div.size() > 0) {
             Element taglineElement = div.first();
@@ -323,8 +356,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
             int runtime = 0;
             try {
               runtime = Integer.parseInt(runtimeAsString);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
             md.setRuntime(runtime);
           }
@@ -450,8 +482,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               String thumbUrl = img.get(0).attr("src");
               if (thumbUrl.contains("no_photo.png")) {
                 cm.setImageUrl("");
-              }
-              else {
+              } else {
                 thumbUrl = thumbUrl.replaceAll("SX[0-9]{2,4}_", "SX100_");
                 thumbUrl = thumbUrl.replaceAll("SY[0-9]{2,4}_", "SY125_");
                 cm.setImageUrl(thumbUrl);
@@ -495,25 +526,62 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
      * plot from /plotsummary
      */
     // build the url
-    sb = new StringBuilder(imdbSite.getSite());
-    sb.append("title/");
-    sb.append(imdbId);
-    sb.append("/plotsummary");
+    if (!Globals.settings.isImdbScrapeForeignLanguage()) {
+      // sb = new StringBuilder(imdbSite.getSite());
+      // sb.append(imdbSite.getSite());
+      // sb.append("title/");
+      // sb.append(imdbId);
+      // sb.append("/plotsummary");
+      //
+      // doc = null;
+      // try {
+      // CachedUrl url = new CachedUrl(sb.toString());
+      // doc = Jsoup.parse(url.getInputStream(),
+      // imdbSite.getCharset().displayName(), "");
+      // } catch (Exception e) {
+      // LOGGER.debug("tried to fetch imdb plot page", e);
+      // return md;
+      // }
+      doc = null;
+      doc = futurePlotsummary.get();
 
-    doc = null;
+      Elements plotpar = doc.getElementsByClass("plotpar");
+      if (plotpar.size() > 0) {
+        String plot = cleanString(plotpar.get(0).ownText());
+        md.setPlot(plot);
+      }
+    }
+
+    // get data from tmdb?
+    if (Globals.settings.isImdbScrapeForeignLanguage()) {
+      // TmdbMetadataProvider tmdb = TmdbMetadataProvider.getInstance();
+      // MediaMetadata tmdbMd = tmdb.getMetadataForIMDBId(imdbId);
+      MediaMetadata tmdbMd = futureTmdb.get();
+      if (tmdbMd != null) {
+        // title
+        md.setMediaTitle(tmdbMd.getMediaTitle());
+        // tagline
+        md.setTagline(tmdbMd.getTagline());
+        // plot
+        md.setPlot(tmdbMd.getPlot());
+      }
+    }
+
+    // get Artwork from TMDB
     try {
-      CachedUrl url = new CachedUrl(sb.toString());
-      doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
-    }
-    catch (Exception e) {
-      LOGGER.debug("tried to fetch imdb plot page", e);
-      return md;
-    }
+      // TmdbMetadataProvider tmdbMd = TmdbMetadataProvider.getInstance();
+      // List<MediaArt> mediaArt = tmdbMd.getMediaArt(md.getIMDBID());
+      List<MediaArt> mediaArt = futureArtwork.get();
+      if (mediaArt != null && mediaArt.size() > 0) {
+        md.clearMediaArt();
+        md.addMediaArt(mediaArt);
 
-    Elements plotpar = doc.getElementsByClass("plotpar");
-    if (plotpar.size() > 0) {
-      String plot = cleanString(plotpar.get(0).ownText());
-      md.setPlot(plot);
+        // also store tmdbId
+        if ("0".equals(md.getTMDBID())) {
+          md.setTMDBID(String.valueOf(mediaArt.get(0).getTmdbId()));
+        }
+      }
+    } catch (Exception e) {
     }
 
     return md;
@@ -578,27 +646,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     if (result.getMetadata() != null) {
       LOGGER.debug("IMDB: getMetadata(result) from cache: " + result);
       md = result.getMetadata();
-    }
-    else {
+    } else {
       LOGGER.debug("IMDB: getMetadata(result): " + result);
       String imdbId = result.getIMDBId();
       md = getMetadataForIMDBId(imdbId);
-    }
-    // get Artwork from TMDB
-    if (md != null) {
-      try {
-        TmdbMetadataProvider tmdbMd = TmdbMetadataProvider.getInstance();
-        List<MediaArt> mediaArt = tmdbMd.getMediaArt(md.getIMDBID());
-        if (mediaArt != null && mediaArt.size() > 0) {
-          md.clearMediaArt();
-          md.addMediaArt(mediaArt);
-        }
-
-        // also store tmdbId
-        md.setTMDBID(String.valueOf(tmdbMd.getTmdbId(md.getIMDBID())));
-      }
-      catch (Exception e) {
-      }
     }
 
     return md;
@@ -649,8 +700,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     sb.append("find?q=");
     try {
       sb.append(URLEncoder.encode(searchTerm, imdbSite.getCharset().displayName()));
-    }
-    catch (UnsupportedEncodingException ex) {
+    } catch (UnsupportedEncodingException ex) {
       // Failed to encode the movie name for some reason!
       LOGGER.debug("Failed to encode search term: " + searchTerm);
       sb.append(searchTerm);
@@ -663,8 +713,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     try {
       CachedUrl url = new CachedUrl(sb.toString());
       doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.debug("tried to fetch search response", e);
       return result;
     }
@@ -765,7 +814,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       sr.setScore(MetadataUtil.calculateScore(searchTerm, movieName));
 
       result.add(sr);
-
     }
 
     return result;
@@ -825,6 +873,55 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     String newString = oldString.replace(String.valueOf((char) 160), " ");
     // and trim
     return StringUtils.trim(newString);
+  }
+
+  private class ImdbWorker implements Callable<Document> {
+    private String   url;
+    private Document doc = null;
+
+    public ImdbWorker(String url) {
+      this.url = url;
+    }
+
+    @Override
+    public Document call() throws Exception {
+      doc = null;
+      try {
+        CachedUrl cachedUrl = new CachedUrl(url);
+        doc = Jsoup.parse(cachedUrl.getInputStream(), imdbSite.getCharset().displayName(), "");
+      } catch (Exception e) {
+        LOGGER.debug("tried to fetch imdb movie page " + url, e);
+      }
+      return doc;
+    }
+  }
+
+  private class TmdbWorker implements Callable<MediaMetadata> {
+    private String imdbId;
+
+    public TmdbWorker(String imdbId) {
+      this.imdbId = imdbId;
+    }
+
+    @Override
+    public MediaMetadata call() throws Exception {
+      TmdbMetadataProvider tmdb = TmdbMetadataProvider.getInstance();
+      return tmdb.getMetadataForIMDBId(imdbId);
+    }
+  }
+
+  private class TmdbArtworkWorker implements Callable<List<MediaArt>> {
+    private String imdbId;
+
+    public TmdbArtworkWorker(String imdbId) {
+      this.imdbId = imdbId;
+    }
+
+    @Override
+    public List<MediaArt> call() throws Exception {
+      TmdbMetadataProvider tmdbMd = TmdbMetadataProvider.getInstance();
+      return tmdbMd.getMediaArt(imdbId);
+    }
   }
 
 }

@@ -17,6 +17,8 @@ package org.tinymediamanager;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,6 +40,8 @@ public class Globals {
 
   /** The entity manager. */
   public static EntityManager         entityManager;
+
+  public static ExecutorService       executor = Executors.newFixedThreadPool(10);
 
   /**
    * Start database.

@@ -49,6 +49,7 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
+// @XmlType(propOrder = { "title, ..." })
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -147,19 +148,17 @@ public class MovieToXbmcNfoConnector {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
         xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
-      }
-      else {
+      } else {
         xbmc.setOutline(xbmc.getPlot());
       }
-    }
-    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
+    } else if (!StringUtils.isEmpty(xbmc.getPlot())) {
       spaceIndex = xbmc.getPlot().length();
       xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     }
 
     xbmc.setTagline(movie.getTagline());
     xbmc.setRuntime(movie.getRuntime());
-    xbmc.setThumb(movie.getPosterUrl());
+    xbmc.setThumb(movie.getPoster());
     xbmc.setId(movie.getImdbId());
     xbmc.setStudio(movie.getProductionCompany());
 
@@ -177,7 +176,7 @@ public class MovieToXbmcNfoConnector {
     xbmc.setDirector(movie.getDirector());
     xbmc.setCredits(movie.getWriter());
     for (MovieCast cast : movie.getActors()) {
-      xbmc.addActor(cast.getName(), cast.getCharacter());
+      xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
     }
 
     for (MediaGenres genre : movie.getGenres()) {
@@ -222,18 +221,14 @@ public class MovieToXbmcNfoConnector {
         String xml = sb.toString();
         IOUtils.write(xml, w);
 
-      }
-      catch (JAXBException e) {
+      } catch (JAXBException e) {
         LOGGER.error("setData", e);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("setData", e);
-      }
-      finally {
+      } finally {
         try {
           w.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("setData", e);
         }
       }
@@ -268,7 +263,12 @@ public class MovieToXbmcNfoConnector {
         movie.setOverview(xbmc.getPlot());
         movie.setTagline(xbmc.getTagline());
         movie.setRuntime(xbmc.getRuntime());
-        movie.setPosterUrl(xbmc.getThumb());
+        if (xbmc.getThumb().contains("http://")) {
+          movie.setPosterUrl(xbmc.getThumb());
+        } else {
+          movie.setPoster(xbmc.getThumb());
+        }
+
         movie.setImdbId(xbmc.getId());
         movie.setDirector(xbmc.getDirector());
         movie.setWriter(xbmc.getCredits());
@@ -282,7 +282,9 @@ public class MovieToXbmcNfoConnector {
           // test it this way; else the program will crash
           if (obj instanceof Actor) {
             Actor actor = (Actor) obj;
-            movie.addToCast(new MovieCast(actor.getName(), actor.getRole()));
+            MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
+            cast.setThumb(actor.getThumb());
+            movie.addToCast(cast);
           }
         }
 
@@ -295,17 +297,14 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
+        LOGGER.error("setData", e);
+        return null;
+      } catch (IOException e) {
         LOGGER.error("setData", e);
         return null;
       }
-      catch (IOException e) {
-        LOGGER.error("setData", e);
-        return null;
-      }
-    }
-    catch (JAXBException e) {
+    } catch (JAXBException e) {
       LOGGER.error("setData", e);
       return null;
     }
@@ -340,8 +339,8 @@ public class MovieToXbmcNfoConnector {
    * @param role
    *          the role
    */
-  public void addActor(String name, String role) {
-    Actor actor = new Actor(name, role);
+  public void addActor(String name, String role, String thumb) {
+    Actor actor = new Actor(name, role, thumb);
     actors.add(actor);
   }
 
@@ -707,6 +706,9 @@ public class MovieToXbmcNfoConnector {
     /** The role. */
     private String role;
 
+    /** The thumb. */
+    private String thumb;
+
     /**
      * Instantiates a new actor.
      */
@@ -720,10 +722,13 @@ public class MovieToXbmcNfoConnector {
      *          the name
      * @param role
      *          the role
+     * @param thumb
+     *          the thumb
      */
-    public Actor(String name, String role) {
+    public Actor(String name, String role, String thumb) {
       this.name = name;
       this.role = role;
+      this.thumb = thumb;
     }
 
     /**
@@ -764,6 +769,26 @@ public class MovieToXbmcNfoConnector {
      */
     public void setRole(String role) {
       this.role = role;
+    }
+
+    /**
+     * Gets the thumb.
+     * 
+     * @return the thumb
+     */
+    @XmlElement(name = "thumb")
+    public String getThumb() {
+      return thumb;
+    }
+
+    /**
+     * Sets the thumb.
+     * 
+     * @param thumb
+     *          the new thumb
+     */
+    public void setThumb(String thumb) {
+      this.thumb = thumb;
     }
 
   }

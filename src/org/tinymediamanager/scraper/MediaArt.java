@@ -32,6 +32,8 @@ public class MediaArt {
   /** The Constant serialVersionUID. */
   private static final long   serialVersionUID = 1L;
 
+  private int                 tmdbId;
+
   /** The download url. */
   private String              downloadUrl;
 
@@ -158,12 +160,19 @@ public class MediaArt {
     try {
       url = new CachedUrl(getDownloadUrl());
       return url.getInputStream();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOGGER.error("getImageIS", e);
     }
     return null;
 
+  }
+
+  public int getTmdbId() {
+    return tmdbId;
+  }
+
+  public void setTmdbId(int tmdbId) {
+    this.tmdbId = tmdbId;
   }
 
 }

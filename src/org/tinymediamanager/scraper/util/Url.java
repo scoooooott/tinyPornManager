@@ -28,9 +28,14 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
@@ -61,7 +66,11 @@ public class Url {
    */
   public Url(String url) {
     if (client == null) {
-      client = new DefaultHttpClient();
+      SchemeRegistry schemeRegistry = new SchemeRegistry();
+      schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+
+      ClientConnectionManager cm = new PoolingClientConnectionManager(schemeRegistry);
+      client = new DefaultHttpClient(cm);
 
       HttpParams params = client.getParams();
       HttpConnectionParams.setConnectionTimeout(params, 5000);
@@ -159,12 +168,10 @@ public class Url {
         int offset = Globals.settings.getProxyUsername().indexOf("\\");
         String domain = Globals.settings.getProxyUsername().substring(0, offset);
         String username = Globals.settings.getProxyUsername().substring(offset + 1, Globals.settings.getProxyUsername().length());
-        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
-            new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
-      }
-      else {
-        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
-            new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
+      } else {
+        httpClient.getCredentialsProvider()
+            .setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
       }
     }
 
