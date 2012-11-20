@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -41,7 +42,8 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MainWindow.
  */
 public class MainWindow extends JFrame {
-  private final Action      actionExit = new ExitAction();
+  private final Action      actionExit  = new ExitAction();
+  private final Action      actionAbout = new AboutAction();
 
   private static MainWindow instance;
 
@@ -65,6 +67,11 @@ public class MainWindow extends JFrame {
     JMenuItem mntmExit = mnTmm.add(actionExit);
     mntmExit.setText("Exit");
     initialize();
+
+    mnTmm = new JMenu("?");
+    menuBar.add(mnTmm);
+    mntmExit = mnTmm.add(actionAbout);
+    mntmExit.setText("About");
     // setVisible(true);
   }
 
@@ -77,20 +84,19 @@ public class MainWindow extends JFrame {
     setBounds(5, 5, 1100, 700);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:default:grow"), }));
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
     // JTabbedPane tabbedPane = new JTabbedPane();
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
     // tabbedPane.setUI(new TmmTabbedPaneUI());
-    // tabbedPane.setTabPlacement(JTabbedPane.LEFT);
+    tabbedPane.setTabPlacement(JTabbedPane.LEFT);
     getContentPane().add(tabbedPane, "1, 2, fill, fill");
 
     JPanel panelMovies = new MoviePanel();// new JPanel();
     // tabbedPane.addTab("", new
-    // ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")),
+    // ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/movies.png")),
     // panelMovies, null);
-    // tabbedPane.addTab("Movies", panelMovies);
+    // tabbedPane.addTab("M", panelMovies);
     VerticalTextIcon.addTab(tabbedPane, "Movies", panelMovies);
 
     JPanel panelSettings = new SettingsPanel();// JPanel();
@@ -98,7 +104,7 @@ public class MainWindow extends JFrame {
     // ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")),
     // panelSettings,
     // null);
-    // tabbedPane.addTab("Settings", panelSettings);
+    // tabbedPane.addTab("S", panelSettings);
     VerticalTextIcon.addTab(tabbedPane, "Settings", panelSettings);
 
     // shutdown listener - to clean database connections safetly
@@ -112,8 +118,7 @@ public class MainWindow extends JFrame {
           if (cache.exists()) {
             FileUtils.deleteDirectory(cache);
           }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
         }
         Globals.executor.shutdownNow();
         dispose();
@@ -124,13 +129,25 @@ public class MainWindow extends JFrame {
 
   private class ExitAction extends AbstractAction {
     public ExitAction() {
-      putValue(NAME, "SwingAction");
-      putValue(SHORT_DESCRIPTION, "Some short description");
+      // putValue(NAME, "SwingAction");
+      // putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
     public void actionPerformed(ActionEvent e) {
       instance.setVisible(false);
       instance.dispose();
+    }
+  }
+
+  private class AboutAction extends AbstractAction {
+    public AboutAction() {
+      // putValue(NAME, "SwingAction");
+      // putValue(SHORT_DESCRIPTION, "Some short description");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      Dialog aboutDialog = new AboutDialog();
+      aboutDialog.setVisible(true);
     }
   }
 
