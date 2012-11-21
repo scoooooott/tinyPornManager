@@ -52,8 +52,8 @@ import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.lang3.StringUtils;
@@ -338,7 +338,7 @@ public class MoviePanel extends JPanel {
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"),
             RowSpec.decode("fill:default:grow"), }));
 
-    lblMovieBackground = new ImageLabel(false);
+    lblMovieBackground = new ImageLabel(false, true);
     layeredPaneImages.add(lblMovieBackground, "1, 3, 3, 3, fill, fill");
 
     lblMoviePoster = new ImageLabel();
@@ -587,11 +587,12 @@ public class MoviePanel extends JPanel {
 
     TableRowSorter sorter = new TableRowSorter(table.getModel());
     table.setRowSorter(sorter);
-    table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        lblActorThumb.setImageUrl("");
-      }
-    });
+    // table.getSelectionModel().addListSelectionListener(new
+    // ListSelectionListener() {
+    // public void valueChanged(ListSelectionEvent e) {
+    // lblActorThumb.setImageUrl("");
+    // }
+    // });
 
     // moviename column
     table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
@@ -627,7 +628,24 @@ public class MoviePanel extends JPanel {
       if (selectionModel.isSelectionEmpty()) {
         selectionModel.setSelectionInterval(0, 0);
       }
+
+      if (tableCast.getModel().getRowCount() > 0) {
+        tableCast.getSelectionModel().setSelectionInterval(0, 0);
+      } else {
+        lblActorThumb.setImageUrl("");
+      }
     }
+
+    // change to the first actor on movie change
+    tableCast.getModel().addTableModelListener(new TableModelListener() {
+      public void tableChanged(TableModelEvent e) {
+        if (tableCast.getModel().getRowCount() > 0) {
+          tableCast.getSelectionModel().setSelectionInterval(0, 0);
+        } else {
+          lblActorThumb.setImageUrl("");
+        }
+      }
+    });
   }
 
   /**
