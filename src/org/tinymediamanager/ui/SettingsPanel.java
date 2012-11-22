@@ -119,6 +119,7 @@ public class SettingsPanel extends JPanel {
         new RowSpec[] { RowSpec.decode("fill:66px:grow"), }));
 
     JScrollPane scrollPaneMovieDetails = new JScrollPane();
+    scrollPaneMovieDetails.setBorder(null);
     tabMovieSettings.add(scrollPaneMovieDetails, "1, 1, fill, fill");
 
     JPanel panelMovieSettings = new JPanel();

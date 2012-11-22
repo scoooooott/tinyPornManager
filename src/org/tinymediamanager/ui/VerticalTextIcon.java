@@ -40,11 +40,6 @@ import javax.swing.UIManager;
  * 
  */
 public class VerticalTextIcon extends JComponent implements Icon, SwingConstants {
-  // private Font font = UIManager.getFont("Label.font");
-  // private FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
-  // private Font font = new Font("Dialog", 0, 12);
-  // private FontMetrics fm = getFontMetrics(font);
-
   private Font        font;
   private FontMetrics fm;
 
@@ -55,7 +50,7 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
   public VerticalTextIcon(String text, boolean clockwize) {
     Font labelFont = UIManager.getFont("Label.font");
     Map<TextAttribute, Serializable> textAttributes = new HashMap<TextAttribute, Serializable>();
-    // textAttributes.put(TextAttribute.KERNING, TextAttribute.KERNING_ON);
+    textAttributes.put(TextAttribute.KERNING, TextAttribute.KERNING_ON);
     textAttributes.put(TextAttribute.FONT, labelFont);
     font = Font.getFont(textAttributes);
     fm = getFontMetrics(font);
@@ -84,7 +79,8 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     if (clockwize) {
       g2.translate(x + getIconWidth(), y);
       g2.rotate(Math.PI / 2);
-    } else {
+    }
+    else {
       g2.translate(x, y + getIconHeight());
       g2.rotate(-Math.PI / 2);
     }
