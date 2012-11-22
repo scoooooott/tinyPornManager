@@ -140,6 +140,9 @@ public class Movie extends AbstractModelObject {
   /** The Constant DATE_ADDED. */
   protected final static String DATE_ADDED           = "dateAdded";
 
+  /** The Constant WATCHED. */
+  protected final static String WATCHED              = "watched";
+
   /** The Constant logger. */
   @XmlTransient
   private static final Logger   LOGGER               = Logger.getLogger(Movie.class);
@@ -217,6 +220,9 @@ public class Movie extends AbstractModelObject {
 
   /** The date added. */
   private Date                  dateAdded;
+
+  /** The watched. */
+  private boolean               watched;
 
   /** The movie files. */
   private List<String>          movieFiles           = new ArrayList<String>();
@@ -647,8 +653,7 @@ public class Movie extends AbstractModelObject {
   public String getFanart() {
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
-    }
-    else {
+    } else {
       return fanart;
     }
   }
@@ -745,8 +750,7 @@ public class Movie extends AbstractModelObject {
   public String getPoster() {
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
-    }
-    else {
+    } else {
       return poster;
     }
   }
@@ -996,8 +1000,7 @@ public class Movie extends AbstractModelObject {
     if (!StringUtils.isEmpty(metadata.getTMDBID())) {
       try {
         setTmdbId(Integer.parseInt(metadata.getTMDBID()));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         setTmdbId(0);
       }
     }
@@ -1290,8 +1293,7 @@ public class Movie extends AbstractModelObject {
             setPoster(FilenameUtils.getName(filename));
           }
         }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - poster", e);
         setPoster(oldFilename);
       }
@@ -1329,8 +1331,7 @@ public class Movie extends AbstractModelObject {
             setFanart(FilenameUtils.getName(filename));
           }
         }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("writeImages - fanart", e);
         setFanart(oldFilename);
       }
@@ -1343,8 +1344,7 @@ public class Movie extends AbstractModelObject {
   public void writeNFO() {
     if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
-    }
-    else {
+    } else {
       setNfoFilename(MovieToXbmcNfoConnector.setData(this));
     }
   }
@@ -1513,5 +1513,26 @@ public class Movie extends AbstractModelObject {
     Date oldValue = this.dateAdded;
     this.dateAdded = newValue;
     firePropertyChange(DATE_ADDED, oldValue, newValue);
+  }
+
+  /**
+   * Checks if is watched.
+   * 
+   * @return true, if is watched
+   */
+  public boolean isWatched() {
+    return watched;
+  }
+
+  /**
+   * Sets the watched.
+   * 
+   * @param newValue
+   *          the new watched
+   */
+  public void setWatched(boolean newValue) {
+    boolean oldValue = this.watched;
+    this.watched = newValue;
+    firePropertyChange(WATCHED, oldValue, newValue);
   }
 }

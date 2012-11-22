@@ -328,7 +328,7 @@ public class MoviePanel extends JPanel {
     lblRating = new JLabel("");
     panelRating.add(lblRating);
 
-    panelRatingStars = new StarRater(10);
+    panelRatingStars = new StarRater(5, 2);
     panelRating.add(panelRatingStars);
     panelRatingStars.setEnabled(false);
 

@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -51,6 +52,8 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
+@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "fanart", "mpaa", "id", "filenameandpath", "genres",
+    "studio", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */

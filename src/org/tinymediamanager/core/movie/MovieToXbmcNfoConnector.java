@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -49,7 +50,8 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
-// @XmlType(propOrder = { "title, ..." })
+@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "mpaa", "certifications", "id", "filenameandpath",
+    "watched", "playcount", "genres", "studio", "credits", "director", "actors" })
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -117,6 +119,12 @@ public class MovieToXbmcNfoConnector {
   /** the credits. */
   private String              credits;
 
+  /** The watched. */
+  private boolean             watched;
+
+  /** The playcount. */
+  private int                 playcount;
+
   /**
    * Instantiates a new movie to xbmc nfo connector.
    */
@@ -161,6 +169,10 @@ public class MovieToXbmcNfoConnector {
     xbmc.setThumb(movie.getPoster());
     xbmc.setId(movie.getImdbId());
     xbmc.setStudio(movie.getProductionCompany());
+    xbmc.setWatched(movie.isWatched());
+    if (xbmc.isWatched()) {
+      xbmc.setPlaycount(1);
+    }
 
     // certifications
     if (movie.getCertification() != null) {
@@ -276,6 +288,7 @@ public class MovieToXbmcNfoConnector {
         if (!StringUtils.isEmpty(xbmc.getMpaa())) {
           movie.setCertification(Certification.findCertification(xbmc.getMpaa()));
         }
+        movie.setWatched(xbmc.isWatched());
 
         for (Object obj : xbmc.getActors()) {
           // every unused XML element will be shown as an actor - we have to
@@ -338,6 +351,8 @@ public class MovieToXbmcNfoConnector {
    *          the name
    * @param role
    *          the role
+   * @param thumb
+   *          the thumb
    */
   public void addActor(String name, String role, String thumb) {
     Actor actor = new Actor(name, role, thumb);
@@ -691,6 +706,24 @@ public class MovieToXbmcNfoConnector {
    */
   public void setCredits(String credits) {
     this.credits = credits;
+  }
+
+  @XmlElement(name = "watched")
+  public boolean isWatched() {
+    return watched;
+  }
+
+  public void setWatched(boolean watched) {
+    this.watched = watched;
+  }
+
+  @XmlElement(name = "playcount")
+  public int getPlaycount() {
+    return playcount;
+  }
+
+  public void setPlaycount(int playcount) {
+    this.playcount = playcount;
   }
 
   // inner class actor to represent actors

@@ -22,17 +22,8 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.image.MemoryImageSource;
-import java.awt.image.PixelGrabber;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JPanel;
 
@@ -65,20 +56,33 @@ public class StarRater extends JPanel {
 
   /** The number of stars n. */
   private int                stars;
+
+  /**
+   * The factor which the ratin will divided (i.e. rating 0 - 10 displayed with
+   * 5 stars)
+   */
+  private int                factor;
+
   /** The rating [0, n]. 0 = no rating. */
   private float              rating;
+
+  /** The rating which has to be painted (rating / factor) */
+  private float              paintRating;
+
   /** The selection [0, n]. 0 = no selection. */
   private int                selection;
+
   /** The rollover [0, n]. 0 = no rollover. */
   private int                rollover;
   /** True for clicked this time. */
+
   private boolean            done;
 
   /**
    * The constructor.
    */
   public StarRater() {
-    this(5);
+    this(5, 1);
   }
 
   /**
@@ -87,8 +91,8 @@ public class StarRater extends JPanel {
    * @param stars
    *          The number of stars n.
    */
-  public StarRater(int stars) {
-    this(stars, 0);
+  public StarRater(int stars, int factor) {
+    this(stars, factor, 0f);
   }
 
   /**
@@ -99,8 +103,8 @@ public class StarRater extends JPanel {
    * @param rating
    *          The rating [0, n]. 0 = no rating.
    */
-  public StarRater(int stars, float rating) {
-    this(stars, rating, 0);
+  public StarRater(int stars, int factor, float rating) {
+    this(stars, factor, rating, 0);
   }
 
   /**
@@ -113,10 +117,16 @@ public class StarRater extends JPanel {
    * @param selection
    *          The selection [0, n]. 0 = no selection.
    */
-  public StarRater(int stars, float rating, int selection) {
+  public StarRater(int stars, int factor, float rating, int selection) {
     this.stars = stars;
     this.rating = rating;
     this.selection = selection;
+    if (factor > 0) {
+      this.factor = factor;
+    } else {
+      this.factor = 1;
+    }
+    this.paintRating = this.rating / this.factor;
     this.rollover = 0;
     this.done = false;
 
@@ -200,6 +210,7 @@ public class StarRater extends JPanel {
    */
   public void setRating(float rating) {
     this.rating = rating;
+    this.paintRating = this.rating / this.factor;
     repaint();
   }
 
@@ -248,10 +259,17 @@ public class StarRater extends JPanel {
       int x = 0;
       for (int i = 0; i < stars; i++) {
         g.drawImage(STAR_BACKGROUND_IMAGE, x, 0, null);
-        if (rating > i) {
-          int dw = (rating >= (i + 1)) ? w : Math.round((rating - i) * w);
+        if (paintRating > i) {
+          int dw = (paintRating >= (i + 1)) ? w : Math.round((paintRating - i) * w);
           g.drawImage(STAR_FOREGROUND_IMAGE, x, 0, x + dw, h, 0, 0, dw, h, null);
         }
+
+        // if (rating > i) {
+        // int dw = (rating >= (i + 1)) ? w : Math.round((rating - i) * w);
+        // g.drawImage(STAR_FOREGROUND_IMAGE, x, 0, x + dw, h, 0, 0, dw, h,
+        // null);
+        // }
+
         // if (selection > i) {
         // g.drawImage(STAR_SELECTION_IMAGE, x, 0, null);
         // }
@@ -283,77 +301,77 @@ public class StarRater extends JPanel {
     listeners.remove(listener);
   }
 
-  /**
-   * Converts an image to a compressed byte array. GZIPs the image to reduce the
-   * size. Use compressedByteArrayToImage(byte[] data) to retrieve the original
-   * image. The image is not recognizable as image from standard tools.
-   * 
-   * @param image
-   *          The image to convert.
-   * @return The byte array.
-   * @throws IOException
-   *           if something goes wrong.
-   */
-  public byte[] imageToCompressedByteArray(Image image) throws IOException {
-    // get image size
-    int width = image.getWidth(null);
-    int height = image.getHeight(null);
+  // /**
+  // * Converts an image to a compressed byte array. GZIPs the image to reduce
+  // the
+  // * size. Use compressedByteArrayToImage(byte[] data) to retrieve the
+  // original
+  // * image. The image is not recognizable as image from standard tools.
+  // *
+  // * @param image
+  // * The image to convert.
+  // * @return The byte array.
+  // * @throws IOException
+  // * if something goes wrong.
+  // */
+  // public byte[] imageToCompressedByteArray(Image image) throws IOException {
+  // // get image size
+  // int width = image.getWidth(null);
+  // int height = image.getHeight(null);
+  //
+  // // store image data as raw int values
+  // try {
+  // int[] imageSource = new int[width * height];
+  // PixelGrabber pg = new PixelGrabber(image, 0, 0, width, height, imageSource,
+  // 0, width);
+  // pg.grabPixels();
+  //
+  // // zip data
+  // ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+  // GZIPOutputStream zippedStream = new GZIPOutputStream(byteStream);
+  // ObjectOutputStream objectStream = new ObjectOutputStream(zippedStream);
+  // objectStream.writeShort(width);
+  // objectStream.writeShort(height);
+  // objectStream.writeObject(imageSource);
+  // objectStream.flush();
+  // objectStream.close();
+  // return byteStream.toByteArray();
+  // } catch (Exception e) {
+  // throw new IOException("Error storing image in object: " + e);
+  // }
+  // }
+  //
+  // /**
+  // * Converts a byte array to an image that has previously been converted with
+  // * imageToCompressedByteArray(Image image). The image is not recognizable as
+  // * image from standard tools.
+  // *
+  // * @param data
+  // * The image.
+  // * @return The image.
+  // */
+  // public static Image compressedByteArrayToImage(byte[] data) {
+  // try {
+  // // unzip data
+  // ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
+  // GZIPInputStream zippedStream = new GZIPInputStream(byteStream);
+  // ObjectInputStream objectStream = new ObjectInputStream(zippedStream);
+  // int width = objectStream.readShort();
+  // int height = objectStream.readShort();
+  // int[] imageSource = (int[]) objectStream.readObject();
+  // objectStream.close();
+  //
+  // // create image
+  // MemoryImageSource mis = new MemoryImageSource(width, height, imageSource,
+  // 0, width);
+  // return Toolkit.getDefaultToolkit().createImage(mis);
+  // } catch (Exception e) {
+  // return null;
+  // }
+  // }
 
-    // store image data as raw int values
-    try {
-      int[] imageSource = new int[width * height];
-      PixelGrabber pg = new PixelGrabber(image, 0, 0, width, height, imageSource, 0, width);
-      pg.grabPixels();
-
-      // zip data
-      ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-      GZIPOutputStream zippedStream = new GZIPOutputStream(byteStream);
-      ObjectOutputStream objectStream = new ObjectOutputStream(zippedStream);
-      objectStream.writeShort(width);
-      objectStream.writeShort(height);
-      objectStream.writeObject(imageSource);
-      objectStream.flush();
-      objectStream.close();
-      return byteStream.toByteArray();
-    }
-    catch (Exception e) {
-      throw new IOException("Error storing image in object: " + e);
-    }
-  }
-
-  /**
-   * Converts a byte array to an image that has previously been converted with
-   * imageToCompressedByteArray(Image image). The image is not recognizable as
-   * image from standard tools.
-   * 
-   * @param data
-   *          The image.
-   * @return The image.
-   */
-  public static Image compressedByteArrayToImage(byte[] data) {
-    try {
-      // unzip data
-      ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
-      GZIPInputStream zippedStream = new GZIPInputStream(byteStream);
-      ObjectInputStream objectStream = new ObjectInputStream(zippedStream);
-      int width = objectStream.readShort();
-      int height = objectStream.readShort();
-      int[] imageSource = (int[]) objectStream.readObject();
-      objectStream.close();
-
-      // create image
-      MemoryImageSource mis = new MemoryImageSource(width, height, imageSource, 0, width);
-      return Toolkit.getDefaultToolkit().createImage(mis);
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
-  private static final Image STAR_BACKGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(
-                                                       MainWindow.class.getResource("/org/tinymediamanager/ui/images/16.png"));
-  private static final Image STAR_FOREGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(
-                                                       MainWindow.class.getResource("/org/tinymediamanager/ui/images/mark16.png"));
+  private static final Image STAR_BACKGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/16.png"));
+  private static final Image STAR_FOREGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/mark16.png"));
 
   // /** The image. */
   // private static final Image STAR_BACKGROUND_IMAGE =
