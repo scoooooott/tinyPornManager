@@ -22,6 +22,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
@@ -67,20 +68,16 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     Color oldColor = g.getColor();
     AffineTransform oldTransform = g2.getTransform();
 
-    // Object oldAAValue =
-    // g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
-    // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-    // RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-    // RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+    Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
 
     g.setFont(font);
     g.setColor(Color.black);
     if (clockwize) {
       g2.translate(x + getIconWidth(), y);
       g2.rotate(Math.PI / 2);
-    }
-    else {
+    } else {
       g2.translate(x, y + getIconHeight());
       g2.rotate(-Math.PI / 2);
     }
@@ -90,7 +87,7 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     g.setFont(oldFont);
     g.setColor(oldColor);
     g2.setTransform(oldTransform);
-    // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
   }
 
   public int getIconWidth() {

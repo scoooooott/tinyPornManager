@@ -20,10 +20,8 @@ import java.util.Properties;
 
 public class ReleaseInfo {
   private static String version;
-
-  public static String getVersion() {
-    return version;
-  }
+  private static String build;
+  private static String buildDate;
 
   static {
     try {
@@ -31,9 +29,23 @@ public class ReleaseInfo {
       Properties releaseInfoProp = new Properties();
       releaseInfoProp.load(fileInputStream);
       version = releaseInfoProp.getProperty("version");
+      build = releaseInfoProp.getProperty("build");
+      buildDate = releaseInfoProp.getProperty("date");
     } catch (Exception e) {
 
       version = new String("");
     }
+  }
+
+  public static String getVersion() {
+    return version;
+  }
+
+  public static String getBuild() {
+    return build;
+  }
+
+  public static String getBuildDate() {
+    return buildDate;
   }
 }

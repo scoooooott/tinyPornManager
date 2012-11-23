@@ -71,12 +71,10 @@ public class TinyMediaManager {
             if (g2 != null) {
               Font font = new Font("Dialog", Font.PLAIN, 14);
               g2.setFont(font);
-            }
-            else {
+            } else {
               LOGGER.debug("got no graphics from splash");
             }
-          }
-          else {
+          } else {
             LOGGER.debug("no splash found");
           }
           long timeStart = System.currentTimeMillis();
@@ -125,11 +123,10 @@ public class TinyMediaManager {
           if ((timeEnd - timeStart) > 3000) {
             try {
               Thread.sleep(3000 - (timeEnd - timeStart));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
           }
-          MainWindow window = new MainWindow("tinyMediaManager " + org.tinymediamanager.ReleaseInfo.getVersion());
+          MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
 
           if (g2 != null) {
             updateProgress(g2, "finished starting");
@@ -138,11 +135,9 @@ public class TinyMediaManager {
 
           window.setVisible(true);
 
-        }
-        catch (javax.persistence.PersistenceException e) {
+        } catch (javax.persistence.PersistenceException e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
         }
@@ -184,6 +179,7 @@ public class TinyMediaManager {
         props.setProperty("windowTitleFont", "Dialog bold 12");
         props.setProperty("subTextFont", "Dialog 10");
         props.put("windowDecoration", "system");
+        props.put("logoString", "");
 
         // Get the look and feel class name
         com.jtattoo.plaf.luna.LunaLookAndFeel.setTheme(props);
