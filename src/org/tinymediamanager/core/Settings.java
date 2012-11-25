@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.movie.MovieConnectors;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.core.movie.MovieScrapers;
@@ -254,6 +255,8 @@ public class Settings extends AbstractModelObject {
    *          the path
    */
   public void removeMovieDataSources(String path) {
+    MovieList movieList = MovieList.getInstance();
+    movieList.removeDatasource(path);
     movieDataSources.remove(path);
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
   }

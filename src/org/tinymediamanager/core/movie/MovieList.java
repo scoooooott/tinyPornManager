@@ -24,6 +24,7 @@ import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
@@ -89,6 +90,22 @@ public class MovieList extends AbstractModelObject {
     movie.setDateAdded(new Date());
     firePropertyChange("movies", null, movieList);
     firePropertyChange("movieCount", oldValue, movieList.size());
+  }
+
+  public void removeDatasource(String path) {
+    if (StringUtils.isEmpty(path)) {
+      return;
+    }
+
+    for (int i = movieList.size() - 1; i >= 0; i--) {
+      Movie movie = movieList.get(i);
+      if (path.equals(movie.getDataSource())) {
+        movieList.remove(movie);
+        Globals.entityManager.getTransaction().begin();
+        Globals.entityManager.remove(movie);
+        Globals.entityManager.getTransaction().commit();
+      }
+    }
   }
 
   /**

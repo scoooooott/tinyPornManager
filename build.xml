@@ -56,10 +56,9 @@
 	</target>
 
 	<target name='package-app' depends='create_run_jar'>
+		<delete dir="dist"/>
 		
     <!-- getdown -->
-    <delete dir="dist/getdown/lib" />
-    <delete dir="dist/getdown" />
     <mkdir dir="dist/getdown" />
     <mkdir dir="dist/getdown/lib" />
     <copy todir="dist/getdown/lib">
@@ -76,12 +75,13 @@
     <digest appdir="dist/getdown"/>
 		
 		<!-- Mac OSX -->
+		<mkdir dir="dist/mac" />
 		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="AppBundler/jarbundler-2.2.0.jar" />
 		<jarbundler dir="dist/mac" name="tinyMediaManager" icon="AppBundler/tmm.icns" mainclass="com.threerings.getdown.launcher.Getdown" arguments="." 
       bundleid="org.tinyMediaManager.tinymediamanager" infostring="tinyMediaManager" jvmversion="1.6+" shortname="tMM" workingdirectory="$JAVAROOT" vmoptions="-Dapple.awt.graphics.UseQuartz=true">
-      <jarfileset dir=".">
+<!--      <jarfileset dir=".">
 			  <include name="**/objectdb.conf" />
-			</jarfileset>
+			</jarfileset> -->
 			
 			<jarfileset dir="AppBundler">
         <include name="**/getdown.jar" />
@@ -100,13 +100,12 @@
 
 		</jarbundler>		
 		<copy file ="AppBundler/JavaApplicationStub" todir="dist/mac/tinyMediaManager.app/Contents/MacOS" />
+		<zip destfile="dist/tmm_${version}_r${build.number}_mac.zip" basedir="dist/mac"/>
 		
 		<!-- Windows -->
 		<property name="launch4j.dir" location="AppBundler/launch4j" />
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask"  classpath="${launch4j.dir}/launch4j.jar
 		        :${launch4j.dir}/lib/xstream.jar" />
-		<delete dir="dist/win/lib" />
-		<delete dir="dist/win" />
 		<mkdir dir="dist/win" />
 		<mkdir dir="dist/win/lib" />
     <launch4j configFile="AppBundler/launch4j.xml" />
@@ -122,10 +121,9 @@
 		<copy file="AppBundler/LICENSE" todir="dist/win" />
 		<copy file="AppBundler/splashscreen.png" todir="dist/win" />
 		<copy file="AppBundler/tmm.png" todir="dist/win" />
+		<zip destfile="dist/tmm_${version}_r${build.number}_win.zip" basedir="dist/win"/>
 				
 		<!-- Linux -->
-		<delete dir="dist/linux/lib" />
-    <delete dir="dist/linux" />
     <mkdir dir="dist/linux" />
 		<mkdir dir="dist/linux/lib" />
     <copy todir="dist/linux/lib">
@@ -142,6 +140,8 @@
 		<chmod file="dist/linux/tinyMediaManager.sh" perm="ugo+rx"/>
 		<copy file="AppBundler/tmm.png" todir="dist/linux" />
 		<copy file="AppBundler/splashscreen.png" todir="dist/linux" />
+		<tar destfile="dist/tmm_${version}_r${build.number}_linux.tar" basedir="dist/linux"/>
+		<gzip destfile="dist/tmm_${version}_r${build.number}_linux.tar.gz" src="dist/tmm_${version}_r${build.number}_linux.tar"/>
 				
 	</target>
 	

@@ -23,11 +23,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
-import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -41,7 +37,7 @@ import javax.swing.UIManager;
  * 
  */
 public class VerticalTextIcon extends JComponent implements Icon, SwingConstants {
-  private Font        font;
+  // private Font font;
   private FontMetrics fm;
 
   private String      text;
@@ -49,11 +45,13 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
   private boolean     clockwize;
 
   public VerticalTextIcon(String text, boolean clockwize) {
-    Font labelFont = UIManager.getFont("Label.font");
-    Map<TextAttribute, Serializable> textAttributes = new HashMap<TextAttribute, Serializable>();
-    textAttributes.put(TextAttribute.KERNING, TextAttribute.KERNING_ON);
-    textAttributes.put(TextAttribute.FONT, labelFont);
-    font = Font.getFont(textAttributes);
+    // Font labelFont = UIManager.getFont("Label.font");
+    // Map<TextAttribute, Serializable> textAttributes = new
+    // HashMap<TextAttribute, Serializable>();
+    // textAttributes.put(TextAttribute.KERNING, TextAttribute.KERNING_ON);
+    // textAttributes.put(TextAttribute.FONT, labelFont);
+    // font = Font.getFont(textAttributes);
+    Font font = UIManager.getFont("Label.font");
     fm = getFontMetrics(font);
 
     this.text = text;
@@ -64,27 +62,29 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
 
   public void paintIcon(Component c, Graphics g, int x, int y) {
     Graphics2D g2 = (Graphics2D) g;
-    Font oldFont = g.getFont();
+    // Font oldFont = g.getFont();
+    // Font font = c.getFont();
     Color oldColor = g.getColor();
     AffineTransform oldTransform = g2.getTransform();
 
     Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 
-    g.setFont(font);
+    // g.setFont(font);
     g.setColor(Color.black);
     if (clockwize) {
       g2.translate(x + getIconWidth(), y);
       g2.rotate(Math.PI / 2);
-    } else {
+    }
+    else {
       g2.translate(x, y + getIconHeight());
       g2.rotate(-Math.PI / 2);
     }
 
     g.drawString(text, 0, fm.getLeading() + fm.getAscent());
 
-    g.setFont(oldFont);
+    // g.setFont(oldFont);
     g.setColor(oldColor);
     g2.setTransform(oldTransform);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);

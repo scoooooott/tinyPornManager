@@ -18,7 +18,6 @@ package org.tinymediamanager.core.movie;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +32,6 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -48,6 +46,8 @@ import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.util.CachedUrl;
+
+import com.moviejukebox.themoviedb.model.ArtworkType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -653,7 +653,8 @@ public class Movie extends AbstractModelObject {
   public String getFanart() {
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
-    } else {
+    }
+    else {
       return fanart;
     }
   }
@@ -750,7 +751,8 @@ public class Movie extends AbstractModelObject {
   public String getPoster() {
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
-    } else {
+    }
+    else {
       return poster;
     }
   }
@@ -1000,7 +1002,8 @@ public class Movie extends AbstractModelObject {
     if (!StringUtils.isEmpty(metadata.getTMDBID())) {
       try {
         setTmdbId(Integer.parseInt(metadata.getTMDBID()));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         setTmdbId(0);
       }
     }
@@ -1243,98 +1246,93 @@ public class Movie extends AbstractModelObject {
 
     // poster
     if (poster && !StringUtils.isEmpty(getPosterUrl())) {
-      try {
-        int i = 0;
-        for (MoviePosterNaming name : Globals.settings.getMoviePosterFilenames()) {
-          if (++i == 1) {
-            oldFilename = getPoster();
-            setPoster("");
-          }
-          url = new CachedUrl(getPosterUrl());
-          // filename = this.path + File.separator + "folder.jpg";
-          filename = this.path + File.separator;
-          switch (name) {
-            case FILENAME_TBN:
-              filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", ".tbn");
-              break;
-
-            case FILENAME_JPG:
-              filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", ".jpg");
-              break;
-
-            case MOVIE_JPG:
-              filename = filename + "movie.jpg";
-              break;
-
-            case MOVIE_TBN:
-              filename = filename + "movie.tbn";
-              break;
-
-            case POSTER_JPG:
-              filename = filename + "poster.jpg";
-              break;
-
-            case POSTER_TBN:
-              filename = filename + "poster.tbn";
-              break;
-
-            case FOLDER_JPG:
-              filename = filename + "folder.jpg";
-              break;
-          }
-          LOGGER.debug("writing poster " + filename);
-          outputStream = new FileOutputStream(filename);
-          is = url.getInputStream();
-          IOUtils.copy(is, outputStream);
-          outputStream.close();
-          is.close();
-          if (i == 1) {
-            LOGGER.debug("set poster " + FilenameUtils.getName(filename));
-            setPoster(FilenameUtils.getName(filename));
-          }
+      // try {
+      int i = 0;
+      for (MoviePosterNaming name : Globals.settings.getMoviePosterFilenames()) {
+        boolean firstImage = false;
+        if (++i == 1) {
+          firstImage = true;
         }
-      } catch (IOException e) {
-        LOGGER.error("writeImages - poster", e);
-        setPoster(oldFilename);
+
+        filename = this.path + File.separator;
+        switch (name) {
+          case FILENAME_TBN:
+            filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", ".tbn");
+            break;
+
+          case FILENAME_JPG:
+            filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", ".jpg");
+            break;
+
+          case MOVIE_JPG:
+            filename = filename + "movie.jpg";
+            break;
+
+          case MOVIE_TBN:
+            filename = filename + "movie.tbn";
+            break;
+
+          case POSTER_JPG:
+            filename = filename + "poster.jpg";
+            break;
+
+          case POSTER_TBN:
+            filename = filename + "poster.tbn";
+            break;
+
+          case FOLDER_JPG:
+            filename = filename + "folder.jpg";
+            break;
+        }
+
+        // get image in thread
+        MovieImageFetcher task = new MovieImageFetcher(this, getPosterUrl(), ArtworkType.POSTER, filename, firstImage);
+        Globals.executor.execute(task);
       }
     }
 
     // fanart
     if (fanart && !StringUtils.isEmpty(getFanartUrl())) {
-      try {
-        int i = 0;
-        for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
-          if (++i == 1) {
-            oldFilename = getFanart();
-            setFanart("");
-          }
-          url = new CachedUrl(getFanartUrl());
-          // filename = this.path + File.separator + "fanart.jpg";
-          filename = this.path + File.separator;
-          switch (name) {
-            case FILENAME_JPG:
-              filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", "-fanart.jpg");
-              break;
-
-            case FANART_JPG:
-              filename = filename + "fanart.jpg";
-              break;
-          }
-          LOGGER.debug("writing fanart " + filename);
-          outputStream = new FileOutputStream(filename);
-          is = url.getInputStream();
-          IOUtils.copy(is, outputStream);
-          outputStream.close();
-          is.close();
-          if (i == 1) {
-            LOGGER.debug("set poster " + FilenameUtils.getName(filename));
-            setFanart(FilenameUtils.getName(filename));
-          }
+      // try {
+      int i = 0;
+      for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
+        boolean firstImage = false;
+        if (++i == 1) {
+          firstImage = true;
+          // oldFilename = getFanart();
+          // setFanart("");
         }
-      } catch (IOException e) {
-        LOGGER.error("writeImages - fanart", e);
-        setFanart(oldFilename);
+        // url = new CachedUrl(getFanartUrl());
+        // filename = this.path + File.separator + "fanart.jpg";
+        filename = this.path + File.separator;
+        switch (name) {
+          case FILENAME_JPG:
+            filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", "-fanart.jpg");
+            break;
+
+          case FANART_JPG:
+            filename = filename + "fanart.jpg";
+            break;
+        }
+        // get image in thread
+        MovieImageFetcher task = new MovieImageFetcher(this, getFanartUrl(), ArtworkType.BACKDROP, filename, firstImage);
+        Globals.executor.execute(task);
+        // LOGGER.debug("writing fanart " + filename);
+        // outputStream = new FileOutputStream(filename);
+        // is = url.getInputStream();
+        // IOUtils.copy(is, outputStream);
+        // outputStream.close();
+        // is.close();
+        // if (i == 1) {
+        // LOGGER.debug("set poster " + FilenameUtils.getName(filename));
+        // setFanart(FilenameUtils.getName(filename));
+        // }
       }
+      // }
+      // catch (IOException e) {
+      // LOGGER.error("writeImages - fanart", e);
+      // setFanart(oldFilename);
+      // }
     }
   }
 
@@ -1344,7 +1342,8 @@ public class Movie extends AbstractModelObject {
   public void writeNFO() {
     if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
-    } else {
+    }
+    else {
       setNfoFilename(MovieToXbmcNfoConnector.setData(this));
     }
   }
@@ -1397,7 +1396,7 @@ public class Movie extends AbstractModelObject {
   /**
    * Save to db.
    */
-  public void saveToDb() {
+  public synchronized void saveToDb() {
     // update DB
     Globals.entityManager.getTransaction().begin();
     Globals.entityManager.persist(this);

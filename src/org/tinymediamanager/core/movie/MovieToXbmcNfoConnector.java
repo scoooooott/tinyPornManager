@@ -45,13 +45,14 @@ import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieToXbmcNfoConnector.
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
-@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "mpaa", "certifications", "id", "filenameandpath",
-    "watched", "playcount", "genres", "studio", "credits", "director", "actors" })
+@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "mpaa",
+    "certifications", "id", "tmdbId", "filenameandpath", "watched", "playcount", "genres", "studio", "credits", "director", "actors" })
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -92,6 +93,9 @@ public class MovieToXbmcNfoConnector {
 
   /** The id. */
   private String              id;
+
+  /** The tmdbid. */
+  private int                 tmdbId;
 
   /** The filenameandpath. */
   private String              filenameandpath;
@@ -156,10 +160,12 @@ public class MovieToXbmcNfoConnector {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
         xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
-      } else {
+      }
+      else {
         xbmc.setOutline(xbmc.getPlot());
       }
-    } else if (!StringUtils.isEmpty(xbmc.getPlot())) {
+    }
+    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
       spaceIndex = xbmc.getPlot().length();
       xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     }
@@ -168,6 +174,7 @@ public class MovieToXbmcNfoConnector {
     xbmc.setRuntime(movie.getRuntime());
     xbmc.setThumb(movie.getPoster());
     xbmc.setId(movie.getImdbId());
+    xbmc.setTmdbId(movie.getTmdbId());
     xbmc.setStudio(movie.getProductionCompany());
     xbmc.setWatched(movie.isWatched());
     if (xbmc.isWatched()) {
@@ -233,14 +240,18 @@ public class MovieToXbmcNfoConnector {
         String xml = sb.toString();
         IOUtils.write(xml, w);
 
-      } catch (JAXBException e) {
+      }
+      catch (JAXBException e) {
         LOGGER.error("setData", e);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("setData", e);
-      } finally {
+      }
+      finally {
         try {
           w.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.error("setData", e);
         }
       }
@@ -277,11 +288,13 @@ public class MovieToXbmcNfoConnector {
         movie.setRuntime(xbmc.getRuntime());
         if (xbmc.getThumb().contains("http://")) {
           movie.setPosterUrl(xbmc.getThumb());
-        } else {
+        }
+        else {
           movie.setPoster(xbmc.getThumb());
         }
 
         movie.setImdbId(xbmc.getId());
+        movie.setTmdbId(xbmc.getTmdbId());
         movie.setDirector(xbmc.getDirector());
         movie.setWriter(xbmc.getCredits());
         movie.setProductionCompany(xbmc.getStudio());
@@ -310,14 +323,17 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      } catch (FileNotFoundException e) {
-        LOGGER.error("setData", e);
-        return null;
-      } catch (IOException e) {
+      }
+      catch (FileNotFoundException e) {
         LOGGER.error("setData", e);
         return null;
       }
-    } catch (JAXBException e) {
+      catch (IOException e) {
+        LOGGER.error("setData", e);
+        return null;
+      }
+    }
+    catch (JAXBException e) {
       LOGGER.error("setData", e);
       return null;
     }
@@ -708,22 +724,64 @@ public class MovieToXbmcNfoConnector {
     this.credits = credits;
   }
 
+  /**
+   * Checks if is watched.
+   * 
+   * @return true, if is watched
+   */
   @XmlElement(name = "watched")
   public boolean isWatched() {
     return watched;
   }
 
+  /**
+   * Sets the watched.
+   * 
+   * @param watched
+   *          the new watched
+   */
   public void setWatched(boolean watched) {
     this.watched = watched;
   }
 
+  /**
+   * Gets the playcount.
+   * 
+   * @return the playcount
+   */
   @XmlElement(name = "playcount")
   public int getPlaycount() {
     return playcount;
   }
 
+  /**
+   * Sets the playcount.
+   * 
+   * @param playcount
+   *          the new playcount
+   */
   public void setPlaycount(int playcount) {
     this.playcount = playcount;
+  }
+
+  /**
+   * Gets the tmdb id.
+   * 
+   * @return the tmdb id
+   */
+  @XmlElement(name = "tmdbid")
+  public int getTmdbId() {
+    return tmdbId;
+  }
+
+  /**
+   * Sets the tmdb id.
+   * 
+   * @param tmdbId
+   *          the new tmdb id
+   */
+  public void setTmdbId(int tmdbId) {
+    this.tmdbId = tmdbId;
   }
 
   // inner class actor to represent actors

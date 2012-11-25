@@ -191,7 +191,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
           // original title = title
           md.setOriginalTitle(md.getMediaTitle());
-        } else {
+        }
+        else {
           // try to parse the title out of "title-extra"
           Elements span = element.getElementsByClass("title-extra");
           if (span.size() > 0) {
@@ -238,7 +239,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               float rating = 0;
               try {
                 rating = Float.valueOf(matcher.group(1));
-              } catch (Exception e) {
+              }
+              catch (Exception e) {
               }
               md.setUserRating(rating);
               break;
@@ -253,7 +255,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           int voteCount = 0;
           try {
             voteCount = Integer.parseInt(countAsString);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
           }
           md.setVoteCount(voteCount);
         }
@@ -356,7 +359,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
             int runtime = 0;
             try {
               runtime = Integer.parseInt(runtimeAsString);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
             }
             md.setRuntime(runtime);
           }
@@ -482,7 +486,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               String thumbUrl = img.get(0).attr("src");
               if (thumbUrl.contains("no_photo.png")) {
                 cm.setImageUrl("");
-              } else {
+              }
+              else {
                 thumbUrl = thumbUrl.replaceAll("SX[0-9]{2,4}_", "SX100_");
                 thumbUrl = thumbUrl.replaceAll("SY[0-9]{2,4}_", "SY125_");
                 cm.setImageUrl(thumbUrl);
@@ -577,11 +582,12 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         md.addMediaArt(mediaArt);
 
         // also store tmdbId
-        if ("0".equals(md.getTMDBID())) {
+        if (StringUtils.isEmpty(md.getTMDBID())) {
           md.setTMDBID(String.valueOf(mediaArt.get(0).getTmdbId()));
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     return md;
@@ -646,7 +652,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     if (result.getMetadata() != null) {
       LOGGER.debug("IMDB: getMetadata(result) from cache: " + result);
       md = result.getMetadata();
-    } else {
+    }
+    else {
       LOGGER.debug("IMDB: getMetadata(result): " + result);
       String imdbId = result.getIMDBId();
       md = getMetadataForIMDBId(imdbId);
@@ -700,7 +707,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     sb.append("find?q=");
     try {
       sb.append(URLEncoder.encode(searchTerm, imdbSite.getCharset().displayName()));
-    } catch (UnsupportedEncodingException ex) {
+    }
+    catch (UnsupportedEncodingException ex) {
       // Failed to encode the movie name for some reason!
       LOGGER.debug("Failed to encode search term: " + searchTerm);
       sb.append(searchTerm);
@@ -713,7 +721,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     try {
       CachedUrl url = new CachedUrl(sb.toString());
       doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.debug("tried to fetch search response", e);
       return result;
     }
@@ -889,7 +898,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       try {
         CachedUrl cachedUrl = new CachedUrl(url);
         doc = Jsoup.parse(cachedUrl.getInputStream(), imdbSite.getCharset().displayName(), "");
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.debug("tried to fetch imdb movie page " + url, e);
       }
       return doc;

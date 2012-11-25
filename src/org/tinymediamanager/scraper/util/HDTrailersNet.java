@@ -9,7 +9,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.tinymediamanager.core.movie.Movie;
 
-public class HDTrailerNet {
+public class HDTrailersNet {
 
   public static void getTrailer(Movie movie) {
     try {

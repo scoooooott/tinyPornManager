@@ -42,8 +42,9 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MainWindow.
  */
 public class MainWindow extends JFrame {
-  private final Action      actionExit  = new ExitAction();
-  private final Action      actionAbout = new AboutAction();
+  private final Action      actionExit     = new ExitAction();
+  private final Action      actionAbout    = new AboutAction();
+  private final Action      actionSettings = new SettingsAction();
 
   private static MainWindow instance;
 
@@ -63,6 +64,9 @@ public class MainWindow extends JFrame {
 
     JMenu mnTmm = new JMenu("tinyMediaManager");
     menuBar.add(mnTmm);
+
+    JMenuItem mntmSettings = mnTmm.add(actionSettings);
+    mntmSettings.setText("Settings");
 
     JMenuItem mntmExit = mnTmm.add(actionExit);
     mntmExit.setText("Exit");
@@ -150,6 +154,17 @@ public class MainWindow extends JFrame {
     public void actionPerformed(ActionEvent e) {
       Dialog aboutDialog = new AboutDialog();
       aboutDialog.setVisible(true);
+    }
+  }
+
+  private class SettingsAction extends AbstractAction {
+    public SettingsAction() {
+      // putValue(NAME, "SwingAction");
+      // putValue(SHORT_DESCRIPTION, "Some short description");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+
     }
   }
 
