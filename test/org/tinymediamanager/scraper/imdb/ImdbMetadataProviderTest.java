@@ -24,6 +24,10 @@ public class ImdbMetadataProviderTest {
 
   @Test
   public void testSearch() {
+    if (Globals.settings.useProxy()) {
+      Globals.settings.setProxy();
+    }
+
     ImdbMetadataProvider mp = null;
     List<MediaSearchResult> results = null;
 
@@ -34,8 +38,7 @@ public class ImdbMetadataProviderTest {
     try {
       mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
       results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "9"));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     // did we get a result?
@@ -71,8 +74,7 @@ public class ImdbMetadataProviderTest {
     try {
       mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
       results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "Inglorious Basterds"));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     // did we get a result?
@@ -132,8 +134,7 @@ public class ImdbMetadataProviderTest {
     try {
       mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
       results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "16 Blocks"));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     // did we get a result?
@@ -145,6 +146,31 @@ public class ImdbMetadataProviderTest {
     // check first result (16 Blocks - 2006 - tt0450232)
     result = results.get(0);
     checkSearchResult("16 Blocks", "2006", "tt0450232", result);
+
+    /*
+     * test on www.imdb.de - "#9"
+     */
+    results = null;
+    try {
+      mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
+      results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "#9"));
+    } catch (Exception e) {
+    }
+
+    // did we get a result?
+    assertNotNull("Result", results);
+
+    // result count
+    assertEquals("Result count", 49, results.size());
+
+    // check first result (#9 - 2009 - tt0472033)
+    result = results.get(0);
+    checkSearchResult("#9", "2009", "tt0472033", result);
+
+    // check second result (Love Potion No. 9 - Der Duft der Liebe - 1992 -
+    // tt0102343)
+    result = results.get(1);
+    checkSearchResult("Love Potion No. 9 - Der Duft der Liebe", "1992", "tt0102343", result);
 
   }
 
@@ -176,8 +202,7 @@ public class ImdbMetadataProviderTest {
     try {
       Globals.settings.setCertificationCountry(CountryCode.US);
       md = mp.getMetaData(sr);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     // did we get metadata?
@@ -240,16 +265,14 @@ public class ImdbMetadataProviderTest {
     try {
       Globals.settings.setCertificationCountry(CountryCode.DE);
       md = mp.getMetaData(sr);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     // did we get metadata?
     assertNotNull("MediaMetadata", md);
 
     // check moviedetails
-    checkMovieDetails("Twelve Monkeys", "1995", "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam",
-        "Chris Marker, David Webb Peoples", "16", md);
+    checkMovieDetails("Twelve Monkeys", "1995", "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam", "Chris Marker, David Webb Peoples", "16", md);
 
     // check poster
     // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTQ4OTM3NzkyN15BMl5BanBnXkFtZTcwMzIwMzgyMQ@@._V1._SX195_SY195_.jpg",
@@ -301,16 +324,14 @@ public class ImdbMetadataProviderTest {
     try {
       Globals.settings.setCertificationCountry(CountryCode.GB);
       md = mp.getMetaData(sr);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     // did we get metadata?
     assertNotNull("MediaMetadata", md);
 
     // check moviedetails
-    checkMovieDetails("Brave", "2012", "Brave", 7.4, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman", "Brenda Chapman, Mark Andrews",
-        "PG", md);
+    checkMovieDetails("Brave", "2012", "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman", "Brenda Chapman, Mark Andrews", "PG", md);
 
     // check poster
     // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMzgwODk3ODA1NF5BMl5BanBnXkFtZTcwNjU3NjQ0Nw@@._V1._SX195_SY195_.jpg",
@@ -352,10 +373,73 @@ public class ImdbMetadataProviderTest {
     // check production company
     checkProductionCompany("Walt Disney Pictures, Pixar Animation Studios", md);
 
+    /*
+     * scrape www.imdb.de - 9 - tt0472033
+     */
+    mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
+    sr = new MediaSearchResult();
+    sr.setIMDBId("tt0472033");
+    sr.setTitle("9");
+    sr.setYear("2009");
+
+    md = null;
+    try {
+      Globals.settings.setCertificationCountry(CountryCode.US);
+      md = mp.getMetaData(sr);
+    } catch (Exception e) {
+    }
+
+    // did we get metadata?
+    assertNotNull("MediaMetadata", md);
+
+    // check moviedetails
+    checkMovieDetails("#9", "2009", "9", 7.0, 63365, "", 79, "Shane Acker", "Pamela Pettler, Shane Acker", "PG-13", md);
+
+    // check poster
+    // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg",
+    // md);
+
+    // check genres
+    genres = new ArrayList<MediaGenres>();
+    genres.add(MediaGenres.ANIMATION);
+    genres.add(MediaGenres.ACTION);
+    genres.add(MediaGenres.ADVENTURE);
+    genres.add(MediaGenres.FANTASY);
+    genres.add(MediaGenres.MYSTERY);
+    genres.add(MediaGenres.SCIENCE_FICTION);
+    genres.add(MediaGenres.THRILLER);
+    checkGenres(genres, md);
+
+    // check plot
+    checkPlot(
+        "Schauplatz Zukunft: Eine übergreifende Maschine, bekannt unter dem Namen \"Die große Maschine\", hat sich zusammen mit allen anderen Maschinen der Menschheit bemächtigt und diese restlos ausgelöscht. Doch unscheinbare kleine Wesen aus Stoff, erfunden von einem Wissenschaftler in den letzten Tage der menschlichen Existenz, haben sich zu einer Mission zusammengeschlossen: in der Postapokalypse zu überleben. Nur eines von Ihnen, Nummer 9, hat die notwendigen Führungsqualitäten, um alle gemeinsam gegen die Maschinen aufzubringen.",
+        md);
+
+    // check cast
+    castMembers = new ArrayList<CastMember>();
+    cm = new CastMember();
+    cm.setName("Christopher Plummer");
+    cm.setCharacter("#1 (voice)");
+    cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTU5MzQ5MDY3NF5BMl5BanBnXkFtZTcwNzMxOTU5Ng@@._V1._SY125_SX100_.jpg");
+    cm.setType(CastMember.ACTOR);
+    castMembers.add(cm);
+
+    cm = new CastMember();
+    cm.setName("Martin Landau");
+    cm.setCharacter("#2 (voice)");
+    cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTI0MzkxNzg0OF5BMl5BanBnXkFtZTcwNDUzOTc5MQ@@._V1._SY125_SX100_.jpg");
+    cm.setType(CastMember.ACTOR);
+    castMembers.add(cm);
+
+    checkCastMembers(castMembers, 10, md);
+
+    // check production company
+    checkProductionCompany("Focus Features, Relativity Media, Arc Productions, Starz Animation, Tim Burton Productions", md);
+
   }
 
-  private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, int runtime,
-      String director, String writer, String certification, MediaMetadata md) {
+  private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, int runtime, String director, String writer,
+      String certification, MediaMetadata md) {
     // title
     assertEquals("title ", title, md.getMediaTitle());
     // year
@@ -392,8 +476,7 @@ public class ImdbMetadataProviderTest {
     }
     assertEquals("writer", writer, sb.toString());
     // certification
-    assertEquals("certification", Certification.getCertification(Globals.settings.getCertificationCountry(), certification), md.getCertifications()
-        .get(0));
+    assertEquals("certification", Certification.getCertification(Globals.settings.getCertificationCountry(), certification), md.getCertifications().get(0));
   }
 
   private void checkMoviePoster(String url, MediaMetadata md) {

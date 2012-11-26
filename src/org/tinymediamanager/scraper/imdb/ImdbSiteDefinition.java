@@ -21,16 +21,16 @@ import java.nio.charset.Charset;
 import org.apache.commons.lang3.StringUtils;
 
 public enum ImdbSiteDefinition {
-  IMDB_COM("http://akas.imdb.com/", "ISO-8859-1", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification");
-  // IMDB_DE("http://www.imdb.de/", "ISO-8859-1", "", "", "", "", "", "");
+  // akas.imdb.com - international site
+  IMDB_COM("http://akas.imdb.com/", "ISO-8859-1", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification"),
+  // www.imdb.de - german site
+  IMDB_DE("http://www.imdb.de/", "ISO-8859-1", "", "", "", "", "", "");
 
-  private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies,
-      String writers, String certification) {
+  private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies, String writers, String certification) {
     this.site = site;
     if (StringUtils.isBlank(charsetName)) {
       this.charset = Charset.defaultCharset();
-    }
-    else {
+    } else {
       this.charset = Charset.forName(charsetName);
     }
     this.tagline = tagline;

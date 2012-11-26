@@ -104,8 +104,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("TmdbMetadataProvider", e);
     }
   }
@@ -115,7 +114,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
    * 
    * @return single instance of TmdbMetadataProvider
    */
-  public static TmdbMetadataProvider getInstance() {
+  public static synchronized TmdbMetadataProvider getInstance() {
     if (instance == null) {
       instance = new TmdbMetadataProvider();
     }
@@ -393,8 +392,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
       // only use the certification of the desired country (if any country has
       // been chosen)
-      if (Globals.settings.getCertificationCountry() == null
-          || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
+      if (Globals.settings.getCertificationCountry() == null || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
 
         // Certification certification = new Certification(info.getCountry(),
         // info.getCertification());
@@ -434,19 +432,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       if (castMember.getPersonType() == PersonType.CAST) {
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
-      }
-      else if (castMember.getPersonType() == PersonType.CREW) {
+      } else if (castMember.getPersonType() == PersonType.CREW) {
         if ("Director".equals(castMember.getJob())) {
           cm.setType(CastMember.DIRECTOR);
-        }
-        else if ("Writing".equals(castMember.getDepartment())) {
+        } else if ("Writing".equals(castMember.getDepartment())) {
           cm.setType(CastMember.WRITER);
-        }
-        else {
+        } else {
           continue;
         }
-      }
-      else {
+      } else {
         continue;
       }
 
@@ -632,8 +626,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     if (result.getMetadata() != null) {
       LOGGER.debug("TMDB: getMetadata(result) from cache: " + result);
       return result.getMetadata();
-    }
-    else {
+    } else {
       LOGGER.debug("TMDB: getMetadata(result): " + result);
       int tmdbId = Integer.parseInt(result.getId());
       return getMetaData(tmdbId);
@@ -821,8 +814,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
       }
       tmdbId = movieInfo.getId();
-    }
-    catch (MovieDbException e) {
+    } catch (MovieDbException e) {
     }
 
     return tmdbId;

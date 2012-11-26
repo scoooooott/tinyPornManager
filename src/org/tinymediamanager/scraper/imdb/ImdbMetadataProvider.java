@@ -104,16 +104,16 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(Globals.executor);
     ExecutorCompletionService<List<MediaArt>> compSvcTmdbArtwork = new ExecutorCompletionService<List<MediaArt>>(Globals.executor);
 
-    // worker for imdb request (/combined)
-    StringBuilder sb = new StringBuilder(imdbSite.getSite());
+    // worker for imdb request (/combined) (everytime from akas.imdb.com)
+    // StringBuilder sb = new StringBuilder(imdbSite.getSite());
+    StringBuilder sb = new StringBuilder(ImdbSiteDefinition.IMDB_COM.getSite());
     sb.append("title/");
     sb.append(imdbId);
     sb.append("/combined");
     Callable<Document> worker = new ImdbWorker(sb.toString());
-    // Future<Document> futureCombined = executor.submit(worker);
     Future<Document> futureCombined = compSvcImdb.submit(worker);
 
-    // worker for imdb request (/plotsummary)
+    // worker for imdb request (/plotsummary) (from chosen site)
     Future<Document> futurePlotsummary = null;
     if (!Globals.settings.isImdbScrapeForeignLanguage()) {
       sb = new StringBuilder(imdbSite.getSite());
@@ -122,7 +122,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       sb.append("/plotsummary");
 
       worker = new ImdbWorker(sb.toString());
-      // futurePlotsummary = executor.submit(worker);
       futurePlotsummary = compSvcImdb.submit(worker);
     }
 
@@ -140,14 +139,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
     Document doc;
     doc = futureCombined.get();
-    // try {
-    // CachedUrl url = new CachedUrl(sb.toString());
-    // doc = Jsoup.parse(url.getInputStream(),
-    // imdbSite.getCharset().displayName(), "");
-    // } catch (Exception e) {
-    // LOGGER.debug("tried to fetch imdb movie page", e);
-    // return md;
-    // }
 
     /*
      * title and year have the following structure
@@ -188,21 +179,20 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         }
 
         // original title
-        if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
-          // original title = title
-          md.setOriginalTitle(md.getMediaTitle());
-        }
-        else {
-          // try to parse the title out of "title-extra"
-          Elements span = element.getElementsByClass("title-extra");
-          if (span.size() > 0) {
-            Element titleExtra = span.first();
-            String originalTitle = titleExtra.ownText();
-            if (!StringUtils.isEmpty(originalTitle)) {
-              md.setOriginalTitle(originalTitle);
-            }
-          }
-        }
+        // if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
+        // original title = title
+        md.setOriginalTitle(md.getMediaTitle());
+        // } else {
+        // // try to parse the title out of "title-extra"
+        // Elements span = element.getElementsByClass("title-extra");
+        // if (span.size() > 0) {
+        // Element titleExtra = span.first();
+        // String originalTitle = titleExtra.ownText();
+        // if (!StringUtils.isEmpty(originalTitle)) {
+        // md.setOriginalTitle(originalTitle);
+        // }
+        // }
+        // }
       }
 
     }
@@ -239,8 +229,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               float rating = 0;
               try {
                 rating = Float.valueOf(matcher.group(1));
-              }
-              catch (Exception e) {
+              } catch (Exception e) {
               }
               md.setUserRating(rating);
               break;
@@ -255,8 +244,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           int voteCount = 0;
           try {
             voteCount = Integer.parseInt(countAsString);
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
           }
           md.setVoteCount(voteCount);
         }
@@ -306,7 +294,9 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
          * >See more</a>&nbsp;&raquo; </div></div>
          */
         // tagline
-        if (h5Title.matches("(?i)" + imdbSite.getTagline() + ".*") && !Globals.settings.isImdbScrapeForeignLanguage()) {
+        // if (h5Title.matches("(?i)" + imdbSite.getTagline() + ".*") &&
+        // !Globals.settings.isImdbScrapeForeignLanguage()) {
+        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getTagline() + ".*") && !Globals.settings.isImdbScrapeForeignLanguage()) {
           Elements div = element.getElementsByClass("info-content");
           if (div.size() > 0) {
             Element taglineElement = div.first();
@@ -329,29 +319,30 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
          * > See more</a>&nbsp;&raquo; </div>
          */
         // genres are only scraped from akas.imdb.com
-        if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
-          if (h5Title.matches("(?i)" + imdbSite.getGenre() + "(.*)")) {
-            Elements div = element.getElementsByClass("info-content");
-            if (div.size() > 0) {
-              Elements a = div.first().getElementsByTag("a");
-              for (Element anchor : a) {
-                if (anchor.attr("href").matches("/Sections/Genres/.*")) {
-                  MediaGenres genre = MediaGenres.getGenre(anchor.ownText());
-                  if (genre != null && !md.getGenres().contains(genre)) {
-                    md.addGenre(genre);
-                  }
+        // if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
+        if (h5Title.matches("(?i)" + imdbSite.getGenre() + "(.*)")) {
+          Elements div = element.getElementsByClass("info-content");
+          if (div.size() > 0) {
+            Elements a = div.first().getElementsByTag("a");
+            for (Element anchor : a) {
+              if (anchor.attr("href").matches("/Sections/Genres/.*")) {
+                MediaGenres genre = MediaGenres.getGenre(anchor.ownText());
+                if (genre != null && !md.getGenres().contains(genre)) {
+                  md.addGenre(genre);
                 }
               }
             }
           }
         }
+        // }
 
         /*
          * <div class="info"><h5>Runtime:</h5><div class="info-content">129 min
          * </div></div>
          */
         // runtime
-        if (h5Title.matches("(?i)" + imdbSite.getRuntime() + ".*")) {
+        // if (h5Title.matches("(?i)" + imdbSite.getRuntime() + ".*")) {
+        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getRuntime() + ".*")) {
           Elements div = element.getElementsByClass("info-content");
           if (div.size() > 0) {
             Element taglineElement = div.first();
@@ -359,8 +350,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
             int runtime = 0;
             try {
               runtime = Integer.parseInt(runtimeAsString);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
             md.setRuntime(runtime);
           }
@@ -376,7 +366,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
          * href="fullcredits#writers">(more)</a> </div> </div>
          */
         // writer
-        if (h5Title.matches("(?i)" + imdbSite.getWriter() + ".*")) {
+        // if (h5Title.matches("(?i)" + imdbSite.getWriter() + ".*")) {
+        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getWriter() + ".*")) {
           Elements a = element.getElementsByTag("a");
           for (Element anchor : a) {
             if (anchor.attr("href").matches("/name/nm.*")) {
@@ -399,7 +390,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
          * ...</div></div>
          */
         // certification
-        if (h5Title.matches("(?i)" + imdbSite.getCertification() + ".*")) {
+        // if (h5Title.matches("(?i)" + imdbSite.getCertification() + ".*")) {
+        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getCertification() + ".*")) {
           Elements a = element.getElementsByTag("a");
           for (Element anchor : a) {
             // certification for the right country
@@ -486,8 +478,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               String thumbUrl = img.get(0).attr("src");
               if (thumbUrl.contains("no_photo.png")) {
                 cm.setImageUrl("");
-              }
-              else {
+              } else {
                 thumbUrl = thumbUrl.replaceAll("SX[0-9]{2,4}_", "SX100_");
                 thumbUrl = thumbUrl.replaceAll("SY[0-9]{2,4}_", "SY125_");
                 cm.setImageUrl(thumbUrl);
@@ -513,7 +504,9 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     // Production companies
     elements = doc.getElementsByClass("blackcatheader");
     for (Element blackcatheader : elements) {
-      if (blackcatheader.ownText().equals(imdbSite.getProductionCompanies())) {
+      // if (blackcatheader.ownText().equals(imdbSite.getProductionCompanies()))
+      // {
+      if (blackcatheader.ownText().equals(ImdbSiteDefinition.IMDB_COM.getProductionCompanies())) {
         Elements a = blackcatheader.nextElementSibling().getElementsByTag("a");
         StringBuilder productionCompanies = new StringBuilder();
         for (Element anchor : a) {
@@ -532,21 +525,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
      */
     // build the url
     if (!Globals.settings.isImdbScrapeForeignLanguage()) {
-      // sb = new StringBuilder(imdbSite.getSite());
-      // sb.append(imdbSite.getSite());
-      // sb.append("title/");
-      // sb.append(imdbId);
-      // sb.append("/plotsummary");
-      //
-      // doc = null;
-      // try {
-      // CachedUrl url = new CachedUrl(sb.toString());
-      // doc = Jsoup.parse(url.getInputStream(),
-      // imdbSite.getCharset().displayName(), "");
-      // } catch (Exception e) {
-      // LOGGER.debug("tried to fetch imdb plot page", e);
-      // return md;
-      // }
       doc = null;
       doc = futurePlotsummary.get();
 
@@ -555,12 +533,26 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         String plot = cleanString(plotpar.get(0).ownText());
         md.setPlot(plot);
       }
+
+      // title also from chosen site if we are not scraping akas.imdb.com
+      if (imdbSite != ImdbSiteDefinition.IMDB_COM) {
+        title = doc.getElementById("tn15title");
+        if (title != null) {
+          Element element = null;
+          // title
+          elements = title.getElementsByClass("main");
+          if (elements.size() > 0) {
+            element = elements.first();
+            String movieTitle = cleanString(element.ownText());
+            md.setMediaTitle(movieTitle);
+          }
+        }
+        md.setTagline("");
+      }
     }
 
     // get data from tmdb?
     if (Globals.settings.isImdbScrapeForeignLanguage()) {
-      // TmdbMetadataProvider tmdb = TmdbMetadataProvider.getInstance();
-      // MediaMetadata tmdbMd = tmdb.getMetadataForIMDBId(imdbId);
       MediaMetadata tmdbMd = futureTmdb.get();
       if (tmdbMd != null) {
         // title
@@ -574,8 +566,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
     // get Artwork from TMDB
     try {
-      // TmdbMetadataProvider tmdbMd = TmdbMetadataProvider.getInstance();
-      // List<MediaArt> mediaArt = tmdbMd.getMediaArt(md.getIMDBID());
       List<MediaArt> mediaArt = futureArtwork.get();
       if (mediaArt != null && mediaArt.size() > 0) {
         md.clearMediaArt();
@@ -586,8 +576,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           md.setTMDBID(String.valueOf(mediaArt.get(0).getTmdbId()));
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     return md;
@@ -652,8 +641,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     if (result.getMetadata() != null) {
       LOGGER.debug("IMDB: getMetadata(result) from cache: " + result);
       md = result.getMetadata();
-    }
-    else {
+    } else {
       LOGGER.debug("IMDB: getMetadata(result): " + result);
       String imdbId = result.getIMDBId();
       md = getMetadataForIMDBId(imdbId);
@@ -707,8 +695,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     sb.append("find?q=");
     try {
       sb.append(URLEncoder.encode(searchTerm, imdbSite.getCharset().displayName()));
-    }
-    catch (UnsupportedEncodingException ex) {
+    } catch (UnsupportedEncodingException ex) {
       // Failed to encode the movie name for some reason!
       LOGGER.debug("Failed to encode search term: " + searchTerm);
       sb.append(searchTerm);
@@ -721,8 +708,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     try {
       CachedUrl url = new CachedUrl(sb.toString());
       doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.debug("tried to fetch search response", e);
       return result;
     }
@@ -898,8 +884,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       try {
         CachedUrl cachedUrl = new CachedUrl(url);
         doc = Jsoup.parse(cachedUrl.getInputStream(), imdbSite.getCharset().displayName(), "");
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.debug("tried to fetch imdb movie page " + url, e);
       }
       return doc;
