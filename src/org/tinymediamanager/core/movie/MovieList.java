@@ -101,9 +101,6 @@ public class MovieList extends AbstractModelObject {
       Movie movie = movieList.get(i);
       if (path.equals(movie.getDataSource())) {
         movieList.remove(movie);
-        Globals.entityManager.getTransaction().begin();
-        Globals.entityManager.remove(movie);
-        Globals.entityManager.getTransaction().commit();
       }
     }
   }
@@ -134,6 +131,9 @@ public class MovieList extends AbstractModelObject {
   public void removeMovie(Movie movie) {
     int oldValue = movieList.size();
     movieList.remove(movie);
+    Globals.entityManager.getTransaction().begin();
+    Globals.entityManager.remove(movie);
+    Globals.entityManager.getTransaction().commit();
     firePropertyChange("movies", null, movieList);
     firePropertyChange("movieCount", oldValue, movieList.size());
   }
@@ -161,8 +161,7 @@ public class MovieList extends AbstractModelObject {
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
         movieList = ObservableCollections.observableList(new ArrayList<Movie>(movies.size()));
-      }
-      else {
+      } else {
         LOGGER.debug("found nothing in database");
       }
       // LOGGER.debug(movies);
@@ -172,15 +171,12 @@ public class MovieList extends AbstractModelObject {
           // LOGGER.debug(movie);
           movie.setObservables();
           addMovie(movie);
-        }
-        else {
+        } else {
           LOGGER.error("retrieved no movie: " + obj);
         }
-    }
-    catch (PersistenceException e) {
+    } catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -220,7 +216,7 @@ public class MovieList extends AbstractModelObject {
 
         // check if filetype is in our settigns
         for (String type : settings.getVideoFileType()) {
-          if (name.toLowerCase().endsWith(type)) {
+          if (name.toLowerCase().endsWith(type.toLowerCase())) {
             typeFound = true;
             break;
           }
@@ -270,8 +266,7 @@ public class MovieList extends AbstractModelObject {
       // }
       // }
 
-    }
-    else {
+    } else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -331,8 +326,7 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 
@@ -358,8 +352,7 @@ public class MovieList extends AbstractModelObject {
           searchResult.add(result);
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 

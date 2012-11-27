@@ -81,7 +81,7 @@ public class TinyMediaManager {
 
           // get logger configuration
           if (g2 != null) {
-            updateProgress(g2, "loading logger");
+            updateProgress(g2, "loading logger", 10);
             splash.update();
           }
           PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
@@ -91,7 +91,7 @@ public class TinyMediaManager {
 
           // initialize database
           if (g2 != null) {
-            updateProgress(g2, "initialize database");
+            updateProgress(g2, "initialize database", 20);
             splash.update();
           }
 
@@ -107,7 +107,7 @@ public class TinyMediaManager {
 
           // load database
           if (g2 != null) {
-            updateProgress(g2, "loading movies");
+            updateProgress(g2, "loading movies", 30);
             splash.update();
           }
 
@@ -116,7 +116,7 @@ public class TinyMediaManager {
 
           // launch application
           if (g2 != null) {
-            updateProgress(g2, "loading ui");
+            updateProgress(g2, "loading ui", 80);
             splash.update();
           }
           long timeEnd = System.currentTimeMillis();
@@ -129,7 +129,7 @@ public class TinyMediaManager {
           MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
 
           if (g2 != null) {
-            updateProgress(g2, "finished starting");
+            updateProgress(g2, "finished starting", 100);
             splash.update();
           }
 
@@ -149,16 +149,18 @@ public class TinyMediaManager {
        * @param text
        *          the text
        */
-      private void updateProgress(Graphics2D g2, String text) {
+      private void updateProgress(Graphics2D g2, String text, int progress) {
         // LOGGER.debug("graphics found");
         Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
         g2.setComposite(AlphaComposite.Clear);
-        g2.fillRect(20, 200, 480, 300);
+        g2.fillRect(20, 200, 480, 305);
         g2.setPaintMode();
         g2.setColor(Color.WHITE);
-        g2.drawString(text + "...", 20, 300);
+        g2.drawString(text + "...", 20, 295);
+        g2.fillRect(20, 300, 20 + (480 - 20) / 100 * progress, 10);
+        g2.drawString(ReleaseInfo.getVersion() + " " + ReleaseInfo.getBuild(), 430, 325);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
       }
 
