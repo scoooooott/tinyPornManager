@@ -19,7 +19,6 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -30,7 +29,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.Globals;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -88,8 +86,7 @@ public class MainWindow extends JFrame {
     setBounds(5, 5, 1100, 700);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:default:grow"), }));
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
     // JTabbedPane tabbedPane = new JTabbedPane();
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
@@ -118,13 +115,12 @@ public class MainWindow extends JFrame {
         try {
           // close database connection
           Globals.shutdownDatabase();
-          // clear cache directory
-          File cache = new File("cache");
-          if (cache.exists()) {
-            FileUtils.deleteDirectory(cache);
-          }
-        }
-        catch (Exception ex) {
+          // // clear cache directory
+          // File cache = new File("cache");
+          // if (cache.exists()) {
+          // FileUtils.deleteDirectory(cache);
+          // }
+        } catch (Exception ex) {
         }
         Globals.executor.shutdownNow();
         dispose();

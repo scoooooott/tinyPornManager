@@ -32,6 +32,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.MainWindow;
 
 // TODO: Auto-generated Javadoc
@@ -114,9 +115,17 @@ public class TinyMediaManager {
           MovieList movieList = MovieList.getInstance();
           movieList.loadMoviesFromDatabase();
 
+          // clean cache
+          if (g2 != null) {
+            updateProgress(g2, "loading movies", 80);
+            splash.update();
+          }
+
+          CachedUrl.cleanupCache();
+
           // launch application
           if (g2 != null) {
-            updateProgress(g2, "loading ui", 80);
+            updateProgress(g2, "loading ui", 90);
             splash.update();
           }
           long timeEnd = System.currentTimeMillis();

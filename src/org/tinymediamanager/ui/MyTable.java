@@ -41,6 +41,7 @@ public class MyTable extends JTable {
     setTableHeader(createTableHeader());
     getTableHeader().setReorderingAllowed(false);
     setOpaque(false);
+    setRowHeight(16);
     setGridColor(TABLE_GRID_COLOR);
     setIntercellSpacing(new Dimension(0, 0));
     // turn off grid painting as we'll handle this manually in order to paint

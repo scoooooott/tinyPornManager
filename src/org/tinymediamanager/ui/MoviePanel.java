@@ -145,6 +145,8 @@ public class MoviePanel extends JPanel {
 
   private final Action        actionRename2            = new RenameAction(true);
 
+  private final Action        actionRemove2            = new RemoveAction(true);
+
   /** The panel rating. */
   private StarRater           panelRatingStars;
 
@@ -318,7 +320,7 @@ public class MoviePanel extends JPanel {
     lblMovieName.setFont(new Font("Dialog", Font.BOLD, 16));
 
     JPanel panelRating = new JPanel();
-    panelMovieHeader.add(panelRating, "2, 2, left, default");
+    panelMovieHeader.add(panelRating, "1, 2, 2, 1, left, default");
 
     panelRatingStars = new StarRater(5, 2);
     panelRating.add(panelRatingStars);
@@ -597,6 +599,7 @@ public class MoviePanel extends JPanel {
     menu.addSeparator();
     menu.add(actionEditMovie2);
     menu.add(actionRename2);
+    menu.add(actionRemove2);
     menu.addSeparator();
 
     // debug menu
@@ -624,14 +627,12 @@ public class MoviePanel extends JPanel {
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
-    // popupMenu.add(actionUpdateDataSources2);
-    // popupMenu.addSeparator();
     popupMenu.add(actionScrape2);
     popupMenu.add(actionScrapeSelected);
-    // popupMenu.add(actionScrapeUnscraped);
     popupMenu.addSeparator();
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionRename2);
+    popupMenu.add(actionRemove2);
 
     MouseListener popupListener = new PopupListener(popupMenu);
     table.addMouseListener(popupListener);
@@ -760,22 +761,6 @@ public class MoviePanel extends JPanel {
 
   }
 
-  // /**
-  // * The Class SingleScrapeAction.
-  // */
-  // private class SingleScrapeAction2 extends SingleScrapeAction {
-  //
-  // /**
-  // * Instantiates a new SingleScrapeAction.
-  // */
-  // public SingleScrapeAction2() {
-  // putValue(NAME, "Scrape selected movies");
-  // putValue(LARGE_ICON_KEY, "");
-  // // putValue(SHORT_DESCRIPTION, "Search & scrape movie");
-  // }
-  //
-  // }
-
   /**
    * The Class UnscrapedScrapeAction.
    */
@@ -897,116 +882,42 @@ public class MoviePanel extends JPanel {
     }
   }
 
-  // /**
-  // * The Class ScrapeTask.
-  // */
-  // private class ScrapeTask extends SwingWorker<Void, Void> {
-  //
-  // /** The movies to scrape. */
-  // private List<Movie> moviesToScrape;
-  //
-  // private int movieCount;
-  //
-  // /**
-  // * Instantiates a new scrape task.
-  // *
-  // * @param moviesToScrape
-  // * the movies to scrape
-  // */
-  // public ScrapeTask(List<Movie> moviesToScrape) {
-  // this.moviesToScrape = moviesToScrape;
-  // this.movieCount = moviesToScrape.size();
-  // }
-  //
-  // /*
-  // * (non-Javadoc)
-  // *
-  // * @see javax.swing.SwingWorker#doInBackground()
-  // */
-  // @Override
-  // public Void doInBackground() {
-  // int movieCount = moviesToScrape.size();
-  // int counter = 0;
-  // for (Movie movie : moviesToScrape) {
-  // if (isCancelled()) {
-  // return null;
-  // }
-  //
-  // counter++;
-  // startProgressBar("scraping: " + movie.getName(), 100 * counter /
-  // movieCount);
-  // List<MediaSearchResult> results = movieList.searchMovie(movie.getName(),
-  // movie.getImdbId());
-  // if (results != null && !results.isEmpty()) {
-  // MediaSearchResult result1 = results.get(0);
-  // // check if there is an other result with 100% score
-  // if (results.size() > 1) {
-  // MediaSearchResult result2 = results.get(1);
-  // // if both results have 100% score - do not take any result
-  // if (result1.getScore() == 1 && result2.getScore() == 1) {
-  // continue;
-  // }
-  // }
-  // try {
-  // movie.setMetadata(movieList.getMetadataProvider().getMetaData(result1));
-  // }
-  // catch (Exception e) {
-  // LOGGER.error("movie.setMetadata", e);
-  // }
-  // }
-  // }
-  //
-  // return null;
-  // }
-  //
-  // private synchronized Movie getNextMovie() {
-  // // get next movie to scrape
-  // if (moviesToScrape.size() > 0) {
-  // Movie movie = moviesToScrape.get(0);
-  // moviesToScrape.remove(movie);
-  // return movie;
-  // }
-  //
-  // return null;
-  // }
-  //
-  // /*
-  // * Executed in event dispatching thread
-  // */
-  // /*
-  // * (non-Javadoc)
-  // *
-  // * @see javax.swing.SwingWorker#done()
-  // */
-  // @Override
-  // public void done() {
-  // stopProgressBar();
-  // }
-  //
-  // /**
-  // * Start progress bar.
-  // *
-  // * @param description
-  // * the description
-  // * @param value
-  // * the value
-  // */
-  // private void startProgressBar(String description, int value) {
-  // lblProgressAction.setText(description);
-  // progressBar.setVisible(true);
-  // progressBar.setValue(value);
-  // btnCancelScraper.setVisible(true);
-  // }
-  //
-  // /**
-  // * Stop progress bar.
-  // */
-  // private void stopProgressBar() {
-  // lblProgressAction.setText("");
-  // progressBar.setVisible(false);
-  // btnCancelScraper.setVisible(false);
-  // }
-  // }
+  private class RemoveAction extends AbstractAction {
+
+    /**
+     * Instantiates a new RemoveAction.
+     */
+    public RemoveAction(boolean withTitle) {
+      if (withTitle) {
+        putValue(LARGE_ICON_KEY, "");
+        putValue(NAME, "Remove selected movies");
+      } else {
+        // putValue(LARGE_ICON_KEY, new
+        // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+        putValue(SHORT_DESCRIPTION, "Remove selected movies");
+      }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+      List<Movie> movies = new ArrayList<Movie>();
+
+      // get seletected movies
+      for (int row : table.getSelectedRows()) {
+        row = table.convertRowIndexToModel(row);
+        Movie movie = movieList.getMovies().get(row);
+        movies.add(movie);
+      }
+
+      // remove selected movies
+      if (movies.size() > 0) {
+        for (int i = 0; i < movies.size(); i++) {
+          movieList.removeMovie(movies.get(i));
+        }
+      }
+    }
+
+  }
 
   /**
    * The Class UpdateDataSourcesTask.
@@ -1134,10 +1045,10 @@ public class MoviePanel extends JPanel {
     JTableBinding<Movie, MovieList, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieList, movieListBeanProperty, table);
     //
     BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Title").setEditable(false);
+    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Title").setEditable(false).setColumnClass(String.class);
     //
     BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
-    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false);
+    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false).setColumnClass(String.class);
     //
     BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("hasNfoFile");
     JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding = jTableBinding.addColumnBinding(movieBeanProperty_2);

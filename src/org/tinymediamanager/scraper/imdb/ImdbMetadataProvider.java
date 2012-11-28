@@ -701,7 +701,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       sb.append(searchTerm);
     }
 
-    sb.append(";s=tt;site=aka");
+    sb.append("&s=tt&site=aka");
 
     LOGGER.debug("========= BEGIN IMDB Scraper Search for: " + sb.toString());
     Document doc;
