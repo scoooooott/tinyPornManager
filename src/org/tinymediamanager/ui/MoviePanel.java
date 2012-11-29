@@ -50,12 +50,16 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.gpl.JSplitButton.JSplitButton;
@@ -64,8 +68,12 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.swingbinding.JTableBinding;
+import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScrapeTask;
@@ -225,8 +233,9 @@ public class MoviePanel extends JPanel {
     JMenuBar menuBar = mainFrame.getJMenuBar();
     menuBar.add(menu);
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.DEFAULT_ROWSPEC, }));
 
     JSplitPane splitPaneHorizontal = new JSplitPane();
     splitPaneHorizontal.setContinuousLayout(true);
@@ -234,9 +243,9 @@ public class MoviePanel extends JPanel {
 
     JPanel panelMovieList = new JPanel();
     splitPaneHorizontal.setLeftComponent(panelMovieList);
-    panelMovieList.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(75dlu;default)"), ColumnSpec.decode("max(200px;pref):grow"), }, new RowSpec[] {
-            RowSpec.decode("26px"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(200px;default):grow"), }));
+    panelMovieList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(75dlu;default)"),
+        ColumnSpec.decode("max(200px;pref):grow"), }, new RowSpec[] { RowSpec.decode("26px"), FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:max(200px;default):grow"), }));
 
     JToolBar toolBar = new JToolBar();
     toolBar.setBorder(null);
@@ -298,7 +307,8 @@ public class MoviePanel extends JPanel {
 
     JPanel panelRight = new JPanel();
     splitPaneHorizontal.setRightComponent(panelRight);
-    panelRight.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+    panelRight.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     JSplitPane splitPaneVertical = new JSplitPane();
     splitPaneVertical.setBorder(null);
@@ -313,14 +323,15 @@ public class MoviePanel extends JPanel {
     panelTop.setBorder(null);
     splitPaneVertical.setTopComponent(panelTop);
     // panelMovieDetails.add(panelMovieHeaderImages, "2, 2, fill, fill");
-    panelTop.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("350px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:250px:grow"), }, new RowSpec[] {
-        RowSpec.decode("fill:default"), RowSpec.decode("fill:pref:grow"), }));
+    panelTop.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("350px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("right:250px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default"), RowSpec.decode("fill:pref:grow"), }));
 
     JPanel panelMovieHeader = new JPanel();
     panelTop.add(panelMovieHeader, "1, 1, 3, 1, fill, fill");
     panelMovieHeader.setBorder(null);
-    panelMovieHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelMovieHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblMovieName = new JLabel("");
     panelMovieHeader.add(lblMovieName, "2, 1, 3, 1, left, top");
@@ -348,9 +359,9 @@ public class MoviePanel extends JPanel {
 
     JLayeredPane layeredPaneImages = new JLayeredPane();
     panelTop.add(layeredPaneImages, "1, 2, 3, 1, fill, fill");
-    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px"), ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"),
-            RowSpec.decode("fill:default:grow"), }));
+    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px"),
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"), RowSpec.decode("fill:default:grow"), }));
 
     lblMovieBackground = new ImageLabel(false, true);
     layeredPaneImages.add(lblMovieBackground, "1, 3, 3, 3, fill, fill");
@@ -360,8 +371,8 @@ public class MoviePanel extends JPanel {
     layeredPaneImages.add(lblMoviePoster, "2, 4, fill, fill");
 
     JPanel panelBottom = new JPanel();
-    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+        RowSpec.decode("fill:default:grow"), }));
 
     tabbedPaneMovieDetails = new JTabbedPane(JTabbedPane.TOP);
     panelBottom.add(tabbedPaneMovieDetails, "1, 2, fill, fill");
@@ -369,12 +380,14 @@ public class MoviePanel extends JPanel {
 
     panelDetails = new JPanel();
     tabbedPaneMovieDetails.addTab("Details", null, panelDetails, null);
-    panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(12dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("max(12dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel("Original Title");
     panelDetails.add(lblOriginalTitleT, "2, 2");
@@ -421,7 +434,8 @@ public class MoviePanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         try {
           Desktop.getDesktop().browse(new URI("http://www.imdb.com/title/" + lblImdbId.getNormalText()));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.error("browse to imdbid", e);
         }
       }
@@ -438,7 +452,8 @@ public class MoviePanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         try {
           Desktop.getDesktop().browse(new URI("http://www.themoviedb.org/movie/" + lblTmdbId.getNormalText()));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.error("browse to tmdbid", e);
         }
       }
@@ -460,7 +475,8 @@ public class MoviePanel extends JPanel {
             if (path.exists()) {
               Desktop.getDesktop().open(path);
             }
-          } catch (Exception ex) {
+          }
+          catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
           }
         }
@@ -483,10 +499,11 @@ public class MoviePanel extends JPanel {
     scrollPaneOverview.setViewportView(textPane);
 
     panelMovieCast = new JPanel();
-    panelMovieCast.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(39dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(165dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("125px"),
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    panelMovieCast.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(39dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("max(165dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("125px"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     lblDirectorT = new JLabel("Director");
     panelMovieCast.add(lblDirectorT, "2, 2");
@@ -519,9 +536,9 @@ public class MoviePanel extends JPanel {
 
     panelMediaInformation = new JPanel();
     tabbedPaneMovieDetails.addTab("Media Information", null, panelMediaInformation, null);
-    panelMediaInformation.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(207dlu;default):grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), }));
+    panelMediaInformation.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(207dlu;default):grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     JLabel lblPathT2 = new JLabel("Path");
     panelMediaInformation.add(lblPathT2, "2, 2");
@@ -542,8 +559,9 @@ public class MoviePanel extends JPanel {
 
     JPanel panelStatus = new JPanel();
     add(panelStatus, "2, 3, fill, fill");
-    panelStatus.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("1px"), ColumnSpec.decode("146px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+    panelStatus.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("1px"),
+        ColumnSpec.decode("146px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec
+        .decode("fill:default:grow"), }));
 
     panelMovieCount = new JPanel();
     panelStatus.add(panelMovieCount, "3, 1, left, fill");
@@ -595,16 +613,10 @@ public class MoviePanel extends JPanel {
     });
 
     eventSelectionModel = new EventSelectionModel<Movie>(movieList.getMovies());
-    // table.setSelectionModel(eventSelectionModel);
     movieSelectionModel = new MovieSelectionModel(eventSelectionModel);
-    // table.getSelectionModel().addListSelectionListener(movieSelectionModel);
 
     // beansbinding init
     initDataBindings();
-
-    // EventSelectionModel<Movie> selectionModel = new
-    // EventSelectionModel<Movie>(movieList.getMovies());
-    // table.setSelectionModel(selectionModel);
 
     // menu items
     menu.add(actionUpdateDataSources2);
@@ -623,22 +635,30 @@ public class MoviePanel extends JPanel {
     JMenuItem clearDatabase = new JMenuItem("clear database");
     debug.add(clearDatabase);
     clearDatabase.addActionListener(new ActionListener() {
-
       @Override
       public void actionPerformed(ActionEvent arg0) {
         // delete all movies from the database
         MovieList movieList = MovieList.getInstance();
-        List<Movie> movies = movieList.getMovies();
-        Globals.entityManager.getTransaction().begin();
-        for (int i = movies.size() - 1; i >= 0; i--) {
-          Movie movie = movies.get(i);
-          Globals.entityManager.remove(movie);
-          movieList.removeMovie(movie);
-        }
-        Globals.entityManager.getTransaction().commit();
+        movieList.removeMovies();
         JOptionPane.showMessageDialog(null, "Database cleared. Please restart tinyMediaManager");
       }
     });
+    JMenuItem clearCache = new JMenuItem("clear cache");
+    debug.add(clearCache);
+    clearCache.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        File cache = new File("cache");
+        if (cache.exists()) {
+          try {
+            FileUtils.deleteDirectory(cache);
+          }
+          catch (Exception e) {
+          }
+        }
+      }
+    });
+
     menu.add(debug);
 
     // popup menu
@@ -652,9 +672,6 @@ public class MoviePanel extends JPanel {
 
     MouseListener popupListener = new PopupListener(popupMenu);
     table.addMouseListener(popupListener);
-
-    // TableRowSorter sorter = new TableRowSorter(table.getModel());
-    // table.setRowSorter(sorter);
 
     // moviename column
     table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
@@ -706,14 +723,37 @@ public class MoviePanel extends JPanel {
     // }
     // });
 
-    // eventSelectionModel = new
-    // EventSelectionModel<Movie>(movieList.getMovies());
     table.setSelectionModel(eventSelectionModel);
-    // movieSelectionModel = new MovieSelectionModel(eventSelectionModel);
     table.getSelectionModel().addListSelectionListener(movieSelectionModel);
     TableRowSorter sorter = new TableRowSorter(table.getModel());
     table.setRowSorter(sorter);
 
+    // selecting first movie at startup
+    if (movieList.getMovies() != null && movieList.getMovies().size() > 0) {
+      ListSelectionModel selectionModel = table.getSelectionModel();
+      if (selectionModel.isSelectionEmpty()) {
+        selectionModel.setSelectionInterval(0, 0);
+      }
+
+      if (tableCast.getModel().getRowCount() > 0) {
+        tableCast.getSelectionModel().setSelectionInterval(0, 0);
+      }
+      else {
+        lblActorThumb.setImageUrl("");
+      }
+    }
+
+    // change to the first actor on movie change
+    tableCast.getModel().addTableModelListener(new TableModelListener() {
+      public void tableChanged(TableModelEvent e) {
+        if (tableCast.getModel().getRowCount() > 0) {
+          tableCast.getSelectionModel().setSelectionInterval(0, 0);
+        }
+        else {
+          lblActorThumb.setImageUrl("");
+        }
+      }
+    });
   }
 
   /**
@@ -729,7 +769,8 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(NAME, "Update data sources");
         putValue(LARGE_ICON_KEY, "");
-      } else {
+      }
+      else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
         putValue(SHORT_DESCRIPTION, "Update data sources");
       }
@@ -759,7 +800,8 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(NAME, "Scrape selected movies");
         putValue(LARGE_ICON_KEY, "");
-      } else {
+      }
+      else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
         putValue(SHORT_DESCRIPTION, "Search & scrape movie");
       }
@@ -858,7 +900,9 @@ public class MoviePanel extends JPanel {
         // If current expression doesn't parse, don't update.
         String filterText = "(?i)" + textField.getText();
         rf = RowFilter.regexFilter(filterText, 0);
-      } catch (java.util.regex.PatternSyntaxException e) {
+        // rf = new MyRowFilter(filterText);
+      }
+      catch (java.util.regex.PatternSyntaxException e) {
         sorter.setRowFilter(rf);
         return;
       }
@@ -868,6 +912,36 @@ public class MoviePanel extends JPanel {
     }
     sorter.setRowFilter(rf);
   }
+
+  // private class MyRowFilter extends RowFilter<Object, Object> {
+  //
+  // private String searchTerm;
+  // private Pattern pattern;
+  // private Matcher matcher;
+  //
+  // public MyRowFilter(String searchTerm) {
+  // this.searchTerm = searchTerm;
+  // pattern = Pattern.compile(searchTerm);
+  // }
+  //
+  // public boolean include(Entry<? extends Object, ? extends Object> entry) {
+  // String title = (String) entry.getValue(0);
+  // if (matcher == null) {
+  // matcher = pattern.matcher(title);
+  // }
+  // else {
+  // matcher.reset(title);
+  // }
+  //
+  // if (matcher.find()) {
+  // return true;
+  // }
+  // // if (title.matches(this.searchTerm)) {
+  // // return true;
+  // // }
+  // return false;
+  // }
+  // }
 
   /**
    * The Class EditAction.
@@ -881,7 +955,8 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
         putValue(NAME, "Edit movie");
-      } else {
+      }
+      else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
         putValue(SHORT_DESCRIPTION, "Edit movie");
       }
@@ -913,7 +988,8 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
         putValue(NAME, "Remove selected movies");
-      } else {
+      }
+      else {
         // putValue(LARGE_ICON_KEY, new
         // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
         putValue(SHORT_DESCRIPTION, "Remove selected movies");
@@ -1009,7 +1085,8 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
         putValue(NAME, "Rename selected movies");
-      } else {
+      }
+      else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
         putValue(SHORT_DESCRIPTION, "rename selected movies");
       }
@@ -1063,11 +1140,159 @@ public class MoviePanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.name");
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.nameForUi");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel, movieSelectionModelBeanProperty,
-        lblMovieName, jLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty, lblMovieName, jLabelBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<MovieSelectionModel, Float> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.rating");
+    AutoBinding<MovieSelectionModel, Float, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_1, lblRating, jLabelBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.votes");
+    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_2, lblVoteCount, jLabelBeanProperty);
+    autoBinding_2.bind();
+    //
+    BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
+    AutoBinding<MovieSelectionModel, Float, StarRater, Float> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_1, panelRatingStars, starRaterBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_3 = BeanProperty.create("selectedMovie.tagline");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_3, lblTagline, jLabelBeanProperty);
+    autoBinding_4.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovie.fanart");
+    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imagePath");
+    AutoBinding<MovieSelectionModel, String, ImageLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_4, lblMovieBackground, imageLabelBeanProperty);
+    autoBinding_5.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_5 = BeanProperty.create("selectedMovie.poster");
+    AutoBinding<MovieSelectionModel, String, ImageLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_5, lblMoviePoster, imageLabelBeanProperty);
+    autoBinding_6.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalName");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_6, lblOriginalTitle, jLabelBeanProperty);
+    autoBinding_7.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_7 = BeanProperty.create("selectedMovie.genresAsString");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_7, lblGenres, jLabelBeanProperty);
+    autoBinding_8.bind();
+    //
+    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_8 = BeanProperty.create("selectedMovie.runtime");
+    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_8, lblRuntime, jLabelBeanProperty);
+    autoBinding_9.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_10 = BeanProperty.create("selectedMovie.productionCompany");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_10, lblProduction, jLabelBeanProperty);
+    autoBinding_11.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_11 = BeanProperty.create("selectedMovie.imdbId");
+    BeanProperty<LinkLabel, String> linkLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieSelectionModel, String, LinkLabel, String> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_11, lblImdbId, linkLabelBeanProperty);
+    autoBinding_12.bind();
+    //
+    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_12 = BeanProperty.create("selectedMovie.tmdbId");
+    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
+    autoBinding_13.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_13 = BeanProperty.create("selectedMovie.path");
+    AutoBinding<MovieSelectionModel, String, LinkLabel, String> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_13, lblMoviePath, linkLabelBeanProperty);
+    autoBinding_14.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_14 = BeanProperty.create("selectedMovie.overview");
+    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieSelectionModel, String, JTextPane, String> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_14, textPane, jTextPaneBeanProperty);
+    autoBinding_15.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_15 = BeanProperty.create("selectedMovie.director");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_16 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_15, lblDirector, jLabelBeanProperty);
+    autoBinding_16.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_16 = BeanProperty.create("selectedMovie.writer");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_16, lblWriter, jLabelBeanProperty);
+    autoBinding_17.bind();
+    //
+    BeanProperty<MovieSelectionModel, List<MovieCast>> movieSelectionModelBeanProperty_17 = BeanProperty.create("selectedMovie.cast");
+    JTableBinding<MovieCast, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_17, tableCast);
+    //
+    BeanProperty<MovieCast, String> movieCastBeanProperty = BeanProperty.create("name");
+    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName("Name").setEditable(false);
+    //
+    BeanProperty<MovieCast, String> movieCastBeanProperty_1 = BeanProperty.create("character");
+    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName("Character").setEditable(false);
+    //
+    jTableBinding.setEditable(false);
+    jTableBinding.bind();
+    //
+    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.thumb");
+    BeanProperty<ImageLabel, String> imageLabelBeanProperty_1 = BeanProperty.create("imageUrl");
+    AutoBinding<JTable, String, ImageLabel, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast, jTableBeanProperty,
+        lblActorThumb, imageLabelBeanProperty_1);
+    autoBinding_18.bind();
+    //
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_13, lblPath2, jLabelBeanProperty);
+    autoBinding_19.bind();
+    //
+    BeanProperty<MovieSelectionModel, List<MediaFile>> movieSelectionModelBeanProperty_18 = BeanProperty.create("selectedMovie.mediaFiles");
+    JTableBinding<MediaFile, MovieSelectionModel, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_18, tableFiles);
+    //
+    BeanProperty<MediaFile, String> mediaFileBeanProperty = BeanProperty.create("filename");
+    jTableBinding_1.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
+    //
+    BeanProperty<MediaFile, String> mediaFileBeanProperty_1 = BeanProperty.create("filesizeInMegabytes");
+    jTableBinding_1.addColumnBinding(mediaFileBeanProperty_1).setColumnName("Size").setEditable(false);
+    //
+    jTableBinding_1.setEditable(false);
+    jTableBinding_1.bind();
+    //
+    BeanProperty<MovieList, Integer> movieListBeanProperty = BeanProperty.create("movieCount");
+    AutoBinding<MovieList, Integer, JLabel, String> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ, movieList,
+        movieListBeanProperty, lblMovieCountInt, jLabelBeanProperty);
+    autoBinding_20.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.certification.name");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_9, lblCertification, jLabelBeanProperty);
+    autoBinding_10.bind();
+    //
+    BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_19 = BeanProperty.create("selectedMovie.hasRating");
+    BeanProperty<StarRater, Boolean> starRaterBeanProperty_1 = BeanProperty.create("visible");
+    AutoBinding<MovieSelectionModel, Boolean, StarRater, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_19, panelRatingStars, starRaterBeanProperty_1);
+    autoBinding_21.bind();
+    //
+    BeanProperty<JLabel, Boolean> jLabelBeanProperty_1 = BeanProperty.create("visible");
+    AutoBinding<MovieSelectionModel, Boolean, JLabel, Boolean> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_19, lblRating, jLabelBeanProperty_1);
+    autoBinding_22.bind();
+    //
+    AutoBinding<MovieSelectionModel, Boolean, JLabel, Boolean> autoBinding_23 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_19, lblVoteCount, jLabelBeanProperty_1);
+    autoBinding_23.bind();
+    //
+    AutoBinding<MovieSelectionModel, Boolean, JLabel, Boolean> autoBinding_24 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_19, lblVoteCountT, jLabelBeanProperty_1);
+    autoBinding_24.bind();
   }
 }
 

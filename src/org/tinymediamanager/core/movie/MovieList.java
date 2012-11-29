@@ -57,7 +57,6 @@ public class MovieList extends AbstractModelObject {
   private final Settings               settings = Settings.getInstance();
 
   /** The movie list. */
-  // private List<Movie> movieList;
   private ObservableElementList<Movie> movieList;
 
   /** The metadata provider. */
@@ -104,7 +103,7 @@ public class MovieList extends AbstractModelObject {
     for (int i = movieList.size() - 1; i >= 0; i--) {
       Movie movie = movieList.get(i);
       if (path.equals(movie.getDataSource())) {
-        movieList.remove(movie);
+        removeMovie(movie);
       }
     }
   }
@@ -142,18 +141,22 @@ public class MovieList extends AbstractModelObject {
     firePropertyChange("movieCount", oldValue, movieList.size());
   }
 
-  // /**
-  // * Gets the movies.
-  // *
-  // * @return the movies
-  // */
-  // public List<Movie> getMovies() {
-  // if (movieList == null) {
-  // movieList = ObservableCollections.observableList(new ArrayList<Movie>());
-  // }
-  // return movieList;
-  // }
+  /**
+   * Remove all movies.
+   * 
+   */
+  public void removeMovies() {
+    for (int i = movieList.size() - 1; i >= 0; i--) {
+      Movie movie = movieList.get(i);
+      removeMovie(movie);
+    }
+  }
 
+  /**
+   * Gets the movies.
+   * 
+   * @return the movies
+   */
   public ObservableElementList<Movie> getMovies() {
     if (movieList == null) {
       movieList = new ObservableElementList<Movie>(new BasicEventList<Movie>(), GlazedLists.beanConnector(Movie.class));
@@ -171,10 +174,9 @@ public class MovieList extends AbstractModelObject {
       List<Movie> movies = query.getResultList();
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
-        // movieList = ObservableCollections.observableList(new
-        // ArrayList<Movie>(movies.size()));,
         movieList = new ObservableElementList<Movie>(new BasicEventList<Movie>(movies.size()), GlazedLists.beanConnector(Movie.class));
-      } else {
+      }
+      else {
         LOGGER.debug("found nothing in database");
       }
       // LOGGER.debug(movies);
@@ -184,12 +186,15 @@ public class MovieList extends AbstractModelObject {
           // LOGGER.debug(movie);
           movie.setObservables();
           addMovie(movie);
-        } else {
+        }
+        else {
           LOGGER.error("retrieved no movie: " + obj);
         }
-    } catch (PersistenceException e) {
+    }
+    catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -279,7 +284,8 @@ public class MovieList extends AbstractModelObject {
       // }
       // }
 
-    } else {
+    }
+    else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -339,7 +345,8 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 
@@ -365,7 +372,8 @@ public class MovieList extends AbstractModelObject {
           searchResult.add(result);
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 

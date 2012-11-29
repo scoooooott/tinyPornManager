@@ -229,7 +229,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               float rating = 0;
               try {
                 rating = Float.valueOf(matcher.group(1));
-              } catch (Exception e) {
+              }
+              catch (Exception e) {
               }
               md.setUserRating(rating);
               break;
@@ -244,7 +245,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           int voteCount = 0;
           try {
             voteCount = Integer.parseInt(countAsString);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
           }
           md.setVoteCount(voteCount);
         }
@@ -350,7 +352,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
             int runtime = 0;
             try {
               runtime = Integer.parseInt(runtimeAsString);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
             }
             md.setRuntime(runtime);
           }
@@ -478,7 +481,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               String thumbUrl = img.get(0).attr("src");
               if (thumbUrl.contains("no_photo.png")) {
                 cm.setImageUrl("");
-              } else {
+              }
+              else {
                 thumbUrl = thumbUrl.replaceAll("SX[0-9]{2,4}_", "SX100_");
                 thumbUrl = thumbUrl.replaceAll("SY[0-9]{2,4}_", "SY125_");
                 cm.setImageUrl(thumbUrl);
@@ -576,7 +580,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           md.setTMDBID(String.valueOf(mediaArt.get(0).getTmdbId()));
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     return md;
@@ -641,7 +646,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     if (result.getMetadata() != null) {
       LOGGER.debug("IMDB: getMetadata(result) from cache: " + result);
       md = result.getMetadata();
-    } else {
+    }
+    else {
       LOGGER.debug("IMDB: getMetadata(result): " + result);
       String imdbId = result.getIMDBId();
       md = getMetadataForIMDBId(imdbId);
@@ -695,20 +701,22 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     sb.append("find?q=");
     try {
       sb.append(URLEncoder.encode(searchTerm, imdbSite.getCharset().displayName()));
-    } catch (UnsupportedEncodingException ex) {
+    }
+    catch (UnsupportedEncodingException ex) {
       // Failed to encode the movie name for some reason!
       LOGGER.debug("Failed to encode search term: " + searchTerm);
       sb.append(searchTerm);
     }
 
-    sb.append("&s=tt&site=aka");
+    sb.append("&s=tt");
 
     LOGGER.debug("========= BEGIN IMDB Scraper Search for: " + sb.toString());
     Document doc;
     try {
       CachedUrl url = new CachedUrl(sb.toString());
       doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.debug("tried to fetch search response", e);
       return result;
     }
@@ -753,7 +761,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     }
 
     // parse results
-    elements = doc.getElementsByAttributeValue("valign", "top");
+    elements = doc.getElementsByClass("result_text");
     for (Element element : elements) {
       // we only want the td's
       if (!"td".equalsIgnoreCase(element.tagName())) {
@@ -809,6 +817,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       sr.setScore(MetadataUtil.calculateScore(searchTerm, movieName));
 
       result.add(sr);
+
+      // only get 20 results
+      if (result.size() > 20) {
+        break;
+      }
     }
 
     return result;
@@ -870,48 +883,104 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     return StringUtils.trim(newString);
   }
 
+  /**
+   * The Class ImdbWorker.
+   */
   private class ImdbWorker implements Callable<Document> {
+
+    /** The url. */
     private String   url;
+
+    /** The doc. */
     private Document doc = null;
 
+    /**
+     * Instantiates a new imdb worker.
+     * 
+     * @param url
+     *          the url
+     */
     public ImdbWorker(String url) {
       this.url = url;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.concurrent.Callable#call()
+     */
     @Override
     public Document call() throws Exception {
       doc = null;
       try {
         CachedUrl cachedUrl = new CachedUrl(url);
         doc = Jsoup.parse(cachedUrl.getInputStream(), imdbSite.getCharset().displayName(), "");
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOGGER.debug("tried to fetch imdb movie page " + url, e);
       }
       return doc;
     }
   }
 
+  /**
+   * The Class TmdbWorker.
+   */
   private class TmdbWorker implements Callable<MediaMetadata> {
+
+    /** The imdb id. */
     private String imdbId;
 
+    /**
+     * Instantiates a new tmdb worker.
+     * 
+     * @param imdbId
+     *          the imdb id
+     */
     public TmdbWorker(String imdbId) {
       this.imdbId = imdbId;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.concurrent.Callable#call()
+     */
     @Override
     public MediaMetadata call() throws Exception {
       TmdbMetadataProvider tmdb = TmdbMetadataProvider.getInstance();
-      return tmdb.getMetadataForIMDBId(imdbId);
+      try {
+        return tmdb.getMetadataForIMDBId(imdbId);
+      }
+      catch (Exception e) {
+        return null;
+      }
     }
   }
 
+  /**
+   * The Class TmdbArtworkWorker.
+   */
   private class TmdbArtworkWorker implements Callable<List<MediaArt>> {
+
+    /** The imdb id. */
     private String imdbId;
 
+    /**
+     * Instantiates a new tmdb artwork worker.
+     * 
+     * @param imdbId
+     *          the imdb id
+     */
     public TmdbArtworkWorker(String imdbId) {
       this.imdbId = imdbId;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.concurrent.Callable#call()
+     */
     @Override
     public List<MediaArt> call() throws Exception {
       TmdbMetadataProvider tmdbMd = TmdbMetadataProvider.getInstance();

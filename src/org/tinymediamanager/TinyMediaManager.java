@@ -72,10 +72,12 @@ public class TinyMediaManager {
             if (g2 != null) {
               Font font = new Font("Dialog", Font.PLAIN, 14);
               g2.setFont(font);
-            } else {
+            }
+            else {
               LOGGER.debug("got no graphics from splash");
             }
-          } else {
+          }
+          else {
             LOGGER.debug("no splash found");
           }
           long timeStart = System.currentTimeMillis();
@@ -132,7 +134,8 @@ public class TinyMediaManager {
           if ((timeEnd - timeStart) > 3000) {
             try {
               Thread.sleep(3000 - (timeEnd - timeStart));
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
             }
           }
           MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
@@ -144,9 +147,11 @@ public class TinyMediaManager {
 
           window.setVisible(true);
 
-        } catch (javax.persistence.PersistenceException e) {
+        }
+        catch (javax.persistence.PersistenceException e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           JOptionPane.showMessageDialog(null, e.getMessage());
           LOGGER.error("start of tmm", e);
         }

@@ -334,7 +334,7 @@ public class MovieToXbmcNfoConnector {
       }
     }
     catch (JAXBException e) {
-      LOGGER.error("setData", e);
+      // LOGGER.error("setData", e);
       return null;
     }
 

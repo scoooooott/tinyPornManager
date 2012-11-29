@@ -303,7 +303,7 @@ public class MetadataUtil {
     if (s == null)
       return null;
     // return (s.replaceAll("[^A-Za-z0-9&']", " ")).replaceAll("[\\ ]+", " ");
-    return s.replaceAll("[\\[\\]-_.:|]", " ");
+    return s.replaceAll("[\\\\[\\\\]-–_.:|]", " ");
   }
 
 }

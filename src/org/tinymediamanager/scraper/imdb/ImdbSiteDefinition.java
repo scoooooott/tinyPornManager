@@ -22,15 +22,17 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum ImdbSiteDefinition {
   // akas.imdb.com - international site
-  IMDB_COM("http://akas.imdb.com/", "ISO-8859-1", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification"),
+  IMDB_COM("http://akas.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification"),
   // www.imdb.de - german site
-  IMDB_DE("http://www.imdb.de/", "ISO-8859-1", "", "", "", "", "", "");
+  IMDB_DE("http://www.imdb.de/", "UTF-8", "", "", "", "", "", "");
 
-  private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies, String writers, String certification) {
+  private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies,
+      String writers, String certification) {
     this.site = site;
     if (StringUtils.isBlank(charsetName)) {
       this.charset = Charset.defaultCharset();
-    } else {
+    }
+    else {
       this.charset = Charset.forName(charsetName);
     }
     this.tagline = tagline;
