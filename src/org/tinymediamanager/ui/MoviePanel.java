@@ -50,13 +50,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.lang3.StringUtils;
@@ -67,15 +64,16 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScrapeTask;
+import org.tinymediamanager.ui.movies.MovieSelectionModel;
+import org.tinymediamanager.ui.movies.MovieTableFormat;
+
+import ca.odell.glazedlists.swing.EventSelectionModel;
+import ca.odell.glazedlists.swing.EventTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -88,125 +86,129 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MoviePanel extends JPanel {
 
   /** The logger. */
-  private final static Logger LOGGER                   = Logger.getLogger(MoviePanel.class);
+  private final static Logger        LOGGER                   = Logger.getLogger(MoviePanel.class);
 
   /** The movie list. */
-  private MovieList           movieList;
+  private MovieList                  movieList;
 
   /** The text field. */
-  private JTextField          textField;
+  private JTextField                 textField;
 
   /** The table. */
-  private JTable              table;
+  private JTable                     table;
 
   /** The action update data sources. */
-  private final Action        actionUpdateDataSources  = new UpdateDataSourcesAction(false);
+  private final Action               actionUpdateDataSources  = new UpdateDataSourcesAction(false);
 
   /** The action update data sources. */
-  private final Action        actionUpdateDataSources2 = new UpdateDataSourcesAction(true);
+  private final Action               actionUpdateDataSources2 = new UpdateDataSourcesAction(true);
 
   /** The action scrape. */
-  private final Action        actionScrape             = new SingleScrapeAction(false);
+  private final Action               actionScrape             = new SingleScrapeAction(false);
 
   /** The action scrape. */
-  private final Action        actionScrape2            = new SingleScrapeAction(true);
+  private final Action               actionScrape2            = new SingleScrapeAction(true);
 
   /** The text pane. */
-  private JTextPane           textPane;
+  private JTextPane                  textPane;
 
   /** The lbl movie name. */
-  private JLabel              lblMovieName;
+  private JLabel                     lblMovieName;
 
   /** The lbl movie background. */
-  private ImageLabel          lblMovieBackground;
+  private ImageLabel                 lblMovieBackground;
 
   /** The lbl movie poster. */
-  private ImageLabel          lblMoviePoster;
+  private ImageLabel                 lblMoviePoster;
 
   /** The table cast. */
-  private JTable              tableCast;
+  private JTable                     tableCast;
 
   /** The lbl original name. */
-  private JLabel              lblTagline;
+  private JLabel                     lblTagline;
 
   /** The action edit movie. */
-  private final Action        actionEditMovie          = new EditAction(false);
+  private final Action               actionEditMovie          = new EditAction(false);
 
   /** The action edit movie. */
-  private final Action        actionEditMovie2         = new EditAction(true);
+  private final Action               actionEditMovie2         = new EditAction(true);
 
   /** The action scrape unscraped movies. */
-  private final Action        actionScrapeUnscraped    = new UnscrapedScrapeAction();
+  private final Action               actionScrapeUnscraped    = new UnscrapedScrapeAction();
 
   /** The action scrape selected movies. */
-  private final Action        actionScrapeSelected     = new SelectedScrapeAction();
+  private final Action               actionScrapeSelected     = new SelectedScrapeAction();
 
-  private final Action        actionRename             = new RenameAction(false);
+  private final Action               actionRename             = new RenameAction(false);
 
-  private final Action        actionRename2            = new RenameAction(true);
+  private final Action               actionRename2            = new RenameAction(true);
 
-  private final Action        actionRemove2            = new RemoveAction(true);
+  private final Action               actionRemove2            = new RemoveAction(true);
 
   /** The panel rating. */
-  private StarRater           panelRatingStars;
+  private StarRater                  panelRatingStars;
 
   /** The label progressAction. */
-  private JLabel              lblProgressAction;
+  private JLabel                     lblProgressAction;
 
   /** The progress bar. */
-  private JProgressBar        progressBar;
+  private JProgressBar               progressBar;
 
   /** The scrape task. */
-  private MovieScrapeTask     scrapeTask;
+  private MovieScrapeTask            scrapeTask;
 
   /** The label rating. */
-  private JLabel              lblRating;
+  private JLabel                     lblRating;
 
   /** The button cancelScraper. */
-  private JButton             btnCancelScraper;
+  private JButton                    btnCancelScraper;
 
   /** The lbl movie path. */
-  private LinkLabel           lblMoviePath;
-  private JPanel              panelProgressBar;
-  private JPanel              panelMovieCount;
-  private JLabel              lblMovieCount;
-  private JLabel              lblMovieCountInt;
-  private JPanel              panelTop;
-  private JTabbedPane         tabbedPaneMovieDetails;
-  private JPanel              panelOverview;
-  private JPanel              panelMovieCast;
-  private JPanel              panelDetails;
-  private JLabel              lblMoviePathT;
-  private JLabel              lblDirectorT;
-  private JLabel              lblDirector;
-  private JLabel              lblWriterT;
-  private JLabel              lblWriter;
-  private JLabel              lblActors;
-  private JLabel              lblProductionT;
-  private JLabel              lblProduction;
-  private JLabel              lblGenresT;
-  private JLabel              lblGenres;
-  private JLabel              lblCertificationT;
-  private JLabel              lblCertification;
-  private JLabel              lblImdbIdT;
-  private JLabel              lblTmdbIdT;
-  private LinkLabel           lblImdbId;
-  private LinkLabel           lblTmdbId;
-  private JLabel              lblRuntimeT;
-  private JLabel              lblRuntime;
-  private JLabel              lblMinutes;
-  private JLabel              lblVoteCount;
-  private JLabel              lblVoteCountT;
-  private JButton             btnRen;
-  private JPanel              panelMediaInformation;
-  private JLabel              lblFilesT;
-  private JScrollPane         scrollPaneFiles;
-  private JTable              tableFiles;
-  private JLabel              lblPath2;
-  private ImageLabel          lblActorThumb;
-  private JMenu               menu;
-  private JLabel              lblOriginalTitleT;
-  private JLabel              lblOriginalTitle;
+  private LinkLabel                  lblMoviePath;
+  private JPanel                     panelProgressBar;
+  private JPanel                     panelMovieCount;
+  private JLabel                     lblMovieCount;
+  private JLabel                     lblMovieCountInt;
+  private JPanel                     panelTop;
+  private JTabbedPane                tabbedPaneMovieDetails;
+  private JPanel                     panelOverview;
+  private JPanel                     panelMovieCast;
+  private JPanel                     panelDetails;
+  private JLabel                     lblMoviePathT;
+  private JLabel                     lblDirectorT;
+  private JLabel                     lblDirector;
+  private JLabel                     lblWriterT;
+  private JLabel                     lblWriter;
+  private JLabel                     lblActors;
+  private JLabel                     lblProductionT;
+  private JLabel                     lblProduction;
+  private JLabel                     lblGenresT;
+  private JLabel                     lblGenres;
+  private JLabel                     lblCertificationT;
+  private JLabel                     lblCertification;
+  private JLabel                     lblImdbIdT;
+  private JLabel                     lblTmdbIdT;
+  private LinkLabel                  lblImdbId;
+  private LinkLabel                  lblTmdbId;
+  private JLabel                     lblRuntimeT;
+  private JLabel                     lblRuntime;
+  private JLabel                     lblMinutes;
+  private JLabel                     lblVoteCount;
+  private JLabel                     lblVoteCountT;
+  private JButton                    btnRen;
+  private JPanel                     panelMediaInformation;
+  private JLabel                     lblFilesT;
+  private JScrollPane                scrollPaneFiles;
+  private JTable                     tableFiles;
+  private JLabel                     lblPath2;
+  private ImageLabel                 lblActorThumb;
+  private JMenu                      menu;
+  private JLabel                     lblOriginalTitleT;
+  private JLabel                     lblOriginalTitle;
+
+  private EventTableModel<Movie>     eventTableModel;
+  private EventSelectionModel<Movie> eventSelectionModel;
+  private MovieSelectionModel        movieSelectionModel;
 
   /**
    * Create the panel.
@@ -281,7 +283,12 @@ public class MoviePanel extends JPanel {
     textField.setColumns(10);
 
     // table = new JTable();
-    table = new MyTable();
+    // build JTable
+
+    eventTableModel = new EventTableModel<Movie>(movieList.getMovies(), new MovieTableFormat());
+    table = new MyTable(eventTableModel);
+
+    // table = new MyTable();
     table.setFont(new Font("Dialog", Font.PLAIN, 11));
     // scrollPane.setViewportView(table);
 
@@ -587,8 +594,17 @@ public class MoviePanel extends JPanel {
       }
     });
 
+    eventSelectionModel = new EventSelectionModel<Movie>(movieList.getMovies());
+    // table.setSelectionModel(eventSelectionModel);
+    movieSelectionModel = new MovieSelectionModel(eventSelectionModel);
+    // table.getSelectionModel().addListSelectionListener(movieSelectionModel);
+
     // beansbinding init
     initDataBindings();
+
+    // EventSelectionModel<Movie> selectionModel = new
+    // EventSelectionModel<Movie>(movieList.getMovies());
+    // table.setSelectionModel(selectionModel);
 
     // menu items
     menu.add(actionUpdateDataSources2);
@@ -637,8 +653,8 @@ public class MoviePanel extends JPanel {
     MouseListener popupListener = new PopupListener(popupMenu);
     table.addMouseListener(popupListener);
 
-    TableRowSorter sorter = new TableRowSorter(table.getModel());
-    table.setRowSorter(sorter);
+    // TableRowSorter sorter = new TableRowSorter(table.getModel());
+    // table.setRowSorter(sorter);
 
     // moviename column
     table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
@@ -665,33 +681,39 @@ public class MoviePanel extends JPanel {
       table.getColumnModel().getColumn(3).setHeaderValue(new ImageIcon(imageURL));
     }
 
-    // LoadingTask task = new LoadingTask();
-    // task.execute();
+    // // selecting first movie at startup
+    // if (movieList.getMovies() != null && movieList.getMovies().size() > 0) {
+    // ListSelectionModel selectionModel = table.getSelectionModel();
+    // if (selectionModel.isSelectionEmpty()) {
+    // selectionModel.setSelectionInterval(0, 0);
+    // }
+    //
+    // if (tableCast.getModel().getRowCount() > 0) {
+    // tableCast.getSelectionModel().setSelectionInterval(0, 0);
+    // } else {
+    // lblActorThumb.setImageUrl("");
+    // }
+    // }
+    //
+    // // change to the first actor on movie change
+    // tableCast.getModel().addTableModelListener(new TableModelListener() {
+    // public void tableChanged(TableModelEvent e) {
+    // if (tableCast.getModel().getRowCount() > 0) {
+    // tableCast.getSelectionModel().setSelectionInterval(0, 0);
+    // } else {
+    // lblActorThumb.setImageUrl("");
+    // }
+    // }
+    // });
 
-    // selecting first movie at startup
-    if (movieList.getMovies() != null && movieList.getMovies().size() > 0) {
-      ListSelectionModel selectionModel = table.getSelectionModel();
-      if (selectionModel.isSelectionEmpty()) {
-        selectionModel.setSelectionInterval(0, 0);
-      }
+    // eventSelectionModel = new
+    // EventSelectionModel<Movie>(movieList.getMovies());
+    table.setSelectionModel(eventSelectionModel);
+    // movieSelectionModel = new MovieSelectionModel(eventSelectionModel);
+    table.getSelectionModel().addListSelectionListener(movieSelectionModel);
+    TableRowSorter sorter = new TableRowSorter(table.getModel());
+    table.setRowSorter(sorter);
 
-      if (tableCast.getModel().getRowCount() > 0) {
-        tableCast.getSelectionModel().setSelectionInterval(0, 0);
-      } else {
-        lblActorThumb.setImageUrl("");
-      }
-    }
-
-    // change to the first actor on movie change
-    tableCast.getModel().addTableModelListener(new TableModelListener() {
-      public void tableChanged(TableModelEvent e) {
-        if (tableCast.getModel().getRowCount() > 0) {
-          tableCast.getSelectionModel().setSelectionInterval(0, 0);
-        } else {
-          lblActorThumb.setImageUrl("");
-        }
-      }
-    });
   }
 
   /**
@@ -1041,158 +1063,255 @@ public class MoviePanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieList, List<Movie>> movieListBeanProperty = BeanProperty.create("movies");
-    JTableBinding<Movie, MovieList, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieList, movieListBeanProperty, table);
-    //
-    BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Title").setEditable(false).setColumnClass(String.class);
-    //
-    BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
-    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false).setColumnClass(String.class);
-    //
-    BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("hasNfoFile");
-    JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding = jTableBinding.addColumnBinding(movieBeanProperty_2);
-    columnBinding.setColumnName("NFO");
-    columnBinding.setEditable(false);
-    columnBinding.setColumnClass(ImageIcon.class);
-    columnBinding.setConverter(new ImageIconConverter());
-    //
-    BeanProperty<Movie, Boolean> movieBeanProperty_3 = BeanProperty.create("hasImages");
-    JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding_1 = jTableBinding.addColumnBinding(movieBeanProperty_3);
-    columnBinding_1.setColumnName("Images");
-    columnBinding_1.setEditable(false);
-    columnBinding_1.setColumnClass(ImageIcon.class);
-    columnBinding_1.setConverter(new ImageIconConverter());
-    //
-    jTableBinding.setEditable(false);
-    jTableBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.overview");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextPane, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty, textPane, jTextPaneBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<JTable, List<MovieCast>> jTableBeanProperty_3 = BeanProperty.create("selectedElement.actors");
-    JTableBinding<MovieCast, JTable, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, table, jTableBeanProperty_3, tableCast);
-    //
-    BeanProperty<MovieCast, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding_1.addColumnBinding(movieCastBeanProperty).setColumnName("Name").setEditable(false);
-    //
-    BeanProperty<MovieCast, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding_1.addColumnBinding(movieCastBeanProperty_1).setColumnName("Role").setEditable(false);
-    //
-    jTableBinding_1.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.nameForUi");
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1, lblMovieName, jLabelBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.fanart");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imagePath");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2, lblMovieBackground,
-        imageLabelBeanProperty);
-    autoBinding_2.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_5 = BeanProperty.create("selectedElement.poster");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_5, lblMoviePoster,
-        imageLabelBeanProperty);
-    autoBinding_4.bind();
-    //
-    BeanProperty<JTable, Float> jTableBeanProperty_6 = BeanProperty.create("selectedElement.rating");
-    BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
-    AutoBinding<JTable, Float, StarRater, Float> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_6, panelRatingStars,
-        starRaterBeanProperty);
-    autoBinding_5.bind();
-    //
-    AutoBinding<JTable, Float, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_6, lblRating, jLabelBeanProperty);
-    autoBinding_6.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_8 = BeanProperty.create("selectedElement.path");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_8, lblMoviePath, jLabelBeanProperty);
-    autoBinding_8.bind();
-    //
-    BeanProperty<MovieList, Integer> movieListBeanProperty_1 = BeanProperty.create("movieCount");
-    AutoBinding<MovieList, Integer, JLabel, String> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ, movieList, movieListBeanProperty_1, lblMovieCountInt,
-        jLabelBeanProperty);
-    autoBinding_9.bind();
-    //
-    BeanProperty<JTable, Boolean> jTableBeanProperty_7 = BeanProperty.create("selectedElement.hasRating");
-    BeanProperty<JLabel, Boolean> jLabelBeanProperty_1 = BeanProperty.create("visible");
-    AutoBinding<JTable, Boolean, JLabel, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_7, lblRating, jLabelBeanProperty_1);
-    autoBinding_7.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_9 = BeanProperty.create("selectedElement.writer");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_9, lblWriter, jLabelBeanProperty);
-    autoBinding_10.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_10 = BeanProperty.create("selectedElement.director");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_10, lblDirector, jLabelBeanProperty);
-    autoBinding_11.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_11 = BeanProperty.create("selectedElement.productionCompany");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_11, lblProduction, jLabelBeanProperty);
-    autoBinding_12.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_12 = BeanProperty.create("selectedElement.genresAsString");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_12, lblGenres, jLabelBeanProperty);
-    autoBinding_13.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_14 = BeanProperty.create("selectedElement.imdbId");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_14, lblImdbId, jLabelBeanProperty);
-    autoBinding_15.bind();
-    //
-    BeanProperty<JTable, Integer> jTableBeanProperty_15 = BeanProperty.create("selectedElement.tmdbId");
-    AutoBinding<JTable, Integer, JLabel, String> autoBinding_16 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_15, lblTmdbId, jLabelBeanProperty);
-    autoBinding_16.bind();
-    //
-    BeanProperty<JTable, Integer> jTableBeanProperty_16 = BeanProperty.create("selectedElement.runtime");
-    AutoBinding<JTable, Integer, JLabel, String> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_16, lblRuntime, jLabelBeanProperty);
-    autoBinding_17.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_13 = BeanProperty.create("selectedElement.certification.name");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_14 = Bindings
-        .createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_13, lblCertification, jLabelBeanProperty);
-    autoBinding_14.bind();
-    //
-    BeanProperty<JTable, Integer> jTableBeanProperty_17 = BeanProperty.create("selectedElement.votes");
-    AutoBinding<JTable, Integer, JLabel, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_17, lblVoteCount, jLabelBeanProperty);
-    autoBinding_18.bind();
-    //
-    AutoBinding<JTable, Boolean, JLabel, Boolean> autoBinding_19 = Bindings
-        .createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_7, lblVoteCountT, jLabelBeanProperty_1);
-    autoBinding_19.bind();
-    //
-    AutoBinding<JTable, Boolean, JLabel, Boolean> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_7, lblVoteCount, jLabelBeanProperty_1);
-    autoBinding_20.bind();
-    //
-    AutoBinding<JTable, String, JLabel, String> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_8, lblPath2, jLabelBeanProperty);
-    autoBinding_21.bind();
-    //
-    BeanProperty<JTable, List<MediaFile>> jTableBeanProperty_18 = BeanProperty.create("selectedElement.mediaFiles");
-    JTableBinding<MediaFile, JTable, JTable> jTableBinding_2 = SwingBindings.createJTableBinding(UpdateStrategy.READ, table, jTableBeanProperty_18, tableFiles);
-    //
-    BeanProperty<MediaFile, String> mediaFileBeanProperty = BeanProperty.create("filename");
-    jTableBinding_2.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
-    //
-    BeanProperty<MediaFile, String> mediaFileBeanProperty_1 = BeanProperty.create("filesizeInMegabytes");
-    jTableBinding_2.addColumnBinding(mediaFileBeanProperty_1).setColumnName("Size").setEditable(false);
-    //
-    jTableBinding_2.setEditable(false);
-    jTableBinding_2.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty_19 = BeanProperty.create("selectedElement.thumb");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty_1 = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast, jTableBeanProperty_19, lblActorThumb,
-        imageLabelBeanProperty_1);
-    autoBinding_22.bind();
-    //
-    BeanProperty<JTable, String> myTableBeanProperty = BeanProperty.create("selectedElement.originalName");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_23 = Bindings.createAutoBinding(UpdateStrategy.READ, table, myTableBeanProperty, lblOriginalTitle, jLabelBeanProperty);
-    autoBinding_23.bind();
-    //
-    BeanProperty<JTable, String> myTableBeanProperty_1 = BeanProperty.create("selectedElement.tagline");
-    AutoBinding<JTable, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, myTableBeanProperty_1, lblTagline, jLabelBeanProperty);
-    autoBinding_3.bind();
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel, movieSelectionModelBeanProperty,
+        lblMovieName, jLabelBeanProperty);
+    autoBinding.bind();
   }
 }
+
+// BeanProperty<MovieList, List<Movie>> movieListBeanProperty =
+// BeanProperty.create("movies");
+// JTableBinding<Movie, MovieList, JTable> jTableBinding =
+// SwingBindings.createJTableBinding(UpdateStrategy.READ, movieList,
+// movieListBeanProperty, table);
+// //
+// BeanProperty<Movie, String> movieBeanProperty =
+// BeanProperty.create("name");
+// jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Title").setEditable(false).setColumnClass(String.class);
+// //
+// BeanProperty<Movie, String> movieBeanProperty_1 =
+// BeanProperty.create("year");
+// jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false).setColumnClass(String.class);
+// //
+// BeanProperty<Movie, Boolean> movieBeanProperty_2 =
+// BeanProperty.create("hasNfoFile");
+// JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding =
+// jTableBinding.addColumnBinding(movieBeanProperty_2);
+// columnBinding.setColumnName("NFO");
+// columnBinding.setEditable(false);
+// columnBinding.setColumnClass(ImageIcon.class);
+// columnBinding.setConverter(new ImageIconConverter());
+// //
+// BeanProperty<Movie, Boolean> movieBeanProperty_3 =
+// BeanProperty.create("hasImages");
+// JTableBinding<Movie, MovieList, JTable>.ColumnBinding columnBinding_1 =
+// jTableBinding.addColumnBinding(movieBeanProperty_3);
+// columnBinding_1.setColumnName("Images");
+// columnBinding_1.setEditable(false);
+// columnBinding_1.setColumnClass(ImageIcon.class);
+// columnBinding_1.setConverter(new ImageIconConverter());
+// //
+// jTableBinding.setEditable(false);
+// jTableBinding.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty =
+// BeanProperty.create("selectedElement.overview");
+// BeanProperty<JTextPane, String> jTextPaneBeanProperty =
+// BeanProperty.create("text");
+// AutoBinding<JTable, String, JTextPane, String> autoBinding =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty, textPane, jTextPaneBeanProperty);
+// autoBinding.bind();
+// //
+// BeanProperty<JTable, List<MovieCast>> jTableBeanProperty_3 =
+// BeanProperty.create("selectedElement.actors");
+// JTableBinding<MovieCast, JTable, JTable> jTableBinding_1 =
+// SwingBindings.createJTableBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_3, tableCast);
+// //
+// BeanProperty<MovieCast, String> movieCastBeanProperty =
+// BeanProperty.create("name");
+// jTableBinding_1.addColumnBinding(movieCastBeanProperty).setColumnName("Name").setEditable(false);
+// //
+// BeanProperty<MovieCast, String> movieCastBeanProperty_1 =
+// BeanProperty.create("character");
+// jTableBinding_1.addColumnBinding(movieCastBeanProperty_1).setColumnName("Role").setEditable(false);
+// //
+// jTableBinding_1.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_1 =
+// BeanProperty.create("selectedElement.nameForUi");
+// BeanProperty<JLabel, String> jLabelBeanProperty =
+// BeanProperty.create("text");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_1 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_1, lblMovieName, jLabelBeanProperty);
+// autoBinding_1.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_2 =
+// BeanProperty.create("selectedElement.fanart");
+// BeanProperty<ImageLabel, String> imageLabelBeanProperty =
+// BeanProperty.create("imagePath");
+// AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_2, lblMovieBackground,
+// imageLabelBeanProperty);
+// autoBinding_2.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_5 =
+// BeanProperty.create("selectedElement.poster");
+// AutoBinding<JTable, String, ImageLabel, String> autoBinding_4 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_5, lblMoviePoster,
+// imageLabelBeanProperty);
+// autoBinding_4.bind();
+// //
+// BeanProperty<JTable, Float> jTableBeanProperty_6 =
+// BeanProperty.create("selectedElement.rating");
+// BeanProperty<StarRater, Float> starRaterBeanProperty =
+// BeanProperty.create("rating");
+// AutoBinding<JTable, Float, StarRater, Float> autoBinding_5 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_6, panelRatingStars,
+// starRaterBeanProperty);
+// autoBinding_5.bind();
+//
+// AutoBinding<JTable, Float, JLabel, String> autoBinding_6 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_6, lblRating, jLabelBeanProperty);
+// autoBinding_6.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_8 =
+// BeanProperty.create("selectedElement.path");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_8 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_8, lblMoviePath, jLabelBeanProperty);
+// autoBinding_8.bind();
+// //
+// BeanProperty<MovieList, Integer> movieListBeanProperty_1 =
+// BeanProperty.create("movieCount");
+// AutoBinding<MovieList, Integer, JLabel, String> autoBinding_9 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, movieList,
+// movieListBeanProperty_1, lblMovieCountInt,
+// jLabelBeanProperty);
+// autoBinding_9.bind();
+// //
+// BeanProperty<JTable, Boolean> jTableBeanProperty_7 =
+// BeanProperty.create("selectedElement.hasRating");
+// BeanProperty<JLabel, Boolean> jLabelBeanProperty_1 =
+// BeanProperty.create("visible");
+// AutoBinding<JTable, Boolean, JLabel, Boolean> autoBinding_7 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_7, lblRating, jLabelBeanProperty_1);
+// autoBinding_7.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_9 =
+// BeanProperty.create("selectedElement.writer");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_10 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_9, lblWriter, jLabelBeanProperty);
+// autoBinding_10.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_10 =
+// BeanProperty.create("selectedElement.director");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_11 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_10, lblDirector, jLabelBeanProperty);
+// autoBinding_11.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_11 =
+// BeanProperty.create("selectedElement.productionCompany");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_12 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_11, lblProduction, jLabelBeanProperty);
+// autoBinding_12.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_12 =
+// BeanProperty.create("selectedElement.genresAsString");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_13 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_12, lblGenres, jLabelBeanProperty);
+// autoBinding_13.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_14 =
+// BeanProperty.create("selectedElement.imdbId");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_15 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_14, lblImdbId, jLabelBeanProperty);
+// autoBinding_15.bind();
+// //
+// BeanProperty<JTable, Integer> jTableBeanProperty_15 =
+// BeanProperty.create("selectedElement.tmdbId");
+// AutoBinding<JTable, Integer, JLabel, String> autoBinding_16 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_15, lblTmdbId, jLabelBeanProperty);
+// autoBinding_16.bind();
+// //
+// BeanProperty<JTable, Integer> jTableBeanProperty_16 =
+// BeanProperty.create("selectedElement.runtime");
+// AutoBinding<JTable, Integer, JLabel, String> autoBinding_17 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_16, lblRuntime, jLabelBeanProperty);
+// autoBinding_17.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_13 =
+// BeanProperty.create("selectedElement.certification.name");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_14 = Bindings
+// .createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_13,
+// lblCertification, jLabelBeanProperty);
+// autoBinding_14.bind();
+// //
+// BeanProperty<JTable, Integer> jTableBeanProperty_17 =
+// BeanProperty.create("selectedElement.votes");
+// AutoBinding<JTable, Integer, JLabel, String> autoBinding_18 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_17, lblVoteCount, jLabelBeanProperty);
+// autoBinding_18.bind();
+// //
+// AutoBinding<JTable, Boolean, JLabel, Boolean> autoBinding_19 = Bindings
+// .createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_7,
+// lblVoteCountT, jLabelBeanProperty_1);
+// autoBinding_19.bind();
+// //
+// AutoBinding<JTable, Boolean, JLabel, Boolean> autoBinding_20 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_7, lblVoteCount, jLabelBeanProperty_1);
+// autoBinding_20.bind();
+// //
+// AutoBinding<JTable, String, JLabel, String> autoBinding_21 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_8, lblPath2, jLabelBeanProperty);
+// autoBinding_21.bind();
+// //
+// BeanProperty<JTable, List<MediaFile>> jTableBeanProperty_18 =
+// BeanProperty.create("selectedElement.mediaFiles");
+// JTableBinding<MediaFile, JTable, JTable> jTableBinding_2 =
+// SwingBindings.createJTableBinding(UpdateStrategy.READ, table,
+// jTableBeanProperty_18, tableFiles);
+// //
+// BeanProperty<MediaFile, String> mediaFileBeanProperty =
+// BeanProperty.create("filename");
+// jTableBinding_2.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
+// //
+// BeanProperty<MediaFile, String> mediaFileBeanProperty_1 =
+// BeanProperty.create("filesizeInMegabytes");
+// jTableBinding_2.addColumnBinding(mediaFileBeanProperty_1).setColumnName("Size").setEditable(false);
+// //
+// jTableBinding_2.setEditable(false);
+// jTableBinding_2.bind();
+// //
+// BeanProperty<JTable, String> jTableBeanProperty_19 =
+// BeanProperty.create("selectedElement.thumb");
+// BeanProperty<ImageLabel, String> imageLabelBeanProperty_1 =
+// BeanProperty.create("imageUrl");
+// AutoBinding<JTable, String, ImageLabel, String> autoBinding_22 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, tableCast,
+// jTableBeanProperty_19, lblActorThumb,
+// imageLabelBeanProperty_1);
+// autoBinding_22.bind();
+// //
+// BeanProperty<JTable, String> myTableBeanProperty =
+// BeanProperty.create("selectedElement.originalName");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_23 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// myTableBeanProperty, lblOriginalTitle, jLabelBeanProperty);
+// autoBinding_23.bind();
+// //
+// BeanProperty<JTable, String> myTableBeanProperty_1 =
+// BeanProperty.create("selectedElement.tagline");
+// AutoBinding<JTable, String, JLabel, String> autoBinding_3 =
+// Bindings.createAutoBinding(UpdateStrategy.READ, table,
+// myTableBeanProperty_1, lblTagline, jLabelBeanProperty);
+// autoBinding_3.bind();

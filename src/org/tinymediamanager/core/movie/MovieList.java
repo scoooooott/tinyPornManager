@@ -26,7 +26,6 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
@@ -39,25 +38,30 @@ import org.tinymediamanager.scraper.SearchQuery;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+
 /**
  * The Class MovieList.
  */
 public class MovieList extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger    LOGGER   = Logger.getLogger(MovieList.class);
+  private static final Logger          LOGGER   = Logger.getLogger(MovieList.class);
 
   /** The instance. */
-  private static MovieList       instance;
+  private static MovieList             instance;
 
   /** The settings. */
-  private final Settings         settings = Settings.getInstance();
+  private final Settings               settings = Settings.getInstance();
 
   /** The movie list. */
-  private List<Movie>            movieList;
+  // private List<Movie> movieList;
+  private ObservableElementList<Movie> movieList;
 
   /** The metadata provider. */
-  private IMediaMetadataProvider metadataProvider;
+  private IMediaMetadataProvider       metadataProvider;
 
   /**
    * Instantiates a new movie list.
@@ -138,14 +142,21 @@ public class MovieList extends AbstractModelObject {
     firePropertyChange("movieCount", oldValue, movieList.size());
   }
 
-  /**
-   * Gets the movies.
-   * 
-   * @return the movies
-   */
-  public List<Movie> getMovies() {
+  // /**
+  // * Gets the movies.
+  // *
+  // * @return the movies
+  // */
+  // public List<Movie> getMovies() {
+  // if (movieList == null) {
+  // movieList = ObservableCollections.observableList(new ArrayList<Movie>());
+  // }
+  // return movieList;
+  // }
+
+  public ObservableElementList<Movie> getMovies() {
     if (movieList == null) {
-      movieList = ObservableCollections.observableList(new ArrayList<Movie>());
+      movieList = new ObservableElementList<Movie>(new BasicEventList<Movie>(), GlazedLists.beanConnector(Movie.class));
     }
     return movieList;
   }
@@ -160,7 +171,9 @@ public class MovieList extends AbstractModelObject {
       List<Movie> movies = query.getResultList();
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
-        movieList = ObservableCollections.observableList(new ArrayList<Movie>(movies.size()));
+        // movieList = ObservableCollections.observableList(new
+        // ArrayList<Movie>(movies.size()));,
+        movieList = new ObservableElementList<Movie>(new BasicEventList<Movie>(movies.size()), GlazedLists.beanConnector(Movie.class));
       } else {
         LOGGER.debug("found nothing in database");
       }
