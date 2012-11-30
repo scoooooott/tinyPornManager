@@ -175,8 +175,7 @@ public class MovieList extends AbstractModelObject {
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
         movieList = new ObservableElementList<Movie>(new BasicEventList<Movie>(movies.size()), GlazedLists.beanConnector(Movie.class));
-      }
-      else {
+      } else {
         LOGGER.debug("found nothing in database");
       }
       // LOGGER.debug(movies);
@@ -186,15 +185,12 @@ public class MovieList extends AbstractModelObject {
           // LOGGER.debug(movie);
           movie.setObservables();
           addMovie(movie);
-        }
-        else {
+        } else {
           LOGGER.error("retrieved no movie: " + obj);
         }
-    }
-    catch (PersistenceException e) {
+    } catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -284,8 +280,7 @@ public class MovieList extends AbstractModelObject {
       // }
       // }
 
-    }
-    else {
+    } else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -345,8 +340,7 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 
@@ -372,8 +366,7 @@ public class MovieList extends AbstractModelObject {
           searchResult.add(result);
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 

@@ -12,10 +12,13 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
   /** The Constant checkIcon. */
-  private final static ImageIcon checkIcon = new ImageIcon(MoviePanel.class.getResource("images/Checkmark.png"));
+  private final static ImageIcon       checkIcon        = new ImageIcon(MoviePanel.class.getResource("images/Checkmark.png"));
 
   /** The Constant crossIcon. */
-  private final static ImageIcon crossIcon = new ImageIcon(MoviePanel.class.getResource("images/Cross.png"));
+  private final static ImageIcon       crossIcon        = new ImageIcon(MoviePanel.class.getResource("images/Cross.png"));
+
+  private static Comparator<String>    stringComparator = new StringComparator();
+  private static Comparator<ImageIcon> imageComparator  = new ImageComparator();
 
   @Override
   public int getColumnCount() {
@@ -82,8 +85,31 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   }
 
   @Override
-  public Comparator getColumnComparator(int arg0) {
-    // TODO Auto-generated method stub
-    return null;
+  public Comparator getColumnComparator(int column) {
+    switch (column) {
+      case 0:
+      case 1:
+        return stringComparator;
+
+      case 2:
+      case 3:
+        return imageComparator;
+    }
+
+    throw new IllegalStateException();
+  }
+
+  private static class StringComparator implements Comparator<String> {
+    @Override
+    public int compare(String arg0, String arg1) {
+      return arg0.compareTo(arg1);
+    }
+  }
+
+  private static class ImageComparator implements Comparator<ImageIcon> {
+    @Override
+    public int compare(ImageIcon arg0, ImageIcon arg1) {
+      return 0;
+    }
   }
 }

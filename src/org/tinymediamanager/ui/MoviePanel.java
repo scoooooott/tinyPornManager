@@ -25,7 +25,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +50,11 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -74,14 +71,17 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieComparator;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScrapeTask;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.MovieTableFormat;
 
+import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.TableComparatorChooser;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -214,9 +214,10 @@ public class MoviePanel extends JPanel {
   private JLabel                     lblOriginalTitleT;
   private JLabel                     lblOriginalTitle;
 
-  private EventTableModel<Movie>     eventTableModel;
+  private EventTableModel<Movie>     movieTableModel;
   private EventSelectionModel<Movie> eventSelectionModel;
   private MovieSelectionModel        movieSelectionModel;
+  private SortedList<Movie>          sortedMovies;
 
   /**
    * Create the panel.
@@ -226,6 +227,7 @@ public class MoviePanel extends JPanel {
     // load movielist
     LOGGER.debug("loading MovieList");
     movieList = MovieList.getInstance();
+    sortedMovies = new SortedList<Movie>(movieList.getMovies(), new MovieComparator());
 
     // build menu
     menu = new JMenu("Movies");
@@ -233,9 +235,8 @@ public class MoviePanel extends JPanel {
     JMenuBar menuBar = mainFrame.getJMenuBar();
     menuBar.add(menu);
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.DEFAULT_ROWSPEC, }));
 
     JSplitPane splitPaneHorizontal = new JSplitPane();
     splitPaneHorizontal.setContinuousLayout(true);
@@ -243,9 +244,9 @@ public class MoviePanel extends JPanel {
 
     JPanel panelMovieList = new JPanel();
     splitPaneHorizontal.setLeftComponent(panelMovieList);
-    panelMovieList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(75dlu;default)"),
-        ColumnSpec.decode("max(200px;pref):grow"), }, new RowSpec[] { RowSpec.decode("26px"), FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:max(200px;default):grow"), }));
+    panelMovieList.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(75dlu;default)"), ColumnSpec.decode("max(200px;pref):grow"), }, new RowSpec[] {
+            RowSpec.decode("26px"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(200px;default):grow"), }));
 
     JToolBar toolBar = new JToolBar();
     toolBar.setBorder(null);
@@ -294,21 +295,21 @@ public class MoviePanel extends JPanel {
     // table = new JTable();
     // build JTable
 
-    eventTableModel = new EventTableModel<Movie>(movieList.getMovies(), new MovieTableFormat());
-    table = new MyTable(eventTableModel);
+    movieTableModel = new EventTableModel<Movie>(sortedMovies, new MovieTableFormat());
+    table = new MyTable(movieTableModel);
+    TableComparatorChooser tableSorter = TableComparatorChooser.install(table, sortedMovies, TableComparatorChooser.SINGLE_COLUMN);
 
     // table = new MyTable();
     table.setFont(new Font("Dialog", Font.PLAIN, 11));
     // scrollPane.setViewportView(table);
 
-    // JScrollPane scrollPane = new JScrollPane();
+    // JScrollPane scrollPane = new JScrollPane(table);
     JScrollPane scrollPane = MyTable.createStripedJScrollPane(table);
     panelMovieList.add(scrollPane, "2, 3, 2, 1, fill, fill");
 
     JPanel panelRight = new JPanel();
     splitPaneHorizontal.setRightComponent(panelRight);
-    panelRight.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+    panelRight.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     JSplitPane splitPaneVertical = new JSplitPane();
     splitPaneVertical.setBorder(null);
@@ -323,15 +324,14 @@ public class MoviePanel extends JPanel {
     panelTop.setBorder(null);
     splitPaneVertical.setTopComponent(panelTop);
     // panelMovieDetails.add(panelMovieHeaderImages, "2, 2, fill, fill");
-    panelTop.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("350px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("right:250px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default"), RowSpec.decode("fill:pref:grow"), }));
+    panelTop.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("350px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:250px:grow"), }, new RowSpec[] {
+        RowSpec.decode("fill:default"), RowSpec.decode("fill:pref:grow"), }));
 
     JPanel panelMovieHeader = new JPanel();
     panelTop.add(panelMovieHeader, "1, 1, 3, 1, fill, fill");
     panelMovieHeader.setBorder(null);
-    panelMovieHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelMovieHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblMovieName = new JLabel("");
     panelMovieHeader.add(lblMovieName, "2, 1, 3, 1, left, top");
@@ -359,9 +359,9 @@ public class MoviePanel extends JPanel {
 
     JLayeredPane layeredPaneImages = new JLayeredPane();
     panelTop.add(layeredPaneImages, "1, 2, 3, 1, fill, fill");
-    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px"),
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"), RowSpec.decode("fill:default:grow"), }));
+    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px"), ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"),
+            RowSpec.decode("fill:default:grow"), }));
 
     lblMovieBackground = new ImageLabel(false, true);
     layeredPaneImages.add(lblMovieBackground, "1, 3, 3, 3, fill, fill");
@@ -371,8 +371,8 @@ public class MoviePanel extends JPanel {
     layeredPaneImages.add(lblMoviePoster, "2, 4, fill, fill");
 
     JPanel panelBottom = new JPanel();
-    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("fill:default:grow"), }));
+    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
     tabbedPaneMovieDetails = new JTabbedPane(JTabbedPane.TOP);
     panelBottom.add(tabbedPaneMovieDetails, "1, 2, fill, fill");
@@ -380,14 +380,12 @@ public class MoviePanel extends JPanel {
 
     panelDetails = new JPanel();
     tabbedPaneMovieDetails.addTab("Details", null, panelDetails, null);
-    panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(12dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(120px;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(12dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel("Original Title");
     panelDetails.add(lblOriginalTitleT, "2, 2");
@@ -434,8 +432,7 @@ public class MoviePanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         try {
           Desktop.getDesktop().browse(new URI("http://www.imdb.com/title/" + lblImdbId.getNormalText()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("browse to imdbid", e);
         }
       }
@@ -452,8 +449,7 @@ public class MoviePanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         try {
           Desktop.getDesktop().browse(new URI("http://www.themoviedb.org/movie/" + lblTmdbId.getNormalText()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("browse to tmdbid", e);
         }
       }
@@ -475,8 +471,7 @@ public class MoviePanel extends JPanel {
             if (path.exists()) {
               Desktop.getDesktop().open(path);
             }
-          }
-          catch (Exception ex) {
+          } catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
           }
         }
@@ -499,11 +494,10 @@ public class MoviePanel extends JPanel {
     scrollPaneOverview.setViewportView(textPane);
 
     panelMovieCast = new JPanel();
-    panelMovieCast.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(39dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("max(165dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("125px"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    panelMovieCast.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(39dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("max(165dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("125px"),
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     lblDirectorT = new JLabel("Director");
     panelMovieCast.add(lblDirectorT, "2, 2");
@@ -536,9 +530,9 @@ public class MoviePanel extends JPanel {
 
     panelMediaInformation = new JPanel();
     tabbedPaneMovieDetails.addTab("Media Information", null, panelMediaInformation, null);
-    panelMediaInformation.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(207dlu;default):grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    panelMediaInformation.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("max(207dlu;default):grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), }));
 
     JLabel lblPathT2 = new JLabel("Path");
     panelMediaInformation.add(lblPathT2, "2, 2");
@@ -559,9 +553,8 @@ public class MoviePanel extends JPanel {
 
     JPanel panelStatus = new JPanel();
     add(panelStatus, "2, 3, fill, fill");
-    panelStatus.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("1px"),
-        ColumnSpec.decode("146px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec
-        .decode("fill:default:grow"), }));
+    panelStatus.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("1px"), ColumnSpec.decode("146px:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     panelMovieCount = new JPanel();
     panelStatus.add(panelMovieCount, "3, 1, left, fill");
@@ -612,7 +605,7 @@ public class MoviePanel extends JPanel {
       }
     });
 
-    eventSelectionModel = new EventSelectionModel<Movie>(movieList.getMovies());
+    eventSelectionModel = new EventSelectionModel<Movie>(sortedMovies);
     movieSelectionModel = new MovieSelectionModel(eventSelectionModel);
 
     // beansbinding init
@@ -652,8 +645,7 @@ public class MoviePanel extends JPanel {
         if (cache.exists()) {
           try {
             FileUtils.deleteDirectory(cache);
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
           }
         }
       }
@@ -673,60 +665,42 @@ public class MoviePanel extends JPanel {
     MouseListener popupListener = new PopupListener(popupMenu);
     table.addMouseListener(popupListener);
 
-    // moviename column
-    table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
-
-    // year column
-    table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
-    table.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
-    table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
-
-    // NFO column
-    table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer());
-    table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
-    URL imageURL = MoviePanel.class.getResource("images/File.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
-    }
-
-    // poster column
-    table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer());
-    table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
-    imageURL = null;
-    imageURL = MoviePanel.class.getResource("images/Image.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(3).setHeaderValue(new ImageIcon(imageURL));
-    }
-
-    // // selecting first movie at startup
-    // if (movieList.getMovies() != null && movieList.getMovies().size() > 0) {
-    // ListSelectionModel selectionModel = table.getSelectionModel();
-    // if (selectionModel.isSelectionEmpty()) {
-    // selectionModel.setSelectionInterval(0, 0);
+    // // moviename column
+    // table.getColumnModel().getColumn(0).setCellRenderer(new
+    // BorderCellRenderer());
+    //
+    // // year column
+    // table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
+    // table.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
+    // table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
+    //
+    // // NFO column
+    // table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new
+    // IconRenderer());
+    // table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
+    // URL imageURL = MoviePanel.class.getResource("images/File.png");
+    // if (imageURL != null) {
+    // table.getColumnModel().getColumn(2).setHeaderValue(new
+    // ImageIcon(imageURL));
     // }
     //
-    // if (tableCast.getModel().getRowCount() > 0) {
-    // tableCast.getSelectionModel().setSelectionInterval(0, 0);
-    // } else {
-    // lblActorThumb.setImageUrl("");
+    // // poster column
+    // table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new
+    // IconRenderer());
+    // table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
+    // imageURL = null;
+    // imageURL = MoviePanel.class.getResource("images/Image.png");
+    // if (imageURL != null) {
+    // table.getColumnModel().getColumn(3).setHeaderValue(new
+    // ImageIcon(imageURL));
     // }
-    // }
-    //
-    // // change to the first actor on movie change
-    // tableCast.getModel().addTableModelListener(new TableModelListener() {
-    // public void tableChanged(TableModelEvent e) {
-    // if (tableCast.getModel().getRowCount() > 0) {
-    // tableCast.getSelectionModel().setSelectionInterval(0, 0);
-    // } else {
-    // lblActorThumb.setImageUrl("");
-    // }
-    // }
-    // });
 
     table.setSelectionModel(eventSelectionModel);
-    table.getSelectionModel().addListSelectionListener(movieSelectionModel);
-    TableRowSorter sorter = new TableRowSorter(table.getModel());
-    table.setRowSorter(sorter);
+    // table.getSelectionModel().addListSelectionListener(movieSelectionModel);
+    eventSelectionModel.addListSelectionListener(movieSelectionModel);
+
+    // TableRowSorter sorter = new TableRowSorter(table.getModel());
+    // table.setRowSorter(sorter);
 
     // selecting first movie at startup
     if (movieList.getMovies() != null && movieList.getMovies().size() > 0) {
@@ -737,8 +711,7 @@ public class MoviePanel extends JPanel {
 
       if (tableCast.getModel().getRowCount() > 0) {
         tableCast.getSelectionModel().setSelectionInterval(0, 0);
-      }
-      else {
+      } else {
         lblActorThumb.setImageUrl("");
       }
     }
@@ -748,8 +721,7 @@ public class MoviePanel extends JPanel {
       public void tableChanged(TableModelEvent e) {
         if (tableCast.getModel().getRowCount() > 0) {
           tableCast.getSelectionModel().setSelectionInterval(0, 0);
-        }
-        else {
+        } else {
           lblActorThumb.setImageUrl("");
         }
       }
@@ -769,8 +741,7 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(NAME, "Update data sources");
         putValue(LARGE_ICON_KEY, "");
-      }
-      else {
+      } else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
         putValue(SHORT_DESCRIPTION, "Update data sources");
       }
@@ -800,8 +771,7 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(NAME, "Scrape selected movies");
         putValue(LARGE_ICON_KEY, "");
-      }
-      else {
+      } else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
         putValue(SHORT_DESCRIPTION, "Search & scrape movie");
       }
@@ -891,26 +861,25 @@ public class MoviePanel extends JPanel {
    * box.
    */
   private void newFilter() {
-    RowFilter rf = null;
-    TableRowSorter sorter = (TableRowSorter) table.getRowSorter();
-
-    // only update, if text is longer than 2 characters
-    if (textField.getText().length() > 2) {
-      try {
-        // If current expression doesn't parse, don't update.
-        String filterText = "(?i)" + textField.getText();
-        rf = RowFilter.regexFilter(filterText, 0);
-        // rf = new MyRowFilter(filterText);
-      }
-      catch (java.util.regex.PatternSyntaxException e) {
-        sorter.setRowFilter(rf);
-        return;
-      }
-    }
-    if (rf == null && sorter.getRowFilter() == null) {
-      return;
-    }
-    sorter.setRowFilter(rf);
+    // RowFilter rf = null;
+    // TableRowSorter sorter = (TableRowSorter) table.getRowSorter();
+    //
+    // // only update, if text is longer than 2 characters
+    // if (textField.getText().length() > 2) {
+    // try {
+    // // If current expression doesn't parse, don't update.
+    // String filterText = "(?i)" + textField.getText();
+    // rf = RowFilter.regexFilter(filterText, 0);
+    // // rf = new MyRowFilter(filterText);
+    // } catch (java.util.regex.PatternSyntaxException e) {
+    // sorter.setRowFilter(rf);
+    // return;
+    // }
+    // }
+    // if (rf == null && sorter.getRowFilter() == null) {
+    // return;
+    // }
+    // sorter.setRowFilter(rf);
   }
 
   // private class MyRowFilter extends RowFilter<Object, Object> {
@@ -955,8 +924,7 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
         putValue(NAME, "Edit movie");
-      }
-      else {
+      } else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
         putValue(SHORT_DESCRIPTION, "Edit movie");
       }
@@ -988,8 +956,7 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
         putValue(NAME, "Remove selected movies");
-      }
-      else {
+      } else {
         // putValue(LARGE_ICON_KEY, new
         // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
         putValue(SHORT_DESCRIPTION, "Remove selected movies");
@@ -1085,8 +1052,7 @@ public class MoviePanel extends JPanel {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
         putValue(NAME, "Rename selected movies");
-      }
-      else {
+      } else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
         putValue(SHORT_DESCRIPTION, "rename selected movies");
       }
@@ -1142,13 +1108,13 @@ public class MoviePanel extends JPanel {
   protected void initDataBindings() {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.nameForUi");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty, lblMovieName, jLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel, movieSelectionModelBeanProperty,
+        lblMovieName, jLabelBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<MovieSelectionModel, Float> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.rating");
-    AutoBinding<MovieSelectionModel, Float, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_1, lblRating, jLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, Float, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel, movieSelectionModelBeanProperty_1,
+        lblRating, jLabelBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.votes");
@@ -1204,8 +1170,8 @@ public class MoviePanel extends JPanel {
     autoBinding_12.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_12 = BeanProperty.create("selectedMovie.tmdbId");
-    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
     autoBinding_13.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_13 = BeanProperty.create("selectedMovie.path");
@@ -1244,8 +1210,8 @@ public class MoviePanel extends JPanel {
     //
     BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.thumb");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty_1 = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast, jTableBeanProperty,
-        lblActorThumb, imageLabelBeanProperty_1);
+    AutoBinding<JTable, String, ImageLabel, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast, jTableBeanProperty, lblActorThumb,
+        imageLabelBeanProperty_1);
     autoBinding_18.bind();
     //
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
@@ -1253,8 +1219,8 @@ public class MoviePanel extends JPanel {
     autoBinding_19.bind();
     //
     BeanProperty<MovieSelectionModel, List<MediaFile>> movieSelectionModelBeanProperty_18 = BeanProperty.create("selectedMovie.mediaFiles");
-    JTableBinding<MediaFile, MovieSelectionModel, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_18, tableFiles);
+    JTableBinding<MediaFile, MovieSelectionModel, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_18, tableFiles);
     //
     BeanProperty<MediaFile, String> mediaFileBeanProperty = BeanProperty.create("filename");
     jTableBinding_1.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
@@ -1266,8 +1232,8 @@ public class MoviePanel extends JPanel {
     jTableBinding_1.bind();
     //
     BeanProperty<MovieList, Integer> movieListBeanProperty = BeanProperty.create("movieCount");
-    AutoBinding<MovieList, Integer, JLabel, String> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ, movieList,
-        movieListBeanProperty, lblMovieCountInt, jLabelBeanProperty);
+    AutoBinding<MovieList, Integer, JLabel, String> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ, movieList, movieListBeanProperty, lblMovieCountInt,
+        jLabelBeanProperty);
     autoBinding_20.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.certification.name");
@@ -1277,8 +1243,8 @@ public class MoviePanel extends JPanel {
     //
     BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_19 = BeanProperty.create("selectedMovie.hasRating");
     BeanProperty<StarRater, Boolean> starRaterBeanProperty_1 = BeanProperty.create("visible");
-    AutoBinding<MovieSelectionModel, Boolean, StarRater, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_19, panelRatingStars, starRaterBeanProperty_1);
+    AutoBinding<MovieSelectionModel, Boolean, StarRater, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_19, panelRatingStars, starRaterBeanProperty_1);
     autoBinding_21.bind();
     //
     BeanProperty<JLabel, Boolean> jLabelBeanProperty_1 = BeanProperty.create("visible");
