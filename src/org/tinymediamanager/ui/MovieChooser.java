@@ -50,9 +50,9 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieChooserModel;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.ui.movies.MovieChooserModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;

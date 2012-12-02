@@ -25,10 +25,10 @@ import org.jdesktop.beansbinding.Converter;
 public class ImageIconConverter extends Converter {
 
   /** The Constant checkIcon. */
-  private final static ImageIcon checkIcon = new ImageIcon(MoviePanel.class.getResource("images/Checkmark.png"));
+  public final static ImageIcon checkIcon = new ImageIcon(MoviePanel.class.getResource("images/Checkmark.png"));
 
   /** The Constant crossIcon. */
-  private final static ImageIcon crossIcon = new ImageIcon(MoviePanel.class.getResource("images/Cross.png"));
+  public final static ImageIcon crossIcon = new ImageIcon(MoviePanel.class.getResource("images/Cross.png"));
 
   /*
    * (non-Javadoc)

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui.movies;
 
 import java.util.Comparator;
@@ -5,10 +20,15 @@ import java.util.Comparator;
 import javax.swing.ImageIcon;
 
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.ui.ImageIconConverter;
 import org.tinymediamanager.ui.MoviePanel;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MovieTableFormat.
+ */
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
   /** The Constant checkIcon. */
@@ -17,14 +37,27 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   /** The Constant crossIcon. */
   private final static ImageIcon       crossIcon        = new ImageIcon(MoviePanel.class.getResource("images/Cross.png"));
 
+  /** The string comparator. */
   private static Comparator<String>    stringComparator = new StringComparator();
+
+  /** The image comparator. */
   private static Comparator<ImageIcon> imageComparator  = new ImageComparator();
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see ca.odell.glazedlists.gui.TableFormat#getColumnCount()
+   */
   @Override
   public int getColumnCount() {
     return 4;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see ca.odell.glazedlists.gui.TableFormat#getColumnName(int)
+   */
   @Override
   public String getColumnName(int column) {
     switch (column) {
@@ -44,6 +77,12 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
     throw new IllegalStateException();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object,
+   * int)
+   */
   @Override
   public Object getColumnValue(Movie movie, int column) {
     switch (column) {
@@ -69,6 +108,11 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
     throw new IllegalStateException();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
+   */
   @Override
   public Class getColumnClass(int column) {
     switch (column) {
@@ -84,6 +128,11 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
     throw new IllegalStateException();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
+   */
   @Override
   public Comparator getColumnComparator(int column) {
     switch (column) {
@@ -93,23 +142,47 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
       case 2:
       case 3:
-        return imageComparator;
+        return null;
     }
 
     throw new IllegalStateException();
   }
 
+  /**
+   * The Class StringComparator.
+   */
   private static class StringComparator implements Comparator<String> {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
     @Override
     public int compare(String arg0, String arg1) {
       return arg0.compareTo(arg1);
     }
   }
 
+  /**
+   * The Class ImageComparator.
+   */
   private static class ImageComparator implements Comparator<ImageIcon> {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
     @Override
     public int compare(ImageIcon arg0, ImageIcon arg1) {
-      return 0;
+      if (arg0 == arg1) {
+        return 0;
+      }
+      if (arg0 == ImageIconConverter.checkIcon) {
+        return 1;
+      }
+      return -1;
     }
   }
 }

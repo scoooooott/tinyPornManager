@@ -90,7 +90,6 @@ public class MovieList extends AbstractModelObject {
   public void addMovie(Movie movie) {
     int oldValue = movieList.size();
     movieList.add(movie);
-    movie.setDateAdded(new Date());
     firePropertyChange("movies", null, movieList);
     firePropertyChange("movieCount", oldValue, movieList.size());
   }
@@ -159,7 +158,7 @@ public class MovieList extends AbstractModelObject {
    */
   public ObservableElementList<Movie> getMovies() {
     if (movieList == null) {
-      movieList = new ObservableElementList<Movie>(new BasicEventList<Movie>(), GlazedLists.beanConnector(Movie.class));
+      movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
     }
     return movieList;
   }
@@ -174,8 +173,10 @@ public class MovieList extends AbstractModelObject {
       List<Movie> movies = query.getResultList();
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
-        movieList = new ObservableElementList<Movie>(new BasicEventList<Movie>(movies.size()), GlazedLists.beanConnector(Movie.class));
-      } else {
+        movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>(movies.size())),
+            GlazedLists.beanConnector(Movie.class));
+      }
+      else {
         LOGGER.debug("found nothing in database");
       }
       // LOGGER.debug(movies);
@@ -185,12 +186,15 @@ public class MovieList extends AbstractModelObject {
           // LOGGER.debug(movie);
           movie.setObservables();
           addMovie(movie);
-        } else {
+        }
+        else {
           LOGGER.error("retrieved no movie: " + obj);
         }
-    } catch (PersistenceException e) {
+    }
+    catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -203,7 +207,8 @@ public class MovieList extends AbstractModelObject {
    */
   public void findMoviesInPath(String path) {
     LOGGER.debug("find movies in path " + path);
-    for (File subdir : new File(path).listFiles()) {
+    File filePath = new File(path);
+    for (File subdir : filePath.listFiles()) {
       if (subdir.isDirectory()) {
         findMovieInDirectory(subdir, path);
       }
@@ -266,6 +271,7 @@ public class MovieList extends AbstractModelObject {
         // persist movie
         if (movie != null) {
           movie.setDataSource(dataSource);
+          movie.setDateAdded(new Date());
           LOGGER.debug("store movie " + dir.getPath());
           movie.saveToDb();
           addMovie(movie);
@@ -280,7 +286,8 @@ public class MovieList extends AbstractModelObject {
       // }
       // }
 
-    } else {
+    }
+    else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -340,7 +347,8 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 
@@ -366,7 +374,8 @@ public class MovieList extends AbstractModelObject {
           searchResult.add(result);
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 

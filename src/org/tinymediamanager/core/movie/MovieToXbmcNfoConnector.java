@@ -286,7 +286,7 @@ public class MovieToXbmcNfoConnector {
         movie.setOverview(xbmc.getPlot());
         movie.setTagline(xbmc.getTagline());
         movie.setRuntime(xbmc.getRuntime());
-        if (xbmc.getThumb().contains("http://")) {
+        if (StringUtils.isNotEmpty(xbmc.getThumb()) && xbmc.getThumb().contains("http://")) {
           movie.setPosterUrl(xbmc.getThumb());
         }
         else {

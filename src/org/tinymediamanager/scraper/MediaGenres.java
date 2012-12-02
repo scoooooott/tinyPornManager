@@ -8,6 +8,8 @@ package org.tinymediamanager.scraper;
  * 
  */
 public enum MediaGenres {
+  /** The empty genre. */
+  EMPTY("", new String[] {}),
   /** The action. */
   ACTION("Action", new String[] {}),
   /** The adventure. */

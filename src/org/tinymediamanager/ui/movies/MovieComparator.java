@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.ui.movies;
 
 import java.util.Comparator;
 
+import org.tinymediamanager.core.movie.Movie;
+
+/**
+ * The Class MovieComparator is used to (initial) sort the movies in the
+ * moviepanel.
+ */
 public class MovieComparator implements Comparator<Movie> {
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+   */
   @Override
   public int compare(Movie movie1, Movie movie2) {
     return movie1.getName().compareTo(movie2.getName());

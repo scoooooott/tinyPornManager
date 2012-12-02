@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -139,6 +140,9 @@ public class Movie extends AbstractModelObject {
 
   /** The Constant DATE_ADDED. */
   protected final static String DATE_ADDED           = "dateAdded";
+
+  /** The Constant DATE_ADDED_AS_STRING. */
+  protected final static String DATE_ADDED_AS_STRING = "dateAddedAsString";
 
   /** The Constant WATCHED. */
   protected final static String WATCHED              = "watched";
@@ -1502,6 +1506,14 @@ public class Movie extends AbstractModelObject {
     return dateAdded;
   }
 
+  public String getDateAddedAsString() {
+    if (dateAdded == null) {
+      return "";
+    }
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+    return sdf.format(dateAdded);
+  }
+
   /**
    * Sets the date added.
    * 
@@ -1512,6 +1524,7 @@ public class Movie extends AbstractModelObject {
     Date oldValue = this.dateAdded;
     this.dateAdded = newValue;
     firePropertyChange(DATE_ADDED, oldValue, newValue);
+    firePropertyChange(DATE_ADDED_AS_STRING, oldValue, newValue);
   }
 
   /**
