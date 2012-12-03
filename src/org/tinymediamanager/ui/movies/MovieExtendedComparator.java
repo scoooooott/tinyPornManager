@@ -25,37 +25,90 @@ import org.tinymediamanager.core.movie.Movie;
  */
 public class MovieExtendedComparator implements Comparator<Movie> {
 
+  /**
+   * The Enum SortColumn.
+   */
   public enum SortColumn {
-    DATE_ADDED("Date added");
 
+    /** The date added. */
+    DATE_ADDED("Date added"),
+    /** The watched. */
+    WATCHED("Watched"),
+    /** The rating. */
+    RATING("Rating"),
+    /** The runtime. */
+    RUNTIME("Runtime");
+
+    /** The title. */
     private String title;
 
+    /**
+     * Instantiates a new sort column.
+     * 
+     * @param title
+     *          the title
+     */
     private SortColumn(String title) {
       this.title = title;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Enum#toString()
+     */
     public String toString() {
       return title;
     }
   }
 
+  /**
+   * The Enum SortOrder.
+   */
   public enum SortOrder {
-    ASCENDING("Ascending"), DESCENDING("Descending");
 
+    /** The ascending. */
+    ASCENDING("Ascending"),
+    /** The descending. */
+    DESCENDING("Descending");
+
+    /** The title. */
     private String title;
 
+    /**
+     * Instantiates a new sort order.
+     * 
+     * @param title
+     *          the title
+     */
     private SortOrder(String title) {
       this.title = title;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Enum#toString()
+     */
     public String toString() {
       return title;
     }
   }
 
+  /** The sort column. */
   private SortColumn sortColumn;
+
+  /** The sort ascending. */
   private boolean    sortAscending;
 
+  /**
+   * Instantiates a new movie extended comparator.
+   * 
+   * @param sortColumn
+   *          the sort column
+   * @param sortAscending
+   *          the sort ascending
+   */
   public MovieExtendedComparator(SortColumn sortColumn, boolean sortAscending) {
     this.sortColumn = sortColumn;
     this.sortAscending = sortAscending;
@@ -77,18 +130,27 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           sortOrder = movie1.getDateAdded().compareTo(movie2.getDateAdded());
           break;
 
+        case WATCHED:
+          sortOrder = Boolean.compare(movie1.isWatched(), movie2.isWatched());
+          break;
+
+        case RATING:
+          sortOrder = Float.compare(movie1.getRating(), movie2.getRating());
+          break;
+
+        case RUNTIME:
+          sortOrder = Integer.compare(movie1.getRuntime(), movie2.getRuntime());
+          break;
+
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     // sort ascending or descending
     if (sortAscending) {
       return sortOrder;
-    }
-    else {
+    } else {
       return sortOrder * -1;
     }
   }
-
 }

@@ -19,6 +19,7 @@ import java.util.Comparator;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.ui.ImageIconConverter;
 import org.tinymediamanager.ui.MoviePanel;
@@ -160,6 +161,12 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
      */
     @Override
     public int compare(String arg0, String arg1) {
+      if (StringUtils.isEmpty(arg0)) {
+        return -1;
+      }
+      if (StringUtils.isEmpty(arg1)) {
+        return 1;
+      }
       return arg0.compareTo(arg1);
     }
   }
