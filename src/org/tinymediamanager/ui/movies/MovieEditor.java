@@ -57,8 +57,8 @@ import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.ImageChooser;
-import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.ImageChooser.ImageType;
+import org.tinymediamanager.ui.ImageLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -521,9 +521,7 @@ public class MovieEditor extends JDialog {
 
       movieToEdit.removeAllGenres();
       for (MediaGenres genre : genres) {
-        if (genre != MediaGenres.EMPTY) {
-          movieToEdit.addGenre(genre);
-        }
+        movieToEdit.addGenre(genre);
       }
 
       movieToEdit.saveToDb();

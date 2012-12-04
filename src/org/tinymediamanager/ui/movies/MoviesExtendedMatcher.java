@@ -16,8 +16,11 @@
 package org.tinymediamanager.ui.movies;
 
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.scraper.MediaGenres;
 
 import ca.odell.glazedlists.matchers.Matcher;
@@ -28,7 +31,7 @@ import ca.odell.glazedlists.matchers.Matcher;
 public class MoviesExtendedMatcher implements Matcher<Movie> {
 
   public enum SearchOptions {
-    WATCHED, GENRE;
+    WATCHED, GENRE, CAST;
   }
 
   /** The search options. */
@@ -73,7 +76,43 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
       }
     }
 
+    // check against cast member
+    if (searchOptions.containsKey(SearchOptions.CAST)) {
+      String castSearch = (String) searchOptions.get(SearchOptions.CAST);
+      if (StringUtils.isNotEmpty(castSearch)) {
+        Pattern pattern = Pattern.compile("(?i)" + castSearch);
+        java.util.regex.Matcher matcher = null;
+
+        // director
+        if (StringUtils.isNotEmpty(movie.getDirector())) {
+          matcher = pattern.matcher(movie.getDirector());
+          if (matcher.find()) {
+            return true;
+          }
+        }
+
+        // writer
+        if (StringUtils.isNotEmpty(movie.getWriter())) {
+          matcher = pattern.matcher(movie.getWriter());
+          if (matcher.find()) {
+            return true;
+          }
+        }
+
+        // actors
+        for (MovieCast cast : movie.getCast()) {
+          if (StringUtils.isNotEmpty(cast.getName())) {
+            matcher = pattern.matcher(cast.getName());
+            if (matcher.find()) {
+              return true;
+            }
+          }
+        }
+      }
+
+      return false;
+    }
+
     return true;
   }
-
 }

@@ -19,6 +19,7 @@ import java.util.Comparator;
 
 import org.tinymediamanager.core.movie.Movie;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieComparator is used to (initial) sort the movies in the
  * moviepanel.
@@ -29,7 +30,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
    * The Enum SortColumn.
    */
   public enum SortColumn {
-
+    /** None. */
+    NONE(""),
     /** The date added. */
     DATE_ADDED("Date added"),
     /** The watched. */
@@ -49,6 +51,38 @@ public class MovieExtendedComparator implements Comparator<Movie> {
      *          the title
      */
     private SortColumn(String title) {
+      this.title = title;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Enum#toString()
+     */
+    public String toString() {
+      return title;
+    }
+  }
+
+  /**
+   * The Enum WatchedFlag.
+   */
+  public enum WatchedFlag {
+
+    /** The watched. */
+    WATCHED("Watched"),
+    /** The not watched. */
+    NOT_WATCHED("Not watched");
+    /** The title. */
+    private String title;
+
+    /**
+     * Instantiates a new sort column.
+     * 
+     * @param title
+     *          the title
+     */
+    private WatchedFlag(String title) {
       this.title = title;
     }
 
@@ -131,7 +165,9 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
         case WATCHED:
-          sortOrder = Boolean.compare(movie1.isWatched(), movie2.isWatched());
+          Boolean watched1 = Boolean.valueOf(movie1.isWatched());
+          Boolean watched2 = Boolean.valueOf(movie2.isWatched());
+          sortOrder = watched1.compareTo(watched2);
           break;
 
         case RATING:
@@ -139,17 +175,21 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
         case RUNTIME:
-          sortOrder = Integer.compare(movie1.getRuntime(), movie2.getRuntime());
+          Integer runtime1 = Integer.valueOf(movie1.getRuntime());
+          Integer runtime2 = Integer.valueOf(movie2.getRuntime());
+          sortOrder = runtime1.compareTo(runtime2);
           break;
 
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     // sort ascending or descending
     if (sortAscending) {
       return sortOrder;
-    } else {
+    }
+    else {
       return sortOrder * -1;
     }
   }
