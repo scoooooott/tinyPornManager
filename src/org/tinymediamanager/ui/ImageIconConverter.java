@@ -18,6 +18,7 @@ package org.tinymediamanager.ui;
 import javax.swing.ImageIcon;
 
 import org.jdesktop.beansbinding.Converter;
+import org.tinymediamanager.ui.movies.MoviePanel;
 
 /**
  * The Class ImageIconConverter.

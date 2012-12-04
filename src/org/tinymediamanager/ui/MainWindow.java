@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.movies.MoviePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;

@@ -22,7 +22,7 @@ import javax.swing.ImageIcon;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.ui.ImageIconConverter;
-import org.tinymediamanager.ui.MoviePanel;
+import org.tinymediamanager.ui.MainWindow;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 
@@ -33,10 +33,10 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
   /** The Constant checkIcon. */
-  private final static ImageIcon       checkIcon        = new ImageIcon(MoviePanel.class.getResource("images/Checkmark.png"));
+  private final static ImageIcon       checkIcon        = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
 
   /** The Constant crossIcon. */
-  private final static ImageIcon       crossIcon        = new ImageIcon(MoviePanel.class.getResource("images/Cross.png"));
+  private final static ImageIcon       crossIcon        = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
 
   /** The string comparator. */
   private static Comparator<String>    stringComparator = new StringComparator();

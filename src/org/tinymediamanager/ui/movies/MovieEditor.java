@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.movies;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -56,6 +56,8 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.ui.ImageChooser;
+import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.ImageChooser.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
