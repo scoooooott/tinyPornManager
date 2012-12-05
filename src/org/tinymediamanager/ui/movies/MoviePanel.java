@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -214,6 +215,7 @@ public class MoviePanel extends JPanel {
     LOGGER.debug("loading MovieList");
     movieList = MovieList.getInstance();
     sortedMovies = new SortedList<Movie>(movieList.getMovies(), new MovieComparator());
+    sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
     // movieSelectionModel = new MovieSelectionModel(sortedMovies);
 
     // build menu
@@ -563,7 +565,7 @@ public class MoviePanel extends JPanel {
     // NFO column
     table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer());
     table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
-    URL imageURL = MoviePanel.class.getResource("images/File.png");
+    URL imageURL = MainWindow.class.getResource("images/File.png");
     if (imageURL != null) {
       table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
     }
@@ -572,7 +574,7 @@ public class MoviePanel extends JPanel {
     table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer());
     table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
     imageURL = null;
-    imageURL = MoviePanel.class.getResource("images/Image.png");
+    imageURL = MainWindow.class.getResource("images/Image.png");
     if (imageURL != null) {
       table.getColumnModel().getColumn(3).setHeaderValue(new ImageIcon(imageURL));
     }
@@ -675,7 +677,13 @@ public class MoviePanel extends JPanel {
       // dialogMovieChooser.pack();
       // dialogMovieChooser.setVisible(true);
       // }
+      List<Movie> selectedMovies = new ArrayList<Movie>();
+      // save all selected movies in an extra list (maybe scraping of one movie
+      // changes the whole list)
       for (Movie movie : movieSelectionModel.getSelectedMovies()) {
+        selectedMovies.add(movie);
+      }
+      for (Movie movie : selectedMovies) {
         MovieChooser dialogMovieChooser = new MovieChooser(movie);
         dialogMovieChooser.pack();
         dialogMovieChooser.setVisible(true);
@@ -737,7 +745,11 @@ public class MoviePanel extends JPanel {
       // row = table.convertRowIndexToModel(row);
       // selectedMovies.add(movieList.getMovies().get(row));
       // }
-      List<Movie> selectedMovies = movieSelectionModel.getSelectedMovies();
+      List<Movie> selectedMovies = new ArrayList<Movie>();
+      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
+        selectedMovies.add(movie);
+      }
+
       if (selectedMovies.size() > 0) {
         // scrapeTask = new ScrapeTask(selectedMovies);
         scrapeTask = new MovieScrapeTask(selectedMovies, lblProgressAction, progressBar, btnCancelScraper);
@@ -745,62 +757,6 @@ public class MoviePanel extends JPanel {
       }
     }
   }
-
-  /**
-   * Update the row filter regular expression from the expression in the text
-   * box.
-   */
-  // private void newFilter() {
-  // RowFilter rf = null;
-  // TableRowSorter sorter = (TableRowSorter) table.getRowSorter();
-  //
-  // // only update, if text is longer than 2 characters
-  // if (textField.getText().length() > 2) {
-  // try {
-  // // If current expression doesn't parse, don't update.
-  // String filterText = "(?i)" + textField.getText();
-  // rf = RowFilter.regexFilter(filterText, 0);
-  // // rf = new MyRowFilter(filterText);
-  // } catch (java.util.regex.PatternSyntaxException e) {
-  // sorter.setRowFilter(rf);
-  // return;
-  // }
-  // }
-  // if (rf == null && sorter.getRowFilter() == null) {
-  // return;
-  // }
-  // sorter.setRowFilter(rf);
-  // }
-
-  // private class MyRowFilter extends RowFilter<Object, Object> {
-  //
-  // private String searchTerm;
-  // private Pattern pattern;
-  // private Matcher matcher;
-  //
-  // public MyRowFilter(String searchTerm) {
-  // this.searchTerm = searchTerm;
-  // pattern = Pattern.compile(searchTerm);
-  // }
-  //
-  // public boolean include(Entry<? extends Object, ? extends Object> entry) {
-  // String title = (String) entry.getValue(0);
-  // if (matcher == null) {
-  // matcher = pattern.matcher(title);
-  // }
-  // else {
-  // matcher.reset(title);
-  // }
-  //
-  // if (matcher.find()) {
-  // return true;
-  // }
-  // // if (title.matches(this.searchTerm)) {
-  // // return true;
-  // // }
-  // return false;
-  // }
-  // }
 
   /**
    * The Class EditAction.
