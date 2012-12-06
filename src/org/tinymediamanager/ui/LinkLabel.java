@@ -36,12 +36,13 @@ import javax.swing.JLabel;
  */
 
 public class LinkLabel extends JLabel {
+  private static final long serialVersionUID = 1L;
 
   /**
    * The normal text set by the user.
    */
 
-  private String text;
+  private String            text;
 
   /**
    * Creates a new LinkLabel with the given text.
@@ -63,8 +64,7 @@ public class LinkLabel extends JLabel {
   public void setText(String text) {
     if (Desktop.isDesktopSupported()) {
       super.setText("<html><font color=\"#0000CF\"><u>" + text + "</u></font></html>"); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-    else {
+    } else {
       super.setText(text);
     }
     this.text = text;

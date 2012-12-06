@@ -58,8 +58,7 @@ public class UrlUtil {
     try {
       u = new URL(url);
       return String.format("%s://%s/", u.getProtocol(), u.getHost());
-    }
-    catch (MalformedURLException e) {
+    } catch (MalformedURLException e) {
       LOGGER.error("Failed to get domain url for: " + url);
     }
     return null;
@@ -96,8 +95,7 @@ public class UrlUtil {
     try {
       u = new URL(url);
       return u.getPath();
-    }
-    catch (MalformedURLException e) {
+    } catch (MalformedURLException e) {
       LOGGER.error("getPathName() Failed! " + url, e);
     }
     return null;
@@ -115,8 +113,7 @@ public class UrlUtil {
       return "";
     try {
       return URLEncoder.encode(data, "UTF-8");
-    }
-    catch (UnsupportedEncodingException e) {
+    } catch (UnsupportedEncodingException e) {
       LOGGER.warn("Failed to url encode data: " + data + " as UTF-8; will try again using default encoding", e);
       return URLEncoder.encode(data);
     }

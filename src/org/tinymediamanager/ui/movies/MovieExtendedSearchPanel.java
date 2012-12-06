@@ -107,11 +107,10 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
     JPanel panel = new JPanel();
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblFilterBy = new JLabel("filter by");
     panel.add(lblFilterBy, "2, 1, 3, 1");
@@ -196,12 +195,6 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
      */
     public void actionPerformed(ActionEvent e) {
       SortColumn column = (SortColumn) cbSortColumn.getSelectedItem();
-
-      // shall we sort?
-      if (column == SortColumn.NONE) {
-        return;
-      }
-
       SortOrder order = (SortOrder) cbSortOrder.getSelectedItem();
       boolean ascending = order == SortOrder.ASCENDING ? true : false;
 
@@ -234,8 +227,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
       if (cbFilterWatched.isSelected()) {
         if (cbWatched.getSelectedItem() == WatchedFlag.WATCHED) {
           searchOptions.put(SearchOptions.WATCHED, true);
-        }
-        else {
+        } else {
           searchOptions.put(SearchOptions.WATCHED, false);
         }
       }

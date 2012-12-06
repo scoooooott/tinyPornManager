@@ -27,10 +27,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 public class MediaArt {
 
   /** The Constant logger. */
-  private static final Logger LOGGER           = Logger.getLogger(MediaArt.class);
-
-  /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = 1L;
+  private static final Logger LOGGER = Logger.getLogger(MediaArt.class);
 
   private int                 tmdbId;
 

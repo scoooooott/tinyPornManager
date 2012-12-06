@@ -64,9 +64,10 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class ImageChooser.
  */
 public class ImageChooser extends JDialog {
+  private static final long   serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(ImageChooser.class);
+  private static final Logger LOGGER           = Logger.getLogger(ImageChooser.class);
 
   /**
    * The Enum ImageType.
@@ -193,6 +194,7 @@ public class ImageChooser extends JDialog {
    * The Class SwingAction.
    */
   private class SwingAction extends AbstractAction {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Instantiates a new swing action.
@@ -357,6 +359,7 @@ public class ImageChooser extends JDialog {
    * The Class SwingAction_1.
    */
   private class SwingAction_1 extends AbstractAction {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Instantiates a new swing action_1.

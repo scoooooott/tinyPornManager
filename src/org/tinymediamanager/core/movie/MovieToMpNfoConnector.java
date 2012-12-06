@@ -307,9 +307,6 @@ public class MovieToMpNfoConnector {
       } catch (FileNotFoundException e) {
         LOGGER.error("setData", e);
         return null;
-      } catch (IOException e) {
-        LOGGER.error("setData", e);
-        return null;
       }
     } catch (JAXBException e) {
       LOGGER.error("setData", e);

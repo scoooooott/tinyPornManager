@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.Color;
@@ -18,23 +33,45 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+/**
+ * The Class MyTable.
+ */
 public class MyTable extends JTable {
 
+  /** The Constant serialVersionUID. */
+  private static final long             serialVersionUID = 1L;
+
+  /** The Constant EVEN_ROW_COLOR. */
   private static final Color            EVEN_ROW_COLOR   = new Color(241, 245, 250);
+
+  /** The Constant TABLE_GRID_COLOR. */
   private static final Color            TABLE_GRID_COLOR = new Color(0xd9d9d9);
 
+  /** The Constant CELL_RENDER_PANE. */
   private static final CellRendererPane CELL_RENDER_PANE = new CellRendererPane();
 
+  /**
+   * Instantiates a new my table.
+   */
   public MyTable() {
     super();
     init();
   }
 
+  /**
+   * Instantiates a new my table.
+   * 
+   * @param dm
+   *          the dm
+   */
   public MyTable(TableModel dm) {
     super(dm);
     init();
   }
 
+  /**
+   * Inits the.
+   */
   private void init() {
     // setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
@@ -52,9 +89,13 @@ public class MyTable extends JTable {
   /**
    * Creates a JTableHeader that paints the table header background to the right
    * of the right-most column if neccesasry.
+   * 
+   * @return the j table header
    */
   private JTableHeader createTableHeader() {
     return new JTableHeader(getColumnModel()) {
+      private static final long serialVersionUID = 1L;
+
       @Override
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -74,6 +115,15 @@ public class MyTable extends JTable {
   /**
    * Paints the given JTable's table default header background at given x for
    * the given width.
+   * 
+   * @param g
+   *          the g
+   * @param table
+   *          the table
+   * @param x
+   *          the x
+   * @param width
+   *          the width
    */
   private static void paintHeader(Graphics g, JTable table, int x, int width) {
     TableCellRenderer renderer = table.getTableHeader().getDefaultRenderer();
@@ -85,6 +135,13 @@ public class MyTable extends JTable {
     CELL_RENDER_PANE.paintComponent(g, component, null, x, 0, width, table.getTableHeader().getHeight(), true);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * javax.swing.JTable#prepareRenderer(javax.swing.table.TableCellRenderer,
+   * int, int)
+   */
   @Override
   public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
     Component component = super.prepareRenderer(renderer, row, column);
@@ -104,15 +161,26 @@ public class MyTable extends JTable {
    * positions of the given JTable.
    */
   private static class StripedViewport extends JViewport {
+    private static final long serialVersionUID = 1L;
 
-    private final JTable fTable;
+    /** The table. */
+    private final JTable      fTable;
 
+    /**
+     * Instantiates a new striped viewport.
+     * 
+     * @param table
+     *          the table
+     */
     public StripedViewport(JTable table) {
       fTable = table;
       setOpaque(false);
       initListeners();
     }
 
+    /**
+     * Inits the listeners.
+     */
     private void initListeners() {
       // install a listener to cause the whole table to repaint when
       // a column is resized. we do this because the extended grid
@@ -124,6 +192,11 @@ public class MyTable extends JTable {
       }
     }
 
+    /**
+     * Creates the table column width listener.
+     * 
+     * @return the property change listener
+     */
     private PropertyChangeListener createTableColumnWidthListener() {
       return new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
@@ -132,6 +205,11 @@ public class MyTable extends JTable {
       };
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+     */
     @Override
     protected void paintComponent(Graphics g) {
       paintStripedBackground(g);
@@ -139,6 +217,12 @@ public class MyTable extends JTable {
       super.paintComponent(g);
     }
 
+    /**
+     * Paint striped background.
+     * 
+     * @param g
+     *          the g
+     */
     private void paintStripedBackground(Graphics g) {
       // get position
       Point viewPosition = getViewPosition();
@@ -179,17 +263,35 @@ public class MyTable extends JTable {
       // }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.JViewport#setViewPosition(java.awt.Point)
+     */
     @Override
     public void setViewPosition(Point p) {
       super.setViewPosition(p);
       repaint();
     }
 
+    /**
+     * Gets the row color.
+     * 
+     * @param row
+     *          the row
+     * @return the row color
+     */
     private Color getRowColor(int row) {
       // return row % 2 == 0 ? EVEN_ROW_COLOR : getBackground();
       return row % 2 == 0 ? EVEN_ROW_COLOR : Color.WHITE;
     }
 
+    /**
+     * Paint vertical grid lines.
+     * 
+     * @param g
+     *          the g
+     */
     private void paintVerticalGridLines(Graphics g) {
       // paint the column grid dividers for the non-existent rows.
       int x = 0;
@@ -205,6 +307,13 @@ public class MyTable extends JTable {
     }
   }
 
+  /**
+   * Creates the striped j scroll pane.
+   * 
+   * @param table
+   *          the table
+   * @return the j scroll pane
+   */
   public static JScrollPane createStripedJScrollPane(JTable table) {
     JScrollPane scrollPane = new JScrollPane(table);
     scrollPane.setViewport(new StripedViewport(table));
@@ -218,9 +327,15 @@ public class MyTable extends JTable {
   /**
    * Creates a component that paints the header background for use in a
    * JScrollPane corner.
+   * 
+   * @param table
+   *          the table
+   * @return the j component
    */
   private static JComponent createCornerComponent(final JTable table) {
     return new JComponent() {
+      private static final long serialVersionUID = 1L;
+
       @Override
       protected void paintComponent(Graphics g) {
         paintHeader(g, table, 0, getWidth());

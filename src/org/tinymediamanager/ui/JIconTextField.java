@@ -26,14 +26,24 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 /**
+ * The Class JIconTextField.
  * 
- * @authorGeorgios Migdos <cyberpython@gmail.com>
+ * @author Georgios Migdos <cyberpython@gmail.com>
  */
 public class JIconTextField extends JTextField {
 
-  private Icon   icon;
-  private Insets dummyInsets;
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = 1L;
 
+  /** The icon. */
+  private Icon              icon;
+
+  /** The dummy insets. */
+  private Insets            dummyInsets;
+
+  /**
+   * Instantiates a new j icon text field.
+   */
   public JIconTextField() {
     super();
     this.icon = null;
@@ -43,14 +53,30 @@ public class JIconTextField extends JTextField {
     this.dummyInsets = border.getBorderInsets(dummy);
   }
 
+  /**
+   * Sets the icon.
+   * 
+   * @param icon
+   *          the new icon
+   */
   public void setIcon(Icon icon) {
     this.icon = icon;
   }
 
+  /**
+   * Gets the icon.
+   * 
+   * @return the icon
+   */
   public Icon getIcon() {
     return this.icon;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+   */
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);

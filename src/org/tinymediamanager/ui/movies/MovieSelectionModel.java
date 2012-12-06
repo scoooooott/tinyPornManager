@@ -115,7 +115,6 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     if (e.getValueIsAdjusting()) {
       return;
     }
-    System.out.println("list changed");
 
     // display first selected movie
     if (selectedMovies.size() > 0 && selectedMovie != selectedMovies.get(0)) {

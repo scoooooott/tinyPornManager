@@ -114,6 +114,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
    * 
    * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
    */
+  @SuppressWarnings("rawtypes")
   @Override
   public Class getColumnClass(int column) {
     switch (column) {
@@ -134,6 +135,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
    * 
    * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
    */
+  @SuppressWarnings("rawtypes")
   @Override
   public Comparator getColumnComparator(int column) {
     switch (column) {

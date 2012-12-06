@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * The Class IconRenderer.
  */
 public class IconRenderer extends DefaultTableCellRenderer {
+  private static final long serialVersionUID = 1L;
 
   /*
    * (non-Javadoc)

@@ -41,10 +41,20 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MainWindow.
  */
 public class MainWindow extends JFrame {
-  private final Action      actionExit     = new ExitAction();
-  private final Action      actionAbout    = new AboutAction();
-  private final Action      actionSettings = new SettingsAction();
 
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = 1L;
+
+  /** The action exit. */
+  private final Action      actionExit       = new ExitAction();
+
+  /** The action about. */
+  private final Action      actionAbout      = new AboutAction();
+
+  /** The action settings. */
+  private final Action      actionSettings   = new SettingsAction();
+
+  /** The instance. */
   private static MainWindow instance;
 
   // /** The frame. */
@@ -52,6 +62,9 @@ public class MainWindow extends JFrame {
 
   /**
    * Create the application.
+   * 
+   * @param name
+   *          the name
    */
   public MainWindow(String name) {
     super(name);
@@ -130,41 +143,94 @@ public class MainWindow extends JFrame {
     });
   }
 
+  /**
+   * The Class ExitAction.
+   */
   private class ExitAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new exit action.
+     */
     public ExitAction() {
       // putValue(NAME, "SwingAction");
       // putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       instance.setVisible(false);
       instance.dispose();
     }
   }
 
+  /**
+   * The Class AboutAction.
+   */
   private class AboutAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new about action.
+     */
     public AboutAction() {
       // putValue(NAME, "SwingAction");
       // putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       Dialog aboutDialog = new AboutDialog();
       aboutDialog.setVisible(true);
     }
   }
 
+  /**
+   * The Class SettingsAction.
+   */
   private class SettingsAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new settings action.
+     */
     public SettingsAction() {
       // putValue(NAME, "SwingAction");
       // putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
 
     }
   }
 
+  /**
+   * Gets the frame.
+   * 
+   * @return the frame
+   */
   public static JFrame getFrame() {
     return instance;
   }

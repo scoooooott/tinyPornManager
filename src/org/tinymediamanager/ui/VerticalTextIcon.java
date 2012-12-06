@@ -33,24 +33,36 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /**
- * @author Santhosh Kumar
+ * The Class VerticalTextIcon.
  * 
+ * @author Santhosh Kumar
  */
 public class VerticalTextIcon extends JComponent implements Icon, SwingConstants {
-  // private Font font;
-  private FontMetrics fm;
 
-  private String      text;
-  private int         width, height;
-  private boolean     clockwize;
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = 1L;
 
+  /** The fm. */
+  private FontMetrics       fm;
+
+  /** The text. */
+  private String            text;
+
+  /** The height. */
+  private int               width, height;
+
+  /** The clockwize. */
+  private boolean           clockwize;
+
+  /**
+   * Instantiates a new vertical text icon.
+   * 
+   * @param text
+   *          the text
+   * @param clockwize
+   *          the clockwize
+   */
   public VerticalTextIcon(String text, boolean clockwize) {
-    // Font labelFont = UIManager.getFont("Label.font");
-    // Map<TextAttribute, Serializable> textAttributes = new
-    // HashMap<TextAttribute, Serializable>();
-    // textAttributes.put(TextAttribute.KERNING, TextAttribute.KERNING_ON);
-    // textAttributes.put(TextAttribute.FONT, labelFont);
-    // font = Font.getFont(textAttributes);
     Font font = UIManager.getFont("Label.font");
     fm = getFontMetrics(font);
 
@@ -60,10 +72,14 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     this.clockwize = clockwize;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int,
+   * int)
+   */
   public void paintIcon(Component c, Graphics g, int x, int y) {
     Graphics2D g2 = (Graphics2D) g;
-    // Font oldFont = g.getFont();
-    // Font font = c.getFont();
     Color oldColor = g.getColor();
     AffineTransform oldTransform = g2.getTransform();
 
@@ -71,33 +87,47 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 
-    // g.setFont(font);
     g.setColor(Color.black);
     if (clockwize) {
       g2.translate(x + getIconWidth(), y);
       g2.rotate(Math.PI / 2);
-    }
-    else {
+    } else {
       g2.translate(x, y + getIconHeight());
       g2.rotate(-Math.PI / 2);
     }
 
     g.drawString(text, 0, fm.getLeading() + fm.getAscent());
 
-    // g.setFont(oldFont);
     g.setColor(oldColor);
     g2.setTransform(oldTransform);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.Icon#getIconWidth()
+   */
   public int getIconWidth() {
     return height;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.Icon#getIconHeight()
+   */
   public int getIconHeight() {
     return width;
   }
 
+  /**
+   * Creates the tabbed pane.
+   * 
+   * @param tabPlacement
+   *          the tab placement
+   * @return the j tabbed pane
+   */
   public static JTabbedPane createTabbedPane(int tabPlacement) {
     switch (tabPlacement) {
       case JTabbedPane.LEFT:
@@ -115,6 +145,16 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     }
   }
 
+  /**
+   * Adds the tab.
+   * 
+   * @param tabPane
+   *          the tab pane
+   * @param text
+   *          the text
+   * @param comp
+   *          the comp
+   */
   public static void addTab(JTabbedPane tabPane, String text, Component comp) {
     int tabPlacement = tabPane.getTabPlacement();
     switch (tabPlacement) {

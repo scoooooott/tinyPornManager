@@ -27,27 +27,52 @@ import java.awt.event.FocusListener;
 import javax.swing.UIManager;
 
 /**
+ * The Class JSearchTextField.
  * 
- * @authorGeorgios Migdos <cyberpython@gmail.com>
+ * @author Georgios Migdos <cyberpython@gmail.com>
  */
 public class JSearchTextField extends JIconTextField implements FocusListener {
 
-  private String textWhenNotFocused;
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = 1L;
 
+  /** The text when not focused. */
+  private String            textWhenNotFocused;
+
+  /**
+   * Instantiates a new j search text field.
+   */
   public JSearchTextField() {
     super();
     this.textWhenNotFocused = "Search...";
     this.addFocusListener(this);
   }
 
+  /**
+   * Gets the text when not focused.
+   * 
+   * @return the text when not focused
+   */
   public String getTextWhenNotFocused() {
     return this.textWhenNotFocused;
   }
 
+  /**
+   * Sets the text when not focused.
+   * 
+   * @param newText
+   *          the new text when not focused
+   */
   public void setTextWhenNotFocused(String newText) {
     this.textWhenNotFocused = newText;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.tinymediamanager.ui.JIconTextField#paintComponent(java.awt.Graphics)
+   */
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
@@ -75,10 +100,20 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
   }
 
   // FocusListener implementation:
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
+   */
   public void focusGained(FocusEvent e) {
     this.repaint();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
+   */
   public void focusLost(FocusEvent e) {
     this.repaint();
   }

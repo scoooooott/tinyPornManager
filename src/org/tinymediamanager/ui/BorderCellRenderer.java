@@ -16,6 +16,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * 
  */
 public class BorderCellRenderer extends DefaultTableCellRenderer {
+  private static final long serialVersionUID = 1L;
 
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -23,8 +24,7 @@ public class BorderCellRenderer extends DefaultTableCellRenderer {
     if (isSelected) {
       setBackground(table.getSelectionBackground());
       setForeground(table.getSelectionForeground());
-    }
-    else {
+    } else {
       setBackground(table.getBackground());
 
     }

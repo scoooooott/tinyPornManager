@@ -51,15 +51,12 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
-@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "mpaa",
-    "certifications", "id", "tmdbId", "filenameandpath", "watched", "playcount", "genres", "studio", "credits", "director", "actors" })
+@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "mpaa", "certifications", "id", "tmdbId",
+    "filenameandpath", "watched", "playcount", "genres", "studio", "credits", "director", "actors" })
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER   = Logger.getLogger(MovieToXbmcNfoConnector.class);
-
-  /** The Constant NFO_NAME. */
-  private final static String NFO_NAME = "movie.nfo";
+  private static final Logger LOGGER = Logger.getLogger(MovieToXbmcNfoConnector.class);
 
   /** The title. */
   private String              title;
@@ -160,12 +157,10 @@ public class MovieToXbmcNfoConnector {
       spaceIndex = xbmc.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
         xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
-      }
-      else {
+      } else {
         xbmc.setOutline(xbmc.getPlot());
       }
-    }
-    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
+    } else if (!StringUtils.isEmpty(xbmc.getPlot())) {
       spaceIndex = xbmc.getPlot().length();
       xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
     }
@@ -240,18 +235,14 @@ public class MovieToXbmcNfoConnector {
         String xml = sb.toString();
         IOUtils.write(xml, w);
 
-      }
-      catch (JAXBException e) {
+      } catch (JAXBException e) {
         LOGGER.error("setData", e);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("setData", e);
-      }
-      finally {
+      } finally {
         try {
           w.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("setData", e);
         }
       }
@@ -288,8 +279,7 @@ public class MovieToXbmcNfoConnector {
         movie.setRuntime(xbmc.getRuntime());
         if (StringUtils.isNotEmpty(xbmc.getThumb()) && xbmc.getThumb().contains("http://")) {
           movie.setPosterUrl(xbmc.getThumb());
-        }
-        else {
+        } else {
           movie.setPoster(xbmc.getThumb());
         }
 
@@ -323,17 +313,11 @@ public class MovieToXbmcNfoConnector {
 
         movie.setNfoFilename(nfoFilename);
 
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
         LOGGER.error("setData", e);
         return null;
       }
-      catch (IOException e) {
-        LOGGER.error("setData", e);
-        return null;
-      }
-    }
-    catch (JAXBException e) {
+    } catch (JAXBException e) {
       // LOGGER.error("setData", e);
       return null;
     }

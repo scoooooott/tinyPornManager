@@ -31,7 +31,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
  * @author manuel
  * 
  */
-public class MovieScrapeTask extends SwingWorker {
+public class MovieScrapeTask extends SwingWorker<Object, Object> {
 
   private final static Logger LOGGER = Logger.getLogger(MovieScrapeTask.class);
 
@@ -173,8 +173,7 @@ public class MovieScrapeTask extends SwingWorker {
           }
           try {
             movie.setMetadata(movieList.getMetadataProvider().getMetaData(result1));
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             LOGGER.error("movie.setMetadata", e);
           }
         }

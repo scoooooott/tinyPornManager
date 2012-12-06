@@ -56,6 +56,7 @@ public class StringUtils {
    *          the map
    * @return the string
    */
+  @SuppressWarnings("rawtypes")
   public static String mapToString(Map map) {
     if (map == null)
       return "null";
@@ -84,8 +85,7 @@ public class StringUtils {
       int v = Integer.parseInt(encodeString);
       String format = "%0" + padding + "d";
       return String.format(format, v);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       return encodeString;
     }
   }

@@ -42,12 +42,13 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class AboutDialog.
  */
 public class AboutDialog extends JDialog {
+  private static final long serialVersionUID = 1L;
 
   /** The content panel. */
-  private final JPanel contentPanel = new JPanel();
+  private final JPanel      contentPanel     = new JPanel();
 
   /** The action. */
-  private final Action action       = new SwingAction();
+  private final Action      action           = new SwingAction();
 
   /**
    * Create the dialog.
@@ -122,6 +123,7 @@ public class AboutDialog extends JDialog {
    * The Class SwingAction.
    */
   private class SwingAction extends AbstractAction {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Instantiates a new swing action.

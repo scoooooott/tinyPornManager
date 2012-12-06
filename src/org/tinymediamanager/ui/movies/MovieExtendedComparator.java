@@ -30,8 +30,10 @@ public class MovieExtendedComparator implements Comparator<Movie> {
    * The Enum SortColumn.
    */
   public enum SortColumn {
-    /** None. */
-    NONE(""),
+    /** The Title. */
+    TITLE("Title"),
+    /** The Year. */
+    YEAR("Year"),
     /** The date added. */
     DATE_ADDED("Date added"),
     /** The watched. */
@@ -160,6 +162,14 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     try {
       // try to sort the chosen column
       switch (sortColumn) {
+        case TITLE:
+          sortOrder = movie1.getName().compareTo(movie2.getName());
+          break;
+
+        case YEAR:
+          sortOrder = movie1.getYear().compareTo(movie2.getYear());
+          break;
+
         case DATE_ADDED:
           sortOrder = movie1.getDateAdded().compareTo(movie2.getDateAdded());
           break;
@@ -181,15 +191,13 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
     }
 
     // sort ascending or descending
     if (sortAscending) {
       return sortOrder;
-    }
-    else {
+    } else {
       return sortOrder * -1;
     }
   }

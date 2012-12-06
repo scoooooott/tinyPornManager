@@ -50,15 +50,11 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.moviejukebox.themoviedb.model.ArtworkType;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Movie.
+ * The main class for movies.
  */
 @Entity
 public class Movie extends AbstractModelObject {
-
-  // /** The Constant NFO_FILE. */
-  // protected final static String NFO_FILE = "movie.nfo";
 
   /** The Constant TITLE. */
   protected final static String TITLE                = "title";
@@ -157,76 +153,76 @@ public class Movie extends AbstractModelObject {
   private Long                  id;
 
   /** The name. */
-  private String                name;
+  private String                name                 = "";
 
   /** The original name. */
-  private String                originalName;
+  private String                originalName         = "";
 
   /** The year. */
-  private String                year;
+  private String                year                 = "";
 
   /** The imdb id. */
-  private String                imdbId;
+  private String                imdbId               = "";
 
   /** The tmdb id. */
-  private int                   tmdbId;
+  private int                   tmdbId               = 0;
 
   /** The overview. */
-  private String                overview;
+  private String                overview             = "";
 
   /** The tagline. */
-  private String                tagline;
+  private String                tagline              = "";
 
   /** The rating. */
-  private float                 rating;
+  private float                 rating               = 0f;
 
   /** The votes. */
-  private int                   votes;
+  private int                   votes                = 0;
 
   /** The runtime. */
-  private int                   runtime;
+  private int                   runtime              = 0;
 
   /** The fanart url. */
-  private String                fanartUrl;
+  private String                fanartUrl            = "";
 
   /** The fanart. */
-  private String                fanart;
+  private String                fanart               = "";
 
   /** The poster url. */
-  private String                posterUrl;
+  private String                posterUrl            = "";
 
   /** The poster. */
-  private String                poster;
+  private String                poster               = "";
 
   /** The path. */
-  private String                path;
+  private String                path                 = "";
 
   /** The nfo filename. */
-  private String                nfoFilename;
+  private String                nfoFilename          = "";
 
   /** The director. */
-  private String                director;
+  private String                director             = "";
 
   /** The writer. */
-  private String                writer;
+  private String                writer               = "";
 
   /** The production company. */
-  private String                productionCompany;
+  private String                productionCompany    = "";
 
   /** The certification. */
-  private Certification         certification;
+  private Certification         certification        = Certification.NOT_RATED;
 
   /** The scraped. */
-  private boolean               scraped;
+  private boolean               scraped              = false;
 
   /** The data source. */
-  private String                dataSource;
+  private String                dataSource           = "";
 
   /** The date added. */
-  private Date                  dateAdded;
+  private Date                  dateAdded            = new Date();
 
   /** The watched. */
-  private boolean               watched;
+  private boolean               watched              = false;
 
   /** The movie files. */
   private List<String>          movieFiles           = new ArrayList<String>();
@@ -254,23 +250,6 @@ public class Movie extends AbstractModelObject {
    * Instantiates a new movie.
    */
   public Movie() {
-    name = new String();
-    originalName = new String();
-    year = new String();
-    imdbId = new String();
-    overview = new String();
-    tagline = new String();
-    fanartUrl = new String();
-    fanart = new String();
-    posterUrl = new String();
-    poster = new String();
-    path = new String();
-    nfoFilename = new String();
-    setDirector(new String());
-    setWriter(new String());
-    certification = Certification.NOT_RATED;
-    tmdbId = 0;
-    setScraped(false);
   }
 
   /**
@@ -657,8 +636,7 @@ public class Movie extends AbstractModelObject {
   public String getFanart() {
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
-    }
-    else {
+    } else {
       return fanart;
     }
   }
@@ -755,8 +733,7 @@ public class Movie extends AbstractModelObject {
   public String getPoster() {
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
-    }
-    else {
+    } else {
       return poster;
     }
   }
@@ -1006,8 +983,7 @@ public class Movie extends AbstractModelObject {
     if (!StringUtils.isEmpty(metadata.getTMDBID())) {
       try {
         setTmdbId(Integer.parseInt(metadata.getTMDBID()));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         setTmdbId(0);
       }
     }
@@ -1346,8 +1322,7 @@ public class Movie extends AbstractModelObject {
   public void writeNFO() {
     if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
-    }
-    else {
+    } else {
       setNfoFilename(MovieToXbmcNfoConnector.setData(this));
     }
   }

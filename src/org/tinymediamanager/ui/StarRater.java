@@ -34,6 +34,7 @@ import javax.swing.JPanel;
  * @since August 30, 2010
  */
 public class StarRater extends JPanel {
+  private static final long serialVersionUID = 1L;
 
   /**
    * The listener.

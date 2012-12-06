@@ -40,9 +40,10 @@ import com.bric.image.pixel.Scaling;
  * The Class ImageLabel.
  */
 public class ImageLabel extends JLabel {
+  private static final long   serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(ImageLabel.class);
+  private static final Logger LOGGER           = Logger.getLogger(ImageLabel.class);
 
   /** The original image. */
   private BufferedImage       originalImage;

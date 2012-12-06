@@ -66,10 +66,9 @@ public class Similarity {
    *          the str
    * @return an ArrayList of 2-character Strings.
    */
-  @SuppressWarnings("unchecked")
-  private ArrayList wordLetterPairs(String str) {
+  private ArrayList<String> wordLetterPairs(String str) {
 
-    ArrayList allPairs = new ArrayList();
+    ArrayList<String> allPairs = new ArrayList<String>();
 
     // Tokenize the string and put the tokens/words into an array
 
@@ -103,7 +102,6 @@ public class Similarity {
    *          the str2
    * @return lexical similarity value in the range [0,1]
    */
-  @SuppressWarnings("unchecked")
   public float compareStrings(String str1, String str2) {
     if (str1 == null || str2 == null)
       return 0.0f;
@@ -112,8 +110,8 @@ public class Similarity {
     }
 
     try {
-      ArrayList pairs1 = wordLetterPairs(str1.toUpperCase());
-      ArrayList pairs2 = wordLetterPairs(str2.toUpperCase());
+      ArrayList<String> pairs1 = wordLetterPairs(str1.toUpperCase());
+      ArrayList<String> pairs2 = wordLetterPairs(str2.toUpperCase());
 
       int intersection = 0;
 
@@ -150,8 +148,7 @@ public class Similarity {
         // for the lack of a better test...
         if (str1.toUpperCase().equals(str2.toUpperCase())) {
           return score;
-        }
-        else {
+        } else {
           LOGGER.warn("Adjusted the perfect score to " + 0.90 + " for " + str1 + " and " + str2 + " because they are not equal.");
           // adjust the score, because only 2 strings should be equal.
           score = 0.90f;
@@ -161,8 +158,7 @@ public class Similarity {
         LOGGER.debug(String.format("Similarity Score: [%s][%s]=[%s]", str1, str2, score));
       }
       return score;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.debug("Exception in compareStrings str1 = " + str1 + " str12 = " + str2);
       return (float) 0.0;
     }

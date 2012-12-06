@@ -23,7 +23,7 @@ import org.tinymediamanager.ui.movies.MoviePanel;
 /**
  * The Class ImageIconConverter.
  */
-public class ImageIconConverter extends Converter {
+public class ImageIconConverter extends Converter<Object, Object> {
 
   /** The Constant checkIcon. */
   public final static ImageIcon checkIcon = new ImageIcon(MoviePanel.class.getResource("images/Checkmark.png"));

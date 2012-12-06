@@ -20,13 +20,14 @@ import javax.swing.border.TitledBorder;
  * @author rgd
  */
 public class CollapsiblePanel extends JPanel {
+  private static final long serialVersionUID = 1L;
 
-  String            title;
-  TitledBorder      border;
-  int               titleHeight;
+  String                    title;
+  TitledBorder              border;
+  int                       titleHeight;
 
-  MouseListener     mouseListener;
-  ComponentListener contentComponentListener;
+  MouseListener             mouseListener;
+  ComponentListener         contentComponentListener;
 
   public CollapsiblePanel(String title) {
     super();

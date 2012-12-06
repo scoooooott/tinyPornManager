@@ -63,11 +63,13 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MovieChooser.
  */
 public class MovieChooser extends JDialog implements ActionListener {
+  private static final long       serialVersionUID = 1L;
+
   /** The static LOGGER */
-  private static final Logger     LOGGER       = Logger.getLogger(MovieChooser.class);
+  private static final Logger     LOGGER           = Logger.getLogger(MovieChooser.class);
 
   /** The content panel. */
-  private final JPanel            contentPanel = new JPanel();
+  private final JPanel            contentPanel     = new JPanel();
 
   /** The movie to scrape. */
   private Movie                   movieToScrape;
@@ -94,7 +96,7 @@ public class MovieChooser extends JDialog implements ActionListener {
   private JProgressBar            progressBar;
 
   /** The movies found. */
-  private List<MovieChooserModel> moviesFound  = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private List<MovieChooserModel> moviesFound      = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
   private JLabel                  lblTagline;
 
   /**

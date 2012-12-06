@@ -43,44 +43,93 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieDetailsPanel extends JPanel {
 
-  /** The logger. */
-  private final static Logger LOGGER = Logger.getLogger(MovieDetailsPanel.class);
+  /** The Constant serialVersionUID. */
+  private static final long   serialVersionUID = 1L;
 
+  /** The logger. */
+  private final static Logger LOGGER           = Logger.getLogger(MovieDetailsPanel.class);
+
+  /** The movie selection model. */
   private MovieSelectionModel movieSelectionModel;
 
+  /** The lbl movie path. */
   private LinkLabel           lblMoviePath;
+
+  /** The lbl movie path t. */
   private JLabel              lblMoviePathT;
+
+  /** The lbl original title t. */
   private JLabel              lblOriginalTitleT;
+
+  /** The lbl original title. */
   private JLabel              lblOriginalTitle;
+
+  /** The lbl production t. */
   private JLabel              lblProductionT;
+
+  /** The lbl production. */
   private JLabel              lblProduction;
+
+  /** The lbl genres t. */
   private JLabel              lblGenresT;
+
+  /** The lbl genres. */
   private JLabel              lblGenres;
+
+  /** The lbl certification t. */
   private JLabel              lblCertificationT;
+
+  /** The lbl certification. */
   private JLabel              lblCertification;
+
+  /** The lbl imdb id t. */
   private JLabel              lblImdbIdT;
+
+  /** The lbl tmdb id t. */
   private JLabel              lblTmdbIdT;
+
+  /** The lbl imdb id. */
   private LinkLabel           lblImdbId;
+
+  /** The lbl tmdb id. */
   private LinkLabel           lblTmdbId;
+
+  /** The lbl runtime t. */
   private JLabel              lblRuntimeT;
+
+  /** The lbl runtime. */
   private JLabel              lblRuntime;
+
+  /** The lbl minutes. */
   private JLabel              lblMinutes;
+
+  /** The lbl date added t. */
   private JLabel              lblDateAddedT;
+
+  /** The lbl date added. */
   private JLabel              lblDateAdded;
+
+  /** The cb watched. */
   private JCheckBox           cbWatched;
+
+  /** The lbl watched t. */
   private JLabel              lblWatchedT;
 
+  /**
+   * Instantiates a new movie details panel.
+   * 
+   * @param model
+   *          the model
+   */
   public MovieDetailsPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
-        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("max(12dlu;default):grow"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
+        ColumnSpec.decode("max(12dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel("Original Title");
     add(lblOriginalTitleT, "2, 2");
@@ -127,8 +176,7 @@ public class MovieDetailsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         try {
           Desktop.getDesktop().browse(new URI("http://www.imdb.com/title/" + lblImdbId.getNormalText()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("browse to imdbid", e);
         }
       }
@@ -145,8 +193,7 @@ public class MovieDetailsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         try {
           Desktop.getDesktop().browse(new URI("http://www.themoviedb.org/movie/" + lblTmdbId.getNormalText()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("browse to tmdbid", e);
         }
       }
@@ -168,8 +215,7 @@ public class MovieDetailsPanel extends JPanel {
             if (path.exists()) {
               Desktop.getDesktop().open(path);
             }
-          }
-          catch (Exception ex) {
+          } catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
           }
         }
@@ -195,6 +241,9 @@ public class MovieDetailsPanel extends JPanel {
     initDataBindings();
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalName");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
@@ -224,8 +273,8 @@ public class MovieDetailsPanel extends JPanel {
     autoBinding_12.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_12 = BeanProperty.create("selectedMovie.tmdbId");
-    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
     autoBinding_13.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_13 = BeanProperty.create("selectedMovie.path");
@@ -239,14 +288,14 @@ public class MovieDetailsPanel extends JPanel {
     autoBinding_10.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.dateAdded.date");
-    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty, lblDateAdded, jLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel, movieSelectionModelBeanProperty,
+        lblDateAdded, jLabelBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.watched");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<MovieSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
+    AutoBinding<MovieSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.dateAdded.day");
