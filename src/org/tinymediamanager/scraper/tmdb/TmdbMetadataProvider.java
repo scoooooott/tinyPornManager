@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Trailer;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.CastMember;
 import org.tinymediamanager.scraper.Certification;
@@ -51,6 +52,7 @@ import com.moviejukebox.themoviedb.model.ProductionCompany;
 import com.moviejukebox.themoviedb.model.ReleaseInfo;
 import com.moviejukebox.themoviedb.tools.ApiUrl;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class TmdbMetadataProvider.
  */
@@ -104,7 +106,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("TmdbMetadataProvider", e);
     }
   }
@@ -307,9 +310,13 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   }
 
   /**
+   * Gets the artwork from tmdb.
+   * 
    * @param tmdbId
-   * @return
+   *          the tmdb id
+   * @return the artwork from tmdb
    * @throws MovieDbException
+   *           the movie db exception
    */
   private List<Artwork> getArtworkFromTmdb(int tmdbId) throws MovieDbException {
     List<Artwork> movieImages = null;
@@ -392,7 +399,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
       // only use the certification of the desired country (if any country has
       // been chosen)
-      if (Globals.settings.getCertificationCountry() == null || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
+      if (Globals.settings.getCertificationCountry() == null
+          || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
 
         // Certification certification = new Certification(info.getCountry(),
         // info.getCertification());
@@ -432,15 +440,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       if (castMember.getPersonType() == PersonType.CAST) {
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
-      } else if (castMember.getPersonType() == PersonType.CREW) {
+      }
+      else if (castMember.getPersonType() == PersonType.CREW) {
         if ("Director".equals(castMember.getJob())) {
           cm.setType(CastMember.DIRECTOR);
-        } else if ("Writing".equals(castMember.getDepartment())) {
+        }
+        else if ("Writing".equals(castMember.getDepartment())) {
           cm.setType(CastMember.WRITER);
-        } else {
+        }
+        else {
           continue;
         }
-      } else {
+      }
+      else {
         continue;
       }
 
@@ -457,6 +469,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     for (Genre genre : MediaGenres) {
       addGenre(genre, md);
     }
+
+    // trailers
+    List<Trailer> trailers = getTrailers(tmdbId);
 
     return md;
   }
@@ -626,7 +641,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     if (result.getMetadata() != null) {
       LOGGER.debug("TMDB: getMetadata(result) from cache: " + result);
       return result.getMetadata();
-    } else {
+    }
+    else {
       LOGGER.debug("TMDB: getMetadata(result): " + result);
       int tmdbId = Integer.parseInt(result.getId());
       return getMetaData(tmdbId);
@@ -721,6 +737,13 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     md.addMediaArt(ma);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.tinymediamanager.scraper.IHasFindByIMDBID#searchByImdbId(java.lang.
+   * String)
+   */
   @Override
   public MediaSearchResult searchByImdbId(String imdbId) throws Exception {
     LOGGER.debug("========= BEGIN TMDB Scraper Search for IMDB Id: " + imdbId);
@@ -745,6 +768,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     return sr;
   }
 
+  /**
+   * Gets the media art.
+   * 
+   * @param imdbId
+   *          the imdb id
+   * @return the media art
+   * @throws Exception
+   *           the exception
+   */
   public List<MediaArt> getMediaArt(String imdbId) throws Exception {
     LOGGER.debug("TMDB: getMediaArt(imdbId): " + imdbId);
     if (!Utils.isValidImdbId(imdbId)) {
@@ -765,6 +797,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     return null;
   }
 
+  /**
+   * Gets the media art.
+   * 
+   * @param tmdbId
+   *          the tmdb id
+   * @return the media art
+   * @throws Exception
+   *           the exception
+   */
   public List<MediaArt> getMediaArt(int tmdbId) throws Exception {
     List<MediaArt> mediaArt = new ArrayList<MediaArt>();
 
@@ -799,6 +840,13 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     return mediaArt;
   }
 
+  /**
+   * Gets the tmdb id.
+   * 
+   * @param imdbId
+   *          the imdb id
+   * @return the tmdb id
+   */
   public int getTmdbId(String imdbId) {
     LOGGER.debug("TMDB: getTmdbId(imdbId): " + imdbId);
     int tmdbId = 0;
@@ -814,10 +862,53 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
       }
       tmdbId = movieInfo.getId();
-    } catch (MovieDbException e) {
+    }
+    catch (MovieDbException e) {
     }
 
     return tmdbId;
+  }
+
+  public List<Trailer> getTrailers(String imdbId) {
+    LOGGER.debug("TMDB: getTrailers(imdbId): " + imdbId);
+    List<Trailer> trailers = null;
+    int tmdbId = getTmdbId(imdbId);
+
+    if (tmdbId > 0) {
+      trailers = getTrailers(tmdbId);
+    }
+
+    return trailers;
+  }
+
+  public List<Trailer> getTrailers(int tmdbId) {
+    LOGGER.debug("TMDB: getTrailers(tmdbId): " + tmdbId);
+    List<Trailer> trailers = new ArrayList<Trailer>();
+
+    // get trailers from tmdb
+    try {
+      synchronized (tmdb) {
+        List<com.moviejukebox.themoviedb.model.Trailer> tmdbTrailers = tmdb.getMovieTrailers(tmdbId, "");
+        List<com.moviejukebox.themoviedb.model.Trailer> tmdbTrailersInLang = tmdb.getMovieTrailers(tmdbId, Globals.settings.getScraperTmdbLanguage()
+            .name());
+        tmdbTrailers.addAll(tmdbTrailersInLang);
+        for (com.moviejukebox.themoviedb.model.Trailer tmdbTrailer : tmdbTrailers) {
+          // youtube support
+          if (StringUtils.isNotEmpty(tmdbTrailer.getWebsite()) && "youtube".equals(tmdbTrailer.getWebsite())) {
+            Trailer trailer = new Trailer();
+            trailer.setName(tmdbTrailer.getName());
+            trailer.setQuality(tmdbTrailer.getSize());
+            trailer.setUrl("http://www.youtube.com/watch?v=" + tmdbTrailer.getSource() + "&hd=1");
+            trailer.setProvider(tmdbTrailer.getWebsite());
+            trailers.add(trailer);
+          }
+        }
+      }
+    }
+    catch (MovieDbException e) {
+    }
+
+    return trailers;
   }
 
 }
