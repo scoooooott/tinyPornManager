@@ -280,6 +280,7 @@ public class CachedUrl extends Url {
     IOUtils.copy(is, fos);
     fos.flush();
     fos.close();
+    is.close();
     LOGGER.debug("Url " + u + " Cached To: " + f.getAbsolutePath());
     PropertiesUtils.store(props, getPropertyFile(), "Cached Url Properties");
     LOGGER.debug("Properties for cached url are now stored: " + getPropertyFile().getAbsolutePath());

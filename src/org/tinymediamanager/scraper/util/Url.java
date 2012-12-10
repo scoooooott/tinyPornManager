@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -28,7 +29,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -40,6 +40,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 
@@ -69,7 +70,12 @@ public class Url {
       SchemeRegistry schemeRegistry = new SchemeRegistry();
       schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
 
-      ClientConnectionManager cm = new PoolingClientConnectionManager(schemeRegistry);
+      PoolingClientConnectionManager cm = new PoolingClientConnectionManager(schemeRegistry);
+      // Increase max total connection to 20
+      cm.setMaxTotal(20);
+      // Increase default max connection per route to 5
+      cm.setDefaultMaxPerRoute(5);
+
       client = new DefaultHttpClient(cm);
 
       HttpParams params = client.getParams();
@@ -106,16 +112,23 @@ public class Url {
   public InputStream getInputStream() throws IOException {
     DefaultHttpClient httpclient = getHttpClient();
     BasicHttpContext localContext = new BasicHttpContext();
+    ByteArrayInputStream is = null;
+    HttpEntity entity = null;
 
     HttpGet httpget = new HttpGet(url);
     LOGGER.debug("getting " + url);
-    HttpResponse response = httpclient.execute(httpget, localContext);
-    HttpEntity entity = response.getEntity();
+    try {
+      HttpResponse response = httpclient.execute(httpget, localContext);
+      entity = response.getEntity();
 
-    if (entity != null) {
-      return entity.getContent();
+      if (entity != null) {
+        is = new ByteArrayInputStream(EntityUtils.toByteArray(entity));
+        // is = new BufferedInputStream(entity.getContent());
+      }
+    } finally {
+      EntityUtils.consume(entity);
     }
-    return null;
+    return is;
   }
 
   /**
