@@ -46,6 +46,7 @@ import org.tinymediamanager.scraper.MediaArt;
 import org.tinymediamanager.scraper.MediaArtifactType;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.Trailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.moviejukebox.themoviedb.model.ArtworkType;
@@ -142,6 +143,9 @@ public class Movie extends AbstractModelObject {
 
   /** The Constant WATCHED. */
   protected final static String WATCHED              = "watched";
+
+  /** The Constant TRAILER. */
+  protected final static String TRAILER              = "trailer";
 
   /** The Constant logger. */
   @XmlTransient
@@ -246,6 +250,14 @@ public class Movie extends AbstractModelObject {
   @Transient
   private List<MediaFile>       mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
+  /** The trailer. */
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<Trailer>         trailer              = new ArrayList<Trailer>();
+
+  /** The trailer observable. */
+  @Transient
+  private List<Trailer>         trailerObservable    = ObservableCollections.observableList(trailer);
+
   /**
    * Instantiates a new movie.
    */
@@ -326,6 +338,7 @@ public class Movie extends AbstractModelObject {
   public void setObservables() {
     castObservable = ObservableCollections.observableList(cast);
     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+    trailerObservable = ObservableCollections.observableList(trailer);
   }
 
   /**
@@ -375,6 +388,20 @@ public class Movie extends AbstractModelObject {
   public void removeFromMediaFiles(MediaFile obj) {
     mediaFilesObservable.remove(obj);
     firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+  }
+
+  public List<Trailer> getTrailers() {
+    return this.trailerObservable;
+  }
+
+  public void addToTrailer(Trailer obj) {
+    trailerObservable.add(obj);
+    firePropertyChange(TRAILER, null, trailerObservable);
+  }
+
+  public void removeAllTrailers() {
+    trailerObservable.clear();
+    firePropertyChange(TRAILER, null, trailerObservable);
   }
 
   /**
@@ -1053,6 +1080,13 @@ public class Movie extends AbstractModelObject {
       addGenre(genre);
     }
 
+    // trailer
+    removeAllTrailers();
+    List<Trailer> trailers = metadata.getTrailers();
+    for (Trailer trailer : trailers) {
+      addToTrailer(trailer);
+    }
+
     // set scraped
     setScraped(true);
 
@@ -1481,6 +1515,11 @@ public class Movie extends AbstractModelObject {
     return dateAdded;
   }
 
+  /**
+   * Gets the date added as string.
+   * 
+   * @return the date added as string
+   */
   public String getDateAddedAsString() {
     if (dateAdded == null) {
       return "";

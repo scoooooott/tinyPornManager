@@ -208,6 +208,7 @@ public class MoviePanel extends JPanel {
   private SortedList<Movie>      sortedMovies;
   private FilterList<Movie>      textFilteredMovies;
   private JPanel                 panelExtendedSearch;
+  private MovieTrailerPanel      panelMovieTrailer;
 
   /**
    * Create the panel.
@@ -454,6 +455,9 @@ public class MoviePanel extends JPanel {
     lblFilesT.setLabelFor(tableFiles);
     scrollPaneFiles.setViewportView(tableFiles);
 
+    panelMovieTrailer = new MovieTrailerPanel(movieSelectionModel);
+    tabbedPaneMovieDetails.addTab("Trailer", null, panelMovieTrailer, null);
+
     JPanel panelStatus = new JPanel();
     add(panelStatus, "2, 3, fill, fill");
     panelStatus.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("1px"), ColumnSpec.decode("146px:grow"),
@@ -586,6 +590,8 @@ public class MoviePanel extends JPanel {
       ListSelectionModel selectionModel = table.getSelectionModel();
       if (selectionModel.isSelectionEmpty()) {
         selectionModel.setSelectionInterval(0, 0);
+        // resize trailer columns
+        panelMovieTrailer.adjustColumns();
       }
 
       if (tableCast.getModel().getRowCount() > 0) {
@@ -595,14 +601,18 @@ public class MoviePanel extends JPanel {
       }
     }
 
-    // change to the first actor on movie change
+    // changes upon movie selection
     tableCast.getModel().addTableModelListener(new TableModelListener() {
       public void tableChanged(TableModelEvent e) {
+        // change to the first actor on movie change
         if (tableCast.getModel().getRowCount() > 0) {
           tableCast.getSelectionModel().setSelectionInterval(0, 0);
         } else {
           lblActorThumb.setImageUrl("");
         }
+
+        // resize trailer columns
+        panelMovieTrailer.adjustColumns();
       }
     });
   }

@@ -71,6 +71,9 @@ public class MediaMetadata {
   /** The certifications. */
   private List<Certification>      certifications = new ArrayList<Certification>();
 
+  /** The trailers. */
+  private List<Trailer>            trailers       = new ArrayList<Trailer>();
+
   /**
    * Instantiates a new media metadata.
    */
@@ -239,6 +242,11 @@ public class MediaMetadata {
     set(MetadataKey.USER_RATING, String.valueOf(userRating));
   }
 
+  /**
+   * Gets the vote count.
+   * 
+   * @return the vote count
+   */
   public int getVoteCount() {
     if (StringUtils.isEmpty(get(MetadataKey.VOTE_COUNT))) {
       return 0;
@@ -246,6 +254,12 @@ public class MediaMetadata {
     return Integer.valueOf(get(MetadataKey.VOTE_COUNT));
   }
 
+  /**
+   * Sets the vote count.
+   * 
+   * @param voteCount
+   *          the new vote count
+   */
   public void setVoteCount(int voteCount) {
     set(MetadataKey.VOTE_COUNT, String.valueOf(voteCount));
   }
@@ -440,8 +454,7 @@ public class MediaMetadata {
   private int toInt(String value) {
     try {
       return Integer.parseInt(value);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       return 0;
     }
   }
@@ -503,8 +516,7 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toFloat(value, defValue);
-    }
-    else {
+    } else {
       return defValue;
     }
   }
@@ -522,8 +534,7 @@ public class MediaMetadata {
     String value = getString(key);
     if (value != null) {
       return NumberUtils.toInt(value, defValue);
-    }
-    else {
+    } else {
       return defValue;
     }
   }
@@ -713,12 +724,42 @@ public class MediaMetadata {
     }
   }
 
+  /**
+   * Adds the certification.
+   * 
+   * @param certification
+   *          the certification
+   */
   public void addCertification(Certification certification) {
     certifications.add(certification);
   }
 
+  /**
+   * Gets the certifications.
+   * 
+   * @return the certifications
+   */
   public List<Certification> getCertifications() {
     return certifications;
+  }
+
+  /**
+   * Adds the trailer.
+   * 
+   * @param trailer
+   *          the trailer
+   */
+  public void addTrailer(Trailer trailer) {
+    trailers.add(trailer);
+  }
+
+  /**
+   * Gets the trailers.
+   * 
+   * @return the trailers
+   */
+  public List<Trailer> getTrailers() {
+    return trailers;
   }
 
 }

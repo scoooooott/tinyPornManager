@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core;
+package org.tinymediamanager.scraper;
+
+import javax.persistence.Entity;
+
+import org.tinymediamanager.core.AbstractModelObject;
 
 /**
  * The Class Trailer.
  */
+@Entity
 public class Trailer extends AbstractModelObject {
 
   /** The name. */
