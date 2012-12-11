@@ -106,7 +106,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   private TmdbMetadataProvider() {
     try {
       tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("TmdbMetadataProvider", e);
     }
   }
@@ -398,7 +399,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
       // only use the certification of the desired country (if any country has
       // been chosen)
-      if (Globals.settings.getCertificationCountry() == null || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
+      if (Globals.settings.getCertificationCountry() == null
+          || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
 
         // Certification certification = new Certification(info.getCountry(),
         // info.getCertification());
@@ -438,15 +440,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       if (castMember.getPersonType() == PersonType.CAST) {
         cm.setType(CastMember.ACTOR);
         cm.setCharacter(castMember.getCharacter());
-      } else if (castMember.getPersonType() == PersonType.CREW) {
+      }
+      else if (castMember.getPersonType() == PersonType.CREW) {
         if ("Director".equals(castMember.getJob())) {
           cm.setType(CastMember.DIRECTOR);
-        } else if ("Writing".equals(castMember.getDepartment())) {
+        }
+        else if ("Writing".equals(castMember.getDepartment())) {
           cm.setType(CastMember.WRITER);
-        } else {
+        }
+        else {
           continue;
         }
-      } else {
+      }
+      else {
         continue;
       }
 
@@ -638,7 +644,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     if (result.getMetadata() != null) {
       LOGGER.debug("TMDB: getMetadata(result) from cache: " + result);
       return result.getMetadata();
-    } else {
+    }
+    else {
       LOGGER.debug("TMDB: getMetadata(result): " + result);
       int tmdbId = Integer.parseInt(result.getId());
       return getMetaData(tmdbId);
@@ -858,7 +865,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
       }
       tmdbId = movieInfo.getId();
-    } catch (MovieDbException e) {
+    }
+    catch (MovieDbException e) {
     }
 
     return tmdbId;
@@ -884,7 +892,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     try {
       synchronized (tmdb) {
         List<com.moviejukebox.themoviedb.model.Trailer> tmdbTrailers = tmdb.getMovieTrailers(tmdbId, "");
-        List<com.moviejukebox.themoviedb.model.Trailer> tmdbTrailersInLang = tmdb.getMovieTrailers(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
+        List<com.moviejukebox.themoviedb.model.Trailer> tmdbTrailersInLang = tmdb.getMovieTrailers(tmdbId, Globals.settings.getScraperTmdbLanguage()
+            .name());
         tmdbTrailers.addAll(tmdbTrailersInLang);
         for (com.moviejukebox.themoviedb.model.Trailer tmdbTrailer : tmdbTrailers) {
           // youtube support
@@ -892,13 +901,23 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
             Trailer trailer = new Trailer();
             trailer.setName(tmdbTrailer.getName());
             trailer.setQuality(tmdbTrailer.getSize());
-            trailer.setUrl("http://www.youtube.com/watch?v=" + tmdbTrailer.getSource() + "&hd=1");
             trailer.setProvider(tmdbTrailer.getWebsite());
+
+            // build url for youtube trailer
+            StringBuilder sb = new StringBuilder();
+            sb.append("http://www.youtube.com/watch?v=");
+            sb.append(tmdbTrailer.getSource());
+            if ("hd".equalsIgnoreCase(tmdbTrailer.getSize())) {
+              sb.append("&hd=1");
+            }
+            trailer.setUrl(sb.toString());
+
             trailers.add(trailer);
           }
         }
       }
-    } catch (MovieDbException e) {
+    }
+    catch (MovieDbException e) {
     }
 
     return trailers;

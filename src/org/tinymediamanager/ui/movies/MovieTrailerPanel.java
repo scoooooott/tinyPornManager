@@ -1,29 +1,73 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui.movies;
 
-import java.util.List;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.net.URI;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.scraper.Trailer;
+import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.TableColumnAdjuster;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.swing.EventTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MovieTrailerPanel.
+ */
 public class MovieTrailerPanel extends JPanel {
 
   /** The movie selection model. */
-  private MovieSelectionModel movieSelectionModel;
-  private JTable              table;
-  private TableColumnAdjuster tca = null;
+  private MovieSelectionModel      movieSelectionModel;
+
+  /** The table. */
+  private JTable                   table;
+
+  /** The table column adjuster. */
+  private TableColumnAdjuster      tableColumnAdjuster = null;
+
+  /** The trailer event list. */
+  private EventList<Trailer>       trailerEventList    = new BasicEventList<Trailer>();
+
+  /** The trailer table model. */
+  private EventTableModel<Trailer> trailerTableModel   = null;
 
   /**
    * Instantiates a new movie details panel.
@@ -33,44 +77,453 @@ public class MovieTrailerPanel extends JPanel {
    */
   public MovieTrailerPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
-    JScrollPane scrollPane = new JScrollPane();
-    add(scrollPane, "2, 2, fill, fill");
-
-    table = new JTable();
+    trailerTableModel = new EventTableModel<Trailer>(trailerEventList, new TrailerTableFormat());
+    table = new MyTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    table.setSelectionModel(new NullSelectionModel());
+
+    JScrollPane scrollPane = MyTable.createStripedJScrollPane(table);
+    add(scrollPane, "2, 2, fill, fill");
     scrollPane.setViewportView(table);
-    initDataBindings();
+    // initDataBindings();
 
-    tca = new TableColumnAdjuster(table);
-    tca.setColumnDataIncluded(true);
-    tca.setColumnHeaderIncluded(true);
+    // make the url clickable
+    URLRenderer renderer = new URLRenderer(table);
+    table.getColumnModel().getColumn(3).setCellRenderer(renderer);
+    table.addMouseListener(renderer);
+    table.addMouseMotionListener(renderer);
+
+    tableColumnAdjuster = new TableColumnAdjuster(table);
+    tableColumnAdjuster.setColumnDataIncluded(true);
+    tableColumnAdjuster.setColumnHeaderIncluded(true);
+
+    // install the propertychangelistener
+    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        String property = propertyChangeEvent.getPropertyName();
+        // react on selection of a movie and change of a trailer
+        if ("selectedMovie".equals(property) || "trailer".equals(property)) {
+          trailerEventList.clear();
+          trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailers());
+          tableColumnAdjuster.adjustColumns();
+        }
+      }
+    };
+
+    movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
+
   }
 
-  public void adjustColumns() {
-    tca.adjustColumns();
+  /**
+   * The Class TrailerTableFormat.
+   */
+  private static class TrailerTableFormat implements TableFormat<Trailer> {
+
+    /**
+     * Instantiates a new trailer table format.
+     */
+    public TrailerTableFormat() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ca.odell.glazedlists.gui.TableFormat#getColumnCount()
+     */
+    @Override
+    public int getColumnCount() {
+      return 4;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ca.odell.glazedlists.gui.TableFormat#getColumnName(int)
+     */
+    @Override
+    public String getColumnName(int column) {
+      switch (column) {
+        case 0:
+          return "Name";
+
+        case 1:
+          return "Source";
+
+        case 2:
+          return "Quality";
+
+        case 3:
+          return "Url";
+      }
+
+      throw new IllegalStateException();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object,
+     * int)
+     */
+    @Override
+    public Object getColumnValue(Trailer trailer, int column) {
+      switch (column) {
+        case 0:
+          return trailer.getName();
+
+        case 1:
+          return trailer.getProvider();
+
+        case 2:
+          return trailer.getQuality();
+
+        case 3:
+          return trailer.getUrl();
+      }
+
+      throw new IllegalStateException();
+    }
   }
 
-  protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, List<Trailer>> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.trailers");
-    JTableBinding<Trailer, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty, table);
-    //
-    BeanProperty<Trailer, String> trailerBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(trailerBeanProperty).setColumnName("Name").setEditable(false);
-    //
-    BeanProperty<Trailer, String> trailerBeanProperty_1 = BeanProperty.create("provider");
-    jTableBinding.addColumnBinding(trailerBeanProperty_1).setColumnName("Source").setEditable(false);
-    //
-    BeanProperty<Trailer, String> trailerBeanProperty_2 = BeanProperty.create("quality");
-    jTableBinding.addColumnBinding(trailerBeanProperty_2).setColumnName("Resolution").setEditable(false);
-    //
-    BeanProperty<Trailer, String> trailerBeanProperty_3 = BeanProperty.create("url");
-    jTableBinding.addColumnBinding(trailerBeanProperty_3).setColumnName("Url").setEditable(false);
-    //
-    jTableBinding.setEditable(false);
-    jTableBinding.bind();
+  /**
+   * The Class URLRenderer.
+   */
+  private static class URLRenderer extends DefaultTableCellRenderer implements MouseListener, MouseMotionListener {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new uRL renderer.
+     * 
+     * @param table
+     *          the table
+     */
+    public URLRenderer(JTable table) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent
+     * (javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable table, final Object value, boolean arg2, boolean arg3, int arg4, int arg5) {
+      final JLabel lab = new JLabel("<html><font color=\"#0000CF\"><u>" + value + "</u></font></html>");
+      return lab;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+      JTable table = (JTable) e.getSource();
+      int row = table.rowAtPoint(new Point(e.getX(), e.getY()));
+      int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
+
+      if (col == 3) {
+        // try to open the browser
+        try {
+          Desktop.getDesktop().browse(new URI((String) table.getModel().getValueAt(row, col)));
+        }
+        catch (Exception ex) {
+        }
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseEntered(MouseEvent e) {
+      JTable table = (JTable) e.getSource();
+      int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
+      if (col == 3) {
+        table.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseExited(MouseEvent e) {
+      JTable table = (JTable) e.getSource();
+      int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
+      if (col != 3) {
+        table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseMoved(MouseEvent e) {
+      JTable table = (JTable) e.getSource();
+      int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
+      if (col != 3 && table.getCursor().getType() == Cursor.HAND_CURSOR) {
+        table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+      if (col == 3 && table.getCursor().getType() == Cursor.DEFAULT_CURSOR) {
+        table.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
+     * )
+     */
+    @Override
+    public void mouseDragged(MouseEvent arg0) {
+      // TODO Auto-generated method stub
+
+    }
+
   }
+
+  /**
+   * The Class NullSelectionModel.
+   */
+  private static class NullSelectionModel implements ListSelectionModel {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#isSelectionEmpty()
+     */
+    public boolean isSelectionEmpty() {
+      return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#isSelectedIndex(int)
+     */
+    public boolean isSelectedIndex(int index) {
+      return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#getMinSelectionIndex()
+     */
+    public int getMinSelectionIndex() {
+      return -1;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#getMaxSelectionIndex()
+     */
+    public int getMaxSelectionIndex() {
+      return -1;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#getLeadSelectionIndex()
+     */
+    public int getLeadSelectionIndex() {
+      return -1;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#getAnchorSelectionIndex()
+     */
+    public int getAnchorSelectionIndex() {
+      return -1;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#setSelectionInterval(int, int)
+     */
+    public void setSelectionInterval(int index0, int index1) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#setLeadSelectionIndex(int)
+     */
+    public void setLeadSelectionIndex(int index) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#setAnchorSelectionIndex(int)
+     */
+    public void setAnchorSelectionIndex(int index) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#addSelectionInterval(int, int)
+     */
+    public void addSelectionInterval(int index0, int index1) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#insertIndexInterval(int, int,
+     * boolean)
+     */
+    public void insertIndexInterval(int index, int length, boolean before) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#clearSelection()
+     */
+    public void clearSelection() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#removeSelectionInterval(int, int)
+     */
+    public void removeSelectionInterval(int index0, int index1) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#removeIndexInterval(int, int)
+     */
+    public void removeIndexInterval(int index0, int index1) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#setSelectionMode(int)
+     */
+    public void setSelectionMode(int selectionMode) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#getSelectionMode()
+     */
+    public int getSelectionMode() {
+      return SINGLE_SELECTION;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * javax.swing.ListSelectionModel#addListSelectionListener(javax.swing.event
+     * .ListSelectionListener)
+     */
+    public void addListSelectionListener(ListSelectionListener lsl) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * javax.swing.ListSelectionModel#removeListSelectionListener(javax.swing
+     * .event.ListSelectionListener)
+     */
+    public void removeListSelectionListener(ListSelectionListener lsl) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#setValueIsAdjusting(boolean)
+     */
+    public void setValueIsAdjusting(boolean valueIsAdjusting) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListSelectionModel#getValueIsAdjusting()
+     */
+    public boolean getValueIsAdjusting() {
+      return false;
+    }
+  }
+
+  // protected void initDataBindings() {
+  // BeanProperty<MovieSelectionModel, List<Trailer>>
+  // movieSelectionModelBeanProperty =
+  // BeanProperty.create("selectedMovie.trailers");
+  // JTableBinding<Trailer, MovieSelectionModel, JTable> jTableBinding =
+  // SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
+  // movieSelectionModelBeanProperty, table);
+  // //
+  // BeanProperty<Trailer, String> trailerBeanProperty =
+  // BeanProperty.create("name");
+  // jTableBinding.addColumnBinding(trailerBeanProperty).setColumnName("Name").setEditable(false);
+  // //
+  // BeanProperty<Trailer, String> trailerBeanProperty_1 =
+  // BeanProperty.create("provider");
+  // jTableBinding.addColumnBinding(trailerBeanProperty_1).setColumnName("Source").setEditable(false);
+  // //
+  // BeanProperty<Trailer, String> trailerBeanProperty_2 =
+  // BeanProperty.create("quality");
+  // jTableBinding.addColumnBinding(trailerBeanProperty_2).setColumnName("Resolution").setEditable(false);
+  // //
+  // BeanProperty<Trailer, String> trailerBeanProperty_3 =
+  // BeanProperty.create("url");
+  // jTableBinding.addColumnBinding(trailerBeanProperty_3).setColumnName("Url").setEditable(false);
+  // //
+  // jTableBinding.setEditable(false);
+  // jTableBinding.bind();
+  // }
 }

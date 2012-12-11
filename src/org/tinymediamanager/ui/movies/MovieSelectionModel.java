@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +62,8 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
   /** The sorted list. */
   private SortedList<Movie>             sortedList;
 
+  private PropertyChangeListener        propertyChangeListener;
+
   /**
    * Instantiates a new movie selection model.
    * 
@@ -77,6 +81,13 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     // this.matcherEditor = new MovieMatcherEditor();
     this.matcherEditor = matcher;
     this.selectedMovies = selectionModel.getSelected();
+
+    propertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        firePropertyChange(evt);
+      }
+    };
   }
 
   /**
@@ -120,6 +131,14 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     if (selectedMovies.size() > 0 && selectedMovie != selectedMovies.get(0)) {
       Movie oldValue = selectedMovie;
       selectedMovie = selectedMovies.get(0);
+
+      // register propertychangelistener to handle changes in a movie
+      if (oldValue != null) {
+        oldValue.removePropertyChangeListener(propertyChangeListener);
+      }
+      if (selectedMovie != null) {
+        selectedMovie.addPropertyChangeListener(propertyChangeListener);
+      }
       firePropertyChange(SELECTED_MOVIE, oldValue, selectedMovie);
     }
 
@@ -127,6 +146,14 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     if (selectedMovies.size() == 0) {
       Movie oldValue = selectedMovie;
       selectedMovie = initalMovie;
+
+      // register propertychangelistener to handle changes in a movie
+      if (oldValue != null) {
+        oldValue.removePropertyChangeListener(propertyChangeListener);
+      }
+      if (selectedMovie != null) {
+        selectedMovie.addPropertyChangeListener(propertyChangeListener);
+      }
       firePropertyChange(SELECTED_MOVIE, oldValue, selectedMovie);
     }
   }

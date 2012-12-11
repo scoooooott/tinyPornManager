@@ -15,9 +15,11 @@
  */
 package org.tinymediamanager.core;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractModelObject.
  */
@@ -82,5 +84,15 @@ public abstract class AbstractModelObject {
    */
   protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
     propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
+  }
+
+  /**
+   * Fire property change.
+   * 
+   * @param evt
+   *          the evt
+   */
+  protected void firePropertyChange(PropertyChangeEvent evt) {
+    propertyChangeSupport.firePropertyChange(evt);
   }
 }
