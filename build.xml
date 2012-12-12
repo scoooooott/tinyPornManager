@@ -18,12 +18,12 @@
 		<jar destfile="build/tmm.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
-				<attribute name="Class-Path" value=". lib/commons-lang3.jar lib/log4j.jar lib/themoviedbapi.jar lib/beansbinding.jar lib/jdom.jar lib/commons-codec.jar lib/commons-io.jar lib/jackson-core-lgpl.jar lib/jackson-mapper-lgpl.jar lib/objectdb.jar lib/Scaling-bin.jar lib/thetvdbapi.jar lib/forms.jar lib/JSplitButton.jar lib/commons-logging.jar lib/httpclient.jar lib/httpclient-cache.jar lib/httpcore.jar lib/httpmime.jar lib/JTattoo.jar lib/jsoup.jar lib/glazedlists.jar" />
+				<attribute name="Class-Path" value=". lib/commons-lang3.jar lib/log4j.jar lib/themoviedbapi.jar lib/beansbinding.jar lib/jdom.jar lib/commons-codec.jar lib/commons-io.jar lib/jackson-core-lgpl.jar lib/jackson-mapper-lgpl.jar lib/objectdb.jar lib/Scaling-bin.jar lib/thetvdbapi.jar lib/forms.jar lib/JSplitButton.jar lib/commons-logging.jar lib/httpclient.jar lib/httpclient-cache.jar lib/httpcore.jar lib/httpmime.jar lib/JTattoo.jar lib/jsoup.jar lib/glazedlists.jar lib/resource.jar" />
 				<attribute name="SplashScreen-Image" value="org/tinymediamanager/ui/images/splashscreen.png" />
 			</manifest>
 			<fileset dir="bin" />
 		</jar>
-		<!-- <jar destfile="build/lib/resources.jar" basedir="resources" includes="*/**" /> -->
+		<jar destfile="build/lib/resources.jar" basedir="resources" includes="*/**" />
 		<copy file="lib/commons-lang3.jar" todir="build/lib" />
 		<copy file="lib/log4j.jar" todir="build/lib" />
 		<copy file="lib/themoviedbapi.jar" todir="build/lib" />

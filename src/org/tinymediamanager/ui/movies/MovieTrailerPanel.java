@@ -34,6 +34,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.Trailer;
 import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.TableColumnAdjuster;
@@ -77,8 +78,8 @@ public class MovieTrailerPanel extends JPanel {
    */
   public MovieTrailerPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), }));
 
     trailerTableModel = new EventTableModel<Trailer>(trailerEventList, new TrailerTableFormat());
     table = new MyTable(trailerTableModel);
@@ -104,8 +105,9 @@ public class MovieTrailerPanel extends JPanel {
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         String property = propertyChangeEvent.getPropertyName();
+        Object source = propertyChangeEvent.getSource();
         // react on selection of a movie and change of a trailer
-        if ("selectedMovie".equals(property) || "trailer".equals(property)) {
+        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || (source.getClass() == Movie.class && "trailer".equals(property))) {
           trailerEventList.clear();
           trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailers());
           tableColumnAdjuster.adjustColumns();
@@ -234,8 +236,7 @@ public class MovieTrailerPanel extends JPanel {
         // try to open the browser
         try {
           Desktop.getDesktop().browse(new URI((String) table.getModel().getValueAt(row, col)));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
         }
       }
     }

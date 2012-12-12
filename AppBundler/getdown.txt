@@ -37,6 +37,7 @@ code = lib/httpmime.jar
 code = lib/JTattoo.jar
 code = lib/jsoup.jar
 code = lib/glazedlists.jar
+code = lib/resources.jar
 
 # The main entry point for the application
 class = org.tinymediamanager.TinyMediaManager
