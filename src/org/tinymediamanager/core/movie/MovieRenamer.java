@@ -26,6 +26,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Utils;
 
 /**
@@ -60,8 +61,7 @@ public class MovieRenamer {
         FileUtils.moveDirectory(srcDir, destDir);
         LOGGER.debug("moved folder " + oldPathname + " to " + newPathname);
         movie.setPath(newPathname);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOGGER.error("move folder", e);
       }
     }
@@ -70,13 +70,14 @@ public class MovieRenamer {
     LOGGER.debug("file expression: " + Globals.settings.getMovieRenamerFilename());
     int i = 1;
     List<String> newFiles = new ArrayList<String>();
-    for (String file : movie.getMovieFiles()) {
+    // for (String file : movie.getMovieFiles()) {
+    for (MediaFile file : movie.getMediaFiles()) {
       String newFilename = createDestination(Globals.settings.getMovieRenamerFilename(), movie);
 
       // get the filetype
-      String fileExtension = FilenameUtils.getExtension(file);
-      String fileWithoutExtension = FilenameUtils.getBaseName(file);
-      String oldFilename = movie.getPath() + File.separator + file;
+      String fileExtension = FilenameUtils.getExtension(file.getFilename());
+      String fileWithoutExtension = FilenameUtils.getBaseName(file.getFilename());
+      String oldFilename = movie.getPath() + File.separator + file.getFilename();
 
       // is there any stacking information in the filename?
       String cleanFilename = Utils.cleanStackingMarkers(fileWithoutExtension);
@@ -91,16 +92,15 @@ public class MovieRenamer {
         String newNfoFile = movie.getPath() + File.separator + newFilename + ".nfo";
         try {
           moveFile(oldNfoFile, newNfoFile);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("move nfo", e);
         }
       }
 
       // do we need to rename the posters?
       if (i == 1
-          && (Globals.settings.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG) || Globals.settings.getMoviePosterFilenames()
-              .contains(MoviePosterNaming.FILENAME_TBN))) {
+          && (Globals.settings.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG) || Globals.settings.getMoviePosterFilenames().contains(
+              MoviePosterNaming.FILENAME_TBN))) {
         // poster as jpg
         if (Globals.settings.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG)) {
           String oldPosterFile = movie.getPath() + File.separator + fileWithoutExtension + ".jpg";
@@ -108,8 +108,7 @@ public class MovieRenamer {
           try {
             moveFile(oldPosterFile, newPosterFile);
             movie.setPoster(FilenameUtils.getName(newPosterFile));
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             LOGGER.error("move nfo", e);
           }
         }
@@ -121,8 +120,7 @@ public class MovieRenamer {
           try {
             moveFile(oldPosterFile, newPosterFile);
             movie.setPoster(FilenameUtils.getName(newPosterFile));
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             LOGGER.error("move nfo", e);
           }
         }
@@ -135,8 +133,7 @@ public class MovieRenamer {
         try {
           moveFile(oldFanartFile, newFanartFile);
           movie.setFanart(FilenameUtils.getName(newFanartFile));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOGGER.error("move nfo", e);
         }
       }
@@ -146,17 +143,17 @@ public class MovieRenamer {
       // movie file
       try {
         moveFile(oldFilename, newFilename);
-        newFiles.add(FilenameUtils.getName(newFilename));
-      }
-      catch (Exception e) {
+        file.setFilename(FilenameUtils.getName(newFilename));
+        // newFiles.add(FilenameUtils.getName(newFilename));
+      } catch (Exception e) {
         LOGGER.error("move file", e);
-        newFiles.add(file);
+        // newFiles.add(file);
       }
 
       i++;
     }
 
-    movie.setMovieFiles(newFiles);
+    // movie.setMovieFiles(newFiles);
     movie.saveToDb();
   }
 
@@ -196,8 +193,7 @@ public class MovieRenamer {
         File newFile = new File(newFilename);
         FileUtils.moveFile(oldFile, newFile);
         LOGGER.debug("moved file " + oldFilename + " to " + newFilename);
-      }
-      else {
+      } else {
         throw new FileNotFoundException(oldFilename);
       }
     }
