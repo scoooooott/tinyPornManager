@@ -22,3 +22,5 @@ JTattoo201208.jar
 htmlparser.jar
 jsoup-1.7.1.jar
 glazedlists-java_150-1.8.0.jar
+l2fprod-common-buttonbar-6.9.1.jar
+l2fprod-common-shared-6.9.1.jar

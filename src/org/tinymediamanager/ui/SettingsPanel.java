@@ -378,6 +378,9 @@ public class SettingsPanel extends JPanel {
     lblProxyPassword.setLabelFor(tfProxyPassword);
     panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
 
+    JPanel panel_2 = new ButtonBarPanel();
+    tabbedPane.addTab("New tab", null, panel_2, null);
+
     JPanel panel = new JPanel();
     add(panel, "2, 4, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
