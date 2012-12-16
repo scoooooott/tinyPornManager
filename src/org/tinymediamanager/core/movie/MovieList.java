@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
@@ -42,19 +45,24 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieList.
+ */
+/**
+ * @author manuel
+ * 
  */
 public class MovieList extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger          LOGGER   = Logger.getLogger(MovieList.class);
+  private static final Logger          LOGGER         = Logger.getLogger(MovieList.class);
 
   /** The instance. */
   private static MovieList             instance;
 
   /** The settings. */
-  private final Settings               settings = Settings.getInstance();
+  private final Settings               settings       = Settings.getInstance();
 
   /** The movie list. */
   private ObservableElementList<Movie> movieList;
@@ -62,11 +70,28 @@ public class MovieList extends AbstractModelObject {
   /** The metadata provider. */
   private IMediaMetadataProvider       metadataProvider;
 
+  /** The tag listener. */
+  private PropertyChangeListener       tagListener;
+
+  /** The tags observable. */
+  private List<String>                 tagsObservable = ObservableCollections.observableList(new ArrayList<String>());
+
   /**
    * Instantiates a new movie list.
    */
   private MovieList() {
-
+    // the tag listener: its used to always have a full list of all tags used in
+    // tmm
+    tagListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        // listen to changes of tags
+        if ("tag".equals(evt.getPropertyName())) {
+          Movie movie = (Movie) evt.getSource();
+          updateTags(movie);
+        }
+      }
+    };
   }
 
   /**
@@ -90,10 +115,18 @@ public class MovieList extends AbstractModelObject {
   public void addMovie(Movie movie) {
     int oldValue = movieList.size();
     movieList.add(movie);
+    updateTags(movie);
+    movie.addPropertyChangeListener(tagListener);
     firePropertyChange("movies", null, movieList);
     firePropertyChange("movieCount", oldValue, movieList.size());
   }
 
+  /**
+   * Removes the datasource.
+   * 
+   * @param path
+   *          the path
+   */
   public void removeDatasource(String path) {
     if (StringUtils.isEmpty(path)) {
       return;
@@ -221,6 +254,8 @@ public class MovieList extends AbstractModelObject {
    * 
    * @param dir
    *          the dir
+   * @param dataSource
+   *          the data source
    */
   private void findMovieInDirectory(File dir, String dataSource) {
     LOGGER.debug("find movies in directory " + dir.getPath());
@@ -231,6 +266,10 @@ public class MovieList extends AbstractModelObject {
 
         // do not start with .
         if (name.toLowerCase().startsWith("."))
+          return false;
+
+        // check against sample.*
+        if (name.startsWith("sample.") || name.startsWith("Sample."))
           return false;
 
         // check if filetype is in our settigns
@@ -358,8 +397,8 @@ public class MovieList extends AbstractModelObject {
   /**
    * Search movie.
    * 
-   * @param searchTerm
-   *          the search term
+   * @param imdbId
+   *          the imdb id
    * @return the list
    */
   private List<MediaSearchResult> searchMovieByImdbId(String imdbId) {
@@ -429,8 +468,54 @@ public class MovieList extends AbstractModelObject {
     return metadataProvider;
   }
 
+  /**
+   * Gets the movie count.
+   * 
+   * @return the movie count
+   */
   public int getMovieCount() {
     int size = movieList.size();
     return size;
+  }
+
+  /**
+   * Gets the tags in movies.
+   * 
+   * @return the tags in movies
+   */
+  public List<String> getTagsInMovies() {
+    return tagsObservable;
+  }
+
+  /**
+   * Update tags used in movies
+   * 
+   * @param movie
+   *          the movie
+   */
+  private void updateTags(Movie movie) {
+    for (String tagInMovie : movie.getTags()) {
+      boolean tagFound = false;
+      for (String tag : tagsObservable) {
+        if (tagInMovie.equals(tag)) {
+          tagFound = true;
+          break;
+        }
+      }
+      if (!tagFound) {
+        addTag(tagInMovie);
+      }
+    }
+  }
+
+  private void addTag(String newTag) {
+    for (String tag : tagsObservable) {
+      if (tag.equals(newTag)) {
+        return;
+      }
+    }
+
+    tagsObservable.add(newTag);
+    firePropertyChange("tag", null, tagsObservable);
   }
 }

@@ -25,6 +25,7 @@ import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URI;
+import java.util.Comparator;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -41,7 +42,7 @@ import org.tinymediamanager.ui.TableColumnAdjuster;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -78,8 +79,8 @@ public class MovieTrailerPanel extends JPanel {
    */
   public MovieTrailerPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     trailerTableModel = new EventTableModel<Trailer>(trailerEventList, new TrailerTableFormat());
     table = new MyTable(trailerTableModel);
@@ -93,7 +94,7 @@ public class MovieTrailerPanel extends JPanel {
 
     // make the url clickable
     URLRenderer renderer = new URLRenderer(table);
-    table.getColumnModel().getColumn(3).setCellRenderer(renderer);
+    table.getColumnModel().getColumn(4).setCellRenderer(renderer);
     table.addMouseListener(renderer);
     table.addMouseMotionListener(renderer);
 
@@ -107,7 +108,8 @@ public class MovieTrailerPanel extends JPanel {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
         // react on selection of a movie and change of a trailer
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || (source.getClass() == Movie.class && "trailer".equals(property))) {
+        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
+            || (source.getClass() == Movie.class && "trailer".equals(property))) {
           trailerEventList.clear();
           trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailers());
           tableColumnAdjuster.adjustColumns();
@@ -122,7 +124,7 @@ public class MovieTrailerPanel extends JPanel {
   /**
    * The Class TrailerTableFormat.
    */
-  private static class TrailerTableFormat implements TableFormat<Trailer> {
+  private static class TrailerTableFormat implements AdvancedTableFormat<Trailer> {
 
     /**
      * Instantiates a new trailer table format.
@@ -137,7 +139,7 @@ public class MovieTrailerPanel extends JPanel {
      */
     @Override
     public int getColumnCount() {
-      return 4;
+      return 5;
     }
 
     /*
@@ -149,15 +151,18 @@ public class MovieTrailerPanel extends JPanel {
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return "Name";
+          return "NFO";
 
         case 1:
-          return "Source";
+          return "Name";
 
         case 2:
-          return "Quality";
+          return "Source";
 
         case 3:
+          return "Quality";
+
+        case 4:
           return "Url";
       }
 
@@ -175,19 +180,55 @@ public class MovieTrailerPanel extends JPanel {
     public Object getColumnValue(Trailer trailer, int column) {
       switch (column) {
         case 0:
-          return trailer.getName();
+          return trailer.getInNfo();
 
         case 1:
-          return trailer.getProvider();
+          return trailer.getName();
 
         case 2:
-          return trailer.getQuality();
+          return trailer.getProvider();
 
         case 3:
+          return trailer.getQuality();
+
+        case 4:
           return trailer.getUrl();
       }
 
       throw new IllegalStateException();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
+     */
+    @Override
+    public Class getColumnClass(int column) {
+      switch (column) {
+        case 0:
+          return Boolean.class;
+
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+          return String.class;
+      }
+
+      throw new IllegalStateException();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
+     */
+    @Override
+    public Comparator getColumnComparator(int arg0) {
+      // TODO Auto-generated method stub
+      return null;
     }
   }
 
@@ -232,11 +273,12 @@ public class MovieTrailerPanel extends JPanel {
       int row = table.rowAtPoint(new Point(e.getX(), e.getY()));
       int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
 
-      if (col == 3) {
+      if (col == 4) {
         // try to open the browser
         try {
           Desktop.getDesktop().browse(new URI((String) table.getModel().getValueAt(row, col)));
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
         }
       }
     }
@@ -250,7 +292,7 @@ public class MovieTrailerPanel extends JPanel {
     public void mouseEntered(MouseEvent e) {
       JTable table = (JTable) e.getSource();
       int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      if (col == 3) {
+      if (col == 4) {
         table.setCursor(new Cursor(Cursor.HAND_CURSOR));
       }
     }
@@ -264,7 +306,7 @@ public class MovieTrailerPanel extends JPanel {
     public void mouseExited(MouseEvent e) {
       JTable table = (JTable) e.getSource();
       int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      if (col != 3) {
+      if (col != 4) {
         table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     }
@@ -279,10 +321,10 @@ public class MovieTrailerPanel extends JPanel {
     public void mouseMoved(MouseEvent e) {
       JTable table = (JTable) e.getSource();
       int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      if (col != 3 && table.getCursor().getType() == Cursor.HAND_CURSOR) {
+      if (col != 4 && table.getCursor().getType() == Cursor.HAND_CURSOR) {
         table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
-      if (col == 3 && table.getCursor().getType() == Cursor.DEFAULT_CURSOR) {
+      if (col == 4 && table.getCursor().getType() == Cursor.DEFAULT_CURSOR) {
         table.setCursor(new Cursor(Cursor.HAND_CURSOR));
       }
     }
@@ -499,32 +541,4 @@ public class MovieTrailerPanel extends JPanel {
       return false;
     }
   }
-
-  // protected void initDataBindings() {
-  // BeanProperty<MovieSelectionModel, List<Trailer>>
-  // movieSelectionModelBeanProperty =
-  // BeanProperty.create("selectedMovie.trailers");
-  // JTableBinding<Trailer, MovieSelectionModel, JTable> jTableBinding =
-  // SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
-  // movieSelectionModelBeanProperty, table);
-  // //
-  // BeanProperty<Trailer, String> trailerBeanProperty =
-  // BeanProperty.create("name");
-  // jTableBinding.addColumnBinding(trailerBeanProperty).setColumnName("Name").setEditable(false);
-  // //
-  // BeanProperty<Trailer, String> trailerBeanProperty_1 =
-  // BeanProperty.create("provider");
-  // jTableBinding.addColumnBinding(trailerBeanProperty_1).setColumnName("Source").setEditable(false);
-  // //
-  // BeanProperty<Trailer, String> trailerBeanProperty_2 =
-  // BeanProperty.create("quality");
-  // jTableBinding.addColumnBinding(trailerBeanProperty_2).setColumnName("Resolution").setEditable(false);
-  // //
-  // BeanProperty<Trailer, String> trailerBeanProperty_3 =
-  // BeanProperty.create("url");
-  // jTableBinding.addColumnBinding(trailerBeanProperty_3).setColumnName("Url").setEditable(false);
-  // //
-  // jTableBinding.setEditable(false);
-  // jTableBinding.bind();
-  // }
 }

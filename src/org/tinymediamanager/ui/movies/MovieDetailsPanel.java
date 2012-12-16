@@ -114,6 +114,8 @@ public class MovieDetailsPanel extends JPanel {
 
   /** The lbl watched t. */
   private JLabel              lblWatchedT;
+  private JLabel              lblTagsT;
+  private JLabel              lblTags;
 
   /**
    * Instantiates a new movie details panel.
@@ -124,11 +126,13 @@ public class MovieDetailsPanel extends JPanel {
   public MovieDetailsPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(12dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
+        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("max(12dlu;default):grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel("Original Title");
@@ -176,7 +180,8 @@ public class MovieDetailsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         try {
           Desktop.getDesktop().browse(new URI("http://www.imdb.com/title/" + lblImdbId.getNormalText()));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.error("browse to imdbid", e);
         }
       }
@@ -193,7 +198,8 @@ public class MovieDetailsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         try {
           Desktop.getDesktop().browse(new URI("http://www.themoviedb.org/movie/" + lblTmdbId.getNormalText()));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.error("browse to tmdbid", e);
         }
       }
@@ -201,8 +207,14 @@ public class MovieDetailsPanel extends JPanel {
     lblTmdbIdT.setLabelFor(lblTmdbId);
     add(lblTmdbId, "10, 12, left, default");
 
+    lblTagsT = new JLabel("Tags");
+    add(lblTagsT, "2, 14");
+
+    lblTags = new JLabel("");
+    add(lblTags, "4, 14, 7, 1");
+
     lblMoviePathT = new JLabel("Path");
-    add(lblMoviePathT, "2, 14");
+    add(lblMoviePathT, "2, 16");
 
     lblMoviePath = new LinkLabel("");
     lblMoviePath.addActionListener(new ActionListener() {
@@ -215,7 +227,8 @@ public class MovieDetailsPanel extends JPanel {
             if (path.exists()) {
               Desktop.getDesktop().open(path);
             }
-          } catch (Exception ex) {
+          }
+          catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
           }
         }
@@ -223,27 +236,24 @@ public class MovieDetailsPanel extends JPanel {
     });
     lblMoviePathT.setLabelFor(lblMoviePath);
 
-    add(lblMoviePath, "4, 14, 7, 1, left, default");
+    add(lblMoviePath, "4, 16, 7, 1, left, default");
 
     lblDateAddedT = new JLabel("Date added");
-    add(lblDateAddedT, "2, 16");
+    add(lblDateAddedT, "2, 18");
 
     lblDateAdded = new JLabel("");
-    add(lblDateAdded, "4, 16, 3, 1");
+    add(lblDateAdded, "4, 18, 3, 1");
 
     lblWatchedT = new JLabel("Watched");
-    add(lblWatchedT, "8, 16");
+    add(lblWatchedT, "8, 18");
 
     cbWatched = new JCheckBox("");
     cbWatched.setEnabled(false);
-    add(cbWatched, "10, 16");
+    add(cbWatched, "10, 18");
 
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalName");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
@@ -273,8 +283,8 @@ public class MovieDetailsPanel extends JPanel {
     autoBinding_12.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_12 = BeanProperty.create("selectedMovie.tmdbId");
-    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, Integer, LinkLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_12, lblTmdbId, linkLabelBeanProperty);
     autoBinding_13.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_13 = BeanProperty.create("selectedMovie.path");
@@ -288,14 +298,14 @@ public class MovieDetailsPanel extends JPanel {
     autoBinding_10.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.dateAdded.date");
-    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel, movieSelectionModelBeanProperty,
-        lblDateAdded, jLabelBeanProperty);
+    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty, lblDateAdded, jLabelBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.watched");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<MovieSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
+    AutoBinding<MovieSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.dateAdded.day");
@@ -307,5 +317,10 @@ public class MovieDetailsPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_3, lblDateAdded, jLabelBeanProperty);
     autoBinding_3.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovie.tagAsString");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_4, lblTags, jLabelBeanProperty);
+    autoBinding_4.bind();
   }
 }

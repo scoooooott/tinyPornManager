@@ -19,6 +19,7 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -29,8 +30,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.movies.MoviePanel;
+import org.tinymediamanager.ui.settings.SettingsPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -128,13 +131,17 @@ public class MainWindow extends JFrame {
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         try {
+          // save unsaved settings
+          Globals.settings.saveSettings();
           // close database connection
           Globals.shutdownDatabase();
-          // // clear cache directory
-          // File cache = new File("cache");
-          // if (cache.exists()) {
-          // FileUtils.deleteDirectory(cache);
-          // }
+          // clear cache directory
+          if (Globals.settings.isClearCacheShutdown()) {
+            File cache = new File("cache");
+            if (cache.exists()) {
+              FileUtils.deleteDirectory(cache);
+            }
+          }
         }
         catch (Exception ex) {
         }

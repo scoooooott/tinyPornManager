@@ -31,7 +31,7 @@ import ca.odell.glazedlists.matchers.Matcher;
 public class MoviesExtendedMatcher implements Matcher<Movie> {
 
   public enum SearchOptions {
-    WATCHED, GENRE, CAST;
+    WATCHED, GENRE, CAST, TAG;
   }
 
   /** The search options. */
@@ -107,6 +107,19 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
               return true;
             }
           }
+        }
+      }
+
+      return false;
+    }
+
+    // check against tag
+    if (searchOptions.containsKey(SearchOptions.TAG)) {
+      String tag = (String) searchOptions.get(SearchOptions.TAG);
+
+      for (String tagInMovie : movie.getTags()) {
+        if (tagInMovie.equals(tag)) {
+          return true;
         }
       }
 

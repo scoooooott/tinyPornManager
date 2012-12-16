@@ -57,15 +57,18 @@ public class AboutDialog extends JDialog {
     setTitle("About");
     setResizable(false);
     setModal(true);
-    setBounds(100, 100, 450, 249);
+    setBounds(100, 100, 450, 303);
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:89px"), FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(25px;min)"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:89px"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(25px;min)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     {
       JLabel lblLogo = new JLabel("");
       lblLogo.setIcon(new ImageIcon(AboutDialog.class.getResource("/org/tinymediamanager/ui/images/tmm96.png")));
@@ -91,7 +94,7 @@ public class AboutDialog extends JDialog {
     }
     {
       JLabel lblHomepage = new JLabel("Homepage");
-      contentPanel.add(lblHomepage, "2, 12");
+      contentPanel.add(lblHomepage, "2, 12, right, default");
     }
     {
       final LinkLabel lblHomepage = new LinkLabel("http://code.google.com/p/tinymediamanager/");
@@ -99,17 +102,39 @@ public class AboutDialog extends JDialog {
         public void actionPerformed(ActionEvent arg0) {
           try {
             Desktop.getDesktop().browse(new URI(lblHomepage.getNormalText()));
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
           }
         }
       });
       contentPanel.add(lblHomepage, "6, 12");
     }
     {
+      JLabel lblThanksTo = new JLabel("Thanks to");
+      contentPanel.add(lblThanksTo, "2, 16, right, default");
+    }
+    {
+      JLabel lblXysm = new JLabel("xysm for excessive testing and lots of feedback");
+      contentPanel.add(lblXysm, "6, 16");
+    }
+    {
+      JLabel lblXzener = new JLabel("Xzener for genre images");
+      contentPanel.add(lblXzener, "6, 18");
+    }
+    {
+      JLabel lblLibs = new JLabel("The creators of all libs I've used");
+      contentPanel.add(lblLibs, "6, 20");
+    }
+    {
+      JLabel lblTester = new JLabel("Everyone who tested and provided feedback");
+      contentPanel.add(lblTester, "6, 22");
+    }
+    {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.BUTTON_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.BUTTON_COLSPEC,
+          FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JButton okButton = new JButton();
         okButton.setAction(action);

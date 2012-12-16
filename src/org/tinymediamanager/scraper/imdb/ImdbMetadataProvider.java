@@ -45,6 +45,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.ProviderInfo;
 import org.tinymediamanager.scraper.SearchQuery;
+import org.tinymediamanager.scraper.Trailer;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
@@ -103,6 +104,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(Globals.executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(Globals.executor);
     ExecutorCompletionService<List<MediaArt>> compSvcTmdbArtwork = new ExecutorCompletionService<List<MediaArt>>(Globals.executor);
+    ExecutorCompletionService<List<Trailer>> compSvcTmdbTrailer = new ExecutorCompletionService<List<Trailer>>(Globals.executor);
 
     // worker for imdb request (/combined) (everytime from akas.imdb.com)
     // StringBuilder sb = new StringBuilder(imdbSite.getSite());
@@ -136,6 +138,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     // worker for artwork
     Callable<List<MediaArt>> workerArtwork = new TmdbArtworkWorker(imdbId);
     Future<List<MediaArt>> futureArtwork = compSvcTmdbArtwork.submit(workerArtwork);
+
+    // worker for fanart
+    Callable<List<Trailer>> workerTrailer = new TmdbTrailerWorker(imdbId);
+    Future<List<Trailer>> futureTrailer = compSvcTmdbTrailer.submit(workerTrailer);
 
     Document doc;
     doc = futureCombined.get();
@@ -568,7 +574,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       }
     }
 
-    // get Artwork from TMDB
+    // get artwork from TMDB
     try {
       List<MediaArt> mediaArt = futureArtwork.get();
       if (mediaArt != null && mediaArt.size() > 0) {
@@ -578,6 +584,18 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         // also store tmdbId
         if (StringUtils.isEmpty(md.getTMDBID())) {
           md.setTMDBID(String.valueOf(mediaArt.get(0).getTmdbId()));
+        }
+      }
+    }
+    catch (Exception e) {
+    }
+
+    // get trailer from tmdb
+    try {
+      List<Trailer> trailers = futureTrailer.get();
+      if (trailers != null && trailers.size() > 0) {
+        for (Trailer trailer : trailers) {
+          md.addTrailer(trailer);
         }
       }
     }
@@ -988,4 +1006,33 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     }
   }
 
+  /**
+   * The Class TmdbTrailerWorker.
+   */
+  private class TmdbTrailerWorker implements Callable<List<Trailer>> {
+
+    /** The imdb id. */
+    private String imdbId;
+
+    /**
+     * Instantiates a new tmdb artwork worker.
+     * 
+     * @param imdbId
+     *          the imdb id
+     */
+    public TmdbTrailerWorker(String imdbId) {
+      this.imdbId = imdbId;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.concurrent.Callable#call()
+     */
+    @Override
+    public List<Trailer> call() throws Exception {
+      TmdbMetadataProvider tmdbMd = TmdbMetadataProvider.getInstance();
+      return tmdbMd.getTrailers(imdbId);
+    }
+  }
 }

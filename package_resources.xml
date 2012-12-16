@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="package_resources" name="package resource files to lib/resources.jar">
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
+		
+	<target name="package_resources">
+		<jar destfile="lib/resources.jar" basedir="resources" includes="*/**" />
+	</target>
+</project>

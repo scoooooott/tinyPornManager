@@ -38,6 +38,8 @@ code = lib/JTattoo.jar
 code = lib/jsoup.jar
 code = lib/glazedlists.jar
 code = lib/resources.jar
+code = lib/l2fprod-common-buttonbar.jar 
+code = lib/l2fprod-common-shared.jar 
 
 # The main entry point for the application
 class = org.tinymediamanager.TinyMediaManager

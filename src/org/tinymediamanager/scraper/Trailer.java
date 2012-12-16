@@ -26,16 +26,19 @@ import org.tinymediamanager.core.AbstractModelObject;
 public class Trailer extends AbstractModelObject {
 
   /** The name. */
-  private String name;
+  private String  name;
 
   /** The url. */
-  private String url;
+  private String  url;
 
   /** The quality. */
-  private String quality;
+  private String  quality;
 
   /** The provider. */
-  private String provider;
+  private String  provider;
+
+  /** The inNfo. */
+  private Boolean inNfo;
 
   /**
    * Instantiates a new trailer.
@@ -129,6 +132,16 @@ public class Trailer extends AbstractModelObject {
     String oldValue = this.provider;
     this.provider = newValue;
     firePropertyChange("provider", oldValue, newValue);
+  }
+
+  public Boolean getInNfo() {
+    return inNfo;
+  }
+
+  public void setInNfo(Boolean newValue) {
+    Boolean oldValue = this.inNfo;
+    this.inNfo = newValue;
+    firePropertyChange("inNfo", oldValue, newValue);
   }
 
 }

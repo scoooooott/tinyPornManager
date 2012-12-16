@@ -51,8 +51,13 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.moviejukebox.themoviedb.model.ArtworkType;
 
+// TODO: Auto-generated Javadoc
 /**
  * The main class for movies.
+ */
+/**
+ * @author manuel
+ * 
  */
 @Entity
 public class Movie extends AbstractModelObject {
@@ -146,6 +151,9 @@ public class Movie extends AbstractModelObject {
 
   /** The Constant TRAILER. */
   protected final static String TRAILER              = "trailer";
+
+  /** The Constant TAG. */
+  protected final static String TAG                  = "tag";
 
   /** The Constant logger. */
   @XmlTransient
@@ -258,6 +266,13 @@ public class Movie extends AbstractModelObject {
   @Transient
   private List<Trailer>         trailerObservable    = ObservableCollections.observableList(trailer);
 
+  /** The tags. */
+  private List<String>          tags                 = new ArrayList<String>();
+
+  /** The tags observable. */
+  @Transient
+  private List<String>          tagsObservable       = ObservableCollections.observableList(tags);
+
   /**
    * Instantiates a new movie.
    */
@@ -339,6 +354,7 @@ public class Movie extends AbstractModelObject {
     castObservable = ObservableCollections.observableList(cast);
     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
     trailerObservable = ObservableCollections.observableList(trailer);
+    tagsObservable = ObservableCollections.observableList(tags);
   }
 
   /**
@@ -390,18 +406,96 @@ public class Movie extends AbstractModelObject {
     firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
   }
 
+  /**
+   * Gets the trailers.
+   * 
+   * @return the trailers
+   */
   public List<Trailer> getTrailers() {
     return this.trailerObservable;
   }
 
-  public void addToTrailer(Trailer obj) {
+  /**
+   * Adds the trailer.
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void addTrailer(Trailer obj) {
     trailerObservable.add(obj);
     firePropertyChange(TRAILER, null, trailerObservable);
   }
 
+  /**
+   * Removes the all trailers.
+   */
   public void removeAllTrailers() {
     trailerObservable.clear();
     firePropertyChange(TRAILER, null, trailerObservable);
+  }
+
+  /**
+   * Adds the to tags.
+   * 
+   * @param newTag
+   *          the new tag
+   */
+  public void addToTags(String newTag) {
+    for (String tag : tagsObservable) {
+      if (tag.equals(newTag)) {
+        return;
+      }
+    }
+
+    tagsObservable.add(newTag);
+    firePropertyChange(TAG, null, tagsObservable);
+    firePropertyChange("tagsAsString", null, tagsObservable);
+  }
+
+  /**
+   * Removes the from tags.
+   * 
+   * @param removeTag
+   *          the remove tag
+   */
+  public void removeFromTags(String removeTag) {
+    tagsObservable.remove(removeTag);
+    firePropertyChange(TAG, null, tagsObservable);
+    firePropertyChange("tagsAsString", null, tagsObservable);
+  }
+
+  /**
+   * Clear tags.
+   */
+  public void clearTags() {
+    tagsObservable.clear();
+    firePropertyChange(TAG, null, tagsObservable);
+    firePropertyChange("tagsAsString", null, tagsObservable);
+  }
+
+  /**
+   * Gets the tag as string.
+   * 
+   * @return the tag as string
+   */
+  public String getTagAsString() {
+    StringBuilder sb = new StringBuilder();
+    for (String tag : tags) {
+      if (!StringUtils.isEmpty(sb)) {
+        sb.append(", ");
+      }
+      sb.append(tag);
+    }
+    return sb.toString();
+  }
+
+  /**
+   * Gets the tags.
+   * 
+   * @return the tags
+   */
+  public List<String> getTags() {
+    return this.tagsObservable;
   }
 
   /**
@@ -663,7 +757,8 @@ public class Movie extends AbstractModelObject {
   public String getFanart() {
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
-    } else {
+    }
+    else {
       return fanart;
     }
   }
@@ -760,7 +855,8 @@ public class Movie extends AbstractModelObject {
   public String getPoster() {
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
-    } else {
+    }
+    else {
       return poster;
     }
   }
@@ -1010,7 +1106,8 @@ public class Movie extends AbstractModelObject {
     if (!StringUtils.isEmpty(metadata.getTMDBID())) {
       try {
         setTmdbId(Integer.parseInt(metadata.getTMDBID()));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         setTmdbId(0);
       }
     }
@@ -1084,7 +1181,10 @@ public class Movie extends AbstractModelObject {
     removeAllTrailers();
     List<Trailer> trailers = metadata.getTrailers();
     for (Trailer trailer : trailers) {
-      addToTrailer(trailer);
+      if (this.trailer.size() == 0) {
+        trailer.setInNfo(Boolean.TRUE);
+      }
+      addTrailer(trailer);
     }
 
     // set scraped
@@ -1356,7 +1456,8 @@ public class Movie extends AbstractModelObject {
   public void writeNFO() {
     if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
-    } else {
+    }
+    else {
       setNfoFilename(MovieToXbmcNfoConnector.setData(this));
     }
   }

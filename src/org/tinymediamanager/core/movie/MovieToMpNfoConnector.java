@@ -45,6 +45,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieToMpNfoConnector.Actor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.Trailer;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,15 +53,12 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
-@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "fanart", "mpaa", "id", "filenameandpath", "genres",
-    "studio", "credits", "director", "actors" })
+@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "fanart", "mpaa", "id",
+    "filenameandpath", "trailer", "genres", "studio", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
   private static final Logger LOGGER = Logger.getLogger(MovieToMpNfoConnector.class);
-
-  // /** The Constant NFO_NAME. */
-  // private final static String NFO_NAME = "movie.nfo";
 
   /** The title. */
   private String              title;
@@ -124,6 +122,9 @@ public class MovieToMpNfoConnector {
   /** the credits. */
   private String              credits;
 
+  /** The trailer. */
+  private String              trailer;
+
   /**
    * Instantiates a new movie to mp nfo connector.
    */
@@ -156,10 +157,12 @@ public class MovieToMpNfoConnector {
       spaceIndex = mp.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
         mp.setOutline(mp.getPlot().substring(0, spaceIndex));
-      } else {
+      }
+      else {
         mp.setOutline(mp.getPlot());
       }
-    } else if (!StringUtils.isEmpty(mp.getPlot())) {
+    }
+    else if (!StringUtils.isEmpty(mp.getPlot())) {
       spaceIndex = mp.getPlot().length();
       mp.setOutline(mp.getPlot().substring(0, spaceIndex));
     }
@@ -189,6 +192,13 @@ public class MovieToMpNfoConnector {
 
     for (MediaGenres genre : movie.getGenres()) {
       mp.addGenre(genre.toString());
+    }
+
+    for (Trailer trailer : movie.getTrailers()) {
+      if (trailer.getInNfo()) {
+        mp.setTrailer(trailer.getUrl());
+        break;
+      }
     }
 
     // and marshall it
@@ -229,14 +239,18 @@ public class MovieToMpNfoConnector {
         String xml = sb.toString();
         IOUtils.write(xml, w);
 
-      } catch (JAXBException e) {
+      }
+      catch (JAXBException e) {
         LOGGER.error("setData", e);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOGGER.error("setData", e);
-      } finally {
+      }
+      finally {
         try {
           w.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOGGER.error("setData", e);
         }
       }
@@ -302,13 +316,25 @@ public class MovieToMpNfoConnector {
           }
         }
 
+        if (StringUtils.isNotEmpty(mp.getTrailer())) {
+          Trailer trailer = new Trailer();
+          trailer.setName("fromNFO");
+          trailer.setProvider("from NFO");
+          trailer.setQuality("unknown");
+          trailer.setUrl(mp.getTrailer());
+          trailer.setInNfo(true);
+          movie.addTrailer(trailer);
+        }
+
         movie.setNfoFilename(nfoFilename);
 
-      } catch (FileNotFoundException e) {
+      }
+      catch (FileNotFoundException e) {
         LOGGER.error("setData", e);
         return null;
       }
-    } catch (JAXBException e) {
+    }
+    catch (JAXBException e) {
       LOGGER.error("setData", e);
       return null;
     }
@@ -342,6 +368,8 @@ public class MovieToMpNfoConnector {
    *          the name
    * @param role
    *          the role
+   * @param thumb
+   *          the thumb
    */
   public void addActor(String name, String role, String thumb) {
     Actor actor = new Actor(name, role, thumb);
@@ -696,6 +724,26 @@ public class MovieToMpNfoConnector {
     this.credits = credits;
   }
 
+  /**
+   * Gets the trailer.
+   * 
+   * @return the trailer
+   */
+  @XmlElement(name = "trailer")
+  public String getTrailer() {
+    return trailer;
+  }
+
+  /**
+   * Sets the trailer.
+   * 
+   * @param trailer
+   *          the new trailer
+   */
+  public void setTrailer(String trailer) {
+    this.trailer = trailer;
+  }
+
   // inner class actor to represent actors
   /**
    * The Class Actor.
@@ -725,6 +773,8 @@ public class MovieToMpNfoConnector {
      *          the name
      * @param role
      *          the role
+     * @param thumb
+     *          the thumb
      */
     public Actor(String name, String role, String thumb) {
       this.name = name;

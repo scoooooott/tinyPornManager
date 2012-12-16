@@ -130,6 +130,12 @@ public class Settings extends AbstractModelObject {
   /** The Constant IMDB_SCRAPE_FOREIGN_LANGU. */
   private final static String           IMDB_SCRAPE_FOREIGN_LANGU = "imdbScrapeForeignLanguage";
 
+  /** The Constant CLEAR_CACHE_SHUTDOWN. */
+  private final static String           CLEAR_CACHE_SHUTDOWN      = "clearCacheShutdown";
+
+  /** The Constant SCRAPE_BEST_IMAGE. */
+  private final static String           SCRAPE_BEST_IMAGE         = "scrapeBestImage";
+
   /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
@@ -168,34 +174,43 @@ public class Settings extends AbstractModelObject {
   private String                        proxyPassword;
 
   /** The scraper tmdb language. */
-  private Languages                     scraperTmdbLanguage;
+  private Languages                     scraperTmdbLanguage       = Languages.en;
 
   /** The image tmdb langugage. */
-  private Languages                     imageTmdbLangugage;
+  private Languages                     imageTmdbLangugage        = Languages.en;
 
   /** The image tmdb poster size. */
-  private PosterSizes                   imageTmdbPosterSize;
+  private PosterSizes                   imageTmdbPosterSize       = PosterSizes.w342;
 
   /** The image tmdb fanart size. */
-  private FanartSizes                   imageTmdbFanartSize;
+  private FanartSizes                   imageTmdbFanartSize       = FanartSizes.original;
 
   /** The country for certification. */
-  private CountryCode                   certificationCountry;
+  private CountryCode                   certificationCountry      = CountryCode.US;
 
   /** The movie connector. */
-  private MovieConnectors               movieConnector;
+  private MovieConnectors               movieConnector            = MovieConnectors.XBMC;
 
   /** The movie renamer pathname. */
-  private String                        movieRenamerPathname;
+  private String                        movieRenamerPathname      = "";
 
   /** The movie renamer filename. */
-  private String                        movieRenamerFilename;
+  private String                        movieRenamerFilename      = "";
 
   /** The imdb scrape foreign language. */
-  private boolean                       imdbScrapeForeignLanguage;
+  private boolean                       imdbScrapeForeignLanguage = false;
 
   /** The movie scraper. */
-  private MovieScrapers                 movieScraper;
+  private MovieScrapers                 movieScraper              = MovieScrapers.TMDB;
+
+  /** The dirty flag. */
+  private boolean                       dirty                     = false;
+
+  /** The clear cache on shutdown. */
+  private boolean                       clearCacheShutdown        = false;
+
+  /** The scrape best image. */
+  private boolean                       scrapeBestImage           = true;
 
   /**
    * Instantiates a new settings.
@@ -233,8 +248,24 @@ public class Settings extends AbstractModelObject {
         LOGGER.error("getInstance", e);
       }
 
+      Settings.instance.clearDirty();
+
     }
     return Settings.instance;
+  }
+
+  /**
+   * Sets the dirty.
+   */
+  private void setDirty() {
+    dirty = true;
+  }
+
+  /**
+   * Clear dirty.
+   */
+  private void clearDirty() {
+    dirty = false;
   }
 
   /**
@@ -245,6 +276,7 @@ public class Settings extends AbstractModelObject {
    */
   public void addMovieDataSources(String path) {
     movieDataSources.add(path);
+    setDirty();
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
   }
 
@@ -258,6 +290,7 @@ public class Settings extends AbstractModelObject {
     MovieList movieList = MovieList.getInstance();
     movieList.removeDatasource(path);
     movieDataSources.remove(path);
+    setDirty();
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
   }
 
@@ -279,6 +312,7 @@ public class Settings extends AbstractModelObject {
   public void addMovieNfoFilename(MovieNfoNaming filename) {
     if (!movieNfoFilenames.contains(filename)) {
       movieNfoFilenames.add(filename);
+      setDirty();
       firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
     }
   }
@@ -292,6 +326,7 @@ public class Settings extends AbstractModelObject {
   public void removeMovieNfoFilename(MovieNfoNaming filename) {
     if (movieNfoFilenames.contains(filename)) {
       movieNfoFilenames.remove(filename);
+      setDirty();
       firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
     }
   }
@@ -301,6 +336,7 @@ public class Settings extends AbstractModelObject {
    */
   public void clearMovieNfoFilenames() {
     movieNfoFilenames.clear();
+    setDirty();
     firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
   }
 
@@ -322,6 +358,7 @@ public class Settings extends AbstractModelObject {
   public void addMoviePosterFilename(MoviePosterNaming filename) {
     if (!moviePosterFilenames.contains(filename)) {
       moviePosterFilenames.add(filename);
+      setDirty();
       firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
     }
   }
@@ -335,6 +372,7 @@ public class Settings extends AbstractModelObject {
   public void removeMoviePosterFilename(MoviePosterNaming filename) {
     if (moviePosterFilenames.contains(filename)) {
       moviePosterFilenames.remove(filename);
+      setDirty();
       firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
     }
   }
@@ -344,6 +382,7 @@ public class Settings extends AbstractModelObject {
    */
   public void clearMoviePosterFilenames() {
     moviePosterFilenames.clear();
+    setDirty();
     firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
   }
 
@@ -365,6 +404,7 @@ public class Settings extends AbstractModelObject {
   public void addMovieFanartFilename(MovieFanartNaming filename) {
     if (!movieFanartFilenames.contains(filename)) {
       movieFanartFilenames.add(filename);
+      setDirty();
       firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
     }
   }
@@ -378,6 +418,7 @@ public class Settings extends AbstractModelObject {
   public void removeMovieFanartFilename(MovieFanartNaming filename) {
     if (movieFanartFilenames.contains(filename)) {
       movieFanartFilenames.remove(filename);
+      setDirty();
       firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
     }
   }
@@ -387,6 +428,7 @@ public class Settings extends AbstractModelObject {
    */
   public void clearMovieFanartFilenames() {
     movieFanartFilenames.clear();
+    setDirty();
     firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
   }
 
@@ -407,6 +449,7 @@ public class Settings extends AbstractModelObject {
    */
   public void addVideoFileTypes(String type) {
     videoFileTypes.add(type);
+    setDirty();
     firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
   }
 
@@ -418,6 +461,7 @@ public class Settings extends AbstractModelObject {
    */
   public void removeVideoFileType(String type) {
     videoFileTypes.remove(type);
+    setDirty();
     firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
   }
 
@@ -434,6 +478,11 @@ public class Settings extends AbstractModelObject {
    * Save settings.
    */
   public void saveSettings() {
+    // is there anything to save?
+    if (!dirty) {
+      return;
+    }
+
     // create JAXB context and instantiate marshaller
     JAXBContext context;
     Writer w = null;
@@ -474,6 +523,9 @@ public class Settings extends AbstractModelObject {
 
     // set proxy information
     setProxy();
+
+    // clear dirty flag
+    clearDirty();
   }
 
   /**
@@ -527,6 +579,7 @@ public class Settings extends AbstractModelObject {
   public void setProxyHost(String newValue) {
     String oldValue = this.proxyHost;
     this.proxyHost = newValue;
+    setDirty();
     firePropertyChange(PROXY_HOST, oldValue, newValue);
   }
 
@@ -549,6 +602,7 @@ public class Settings extends AbstractModelObject {
   public void setProxyPort(String newValue) {
     String oldValue = this.proxyPort;
     this.proxyPort = newValue;
+    setDirty();
     firePropertyChange(PROXY_PORT, oldValue, newValue);
   }
 
@@ -571,6 +625,7 @@ public class Settings extends AbstractModelObject {
   public void setProxyUsername(String newValue) {
     String oldValue = this.proxyUsername;
     this.proxyUsername = newValue;
+    setDirty();
     firePropertyChange(PROXY_USERNAME, oldValue, newValue);
   }
 
@@ -594,6 +649,7 @@ public class Settings extends AbstractModelObject {
     newValue = StringEscapeUtils.escapeXml(newValue);
     String oldValue = this.proxyPassword;
     this.proxyPassword = newValue;
+    setDirty();
     firePropertyChange(PROXY_PASSWORD, oldValue, newValue);
   }
 
@@ -616,6 +672,7 @@ public class Settings extends AbstractModelObject {
   public void setImageTmdbLangugage(Languages newValue) {
     Languages oldValue = this.imageTmdbLangugage;
     this.imageTmdbLangugage = newValue;
+    setDirty();
     firePropertyChange(IMAGE_TMDB_LANGU, oldValue, newValue);
   }
 
@@ -665,6 +722,7 @@ public class Settings extends AbstractModelObject {
   public void setImageTmdbPosterSize(PosterSizes newValue) {
     PosterSizes oldValue = this.imageTmdbPosterSize;
     this.imageTmdbPosterSize = newValue;
+    setDirty();
     firePropertyChange(IMAGE_TMDB_POSTER, oldValue, newValue);
   }
 
@@ -687,6 +745,7 @@ public class Settings extends AbstractModelObject {
   public void setImageTmdbFanartSize(FanartSizes newValue) {
     FanartSizes oldValue = this.imageTmdbFanartSize;
     this.imageTmdbFanartSize = newValue;
+    setDirty();
     firePropertyChange(IMAGE_TMDB_FANART, oldValue, newValue);
   }
 
@@ -709,6 +768,7 @@ public class Settings extends AbstractModelObject {
   public void setScraperTmdbLanguage(Languages newValue) {
     Languages oldValue = this.scraperTmdbLanguage;
     this.scraperTmdbLanguage = newValue;
+    setDirty();
     firePropertyChange(SCRAPER_TMDB_LANGU, oldValue, newValue);
   }
 
@@ -731,6 +791,7 @@ public class Settings extends AbstractModelObject {
   public void setCertificationCountry(CountryCode newValue) {
     CountryCode oldValue = this.certificationCountry;
     certificationCountry = newValue;
+    setDirty();
     firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
 
@@ -753,31 +814,61 @@ public class Settings extends AbstractModelObject {
   public void setMovieConnector(MovieConnectors newValue) {
     MovieConnectors oldValue = this.movieConnector;
     this.movieConnector = newValue;
+    setDirty();
     firePropertyChange(MOVIE_CONNECTOR, oldValue, newValue);
   }
 
+  /**
+   * Gets the movie renamer pathname.
+   * 
+   * @return the movie renamer pathname
+   */
   @XmlElement(name = MOVIE_RENAMER_PATHNAME)
   public String getMovieRenamerPathname() {
     return movieRenamerPathname;
   }
 
+  /**
+   * Sets the movie renamer pathname.
+   * 
+   * @param newValue
+   *          the new movie renamer pathname
+   */
   public void setMovieRenamerPathname(String newValue) {
     String oldValue = this.movieRenamerPathname;
     this.movieRenamerPathname = newValue;
+    setDirty();
     firePropertyChange(MOVIE_RENAMER_PATHNAME, oldValue, newValue);
   }
 
+  /**
+   * Gets the movie renamer filename.
+   * 
+   * @return the movie renamer filename
+   */
   @XmlElement(name = MOVIE_RENAMER_FILENAME)
   public String getMovieRenamerFilename() {
     return movieRenamerFilename;
   }
 
+  /**
+   * Sets the movie renamer filename.
+   * 
+   * @param newValue
+   *          the new movie renamer filename
+   */
   public void setMovieRenamerFilename(String newValue) {
     String oldValue = this.movieRenamerFilename;
     this.movieRenamerFilename = newValue;
+    setDirty();
     firePropertyChange(MOVIE_RENAMER_FILENAME, oldValue, newValue);
   }
 
+  /**
+   * Gets the movie scraper.
+   * 
+   * @return the movie scraper
+   */
   public MovieScrapers getMovieScraper() {
     if (movieScraper == null) {
       return MovieScrapers.TMDB;
@@ -785,19 +876,82 @@ public class Settings extends AbstractModelObject {
     return movieScraper;
   }
 
+  /**
+   * Sets the movie scraper.
+   * 
+   * @param newValue
+   *          the new movie scraper
+   */
   public void setMovieScraper(MovieScrapers newValue) {
     MovieScrapers oldValue = this.movieScraper;
     this.movieScraper = newValue;
+    setDirty();
     firePropertyChange(MOVIE_SCRAPER, oldValue, newValue);
   }
 
+  /**
+   * Checks if is imdb scrape foreign language.
+   * 
+   * @return true, if is imdb scrape foreign language
+   */
   public boolean isImdbScrapeForeignLanguage() {
     return imdbScrapeForeignLanguage;
   }
 
+  /**
+   * Sets the imdb scrape foreign language.
+   * 
+   * @param newValue
+   *          the new imdb scrape foreign language
+   */
   public void setImdbScrapeForeignLanguage(boolean newValue) {
     boolean oldValue = this.imdbScrapeForeignLanguage;
     this.imdbScrapeForeignLanguage = newValue;
+    setDirty();
     firePropertyChange(IMDB_SCRAPE_FOREIGN_LANGU, oldValue, newValue);
+  }
+
+  /**
+   * Checks if is clear cache shutdown.
+   * 
+   * @return true, if is clear cache shutdown
+   */
+  public boolean isClearCacheShutdown() {
+    return clearCacheShutdown;
+  }
+
+  /**
+   * Sets the clear cache shutdown.
+   * 
+   * @param newValue
+   *          the new clear cache shutdown
+   */
+  public void setClearCacheShutdown(boolean newValue) {
+    boolean oldValue = this.clearCacheShutdown;
+    this.clearCacheShutdown = newValue;
+    setDirty();
+    firePropertyChange(CLEAR_CACHE_SHUTDOWN, oldValue, newValue);
+  }
+
+  /**
+   * Checks if is scrape best image.
+   * 
+   * @return true, if is scrape best image
+   */
+  public boolean isScrapeBestImage() {
+    return scrapeBestImage;
+  }
+
+  /**
+   * Sets the scrape best image.
+   * 
+   * @param newValue
+   *          the new scrape best image
+   */
+  public void setScrapeBestImage(boolean newValue) {
+    boolean oldValue = this.scrapeBestImage;
+    this.scrapeBestImage = newValue;
+    setDirty();
+    firePropertyChange(SCRAPE_BEST_IMAGE, oldValue, newValue);
   }
 }
