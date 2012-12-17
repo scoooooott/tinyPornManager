@@ -61,6 +61,9 @@ public class MainWindow extends JFrame {
   /** The action feedback. */
   private final Action      actionFeedback   = new FeedbackAction();
 
+  /** The action bug report. */
+  private final Action      actionBugReport  = new BugReportAction();
+
   /** The instance. */
   private static MainWindow instance;
 
@@ -90,6 +93,11 @@ public class MainWindow extends JFrame {
     JMenuItem mntmFeedback = mnTmm.add(actionFeedback);
     mntmFeedback.setText("Send feedback");
 
+    JMenuItem mntmBugReport = mnTmm.add(actionBugReport);
+    mntmBugReport.setText("Report a bug");
+
+    mnTmm.addSeparator();
+
     JMenuItem mntmExit = mnTmm.add(actionExit);
     mntmExit.setText("Exit");
     initialize();
@@ -110,7 +118,8 @@ public class MainWindow extends JFrame {
     setBounds(5, 5, 1100, 727);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("fill:default:grow"), }));
 
     // JTabbedPane tabbedPane = new JTabbedPane();
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
@@ -148,7 +157,8 @@ public class MainWindow extends JFrame {
               FileUtils.deleteDirectory(cache);
             }
           }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
         }
         Globals.executor.shutdownNow();
         dispose();
@@ -278,4 +288,32 @@ public class MainWindow extends JFrame {
     return instance;
   }
 
+  /**
+   * The Class BugReportAction.
+   */
+  private class BugReportAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new feedback action.
+     */
+    public BugReportAction() {
+      // putValue(NAME, "SwingAction");
+      // putValue(SHORT_DESCRIPTION, "Some short description");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      JDialog dialog = new BugReportDialog();
+      dialog.pack();
+      dialog.setVisible(true);
+    }
+  }
 }

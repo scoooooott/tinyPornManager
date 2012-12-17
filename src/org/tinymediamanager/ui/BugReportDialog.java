@@ -17,11 +17,15 @@ package org.tinymediamanager.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.Charset;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,15 +34,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
 
@@ -47,28 +53,41 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class FeedbackDialog.
  */
-public class FeedbackDialog extends JDialog {
+public class BugReportDialog extends JDialog {
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
+  private static final long   serialVersionUID = 1L;
+
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER           = Logger.getLogger(BugReportDialog.class);
 
   /** The text field. */
-  private JTextField        textField;
+  private JTextField          textField;
 
   /** The text area. */
-  private JTextArea         textArea;
+  private JTextArea           textArea;
+
+  /** The chckbx logs. */
+  private JCheckBox           chckbxLogs;
+
+  /** The chckbx configxml. */
+  private JCheckBox           chckbxConfigxml;
+
+  /** The chckbx database. */
+  private JCheckBox           chckbxDatabase;
 
   /**
    * Instantiates a new feedback dialog.
    */
-  public FeedbackDialog() {
-    setTitle("Send feedback");
+  public BugReportDialog() {
+    setTitle("Report a bug");
     setIconImage(Globals.logo);
     setModal(true);
-    setBounds(100, 100, 450, 303);
+    setBounds(100, 100, 532, 453);
 
     getContentPane().setLayout(
         new FormLayout(
@@ -80,7 +99,8 @@ public class FeedbackDialog extends JDialog {
     getContentPane().add(panelContent, "2, 2, fill, fill");
     panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblName = new JLabel("Name (optional)");
     panelContent.add(lblName, "2, 2, right, default");
@@ -89,7 +109,7 @@ public class FeedbackDialog extends JDialog {
     panelContent.add(textField, "4, 2, fill, default");
     textField.setColumns(10);
 
-    JLabel lblFeedback = new JLabel("Feedback");
+    JLabel lblFeedback = new JLabel("Description");
     panelContent.add(lblFeedback, "2, 4, right, top");
 
     JScrollPane scrollPane = new JScrollPane();
@@ -100,43 +120,97 @@ public class FeedbackDialog extends JDialog {
     textArea.setLineWrap(true);
     textArea.setWrapStyleWord(true);
 
+    JLabel lblAttachments = new JLabel("Attachments");
+    panelContent.add(lblAttachments, "2, 6");
+
+    chckbxLogs = new JCheckBox("Logs");
+    chckbxLogs.setSelected(true);
+    panelContent.add(chckbxLogs, "4, 6");
+
+    chckbxConfigxml = new JCheckBox("config.xml");
+    panelContent.add(chckbxConfigxml, "4, 7");
+
+    chckbxDatabase = new JCheckBox("Database");
+    panelContent.add(chckbxDatabase, "4, 8");
+
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));
     getContentPane().add(panelButtons, "2, 4, fill, fill");
 
-    JButton btnSend = new JButton("Send feedback");
+    JButton btnSend = new JButton("Send bug report");
     btnSend.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         // check if feedback is provided
         if (StringUtils.isEmpty(textArea.getText())) {
-          JOptionPane.showMessageDialog(null, "Feedback is empty");
+          JOptionPane.showMessageDialog(null, "No description provided");
           return;
         }
 
-        // send feedback
+        // send bug report
         DefaultHttpClient client = Utils.getHttpClient();
-        HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbxTIhI58gwy0UJ0Z1CdmZDdHlwBDU_vugBmQxcKN9aug4nfgrgZ/exec");
+        HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbzrhTmZiHJb1bdCqyeiVOqLup8zK4Dbx6kAtHYsgzBVqHTaNJqj/exec");
         try {
-          List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-
-          String message = new String("Feedback from " + textField.getText() + "\n\n");
+          String message = new String("Bug report from " + textField.getText() + "\n\n");
           message += textArea.getText();
 
-          nameValuePairs.add(new BasicNameValuePair("message", message));
-          post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+          MultipartEntity mpEntity = new MultipartEntity(HttpMultipartMode.STRICT);
+          mpEntity.addPart("message", new StringBody(message, Charset.forName("UTF-8")));
+
+          // attach files
+          if (chckbxLogs.isSelected() || chckbxConfigxml.isSelected() || chckbxDatabase.isSelected()) {
+            try {
+              byte[] buffer = new byte[1024];
+
+              // build zip with selected files in it
+              ByteArrayOutputStream os = new ByteArrayOutputStream();
+              ZipOutputStream zos = new ZipOutputStream(os);
+
+              // attach logs
+              if (chckbxLogs.isSelected()) {
+                ZipEntry ze = new ZipEntry("tmm.log");
+                zos.putNextEntry(ze);
+                FileInputStream in = new FileInputStream("logs/tmm.log");
+
+                int len;
+                while ((len = in.read(buffer)) > 0) {
+                  zos.write(buffer, 0, len);
+                }
+
+                in.close();
+                zos.closeEntry();
+              }
+              zos.close();
+
+              byte[] data = os.toByteArray();
+              String data_string = Base64.encodeBase64String(data);
+              mpEntity.addPart("logs", new StringBody(data_string));
+            }
+
+            catch (IOException ex) {
+              LOGGER.warn("error adding attachments");
+            }
+          }
+
+          mpEntity.addPart("part 2", new StringBody("test"));
+
+          post.setEntity(mpEntity);
 
           HttpResponse response = client.execute(post);
 
           HttpEntity entity = response.getEntity();
+          System.out.println(EntityUtils.toString(entity));
           EntityUtils.consume(entity);
 
         }
         catch (IOException e) {
-          JOptionPane.showMessageDialog(null, "Error sending feedback");
+          JOptionPane.showMessageDialog(null, "Error sending bug report");
           return;
         }
+        finally {
+          post.releaseConnection();
+        }
 
-        JOptionPane.showMessageDialog(null, "Feedback sent");
+        JOptionPane.showMessageDialog(null, "Bug report sent");
         setVisible(false);
       }
     });
