@@ -1,0 +1,148 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.tinymediamanager.ui;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+/**
+ * The Class FeedbackDialog.
+ */
+public class FeedbackDialog extends JDialog {
+
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = 1L;
+
+  /** The text field. */
+  private JTextField        textField;
+
+  /** The text area. */
+  private JTextArea         textArea;
+
+  /**
+   * Instantiates a new feedback dialog.
+   */
+  public FeedbackDialog() {
+    setTitle("Send feedback");
+    setIconImage(Globals.logo);
+    setModal(true);
+    setBounds(100, 100, 450, 303);
+
+    getContentPane().setLayout(
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(250px;min):grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    JPanel panelContent = new JPanel();
+    getContentPane().add(panelContent, "2, 2, fill, fill");
+    panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), }));
+
+    JLabel lblName = new JLabel("Name (optional)");
+    panelContent.add(lblName, "2, 2, right, default");
+
+    textField = new JTextField();
+    panelContent.add(textField, "4, 2, fill, default");
+    textField.setColumns(10);
+
+    JLabel lblFeedback = new JLabel("Feedback");
+    panelContent.add(lblFeedback, "2, 4, right, top");
+
+    JScrollPane scrollPane = new JScrollPane();
+    panelContent.add(scrollPane, "4, 4, fill, fill");
+
+    textArea = new JTextArea();
+    scrollPane.setViewportView(textArea);
+    textArea.setLineWrap(true);
+    textArea.setWrapStyleWord(true);
+
+    JPanel panelButtons = new JPanel();
+    panelButtons.setLayout(new EqualsLayout(5));
+    getContentPane().add(panelButtons, "2, 4, fill, fill");
+
+    JButton btnSend = new JButton("Send feedback");
+    btnSend.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        // check if feedback is provided
+        if (StringUtils.isEmpty(textArea.getText())) {
+          JOptionPane.showMessageDialog(null, "Feedback is empty");
+          return;
+        }
+
+        // send feedback
+        DefaultHttpClient client = Utils.getHttpClient();
+        HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbxTIhI58gwy0UJ0Z1CdmZDdHlwBDU_vugBmQxcKN9aug4nfgrgZ/exec");
+        try {
+          List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+          nameValuePairs.add(new BasicNameValuePair("name", textField.getText()));
+          nameValuePairs.add(new BasicNameValuePair("message", textArea.getText()));
+          post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+          HttpResponse response = client.execute(post);
+
+          HttpEntity entity = response.getEntity();
+          EntityUtils.consume(entity);
+
+        } catch (IOException e) {
+          JOptionPane.showMessageDialog(null, "Error sending feedback");
+          return;
+        }
+
+        JOptionPane.showMessageDialog(null, "Feedback sent");
+        setVisible(false);
+      }
+    });
+    panelButtons.add(btnSend);
+
+    JButton btnCacnel = new JButton("Cancel");
+    btnCacnel.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        setVisible(false);
+      }
+    });
+    panelButtons.add(btnCacnel);
+  }
+}

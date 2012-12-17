@@ -26,28 +26,24 @@ import org.tinymediamanager.core.AbstractModelObject;
 public class Trailer extends AbstractModelObject {
 
   /** The name. */
-  private String  name;
+  private String  name     = "";
 
   /** The url. */
-  private String  url;
+  private String  url      = "";
 
   /** The quality. */
-  private String  quality;
+  private String  quality  = "";
 
   /** The provider. */
-  private String  provider;
+  private String  provider = "";
 
   /** The inNfo. */
-  private Boolean inNfo;
+  private Boolean inNfo    = false;
 
   /**
    * Instantiates a new trailer.
    */
   public Trailer() {
-    this.name = "";
-    this.url = "";
-    this.quality = "";
-    this.provider = "";
   }
 
   /**

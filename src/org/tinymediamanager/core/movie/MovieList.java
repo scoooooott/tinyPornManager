@@ -22,6 +22,8 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
@@ -206,10 +208,8 @@ public class MovieList extends AbstractModelObject {
       List<Movie> movies = query.getResultList();
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
-        movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>(movies.size())),
-            GlazedLists.beanConnector(Movie.class));
-      }
-      else {
+        movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>(movies.size())), GlazedLists.beanConnector(Movie.class));
+      } else {
         LOGGER.debug("found nothing in database");
       }
       // LOGGER.debug(movies);
@@ -219,15 +219,12 @@ public class MovieList extends AbstractModelObject {
           // LOGGER.debug(movie);
           movie.setObservables();
           addMovie(movie);
-        }
-        else {
+        } else {
           LOGGER.error("retrieved no movie: " + obj);
         }
-    }
-    catch (PersistenceException e) {
+    } catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -269,7 +266,9 @@ public class MovieList extends AbstractModelObject {
           return false;
 
         // check against sample.*
-        if (name.startsWith("sample.") || name.startsWith("Sample."))
+        Pattern pattern = Pattern.compile("(?i)^sample\\..{2,4}");
+        Matcher matcher = pattern.matcher(name);
+        if (matcher.matches())
           return false;
 
         // check if filetype is in our settigns
@@ -325,8 +324,7 @@ public class MovieList extends AbstractModelObject {
       // }
       // }
 
-    }
-    else {
+    } else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -386,8 +384,7 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 
@@ -413,8 +410,7 @@ public class MovieList extends AbstractModelObject {
           searchResult.add(result);
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 

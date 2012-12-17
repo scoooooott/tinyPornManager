@@ -21,11 +21,31 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.NTCredentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.tinymediamanager.Globals;
 
 /**
  * The Class Utils.
  */
 public class Utils {
+
+  private static DefaultHttpClient client;
+  /** The Constant HTTP_USER_AGENT. */
+  protected static final String    HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
 
   /**
    * Read file as string.
@@ -67,18 +87,18 @@ public class Utils {
   }
 
   public static String replaceAcutesHTML(String str) {
-    str = str.replaceAll("&aacute;", "á");
-    str = str.replaceAll("&eacute;", "é");
-    str = str.replaceAll("&iacute;", "í");
-    str = str.replaceAll("&oacute;", "ó");
-    str = str.replaceAll("&uacute;", "ú");
-    str = str.replaceAll("&Aacute;", "Á");
-    str = str.replaceAll("&Eacute;", "É");
-    str = str.replaceAll("&Iacute;", "Í");
-    str = str.replaceAll("&Oacute;", "Ó");
-    str = str.replaceAll("&Uacute;", "Ú");
-    str = str.replaceAll("&ntilde;", "ñ");
-    str = str.replaceAll("&Ntilde;", "Ñ");
+    str = str.replaceAll("&aacute;", "ï¿½");
+    str = str.replaceAll("&eacute;", "ï¿½");
+    str = str.replaceAll("&iacute;", "ï¿½");
+    str = str.replaceAll("&oacute;", "ï¿½");
+    str = str.replaceAll("&uacute;", "ï¿½");
+    str = str.replaceAll("&Aacute;", "ï¿½");
+    str = str.replaceAll("&Eacute;", "ï¿½");
+    str = str.replaceAll("&Iacute;", "ï¿½");
+    str = str.replaceAll("&Oacute;", "ï¿½");
+    str = str.replaceAll("&Uacute;", "ï¿½");
+    str = str.replaceAll("&ntilde;", "ï¿½");
+    str = str.replaceAll("&Ntilde;", "ï¿½");
 
     return str;
   }
@@ -88,4 +108,61 @@ public class Utils {
       return null;
     return str.replaceFirst("^\\\"(.*)\\\"$", "$1");
   }
+
+  /*
+   * provide a httpclient with proxy set
+   */
+  public static DefaultHttpClient getHttpClient() {
+    SchemeRegistry schemeRegistry = new SchemeRegistry();
+    schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+    schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
+
+    PoolingClientConnectionManager cm = new PoolingClientConnectionManager(schemeRegistry);
+    // Increase max total connection to 20
+    cm.setMaxTotal(20);
+    // Increase default max connection per route to 5
+    cm.setDefaultMaxPerRoute(5);
+
+    client = new DefaultHttpClient(cm);
+
+    HttpParams params = client.getParams();
+    HttpConnectionParams.setConnectionTimeout(params, 5000);
+    HttpConnectionParams.setSoTimeout(params, 5000);
+    HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
+    client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler());
+
+    if ((Globals.settings.useProxy())) {
+      setProxy(client);
+    }
+
+    return client;
+  }
+
+  /**
+   * Sets the proxy.
+   * 
+   * @param httpClient
+   *          the new proxy
+   */
+  protected static void setProxy(DefaultHttpClient httpClient) {
+    HttpHost proxyHost = new HttpHost(Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()));
+
+    // authenticate
+    if (!StringUtils.isEmpty(Globals.settings.getProxyUsername()) && !StringUtils.isEmpty(Globals.settings.getProxyPassword())) {
+      if (Globals.settings.getProxyUsername().contains("\\")) {
+        // use NTLM
+        int offset = Globals.settings.getProxyUsername().indexOf("\\");
+        String domain = Globals.settings.getProxyUsername().substring(0, offset);
+        String username = Globals.settings.getProxyUsername().substring(offset + 1, Globals.settings.getProxyUsername().length());
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
+      } else {
+        httpClient.getCredentialsProvider()
+            .setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
+      }
+    }
+
+    // set proxy
+    httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+  }
+
 }

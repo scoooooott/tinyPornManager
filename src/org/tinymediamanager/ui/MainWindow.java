@@ -23,6 +23,7 @@ import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -57,6 +58,9 @@ public class MainWindow extends JFrame {
   /** The action settings. */
   private final Action      actionSettings   = new SettingsAction();
 
+  /** The action feedback. */
+  private final Action      actionFeedback   = new FeedbackAction();
+
   /** The instance. */
   private static MainWindow instance;
 
@@ -83,6 +87,9 @@ public class MainWindow extends JFrame {
     // JMenuItem mntmSettings = mnTmm.add(actionSettings);
     // mntmSettings.setText("Settings");
 
+    JMenuItem mntmFeedback = mnTmm.add(actionFeedback);
+    mntmFeedback.setText("Send feedback");
+
     JMenuItem mntmExit = mnTmm.add(actionExit);
     mntmExit.setText("Exit");
     initialize();
@@ -100,11 +107,10 @@ public class MainWindow extends JFrame {
   private void initialize() {
     // set the logo
     setIconImage(Globals.logo);
-    setBounds(5, 5, 1100, 700);
+    setBounds(5, 5, 1100, 727);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:default:grow"), }));
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
     // JTabbedPane tabbedPane = new JTabbedPane();
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
@@ -142,8 +148,7 @@ public class MainWindow extends JFrame {
               FileUtils.deleteDirectory(cache);
             }
           }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
         }
         Globals.executor.shutdownNow();
         dispose();
@@ -232,6 +237,35 @@ public class MainWindow extends JFrame {
      */
     public void actionPerformed(ActionEvent e) {
 
+    }
+  }
+
+  /**
+   * The Class FeedbackAction.
+   */
+  private class FeedbackAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new feedback action.
+     */
+    public FeedbackAction() {
+      // putValue(NAME, "SwingAction");
+      // putValue(SHORT_DESCRIPTION, "Some short description");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      JDialog dialog = new FeedbackDialog();
+      dialog.pack();
+      dialog.setVisible(true);
     }
   }
 
