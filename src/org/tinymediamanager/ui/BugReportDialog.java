@@ -35,6 +35,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -90,17 +91,15 @@ public class BugReportDialog extends JDialog {
     setBounds(100, 100, 532, 453);
 
     getContentPane().setLayout(
-        new FormLayout(
-            new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(250px;min):grow"), FormFactory.RELATED_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(250px;min):grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, "2, 2, fill, fill");
-    panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblName = new JLabel("Name (optional)");
     panelContent.add(lblName, "2, 2, right, default");
@@ -130,8 +129,8 @@ public class BugReportDialog extends JDialog {
     chckbxConfigxml = new JCheckBox("config.xml");
     panelContent.add(chckbxConfigxml, "4, 7");
 
-    chckbxDatabase = new JCheckBox("Database");
-    panelContent.add(chckbxDatabase, "4, 8");
+    // chckbxDatabase = new JCheckBox("Database");
+    // panelContent.add(chckbxDatabase, "4, 8");
 
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));
@@ -157,9 +156,15 @@ public class BugReportDialog extends JDialog {
           mpEntity.addPart("message", new StringBody(message, Charset.forName("UTF-8")));
 
           // attach files
-          if (chckbxLogs.isSelected() || chckbxConfigxml.isSelected() || chckbxDatabase.isSelected()) {
+          if (chckbxLogs.isSelected() || chckbxConfigxml.isSelected() /*
+                                                                       * ||
+                                                                       * chckbxDatabase
+                                                                       * .
+                                                                       * isSelected
+                                                                       * ()
+                                                                       */) {
             try {
-              byte[] buffer = new byte[1024];
+              // byte[] buffer = new byte[1024];
 
               // build zip with selected files in it
               ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -171,14 +176,33 @@ public class BugReportDialog extends JDialog {
                 zos.putNextEntry(ze);
                 FileInputStream in = new FileInputStream("logs/tmm.log");
 
-                int len;
-                while ((len = in.read(buffer)) > 0) {
-                  zos.write(buffer, 0, len);
-                }
-
+                IOUtils.copy(in, zos);
                 in.close();
                 zos.closeEntry();
               }
+
+              // attach config file
+              if (chckbxConfigxml.isSelected()) {
+                ZipEntry ze = new ZipEntry("config.xml");
+                zos.putNextEntry(ze);
+                FileInputStream in = new FileInputStream("config.xml");
+
+                IOUtils.copy(in, zos);
+                in.close();
+                zos.closeEntry();
+              }
+
+              // // attach database
+              // if (chckbxDatabase.isSelected()) {
+              // ZipEntry ze = new ZipEntry("tmm.odb");
+              // zos.putNextEntry(ze);
+              // FileInputStream in = new FileInputStream("tmm.odb");
+              //
+              // IOUtils.copy(in, zos);
+              // in.close();
+              // zos.closeEntry();
+              // }
+
               zos.close();
 
               byte[] data = os.toByteArray();
@@ -187,26 +211,21 @@ public class BugReportDialog extends JDialog {
             }
 
             catch (IOException ex) {
-              LOGGER.warn("error adding attachments");
+              LOGGER.warn("error adding attachments", ex);
             }
           }
 
-          mpEntity.addPart("part 2", new StringBody("test"));
-
           post.setEntity(mpEntity);
-
           HttpResponse response = client.execute(post);
 
           HttpEntity entity = response.getEntity();
           System.out.println(EntityUtils.toString(entity));
           EntityUtils.consume(entity);
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           JOptionPane.showMessageDialog(null, "Error sending bug report");
           return;
-        }
-        finally {
+        } finally {
           post.releaseConnection();
         }
 
