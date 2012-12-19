@@ -273,6 +273,10 @@ public class Movie extends AbstractModelObject {
   @Transient
   private List<String>          tagsObservable       = ObservableCollections.observableList(tags);
 
+  /** The duplicate flag. */
+  @Transient
+  private boolean               duplicate            = false;
+
   /**
    * Instantiates a new movie.
    */
@@ -1661,5 +1665,28 @@ public class Movie extends AbstractModelObject {
     boolean oldValue = this.watched;
     this.watched = newValue;
     firePropertyChange(WATCHED, oldValue, newValue);
+  }
+
+  /**
+   * Sets the duplicate.
+   */
+  public void setDuplicate() {
+    this.duplicate = true;
+  }
+
+  /**
+   * Clear duplicate.
+   */
+  public void clearDuplicate() {
+    this.duplicate = false;
+  }
+
+  /**
+   * Checks if is duplicate.
+   * 
+   * @return true, if is duplicate
+   */
+  public boolean isDuplicate() {
+    return this.duplicate;
   }
 }

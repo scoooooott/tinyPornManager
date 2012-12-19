@@ -47,6 +47,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Utils;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -91,15 +92,17 @@ public class BugReportDialog extends JDialog {
     setBounds(100, 100, 532, 453);
 
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(250px;min):grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, }));
+        new FormLayout(
+            new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(400px;min):grow"), FormFactory.RELATED_GAP_COLSPEC, },
+            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(250px;min):grow"), FormFactory.RELATED_GAP_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, "2, 2, fill, fill");
-    panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblName = new JLabel("Name (optional)");
     panelContent.add(lblName, "2, 2, right, default");
@@ -149,11 +152,25 @@ public class BugReportDialog extends JDialog {
         DefaultHttpClient client = Utils.getHttpClient();
         HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbzrhTmZiHJb1bdCqyeiVOqLup8zK4Dbx6kAtHYsgzBVqHTaNJqj/exec");
         try {
-          String message = new String("Bug report from " + textField.getText() + "\n\n");
-          message += textArea.getText();
+          StringBuilder message = new StringBuilder("Bug report from ");
+          message.append(textField.getText());
+          message.append("\n\nVersion: ");
+          message.append(ReleaseInfo.getVersion());
+          message.append("\nBuild: ");
+          message.append(ReleaseInfo.getBuild());
+          message.append("\nOS: ");
+          message.append(System.getProperty("os.name"));
+          message.append(" ");
+          message.append(System.getProperty("os.version"));
+          message.append("\n\n");
+          message.append(textArea.getText());
+
+          // String message = new String("Bug report from " +
+          // textField.getText() + "\n\n");
+          // message += textArea.getText();
 
           MultipartEntity mpEntity = new MultipartEntity(HttpMultipartMode.STRICT);
-          mpEntity.addPart("message", new StringBody(message, Charset.forName("UTF-8")));
+          mpEntity.addPart("message", new StringBody(message.toString(), Charset.forName("UTF-8")));
 
           // attach files
           if (chckbxLogs.isSelected() || chckbxConfigxml.isSelected() /*
@@ -222,10 +239,12 @@ public class BugReportDialog extends JDialog {
           System.out.println(EntityUtils.toString(entity));
           EntityUtils.consume(entity);
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           JOptionPane.showMessageDialog(null, "Error sending bug report");
           return;
-        } finally {
+        }
+        finally {
           post.releaseConnection();
         }
 
