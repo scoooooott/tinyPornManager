@@ -31,7 +31,7 @@ import ca.odell.glazedlists.matchers.Matcher;
 public class MoviesExtendedMatcher implements Matcher<Movie> {
 
   public enum SearchOptions {
-    WATCHED, GENRE, CAST, TAG;
+    DUPLICATES, WATCHED, GENRE, CAST, TAG;
   }
 
   /** The search options. */
@@ -57,6 +57,13 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     // not null
     if (movie == null) {
       return false;
+    }
+
+    // check duplicates
+    if (searchOptions.containsKey(SearchOptions.DUPLICATES)) {
+      if (!movie.isDuplicate()) {
+        return false;
+      }
     }
 
     // check against watched flag

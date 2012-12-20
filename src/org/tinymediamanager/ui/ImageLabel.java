@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JLabel;
+import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -40,6 +41,8 @@ import com.bric.image.pixel.Scaling;
  * The Class ImageLabel.
  */
 public class ImageLabel extends JLabel {
+
+  /** The Constant serialVersionUID. */
   private static final long   serialVersionUID = 1L;
 
   /** The Constant logger. */
@@ -57,7 +60,11 @@ public class ImageLabel extends JLabel {
   /** The draw border. */
   private boolean             drawBorder;
 
+  /** The draw full width. */
   private boolean             drawFullWidth;
+
+  /** The worker. */
+  private ImageFetcher        worker;
 
   /**
    * Instantiates a new image label.
@@ -70,6 +77,9 @@ public class ImageLabel extends JLabel {
 
   /**
    * Instantiates a new image label.
+   * 
+   * @param drawBorder
+   *          the draw border
    */
   public ImageLabel(boolean drawBorder) {
     super("");
@@ -79,6 +89,11 @@ public class ImageLabel extends JLabel {
 
   /**
    * Instantiates a new image label.
+   * 
+   * @param drawBorder
+   *          the draw border
+   * @param drawFullWidth
+   *          the draw full width
    */
   public ImageLabel(boolean drawBorder, boolean drawFullWidth) {
     super("");
@@ -163,17 +178,28 @@ public class ImageLabel extends JLabel {
       return;
     }
 
-    try {
-      CachedUrl cachedUrl = new CachedUrl(imageUrl);
-      Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
-      this.originalImage = com.bric.image.ImageLoader.createImage(image);// ImageIO.read(cachedUrl.getInputStream(null,
-                                                                         // true));
-
-    } catch (IOException e) {
-      originalImage = null;
-      // LOGGER.error("setImageUrl", e);
+    // stop previous worker
+    if (worker != null && !worker.isDone()) {
+      worker.cancel(true);
     }
-    this.repaint();
+
+    // fetch image in separate worker -> performance
+    worker = new ImageFetcher();
+    worker.execute();
+
+    // try {
+    // CachedUrl cachedUrl = new CachedUrl(imageUrl);
+    // Image image =
+    // Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+    // this.originalImage = com.bric.image.ImageLoader.createImage(image);//
+    // ImageIO.read(cachedUrl.getInputStream(null,
+    // // true));
+    //
+    // } catch (IOException e) {
+    // originalImage = null;
+    // // LOGGER.error("setImageUrl", e);
+    // }
+    // this.repaint();
   }
 
   /*
@@ -282,4 +308,42 @@ public class ImageLabel extends JLabel {
     return size;
   }
 
+  /**
+   * The Class ImageFetcher.
+   */
+  private class ImageFetcher extends SwingWorker<BufferedImage, Void> {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#doInBackground()
+     */
+    @Override
+    protected BufferedImage doInBackground() throws Exception {
+      try {
+        CachedUrl cachedUrl = new CachedUrl(imageUrl);
+        Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+        return com.bric.image.ImageLoader.createImage(image);
+
+      } catch (IOException e) {
+        return null;
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#done()
+     */
+    @Override
+    protected void done() {
+      try {
+        // get fetched image
+        originalImage = get();
+      } catch (Exception e) {
+        originalImage = null;
+      }
+      repaint();
+    }
+  }
 }

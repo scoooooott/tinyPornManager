@@ -116,6 +116,8 @@ public class Url {
         is = new ByteArrayInputStream(EntityUtils.toByteArray(entity));
         // is = new BufferedInputStream(entity.getContent());
       }
+    } catch (Exception e) {
+      LOGGER.warn("fetch data", e);
     } finally {
       EntityUtils.consume(entity);
     }

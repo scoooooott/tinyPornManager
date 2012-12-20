@@ -107,6 +107,8 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
   /** The cb tag. */
   private JComboBox           cbTag;
+  private JCheckBox           cbFilterDuplicates;
+  private JLabel              lblShowDuplicates;
 
   /**
    * Instantiates a new movie extended search panel.
@@ -120,25 +122,31 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
     JPanel panel = new JPanel();
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblFilterBy = new JLabel("filter by");
     panel.add(lblFilterBy, "2, 1, 3, 1");
 
+    cbFilterDuplicates = new JCheckBox("");
+    cbFilterDuplicates.setAction(actionFilter);
+    panel.add(cbFilterDuplicates, "2, 3");
+
+    lblShowDuplicates = new JLabel("Show duplicates");
+    panel.add(lblShowDuplicates, "4, 3, right, default");
+
     cbFilterWatched = new JCheckBox("");
     cbFilterWatched.setAction(actionFilter);
-    panel.add(cbFilterWatched, "2, 3");
+    panel.add(cbFilterWatched, "2, 4");
 
     lblWatchedFlag = new JLabel("Watched flag");
-    panel.add(lblWatchedFlag, "4, 3, right, default");
+    panel.add(lblWatchedFlag, "4, 4, right, default");
 
     cbWatched = new JComboBox(WatchedFlag.values());
     cbWatched.setAction(actionFilter);
-    panel.add(cbWatched, "6, 3, fill, default");
+    panel.add(cbWatched, "6, 4, fill, default");
 
     cbFilterGenre = new JCheckBox("");
     cbFilterGenre.setAction(actionFilter);
@@ -153,13 +161,13 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
     cbFilterCast = new JCheckBox("");
     cbFilterCast.setAction(actionFilter);
-    panel.add(cbFilterCast, "2, 7");
+    panel.add(cbFilterCast, "2, 6");
 
     lblCastMember = new JLabel("Cast member");
-    panel.add(lblCastMember, "4, 7, right, default");
+    panel.add(lblCastMember, "4, 6, right, default");
 
     tfCastMember = new JTextField();
-    panel.add(tfCastMember, "6, 7, fill, default");
+    panel.add(tfCastMember, "6, 6, fill, default");
     tfCastMember.setColumns(10);
     tfCastMember.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
@@ -177,26 +185,26 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
     cbFilterTag = new JCheckBox("");
     cbFilterTag.setAction(actionFilter);
-    panel.add(cbFilterTag, "2, 9");
+    panel.add(cbFilterTag, "2, 7");
 
     lblTag = new JLabel("Tag");
-    panel.add(lblTag, "4, 9, right, default");
+    panel.add(lblTag, "4, 7, right, default");
 
     cbTag = new JComboBox(movieList.getTagsInMovies().toArray());
     cbTag.setAction(actionFilter);
 
-    panel.add(cbTag, "6, 9, fill, default");
+    panel.add(cbTag, "6, 7, fill, default");
 
     lblSortBy = new JLabel("sort by");
-    panel.add(lblSortBy, "2, 11, 3, 1");
+    panel.add(lblSortBy, "2, 9, 3, 1");
 
     cbSortColumn = new JComboBox(SortColumn.values());
     cbSortColumn.setAction(actionSort);
-    panel.add(cbSortColumn, "4, 13, fill, default");
+    panel.add(cbSortColumn, "4, 11, fill, default");
 
     cbSortOrder = new JComboBox(SortOrder.values());
     cbSortOrder.setAction(actionSort);
-    panel.add(cbSortOrder, "6, 13, fill, default");
+    panel.add(cbSortOrder, "6, 11, fill, default");
 
     add(panel);
     toggleVisibility(false);
@@ -249,12 +257,17 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     public void actionPerformed(ActionEvent e) {
       HashMap<SearchOptions, Object> searchOptions = new HashMap<SearchOptions, Object>();
 
+      // filter duplicates
+      if (cbFilterDuplicates.isSelected()) {
+        movieList.searchDuplicates();
+        searchOptions.put(SearchOptions.DUPLICATES, null);
+      }
+
       // filter for watched flag
       if (cbFilterWatched.isSelected()) {
         if (cbWatched.getSelectedItem() == WatchedFlag.WATCHED) {
           searchOptions.put(SearchOptions.WATCHED, true);
-        }
-        else {
+        } else {
           searchOptions.put(SearchOptions.WATCHED, false);
         }
       }

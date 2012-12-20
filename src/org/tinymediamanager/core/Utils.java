@@ -19,23 +19,32 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
+
+import javax.net.ssl.SSLException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HttpContext;
 import org.tinymediamanager.Globals;
 
 /**
@@ -126,10 +135,44 @@ public class Utils {
     client = new DefaultHttpClient(cm);
 
     HttpParams params = client.getParams();
-    HttpConnectionParams.setConnectionTimeout(params, 5000);
-    HttpConnectionParams.setSoTimeout(params, 5000);
+    HttpConnectionParams.setConnectionTimeout(params, 10000);
+    HttpConnectionParams.setSoTimeout(params, 10000);
     HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
-    client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler());
+
+    // my own retry handler
+    HttpRequestRetryHandler myRetryHandler = new HttpRequestRetryHandler() {
+      public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+        if (executionCount >= 5) {
+          // Do not retry if over max retry count
+          return false;
+        }
+        if (exception instanceof InterruptedIOException) {
+          // Timeout
+          return true;
+        }
+        if (exception instanceof UnknownHostException) {
+          // Unknown host
+          return false;
+        }
+        if (exception instanceof ConnectException) {
+          // Connection refused
+          return false;
+        }
+        if (exception instanceof SSLException) {
+          // SSL handshake exception
+          return false;
+        }
+        HttpRequest request = (HttpRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
+        boolean idempotent = !(request instanceof HttpEntityEnclosingRequest);
+        if (idempotent) {
+          // Retry if the request is considered idempotent
+          return true;
+        }
+        return false;
+      }
+    };
+
+    client.setHttpRequestRetryHandler(myRetryHandler);
 
     if ((Globals.settings.useProxy())) {
       setProxy(client);
