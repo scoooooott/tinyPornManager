@@ -38,14 +38,15 @@ public class ImdbMetadataProviderTest {
     try {
       mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
       results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "9"));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     // did we get a result?
     assertNotNull("Result", results);
 
     // result count
-    assertEquals("Result count", 5, results.size());
+    assertEquals("Result count", 20, results.size());
 
     // check first result (9 - 2009 - tt0472033)
     MediaSearchResult result = results.get(0);
@@ -55,17 +56,17 @@ public class ImdbMetadataProviderTest {
     result = results.get(1);
     checkSearchResult("9", "2005", "tt0443424", result);
 
-    // check third result (9 - 2002 - tt0342012)
+    // check third result (9 - 1996 - tt0191312)
     result = results.get(2);
-    checkSearchResult("9", "2002", "tt0342012", result);
-
-    // check fourth result (9 - 2009 - tt1430606)
-    result = results.get(3);
-    checkSearchResult("9", "2009", "tt1430606", result);
-
-    // check fifth result (9 - 1996 - tt0191312)
-    result = results.get(4);
     checkSearchResult("9", "1996", "tt0191312", result);
+
+    // check fourth result (District 9 - 2009 - tt1136608)
+    result = results.get(3);
+    checkSearchResult("District 9", "2009", "tt1136608", result);
+
+    // check fifth result (Plan 9 from Outer Space - 1959 - tt0052077)
+    result = results.get(4);
+    checkSearchResult("Plan 9 from Outer Space", "1959", "tt0052077", result);
 
     /*
      * test on akas.imdb.com - "Inglorious Basterds"
@@ -74,67 +75,43 @@ public class ImdbMetadataProviderTest {
     try {
       mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
       results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "Inglorious Basterds"));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     // did we get a result?
     assertNotNull("Result", results);
 
     // result count
-    assertEquals("Result count", 10, results.size());
+    assertEquals("Result count", 20, results.size());
 
     // check first result (Inglourious Basterds - 2009 - tt0361748)
     result = results.get(0);
     checkSearchResult("Inglourious Basterds", "2009", "tt0361748", result);
 
-    // check second result (Quel maledetto treno blindato - 1978 - tt0076584)
+    // check second result (The Mob Reviews: 'Inglorious Basterds' and 'Post
+    // Grad' - 2009 - tt1507733)
     result = results.get(1);
+    checkSearchResult("The Mob Reviews: 'Inglorious Basterds' and 'Post Grad'", "2009", "tt1507733", result);
+
+    // check third result (G.I. Joe: The Rise of Cobra/Shorts/Inglorious
+    // Basterds - 2009 - tt2135175)
+    result = results.get(2);
+    checkSearchResult("G.I. Joe: The Rise of Cobra/Shorts/Inglorious Basterds", "2009", "tt2135175", result);
+
+    // check fourth result (Quel maledetto treno blindato - 1978 - tt0076584)
+    result = results.get(3);
     checkSearchResult("Quel maledetto treno blindato", "1978", "tt0076584", result);
 
-    // check third result (Eroi dell'inferno - 1987 - tt0342012)
-    result = results.get(2);
-    checkSearchResult("Eroi dell'inferno", "1987", "tt0422182", result);
-
-    // check 4. result (Inglourious Basterds: Done in 60 seconds - 2010 -
-    // tt1430606)
-    result = results.get(3);
-    checkSearchResult("Inglourious Basterds: Done in 60 seconds", "2010", "tt1837578", result);
-
-    // check 5. result (Inglourious Basterds: Movie Special - 2009 -
-    // tt1515156)
-    result = results.get(4);
-    checkSearchResult("Inglourious Basterds: Movie Special", "2009", "tt1515156", result);
-
-    // check 6. result (Quelli del Maledetto Treno Blindato - Making of
-    // 'Inglorious Bastards' - 2007 -
-    // tt1028564)
-    result = results.get(5);
-    checkSearchResult("Quelli del Maledetto Treno Blindato - Making of 'Inglorious Bastards'", "2007", "tt1028564", result);
-
-    // check 7. result (Merah Putih - 2009 - tt1438496)
-    result = results.get(6);
-    checkSearchResult("Merah Putih", "2009", "tt1438496", result);
-
-    // check 8. result (Joshikyôei hanrangun - 2007 - tt1134826)
-    result = results.get(7);
-    checkSearchResult("Joshikyôei hanrangun", "2007", "tt1134826", result);
-
-    // check 9. result (Inglorious Bumblers - 2009 - tt1529278)
-    result = results.get(8);
-    checkSearchResult("Inglorious Bumblers", "2009", "tt1529278", result);
-
-    // check 10. result (Inglorious Relations - 2008 - tt1378268)
-    result = results.get(9);
-    checkSearchResult("Inglorious Relations", "2008", "tt1378268", result);
-
     /*
-     * test on akas.imdb.com - "16 Blocks" (redirect to page)
+     * test on www.imdb.de - "#9" - redirect to page
      */
     results = null;
     try {
-      mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
-      results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "16 Blocks"));
-    } catch (Exception e) {
+      mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
+      results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "#9"));
+    }
+    catch (Exception e) {
     }
 
     // did we get a result?
@@ -143,34 +120,9 @@ public class ImdbMetadataProviderTest {
     // result count
     assertEquals("Result count", 1, results.size());
 
-    // check first result (16 Blocks - 2006 - tt0450232)
-    result = results.get(0);
-    checkSearchResult("16 Blocks", "2006", "tt0450232", result);
-
-    /*
-     * test on www.imdb.de - "#9"
-     */
-    results = null;
-    try {
-      mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
-      results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "#9"));
-    } catch (Exception e) {
-    }
-
-    // did we get a result?
-    assertNotNull("Result", results);
-
-    // result count
-    assertEquals("Result count", 49, results.size());
-
     // check first result (#9 - 2009 - tt0472033)
     result = results.get(0);
     checkSearchResult("#9", "2009", "tt0472033", result);
-
-    // check second result (Love Potion No. 9 - Der Duft der Liebe - 1992 -
-    // tt0102343)
-    result = results.get(1);
-    checkSearchResult("Love Potion No. 9 - Der Duft der Liebe", "1992", "tt0102343", result);
 
   }
 
@@ -202,7 +154,8 @@ public class ImdbMetadataProviderTest {
     try {
       Globals.settings.setCertificationCountry(CountryCode.US);
       md = mp.getMetaData(sr);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     // did we get metadata?
@@ -265,14 +218,16 @@ public class ImdbMetadataProviderTest {
     try {
       Globals.settings.setCertificationCountry(CountryCode.DE);
       md = mp.getMetaData(sr);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     // did we get metadata?
     assertNotNull("MediaMetadata", md);
 
     // check moviedetails
-    checkMovieDetails("Twelve Monkeys", "1995", "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam", "Chris Marker, David Webb Peoples", "16", md);
+    checkMovieDetails("Twelve Monkeys", "1995", "Twelve Monkeys", 8.1, 262821, "The future is history.", 129, "Terry Gilliam",
+        "Chris Marker, David Webb Peoples", "16", md);
 
     // check poster
     // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTQ4OTM3NzkyN15BMl5BanBnXkFtZTcwMzIwMzgyMQ@@._V1._SX195_SY195_.jpg",
@@ -324,14 +279,16 @@ public class ImdbMetadataProviderTest {
     try {
       Globals.settings.setCertificationCountry(CountryCode.GB);
       md = mp.getMetaData(sr);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     // did we get metadata?
     assertNotNull("MediaMetadata", md);
 
     // check moviedetails
-    checkMovieDetails("Brave", "2012", "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman", "Brenda Chapman, Mark Andrews", "PG", md);
+    checkMovieDetails("Brave", "2012", "Brave", 7.3, 52871, "Change your fate.", 93, "Mark Andrews, Brenda Chapman", "Brenda Chapman, Mark Andrews",
+        "PG", md);
 
     // check poster
     // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMzgwODk3ODA1NF5BMl5BanBnXkFtZTcwNjU3NjQ0Nw@@._V1._SX195_SY195_.jpg",
@@ -368,7 +325,7 @@ public class ImdbMetadataProviderTest {
     cm.setType(CastMember.ACTOR);
     castMembers.add(cm);
 
-    checkCastMembers(castMembers, 14, md);
+    checkCastMembers(castMembers, 15, md);
 
     // check production company
     checkProductionCompany("Walt Disney Pictures, Pixar Animation Studios", md);
@@ -386,7 +343,8 @@ public class ImdbMetadataProviderTest {
     try {
       Globals.settings.setCertificationCountry(CountryCode.US);
       md = mp.getMetaData(sr);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     // did we get metadata?
@@ -438,8 +396,8 @@ public class ImdbMetadataProviderTest {
 
   }
 
-  private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, int runtime, String director, String writer,
-      String certification, MediaMetadata md) {
+  private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, int runtime,
+      String director, String writer, String certification, MediaMetadata md) {
     // title
     assertEquals("title ", title, md.getMediaTitle());
     // year
@@ -476,7 +434,8 @@ public class ImdbMetadataProviderTest {
     }
     assertEquals("writer", writer, sb.toString());
     // certification
-    assertEquals("certification", Certification.getCertification(Globals.settings.getCertificationCountry(), certification), md.getCertifications().get(0));
+    assertEquals("certification", Certification.getCertification(Globals.settings.getCertificationCountry(), certification), md.getCertifications()
+        .get(0));
   }
 
   private void checkMoviePoster(String url, MediaMetadata md) {

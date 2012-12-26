@@ -210,8 +210,10 @@ public class MovieList extends AbstractModelObject {
       List<Movie> movies = query.getResultList();
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
-        movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>(movies.size())), GlazedLists.beanConnector(Movie.class));
-      } else {
+        movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>(movies.size())),
+            GlazedLists.beanConnector(Movie.class));
+      }
+      else {
         LOGGER.debug("found nothing in database");
       }
       // LOGGER.debug(movies);
@@ -221,12 +223,15 @@ public class MovieList extends AbstractModelObject {
           // LOGGER.debug(movie);
           movie.setObservables();
           addMovie(movie);
-        } else {
+        }
+        else {
           LOGGER.error("retrieved no movie: " + obj);
         }
-    } catch (PersistenceException e) {
+    }
+    catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
   }
@@ -326,7 +331,8 @@ public class MovieList extends AbstractModelObject {
       // }
       // }
 
-    } else {
+    }
+    else {
       // no - dig deeper
       for (File subdir : dir.listFiles()) {
         if (subdir.isDirectory()) {
@@ -386,7 +392,8 @@ public class MovieList extends AbstractModelObject {
     List<MediaSearchResult> searchResult = null;
     try {
       searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 
@@ -412,7 +419,8 @@ public class MovieList extends AbstractModelObject {
           searchResult.add(result);
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("searchMovie", e);
     }
 
@@ -440,7 +448,7 @@ public class MovieList extends AbstractModelObject {
       switch (scraper) {
         case IMDB:
           LOGGER.debug("get instance of ImdbMetadataProvider");
-          metadataProvider = new ImdbMetadataProvider();
+          metadataProvider = new ImdbMetadataProvider(Globals.settings.getImdbSite());
           break;
 
         case TMDB:
@@ -541,7 +549,8 @@ public class MovieList extends AbstractModelObject {
           movie.setDuplicate();
           Movie movie2 = imdbDuplicates.get(movie.getImdbId());
           movie2.setDuplicate();
-        } else {
+        }
+        else {
           // no, store movie
           imdbDuplicates.put(movie.getImdbId(), movie);
         }
@@ -555,7 +564,8 @@ public class MovieList extends AbstractModelObject {
           movie.setDuplicate();
           Movie movie2 = tmdbDuplicates.get(movie.getTmdbId());
           movie2.setDuplicate();
-        } else {
+        }
+        else {
           // no, store movie
           tmdbDuplicates.put(movie.getTmdbId(), movie);
         }

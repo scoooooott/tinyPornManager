@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -45,6 +47,7 @@ import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
@@ -130,6 +133,9 @@ public class Settings extends AbstractModelObject {
   /** The Constant IMDB_SCRAPE_FOREIGN_LANGU. */
   private final static String           IMDB_SCRAPE_FOREIGN_LANGU = "imdbScrapeForeignLanguage";
 
+  /** The Constant IMDB_SITE. */
+  private final static String           IMDB_SITE                 = "imdbSite";
+
   /** The Constant CLEAR_CACHE_SHUTDOWN. */
   private final static String           CLEAR_CACHE_SHUTDOWN      = "clearCacheShutdown";
 
@@ -212,10 +218,29 @@ public class Settings extends AbstractModelObject {
   /** The scrape best image. */
   private boolean                       scrapeBestImage           = true;
 
+  /** The imdb site. */
+  private ImdbSiteDefinition            imdbSite                  = ImdbSiteDefinition.IMDB_COM;
+
+  /** The scraperMetadata configuration. */
+  private ScraperMetadataConfig         scraperMetadataConfig     = null;
+
+  /** The property change listener. */
+  private PropertyChangeListener        propertyChangeListener;
+
   /**
    * Instantiates a new settings.
    */
   private Settings() {
+    propertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        setDirty();
+      }
+    };
+    addPropertyChangeListener(propertyChangeListener);
+
+    // default values
+    scraperMetadataConfig = new ScraperMetadataConfig();
   }
 
   /**
@@ -276,7 +301,7 @@ public class Settings extends AbstractModelObject {
    */
   public void addMovieDataSources(String path) {
     movieDataSources.add(path);
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
   }
 
@@ -290,7 +315,7 @@ public class Settings extends AbstractModelObject {
     MovieList movieList = MovieList.getInstance();
     movieList.removeDatasource(path);
     movieDataSources.remove(path);
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
   }
 
@@ -312,7 +337,7 @@ public class Settings extends AbstractModelObject {
   public void addMovieNfoFilename(MovieNfoNaming filename) {
     if (!movieNfoFilenames.contains(filename)) {
       movieNfoFilenames.add(filename);
-      setDirty();
+      // setDirty();
       firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
     }
   }
@@ -326,7 +351,7 @@ public class Settings extends AbstractModelObject {
   public void removeMovieNfoFilename(MovieNfoNaming filename) {
     if (movieNfoFilenames.contains(filename)) {
       movieNfoFilenames.remove(filename);
-      setDirty();
+      // setDirty();
       firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
     }
   }
@@ -336,7 +361,7 @@ public class Settings extends AbstractModelObject {
    */
   public void clearMovieNfoFilenames() {
     movieNfoFilenames.clear();
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_NFO_FILENAME, null, movieNfoFilenames);
   }
 
@@ -358,7 +383,7 @@ public class Settings extends AbstractModelObject {
   public void addMoviePosterFilename(MoviePosterNaming filename) {
     if (!moviePosterFilenames.contains(filename)) {
       moviePosterFilenames.add(filename);
-      setDirty();
+      // setDirty();
       firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
     }
   }
@@ -372,7 +397,7 @@ public class Settings extends AbstractModelObject {
   public void removeMoviePosterFilename(MoviePosterNaming filename) {
     if (moviePosterFilenames.contains(filename)) {
       moviePosterFilenames.remove(filename);
-      setDirty();
+      // setDirty();
       firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
     }
   }
@@ -382,7 +407,7 @@ public class Settings extends AbstractModelObject {
    */
   public void clearMoviePosterFilenames() {
     moviePosterFilenames.clear();
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_POSTER_FILENAME, null, moviePosterFilenames);
   }
 
@@ -404,7 +429,7 @@ public class Settings extends AbstractModelObject {
   public void addMovieFanartFilename(MovieFanartNaming filename) {
     if (!movieFanartFilenames.contains(filename)) {
       movieFanartFilenames.add(filename);
-      setDirty();
+      // setDirty();
       firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
     }
   }
@@ -418,7 +443,7 @@ public class Settings extends AbstractModelObject {
   public void removeMovieFanartFilename(MovieFanartNaming filename) {
     if (movieFanartFilenames.contains(filename)) {
       movieFanartFilenames.remove(filename);
-      setDirty();
+      // setDirty();
       firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
     }
   }
@@ -428,7 +453,7 @@ public class Settings extends AbstractModelObject {
    */
   public void clearMovieFanartFilenames() {
     movieFanartFilenames.clear();
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_FANART_FILENAME, null, movieFanartFilenames);
   }
 
@@ -449,7 +474,7 @@ public class Settings extends AbstractModelObject {
    */
   public void addVideoFileTypes(String type) {
     videoFileTypes.add(type);
-    setDirty();
+    // setDirty();
     firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
   }
 
@@ -461,7 +486,7 @@ public class Settings extends AbstractModelObject {
    */
   public void removeVideoFileType(String type) {
     videoFileTypes.remove(type);
-    setDirty();
+    // setDirty();
     firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
   }
 
@@ -579,7 +604,7 @@ public class Settings extends AbstractModelObject {
   public void setProxyHost(String newValue) {
     String oldValue = this.proxyHost;
     this.proxyHost = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(PROXY_HOST, oldValue, newValue);
   }
 
@@ -602,7 +627,7 @@ public class Settings extends AbstractModelObject {
   public void setProxyPort(String newValue) {
     String oldValue = this.proxyPort;
     this.proxyPort = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(PROXY_PORT, oldValue, newValue);
   }
 
@@ -625,7 +650,7 @@ public class Settings extends AbstractModelObject {
   public void setProxyUsername(String newValue) {
     String oldValue = this.proxyUsername;
     this.proxyUsername = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(PROXY_USERNAME, oldValue, newValue);
   }
 
@@ -649,7 +674,7 @@ public class Settings extends AbstractModelObject {
     newValue = StringEscapeUtils.escapeXml(newValue);
     String oldValue = this.proxyPassword;
     this.proxyPassword = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(PROXY_PASSWORD, oldValue, newValue);
   }
 
@@ -672,7 +697,7 @@ public class Settings extends AbstractModelObject {
   public void setImageTmdbLangugage(Languages newValue) {
     Languages oldValue = this.imageTmdbLangugage;
     this.imageTmdbLangugage = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(IMAGE_TMDB_LANGU, oldValue, newValue);
   }
 
@@ -722,7 +747,7 @@ public class Settings extends AbstractModelObject {
   public void setImageTmdbPosterSize(PosterSizes newValue) {
     PosterSizes oldValue = this.imageTmdbPosterSize;
     this.imageTmdbPosterSize = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(IMAGE_TMDB_POSTER, oldValue, newValue);
   }
 
@@ -745,7 +770,7 @@ public class Settings extends AbstractModelObject {
   public void setImageTmdbFanartSize(FanartSizes newValue) {
     FanartSizes oldValue = this.imageTmdbFanartSize;
     this.imageTmdbFanartSize = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(IMAGE_TMDB_FANART, oldValue, newValue);
   }
 
@@ -768,7 +793,7 @@ public class Settings extends AbstractModelObject {
   public void setScraperTmdbLanguage(Languages newValue) {
     Languages oldValue = this.scraperTmdbLanguage;
     this.scraperTmdbLanguage = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(SCRAPER_TMDB_LANGU, oldValue, newValue);
   }
 
@@ -791,7 +816,7 @@ public class Settings extends AbstractModelObject {
   public void setCertificationCountry(CountryCode newValue) {
     CountryCode oldValue = this.certificationCountry;
     certificationCountry = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
 
@@ -814,7 +839,7 @@ public class Settings extends AbstractModelObject {
   public void setMovieConnector(MovieConnectors newValue) {
     MovieConnectors oldValue = this.movieConnector;
     this.movieConnector = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_CONNECTOR, oldValue, newValue);
   }
 
@@ -837,7 +862,7 @@ public class Settings extends AbstractModelObject {
   public void setMovieRenamerPathname(String newValue) {
     String oldValue = this.movieRenamerPathname;
     this.movieRenamerPathname = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_RENAMER_PATHNAME, oldValue, newValue);
   }
 
@@ -860,7 +885,7 @@ public class Settings extends AbstractModelObject {
   public void setMovieRenamerFilename(String newValue) {
     String oldValue = this.movieRenamerFilename;
     this.movieRenamerFilename = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_RENAMER_FILENAME, oldValue, newValue);
   }
 
@@ -885,7 +910,7 @@ public class Settings extends AbstractModelObject {
   public void setMovieScraper(MovieScrapers newValue) {
     MovieScrapers oldValue = this.movieScraper;
     this.movieScraper = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(MOVIE_SCRAPER, oldValue, newValue);
   }
 
@@ -907,8 +932,30 @@ public class Settings extends AbstractModelObject {
   public void setImdbScrapeForeignLanguage(boolean newValue) {
     boolean oldValue = this.imdbScrapeForeignLanguage;
     this.imdbScrapeForeignLanguage = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(IMDB_SCRAPE_FOREIGN_LANGU, oldValue, newValue);
+  }
+
+  /**
+   * Gets the imdb site.
+   * 
+   * @return the imdb site
+   */
+  public ImdbSiteDefinition getImdbSite() {
+    return imdbSite;
+  }
+
+  /**
+   * Sets the imdb site.
+   * 
+   * @param newValue
+   *          the new imdb site
+   */
+  public void setImdbSite(ImdbSiteDefinition newValue) {
+    ImdbSiteDefinition oldValue = this.imdbSite;
+    this.imdbSite = newValue;
+    // setDirty();
+    firePropertyChange(IMDB_SITE, oldValue, newValue);
   }
 
   /**
@@ -929,7 +976,7 @@ public class Settings extends AbstractModelObject {
   public void setClearCacheShutdown(boolean newValue) {
     boolean oldValue = this.clearCacheShutdown;
     this.clearCacheShutdown = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(CLEAR_CACHE_SHUTDOWN, oldValue, newValue);
   }
 
@@ -951,7 +998,27 @@ public class Settings extends AbstractModelObject {
   public void setScrapeBestImage(boolean newValue) {
     boolean oldValue = this.scrapeBestImage;
     this.scrapeBestImage = newValue;
-    setDirty();
+    // setDirty();
     firePropertyChange(SCRAPE_BEST_IMAGE, oldValue, newValue);
+  }
+
+  /**
+   * Gets the scraper metadata config.
+   * 
+   * @return the scraper metadata config
+   */
+  public ScraperMetadataConfig getScraperMetadataConfig() {
+    return scraperMetadataConfig;
+  }
+
+  /**
+   * Sets the scraper metadata config.
+   * 
+   * @param scraperMetadataConfig
+   *          the new scraper metadata config
+   */
+  public void setScraperMetadataConfig(ScraperMetadataConfig scraperMetadataConfig) {
+    this.scraperMetadataConfig = scraperMetadataConfig;
+    this.scraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
   }
 }

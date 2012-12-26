@@ -47,7 +47,6 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.Trailer;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieTompNfoConnector.
  */

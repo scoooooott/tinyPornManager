@@ -39,6 +39,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieCast.CastType;
 import org.tinymediamanager.scraper.CastMember;
 import org.tinymediamanager.scraper.Certification;
@@ -48,6 +49,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.Trailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.HDTrailersNet;
 
 import com.moviejukebox.themoviedb.model.ArtworkType;
 
@@ -1096,16 +1098,23 @@ public class Movie extends AbstractModelObject {
   /**
    * Sets the metadata.
    * 
+   * @param md
+   *          the new metadata
+   */
+  public void setMetadata(MediaMetadata md) {
+    setMetadata(md, Globals.settings.getScraperMetadataConfig());
+  }
+
+  /**
+   * Sets the metadata.
+   * 
    * @param metadata
    *          the new metadata
    */
   /**
    * @param metadata
    */
-  public void setMetadata(MediaMetadata metadata) {
-    setName(metadata.getMediaTitle());
-    setOriginalName(metadata.getOriginalTitle());
-    setOverview(metadata.getPlot());
+  public void setMetadata(MediaMetadata metadata, ScraperMetadataConfig config) {
     setImdbId(metadata.getIMDBID());
     if (!StringUtils.isEmpty(metadata.getTMDBID())) {
       try {
@@ -1115,80 +1124,123 @@ public class Movie extends AbstractModelObject {
         setTmdbId(0);
       }
     }
-    setYear(metadata.getYear());
-    setRating(metadata.getUserRating());
-    setVotes(metadata.getVoteCount());
-    setRuntime(metadata.getRuntime());
 
-    setTagline(metadata.getTagline());
-    setProductionCompany(metadata.getCompany());
+    // set chosen metadata
+    if (config.isTitle()) {
+      setName(metadata.getMediaTitle());
+    }
+
+    if (config.isOriginalTitle()) {
+      setOriginalName(metadata.getOriginalTitle());
+    }
+
+    if (config.isTagline()) {
+      setTagline(metadata.getTagline());
+    }
+
+    if (config.isPlot()) {
+      setOverview(metadata.getPlot());
+    }
+
+    if (config.isYear()) {
+      setYear(metadata.getYear());
+    }
+
+    if (config.isRating()) {
+      setRating(metadata.getUserRating());
+      setVotes(metadata.getVoteCount());
+    }
+
+    if (config.isRuntime()) {
+      setRuntime(metadata.getRuntime());
+    }
 
     // certifications
-    for (Certification certification : metadata.getCertifications()) {
-      setCertification(certification);
-      break;
+    if (config.isCertification()) {
+      for (Certification certification : metadata.getCertifications()) {
+        setCertification(certification);
+        break;
+      }
     }
 
     // poster
-    List<MediaArt> art = metadata.getMediaArt(MediaArtifactType.POSTER);
-    if (art.size() > 0) {
-      MediaArt poster = art.get(0);
-      setPosterUrl(poster.getDownloadUrl());
-    }
+    if (config.isArtwork()) {
+      List<MediaArt> art = metadata.getMediaArt(MediaArtifactType.POSTER);
+      if (art.size() > 0) {
+        MediaArt poster = art.get(0);
+        setPosterUrl(poster.getDownloadUrl());
+      }
 
-    // fanart
-    art = metadata.getMediaArt(MediaArtifactType.BACKGROUND);
-    if (art.size() > 0) {
-      MediaArt fanart = art.get(0);
-      setFanartUrl(fanart.getDownloadUrl());
+      // fanart
+      art = metadata.getMediaArt(MediaArtifactType.BACKGROUND);
+      if (art.size() > 0) {
+        MediaArt fanart = art.get(0);
+        setFanartUrl(fanart.getDownloadUrl());
+      }
     }
 
     // cast
-    removeAllActors();
-    List<CastMember> cast = metadata.getCastMembers();
-    String director = new String();
-    String writer = new String();
-    for (CastMember member : cast) {
-      MovieCast castMember = new MovieCast();
-      castMember.setName(member.getName());
-      castMember.setCharacter(member.getCharacter());
-      castMember.setThumb(member.getImageUrl());
-      switch (member.getType()) {
-        case CastMember.ACTOR:
-          castMember.setType(CastType.ACTOR);
-          addToCast(castMember);
-          break;
-        case CastMember.DIRECTOR:
-          if (!StringUtils.isEmpty(director)) {
-            director += ", ";
-          }
-          director += member.getName();
-          break;
-        case CastMember.WRITER:
-          if (!StringUtils.isEmpty(writer)) {
-            writer += ", ";
-          }
-          writer += member.getName();
-          break;
+    if (config.isCast()) {
+      setProductionCompany(metadata.getCompany());
+      removeAllActors();
+      List<CastMember> cast = metadata.getCastMembers();
+      String director = new String();
+      String writer = new String();
+      for (CastMember member : cast) {
+        MovieCast castMember = new MovieCast();
+        castMember.setName(member.getName());
+        castMember.setCharacter(member.getCharacter());
+        castMember.setThumb(member.getImageUrl());
+        switch (member.getType()) {
+          case CastMember.ACTOR:
+            castMember.setType(CastType.ACTOR);
+            addToCast(castMember);
+            break;
+          case CastMember.DIRECTOR:
+            if (!StringUtils.isEmpty(director)) {
+              director += ", ";
+            }
+            director += member.getName();
+            break;
+          case CastMember.WRITER:
+            if (!StringUtils.isEmpty(writer)) {
+              writer += ", ";
+            }
+            writer += member.getName();
+            break;
+        }
       }
+      setDirector(director);
+      setWriter(writer);
     }
-    setDirector(director);
-    setWriter(writer);
 
     // genres
-    removeAllGenres();
-    for (MediaGenres genre : metadata.getGenres()) {
-      addGenre(genre);
+    if (config.isGenres()) {
+      removeAllGenres();
+      for (MediaGenres genre : metadata.getGenres()) {
+        addGenre(genre);
+      }
     }
 
     // trailer
-    removeAllTrailers();
-    List<Trailer> trailers = metadata.getTrailers();
-    for (Trailer trailer : trailers) {
-      if (this.trailer.size() == 0) {
-        trailer.setInNfo(Boolean.TRUE);
+    if (config.isTrailer()) {
+      removeAllTrailers();
+      List<Trailer> trailers = metadata.getTrailers();
+      for (Trailer trailer : trailers) {
+        if (this.trailer.size() == 0) {
+          trailer.setInNfo(Boolean.TRUE);
+        }
+        addTrailer(trailer);
       }
-      addTrailer(trailer);
+
+      // extra trailer from hdtrailers.net
+      trailers = HDTrailersNet.getTrailers(this);
+      for (Trailer trailer : trailers) {
+        if (this.trailer.size() == 0) {
+          trailer.setInNfo(Boolean.TRUE);
+        }
+        addTrailer(trailer);
+      }
     }
 
     // set scraped

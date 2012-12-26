@@ -62,6 +62,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
   /** The sorted list. */
   private SortedList<Movie>             sortedList;
 
+  /** The property change listener. */
   private PropertyChangeListener        propertyChangeListener;
 
   /**

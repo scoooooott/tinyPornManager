@@ -538,10 +538,20 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       doc = null;
       doc = futurePlotsummary.get();
 
-      Elements plotpar = doc.getElementsByClass("plotpar");
-      if (plotpar.size() > 0) {
-        String plot = cleanString(plotpar.get(0).ownText());
-        md.setPlot(plot);
+      // imdb.com has another site structure
+      if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
+        Elements plotpar = doc.getElementsByClass("plotpar");
+        if (plotpar.size() > 0) {
+          String plot = cleanString(plotpar.get(0).ownText());
+          md.setPlot(plot);
+        }
+      }
+      else {
+        Element wiki = doc.getElementById("swiki.2.1");
+        if (wiki != null) {
+          String plot = cleanString(wiki.ownText());
+          md.setPlot(plot);
+        }
       }
 
       // title also from chosen site if we are not scraping akas.imdb.com
@@ -718,7 +728,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     StringBuilder sb = new StringBuilder(imdbSite.getSite());
     sb.append("find?q=");
     try {
-      sb.append(URLEncoder.encode(searchTerm, imdbSite.getCharset().displayName()));
+      // search site was everytime in UTF-8
+      // sb.append(URLEncoder.encode(searchTerm,
+      // imdbSite.getCharset().displayName()));
+      sb.append(URLEncoder.encode(searchTerm, "UTF-8"));
     }
     catch (UnsupportedEncodingException ex) {
       // Failed to encode the movie name for some reason!
@@ -732,7 +745,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     Document doc;
     try {
       CachedUrl url = new CachedUrl(sb.toString());
-      doc = Jsoup.parse(url.getInputStream(), imdbSite.getCharset().displayName(), "");
+
+      // doc = Jsoup.parse(url.getInputStream(),
+      // imdbSite.getCharset().displayName(), "");
+      doc = Jsoup.parse(url.getInputStream(), "UTF-8", "");
     }
     catch (Exception e) {
       LOGGER.debug("tried to fetch search response", e);
@@ -837,7 +853,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       result.add(sr);
 
       // only get 20 results
-      if (result.size() > 20) {
+      if (result.size() >= 20) {
         break;
       }
     }

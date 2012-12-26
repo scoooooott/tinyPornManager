@@ -2,25 +2,39 @@ package org.tinymediamanager.scraper.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.scraper.Trailer;
 
 public class HDTrailersNet {
 
-  public static void getTrailer(Movie movie) {
-    try {
-      // FIXME: how to get hd-trailers url?!?
-      // english title and guess url (as done in other tools)
-      // or get url from google? use english title and take first entry?
-      // ex
-      // http://www.google.at/search?q=inurl:hd-trailers.net/movie+%22men+in+black+3%22
-      Url url = new CachedUrl("http://www.hd-trailers.net/movie/men-in-black-3/");
-      InputStream in = url.getInputStream();
+  /** The Constant logger. */
+  private static final Logger LOGGER = Logger.getLogger(HDTrailersNet.class);
 
+  public static List<Trailer> getTrailers(Movie movie) {
+    List<Trailer> trailers = new ArrayList<Trailer>();
+    String ot = movie.getOriginalName();
+
+    // check if the original title is not empty
+    if (StringUtils.isEmpty(ot)) {
+      return trailers;
+    }
+
+    try {
+      // best guess
+      String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("--", "-").toLowerCase() + "/";
+      LOGGER.debug("Guessed HD-Trailers Url: " + search);
+
+      Url url = new CachedUrl(search);
+      InputStream in = url.getInputStream();
       Document doc = Jsoup.parse(in, "UTF-8", "");
       Elements tr = doc.getElementsByAttributeValue("itemprop", "trailer");
       /*
@@ -61,24 +75,90 @@ public class HDTrailersNet {
        * title="Embed this video on your website">embed</a></td> </tr>
        */
       for (Element t : tr) {
-        String date = t.select("td.bottomTableDate").first().text();
+        try {
+          String date = t.select("td.bottomTableDate").first().text();
+          String title = t.select("td.bottomTableName > span").first().text();
 
-        // apple.com urls currently not working (according to hd-trailers)
-        String tr0tit = t.select("td.bottomTableResolution > a").get(0).attr("title");
-        String tr0url = t.select("td.bottomTableResolution > a").get(0).attr("href");
-        System.out.println(date + " | " + tr0tit + " | " + tr0url);
+          // apple.com urls currently not working (according to hd-trailers)
+          String tr0qual = t.select("td.bottomTableResolution > a").get(0).text();
+          String tr0url = t.select("td.bottomTableResolution > a").get(0).attr("href");
+          LOGGER.debug(tr0qual + " | " + title + " (" + date + ") | " + tr0url);
+          Trailer trailer = new Trailer();
+          trailer.setName(title + " (" + date + ")");
+          trailer.setUrl(tr0url);
+          trailer.setQuality(tr0qual);
+          trailer.setProvider(getProviderFromUrl(tr0url));
+          trailers.add(trailer);
 
-        String tr1tit = t.select("td.bottomTableResolution > a").get(1).attr("title");
-        String tr1url = t.select("td.bottomTableResolution > a").get(1).attr("href");
-        System.out.println(date + " | " + tr1tit + " | " + tr1url);
+          String tr1qual = t.select("td.bottomTableResolution > a").get(1).text();
+          String tr1url = t.select("td.bottomTableResolution > a").get(1).attr("href");
+          LOGGER.debug(tr1qual + " | " + title + " (" + date + ") | " + tr1url);
+          trailer = new Trailer();
+          trailer.setName(title + " (" + date + ")");
+          trailer.setUrl(tr1url);
+          trailer.setQuality(tr1qual);
+          trailer.setProvider(getProviderFromUrl(tr1url));
+          trailers.add(trailer);
 
-        String tr2tit = t.select("td.bottomTableResolution > a").get(2).attr("title");
-        String tr2url = t.select("td.bottomTableResolution > a").get(2).attr("href");
-        System.out.println(date + " | " + tr2tit + " | " + tr2url);
+          String tr2qual = t.select("td.bottomTableResolution > a").get(2).text();
+          String tr2url = t.select("td.bottomTableResolution > a").get(2).attr("href");
+          LOGGER.debug(tr2qual + " | " + title + " (" + date + ") | " + tr2url);
+          trailer = new Trailer();
+          trailer.setName(title + " (" + date + ")");
+          trailer.setUrl(tr2url);
+          trailer.setQuality(tr2qual);
+          trailer.setProvider(getProviderFromUrl(tr2url));
+          trailers.add(trailer);
+        }
+        catch (IndexOutOfBoundsException i) {
+          // ignore parse errors per line
+          LOGGER.warn("Error parsing HD-Trailers line. Possible missing quality.");
+        }
+
       }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
     }
+    catch (IOException e) {
+      LOGGER.error("cannot parse HD-Trailers movie: " + ot, e);
+    }
+    finally {
+    }
+    return trailers;
   }
+
+  /**
+   * Returns the "Source" for this trailer by parsing the URL
+   * 
+   * @param url
+   * @return
+   */
+  private static String getProviderFromUrl(String url) {
+    url = url.toLowerCase();
+    String source = "unknown";
+    if (url.contains("youtube.com")) {
+      source = "youtube";
+    }
+    else if (url.contains("apple.com")) {
+      source = "apple";
+    }
+    else if (url.contains("aol.com")) {
+      source = "aol";
+    }
+    else if (url.contains("yahoo.com")) {
+      source = "yahoo";
+    }
+    else if (url.contains("hd-trailers.net")) {
+      source = "hdtrailers";
+    }
+    else if (url.contains("moviefone.com")) {
+      source = "moviefone";
+    }
+    else if (url.contains("mtv.com")) {
+      source = "mtv";
+    }
+    else if (url.contains("ign.com")) {
+      source = "ign";
+    }
+    return source;
+  }
+
 }

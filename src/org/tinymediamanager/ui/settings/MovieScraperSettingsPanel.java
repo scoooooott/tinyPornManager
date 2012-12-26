@@ -32,8 +32,10 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
+import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -51,6 +53,7 @@ public class MovieScraperSettingsPanel extends JPanel {
 
   /** The button group scraper. */
   private ButtonGroup buttonGroupScraper;
+
   /** The cb scraper tmdb language. */
   private JComboBox   cbScraperTmdbLanguage;
 
@@ -62,7 +65,16 @@ public class MovieScraperSettingsPanel extends JPanel {
 
   /** The cb scraper imdb. */
   private JCheckBox   cbScraperImdb;
+
+  /** The chckbx automatically scrape images. */
   private JCheckBox   chckbxAutomaticallyScrapeImages;
+
+  /** The cb imdb site. */
+  private JComboBox   cbImdbSite;
+
+  /** The panel scraper metadata. */
+  private JPanel      panelScraperMetadata;
+  private JPanel      panelScraperMetadataContainer;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -74,7 +86,7 @@ public class MovieScraperSettingsPanel extends JPanel {
     panelMovieScrapers.setBorder(new TitledBorder(null, "Scrapers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelMovieScrapers, "2, 2, left, top");
     panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
@@ -100,14 +112,23 @@ public class MovieScraperSettingsPanel extends JPanel {
     buttonGroupScraper.add(cbScraperImdb);
     panelMovieScrapers.add(cbScraperImdb, "1, 8");
 
-    JLabel lblEperimental = new JLabel("experimental!");
-    panelMovieScrapers.add(lblEperimental, "3, 8");
+    cbImdbSite = new JComboBox(ImdbSiteDefinition.values());
+    panelMovieScrapers.add(cbImdbSite, "3, 8, fill, default");
 
     cbImdbTranslateableContent = new JCheckBox("Plot/Title/Tagline from TMDB");
     panelMovieScrapers.add(cbImdbTranslateableContent, "3, 10");
 
-    chckbxAutomaticallyScrapeImages = new JCheckBox("automatically scrape images");
-    add(chckbxAutomaticallyScrapeImages, "2, 4");
+    panelScraperMetadataContainer = new JPanel();
+    panelScraperMetadataContainer.setBorder(new TitledBorder(null, "Metadata settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    add(panelScraperMetadataContainer, "2, 4, fill, fill");
+    panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    panelScraperMetadata = new MovieScraperMetadataPanel(settings.getScraperMetadataConfig());
+    panelScraperMetadataContainer.add(panelScraperMetadata, "1, 1, 2, 1, fill, default");
+
+    chckbxAutomaticallyScrapeImages = new JCheckBox("automatically scrape images (without selection)");
+    panelScraperMetadataContainer.add(chckbxAutomaticallyScrapeImages, "2, 3");
 
     initDataBindings();
 
@@ -149,6 +170,9 @@ public class MovieScraperSettingsPanel extends JPanel {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<Settings, Languages> settingsBeanProperty_8 = BeanProperty.create("scraperTmdbLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
@@ -171,5 +195,10 @@ public class MovieScraperSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<Settings, ImdbSiteDefinition> settingsBeanProperty_1 = BeanProperty.create("imdbSite");
+    AutoBinding<Settings, ImdbSiteDefinition, JComboBox, Object> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, cbImdbSite, jComboBoxBeanProperty);
+    autoBinding_1.bind();
   }
 }

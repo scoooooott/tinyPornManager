@@ -294,15 +294,20 @@ public class MyTable extends JTable {
      */
     private void paintVerticalGridLines(Graphics g) {
       // paint the column grid dividers for the non-existent rows.
-      int x = 0;
+
+      int offset = getViewPosition().x;
+      int x = -offset;
       for (int i = 0; i < fTable.getColumnCount(); i++) {
         TableColumn column = fTable.getColumnModel().getColumn(i);
         // increase the x position by the width of the current column.
         x += column.getWidth();
-        g.setColor(TABLE_GRID_COLOR);
-        // draw the grid line (not sure what the -1 is for, but BasicTableUI
-        // also does it.
-        g.drawLine(x - 1, g.getClipBounds().y, x - 1, getHeight());
+
+        if (x >= 0) {
+          g.setColor(TABLE_GRID_COLOR);
+          // draw the grid line (not sure what the -1 is for, but BasicTableUI
+          // also does it.
+          g.drawLine(x - 1, g.getClipBounds().y, x - 1, getHeight());
+        }
       }
     }
   }

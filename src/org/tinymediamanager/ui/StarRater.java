@@ -37,9 +37,9 @@ public class StarRater extends JPanel {
   private static final long  serialVersionUID      = 1L;
 
   private static final Image STAR_BACKGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(
-                                                       MainWindow.class.getResource("/org/tinymediamanager/ui/images/32.png"));
+                                                       MainWindow.class.getResource("/org/tinymediamanager/ui/images/24.png"));
   private static final Image STAR_FOREGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(
-                                                       MainWindow.class.getResource("/org/tinymediamanager/ui/images/mark32.png"));
+                                                       MainWindow.class.getResource("/org/tinymediamanager/ui/images/mark24.png"));
 
   /**
    * The listener.

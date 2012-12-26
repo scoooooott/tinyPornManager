@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 
@@ -118,14 +119,18 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
    */
   public MovieExtendedSearchPanel(MovieSelectionModel model) {
     super("Extended filter and sort options");
+
+    Font font = new Font("Dialog", Font.PLAIN, 10);
+
     this.movieSelectionModel = model;
 
     JPanel panel = new JPanel();
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     lblFilterBy = new JLabel("filter by");
     panel.add(lblFilterBy, "2, 1, 3, 1");
@@ -267,7 +272,8 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
       if (cbFilterWatched.isSelected()) {
         if (cbWatched.getSelectedItem() == WatchedFlag.WATCHED) {
           searchOptions.put(SearchOptions.WATCHED, true);
-        } else {
+        }
+        else {
           searchOptions.put(SearchOptions.WATCHED, false);
         }
       }

@@ -20,12 +20,38 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum ImdbSiteDefinition.
+ */
 public enum ImdbSiteDefinition {
   // akas.imdb.com - international site
+  /** The imdb com. */
   IMDB_COM("http://akas.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification"),
   // www.imdb.de - german site
-  IMDB_DE("http://www.imdb.de/", "UTF-8", "", "", "", "", "", "");
+  /** The imdb de. */
+  IMDB_DE("http://www.imdb.de/", "iso-8859-1", "", "", "", "", "", "");
 
+  /**
+   * Instantiates a new imdb site definition.
+   * 
+   * @param site
+   *          the site
+   * @param charsetName
+   *          the charset name
+   * @param tagline
+   *          the tagline
+   * @param genre
+   *          the genre
+   * @param runtime
+   *          the runtime
+   * @param productionCompanies
+   *          the production companies
+   * @param writers
+   *          the writers
+   * @param certification
+   *          the certification
+   */
   private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies,
       String writers, String certification) {
     this.site = site;
@@ -43,45 +69,109 @@ public enum ImdbSiteDefinition {
     this.certification = certification;
   }
 
+  /** The site. */
   private String  site;
+
+  /** The charset. */
   private Charset charset;
+
+  /** The tagline. */
   private String  tagline;
+
+  /** The genre. */
   private String  genre;
+
+  /** The runtime. */
   private String  runtime;
+
+  /** The production companies. */
   private String  productionCompanies;
+
+  /** The writer. */
   private String  writer;
+
+  /** The certification. */
   private String  certification;
 
+  /**
+   * Gets the site.
+   * 
+   * @return the site
+   */
   public String getSite() {
     return site;
   }
 
+  /**
+   * Gets the charset.
+   * 
+   * @return the charset
+   */
   public Charset getCharset() {
     return charset;
   }
 
+  /**
+   * Gets the tagline.
+   * 
+   * @return the tagline
+   */
   public String getTagline() {
     return tagline;
   }
 
+  /**
+   * Gets the genre.
+   * 
+   * @return the genre
+   */
   public String getGenre() {
     return genre;
   }
 
+  /**
+   * Gets the runtime.
+   * 
+   * @return the runtime
+   */
   public String getRuntime() {
     return runtime;
   }
 
+  /**
+   * Gets the production companies.
+   * 
+   * @return the production companies
+   */
   public String getProductionCompanies() {
     return productionCompanies;
   }
 
+  /**
+   * Gets the writer.
+   * 
+   * @return the writer
+   */
   public String getWriter() {
     return writer;
   }
 
+  /**
+   * Gets the certification.
+   * 
+   * @return the certification
+   */
   public String getCertification() {
     return certification;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Enum#toString()
+   */
+  public String toString() {
+    return site;
   }
 }
 
