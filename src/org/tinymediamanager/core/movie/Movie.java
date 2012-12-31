@@ -41,15 +41,14 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieCast.CastType;
-import org.tinymediamanager.scraper.CastMember;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaArt;
-import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
-import org.tinymediamanager.scraper.Trailer;
+import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
-import org.tinymediamanager.scraper.util.HDTrailersNet;
 
 import com.moviejukebox.themoviedb.model.ArtworkType;
 
@@ -262,11 +261,11 @@ public class Movie extends AbstractModelObject {
 
   /** The trailer. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<Trailer>         trailer              = new ArrayList<Trailer>();
+  private List<MediaTrailer>    trailer              = new ArrayList<MediaTrailer>();
 
   /** The trailer observable. */
   @Transient
-  private List<Trailer>         trailerObservable    = ObservableCollections.observableList(trailer);
+  private List<MediaTrailer>    trailerObservable    = ObservableCollections.observableList(trailer);
 
   /** The tags. */
   private List<String>          tags                 = new ArrayList<String>();
@@ -417,7 +416,7 @@ public class Movie extends AbstractModelObject {
    * 
    * @return the trailers
    */
-  public List<Trailer> getTrailers() {
+  public List<MediaTrailer> getTrailers() {
     return this.trailerObservable;
   }
 
@@ -427,7 +426,7 @@ public class Movie extends AbstractModelObject {
    * @param obj
    *          the obj
    */
-  public void addTrailer(Trailer obj) {
+  public void addTrailer(MediaTrailer obj) {
     trailerObservable.add(obj);
     firePropertyChange(TRAILER, null, trailerObservable);
   }
@@ -1110,24 +1109,19 @@ public class Movie extends AbstractModelObject {
    * 
    * @param metadata
    *          the new metadata
+   * @param config
+   *          the config
    */
   /**
    * @param metadata
    */
   public void setMetadata(MediaMetadata metadata, ScraperMetadataConfig config) {
-    setImdbId(metadata.getIMDBID());
-    if (!StringUtils.isEmpty(metadata.getTMDBID())) {
-      try {
-        setTmdbId(Integer.parseInt(metadata.getTMDBID()));
-      }
-      catch (Exception e) {
-        setTmdbId(0);
-      }
-    }
+    setImdbId(metadata.getImdbId());
+    setTmdbId(metadata.getTmdbId());
 
     // set chosen metadata
     if (config.isTitle()) {
-      setName(metadata.getMediaTitle());
+      setName(metadata.getTitle());
     }
 
     if (config.isOriginalTitle()) {
@@ -1147,7 +1141,7 @@ public class Movie extends AbstractModelObject {
     }
 
     if (config.isRating()) {
-      setRating(metadata.getUserRating());
+      setRating((float) metadata.getRating());
       setVotes(metadata.getVoteCount());
     }
 
@@ -1163,46 +1157,46 @@ public class Movie extends AbstractModelObject {
       }
     }
 
-    // poster
-    if (config.isArtwork()) {
-      List<MediaArt> art = metadata.getMediaArt(MediaArtifactType.POSTER);
-      if (art.size() > 0) {
-        MediaArt poster = art.get(0);
-        setPosterUrl(poster.getDownloadUrl());
-      }
-
-      // fanart
-      art = metadata.getMediaArt(MediaArtifactType.BACKGROUND);
-      if (art.size() > 0) {
-        MediaArt fanart = art.get(0);
-        setFanartUrl(fanart.getDownloadUrl());
-      }
-    }
+    // // poster
+    // if (config.isArtwork()) {
+    // List<MediaArtwork> art = metadata.getMediaArt(MediaArtworkType.POSTER);
+    // if (art.size() > 0) {
+    // MediaArtwork poster = art.get(0);
+    // setPosterUrl(poster.getDownloadUrl());
+    // }
+    //
+    // // fanart
+    // art = metadata.getMediaArt(MediaArtworkType.BACKGROUND);
+    // if (art.size() > 0) {
+    // MediaArtwork fanart = art.get(0);
+    // setFanartUrl(fanart.getDownloadUrl());
+    // }
+    // }
 
     // cast
     if (config.isCast()) {
-      setProductionCompany(metadata.getCompany());
+      setProductionCompany(metadata.getProductionCompany());
       removeAllActors();
-      List<CastMember> cast = metadata.getCastMembers();
+      List<MediaCastMember> cast = metadata.getCastMembers();
       String director = new String();
       String writer = new String();
-      for (CastMember member : cast) {
+      for (MediaCastMember member : cast) {
         MovieCast castMember = new MovieCast();
         castMember.setName(member.getName());
         castMember.setCharacter(member.getCharacter());
         castMember.setThumb(member.getImageUrl());
         switch (member.getType()) {
-          case CastMember.ACTOR:
+          case ACTOR:
             castMember.setType(CastType.ACTOR);
             addToCast(castMember);
             break;
-          case CastMember.DIRECTOR:
+          case DIRECTOR:
             if (!StringUtils.isEmpty(director)) {
               director += ", ";
             }
             director += member.getName();
             break;
-          case CastMember.WRITER:
+          case WRITER:
             if (!StringUtils.isEmpty(writer)) {
               writer += ", ";
             }
@@ -1222,37 +1216,144 @@ public class Movie extends AbstractModelObject {
       }
     }
 
-    // trailer
-    if (config.isTrailer()) {
-      removeAllTrailers();
-      List<Trailer> trailers = metadata.getTrailers();
-      for (Trailer trailer : trailers) {
-        if (this.trailer.size() == 0) {
-          trailer.setInNfo(Boolean.TRUE);
-        }
-        addTrailer(trailer);
-      }
-
-      // extra trailer from hdtrailers.net
-      trailers = HDTrailersNet.getTrailers(this);
-      for (Trailer trailer : trailers) {
-        if (this.trailer.size() == 0) {
-          trailer.setInNfo(Boolean.TRUE);
-        }
-        addTrailer(trailer);
-      }
-    }
+    // // trailer
+    // if (config.isTrailer()) {
+    // removeAllTrailers();
+    // List<MediaTrailer> trailers = metadata.getTrailers();
+    // for (MediaTrailer trailer : trailers) {
+    // if (this.trailer.size() == 0) {
+    // trailer.setInNfo(Boolean.TRUE);
+    // }
+    // addTrailer(trailer);
+    // }
+    //
+    // // extra trailer from hdtrailers.net
+    // trailers = HDTrailersNet.getTrailers(this);
+    // for (MediaTrailer trailer : trailers) {
+    // if (this.trailer.size() == 0) {
+    // trailer.setInNfo(Boolean.TRUE);
+    // }
+    // addTrailer(trailer);
+    // }
+    // }
 
     // set scraped
     setScraped(true);
 
-    // write NFO and saving images
+    // write NFO
     writeNFO();
-    writeImages(true, true);
+    // writeImages(true, true);
 
     // update DB
     saveToDb();
 
+  }
+
+  /**
+   * Sets the trailers.
+   * 
+   * @param trailers
+   *          the new trailers
+   */
+  public void setTrailers(List<MediaTrailer> trailers) {
+    removeAllTrailers();
+    for (MediaTrailer trailer : trailers) {
+      if (this.trailer.size() == 0) {
+        trailer.setInNfo(Boolean.TRUE);
+      }
+      addTrailer(trailer);
+    }
+
+    // persist
+    saveToDb();
+  }
+
+  /**
+   * Gets the metadata.
+   * 
+   * @return the metadata
+   */
+  public MediaMetadata getMetadata() {
+    MediaMetadata md = new MediaMetadata("");
+
+    md.setImdbId(imdbId);
+    md.setTmdbId(tmdbId);
+    md.setTitle(name);
+    md.setOriginalTitle(originalName);
+    md.setTagline(tagline);
+    md.setPlot(overview);
+    md.setYear(year);
+    md.setRating(rating);
+    md.setVoteCount(votes);
+    md.setRuntime(runtime);
+    md.addCertification(certification);
+
+    return md;
+  }
+
+  /**
+   * Sets the artwork.
+   * 
+   * @param md
+   *          the new artwork
+   */
+  public void setArtwork(MediaMetadata md) {
+    setArtwork(md, Globals.settings.getScraperMetadataConfig());
+  }
+
+  /**
+   * Sets the artwork.
+   * 
+   * @param md
+   *          the md
+   * @param config
+   *          the config
+   */
+  public void setArtwork(MediaMetadata md, ScraperMetadataConfig config) {
+    setArtwork(md.getMediaArt(MediaArtworkType.ALL), config);
+  }
+
+  /**
+   * Sets the artwork.
+   * 
+   * @param artwork
+   *          the new artwork
+   */
+  public void setArtwork(List<MediaArtwork> artwork) {
+    setArtwork(artwork, Globals.settings.getScraperMetadataConfig());
+  }
+
+  /**
+   * Sets the artwork.
+   * 
+   * @param artwork
+   *          the artwork
+   * @param config
+   *          the config
+   */
+  public void setArtwork(List<MediaArtwork> artwork, ScraperMetadataConfig config) {
+    if (config.isArtwork()) {
+      // poster
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.POSTER) {
+          setPosterUrl(art.getDownloadUrl());
+          break;
+        }
+      }
+
+      // fanart
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.BACKGROUND) {
+          setFanartUrl(art.getDownloadUrl());
+          break;
+        }
+      }
+
+      // download images
+      writeImages(true, true);
+      // update DB
+      saveToDb();
+    }
   }
 
   /**

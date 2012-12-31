@@ -82,6 +82,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.StarRater;
 import org.tinymediamanager.ui.VoteCountConverter;
+import org.tinymediamanager.ui.WatchedIconConverter;
 
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
@@ -95,6 +96,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MoviePanel.
  */
@@ -264,8 +266,14 @@ public class MoviePanel extends JPanel {
 
   /** The lbl certification image. */
   private JLabel                 lblCertificationImage;
+
+  /** The lbl movie count of. */
   private JLabel                 lblMovieCountOf;
+
+  /** The lbl movie count filtered. */
   private JLabel                 lblMovieCountFiltered;
+  private JLabel                 lblWatchedImage;
+  private JPanel                 panelWatchedImage;
 
   /**
    * Create the panel.
@@ -300,9 +308,9 @@ public class MoviePanel extends JPanel {
         RowSpec.decode("fill:max(200px;default):grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JToolBar toolBar = new JToolBar();
-    toolBar.setBorder(null);
     toolBar.setRollover(true);
     toolBar.setFloatable(false);
+    toolBar.setOpaque(false);
     panelMovieList.add(toolBar, "2, 1, left, fill");
 
     JButton buttonUpdateDataSources = toolBar.add(actionUpdateDataSources);
@@ -315,7 +323,6 @@ public class MoviePanel extends JPanel {
 
     // register for listener
     buttonScrape.addSplitButtonActionListener(new SplitButtonActionListener() {
-
       public void buttonClicked(ActionEvent e) {
         actionScrape.actionPerformed(e);
       }
@@ -360,6 +367,11 @@ public class MoviePanel extends JPanel {
       @Override
       public void tableChanged(TableModelEvent arg0) {
         lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
+        // select first movie if nothing is selected
+        ListSelectionModel selectionModel = table.getSelectionModel();
+        if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() > 0) {
+          selectionModel.setSelectionInterval(0, 0);
+        }
       }
     });
 
@@ -404,18 +416,24 @@ public class MoviePanel extends JPanel {
     panelMovieHeader.setBorder(null);
     panelMovieHeader.setLayout(new BorderLayout(0, 0));
 
+    JPanel panelMovieTitle = new JPanel();
+    panelMovieHeader.add(panelMovieTitle, BorderLayout.NORTH);
+    panelMovieTitle.setLayout(new BorderLayout(0, 0));
     lblMovieName = new JLabel("");
-    panelMovieHeader.add(lblMovieName, BorderLayout.NORTH);
+    // panelMovieHeader.add(lblMovieName, BorderLayout.NORTH);
+    panelMovieTitle.add(lblMovieName);
     lblMovieName.setFont(new Font("Dialog", Font.BOLD, 16));
+
+    panelWatchedImage = new JPanel();
+    panelMovieTitle.add(panelWatchedImage, BorderLayout.EAST);
+
+    lblWatchedImage = new JLabel("");
+    panelWatchedImage.add(lblWatchedImage);
 
     JPanel panelRatingTagline = new JPanel();
     panelMovieHeader.add(panelRatingTagline, BorderLayout.CENTER);
     panelRatingTagline.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("24px"), FormFactory.DEFAULT_ROWSPEC, }));
-    // panelRatingTagline.setLayout(new FormLayout(new ColumnSpec[] {
-    // ColumnSpec.decode("140px:grow"), }, new RowSpec[] {
-    // FormFactory.DEFAULT_ROWSPEC,
-    // FormFactory.DEFAULT_ROWSPEC, }));
 
     lblRating = new JLabel("");
     panelRatingTagline.add(lblRating, "2, 2, left, center");
@@ -439,19 +457,19 @@ public class MoviePanel extends JPanel {
     JLayeredPane layeredPaneImages = new JLayeredPane();
     panelTop.add(layeredPaneImages, "1, 2, 4, 1, fill, fill");
     layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px"),
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"), RowSpec.decode("fill:default:grow"), }));
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"),
+        RowSpec.decode("fill:default:grow"), }));
 
     lblMovieBackground = new ImageLabel(false, true);
-    layeredPaneImages.add(lblMovieBackground, "1, 3, 3, 3, fill, fill");
+    layeredPaneImages.add(lblMovieBackground, "1, 1, 3, 3, fill, fill");
 
     lblMoviePoster = new ImageLabel();
     layeredPaneImages.setLayer(lblMoviePoster, 1);
-    layeredPaneImages.add(lblMoviePoster, "2, 4, fill, fill");
+    layeredPaneImages.add(lblMoviePoster, "2, 2, fill, fill");
 
     JPanel panelGenres = new MovieGenresPanel(movieSelectionModel);
     layeredPaneImages.setLayer(panelGenres, 2);
-    layeredPaneImages.add(panelGenres, "2, 4, 2, 2, right, bottom");
+    layeredPaneImages.add(panelGenres, "2, 2, 2, 2, right, bottom");
 
     JPanel panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
@@ -1231,5 +1249,11 @@ public class MoviePanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_3, lblTagline, jLabelBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_7 = BeanProperty.create("selectedMovie.watched");
+    AutoBinding<MovieSelectionModel, Boolean, JLabel, Icon> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_7, lblWatchedImage, jLabelBeanProperty_2);
+    autoBinding_8.setConverter(new WatchedIconConverter());
+    autoBinding_8.bind();
   }
 }

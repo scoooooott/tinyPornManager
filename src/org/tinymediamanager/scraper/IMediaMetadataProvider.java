@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper;
 
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Interface IMediaMetadataProvider.
  */
@@ -24,34 +25,30 @@ public interface IMediaMetadataProvider {
 
   /**
    * Gets the info.
-   *
-   * @return the info
+   * 
+   * @return the provider info containing metadata of the provider
    */
-  public ProviderInfo getInfo();
+  public MediaProviderInfo getProviderInfo();
 
   /**
    * Gets the meta data.
-   *
-   * @param result the result
+   * 
+   * @param options
+   *          the options
    * @return the meta data
-   * @throws Exception the exception
+   * @throws Exception
+   *           the exception
    */
-  public MediaMetadata getMetaData(MediaSearchResult result) throws Exception;
+  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception;
 
   /**
-   * Search.
-   *
-   * @param query the query
+   * Search for media.
+   * 
+   * @param options
+   *          the options
    * @return the list
-   * @throws Exception the exception
+   * @throws Exception
+   *           the exception
    */
-  public List<MediaSearchResult> search(SearchQuery query) throws Exception;
-
-  /**
-   * Gets the supported search types.
-   *
-   * @return the supported search types
-   */
-  public MediaType[] getSupportedSearchTypes();
-
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception;
 }

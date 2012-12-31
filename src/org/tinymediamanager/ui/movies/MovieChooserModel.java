@@ -16,15 +16,20 @@
 package org.tinymediamanager.ui.movies;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
-import org.tinymediamanager.scraper.MediaArt;
-import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
  * The Class MovieChooserModel.
@@ -32,37 +37,43 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 public class MovieChooserModel extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger    LOGGER  = Logger.getLogger(MovieChooserModel.class);
+  private static final Logger         LOGGER  = Logger.getLogger(MovieChooserModel.class);
 
   /** The metadata provider. */
-  private IMediaMetadataProvider metadataProvider;
+  private IMediaMetadataProvider      metadataProvider;
+
+  /** The artwork provider. */
+  private List<IMediaArtworkProvider> artworkProviders;
+
+  /** The trailer provider. */
+  private List<IMediaTrailerProvider> trailerProviders;
 
   /** The result. */
-  private MediaSearchResult      result;
+  private MediaSearchResult           result;
 
   /** The metadata. */
-  private MediaMetadata          metadata;
+  private MediaMetadata               metadata;
 
   /** The name. */
-  private String                 name;
+  private String                      name;
 
   /** The overview. */
-  private String                 overview;
+  private String                      overview;
 
   /** The year. */
-  private String                 year;
+  private String                      year;
 
   /** The combined name. */
-  private String                 combinedName;
+  private String                      combinedName;
 
   /** The poster url. */
-  private String                 posterUrl;
+  private String                      posterUrl;
 
   /** The tagline. */
-  private String                 tagline;
+  private String                      tagline;
 
   /** The scraped. */
-  private boolean                scraped = false;
+  private boolean                     scraped = false;
 
   /* new scraper logic */
   /**
@@ -70,12 +81,20 @@ public class MovieChooserModel extends AbstractModelObject {
    * 
    * @param metadataProvider
    *          the metadata provider
+   * @param artworkProviders
+   *          the artwork providers
+   * @param trailerProviders
+   *          the trailer providers
    * @param result
    *          the result
    */
-  public MovieChooserModel(IMediaMetadataProvider metadataProvider, MediaSearchResult result) {
+  public MovieChooserModel(IMediaMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
+      List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
     this.metadataProvider = metadataProvider;
+    this.artworkProviders = artworkProviders;
+    this.trailerProviders = trailerProviders;
     this.result = result;
+
     // name
     setName(result.getTitle());
     // year
@@ -194,20 +213,14 @@ public class MovieChooserModel extends AbstractModelObject {
    */
   public void scrapeMetaData() {
     try {
-      metadata = metadataProvider.getMetaData(result);
+      MediaScrapeOptions options = new MediaScrapeOptions();
+      options.setResult(result);
+      metadata = metadataProvider.getMetadata(options);
       setOverview(metadata.getPlot());
       setTagline(metadata.getTagline());
 
       // poster for preview
-      List<MediaArt> mediaArt = metadata.getFanart();
-      for (MediaArt art : mediaArt) {
-        if (art.getType() == MediaArtifactType.POSTER) {
-          setPosterUrl(art.getDownloadUrl());
-
-          break;
-        }
-      }
-
+      setPosterUrl(result.getPosterUrl());
       scraped = true;
 
     }
@@ -217,7 +230,68 @@ public class MovieChooserModel extends AbstractModelObject {
     catch (Exception e) {
       LOGGER.error("scrapeMedia", e);
     }
+  }
 
+  /**
+   * Gets the artwork.
+   * 
+   * @return the artwork
+   */
+  public List<MediaArtwork> getArtwork() {
+    List<MediaArtwork> artwork = null;
+
+    MediaScrapeOptions options = new MediaScrapeOptions();
+    options.setArtworkType(MediaArtworkType.ALL);
+    options.setMetadata(metadata);
+    options.setImdbId(metadata.getImdbId());
+    options.setTmdbId(metadata.getTmdbId());
+
+    // scrape providers till one artwork has been found
+    for (IMediaArtworkProvider artworkProvider : artworkProviders) {
+      try {
+        artwork = artworkProvider.getArtwork(options);
+      }
+      catch (Exception e) {
+        artwork = new ArrayList<MediaArtwork>();
+      }
+      // check if at least one artwork has been found
+      if (artwork.size() > 0) {
+        break;
+      }
+    }
+
+    // initialize if null
+    if (artwork == null) {
+      artwork = new ArrayList<MediaArtwork>();
+    }
+
+    return artwork;
+  }
+
+  /**
+   * Gets the trailers.
+   * 
+   * @return the trailers
+   */
+  public List<MediaTrailer> getTrailers() {
+    List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+
+    MediaScrapeOptions options = new MediaScrapeOptions();
+    options.setMetadata(metadata);
+    options.setImdbId(metadata.getImdbId());
+    options.setTmdbId(metadata.getTmdbId());
+
+    // scrape trailers
+    for (IMediaTrailerProvider trailerProvider : trailerProviders) {
+      try {
+        List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
+        trailers.addAll(foundTrailers);
+      }
+      catch (Exception e) {
+      }
+    }
+
+    return trailers;
   }
 
   /**
@@ -226,9 +300,6 @@ public class MovieChooserModel extends AbstractModelObject {
    * @return the metadata
    */
   public MediaMetadata getMetadata() {
-    // if (metadata == null) {
-    // scrapeMetaData();
-    // }
     return metadata;
   }
 
@@ -241,12 +312,23 @@ public class MovieChooserModel extends AbstractModelObject {
     return scraped;
   }
 
+  /**
+   * Sets the tagline.
+   * 
+   * @param newValue
+   *          the new tagline
+   */
   public void setTagline(String newValue) {
     String oldValue = this.tagline;
     this.tagline = newValue;
     firePropertyChange("tagline", oldValue, newValue);
   }
 
+  /**
+   * Gets the tagline.
+   * 
+   * @return the tagline
+   */
   public String getTagline() {
     return tagline;
   }

@@ -32,34 +32,37 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.scraper.CastMember;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
-import org.tinymediamanager.scraper.MediaArt;
-import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaCastMember;
+import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MetadataUtil;
-import org.tinymediamanager.scraper.ProviderInfo;
-import org.tinymediamanager.scraper.SearchQuery;
-import org.tinymediamanager.scraper.Trailer;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImdbMetadataProvider.
  */
-public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByIMDBID {
+public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(ImdbMetadataProvider.class);
+  private static final Logger      LOGGER       = Logger.getLogger(ImdbMetadataProvider.class);
 
   /** The imdb site. */
-  private ImdbSiteDefinition  imdbSite;
+  private ImdbSiteDefinition       imdbSite;
+
+  /** The provider info. */
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo("imdb", "imdb.com", "Scraper for imdb which is able to scrape movie metadata");
 
   /**
    * Instantiates a new imdb metadata provider.
@@ -81,30 +84,45 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.tinymediamanager.scraper.IHasFindByIMDBID#getMetadataForIMDBId(java
-   * .lang.String)
-   */
-  /**
-   * Gets the metadata for imdb id.
-   * 
-   * @param imdbId
-   *          the imdb id
-   * @return the metadata for imdb id
-   * @throws Exception
-   *           the exception
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getInfo()
    */
   @Override
-  public MediaMetadata getMetadataForIMDBId(String imdbId) throws Exception {
-    LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
+  public MediaProviderInfo getProviderInfo() {
+    return providerInfo;
+  }
 
-    MediaMetadata md = new MediaMetadata();
-    md.setIMDBID(imdbId);
+  @Override
+  public MediaMetadata getMetadata(MediaScrapeOptions scrapeOptions) throws Exception {
+    // check if there is a md in the result
+    if (scrapeOptions.getResult() != null && scrapeOptions.getResult().getMetadata() != null) {
+      LOGGER.debug("IMDB: getMetadata from cache: " + scrapeOptions.getResult());
+      return scrapeOptions.getResult().getMetadata();
+    }
+
+    MediaMetadata md = new MediaMetadata(providerInfo.getId());
+    String imdbId = "";
+
+    // imdbId from searchResult
+    if (scrapeOptions.getResult() != null) {
+      imdbId = scrapeOptions.getResult().getIMDBId();
+    }
+
+    // imdbid from scraper option
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      imdbId = scrapeOptions.getImdbId();
+    }
+
+    if (!MetadataUtil.isValidImdbId(imdbId)) {
+      return md;
+    }
+
+    LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
+    md.setImdbId(imdbId);
 
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(Globals.executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(Globals.executor);
-    ExecutorCompletionService<List<MediaArt>> compSvcTmdbArtwork = new ExecutorCompletionService<List<MediaArt>>(Globals.executor);
-    ExecutorCompletionService<List<Trailer>> compSvcTmdbTrailer = new ExecutorCompletionService<List<Trailer>>(Globals.executor);
+    ExecutorCompletionService<List<MediaArtwork>> compSvcTmdbArtwork = new ExecutorCompletionService<List<MediaArtwork>>(Globals.executor);
+    ExecutorCompletionService<List<MediaTrailer>> compSvcTmdbTrailer = new ExecutorCompletionService<List<MediaTrailer>>(Globals.executor);
 
     // worker for imdb request (/combined) (everytime from akas.imdb.com)
     // StringBuilder sb = new StringBuilder(imdbSite.getSite());
@@ -135,13 +153,17 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       futureTmdb = compSvcTmdb.submit(worker2);
     }
 
-    // worker for artwork
-    Callable<List<MediaArt>> workerArtwork = new TmdbArtworkWorker(imdbId);
-    Future<List<MediaArt>> futureArtwork = compSvcTmdbArtwork.submit(workerArtwork);
-
-    // worker for fanart
-    Callable<List<Trailer>> workerTrailer = new TmdbTrailerWorker(imdbId);
-    Future<List<Trailer>> futureTrailer = compSvcTmdbTrailer.submit(workerTrailer);
+    // // worker for artwork
+    // Callable<List<MediaArtwork>> workerArtwork = new
+    // TmdbArtworkWorker(imdbId);
+    // Future<List<MediaArtwork>> futureArtwork =
+    // compSvcTmdbArtwork.submit(workerArtwork);
+    //
+    // // worker for fanart
+    // Callable<List<MediaTrailer>> workerTrailer = new
+    // TmdbTrailerWorker(imdbId);
+    // Future<List<MediaTrailer>> futureTrailer =
+    // compSvcTmdbTrailer.submit(workerTrailer);
 
     Document doc;
     doc = futureCombined.get();
@@ -164,7 +186,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       if (elements.size() > 0) {
         element = elements.first();
         String movieTitle = cleanString(element.ownText());
-        md.setMediaTitle(movieTitle);
+        md.setTitle(movieTitle);
       }
 
       // year and original title
@@ -187,7 +209,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         // original title
         // if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
         // original title = title
-        md.setOriginalTitle(md.getMediaTitle());
+        md.setOriginalTitle(md.getTitle());
         // } else {
         // // try to parse the title out of "title-extra"
         // Elements span = element.getElementsByClass("title-extra");
@@ -209,7 +231,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       String posterUrl = poster.attr("src");
       posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX195_");
       posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY195_");
-      processMediaArt(md, MediaArtifactType.POSTER, "Poster", posterUrl);
+      processMediaArt(md, MediaArtworkType.POSTER, "Poster", posterUrl);
     }
 
     /*
@@ -238,7 +260,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
               }
               catch (Exception e) {
               }
-              md.setUserRating(rating);
+              md.setRating(rating);
               break;
             }
           }
@@ -380,7 +402,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           Elements a = element.getElementsByTag("a");
           for (Element anchor : a) {
             if (anchor.attr("href").matches("/name/nm.*")) {
-              CastMember cm = new CastMember(CastMember.WRITER);
+              MediaCastMember cm = new MediaCastMember(CastType.WRITER);
               cm.setName(anchor.ownText());
               md.addCastMember(cm);
             }
@@ -434,7 +456,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         Elements a = element.getElementsByTag("a");
         for (Element anchor : a) {
           if (anchor.attr("href").matches("/name/nm.*")) {
-            CastMember cm = new CastMember(CastMember.DIRECTOR);
+            MediaCastMember cm = new MediaCastMember(CastType.DIRECTOR);
             cm.setName(anchor.ownText());
             md.addCastMember(cm);
           }
@@ -478,7 +500,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       Elements tr = elements.get(0).getElementsByTag("tr");
       for (Element row : tr) {
         Elements td = row.getElementsByTag("td");
-        CastMember cm = new CastMember();
+        MediaCastMember cm = new MediaCastMember();
         for (Element column : td) {
           // actor thumb
           if (column.hasClass("hs")) {
@@ -505,7 +527,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           }
         }
         if (StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
-          cm.setType(CastMember.ACTOR);
+          cm.setType(CastType.ACTOR);
           md.addCastMember(cm);
         }
       }
@@ -525,7 +547,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           }
           productionCompanies.append(anchor.ownText());
         }
-        md.setCompany(productionCompanies.toString());
+        md.setProductionCompany(productionCompanies.toString());
         break;
       }
     }
@@ -564,7 +586,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
           if (elements.size() > 0) {
             element = elements.first();
             String movieTitle = cleanString(element.ownText());
-            md.setMediaTitle(movieTitle);
+            md.setTitle(movieTitle);
           }
         }
         md.setTagline("");
@@ -576,7 +598,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       MediaMetadata tmdbMd = futureTmdb.get();
       if (tmdbMd != null) {
         // title
-        md.setMediaTitle(tmdbMd.getMediaTitle());
+        md.setTitle(tmdbMd.getTitle());
         // tagline
         md.setTagline(tmdbMd.getTagline());
         // plot
@@ -584,102 +606,33 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
       }
     }
 
-    // get artwork from TMDB
-    try {
-      List<MediaArt> mediaArt = futureArtwork.get();
-      if (mediaArt != null && mediaArt.size() > 0) {
-        md.clearMediaArt();
-        md.addMediaArt(mediaArt);
-
-        // also store tmdbId
-        if (StringUtils.isEmpty(md.getTMDBID())) {
-          md.setTMDBID(String.valueOf(mediaArt.get(0).getTmdbId()));
-        }
-      }
-    }
-    catch (Exception e) {
-    }
-
-    // get trailer from tmdb
-    try {
-      List<Trailer> trailers = futureTrailer.get();
-      if (trailers != null && trailers.size() > 0) {
-        for (Trailer trailer : trailers) {
-          md.addTrailer(trailer);
-        }
-      }
-    }
-    catch (Exception e) {
-    }
-
-    return md;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.tinymediamanager.scraper.IHasFindByIMDBID#searchByImdbId(java.lang.
-   * String)
-   */
-  /**
-   * Search by imdb id.
-   * 
-   * @param imdbid
-   *          the imdbid
-   * @return the media search result
-   * @throws Exception
-   *           the exception
-   */
-  @Override
-  public MediaSearchResult searchByImdbId(String imdbid) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getInfo()
-   */
-  /**
-   * Gets the info.
-   * 
-   * @return the info
-   */
-  @Override
-  public ProviderInfo getInfo() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetaData(org.
-   * tinymediamanager.scraper.MediaSearchResult)
-   */
-  /**
-   * Gets the meta data.
-   * 
-   * @param result
-   *          the result
-   * @return the meta data
-   * @throws Exception
-   *           the exception
-   */
-  @Override
-  public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
-    MediaMetadata md = null;
-    if (result.getMetadata() != null) {
-      LOGGER.debug("IMDB: getMetadata(result) from cache: " + result);
-      md = result.getMetadata();
-    }
-    else {
-      LOGGER.debug("IMDB: getMetadata(result): " + result);
-      String imdbId = result.getIMDBId();
-      md = getMetadataForIMDBId(imdbId);
-    }
+    // // get artwork from TMDB
+    // try {
+    // List<MediaArtwork> mediaArt = futureArtwork.get();
+    // if (mediaArt != null && mediaArt.size() > 0) {
+    // md.clearMediaArt();
+    // md.addMediaArt(mediaArt);
+    //
+    // // also store tmdbId
+    // if (md.getTmdbId() == 0) {
+    // md.setTmdbId(mediaArt.get(0).getTmdbId());
+    // }
+    // }
+    // }
+    // catch (Exception e) {
+    // }
+    //
+    // // get trailer from tmdb
+    // try {
+    // List<MediaTrailer> trailers = futureTrailer.get();
+    // if (trailers != null && trailers.size() > 0) {
+    // for (MediaTrailer trailer : trailers) {
+    // md.addTrailer(trailer);
+    // }
+    // }
+    // }
+    // catch (Exception e) {
+    // }
 
     return md;
   }
@@ -701,7 +654,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
    *           the exception
    */
   @Override
-  public List<MediaSearchResult> search(SearchQuery query) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
     /*
      * IMDb matches seem to come in several "flavours".
      * 
@@ -723,7 +676,19 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
     List<MediaSearchResult> result = new ArrayList<MediaSearchResult>();
 
-    String searchTerm = query.get(SearchQuery.Field.QUERY);
+    String searchTerm = "";
+
+    if (StringUtils.isNotEmpty(query.get(SearchParam.IMDBID))) {
+      searchTerm = query.get(SearchParam.IMDBID);
+    }
+
+    if (StringUtils.isEmpty(searchTerm)) {
+      searchTerm = query.get(SearchParam.QUERY);
+    }
+
+    if (StringUtils.isEmpty(searchTerm)) {
+      return result;
+    }
 
     StringBuilder sb = new StringBuilder(imdbSite.getSite());
     sb.append("find?q=");
@@ -773,9 +738,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
 
       // get full information
       if (!StringUtils.isEmpty(movieId)) {
-        md = getMetadataForIMDBId(movieId);
-        if (!StringUtils.isEmpty(md.getMediaTitle())) {
-          movieName = md.getMediaTitle();
+        MediaScrapeOptions options = new MediaScrapeOptions();
+        options.setImdbId(movieId);
+        md = getMetadata(options);
+        if (!StringUtils.isEmpty(md.getTitle())) {
+          movieName = md.getTitle();
         }
       }
 
@@ -784,7 +751,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         continue;
       }
 
-      MediaSearchResult sr = new MediaSearchResult();
+      MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
       sr.setTitle(movieName);
       sr.setIMDBId(movieId);
       sr.setYear(md.getYear());
@@ -795,35 +762,68 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     }
 
     // parse results
-    elements = doc.getElementsByClass("result_text");
-    for (Element element : elements) {
-      // we only want the td's
-      if (!"td".equalsIgnoreCase(element.tagName())) {
+    // elements = doc.getElementsByClass("result_text");
+    elements = doc.getElementsByClass("findResult");
+    for (Element tr : elements) {
+      // we only want the tr's
+      if (!"tr".equalsIgnoreCase(tr.tagName())) {
         continue;
       }
 
-      // get the name inside the link
-      String movieName = null;
-      String movieId = null;
-      Elements anchors = element.getElementsByTag("a");
-      for (Element a : anchors) {
-        if (StringUtils.isEmpty(a.text())) {
+      // find the id / name
+      String movieName = "";
+      String movieId = "";
+      String year = "";
+      Elements tds = tr.getElementsByClass("result_text");
+      for (Element element : tds) {
+        // we only want the td's
+        if (!"td".equalsIgnoreCase(element.tagName())) {
           continue;
         }
 
-        // movie name
-        movieName = a.text();
-
-        // parse id
-        String href = a.attr("href");
-        Matcher matcher = imdbIdPattern.matcher(href);
-        while (matcher.find()) {
-          if (matcher.group(1) != null) {
-            movieId = matcher.group(1);
+        // get the name inside the link
+        Elements anchors = element.getElementsByTag("a");
+        for (Element a : anchors) {
+          if (StringUtils.isEmpty(a.text())) {
+            continue;
           }
-        }
 
-        break;
+          // movie name
+          movieName = a.text();
+
+          // parse id
+          String href = a.attr("href");
+          Matcher matcher = imdbIdPattern.matcher(href);
+          while (matcher.find()) {
+            if (matcher.group(1) != null) {
+              movieId = matcher.group(1);
+            }
+          }
+
+          // try to parse out the year
+          Pattern yearPattern = Pattern.compile("\\(([0-9]{4})|/\\)");
+          matcher = yearPattern.matcher(element.text());
+          while (matcher.find()) {
+            if (matcher.group(1) != null) {
+              year = matcher.group(1);
+              break;
+            }
+          }
+
+          break;
+        }
+      }
+
+      // if an id/name was found - parse the poster image
+      String posterUrl = "";
+      tds = tr.getElementsByClass("primary_photo");
+      for (Element element : tds) {
+        Elements imgs = element.getElementsByTag("img");
+        for (Element img : imgs) {
+          posterUrl = img.attr("src");
+          posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SY195_");
+          posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
+        }
       }
 
       // if no movie name/id was found - continue
@@ -831,19 +831,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
         continue;
       }
 
-      MediaSearchResult sr = new MediaSearchResult();
+      MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
       sr.setTitle(movieName);
       sr.setIMDBId(movieId);
-
-      // try to parse out the year
-      Pattern yearPattern = Pattern.compile("\\(([0-9]{4})|/\\)");
-      Matcher matcher = yearPattern.matcher(element.text());
-      while (matcher.find()) {
-        if (matcher.group(1) != null) {
-          sr.setYear(matcher.group(1));
-          break;
-        }
-      }
+      sr.setYear(year);
+      sr.setPosterUrl(posterUrl);
 
       // populate extra args
       MetadataUtil.copySearchQueryToSearchResult(query, sr);
@@ -861,24 +853,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.tinymediamanager.scraper.IMediaMetadataProvider#getSupportedSearchTypes
-   * ()
-   */
-  /**
-   * Gets the supported search types.
-   * 
-   * @return the supported search types
-   */
-  @Override
-  public MediaType[] getSupportedSearchTypes() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
   /**
    * Process media art.
    * 
@@ -891,8 +865,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
    * @param image
    *          the image
    */
-  private void processMediaArt(MediaMetadata md, MediaArtifactType type, String label, String image) {
-    MediaArt ma = new MediaArt();
+  private void processMediaArt(MediaMetadata md, MediaArtworkType type, String label, String image) {
+    MediaArtwork ma = new MediaArtwork();
     ma.setDownloadUrl(image);
     ma.setLabel(label);
     // ma.setProviderId(getInfo().getId());
@@ -982,9 +956,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
      */
     @Override
     public MediaMetadata call() throws Exception {
-      TmdbMetadataProvider tmdb = TmdbMetadataProvider.getInstance();
       try {
-        return tmdb.getMetadataForIMDBId(imdbId);
+        TmdbMetadataProvider tmdb = new TmdbMetadataProvider();
+        MediaScrapeOptions options = new MediaScrapeOptions();
+        options.setImdbId(imdbId);
+        return tmdb.getMetadata(options);
       }
       catch (Exception e) {
         return null;
@@ -992,63 +968,68 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider, IHasFindByI
     }
   }
 
-  /**
-   * The Class TmdbArtworkWorker.
-   */
-  private class TmdbArtworkWorker implements Callable<List<MediaArt>> {
-
-    /** The imdb id. */
-    private String imdbId;
-
-    /**
-     * Instantiates a new tmdb artwork worker.
-     * 
-     * @param imdbId
-     *          the imdb id
-     */
-    public TmdbArtworkWorker(String imdbId) {
-      this.imdbId = imdbId;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.concurrent.Callable#call()
-     */
-    @Override
-    public List<MediaArt> call() throws Exception {
-      TmdbMetadataProvider tmdbMd = TmdbMetadataProvider.getInstance();
-      return tmdbMd.getMediaArt(imdbId);
-    }
-  }
-
-  /**
-   * The Class TmdbTrailerWorker.
-   */
-  private class TmdbTrailerWorker implements Callable<List<Trailer>> {
-
-    /** The imdb id. */
-    private String imdbId;
-
-    /**
-     * Instantiates a new tmdb artwork worker.
-     * 
-     * @param imdbId
-     *          the imdb id
-     */
-    public TmdbTrailerWorker(String imdbId) {
-      this.imdbId = imdbId;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.concurrent.Callable#call()
-     */
-    @Override
-    public List<Trailer> call() throws Exception {
-      TmdbMetadataProvider tmdbMd = TmdbMetadataProvider.getInstance();
-      return tmdbMd.getTrailers(imdbId);
-    }
-  }
+  // /**
+  // * The Class TmdbArtworkWorker.
+  // */
+  // private class TmdbArtworkWorker implements Callable<List<MediaArtwork>> {
+  //
+  // /** The imdb id. */
+  // private String imdbId;
+  //
+  // /**
+  // * Instantiates a new tmdb artwork worker.
+  // *
+  // * @param imdbId
+  // * the imdb id
+  // */
+  // public TmdbArtworkWorker(String imdbId) {
+  // this.imdbId = imdbId;
+  // }
+  //
+  // /*
+  // * (non-Javadoc)
+  // *
+  // * @see java.util.concurrent.Callable#call()
+  // */
+  // @Override
+  // public List<MediaArtwork> call() throws Exception {
+  // TmdbMetadataProvider tmdbMd = new TmdbMetadataProvider();
+  // MediaScrapeOptions options = new MediaScrapeOptions();
+  // options.setArtworkType(MediaArtworkType.ALL);
+  // options.setImdbId(imdbId);
+  // return tmdbMd.getArtwork(options);
+  // }
+  // }
+  //
+  // /**
+  // * The Class TmdbTrailerWorker.
+  // */
+  // private class TmdbTrailerWorker implements Callable<List<MediaTrailer>> {
+  //
+  // /** The imdb id. */
+  // private String imdbId;
+  //
+  // /**
+  // * Instantiates a new tmdb artwork worker.
+  // *
+  // * @param imdbId
+  // * the imdb id
+  // */
+  // public TmdbTrailerWorker(String imdbId) {
+  // this.imdbId = imdbId;
+  // }
+  //
+  // /*
+  // * (non-Javadoc)
+  // *
+  // * @see java.util.concurrent.Callable#call()
+  // */
+  // @Override
+  // public List<MediaTrailer> call() throws Exception {
+  // TmdbMetadataProvider tmdbMd = new TmdbMetadataProvider();
+  // MediaScrapeOptions options = new MediaScrapeOptions();
+  // options.setImdbId(imdbId);
+  // return tmdbMd.getTrailers(options);
+  // }
+  // }
 }

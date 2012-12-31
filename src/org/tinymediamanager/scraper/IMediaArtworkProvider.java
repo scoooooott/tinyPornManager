@@ -15,30 +15,30 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.util.List;
+
+// TODO: Auto-generated Javadoc
 /**
- * The Interface IHasFindByIMDBID.
+ * The Interface IMediaArtworkProvider.
  */
-public interface IHasFindByIMDBID {
+public interface IMediaArtworkProvider {
 
   /**
-   * Gets the metadata for imdb id.
+   * Gets the info.
    * 
-   * @param imdbid
-   *          the imdbid
-   * @return the metadata for imdb id
+   * @return the provider info containing metadata of the provider
+   */
+  public MediaProviderInfo getProviderInfo();
+
+  /**
+   * Gets the artwork.
+   * 
+   * @param options
+   *          the options
+   * @return the artwork
    * @throws Exception
    *           the exception
    */
-  public MediaMetadata getMetadataForIMDBId(String imdbid) throws Exception;
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception;
 
-  /**
-   * Search by imdb id.
-   * 
-   * @param imdbid
-   *          the imdbid
-   * @return the media search result
-   * @throws Exception
-   *           the exception
-   */
-  public MediaSearchResult searchByImdbId(String imdbid) throws Exception;
 }

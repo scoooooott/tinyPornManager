@@ -45,7 +45,6 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieToMpNfoConnector.Actor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.Trailer;
 
 /**
  * The Class MovieTompNfoConnector.
@@ -53,7 +52,7 @@ import org.tinymediamanager.scraper.Trailer;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
 @XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "fanart", "mpaa", "id",
-    "filenameandpath", "trailer", "genres", "studio", "credits", "director", "actors" })
+    "filenameandpath", "genres", "studio", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
@@ -120,9 +119,6 @@ public class MovieToMpNfoConnector {
 
   /** the credits. */
   private String              credits;
-
-  /** The trailer. */
-  private String              trailer;
 
   /**
    * Instantiates a new movie to mp nfo connector.
@@ -191,13 +187,6 @@ public class MovieToMpNfoConnector {
 
     for (MediaGenres genre : movie.getGenres()) {
       mp.addGenre(genre.toString());
-    }
-
-    for (Trailer trailer : movie.getTrailers()) {
-      if (trailer.getInNfo()) {
-        mp.setTrailer(trailer.getUrl());
-        break;
-      }
     }
 
     // and marshall it
@@ -313,16 +302,6 @@ public class MovieToMpNfoConnector {
           if (genreFound != null) {
             movie.addGenre(genreFound);
           }
-        }
-
-        if (StringUtils.isNotEmpty(mp.getTrailer())) {
-          Trailer trailer = new Trailer();
-          trailer.setName("fromNFO");
-          trailer.setProvider("from NFO");
-          trailer.setQuality("unknown");
-          trailer.setUrl(mp.getTrailer());
-          trailer.setInNfo(true);
-          movie.addTrailer(trailer);
         }
 
         movie.setNfoFilename(nfoFilename);
@@ -721,26 +700,6 @@ public class MovieToMpNfoConnector {
    */
   public void setCredits(String credits) {
     this.credits = credits;
-  }
-
-  /**
-   * Gets the trailer.
-   * 
-   * @return the trailer
-   */
-  @XmlElement(name = "trailer")
-  public String getTrailer() {
-    return trailer;
-  }
-
-  /**
-   * Sets the trailer.
-   * 
-   * @param trailer
-   *          the new trailer
-   */
-  public void setTrailer(String trailer) {
-    this.trailer = trailer;
   }
 
   // inner class actor to represent actors

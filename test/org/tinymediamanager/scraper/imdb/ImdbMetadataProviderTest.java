@@ -10,15 +10,17 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.scraper.CastMember;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaArt;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaCastMember;
+import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.SearchQuery;
 
 public class ImdbMetadataProviderTest {
 
@@ -37,7 +39,7 @@ public class ImdbMetadataProviderTest {
     results = null;
     try {
       mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
-      results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "9"));
+      results = mp.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "9"));
     }
     catch (Exception e) {
     }
@@ -74,7 +76,7 @@ public class ImdbMetadataProviderTest {
     results = null;
     try {
       mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
-      results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "Inglorious Basterds"));
+      results = mp.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Inglorious Basterds"));
     }
     catch (Exception e) {
     }
@@ -109,7 +111,7 @@ public class ImdbMetadataProviderTest {
     results = null;
     try {
       mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
-      results = mp.search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, "#9"));
+      results = mp.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "#9"));
     }
     catch (Exception e) {
     }
@@ -138,22 +140,20 @@ public class ImdbMetadataProviderTest {
   @Test
   public void testScrape() {
     ImdbMetadataProvider mp = null;
-    MediaSearchResult sr = null;
+    MediaScrapeOptions options = null;
     MediaMetadata md = null;
 
     /*
      * scrape akas.imdb.com - 9 - tt0472033
      */
     mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
-    sr = new MediaSearchResult();
-    sr.setIMDBId("tt0472033");
-    sr.setTitle("9");
-    sr.setYear("2009");
+    options = new MediaScrapeOptions();
+    options.setImdbId("tt0472033");
 
     md = null;
     try {
       Globals.settings.setCertificationCountry(CountryCode.US);
-      md = mp.getMetaData(sr);
+      md = mp.getMetadata(options);
     }
     catch (Exception e) {
     }
@@ -185,19 +185,19 @@ public class ImdbMetadataProviderTest {
         md);
 
     // check cast
-    List<CastMember> castMembers = new ArrayList<CastMember>();
-    CastMember cm = new CastMember();
+    List<MediaCastMember> castMembers = new ArrayList<MediaCastMember>();
+    MediaCastMember cm = new MediaCastMember();
     cm.setName("Christopher Plummer");
     cm.setCharacter("#1 (voice)");
     cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTU5MzQ5MDY3NF5BMl5BanBnXkFtZTcwNzMxOTU5Ng@@._V1._SY125_SX100_.jpg");
-    cm.setType(CastMember.ACTOR);
+    cm.setType(CastType.ACTOR);
     castMembers.add(cm);
 
-    cm = new CastMember();
+    cm = new MediaCastMember();
     cm.setName("Martin Landau");
     cm.setCharacter("#2 (voice)");
     cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTI0MzkxNzg0OF5BMl5BanBnXkFtZTcwNDUzOTc5MQ@@._V1._SY125_SX100_.jpg");
-    cm.setType(CastMember.ACTOR);
+    cm.setType(CastType.ACTOR);
     castMembers.add(cm);
 
     checkCastMembers(castMembers, 10, md);
@@ -209,15 +209,13 @@ public class ImdbMetadataProviderTest {
      * scrape akas.imdb.com - 12 Monkeys - tt0114746
      */
     mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
-    sr = new MediaSearchResult();
-    sr.setIMDBId("tt0114746");
-    sr.setTitle("Twelve Monkeys");
-    sr.setYear("1995");
+    options = new MediaScrapeOptions();
+    options.setImdbId("tt0114746");
 
     md = null;
     try {
       Globals.settings.setCertificationCountry(CountryCode.DE);
-      md = mp.getMetaData(sr);
+      md = mp.getMetadata(options);
     }
     catch (Exception e) {
     }
@@ -246,19 +244,19 @@ public class ImdbMetadataProviderTest {
         md);
 
     // check cast
-    castMembers = new ArrayList<CastMember>();
-    cm = new CastMember();
+    castMembers = new ArrayList<MediaCastMember>();
+    cm = new MediaCastMember();
     cm.setName("Joseph Melito");
     cm.setCharacter("Young Cole");
     cm.setImageUrl("");
-    cm.setType(CastMember.ACTOR);
+    cm.setType(CastType.ACTOR);
     castMembers.add(cm);
 
-    cm = new CastMember();
+    cm = new MediaCastMember();
     cm.setName("Bruce Willis");
     cm.setCharacter("James Cole");
     cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMjA0MjMzMTE5OF5BMl5BanBnXkFtZTcwMzQ2ODE3Mw@@._V1._SY125_SX100_.jpg");
-    cm.setType(CastMember.ACTOR);
+    cm.setType(CastType.ACTOR);
     castMembers.add(cm);
 
     checkCastMembers(castMembers, 82, md);
@@ -270,15 +268,13 @@ public class ImdbMetadataProviderTest {
      * scrape akas.imdb.com - Brave - tt1217209
      */
     mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
-    sr = new MediaSearchResult();
-    sr.setIMDBId("tt1217209");
-    sr.setTitle("Brave");
-    sr.setYear("2012");
+    options = new MediaScrapeOptions();
+    options.setImdbId("tt1217209");
 
     md = null;
     try {
       Globals.settings.setCertificationCountry(CountryCode.GB);
-      md = mp.getMetaData(sr);
+      md = mp.getMetadata(options);
     }
     catch (Exception e) {
     }
@@ -310,19 +306,19 @@ public class ImdbMetadataProviderTest {
         md);
 
     // check cast
-    castMembers = new ArrayList<CastMember>();
-    cm = new CastMember();
+    castMembers = new ArrayList<MediaCastMember>();
+    cm = new MediaCastMember();
     cm.setName("Kelly Macdonald");
     cm.setCharacter("Merida (voice)");
     cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMjE0ODMzMjMyOV5BMl5BanBnXkFtZTcwMTYzNTA0NA@@._V1._SY125_SX100_.jpg");
-    cm.setType(CastMember.ACTOR);
+    cm.setType(CastType.ACTOR);
     castMembers.add(cm);
 
-    cm = new CastMember();
+    cm = new MediaCastMember();
     cm.setName("Billy Connolly");
     cm.setCharacter("Fergus (voice)");
     cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTQzMzM2MTA4Ml5BMl5BanBnXkFtZTYwMzIxNTM1._V1._SY125_SX100_.jpg");
-    cm.setType(CastMember.ACTOR);
+    cm.setType(CastType.ACTOR);
     castMembers.add(cm);
 
     checkCastMembers(castMembers, 15, md);
@@ -334,15 +330,13 @@ public class ImdbMetadataProviderTest {
      * scrape www.imdb.de - 9 - tt0472033
      */
     mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
-    sr = new MediaSearchResult();
-    sr.setIMDBId("tt0472033");
-    sr.setTitle("9");
-    sr.setYear("2009");
+    options = new MediaScrapeOptions();
+    options.setImdbId("tt0472033");
 
     md = null;
     try {
       Globals.settings.setCertificationCountry(CountryCode.US);
-      md = mp.getMetaData(sr);
+      md = mp.getMetadata(options);
     }
     catch (Exception e) {
     }
@@ -374,19 +368,19 @@ public class ImdbMetadataProviderTest {
         md);
 
     // check cast
-    castMembers = new ArrayList<CastMember>();
-    cm = new CastMember();
+    castMembers = new ArrayList<MediaCastMember>();
+    cm = new MediaCastMember();
     cm.setName("Christopher Plummer");
     cm.setCharacter("#1 (voice)");
     cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTU5MzQ5MDY3NF5BMl5BanBnXkFtZTcwNzMxOTU5Ng@@._V1._SY125_SX100_.jpg");
-    cm.setType(CastMember.ACTOR);
+    cm.setType(CastType.ACTOR);
     castMembers.add(cm);
 
-    cm = new CastMember();
+    cm = new MediaCastMember();
     cm.setName("Martin Landau");
     cm.setCharacter("#2 (voice)");
     cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTI0MzkxNzg0OF5BMl5BanBnXkFtZTcwNDUzOTc5MQ@@._V1._SY125_SX100_.jpg");
-    cm.setType(CastMember.ACTOR);
+    cm.setType(CastType.ACTOR);
     castMembers.add(cm);
 
     checkCastMembers(castMembers, 10, md);
@@ -399,13 +393,13 @@ public class ImdbMetadataProviderTest {
   private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, int runtime,
       String director, String writer, String certification, MediaMetadata md) {
     // title
-    assertEquals("title ", title, md.getMediaTitle());
+    assertEquals("title ", title, md.getTitle());
     // year
     assertEquals("year", year, md.getYear());
     // original title
     assertEquals("originalTitle", originalTitle, md.getOriginalTitle());
     // rating
-    assertEquals("rating", rating, md.getUserRating(), 0.01);
+    assertEquals("rating", rating, md.getRating(), 0.01);
     // count (only check if parsed cout count is smaller than the given
     // votecount)
     if (voteCount > md.getVoteCount()) {
@@ -417,7 +411,7 @@ public class ImdbMetadataProviderTest {
     assertEquals("runtime", runtime, md.getRuntime());
     // director
     StringBuilder sb = new StringBuilder();
-    for (CastMember cm : md.getCastMembers(CastMember.DIRECTOR)) {
+    for (MediaCastMember cm : md.getCastMembers(CastType.DIRECTOR)) {
       if (StringUtils.isNotEmpty(sb)) {
         sb.append(", ");
       }
@@ -426,7 +420,7 @@ public class ImdbMetadataProviderTest {
     assertEquals("director", director, sb.toString());
     // writer
     sb = new StringBuilder();
-    for (CastMember cm : md.getCastMembers(CastMember.WRITER)) {
+    for (MediaCastMember cm : md.getCastMembers(CastType.WRITER)) {
       if (StringUtils.isNotEmpty(sb)) {
         sb.append(", ");
       }
@@ -440,9 +434,9 @@ public class ImdbMetadataProviderTest {
 
   private void checkMoviePoster(String url, MediaMetadata md) {
     // check poster
-    List<MediaArt> mediaArt = md.getFanart();
+    List<MediaArtwork> mediaArt = md.getFanart();
     assertEquals("fanart count", 1, mediaArt.size());
-    MediaArt art = mediaArt.get(0);
+    MediaArtwork art = mediaArt.get(0);
     assertEquals("poster", url, art.getDownloadUrl());
   }
 
@@ -464,15 +458,15 @@ public class ImdbMetadataProviderTest {
     assertEquals("plot", plot, md.getPlot());
   }
 
-  private void checkCastMembers(List<CastMember> castMembers, int count, MediaMetadata md) {
+  private void checkCastMembers(List<MediaCastMember> castMembers, int count, MediaMetadata md) {
     // not null
-    assertNotNull(md.getCastMembers(CastMember.ACTOR));
+    assertNotNull(md.getCastMembers(CastType.ACTOR));
     // count of castmembers
-    assertEquals("castMember count", count, md.getCastMembers(CastMember.ACTOR).size());
+    assertEquals("castMember count", count, md.getCastMembers(CastType.ACTOR).size());
     // check all defined members
     for (int i = 0; i < castMembers.size(); i++) {
-      CastMember expected = castMembers.get(i);
-      CastMember actual = md.getCastMembers(CastMember.ACTOR).get(i);
+      MediaCastMember expected = castMembers.get(i);
+      MediaCastMember actual = md.getCastMembers(CastType.ACTOR).get(i);
 
       // name
       assertEquals("name", expected.getName(), actual.getName());
@@ -486,7 +480,7 @@ public class ImdbMetadataProviderTest {
   }
 
   private void checkProductionCompany(String company, MediaMetadata md) {
-    assertEquals("production company", company, md.getCompany());
+    assertEquals("production company", company, md.getProductionCompany());
   }
 
 }

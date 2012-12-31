@@ -164,8 +164,14 @@ public class MovieDetailsPanel extends JPanel {
     lblProduction = new JLabel();
     add(lblProduction, "4, 10, 7, 1");
 
+    lblTagsT = new JLabel("Tags");
+    add(lblTagsT, "2, 12");
+
+    lblTags = new JLabel("");
+    add(lblTags, "4, 12, 7, 1");
+
     lblImdbIdT = new JLabel("IMDB Id");
-    add(lblImdbIdT, "2, 12");
+    add(lblImdbIdT, "2, 14");
 
     lblImdbId = new LinkLabel("");
     lblImdbId.addActionListener(new ActionListener() {
@@ -178,12 +184,12 @@ public class MovieDetailsPanel extends JPanel {
         }
       }
     });
+
+    add(lblImdbId, "4, 14, 3, 1, left, default");
     lblImdbIdT.setLabelFor(lblImdbId);
 
-    add(lblImdbId, "4, 12, 3, 1, left, default");
-
     lblTmdbIdT = new JLabel("TMDB Id");
-    add(lblTmdbIdT, "8, 12");
+    add(lblTmdbIdT, "8, 14");
 
     lblTmdbId = new LinkLabel("");
     lblTmdbId.addActionListener(new ActionListener() {
@@ -196,14 +202,8 @@ public class MovieDetailsPanel extends JPanel {
         }
       }
     });
+    add(lblTmdbId, "10, 14, left, default");
     lblTmdbIdT.setLabelFor(lblTmdbId);
-    add(lblTmdbId, "10, 12, left, default");
-
-    lblTagsT = new JLabel("Tags");
-    add(lblTagsT, "2, 14");
-
-    lblTags = new JLabel("");
-    add(lblTags, "4, 14, 7, 1");
 
     initDataBindings();
   }

@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -62,7 +63,7 @@ import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.Trailer;
+import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.AutocompleteComboBox;
 import org.tinymediamanager.ui.ImageChooser;
 import org.tinymediamanager.ui.ImageChooser.ImageType;
@@ -129,7 +130,7 @@ public class MovieEditor extends JDialog {
   private List<MediaGenres> genres            = ObservableCollections.observableList(new ArrayList<MediaGenres>());
 
   /** The trailers. */
-  private List<Trailer>     trailers          = ObservableCollections.observableList(new ArrayList<Trailer>());
+  private List<MediaTrailer>     trailers          = ObservableCollections.observableList(new ArrayList<MediaTrailer>());
 
   /** The tags. */
   private List<String>      tags              = ObservableCollections.observableList(new ArrayList<String>());
@@ -231,14 +232,23 @@ public class MovieEditor extends JDialog {
     movieToEdit = movie;
     setBounds(5, 5, 950, 700);
     getContentPane().setLayout(new BorderLayout());
-
     {
+      JPanel panelPath = new JPanel();
+      getContentPane().add(panelPath, BorderLayout.NORTH);
+      panelPath.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+          FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+          RowSpec.decode("15px"), }));
+
+      JLabel lblMoviePathT = new JLabel("Path");
+      panelPath.add(lblMoviePathT, "2, 2, left, top");
+
       lblMoviePath = new JLabel("");
-      getContentPane().add(lblMoviePath, BorderLayout.NORTH);
+      lblMoviePath.setFont(new Font("Dialog", Font.BOLD, 14));
+      panelPath.add(lblMoviePath, "5, 2, left, top");
     }
 
     JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.NORTH);
-    tabbedPane.addTab("Details 1", details1Panel);
+    tabbedPane.addTab("Details", details1Panel);
     getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
     details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -621,7 +631,7 @@ public class MovieEditor extends JDialog {
         genres.add(genre);
       }
 
-      for (Trailer trailer : movie.getTrailers()) {
+      for (MediaTrailer trailer : movie.getTrailers()) {
         trailers.add(trailer);
       }
 
@@ -645,10 +655,10 @@ public class MovieEditor extends JDialog {
         // click on the checkbox
         if (arg0.getColumn() == 0) {
           int row = arg0.getFirstRow();
-          Trailer changedTrailer = trailers.get(row);
+          MediaTrailer changedTrailer = trailers.get(row);
           // if flag inNFO was changed, change all other trailers flags
           if (changedTrailer.getInNfo()) {
-            for (Trailer trailer : trailers) {
+            for (MediaTrailer trailer : trailers) {
               if (trailer != changedTrailer) {
                 trailer.setInNfo(Boolean.FALSE);
               }
@@ -727,7 +737,7 @@ public class MovieEditor extends JDialog {
       }
 
       movieToEdit.removeAllTrailers();
-      for (Trailer trailer : trailers) {
+      for (MediaTrailer trailer : trailers) {
         movieToEdit.addTrailer(trailer);
       }
 
@@ -909,7 +919,7 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      Trailer trailer = new Trailer();
+      MediaTrailer trailer = new MediaTrailer();
       trailer.setName("unknown");
       trailer.setProvider("unknown");
       trailer.setQuality("unknown");
@@ -958,21 +968,21 @@ public class MovieEditor extends JDialog {
     JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
-    JTableBinding<Trailer, List<Trailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers, tableTrailer);
+    JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers, tableTrailer);
     //
-    BeanProperty<Trailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
+    BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
     jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnName("NFO").setColumnClass(Boolean.class);
     //
-    BeanProperty<Trailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_1).setColumnName("Name");
     //
-    BeanProperty<Trailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_2).setColumnName("Source");
     //
-    BeanProperty<Trailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_3).setColumnName("Quality");
     //
-    BeanProperty<Trailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
+    BeanProperty<MediaTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_4).setColumnName("Url");
     //
     jTableBinding_1.bind();

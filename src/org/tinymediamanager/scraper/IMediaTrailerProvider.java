@@ -15,15 +15,29 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.util.List;
+
 /**
- * The Interface IHasIMDBID.
+ * The Interface IMediaTrailerProvider.
  */
-public interface IHasIMDBID {
+public interface IMediaTrailerProvider {
 
   /**
-   * Gets the iMDB id.
+   * Gets the info.
    * 
-   * @return the iMDB id
+   * @return the provider info containing metadata of the provider
    */
-  public String getIMDBId();
+  public MediaProviderInfo getProviderInfo();
+
+  /**
+   * Gets the trailers.
+   * 
+   * @param options
+   *          the options
+   * @return the trailers
+   * @throws Exception
+   *           the exception
+   */
+  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception;
+
 }

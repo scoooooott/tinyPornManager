@@ -36,12 +36,15 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.scraper.IHasFindByIMDBID;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
-import org.tinymediamanager.scraper.SearchQuery;
+import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
@@ -71,8 +74,11 @@ public class MovieList extends AbstractModelObject {
   /** The movie list. */
   private ObservableElementList<Movie> movieList;
 
-  /** The metadata provider. */
-  private IMediaMetadataProvider       metadataProvider;
+  // /** The metadata provider. */
+  // private IMediaMetadataProvider metadataProvider;
+  //
+  // /** The artwork provider. */
+  // private IMediaArtworkProvider artworkProvider;
 
   /** The tag listener. */
   private PropertyChangeListener       tagListener;
@@ -391,7 +397,7 @@ public class MovieList extends AbstractModelObject {
 
     List<MediaSearchResult> searchResult = null;
     try {
-      searchResult = getMetadataProvider().search(new SearchQuery(MediaType.MOVIE, SearchQuery.Field.QUERY, searchTerm));
+      searchResult = getMetadataProvider().search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, searchTerm));
     }
     catch (Exception e) {
       LOGGER.error("searchMovie", e);
@@ -410,18 +416,16 @@ public class MovieList extends AbstractModelObject {
   private List<MediaSearchResult> searchMovieByImdbId(String imdbId) {
 
     List<MediaSearchResult> searchResult = null;
+    MediaSearchOptions options = new MediaSearchOptions();
+    options.setMediaType(MediaType.MOVIE);
+    options.set(SearchParam.IMDBID, imdbId);
+
     try {
-      if (getMetadataProvider() instanceof IHasFindByIMDBID) {
-        IHasFindByIMDBID provider = (IHasFindByIMDBID) getMetadataProvider();
-        MediaSearchResult result = provider.searchByImdbId(imdbId);
-        if (result != null) {
-          searchResult = new ArrayList<MediaSearchResult>(1);
-          searchResult.add(result);
-        }
-      }
+      searchResult = getMetadataProvider().search(options);
     }
     catch (Exception e) {
-      LOGGER.error("searchMovie", e);
+      LOGGER.warn("failed to search movie with imdbid", e);
+      searchResult = new ArrayList<MediaSearchResult>();
     }
 
     return searchResult;
@@ -435,43 +439,97 @@ public class MovieList extends AbstractModelObject {
   public IMediaMetadataProvider getMetadataProvider() {
     // check if instance is corresponding to the selected scraper
     MovieScrapers scraper = Globals.settings.getMovieScraper();
-    if (metadataProvider != null) {
-      if (metadataProvider instanceof ImdbMetadataProvider && scraper != MovieScrapers.IMDB) {
-        metadataProvider = null;
-      }
-      if (metadataProvider instanceof TmdbMetadataProvider && scraper != MovieScrapers.TMDB) {
-        metadataProvider = null;
-      }
-    }
+    // if (metadataProvider != null) {
+    // if (metadataProvider instanceof ImdbMetadataProvider && scraper !=
+    // MovieScrapers.IMDB) {
+    // metadataProvider = null;
+    // }
+    // if (metadataProvider instanceof TmdbMetadataProvider && scraper !=
+    // MovieScrapers.TMDB) {
+    // metadataProvider = null;
+    // }
+    // }
     // create new scraper instance
-    if (metadataProvider == null) {
-      switch (scraper) {
-        case IMDB:
-          LOGGER.debug("get instance of ImdbMetadataProvider");
-          metadataProvider = new ImdbMetadataProvider(Globals.settings.getImdbSite());
-          break;
+    // if (metadataProvider == null) {
 
-        case TMDB:
-        default:
-          LOGGER.debug("get instance of TmdbMetadataProvider");
-          metadataProvider = TmdbMetadataProvider.getInstance();
-          LOGGER.debug("get instance of XbmcMetadataProvider");
-      }
-      //
-      // try {
-      // metadataProvider = new XbmcMetadataProvider(new
-      // XbmcScraperParser().parseScraper(new
-      // File("xbmc_scraper/metadata.imdb.com/imdb.xml")));
-      // metadataProvider = new XbmcMetadataProvider(new
-      // XbmcScraperParser().parseScraper(new
-      // File("xbmc_scraper/metadata.imdb.de/imdb_de.xml")));
-      // } catch (Exception e) {
-      // LOGGER.error("tried to get xmbc scraper", e);
-      // }
+    IMediaMetadataProvider metadataProvider = null;
+    switch (scraper) {
+      case IMDB:
+        LOGGER.debug("get instance of ImdbMetadataProvider");
+        metadataProvider = new ImdbMetadataProvider(Globals.settings.getImdbSite());
+        break;
 
+      case TMDB:
+      default:
+        LOGGER.debug("get instance of TmdbMetadataProvider");
+        try {
+          metadataProvider = new TmdbMetadataProvider();
+        }
+        catch (Exception e) {
+          LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
+        }
     }
+    //
+    // try {
+    // metadataProvider = new XbmcMetadataProvider(new
+    // XbmcScraperParser().parseScraper(new
+    // File("xbmc_scraper/metadata.imdb.com/imdb.xml")));
+    // metadataProvider = new XbmcMetadataProvider(new
+    // XbmcScraperParser().parseScraper(new
+    // File("xbmc_scraper/metadata.imdb.de/imdb_de.xml")));
+    // } catch (Exception e) {
+    // LOGGER.error("tried to get xmbc scraper", e);
+    // }
+
+    // }
 
     return metadataProvider;
+  }
+
+  /**
+   * Gets the artwork provider.
+   * 
+   * @return the artwork provider
+   */
+  public List<IMediaArtworkProvider> getArtworkProviders() {
+    List<IMediaArtworkProvider> artworkProviders = new ArrayList<IMediaArtworkProvider>();
+    // if (artworkProvider == null) {
+    LOGGER.debug("get instance of TmdbMetadataProvider");
+    try {
+      IMediaArtworkProvider artworkProvider = new TmdbMetadataProvider();
+      artworkProviders.add(artworkProvider);
+    }
+    catch (Exception e) {
+      LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
+    }
+    // }
+
+    return artworkProviders;
+  }
+
+  /**
+   * Gets the trailer providers.
+   * 
+   * @return the trailer providers
+   */
+  public List<IMediaTrailerProvider> getTrailerProviders() {
+    List<IMediaTrailerProvider> trailerProviders = new ArrayList<IMediaTrailerProvider>();
+    LOGGER.debug("get instances of IMediaTrailerProviders");
+
+    // tmdb
+    try {
+      IMediaTrailerProvider trailerProvider = new TmdbMetadataProvider();
+      trailerProviders.add(trailerProvider);
+    }
+    catch (Exception e) {
+      LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
+    }
+
+    // hd-trailers.net
+    IMediaTrailerProvider trailerProvider = new HDTrailersNet();
+    trailerProviders.add(trailerProvider);
+
+    return trailerProviders;
   }
 
   /**

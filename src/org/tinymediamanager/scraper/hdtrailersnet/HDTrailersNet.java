@@ -1,4 +1,4 @@
-package org.tinymediamanager.scraper.util;
+package org.tinymediamanager.scraper.hdtrailersnet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,17 +11,37 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.scraper.Trailer;
+import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 
-public class HDTrailersNet {
+public class HDTrailersNet implements IMediaTrailerProvider {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(HDTrailersNet.class);
+  private static final Logger      LOGGER       = Logger.getLogger(HDTrailersNet.class);
 
-  public static List<Trailer> getTrailers(Movie movie) {
-    List<Trailer> trailers = new ArrayList<Trailer>();
-    String ot = movie.getOriginalName();
+  /** The provider info. */
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo("hdtrailersnet", "hd-trailers.net",
+                                                    "Scraper for hd-trailers.net which is able to scrape trailers");
+
+  public HDTrailersNet() {
+  }
+
+  @Override
+  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+    List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+    MediaMetadata md = options.getMetadata();
+
+    if (md == null || StringUtils.isEmpty(md.getOriginalTitle())) {
+      LOGGER.warn("no originalTitle served");
+      return trailers;
+    }
+
+    String ot = md.getOriginalTitle();
 
     // check if the original title is not empty
     if (StringUtils.isEmpty(ot)) {
@@ -83,7 +103,7 @@ public class HDTrailersNet {
           String tr0qual = t.select("td.bottomTableResolution > a").get(0).text();
           String tr0url = t.select("td.bottomTableResolution > a").get(0).attr("href");
           LOGGER.debug(tr0qual + " | " + title + " (" + date + ") | " + tr0url);
-          Trailer trailer = new Trailer();
+          MediaTrailer trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
           trailer.setUrl(tr0url);
           trailer.setQuality(tr0qual);
@@ -93,7 +113,7 @@ public class HDTrailersNet {
           String tr1qual = t.select("td.bottomTableResolution > a").get(1).text();
           String tr1url = t.select("td.bottomTableResolution > a").get(1).attr("href");
           LOGGER.debug(tr1qual + " | " + title + " (" + date + ") | " + tr1url);
-          trailer = new Trailer();
+          trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
           trailer.setUrl(tr1url);
           trailer.setQuality(tr1qual);
@@ -103,7 +123,7 @@ public class HDTrailersNet {
           String tr2qual = t.select("td.bottomTableResolution > a").get(2).text();
           String tr2url = t.select("td.bottomTableResolution > a").get(2).attr("href");
           LOGGER.debug(tr2qual + " | " + title + " (" + date + ") | " + tr2url);
-          trailer = new Trailer();
+          trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
           trailer.setUrl(tr2url);
           trailer.setQuality(tr2qual);
@@ -161,4 +181,13 @@ public class HDTrailersNet {
     return source;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaTrailerProvider#getProviderInfo()
+   */
+  @Override
+  public MediaProviderInfo getProviderInfo() {
+    return providerInfo;
+  }
 }

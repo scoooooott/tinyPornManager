@@ -24,11 +24,28 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 /**
  * The Class MediaArt.
  */
-public class MediaArt {
+public class MediaArtwork {
+
+  /**
+   * The Enum MediaArtworkType.
+   */
+  public enum MediaArtworkType {
+    /** The background. */
+    BACKGROUND,
+    /** The banner. */
+    BANNER,
+    /** The poster. */
+    POSTER,
+    /** The actor. */
+    ACTOR,
+    /** All. */
+    ALL;
+  }
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(MediaArt.class);
+  private static final Logger LOGGER = Logger.getLogger(MediaArtwork.class);
 
+  /** The tmdb id. */
   private int                 tmdbId;
 
   /** The download url. */
@@ -38,7 +55,7 @@ public class MediaArt {
   private String              providerId;
 
   /** The type. */
-  private MediaArtifactType   type;
+  private MediaArtworkType    type;
 
   /** The label. */
   private String              label;
@@ -49,7 +66,7 @@ public class MediaArt {
   /**
    * Instantiates a new media art.
    */
-  public MediaArt() {
+  public MediaArtwork() {
   }
 
   /**
@@ -95,7 +112,7 @@ public class MediaArt {
    * 
    * @return the type
    */
-  public MediaArtifactType getType() {
+  public MediaArtworkType getType() {
     return type;
   }
 
@@ -105,7 +122,7 @@ public class MediaArt {
    * @param type
    *          the new type
    */
-  public void setType(MediaArtifactType type) {
+  public void setType(MediaArtworkType type) {
     this.type = type;
   }
 
@@ -157,7 +174,8 @@ public class MediaArt {
     try {
       url = new CachedUrl(getDownloadUrl());
       return url.getInputStream();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOGGER.error("getImageIS", e);
     }
     return null;

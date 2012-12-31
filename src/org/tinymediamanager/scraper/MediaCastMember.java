@@ -18,55 +18,43 @@ package org.tinymediamanager.scraper;
 import java.util.LinkedList;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CastMember.
  */
-public class CastMember {
+public class MediaCastMember {
+
+  public enum CastType {
+    ACTOR, WRITER, DIRECTOR, OTHER, ALL
+  }
 
   /** The id. */
-  private String          id;
+  private String       id;
 
   /** The name. */
-  private String          name;
+  private String       name;
 
   /** The part. */
-  private String          part;
+  private String       part;
 
   /** The character. */
-  private String          character;
+  private String       character;
 
   /** The provider data url. */
-  private String          providerDataUrl;
+  private String       providerDataUrl;
 
   /** The image url. */
-  private String          imageUrl;
+  private String       imageUrl;
 
   /** The type. */
-  private int             type;
+  private CastType     type;
 
   /** The fanart. */
-  private List<String>    fanart   = new LinkedList<String>();
-
-  /** The Constant ACTOR. */
-  public static final int ACTOR    = 0;
-
-  /** The Constant WRITER. */
-  public static final int WRITER   = 1;
-
-  /** The Constant DIRECTOR. */
-  public static final int DIRECTOR = 2;
-
-  /** The Constant OTHER. */
-  public static final int OTHER    = 99;
-
-  /** The Constant ALL. */
-  public static final int ALL      = 999;
+  private List<String> fanart = new LinkedList<String>();
 
   /**
    * Instantiates a new cast member.
    */
-  public CastMember() {
+  public MediaCastMember() {
   }
 
   /**
@@ -75,7 +63,7 @@ public class CastMember {
    * @param type
    *          the type
    */
-  public CastMember(int type) {
+  public MediaCastMember(CastType type) {
     setType(type);
   }
 
@@ -160,7 +148,7 @@ public class CastMember {
    * 
    * @return the type
    */
-  public int getType() {
+  public CastType getType() {
     return type;
   }
 
@@ -170,7 +158,7 @@ public class CastMember {
    * @param type
    *          the new type
    */
-  public void setType(int type) {
+  public void setType(CastType type) {
     this.type = type;
   }
 

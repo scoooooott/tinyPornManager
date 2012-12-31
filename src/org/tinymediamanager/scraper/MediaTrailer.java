@@ -19,11 +19,12 @@ import javax.persistence.Entity;
 
 import org.tinymediamanager.core.AbstractModelObject;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Trailer.
  */
 @Entity
-public class Trailer extends AbstractModelObject {
+public class MediaTrailer extends AbstractModelObject {
 
   /** The name. */
   private String  name     = "";
@@ -38,12 +39,18 @@ public class Trailer extends AbstractModelObject {
   private String  provider = "";
 
   /** The inNfo. */
-  private Boolean inNfo    = false;
+  private Boolean inNfo    = Boolean.FALSE;
+
+  /** The size (as string). */
+  private String  size     = "";
+
+  /** The date (as string). */
+  private String  date     = "";
 
   /**
    * Instantiates a new trailer.
    */
-  public Trailer() {
+  public MediaTrailer() {
   }
 
   /**
@@ -58,7 +65,7 @@ public class Trailer extends AbstractModelObject {
   /**
    * Sets the name.
    * 
-   * @param name
+   * @param newValue
    *          the new name
    */
   public void setName(String newValue) {
@@ -79,7 +86,7 @@ public class Trailer extends AbstractModelObject {
   /**
    * Sets the url.
    * 
-   * @param url
+   * @param newValue
    *          the new url
    */
   public void setUrl(String newValue) {
@@ -100,7 +107,7 @@ public class Trailer extends AbstractModelObject {
   /**
    * Sets the quality.
    * 
-   * @param quality
+   * @param newValue
    *          the new quality
    */
   public void setQuality(String newValue) {
@@ -121,7 +128,7 @@ public class Trailer extends AbstractModelObject {
   /**
    * Sets the provider.
    * 
-   * @param provider
+   * @param newValue
    *          the new provider
    */
   public void setProvider(String newValue) {
@@ -130,14 +137,67 @@ public class Trailer extends AbstractModelObject {
     firePropertyChange("provider", oldValue, newValue);
   }
 
+  /**
+   * Gets the in nfo.
+   * 
+   * @return the in nfo
+   */
   public Boolean getInNfo() {
     return inNfo;
   }
 
+  /**
+   * Sets the in nfo.
+   * 
+   * @param newValue
+   *          the new in nfo
+   */
   public void setInNfo(Boolean newValue) {
     Boolean oldValue = this.inNfo;
     this.inNfo = newValue;
     firePropertyChange("inNfo", oldValue, newValue);
+  }
+
+  /**
+   * Gets the size.
+   * 
+   * @return the size
+   */
+  public String getSize() {
+    return size;
+  }
+
+  /**
+   * Gets the date.
+   * 
+   * @return the date
+   */
+  public String getDate() {
+    return date;
+  }
+
+  /**
+   * Sets the size.
+   * 
+   * @param newValue
+   *          the new size
+   */
+  public void setSize(String newValue) {
+    String oldValue = this.size;
+    this.size = newValue;
+    firePropertyChange("size", oldValue, newValue);
+  }
+
+  /**
+   * Sets the date.
+   * 
+   * @param newValue
+   *          the new date
+   */
+  public void setDate(String newValue) {
+    String oldValue = this.date;
+    this.date = newValue;
+    firePropertyChange("date", oldValue, newValue);
   }
 
 }

@@ -194,6 +194,12 @@ public class TinyMediaManager {
         props.setProperty("menuTextFont", "Dialog 12");
         props.setProperty("windowTitleFont", "Dialog bold 12");
         props.setProperty("subTextFont", "Dialog 10");
+        props.setProperty("backgroundColor", "237 237 237");
+        props.setProperty("menuBackgroundColor", "237 237 237");
+        props.setProperty("menuColorLight", "237 237 237");
+        props.setProperty("menuColorDark", "237 237 237");
+        props.setProperty("toolbarColorLight", "237 237 237");
+        props.setProperty("toolbarColorDark", "237 237 237");
         props.put("windowDecoration", "system");
         props.put("logoString", "");
 

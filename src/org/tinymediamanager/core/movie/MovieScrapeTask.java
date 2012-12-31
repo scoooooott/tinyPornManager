@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,27 +26,53 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
 import org.apache.log4j.Logger;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaTrailer;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author manuel
+ * The Class MovieScrapeTask.
  * 
+ * @author manuel
  */
 public class MovieScrapeTask extends SwingWorker<Object, Object> {
 
+  /** The Constant LOGGER. */
   private final static Logger LOGGER = Logger.getLogger(MovieScrapeTask.class);
 
   /** The movies to scrape. */
   private List<Movie>         moviesToScrape;
 
+  /** The movie count. */
   private int                 movieCount;
 
+  /** The lbl description. */
   private JLabel              lblDescription;
 
+  /** The progress bar. */
   private JProgressBar        progressBar;
 
+  /** The btn cancel. */
   private JButton             btnCancel;
 
+  /**
+   * Instantiates a new movie scrape task.
+   * 
+   * @param moviesToScrape
+   *          the movies to scrape
+   * @param label
+   *          the label
+   * @param progressBar
+   *          the progress bar
+   * @param button
+   *          the button
+   */
   public MovieScrapeTask(List<Movie> moviesToScrape, JLabel label, JProgressBar progressBar, JButton button) {
     this.moviesToScrape = moviesToScrape;
     this.movieCount = moviesToScrape.size();
@@ -83,6 +110,11 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
     return null;
   }
 
+  /**
+   * Gets the next movie.
+   * 
+   * @return the next movie
+   */
   private synchronized Movie getNextMovie() {
     // get next movie to scrape
     if (moviesToScrape.size() > 0) {
@@ -95,6 +127,9 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
     return null;
   }
 
+  /**
+   * Cancel.
+   */
   public void cancel() {
     cancel(false);
     moviesToScrape.clear();
@@ -137,10 +172,22 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
     btnCancel.setVisible(false);
   }
 
+  /**
+   * The Class Worker.
+   */
   private class Worker implements Runnable {
 
+    private MovieList       movieList;
+
+    /** The scrape task. */
     private MovieScrapeTask scrapeTask;
 
+    /**
+     * Instantiates a new worker.
+     * 
+     * @param scrapeTask
+     *          the scrape task
+     */
     public Worker(MovieScrapeTask scrapeTask) {
       this.scrapeTask = scrapeTask;
     }
@@ -152,14 +199,14 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
      */
     @Override
     public void run() {
-      MovieList movieList = MovieList.getInstance();
+      movieList = MovieList.getInstance();
       while (true) {
         Movie movie = scrapeTask.getNextMovie();
         if (movie == null) {
           break;
         }
 
-        // scrape moie
+        // scrape movie
         List<MediaSearchResult> results = movieList.searchMovie(movie.getName(), movie.getImdbId());
         if (results != null && !results.isEmpty()) {
           MediaSearchResult result1 = results.get(0);
@@ -171,13 +218,82 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
               continue;
             }
           }
+          // get metadata, artwork and trailers
           try {
-            movie.setMetadata(movieList.getMetadataProvider().getMetaData(result1));
-          } catch (Exception e) {
+            MediaScrapeOptions options = new MediaScrapeOptions();
+            options.setResult(result1);
+            MediaMetadata md = movieList.getMetadataProvider().getMetadata(options);
+            movie.setMetadata(md);
+            movie.setArtwork(getArtwork(md));
+            movie.setTrailers(getTrailers(md));
+          }
+          catch (Exception e) {
             LOGGER.error("movie.setMetadata", e);
           }
         }
       }
+    }
+
+    /**
+     * Gets the artwork.
+     * 
+     * @return the artwork
+     */
+    public List<MediaArtwork> getArtwork(MediaMetadata metadata) {
+      List<MediaArtwork> artwork = null;
+
+      MediaScrapeOptions options = new MediaScrapeOptions();
+      options.setArtworkType(MediaArtworkType.ALL);
+      options.setMetadata(metadata);
+      options.setImdbId(metadata.getImdbId());
+      options.setTmdbId(metadata.getTmdbId());
+
+      // scrape providers till one artwork has been found
+      for (IMediaArtworkProvider artworkProvider : movieList.getArtworkProviders()) {
+        try {
+          artwork = artworkProvider.getArtwork(options);
+        }
+        catch (Exception e) {
+          artwork = new ArrayList<MediaArtwork>();
+        }
+        // check if at least one artwork has been found
+        if (artwork.size() > 0) {
+          break;
+        }
+      }
+
+      // initialize if null
+      if (artwork == null) {
+        artwork = new ArrayList<MediaArtwork>();
+      }
+
+      return artwork;
+    }
+
+    /**
+     * Gets the trailers.
+     * 
+     * @return the trailers
+     */
+    private List<MediaTrailer> getTrailers(MediaMetadata metadata) {
+      List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+
+      MediaScrapeOptions options = new MediaScrapeOptions();
+      options.setMetadata(metadata);
+      options.setImdbId(metadata.getImdbId());
+      options.setTmdbId(metadata.getTmdbId());
+
+      // scrape trailers
+      for (IMediaTrailerProvider trailerProvider : movieList.getTrailerProviders()) {
+        try {
+          List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
+          trailers.addAll(foundTrailers);
+        }
+        catch (Exception e) {
+        }
+      }
+
+      return trailers;
     }
   }
 }

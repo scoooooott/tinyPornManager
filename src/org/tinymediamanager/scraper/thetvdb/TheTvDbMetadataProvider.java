@@ -18,13 +18,12 @@ package org.tinymediamanager.scraper.thetvdb;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.tinymediamanager.scraper.IHasFindByIMDBID;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaProviderInfo;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.ProviderInfo;
-import org.tinymediamanager.scraper.SearchQuery;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
 import com.moviejukebox.thetvdb.TheTVDB;
@@ -32,41 +31,30 @@ import com.moviejukebox.thetvdb.TheTVDB;
 /**
  * The Class TheTvDbMetadataProvider.
  */
-public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IHasFindByIMDBID {
+public class TheTvDbMetadataProvider implements IMediaMetadataProvider {
 
   /** The Constant LOGGER. */
-  private static final Logger                  LOGGER   = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger LOGGER = Logger.getLogger(TmdbMetadataProvider.class);
 
   /** The Constant instance. */
-  private static final TheTvDbMetadataProvider instance = new TheTvDbMetadataProvider();
+  private static TheTVDB      tvdb;
 
   /**
    * Instantiates a new the tv db metadata provider.
    */
   private TheTvDbMetadataProvider() {
-    TheTVDB tvDB = new TheTVDB("1A4971671264D790");
+    if (tvdb == null) {
+      tvdb = new TheTVDB("1A4971671264D790");
+    }
   }
 
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.tinymediamanager.scraper.IHasFindByIMDBID#getMetadataForIMDBId(java
-   * .lang.String)
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getProviderInfo()
    */
   @Override
-  public MediaMetadata getMetadataForIMDBId(String imdbid) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getInfo()
-   */
-  @Override
-  public ProviderInfo getInfo() {
+  public MediaProviderInfo getProviderInfo() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -75,10 +63,10 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IHasFind
    * (non-Javadoc)
    * 
    * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetaData(org.
-   * tinymediamanager.scraper.MediaSearchResult)
+   * tinymediamanager.scraper.MediaScrapeOptions)
    */
   @Override
-  public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     // TODO Auto-generated method stub
     return null;
   }
@@ -88,29 +76,10 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IHasFind
    * 
    * @see
    * org.tinymediamanager.scraper.IMediaMetadataProvider#search(org.tinymediamanager
-   * .scraper.SearchQuery)
+   * .scraper.MediaSearchOptions)
    */
   @Override
-  public List<MediaSearchResult> search(SearchQuery query) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.tinymediamanager.scraper.IMediaMetadataProvider#getSupportedSearchTypes
-   * ()
-   */
-  @Override
-  public MediaType[] getSupportedSearchTypes() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public MediaSearchResult searchByImdbId(String imdbid) throws Exception {
+  public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     // TODO Auto-generated method stub
     return null;
   }

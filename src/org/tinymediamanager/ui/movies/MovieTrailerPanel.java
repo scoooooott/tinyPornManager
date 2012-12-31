@@ -36,7 +36,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.scraper.Trailer;
+import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 
@@ -57,19 +57,19 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieTrailerPanel extends JPanel {
 
   /** The movie selection model. */
-  private MovieSelectionModel      movieSelectionModel;
+  private MovieSelectionModel           movieSelectionModel;
 
   /** The table. */
-  private JTable                   table;
+  private JTable                        table;
 
   /** The table column adjuster. */
-  private TableColumnAdjuster      tableColumnAdjuster = null;
+  private TableColumnAdjuster           tableColumnAdjuster = null;
 
   /** The trailer event list. */
-  private EventList<Trailer>       trailerEventList    = new BasicEventList<Trailer>();
+  private EventList<MediaTrailer>       trailerEventList    = new BasicEventList<MediaTrailer>();
 
   /** The trailer table model. */
-  private EventTableModel<Trailer> trailerTableModel   = null;
+  private EventTableModel<MediaTrailer> trailerTableModel   = null;
 
   /**
    * Instantiates a new movie details panel.
@@ -82,7 +82,7 @@ public class MovieTrailerPanel extends JPanel {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
-    trailerTableModel = new EventTableModel<Trailer>(trailerEventList, new TrailerTableFormat());
+    trailerTableModel = new EventTableModel<MediaTrailer>(trailerEventList, new TrailerTableFormat());
     table = new MyTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setSelectionModel(new NullSelectionModel());
@@ -90,7 +90,6 @@ public class MovieTrailerPanel extends JPanel {
     JScrollPane scrollPane = MyTable.createStripedJScrollPane(table);
     add(scrollPane, "2, 2, fill, fill");
     scrollPane.setViewportView(table);
-    // initDataBindings();
 
     // make the url clickable
     URLRenderer renderer = new URLRenderer(table);
@@ -124,7 +123,7 @@ public class MovieTrailerPanel extends JPanel {
   /**
    * The Class TrailerTableFormat.
    */
-  private static class TrailerTableFormat implements AdvancedTableFormat<Trailer> {
+  private static class TrailerTableFormat implements AdvancedTableFormat<MediaTrailer> {
 
     /**
      * Instantiates a new trailer table format.
@@ -177,7 +176,11 @@ public class MovieTrailerPanel extends JPanel {
      * int)
      */
     @Override
-    public Object getColumnValue(Trailer trailer, int column) {
+    public Object getColumnValue(MediaTrailer trailer, int column) {
+      if (trailer == null) {
+        return null;
+      }
+
       switch (column) {
         case 0:
           return trailer.getInNfo();

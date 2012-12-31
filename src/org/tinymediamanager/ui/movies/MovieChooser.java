@@ -53,8 +53,10 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.ImageChooser;
 import org.tinymediamanager.ui.ImageChooser.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
@@ -310,7 +312,8 @@ public class MovieChooser extends JDialog implements ActionListener {
     if ("OK".equals(e.getActionCommand())) {
       int row = table.getSelectedRow();
       if (row >= 0) {
-        MediaMetadata md = moviesFound.get(row).getMetadata();
+        MovieChooserModel model = moviesFound.get(row);
+        MediaMetadata md = model.getMetadata();
 
         // did the user want to choose the images?
         if (!Globals.settings.isScrapeBestImage()) {
@@ -320,25 +323,39 @@ public class MovieChooser extends JDialog implements ActionListener {
         // set scraped metadata
         movieToScrape.setMetadata(md);
 
-        // let the user choose the images
-        if (!Globals.settings.isScrapeBestImage()) {
-          // poster
-          {
-            ImageLabel lblImage = new ImageLabel();
-            ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage);
-            dialog.setVisible(true);
-            movieToScrape.setPosterUrl(lblImage.getImageUrl());
-            movieToScrape.writeImages(true, false);
-          }
+        // get images?
+        if (Globals.settings.getScraperMetadataConfig().isArtwork()) {
+          // let the user choose the images
+          if (!Globals.settings.isScrapeBestImage()) {
+            // poster
+            {
+              ImageLabel lblImage = new ImageLabel();
+              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage);
+              dialog.setVisible(true);
+              movieToScrape.setPosterUrl(lblImage.getImageUrl());
+              movieToScrape.writeImages(true, false);
+            }
 
-          // fanart
-          {
-            ImageLabel lblImage = new ImageLabel();
-            ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage);
-            dialog.setVisible(true);
-            movieToScrape.setFanartUrl(lblImage.getImageUrl());
-            movieToScrape.writeImages(false, true);
+            // fanart
+            {
+              ImageLabel lblImage = new ImageLabel();
+              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage);
+              dialog.setVisible(true);
+              movieToScrape.setFanartUrl(lblImage.getImageUrl());
+              movieToScrape.writeImages(false, true);
+            }
           }
+          else {
+            // get artwork directly from provider
+            List<MediaArtwork> artwork = model.getArtwork();
+            movieToScrape.setArtwork(artwork);
+          }
+        }
+
+        // get trailers?
+        if (Globals.settings.getScraperMetadataConfig().isTrailer()) {
+          List<MediaTrailer> trailers = model.getTrailers();
+          movieToScrape.setTrailers(trailers);
         }
 
         this.setVisible(false);
@@ -414,7 +431,8 @@ public class MovieChooser extends JDialog implements ActionListener {
       List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId);
       moviesFound.clear();
       for (MediaSearchResult result : searchResult) {
-        moviesFound.add(new MovieChooserModel(movieList.getMetadataProvider(), result));
+        moviesFound.add(new MovieChooserModel(movieList.getMetadataProvider(), movieList.getArtworkProviders(), movieList.getTrailerProviders(),
+            result));
       }
 
       return null;

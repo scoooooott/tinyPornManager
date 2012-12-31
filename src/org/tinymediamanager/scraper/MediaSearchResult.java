@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.tinymediamanager.scraper.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MediaSearchResult.
  */
@@ -57,10 +58,17 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   /** The type. */
   private MediaType           type;
 
+  /** The poster url. */
+  private String              posterUrl;
+
   /**
    * Instantiates a new media search result.
+   * 
+   * @param providerId
+   *          the provider id
    */
-  public MediaSearchResult() {
+  public MediaSearchResult(String providerId) {
+    this.providerId = providerId;
   }
 
   /**
@@ -347,6 +355,25 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     this.metadata = md;
   }
 
+  /**
+   * Gets the poster url.
+   * 
+   * @return the poster url
+   */
+  public String getPosterUrl() {
+    return posterUrl;
+  }
+
+  /**
+   * Sets the poster url.
+   * 
+   * @param posterUrl
+   *          the new poster url
+   */
+  public void setPosterUrl(String posterUrl) {
+    this.posterUrl = posterUrl;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -356,9 +383,11 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   public int compareTo(MediaSearchResult arg0) {
     if (getScore() < arg0.getScore()) {
       return -1;
-    } else if (getScore() == arg0.getScore()) {
+    }
+    else if (getScore() == arg0.getScore()) {
       return 0;
-    } else {
+    }
+    else {
       return 1;
     }
 

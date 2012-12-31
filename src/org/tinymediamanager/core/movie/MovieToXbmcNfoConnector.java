@@ -44,7 +44,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.Trailer;
+import org.tinymediamanager.scraper.MediaTrailer;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -209,7 +209,7 @@ public class MovieToXbmcNfoConnector {
       xbmc.addGenre(genre.toString());
     }
 
-    for (Trailer trailer : movie.getTrailers()) {
+    for (MediaTrailer trailer : movie.getTrailers()) {
       if (trailer.getInNfo()) {
         xbmc.setTrailer(trailer.getUrl());
         break;
@@ -340,7 +340,7 @@ public class MovieToXbmcNfoConnector {
         }
 
         if (StringUtils.isNotEmpty(xbmc.getTrailer())) {
-          Trailer trailer = new Trailer();
+          MediaTrailer trailer = new MediaTrailer();
           trailer.setName("fromNFO");
           trailer.setProvider("from NFO");
           trailer.setQuality("unknown");

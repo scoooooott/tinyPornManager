@@ -15,37 +15,35 @@
  */
 package org.tinymediamanager.scraper;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ProviderInfo.
  */
-public class ProviderInfo {
-  /** The icon url. */
-  private String id, name, description, iconUrl;
+public class MediaProviderInfo {
 
-  /**
-   * Instantiates a new provider info.
-   */
-  public ProviderInfo() {
-  }
+  /** The id. */
+  private String id;
+
+  /** The name. */
+  private String name;
+
+  /** The description. */
+  private String description;
 
   /**
    * Instantiates a new provider info.
    * 
    * @param id
-   *          the id
+   *          the id of the provider
    * @param name
-   *          the name
+   *          the name of the provider
    * @param description
-   *          the description
-   * @param iconUrl
-   *          the icon url
+   *          a description of the provider
    */
-  public ProviderInfo(String id, String name, String description, String iconUrl) {
-    super();
+  public MediaProviderInfo(String id, String name, String description) {
     this.id = id;
     this.name = name;
     this.description = description;
-    this.iconUrl = iconUrl;
   }
 
   /**
@@ -103,24 +101,5 @@ public class ProviderInfo {
    */
   public void setDescription(String description) {
     this.description = description;
-  }
-
-  /**
-   * Gets the icon url.
-   * 
-   * @return the icon url
-   */
-  public String getIconUrl() {
-    return iconUrl;
-  }
-
-  /**
-   * Sets the icon url.
-   * 
-   * @param iconUrl
-   *          the new icon url
-   */
-  public void setIconUrl(String iconUrl) {
-    this.iconUrl = iconUrl;
   }
 }

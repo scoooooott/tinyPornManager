@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import org.tinymediamanager.scraper.MediaArtifactType;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
 /**
  * The Class TmdbArtwork.
@@ -26,49 +26,46 @@ public class TmdbArtwork {
    * The Enum PosterSizes.
    */
   public enum PosterSizes {
-
-    /** The w92. */
-    w92,
-    /** The w154. */
-    w154,
-    /** The w185. */
-    w185,
-    /** The w342. */
-    w342,
+    /** The original. */
+    original,
     /** The w500. */
     w500,
-    /** The original. */
-    original
-
+    /** The w342. */
+    w342,
+    /** The w185. */
+    w185,
+    /** The w154. */
+    w154,
+    /** The w92. */
+    w92
   }
 
   /**
    * The Enum FanartSizes.
    */
   public enum FanartSizes {
-
-    /** The w300. */
-    w300,
-    /** The w780. */
-    w780,
+    /** The original. */
+    original,
     /** The w1280. */
     w1280,
-    /** The original. */
-    original
+    /** The w780. */
+    w780,
+    /** The w300. */
+    w300
   }
 
   /** The type. */
-  private MediaArtifactType type;
+  private MediaArtworkType type;
 
   /** The base url. */
-  private String            baseUrl;
+  private String           baseUrl;
 
   /** The file path. */
-  private String            filePath;
+  private String           filePath;
 
-  private int               width;
+  private int              width;
 
-  private int               height;
+  private int              height;
 
   /**
    * Instantiates a new tmdb artwork.
@@ -80,7 +77,7 @@ public class TmdbArtwork {
    * @param filePath
    *          the file path
    */
-  public TmdbArtwork(MediaArtifactType type, String baseUrl, String filePath) {
+  public TmdbArtwork(MediaArtworkType type, String baseUrl, String filePath) {
     this.type = type;
     this.baseUrl = baseUrl;
     this.filePath = filePath;
@@ -91,7 +88,7 @@ public class TmdbArtwork {
    * 
    * @return the type
    */
-  public MediaArtifactType getType() {
+  public MediaArtworkType getType() {
     return type;
   }
 
