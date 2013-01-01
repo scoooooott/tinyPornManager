@@ -22,7 +22,11 @@
 	<classpathentry kind="lib" path="lib/themoviedbapi.jar"/>
 	<classpathentry kind="lib" path="lib/thetvdbapi.jar"/>
 	<classpathentry kind="lib" path="lib/JTattoo.jar"/>
-	<classpathentry kind="lib" path="lib/jsoup.jar"/>
+	<classpathentry kind="lib" path="lib/jsoup.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/tinyMediaManager/buildsupport/jsoup-1.7.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/glazedlists.jar"/>
