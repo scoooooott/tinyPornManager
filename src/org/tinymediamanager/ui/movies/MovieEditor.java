@@ -62,6 +62,7 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.AutocompleteComboBox;
@@ -82,142 +83,142 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieEditor extends JDialog {
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID  = 1L;
+  private static final long  serialVersionUID  = 1L;
 
   /** The details1 panel. */
-  private final JPanel      details1Panel     = new JPanel();
+  private final JPanel       details1Panel     = new JPanel();
 
   /** The details2 panel. */
-  private final JPanel      details2Panel     = new JPanel();
+  private final JPanel       details2Panel     = new JPanel();
 
   /** The movie to edit. */
-  private Movie             movieToEdit;
+  private Movie              movieToEdit;
 
   /** The movielist. */
-  private MovieList         movieList         = MovieList.getInstance();
+  private MovieList          movieList         = MovieList.getInstance();
 
   /** The tf title. */
-  private JTextField        tfTitle;
+  private JTextField         tfTitle;
 
   /** The tf original title. */
-  private JTextField        tfOriginalTitle;
+  private JTextField         tfOriginalTitle;
 
   /** The tf year. */
-  private JSpinner          spYear;
+  private JSpinner           spYear;
 
   /** The tp plot. */
-  private JTextPane         tpPlot;
+  private JTextPane          tpPlot;
 
   /** The tf director. */
-  private JTextField        tfDirector;
+  private JTextField         tfDirector;
 
   /** The table. */
-  private JTable            tableActors;
+  private JTable             tableActors;
 
   /** The lbl movie path. */
-  private JLabel            lblMoviePath;
+  private JLabel             lblMoviePath;
 
   /** The lbl poster. */
-  private ImageLabel        lblPoster;
+  private ImageLabel         lblPoster;
 
   /** The lbl fanart. */
-  private ImageLabel        lblFanart;
+  private ImageLabel         lblFanart;
 
   /** The cast. */
-  private List<MovieCast>   cast              = ObservableCollections.observableList(new ArrayList<MovieCast>());
+  private List<MovieCast>    cast              = ObservableCollections.observableList(new ArrayList<MovieCast>());
 
   /** The genres. */
-  private List<MediaGenres> genres            = ObservableCollections.observableList(new ArrayList<MediaGenres>());
+  private List<MediaGenres>  genres            = ObservableCollections.observableList(new ArrayList<MediaGenres>());
 
   /** The trailers. */
-  private List<MediaTrailer>     trailers          = ObservableCollections.observableList(new ArrayList<MediaTrailer>());
+  private List<MediaTrailer> trailers          = ObservableCollections.observableList(new ArrayList<MediaTrailer>());
 
   /** The tags. */
-  private List<String>      tags              = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>       tags              = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The action ok. */
-  private final Action      actionOK          = new SwingAction();
+  private final Action       actionOK          = new SwingAction();
 
   /** The action cancel. */
-  private final Action      actionCancel      = new SwingAction_1();
+  private final Action       actionCancel      = new SwingAction_1();
 
   /** The action add actor. */
-  private final Action      actionAddActor    = new SwingAction_4();
+  private final Action       actionAddActor    = new SwingAction_4();
 
   /** The action remove actor. */
-  private final Action      actionRemoveActor = new SwingAction_5();
+  private final Action       actionRemoveActor = new SwingAction_5();
 
   /** The tf writer. */
-  private JTextField        tfWriter;
+  private JTextField         tfWriter;
 
   /** The sp runtime. */
-  private JSpinner          spRuntime;
+  private JSpinner           spRuntime;
 
   /** The tf production companies. */
-  private JTextPane         tfProductionCompanies;
+  private JTextPane          tfProductionCompanies;
 
   /** The list genres. */
-  private JList             listGenres;
+  private JList              listGenres;
 
   /** The action add genre. */
-  private final Action      actionAddGenre    = new SwingAction_2();
+  private final Action       actionAddGenre    = new SwingAction_2();
 
   /** The action remove genre. */
-  private final Action      actionRemoveGenre = new SwingAction_3();
+  private final Action       actionRemoveGenre = new SwingAction_3();
 
   /** The cb genres. */
-  private JComboBox         cbGenres;
+  private JComboBox          cbGenres;
 
   /** The sp rating. */
-  private JSpinner          spRating;
+  private JSpinner           spRating;
 
   /** The cb certification. */
-  private JComboBox         cbCertification;
+  private JComboBox          cbCertification;
 
   /** The tf imdb id. */
-  private JTextField        tfImdbId;
+  private JTextField         tfImdbId;
 
   /** The tf tmdb id. */
-  private JTextField        tfTmdbId;
+  private JTextField         tfTmdbId;
 
   /** The lbl imdb id. */
-  private JLabel            lblImdbId;
+  private JLabel             lblImdbId;
 
   /** The lbl tmdb id. */
-  private JLabel            lblTmdbId;
+  private JLabel             lblTmdbId;
 
   /** The lbl watched. */
-  private JLabel            lblWatched;
+  private JLabel             lblWatched;
 
   /** The cb watched. */
-  private JCheckBox         cbWatched;
+  private JCheckBox          cbWatched;
 
   /** The tf tagline. */
-  private JTextPane         tpTagline;
+  private JTextPane          tpTagline;
 
   /** The table trailer. */
-  private JTable            tableTrailer;
+  private JTable             tableTrailer;
 
   /** The action. */
-  private final Action      action            = new SwingAction_6();
+  private final Action       action            = new SwingAction_6();
 
   /** The action_1. */
-  private final Action      action_1          = new SwingAction_7();
+  private final Action       action_1          = new SwingAction_7();
 
   /** The cb tags. */
-  private JComboBox         cbTags;
+  private JComboBox          cbTags;
 
   /** The list tags. */
-  private JList             listTags;
+  private JList              listTags;
 
   /** The action_2. */
-  private final Action      action_2          = new SwingAction_8();
+  private final Action       action_2          = new SwingAction_8();
 
   /** The action_3. */
-  private final Action      action_3          = new SwingAction_9();
+  private final Action       action_3          = new SwingAction_9();
 
   /** The sp date added. */
-  private JSpinner          spDateAdded;
+  private JSpinner           spDateAdded;
 
   /**
    * Create the dialog.
@@ -280,7 +281,8 @@ public class MovieEditor extends JDialog {
       lblPoster.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          ImageChooser dialog = new ImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster);
+          List<MediaArtwork> extrathumbs = new ArrayList<MediaArtwork>();
+          ImageChooser dialog = new ImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster, extrathumbs);
           dialog.setVisible(true);
         }
       });
@@ -413,7 +415,8 @@ public class MovieEditor extends JDialog {
       lblFanart.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          ImageChooser dialog = new ImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart);
+          List<MediaArtwork> extrathumbs = new ArrayList<MediaArtwork>();
+          ImageChooser dialog = new ImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart, extrathumbs);
           dialog.setVisible(true);
         }
       });
@@ -968,7 +971,8 @@ public class MovieEditor extends JDialog {
     JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
-    JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers, tableTrailer);
+    JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,
+        tableTrailer);
     //
     BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
     jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnName("NFO").setColumnClass(Boolean.class);

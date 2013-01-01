@@ -207,7 +207,7 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
         }
 
         // scrape movie
-        List<MediaSearchResult> results = movieList.searchMovie(movie.getName(), movie.getImdbId());
+        List<MediaSearchResult> results = movieList.searchMovie(movie.getName(), movie.getImdbId(), null);
         if (results != null && !results.isEmpty()) {
           MediaSearchResult result1 = results.get(0);
           // check if there is an other result with 100% score

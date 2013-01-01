@@ -16,19 +16,33 @@
 package org.tinymediamanager.core.movie;
 
 /**
- * @author manuel
- * 
+ * The Enum MovieScrapers.
  */
 public enum MovieScrapers {
 
-  TMDB("The Movie Database"), IMDB("IMDB");
+  /** The tmdb. */
+  TMDB("The Movie Database"),
+  /** The imdb. */
+  IMDB("IMDB");
 
+  /** The title. */
   private String title;
 
+  /**
+   * Instantiates a new movie scrapers.
+   * 
+   * @param title
+   *          the title
+   */
   private MovieScrapers(String title) {
     this.title = title;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Enum#toString()
+   */
   public String toString() {
     return this.title;
   }

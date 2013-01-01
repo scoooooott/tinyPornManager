@@ -18,12 +18,13 @@ package org.tinymediamanager.ui.movies;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.net.URI;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -104,6 +105,12 @@ public class MovieDetailsPanel extends JPanel {
   /** The lbl tags. */
   private JLabel              lblTags;
 
+  /** The lbl movie path t. */
+  private JLabel              lblMoviePathT;
+
+  /** The lbl movie path. */
+  private LinkLabel           lblMoviePath;
+
   /**
    * Instantiates a new movie details panel.
    * 
@@ -120,7 +127,8 @@ public class MovieDetailsPanel extends JPanel {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel("Original Title");
     add(lblOriginalTitleT, "2, 2");
@@ -205,12 +213,34 @@ public class MovieDetailsPanel extends JPanel {
     add(lblTmdbId, "10, 14, left, default");
     lblTmdbIdT.setLabelFor(lblTmdbId);
 
+    lblMoviePathT = new JLabel("Path");
+    add(lblMoviePathT, "2, 16");
+
+    lblMoviePath = new LinkLabel("");
+    lblMoviePath.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+          try {
+            // get the location from the label
+            File path = new File(lblMoviePath.getNormalText());
+            // check whether this location exists
+            if (path.exists()) {
+              Desktop.getDesktop().open(path);
+            }
+          }
+          catch (Exception ex) {
+            LOGGER.error("open filemanager", ex);
+          }
+        }
+      }
+    });
+    lblMoviePathT.setLabelFor(lblMoviePath);
+    lblMoviePathT.setLabelFor(lblMoviePath);
+    add(lblMoviePath, "4, 16, 7, 1");
+
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalName");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
@@ -250,12 +280,13 @@ public class MovieDetailsPanel extends JPanel {
     autoBinding_4.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_5 = BeanProperty.create("selectedMovie.productionCompany");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    // AutoBinding<MovieSelectionModel, String, JTextArea, String> autoBinding_5
-    // = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-    // movieSelectionModelBeanProperty_5, lblProduction, jTextAreaBeanProperty);
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_5, lblProduction, jLabelBeanProperty);
     autoBinding_5.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.path");
+    AutoBinding<MovieSelectionModel, String, LinkLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty, lblMoviePath, linkLabelBeanProperty);
+    autoBinding.bind();
   }
 }

@@ -23,7 +23,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,6 +55,10 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieScrapers;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
@@ -66,50 +72,68 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieChooser.
  */
 public class MovieChooser extends JDialog implements ActionListener {
-  private static final long       serialVersionUID      = 1L;
 
-  /** The static LOGGER */
-  private static final Logger     LOGGER                = Logger.getLogger(MovieChooser.class);
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID      = 1L;
+
+  /** The static LOGGER. */
+  private static final Logger         LOGGER                = Logger.getLogger(MovieChooser.class);
 
   /** The content panel. */
-  private final JPanel            contentPanel          = new JPanel();
+  private final JPanel                contentPanel          = new JPanel();
+
+  /** The movie list. */
+  private MovieList                   movieList             = MovieList.getInstance();
 
   /** The movie to scrape. */
-  private Movie                   movieToScrape;
+  private Movie                       movieToScrape;
 
   /** The text field search string. */
-  private JTextField              textFieldSearchString;
+  private JTextField                  textFieldSearchString;
+
+  /** The cb scraper. */
+  private JComboBox                   cbScraper;
 
   /** The table. */
-  private JTable                  table;
+  private JTable                      table;
 
   /** The lbl movie name. */
-  private JTextArea               lblMovieName;
+  private JTextArea                   lblMovieName;
 
   /** The tp movie description. */
-  private JTextPane               tpMovieDescription;
+  private JTextPane                   tpMovieDescription;
 
   /** The lbl movie poster. */
-  private ImageLabel              lblMoviePoster;
+  private ImageLabel                  lblMoviePoster;
 
   /** The lbl progress action. */
-  private JLabel                  lblProgressAction;
+  private JLabel                      lblProgressAction;
 
   /** The progress bar. */
-  private JProgressBar            progressBar;
+  private JProgressBar                progressBar;
 
   /** The movies found. */
-  private List<MovieChooserModel> moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
+  private List<MovieChooserModel>     moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
 
   /** The lbl tagline. */
-  private JTextArea               lblTagline;
+  private JTextArea                   lblTagline;
 
   /** The scraper metadata config. */
-  private ScraperMetadataConfig   scraperMetadataConfig = new ScraperMetadataConfig();
+  private ScraperMetadataConfig       scraperMetadataConfig = new ScraperMetadataConfig();
+
+  /** The metadata provider. */
+  private IMediaMetadataProvider      metadataProvider;
+
+  /** The artwork providers. */
+  private List<IMediaArtworkProvider> artworkProviders;
+
+  /** The trailer providers. */
+  private List<IMediaTrailerProvider> trailerProviders;
 
   /**
    * Create the dialog.
@@ -125,6 +149,9 @@ public class MovieChooser extends JDialog implements ActionListener {
 
     // copy the values
     ScraperMetadataConfig settings = Globals.settings.getScraperMetadataConfig();
+    metadataProvider = movieList.getMetadataProvider();
+    artworkProviders = movieList.getArtworkProviders();
+    trailerProviders = movieList.getTrailerProviders();
 
     scraperMetadataConfig.setTitle(settings.isTitle());
     scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
@@ -148,17 +175,30 @@ public class MovieChooser extends JDialog implements ActionListener {
     {
       JPanel panelSearchField = new JPanel();
       contentPanel.add(panelSearchField, "1, 2, fill, fill");
-      panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+      panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+          ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+          FormFactory.DEFAULT_ROWSPEC, }));
+      {
+        JLabel lblScraper = new JLabel("Scraper");
+        panelSearchField.add(lblScraper, "2, 1, right, default");
+      }
+      {
+        cbScraper = new JComboBox(MovieScrapers.values());
+        MovieScrapers defaultScraper = Globals.settings.getMovieScraper();
+        cbScraper.setSelectedItem(defaultScraper);
+        cbScraper.setAction(new ChangeScraperAction());
+        panelSearchField.add(cbScraper, "4, 1, fill, default");
+      }
       {
         textFieldSearchString = new JTextField();
-        panelSearchField.add(textFieldSearchString, "2, 1, fill, default");
+        panelSearchField.add(textFieldSearchString, "2, 3, 5, 1, fill, default");
         textFieldSearchString.setColumns(10);
       }
 
       {
         JButton btnSearch = new JButton("Search");
-        panelSearchField.add(btnSearch, "3, 1");
+        panelSearchField.add(btnSearch, "7, 3");
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
             searchMovie(textFieldSearchString.getText(), "");
@@ -293,6 +333,7 @@ public class MovieChooser extends JDialog implements ActionListener {
       movieToScrape = movie;
       progressBar.setVisible(false);
       initDataBindings();
+
       textFieldSearchString.setText(movieToScrape.getName());
       // searchMovie(textFieldSearchString.getText(),
       // movieToScrape.getImdbId());
@@ -300,6 +341,7 @@ public class MovieChooser extends JDialog implements ActionListener {
       // initial search only by name
       searchMovie(textFieldSearchString.getText(), "");
     }
+
   }
 
   /*
@@ -307,6 +349,12 @@ public class MovieChooser extends JDialog implements ActionListener {
    * 
    * @see
    * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+   */
+  /**
+   * Action performed.
+   * 
+   * @param e
+   *          the e
    */
   public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
@@ -330,7 +378,8 @@ public class MovieChooser extends JDialog implements ActionListener {
             // poster
             {
               ImageLabel lblImage = new ImageLabel();
-              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage);
+              List<MediaArtwork> extrathumbs = new ArrayList<MediaArtwork>();
+              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage, extrathumbs);
               dialog.setVisible(true);
               movieToScrape.setPosterUrl(lblImage.getImageUrl());
               movieToScrape.writeImages(true, false);
@@ -339,7 +388,8 @@ public class MovieChooser extends JDialog implements ActionListener {
             // fanart
             {
               ImageLabel lblImage = new ImageLabel();
-              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage);
+              List<MediaArtwork> extrathumbs = new ArrayList<MediaArtwork>();
+              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage, extrathumbs);
               dialog.setVisible(true);
               movieToScrape.setFanartUrl(lblImage.getImageUrl());
               movieToScrape.writeImages(false, true);
@@ -372,6 +422,8 @@ public class MovieChooser extends JDialog implements ActionListener {
    * 
    * @param searchTerm
    *          the search term
+   * @param imdbId
+   *          the imdb id
    */
   private void searchMovie(String searchTerm, String imdbId) {
     SearchTask task = new SearchTask(searchTerm, imdbId);
@@ -406,6 +458,8 @@ public class MovieChooser extends JDialog implements ActionListener {
 
     /** The search term. */
     private String searchTerm;
+
+    /** The imdb id. */
     private String imdbId;
 
     /**
@@ -413,6 +467,8 @@ public class MovieChooser extends JDialog implements ActionListener {
      * 
      * @param searchTerm
      *          the search term
+     * @param imdbId
+     *          the imdb id
      */
     public SearchTask(String searchTerm, String imdbId) {
       this.searchTerm = searchTerm;
@@ -427,12 +483,10 @@ public class MovieChooser extends JDialog implements ActionListener {
     @Override
     public Void doInBackground() {
       startProgressBar("searching for: " + searchTerm);
-      MovieList movieList = MovieList.getInstance();
-      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId);
+      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId, metadataProvider);
       moviesFound.clear();
       for (MediaSearchResult result : searchResult) {
-        moviesFound.add(new MovieChooserModel(movieList.getMetadataProvider(), movieList.getArtworkProviders(), movieList.getTrailerProviders(),
-            result));
+        moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
       }
 
       return null;
@@ -497,6 +551,9 @@ public class MovieChooser extends JDialog implements ActionListener {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
         moviesFound, table);
@@ -529,5 +586,30 @@ public class MovieChooser extends JDialog implements ActionListener {
     AutoBinding<JTable, String, JTextArea, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
         lblMovieName, jTextAreaBeanProperty_1);
     autoBinding_3.bind();
+  }
+
+  /**
+   * The Class ChangeScraperAction.
+   */
+  private class ChangeScraperAction extends AbstractAction {
+
+    /**
+     * Instantiates a new sort action.
+     */
+    public ChangeScraperAction() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      MovieScrapers selectedScraper = (MovieScrapers) cbScraper.getSelectedItem();
+      System.out.println(selectedScraper);
+      metadataProvider = MovieList.getInstance().getMetadataProvider(selectedScraper);
+      searchMovie(textFieldSearchString.getText(), "");
+    }
   }
 }

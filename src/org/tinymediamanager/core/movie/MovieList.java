@@ -206,7 +206,6 @@ public class MovieList extends AbstractModelObject {
     return movieList;
   }
 
-  // load movielist from database
   /**
    * Load movies from database.
    */
@@ -222,11 +221,10 @@ public class MovieList extends AbstractModelObject {
       else {
         LOGGER.debug("found nothing in database");
       }
-      // LOGGER.debug(movies);
+
       for (Object obj : movies)
         if (obj instanceof Movie) {
           Movie movie = (Movie) obj;
-          // LOGGER.debug(movie);
           movie.setObservables();
           addMovie(movie);
         }
@@ -375,10 +373,10 @@ public class MovieList extends AbstractModelObject {
    *          the imdb id
    * @return the list
    */
-  public List<MediaSearchResult> searchMovie(String searchTerm, String ImdbId) {
-    List<MediaSearchResult> sr = searchMovieByImdbId(ImdbId);
+  public List<MediaSearchResult> searchMovie(String searchTerm, String ImdbId, IMediaMetadataProvider metadataProvider) {
+    List<MediaSearchResult> sr = searchMovieByImdbId(ImdbId, metadataProvider);
     if (sr == null || sr.size() == 0) {
-      sr = searchMovie(searchTerm);
+      sr = searchMovie(searchTerm, metadataProvider);
     }
 
     return sr;
@@ -391,13 +389,18 @@ public class MovieList extends AbstractModelObject {
    *          the search term
    * @return the list
    */
-  private List<MediaSearchResult> searchMovie(String searchTerm) {
+  private List<MediaSearchResult> searchMovie(String searchTerm, IMediaMetadataProvider metadataProvider) {
     // format searchstring
     searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
     List<MediaSearchResult> searchResult = null;
     try {
-      searchResult = getMetadataProvider().search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, searchTerm));
+      IMediaMetadataProvider provider = metadataProvider;
+      // get a new metadataprovider if nothing is set
+      if (provider == null) {
+        provider = getMetadataProvider();
+      }
+      searchResult = provider.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, searchTerm));
     }
     catch (Exception e) {
       LOGGER.error("searchMovie", e);
@@ -413,7 +416,7 @@ public class MovieList extends AbstractModelObject {
    *          the imdb id
    * @return the list
    */
-  private List<MediaSearchResult> searchMovieByImdbId(String imdbId) {
+  private List<MediaSearchResult> searchMovieByImdbId(String imdbId, IMediaMetadataProvider metadataProvider) {
 
     List<MediaSearchResult> searchResult = null;
     MediaSearchOptions options = new MediaSearchOptions();
@@ -421,7 +424,12 @@ public class MovieList extends AbstractModelObject {
     options.set(SearchParam.IMDBID, imdbId);
 
     try {
-      searchResult = getMetadataProvider().search(options);
+      IMediaMetadataProvider provider = metadataProvider;
+      // get a new metadataProvider if no one is set
+      if (provider == null) {
+        provider = getMetadataProvider();
+      }
+      searchResult = provider.search(options);
     }
     catch (Exception e) {
       LOGGER.warn("failed to search movie with imdbid", e);
@@ -437,21 +445,18 @@ public class MovieList extends AbstractModelObject {
    * @return the metadata provider
    */
   public IMediaMetadataProvider getMetadataProvider() {
-    // check if instance is corresponding to the selected scraper
     MovieScrapers scraper = Globals.settings.getMovieScraper();
-    // if (metadataProvider != null) {
-    // if (metadataProvider instanceof ImdbMetadataProvider && scraper !=
-    // MovieScrapers.IMDB) {
-    // metadataProvider = null;
-    // }
-    // if (metadataProvider instanceof TmdbMetadataProvider && scraper !=
-    // MovieScrapers.TMDB) {
-    // metadataProvider = null;
-    // }
-    // }
-    // create new scraper instance
-    // if (metadataProvider == null) {
+    return getMetadataProvider(scraper);
+  }
 
+  /**
+   * Gets the metadata provider.
+   * 
+   * @param scraper
+   *          the scraper
+   * @return the metadata provider
+   */
+  public IMediaMetadataProvider getMetadataProvider(MovieScrapers scraper) {
     IMediaMetadataProvider metadataProvider = null;
     switch (scraper) {
       case IMDB:
@@ -469,6 +474,7 @@ public class MovieList extends AbstractModelObject {
           LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
         }
     }
+
     //
     // try {
     // metadataProvider = new XbmcMetadataProvider(new

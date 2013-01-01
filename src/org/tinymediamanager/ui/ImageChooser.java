@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -34,6 +35,7 @@ import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -48,6 +50,7 @@ import javax.swing.SwingWorker;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
@@ -60,7 +63,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImageChooser.
  */
@@ -84,37 +86,43 @@ public class ImageChooser extends JDialog {
   }
 
   /** The content panel. */
-  private final JPanel        contentPanel = new JPanel();
+  private final JPanel         contentPanel   = new JPanel();
 
   /** The progress bar. */
-  private JProgressBar        progressBar;
+  private JProgressBar         progressBar;
 
   /** The lbl progress action. */
-  private JLabel              lblProgressAction;
+  private JLabel               lblProgressAction;
 
   /** The panel images. */
-  private JPanel              panelImages;
+  private JPanel               panelImages;
 
   /** The image label. */
-  private ImageLabel          imageLabel;
+  private ImageLabel           imageLabel;
 
   /** The type. */
-  private ImageType           type;
+  private ImageType            type;
 
   /** The button group. */
-  private ButtonGroup         buttonGroup  = new ButtonGroup();
+  private ButtonGroup          buttonGroup    = new ButtonGroup();
 
   /** The buttons. */
-  private List<JToggleButton> buttons      = new ArrayList<JToggleButton>();
+  private List<JToggleButton>  buttons        = new ArrayList<JToggleButton>();
 
   /** The task. */
-  private DownloadTask        task;
+  private DownloadTask         task;
 
   /** The action ok. */
-  private final Action        actionOK     = new SwingAction();
+  private final Action         actionOK       = new SwingAction();
 
   /** The action cancel. */
-  private final Action        actionCancel = new SwingAction_1();
+  private final Action         actionCancel   = new SwingAction_1();
+
+  /** The toggle button ui. */
+  private final ToggleButtonUI toggleButtonUI = new ToggleButtonUI();
+
+  /** The extrathumbs. */
+  private List<MediaArtwork>   extrathumbs;
 
   /**
    * Create the dialog.
@@ -128,11 +136,12 @@ public class ImageChooser extends JDialog {
    * @param imageLabel
    *          the image label
    */
-  public ImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel) {
+  public ImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel, List<MediaArtwork> extrathumbs) {
     setModal(true);
     setIconImage(Globals.logo);
     this.imageLabel = imageLabel;
     this.type = type;
+    this.extrathumbs = extrathumbs;
 
     switch (type) {
       case FANART:
@@ -335,9 +344,12 @@ public class ImageChooser extends JDialog {
     gbc.fill = GridBagConstraints.BOTH;
     gbc.gridx = 0;
     gbc.gridy = 0;
+    gbc.gridwidth = 3;
     gbc.insets = new Insets(5, 5, 5, 5);
 
     JToggleButton button = new JToggleButton();
+    button.setBackground(Color.white);
+    button.setUI(toggleButtonUI);
     BufferedImage resizedImage = new BufferedImage(size.x, size.y, imageType);
     Graphics2D g = resizedImage.createGraphics();
     g.drawImage(originalImage, 0, 0, size.x, size.y, null);
@@ -353,9 +365,19 @@ public class ImageChooser extends JDialog {
     gbc = new GridBagConstraints();
     gbc.gridx = 0;
     gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.insets = new Insets(0, 5, 0, 0);
     JComboBox cb = new JComboBox(resolutions.toArray());
     button.putClientProperty("TmdbArtworkSize", cb);
     imagePanel.add(cb, gbc);
+
+    gbc = new GridBagConstraints();
+    gbc.gridx = 2;
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.EAST;
+    JCheckBox chkbx = new JCheckBox();
+    button.putClientProperty("TmdbArtworkExtrathumb", chkbx);
+    imagePanel.add(chkbx, gbc);
 
     panelImages.add(imagePanel);
     panelImages.validate();
@@ -460,13 +482,6 @@ public class ImageChooser extends JDialog {
           CachedUrl cachedUrl = new CachedUrl(tmdbArtwork.getUrlForSmallArtwork());
           Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
           BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
-
-          // // performance of image loading isnt a problem here, so we use
-          // // ImageIO.read (so we can use HttpClient for faster network
-          // // performance
-          // BufferedImage bufferedImage =
-          // ImageIO.read(cachedUrl.getInputStream());
-
           addImage(bufferedImage, tmdbArtwork);
         }
 

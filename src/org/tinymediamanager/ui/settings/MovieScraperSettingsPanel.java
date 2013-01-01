@@ -74,6 +74,8 @@ public class MovieScraperSettingsPanel extends JPanel {
 
   /** The panel scraper metadata. */
   private JPanel      panelScraperMetadata;
+
+  /** The panel scraper metadata container. */
   private JPanel      panelScraperMetadataContainer;
 
   /**
