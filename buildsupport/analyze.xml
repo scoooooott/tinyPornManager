@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="gen_analyze" default="analyze" basedir=".">
+
+    <target name="analyze" description="run all analyzers" depends="pmd,findbugs" />
+
+    <property name="findbugs.dir" value="./buildsupport/findbugs" />
+    <property name="pmd.dir" value="./buildsupport/pmd" />
+
+    <path id="classpath.findbugs">
+        <fileset dir="${findbugs.dir}">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+    <path id="classpath.pmd">
+        <fileset dir="${pmd.dir}">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+	
+    <target name="findbugs" description="Run findbugs" if="build">
+        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="classpath.findbugs" />
+        <findbugs home="${findbugs.dir}" output="xml" outputFile="reports/findbugs.xml" jvmargs="-Xms256m -Xmx512m">
+            <sourcePath path="${source}" />
+            <auxClasspath path="${classpath}" />
+            <class location="${build}" />
+        </findbugs>
+        <xslt in="reports/findbugs.xml" out="reports/findbugs.html" style="${findbugs.dir}/fancy-hist.xsl" />
+    </target>
+
+    <target name="pmd">
+        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="classpath.pmd" />
+        <pmd>
+            <ruleset>rulesets/java/unusedcode.xml</ruleset>
+            <ruleset>rulesets/java/basic.xml</ruleset>
+            <ruleset>rulesets/java/logging-java.xml</ruleset>
+            <ruleset>rulesets/java/logging-jakarta-commons.xml</ruleset>
+            <ruleset>rulesets/java/migrating.xml</ruleset>
+            <ruleset>rulesets/java/finalizers.xml</ruleset>
+            <ruleset>rulesets/java/strings.xml</ruleset>
+            <ruleset>rulesets/java/imports.xml</ruleset>
+            <formatter type="xml" toFile="reports/pmd.xml" />
+        	<formatter type="html" toFile="reports/pmd.html" />
+            <fileset dir="${source}">
+                <include name="**/*.java" />
+            </fileset>
+        </pmd>
+    </target>
+
+    <target name="cpd">
+        <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="classpath.pmd" />
+        <cpd minimumTokenCount="100" format="xml" outputFile="reports/cpd.xml">
+            <fileset dir="${source}">
+                <include name="**/*.java" />
+            </fileset>
+        </cpd>
+    </target>
+
+</project>
