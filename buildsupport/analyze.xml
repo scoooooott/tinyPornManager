@@ -2,7 +2,7 @@
 
 <project name="gen_analyze" default="analyze" basedir=".">
 
-    <target name="analyze" description="run all analyzers" depends="pmd,findbugs" />
+    <target name="analyze" description="run all analyzers" depends="pmd,cpd,findbugs" />
 
     <property name="findbugs.dir" value="./buildsupport/findbugs" />
     <property name="pmd.dir" value="./buildsupport/pmd" />
