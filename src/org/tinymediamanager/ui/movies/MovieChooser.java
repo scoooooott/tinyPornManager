@@ -143,6 +143,7 @@ public class MovieChooser extends JDialog implements ActionListener {
    */
   public MovieChooser(Movie movie) {
     setTitle("search movie");
+    setName("movieChooser");
     setIconImage(Globals.logo);
     setModal(true);
     setBounds(5, 5, 1111, 643);

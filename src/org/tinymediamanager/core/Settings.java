@@ -224,6 +224,9 @@ public class Settings extends AbstractModelObject {
   /** The scraperMetadata configuration. */
   private ScraperMetadataConfig         scraperMetadataConfig     = null;
 
+  /** The window config. */
+  private WindowConfig                  windowConfig              = null;
+
   /** The property change listener. */
   private PropertyChangeListener        propertyChangeListener;
 
@@ -241,6 +244,7 @@ public class Settings extends AbstractModelObject {
 
     // default values
     scraperMetadataConfig = new ScraperMetadataConfig();
+    windowConfig = new WindowConfig();
   }
 
   /**
@@ -1020,5 +1024,14 @@ public class Settings extends AbstractModelObject {
   public void setScraperMetadataConfig(ScraperMetadataConfig scraperMetadataConfig) {
     this.scraperMetadataConfig = scraperMetadataConfig;
     this.scraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  public WindowConfig getWindowConfig() {
+    return windowConfig;
+  }
+
+  public void setWindowConfig(WindowConfig windowConfig) {
+    this.windowConfig = windowConfig;
+    this.windowConfig.addPropertyChangeListener(propertyChangeListener);
   }
 }

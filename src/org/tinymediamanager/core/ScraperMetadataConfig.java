@@ -17,7 +17,6 @@ package org.tinymediamanager.core;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ScraperMetadataConfig.
  */

@@ -16,6 +16,7 @@
 
 package org.tinymediamanager;
 
+import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -23,6 +24,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
+import java.awt.Toolkit;
 import java.io.File;
 import java.util.Properties;
 
@@ -34,6 +36,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmWindowSaver;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,6 +57,9 @@ public class TinyMediaManager {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
+          Toolkit tk = Toolkit.getDefaultToolkit();
+          tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
+
           // set look and feel
           setLookAndFeel();
 

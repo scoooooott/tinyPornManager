@@ -78,6 +78,7 @@ public class MainWindow extends JFrame {
    */
   public MainWindow(String name) {
     super(name);
+    setName("mainWindow");
 
     instance = this;
 
