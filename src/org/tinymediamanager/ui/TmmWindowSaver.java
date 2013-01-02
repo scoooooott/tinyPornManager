@@ -4,15 +4,15 @@ import java.awt.AWTEvent;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.WindowConfig;
+import org.tinymediamanager.ui.movies.MoviePanel;
 
 public class TmmWindowSaver implements AWTEventListener {
 
@@ -20,10 +20,7 @@ public class TmmWindowSaver implements AWTEventListener {
 
   private static TmmWindowSaver instance;
 
-  private Map                   framemap;
-
   private TmmWindowSaver() {
-    framemap = new HashMap();
   }
 
   public static TmmWindowSaver getInstance() {
@@ -70,7 +67,6 @@ public class TmmWindowSaver implements AWTEventListener {
         // loadSettings(frame);
         System.out.println(dialog.getName());
       }
-      System.out.println(evt);
     }
   }
 
@@ -78,30 +74,51 @@ public class TmmWindowSaver implements AWTEventListener {
     WindowConfig config = Globals.settings.getWindowConfig();
     // settings for main window
     if ("mainWindow".equals(frame.getName())) {
-      // only set location/size if something was stored
+      // was the main window maximized?
       if (config.isMainWindowMaximized()) {
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.validate();
       }
       else {
+        // only set location/size if something was stored
         if (config.getMainWindowHeight() > 0) {
           frame.setLocation(config.getMainWindowX(), config.getMainWindowY());
           frame.setSize(config.getMainWindowWidth(), config.getMainWindowHeight());
           frame.validate();
         }
       }
+
+      // sliders
+      MainWindow mainWindow = (MainWindow) frame;
+      MoviePanel moviePanel = mainWindow.getMoviePanel();
+      if (config.getMovieWindowSlider1Position() > 0) {
+        moviePanel.getSplitPaneVertical().setDividerLocation(config.getMovieWindowSlider1Position());
+      }
+      if (config.getMovieWindowSlider2Position() > 0) {
+        moviePanel.getSplitPaneHorizontal().setDividerLocation(config.getMovieWindowSlider2Position());
+      }
     }
+  }
+
+  public void loadSettings(JPanel panel) {
+    WindowConfig config = Globals.settings.getWindowConfig();
   }
 
   public void saveSettings(JFrame frame) {
     WindowConfig config = Globals.settings.getWindowConfig();
     // settings for main window
-    if ("mainWindow".equals(frame.getName())) {
+    if ("mainWindow".equals(frame.getName()) && frame instanceof MainWindow) {
       config.setMainWindowX(frame.getX());
       config.setMainWindowY(frame.getY());
       config.setMainWindowWidth(frame.getWidth());
       config.setMainWindowHeight(frame.getHeight());
       config.setMainWindowMaximized((frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
+
+      // sliders
+      MainWindow mainWindow = (MainWindow) frame;
+      MoviePanel moviePanel = mainWindow.getMoviePanel();
+      config.setMovieWindowSlider1Position(moviePanel.getSplitPaneVertical().getDividerLocation());
+      config.setMovieWindowSlider2Position(moviePanel.getSplitPaneHorizontal().getDividerLocation());
     }
   }
 }

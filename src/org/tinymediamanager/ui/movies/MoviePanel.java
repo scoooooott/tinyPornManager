@@ -67,6 +67,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.WindowConfig;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
@@ -272,8 +273,20 @@ public class MoviePanel extends JPanel {
 
   /** The lbl movie count filtered. */
   private JLabel                 lblMovieCountFiltered;
+
+  /** The lbl watched image. */
   private JLabel                 lblWatchedImage;
+
+  /** The panel watched image. */
   private JPanel                 panelWatchedImage;
+
+  /** The split pane horizontal. */
+  private JSplitPane             splitPaneHorizontal;
+
+  /** The split pane vertical. */
+  private JSplitPane             splitPaneVertical;
+
+  private WindowConfig           windowConfig;
 
   /**
    * Create the panel.
@@ -286,6 +299,7 @@ public class MoviePanel extends JPanel {
     sortedMovies = new SortedList<Movie>(movieList.getMovies(), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
     // movieSelectionModel = new MovieSelectionModel(sortedMovies);
+    windowConfig = Globals.settings.getWindowConfig();
 
     // build menu
     menu = new JMenu("Movies");
@@ -297,7 +311,7 @@ public class MoviePanel extends JPanel {
         new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
             FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.DEFAULT_ROWSPEC, }));
 
-    JSplitPane splitPaneHorizontal = new JSplitPane();
+    splitPaneHorizontal = new JSplitPane();
     splitPaneHorizontal.setContinuousLayout(true);
     add(splitPaneHorizontal, "2, 2, fill, fill");
 
@@ -394,7 +408,7 @@ public class MoviePanel extends JPanel {
     panelRight
         .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("650px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
-    JSplitPane splitPaneVertical = new JSplitPane();
+    splitPaneVertical = new JSplitPane();
     splitPaneVertical.setBorder(null);
     splitPaneVertical.setResizeWeight(0.9);
     splitPaneVertical.setContinuousLayout(true);
@@ -1149,6 +1163,24 @@ public class MoviePanel extends JPanel {
     }
   }
 
+  /**
+   * Gets the split pane horizontal.
+   * 
+   * @return the split pane horizontal
+   */
+  public JSplitPane getSplitPaneHorizontal() {
+    return splitPaneHorizontal;
+  }
+
+  /**
+   * Gets the split pane vertical.
+   * 
+   * @return the split pane vertical
+   */
+  public JSplitPane getSplitPaneVertical() {
+    return splitPaneVertical;
+  }
+
   protected void initDataBindings() {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.nameForUi");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
@@ -1255,5 +1287,6 @@ public class MoviePanel extends JPanel {
         movieSelectionModelBeanProperty_7, lblWatchedImage, jLabelBeanProperty_2);
     autoBinding_8.setConverter(new WatchedIconConverter());
     autoBinding_8.bind();
+    //
   }
 }

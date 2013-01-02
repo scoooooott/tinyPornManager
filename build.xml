@@ -123,7 +123,7 @@
         </zip>
 
         <!-- Windows -->
-        <property name="launch4j.dir" location="buildsupport/launch4j" />
+        <property name="launch4j.dir" location="AppBundler/launch4j" />
         <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.dir}/launch4j.jar
                 :${launch4j.dir}/xstream.jar" />
         <mkdir dir="dist/win" />

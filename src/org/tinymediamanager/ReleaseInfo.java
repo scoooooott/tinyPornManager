@@ -16,35 +16,70 @@
 package org.tinymediamanager;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * The Class ReleaseInfo.
+ */
 public class ReleaseInfo {
+
+  /** The version. */
   private static String version;
+
+  /** The build. */
   private static String build;
+
+  /** The build date. */
   private static String buildDate;
 
   static {
+    FileInputStream fileInputStream = null;
     try {
-      FileInputStream fileInputStream = new FileInputStream("version");
+      fileInputStream = new FileInputStream("version");
       Properties releaseInfoProp = new Properties();
       releaseInfoProp.load(fileInputStream);
       version = releaseInfoProp.getProperty("version");
       build = releaseInfoProp.getProperty("build");
       buildDate = releaseInfoProp.getProperty("date");
-    } catch (Exception e) {
-
-      version = new String("");
+    }
+    catch (IOException e) {
+      version = "";
+    }
+    finally {
+      try {
+        if (fileInputStream != null) {
+          fileInputStream.close();
+        }
+      }
+      catch (IOException e) {
+      }
     }
   }
 
+  /**
+   * Gets the version.
+   * 
+   * @return the version
+   */
   public static String getVersion() {
     return version;
   }
 
+  /**
+   * Gets the builds the.
+   * 
+   * @return the builds the
+   */
   public static String getBuild() {
     return build;
   }
 
+  /**
+   * Gets the builds the date.
+   * 
+   * @return the builds the date
+   */
   public static String getBuildDate() {
     return buildDate;
   }

@@ -244,7 +244,9 @@ public class Settings extends AbstractModelObject {
 
     // default values
     scraperMetadataConfig = new ScraperMetadataConfig();
+    scraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     windowConfig = new WindowConfig();
+    windowConfig.addPropertyChangeListener(propertyChangeListener);
   }
 
   /**

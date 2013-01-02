@@ -33,7 +33,7 @@ import org.tinymediamanager.ui.MainWindow;
 public class Globals {
 
   /** The settings. */
-  public static Settings              settings = Settings.getInstance();
+  public static final Settings        settings = Settings.getInstance();
 
   /** The emf. */
   private static EntityManagerFactory emf;
@@ -41,7 +41,7 @@ public class Globals {
   /** The entity manager. */
   public static EntityManager         entityManager;
 
-  public static ExecutorService       executor = Executors.newFixedThreadPool(10);
+  public static final ExecutorService executor = Executors.newFixedThreadPool(10);
 
   /**
    * Start database.

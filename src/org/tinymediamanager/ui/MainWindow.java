@@ -67,8 +67,7 @@ public class MainWindow extends JFrame {
   /** The instance. */
   private static MainWindow instance;
 
-  // /** The frame. */
-  // private JFrame frame;
+  private JPanel            panelMovies;
 
   /**
    * Create the application.
@@ -128,7 +127,7 @@ public class MainWindow extends JFrame {
     tabbedPane.setTabPlacement(JTabbedPane.LEFT);
     getContentPane().add(tabbedPane, "1, 2, fill, fill");
 
-    JPanel panelMovies = new MoviePanel();// new JPanel();
+    panelMovies = new MoviePanel();// new JPanel();
     // tabbedPane.addTab("", new
     // ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/movies.png")),
     // panelMovies, null);
@@ -194,6 +193,15 @@ public class MainWindow extends JFrame {
       instance.setVisible(false);
       instance.dispose();
     }
+  }
+
+  /**
+   * Gets the movie panel.
+   * 
+   * @return the movie panel
+   */
+  public MoviePanel getMoviePanel() {
+    return (MoviePanel) panelMovies;
   }
 
   /**

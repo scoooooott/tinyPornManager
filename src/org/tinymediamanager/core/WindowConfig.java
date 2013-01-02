@@ -23,16 +23,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "WindowConfig")
 public class WindowConfig extends AbstractModelObject {
 
-  private int     mainWindowX         = 0;
-  private int     mainWindowY         = 0;
-  private int     mainWindowWidth     = 0;
-  private int     mainWindowHeight    = 0;
-  private boolean mainWindowMaximized = false;
+  private int     mainWindowX                = 0;
+  private int     mainWindowY                = 0;
+  private int     mainWindowWidth            = 0;
+  private int     mainWindowHeight           = 0;
+  private boolean mainWindowMaximized        = false;
 
-  private int     movieChooserX       = 0;
-  private int     movieChooserY       = 0;
-  private int     movieChooserWidth   = 0;
-  private int     movieChooserHeight  = 0;
+  private int     movieWindowSlider1Position = 0;
+  private int     movieWindowSlider2Position = 0;
+
+  private int     movieChooserX              = 0;
+  private int     movieChooserY              = 0;
+  private int     movieChooserWidth          = 0;
+  private int     movieChooserHeight         = 0;
 
   public WindowConfig() {
 
@@ -88,36 +91,64 @@ public class WindowConfig extends AbstractModelObject {
     firePropertyChange("mainWindowMaximized", oldValue, newValue);
   }
 
+  public int getMovieWindowSlider1Position() {
+    return movieWindowSlider1Position;
+  }
+
+  public int getMovieWindowSlider2Position() {
+    return movieWindowSlider2Position;
+  }
+
+  public void setMovieWindowSlider1Position(int newValue) {
+    int oldValue = this.movieWindowSlider1Position;
+    this.movieWindowSlider1Position = newValue;
+    firePropertyChange("movieWindowSlider1", oldValue, newValue);
+  }
+
+  public void setMovieWindowSlider2Position(int newValue) {
+    int oldValue = this.movieWindowSlider2Position;
+    this.movieWindowSlider2Position = newValue;
+    firePropertyChange("movieWindowSlider2", oldValue, newValue);
+  }
+
   public int getMovieChooserX() {
     return movieChooserX;
   }
 
-  public void setMovieChooserX(int movieChooserX) {
-    this.movieChooserX = movieChooserX;
+  public void setMovieChooserX(int newValue) {
+    int oldValue = this.movieChooserX;
+    this.movieChooserX = newValue;
+    firePropertyChange("movieChooserX", oldValue, newValue);
   }
 
   public int getMovieChooserY() {
     return movieChooserY;
   }
 
-  public void setMovieChooserY(int movieChooserY) {
-    this.movieChooserY = movieChooserY;
+  public void setMovieChooserY(int newValue) {
+    int oldValue = this.movieChooserY;
+    this.movieChooserY = newValue;
+    firePropertyChange("movieChooserY", oldValue, newValue);
   }
 
   public int getMovieChooserWidth() {
     return movieChooserWidth;
   }
 
-  public void setMovieChooserWidth(int movieChooserWidth) {
-    this.movieChooserWidth = movieChooserWidth;
+  public void setMovieChooserWidth(int newValue) {
+    int oldValue = this.movieChooserWidth;
+    this.movieChooserWidth = newValue;
+    firePropertyChange("movieChooserWidth", oldValue, newValue);
   }
 
   public int getMovieChooserHeight() {
     return movieChooserHeight;
   }
 
-  public void setMovieChooserHeight(int movieChooserHeight) {
-    this.movieChooserHeight = movieChooserHeight;
+  public void setMovieChooserHeight(int newValue) {
+    int oldValue = this.movieChooserHeight;
+    this.movieChooserHeight = newValue;
+    firePropertyChange("movieChooserHeight", oldValue, newValue);
   }
 
 }
