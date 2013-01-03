@@ -159,7 +159,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
       width = Math.max(width, tableColumn.getPreferredWidth());
     }
 
-    columnSizes.put(tableColumn, new Integer(tableColumn.getWidth()));
+    columnSizes.put(tableColumn, Integer.valueOf(tableColumn.getWidth()));
     table.getTableHeader().setResizingColumn(tableColumn);
     tableColumn.setWidth(width);
   }
@@ -220,7 +220,8 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
       if (isDynamicAdjustment) {
         table.addPropertyChangeListener(this);
         table.getModel().addTableModelListener(this);
-      } else {
+      }
+      else {
         table.removePropertyChangeListener(this);
         table.getModel().removeTableModelListener(this);
       }
@@ -342,7 +343,8 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
           else
             restoreColumn(columns[i]);
         }
-      } else {
+      }
+      else {
         if (isAdjust)
           adjustColumns();
         else

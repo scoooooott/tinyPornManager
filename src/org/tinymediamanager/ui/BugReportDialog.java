@@ -210,6 +210,7 @@ public class BugReportDialog extends JDialog {
               }
 
               // // attach database
+              // ToDo
               // if (chckbxDatabase.isSelected()) {
               // ZipEntry ze = new ZipEntry("tmm.odb");
               // zos.putNextEntry(ze);
@@ -236,7 +237,6 @@ public class BugReportDialog extends JDialog {
           HttpResponse response = client.execute(post);
 
           HttpEntity entity = response.getEntity();
-          System.out.println(EntityUtils.toString(entity));
           EntityUtils.consume(entity);
 
         }

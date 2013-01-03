@@ -88,6 +88,8 @@ public class TmmWindowSaver implements AWTEventListener {
         }
       }
 
+      System.out.println(config.getParam("mainMain"));
+
       // sliders
       MainWindow mainWindow = (MainWindow) frame;
       MoviePanel moviePanel = mainWindow.getMoviePanel();
@@ -113,6 +115,8 @@ public class TmmWindowSaver implements AWTEventListener {
       config.setMainWindowWidth(frame.getWidth());
       config.setMainWindowHeight(frame.getHeight());
       config.setMainWindowMaximized((frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
+
+      config.addParam("mainMain", Integer.valueOf(frame.getX()));
 
       // sliders
       MainWindow mainWindow = (MainWindow) frame;

@@ -274,10 +274,11 @@ public class MovieToMpNfoConnector {
         movie.setTagline(mp.getTagline());
         movie.setRuntime(mp.getRuntime());
         movie.setPoster(mp.getThumb());
-        for (String fanart : mp.getFanart()) {
-          movie.setFanart(fanart);
-          break;
+
+        if (mp.getFanart() != null && mp.getFanart().size() > 0) {
+          movie.setFanart(mp.getFanart().get(0));
         }
+
         movie.setImdbId(mp.getId());
         movie.setDirector(mp.getDirector());
         movie.setWriter(mp.getCredits());

@@ -606,7 +606,7 @@ public class MovieEditor extends JDialog {
       tfWriter.setText(movie.getWriter());
       lblPoster.setImagePath(movie.getPoster());
       tfProductionCompanies.setText(movie.getProductionCompany());
-      spRuntime.setValue(new Integer(movie.getRuntime()));
+      spRuntime.setValue(Integer.valueOf(movie.getRuntime()));
       cbWatched.setSelected(movie.isWatched());
       spDateAdded.setValue(movie.getDateAdded());
 

@@ -746,19 +746,16 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         }
       }
 
-      // if no movie name/id was found - continue
-      if (StringUtils.isEmpty(movieName) || StringUtils.isEmpty(movieId)) {
-        continue;
+      // if a movie name/id was found - return it
+      if (StringUtils.isNotEmpty(movieName) && StringUtils.isNotEmpty(movieId)) {
+        MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
+        sr.setTitle(movieName);
+        sr.setIMDBId(movieId);
+        sr.setYear(md.getYear());
+        sr.setMetadata(md);
+        result.add(sr);
+        return result;
       }
-
-      MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
-      sr.setTitle(movieName);
-      sr.setIMDBId(movieId);
-      sr.setYear(md.getYear());
-      sr.setMetadata(md);
-      result.add(sr);
-
-      return result;
     }
 
     // parse results
@@ -784,33 +781,30 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         // get the name inside the link
         Elements anchors = element.getElementsByTag("a");
         for (Element a : anchors) {
-          if (StringUtils.isEmpty(a.text())) {
-            continue;
-          }
+          if (StringUtils.isNotEmpty(a.text())) {
+            // movie name
+            movieName = a.text();
 
-          // movie name
-          movieName = a.text();
-
-          // parse id
-          String href = a.attr("href");
-          Matcher matcher = imdbIdPattern.matcher(href);
-          while (matcher.find()) {
-            if (matcher.group(1) != null) {
-              movieId = matcher.group(1);
+            // parse id
+            String href = a.attr("href");
+            Matcher matcher = imdbIdPattern.matcher(href);
+            while (matcher.find()) {
+              if (matcher.group(1) != null) {
+                movieId = matcher.group(1);
+              }
             }
-          }
 
-          // try to parse out the year
-          Pattern yearPattern = Pattern.compile("\\(([0-9]{4})|/\\)");
-          matcher = yearPattern.matcher(element.text());
-          while (matcher.find()) {
-            if (matcher.group(1) != null) {
-              year = matcher.group(1);
-              break;
+            // try to parse out the year
+            Pattern yearPattern = Pattern.compile("\\(([0-9]{4})|/\\)");
+            matcher = yearPattern.matcher(element.text());
+            while (matcher.find()) {
+              if (matcher.group(1) != null) {
+                year = matcher.group(1);
+                break;
+              }
             }
+            break;
           }
-
-          break;
         }
       }
 

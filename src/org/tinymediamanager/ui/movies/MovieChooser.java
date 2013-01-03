@@ -608,7 +608,6 @@ public class MovieChooser extends JDialog implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
       MovieScrapers selectedScraper = (MovieScrapers) cbScraper.getSelectedItem();
-      System.out.println(selectedScraper);
       metadataProvider = MovieList.getInstance().getMetadataProvider(selectedScraper);
       searchMovie(textFieldSearchString.getText(), "");
     }

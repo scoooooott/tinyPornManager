@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core;
 
+import java.util.HashMap;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,22 +25,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "WindowConfig")
 public class WindowConfig extends AbstractModelObject {
 
-  private int     mainWindowX                = 0;
-  private int     mainWindowY                = 0;
-  private int     mainWindowWidth            = 0;
-  private int     mainWindowHeight           = 0;
-  private boolean mainWindowMaximized        = false;
+  private int                     mainWindowX                = 0;
+  private int                     mainWindowY                = 0;
+  private int                     mainWindowWidth            = 0;
+  private int                     mainWindowHeight           = 0;
+  private boolean                 mainWindowMaximized        = false;
 
-  private int     movieWindowSlider1Position = 0;
-  private int     movieWindowSlider2Position = 0;
+  private int                     movieWindowSlider1Position = 0;
+  private int                     movieWindowSlider2Position = 0;
 
-  private int     movieChooserX              = 0;
-  private int     movieChooserY              = 0;
-  private int     movieChooserWidth          = 0;
-  private int     movieChooserHeight         = 0;
+  private int                     movieChooserX              = 0;
+  private int                     movieChooserY              = 0;
+  private int                     movieChooserWidth          = 0;
+  private int                     movieChooserHeight         = 0;
+
+  private HashMap<String, Object> keystore;
 
   public WindowConfig() {
+    keystore = new HashMap<String, Object>();
+  }
 
+  public HashMap<String, Object> getKeystore() {
+    return keystore;
+  }
+
+  public void setKeystore(HashMap<String, Object> keystore) {
+    this.keystore = keystore;
+  }
+
+  public void addParam(String key, Object value) {
+    if (keystore.containsKey(key)) {
+      keystore.remove(key);
+    }
+
+    keystore.put(key, value);
+  }
+
+  public Object getParam(String key) {
+    return keystore.get(key);
   }
 
   public int getMainWindowX() {

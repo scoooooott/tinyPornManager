@@ -345,11 +345,13 @@ public class Movie extends AbstractModelObject {
    * @return the name for ui
    */
   public String getNameForUi() {
-    String nameForUi = new String(name);
+    StringBuffer nameForUi = new StringBuffer(name);
     if (year != null && !year.isEmpty()) {
-      nameForUi += " (" + year + ")";
+      nameForUi.append(" (");
+      nameForUi.append(year);
+      nameForUi.append(")");
     }
-    return nameForUi;
+    return nameForUi.toString();
   }
 
   /**
@@ -1007,15 +1009,14 @@ public class Movie extends AbstractModelObject {
           break;
       }
 
-      if (movie == null) {
-        LOGGER.debug("did not find movie informations in nfo");
-        continue;
+      if (movie != null) {
+        movie.setPath(path);
+        movie.addToFiles(videoFiles);
+        movie.findImages();
+        break;
       }
 
-      movie.setPath(path);
-      movie.addToFiles(videoFiles);
-      movie.findImages();
-      break;
+      LOGGER.debug("did not find movie informations in nfo");
     }
 
     return movie;
@@ -1151,9 +1152,8 @@ public class Movie extends AbstractModelObject {
 
     // certifications
     if (config.isCertification()) {
-      for (Certification certification : metadata.getCertifications()) {
-        setCertification(certification);
-        break;
+      if (metadata.getCertifications() != null && metadata.getCertifications().size() > 0) {
+        setCertification(metadata.getCertifications().get(0));
       }
     }
 
@@ -1178,8 +1178,8 @@ public class Movie extends AbstractModelObject {
       setProductionCompany(metadata.getProductionCompany());
       removeAllActors();
       List<MediaCastMember> cast = metadata.getCastMembers();
-      String director = new String();
-      String writer = new String();
+      String director = "";
+      String writer = "";
       for (MediaCastMember member : cast) {
         MovieCast castMember = new MovieCast();
         castMember.setName(member.getName());
@@ -1564,17 +1564,12 @@ public class Movie extends AbstractModelObject {
 
     // fanart
     if (fanart && !StringUtils.isEmpty(getFanartUrl())) {
-      // try {
       int i = 0;
       for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
         boolean firstImage = false;
         if (++i == 1) {
           firstImage = true;
-          // oldFilename = getFanart();
-          // setFanart("");
         }
-        // url = new CachedUrl(getFanartUrl());
-        // filename = this.path + File.separator + "fanart.jpg";
         filename = this.path + File.separator;
         switch (name) {
           case FILENAME_JPG:
@@ -1588,22 +1583,7 @@ public class Movie extends AbstractModelObject {
         // get image in thread
         MovieImageFetcher task = new MovieImageFetcher(this, getFanartUrl(), ArtworkType.BACKDROP, filename, firstImage);
         Globals.executor.execute(task);
-        // LOGGER.debug("writing fanart " + filename);
-        // outputStream = new FileOutputStream(filename);
-        // is = url.getInputStream();
-        // IOUtils.copy(is, outputStream);
-        // outputStream.close();
-        // is.close();
-        // if (i == 1) {
-        // LOGGER.debug("set poster " + FilenameUtils.getName(filename));
-        // setFanart(FilenameUtils.getName(filename));
-        // }
       }
-      // }
-      // catch (IOException e) {
-      // LOGGER.error("writeImages - fanart", e);
-      // setFanart(oldFilename);
-      // }
     }
   }
 

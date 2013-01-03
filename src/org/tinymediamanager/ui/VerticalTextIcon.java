@@ -91,7 +91,8 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     if (clockwize) {
       g2.translate(x + getIconWidth(), y);
       g2.rotate(Math.PI / 2);
-    } else {
+    }
+    else {
       g2.translate(x, y + getIconHeight());
       g2.rotate(-Math.PI / 2);
     }
@@ -134,7 +135,7 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
       case JTabbedPane.RIGHT:
         Object textIconGap = UIManager.get("TabbedPane.textIconGap");
         Insets tabInsets = UIManager.getInsets("TabbedPane.tabInsets");
-        UIManager.put("TabbedPane.textIconGap", new Integer(1));
+        UIManager.put("TabbedPane.textIconGap", Integer.valueOf(1));
         UIManager.put("TabbedPane.tabInsets", new Insets(tabInsets.left, tabInsets.top, tabInsets.right, tabInsets.bottom));
         JTabbedPane tabPane = new JTabbedPane(tabPlacement);
         UIManager.put("TabbedPane.textIconGap", textIconGap);
