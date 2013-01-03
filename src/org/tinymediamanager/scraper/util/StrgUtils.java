@@ -17,11 +17,13 @@ package org.tinymediamanager.scraper.util;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Class StringUtils.
  */
-public class StringUtils {
+public class StrgUtils {
 
   /**
    * Removes the html.
@@ -90,4 +92,23 @@ public class StringUtils {
     }
   }
 
+  /**
+   * gets regular expression based substring
+   * 
+   * @param str
+   *          the string to search
+   * @param pattern
+   *          the pattern to match; with ONE group bracket ()
+   * @return the matched substring or empty string
+   */
+  public static String substr(String str, String pattern) {
+    Pattern regex = Pattern.compile(pattern);
+    Matcher m = regex.matcher(str);
+    if (m.find()) {
+      return m.group(1);
+    }
+    else {
+      return "";
+    }
+  }
 }

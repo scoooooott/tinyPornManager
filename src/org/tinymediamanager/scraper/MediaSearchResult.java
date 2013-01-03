@@ -18,7 +18,7 @@ package org.tinymediamanager.scraper;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.tinymediamanager.scraper.util.StringUtils;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -245,7 +245,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("MediaSearchResult [extraArgs=");
-    builder.append(StringUtils.mapToString(extraArgs));
+    builder.append(StrgUtils.mapToString(extraArgs));
     builder.append(", id=");
     builder.append(id);
     builder.append(", imdbId=");
