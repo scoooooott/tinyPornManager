@@ -520,7 +520,7 @@ public class Settings extends AbstractModelObject {
     try {
       context = JAXBContext.newInstance(Settings.class);
       Marshaller m = context.createMarshaller();
-      m.setProperty("jaxb.encoding", "Unicode");
+      m.setProperty("jaxb.encoding", "UTF-8");
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
       w = new StringWriter();
       m.marshal(this, w);

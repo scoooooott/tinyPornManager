@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -84,6 +85,7 @@ public class MovieMediaInformationPanel extends JPanel {
 
   /** The lbl movie path t. */
   private JLabel              lblMoviePathT;
+  private JButton             btnPlay;
 
   /**
    * Instantiates a new movie media information panel.
@@ -96,9 +98,9 @@ public class MovieMediaInformationPanel extends JPanel {
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     lblDateAddedT = new JLabel("Added on");
     add(lblDateAddedT, "2, 2");
@@ -112,6 +114,30 @@ public class MovieMediaInformationPanel extends JPanel {
     cbWatched = new JCheckBox("");
     cbWatched.setEnabled(false);
     add(cbWatched, "8, 2");
+
+    btnPlay = new JButton("Play");
+    btnPlay.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+          try {
+            // get the location from the label
+            StringBuilder movieFile = new StringBuilder(lblMoviePath.getNormalText());
+            movieFile.append(File.separator);
+            movieFile.append(movieSelectionModel.getSelectedMovie().getMediaFiles().get(0).getFilename());
+            File path = new File(movieFile.toString());
+            // check whether this location exists
+            if (path.exists()) {
+              System.out.println(movieFile.toString());
+              Desktop.getDesktop().open(path);
+            }
+          }
+          catch (Exception ex) {
+            LOGGER.error("open filemanager", ex);
+          }
+        }
+      }
+    });
+    add(btnPlay, "10, 2");
 
     lblMoviePathT = new JLabel("Path");
     add(lblMoviePathT, "2, 4");
@@ -136,7 +162,7 @@ public class MovieMediaInformationPanel extends JPanel {
     });
     lblMoviePathT.setLabelFor(lblMoviePath);
     lblMoviePathT.setLabelFor(lblMoviePath);
-    add(lblMoviePath, "4, 4");
+    add(lblMoviePath, "4, 4, 5, 1");
 
     lblFilesT = new JLabel("Files");
     add(lblFilesT, "2, 6, default, top");
