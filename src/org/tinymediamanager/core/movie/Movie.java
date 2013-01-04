@@ -135,8 +135,8 @@ public class Movie extends AbstractModelObject {
   /** The Constant DATA_SOURCE. */
   protected final static String DATA_SOURCE          = "dataSource";
 
-  /** The Constant MOVIE_FILES. */
-  protected final static String MOVIE_FILES          = "movieFiles";
+  // /** The Constant MOVIE_FILES. */
+  // protected final static String MOVIE_FILES = "movieFiles";
 
   /** The Constant MEDIA_FILES. */
   protected final static String MEDIA_FILES          = "mediaFiles";
@@ -237,8 +237,8 @@ public class Movie extends AbstractModelObject {
   /** The watched. */
   private boolean               watched              = false;
 
-  /** The movie files. */
-  private List<String>          movieFiles           = new ArrayList<String>();
+  // /** The movie files. */
+  // private List<String> movieFiles = new ArrayList<String>();
 
   /** The genres. */
   private List<MediaGenres>     genres               = new ArrayList<MediaGenres>();
@@ -512,7 +512,7 @@ public class Movie extends AbstractModelObject {
    *          the new file
    */
   public void addToFiles(String newFile) {
-    movieFiles.add(newFile);
+    // movieFiles.add(newFile);
     addToMediaFiles(new MediaFile(getPath(), newFile));
   }
 
@@ -532,25 +532,25 @@ public class Movie extends AbstractModelObject {
     }
   }
 
-  /**
-   * Sets the movie files.
-   * 
-   * @param newValue
-   *          the new movie files
-   */
-  public void setMovieFiles(List<String> newValue) {
-    this.movieFiles = newValue;
-    firePropertyChange(MOVIE_FILES, null, newValue);
-  }
-
-  /**
-   * Gets the movie files.
-   * 
-   * @return the movie files
-   */
-  public List<String> getMovieFiles() {
-    return this.movieFiles;
-  }
+  // /**
+  // * Sets the movie files.
+  // *
+  // * @param newValue
+  // * the new movie files
+  // */
+  // public void setMovieFiles(List<String> newValue) {
+  // this.movieFiles = newValue;
+  // firePropertyChange(MOVIE_FILES, null, newValue);
+  // }
+  //
+  // /**
+  // * Gets the movie files.
+  // *
+  // * @return the movie files
+  // */
+  // public List<String> getMovieFiles() {
+  // return this.movieFiles;
+  // }
 
   /**
    * Gets the data source.
@@ -951,11 +951,22 @@ public class Movie extends AbstractModelObject {
    * @return true, if successful
    */
   public boolean hasFile(String filename) {
-    for (String fileName : movieFiles) {
-      if (fileName.compareTo(filename) == 0) {
+    if (StringUtils.isEmpty(filename)) {
+      return false;
+    }
+
+    for (MediaFile file : mediaFiles) {
+      if (filename.compareTo(file.getFilename()) == 0) {
         return true;
       }
     }
+
+    // for (String fileName : movieFiles) {
+    // if (fileName.compareTo(filename) == 0) {
+    // return true;
+    // }
+    // }
+
     return false;
   }
 
@@ -1528,11 +1539,11 @@ public class Movie extends AbstractModelObject {
         filename = this.path + File.separator;
         switch (name) {
           case FILENAME_TBN:
-            filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", ".tbn");
+            filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", ".tbn");
             break;
 
           case FILENAME_JPG:
-            filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", ".jpg");
+            filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", ".jpg");
             break;
 
           case MOVIE_JPG:
@@ -1573,7 +1584,7 @@ public class Movie extends AbstractModelObject {
         filename = this.path + File.separator;
         switch (name) {
           case FILENAME_JPG:
-            filename = filename + getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$", "-fanart.jpg");
+            filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", "-fanart.jpg");
             break;
 
           case FANART_JPG:

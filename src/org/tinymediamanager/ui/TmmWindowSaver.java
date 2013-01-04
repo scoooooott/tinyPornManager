@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
@@ -14,15 +29,28 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.WindowConfig;
 import org.tinymediamanager.ui.movies.MoviePanel;
 
+/**
+ * The Class TmmWindowSaver.
+ */
 public class TmmWindowSaver implements AWTEventListener {
 
+  /** The Constant LOGGER. */
   private static final Logger   LOGGER = Logger.getLogger(TmmWindowSaver.class);
 
+  /** The instance. */
   private static TmmWindowSaver instance;
 
+  /**
+   * Instantiates a new tmm window saver.
+   */
   private TmmWindowSaver() {
   }
 
+  /**
+   * Gets the single instance of TmmWindowSaver.
+   * 
+   * @return single instance of TmmWindowSaver
+   */
   public static TmmWindowSaver getInstance() {
     if (instance == null) {
       instance = new TmmWindowSaver();
@@ -30,6 +58,11 @@ public class TmmWindowSaver implements AWTEventListener {
     return instance;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.event.AWTEventListener#eventDispatched(java.awt.AWTEvent)
+   */
   @Override
   public void eventDispatched(AWTEvent evt) {
     // load settings
@@ -55,7 +88,6 @@ public class TmmWindowSaver implements AWTEventListener {
     // save settings
     if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
       ComponentEvent cev = (ComponentEvent) evt;
-      System.out.println(cev);
       // frame = mainWindow
       if (cev.getComponent() instanceof JFrame) {
         JFrame frame = (JFrame) cev.getComponent();
@@ -69,6 +101,12 @@ public class TmmWindowSaver implements AWTEventListener {
     }
   }
 
+  /**
+   * Load settings.
+   * 
+   * @param frame
+   *          the frame
+   */
   public void loadSettings(JFrame frame) {
     WindowConfig config = Globals.settings.getWindowConfig();
     // settings for main window
@@ -99,6 +137,12 @@ public class TmmWindowSaver implements AWTEventListener {
     }
   }
 
+  /**
+   * Load settings.
+   * 
+   * @param dialog
+   *          the dialog
+   */
   public void loadSettings(JDialog dialog) {
     WindowConfig config = Globals.settings.getWindowConfig();
     if (!dialog.getName().contains("dialog")) {
@@ -109,6 +153,12 @@ public class TmmWindowSaver implements AWTEventListener {
     }
   }
 
+  /**
+   * Save settings.
+   * 
+   * @param frame
+   *          the frame
+   */
   public void saveSettings(JFrame frame) {
     WindowConfig config = Globals.settings.getWindowConfig();
     // settings for main window
@@ -124,6 +174,12 @@ public class TmmWindowSaver implements AWTEventListener {
     }
   }
 
+  /**
+   * Save settings.
+   * 
+   * @param dialog
+   *          the dialog
+   */
   public void saveSettings(JDialog dialog) {
     WindowConfig config = Globals.settings.getWindowConfig();
     if (!dialog.getName().contains("dialog")) {

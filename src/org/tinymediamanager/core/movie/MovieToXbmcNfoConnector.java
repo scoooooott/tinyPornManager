@@ -195,8 +195,8 @@ public class MovieToXbmcNfoConnector {
     }
 
     // filename and path
-    if (movie.getMovieFiles().size() > 0) {
-      xbmc.setFilenameandpath(movie.getPath() + File.separator + movie.getMovieFiles().get(0));
+    if (movie.getMediaFiles().size() > 0) {
+      xbmc.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles().get(0).getFilename());
     }
 
     xbmc.setDirector(movie.getDirector());
@@ -232,7 +232,7 @@ public class MovieToXbmcNfoConnector {
             // nfoFilename = movie.getPath() + File.separator +
             // movie.getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$",
             // ".nfo");
-            nfoFilename = movie.getPath() + File.separator + FilenameUtils.getBaseName(movie.getMovieFiles().get(0)) + ".nfo";
+            nfoFilename = movie.getPath() + File.separator + FilenameUtils.getBaseName(movie.getMediaFiles().get(0).getFilename()) + ".nfo";
             break;
 
           case MOVIE_NFO:
