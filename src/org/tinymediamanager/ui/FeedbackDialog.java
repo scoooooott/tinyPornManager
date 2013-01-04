@@ -66,6 +66,7 @@ public class FeedbackDialog extends JDialog {
    */
   public FeedbackDialog() {
     setTitle("Send feedback");
+    setName("feedback");
     setIconImage(Globals.logo);
     setModal(true);
     setBounds(100, 100, 450, 303);

@@ -1,13 +1,13 @@
 package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
+import java.awt.Rectangle;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
@@ -44,8 +44,7 @@ public class TmmWindowSaver implements AWTEventListener {
         // popup dialogs
         if (cev.getComponent() instanceof JDialog) {
           JDialog dialog = (JDialog) cev.getComponent();
-          // loadSettings(frame);
-          System.out.println(dialog.getName());
+          loadSettings(dialog);
         }
       }
       catch (Exception ex) {
@@ -56,6 +55,7 @@ public class TmmWindowSaver implements AWTEventListener {
     // save settings
     if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
       ComponentEvent cev = (ComponentEvent) evt;
+      System.out.println(cev);
       // frame = mainWindow
       if (cev.getComponent() instanceof JFrame) {
         JFrame frame = (JFrame) cev.getComponent();
@@ -64,8 +64,7 @@ public class TmmWindowSaver implements AWTEventListener {
       // popup dialogs
       if (cev.getComponent() instanceof JDialog) {
         JDialog dialog = (JDialog) cev.getComponent();
-        // loadSettings(frame);
-        System.out.println(dialog.getName());
+        saveSettings(dialog);
       }
     }
   }
@@ -75,54 +74,60 @@ public class TmmWindowSaver implements AWTEventListener {
     // settings for main window
     if ("mainWindow".equals(frame.getName())) {
       // was the main window maximized?
-      if (config.isMainWindowMaximized()) {
+      if (config.getBoolean("mainWindowMaximized")) {
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.validate();
       }
       else {
         // only set location/size if something was stored
-        if (config.getMainWindowHeight() > 0) {
-          frame.setLocation(config.getMainWindowX(), config.getMainWindowY());
-          frame.setSize(config.getMainWindowWidth(), config.getMainWindowHeight());
+        Rectangle rect = config.getWindowBounds("mainWindow");
+        if (rect.width > 0) {
+          frame.setBounds(rect);
           frame.validate();
         }
       }
 
-      System.out.println(config.getParam("mainMain"));
-
       // sliders
       MainWindow mainWindow = (MainWindow) frame;
       MoviePanel moviePanel = mainWindow.getMoviePanel();
-      if (config.getMovieWindowSlider1Position() > 0) {
-        moviePanel.getSplitPaneVertical().setDividerLocation(config.getMovieWindowSlider1Position());
+      if (config.getInteger("movieWindowSlider1") > 0) {
+        moviePanel.getSplitPaneVertical().setDividerLocation(config.getInteger("movieWindowSlider1"));
       }
-      if (config.getMovieWindowSlider2Position() > 0) {
-        moviePanel.getSplitPaneHorizontal().setDividerLocation(config.getMovieWindowSlider2Position());
+      if (config.getInteger("movieWindowSlider2") > 0) {
+        moviePanel.getSplitPaneHorizontal().setDividerLocation(config.getInteger("movieWindowSlider2"));
       }
     }
   }
 
-  public void loadSettings(JPanel panel) {
+  public void loadSettings(JDialog dialog) {
     WindowConfig config = Globals.settings.getWindowConfig();
+    if (!dialog.getName().contains("dialog")) {
+      Rectangle rect = config.getWindowBounds(dialog.getName());
+      if (rect.width > 0) {
+        dialog.setBounds(rect);
+      }
+    }
   }
 
   public void saveSettings(JFrame frame) {
     WindowConfig config = Globals.settings.getWindowConfig();
     // settings for main window
     if ("mainWindow".equals(frame.getName()) && frame instanceof MainWindow) {
-      config.setMainWindowX(frame.getX());
-      config.setMainWindowY(frame.getY());
-      config.setMainWindowWidth(frame.getWidth());
-      config.setMainWindowHeight(frame.getHeight());
-      config.setMainWindowMaximized((frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
-
-      config.addParam("mainMain", Integer.valueOf(frame.getX()));
+      config.addParam("mainWindowMaximized", (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
+      config.storeWindowBounds("mainWindow", frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
 
       // sliders
       MainWindow mainWindow = (MainWindow) frame;
       MoviePanel moviePanel = mainWindow.getMoviePanel();
-      config.setMovieWindowSlider1Position(moviePanel.getSplitPaneVertical().getDividerLocation());
-      config.setMovieWindowSlider2Position(moviePanel.getSplitPaneHorizontal().getDividerLocation());
+      config.addParam("movieWindowSlider1", moviePanel.getSplitPaneVertical().getDividerLocation());
+      config.addParam("movieWindowSlider2", moviePanel.getSplitPaneHorizontal().getDividerLocation());
+    }
+  }
+
+  public void saveSettings(JDialog dialog) {
+    WindowConfig config = Globals.settings.getWindowConfig();
+    if (!dialog.getName().contains("dialog")) {
+      config.storeWindowBounds("movieChooser", dialog.getX(), dialog.getY(), dialog.getWidth(), dialog.getHeight());
     }
   }
 }

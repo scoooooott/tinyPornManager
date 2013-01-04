@@ -87,6 +87,7 @@ public class BugReportDialog extends JDialog {
    */
   public BugReportDialog() {
     setTitle("Report a bug");
+    setName("bugReport");
     setIconImage(Globals.logo);
     setModal(true);
     setBounds(100, 100, 532, 453);

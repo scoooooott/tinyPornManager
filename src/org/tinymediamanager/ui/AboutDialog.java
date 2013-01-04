@@ -55,6 +55,7 @@ public class AboutDialog extends JDialog {
    */
   public AboutDialog() {
     setTitle("About");
+    setName("aboutDialog");
     setResizable(false);
     setModal(true);
     setBounds(100, 100, 450, 303);

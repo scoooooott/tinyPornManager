@@ -76,7 +76,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieEditor.
  */
@@ -230,6 +229,7 @@ public class MovieEditor extends JDialog {
     setModal(true);
     setIconImage(Globals.logo);
     setTitle("Edit Movie");
+    setName("movieEditor");
     movieToEdit = movie;
     setBounds(5, 5, 950, 700);
     getContentPane().setLayout(new BorderLayout());

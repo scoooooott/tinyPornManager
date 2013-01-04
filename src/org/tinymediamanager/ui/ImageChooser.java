@@ -153,6 +153,8 @@ public class ImageChooser extends JDialog {
         break;
     }
 
+    setName("imageChooser");
+
     setBounds(5, 5, 968, 590);
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
