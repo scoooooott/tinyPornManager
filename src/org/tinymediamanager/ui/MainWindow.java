@@ -107,6 +107,7 @@ public class MainWindow extends JFrame {
     mntmExit = mnTmm.add(actionAbout);
     mntmExit.setText("About");
     // setVisible(true);
+
   }
 
   /**

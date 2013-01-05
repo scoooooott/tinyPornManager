@@ -65,39 +65,39 @@ public class TmmWindowSaver implements AWTEventListener {
    */
   @Override
   public void eventDispatched(AWTEvent evt) {
-    // load settings
-    if (evt.getID() == WindowEvent.WINDOW_OPENED) {
-      try {
-        ComponentEvent cev = (ComponentEvent) evt;
-        // frame = mainWindow
-        if (cev.getComponent() instanceof JFrame) {
-          JFrame frame = (JFrame) cev.getComponent();
-          loadSettings(frame);
-        }
-        // popup dialogs
-        if (cev.getComponent() instanceof JDialog) {
-          JDialog dialog = (JDialog) cev.getComponent();
-          loadSettings(dialog);
-        }
-      }
-      catch (Exception ex) {
-        LOGGER.warn("failed to restore window layout", ex);
-      }
-    }
+    // // load settings
+    // if (evt.getID() == WindowEvent.WINDOW_OPENED) {
+    // try {
+    // ComponentEvent cev = (ComponentEvent) evt;
+    // // frame = mainWindow
+    // if (cev.getComponent() instanceof JFrame) {
+    // JFrame frame = (JFrame) cev.getComponent();
+    // loadSettings(frame);
+    // }
+    // // popup dialogs
+    // if (cev.getComponent() instanceof JDialog) {
+    // JDialog dialog = (JDialog) cev.getComponent();
+    // loadSettings(dialog);
+    // }
+    // }
+    // catch (Exception ex) {
+    // LOGGER.warn("failed to restore window layout", ex);
+    // }
+    // }
 
     // save settings
-    if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
-      ComponentEvent cev = (ComponentEvent) evt;
-      // frame = mainWindow
-      if (cev.getComponent() instanceof JFrame) {
-        JFrame frame = (JFrame) cev.getComponent();
-        saveSettings(frame);
-      }
-      // popup dialogs
-      if (cev.getComponent() instanceof JDialog) {
-        JDialog dialog = (JDialog) cev.getComponent();
-        saveSettings(dialog);
-      }
+    // if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
+
+    ComponentEvent cev = (ComponentEvent) evt;
+    // frame = mainWindow
+    if (evt.getID() == WindowEvent.WINDOW_CLOSING && cev.getComponent() instanceof JFrame) {
+      JFrame frame = (JFrame) cev.getComponent();
+      saveSettings(frame);
+    }
+    // popup dialogs
+    if (evt.getID() == WindowEvent.WINDOW_CLOSED && cev.getComponent() instanceof JDialog) {
+      JDialog dialog = (JDialog) cev.getComponent();
+      saveSettings(dialog);
     }
   }
 
@@ -107,7 +107,7 @@ public class TmmWindowSaver implements AWTEventListener {
    * @param frame
    *          the frame
    */
-  public void loadSettings(JFrame frame) {
+  public static void loadSettings(JFrame frame) {
     WindowConfig config = Globals.settings.getWindowConfig();
     // settings for main window
     if ("mainWindow".equals(frame.getName())) {
@@ -121,7 +121,7 @@ public class TmmWindowSaver implements AWTEventListener {
         Rectangle rect = config.getWindowBounds("mainWindow");
         if (rect.width > 0) {
           frame.setBounds(rect);
-          frame.validate();
+          // frame.validate();
         }
       }
 
@@ -143,7 +143,7 @@ public class TmmWindowSaver implements AWTEventListener {
    * @param dialog
    *          the dialog
    */
-  public void loadSettings(JDialog dialog) {
+  public static void loadSettings(JDialog dialog) {
     WindowConfig config = Globals.settings.getWindowConfig();
     if (!dialog.getName().contains("dialog")) {
       Rectangle rect = config.getWindowBounds(dialog.getName());
@@ -183,7 +183,7 @@ public class TmmWindowSaver implements AWTEventListener {
   public void saveSettings(JDialog dialog) {
     WindowConfig config = Globals.settings.getWindowConfig();
     if (!dialog.getName().contains("dialog")) {
-      config.storeWindowBounds("movieChooser", dialog.getX(), dialog.getY(), dialog.getWidth(), dialog.getHeight());
+      config.storeWindowBounds(dialog.getName(), dialog.getX(), dialog.getY(), dialog.getWidth(), dialog.getHeight());
     }
   }
 }

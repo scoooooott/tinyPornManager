@@ -151,6 +151,7 @@ public class TinyMediaManager {
             splash.update();
           }
 
+          TmmWindowSaver.loadSettings(window);
           window.setVisible(true);
 
         }

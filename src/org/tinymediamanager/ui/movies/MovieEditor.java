@@ -70,6 +70,7 @@ import org.tinymediamanager.ui.ImageChooser;
 import org.tinymediamanager.ui.ImageChooser.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.TmmWindowSaver;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -230,8 +231,10 @@ public class MovieEditor extends JDialog {
     setIconImage(Globals.logo);
     setTitle("Edit Movie");
     setName("movieEditor");
-    movieToEdit = movie;
     setBounds(5, 5, 950, 700);
+    TmmWindowSaver.loadSettings(this);
+
+    movieToEdit = movie;
     getContentPane().setLayout(new BorderLayout());
     {
       JPanel panelPath = new JPanel();
@@ -755,6 +758,7 @@ public class MovieEditor extends JDialog {
       movieToEdit.setDateAdded((Date) spDateAdded.getValue());
 
       setVisible(false);
+      dispose();
     }
   }
 
@@ -782,6 +786,7 @@ public class MovieEditor extends JDialog {
      */
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
+      dispose();
     }
   }
 

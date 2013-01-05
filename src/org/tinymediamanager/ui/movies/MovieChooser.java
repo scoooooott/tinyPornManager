@@ -66,13 +66,13 @@ import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.ImageChooser;
 import org.tinymediamanager.ui.ImageChooser.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
+import org.tinymediamanager.ui.TmmWindowSaver;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieChooser.
  */
@@ -144,9 +144,10 @@ public class MovieChooser extends JDialog implements ActionListener {
   public MovieChooser(Movie movie) {
     setTitle("search movie");
     setName("movieChooser");
+    TmmWindowSaver.loadSettings(this);
     setIconImage(Globals.logo);
     setModal(true);
-    setBounds(5, 5, 1111, 643);
+    // setBounds(5, 5, 1111, 643);
 
     // copy the values
     ScraperMetadataConfig settings = Globals.settings.getScraperMetadataConfig();
@@ -410,10 +411,12 @@ public class MovieChooser extends JDialog implements ActionListener {
         }
 
         this.setVisible(false);
+        dispose();
       }
     }
     if ("Cancel".equals(e.getActionCommand())) {
       this.setVisible(false);
+      dispose();
     }
 
   }

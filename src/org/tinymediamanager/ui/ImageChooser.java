@@ -154,8 +154,9 @@ public class ImageChooser extends JDialog {
     }
 
     setName("imageChooser");
-
     setBounds(5, 5, 968, 590);
+    TmmWindowSaver.loadSettings(this);
+
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), },
@@ -280,6 +281,7 @@ public class ImageChooser extends JDialog {
       }
       task.cancel(true);
       setVisible(false);
+      dispose();
     }
   }
 
@@ -412,6 +414,7 @@ public class ImageChooser extends JDialog {
     public void actionPerformed(ActionEvent e) {
       task.cancel(true);
       setVisible(false);
+      dispose();
     }
   }
 

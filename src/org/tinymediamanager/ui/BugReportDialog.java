@@ -55,7 +55,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FeedbackDialog.
  */
@@ -90,7 +89,9 @@ public class BugReportDialog extends JDialog {
     setName("bugReport");
     setIconImage(Globals.logo);
     setModal(true);
+
     setBounds(100, 100, 532, 453);
+    TmmWindowSaver.loadSettings(this);
 
     getContentPane().setLayout(
         new FormLayout(
@@ -251,6 +252,7 @@ public class BugReportDialog extends JDialog {
 
         JOptionPane.showMessageDialog(null, "Bug report sent");
         setVisible(false);
+        dispose();
       }
     });
     panelButtons.add(btnSend);
@@ -259,6 +261,7 @@ public class BugReportDialog extends JDialog {
     btnCacnel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
+        dispose();
       }
     });
     panelButtons.add(btnCacnel);

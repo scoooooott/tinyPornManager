@@ -56,10 +56,11 @@ public class FeedbackDialog extends JDialog {
   private static final long serialVersionUID = 1L;
 
   /** The text field. */
-  private JTextField        textField;
+  private JTextField        tfName;
 
   /** The text area. */
   private JTextArea         textArea;
+  private JTextField        tfEmail;
 
   /**
    * Instantiates a new feedback dialog.
@@ -67,9 +68,11 @@ public class FeedbackDialog extends JDialog {
   public FeedbackDialog() {
     setTitle("Send feedback");
     setName("feedback");
+    setBounds(100, 100, 450, 303);
+    TmmWindowSaver.loadSettings(this);
+
     setIconImage(Globals.logo);
     setModal(true);
-    setBounds(100, 100, 450, 303);
 
     getContentPane().setLayout(
         new FormLayout(
@@ -81,20 +84,28 @@ public class FeedbackDialog extends JDialog {
     getContentPane().add(panelContent, "2, 2, fill, fill");
     panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), }));
 
     JLabel lblName = new JLabel("Name (optional)");
     panelContent.add(lblName, "2, 2, right, default");
 
-    textField = new JTextField();
-    panelContent.add(textField, "4, 2, fill, default");
-    textField.setColumns(10);
+    tfName = new JTextField();
+    panelContent.add(tfName, "4, 2, fill, default");
+    tfName.setColumns(10);
+
+    JLabel lblEmailoptional = new JLabel("Email (optional)");
+    panelContent.add(lblEmailoptional, "2, 4, right, default");
+
+    tfEmail = new JTextField();
+    panelContent.add(tfEmail, "4, 4, fill, default");
+    tfEmail.setColumns(10);
 
     JLabel lblFeedback = new JLabel("Feedback");
-    panelContent.add(lblFeedback, "2, 4, right, top");
+    panelContent.add(lblFeedback, "2, 6, right, top");
 
     JScrollPane scrollPane = new JScrollPane();
-    panelContent.add(scrollPane, "4, 4, fill, fill");
+    panelContent.add(scrollPane, "4, 6, fill, fill");
 
     textArea = new JTextArea();
     scrollPane.setViewportView(textArea);
@@ -120,7 +131,7 @@ public class FeedbackDialog extends JDialog {
         try {
           List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 
-          String message = new String("Feedback from " + textField.getText() + "\n\n");
+          String message = new String("Feedback from " + tfName.getText() + "\nEmail: " + tfEmail.getText() + "\n\n");
           message += textArea.getText();
 
           nameValuePairs.add(new BasicNameValuePair("message", message));
@@ -139,6 +150,7 @@ public class FeedbackDialog extends JDialog {
 
         JOptionPane.showMessageDialog(null, "Feedback sent");
         setVisible(false);
+        dispose();
       }
     });
     panelButtons.add(btnSend);
@@ -147,6 +159,7 @@ public class FeedbackDialog extends JDialog {
     btnCacnel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
+        dispose();
       }
     });
     panelButtons.add(btnCacnel);
