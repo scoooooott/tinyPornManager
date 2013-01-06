@@ -40,6 +40,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.ScraperMetadataConfig;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieCast.CastType;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -282,6 +283,42 @@ public class Movie extends AbstractModelObject {
    * Instantiates a new movie.
    */
   public Movie() {
+  }
+
+  /**
+   * Returns the sortable variant of title<br>
+   * eg "The Bourne Legacy" -> "Bourne Legacy, The"
+   * @return the title in its sortable format
+   */
+  public String getNameSortable() {
+      return Utils.getSortableName(this.getName());
+  }
+
+  /**
+   * Returns the sortable variant of originatltitle<br>
+   * eg "The Bourne Legacy" -> "Bourne Legacy, The"
+   * @return the originaltitle in its sortable format
+   */
+  public String getOriginalNameSortable() {
+      return Utils.getSortableName(this.getOriginalName());
+  }
+
+  /**
+   * Returns the common name of title when it is named sortable<br>
+   * eg "Bourne Legacy, The" -> "The Bourne Legacy" 
+   * @return the common title
+   */
+  public String getNameRemoveSortable() {
+      return Utils.removeSortableName(this.getName());
+  }
+
+  /**
+   * Returns the common name of title when it is named sortable<br>
+   * eg "Bourne Legacy, The" -> "The Bourne Legacy" 
+   * @return the common originaltitle 
+   */
+  public String getOriginalNameRemoveSortable() {
+      return Utils.removeSortableName(this.getOriginalName());
   }
 
   /**

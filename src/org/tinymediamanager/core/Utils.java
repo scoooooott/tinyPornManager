@@ -57,6 +57,31 @@ public class Utils {
   protected static final String    HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
 
   /**
+   * Returns the sortable variant of title/originaltitle<br>
+   * eg "The Bourne Legacy" -> "Bourne Legacy, The"
+   * @return the title/originaltitle in its sortable format
+   */
+  public static String getSortableName(String title) {
+      for (String prfx : Settings.getInstance().getTitlePrefix()) {
+          title = title.replaceAll("(?i)^" + prfx + " (.*)", "$1, " + prfx);
+      }
+      return title;
+  }
+
+  /**
+   * Returns the common name of title/originaltitle when it is named sortable<br>
+   * eg "Bourne Legacy, The" -> "The Bourne Legacy" 
+   * @param the title/originaltitle in its sortable format
+   * @return the original title 
+   */
+  public static String removeSortableName(String title) {
+      for (String prfx : Settings.getInstance().getTitlePrefix()) {
+          title = title.replaceAll("(?i)(.*), " + prfx, prfx + " $1");
+      }
+      return title;
+  }
+
+  /**
    * Read file as string.
    * 
    * @param file
@@ -95,7 +120,9 @@ public class Utils {
     return imdbId.matches("tt\\d{7}");
   }
 
+  @Deprecated
   public static String replaceAcutesHTML(String str) {
+    // TODO: use StringEscapeUtils
     str = str.replaceAll("&aacute;", "�");
     str = str.replaceAll("&eacute;", "�");
     str = str.replaceAll("&iacute;", "�");

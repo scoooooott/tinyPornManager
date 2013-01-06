@@ -73,6 +73,12 @@ public class Settings extends AbstractModelObject {
   /** The Constant PATH. */
   private final static String           PATH                      = "path";
 
+  /** The Constant TITLE_PREFIX. */
+  private final static String           TITLE_PREFIX              = "titlePrefix";
+
+  /** The Constant TITLE_PREFIX. */
+  private final static String           PREFIX                    = "prefix";
+
   /** The Constant VIDEO_FILE_TYPE. */
   private final static String           VIDEO_FILE_TYPE           = "videoFileTypes";
 
@@ -143,6 +149,11 @@ public class Settings extends AbstractModelObject {
   private final static String           SCRAPE_BEST_IMAGE         = "scrapeBestImage";
 
   /** The video file types. */
+  @XmlElementWrapper(name = TITLE_PREFIX)
+  @XmlElement(name = PREFIX)
+  private final List<String>            titlePrefix               = new ArrayList<String>();
+
+  /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>            videoFileTypes            = new ArrayList<String>();
@@ -198,10 +209,10 @@ public class Settings extends AbstractModelObject {
   private MovieConnectors               movieConnector            = MovieConnectors.XBMC;
 
   /** The movie renamer pathname. */
-  private String                        movieRenamerPathname      = "";
+  private String                        movieRenamerPathname      = "$T ($Y)";
 
   /** The movie renamer filename. */
-  private String                        movieRenamerFilename      = "";
+  private String                        movieRenamerFilename      = "$T ($Y)";
 
   /** The imdb scrape foreign language. */
   private boolean                       imdbScrapeForeignLanguage = false;
@@ -473,6 +484,39 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
+   * Adds a title prefix.
+   * 
+   * @param prfx
+   *          the prefix
+   */
+  public void addTitlePrefix(String prfx) {
+    titlePrefix.add(prfx);
+    // setDirty();
+    firePropertyChange(TITLE_PREFIX, null, titlePrefix);
+  }
+
+  /**
+   * Removes the video file type.
+   * 
+   * @param type
+   *          the type
+   */
+  public void removeTitlePrefix(String prfx) {
+    titlePrefix.remove(prfx);
+    // setDirty();
+    firePropertyChange(TITLE_PREFIX, null, titlePrefix);
+  }
+
+  /**
+   * Gets the video file type.
+   * 
+   * @return the video file type
+   */
+  public List<String> getTitlePrefix() {
+    return titlePrefix;
+  }
+
+  /**
    * Adds the video file types.
    * 
    * @param type
@@ -574,6 +618,16 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".divx");
     addVideoFileTypes(".h264");
     addVideoFileTypes(".mov");
+
+    // default title prefix
+    addTitlePrefix("A");
+    addTitlePrefix("An");
+    addTitlePrefix("The");
+    addTitlePrefix("Der");
+    addTitlePrefix("Die");
+    addTitlePrefix("Das");
+    addTitlePrefix("Ein");
+    addTitlePrefix("Eine");
 
     setScraperTmdbLanguage(Languages.en);
     setImageTmdbLangugage(Languages.en);
