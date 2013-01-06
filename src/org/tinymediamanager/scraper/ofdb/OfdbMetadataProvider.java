@@ -157,36 +157,6 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
                 }
             }
 
-            // trailer
-            Pattern regex = Pattern.compile("return '(.*?)';");
-            Matcher m = regex.matcher(doc.toString());
-            while (m.find()) {
-                String s = m.group(1);
-                /*
-                 <b>Trailer 1</b><br><i>(xxlarge)</i><br><br>&raquo; 640px<br><br>Download:<br>&raquo; 
-                 <a href="http://de.clip-1.filmtrailer.com/9507_31566_a_5.wmv?log_var=72|491100001-1|-">wmv</a><br>&raquo;
-                 <a href="http://de.clip-1.filmtrailer.com/9507_31566_a_5.mp4?log_var=72|491100001-1|-">mp4</a><br>&raquo;
-                 <a href="http://de.clip-1.filmtrailer.com/9507_31566_a_5.webm?log_var=72|491100001-1|-">webm</a><br>
-                */
-                String tname = StrgUtils.substr(s, "<b>(.*?)</b>");
-                String tpix = StrgUtils.substr(s, "raquo; (.*?)x<br>");
-                // String tqual = StrgUtils.substr(s, "<i>\\((.*?)\\)</i>");
-
-                // url + format
-                Pattern lr = Pattern.compile("<a href=\"(.*?)\">(.*?)</a>");
-                Matcher lm = lr.matcher(s);
-                while (lm.find()) {
-                    String turl = lm.group(1);
-                    String tformat = lm.group(2);
-                    MediaTrailer trailer = new MediaTrailer();
-                    trailer.setName(tname);
-                    trailer.setQuality(tpix + " (" + tformat + ")");
-                    trailer.setProvider("filmtrailer");
-                    trailer.setUrl(turl);
-                    md.addTrailer(trailer);
-                }
-            }
-
             // get PlotLink, open url and parse
             // <a href="plot/22523,31360,Die-Bourne-Identität"><b>[mehr]</b></a>
             el = doc.getElementsByAttributeValueMatching("href", "plot\\/\\d+,");
@@ -308,6 +278,12 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
 
     @Override
     public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+        LOGGER.debug("OFDB Scraper: getting trailers");
+        List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+        if (options.getImdbId().isEmpty()) {
+            LOGGER.debug("OFDB Scraper: IMDB id not found");
+            return trailers;
+        }
         /*
         function getTrailerData(ci)
         {
@@ -326,8 +302,59 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
             }
         }
         */
-        MediaTrailer trailer = new MediaTrailer();
+        Url url;
+        try {
+            // search with IMDB
+            String searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + options.getImdbId();
+            url = new CachedUrl(searchString);
+            InputStream in = url.getInputStream();
+            Document doc = Jsoup.parse(in, "UTF-8", "");
+            in.close();
+            Elements filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
+            LOGGER.debug("OFDB Scraper: found " + filme.size() + " search results"); // hopefully only one
+            if (filme == null || filme.isEmpty()) {
+                return trailers;
+            }
 
-        return null;
+            // get details page (again)
+            url = new CachedUrl(BASE_URL + "/" + StrgUtils.substr(filme.first().toString(), "href=\\\"(.*?)\\\""));
+            in = url.getInputStream();
+            doc = Jsoup.parse(in, "UTF-8", "");
+            in.close();
+            
+            Pattern regex = Pattern.compile("return '(.*?)';");
+            Matcher m = regex.matcher(doc.toString());
+            while (m.find()) {
+                String s = m.group(1);
+                /*
+                 <b>Trailer 1</b><br><i>(xxlarge)</i><br><br>&raquo; 640px<br><br>Download:<br>&raquo; 
+                 <a href="http://de.clip-1.filmtrailer.com/9507_31566_a_5.wmv?log_var=72|491100001-1|-">wmv</a><br>&raquo;
+                 <a href="http://de.clip-1.filmtrailer.com/9507_31566_a_5.mp4?log_var=72|491100001-1|-">mp4</a><br>&raquo;
+                 <a href="http://de.clip-1.filmtrailer.com/9507_31566_a_5.webm?log_var=72|491100001-1|-">webm</a><br>
+                */
+                String tname = StrgUtils.substr(s, "<b>(.*?)</b>");
+                String tpix = StrgUtils.substr(s, "raquo; (.*?)x<br>");
+                // String tqual = StrgUtils.substr(s, "<i>\\((.*?)\\)</i>");
+
+                // url + format
+                Pattern lr = Pattern.compile("<a href=\"(.*?)\">(.*?)</a>");
+                Matcher lm = lr.matcher(s);
+                while (lm.find()) {
+                    String turl = lm.group(1);
+                    String tformat = lm.group(2);
+                    MediaTrailer trailer = new MediaTrailer();
+                    trailer.setName(tname);
+                    trailer.setQuality(tpix + " (" + tformat + ")");
+                    trailer.setProvider("filmtrailer");
+                    trailer.setUrl(turl);
+                    LOGGER.debug("OFDB Scraper: " + trailer.toString());
+                    trailers.add(trailer);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error parsing " + options.getResult().getUrl());
+            throw e;
+        }
+        return trailers;
     }
 }
