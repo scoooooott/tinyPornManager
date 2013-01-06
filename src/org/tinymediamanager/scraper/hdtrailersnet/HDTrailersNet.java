@@ -105,6 +105,7 @@ public class HDTrailersNet implements IMediaTrailerProvider {
           String tr0url = t.select("td.bottomTableResolution > a").get(0).attr("href");
           MediaTrailer trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
+          trailer.setDate(date);
           trailer.setUrl(tr0url);
           trailer.setQuality(tr0qual);
           trailer.setProvider(getProviderFromUrl(tr0url));
@@ -115,6 +116,7 @@ public class HDTrailersNet implements IMediaTrailerProvider {
           String tr1url = t.select("td.bottomTableResolution > a").get(1).attr("href");
           trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
+          trailer.setDate(date);
           trailer.setUrl(tr1url);
           trailer.setQuality(tr1qual);
           trailer.setProvider(getProviderFromUrl(tr1url));
@@ -125,6 +127,7 @@ public class HDTrailersNet implements IMediaTrailerProvider {
           String tr2url = t.select("td.bottomTableResolution > a").get(2).attr("href");
           trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
+          trailer.setDate(date);
           trailer.setUrl(tr2url);
           trailer.setQuality(tr2qual);
           trailer.setProvider(getProviderFromUrl(tr2url));
