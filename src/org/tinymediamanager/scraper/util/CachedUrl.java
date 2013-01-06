@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -87,7 +88,8 @@ public class CachedUrl extends Url {
         LOGGER.info("Removing Cached Url File: " + f);
         f.delete();
       }
-    } else {
+    }
+    else {
       File f = propFile.getParentFile();
       f.mkdirs();
       LOGGER.debug("Creating a new cached url for: " + url);
@@ -125,7 +127,8 @@ public class CachedUrl extends Url {
       // limited use
       byte[] key = DigestUtils.md5(url);
       return new String(Hex.encodeHex(key));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.error("Failed to create cached filename for url: " + url, e);
       throw new RuntimeException(e);
     }
@@ -186,8 +189,8 @@ public class CachedUrl extends Url {
     long diff = (System.currentTimeMillis() - cachedFile.lastModified()) / 1000;
     boolean expired = (diff > expirySecs);
     if (expired) {
-      LOGGER.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile + "; LastModified: " + cachedFile.lastModified() + "; Current Time: " + System.currentTimeMillis()
-          + "; Expiry: " + expirySecs + "s; Diff: " + diff + "s");
+      LOGGER.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile + "; LastModified: " + cachedFile.lastModified()
+          + "; Current Time: " + System.currentTimeMillis() + "; Expiry: " + expirySecs + "s; Diff: " + diff + "s");
     }
     return expired;
   }
@@ -258,7 +261,8 @@ public class CachedUrl extends Url {
     File f = getCachedFile();
     if (!f.exists() || f.length() == 0) {
       cache();
-    } else {
+    }
+    else {
       LOGGER.debug("Cached File exists: " + f.getAbsolutePath() + " so we'll just use it.");
     }
     return f.toURI().toURL();
@@ -273,15 +277,24 @@ public class CachedUrl extends Url {
   private void cache() throws IOException {
     LOGGER.debug("Caching Url: " + url);
 
-    Url u = new Url(url);
-    InputStream is = u.getInputStream();
+    // workaround for local files
+    InputStream is = null;
+    if (!url.startsWith("file:")) {
+      Url u = new Url(url);
+      is = u.getInputStream();
+    }
+    else {
+      String newUrl = url.replace("file:", "");
+      File file = new File(newUrl);
+      is = new FileInputStream(file);
+    }
     File f = getCachedFile();
     FileOutputStream fos = new FileOutputStream(f);
     IOUtils.copy(is, fos);
     fos.flush();
     fos.close();
     is.close();
-    LOGGER.debug("Url " + u + " Cached To: " + f.getAbsolutePath());
+    LOGGER.debug("Url " + url + " Cached To: " + f.getAbsolutePath());
     PropertiesUtils.store(props, getPropertyFile(), "Cached Url Properties");
     LOGGER.debug("Properties for cached url are now stored: " + getPropertyFile().getAbsolutePath());
   }
@@ -332,7 +345,8 @@ public class CachedUrl extends Url {
           f.delete();
           propFile.delete();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
       }
     }
   }

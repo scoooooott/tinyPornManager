@@ -17,6 +17,9 @@ package org.tinymediamanager.core.movie;
 
 import javax.persistence.Entity;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
 
 /**
@@ -169,4 +172,19 @@ public class MovieCast extends AbstractModelObject {
     firePropertyChange("thumb", oldValue, newValue);
   }
 
+  /**
+   * <p>
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
+   * </p>
+   * 
+   * @param object
+   *          the Object to be output
+   * @return the String result
+   * @see ReflectionToStringBuilder#toString(Object)
+   */
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
 }

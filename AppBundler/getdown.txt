@@ -22,8 +22,6 @@ code = lib/beansbinding.jar
 code = lib/jdom.jar
 code = lib/commons-codec.jar
 code = lib/commons-io.jar
-code = lib/jackson-core-lgpl.jar
-code = lib/jackson-mapper-lgpl.jar
 code = lib/objectdb.jar
 code = lib/Scaling-bin.jar
 code = lib/thetvdbapi.jar
@@ -40,6 +38,12 @@ code = lib/glazedlists.jar
 code = lib/resources.jar
 code = lib/l2fprod-common-buttonbar.jar 
 code = lib/l2fprod-common-shared.jar 
+code = lib/jackson-databind.jar
+code = lib/jackson-core.jar
+code = lib/jackson-annotations.jar
+code = lib/jna.jar
+code = lib/platform.jar
+code = lib/vlcj.jar
 
 # The main entry point for the application
 class = org.tinymediamanager.TinyMediaManager

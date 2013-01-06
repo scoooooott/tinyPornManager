@@ -173,7 +173,7 @@ public class MovieChooser extends JDialog implements ActionListener {
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     contentPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     {
       JPanel panelSearchField = new JPanel();
       contentPanel.add(panelSearchField, "1, 2, fill, fill");
@@ -299,13 +299,17 @@ public class MovieChooser extends JDialog implements ActionListener {
       }
     }
     {
+      JLabel lblScrapeFollowingItems = new JLabel("Scrape following items");
+      contentPanel.add(lblScrapeFollowingItems, "1, 6");
+    }
+    {
       JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "1, 6, fill, fill");
+      contentPanel.add(panelScraperMetadataSetting, "1, 7, fill, fill");
     }
 
     {
       JPanel buttonPane = new JPanel();
-      contentPanel.add(buttonPane, "1, 8");
+      contentPanel.add(buttonPane, "1, 9");
       {
         JButton okButton = new JButton("Ok");
         okButton.setActionCommand("OK");
@@ -380,8 +384,7 @@ public class MovieChooser extends JDialog implements ActionListener {
             // poster
             {
               ImageLabel lblImage = new ImageLabel();
-              List<MediaArtwork> extrathumbs = new ArrayList<MediaArtwork>();
-              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage, extrathumbs);
+              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage, null);
               dialog.setVisible(true);
               movieToScrape.setPosterUrl(lblImage.getImageUrl());
               movieToScrape.writeImages(true, false);
@@ -390,11 +393,12 @@ public class MovieChooser extends JDialog implements ActionListener {
             // fanart
             {
               ImageLabel lblImage = new ImageLabel();
-              List<MediaArtwork> extrathumbs = new ArrayList<MediaArtwork>();
+              List<String> extrathumbs = new ArrayList<String>();
               ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage, extrathumbs);
               dialog.setVisible(true);
               movieToScrape.setFanartUrl(lblImage.getImageUrl());
               movieToScrape.writeImages(false, true);
+              movieToScrape.downloadExtraThumbs(extrathumbs);
             }
           }
           else {

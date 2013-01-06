@@ -31,18 +31,13 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
-
-import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.discovery.NativeDiscovery;
-import uk.co.caprica.vlcj.runtime.RuntimeUtil;
-
-import com.sun.jna.Native;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -75,6 +70,8 @@ public class TinyMediaManager {
             JOptionPane.showMessageDialog(null, "Update from Alpha is not supported. Please download the actual version");
             return;
           }
+
+          doUpgradeTasks();
 
           // init splash
           SplashScreen splash = SplashScreen.getSplashScreen();
@@ -129,20 +126,21 @@ public class TinyMediaManager {
           MovieList movieList = MovieList.getInstance();
           movieList.loadMoviesFromDatabase();
 
-          // try to initialize VLC native libs
-          if (g2 != null) {
-            updateProgress(g2, "loading VLC libs", 50);
-            splash.update();
-          }
-          try {
-            // add -Dvlcj.log=DEBUG to VM arguments
-            new NativeDiscovery().discover();
-            Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-            LOGGER.info("VLC: native libraries found and loaded :)");
-          }
-          catch (UnsatisfiedLinkError ule) {
-            LOGGER.warn("VLC: " + ule.getMessage().trim());
-          }
+          // // try to initialize VLC native libs
+          // if (g2 != null) {
+          // updateProgress(g2, "loading VLC libs", 50);
+          // splash.update();
+          // }
+          // try {
+          // // add -Dvlcj.log=DEBUG to VM arguments
+          // new NativeDiscovery().discover();
+          // Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(),
+          // LibVlc.class);
+          // LOGGER.info("VLC: native libraries found and loaded :)");
+          // }
+          // catch (UnsatisfiedLinkError ule) {
+          // LOGGER.warn("VLC: " + ule.getMessage().trim());
+          // }
 
           // clean cache
           if (g2 != null) {
@@ -237,6 +235,28 @@ public class TinyMediaManager {
 
         // Install the look and feel
         UIManager.setLookAndFeel(laf);
+      }
+
+      /**
+       * does upgrade tasks, such as deleting old libs
+       */
+      private void doUpgradeTasks() {
+        File file = new File("lib/jackson-core-lgpl.jar");
+        if (file.exists()) {
+          FileUtils.deleteQuietly(file);
+        }
+        file = new File("lib/jackson-core-lgpl.jarv");
+        if (file.exists()) {
+          FileUtils.deleteQuietly(file);
+        }
+        file = new File("lib/jackson-mapper-lgpl.jar");
+        if (file.exists()) {
+          FileUtils.deleteQuietly(file);
+        }
+        file = new File("lib/jackson-mapper-lgpl.jarv");
+        if (file.exists()) {
+          FileUtils.deleteQuietly(file);
+        }
       }
     });
   }

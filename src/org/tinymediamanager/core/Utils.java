@@ -224,10 +224,12 @@ public class Utils {
         int offset = Globals.settings.getProxyUsername().indexOf("\\");
         String domain = Globals.settings.getProxyUsername().substring(0, offset);
         String username = Globals.settings.getProxyUsername().substring(offset + 1, Globals.settings.getProxyUsername().length());
-        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
-      } else {
-        httpClient.getCredentialsProvider()
-            .setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
+            new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
+      }
+      else {
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
+            new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
       }
     }
 

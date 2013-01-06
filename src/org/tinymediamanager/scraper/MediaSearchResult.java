@@ -18,7 +18,9 @@ package org.tinymediamanager.scraper;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.tinymediamanager.scraper.util.StrgUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -236,40 +238,6 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     this.extraArgs.put(key, value);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("MediaSearchResult [extraArgs=");
-    builder.append(StrgUtils.mapToString(extraArgs));
-    builder.append(", id=");
-    builder.append(id);
-    builder.append(", imdbId=");
-    builder.append(imdbId);
-    builder.append(", metadata=");
-    builder.append(metadata);
-    builder.append(", providerId=");
-    builder.append(providerId);
-    builder.append(", score=");
-    builder.append(score);
-    builder.append(", title=");
-    builder.append(title);
-    builder.append(", originalTitle=");
-    builder.append(originalTitle);
-    builder.append(", type=");
-    builder.append(type);
-    builder.append(", url=");
-    builder.append(url);
-    builder.append(", year=");
-    builder.append(year);
-    builder.append("]");
-    return builder.toString();
-  }
-
   /**
    * Gets the media type.
    * 
@@ -390,6 +358,21 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     else {
       return 1;
     }
+  }
 
+  /**
+   * <p>
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
+   * </p>
+   * 
+   * @param object
+   *          the Object to be output
+   * @return the String result
+   * @see ReflectionToStringBuilder#toString(Object)
+   */
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 }

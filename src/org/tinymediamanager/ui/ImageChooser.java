@@ -27,6 +27,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,11 +48,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
+import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
@@ -63,6 +65,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ImageChooser.
  */
@@ -122,7 +125,10 @@ public class ImageChooser extends JDialog {
   private final ToggleButtonUI toggleButtonUI = new ToggleButtonUI();
 
   /** The extrathumbs. */
-  private List<MediaArtwork>   extrathumbs;
+  private List<String>         extrathumbs;
+
+  /** The action. */
+  private final Action         action         = new SwingAction_2();
 
   /**
    * Create the dialog.
@@ -135,8 +141,10 @@ public class ImageChooser extends JDialog {
    *          the type
    * @param imageLabel
    *          the image label
+   * @param extrathumbs
+   *          the extrathumbs
    */
-  public ImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel, List<MediaArtwork> extrathumbs) {
+  public ImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel, List<String> extrathumbs) {
     setModal(true);
     setIconImage(Globals.logo);
     this.imageLabel = imageLabel;
@@ -154,7 +162,7 @@ public class ImageChooser extends JDialog {
     }
 
     setName("imageChooser");
-    setBounds(5, 5, 968, 590);
+    setBounds(5, 5, 1000, 590);
     TmmWindowSaver.loadSettings(this);
 
     getContentPane().setLayout(new BorderLayout());
@@ -177,8 +185,8 @@ public class ImageChooser extends JDialog {
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
       buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
       {
         progressBar = new JProgressBar();
         buttonPane.add(progressBar, "2, 2");
@@ -195,10 +203,15 @@ public class ImageChooser extends JDialog {
         getRootPane().setDefaultButton(okButton);
       }
       {
+        JButton btnAddFile = new JButton("Add file");
+        btnAddFile.setAction(action);
+        buttonPane.add(btnAddFile, "8, 2, fill, top");
+      }
+      {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setAction(actionCancel);
         cancelButton.setActionCommand("Cancel");
-        buttonPane.add(cancelButton, "8, 2, fill, top");
+        buttonPane.add(cancelButton, "10, 2, fill, top");
       }
     }
 
@@ -232,6 +245,7 @@ public class ImageChooser extends JDialog {
       TmdbArtwork artwork = null;
       PosterSizes posterSize = null;
       FanartSizes fanartSize = null;
+
       // get selected button
       for (JToggleButton button : buttons) {
         if (button.isSelected()) {
@@ -279,6 +293,39 @@ public class ImageChooser extends JDialog {
             break;
         }
       }
+
+      // extrathumbs
+      if (type == ImageType.FANART) {
+        extrathumbs.clear();
+        // get extrathumbs
+        for (JToggleButton button : buttons) {
+          Object clientProperty = button.getClientProperty("TmdbArtworkExtrathumb");
+          if (clientProperty instanceof JCheckBox) {
+            JCheckBox chkbx = (JCheckBox) clientProperty;
+            if (chkbx.isSelected()) {
+              clientProperty = button.getClientProperty("TmdbArtwork");
+              if (clientProperty instanceof TmdbArtwork) {
+                artwork = (TmdbArtwork) clientProperty;
+                clientProperty = button.getClientProperty("TmdbArtworkSize");
+                // try to get the size
+                if (clientProperty instanceof JComboBox) {
+                  JComboBox cb = (JComboBox) clientProperty;
+                  ImageResolution resolution = (ImageResolution) cb.getSelectedItem();
+                  fanartSize = resolution.getFanartSize();
+
+                  if (fanartSize != null) {
+                    extrathumbs.add(artwork.getUrlForSpecialArtwork(fanartSize));
+                  }
+                  else {
+                    extrathumbs.add(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbFanartSize()));
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
       task.cancel(true);
       setVisible(false);
       dispose();
@@ -375,13 +422,15 @@ public class ImageChooser extends JDialog {
     button.putClientProperty("TmdbArtworkSize", cb);
     imagePanel.add(cb, gbc);
 
-    gbc = new GridBagConstraints();
-    gbc.gridx = 2;
-    gbc.gridy = 1;
-    gbc.anchor = GridBagConstraints.EAST;
-    JCheckBox chkbx = new JCheckBox();
-    button.putClientProperty("TmdbArtworkExtrathumb", chkbx);
-    imagePanel.add(chkbx, gbc);
+    if (type == ImageType.FANART) {
+      gbc = new GridBagConstraints();
+      gbc.gridx = 2;
+      gbc.gridy = 1;
+      gbc.anchor = GridBagConstraints.EAST;
+      JCheckBox chkbx = new JCheckBox();
+      button.putClientProperty("TmdbArtworkExtrathumb", chkbx);
+      imagePanel.add(chkbx, gbc);
+    }
 
     panelImages.add(imagePanel);
     panelImages.validate();
@@ -461,9 +510,11 @@ public class ImageChooser extends JDialog {
               // retrieve via TMDB ID
               artwork = tmdb.getArtwork(tmdbId, MediaArtworkType.POSTER);
             }
-            if (!StringUtils.isEmpty(imdbId)) {
-              // retrieve via IMDB ID
-              artwork = tmdb.getArtwork(imdbId, MediaArtworkType.POSTER);
+            else {
+              if (!StringUtils.isEmpty(imdbId)) {
+                // retrieve via IMDB ID
+                artwork = tmdb.getArtwork(imdbId, MediaArtworkType.POSTER);
+              }
             }
             break;
 
@@ -473,9 +524,11 @@ public class ImageChooser extends JDialog {
               // retrieve via TMDB ID
               artwork = tmdb.getArtwork(tmdbId, MediaArtworkType.BACKGROUND);
             }
-            if (!StringUtils.isEmpty(imdbId)) {
-              // retrieve via IMDB ID
-              artwork = tmdb.getArtwork(imdbId, MediaArtworkType.BACKGROUND);
+            else {
+              if (!StringUtils.isEmpty(imdbId)) {
+                // retrieve via IMDB ID
+                artwork = tmdb.getArtwork(imdbId, MediaArtworkType.BACKGROUND);
+              }
             }
             break;
         }
@@ -695,6 +748,87 @@ public class ImageChooser extends JDialog {
         }
       }
       return resolutions;
+    }
+  }
+
+  /**
+   * The Class SwingAction_2.
+   */
+  private class SwingAction_2 extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action_2.
+     */
+    public SwingAction_2() {
+      putValue(NAME, "Choose file");
+      putValue(SHORT_DESCRIPTION, "Choose a file");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      JFileChooser fileChooser = new JFileChooser();
+      FileFilter filter = new ImageFileFilter();
+      fileChooser.setFileFilter(filter);
+      fileChooser.setMultiSelectionEnabled(false);
+      if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        String fileName = fileChooser.getSelectedFile().getPath();
+
+        switch (type) {
+          case POSTER:
+            imageLabel.setImageUrl("file:/" + fileName);
+            break;
+
+          case FANART:
+            imageLabel.setImageUrl("file:/" + fileName);
+            break;
+        }
+
+        task.cancel(true);
+        setVisible(false);
+        dispose();
+      }
+
+    }
+
+    /**
+     * The Class ImageFileFilter.
+     */
+    public class ImageFileFilter extends FileFilter {
+
+      /** The ok file extensions. */
+      private final String[] okFileExtensions = new String[] { "jpg", "png" };
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
+       */
+      public boolean accept(File file) {
+        if (file.isDirectory())
+          return true;
+
+        for (String extension : okFileExtensions) {
+          if (file.getName().toLowerCase().endsWith(extension)) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see javax.swing.filechooser.FileFilter#getDescription()
+       */
+      @Override
+      public String getDescription() {
+        return "image files (.jpg; .png)";
+      }
     }
   }
 }

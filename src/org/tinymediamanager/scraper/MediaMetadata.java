@@ -18,27 +18,55 @@ package org.tinymediamanager.scraper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MediaMetadata.
  */
 public class MediaMetadata {
 
+  /** The provider id. */
   private String                providerId;
 
+  /** The imdb id. */
   private String                imdbId            = "";
+
+  /** The tmdb id. */
   private int                   tmdbId            = 0;
+
+  /** The plot. */
   private String                plot              = "";
+
+  /** The title. */
   private String                title             = "";
+
+  /** The original title. */
   private String                originalTitle     = "";
+
+  /** The rating. */
   private double                rating            = 0.0;
+
+  /** The vote count. */
   private int                   voteCount         = 0;
+
+  /** The runtime. */
   private int                   runtime           = 0;
+
+  /** The tagline. */
   private String                tagline           = "";
+
+  /** The production company. */
   private String                productionCompany = "";
+
+  /** The year. */
   private String                year              = "";
+
+  /** The release date. */
   private String                releaseDate       = "";
 
   /** The cast members. */
@@ -58,99 +86,228 @@ public class MediaMetadata {
 
   /**
    * Instantiates a new media metadata.
+   * 
+   * @param providerId
+   *          the provider id
    */
   public MediaMetadata(String providerId) {
     this.providerId = providerId;
   }
 
+  /**
+   * Gets the provider id.
+   * 
+   * @return the provider id
+   */
   public String getProviderId() {
     return providerId;
   }
 
+  /**
+   * Gets the tmdb id.
+   * 
+   * @return the tmdb id
+   */
   public int getTmdbId() {
     return tmdbId;
   }
 
+  /**
+   * Gets the plot.
+   * 
+   * @return the plot
+   */
   public String getPlot() {
     return plot;
   }
 
+  /**
+   * Gets the title.
+   * 
+   * @return the title
+   */
   public String getTitle() {
     return title;
   }
 
+  /**
+   * Gets the original title.
+   * 
+   * @return the original title
+   */
   public String getOriginalTitle() {
     return originalTitle;
   }
 
+  /**
+   * Gets the rating.
+   * 
+   * @return the rating
+   */
   public double getRating() {
     return rating;
   }
 
+  /**
+   * Gets the runtime.
+   * 
+   * @return the runtime
+   */
   public int getRuntime() {
     return runtime;
   }
 
+  /**
+   * Gets the tagline.
+   * 
+   * @return the tagline
+   */
   public String getTagline() {
     return tagline;
   }
 
+  /**
+   * Sets the tmdb id.
+   * 
+   * @param tmdbId
+   *          the new tmdb id
+   */
   public void setTmdbId(int tmdbId) {
     this.tmdbId = tmdbId;
   }
 
+  /**
+   * Gets the imdb id.
+   * 
+   * @return the imdb id
+   */
   public String getImdbId() {
     return imdbId;
   }
 
+  /**
+   * Sets the imdb id.
+   * 
+   * @param imdbId
+   *          the new imdb id
+   */
   public void setImdbId(String imdbId) {
     this.imdbId = imdbId;
   }
 
+  /**
+   * Sets the plot.
+   * 
+   * @param plot
+   *          the new plot
+   */
   public void setPlot(String plot) {
     this.plot = plot;
   }
 
+  /**
+   * Sets the title.
+   * 
+   * @param title
+   *          the new title
+   */
   public void setTitle(String title) {
     this.title = title;
   }
 
+  /**
+   * Sets the original title.
+   * 
+   * @param originalTitle
+   *          the new original title
+   */
   public void setOriginalTitle(String originalTitle) {
     this.originalTitle = originalTitle;
   }
 
+  /**
+   * Sets the rating.
+   * 
+   * @param rating
+   *          the new rating
+   */
   public void setRating(double rating) {
     this.rating = rating;
   }
 
+  /**
+   * Gets the vote count.
+   * 
+   * @return the vote count
+   */
   public int getVoteCount() {
     return voteCount;
   }
 
+  /**
+   * Sets the vote count.
+   * 
+   * @param voteCount
+   *          the new vote count
+   */
   public void setVoteCount(int voteCount) {
     this.voteCount = voteCount;
   }
 
+  /**
+   * Sets the runtime.
+   * 
+   * @param runtime
+   *          the new runtime
+   */
   public void setRuntime(int runtime) {
     this.runtime = runtime;
   }
 
+  /**
+   * Sets the tagline.
+   * 
+   * @param tagline
+   *          the new tagline
+   */
   public void setTagline(String tagline) {
     this.tagline = tagline;
   }
 
+  /**
+   * Gets the year.
+   * 
+   * @return the year
+   */
   public String getYear() {
     return year;
   }
 
+  /**
+   * Gets the release date.
+   * 
+   * @return the release date
+   */
   public String getReleaseDate() {
     return releaseDate;
   }
 
+  /**
+   * Sets the year.
+   * 
+   * @param year
+   *          the new year
+   */
   public void setYear(String year) {
     this.year = year;
   }
 
+  /**
+   * Sets the release date.
+   * 
+   * @param releaseDate
+   *          the new release date
+   */
   public void setReleaseDate(String releaseDate) {
     this.releaseDate = releaseDate;
   }
@@ -206,10 +363,21 @@ public class MediaMetadata {
 
   }
 
+  /**
+   * Gets the production company.
+   * 
+   * @return the production company
+   */
   public String getProductionCompany() {
     return productionCompany;
   }
 
+  /**
+   * Sets the production company.
+   * 
+   * @param productionCompany
+   *          the new production company
+   */
   public void setProductionCompany(String productionCompany) {
     this.productionCompany = productionCompany;
   }
@@ -341,4 +509,17 @@ public class MediaMetadata {
     return trailers;
   }
 
+  /**
+   * <p>
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
+   * </p>
+   * 
+   * @return the String result
+   * @see ReflectionToStringBuilder#toString(Object)
+   */
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
 }

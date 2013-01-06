@@ -39,19 +39,19 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MetadataUtil;
 
-import com.moviejukebox.themoviedb.MovieDbException;
-import com.moviejukebox.themoviedb.TheMovieDb;
-import com.moviejukebox.themoviedb.model.Artwork;
-import com.moviejukebox.themoviedb.model.ArtworkType;
-import com.moviejukebox.themoviedb.model.Genre;
-import com.moviejukebox.themoviedb.model.MovieDb;
-import com.moviejukebox.themoviedb.model.Person;
-import com.moviejukebox.themoviedb.model.PersonType;
-import com.moviejukebox.themoviedb.model.ProductionCompany;
-import com.moviejukebox.themoviedb.model.ReleaseInfo;
-import com.moviejukebox.themoviedb.tools.ApiUrl;
+import com.omertron.themoviedbapi.MovieDbException;
+import com.omertron.themoviedbapi.TheMovieDbApi;
+import com.omertron.themoviedbapi.model.Artwork;
+import com.omertron.themoviedbapi.model.ArtworkType;
+import com.omertron.themoviedbapi.model.Genre;
+import com.omertron.themoviedbapi.model.MovieDb;
+import com.omertron.themoviedbapi.model.Person;
+import com.omertron.themoviedbapi.model.PersonType;
+import com.omertron.themoviedbapi.model.ProductionCompany;
+import com.omertron.themoviedbapi.model.ReleaseInfo;
+import com.omertron.themoviedbapi.model.Trailer;
+import com.omertron.themoviedbapi.tools.ApiUrl;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TmdbMetadataProvider.
  */
@@ -61,7 +61,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   private static final Logger      LOGGER       = Logger.getLogger(TmdbMetadataProvider.class);
 
   /** The tmdb. */
-  private static TheMovieDb        tmdb;
+  private static TheMovieDbApi     tmdb;
 
   /** The provider info. */
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("tmdb", "themoviedb.org",
@@ -110,7 +110,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // create a new instance of the tmdb api
     if (tmdb == null) {
       try {
-        tmdb = new TheMovieDb("6247670ec93f4495a36297ff88f7cd15");
+        tmdb = new TheMovieDbApi("6247670ec93f4495a36297ff88f7cd15");
       }
       catch (Exception e) {
         LOGGER.error("TmdbMetadataProvider", e);
@@ -166,7 +166,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // begin search
     LOGGER.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
-    URL url = tmdbSearchMovie.getQueryUrl(searchString, Globals.settings.getScraperTmdbLanguage().name(), 1);
+    tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getScraperTmdbLanguage().name());
+    URL url = tmdbSearchMovie.buildUrl();
     LOGGER.debug(url.toString().replace("&api_key=6247670ec93f4495a36297ff88f7cd15", "&<API_KEY>"));
 
     List<MovieDb> moviesFound = null;
@@ -464,12 +465,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     try {
       synchronized (tmdb) {
         // get trailers from tmdb (with specified langu and without)
-        List<com.moviejukebox.themoviedb.model.Trailer> tmdbTrailers = tmdb
-            .getMovieTrailers(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
-        List<com.moviejukebox.themoviedb.model.Trailer> tmdbTrailersWoLang = tmdb.getMovieTrailers(tmdbId, "");
+        List<Trailer> tmdbTrailers = tmdb.getMovieTrailers(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
+        List<Trailer> tmdbTrailersWoLang = tmdb.getMovieTrailers(tmdbId, "");
         tmdbTrailers.addAll(tmdbTrailersWoLang);
 
-        for (com.moviejukebox.themoviedb.model.Trailer tmdbTrailer : tmdbTrailers) {
+        for (Trailer tmdbTrailer : tmdbTrailers) {
           boolean addTrailer = true;
 
           // youtube support
@@ -541,6 +541,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
    *           the movie db exception
    */
   private List<Artwork> getArtworkFromTmdb(int tmdbId) throws MovieDbException {
+    List<String> uniqueUrls = new ArrayList<String>();
     List<Artwork> movieImages = null;
     List<Artwork> movieImages_wo_lang = null;
     synchronized (tmdb) {
@@ -550,7 +551,21 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       movieImages_wo_lang = tmdb.getMovieImages(tmdbId, "");
     }
 
-    movieImages.addAll(movieImages_wo_lang);
+    // fill list qith unique links
+    for (Artwork artwork : movieImages) {
+      if (!uniqueUrls.contains(artwork.getFilePath())) {
+        uniqueUrls.add(artwork.getFilePath());
+      }
+    }
+
+    // only add more unique urls
+    for (Artwork artwork : movieImages_wo_lang) {
+      if (!uniqueUrls.contains(artwork.getFilePath())) {
+        uniqueUrls.add(artwork.getFilePath());
+        movieImages.add(artwork);
+      }
+    }
+
     return movieImages;
   }
 

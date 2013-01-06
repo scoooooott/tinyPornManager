@@ -69,7 +69,7 @@ public class AboutDialog extends JDialog {
             FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(25px;min)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     {
       JLabel lblLogo = new JLabel("");
       lblLogo.setIcon(new ImageIcon(AboutDialog.class.getResource("/org/tinymediamanager/ui/images/tmm96.png")));
@@ -119,16 +119,20 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblXysm, "6, 16");
     }
     {
+      JLabel lblMyronForHelping = new JLabel("Myron for helping me with scrapers and builds");
+      contentPanel.add(lblMyronForHelping, "6, 18");
+    }
+    {
       JLabel lblXzener = new JLabel("Xzener for genre images");
-      contentPanel.add(lblXzener, "6, 18");
+      contentPanel.add(lblXzener, "6, 20");
     }
     {
       JLabel lblLibs = new JLabel("The creators of all libs I've used");
-      contentPanel.add(lblLibs, "6, 20");
+      contentPanel.add(lblLibs, "6, 22");
     }
     {
       JLabel lblTester = new JLabel("Everyone who tested and provided feedback");
-      contentPanel.add(lblTester, "6, 22");
+      contentPanel.add(lblTester, "6, 24");
     }
     {
       JPanel buttonPane = new JPanel();

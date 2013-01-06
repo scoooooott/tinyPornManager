@@ -15,6 +15,10 @@
  */
 package org.tinymediamanager.scraper;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class ProviderInfo.
@@ -101,5 +105,21 @@ public class MediaProviderInfo {
    */
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  /**
+   * <p>
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
+   * </p>
+   * 
+   * @param object
+   *          the Object to be output
+   * @return the String result
+   * @see ReflectionToStringBuilder#toString(Object)
+   */
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 }

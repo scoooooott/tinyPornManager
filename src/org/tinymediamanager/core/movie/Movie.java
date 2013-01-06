@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,8 +33,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
@@ -51,7 +57,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
-import com.moviejukebox.themoviedb.model.ArtworkType;
+import com.omertron.themoviedbapi.model.ArtworkType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -66,6 +72,9 @@ public class Movie extends AbstractModelObject {
 
   /** The Constant TITLE. */
   protected final static String TITLE                = "title";
+
+  /** The Constant TITLE. */
+  protected final static String SORT_TITLE           = "sortTitle";
 
   /** The Constant ORIGINAL_TITLE. */
   protected final static String ORIGINAL_TITLE       = "originaltitle";
@@ -168,6 +177,9 @@ public class Movie extends AbstractModelObject {
 
   /** The name. */
   private String                name                 = "";
+
+  @Transient
+  private String                sortTitle            = "";
 
   /** The original name. */
   private String                originalName         = "";
@@ -279,6 +291,9 @@ public class Movie extends AbstractModelObject {
   @Transient
   private boolean               duplicate            = false;
 
+  /** The extra thumbs. */
+  private List<String>          extraThumbs          = new ArrayList<String>();
+
   /**
    * Instantiates a new movie.
    */
@@ -288,38 +303,45 @@ public class Movie extends AbstractModelObject {
   /**
    * Returns the sortable variant of title<br>
    * eg "The Bourne Legacy" -> "Bourne Legacy, The"
+   * 
    * @return the title in its sortable format
    */
-  public String getNameSortable() {
-      return Utils.getSortableName(this.getName());
+  public String getSortTitle() {
+    if (StringUtils.isEmpty(sortTitle)) {
+      sortTitle = Utils.getSortableName(this.getName());
+    }
+    return sortTitle;
   }
 
-  /**
-   * Returns the sortable variant of originatltitle<br>
-   * eg "The Bourne Legacy" -> "Bourne Legacy, The"
-   * @return the originaltitle in its sortable format
-   */
-  public String getOriginalNameSortable() {
-      return Utils.getSortableName(this.getOriginalName());
-  }
+  // /**
+  // * Returns the sortable variant of originatltitle<br>
+  // * eg "The Bourne Legacy" -> "Bourne Legacy, The"
+  // *
+  // * @return the originaltitle in its sortable format
+  // */
+  // public String getOriginalNameSortable() {
+  // return Utils.getSortableName(this.getOriginalName());
+  // }
 
-  /**
-   * Returns the common name of title when it is named sortable<br>
-   * eg "Bourne Legacy, The" -> "The Bourne Legacy" 
-   * @return the common title
-   */
-  public String getNameRemoveSortable() {
-      return Utils.removeSortableName(this.getName());
-  }
-
-  /**
-   * Returns the common name of title when it is named sortable<br>
-   * eg "Bourne Legacy, The" -> "The Bourne Legacy" 
-   * @return the common originaltitle 
-   */
-  public String getOriginalNameRemoveSortable() {
-      return Utils.removeSortableName(this.getOriginalName());
-  }
+  // /**
+  // * Returns the common name of title when it is named sortable<br>
+  // * eg "Bourne Legacy, The" -> "The Bourne Legacy"
+  // *
+  // * @return the common title
+  // */
+  // public String getNameRemoveSortable() {
+  // return Utils.removeSortableName(this.getName());
+  // }
+  //
+  // /**
+  // * Returns the common name of title when it is named sortable<br>
+  // * eg "Bourne Legacy, The" -> "The Bourne Legacy"
+  // *
+  // * @return the common originaltitle
+  // */
+  // public String getOriginalNameRemoveSortable() {
+  // return Utils.removeSortableName(this.getOriginalName());
+  // }
 
   /**
    * checks if this movie has been scraped.
@@ -1122,6 +1144,60 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
+   * Gets the extra thumbs.
+   * 
+   * @return the extra thumbs
+   */
+  public List<String> getExtraThumbs() {
+    return extraThumbs;
+  }
+
+  /**
+   * Sets the extra thumbs.
+   * 
+   * @param extraThumbs
+   *          the new extra thumbs
+   */
+  public void setExtraThumbs(List<String> extraThumbs) {
+    this.extraThumbs = extraThumbs;
+  }
+
+  /**
+   * Download extra thumbs.
+   * 
+   * @param thumbs
+   *          the thumbs
+   */
+  public void downloadExtraThumbs(List<String> thumbs) {
+    // init/delete old thumbs
+    extraThumbs.clear();
+
+    try {
+      String path = getPath() + File.separator + "extrathumbs";
+      File folder = new File(path);
+      if (folder.exists()) {
+        FileUtils.deleteDirectory(folder);
+      }
+
+      folder.mkdirs();
+
+      // fetch and store images
+      for (int i = 0; i < thumbs.size(); i++) {
+        String url = thumbs.get(i);
+        CachedUrl cachedUrl = new CachedUrl(url);
+        FileOutputStream outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + ".jpg");
+        InputStream is = cachedUrl.getInputStream();
+        IOUtils.copy(is, outputStream);
+        outputStream.close();
+        is.close();
+      }
+    }
+    catch (IOException e) {
+      LOGGER.warn("download extrathumbs", e);
+    }
+  }
+
+  /**
    * Sets the id.
    * 
    * @param id
@@ -1424,6 +1500,9 @@ public class Movie extends AbstractModelObject {
     name = newValue;
     firePropertyChange("name", oldValue, newValue);
     firePropertyChange("nameForUi", oldValue, newValue);
+
+    sortTitle = "";
+    firePropertyChange(SORT_TITLE, oldValue, newValue);
   }
 
   /**
@@ -1869,5 +1948,21 @@ public class Movie extends AbstractModelObject {
    */
   public boolean isDuplicate() {
     return this.duplicate;
+  }
+
+  /**
+   * <p>
+   * Uses <code>ReflectionToStringBuilder</code> to generate a
+   * <code>toString</code> for the specified object.
+   * </p>
+   * 
+   * @param object
+   *          the Object to be output
+   * @return the String result
+   * @see ReflectionToStringBuilder#toString(Object)
+   */
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 }

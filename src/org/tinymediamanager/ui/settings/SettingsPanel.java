@@ -62,14 +62,14 @@ public class SettingsPanel extends JPanel {
     add("West", toolbar);
 
     ButtonGroup group = new ButtonGroup();
-    panelGeneralSettings = new GeneralSettingsPanel();
-    addButton("General", "/org/tinymediamanager/ui/images/Action-configure-icon.png", panelGeneralSettings, toolbar, group);
     panelMovieSettings = new MovieSettingsPanel();
     addButton("Movies", "/org/tinymediamanager/ui/images/show_reel.png", panelMovieSettings, toolbar, group);
     panelScraperMovieSettings = new MovieScraperSettingsPanel();
     addButton("<html>Movies -<br>Scraper</html>", "/org/tinymediamanager/ui/images/show_reel.png", panelScraperMovieSettings, toolbar, group);
     panelImageMovieSettings = new MovieImageSettingsPanel();
     addButton("<html>Movies -<br>Images</html>", "/org/tinymediamanager/ui/images/show_reel.png", panelImageMovieSettings, toolbar, group);
+    panelGeneralSettings = new GeneralSettingsPanel();
+    addButton("General", "/org/tinymediamanager/ui/images/Action-configure-icon.png", panelGeneralSettings, toolbar, group);
 
     // // button panel
     // JPanel buttonPanel = new JPanel();

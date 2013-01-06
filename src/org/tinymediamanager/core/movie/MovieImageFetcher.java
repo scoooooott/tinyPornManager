@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
-import com.moviejukebox.themoviedb.model.ArtworkType;
+import com.omertron.themoviedbapi.model.ArtworkType;
 
 /**
  * @author manuel

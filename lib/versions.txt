@@ -9,14 +9,12 @@ httpclient-4.2.1.jar
 httpclient-cache-4.2.1.jar
 httpcore-4.2.1.jar
 httpmime-4.2.1.jar
-jackson-core-lgpl-1.9.9.jar
-jackson-mapper-lgpl-1.9.9.jar
 jdom.jar
 JSplitButton_1.2.jar
 log4j-1.2.16.jar
 objectdb-2.4.4_12.jar
 Scaling-bin.jar
-themoviedbapi-3.2.jar
+themoviedbapi-3.3.jar
 thetvdbapi-1.4-SNAPSHOT-r123.jar
 JTattoo201208.jar 
 htmlparser.jar
@@ -24,3 +22,9 @@ jsoup-1.7.1.jar
 glazedlists-java_150-1.8.0.jar
 l2fprod-common-buttonbar-6.9.1.jar
 l2fprod-common-shared-6.9.1.jar
+jackson-databind-2.1.2.jar
+jackson-core-2.1.2.jar
+jackson-annotations-2.1.2.jar
+jna-3.5.1.jar
+platform-3.5.1.jar
+vlcj-2.2.0-SNAPSHOT.jar

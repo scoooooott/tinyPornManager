@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -23,6 +24,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -121,7 +123,8 @@ public class MovieScraperSettingsPanel extends JPanel {
     panelMovieScrapers.add(cbImdbTranslateableContent, "3, 10");
 
     panelScraperMetadataContainer = new JPanel();
-    panelScraperMetadataContainer.setBorder(new TitledBorder(null, "Metadata settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelScraperMetadataContainer.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Metadata scrape defaults",
+        TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
     add(panelScraperMetadataContainer, "2, 4, fill, fill");
     panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
