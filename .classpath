@@ -33,5 +33,12 @@
 	<classpathentry kind="lib" path="lib/l2fprod-common-buttonbar.jar"/>
 	<classpathentry kind="lib" path="lib/l2fprod-common-shared.jar"/>
 	<classpathentry kind="lib" path="lib/resources.jar"/>
+	<classpathentry kind="lib" path="lib/jna-3.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/platform-3.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/vlcj-2.2.0-SNAPSHOT.jar" sourcepath="buildsupport/vlcj-2.2.0-SNAPSHOT-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/tinyMediaManager/buildsupport/vlcj-2.2.0-SNAPSHOT-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

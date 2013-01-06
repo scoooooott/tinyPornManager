@@ -19,10 +19,13 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,6 +41,9 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.ui.LinkLabel;
+
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import uk.co.caprica.vlcj.mrl.FileMrl;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -119,22 +125,62 @@ public class MovieMediaInformationPanel extends JPanel {
     btnPlay.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+          // get the location from the label
+          StringBuilder movieFile = new StringBuilder(lblMoviePath.getNormalText());
+          movieFile.append(File.separator);
+          movieFile.append(movieSelectionModel.getSelectedMovie().getMediaFiles().get(0).getFilename());
+          File f = new File(movieFile.toString());
+
           try {
-            // get the location from the label
-            StringBuilder movieFile = new StringBuilder(lblMoviePath.getNormalText());
-            movieFile.append(File.separator);
-            movieFile.append(movieSelectionModel.getSelectedMovie().getMediaFiles().get(0).getFilename());
-            File path = new File(movieFile.toString());
-            // check whether this location exists
-            if (path.exists()) {
-              System.out.println(movieFile.toString());
-              Desktop.getDesktop().open(path);
-            }
+            if (f.exists()) {
+
+              String vlcF = f.getAbsolutePath();
+              // FIXME: german umlauts do not decode correctly; Bug in
+              // libDvdNav? so workaround;
+              if (vlcF.matches(".*[äöüÄÖÜ].*")) {
+                LOGGER.debug("VLC: workaround: german umlauts found - use system player");
+                Desktop.getDesktop().open(f);
+              }
+              else {
+                try {
+
+                  if (!vlcF.startsWith("/")) {
+                    // add the missing 3rd / if not start with one (eg windows)
+                    vlcF = "/" + vlcF;
+                  }
+                  String mrl = new FileMrl().file(vlcF).value();
+
+                  final EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+                  JFrame frame = new JFrame("player");
+                  frame.setLocation(100, 100);
+                  frame.setSize(1050, 600);
+                  frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
+                  frame.setVisible(true);
+                  frame.setContentPane(mediaPlayerComponent);
+                  // mrl = mrl.replace("file://", ""); // does not work either
+
+                  LOGGER.debug("VLC: playing " + mrl);
+                  Boolean ok = mediaPlayerComponent.getMediaPlayer().playMedia(mrl);
+                  if (!ok) {
+                    LOGGER.error("VLC: couldn't create player window!");
+                  }
+                }
+                catch (RuntimeException e) {
+                  LOGGER.warn("VLC: has not been initialized on startup - use system player");
+                  Desktop.getDesktop().open(f);
+                }
+                catch (NoClassDefFoundError e) {
+                  LOGGER.warn("VLC: has not been initialized on startup - use system player");
+                  Desktop.getDesktop().open(f);
+                }
+
+              } // end else
+            } // end exists
+          } // end try
+          catch (IOException e) {
+            LOGGER.error("Error opening file", e);
           }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-          }
-        }
+        } // end isEmpty
       }
     });
     add(btnPlay, "10, 2");
