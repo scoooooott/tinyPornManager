@@ -80,9 +80,12 @@
         <jar destfile="build/tmm.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
-                <attribute name="Implementation-Version" value="${version} (r${svn.info.revision})" />
                 <attribute name="SplashScreen-Image" value="org/tinymediamanager/ui/images/splashscreen.png" />
                 <attribute name="Class-Path" value=". ${jar.classpath}" />
+                <attribute name="Implementation-Title" value="tinyMediaManager"/>
+                <attribute name="Implementation-Version" value="${version} (r${svn.info.revision})"/> 
+                <attribute name="Build-Date" value="${DSTAMP}-${TSTAMP}"/>
+                <attribute name="Build-By" value="${user.name}"/>
             </manifest>
             <fileset dir="bin" />
         </jar>
