@@ -91,24 +91,25 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
   }
 
   @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions scrapeOptions) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getMetadata() " + options.toString());
     // check if there is a md in the result
-    if (scrapeOptions.getResult() != null && scrapeOptions.getResult().getMetadata() != null) {
-      LOGGER.debug("IMDB: getMetadata from cache: " + scrapeOptions.getResult());
-      return scrapeOptions.getResult().getMetadata();
+    if (options.getResult() != null && options.getResult().getMetadata() != null) {
+      LOGGER.debug("IMDB: getMetadata from cache: " + options.getResult());
+      return options.getResult().getMetadata();
     }
 
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     String imdbId = "";
 
     // imdbId from searchResult
-    if (scrapeOptions.getResult() != null) {
-      imdbId = scrapeOptions.getResult().getIMDBId();
+    if (options.getResult() != null) {
+      imdbId = options.getResult().getIMDBId();
     }
 
     // imdbid from scraper option
     if (!MetadataUtil.isValidImdbId(imdbId)) {
-      imdbId = scrapeOptions.getImdbId();
+      imdbId = options.getImdbId();
     }
 
     if (!MetadataUtil.isValidImdbId(imdbId)) {
@@ -618,6 +619,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
    */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+      LOGGER.debug("search() " + query.toString());
     /*
      * IMDb matches seem to come in several "flavours".
      * 

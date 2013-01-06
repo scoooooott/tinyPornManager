@@ -145,6 +145,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
    */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
+    LOGGER.debug("search() " + query.toString());
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = "";
     String baseUrl = "";
@@ -211,17 +212,18 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   /**
    * Gets the meta data.
    * 
-   * @param scrapeOptions
+   * @param options
    *          the scrape options
    * @return the meta data
    * @throws Exception
    *           the exception
    */
-  public MediaMetadata getMetadata(MediaScrapeOptions scrapeOptions) throws Exception {
+  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getMetadata() " + options.toString());
     // check if there is a md in the result
-    if (scrapeOptions.getResult() != null && scrapeOptions.getResult().getMetadata() != null) {
-      LOGGER.debug("TMDB: getMetadata from cache: " + scrapeOptions.getResult());
-      return scrapeOptions.getResult().getMetadata();
+    if (options.getResult() != null && options.getResult().getMetadata() != null) {
+      LOGGER.debug("TMDB: getMetadata from cache: " + options.getResult());
+      return options.getResult().getMetadata();
     }
 
     // get ids to scrape
@@ -230,17 +232,17 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     int tmdbId = 0;
 
     // tmdbId from searchResult
-    if (scrapeOptions.getResult() != null) {
-      tmdbId = Integer.parseInt(scrapeOptions.getResult().getId());
+    if (options.getResult() != null) {
+      tmdbId = Integer.parseInt(options.getResult().getId());
     }
 
     // tmdbId from option
     if (tmdbId == 0) {
-      tmdbId = scrapeOptions.getTmdbId();
+      tmdbId = options.getTmdbId();
     }
 
     // tmdbId via imdbId
-    String imdbId = scrapeOptions.getImdbId();
+    String imdbId = options.getImdbId();
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId
       tmdbId = getTmdbIdFromImdbId(imdbId);
@@ -389,11 +391,12 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions scrapeOptions) throws Exception {
-    MediaArtworkType artworkType = scrapeOptions.getArtworkType();
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getArtwork() " + options.toString());
+    MediaArtworkType artworkType = options.getArtworkType();
 
-    int tmdbId = scrapeOptions.getTmdbId();
-    String imdbId = scrapeOptions.getImdbId();
+    int tmdbId = options.getTmdbId();
+    String imdbId = options.getImdbId();
 
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId
@@ -429,7 +432,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
 
     // buffer the artwork
-    MediaMetadata md = scrapeOptions.getMetadata();
+    MediaMetadata md = options.getMetadata();
     if (md != null) {
       md.addMediaArt(artwork);
     }
@@ -444,11 +447,12 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
    *          the tmdb id
    * @return the trailers
    */
-  public List<MediaTrailer> getTrailers(MediaScrapeOptions scrapeOptions) throws Exception {
+  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getTrailers() " + options.toString());
     List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
 
-    int tmdbId = scrapeOptions.getTmdbId();
-    String imdbId = scrapeOptions.getImdbId();
+    int tmdbId = options.getTmdbId();
+    String imdbId = options.getImdbId();
 
     if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
       // try to get tmdbId via imdbId

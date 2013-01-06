@@ -67,6 +67,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider {
    */
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getMetadata() " + options.toString());
     // TODO Auto-generated method stub
     return null;
   }
@@ -80,6 +81,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider {
    */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
+    LOGGER.debug("search() " + options.toString());
     // TODO Auto-generated method stub
     return null;
   }

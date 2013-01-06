@@ -101,11 +101,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
 
     @Override
     public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
-        // MediaSearchResult [extraArgs=empty, id=226745, imdbId=null,
-        // metadata=null, providerId=ofdb, score=0.0, title=Bourne Vermächtnis, Das,
-        // originalTitle=Bourne Legacy, The, type=MOVIE,
-        // url=http://www.ofdb.de/film/226745,Das-Bourne-Verm&auml;chtnis,
-        // year=2012]
+        LOGGER.debug("getMetadata() " + options.toString());
 
         MediaMetadata md = new MediaMetadata(providerInfo.getId());
         // generic Elements used all over
@@ -115,9 +111,9 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         md.setTitle(Utils.removeSortableName(options.getResult().getTitle()));
         md.setYear(options.getResult().getYear());
 
-        // http://www.ofdb.de/film/22523,Die-Bourne-Identit%C3%A4t
         Url url;
         try {
+            LOGGER.debug("get details page");
             url = new CachedUrl(options.getResult().getUrl());
             InputStream in = url.getInputStream();
             Document doc = Jsoup.parse(in, "UTF-8", "");
@@ -157,6 +153,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
                 }
             }
 
+            LOGGER.debug("parse plot");
             // get PlotLink, open url and parse
             // <a href="plot/22523,31360,Die-Bourne-Identität"><b>[mehr]</b></a>
             el = doc.getElementsByAttributeValueMatching("href", "plot\\/\\d+,");
@@ -197,13 +194,12 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         q = q.replaceAll("(?i)( a | the | der | die | das |\\(\\d+\\))", " ");
         q = q.replaceAll("[^A-Za-z0-9äöüÄÖÜ ]", " ");
         q = q.replaceAll("  ", "");
-        LOGGER.debug(q);
         return q.trim();
     }
 
     @Override
     public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
-        LOGGER.debug("OFDB Scraper: start");
+        LOGGER.debug("search() " + options.toString());
         List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
         String searchString = "";
         String imdb = "";
@@ -218,19 +214,19 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.IMDBID))) {
             imdb = options.get(MediaSearchOptions.SearchParam.IMDBID);
             searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + imdb;
-            LOGGER.debug("OFDB Scraper: search with imdbId: " + imdb);
+            LOGGER.debug("search with imdbId: " + imdb);
         } else if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
             String title = options.get(MediaSearchOptions.SearchParam.TITLE);
             searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=Titel&SText="
                     + URLEncoder.encode(cleanSearch(title), "UTF-8");
-            LOGGER.debug("OFDB Scraper: search with title: " + title);
+            LOGGER.debug("search with title: " + title);
         } else if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
             String query = options.get(MediaSearchOptions.SearchParam.QUERY);
             searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=All&SText="
                     + URLEncoder.encode(cleanSearch(query), "UTF-8");
-            LOGGER.debug("OFDB Scraper: search for everything: " + query);
+            LOGGER.debug("search for everything: " + query);
         } else {
-            LOGGER.debug("OFDB Scraper: empty searchString");
+            LOGGER.debug("empty searchString");
             return resultList;
         }
 
@@ -240,7 +236,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         in.close();
         // only look for movie links
         Elements filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-        LOGGER.debug("OFDB Scraper: found " + filme.size() + " search results");
+        LOGGER.debug("found " + filme.size() + " search results");
         if (filme == null || filme.isEmpty()) {
             return resultList;
         }
@@ -257,7 +253,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
                 }
                 sr.setId(StrgUtils.substr(a.toString(), "film\\/(\\d+),")); // OFDB ID
                 sr.setTitle(StringEscapeUtils.unescapeHtml4(StrgUtils.substr(a.toString(), ">(.*?)<font")));
-                LOGGER.debug("OFDB Scraper: found movie " + sr.getTitle());
+                LOGGER.debug("found movie " + sr.getTitle());
                 sr.setOriginalTitle(StringEscapeUtils.unescapeHtml4(StrgUtils.substr(a.toString(),
                         "> / (.*?)</font")));
                 sr.setYear(StrgUtils.substr(a.toString(), "font> \\((.*?)\\)<\\/a"));
@@ -268,20 +264,19 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
                 MetadataUtil.copySearchQueryToSearchResult(options, sr);
                 resultList.add(sr);
             } catch (Exception e) {
-                LOGGER.warn("OFDB Scraper: error parsing movie result: " + e.getMessage());
+                LOGGER.warn("error parsing movie result: " + e.getMessage());
             }
         }
 
-        LOGGER.debug("OFDB Scraper: end");
         return resultList;
     }
 
     @Override
     public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
-        LOGGER.debug("OFDB Scraper: getting trailers");
+        LOGGER.debug("getTrailers() " + options.toString());
         List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
         if (options.getImdbId().isEmpty()) {
-            LOGGER.debug("OFDB Scraper: IMDB id not found");
+            LOGGER.debug("IMDB id not found");
             return trailers;
         }
         /*
@@ -311,12 +306,12 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
             Document doc = Jsoup.parse(in, "UTF-8", "");
             in.close();
             Elements filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-            LOGGER.debug("OFDB Scraper: found " + filme.size() + " search results"); // hopefully only one
+            LOGGER.debug("found " + filme.size() + " search results"); // hopefully only one
             if (filme == null || filme.isEmpty()) {
                 return trailers;
             }
 
-            // get details page (again)
+            LOGGER.debug("get (trailer) details page");
             url = new CachedUrl(BASE_URL + "/" + StrgUtils.substr(filme.first().toString(), "href=\\\"(.*?)\\\""));
             in = url.getInputStream();
             doc = Jsoup.parse(in, "UTF-8", "");
@@ -347,7 +342,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
                     trailer.setQuality(tpix + " (" + tformat + ")");
                     trailer.setProvider("filmtrailer");
                     trailer.setUrl(turl);
-                    LOGGER.debug("OFDB Scraper: " + trailer.toString());
+                    LOGGER.debug(trailer.toString());
                     trailers.add(trailer);
                 }
             }

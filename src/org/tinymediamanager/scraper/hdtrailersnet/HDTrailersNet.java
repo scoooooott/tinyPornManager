@@ -33,6 +33,7 @@ public class HDTrailersNet implements IMediaTrailerProvider {
 
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getTrailers() " + options.toString());
     List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
     MediaMetadata md = options.getMetadata();
 
@@ -102,39 +103,38 @@ public class HDTrailersNet implements IMediaTrailerProvider {
           // apple.com urls currently not working (according to hd-trailers)
           String tr0qual = t.select("td.bottomTableResolution > a").get(0).text();
           String tr0url = t.select("td.bottomTableResolution > a").get(0).attr("href");
-          LOGGER.debug(tr0qual + " | " + title + " (" + date + ") | " + tr0url);
           MediaTrailer trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
           trailer.setUrl(tr0url);
           trailer.setQuality(tr0qual);
           trailer.setProvider(getProviderFromUrl(tr0url));
+          LOGGER.debug(trailer.toString());
           trailers.add(trailer);
 
           String tr1qual = t.select("td.bottomTableResolution > a").get(1).text();
           String tr1url = t.select("td.bottomTableResolution > a").get(1).attr("href");
-          LOGGER.debug(tr1qual + " | " + title + " (" + date + ") | " + tr1url);
           trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
           trailer.setUrl(tr1url);
           trailer.setQuality(tr1qual);
           trailer.setProvider(getProviderFromUrl(tr1url));
+          LOGGER.debug(trailer.toString());
           trailers.add(trailer);
 
           String tr2qual = t.select("td.bottomTableResolution > a").get(2).text();
           String tr2url = t.select("td.bottomTableResolution > a").get(2).attr("href");
-          LOGGER.debug(tr2qual + " | " + title + " (" + date + ") | " + tr2url);
           trailer = new MediaTrailer();
           trailer.setName(title + " (" + date + ")");
           trailer.setUrl(tr2url);
           trailer.setQuality(tr2qual);
           trailer.setProvider(getProviderFromUrl(tr2url));
+          LOGGER.debug(trailer.toString());
           trailers.add(trailer);
         }
         catch (IndexOutOfBoundsException i) {
           // ignore parse errors per line
           LOGGER.warn("Error parsing HD-Trailers line. Possible missing quality.");
         }
-
       }
     }
     catch (IOException e) {
