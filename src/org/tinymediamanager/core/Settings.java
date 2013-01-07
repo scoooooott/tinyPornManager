@@ -258,6 +258,15 @@ public class Settings extends AbstractModelObject {
     scraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     windowConfig = new WindowConfig();
     windowConfig.addPropertyChangeListener(propertyChangeListener);
+
+    addTitlePrefix("A");
+    addTitlePrefix("An");
+    addTitlePrefix("The");
+    addTitlePrefix("Der");
+    addTitlePrefix("Die");
+    addTitlePrefix("Das");
+    addTitlePrefix("Ein");
+    addTitlePrefix("Eine");
   }
 
   /**
@@ -620,6 +629,7 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".mov");
 
     // default title prefix
+    titlePrefix.clear();
     addTitlePrefix("A");
     addTitlePrefix("An");
     addTitlePrefix("The");

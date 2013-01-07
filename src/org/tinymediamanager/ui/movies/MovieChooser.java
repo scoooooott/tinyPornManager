@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -377,6 +378,8 @@ public class MovieChooser extends JDialog implements ActionListener {
         // set scraped metadata
         movieToScrape.setMetadata(md);
 
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
         // get images?
         if (Globals.settings.getScraperMetadataConfig().isArtwork()) {
           // let the user choose the images
@@ -413,6 +416,8 @@ public class MovieChooser extends JDialog implements ActionListener {
           List<MediaTrailer> trailers = model.getTrailers();
           movieToScrape.setTrailers(trailers);
         }
+
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         this.setVisible(false);
         dispose();
