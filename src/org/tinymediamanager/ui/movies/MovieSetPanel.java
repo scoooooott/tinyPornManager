@@ -15,10 +15,15 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.awt.CardLayout;
+
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tinymediamanager.core.movie.Movie;
@@ -48,13 +53,13 @@ public class MovieSetPanel extends JPanel {
     splitPaneHorizontal.setContinuousLayout(true);
     add(splitPaneHorizontal, "2, 2, fill, fill");
 
-    JPanel panelMovieList = new JPanel();
-    splitPaneHorizontal.setLeftComponent(panelMovieList);
-    panelMovieList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("74px:grow"), },
+    JPanel panelMovieSetList = new JPanel();
+    splitPaneHorizontal.setLeftComponent(panelMovieSetList);
+    panelMovieSetList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("74px:grow"), },
         new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:322px:grow"), }));
 
     JScrollPane scrollPane = new JScrollPane();
-    panelMovieList.add(scrollPane, "2, 2, fill, fill");
+    panelMovieSetList.add(scrollPane, "2, 2, fill, fill");
 
     // build tree
     MovieList movieList = MovieList.getInstance();
@@ -68,9 +73,43 @@ public class MovieSetPanel extends JPanel {
       root.add(setNode);
     }
 
-    JTree tree = new JTree(root);
+    final JTree tree = new JTree(root);
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     scrollPane.setViewportView(tree);
+
+    final JPanel panelRight = new JPanel();
+    splitPaneHorizontal.setRightComponent(panelRight);
+    panelRight.setLayout(new CardLayout(0, 0));
+
+    JPanel panelSet = new JPanel();
+    panelRight.add(panelSet, "movieSet");
+
+    JLabel lblNewLabel = new JLabel("Set");
+    panelSet.add(lblNewLabel);
+
+    JPanel panelMovie = new JPanel();
+    panelRight.add(panelMovie, "movie");
+
+    JLabel lblNewLabel_1 = new JLabel("Movie");
+    panelMovie.add(lblNewLabel_1);
+
+    tree.addTreeSelectionListener(new TreeSelectionListener() {
+      @Override
+      public void valueChanged(TreeSelectionEvent e) {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+
+        if (node.getUserObject() instanceof MovieSet) {
+          MovieSet movieSet = (MovieSet) node.getUserObject();
+          CardLayout cl = (CardLayout) (panelRight.getLayout());
+          cl.show(panelRight, "movieSet");
+        }
+        if (node.getUserObject() instanceof Movie) {
+          Movie movie = (Movie) node.getUserObject();
+          CardLayout cl = (CardLayout) (panelRight.getLayout());
+          cl.show(panelRight, "movie");
+        }
+      }
+    });
   }
 }
