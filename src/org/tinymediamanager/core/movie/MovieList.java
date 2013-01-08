@@ -69,11 +69,8 @@ public class MovieList extends AbstractModelObject {
   /** The movie list. */
   private ObservableElementList<Movie> movieList;
 
-  // /** The metadata provider. */
-  // private IMediaMetadataProvider metadataProvider;
-  //
-  // /** The artwork provider. */
-  // private IMediaArtworkProvider artworkProvider;
+  /** The movie set list. */
+  private List<MovieSet>               movieSetList;
 
   /** The tag listener. */
   private PropertyChangeListener       tagListener;
@@ -205,27 +202,53 @@ public class MovieList extends AbstractModelObject {
    * Load movies from database.
    */
   public void loadMoviesFromDatabase() {
+    List<Movie> movies = null;
+    List<MovieSet> movieSets = null;
     try {
+      // load movies
       TypedQuery<Movie> query = Globals.entityManager.createQuery("SELECT movie FROM Movie movie", Movie.class);
-      List<Movie> movies = query.getResultList();
+      movies = query.getResultList();
       if (movies != null) {
         LOGGER.debug("found " + movies.size() + " movies in database");
         movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>(movies.size())),
             GlazedLists.beanConnector(Movie.class));
+
+        for (Object obj : movies) {
+          if (obj instanceof Movie) {
+            Movie movie = (Movie) obj;
+            movie.setObservables();
+            addMovie(movie);
+          }
+          else {
+            LOGGER.error("retrieved no movie: " + obj);
+          }
+        }
+
       }
       else {
-        LOGGER.debug("found nothing in database");
+        LOGGER.debug("found no movies in database");
       }
 
-      for (Object obj : movies)
-        if (obj instanceof Movie) {
-          Movie movie = (Movie) obj;
-          movie.setObservables();
-          addMovie(movie);
+      // load movie sets
+      TypedQuery<MovieSet> querySets = Globals.entityManager.createQuery("SELECT movieSet FROM MovieSet movieSet", MovieSet.class);
+      movieSets = querySets.getResultList();
+      if (movieSets != null) {
+        LOGGER.debug("found " + movieSets.size() + " movieSets in database");
+        movieSetList = ObservableCollections.observableList(new ArrayList<MovieSet>(movieSets.size()));
+
+        // load movie sets
+        for (Object obj : movieSets) {
+          if (obj instanceof MovieSet) {
+            MovieSet movieSet = (MovieSet) obj;
+            movieSet.setObservables();
+            addMovieSet(movieSet);
+          }
         }
-        else {
-          LOGGER.error("retrieved no movie: " + obj);
-        }
+      }
+      else {
+        LOGGER.debug("found no movieSets in database");
+      }
+
     }
     catch (PersistenceException e) {
       LOGGER.error("loadMoviesFromDatabase", e);
@@ -233,6 +256,31 @@ public class MovieList extends AbstractModelObject {
     catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
+
+    // // TEMP!
+    // MovieSet harryPotter = new MovieSet("Harry Potter");
+    // harryPotter.saveToDb();
+    //
+    // MovieSet terminator = new MovieSet("Terminator");
+    // terminator.saveToDb();
+    // for (Movie movie : movieList) {
+    // // TEMP
+    // if (movie.getName().contains("Harry")) {
+    // harryPotter.addMovie(movie);
+    // movie.setMovieSet(harryPotter);
+    // movie.saveToDb();
+    // }
+    // if (movie.getName().contains("Terminator")) {
+    // terminator.addMovie(movie);
+    // movie.setMovieSet(terminator);
+    // movie.saveToDb();
+    // }
+    // }
+    // harryPotter.saveToDb();
+    // terminator.saveToDb();
+    //
+    // movieSetList.add(harryPotter);
+    // movieSetList.add(terminator);
   }
 
   /**
@@ -630,5 +678,33 @@ public class MovieList extends AbstractModelObject {
         }
       }
     }
+  }
+
+  /**
+   * @return the movieSetList
+   */
+  public List<MovieSet> getMovieSetList() {
+    if (movieSetList == null) {
+      movieSetList = ObservableCollections.observableList(new ArrayList<MovieSet>());
+    }
+    return movieSetList;
+  }
+
+  /**
+   * @param movieSetList
+   *          the movieSetList to set
+   */
+  public void setMovieSetList(ObservableElementList<MovieSet> movieSetList) {
+    this.movieSetList = movieSetList;
+  }
+
+  /**
+   * Adds the movie set.
+   * 
+   * @param movieSet
+   *          the movie set
+   */
+  public void addMovieSet(MovieSet movieSet) {
+    this.movieSetList.add(movieSet);
   }
 }

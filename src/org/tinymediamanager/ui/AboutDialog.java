@@ -147,6 +147,8 @@ public class AboutDialog extends JDialog {
         getRootPane().setDefaultButton(okButton);
       }
     }
+
+    pack();
   }
 
   /**

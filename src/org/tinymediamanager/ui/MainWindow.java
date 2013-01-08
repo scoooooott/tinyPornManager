@@ -34,6 +34,7 @@ import javax.swing.JTabbedPane;
 import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.movies.MoviePanel;
+import org.tinymediamanager.ui.movies.MovieSetPanel;
 import org.tinymediamanager.ui.settings.SettingsPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -122,25 +123,17 @@ public class MainWindow extends JFrame {
         new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
             RowSpec.decode("fill:default:grow"), }));
 
-    // JTabbedPane tabbedPane = new JTabbedPane();
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
-    // tabbedPane.setUI(new TmmTabbedPaneUI());
     tabbedPane.setTabPlacement(JTabbedPane.LEFT);
     getContentPane().add(tabbedPane, "1, 2, fill, fill");
 
-    panelMovies = new MoviePanel();// new JPanel();
-    // tabbedPane.addTab("", new
-    // ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/movies.png")),
-    // panelMovies, null);
-    // tabbedPane.addTab("M", panelMovies);
+    panelMovies = new MoviePanel();
     VerticalTextIcon.addTab(tabbedPane, "Movies", panelMovies);
 
-    JPanel panelSettings = new SettingsPanel();// JPanel();
-    // tabbedPane.addTab("", new
-    // ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")),
-    // panelSettings,
-    // null);
-    // tabbedPane.addTab("S", panelSettings);
+    JPanel panelMovieSets = new MovieSetPanel();
+    VerticalTextIcon.addTab(tabbedPane, "Movie sets", panelMovieSets);
+
+    JPanel panelSettings = new SettingsPanel();
     VerticalTextIcon.addTab(tabbedPane, "Settings", panelSettings);
 
     // shutdown listener - to clean database connections safetly

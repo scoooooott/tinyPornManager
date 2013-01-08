@@ -59,13 +59,8 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.omertron.themoviedbapi.model.ArtworkType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The main class for movies.
- */
-/**
- * @author manuel
- * 
  */
 @Entity
 public class Movie extends AbstractModelObject {
@@ -293,6 +288,8 @@ public class Movie extends AbstractModelObject {
 
   /** The extra thumbs. */
   private List<String>          extraThumbs          = new ArrayList<String>();
+
+  private MovieSet              movieSet;
 
   /**
    * Instantiates a new movie.
@@ -1964,5 +1961,20 @@ public class Movie extends AbstractModelObject {
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
+  /**
+   * @return the movieset
+   */
+  public MovieSet getMovieSet() {
+    return movieSet;
+  }
+
+  /**
+   * @param movieset
+   *          the movieset to set
+   */
+  public void setMovieSet(MovieSet movieset) {
+    this.movieSet = movieset;
   }
 }
