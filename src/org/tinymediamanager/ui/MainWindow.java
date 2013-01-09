@@ -34,7 +34,7 @@ import javax.swing.JTabbedPane;
 import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.movies.MoviePanel;
-import org.tinymediamanager.ui.movies.MovieSetPanel;
+import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.settings.SettingsPanel;
 
 import com.jgoodies.forms.factories.FormFactory;

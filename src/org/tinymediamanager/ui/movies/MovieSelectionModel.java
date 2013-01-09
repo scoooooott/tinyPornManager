@@ -32,7 +32,6 @@ import ca.odell.glazedlists.SortedList;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieSelectionModel.
  */
@@ -66,7 +65,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
   private PropertyChangeListener        propertyChangeListener;
 
   /**
-   * Instantiates a new movie selection model.
+   * Instantiates a new movie selection model. Usage in MoviePanel
    * 
    * @param sortedList
    *          the sorted list
@@ -89,6 +88,34 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
         firePropertyChange(evt);
       }
     };
+  }
+
+  /**
+   * Instantiates a new movie selection model. Usage in MovieSetPanel
+   */
+  public MovieSelectionModel() {
+
+  }
+
+  /**
+   * Sets the selected movie.
+   * 
+   * @param movie
+   *          the new selected movie
+   */
+  public void setSelectedMovie(Movie movie) {
+    Movie oldValue = this.selectedMovie;
+    this.selectedMovie = movie;
+
+    if (oldValue != null) {
+      oldValue.removePropertyChangeListener(propertyChangeListener);
+    }
+
+    if (selectedMovie != null) {
+      selectedMovie.addPropertyChangeListener(propertyChangeListener);
+    }
+
+    firePropertyChange(SELECTED_MOVIE, oldValue, movie);
   }
 
   /**
@@ -166,13 +193,6 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public Movie getSelectedMovie() {
     return selectedMovie;
-  }
-
-  /**
-   * Sets the selected movie.
-   */
-  public void setSelectedMovie() {
-
   }
 
   /**

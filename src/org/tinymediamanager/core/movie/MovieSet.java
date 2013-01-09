@@ -34,13 +34,28 @@ import org.tinymediamanager.core.AbstractModelObject;
 @Entity
 public class MovieSet extends AbstractModelObject {
 
+  /** The name. */
   private String      name             = "";
 
+  /** The movies. */
   private List<Movie> movies           = new ArrayList<Movie>();
 
+  /** The movies observable. */
   @Transient
   private List<Movie> moviesObservable = ObservableCollections.observableList(movies);
 
+  /**
+   * Instantiates a new movie set. Needed for JAXB
+   */
+  public MovieSet() {
+  }
+
+  /**
+   * Instantiates a new movie set.
+   * 
+   * @param name
+   *          the name
+   */
   public MovieSet(String name) {
     this.name = name;
   }
@@ -53,6 +68,8 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
+   * Gets the name.
+   * 
    * @return the name
    */
   public String getName() {
@@ -60,8 +77,10 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
-   * @param name
-   *          the name to set
+   * Sets the name.
+   * 
+   * @param newValue
+   *          the new name
    */
   public void setName(String newValue) {
     String oldValue = this.name;
@@ -69,10 +88,21 @@ public class MovieSet extends AbstractModelObject {
     firePropertyChange("name", oldValue, newValue);
   }
 
+  /**
+   * Adds the movie.
+   * 
+   * @param movie
+   *          the movie
+   */
   public void addMovie(Movie movie) {
     moviesObservable.add(movie);
   }
 
+  /**
+   * Gets the movies.
+   * 
+   * @return the movies
+   */
   public List<Movie> getMovies() {
     return moviesObservable;
   }
@@ -93,8 +123,6 @@ public class MovieSet extends AbstractModelObject {
    * <code>toString</code> for the specified object.
    * </p>
    * 
-   * @param object
-   *          the Object to be output
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */

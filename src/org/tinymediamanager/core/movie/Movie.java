@@ -245,9 +245,6 @@ public class Movie extends AbstractModelObject {
   /** The watched. */
   private boolean               watched              = false;
 
-  // /** The movie files. */
-  // private List<String> movieFiles = new ArrayList<String>();
-
   /** The genres. */
   private List<MediaGenres>     genres               = new ArrayList<MediaGenres>();
 
@@ -289,10 +286,11 @@ public class Movie extends AbstractModelObject {
   /** The extra thumbs. */
   private List<String>          extraThumbs          = new ArrayList<String>();
 
+  /** The movie set. */
   private MovieSet              movieSet;
 
   /**
-   * Instantiates a new movie.
+   * Instantiates a new movie. Needed for JAXB
    */
   public Movie() {
   }
@@ -587,26 +585,6 @@ public class Movie extends AbstractModelObject {
       }
     }
   }
-
-  // /**
-  // * Sets the movie files.
-  // *
-  // * @param newValue
-  // * the new movie files
-  // */
-  // public void setMovieFiles(List<String> newValue) {
-  // this.movieFiles = newValue;
-  // firePropertyChange(MOVIE_FILES, null, newValue);
-  // }
-  //
-  // /**
-  // * Gets the movie files.
-  // *
-  // * @return the movie files
-  // */
-  // public List<String> getMovieFiles() {
-  // return this.movieFiles;
-  // }
 
   /**
    * Gets the data source.
@@ -1017,20 +995,7 @@ public class Movie extends AbstractModelObject {
       }
     }
 
-    // for (String fileName : movieFiles) {
-    // if (fileName.compareTo(filename) == 0) {
-    // return true;
-    // }
-    // }
-
     return false;
-  }
-
-  // when loading from Database
-  /**
-   * On load.
-   */
-  void onLoad() {
   }
 
   /**
