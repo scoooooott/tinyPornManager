@@ -60,7 +60,6 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.WindowConfig;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieRenamer;
@@ -193,8 +192,8 @@ public class MoviePanel extends JPanel {
   /** The panel right. */
   private MovieInformationPanel  panelRight;
 
-  /** The window config. */
-  private WindowConfig           windowConfig;
+  // /** The window config. */
+  // private WindowConfig windowConfig;
 
   /**
    * Create the panel.
@@ -207,7 +206,7 @@ public class MoviePanel extends JPanel {
     sortedMovies = new SortedList<Movie>(movieList.getMovies(), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
     // movieSelectionModel = new MovieSelectionModel(sortedMovies);
-    windowConfig = Globals.settings.getWindowConfig();
+    // windowConfig = Globals.settings.getWindowConfig();
 
     // build menu
     menu = new JMenu("Movies");

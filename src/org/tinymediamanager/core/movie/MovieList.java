@@ -705,6 +705,25 @@ public class MovieList extends AbstractModelObject {
    *          the movie set
    */
   public void addMovieSet(MovieSet movieSet) {
+    int oldValue = movieSetList.size();
     this.movieSetList.add(movieSet);
+    firePropertyChange("movieSets", null, movieSetList);
+    firePropertyChange("movieSetCount", oldValue, movieSetList.size());
+  }
+
+  /**
+   * Removes the movie set.
+   * 
+   * @param movieSet
+   *          the movie set
+   */
+  public void removeMovieSet(MovieSet movieSet) {
+    int oldValue = movieSetList.size();
+    movieSetList.remove(movieSet);
+    Globals.entityManager.getTransaction().begin();
+    Globals.entityManager.remove(movieSet);
+    Globals.entityManager.getTransaction().commit();
+    firePropertyChange("movieSets", null, movieSetList);
+    firePropertyChange("movieSetCount", oldValue, movieSetList.size());
   }
 }

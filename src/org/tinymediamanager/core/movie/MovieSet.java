@@ -21,9 +21,6 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -96,6 +93,16 @@ public class MovieSet extends AbstractModelObject {
    */
   public void addMovie(Movie movie) {
     moviesObservable.add(movie);
+    saveToDb();
+    firePropertyChange("movies", null, moviesObservable);
+    firePropertyChange("AddedMovie", this, movie);
+  }
+
+  public void removeMovie(Movie movie) {
+    moviesObservable.remove(movie);
+    saveToDb();
+    firePropertyChange("movies", null, moviesObservable);
+    firePropertyChange("removedMovie", this, movie);
   }
 
   /**
@@ -105,6 +112,16 @@ public class MovieSet extends AbstractModelObject {
    */
   public List<Movie> getMovies() {
     return moviesObservable;
+  }
+
+  /**
+   * Removes the all movies.
+   */
+  public void removeAllMovies() {
+    moviesObservable.clear();
+    saveToDb();
+    firePropertyChange("movies", null, moviesObservable);
+    firePropertyChange("RemovedAllMovies", null, moviesObservable);
   }
 
   /**
@@ -118,16 +135,13 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
-   * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
-   * </p>
-   * 
-   * @return the String result
-   * @see ReflectionToStringBuilder#toString(Object)
+   * toString. used for JComboBox in movie editor
    */
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    return this.name;
+    // return ToStringBuilder.reflectionToString(this,
+    // ToStringStyle.SHORT_PREFIX_STYLE);
   }
+
 }

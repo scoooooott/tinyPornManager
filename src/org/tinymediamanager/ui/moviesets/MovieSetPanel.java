@@ -31,6 +31,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
@@ -44,13 +45,14 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieSetTreePanel.
  */
 public class MovieSetPanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long      serialVersionUID  = 1L;
+  private static final long      serialVersionUID     = 1L;
 
   /** The split pane horizontal. */
   private JSplitPane             splitPaneHorizontal;
@@ -62,16 +64,19 @@ public class MovieSetPanel extends JPanel {
   private MovieSetSelectionModel movieSetSelectionModel;
 
   /** The movie list. */
-  private MovieList              movieList         = MovieList.getInstance();
+  private MovieList              movieList            = MovieList.getInstance();
 
   /** The action add movie set. */
-  private final Action           actionAddMovieSet = new AddMovieSetAction();
+  private final Action           actionAddMovieSet    = new AddMovieSetAction();
 
   /** The tree. */
   private JTree                  tree;
 
   /** The tree model. */
   private MovieSetTreeModel      treeModel;
+
+  /** The action remove movie set. */
+  private final Action           actionRemoveMovieSet = new RemoveMovieSetAction();
 
   /**
    * Instantiates a new movie set panel.
@@ -100,9 +105,13 @@ public class MovieSetPanel extends JPanel {
     JToolBar toolBar = new JToolBar();
     panelMovieSetList.add(toolBar, "2, 2");
 
-    JButton btnAdd = new JButton("");
-    btnAdd.setAction(actionAddMovieSet);
-    toolBar.add(btnAdd);
+    JButton btnAddMovieSet = new JButton("");
+    btnAddMovieSet.setAction(actionAddMovieSet);
+    toolBar.add(btnAddMovieSet);
+
+    JButton btnRemoveMovieSet = new JButton("New button");
+    btnRemoveMovieSet.setAction(actionRemoveMovieSet);
+    toolBar.add(btnRemoveMovieSet);
 
     JScrollPane scrollPane = new JScrollPane();
     panelMovieSetList.add(scrollPane, "2, 4, fill, fill");
@@ -126,18 +135,19 @@ public class MovieSetPanel extends JPanel {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-
-        if (node.getUserObject() instanceof MovieSet) {
-          MovieSet movieSet = (MovieSet) node.getUserObject();
-          movieSetSelectionModel.setSelectedMovieSet(movieSet);
-          CardLayout cl = (CardLayout) (panelRight.getLayout());
-          cl.show(panelRight, "movieSet");
-        }
-        if (node.getUserObject() instanceof Movie) {
-          Movie movie = (Movie) node.getUserObject();
-          movieSelectionModel.setSelectedMovie(movie);
-          CardLayout cl = (CardLayout) (panelRight.getLayout());
-          cl.show(panelRight, "movie");
+        if (node != null) {
+          if (node.getUserObject() instanceof MovieSet) {
+            MovieSet movieSet = (MovieSet) node.getUserObject();
+            movieSetSelectionModel.setSelectedMovieSet(movieSet);
+            CardLayout cl = (CardLayout) (panelRight.getLayout());
+            cl.show(panelRight, "movieSet");
+          }
+          if (node.getUserObject() instanceof Movie) {
+            Movie movie = (Movie) node.getUserObject();
+            movieSelectionModel.setSelectedMovie(movie);
+            CardLayout cl = (CardLayout) (panelRight.getLayout());
+            cl.show(panelRight, "movie");
+          }
         }
       }
     });
@@ -153,7 +163,7 @@ public class MovieSetPanel extends JPanel {
      */
     public AddMovieSetAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Add.png")));
-      putValue(SHORT_DESCRIPTION, "rename selected movies");
+      putValue(SHORT_DESCRIPTION, "Add a movie set");
     }
 
     /*
@@ -168,7 +178,53 @@ public class MovieSetPanel extends JPanel {
         MovieSet movieSet = new MovieSet(name);
         movieSet.saveToDb();
         movieList.addMovieSet(movieSet);
-        treeModel.addMovieSet(new MovieSetTreeNode(movieSet));
+        treeModel.addMovieSet(movieSet);
+      }
+    }
+  }
+
+  /**
+   * The Class RemoveMovieSetAction.
+   */
+  private class RemoveMovieSetAction extends AbstractAction {
+
+    /**
+     * Instantiates a new removes the movie set action.
+     */
+    public RemoveMovieSetAction() {
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      putValue(SHORT_DESCRIPTION, "Remove selected movie set");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      TreePath[] paths = tree.getSelectionPaths();
+      tree.clearSelection();
+      if (paths != null) {
+        for (TreePath path : paths) {
+          if (path.getPathCount() > 1) {
+
+            // DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+            // path.getLastPathComponent();
+            // if (node.getUserObject() instanceof MovieSet) {
+            // MovieSet movieSet = (MovieSet) node.getUserObject();
+            // System.out.println(movieSet.getName());
+            // }
+            // if (node.getUserObject() instanceof Movie) {
+            // Movie movie = (Movie) node.getUserObject();
+            // System.out.println(movie.getName());
+            // }
+            //
+            treeModel.remove(path);
+
+            // tree.addSelectionPath(path.getParentPath());
+          }
+        }
       }
     }
   }

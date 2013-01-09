@@ -61,6 +61,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
@@ -222,6 +223,9 @@ public class MovieEditor extends JDialog {
   /** The extrathumbs. */
   private List<String>       extrathumbs       = new ArrayList<String>();
 
+  /** The cb movie set. */
+  private JComboBox          cbMovieSet;
+
   /**
    * Create the dialog.
    * 
@@ -267,9 +271,10 @@ public class MovieEditor extends JDialog {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50px"),
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(75px;default)"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("75px:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50px"), FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow(2)"), }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(75px;default)"),
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("75px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50px"),
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow(2)"), }));
 
     {
       JLabel lblTitle = new JLabel("Title");
@@ -291,7 +296,7 @@ public class MovieEditor extends JDialog {
         }
       });
       lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      details1Panel.add(lblPoster, "14, 4, 3, 15, fill, fill");
+      details1Panel.add(lblPoster, "14, 4, 3, 17, fill, fill");
     }
     {
       JLabel lblOriginalTitle = new JLabel("Originaltitle");
@@ -352,52 +357,60 @@ public class MovieEditor extends JDialog {
       details1Panel.add(cbCertification, "10, 12, 3, 1, fill, default");
     }
     {
+      JLabel lblMovieSet = new JLabel("Movie set");
+      details1Panel.add(lblMovieSet, "2, 14, right, default");
+    }
+    {
+      cbMovieSet = new JComboBox();
+      details1Panel.add(cbMovieSet, "4, 14, 9, 1, fill, default");
+    }
+    {
       lblImdbId = new JLabel("IMDB Id");
-      details1Panel.add(lblImdbId, "2, 14, right, default");
+      details1Panel.add(lblImdbId, "2, 16, right, default");
     }
     {
       tfImdbId = new JTextField();
       lblImdbId.setLabelFor(tfImdbId);
-      details1Panel.add(tfImdbId, "4, 14, 3, 1, fill, default");
+      details1Panel.add(tfImdbId, "4, 16, 3, 1, fill, default");
       tfImdbId.setColumns(10);
     }
     {
       lblTmdbId = new JLabel("TMDB Id");
-      details1Panel.add(lblTmdbId, "8, 14, right, default");
+      details1Panel.add(lblTmdbId, "8, 16, right, default");
     }
     {
       tfTmdbId = new JTextField();
       lblTmdbId.setLabelFor(tfTmdbId);
-      details1Panel.add(tfTmdbId, "10, 14, 3, 1, fill, default");
+      details1Panel.add(tfTmdbId, "10, 16, 3, 1, fill, default");
       tfTmdbId.setColumns(10);
     }
     {
       lblWatched = new JLabel("Watched");
-      details1Panel.add(lblWatched, "2, 16, right, default");
+      details1Panel.add(lblWatched, "2, 18, right, default");
     }
     {
       cbWatched = new JCheckBox("");
       lblWatched.setLabelFor(cbWatched);
-      details1Panel.add(cbWatched, "4, 16");
+      details1Panel.add(cbWatched, "4, 18");
     }
     {
       JLabel lblDateAdded = new JLabel("Date added");
-      details1Panel.add(lblDateAdded, "8, 16, right, default");
+      details1Panel.add(lblDateAdded, "8, 18, right, default");
     }
     {
       spDateAdded = new JSpinner(new SpinnerDateModel());
       // JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spDateAdded,
       // "dd.MM.yyyy HH:mm:ss");
       // spDateAdded.setEditor(timeEditor);
-      details1Panel.add(spDateAdded, "10, 16, 3, 1");
+      details1Panel.add(spDateAdded, "10, 18, 3, 1");
     }
     {
       JLabel lblPlot = new JLabel("Plot");
-      details1Panel.add(lblPlot, "2, 18, right, top");
+      details1Panel.add(lblPlot, "2, 20, right, top");
     }
     {
       JScrollPane scrollPanePlot = new JScrollPane();
-      details1Panel.add(scrollPanePlot, "4, 18, 9, 3, fill, fill");
+      details1Panel.add(scrollPanePlot, "4, 20, 9, 3, fill, fill");
       {
         tpPlot = new JTextPane();
         scrollPanePlot.setViewportView(tpPlot);
@@ -405,11 +418,11 @@ public class MovieEditor extends JDialog {
     }
     {
       JLabel lblDirector = new JLabel("Director");
-      details1Panel.add(lblDirector, "2, 22, right, default");
+      details1Panel.add(lblDirector, "2, 24, right, default");
     }
     {
       tfDirector = new JTextField();
-      details1Panel.add(tfDirector, "4, 22, 9, 1, fill, top");
+      details1Panel.add(tfDirector, "4, 24, 9, 1, fill, top");
       tfDirector.setColumns(10);
     }
     {
@@ -423,25 +436,25 @@ public class MovieEditor extends JDialog {
           dialog.setVisible(true);
         }
       });
-      details1Panel.add(lblFanart, "14, 20, 3, 7, fill, fill");
+      details1Panel.add(lblFanart, "14, 22, 3, 7, fill, fill");
     }
     lblFanart.setImagePath(movie.getFanart());
     {
       JLabel lblWriter = new JLabel("Writer");
-      details1Panel.add(lblWriter, "2, 24, right, default");
+      details1Panel.add(lblWriter, "2, 26, right, default");
     }
     {
       tfWriter = new JTextField();
-      details1Panel.add(tfWriter, "4, 24, 9, 1, fill, top");
+      details1Panel.add(tfWriter, "4, 26, 9, 1, fill, top");
       tfWriter.setColumns(10);
     }
     {
       JLabel lblCompany = new JLabel("Production");
-      details1Panel.add(lblCompany, "2, 26, right, top");
+      details1Panel.add(lblCompany, "2, 28, right, top");
     }
     {
       JScrollPane scrollPaneProduction = new JScrollPane();
-      details1Panel.add(scrollPaneProduction, "4, 26, 9, 1, fill, fill");
+      details1Panel.add(scrollPaneProduction, "4, 28, 9, 1, fill, fill");
       tfProductionCompanies = new JTextPane();
       scrollPaneProduction.setViewportView(tfProductionCompanies);
     }
@@ -648,6 +661,14 @@ public class MovieEditor extends JDialog {
       extrathumbs.addAll(movieToEdit.getExtraThumbs());
 
       cbCertification.setSelectedItem(movie.getCertification());
+
+      cbMovieSet.addItem("");
+      for (MovieSet movieSet : movieList.getMovieSetList()) {
+        cbMovieSet.addItem(movieSet);
+        if (movieToEdit.getMovieSet() == movieSet) {
+          cbMovieSet.setSelectedItem(movieSet);
+        }
+      }
     }
 
     // adjust table columns
@@ -760,11 +781,30 @@ public class MovieEditor extends JDialog {
         movieToEdit.addToTags(tag);
       }
 
-      movieToEdit.saveToDb();
-      movieToEdit.writeNFO();
-
       movieToEdit.setDateAdded((Date) spDateAdded.getValue());
 
+      // movie set
+      Object obj = cbMovieSet.getSelectedItem();
+      if (obj instanceof String) {
+        if (movieToEdit.getMovieSet() != null) {
+          movieToEdit.getMovieSet().removeMovie(movieToEdit);
+        }
+        movieToEdit.setMovieSet(null);
+      }
+      if (obj instanceof MovieSet) {
+        MovieSet movieSet = (MovieSet) obj;
+
+        if (movieToEdit.getMovieSet() != movieSet) {
+          if (movieToEdit.getMovieSet() != null) {
+            movieToEdit.getMovieSet().removeMovie(movieToEdit);
+          }
+          movieToEdit.setMovieSet(movieSet);
+          movieSet.addMovie(movieToEdit);
+        }
+      }
+
+      movieToEdit.saveToDb();
+      movieToEdit.writeNFO();
       setVisible(false);
       dispose();
     }

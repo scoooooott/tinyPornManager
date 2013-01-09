@@ -313,8 +313,12 @@ public class MovieToMpNfoConnector {
         return null;
       }
     }
-    catch (JAXBException e) {
-      LOGGER.error("setData", e);
+    catch (Exception e) {
+      return null;
+    }
+
+    // only return if a movie name has been found
+    if (StringUtils.isEmpty(movie.getName())) {
       return null;
     }
 
