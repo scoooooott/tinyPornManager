@@ -15,12 +15,20 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
 import javax.persistence.Entity;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -218,4 +226,27 @@ public class MediaTrailer extends AbstractModelObject {
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
+
+  /**
+   * Downloads Trailer to specified file
+   * 
+   * @param file
+   *          the absolute file on file system, overwrites existing trailer!
+   * @throws IOException
+   *           if url is not valid or network error
+   * @throws URISyntaxException
+   *           if url is not valid
+   * @author Myron Boyle
+   */
+  public void downloadTo(String file) throws IOException, URISyntaxException {
+    System.out.println("Downloading " + this.getUrl() + " to " + file);
+
+    Url u = new Url(UrlUtil.getURIEncoded(this.getUrl()).toASCIIString());
+    FileOutputStream outputStream = new FileOutputStream(file);
+    InputStream is = u.getInputStream();
+    IOUtils.copy(is, outputStream);
+    outputStream.close();
+    is.close();
+  }
+
 }

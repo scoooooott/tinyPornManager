@@ -17,6 +17,8 @@ package org.tinymediamanager.scraper.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -29,6 +31,43 @@ public class UrlUtil {
 
   /** The Constant log. */
   private static final Logger LOGGER = Logger.getLogger(UrlUtil.class);
+
+  /**
+   * Casts url string to URI, and does the correct encoding (rfc2396) of query
+   * string ONLY (eg "|" character). URLEncoder encodes everything which might
+   * break commons.http
+   * 
+   * @param url
+   *          the url as string
+   * @return URI object
+   * @throws URISyntaxException
+   *           if url could not be parsed / invalid
+   * @author Myron Boyle
+   */
+  public static URI getURIEncoded(String url) throws URISyntaxException {
+    String[] trArr = url.split("://");
+    return new URI(trArr[0], "//" + trArr[1], null);
+  }
+
+  /**
+   * Returns file extension from url
+   * 
+   * @return file extension or empty string
+   * @throws URISyntaxException
+   *           if url is not valid
+   * @author Myron Boyle
+   */
+  public static String getFileExtension(String url) throws URISyntaxException {
+    String ext = getURIEncoded(url).getPath();
+    if (ext == null || ext.isEmpty() || !ext.contains(".")) {
+      LOGGER.warn("Url " + url + " has no extension!");
+      return "";
+    }
+    else {
+      ext = ext.substring(ext.lastIndexOf('.') + 1);
+      return ext;
+    }
+  }
 
   /**
    * Returns the the entire Url Path except the filename, like doing a basedir
@@ -58,7 +97,8 @@ public class UrlUtil {
     try {
       u = new URL(url);
       return String.format("%s://%s/", u.getProtocol(), u.getHost());
-    } catch (MalformedURLException e) {
+    }
+    catch (MalformedURLException e) {
       LOGGER.error("Failed to get domain url for: " + url);
     }
     return null;
@@ -95,7 +135,8 @@ public class UrlUtil {
     try {
       u = new URL(url);
       return u.getPath();
-    } catch (MalformedURLException e) {
+    }
+    catch (MalformedURLException e) {
       LOGGER.error("getPathName() Failed! " + url, e);
     }
     return null;
@@ -113,7 +154,8 @@ public class UrlUtil {
       return "";
     try {
       return URLEncoder.encode(data, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    }
+    catch (UnsupportedEncodingException e) {
       LOGGER.warn("Failed to url encode data: " + data + " as UTF-8; will try again using default encoding", e);
       return URLEncoder.encode(data);
     }

@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,6 +57,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.omertron.themoviedbapi.model.ArtworkType;
 
@@ -493,6 +495,46 @@ public class Movie extends AbstractModelObject {
   public void removeAllTrailers() {
     trailerObservable.clear();
     firePropertyChange(TRAILER, null, trailerObservable);
+  }
+
+  /**
+   * Downloads trailer to movie folder (get from NFO), naming
+   * <code>&lt;movie&gt;-trailer.ext</code><br>
+   * Downloads to .tmp file first and renames after successful download.
+   * 
+   * @author Myron Boyle
+   * @param trailerToDownload
+   *          the MediaTrailer object to download
+   * @return true/false if successful
+   */
+  public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
+    // get trailer filename from NFO file
+    String tfile = this.getNfoFilename().replaceAll("(?i)\\.nfo$", "-trailer.");
+    try {
+      String ext = UrlUtil.getFileExtension(trailerToDownload.getUrl());
+      if (ext.isEmpty()) {
+        ext = "unknown";
+      }
+      // download to temp first
+      trailerToDownload.downloadTo(tfile + ext + ".tmp");
+      LOGGER.info("Trailer download successfully");
+      // TODO: maybe check if there are other trailerfiles (with other
+      // extension) and remove
+      FileUtils.deleteQuietly(new File(tfile + ext));
+      MovieRenamer.moveFile(tfile + ext + ".tmp", tfile + ext);
+    }
+    catch (IOException e) {
+      LOGGER.error("Error downloading trailer", e);
+      return false;
+    }
+    catch (URISyntaxException e) {
+      LOGGER.error("Error downloading trailer; url invalid", e);
+      return false;
+    }
+    catch (Exception e) {
+      LOGGER.error("Error downloading trailer; rename failed", e);
+    }
+    return true;
   }
 
   /**
@@ -1828,7 +1870,7 @@ public class Movie extends AbstractModelObject {
       if (!StringUtils.isEmpty(sb)) {
         sb.append(", ");
       }
-      sb.append(genre.toString());
+      sb.append(genre != null ? genre.toString() : "null");
     }
     return sb.toString();
   }

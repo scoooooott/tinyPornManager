@@ -218,11 +218,12 @@ public class MovieRenamer {
    * @throws Exception
    *           the exception
    */
-  private static void moveFile(String oldFilename, String newFilename) throws Exception {
+  public static void moveFile(String oldFilename, String newFilename) throws Exception {
     if (!oldFilename.equals(newFilename)) {
       File oldFile = new File(oldFilename);
       if (oldFile.exists()) {
         File newFile = new File(newFilename);
+        //TODO: FileUtils.deleteQuietly(new File(newFile)); first ?
         FileUtils.moveFile(oldFile, newFile);
         LOGGER.debug("moved file " + oldFilename + " to " + newFilename);
       }
