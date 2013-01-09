@@ -106,8 +106,8 @@ public class Url {
     ByteArrayInputStream is = null;
     HttpEntity entity = null;
 
-    HttpGet httpget = new HttpGet(url);
     LOGGER.debug("getting " + url);
+    HttpGet httpget = new HttpGet(url);
     try {
       HttpResponse response = httpclient.execute(httpget, localContext);
       entity = response.getEntity();
