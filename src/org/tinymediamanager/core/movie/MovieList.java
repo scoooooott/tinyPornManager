@@ -256,31 +256,6 @@ public class MovieList extends AbstractModelObject {
     catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
     }
-
-    // // TEMP!
-    // MovieSet harryPotter = new MovieSet("Harry Potter");
-    // harryPotter.saveToDb();
-    //
-    // MovieSet terminator = new MovieSet("Terminator");
-    // terminator.saveToDb();
-    // for (Movie movie : movieList) {
-    // // TEMP
-    // if (movie.getName().contains("Harry")) {
-    // harryPotter.addMovie(movie);
-    // movie.setMovieSet(harryPotter);
-    // movie.saveToDb();
-    // }
-    // if (movie.getName().contains("Terminator")) {
-    // terminator.addMovie(movie);
-    // movie.setMovieSet(terminator);
-    // movie.saveToDb();
-    // }
-    // }
-    // harryPotter.saveToDb();
-    // terminator.saveToDb();
-    //
-    // movieSetList.add(harryPotter);
-    // movieSetList.add(terminator);
   }
 
   /**

@@ -46,6 +46,8 @@ public class MovieSetTreeModel implements TreeModel {
   /** The node map to store the node for Objects. */
   private HashMap<Object, TreeNode> nodeMap   = new HashMap<Object, TreeNode>();
 
+  private PropertyChangeListener    propertyChangeListener;
+
   /**
    * Instantiates a new movie set tree model.
    * 
@@ -53,6 +55,24 @@ public class MovieSetTreeModel implements TreeModel {
    *          the movie sets
    */
   public MovieSetTreeModel(List<MovieSet> movieSets) {
+    // create the listener
+    propertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        // react on changes of movies attached to this set
+        if ("addedMovie".equals(evt.getPropertyName())) {
+          Movie movie = (Movie) evt.getNewValue();
+          MovieSet movieSet = (MovieSet) evt.getSource();
+          addMovie(movieSet, movie);
+        }
+        if ("removedMovie".equals(evt.getPropertyName())) {
+          Movie movie = (Movie) evt.getNewValue();
+          MovieSet movieSet = (MovieSet) evt.getSource();
+          removeMovie(movieSet, movie);
+        }
+      }
+    };
+
     // build initial tree
     for (MovieSet movieSet : movieSets) {
       DefaultMutableTreeNode setNode = new MovieSetTreeNode(movieSet);
@@ -65,21 +85,7 @@ public class MovieSetTreeModel implements TreeModel {
       root.add(setNode);
 
       // implement change listener
-      movieSet.addPropertyChangeListener(new PropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent arg0) {
-          // react on changes of movies attached to this set
-          if ("addedMovie".equals(arg0.getPropertyName())) {
-            Movie movie = (Movie) arg0.getNewValue();
-            MovieSet movieSet = (MovieSet) arg0.getOldValue();
-            addMovie(movieSet, movie);
-          }
-          if ("removedMovie".equals(arg0.getPropertyName())) {
-
-          }
-
-        }
-      });
+      movieSet.addPropertyChangeListener(propertyChangeListener);
     }
   }
 
@@ -173,8 +179,8 @@ public class MovieSetTreeModel implements TreeModel {
     MovieSetTreeNode child = new MovieSetTreeNode(movieSet);
     nodeMap.put(movieSet, child);
     // add the node
-    int index = root.getChildCount();
     root.add(child);
+    int index = root.getIndex(child);
 
     // inform listeners
     TreeModelEvent event = new TreeModelEvent(this, root.getPath(), new int[] { index }, new Object[] { child });
@@ -183,7 +189,7 @@ public class MovieSetTreeModel implements TreeModel {
       listener.treeNodesInserted(event);
   }
 
-  public void addMovie(MovieSet movieSet, Movie movie) {
+  private void addMovie(MovieSet movieSet, Movie movie) {
     // get the movie set node
     MovieSetTreeNode parent = (MovieSetTreeNode) nodeMap.get(movieSet);
     if (parent != null) {
@@ -194,7 +200,24 @@ public class MovieSetTreeModel implements TreeModel {
       int index = parent.getIndex(child);
 
       // inform listeners
-      TreeModelEvent event = new TreeModelEvent(this, root.getPath(), new int[] { index }, new Object[] { child });
+      TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
+      for (TreeModelListener listener : listeners)
+        listener.treeNodesInserted(event);
+    }
+  }
+
+  private void removeMovie(MovieSet movieSet, Movie movie) {
+    // get the movie set node
+    MovieSetTreeNode parent = (MovieSetTreeNode) nodeMap.get(movieSet);
+    if (parent != null) {
+      MovieSetTreeNode child = (MovieSetTreeNode) nodeMap.get(movie);
+      nodeMap.remove(movie);
+      int index = parent.getIndex(child);
+
+      parent.remove(child);
+
+      // inform listeners
+      TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
       for (TreeModelListener listener : listeners)
         listener.treeNodesRemoved(event);
     }

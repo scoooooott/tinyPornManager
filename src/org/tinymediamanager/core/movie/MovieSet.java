@@ -95,14 +95,14 @@ public class MovieSet extends AbstractModelObject {
     moviesObservable.add(movie);
     saveToDb();
     firePropertyChange("movies", null, moviesObservable);
-    firePropertyChange("AddedMovie", this, movie);
+    firePropertyChange("addedMovie", null, movie);
   }
 
   public void removeMovie(Movie movie) {
     moviesObservable.remove(movie);
     saveToDb();
     firePropertyChange("movies", null, moviesObservable);
-    firePropertyChange("removedMovie", this, movie);
+    firePropertyChange("removedMovie", null, movie);
   }
 
   /**
