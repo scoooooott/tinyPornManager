@@ -803,6 +803,13 @@ public class MovieEditor extends JDialog {
         }
       }
 
+      double tempRating = (Double) spRating.getValue();
+      float rating = (float) tempRating;
+      if (movieToEdit.getRating() != rating) {
+        movieToEdit.setRating(rating);
+        movieToEdit.setVotes(1);
+      }
+
       movieToEdit.saveToDb();
       movieToEdit.writeNFO();
       setVisible(false);

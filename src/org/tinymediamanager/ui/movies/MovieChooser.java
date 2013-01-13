@@ -145,10 +145,10 @@ public class MovieChooser extends JDialog implements ActionListener {
   public MovieChooser(Movie movie) {
     setTitle("search movie");
     setName("movieChooser");
+    setBounds(5, 5, 1111, 643);
     TmmWindowSaver.loadSettings(this);
     setIconImage(Globals.logo);
     setModal(true);
-    // setBounds(5, 5, 1111, 643);
 
     // copy the values
     ScraperMetadataConfig settings = Globals.settings.getScraperMetadataConfig();

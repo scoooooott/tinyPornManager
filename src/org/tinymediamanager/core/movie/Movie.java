@@ -1465,6 +1465,11 @@ public class Movie extends AbstractModelObject {
       for (MediaArtwork art : artwork) {
         if (art.getType() == MediaArtworkType.POSTER) {
           setPosterUrl(art.getDownloadUrl());
+
+          // did we get the tmdbid from artwork?
+          if (tmdbId == 0 && art.getTmdbId() > 0) {
+            setTmdbId(art.getTmdbId());
+          }
           break;
         }
       }
@@ -1473,6 +1478,11 @@ public class Movie extends AbstractModelObject {
       for (MediaArtwork art : artwork) {
         if (art.getType() == MediaArtworkType.BACKGROUND) {
           setFanartUrl(art.getDownloadUrl());
+
+          // did we get the tmdbid from artwork?
+          if (tmdbId == 0 && art.getTmdbId() > 0) {
+            setTmdbId(art.getTmdbId());
+          }
           break;
         }
       }
@@ -1853,7 +1863,7 @@ public class Movie extends AbstractModelObject {
    * @return the checks for rating
    */
   public boolean getHasRating() {
-    if (rating > 0) {
+    if (rating > 0 || scraped) {
       return true;
     }
     return false;

@@ -43,6 +43,8 @@ import com.omertron.themoviedbapi.MovieDbException;
 import com.omertron.themoviedbapi.TheMovieDbApi;
 import com.omertron.themoviedbapi.model.Artwork;
 import com.omertron.themoviedbapi.model.ArtworkType;
+import com.omertron.themoviedbapi.model.Collection;
+import com.omertron.themoviedbapi.model.CollectionInfo;
 import com.omertron.themoviedbapi.model.Genre;
 import com.omertron.themoviedbapi.model.MovieDb;
 import com.omertron.themoviedbapi.model.Person;
@@ -52,6 +54,7 @@ import com.omertron.themoviedbapi.model.ReleaseInfo;
 import com.omertron.themoviedbapi.model.Trailer;
 import com.omertron.themoviedbapi.tools.ApiUrl;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class TmdbMetadataProvider.
  */
@@ -149,6 +152,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = "";
     String baseUrl = "";
+    int year = 0;
 
     // detect the string to search
     if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
@@ -157,6 +161,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.TITLE))) {
       searchString = query.get(MediaSearchOptions.SearchParam.TITLE);
+    }
+
+    if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.YEAR))) {
+      try {
+        Integer.parseInt(query.get(MediaSearchOptions.SearchParam.YEAR));
+      }
+      catch (Exception e) {
+        year = 0;
+      }
     }
 
     if (StringUtils.isEmpty(searchString)) {
@@ -173,7 +186,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     List<MovieDb> moviesFound = null;
     synchronized (tmdb) {
-      moviesFound = tmdb.searchMovie(searchString, Globals.settings.getScraperTmdbLanguage().name(), false);
+      // old api
+      // moviesFound = tmdb.searchMovie(searchString,
+      // Globals.settings.getScraperTmdbLanguage().name(), false);
+      // new api
+      moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getScraperTmdbLanguage().name(), false, 0);
       baseUrl = tmdb.getConfiguration().getBaseUrl();
     }
 
@@ -390,6 +407,12 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return md;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getArtwork(org.
+   * tinymediamanager.scraper.MediaScrapeOptions)
+   */
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getArtwork() " + options.toString());
@@ -416,6 +439,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         ma.setLabel("Poster");
         ma.setProviderId(getProviderInfo().getId());
         ma.setType(MediaArtworkType.POSTER);
+        ma.setTmdbId(tmdbId);
         artwork.add(ma);
       }
 
@@ -426,6 +450,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         ma.setLabel("Backdrop");
         ma.setProviderId(getProviderInfo().getId());
         ma.setType(MediaArtworkType.BACKGROUND);
+        ma.setTmdbId(tmdbId);
         artwork.add(ma);
       }
 
@@ -443,9 +468,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   /**
    * Gets the trailers.
    * 
-   * @param tmdbId
-   *          the tmdb id
+   * @param options
+   *          the options
    * @return the trailers
+   * @throws Exception
+   *           the exception
    */
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getTrailers() " + options.toString());
@@ -514,7 +541,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   }
 
   /**
-   * Converts the imdbId to the tmdbId
+   * Converts the imdbId to the tmdbId.
    * 
    * @param imdbId
    *          the imdb id
@@ -522,7 +549,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
    * @throws Exception
    *           the exception
    */
-  private int getTmdbIdFromImdbId(String imdbId) throws Exception {
+  public int getTmdbIdFromImdbId(String imdbId) throws Exception {
     // get the tmdbid for this imdbid
     MovieDb movieInfo = null;
     synchronized (tmdb) {
@@ -1207,6 +1234,64 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
 
     return artwork;
+  }
+
+  /**
+   * Search for movie sets.
+   * 
+   * @param setName
+   *          the set name
+   * @return the list
+   */
+  public List<Collection> searchMovieSets(String setName) {
+    List<Collection> movieSetsFound = null;
+    synchronized (tmdb) {
+
+      try {
+        movieSetsFound = tmdb.searchCollection(setName, Globals.settings.getScraperTmdbLanguage().name(), 0);
+        String baseUrl = tmdb.getConfiguration().getBaseUrl();
+        for (Collection collection : movieSetsFound) {
+          collection.setPosterPath(baseUrl + "w342" + collection.getPosterPath());
+        }
+
+      }
+      catch (MovieDbException e) {
+        LOGGER.warn("search movieset", e);
+      }
+    }
+
+    if (movieSetsFound == null) {
+      return new ArrayList<Collection>();
+    }
+
+    return movieSetsFound;
+  }
+
+  /**
+   * Gets the movie set metadata.
+   * 
+   * @param options
+   *          the options
+   * @return the movie set metadata
+   * @throws Exception
+   *           the exception
+   */
+  public CollectionInfo getMovieSetMetadata(MediaScrapeOptions options) throws Exception {
+    CollectionInfo info = null;
+    int tmdbId = 0;
+
+    // search for tmdbId
+    tmdbId = options.getTmdbId();
+    if (tmdbId == 0) {
+      LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
+      return info;
+    }
+
+    info = tmdb.getCollectionInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
+    String baseUrl = tmdb.getConfiguration().getBaseUrl();
+
+    info.setPosterPath(baseUrl + "w342" + info.getPosterPath());
+    return info;
   }
 
 }

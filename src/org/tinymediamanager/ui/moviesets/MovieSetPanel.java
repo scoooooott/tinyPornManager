@@ -45,7 +45,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieSetTreePanel.
  */
@@ -77,6 +76,7 @@ public class MovieSetPanel extends JPanel {
 
   /** The action remove movie set. */
   private final Action           actionRemoveMovieSet = new RemoveMovieSetAction();
+  private final Action           actionSearchMovieSet = new SearchMovieSetAction();
 
   /**
    * Instantiates a new movie set panel.
@@ -112,6 +112,10 @@ public class MovieSetPanel extends JPanel {
     JButton btnRemoveMovieSet = new JButton("New button");
     btnRemoveMovieSet.setAction(actionRemoveMovieSet);
     toolBar.add(btnRemoveMovieSet);
+
+    JButton btnSearchMovieSet = new JButton("New button");
+    btnSearchMovieSet.setAction(actionSearchMovieSet);
+    toolBar.add(btnSearchMovieSet);
 
     JScrollPane scrollPane = new JScrollPane();
     panelMovieSetList.add(scrollPane, "2, 4, fill, fill");
@@ -226,6 +230,36 @@ public class MovieSetPanel extends JPanel {
           }
         }
       }
+    }
+  }
+
+  private class SearchMovieSetAction extends AbstractAction {
+    public SearchMovieSetAction() {
+      putValue(NAME, "search");
+      putValue(SHORT_DESCRIPTION, "Some short description");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      TreePath[] paths = tree.getSelectionPaths();
+      tree.clearSelection();
+
+      // filter out all movie sets from the selection
+      if (paths != null) {
+        for (TreePath path : paths) {
+          if (path.getPathCount() > 1) {
+
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+            if (node.getUserObject() instanceof MovieSet) {
+              MovieSet movieSet = (MovieSet) node.getUserObject();
+
+              // display movie set chooser
+              MovieSetChooser chooser = new MovieSetChooser(movieSet);
+              chooser.setVisible(true);
+            }
+          }
+        }
+      }
+
     }
   }
 }
