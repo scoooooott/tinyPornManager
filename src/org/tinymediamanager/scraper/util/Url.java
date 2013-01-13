@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -35,16 +36,40 @@ import org.tinymediamanager.core.Utils;
  */
 public class Url {
   /** The log. */
-  private static final Logger      LOGGER = Logger.getLogger(Url.class);
+  private static final Logger      LOGGER  = Logger.getLogger(Url.class);
 
   private static DefaultHttpClient client;
 
   /** The url. */
-  protected String                 url    = null;
+  protected String                 url     = null;
+
+  /** the headers sent from server */
+  private Header[]                 headers = null;
 
   // /** The Constant HTTP_USER_AGENT. */
   // protected static final String HTTP_USER_AGENT =
   // "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
+
+  /**
+   * gets the specified header value from this connection<br>
+   * You need to call this AFTER getInputstream()
+   * 
+   * @param header
+   *          the header you want to know (like Content-Length)
+   * @return the header value
+   * @author Myron Boyle
+   */
+  public String getHeader(String header) {
+    if (headers == null) {
+      return "";
+    }
+    for (Header h : headers) {
+      if (h.getName().toLowerCase().equals(header.toLowerCase())) {
+        return h.getValue();
+      }
+    }
+    return "";
+  }
 
   /**
    * Instantiates a new url.
@@ -110,15 +135,18 @@ public class Url {
     HttpGet httpget = new HttpGet(url);
     try {
       HttpResponse response = httpclient.execute(httpget, localContext);
+      headers = response.getAllHeaders();
       entity = response.getEntity();
 
       if (entity != null) {
         is = new ByteArrayInputStream(EntityUtils.toByteArray(entity));
         // is = new BufferedInputStream(entity.getContent());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.warn("fetch data", e);
-    } finally {
+    }
+    finally {
       EntityUtils.consume(entity);
     }
     return is;
