@@ -124,6 +124,18 @@ public class MovieSetTreeModel implements TreeModel {
    * @see javax.swing.tree.TreeModel#isLeaf(java.lang.Object)
    */
   public boolean isLeaf(Object node) {
+    // root is never a leaf
+    if (node == root) {
+      return false;
+    }
+
+    if (node instanceof MovieSetTreeNode) {
+      MovieSetTreeNode mstnode = (MovieSetTreeNode) node;
+      if (mstnode.getUserObject() instanceof MovieSet) {
+        return false;
+      }
+    }
+
     return getChildCount(node) == 0;
   }
 
@@ -187,6 +199,7 @@ public class MovieSetTreeModel implements TreeModel {
 
     for (TreeModelListener listener : listeners)
       listener.treeNodesInserted(event);
+
   }
 
   private void addMovie(MovieSet movieSet, Movie movie) {
@@ -203,6 +216,8 @@ public class MovieSetTreeModel implements TreeModel {
       TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
       for (TreeModelListener listener : listeners)
         listener.treeNodesInserted(event);
+
+      movieSet.addPropertyChangeListener(propertyChangeListener);
     }
   }
 
@@ -242,6 +257,7 @@ public class MovieSetTreeModel implements TreeModel {
         movie.saveToDb();
       }
       movieSet.removeAllMovies();
+      movieSet.removePropertyChangeListener(propertyChangeListener);
       MovieList.getInstance().removeMovieSet(movieSet);
 
       node.removeAllChildren();

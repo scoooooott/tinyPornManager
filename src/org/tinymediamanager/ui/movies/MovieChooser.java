@@ -342,11 +342,10 @@ public class MovieChooser extends JDialog implements ActionListener {
       initDataBindings();
 
       textFieldSearchString.setText(movieToScrape.getName());
-      // searchMovie(textFieldSearchString.getText(),
-      // movieToScrape.getImdbId());
+      searchMovie(textFieldSearchString.getText(), movieToScrape.getImdbId());
 
-      // initial search only by name
-      searchMovie(textFieldSearchString.getText(), "");
+      // // initial search only by name
+      // searchMovie(textFieldSearchString.getText(), "");
     }
 
   }

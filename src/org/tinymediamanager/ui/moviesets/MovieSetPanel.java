@@ -183,6 +183,9 @@ public class MovieSetPanel extends JPanel {
         movieSet.saveToDb();
         movieList.addMovieSet(movieSet);
         treeModel.addMovieSet(movieSet);
+
+        // re-expand root
+        tree.expandRow(0);
       }
     }
   }

@@ -26,6 +26,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,6 +51,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.ImageLabel;
@@ -70,12 +72,19 @@ public class MovieSetChooser extends JDialog implements ActionListener {
   /** The static LOGGER. */
   private static final Logger        LOGGER         = Logger.getLogger(MovieSetChooser.class);
 
+  /** The movie set to edit. */
+  private MovieSet                   movieSetToEdit;
+
   /** The lbl progress action. */
   private JLabel                     lblProgressAction;
 
   /** The progress bar. */
   private JProgressBar               progressBar;
+
+  /** The tf movie set name. */
   private JTextField                 tfMovieSetName;
+
+  /** The table movie sets. */
   private JTable                     tableMovieSets;
 
   /** The lbl movie name. */
@@ -87,8 +96,14 @@ public class MovieSetChooser extends JDialog implements ActionListener {
   /** The movies found. */
   private List<MovieSetChooserModel> movieSetsFound = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
 
+  /** The action search. */
   private final Action               actionSearch   = new SearchAction();
+
+  /** The table movies. */
   private JTable                     tableMovies;
+
+  /** The cb assign movies. */
+  private JCheckBox                  cbAssignMovies;
 
   /**
    * Instantiates a new movie set chooser panel.
@@ -103,6 +118,8 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     TmmWindowSaver.loadSettings(this);
     setIconImage(Globals.logo);
     setModal(true);
+
+    movieSetToEdit = movieSet;
 
     getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -166,7 +183,7 @@ public class MovieSetChooser extends JDialog implements ActionListener {
         panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("250px"), FormFactory.PARAGRAPH_GAP_ROWSPEC,
-            RowSpec.decode("top:default:grow"), }));
+            RowSpec.decode("top:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
         {
           lblMovieSetName = new JTextArea("");
           lblMovieSetName.setLineWrap(true);
@@ -196,6 +213,10 @@ public class MovieSetChooser extends JDialog implements ActionListener {
           }
 
         }
+        {
+          cbAssignMovies = new JCheckBox("Assign movies to this movieset");
+          panelSearchDetail.add(cbAssignMovies, "2, 7, 3, 1");
+        }
       }
     }
 
@@ -214,13 +235,6 @@ public class MovieSetChooser extends JDialog implements ActionListener {
         {
           lblProgressAction = new JLabel("");
           buttonPane.add(lblProgressAction, "4, 2, fill, center");
-        }
-        {
-          JButton btnSaveAssign = new JButton("Save & Assign");
-          btnSaveAssign.setActionCommand("SaveAssign");
-          btnSaveAssign.setToolTipText("Save movie set metadata and try to assign movies to it");
-          btnSaveAssign.addActionListener(this);
-          buttonPane.add(btnSaveAssign, "6, 2, fill, top");
         }
         {
           JButton btnSave = new JButton("Save");
@@ -250,10 +264,6 @@ public class MovieSetChooser extends JDialog implements ActionListener {
   /**
    * Search movie.
    * 
-   * @param searchTerm
-   *          the search term
-   * @param imdbId
-   *          the imdb id
    */
   private void searchMovie() {
     SearchTask task = new SearchTask(tfMovieSetName.getText());
@@ -273,8 +283,6 @@ public class MovieSetChooser extends JDialog implements ActionListener {
      * 
      * @param searchTerm
      *          the search term
-     * @param imdbId
-     *          the imdb id
      */
     public SearchTask(String searchTerm) {
       this.searchTerm = searchTerm;
@@ -301,8 +309,7 @@ public class MovieSetChooser extends JDialog implements ActionListener {
 
       }
       catch (Exception e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
+        LOGGER.warn("SearchTask", e1);
       }
 
       return null;
@@ -322,12 +329,25 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     }
   }
 
+  /**
+   * The Class SearchAction.
+   */
   private class SearchAction extends AbstractAction {
+
+    /**
+     * Instantiates a new search action.
+     */
     public SearchAction() {
       putValue(NAME, "Search");
       putValue(SHORT_DESCRIPTION, "Search movie set metadata");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       searchMovie();
     }
@@ -348,17 +368,39 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     }
 
     if ("Save".equals(arg0.getActionCommand())) {
-      // simply save it
+      // save it
+      int row = tableMovieSets.getSelectedRow();
+      if (row >= 0) {
+        MovieSetChooserModel model = movieSetsFound.get(row);
+        movieSetToEdit.setName(model.getName());
+
+        // assign movies
+        if (cbAssignMovies.isSelected()) {
+          movieSetToEdit.removeAllMovies();
+          for (MovieInSet movieInSet : model.getMovies()) {
+            Movie movie = movieInSet.getMovie();
+            if (movie == null) {
+              continue;
+            }
+
+            // check if the found movie contains a matching set
+            if (movie.getMovieSet() != null) {
+              // unassign movie from set
+              MovieSet mSet = movie.getMovieSet();
+              mSet.removeMovie(movie);
+            }
+
+            movie.setMovieSet(movieSetToEdit);
+            movie.saveToDb();
+
+            movieSetToEdit.addMovie(movie);
+          }
+        }
+
+      }
       setVisible(false);
       dispose();
     }
-
-    if ("SaveAssign".equals(arg0.getActionCommand())) {
-      // simply save it
-      setVisible(false);
-      dispose();
-    }
-
   }
 
   /**
@@ -427,6 +469,9 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     progressBar.setIndeterminate(false);
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     JTableBinding<MovieSetChooserModel, List<MovieSetChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
         movieSetsFound, tableMovieSets);
