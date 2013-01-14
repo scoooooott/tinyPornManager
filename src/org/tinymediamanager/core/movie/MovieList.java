@@ -392,7 +392,10 @@ public class MovieList extends AbstractModelObject {
    * @return the list
    */
   public List<MediaSearchResult> searchMovie(String searchTerm, String ImdbId, IMediaMetadataProvider metadataProvider) {
-    List<MediaSearchResult> sr = searchMovieByImdbId(ImdbId, metadataProvider);
+    List<MediaSearchResult> sr = null;
+    if (ImdbId != null && !ImdbId.isEmpty()) {
+      sr = searchMovieByImdbId(ImdbId, metadataProvider);
+    }
     if (sr == null || sr.size() == 0) {
       sr = searchMovie(searchTerm, metadataProvider);
     }
