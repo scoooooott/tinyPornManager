@@ -57,6 +57,8 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.ParserUtils;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.omertron.themoviedbapi.model.ArtworkType;
@@ -1058,8 +1060,8 @@ public class Movie extends AbstractModelObject {
         if (name.toLowerCase().startsWith("."))
           return false;
 
-        // check if filetype is in our settigns
-        if (name.toLowerCase().endsWith("nfo") || name.toLowerCase().endsWith("NFO")) {
+        // check if filetype is in our settings
+        if (name.toLowerCase().endsWith("nfo")) {
           return true;
         }
 
@@ -1081,6 +1083,25 @@ public class Movie extends AbstractModelObject {
         case MP:
           movie = MovieToMpNfoConnector.getData(file.getPath());
           break;
+      }
+
+      // no known NFO format? try to find a imdb number in it... (if <100kb ;)
+      if (movie == null) {
+        if (FileUtils.sizeOf(file) < 100000) {
+          try {
+            String imdb = FileUtils.readFileToString(file);
+            imdb = StrgUtils.substr(imdb, ".*(tt\\d{7}).*");
+            if (!imdb.isEmpty()) {
+              LOGGER.debug("Found IMDB id: " + imdb);
+              movie = new Movie();
+              movie.setImdbId(imdb);
+              movie.setName(ParserUtils.detectCleanMoviename(directory.getName()));
+            }
+          }
+          catch (IOException e) {
+            LOGGER.warn("couldn't read NFO " + file.getName());
+          }
+        }
       }
 
       if (movie != null) {
