@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +51,8 @@ public class ParserUtils {
         "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "repack", "rerip", "retail", "r3", "r5", "bd5", "se", "svcd", "swedish", "german", "read.nfo",
         "nfofix", "unrated", "ws", "telesync", "ts", "telecine", "tc", "brrip", "bdrip", "480p", "480i", "576p", "576i", "720p", "720i", "1080p",
         "1080i", "hrhd", "hrhdtv", "hddvd", "bluray", "blueray", "x264", "h264", "xvid", "xvidvd", "xxx", "www.www", "cd1", "cd2", "cd3", "cd4",
-        "cd5", "cd6", "cd7", "cd8", "cd9", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8", "dvd9" };
+        "cd5", "cd6", "cd7", "cd8", "cd9", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8", "dvd9", "disc1", "disc2", "disc3",
+        "disc4", "disc5", "disc6", "disc7", "disc8", "disc9" };
 
     if (filename == null || filename.isEmpty()) {
       LOGGER.warn("Filename empty?!");
@@ -61,7 +61,7 @@ public class ParserUtils {
 
     // remove extension (if found) and split
     String fname = filename.replaceFirst("\\.\\w{2,4}$", "");
-    String[] s = fname.split("[() .-]");
+    String[] s = fname.split("[()_ -.]");
     int firstFoundStopwordPosition = s.length;
 
     // iterate over all splitted items

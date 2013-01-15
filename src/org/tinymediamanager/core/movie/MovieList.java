@@ -47,6 +47,7 @@ import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.scraper.util.ParserUtils;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -325,12 +326,7 @@ public class MovieList extends AbstractModelObject {
         if (movie == null) {
           // movie did not exist - create new one
           movie = new Movie();
-          String name = dir.getName().replaceAll("\\[.*[0-9].\\]", ""); // cut
-          // year
-          // information
-          name = name.replaceAll("[._]", " "); // replace ._ in folder
-          // name
-          movie.setName(name);
+          movie.setName(ParserUtils.detectCleanMoviename(dir.getName()));
           movie.setPath(dir.getPath());
           movie.addToFiles(videoFiles);
           movie.findImages();
