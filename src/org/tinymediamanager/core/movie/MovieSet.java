@@ -34,6 +34,12 @@ public class MovieSet extends AbstractModelObject {
   /** The name. */
   private String      name             = "";
 
+  /** The poster url. */
+  private String      posterUrl        = "";
+
+  /** The poster. */
+  private String      poster           = "";
+
   /** The movies. */
   private List<Movie> movies           = new ArrayList<Movie>();
 
@@ -53,8 +59,10 @@ public class MovieSet extends AbstractModelObject {
    * @param name
    *          the name
    */
-  public MovieSet(String name) {
-    this.name = name;
+  public MovieSet(String newValue) {
+    String oldValue = this.name;
+    this.name = newValue;
+    firePropertyChange("name", oldValue, newValue);
   }
 
   /**
@@ -71,6 +79,40 @@ public class MovieSet extends AbstractModelObject {
    */
   public String getName() {
     return name;
+  }
+
+  /**
+   * @return the posterUrl
+   */
+  public String getPosterUrl() {
+    return posterUrl;
+  }
+
+  /**
+   * @param posterUrl
+   *          the posterUrl to set
+   */
+  public void setPosterUrl(String newValue) {
+    String oldValue = this.posterUrl;
+    this.posterUrl = newValue;
+    firePropertyChange("posterUrl", oldValue, newValue);
+  }
+
+  /**
+   * @return the poster
+   */
+  public String getPoster() {
+    return poster;
+  }
+
+  /**
+   * @param poster
+   *          the poster to set
+   */
+  public void setPoster(String newValue) {
+    String oldValue = this.poster;
+    this.poster = newValue;
+    firePropertyChange("poster", oldValue, newValue);
   }
 
   /**
@@ -98,6 +140,12 @@ public class MovieSet extends AbstractModelObject {
     firePropertyChange("addedMovie", null, movie);
   }
 
+  /**
+   * Removes the movie.
+   * 
+   * @param movie
+   *          the movie
+   */
   public void removeMovie(Movie movie) {
     moviesObservable.remove(movie);
     saveToDb();
@@ -136,6 +184,8 @@ public class MovieSet extends AbstractModelObject {
 
   /**
    * toString. used for JComboBox in movie editor
+   * 
+   * @return the string
    */
   @Override
   public String toString() {

@@ -16,7 +16,7 @@ objectdb-2.4.4_12.jar
 Scaling-bin.jar
 themoviedbapi-3.4-20130101.073052-10.jar
 thetvdbapi-1.4-SNAPSHOT-r123.jar
-JTattoo201208.jar 
+JTattoo-1.6.5.jar 
 htmlparser.jar
 jsoup-1.7.1.jar
 glazedlists-java_150-1.8.0.jar

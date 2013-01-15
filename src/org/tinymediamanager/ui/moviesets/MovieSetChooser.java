@@ -373,6 +373,7 @@ public class MovieSetChooser extends JDialog implements ActionListener {
       if (row >= 0) {
         MovieSetChooserModel model = movieSetsFound.get(row);
         movieSetToEdit.setName(model.getName());
+        movieSetToEdit.setPosterUrl(model.getPosterUrl());
 
         // assign movies
         if (cbAssignMovies.isSelected()) {
@@ -397,6 +398,7 @@ public class MovieSetChooser extends JDialog implements ActionListener {
           }
         }
 
+        movieSetToEdit.saveToDb();
       }
       setVisible(false);
       dispose();
