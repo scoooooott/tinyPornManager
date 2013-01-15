@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -42,6 +45,7 @@ public class MovieSetInformationPanel extends JPanel {
   private JLabel                 lblMovieSetName;
   private JTable                 tableAssignedMovies;
   private ImageLabel             lblMovieSetPoster;
+  private JPanel                 panel;
 
   /**
    * Instantiates a new movie set information panel.
@@ -51,20 +55,25 @@ public class MovieSetInformationPanel extends JPanel {
    */
   public MovieSetInformationPanel(MovieSetSelectionModel selectionModel) {
     this.selectionModel = selectionModel;
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("10px"), ColumnSpec.decode("left:120px"), ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("10px"), RowSpec.decode("top:180px"),
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("bottom:default:grow"), }));
+    setLayout(new BorderLayout(0, 0));
 
     lblMovieSetName = new JLabel("");
-    add(lblMovieSetName, "2, 2, 2, 1");
+    lblMovieSetName.setFont(new Font("Dialog", Font.BOLD, 16));
+    add(lblMovieSetName, BorderLayout.NORTH);
+
+    panel = new JPanel();
+    add(panel, BorderLayout.CENTER);
+    panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("180px"), ColumnSpec.decode("1px"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("270px"), }));
 
     lblMovieSetPoster = new ImageLabel();
-    add(lblMovieSetPoster, "2, 4, fill, fill");
+    panel.add(lblMovieSetPoster, "2, 2, fill, fill");
 
     JScrollPane scrollPaneMovies = new JScrollPane();
-    add(scrollPaneMovies, "2, 6, 2, 1, fill, fill");
+    add(scrollPaneMovies, BorderLayout.SOUTH);
 
     tableAssignedMovies = new JTable();
+    tableAssignedMovies.setPreferredScrollableViewportSize(new Dimension(450, 200));
     scrollPaneMovies.setViewportView(tableAssignedMovies);
     initDataBindings();
   }

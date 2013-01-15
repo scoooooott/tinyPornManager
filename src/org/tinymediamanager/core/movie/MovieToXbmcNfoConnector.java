@@ -46,14 +46,15 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieToXbmcNfoConnector.
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
-@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "mpaa",
-    "certifications", "id", "tmdbId", "filenameandpath", "trailer", "watched", "playcount", "genres", "studio", "credits", "director", "tags",
-    "actors" })
+@XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
+    "mpaa", "certifications", "id", "tmdbId", "filenameandpath", "trailer", "watched", "playcount", "genres", "studio", "credits", "director",
+    "tags", "actors" })
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -133,6 +134,12 @@ public class MovieToXbmcNfoConnector {
   /** The tags. */
   @XmlElement(name = "tag")
   private List<String>        tags;
+
+  /** The set. */
+  private String              set;
+
+  /** The sorttitle. */
+  private String              sorttitle;
 
   /**
    * Instantiates a new movie to xbmc nfo connector.
@@ -217,6 +224,13 @@ public class MovieToXbmcNfoConnector {
 
     for (String tag : movie.getTags()) {
       xbmc.addTag(tag);
+    }
+
+    // movie set
+    if (movie.getMovieSet() != null) {
+      MovieSet movieSet = movie.getMovieSet();
+      xbmc.setSet(movieSet.getName());
+      xbmc.setSorttitle(movieSet.getName() + (movieSet.getMovieIndex(movie) + 1));
     }
 
     // and marshall it
@@ -852,6 +866,46 @@ public class MovieToXbmcNfoConnector {
    */
   public void setTrailer(String trailer) {
     this.trailer = trailer;
+  }
+
+  /**
+   * Gets the sets the.
+   * 
+   * @return the sets the
+   */
+  @XmlElement(name = "set")
+  public String getSet() {
+    return set;
+  }
+
+  /**
+   * Gets the sorttitle.
+   * 
+   * @return the sorttitle
+   */
+  @XmlElement(name = "sorttitle")
+  public String getSorttitle() {
+    return sorttitle;
+  }
+
+  /**
+   * Sets the sets the.
+   * 
+   * @param set
+   *          the new sets the
+   */
+  public void setSet(String set) {
+    this.set = set;
+  }
+
+  /**
+   * Sets the sorttitle.
+   * 
+   * @param sorttitle
+   *          the new sorttitle
+   */
+  public void setSorttitle(String sorttitle) {
+    this.sorttitle = sorttitle;
   }
 
   // inner class actor to represent actors

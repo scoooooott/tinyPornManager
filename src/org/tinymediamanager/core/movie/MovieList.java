@@ -566,6 +566,16 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * Gets the movie set count.
+   * 
+   * @return the movie set count
+   */
+  public int getMovieSetCount() {
+    int size = movieSetList.size();
+    return size;
+  }
+
+  /**
    * Gets the tags in movies.
    * 
    * @return the tags in movies

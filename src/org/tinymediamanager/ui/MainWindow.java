@@ -120,8 +120,8 @@ public class MainWindow extends JFrame {
     setBounds(5, 5, 1100, 727);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:default:grow"), }));
+        new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), ColumnSpec.decode("1dlu"), }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), RowSpec.decode("fill:1dlu"), }));
 
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
     tabbedPane.setTabPlacement(JTabbedPane.LEFT);
@@ -159,6 +159,7 @@ public class MainWindow extends JFrame {
         System.exit(0); // calling the method is a must
       }
     });
+
   }
 
   /**

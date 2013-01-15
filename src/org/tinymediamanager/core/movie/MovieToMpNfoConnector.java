@@ -30,11 +30,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -43,16 +45,18 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieToMpNfoConnector.Actor;
+import org.tinymediamanager.core.movie.MovieToMpNfoConnector.MovieSets;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieTompNfoConnector.
  */
 @XmlRootElement(name = "movie")
-@XmlSeeAlso(Actor.class)
-@XmlType(propOrder = { "title", "originaltitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "fanart", "mpaa", "id",
-    "filenameandpath", "genres", "studio", "credits", "director", "actors" })
+@XmlSeeAlso({ Actor.class, MovieSets.class })
+@XmlType(propOrder = { "title", "originaltitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "fanart",
+    "mpaa", "id", "filenameandpath", "genres", "studio", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
@@ -120,6 +124,9 @@ public class MovieToMpNfoConnector {
   /** the credits. */
   private String              credits;
 
+  /** The sets. */
+  private List<MovieSets>     sets;
+
   /**
    * Instantiates a new movie to mp nfo connector.
    */
@@ -127,6 +134,7 @@ public class MovieToMpNfoConnector {
     actors = new ArrayList<MovieToMpNfoConnector.Actor>();
     genres = new ArrayList<String>();
     fanart = new ArrayList<String>();
+    sets = new ArrayList<MovieSets>();
   }
 
   /**
@@ -187,6 +195,13 @@ public class MovieToMpNfoConnector {
 
     for (MediaGenres genre : movie.getGenres()) {
       mp.addGenre(genre.toString());
+    }
+
+    // movie set
+    if (movie.getMovieSet() != null) {
+      MovieSet movieSet = movie.getMovieSet();
+      MovieSets set = new MovieSets(movieSet.getName(), movieSet.getMovieIndex(movie) + 1);
+      mp.addSet(set);
     }
 
     // and marshall it
@@ -707,6 +722,37 @@ public class MovieToMpNfoConnector {
     this.credits = credits;
   }
 
+  /**
+   * Gets the sets.
+   * 
+   * @return the sets
+   */
+  @XmlElementWrapper
+  @XmlElement(name = "set", type = MovieSets.class)
+  public List<MovieSets> getSets() {
+    return this.sets;
+  }
+
+  /**
+   * Adds the set.
+   * 
+   * @param set
+   *          the set
+   */
+  public void addSet(MovieSets set) {
+    this.sets.add(set);
+  }
+
+  /**
+   * Sets the sets.
+   * 
+   * @param sets
+   *          the new sets
+   */
+  public void setSets(List<MovieSets> sets) {
+    this.sets = sets;
+  }
+
   // inner class actor to represent actors
   /**
    * The Class Actor.
@@ -807,4 +853,77 @@ public class MovieToMpNfoConnector {
 
   }
 
+  // inner class actor to represent movie sets
+  /**
+   * The Class MovieSets.
+   */
+  public static class MovieSets {
+
+    /** The name. */
+    private String name;
+
+    /** The order. */
+    private int    order;
+
+    /**
+     * Instantiates a new movie sets.
+     */
+    public MovieSets() {
+
+    }
+
+    /**
+     * Instantiates a new movie sets.
+     * 
+     * @param name
+     *          the name
+     * @param order
+     *          the order
+     */
+    public MovieSets(String name, int order) {
+      this.name = name;
+      this.order = order;
+    }
+
+    /**
+     * Gets the name.
+     * 
+     * @return the name
+     */
+    @XmlValue
+    public String getName() {
+      return name;
+    }
+
+    /**
+     * Gets the order.
+     * 
+     * @return the order
+     */
+    @XmlAttribute(name = "order")
+    public int getOrder() {
+      return order;
+    }
+
+    /**
+     * Sets the name.
+     * 
+     * @param name
+     *          the new name
+     */
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    /**
+     * Sets the order.
+     * 
+     * @param order
+     *          the new order
+     */
+    public void setOrder(int order) {
+      this.order = order;
+    }
+
+  }
 }

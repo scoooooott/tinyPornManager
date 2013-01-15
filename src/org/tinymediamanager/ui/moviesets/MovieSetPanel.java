@@ -22,6 +22,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -34,6 +35,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
@@ -77,6 +82,7 @@ public class MovieSetPanel extends JPanel {
   /** The action remove movie set. */
   private final Action           actionRemoveMovieSet = new RemoveMovieSetAction();
   private final Action           actionSearchMovieSet = new SearchMovieSetAction();
+  private JLabel                 lblMovieSetCount;
 
   /**
    * Instantiates a new movie set panel.
@@ -103,17 +109,20 @@ public class MovieSetPanel extends JPanel {
             RowSpec.decode("fill:322px:grow"), }));
 
     JToolBar toolBar = new JToolBar();
+    toolBar.setRollover(true);
+    toolBar.setFloatable(false);
+    toolBar.setOpaque(false);
     panelMovieSetList.add(toolBar, "2, 2");
 
     JButton btnAddMovieSet = new JButton("");
     btnAddMovieSet.setAction(actionAddMovieSet);
     toolBar.add(btnAddMovieSet);
 
-    JButton btnRemoveMovieSet = new JButton("New button");
+    JButton btnRemoveMovieSet = new JButton("");
     btnRemoveMovieSet.setAction(actionRemoveMovieSet);
     toolBar.add(btnRemoveMovieSet);
 
-    JButton btnSearchMovieSet = new JButton("New button");
+    JButton btnSearchMovieSet = new JButton("");
     btnSearchMovieSet.setAction(actionSearchMovieSet);
     toolBar.add(btnSearchMovieSet);
 
@@ -135,6 +144,15 @@ public class MovieSetPanel extends JPanel {
     JPanel panelMovie = new MovieInformationPanel(movieSelectionModel);
     panelRight.add(panelMovie, "movie");
 
+    JPanel panelMovieSetCount = new JPanel();
+    add(panelMovieSetCount, "2, 3, left, fill");
+
+    JLabel lblMovieSets = new JLabel("Moviesets:");
+    panelMovieSetCount.add(lblMovieSets);
+
+    lblMovieSetCount = new JLabel("0");
+    panelMovieSetCount.add(lblMovieSetCount);
+
     tree.addTreeSelectionListener(new TreeSelectionListener() {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
@@ -155,6 +173,7 @@ public class MovieSetPanel extends JPanel {
         }
       }
     });
+    initDataBindings();
   }
 
   /**
@@ -183,9 +202,6 @@ public class MovieSetPanel extends JPanel {
         movieSet.saveToDb();
         movieList.addMovieSet(movieSet);
         treeModel.addMovieSet(movieSet);
-
-        // re-expand root
-        tree.expandRow(0);
       }
     }
   }
@@ -238,7 +254,7 @@ public class MovieSetPanel extends JPanel {
 
   private class SearchMovieSetAction extends AbstractAction {
     public SearchMovieSetAction() {
-      putValue(NAME, "search");
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
       putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
@@ -264,5 +280,13 @@ public class MovieSetPanel extends JPanel {
       }
 
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<MovieList, Integer> movieListBeanProperty = BeanProperty.create("movieSetCount");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieList, movieListBeanProperty,
+        lblMovieSetCount, jLabelBeanProperty);
+    autoBinding.bind();
   }
 }

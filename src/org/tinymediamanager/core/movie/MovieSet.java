@@ -194,4 +194,14 @@ public class MovieSet extends AbstractModelObject {
     // ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
+  /**
+   * Gets the movie index.
+   * 
+   * @param movie
+   *          the movie
+   * @return the movie index
+   */
+  public int getMovieIndex(Movie movie) {
+    return movies.indexOf(movie);
+  }
 }

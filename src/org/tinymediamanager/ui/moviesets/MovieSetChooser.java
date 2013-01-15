@@ -140,11 +140,16 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     }
     {
       JSplitPane splitPane = new JSplitPane();
+      splitPane.setContinuousLayout(true);
       splitPane.setResizeWeight(0.5);
       getContentPane().add(splitPane, BorderLayout.CENTER);
       {
+        JPanel panelResults = new JPanel();
+        panelResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), }, new RowSpec[] {
+            FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"), }));
         JScrollPane panelSearchResults = new JScrollPane();
-        splitPane.setLeftComponent(panelSearchResults);
+        panelResults.add(panelSearchResults, "2, 2, fill, fill");
+        splitPane.setLeftComponent(panelResults);
         {
           tableMovieSets = new JTable();
           panelSearchResults.setViewportView(tableMovieSets);
