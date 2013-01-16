@@ -1291,6 +1291,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
     info.setPosterPath(baseUrl + "w342" + info.getPosterPath());
+    info.setBackdropPath(baseUrl + "w1280" + info.getBackdropPath());
     return info;
   }
 

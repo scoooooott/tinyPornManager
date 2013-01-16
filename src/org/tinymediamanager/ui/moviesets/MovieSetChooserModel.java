@@ -37,6 +37,8 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
   private String               posterUrl = "";
 
+  private String               fanartUrl = "";
+
   private Collection           collection;
 
   private CollectionInfo       info;
@@ -52,6 +54,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
 
     setName(collection.getName());
     setPosterUrl(collection.getPosterPath());
+    setFanartUrl(collection.getBackdropPath());
 
     try {
       mp = new TmdbMetadataProvider();
@@ -75,12 +78,21 @@ public class MovieSetChooserModel extends AbstractModelObject {
     firePropertyChange("posterUrl", "", posterUrl);
   }
 
+  public void setFanartUrl(String fanartUrl) {
+    this.fanartUrl = fanartUrl;
+    firePropertyChange("fanartUrl", "", fanartUrl);
+  }
+
   public boolean isScraped() {
     return scraped;
   }
 
   public String getPosterUrl() {
     return posterUrl;
+  }
+
+  public String getFanartUrl() {
+    return fanartUrl;
   }
 
   public void matchWithExistingMovies() {

@@ -40,6 +40,10 @@ public class MovieSet extends AbstractModelObject {
   /** The poster. */
   private String      poster           = "";
 
+  private String      fanartUrl        = "";
+
+  private String      fanart           = "";
+
   /** The movies. */
   private List<Movie> movies           = new ArrayList<Movie>();
 
@@ -113,6 +117,26 @@ public class MovieSet extends AbstractModelObject {
     String oldValue = this.poster;
     this.poster = newValue;
     firePropertyChange("poster", oldValue, newValue);
+  }
+
+  public String getFanartUrl() {
+    return fanartUrl;
+  }
+
+  public String getFanart() {
+    return fanart;
+  }
+
+  public void setFanartUrl(String newValue) {
+    String oldValue = this.fanartUrl;
+    this.fanartUrl = newValue;
+    firePropertyChange("fanartUrl", oldValue, newValue);
+  }
+
+  public void setFanart(String newValue) {
+    String oldValue = this.fanart;
+    this.fanart = newValue;
+    firePropertyChange("fanart", oldValue, newValue);
   }
 
   /**

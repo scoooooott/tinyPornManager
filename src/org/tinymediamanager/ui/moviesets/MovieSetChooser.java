@@ -379,6 +379,7 @@ public class MovieSetChooser extends JDialog implements ActionListener {
         MovieSetChooserModel model = movieSetsFound.get(row);
         movieSetToEdit.setName(model.getName());
         movieSetToEdit.setPosterUrl(model.getPosterUrl());
+        movieSetToEdit.setFanartUrl(model.getFanartUrl());
 
         // assign movies
         if (cbAssignMovies.isSelected()) {
