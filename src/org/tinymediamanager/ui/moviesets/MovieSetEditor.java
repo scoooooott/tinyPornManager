@@ -15,14 +15,20 @@
  */
 package org.tinymediamanager.ui.moviesets;
 
+import java.awt.BorderLayout;
+
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.ImageLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -39,6 +45,10 @@ public class MovieSetEditor extends JDialog {
   private JTextField tfName;
   private JTable     tableMovies;
 
+  private ImageLabel lblPoster;
+
+  private JTextPane  tpOverview;
+
   /**
    * Instantiates a new movie set editor.
    * 
@@ -46,38 +56,76 @@ public class MovieSetEditor extends JDialog {
    *          the movie set
    */
   public MovieSetEditor(MovieSet movieSet) {
-    getContentPane().setLayout(
-        new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    setModal(true);
+    setIconImage(Globals.logo);
+    setTitle("Edit Movieset");
+    setName("movieSetEditor");
+    setBounds(5, 5, 700, 500);
+
+    movieSetToEdit = movieSet;
+
+    getContentPane().setLayout(new BorderLayout());
+
+    JPanel panelContent = new JPanel();
+    panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), }, new RowSpec[] {
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), }));
+    getContentPane().add(panelContent, BorderLayout.CENTER);
 
     JLabel lblName = new JLabel("Name");
-    getContentPane().add(lblName, "1, 1, right, default");
+    panelContent.add(lblName, "1, 1, right, default");
 
     tfName = new JTextField();
-    getContentPane().add(tfName, "3, 1, fill, default");
+    panelContent.add(tfName, "3, 1, fill, default");
     tfName.setColumns(10);
 
-    JLabel lblPoster = new JLabel("New label");
-    getContentPane().add(lblPoster, "5, 1");
+    lblPoster = new ImageLabel();
+    panelContent.add(lblPoster, "5, 1");
 
     JLabel lblOverview = new JLabel("Overview");
-    getContentPane().add(lblOverview, "1, 3, right, top");
+    panelContent.add(lblOverview, "1, 3, right, top");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
-    getContentPane().add(scrollPaneOverview, "3, 3, fill, fill");
+    panelContent.add(scrollPaneOverview, "3, 3, fill, fill");
 
-    JTextPane tpOverview = new JTextPane();
+    tpOverview = new JTextPane();
     scrollPaneOverview.setViewportView(tpOverview);
 
     JLabel lblMovies = new JLabel("Movies");
-    getContentPane().add(lblMovies, "1, 5, right, top");
+    panelContent.add(lblMovies, "1, 5, right, top");
 
     JScrollPane scrollPaneMovies = new JScrollPane();
-    getContentPane().add(scrollPaneMovies, "3, 5, fill, fill");
+    panelContent.add(scrollPaneMovies, "3, 5, fill, fill");
 
     tableMovies = new JTable();
     scrollPaneMovies.setViewportView(tableMovies);
-    movieSetToEdit = movieSet;
+
+    /**
+     * Button pane
+     */
+    {
+      JPanel buttonPane = new JPanel();
+      getContentPane().add(buttonPane, BorderLayout.SOUTH);
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"),
+          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      {
+        JButton okButton = new JButton("OK");
+        buttonPane.add(okButton, "2, 2, fill, top");
+        getRootPane().setDefaultButton(okButton);
+      }
+      {
+        JButton cancelButton = new JButton("Cancel");
+        buttonPane.add(cancelButton, "4, 2, fill, top");
+      }
+    }
+
+    {
+      tfName.setText(movieSetToEdit.getName());
+      tpOverview.setText(movieSetToEdit.getOverview());
+      lblPoster.setImageUrl(movieSetToEdit.getPosterUrl());
+    }
+
   }
 }

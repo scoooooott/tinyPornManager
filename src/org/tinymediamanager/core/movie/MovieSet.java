@@ -34,6 +34,9 @@ public class MovieSet extends AbstractModelObject {
   /** The name. */
   private String      name             = "";
 
+  /** The overview. */
+  private String      overview         = "";
+
   /** The poster url. */
   private String      posterUrl        = "";
 
@@ -83,6 +86,23 @@ public class MovieSet extends AbstractModelObject {
    */
   public String getName() {
     return name;
+  }
+
+  /**
+   * @return the overview
+   */
+  public String getOverview() {
+    return overview;
+  }
+
+  /**
+   * @param overview
+   *          the overview to set
+   */
+  public void setOverview(String newValue) {
+    String oldValue = this.overview;
+    this.overview = newValue;
+    firePropertyChange("overview", oldValue, newValue);
   }
 
   /**
