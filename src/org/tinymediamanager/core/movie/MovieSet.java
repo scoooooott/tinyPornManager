@@ -210,10 +210,13 @@ public class MovieSet extends AbstractModelObject {
    * Removes the all movies.
    */
   public void removeAllMovies() {
+    // store all old movies to remove the nodes in the tree
+    List<Movie> oldValue = new ArrayList<Movie>(moviesObservable.size());
+    oldValue.addAll(moviesObservable);
     moviesObservable.clear();
     saveToDb();
     firePropertyChange("movies", null, moviesObservable);
-    firePropertyChange("RemovedAllMovies", null, moviesObservable);
+    firePropertyChange("removedAllMovies", oldValue, moviesObservable);
   }
 
   /**

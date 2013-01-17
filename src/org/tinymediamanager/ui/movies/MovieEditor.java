@@ -786,18 +786,13 @@ public class MovieEditor extends JDialog {
       // movie set
       Object obj = cbMovieSet.getSelectedItem();
       if (obj instanceof String) {
-        if (movieToEdit.getMovieSet() != null) {
-          movieToEdit.getMovieSet().removeMovie(movieToEdit);
-        }
-        movieToEdit.setMovieSet(null);
+        movieToEdit.removeFromMovieSet();
       }
       if (obj instanceof MovieSet) {
         MovieSet movieSet = (MovieSet) obj;
 
         if (movieToEdit.getMovieSet() != movieSet) {
-          if (movieToEdit.getMovieSet() != null) {
-            movieToEdit.getMovieSet().removeMovie(movieToEdit);
-          }
+          movieToEdit.removeFromMovieSet();
           movieToEdit.setMovieSet(movieSet);
           movieSet.addMovie(movieToEdit);
         }

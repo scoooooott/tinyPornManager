@@ -83,6 +83,7 @@ public class MovieSetPanel extends JPanel {
   private final Action           actionRemoveMovieSet = new RemoveMovieSetAction();
   private final Action           actionSearchMovieSet = new SearchMovieSetAction();
   private JLabel                 lblMovieSetCount;
+  private final Action           actionEditMovieSet   = new EditMovieSetAction();
 
   /**
    * Instantiates a new movie set panel.
@@ -125,6 +126,10 @@ public class MovieSetPanel extends JPanel {
     JButton btnSearchMovieSet = new JButton("");
     btnSearchMovieSet.setAction(actionSearchMovieSet);
     toolBar.add(btnSearchMovieSet);
+
+    JButton btnEditMovieSet = new JButton("");
+    btnEditMovieSet.setAction(actionEditMovieSet);
+    toolBar.add(btnEditMovieSet);
 
     JScrollPane scrollPane = new JScrollPane();
     panelMovieSetList.add(scrollPane, "2, 4, fill, fill");
@@ -255,12 +260,12 @@ public class MovieSetPanel extends JPanel {
   private class SearchMovieSetAction extends AbstractAction {
     public SearchMovieSetAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-      putValue(SHORT_DESCRIPTION, "Some short description");
+      putValue(SHORT_DESCRIPTION, "Search TMDB for movieset metadata");
     }
 
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
-      tree.clearSelection();
+      // tree.clearSelection();
 
       // filter out all movie sets from the selection
       if (paths != null) {
@@ -278,7 +283,6 @@ public class MovieSetPanel extends JPanel {
           }
         }
       }
-
     }
   }
 
@@ -288,5 +292,34 @@ public class MovieSetPanel extends JPanel {
     AutoBinding<MovieList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieList, movieListBeanProperty,
         lblMovieSetCount, jLabelBeanProperty);
     autoBinding.bind();
+  }
+
+  private class EditMovieSetAction extends AbstractAction {
+    public EditMovieSetAction() {
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(SHORT_DESCRIPTION, "Edit movieset");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      TreePath[] paths = tree.getSelectionPaths();
+      // tree.clearSelection();
+
+      // filter out all movie sets from the selection
+      if (paths != null) {
+        for (TreePath path : paths) {
+          if (path.getPathCount() > 1) {
+
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+            if (node.getUserObject() instanceof MovieSet) {
+              MovieSet movieSet = (MovieSet) node.getUserObject();
+
+              // display movie set chooser
+              MovieSetEditor editor = new MovieSetEditor(movieSet);
+              editor.setVisible(true);
+            }
+          }
+        }
+      }
+    }
   }
 }

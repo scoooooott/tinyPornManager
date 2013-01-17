@@ -2012,7 +2012,19 @@ public class Movie extends AbstractModelObject {
    * @param movieset
    *          the movieset to set
    */
-  public void setMovieSet(MovieSet movieset) {
-    this.movieSet = movieset;
+  public void setMovieSet(MovieSet newValue) {
+    MovieSet oldValue = this.movieSet;
+    this.movieSet = newValue;
+    firePropertyChange("movieset", oldValue, newValue);
+  }
+
+  /**
+   * Removes the from movie set.
+   */
+  public void removeFromMovieSet() {
+    if (movieSet != null) {
+      movieSet.removeMovie(this);
+    }
+    setMovieSet(null);
   }
 }

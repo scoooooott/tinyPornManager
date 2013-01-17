@@ -70,6 +70,13 @@ public class MovieSetTreeModel implements TreeModel {
           MovieSet movieSet = (MovieSet) evt.getSource();
           removeMovie(movieSet, movie);
         }
+        if ("removedAllMovies".equals(evt.getPropertyName())) {
+          List<Movie> removedMovies = (List<Movie>) evt.getOldValue();
+          MovieSet movieSet = (MovieSet) evt.getSource();
+          for (Movie movie : removedMovies) {
+            removeMovie(movieSet, movie);
+          }
+        }
       }
     };
 
