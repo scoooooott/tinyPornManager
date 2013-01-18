@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +28,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -34,13 +36,16 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.beansbinding.ObjectProperty;
+import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
@@ -79,13 +84,16 @@ public class MovieSettingsPanel extends JPanel {
 
   /** The tf movie filename. */
   private JTextField tfMovieFilename;
+  private JTextField tfSortPrefix;
+  private JList      listSortPrefixes;
 
   /**
    * Instantiates a new movie settings panel.
    */
   public MovieSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("max(84dlu;default)"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JPanel panelMovieDataSources = new JPanel();
 
@@ -154,6 +162,57 @@ public class MovieSettingsPanel extends JPanel {
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
     panelMovieDataSources.add(cbMovieNfoFilename2, "4, 7");
 
+    JPanel panelSortOptions = new JPanel();
+    panelSortOptions.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Movielist sorting", TitledBorder.LEADING,
+        TitledBorder.TOP, null, null));
+    add(panelSortOptions, "4, 2, 1, 3, fill, fill");
+    panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    JLabel lblSortingPrefixes = new JLabel("Title prefixes");
+    panelSortOptions.add(lblSortingPrefixes, "2, 2");
+
+    JScrollPane scrollPaneSortPrefixes = new JScrollPane();
+    panelSortOptions.add(scrollPaneSortPrefixes, "2, 4, fill, fill");
+
+    listSortPrefixes = new JList();
+    scrollPaneSortPrefixes.setViewportView(listSortPrefixes);
+
+    JButton btnRemove_1 = new JButton("Remove");
+    btnRemove_1.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        int row = listSortPrefixes.getSelectedIndex();
+        String prefix = Globals.settings.getTitlePrefix().get(row);
+        Globals.settings.removeTitlePrefix(prefix);
+      }
+    });
+    panelSortOptions.add(btnRemove_1, "4, 4, default, bottom");
+
+    tfSortPrefix = new JTextField();
+    panelSortOptions.add(tfSortPrefix, "2, 6, fill, default");
+    tfSortPrefix.setColumns(10);
+
+    JButton btnAdd_1 = new JButton("Add");
+    btnAdd_1.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (StringUtils.isNotEmpty(tfSortPrefix.getText())) {
+          Globals.settings.addTitlePrefix(tfSortPrefix.getText());
+        }
+      }
+    });
+    panelSortOptions.add(btnAdd_1, "4, 6");
+
+    JTextPane tpSortingHints = new JTextPane();
+    tpSortingHints.setFont(new Font("Dialog", Font.PLAIN, 10));
+    tpSortingHints
+        .setText("Choose prefixes, which will affect the sort order of the movielist.\n\nExample:    The\nThe Bourne Identity   will be shown as    Bourne Identity, The\n\nIf you want to disable this feature, just clear the list");
+    tpSortingHints.setBackground(UIManager.getColor("Panel.background"));
+    panelSortOptions.add(tpSortingHints, "2, 8, fill, fill");
+
     // the panel renamer
     JPanel panelRenamer = new JPanel();
     panelRenamer.setBorder(new TitledBorder(null, "Renamer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -218,11 +277,22 @@ public class MovieSettingsPanel extends JPanel {
 
   }
 
+  // check changes of checkboxes
   /**
-   * Inits the data bindings.
+   * Check changes.
    */
+  private void checkChanges() {
+    // set NFO filenames
+    settings.clearMovieNfoFilenames();
+    if (cbMovieNfoFilename1.isSelected()) {
+      settings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
+    }
+    if (cbMovieNfoFilename2.isSelected()) {
+      settings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
+    }
+  }
+
   protected void initDataBindings() {
-    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
     BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieDataSource");
     JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,
         tableMovieSources);
@@ -233,6 +303,7 @@ public class MovieSettingsPanel extends JPanel {
     jTableBinding.bind();
     //
     BeanProperty<Settings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieConnector");
+    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
     AutoBinding<Settings, MovieConnectors, JComboBox, Object> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
     autoBinding_9.bind();
@@ -249,20 +320,9 @@ public class MovieSettingsPanel extends JPanel {
         settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
     autoBinding_11.bind();
     //
-  }
-
-  // check changes of checkboxes
-  /**
-   * Check changes.
-   */
-  private void checkChanges() {
-    // set NFO filenames
-    settings.clearMovieNfoFilenames();
-    if (cbMovieNfoFilename1.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
-    }
-    if (cbMovieNfoFilename2.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
-    }
+    BeanProperty<Settings, List<String>> settingsBeanProperty = BeanProperty.create("titlePrefix");
+    JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty,
+        listSortPrefixes);
+    jListBinding.bind();
   }
 }

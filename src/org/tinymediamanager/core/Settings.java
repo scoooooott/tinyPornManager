@@ -151,7 +151,7 @@ public class Settings extends AbstractModelObject {
   /** The video file types. */
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
-  private final List<String>            titlePrefix               = new ArrayList<String>();
+  private final List<String>            titlePrefix               = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
@@ -258,15 +258,6 @@ public class Settings extends AbstractModelObject {
     scraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     windowConfig = new WindowConfig();
     windowConfig.addPropertyChangeListener(propertyChangeListener);
-
-    addTitlePrefix("A");
-    addTitlePrefix("An");
-    addTitlePrefix("The");
-    addTitlePrefix("Der");
-    addTitlePrefix("Die");
-    addTitlePrefix("Das");
-    addTitlePrefix("Ein");
-    addTitlePrefix("Eine");
   }
 
   /**
@@ -818,7 +809,7 @@ public class Settings extends AbstractModelObject {
         System.setProperty("http.proxyPassword", getProxyPassword());
         System.setProperty("https.proxyPassword", getProxyPassword());
       }
-          // System.setProperty("java.net.useSystemProxies", "true");
+      // System.setProperty("java.net.useSystemProxies", "true");
     }
   }
 

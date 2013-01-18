@@ -126,8 +126,8 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     JPanel panelHeader = new JPanel();
     getContentPane().add(panelHeader, BorderLayout.NORTH);
     panelHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("114px:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
-        FormFactory.RELATED_GAP_ROWSPEC, }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+        RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
     {
       tfMovieSetName = new JTextField();
       panelHeader.add(tfMovieSetName, "2, 2, fill, fill");
@@ -229,10 +229,10 @@ public class MovieSetChooser extends JDialog implements ActionListener {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
       {
-        buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("185px"),
+        buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("2dlu"), ColumnSpec.decode("185px"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("18px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), },
-            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
+            ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
         {
           progressBar = new JProgressBar();
           buttonPane.add(progressBar, "2, 2, fill, center");
@@ -258,6 +258,10 @@ public class MovieSetChooser extends JDialog implements ActionListener {
       }
     }
     initDataBindings();
+
+    // adjust table columns
+    tableMovies.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    tableMovies.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
     {
       tfMovieSetName.setText(movieSet.getName());
@@ -477,9 +481,6 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     progressBar.setIndeterminate(false);
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     JTableBinding<MovieSetChooserModel, List<MovieSetChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
         movieSetsFound, tableMovieSets);
@@ -495,9 +496,6 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     //
     BeanProperty<MovieInSet, String> movieInSetBeanProperty = BeanProperty.create("name");
     jTableBinding_1.addColumnBinding(movieInSetBeanProperty).setColumnName("Movie").setEditable(false);
-    //
-    BeanProperty<MovieInSet, Integer> movieInSetBeanProperty_1 = BeanProperty.create("tmdbId");
-    jTableBinding_1.addColumnBinding(movieInSetBeanProperty_1).setColumnName("TMDB Id").setEditable(false);
     //
     BeanProperty<MovieInSet, String> movieInSetBeanProperty_2 = BeanProperty.create("movie.name");
     jTableBinding_1.addColumnBinding(movieInSetBeanProperty_2).setColumnName("matched Movie").setEditable(false);

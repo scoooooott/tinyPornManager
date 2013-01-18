@@ -42,7 +42,6 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.ImageLabel;
-import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -61,6 +60,7 @@ public class MovieSetEditor extends JDialog {
   private JTable       tableMovies;
 
   private ImageLabel   lblPoster;
+  private ImageLabel   lblFanart;
 
   private JTextPane    tpOverview;
 
@@ -91,41 +91,56 @@ public class MovieSetEditor extends JDialog {
     getContentPane().setLayout(new BorderLayout());
 
     JPanel panelContent = new JPanel();
-    panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), }, new RowSpec[] {
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("75px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), }));
+    panelContent.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("2dlu"), FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), ColumnSpec.decode("2dlu"), },
+        new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("75px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
     getContentPane().add(panelContent, BorderLayout.CENTER);
 
-    JLabel lblName = new JLabel("Name");
-    panelContent.add(lblName, "1, 1, right, default");
+    JLabel lblName = new JLabel("Title");
+    panelContent.add(lblName, "2, 2, right, default");
 
     tfName = new JTextField();
-    panelContent.add(tfName, "3, 1, fill, default");
+    panelContent.add(tfName, "4, 2, fill, default");
     tfName.setColumns(10);
 
     lblPoster = new ImageLabel();
-    panelContent.add(lblPoster, "5, 1");
+    panelContent.add(lblPoster, "6, 2, 1, 7, fill, fill");
 
     JLabel lblOverview = new JLabel("Overview");
-    panelContent.add(lblOverview, "1, 3, right, top");
+    panelContent.add(lblOverview, "2, 4, right, top");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
-    panelContent.add(scrollPaneOverview, "3, 3, fill, fill");
+    panelContent.add(scrollPaneOverview, "4, 4, fill, fill");
 
     tpOverview = new JTextPane();
     scrollPaneOverview.setViewportView(tpOverview);
 
     JLabel lblMovies = new JLabel("Movies");
-    panelContent.add(lblMovies, "1, 5, right, top");
+    panelContent.add(lblMovies, "2, 6, right, top");
 
     JScrollPane scrollPaneMovies = new JScrollPane();
-    panelContent.add(scrollPaneMovies, "3, 5, 1, 9, fill, fill");
+    panelContent.add(scrollPaneMovies, "4, 6, 1, 9, fill, fill");
 
     tableMovies = new JTable();
     scrollPaneMovies.setViewportView(tableMovies);
+
+    JButton btnRemoveMovie = new JButton("");
+    btnRemoveMovie.setAction(actionRemoveMovie);
+    panelContent.add(btnRemoveMovie, "2, 8, right, top");
+
+    JButton btnMoveMovieUp = new JButton("");
+    btnMoveMovieUp.setAction(actionMoveMovieUp);
+    panelContent.add(btnMoveMovieUp, "2, 10, right, top");
+
+    lblFanart = new ImageLabel();
+    panelContent.add(lblFanart, "6, 10, 1, 5, fill, fill");
+
+    JButton btnMoveMovieDown = new JButton("");
+    btnMoveMovieDown.setAction(actionMoveMovieDown);
+    panelContent.add(btnMoveMovieDown, "2, 12, right, top");
 
     /**
      * Button pane
@@ -134,7 +149,7 @@ public class MovieSetEditor extends JDialog {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
       buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), ColumnSpec.decode("2dlu"), }, new RowSpec[] {
           FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         JButton btnOk = new JButton("OK");
@@ -153,41 +168,23 @@ public class MovieSetEditor extends JDialog {
       tfName.setText(movieSetToEdit.getName());
       tpOverview.setText(movieSetToEdit.getOverview());
       lblPoster.setImageUrl(movieSetToEdit.getPosterUrl());
-
-      JButton btnRemoveMovie = new JButton("");
-      btnRemoveMovie.setAction(actionRemoveMovie);
-      panelContent.add(btnRemoveMovie, "1, 7, right, top");
-
-      JButton btnMoveMovieUp = new JButton("");
-      btnMoveMovieUp.setAction(actionMoveMovieUp);
-      panelContent.add(btnMoveMovieUp, "1, 9");
-
-      JButton btnMoveMovieDown = new JButton("");
-      btnMoveMovieDown.setAction(actionMoveMovieDown);
-      panelContent.add(btnMoveMovieDown, "1, 11");
       moviesInSet.addAll(movieSetToEdit.getMovies());
+      lblPoster.setImageUrl(movieSetToEdit.getPosterUrl());
+      lblFanart.setImageUrl(movieSetToEdit.getFanartUrl());
     }
 
     initDataBindings();
 
     // adjust table columns
-    TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(tableMovies);
-    tableColumnAdjuster.setColumnDataIncluded(true);
-    tableColumnAdjuster.setColumnHeaderIncluded(true);
-    tableColumnAdjuster.adjustColumns();
-  }
+    // year column
+    tableMovies.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
+    tableMovies.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
+    tableMovies.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
 
-  protected void initDataBindings() {
-    JTableBinding<Movie, List<Movie>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, moviesInSet, tableMovies);
-    //
-    BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Name").setEditable(false);
-    //
-    BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
-    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year");
-    //
-    jTableBinding.setEditable(false);
-    jTableBinding.bind();
+    // watched column
+    tableMovies.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(70);
+    tableMovies.getTableHeader().getColumnModel().getColumn(2).setMinWidth(70);
+    tableMovies.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(85);
   }
 
   private class RemoveMovieAction extends AbstractAction {
@@ -206,7 +203,7 @@ public class MovieSetEditor extends JDialog {
 
   private class MoveUpAction extends AbstractAction {
     public MoveUpAction() {
-      putValue(NAME, "up");
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Button_Up.png")));
       putValue(SHORT_DESCRIPTION, "Move marked movie up");
     }
 
@@ -221,7 +218,7 @@ public class MovieSetEditor extends JDialog {
 
   private class MoveDownAction extends AbstractAction {
     public MoveDownAction() {
-      putValue(NAME, "down");
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Button_Down.png")));
       putValue(SHORT_DESCRIPTION, "Move marked movie down");
     }
 
@@ -274,5 +271,21 @@ public class MovieSetEditor extends JDialog {
       setVisible(false);
       dispose();
     }
+  }
+
+  protected void initDataBindings() {
+    JTableBinding<Movie, List<Movie>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, moviesInSet, tableMovies);
+    //
+    BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
+    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Name").setEditable(false);
+    //
+    BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
+    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year");
+    //
+    BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("watched");
+    jTableBinding.addColumnBinding(movieBeanProperty_2).setColumnName("Watched").setEditable(false).setColumnClass(Boolean.class);
+    //
+    jTableBinding.setEditable(false);
+    jTableBinding.bind();
   }
 }

@@ -201,7 +201,7 @@ public class MovieSetPanel extends JPanel {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      String name = JOptionPane.showInputDialog(null, "Name of the movie set : ", "", 1);
+      String name = JOptionPane.showInputDialog(null, "Movieset title : ", "", 1);
       if (StringUtils.isNotEmpty(name)) {
         MovieSet movieSet = new MovieSet(name);
         movieSet.saveToDb();
