@@ -617,16 +617,48 @@ public class Settings extends AbstractModelObject {
    */
   private void writeDefaultSettings() {
     // default video file types
-    addVideoFileTypes(".mpg");
+    // derived from http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
+    addVideoFileTypes(".3gp");
+    addVideoFileTypes(".asf");
+    addVideoFileTypes(".asx");
+    addVideoFileTypes(".avc");
     addVideoFileTypes(".avi");
-    addVideoFileTypes(".mp4");
-    addVideoFileTypes(".mkv");
-    addVideoFileTypes(".wmv");
-    addVideoFileTypes(".ts");
-    addVideoFileTypes(".mpeg");
+    addVideoFileTypes(".bin");
+    addVideoFileTypes(".bivx");
+    addVideoFileTypes(".dat");
     addVideoFileTypes(".divx");
+    addVideoFileTypes(".dv");
+    addVideoFileTypes(".dvr-ms");
+    addVideoFileTypes(".fli");
+    addVideoFileTypes(".flv");
     addVideoFileTypes(".h264");
+    addVideoFileTypes(".img");
+    addVideoFileTypes(".iso");
+    addVideoFileTypes(".m2ts");
+    addVideoFileTypes(".m2v");
+    addVideoFileTypes(".m4v");
+    addVideoFileTypes(".mkv");
     addVideoFileTypes(".mov");
+    addVideoFileTypes(".mp4");
+    addVideoFileTypes(".mpeg");
+    addVideoFileTypes(".mpg");
+    addVideoFileTypes(".nrg");
+    addVideoFileTypes(".nsv");
+    addVideoFileTypes(".nuv");
+    addVideoFileTypes(".ogm");
+    addVideoFileTypes(".pva");
+    addVideoFileTypes(".qt");
+    addVideoFileTypes(".rm");
+    addVideoFileTypes(".rmvb");
+    addVideoFileTypes(".strm");
+    addVideoFileTypes(".svq3");
+    addVideoFileTypes(".ts");
+    addVideoFileTypes(".ty");
+    addVideoFileTypes(".viv");
+    addVideoFileTypes(".vob");
+    addVideoFileTypes(".vp3");
+    addVideoFileTypes(".wmv");
+    addVideoFileTypes(".xvid");
 
     // default title prefix
     titlePrefix.clear();
