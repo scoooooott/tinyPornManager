@@ -323,7 +323,7 @@ public class MediaFile extends AbstractModelObject {
     int height = Integer.parseInt(v);
 
     int ns = 0;
-    int[] hs = new int[] { 1080, 720, 480, 360, 240, 120 };
+    int[] hs = new int[] { 1080, 720, 576, 540, 480, 360, 240, 120 };
     for (int i = 0; i < hs.length - 1; i++) {
       if (height > hs[i + 1]) {
         ns = hs[i];
@@ -392,6 +392,19 @@ public class MediaFile extends AbstractModelObject {
       return false;
     }
     return (float) dim.get(0) / dim.get(1) > 1.37f ? true : false;
+  }
+
+  /**
+   * returns the aspect ratio
+   * 
+   * @return the aspect ratio
+   */
+  public Float getAspectRatio() {
+    List<Integer> dim = getDimension();
+    if (dim.contains(null)) {
+      return 0F;
+    }
+    return (float) (Math.round(dim.get(0).floatValue() / dim.get(1).floatValue() * 100) / 100.0);
   }
 
   /**

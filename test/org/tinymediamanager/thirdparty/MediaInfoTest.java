@@ -79,6 +79,7 @@ public class MediaInfoTest {
     System.out.println("def: " + mf.getVideoDefinitionCategory());
     System.out.println("form: " + mf.getVideoFormat());
     System.out.println("ws?: " + mf.isWidescreen());
+    System.out.println("ar: " + mf.getAspectRatio());
     System.out.println("dim: " + mf.getDimension());
     // Map<String, String> i = getMediaInfo().snapshot(StreamKind.Video, 0);
   }
