@@ -17,9 +17,10 @@ package org.tinymediamanager.core.movie;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -238,7 +240,6 @@ public class MovieToXbmcNfoConnector {
     String nfoFilename = "";
     for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
       JAXBContext context;
-      Writer w = null;
       try {
         switch (name) {
           case FILENAME_NFO:
@@ -257,7 +258,7 @@ public class MovieToXbmcNfoConnector {
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         // w = new FileWriter(nfoFilename);
-        w = new StringWriter();
+        Writer w = new StringWriter();
         m.marshal(xbmc, w);
         StringBuilder sb = new StringBuilder(w.toString());
         w.close();
@@ -266,25 +267,13 @@ public class MovieToXbmcNfoConnector {
         if (SystemUtils.IS_OS_WINDOWS) {
           sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
         }
-
-        w = new FileWriter(nfoFilename);
-        String xml = sb.toString();
-        IOUtils.write(xml, w);
-
+        FileUtils.write(new File(nfoFilename), sb, "UTF-8");
       }
       catch (JAXBException e) {
         LOGGER.error("setData", e);
       }
       catch (IOException e) {
         LOGGER.error("setData", e);
-      }
-      finally {
-        try {
-          w.close();
-        }
-        catch (Exception e) {
-          LOGGER.error("setData", e);
-        }
       }
     }
 
