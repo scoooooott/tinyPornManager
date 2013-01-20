@@ -65,7 +65,7 @@
         <jar destfile="${lib.dir}/resources.jar" basedir="resources" includes="*/**" />
     </target>
 
-    <target name="create_tmm_jar" depends="compile">
+    <target name="create_tmm_jar" description="creates the jar" depends="compile">
 
         <svn>
             <info path="." />
@@ -108,21 +108,17 @@
         </propertyfile>
     </target>
 
-    <target name='package-app' depends='create_tmm_jar'>
-        <!-- default files -->
+    <target name='package-app' description="builds the packages" depends='create_tmm_jar'>
+        <!-- default files, to include in dist -->
         <copy file="objectdb.conf" todir="${build.dir}" />
         <copy file="AppBundler/getdown.jar" todir="${build.dir}" />
         <copy file="AppBundler/getdown.txt" todir="${build.dir}" />
+        <replace file="${build.dir}/getdown.txt" token="%SVNREV%" value="${svn.info.revision}"/>
         <copy file="AppBundler/LICENSE" todir="${build.dir}" />
         <copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
         <copy file="AppBundler/tmm.png" todir="${build.dir}" />
 
-        <!-- create checksum file -->
-        <taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" 
-                 classpath="AppBundler/getdown-tools-1.2.jar" />
-        <digest appdir="${build.dir}" />
-
-        <!-- Mac OSX -->
+    	<!-- Mac OSX -->
         <mkdir dir="${dist.dir}/mac" />
         <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="AppBundler/jarbundler-2.2.0.jar" />
         <jarbundler dir="${dist.dir}/mac" name="tinyMediaManager" icon="AppBundler/tmm.icns" 
@@ -158,6 +154,18 @@
             <tarfileset dir="${dist.dir}" includes="*.sh"/>
         </tar>
         <gzip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar.gz" src="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar" />
+
+        <!-- default files, NOT to include in dist, but in getdown updater -->
+        <copy todir="${build.dir}/native">
+            <fileset dir="native"/>
+        </copy>
+        <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.exe" />
+        <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
+
+        <!-- finally create checksums -->
+        <taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" 
+                 classpath="AppBundler/getdown.jar" />
+        <digest appdir="${build.dir}" />
     </target>
 
     <target name="analyze" description="Run analyzers" depends="compile">

@@ -32,14 +32,17 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
-// TODO: Auto-generated Javadoc
+import com.sun.jna.Platform;
+
 /**
  * The Class TinyMediaManager.
  */
@@ -91,17 +94,19 @@ public class TinyMediaManager {
           }
           long timeStart = System.currentTimeMillis();
 
-          // get logger configuration
+          // update check //////////////////////////////////////////////
           if (g2 != null) {
-            updateProgress(g2, "loading logger", 10);
+            updateProgress(g2, "update check", 10);
             splash.update();
           }
-          PropertyConfigurator.configure(TinyMediaManager.class.getResource("log4j.conf"));
-          // DOMConfigurator.configure(TinyMediaManager.class.getResource("log4j.xml"));
+          // write a random number to file, to identify this instance (for
+          // updater, tracking, whatsoever)
+          Utils.trackEvent("startup");
+
           LOGGER.debug("starting tinyMediaManager");
           LOGGER.debug("default encoding " + System.getProperty("file.encoding"));
 
-          // initialize database
+          // initialize database //////////////////////////////////////////////
           if (g2 != null) {
             updateProgress(g2, "initialize database", 20);
             splash.update();
@@ -117,7 +122,7 @@ public class TinyMediaManager {
             Globals.settings.setProxy();
           }
 
-          // load database
+          // load database //////////////////////////////////////////////////
           if (g2 != null) {
             updateProgress(g2, "loading movies", 30);
             splash.update();
@@ -126,9 +131,39 @@ public class TinyMediaManager {
           MovieList movieList = MovieList.getInstance();
           movieList.loadMoviesFromDatabase();
 
+          // set native dir (needs to be absolute)
+          String nativepath = TinyMediaManager.class.getClassLoader().getResource(".").getPath() + "native/";
+          if (Platform.isWindows()) {
+            nativepath += "windows-";
+          }
+          else if (Platform.isLinux()) {
+            nativepath += "linux-";
+          }
+          else if (Platform.isMac()) {
+            nativepath += "mac-";
+          }
+          nativepath += System.getProperty("os.arch");
+          System.setProperty("jna.library.path", nativepath);
+
+          // MediaInfo /////////////////////////////////////////////////////
+          if (g2 != null) {
+            updateProgress(g2, "loading MediaInfo libs", 50);
+            splash.update();
+          }
+          LOGGER.debug("Loading native mediainfo lib from: " + nativepath);
+          // load libMediainfo
+          String miv = MediaInfo.version();
+          if (!StringUtils.isEmpty(miv)) {
+            LOGGER.info("Using " + miv);
+          }
+          else {
+            LOGGER.error("could not load MediaInfo!");
+          }
+
+          // VLC /////////////////////////////////////////////////////////
           // // try to initialize VLC native libs
           // if (g2 != null) {
-          // updateProgress(g2, "loading VLC libs", 50);
+          // updateProgress(g2, "loading VLC libs", 60);
           // splash.update();
           // }
           // try {
@@ -142,15 +177,14 @@ public class TinyMediaManager {
           // LOGGER.warn("VLC: " + ule.getMessage().trim());
           // }
 
-          // clean cache
+          // clean cache ////////////////////////////////////////////////////
           if (g2 != null) {
             updateProgress(g2, "loading movies", 80);
             splash.update();
           }
-
           CachedUrl.cleanupCache();
 
-          // launch application
+          // launch application ////////////////////////////////////////////
           if (g2 != null) {
             updateProgress(g2, "loading ui", 90);
             splash.update();
@@ -165,6 +199,7 @@ public class TinyMediaManager {
           }
           MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
 
+          // finished ////////////////////////////////////////////////////
           if (g2 != null) {
             updateProgress(g2, "finished starting", 100);
             splash.update();
