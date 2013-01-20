@@ -72,6 +72,9 @@ public class Utils {
    * @author Myron Boyle
    */
   public static String getSortableName(String title) {
+    if (title.toLowerCase().matches("^die hard$") || title.toLowerCase().matches("^die hard[:\\s].*")) {
+      return title;
+    }
     for (String prfx : Settings.getInstance().getTitlePrefix()) {
       title = title.replaceAll("(?i)^" + prfx + " (.*)", "$1, " + prfx);
     }

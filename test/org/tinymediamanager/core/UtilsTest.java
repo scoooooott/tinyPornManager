@@ -12,6 +12,10 @@ public class UtilsTest {
         Assert.assertEquals("Dark Knight, The", Utils.getSortableName("tHE Dark Knight"));
         Assert.assertEquals("hard days night, A", Utils.getSortableName("a hard days night"));
         Assert.assertEquals("Die Hard", Utils.getSortableName("Die Hard")); // wohoo
+        Assert.assertEquals("Die Hard 2", Utils.getSortableName("Die Hard 2")); // wohoo
+        Assert.assertEquals("Die Hard: with a", Utils.getSortableName("Die Hard: with a")); // wohoo
+        Assert.assertEquals("Good Day to Die Hard, A", Utils.getSortableName("A Good Day to Die Hard")); // wohoo
+        Assert.assertEquals("Hardyboys, Die", Utils.getSortableName("Die Hardyboys"));
     }
 
     @Test
