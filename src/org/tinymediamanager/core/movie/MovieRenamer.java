@@ -179,7 +179,7 @@ public class MovieRenamer {
    *          the movie
    * @return the string
    */
-  private static String createDestination(String template, Movie movie) {
+  protected static String createDestination(String template, Movie movie) {
     String newDestination = template;
 
     // replace token title ($T)
@@ -202,9 +202,31 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll("\\$O", movie.getOriginalName());
     }
 
-    // replace illegal characters (ie : in windows path is not allowed
-    newDestination.replace(":", "");
+    // replace token IMDBid ($I)
+    if (newDestination.contains("$I")) {
+      newDestination = newDestination.replaceAll("\\$I", movie.getImdbId());
+    }
 
+    // replace token sort title ($E)
+    if (newDestination.contains("$E")) {
+      newDestination = newDestination.replaceAll("\\$E", movie.getSortTitle());
+    }
+
+    // replace illegal characters
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
+    newDestination = newDestination.replaceAll("([:<>|?*])", "");
+
+    // TODO: more renaming options; add to GUI
+    // $A = Audio
+    // $B = Base Path
+    // $C = Director
+    // $D = Directory
+    // $F = File Name
+    // $G = Genre (Follow with a space, dot or hyphen to change separator)
+    // $L = List Title
+    // $M = MPAA
+    // $R = Resolution
+    // $S = Source
     return newDestination;
   }
 
