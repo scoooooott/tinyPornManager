@@ -212,22 +212,33 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll("\\$E", movie.getSortTitle());
     }
 
+    // replace token resolution ($R)
+    if (newDestination.contains("$R")) {
+      newDestination = newDestination.replaceAll("\\$R", movie.getMediaFiles().get(0).getVideoResolution());
+    }
+
+    // replace token audio codec + channels ($A)
+    if (newDestination.contains("$A")) {
+      newDestination = newDestination.replaceAll("\\$A", movie.getMediaFiles().get(0).getAudioCodec() + "-"
+          + movie.getMediaFiles().get(0).getAudioChannels());
+    }
+
+    // replace token video codec + channels ($V)
+    if (newDestination.contains("$V")) {
+      newDestination = newDestination.replaceAll("\\$V", movie.getMediaFiles().get(0).getVideoCodec() + "-"
+          + movie.getMediaFiles().get(0).getVideoFormat());
+    }
+
+    // replace token media source (BluRay|DVD|TV|...) ($S)
+//    if (newDestination.contains("$S")) {
+//      newDestination = newDestination.replaceAll("\\$S", movie.getMediaSource());
+//    }
+
     // replace illegal characters
     // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
     newDestination = newDestination.replaceAll("([:<>|?*])", "");
 
-    // TODO: more renaming options; add to GUI
-    // $A = Audio
-    // $B = Base Path
-    // $C = Director
-    // $D = Directory
-    // $F = File Name
-    // $G = Genre (Follow with a space, dot or hyphen to change separator)
-    // $L = List Title
-    // $M = MPAA
-    // $R = Resolution
-    // $S = Source
-    return newDestination;
+    return newDestination.trim();
   }
 
   /**
@@ -245,7 +256,7 @@ public class MovieRenamer {
       File oldFile = new File(oldFilename);
       if (oldFile.exists()) {
         File newFile = new File(newFilename);
-        //TODO: FileUtils.deleteQuietly(new File(newFile)); first ?
+        // TODO: FileUtils.deleteQuietly(new File(newFile)); first ?
         FileUtils.moveFile(oldFile, newFile);
         LOGGER.debug("moved file " + oldFilename + " to " + newFilename);
       }

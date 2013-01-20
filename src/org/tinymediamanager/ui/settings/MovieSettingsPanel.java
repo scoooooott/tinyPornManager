@@ -232,7 +232,7 @@ public class MovieSettingsPanel extends JPanel {
     JTextPane txtpntTitle = new JTextPane();
     txtpntTitle.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
-    txtpntTitle.setText("Available pattern:\n$T = Title\n$O = OriginalTitle\n$1 = first letter of the title\n$Y = Year");
+    txtpntTitle.setText("Available pattern:\r\n$T = Title\r\n$O = OriginalTitle\r\n$1 = first letter of the title\r\n$Y = Year\r\n$I = IMDB number\r\n$E = Sort title\r\n$R = Video resolution\r\n$A = audio code + channels\r\n$V = video code + format");
     txtpntTitle.setEditable(false);
     panelRenamer.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
 
