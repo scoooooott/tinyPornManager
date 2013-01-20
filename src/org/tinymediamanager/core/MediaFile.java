@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -66,6 +67,7 @@ public class MediaFile extends AbstractModelObject {
   private long                filesize;
 
   /** the mediainfo object */
+  @Transient
   private MediaInfo           mediaInfo;
 
   public MediaFile() {
