@@ -48,6 +48,8 @@ public class MovieSetTreeModel implements TreeModel {
 
   private PropertyChangeListener    propertyChangeListener;
 
+  MovieList                         movieList = MovieList.getInstance();
+
   /**
    * Instantiates a new movie set tree model.
    * 
@@ -94,6 +96,8 @@ public class MovieSetTreeModel implements TreeModel {
       // implement change listener
       movieSet.addPropertyChangeListener(propertyChangeListener);
     }
+
+    movieList.setMovieSetTreeModel(this);
   }
 
   /*
@@ -246,6 +250,32 @@ public class MovieSetTreeModel implements TreeModel {
     }
   }
 
+  public void removeMovieSet(MovieSet movieSet) {
+    MovieSetTreeNode node = (MovieSetTreeNode) nodeMap.get(movieSet);
+    int index = root.getIndex(node);
+
+    for (Movie movie : movieSet.getMovies()) {
+      movie.setMovieSet(null);
+      movie.saveToDb();
+      movie.writeNFO();
+      nodeMap.remove(movie);
+    }
+    movieSet.removeAllMovies();
+    movieSet.removePropertyChangeListener(propertyChangeListener);
+    movieList.removeMovieSet(movieSet);
+    nodeMap.remove(movieSet);
+
+    node.removeAllChildren();
+    node.removeFromParent();
+
+    // inform listeners
+    TreeModelEvent event = new TreeModelEvent(this, root.getPath(), new int[] { index }, new Object[] { node });
+
+    for (TreeModelListener listener : listeners) {
+      listener.treeNodesRemoved(event);
+    }
+  }
+
   /**
    * Removes the.
    * 
@@ -268,7 +298,7 @@ public class MovieSetTreeModel implements TreeModel {
       }
       movieSet.removeAllMovies();
       movieSet.removePropertyChangeListener(propertyChangeListener);
-      MovieList.getInstance().removeMovieSet(movieSet);
+      movieList.removeMovieSet(movieSet);
       nodeMap.remove(movieSet);
 
       node.removeAllChildren();

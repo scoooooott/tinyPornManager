@@ -81,5 +81,4 @@ public class MovieSetSelectionModel extends AbstractModelObject {
   public MovieSet getSelectedMovieSet() {
     return selectedMovieSet;
   }
-
 }

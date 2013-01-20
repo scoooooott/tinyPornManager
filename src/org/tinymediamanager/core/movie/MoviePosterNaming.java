@@ -27,6 +27,9 @@ public enum MoviePosterNaming {
   /** The filename jpg. */
   FILENAME_JPG,
 
+  /** The filename poster jpg. */
+  FILENAME_POSTER_JPG,
+
   /** The movie jpg. */
   MOVIE_JPG,
 

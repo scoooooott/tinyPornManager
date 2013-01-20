@@ -73,6 +73,7 @@ public class MovieImageSettingsPanel extends JPanel {
   private JCheckBox cbMovieFanartFilename1;
 
   private JCheckBox cbMovieFanartFilename2;
+  private JCheckBox cbMoviePosterFilename8;
 
   public MovieImageSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
@@ -136,14 +137,17 @@ public class MovieImageSettingsPanel extends JPanel {
     cbMoviePosterFilename5 = new JCheckBox("poster.tbn");
     panelMovieImages.add(cbMoviePosterFilename5, "6, 7");
 
-    cbMoviePosterFilename2 = new JCheckBox("movie.jpg");
-    panelMovieImages.add(cbMoviePosterFilename2, "4, 8");
+    cbMoviePosterFilename8 = new JCheckBox("<movie filename>-poster.jpg");
+    panelMovieImages.add(cbMoviePosterFilename8, "4, 8");
 
     cbMoviePosterFilename6 = new JCheckBox("folder.jpg");
     panelMovieImages.add(cbMoviePosterFilename6, "6, 8");
 
+    cbMoviePosterFilename2 = new JCheckBox("movie.jpg");
+    panelMovieImages.add(cbMoviePosterFilename2, "4, 9");
+
     cbMoviePosterFilename3 = new JCheckBox("movie.tbn");
-    panelMovieImages.add(cbMoviePosterFilename3, "4, 9");
+    panelMovieImages.add(cbMoviePosterFilename3, "6, 9");
 
     JLabel lblFanartFileNaming = new JLabel("Fanart file naming");
     panelMovieImages.add(lblFanartFileNaming, "2, 11");
@@ -179,6 +183,9 @@ public class MovieImageSettingsPanel extends JPanel {
     if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_JPG)) {
       cbMoviePosterFilename7.setSelected(true);
     }
+    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_POSTER_JPG)) {
+      cbMoviePosterFilename8.setSelected(true);
+    }
 
     // fanart filenames
     List<MovieFanartNaming> movieFanartFilenames = settings.getMovieFanartFilenames();
@@ -203,6 +210,7 @@ public class MovieImageSettingsPanel extends JPanel {
     cbMoviePosterFilename5.addItemListener(listener);
     cbMoviePosterFilename6.addItemListener(listener);
     cbMoviePosterFilename7.addItemListener(listener);
+    cbMoviePosterFilename8.addItemListener(listener);
 
     cbMovieFanartFilename1.addItemListener(listener);
     cbMovieFanartFilename2.addItemListener(listener);
@@ -250,6 +258,9 @@ public class MovieImageSettingsPanel extends JPanel {
     }
     if (cbMoviePosterFilename7.isSelected()) {
       settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
+    }
+    if (cbMoviePosterFilename8.isSelected()) {
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
     }
 
     // set fanart filenames

@@ -48,6 +48,7 @@ import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.ParserUtils;
+import org.tinymediamanager.ui.moviesets.MovieSetTreeModel;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -78,6 +79,8 @@ public class MovieList extends AbstractModelObject {
 
   /** The tags observable. */
   private List<String>                 tagsObservable = ObservableCollections.observableList(new ArrayList<String>());
+
+  private MovieSetTreeModel            movieSetTreeModel;
 
   /**
    * Instantiates a new movie list.
@@ -709,5 +712,25 @@ public class MovieList extends AbstractModelObject {
     Globals.entityManager.getTransaction().commit();
     firePropertyChange("movieSets", null, movieSetList);
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
+  }
+
+  /**
+   * Remove all movieSets.
+   * 
+   */
+  public void removeMovieSets() {
+    for (int i = movieSetList.size() - 1; i >= 0; i--) {
+      MovieSet movieSet = movieSetList.get(i);
+      // remove it via the tree model to ensure the tree is redrawn right
+      movieSetTreeModel.removeMovieSet(movieSet);
+    }
+  }
+
+  public MovieSetTreeModel getMovieSetTreeModel() {
+    return movieSetTreeModel;
+  }
+
+  public void setMovieSetTreeModel(MovieSetTreeModel movieSetTreeModel) {
+    this.movieSetTreeModel = movieSetTreeModel;
   }
 }

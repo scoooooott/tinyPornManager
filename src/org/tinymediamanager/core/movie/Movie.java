@@ -1697,6 +1697,10 @@ public class Movie extends AbstractModelObject {
             filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", ".jpg");
             break;
 
+          case FILENAME_POSTER_JPG:
+            filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", "-poster.jpg");
+            break;
+
           case MOVIE_JPG:
             filename = filename + "movie.jpg";
             break;

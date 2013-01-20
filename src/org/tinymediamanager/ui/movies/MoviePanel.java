@@ -22,7 +22,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,6 @@ import javax.swing.SwingWorker;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.gpl.JSplitButton.JSplitButton;
@@ -375,37 +373,6 @@ public class MoviePanel extends JPanel {
     menu.add(actionRename2);
     menu.add(actionRemove2);
     menu.addSeparator();
-
-    // debug menu
-    JMenu debug = new JMenu("Debug");
-    JMenuItem clearDatabase = new JMenuItem("clear database");
-    debug.add(clearDatabase);
-    clearDatabase.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        // delete all movies from the database
-        MovieList movieList = MovieList.getInstance();
-        movieList.removeMovies();
-        JOptionPane.showMessageDialog(null, "Database cleared. Please restart tinyMediaManager");
-      }
-    });
-    JMenuItem clearCache = new JMenuItem("clear cache");
-    debug.add(clearCache);
-    clearCache.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        File cache = new File("cache");
-        if (cache.exists()) {
-          try {
-            FileUtils.deleteDirectory(cache);
-          }
-          catch (Exception e) {
-          }
-        }
-      }
-    });
-
-    menu.add(debug);
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();

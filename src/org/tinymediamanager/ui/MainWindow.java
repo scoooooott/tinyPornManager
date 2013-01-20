@@ -15,8 +15,10 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -28,11 +30,13 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.settings.SettingsPanel;
@@ -102,6 +106,40 @@ public class MainWindow extends JFrame {
     JMenuItem mntmExit = mnTmm.add(actionExit);
     mntmExit.setText("Exit");
     initialize();
+
+    // debug menu
+    JMenu debug = new JMenu("Debug");
+    JMenuItem clearDatabase = new JMenuItem("clear database");
+    debug.add(clearDatabase);
+    clearDatabase.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        // delete all data from the database
+        MovieList movieList = MovieList.getInstance();
+        movieList.removeMovieSets();
+        movieList.removeMovies();
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        JOptionPane.showMessageDialog(null, "Database cleared. Please restart tinyMediaManager");
+      }
+    });
+    JMenuItem clearCache = new JMenuItem("clear cache");
+    debug.add(clearCache);
+    clearCache.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        File cache = new File("cache");
+        if (cache.exists()) {
+          try {
+            FileUtils.deleteDirectory(cache);
+          }
+          catch (Exception e) {
+          }
+        }
+      }
+    });
+
+    menuBar.add(debug);
 
     mnTmm = new JMenu("?");
     menuBar.add(mnTmm);
