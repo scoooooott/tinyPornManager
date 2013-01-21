@@ -698,6 +698,17 @@ public class Movie extends AbstractModelObject {
       }
     }
 
+    // <movie filename>-poster.jpg
+    if (!StringUtils.isEmpty(movieFileName)) {
+      String poster = path + File.separator + FilenameUtils.getBaseName(movieFileName) + "-poster.jpg";
+      File imageFile = new File(poster);
+      if (imageFile.exists()) {
+        setPoster(FilenameUtils.getName(poster));
+        LOGGER.debug("found poster " + imageFile.getPath());
+        return;
+      }
+    }
+
     // movie.jpg
     {
       String poster = path + File.separator + "movie.jpg";

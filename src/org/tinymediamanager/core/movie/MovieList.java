@@ -304,6 +304,12 @@ public class MovieList extends AbstractModelObject {
         if (matcher.matches())
           return false;
 
+        // check against *-trailer.*
+        pattern = Pattern.compile("(?i).*-trailer\\..{2,4}");
+        matcher = pattern.matcher(name);
+        if (matcher.matches())
+          return false;
+
         // check if filetype is in our settigns
         for (String type : settings.getVideoFileType()) {
           if (name.toLowerCase().endsWith(type.toLowerCase())) {
@@ -343,14 +349,6 @@ public class MovieList extends AbstractModelObject {
           addMovie(movie);
         }
       }
-
-      // for (File file : videoFiles) {
-      // // check if that file exists for that movie
-      // if (!movie.hasFile(file.getName())) {
-      // // create new movie file
-      // movie.addToFiles(file.getName());
-      // }
-      // }
 
     }
     else {
