@@ -265,7 +265,8 @@ public class MediaFile extends AbstractModelObject {
    * @param keys
    *          the information you want to fetch
    * @return the media information you asked<br>
-   *         <b>OR AN EMPTY STRING IF MEDIAINFO COULD NOT BE LOADED</b>
+   *         <b>OR AN EMPTY STRING IF MEDIAINFO COULD NOT BE LOADED</b> (never
+   *         NULL)
    */
   private String getMediaInfo(StreamKind streamKind, int streamNumber, String... keys) {
     for (String key : keys) {
@@ -558,7 +559,7 @@ public class MediaFile extends AbstractModelObject {
     String height = getMediaInfo(StreamKind.Video, 0, "Height");
     String scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
 
-    if (height == null || height.isEmpty() || scanType == null || scanType.isEmpty()) {
+    if (height.isEmpty() || scanType.isEmpty()) {
       setExactVideoFormat("");
     }
     else {
@@ -567,9 +568,12 @@ public class MediaFile extends AbstractModelObject {
 
     // video dimension
     String width = getMediaInfo(StreamKind.Video, 0, "Width");
-
-    setVideoWidth(Integer.parseInt(width));
-    setVideoHeight(Integer.parseInt(height));
+    if (!width.isEmpty()) {
+      setVideoWidth(Integer.parseInt(width));
+    }
+    if (!height.isEmpty()) {
+      setVideoHeight(Integer.parseInt(height));
+    }
   }
 
   /**
