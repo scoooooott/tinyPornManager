@@ -67,8 +67,10 @@ public class MediaInfoTest {
   @Test
   public void mediaFile() {
     MediaFile mf = new MediaFile();
-    mf.setPath("/path/to/movies");
+    mf.setPath("/path/to/mediafile/");
     mf.setFilename("movie.avi");
+
+    mf.gatherMediaInformation();
 
     System.out.println("res: " + mf.getVideoResolution());
     System.out.println("chan: " + mf.getAudioChannels());
@@ -80,7 +82,8 @@ public class MediaInfoTest {
     System.out.println("form: " + mf.getVideoFormat());
     System.out.println("ws?: " + mf.isWidescreen());
     System.out.println("ar: " + mf.getAspectRatio());
-    System.out.println("dim: " + mf.getDimension());
+    System.out.println("width: " + mf.getVideoWidth());
+    System.out.println("height: " + mf.getVideoHeight());
     // Map<String, String> i = getMediaInfo().snapshot(StreamKind.Video, 0);
   }
 

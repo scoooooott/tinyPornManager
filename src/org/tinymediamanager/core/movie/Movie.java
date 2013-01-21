@@ -25,6 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -611,7 +613,9 @@ public class Movie extends AbstractModelObject {
    */
   public void addToFiles(String newFile) {
     // movieFiles.add(newFile);
-    addToMediaFiles(new MediaFile(getPath(), newFile));
+    MediaFile mediaFile = new MediaFile(getPath(), newFile);
+    mediaFile.gatherMediaInformation();
+    addToMediaFiles(mediaFile);
   }
 
   /**
@@ -774,6 +778,20 @@ public class Movie extends AbstractModelObject {
         return;
       }
     }
+
+    // still not found anything? try *-poster.*
+    {
+      Pattern pattern = Pattern.compile("(?i).*-poster\\..{2,4}");
+      File[] files = new File(path).listFiles();
+      for (File file : files) {
+        Matcher matcher = pattern.matcher(file.getName());
+        if (matcher.matches()) {
+          setPoster(FilenameUtils.getName(file.getName()));
+          LOGGER.debug("found poster " + file.getPath());
+          return;
+        }
+      }
+    }
   }
 
   /**
@@ -806,6 +824,20 @@ public class Movie extends AbstractModelObject {
         setFanart(FilenameUtils.getName(fanart));
         LOGGER.debug("found fanart " + imageFile.getPath());
         return;
+      }
+    }
+
+    // still not found anything? try *-fanart.*
+    {
+      Pattern pattern = Pattern.compile("(?i).*-fanart\\..{2,4}");
+      File[] files = new File(path).listFiles();
+      for (File file : files) {
+        Matcher matcher = pattern.matcher(file.getName());
+        if (matcher.matches()) {
+          setFanart(FilenameUtils.getName(file.getName()));
+          LOGGER.debug("found fanart " + file.getPath());
+          return;
+        }
       }
     }
   }

@@ -219,13 +219,9 @@ public class MovieMediaInformationPanel extends JPanel {
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
-    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.dateAdded.date");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty, lblDateAdded, jLabelBeanProperty);
     autoBinding.bind();
@@ -250,18 +246,30 @@ public class MovieMediaInformationPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_13, lblMoviePath, jLabelBeanProperty);
     autoBinding_19.bind();
+    //
     BeanProperty<MovieSelectionModel, List<MediaFile>> movieSelectionModelBeanProperty_18 = BeanProperty.create("selectedMovie.mediaFiles");
-    JTableBinding<MediaFile, MovieSelectionModel, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_18, tableFiles);
+    JTableBinding<MediaFile, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_18, tableFiles);
     //
     BeanProperty<MediaFile, String> mediaFileBeanProperty = BeanProperty.create("filename");
-    jTableBinding_1.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
+    jTableBinding.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
     //
     BeanProperty<MediaFile, String> mediaFileBeanProperty_1 = BeanProperty.create("filesizeInMegabytes");
-    jTableBinding_1.addColumnBinding(mediaFileBeanProperty_1).setColumnName("Size").setEditable(false);
+    jTableBinding.addColumnBinding(mediaFileBeanProperty_1).setColumnName("Size").setEditable(false);
     //
-    jTableBinding_1.setEditable(false);
-    jTableBinding_1.bind();
+    BeanProperty<MediaFile, String> mediaFileBeanProperty_2 = BeanProperty.create("videoCodec");
+    jTableBinding.addColumnBinding(mediaFileBeanProperty_2).setColumnName("Video codec").setEditable(false);
     //
+    BeanProperty<MediaFile, String> mediaFileBeanProperty_3 = BeanProperty.create("videoResolution");
+    jTableBinding.addColumnBinding(mediaFileBeanProperty_3).setColumnName("Resolution").setEditable(false);
+    //
+    BeanProperty<MediaFile, String> mediaFileBeanProperty_4 = BeanProperty.create("audioCodec");
+    jTableBinding.addColumnBinding(mediaFileBeanProperty_4).setColumnName("Audio Codec").setEditable(false);
+    //
+    BeanProperty<MediaFile, String> mediaFileBeanProperty_5 = BeanProperty.create("audioChannels");
+    jTableBinding.addColumnBinding(mediaFileBeanProperty_5).setColumnName("Audio channels").setEditable(false);
+    //
+    jTableBinding.setEditable(false);
+    jTableBinding.bind();
   }
 }

@@ -15,12 +15,8 @@
  */
 package org.tinymediamanager.core;
 
-import static java.util.Arrays.asList;
-
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Scanner;
 
 import javax.persistence.Entity;
@@ -33,9 +29,11 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.log4j.Logger;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MediaFile.
  * 
@@ -44,18 +42,20 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 @Entity
 public class MediaFile extends AbstractModelObject {
 
-  private static final Logger LOGGER         = Logger.getLogger(MediaFile.class);
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER           = Logger.getLogger(MediaFile.class);
 
   /** The Constant PATH. */
-  private static final String PATH           = "path";
+  private static final String PATH             = "path";
 
   /** The Constant FILENAME. */
-  private static final String FILENAME       = "filename";
+  private static final String FILENAME         = "filename";
 
   /** The Constant FILESIZE. */
-  private static final String FILESIZE       = "filesize";
+  private static final String FILESIZE         = "filesize";
 
-  private static final String FILESIZE_IN_MB = "filesizeInMegabytes";
+  /** The Constant FILESIZE_IN_MB. */
+  private static final String FILESIZE_IN_MB   = "filesizeInMegabytes";
 
   /** The path. */
   private String              path;
@@ -66,10 +66,37 @@ public class MediaFile extends AbstractModelObject {
   /** The filesize. */
   private long                filesize;
 
-  /** the mediainfo object */
+  /** The video codec. */
+  private String              videoCodec       = "";
+
+  /** The audio codec. */
+  private String              audioCodec       = "";
+
+  /** The audio channels. */
+  private String              audioChannels    = "";
+
+  /** The container format. */
+  private String              containerFormat  = "";
+
+  /** The video format. */
+  private String              videoFormat      = "";
+
+  /** The exact video format. */
+  private String              exactVideoFormat = "";
+
+  /** The video width. */
+  private int                 videoWidth       = 0;
+
+  /** The video height. */
+  private int                 videoHeight      = 0;
+
+  /** the mediainfo object. */
   @Transient
   private MediaInfo           mediaInfo;
 
+  /**
+   * Instantiates a new media file.
+   */
   public MediaFile() {
     this.path = "";
     this.filename = "";
@@ -110,7 +137,7 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
-   * gets the file handle
+   * gets the file handle.
    * 
    * @return the file handle or NULL if file does not exits
    */
@@ -188,6 +215,11 @@ public class MediaFile extends AbstractModelObject {
     firePropertyChange(FILESIZE_IN_MB, oldValue, newValue);
   }
 
+  /**
+   * Gets the filesize in megabytes.
+   * 
+   * @return the filesize in megabytes
+   */
   public String getFilesizeInMegabytes() {
     DecimalFormat df = new DecimalFormat("#0.00");
     return df.format(filesize / (1024.0 * 1024.0)) + " M";
@@ -199,8 +231,6 @@ public class MediaFile extends AbstractModelObject {
    * <code>toString</code> for the specified object.
    * </p>
    * 
-   * @param object
-   *          the Object to be output
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */
@@ -210,7 +240,7 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
-   * instantiates and gets new mediainfo object
+   * instantiates and gets new mediainfo object.
    * 
    * @return MediaInfo object
    */
@@ -225,7 +255,7 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
-   * Gets the real mediainfo values
+   * Gets the real mediainfo values.
    * 
    * @param streamKind
    *          MediaInfo.StreamKind.(General|Video|Audio|Text|Chapters|Image|Menu
@@ -247,32 +277,15 @@ public class MediaFile extends AbstractModelObject {
     return "";
   }
 
+  /**
+   * Checks if is empty value.
+   * 
+   * @param object
+   *          the object
+   * @return true, if is empty value
+   */
   public static boolean isEmptyValue(Object object) {
     return object == null || object.toString().length() == 0;
-  }
-
-  /**
-   * Joins an iterateable object with specified delimeter
-   * 
-   * @param values
-   *          the iterable object
-   * @param delimiter
-   *          the delimeter
-   * @return the joined string
-   */
-  public static String join(Iterable<?> values, CharSequence delimiter) {
-    StringBuilder sb = new StringBuilder();
-
-    for (Iterator<?> iterator = values.iterator(); iterator.hasNext();) {
-      Object value = iterator.next();
-      if (!isEmptyValue(value)) {
-        if (sb.length() > 0) {
-          sb.append(delimiter);
-        }
-        sb.append(value);
-      }
-    }
-    return sb.toString();
   }
 
   /**
@@ -282,23 +295,41 @@ public class MediaFile extends AbstractModelObject {
    * @return the video codec
    */
   public String getVideoCodec() {
-    // e.g. XviD, x264, DivX 5, MPEG-4 Visual, AVC, etc.
-    String codec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
-    // get first token (e.g. DivX 5 => DivX)
-    return StringUtils.isEmpty(codec) ? "" : new Scanner(codec).next();
+    return videoCodec;
+  }
+
+  /**
+   * Sets the video codec.
+   * 
+   * @param newValue
+   *          the new video codec
+   */
+  public void setVideoCodec(String newValue) {
+    String oldValue = this.videoCodec;
+    this.videoCodec = newValue;
+    firePropertyChange("videoCodec", oldValue, newValue);
   }
 
   /**
    * gets the audio codec<br>
-   * (w/o punctuation; eg AC-3 => AC3)
+   * (w/o punctuation; eg AC-3 => AC3).
    * 
    * @return the audio codec
    */
   public String getAudioCodec() {
-    // e.g. AC-3, DTS, AAC, Vorbis, MP3, etc.
-    String codec = getMediaInfo(StreamKind.Audio, 0, "CodecID/Hint", "Format");
-    // remove punctuation (e.g. AC-3 => AC3)
-    return codec.replaceAll("\\p{Punct}", "");
+    return audioCodec;
+  }
+
+  /**
+   * Sets the audio codec.
+   * 
+   * @param newValue
+   *          the new audio codec
+   */
+  public void setAudioCodec(String newValue) {
+    String oldValue = this.audioCodec;
+    this.audioCodec = newValue;
+    firePropertyChange("audioCodec", oldValue, newValue);
   }
 
   /**
@@ -307,80 +338,137 @@ public class MediaFile extends AbstractModelObject {
    * @return the container format
    */
   public String getContainerFormat() {
-    String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
-    // get first extension
-    return StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase();
+    return this.containerFormat;
+  }
+
+  /**
+   * Sets the container format.
+   * 
+   * @param newValue
+   *          the new container format
+   */
+  public void setContainerFormat(String newValue) {
+    String oldValue = this.containerFormat;
+    this.containerFormat = newValue;
+    firePropertyChange("containerFormat", oldValue, newValue);
   }
 
   /**
    * gets the common video format<br>
+   * .
    * 
    * @return 1080p 720p 480p... or null if too small
    */
   public String getVideoFormat() {
-    String v = getMediaInfo(StreamKind.Video, 0, "Height");
-    if (v.isEmpty()) {
-      return "";
-    }
-    int height = Integer.parseInt(v);
-
-    int ns = 0;
-    int[] hs = new int[] { 1080, 720, 576, 540, 480, 360, 240, 120 };
-    for (int i = 0; i < hs.length - 1; i++) {
-      if (height > hs[i + 1]) {
-        ns = hs[i];
-        break;
-      }
-    }
-
-    if (ns > 0) {
-      // e.g. 720p, nobody actually wants files to be tagged as interlaced, e.g.
-      // 720i
-      return String.format("%dp", ns);
-    }
-
-    return null; // video too small
+    return this.videoFormat;
   }
 
   /**
-   * gets the exact video format (height + scantype p/i)
+   * Sets the video format.
    * 
-   * @return
+   * @param newValue
+   *          the new video format
+   */
+  public void setVideoFormat(String newValue) {
+    String oldValue = this.videoFormat;
+    this.videoFormat = newValue;
+    firePropertyChange("videoFormat", oldValue, newValue);
+  }
+
+  /**
+   * gets the exact video format (height + scantype p/i).
+   * 
+   * @return the exact video format
    */
   public String getExactVideoFormat() {
-    String height = getMediaInfo(StreamKind.Video, 0, "Height");
-    String scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
-
-    if (height == null || height.isEmpty() || scanType == null || scanType.isEmpty()) {
-      return "";
-    }
-    return height + Character.toLowerCase(scanType.charAt(0));
+    return this.exactVideoFormat;
   }
 
   /**
-   * returns the amount of audio channels
+   * Sets the exact video format.
+   * 
+   * @param newValue
+   *          the new exact video format
+   */
+  public void setExactVideoFormat(String newValue) {
+    String oldValue = this.exactVideoFormat;
+    this.exactVideoFormat = newValue;
+    firePropertyChange("exactVideoFormat", oldValue, newValue);
+  }
+
+  /**
+   * returns the amount of audio channels.
    * 
    * @return the amount of audio channels (eg. 6ch)
    */
   public String getAudioChannels() {
-    String channels = getMediaInfo(StreamKind.Audio, 0, "Channel(s)");
-    if (channels.isEmpty()) {
-      return "";
-    }
-    return channels + "ch";
+    return this.audioChannels;
   }
 
   /**
-   * returns the exact video resolution
+   * Sets the audio channels.
+   * 
+   * @param newValue
+   *          the new audio channels
+   */
+  public void setAudioChannels(String newValue) {
+    String oldValue = this.audioChannels;
+    this.audioChannels = newValue;
+    firePropertyChange("audioChannels", oldValue, newValue);
+  }
+
+  /**
+   * returns the exact video resolution.
    * 
    * @return eg 1280x720
    */
   public String getVideoResolution() {
-    List<Integer> dim = getDimension();
-    if (dim.contains(null)) {
+    if (this.videoWidth == 0 || this.videoHeight == 0) {
       return "";
     }
-    return join(dim, "x");
+    return this.videoWidth + "x" + this.videoHeight;
+  }
+
+  /**
+   * Gets the video width.
+   * 
+   * @return the video width
+   */
+  public int getVideoWidth() {
+    return videoWidth;
+  }
+
+  /**
+   * Gets the video height.
+   * 
+   * @return the video height
+   */
+  public int getVideoHeight() {
+    return videoHeight;
+  }
+
+  /**
+   * Sets the video width.
+   * 
+   * @param newValue
+   *          the new video width
+   */
+  public void setVideoWidth(int newValue) {
+    int oldValue = this.videoWidth;
+    this.videoWidth = newValue;
+    firePropertyChange("videoWidth", oldValue, newValue);
+  }
+
+  /**
+   * Sets the video height.
+   * 
+   * @param newValue
+   *          the new video height
+   */
+  public void setVideoHeight(int newValue) {
+    int oldValue = this.videoHeight;
+    this.videoHeight = newValue;
+    firePropertyChange("videoHeight", oldValue, newValue);
   }
 
   /**
@@ -389,49 +477,109 @@ public class MediaFile extends AbstractModelObject {
    * @return true/false if widescreen
    */
   public Boolean isWidescreen() {
-    List<Integer> dim = getDimension();
-    if (dim.contains(null)) {
+    if (this.videoWidth == 0 || this.videoHeight == 0) {
       return false;
     }
-    return (float) dim.get(0) / dim.get(1) > 1.37f ? true : false;
+    return ((float) this.videoWidth) / ((float) this.videoHeight) > 1.37f ? true : false;
   }
 
   /**
-   * returns the aspect ratio
+   * returns the aspect ratio.
    * 
    * @return the aspect ratio
    */
   public Float getAspectRatio() {
-    List<Integer> dim = getDimension();
-    if (dim.contains(null)) {
+    if (this.videoWidth == 0 || this.videoHeight == 0) {
       return 0F;
     }
-    return (float) (Math.round(dim.get(0).floatValue() / dim.get(1).floatValue() * 100) / 100.0);
+    return (float) (Math.round((float) this.videoWidth / (float) this.videoHeight * 100) / 100.0);
   }
 
   /**
-   * SD (less than 720 lines) or HD (more than 720 lines)
+   * SD (less than 720 lines) or HD (more than 720 lines).
    * 
    * @return SD or HD
    */
   public String getVideoDefinitionCategory() {
-    List<Integer> dim = getDimension();
-    if (dim.contains(null)) {
+    if (this.videoWidth == 0 || this.videoHeight == 0) {
       return "";
     }
-    return dim.get(0) >= 1280 || dim.get(1) >= 720 ? "HD" : "SD";
+    return this.videoWidth >= 1280 || this.videoHeight >= 720 ? "HD" : "SD";
   }
 
   /**
-   * gets the dimension of video stream
-   * 
-   * @return
+   * Gathers the media information via the native mediainfo lib.
    */
-  public List<Integer> getDimension() {
-    String width = getMediaInfo(StreamKind.Video, 0, "Width");
-    String height = getMediaInfo(StreamKind.Video, 0, "Height");
+  public void gatherMediaInformation() {
+    // video codec
+    // e.g. XviD, x264, DivX 5, MPEG-4 Visual, AVC, etc.
+    String videoCodec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
+    // get first token (e.g. DivX 5 => DivX)
+    setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
 
-    return asList(!width.isEmpty() ? Integer.parseInt(width) : null, !height.isEmpty() ? Integer.parseInt(height) : null);
+    // audio codec
+    // e.g. AC-3, DTS, AAC, Vorbis, MP3, etc.
+    String audioCodec = getMediaInfo(StreamKind.Audio, 0, "CodecID/Hint", "Format");
+    // remove punctuation (e.g. AC-3 => AC3)
+    setAudioCodec(audioCodec.replaceAll("\\p{Punct}", ""));
+
+    // audio channels
+    String channels = getMediaInfo(StreamKind.Audio, 0, "Channel(s)");
+    setAudioChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
+
+    // container format
+    String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
+    // get first extension
+    setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
+
+    // video format
+    setVideoFormat("");
+    String v = getMediaInfo(StreamKind.Video, 0, "Height");
+    if (!v.isEmpty()) {
+      int height = Integer.parseInt(v);
+
+      int ns = 0;
+      int[] hs = new int[] { 1080, 720, 576, 540, 480, 360, 240, 120 };
+      for (int i = 0; i < hs.length - 1; i++) {
+        if (height > hs[i + 1]) {
+          ns = hs[i];
+          break;
+        }
+      }
+
+      if (ns > 0) {
+        // e.g. 720p, nobody actually wants files to be tagged as interlaced,
+        // e.g. 720i
+        setVideoFormat(String.format("%dp", ns));
+      }
+    }
+
+    // exact video format
+    String height = getMediaInfo(StreamKind.Video, 0, "Height");
+    String scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
+
+    if (height == null || height.isEmpty() || scanType == null || scanType.isEmpty()) {
+      setExactVideoFormat("");
+    }
+    else {
+      setExactVideoFormat(height + Character.toLowerCase(scanType.charAt(0)));
+    }
+
+    // video dimension
+    String width = getMediaInfo(StreamKind.Video, 0, "Width");
+
+    setVideoWidth(Integer.parseInt(width));
+    setVideoHeight(Integer.parseInt(height));
+  }
+
+  /**
+   * Save to db.
+   */
+  public synchronized void saveToDb() {
+    // update DB
+    Globals.entityManager.getTransaction().begin();
+    Globals.entityManager.persist(this);
+    Globals.entityManager.getTransaction().commit();
   }
 
 }
