@@ -549,9 +549,9 @@ public class MediaFile extends AbstractModelObject {
    * @return the duration
    */
   public String getDurationHM() {
-    int seconds = (int) (this.duration / 1000) % 60;
-    int minutes = (int) ((this.duration / (1000 * 60)) % 60);
-    int hours = (int) ((this.duration / (1000 * 60 * 60)) % 24);
+    int seconds = (int) this.duration % 60;
+    int minutes = (int) (this.duration / 60) % 60;
+    int hours = (int) (this.duration / (60 * 60)) % 24;
     return hours + "h " + minutes + "m";
   }
 
@@ -562,9 +562,9 @@ public class MediaFile extends AbstractModelObject {
    * @return the duration
    */
   public String getDurationHHMMSS() {
-    int seconds = (int) (this.duration / 1000) % 60;
-    int minutes = (int) ((this.duration / (1000 * 60)) % 60);
-    int hours = (int) ((this.duration / (1000 * 60 * 60)) % 24);
+    int seconds = (int) this.duration % 60;
+    int minutes = (int) (this.duration / 60) % 60;
+    int hours = (int) (this.duration / (60 * 60)) % 24;
     return String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
   }
 
