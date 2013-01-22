@@ -35,7 +35,6 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieScrapeTask.
  * 

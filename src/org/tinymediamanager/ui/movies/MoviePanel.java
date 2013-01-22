@@ -58,6 +58,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieRenamer;
@@ -80,6 +81,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MoviePanel.
  */
@@ -190,6 +192,12 @@ public class MoviePanel extends JPanel {
   /** The panel right. */
   private MovieInformationPanel  panelRight;
 
+  /** The btn media information. */
+  private JButton                btnMediaInformation;
+  // private final Action action = new SwingAction();
+  /** The action media information. */
+  private final Action           actionMediaInformation   = new MediaInformationAction();
+
   // /** The window config. */
   // private WindowConfig windowConfig;
 
@@ -265,6 +273,10 @@ public class MoviePanel extends JPanel {
     btnRen = new JButton("REN");
     btnRen.setAction(actionRename);
     toolBar.add(btnRen);
+
+    btnMediaInformation = new JButton("MI");
+    btnMediaInformation.setAction(actionMediaInformation);
+    toolBar.add(btnMediaInformation);
 
     // textField = new JTextField();
     textField = new JSearchTextField();
@@ -391,7 +403,7 @@ public class MoviePanel extends JPanel {
   }
 
   /**
-   * further initializations
+   * further initializations.
    */
   private void init() {
     // moviename column
@@ -898,6 +910,9 @@ public class MoviePanel extends JPanel {
     return panelRight.getSplitPaneVertical();
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     //
@@ -906,5 +921,52 @@ public class MoviePanel extends JPanel {
         movieListBeanProperty, lblMovieCountTotal, jLabelBeanProperty);
     autoBinding_20.bind();
     //
+  }
+
+  // private class SwingAction extends AbstractAction {
+  // public SwingAction() {
+  // putValue(NAME, "SwingAction");
+  // putValue(SHORT_DESCRIPTION, "Some short description");
+  // }
+  //
+  // public void actionPerformed(ActionEvent e) {
+  // }
+  // }
+
+  /**
+   * The Class MediaInformationAction.
+   */
+  private class MediaInformationAction extends AbstractAction {
+
+    /**
+     * Instantiates a new media information action.
+     */
+    public MediaInformationAction() {
+      putValue(NAME, "MI");
+      putValue(SHORT_DESCRIPTION, "Update media information of selected movies");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      List<Movie> selectedMovies = new ArrayList<Movie>();
+      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
+        selectedMovies.add(movie);
+      }
+
+      // get data of all files within all selected movies
+      if (selectedMovies.size() > 0) {
+        for (Movie movie : selectedMovies) {
+          for (MediaFile file : movie.getMediaFiles()) {
+            file.gatherMediaInformation();
+            file.saveToDb();
+          }
+        }
+      }
+    }
   }
 }
