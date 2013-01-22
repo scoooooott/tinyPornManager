@@ -18,6 +18,7 @@ package org.tinymediamanager.core;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -89,6 +90,12 @@ public class MediaFile extends AbstractModelObject {
 
   /** The video height. */
   private int                 videoHeight      = 0;
+
+  /** The overallBitRate in kbps. */
+  private int                 overallBitRate   = 0;
+
+  /** duration, runtime in sec */
+  private int                 duration         = 0;
 
   /** the mediainfo object. */
   @Transient
@@ -509,6 +516,68 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
+   * returns the overall bit rate for this file
+   * 
+   * @return bitrate in kbps
+   */
+  public int getOverallBitRate() {
+    return overallBitRate;
+  }
+
+  /**
+   * sets the overall bit rate for this file (in kbps)
+   * 
+   * @param overallBitRate
+   */
+  public void setOverallBitRate(int overallBitRate) {
+    this.overallBitRate = overallBitRate;
+  }
+
+  /**
+   * returns the duration / runtime in seconds
+   * 
+   * @return the duration
+   */
+  public int getDuration() {
+    return duration;
+  }
+
+  /**
+   * returns the duration / runtime formatted<br>
+   * eg 1h 35m
+   * 
+   * @return the duration
+   */
+  public String getDurationHM() {
+    int seconds = (int) (this.duration / 1000) % 60;
+    int minutes = (int) ((this.duration / (1000 * 60)) % 60);
+    int hours = (int) ((this.duration / (1000 * 60 * 60)) % 24);
+    return hours + "h " + minutes + "m";
+  }
+
+  /**
+   * returns the duration / runtime formatted<br>
+   * eg 01:35:00
+   * 
+   * @return the duration
+   */
+  public String getDurationHHMMSS() {
+    int seconds = (int) (this.duration / 1000) % 60;
+    int minutes = (int) ((this.duration / (1000 * 60)) % 60);
+    int hours = (int) ((this.duration / (1000 * 60 * 60)) % 24);
+    return String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+  }
+
+  /**
+   * sets the duration / runtime in seconds
+   * 
+   * @param duration
+   */
+  public void setDuration(int duration) {
+    this.duration = duration;
+  }
+
+  /**
    * Gathers the media information via the native mediainfo lib.
    */
   public void gatherMediaInformation() {
@@ -574,6 +643,28 @@ public class MediaFile extends AbstractModelObject {
     if (!height.isEmpty()) {
       setVideoHeight(Integer.parseInt(height));
     }
+
+    // overall bitrate (OverallBitRate/String)
+    String br = getMediaInfo(StreamKind.General, 0, "OverallBitRate");
+    System.out.println(br);
+    if (!br.isEmpty()) {
+      setOverallBitRate(Integer.valueOf(br) / 1024); // in kbps
+    }
+
+    // Duration;Play time of the stream in ms
+    // Duration/String;Play time in format : XXx YYy only, YYy omited if zero
+    // Duration/String1;Play time in format : HHh MMmn SSs MMMms, XX om.if.z.
+    // Duration/String2;Play time in format : XXx YYy only, YYy omited if zero
+    // Duration/String3;Play time in format : HH:MM:SS.MMM
+    String dur = getMediaInfo(StreamKind.General, 0, "Duration");
+    if (!dur.isEmpty()) {
+      setDuration(Integer.valueOf(dur) / 1000);
+    }
+    /*
+     * String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(millis),
+     * TimeUnit.MILLISECONDS.toSeconds(millis) -
+     * TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+     */
   }
 
   /**
