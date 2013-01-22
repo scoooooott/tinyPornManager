@@ -48,6 +48,9 @@ public class MediaArtwork {
   /** The Constant logger. */
   private static final Logger LOGGER = Logger.getLogger(MediaArtwork.class);
 
+  /** The imdb id. */
+  private String              imdbId;
+
   /** The tmdb id. */
   private int                 tmdbId;
 
@@ -191,6 +194,14 @@ public class MediaArtwork {
 
   public void setTmdbId(int tmdbId) {
     this.tmdbId = tmdbId;
+  }
+
+  public String getImdbId() {
+    return imdbId;
+  }
+
+  public void setImdbId(String imdbId) {
+    this.imdbId = imdbId;
   }
 
   /**
