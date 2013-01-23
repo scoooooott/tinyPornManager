@@ -83,7 +83,7 @@ public class MovieSetEditor extends JDialog {
     setIconImage(Globals.logo);
     setTitle("Edit Movieset");
     setName("movieSetEditor");
-    setBounds(5, 5, 700, 400);
+    setBounds(5, 5, 800, 500);
     TmmWindowSaver.loadSettings(this);
 
     movieSetToEdit = movieSet;

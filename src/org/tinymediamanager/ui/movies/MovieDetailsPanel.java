@@ -123,15 +123,37 @@ public class MovieDetailsPanel extends JPanel {
   public MovieDetailsPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
-        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] {
+    		FormFactory.RELATED_GAP_COLSPEC,
+    		FormFactory.DEFAULT_COLSPEC,
+    		FormFactory.UNRELATED_GAP_COLSPEC,
+    		ColumnSpec.decode("25px"),
+    		FormFactory.RELATED_GAP_COLSPEC,
+    		ColumnSpec.decode("default:grow"),
+    		FormFactory.RELATED_GAP_COLSPEC,
+    		FormFactory.DEFAULT_COLSPEC,
+    		FormFactory.UNRELATED_GAP_COLSPEC,
+    		ColumnSpec.decode("default:grow"),
+    		FormFactory.RELATED_GAP_COLSPEC,},
+    	new RowSpec[] {
+    		FormFactory.RELATED_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    		new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
+    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,}));
 
     lblOriginalTitleT = new JLabel("Original Title");
     add(lblOriginalTitleT, "2, 2");
@@ -139,38 +161,32 @@ public class MovieDetailsPanel extends JPanel {
     lblOriginalTitle = new JLabel("");
     add(lblOriginalTitle, "4, 2, 7, 1");
 
-    lblMoviesetT = new JLabel("Movieset");
-    add(lblMoviesetT, "2, 4");
-
-    lblMovieSet = new JLabel("");
-    add(lblMovieSet, "4, 4, 3, 1");
-
     lblGenresT = new JLabel("Genres");
-    add(lblGenresT, "2, 6");
+    add(lblGenresT, "2, 4");
     lblGenresT.setLabelFor(lblGenres);
 
     lblGenres = new JLabel("");
-    add(lblGenres, "4, 6, 7, 1");
+    add(lblGenres, "4, 4, 7, 1");
 
     lblRuntimeT = new JLabel("Runtime");
-    add(lblRuntimeT, "2, 8");
+    add(lblRuntimeT, "2, 6");
     lblRuntimeT.setLabelFor(lblRuntime);
 
     lblRuntime = new JLabel("");
-    add(lblRuntime, "4, 8");
+    add(lblRuntime, "4, 6");
 
     lblMinutes = new JLabel("min");
-    add(lblMinutes, "6, 8");
+    add(lblMinutes, "6, 6");
 
     lblCertificationT = new JLabel("Certification");
-    add(lblCertificationT, "2, 10");
+    add(lblCertificationT, "2, 8");
     lblCertificationT.setLabelFor(lblCertification);
 
     lblCertification = new JLabel("");
-    add(lblCertification, "4, 10, 7, 1");
+    add(lblCertification, "4, 8, 7, 1");
 
     lblProductionT = new JLabel("Production");
-    add(lblProductionT, "2, 12, default, top");
+    add(lblProductionT, "2, 10, default, top");
     lblProductionT.setLabelFor(lblProduction);
 
     // lblProduction = new JTextArea("");
@@ -179,7 +195,13 @@ public class MovieDetailsPanel extends JPanel {
     // lblProduction.setOpaque(false);
     // lblProduction.setWrapStyleWord(true);
     lblProduction = new JLabel();
-    add(lblProduction, "4, 12, 7, 1");
+    add(lblProduction, "4, 10, 7, 1");
+    
+        lblMoviesetT = new JLabel("Movieset");
+        add(lblMoviesetT, "2, 12");
+    
+        lblMovieSet = new JLabel("");
+        add(lblMovieSet, "4, 12, 5, 1");
 
     lblTagsT = new JLabel("Tags");
     add(lblTagsT, "2, 14");

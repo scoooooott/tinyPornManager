@@ -148,19 +148,6 @@ public class CachedUrl extends Url {
     return urlCacheDir;
   }
 
-  // private static boolean isExpired(File cachedFile) {
-  // long diff = (System.currentTimeMillis() - cachedFile.lastModified()) /
-  // 1000;
-  // boolean expired = (diff > CACHE_EXPIRY);
-  // if (expired) {
-  // LOGGER.debug("CachedUrl.isExpired(): " + expired + "; File: " + cachedFile
-  // + "; LastModified: " + cachedFile.lastModified() + "; Current Time: " +
-  // System.currentTimeMillis()
-  // + "; Expiry: " + CACHE_EXPIRY + "s; Diff: " + diff + "s");
-  // }
-  // return expired;
-  // }
-
   /**
    * Checks if is expired.
    * 
@@ -228,6 +215,17 @@ public class CachedUrl extends Url {
    */
   public File getCachedFile() {
     return getCachedFile(props);
+  }
+  
+  /**
+   * Removes the cached file. For example if an image download is broken
+   */
+  public void removeCachedFile(){
+	File f = getCachedFile();
+	if (f.exists()) {
+	  LOGGER.info("Removing Cached Url File: " + f);
+	  f.delete();
+	}
   }
 
   /**

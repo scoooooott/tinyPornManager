@@ -55,6 +55,7 @@ public class MovieSetInformationPanel extends JPanel {
   private JScrollPane            scrollPaneOverview;
   private JTextPane              tpOverview;
   private JPanel                 panelOverview;
+  private JLabel lblOverview;
 
   /**
    * Instantiates a new movie set information panel.
@@ -68,15 +69,22 @@ public class MovieSetInformationPanel extends JPanel {
 
     panel = new JPanel();
     add(panel, BorderLayout.CENTER);
-    panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("180px:grow"), ColumnSpec.decode("1px"), },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("pref:grow"), RowSpec.decode("bottom:default"), }));
+    panel.setLayout(new FormLayout(new ColumnSpec[] {
+    		FormFactory.RELATED_GAP_COLSPEC,
+    		ColumnSpec.decode("180px:grow"),
+    		ColumnSpec.decode("1px"),},
+    	new RowSpec[] {
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.RELATED_GAP_ROWSPEC,
+    		RowSpec.decode("pref:grow"),
+    		RowSpec.decode("bottom:default"),}));
 
     lblMovieSetName = new JLabel("");
     lblMovieSetName.setFont(new Font("Dialog", Font.BOLD, 18));
     panel.add(lblMovieSetName, "2,1, fill, fill");
 
     layeredPane = new JLayeredPane();
-    panel.add(layeredPane, "1, 2, 2, 1, fill, fill");
+    panel.add(layeredPane, "1, 3, 2, 1, fill, fill");
     layeredPane.setLayout(new FormLayout(
         new ColumnSpec[] { ColumnSpec.decode("10px"), ColumnSpec.decode("120px"), ColumnSpec.decode("default:grow"), }, new RowSpec[] {
             RowSpec.decode("10px"), RowSpec.decode("180px"), RowSpec.decode("default:grow"), }));
@@ -95,11 +103,19 @@ public class MovieSetInformationPanel extends JPanel {
 
     panelOverview = new JPanel();
     panelSouth.setLeftComponent(panelOverview);
-    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("250px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("24px:grow"), }));
+    panelOverview.setLayout(new FormLayout(new ColumnSpec[] {
+    		ColumnSpec.decode("250px:grow"),},
+    	new RowSpec[] {
+    		FormFactory.LINE_GAP_ROWSPEC,
+    		FormFactory.DEFAULT_ROWSPEC,
+    		FormFactory.RELATED_GAP_ROWSPEC,
+    		RowSpec.decode("24px:grow"),}));
+    
+    lblOverview = new JLabel("Overview");
+    panelOverview.add(lblOverview, "1, 2");
 
     scrollPaneOverview = new JScrollPane();
-    panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
+    panelOverview.add(scrollPaneOverview, "1, 4, fill, fill");
 
     tpOverview = new JTextPane();
     scrollPaneOverview.setViewportView(tpOverview);
@@ -141,7 +157,7 @@ public class MovieSetInformationPanel extends JPanel {
         movieSetSelectionModelBeanProperty_1, tableAssignedMovies);
     //
     BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Name").setEditable(false);
+    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Movieset parts").setEditable(false);
     //
     BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
     jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false);
