@@ -31,6 +31,8 @@ import java.io.IOException;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.scraper.util.CachedUrl;
@@ -48,6 +50,9 @@ public class ImageLabel extends JLabel {
   /** The Constant logger. */
   private static final Logger LOGGER           = Logger.getLogger(ImageLabel.class);
 
+  /** The Constant CACHE_DIR. */
+  private static final String CACHE_DIR        = "cache/image";
+
   /** The original image. */
   private BufferedImage       originalImage;
 
@@ -62,6 +67,9 @@ public class ImageLabel extends JLabel {
 
   /** The draw full width. */
   private boolean             drawFullWidth;
+
+  /** The url cache dir. */
+  private File                imageCacheDir    = null;
 
   /** The worker. */
   private ImageFetcher        worker;
@@ -127,7 +135,6 @@ public class ImageLabel extends JLabel {
       originalImage = null;
     }
     else {
-
       this.imagePath = newValue;
       firePropertyChange("imagePath", oldValue, newValue);
 
@@ -137,7 +144,8 @@ public class ImageLabel extends JLabel {
         return;
       }
 
-      File file = new File(imagePath);
+      // File file = new File(imagePath);
+      File file = getCachedFile(imagePath);
       if (file.exists()) {
         try {
           this.originalImage = com.bric.image.ImageLoader.createImage(file);// ImageIO.read(file);
@@ -299,6 +307,74 @@ public class ImageLabel extends JLabel {
       size.y = maxHeight;
     }
     return size;
+  }
+
+  /**
+   * Gets the cached file name.
+   * 
+   * @param path
+   *          the url
+   * @return the cached file name
+   */
+  private String getCachedFileName(String path) {
+    try {
+      if (path == null)
+        return null;
+      // now uses a simple md5 hash, which should have a fairly low collision
+      // rate, especially for our
+      // limited use
+      byte[] key = DigestUtils.md5(path);
+      return new String(Hex.encodeHex(key));
+    }
+    catch (Exception e) {
+      LOGGER.error("Failed to create cached filename for image: " + path, e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Gets the cache dir.
+   * 
+   * @return the cache dir
+   */
+  private File getCacheDir() {
+    if (imageCacheDir == null) {
+      imageCacheDir = new File(CACHE_DIR);
+      if (!imageCacheDir.exists())
+        imageCacheDir.mkdirs();
+    }
+    return imageCacheDir;
+  }
+
+  /**
+   * Gets the cached file.
+   * 
+   * @param path
+   *          the path
+   * @return the cached file
+   */
+  private File getCachedFile(String path) {
+    // try {
+    // File originalFile = new File(path);
+    // String cacheFilename = getCachedFileName(path);
+    // File cachedFile = new File(getCacheDir(), cacheFilename + ".tbn");
+    // if (!cachedFile.exists()) {
+    // // rescale & cache
+    // BufferedImage originalImage =
+    // com.bric.image.ImageLoader.createImage(originalFile);
+    // Point size = calculateSize(1280, 720, originalImage.getWidth(),
+    // originalImage.getHeight(), true);
+    // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
+    // ImageIO.write(scaledImage, "jpeg", cachedFile);
+    // }
+    // return cachedFile;
+    // }
+    // catch (Exception e) {
+    // LOGGER.error("cache", e);
+    // }
+
+    // fallback - openjdk does not store jpg :(
+    return new File(path);
   }
 
   /**

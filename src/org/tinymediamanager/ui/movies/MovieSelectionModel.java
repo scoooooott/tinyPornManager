@@ -109,10 +109,12 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
 
     if (oldValue != null) {
       oldValue.removePropertyChangeListener(propertyChangeListener);
+      // oldValue.removePropertyChangeListenerFromChildren(propertyChangeListener);
     }
 
     if (selectedMovie != null) {
       selectedMovie.addPropertyChangeListener(propertyChangeListener);
+      // selectedMovie.addPropertyChangeListenerToChildren(propertyChangeListener);
     }
 
     firePropertyChange(SELECTED_MOVIE, oldValue, movie);
@@ -163,9 +165,11 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
       // register propertychangelistener to handle changes in a movie
       if (oldValue != null) {
         oldValue.removePropertyChangeListener(propertyChangeListener);
+        // oldValue.removePropertyChangeListenerFromChildren(propertyChangeListener);
       }
       if (selectedMovie != null) {
         selectedMovie.addPropertyChangeListener(propertyChangeListener);
+        // selectedMovie.addPropertyChangeListenerToChildren(propertyChangeListener);
       }
       firePropertyChange(SELECTED_MOVIE, oldValue, selectedMovie);
     }

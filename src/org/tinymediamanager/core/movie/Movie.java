@@ -2074,4 +2074,52 @@ public class Movie extends AbstractModelObject {
     }
     setMovieSet(null);
   }
+
+  // /**
+  // * Adds the property change listener to children.
+  // *
+  // * @param prop
+  // * the prop
+  // */
+  // public void addPropertyChangeListenerToChildren(PropertyChangeListener
+  // prop) {
+  // // // actor
+  // // for (MovieCast cast : castObservable) {
+  // // cast.addPropertyChangeListener(prop);
+  // // }
+  // //
+  // // // trailer
+  // // for (MediaTrailer trailer : trailerObservable) {
+  // // trailer.addPropertyChangeListener(prop);
+  // // }
+  //
+  // // media files
+  // for (MediaFile file : mediaFilesObservable) {
+  // file.addPropertyChangeListener(prop);
+  // }
+  // }
+  //
+  // /**
+  // * Removes the property change listener from children.
+  // *
+  // * @param prop
+  // * the prop
+  // */
+  // public void removePropertyChangeListenerFromChildren(PropertyChangeListener
+  // prop) {
+  // // // actor
+  // // for (MovieCast cast : castObservable) {
+  // // cast.removePropertyChangeListener(prop);
+  // // }
+  // //
+  // // // trailer
+  // // for (MediaTrailer trailer : trailerObservable) {
+  // // trailer.removePropertyChangeListener(prop);
+  // // }
+  //
+  // // media files
+  // for (MediaFile file : mediaFilesObservable) {
+  // file.removePropertyChangeListener(prop);
+  // }
+  // }
 }

@@ -533,22 +533,28 @@ public class ImageChooser extends JDialog {
             break;
         }
 
+        // prevent NPE
+        if (artwork == null) {
+          return null;
+        }
+
         for (TmdbArtwork tmdbArtwork : artwork) {
           if (isCancelled()) {
             return null;
           }
           CachedUrl cachedUrl = null;
-          try{
-        	  cachedUrl = new CachedUrl(tmdbArtwork.getUrlForSmallArtwork());
-	          Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
-	          BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
-	          addImage(bufferedImage, tmdbArtwork);
-          } catch (Exception e){
-        	  LOGGER.error("DownloadTask", e);
-        	  // ToDo: mark cache file as damaged; maybe retry?
-        	  if(cachedUrl != null){
-        		cachedUrl.removeCachedFile();
-        	  }
+          try {
+            cachedUrl = new CachedUrl(tmdbArtwork.getUrlForSmallArtwork());
+            Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+            BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
+            addImage(bufferedImage, tmdbArtwork);
+          }
+          catch (Exception e) {
+            LOGGER.error("DownloadTask", e);
+            // mark cache file as damaged
+            if (cachedUrl != null) {
+              cachedUrl.removeCachedFile();
+            }
           }
         }
 

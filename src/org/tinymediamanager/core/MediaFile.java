@@ -18,7 +18,6 @@ package org.tinymediamanager.core;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -94,7 +93,7 @@ public class MediaFile extends AbstractModelObject {
   /** The overallBitRate in kbps. */
   private int                 overallBitRate   = 0;
 
-  /** duration, runtime in sec */
+  /** duration, runtime in sec. */
   private int                 duration         = 0;
 
   /** the mediainfo object. */
@@ -516,7 +515,7 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
-   * returns the overall bit rate for this file
+   * returns the overall bit rate for this file.
    * 
    * @return bitrate in kbps
    */
@@ -525,16 +524,29 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
-   * sets the overall bit rate for this file (in kbps)
+   * sets the overall bit rate for this file (in kbps).
    * 
-   * @param overallBitRate
+   * @param newValue
+   *          the new overall bit rate
    */
-  public void setOverallBitRate(int overallBitRate) {
-    this.overallBitRate = overallBitRate;
+  public void setOverallBitRate(int newValue) {
+    int oldValue = this.overallBitRate;
+    this.overallBitRate = newValue;
+    firePropertyChange("overallBitRate", oldValue, newValue);
+    firePropertyChange("bitRateInKbps", oldValue, newValue);
   }
 
   /**
-   * returns the duration / runtime in seconds
+   * Gets the bite rate in kbps.
+   * 
+   * @return the bite rate in kbps
+   */
+  public String getBiteRateInKbps() {
+    return this.overallBitRate + " kbps";
+  }
+
+  /**
+   * returns the duration / runtime in seconds.
    * 
    * @return the duration
    */
@@ -544,7 +556,7 @@ public class MediaFile extends AbstractModelObject {
 
   /**
    * returns the duration / runtime formatted<br>
-   * eg 1h 35m
+   * eg 1h 35m.
    * 
    * @return the duration
    */
@@ -557,7 +569,7 @@ public class MediaFile extends AbstractModelObject {
 
   /**
    * returns the duration / runtime formatted<br>
-   * eg 01:35:00
+   * eg 01:35:00.
    * 
    * @return the duration
    */
@@ -569,12 +581,17 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
-   * sets the duration / runtime in seconds
+   * sets the duration / runtime in seconds.
    * 
-   * @param duration
+   * @param newValue
+   *          the new duration
    */
-  public void setDuration(int duration) {
-    this.duration = duration;
+  public void setDuration(int newValue) {
+    int oldValue = this.duration;
+    this.duration = newValue;
+    firePropertyChange("duration", oldValue, newValue);
+    firePropertyChange("durationHM", oldValue, newValue);
+    firePropertyChange("durationHHMMSS", oldValue, newValue);
   }
 
   /**
@@ -646,7 +663,6 @@ public class MediaFile extends AbstractModelObject {
 
     // overall bitrate (OverallBitRate/String)
     String br = getMediaInfo(StreamKind.General, 0, "OverallBitRate");
-    System.out.println(br);
     if (!br.isEmpty()) {
       setOverallBitRate(Integer.valueOf(br) / 1024); // in kbps
     }

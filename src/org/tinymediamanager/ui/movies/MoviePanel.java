@@ -196,7 +196,10 @@ public class MoviePanel extends JPanel {
   private JButton                btnMediaInformation;
   // private final Action action = new SwingAction();
   /** The action media information. */
-  private final Action           actionMediaInformation   = new MediaInformationAction();
+  private final Action           actionMediaInformation   = new MediaInformationAction(false);
+
+  /** The action media information2. */
+  private final Action           actionMediaInformation2  = new MediaInformationAction(true);
 
   // /** The window config. */
   // private WindowConfig windowConfig;
@@ -385,6 +388,7 @@ public class MoviePanel extends JPanel {
     menu.add(actionRename2);
     menu.add(actionRemove2);
     menu.addSeparator();
+    menu.add(actionMediaInformation2);
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
@@ -394,6 +398,7 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionRename2);
     popupMenu.add(actionRemove2);
+    popupMenu.add(actionMediaInformation2);
 
     MouseListener popupListener = new PopupListener(popupMenu);
     table.addMouseListener(popupListener);
@@ -941,9 +946,17 @@ public class MoviePanel extends JPanel {
     /**
      * Instantiates a new media information action.
      */
-    public MediaInformationAction() {
-      putValue(NAME, "MI");
-      putValue(SHORT_DESCRIPTION, "Update media information of selected movies");
+    public MediaInformationAction(boolean withTitle) {
+      if (withTitle) {
+        putValue(NAME, "Update media information of selected movies");
+        putValue(LARGE_ICON_KEY, "");
+      }
+      else {
+        putValue(NAME, "MI");
+        // putValue(LARGE_ICON_KEY, new
+        // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+        putValue(SHORT_DESCRIPTION, "Update media information of selected movies");
+      }
     }
 
     /*

@@ -50,6 +50,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieSetTreePanel.
  */
@@ -81,8 +82,14 @@ public class MovieSetPanel extends JPanel {
 
   /** The action remove movie set. */
   private final Action           actionRemoveMovieSet = new RemoveMovieSetAction();
+
+  /** The action search movie set. */
   private final Action           actionSearchMovieSet = new SearchMovieSetAction();
+
+  /** The lbl movie set count. */
   private JLabel                 lblMovieSetCount;
+
+  /** The action edit movie set. */
   private final Action           actionEditMovieSet   = new EditMovieSetAction();
 
   /**
@@ -257,12 +264,25 @@ public class MovieSetPanel extends JPanel {
     }
   }
 
+  /**
+   * The Class SearchMovieSetAction.
+   */
   private class SearchMovieSetAction extends AbstractAction {
+
+    /**
+     * Instantiates a new search movie set action.
+     */
     public SearchMovieSetAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
       putValue(SHORT_DESCRIPTION, "Search TMDB for movieset metadata");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
       // tree.clearSelection();
@@ -286,6 +306,9 @@ public class MovieSetPanel extends JPanel {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<MovieList, Integer> movieListBeanProperty = BeanProperty.create("movieSetCount");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
@@ -294,12 +317,25 @@ public class MovieSetPanel extends JPanel {
     autoBinding.bind();
   }
 
+  /**
+   * The Class EditMovieSetAction.
+   */
   private class EditMovieSetAction extends AbstractAction {
+
+    /**
+     * Instantiates a new edits the movie set action.
+     */
     public EditMovieSetAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
       putValue(SHORT_DESCRIPTION, "Edit movieset");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
       // tree.clearSelection();

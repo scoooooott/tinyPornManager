@@ -42,20 +42,47 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MovieSetInformationPanel.
+ */
 public class MovieSetInformationPanel extends JPanel {
 
+  /** The selection model. */
   private MovieSetSelectionModel selectionModel;
+
+  /** The lbl movie set name. */
   private JLabel                 lblMovieSetName;
+
+  /** The table assigned movies. */
   private JTable                 tableAssignedMovies;
+
+  /** The lbl movie set poster. */
   private ImageLabel             lblMovieSetPoster;
+
+  /** The panel. */
   private JPanel                 panel;
+
+  /** The layered pane. */
   private JLayeredPane           layeredPane;
+
+  /** The lbl movie set fanart. */
   private ImageLabel             lblMovieSetFanart;
+
+  /** The panel south. */
   private JSplitPane             panelSouth;
+
+  /** The scroll pane overview. */
   private JScrollPane            scrollPaneOverview;
+
+  /** The tp overview. */
   private JTextPane              tpOverview;
+
+  /** The panel overview. */
   private JPanel                 panelOverview;
-  private JLabel lblOverview;
+
+  /** The lbl overview. */
+  private JLabel                 lblOverview;
 
   /**
    * Instantiates a new movie set information panel.
@@ -69,15 +96,10 @@ public class MovieSetInformationPanel extends JPanel {
 
     panel = new JPanel();
     add(panel, BorderLayout.CENTER);
-    panel.setLayout(new FormLayout(new ColumnSpec[] {
-    		FormFactory.RELATED_GAP_COLSPEC,
-    		ColumnSpec.decode("180px:grow"),
-    		ColumnSpec.decode("1px"),},
-    	new RowSpec[] {
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.RELATED_GAP_ROWSPEC,
-    		RowSpec.decode("pref:grow"),
-    		RowSpec.decode("bottom:default"),}));
+    panel
+        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("180px:grow"), ColumnSpec.decode("1px"), },
+            new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("pref:grow"),
+                RowSpec.decode("bottom:default"), }));
 
     lblMovieSetName = new JLabel("");
     lblMovieSetName.setFont(new Font("Dialog", Font.BOLD, 18));
@@ -103,14 +125,9 @@ public class MovieSetInformationPanel extends JPanel {
 
     panelOverview = new JPanel();
     panelSouth.setLeftComponent(panelOverview);
-    panelOverview.setLayout(new FormLayout(new ColumnSpec[] {
-    		ColumnSpec.decode("250px:grow"),},
-    	new RowSpec[] {
-    		FormFactory.LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.RELATED_GAP_ROWSPEC,
-    		RowSpec.decode("24px:grow"),}));
-    
+    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("250px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("24px:grow"), }));
+
     lblOverview = new JLabel("Overview");
     panelOverview.add(lblOverview, "1, 2");
 
@@ -145,6 +162,9 @@ public class MovieSetInformationPanel extends JPanel {
     tableAssignedMovies.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(85);
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty = BeanProperty.create("selectedMovieSet.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");

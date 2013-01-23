@@ -43,6 +43,8 @@ import org.tinymediamanager.ui.TableColumnAdjuster;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
 
@@ -100,7 +102,7 @@ public class MovieMediaInformationPanel extends JPanel {
   private TableColumnAdjuster        tableColumnAdjuster = null;
 
   /** The media file event list. */
-  private EventList<MediaFile>       mediaFileEventList  = new BasicEventList<MediaFile>();
+  private EventList<MediaFile>       mediaFileEventList;
 
   /** The media file table model. */
   private EventTableModel<MediaFile> mediaFileTableModel = null;
@@ -113,6 +115,8 @@ public class MovieMediaInformationPanel extends JPanel {
    */
   public MovieMediaInformationPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
+    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
+        GlazedLists.beanConnector(MediaFile.class));
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
@@ -244,20 +248,21 @@ public class MovieMediaInformationPanel extends JPanel {
     tableColumnAdjuster.setColumnDataIncluded(true);
     tableColumnAdjuster.setColumnHeaderIncluded(true);
     tableColumnAdjuster.setOnlyAdjustLarger(false);
-    tableColumnAdjuster.setDynamicAdjustment(true);
+    // tableColumnAdjuster.setDynamicAdjustment(true);
 
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of a trailer
+        // react on selection of a movie and change of media files
         if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
             || (source.getClass() == Movie.class && "mediaFiles".equals(property))) {
           mediaFileEventList.clear();
           mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
           tableColumnAdjuster.adjustColumns();
         }
+
       }
     };
 
@@ -343,7 +348,7 @@ public class MovieMediaInformationPanel extends JPanel {
      */
     @Override
     public int getColumnCount() {
-      return 6;
+      return 8;
     }
 
     /*
@@ -361,16 +366,23 @@ public class MovieMediaInformationPanel extends JPanel {
           return "Size";
 
         case 2:
-          return "VCodec";
+          return "Runtime";
 
         case 3:
-          return "Resolution";
+          return "VCodec";
 
         case 4:
-          return "ACodec";
+          return "Resolution";
 
         case 5:
+          return "VBitrate";
+
+        case 6:
+          return "ACodec";
+
+        case 7:
           return "AChannels";
+
       }
 
       throw new IllegalStateException();
@@ -393,15 +405,21 @@ public class MovieMediaInformationPanel extends JPanel {
           return mediaFile.getFilesizeInMegabytes();
 
         case 2:
-          return mediaFile.getVideoCodec();
+          return mediaFile.getDurationHM();
 
         case 3:
-          return mediaFile.getVideoResolution();
+          return mediaFile.getVideoCodec();
 
         case 4:
-          return mediaFile.getAudioCodec();
+          return mediaFile.getVideoResolution();
 
         case 5:
+          return mediaFile.getBiteRateInKbps();
+
+        case 6:
+          return mediaFile.getAudioCodec();
+
+        case 7:
           return mediaFile.getAudioChannels();
       }
 
@@ -422,6 +440,8 @@ public class MovieMediaInformationPanel extends JPanel {
         case 3:
         case 4:
         case 5:
+        case 6:
+        case 7:
           return String.class;
       }
 
