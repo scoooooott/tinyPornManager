@@ -36,5 +36,6 @@
 	<classpathentry kind="lib" path="lib/jackson-databind.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/platform.jar"/>
+    <classpathentry kind="lib" path="lib/fanarttvapi.jar" sourcepath="buildsupport/fanarttvapi-1.4-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

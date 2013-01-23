@@ -3,6 +3,7 @@ commons-codec-1.6.jar
 commons-io-2.1.jar
 commons-lang3-3.1.jar
 commons-logging-1.1.1.jar
+fanarttvapi-1.4.jar
 fluent-hc-4.2.1.jar
 forms-1.3.0.jar
 httpclient-4.2.1.jar

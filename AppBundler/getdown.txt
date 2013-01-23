@@ -19,6 +19,7 @@ code = lib/commons-codec.jar
 code = lib/commons-io.jar
 code = lib/commons-lang3.jar
 code = lib/commons-logging.jar
+code = lib/fanarttvapi.jar
 code = lib/forms.jar
 code = lib/glazedlists.jar
 code = lib/httpclient-cache.jar
