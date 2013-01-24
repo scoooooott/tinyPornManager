@@ -131,6 +131,39 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     }
   }
 
+  /**
+   * The Enum MovieInMovieSet.
+   */
+  public enum MovieInMovieSet {
+
+    /** The in movieset. */
+    IN_MOVIESET("Movies in a movieset"),
+    /** The not in movieset. */
+    NOT_IN_MOVIESET("Movies not in a movieset");
+
+    /** The title. */
+    private String title;
+
+    /**
+     * Instantiates a new sort order.
+     * 
+     * @param title
+     *          the title
+     */
+    private MovieInMovieSet(String title) {
+      this.title = title;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Enum#toString()
+     */
+    public String toString() {
+      return title;
+    }
+  }
+
   /** The sort column. */
   private SortColumn sortColumn;
 
@@ -191,13 +224,15 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           break;
 
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
     }
 
     // sort ascending or descending
     if (sortAscending) {
       return sortOrder;
-    } else {
+    }
+    else {
       return sortOrder * -1;
     }
   }

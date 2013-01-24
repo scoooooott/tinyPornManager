@@ -31,7 +31,7 @@ import ca.odell.glazedlists.matchers.Matcher;
 public class MoviesExtendedMatcher implements Matcher<Movie> {
 
   public enum SearchOptions {
-    DUPLICATES, WATCHED, GENRE, CAST, TAG;
+    DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET;
   }
 
   /** The search options. */
@@ -128,6 +128,16 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
         if (tagInMovie.equals(tag)) {
           return true;
         }
+      }
+
+      return false;
+    }
+
+    // check against MOVIESET
+    if (searchOptions.containsKey(SearchOptions.MOVIESET)) {
+      Boolean isInSet = (Boolean) searchOptions.get(SearchOptions.MOVIESET);
+      if ((movie.getMovieSet() != null) == isInSet) {
+        return true;
       }
 
       return false;

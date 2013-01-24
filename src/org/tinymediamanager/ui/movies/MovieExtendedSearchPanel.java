@@ -32,6 +32,7 @@ import javax.swing.event.DocumentListener;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.CollapsiblePanel;
+import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.WatchedFlag;
@@ -110,6 +111,9 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
   private JComboBox           cbTag;
   private JCheckBox           cbFilterDuplicates;
   private JLabel              lblShowDuplicates;
+  private JCheckBox           cbFilterMovieset;
+  private JLabel              lblMoviesInMovieset;
+  private JComboBox           cbMovieset;
 
   /**
    * Instantiates a new movie extended search panel.
@@ -128,9 +132,9 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblFilterBy = new JLabel("filter by");
     panel.add(lblFilterBy, "2, 1, 3, 1");
@@ -200,16 +204,27 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
     panel.add(cbTag, "6, 7, fill, default");
 
+    cbFilterMovieset = new JCheckBox("");
+    cbFilterMovieset.setAction(actionFilter);
+    panel.add(cbFilterMovieset, "2, 8");
+
+    lblMoviesInMovieset = new JLabel("Movies in movieset");
+    panel.add(lblMoviesInMovieset, "4, 8, right, default");
+
+    cbMovieset = new JComboBox(MovieInMovieSet.values());
+    cbMovieset.setAction(actionFilter);
+    panel.add(cbMovieset, "6, 8, fill, default");
+
     lblSortBy = new JLabel("sort by");
-    panel.add(lblSortBy, "2, 9, 3, 1");
+    panel.add(lblSortBy, "2, 10, 3, 1");
 
     cbSortColumn = new JComboBox(SortColumn.values());
     cbSortColumn.setAction(actionSort);
-    panel.add(cbSortColumn, "4, 11, fill, default");
+    panel.add(cbSortColumn, "4, 12, fill, default");
 
     cbSortOrder = new JComboBox(SortOrder.values());
     cbSortOrder.setAction(actionSort);
-    panel.add(cbSortOrder, "6, 11, fill, default");
+    panel.add(cbSortOrder, "6, 12, fill, default");
 
     add(panel);
     toggleVisibility(false);
@@ -295,6 +310,16 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
       if (cbFilterTag.isSelected()) {
         String tag = (String) cbTag.getSelectedItem();
         searchOptions.put(SearchOptions.TAG, tag);
+      }
+
+      // filter by movie in movieset
+      if (cbFilterMovieset.isSelected()) {
+        if (cbMovieset.getSelectedItem() == MovieInMovieSet.IN_MOVIESET) {
+          searchOptions.put(SearchOptions.MOVIESET, true);
+        }
+        else {
+          searchOptions.put(SearchOptions.MOVIESET, false);
+        }
       }
 
       // apply the filter

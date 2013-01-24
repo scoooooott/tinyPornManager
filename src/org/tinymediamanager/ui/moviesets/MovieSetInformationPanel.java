@@ -18,7 +18,9 @@ package org.tinymediamanager.ui.moviesets;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.util.List;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Comparator;
 
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -32,10 +34,16 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.ImageLabel;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import ca.odell.glazedlists.swing.EventTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -84,14 +92,22 @@ public class MovieSetInformationPanel extends JPanel {
   /** The lbl overview. */
   private JLabel                 lblOverview;
 
+  /** The media file event list. */
+  private EventList<Movie>       movieEventList;
+
+  /** The media file table model. */
+  private EventTableModel<Movie> movieTableModel = null;
+
   /**
    * Instantiates a new movie set information panel.
    * 
    * @param selectionModel
    *          the selection model
    */
-  public MovieSetInformationPanel(MovieSetSelectionModel selectionModel) {
-    this.selectionModel = selectionModel;
+  public MovieSetInformationPanel(MovieSetSelectionModel model) {
+    this.selectionModel = model;
+    movieEventList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>()), GlazedLists.beanConnector(Movie.class));
+
     setLayout(new BorderLayout(0, 0));
 
     panel = new JPanel();
@@ -144,7 +160,9 @@ public class MovieSetInformationPanel extends JPanel {
 
     JScrollPane scrollPaneMovies = new JScrollPane();
     panelMovies.add(scrollPaneMovies, "1, 2, fill, fill");
-    tableAssignedMovies = new JTable();
+
+    movieTableModel = new EventTableModel<Movie>(movieEventList, new MovieInMovieSetTableFormat());
+    tableAssignedMovies = new JTable(movieTableModel);
     tableAssignedMovies.setPreferredScrollableViewportSize(new Dimension(450, 200));
     scrollPaneMovies.setViewportView(tableAssignedMovies);
 
@@ -160,6 +178,22 @@ public class MovieSetInformationPanel extends JPanel {
     tableAssignedMovies.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(70);
     tableAssignedMovies.getTableHeader().getColumnModel().getColumn(2).setMinWidth(70);
     tableAssignedMovies.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(85);
+
+    // install the propertychangelistener
+    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        String property = propertyChangeEvent.getPropertyName();
+        Object source = propertyChangeEvent.getSource();
+        // react on selection of a movie and change of media files
+        if ((source.getClass() == MovieSetSelectionModel.class && "selectedMovieSet".equals(property))
+            || (source.getClass() == MovieSet.class && "movies".equals(property))) {
+          movieEventList.clear();
+          movieEventList.addAll(selectionModel.getSelectedMovieSet().getMovies());
+        }
+      }
+    };
+
+    selectionModel.addPropertyChangeListener(propertyChangeListener);
   }
 
   /**
@@ -171,22 +205,28 @@ public class MovieSetInformationPanel extends JPanel {
     AutoBinding<MovieSetSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         movieSetSelectionModelBeanProperty, lblMovieSetName, jLabelBeanProperty);
     autoBinding.bind();
-    //
-    BeanProperty<MovieSetSelectionModel, List<Movie>> movieSetSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovieSet.movies");
-    JTableBinding<Movie, MovieSetSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, selectionModel,
-        movieSetSelectionModelBeanProperty_1, tableAssignedMovies);
-    //
-    BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Movieset parts").setEditable(false);
-    //
-    BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
-    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false);
-    //
-    BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("watched");
-    jTableBinding.addColumnBinding(movieBeanProperty_2).setColumnName("Watched").setEditable(false).setColumnClass(Boolean.class);
-    //
-    jTableBinding.setEditable(false);
-    jTableBinding.bind();
+    // //
+    // BeanProperty<MovieSetSelectionModel, List<Movie>>
+    // movieSetSelectionModelBeanProperty_1 =
+    // BeanProperty.create("selectedMovieSet.movies");
+    // JTableBinding<Movie, MovieSetSelectionModel, JTable> jTableBinding =
+    // SwingBindings.createJTableBinding(UpdateStrategy.READ, selectionModel,
+    // movieSetSelectionModelBeanProperty_1, tableAssignedMovies);
+    // //
+    // BeanProperty<Movie, String> movieBeanProperty =
+    // BeanProperty.create("name");
+    // jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Movieset parts").setEditable(false);
+    // //
+    // BeanProperty<Movie, String> movieBeanProperty_1 =
+    // BeanProperty.create("year");
+    // jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false);
+    // //
+    // BeanProperty<Movie, Boolean> movieBeanProperty_2 =
+    // BeanProperty.create("watched");
+    // jTableBinding.addColumnBinding(movieBeanProperty_2).setColumnName("Watched").setEditable(false).setColumnClass(Boolean.class);
+    // //
+    // jTableBinding.setEditable(false);
+    // jTableBinding.bind();
     //
     BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovieSet.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
@@ -204,5 +244,94 @@ public class MovieSetInformationPanel extends JPanel {
     AutoBinding<MovieSetSelectionModel, String, JTextPane, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         movieSetSelectionModelBeanProperty_4, tpOverview, jTextPaneBeanProperty);
     autoBinding_3.bind();
+  }
+
+  /**
+   * The Class MediaTableFormat.
+   */
+  private static class MovieInMovieSetTableFormat implements AdvancedTableFormat<Movie> {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ca.odell.glazedlists.gui.TableFormat#getColumnCount()
+     */
+    @Override
+    public int getColumnCount() {
+      return 3;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ca.odell.glazedlists.gui.TableFormat#getColumnName(int)
+     */
+    @Override
+    public String getColumnName(int column) {
+      switch (column) {
+        case 0:
+          return "Movieset parts";
+
+        case 1:
+          return "Year";
+
+        case 2:
+          return "Watched";
+      }
+
+      throw new IllegalStateException();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object,
+     * int)
+     */
+    @Override
+    public Object getColumnValue(Movie movie, int column) {
+      switch (column) {
+        case 0:
+          return movie.getName();
+
+        case 1:
+          return movie.getYear();
+
+        case 2:
+          return movie.isWatched();
+      }
+      throw new IllegalStateException();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
+     */
+    @Override
+    public Class getColumnClass(int column) {
+      switch (column) {
+        case 0:
+        case 1:
+          return String.class;
+
+        case 2:
+          return Boolean.class;
+      }
+      throw new IllegalStateException();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
+     */
+    @Override
+    public Comparator getColumnComparator(int arg0) {
+      return null;
+    }
+
   }
 }

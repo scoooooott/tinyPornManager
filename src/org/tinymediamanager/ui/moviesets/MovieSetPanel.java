@@ -183,6 +183,9 @@ public class MovieSetPanel extends JPanel {
             cl.show(panelRight, "movie");
           }
         }
+        else {
+          movieSetSelectionModel.setSelectedMovieSet(null);
+        }
       }
     });
     initDataBindings();

@@ -60,7 +60,13 @@ public class MovieSetSelectionModel extends AbstractModelObject {
    */
   public void setSelectedMovieSet(MovieSet movieSet) {
     MovieSet oldValue = this.selectedMovieSet;
-    this.selectedMovieSet = movieSet;
+
+    if (movieSet != null) {
+      this.selectedMovieSet = movieSet;
+    }
+    else {
+      this.selectedMovieSet = initalMovieSet;
+    }
 
     if (oldValue != null) {
       oldValue.removePropertyChangeListener(propertyChangeListener);
