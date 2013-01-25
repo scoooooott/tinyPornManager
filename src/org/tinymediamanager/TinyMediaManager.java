@@ -26,6 +26,8 @@ import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -73,6 +75,8 @@ public class TinyMediaManager {
             JOptionPane.showMessageDialog(null, "Update from Alpha is not supported. Please download the actual version");
             return;
           }
+
+          doStartupTasks();
 
           doUpgradeTasks();
 
@@ -132,7 +136,9 @@ public class TinyMediaManager {
           movieList.loadMoviesFromDatabase();
 
           // set native dir (needs to be absolute)
-//          String nativepath = TinyMediaManager.class.getClassLoader().getResource(".").getPath() + "native/";
+          // String nativepath =
+          // TinyMediaManager.class.getClassLoader().getResource(".").getPath()
+          // + "native/";
           String nativepath = "native/";
           if (Platform.isWindows()) {
             nativepath += "windows-";
@@ -292,6 +298,42 @@ public class TinyMediaManager {
         file = new File("lib/jackson-mapper-lgpl.jarv");
         if (file.exists()) {
           FileUtils.deleteQuietly(file);
+        }
+      }
+
+      /**
+       * Does some tasks at startup
+       */
+      private void doStartupTasks() {
+        // check if a .desktop file exists
+        if (Platform.isLinux()) {
+          File desktop = new File("tinyMediaManager.desktop");
+          if (!desktop.exists()) {
+            // create .desktop
+            String path = this.getClass().getClassLoader().getResource(".").getPath();
+            StringBuilder sb = new StringBuilder("[Desktop Entry]\n");
+            sb.append("Type=Application\n");
+            sb.append("Name=tinyMediaManager\n");
+            sb.append("Path=");
+            sb.append(path);
+            sb.append("\n");
+            sb.append("Exec=/bin/sh \"");
+            sb.append(path);
+            sb.append("tinyMediaManager.sh\"\n");
+            sb.append("Icon=");
+            sb.append(path);
+            sb.append("tmm.png\n");
+            sb.append("Categories=Application;Multimedia;");
+            FileWriter writer;
+            try {
+              writer = new FileWriter(desktop);
+              writer.write(sb.toString());
+              writer.close();
+              desktop.setExecutable(true);
+            }
+            catch (IOException e) {
+            }
+          }
         }
       }
     });

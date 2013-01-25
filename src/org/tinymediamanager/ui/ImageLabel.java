@@ -365,6 +365,7 @@ public class ImageLabel extends JLabel {
     // Point size = calculateSize(1280, 720, originalImage.getWidth(),
     // originalImage.getHeight(), true);
     // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
+    //
     // ImageIO.write(scaledImage, "jpeg", cachedFile);
     // }
     // return cachedFile;

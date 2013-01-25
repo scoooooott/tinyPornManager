@@ -156,7 +156,7 @@ public class MovieSettingsPanel extends JPanel {
     JLabel lblNfoFileNaming = new JLabel("NFO file naming");
     panelMovieDataSources.add(lblNfoFileNaming, "2, 6");
 
-    cbMovieNfoFilename1 = new JCheckBox("<filename>.nfo");
+    cbMovieNfoFilename1 = new JCheckBox("<movie filename>.nfo");
     panelMovieDataSources.add(cbMovieNfoFilename1, "4, 6");
 
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
@@ -232,7 +232,8 @@ public class MovieSettingsPanel extends JPanel {
     JTextPane txtpntTitle = new JTextPane();
     txtpntTitle.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
-    txtpntTitle.setText("Available pattern:\r\n$T = Title\r\n$O = OriginalTitle\r\n$1 = first letter of the title\r\n$Y = Year\r\n$I = IMDB number\r\n$E = Sort title\r\n$R = Video resolution\r\n$A = audio code + channels\r\n$V = video code + format");
+    txtpntTitle
+        .setText("Available pattern:\r\n$T = Title\r\n$O = OriginalTitle\r\n$1 = first letter of the title\r\n$Y = Year\r\n$I = IMDB number\r\n$E = Sort title\r\n$R = Video resolution\r\n$A = audio code + channels\r\n$V = video code + format");
     txtpntTitle.setEditable(false);
     panelRenamer.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
 
