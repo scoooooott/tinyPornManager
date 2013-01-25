@@ -952,9 +952,9 @@ public class MoviePanel extends JPanel {
         putValue(LARGE_ICON_KEY, "");
       }
       else {
-        putValue(NAME, "MI");
-        // putValue(LARGE_ICON_KEY, new
-        // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+//        putValue(NAME, "MI");
+         putValue(LARGE_ICON_KEY, new
+         ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
         putValue(SHORT_DESCRIPTION, "Update media information of selected movies");
       }
     }

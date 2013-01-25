@@ -132,7 +132,8 @@ public class TinyMediaManager {
           movieList.loadMoviesFromDatabase();
 
           // set native dir (needs to be absolute)
-          String nativepath = TinyMediaManager.class.getClassLoader().getResource(".").getPath() + "native/";
+//          String nativepath = TinyMediaManager.class.getClassLoader().getResource(".").getPath() + "native/";
+          String nativepath = "native/";
           if (Platform.isWindows()) {
             nativepath += "windows-";
           }

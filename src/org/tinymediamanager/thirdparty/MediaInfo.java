@@ -56,7 +56,7 @@ public class MediaInfo implements Closeable {
     }
     catch (LinkageError e) {
       // throw new MediaInfoException(e);
-      LOGGER.error("Failed to load mediainfo");
+      LOGGER.error("Failed to load mediainfo", e);
       handle = null;
     }
   }
@@ -271,7 +271,7 @@ public class MediaInfo implements Closeable {
     }
     catch (LinkageError e) {
       // throw new MediaInfoException(e);
-      LOGGER.error("Failed to load mediainfo");
+      LOGGER.error("Failed to load mediainfo", e);
       return "";
     }
   }
