@@ -43,7 +43,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieExtendedSearchPanel.
  */
@@ -109,10 +108,20 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
   /** The cb tag. */
   private JComboBox           cbTag;
+
+  /** The cb filter duplicates. */
   private JCheckBox           cbFilterDuplicates;
+
+  /** The lbl show duplicates. */
   private JLabel              lblShowDuplicates;
+
+  /** The cb filter movieset. */
   private JCheckBox           cbFilterMovieset;
+
+  /** The lbl movies in movieset. */
   private JLabel              lblMoviesInMovieset;
+
+  /** The cb movieset. */
   private JComboBox           cbMovieset;
 
   /**

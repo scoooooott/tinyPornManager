@@ -135,6 +135,9 @@ public class MovieInformationPanel extends JPanel {
 
   /** The movie selection model. */
   private MovieSelectionModel movieSelectionModel;
+  private JLabel              lblNewLabel;
+  private JLabel              lblNewLabel_1;
+  private JLabel              lblNewLabel_2;
 
   /**
    * Instantiates a new movie information panel.
@@ -221,6 +224,27 @@ public class MovieInformationPanel extends JPanel {
     JPanel panelGenres = new MovieGenresPanel(movieSelectionModel);
     layeredPaneImages.setLayer(panelGenres, 2);
     layeredPaneImages.add(panelGenres, "2, 2, 2, 2, right, bottom");
+
+    // JPanel panelLogos = new JPanel();
+    // panelLogos.setOpaque(false);
+    // layeredPaneImages.setLayer(panelLogos, 2);
+    // layeredPaneImages.add(panelLogos, "2, 2, 2, 2, right, top");
+    // panelLogos.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+    //
+    // lblNewLabel = new JLabel("");
+    // lblNewLabel.setIcon(new
+    // ImageIcon(MovieInformationPanel.class.getResource("/org/tinymediamanager/ui/images/1080P (1).png")));
+    // panelLogos.add(lblNewLabel);
+    //
+    // lblNewLabel_1 = new JLabel("");
+    // lblNewLabel_1.setIcon(new
+    // ImageIcon(MovieInformationPanel.class.getResource("/org/tinymediamanager/ui/images/H264.png")));
+    // panelLogos.add(lblNewLabel_1);
+    //
+    // lblNewLabel_2 = new JLabel("");
+    // lblNewLabel_2.setIcon(new
+    // ImageIcon(MovieInformationPanel.class.getResource("/org/tinymediamanager/ui/images/AC3 5.1.png")));
+    // panelLogos.add(lblNewLabel_2);
 
     JPanel panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,

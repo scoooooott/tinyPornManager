@@ -8,6 +8,7 @@
     <property name="bin.dir" value="bin" />
     <property name="build.dir" value="build" />
     <property name="dist.dir" value="dist" />
+	  <property name="preview.dir" value="preview" /> 
 
 	<tstamp>
         <format property="today" pattern="dd/MM/yyyy" />
@@ -30,12 +31,14 @@
         <delete dir="${bin.dir}" />
         <delete dir="${build.dir}" />
         <delete dir="${dist.dir}" />
+    	  <delete dir="${preview.dir}" />
     </target>
 
     <target name="init" depends="clean">
         <mkdir dir="${bin.dir}" />
         <mkdir dir="${build.dir}" />
         <mkdir dir="${dist.dir}" />
+    	  <mkdir dir="${preview.dir}" />
     </target>
 
     <target name="compile" depends="init">
@@ -118,7 +121,7 @@
         <copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
         <copy file="AppBundler/tmm.png" todir="${build.dir}" />
 
-    	<!-- Mac OSX -->
+    	  <!-- Mac OSX -->
         <mkdir dir="${dist.dir}/mac" />
         <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="AppBundler/jarbundler-2.2.0.jar" />
         <jarbundler dir="${dist.dir}/mac" name="tinyMediaManager" icon="AppBundler/tmm.icns" 
@@ -167,6 +170,27 @@
                  classpath="AppBundler/getdown.jar" />
         <digest appdir="${build.dir}" />
     </target>
+	
+	  <target name='create_preview' description="creates the preview" depends='package-app'>
+      <copy todir="${preview.dir}">
+          <fileset dir="${build.dir}"/>
+      </copy>
+      <copy todir="${preview.dir}/native">
+          <fileset dir="native"/>
+      </copy>
+      <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${preview.dir}/tinyMediaManager.exe" />
+      <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${preview.dir}/tinyMediaManager.sh" />
+      <!-- default files, to include in dist -->
+	  	<delete file="${preview.dir}/getdown.txt"></delete>
+	  	<delete file="${preview.dir}/digest.txt"></delete>
+      <copy file="AppBundler/getdown_preview.txt" tofile="${preview.dir}/getdown.txt" />
+      <replace file="${preview.dir}/getdown.txt" token="%SVNREV%" value="${svn.info.revision}"/>
+	  	
+      <!-- finally create checksums -->
+      <taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" 
+               classpath="AppBundler/getdown.jar" />
+      <digest appdir="${preview.dir}" />
+	 	</target>
 
     <target name="analyze" description="Run analyzers" depends="compile">
         <delete dir="reports" />

@@ -155,6 +155,7 @@ public class MovieRenamer {
       // movie file
       try {
         moveFile(oldFilename, newFilename);
+        file.setPath(movie.getPath());
         file.setFilename(FilenameUtils.getName(newFilename));
         // newFiles.add(FilenameUtils.getName(newFilename));
       }
@@ -230,9 +231,10 @@ public class MovieRenamer {
     }
 
     // replace token media source (BluRay|DVD|TV|...) ($S)
-//    if (newDestination.contains("$S")) {
-//      newDestination = newDestination.replaceAll("\\$S", movie.getMediaSource());
-//    }
+    // if (newDestination.contains("$S")) {
+    // newDestination = newDestination.replaceAll("\\$S",
+    // movie.getMediaSource());
+    // }
 
     // replace illegal characters
     // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
