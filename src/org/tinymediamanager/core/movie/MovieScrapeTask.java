@@ -253,6 +253,7 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
           artwork = artworkProvider.getArtwork(options);
         }
         catch (Exception e) {
+          LOGGER.error("getArtwork", e);
           artwork = new ArrayList<MediaArtwork>();
         }
         // check if at least one artwork has been found
@@ -289,6 +290,7 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
           trailers.addAll(foundTrailers);
         }
         catch (Exception e) {
+          LOGGER.error("getTrailers", e);
         }
       }
 
