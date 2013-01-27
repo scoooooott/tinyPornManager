@@ -314,6 +314,7 @@ public class MovieToMpNfoConnector {
       }
     }
     catch (Exception e) {
+      LOGGER.error("setData", e);
       return null;
     }
 
