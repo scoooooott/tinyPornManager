@@ -262,7 +262,6 @@ public class MovieToMpNfoConnector {
     try {
       context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
       Unmarshaller um = context.createUnmarshaller();
-      um.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
       try {
         MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(new FileReader(nfoFilename));
         movie = new Movie();

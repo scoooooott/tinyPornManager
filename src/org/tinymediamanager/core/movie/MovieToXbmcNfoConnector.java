@@ -291,7 +291,6 @@ public class MovieToXbmcNfoConnector {
     try {
       context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
       Unmarshaller um = context.createUnmarshaller();
-      um.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
       try {
         MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(new FileReader(nfoFilename));
         movie = new Movie();
