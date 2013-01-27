@@ -17,10 +17,8 @@ package org.tinymediamanager.core.movie;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -38,7 +36,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
@@ -48,7 +45,6 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieToXbmcNfoConnector.
  */
@@ -295,6 +291,7 @@ public class MovieToXbmcNfoConnector {
     try {
       context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
       Unmarshaller um = context.createUnmarshaller();
+      um.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
       try {
         MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(new FileReader(nfoFilename));
         movie = new Movie();
