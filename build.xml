@@ -192,7 +192,8 @@
       <digest appdir="${preview.dir}" />
 	 	</target>
 
-    <target name="analyze" description="Run analyzers" depends="compile">
+    <!--target name="analyze" description="Run analyzers" depends="compile"-->
+    <target name="analyze" description="Run analyzers">
         <delete dir="reports" />
         <mkdir dir="reports" />
         <ant antfile="buildsupport/analyze.xml">
