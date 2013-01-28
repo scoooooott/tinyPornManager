@@ -269,7 +269,7 @@ public class Utils {
    */
   public static void trackEvent(String event) {
     try {
-      File uuidFile = new File(Utils.class.getClassLoader().getResource(".").getPath() + "/tmm.uuid");
+      File uuidFile = new File("tmm.uuid");
       if (!uuidFile.exists()) {
         FileUtils.write(uuidFile, UUID.randomUUID().toString());
       }
