@@ -17,10 +17,12 @@ package org.tinymediamanager.core;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -273,7 +275,8 @@ public class Settings extends AbstractModelObject {
         context = JAXBContext.newInstance(Settings.class);
         Unmarshaller um = context.createUnmarshaller();
         try {
-          Settings.instance = (Settings) um.unmarshal(new FileReader(CONFIG_FILE));
+          Reader in = new InputStreamReader(new FileInputStream(CONFIG_FILE), "UTF-8");
+          Settings.instance = (Settings) um.unmarshal(in);
         }
         catch (FileNotFoundException e) {
           // e.printStackTrace();

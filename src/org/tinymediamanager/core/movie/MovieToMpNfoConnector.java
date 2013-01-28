@@ -16,9 +16,11 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -263,7 +265,8 @@ public class MovieToMpNfoConnector {
       context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
       Unmarshaller um = context.createUnmarshaller();
       try {
-        MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(new FileReader(nfoFilename));
+        Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
+        MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(in);
         movie = new Movie();
         movie.setName(mp.getTitle());
         movie.setOriginalName(mp.getOriginaltitle());
