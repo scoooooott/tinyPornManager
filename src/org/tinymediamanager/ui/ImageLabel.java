@@ -362,11 +362,30 @@ public class ImageLabel extends JLabel {
     // // rescale & cache
     // BufferedImage originalImage =
     // com.bric.image.ImageLoader.createImage(originalFile);
-    // Point size = calculateSize(1280, 720, originalImage.getWidth(),
+    // Point size = calculateSize((int) (originalImage.getWidth() / 1.5), (int)
+    // (originalImage.getHeight() / 1.5), originalImage.getWidth(),
     // originalImage.getHeight(), true);
     // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
     //
-    // ImageIO.write(scaledImage, "jpeg", cachedFile);
+    // // convert to rgb
+    // BufferedImage rgb = new BufferedImage(scaledImage.getWidth(),
+    // scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+    //
+    // ColorConvertOp xformOp = new ColorConvertOp(null);
+    // xformOp.filter(scaledImage, rgb);
+    //
+    // ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+    // ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
+    // jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+    // jpgWrtPrm.setCompressionQuality(0.7f);
+    //
+    // FileImageOutputStream output = new FileImageOutputStream(cachedFile);
+    // imgWrtr.setOutput(output);
+    // IIOImage image = new IIOImage(rgb, null, null);
+    // imgWrtr.write(null, image, jpgWrtPrm);
+    // imgWrtr.dispose();
+    //
+    // // ImageIO.write(rgb, "jpg", cachedFile);
     // }
     // return cachedFile;
     // }

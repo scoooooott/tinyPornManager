@@ -137,7 +137,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
     this.movieSelectionModel = model;
 
-    JPanel panel = new JPanel();
+//    JPanel panel = new JPanel();
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -236,7 +236,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     panel.add(cbSortOrder, "6, 12, fill, default");
 
     add(panel);
-    toggleVisibility(false);
+    setCollapsed(true);
   }
 
   /**
