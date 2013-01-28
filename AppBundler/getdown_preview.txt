@@ -45,7 +45,7 @@ code = lib/themoviedbapi.jar
 code = lib/thetvdbapi.jar
 code = lib/vlcj.jar
 
-resource = [windows] tinyMediaManager.exe
+#resource = [windows] tinyMediaManager.exe
 resource = [!windows] getdown.jar
 resource = [!windows] tinyMediaManager.sh
 resource = version

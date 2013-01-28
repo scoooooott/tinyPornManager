@@ -623,21 +623,26 @@ public class MediaFile extends AbstractModelObject {
     setVideoFormat("");
     String v = getMediaInfo(StreamKind.Video, 0, "Height");
     if (!v.isEmpty()) {
-      int height = Integer.parseInt(v);
+      int height;
+      try {
+        height = Integer.parseInt(v);
+        int ns = 0;
+        int[] hs = new int[] { 1080, 720, 576, 540, 480, 360, 240, 120 };
+        for (int i = 0; i < hs.length - 1; i++) {
+          if (height > hs[i + 1]) {
+            ns = hs[i];
+            break;
+          }
+        }
 
-      int ns = 0;
-      int[] hs = new int[] { 1080, 720, 576, 540, 480, 360, 240, 120 };
-      for (int i = 0; i < hs.length - 1; i++) {
-        if (height > hs[i + 1]) {
-          ns = hs[i];
-          break;
+        if (ns > 0) {
+          // e.g. 720p, nobody actually wants files to be tagged as interlaced,
+          // e.g. 720i
+          setVideoFormat(String.format("%dp", ns));
         }
       }
-
-      if (ns > 0) {
-        // e.g. 720p, nobody actually wants files to be tagged as interlaced,
-        // e.g. 720i
-        setVideoFormat(String.format("%dp", ns));
+      catch (NumberFormatException e) {
+        setVideoFormat("");
       }
     }
 
@@ -655,16 +660,31 @@ public class MediaFile extends AbstractModelObject {
     // video dimension
     String width = getMediaInfo(StreamKind.Video, 0, "Width");
     if (!width.isEmpty()) {
-      setVideoWidth(Integer.parseInt(width));
+      try {
+        setVideoWidth(Integer.parseInt(width));
+      }
+      catch (NumberFormatException e) {
+        setVideoWidth(0);
+      }
     }
     if (!height.isEmpty()) {
-      setVideoHeight(Integer.parseInt(height));
+      try {
+        setVideoHeight(Integer.parseInt(height));
+      }
+      catch (NumberFormatException e) {
+        setVideoHeight(0);
+      }
     }
 
     // overall bitrate (OverallBitRate/String)
     String br = getMediaInfo(StreamKind.General, 0, "OverallBitRate");
     if (!br.isEmpty()) {
-      setOverallBitRate(Integer.valueOf(br) / 1024); // in kbps
+      try {
+        setOverallBitRate(Integer.valueOf(br) / 1024); // in kbps
+      }
+      catch (NumberFormatException e) {
+        setOverallBitRate(0);
+      }
     }
 
     // Duration;Play time of the stream in ms
@@ -674,7 +694,12 @@ public class MediaFile extends AbstractModelObject {
     // Duration/String3;Play time in format : HH:MM:SS.MMM
     String dur = getMediaInfo(StreamKind.General, 0, "Duration");
     if (!dur.isEmpty()) {
-      setDuration(Integer.valueOf(dur) / 1000);
+      try {
+        setDuration(Integer.valueOf(dur) / 1000);
+      }
+      catch (NumberFormatException e) {
+        setDuration(0);
+      }
     }
     /*
      * String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(millis),
