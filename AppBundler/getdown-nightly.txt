@@ -1,0 +1,81 @@
+# The URL from which the client is downloaded
+appbase = https://myron0815.ci.cloudbees.com/job/tinymediamanager/ws/tinyMediaManager/build/
+
+#version = %SVNREV%
+
+# UI Configuration
+ui.name = tinyMediaManager updater
+ui.background_image = splashscreen.png
+ui.icon = tmm.png
+ui.progress = 20, 300, 460, 25
+ui.progress_text = FFFFFF
+ui.status = 40, 260, 440, 30
+ui.status_text = FFFFFF
+
+# Application jar files, on classpath
+code = tmm.jar
+code = lib/beansbinding.jar
+code = lib/commons-codec.jar
+code = lib/commons-io.jar
+code = lib/commons-lang3.jar
+code = lib/commons-logging.jar
+code = lib/fanarttvapi.jar
+code = lib/forms.jar
+code = lib/glazedlists.jar
+code = lib/httpclient-cache.jar
+code = lib/httpclient.jar
+code = lib/httpcore.jar
+code = lib/httpmime.jar
+code = lib/jackson-annotations.jar
+code = lib/jackson-core.jar
+code = lib/jackson-databind.jar
+code = lib/jdom.jar
+code = lib/jna.jar
+code = lib/jsoup.jar
+code = lib/JSplitButton.jar
+code = lib/JTattoo.jar
+code = lib/l2fprod-common-buttonbar.jar 
+code = lib/l2fprod-common-shared.jar 
+code = lib/log4j.jar
+code = lib/objectdb.jar
+code = lib/platform.jar
+code = lib/resources.jar
+code = lib/Scaling-bin.jar
+code = lib/themoviedbapi.jar
+code = lib/thetvdbapi.jar
+code = lib/vlcj.jar
+
+resource = getdown.jar
+#resource = [windows] tinyMediaManager.exe #not yet - need more testing
+resource = [!windows] tinyMediaManager.sh
+resource = version
+resource = splashscreen.png
+resource = objectdb.conf
+
+# mediainfo native libs
+resource = [linux-amd64] native/linux-amd64/libmediainfo.so
+resource = [linux-amd64] native/linux-amd64/libzen.so
+resource = [linux-arm] native/linux-arm/libmediainfo.so
+resource = [linux-arm] native/linux-arm/libzen.so
+resource = [linux-i386] native/linux-i386/libmediainfo.so
+resource = [linux-i386] native/linux-i386/libzen.so
+resource = [linux-i686] native/linux-i686/libmediainfo.so
+resource = [linux-i686] native/linux-i686/libzen.so
+resource = [mac os x] native/mac-x86_64/libmediainfo.dylib
+resource = [windows-amd64] native/windows-amd64/MediaInfo.dll
+resource = [windows-x64] native/windows-x64/MediaInfo.dll
+resource = [windows-x86] native/windows-x86/MediaInfo.dll
+resource = [windows-x86] native/windows-x86/mingwm10.dll
+
+
+# The main entry point for the application
+class = org.tinymediamanager.TinyMediaManager
+
+# allow offline use
+allow_offline = true
+
+# jvm args
+jvmarg = -Xms64m 
+jvmarg = -Xmx512m
+jvmarg = -splash:splashscreen.png
+jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true

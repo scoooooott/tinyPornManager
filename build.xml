@@ -8,7 +8,8 @@
     <property name="bin.dir" value="bin" />
     <property name="build.dir" value="build" />
     <property name="dist.dir" value="dist" />
-	  <property name="preview.dir" value="preview" /> 
+    <property name="preview.dir" value="preview" /> 
+    <property name="getdown" value="getdown.txt" />  <!-- set as property to override in jenkins --> 
 
 	<tstamp>
         <format property="today" pattern="dd/MM/yyyy" />
@@ -115,7 +116,7 @@
         <!-- default files, to include in dist -->
         <copy file="objectdb.conf" todir="${build.dir}" />
         <copy file="AppBundler/getdown.jar" todir="${build.dir}" />
-        <copy file="AppBundler/getdown.txt" todir="${build.dir}" />
+        <copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />
         <replace file="${build.dir}/getdown.txt" token="%SVNREV%" value="${svn.info.revision}"/>
         <copy file="AppBundler/LICENSE" todir="${build.dir}" />
         <copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
