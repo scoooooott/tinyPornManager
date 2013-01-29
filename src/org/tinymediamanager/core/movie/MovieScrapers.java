@@ -23,7 +23,9 @@ public enum MovieScrapers {
   /** The tmdb. */
   TMDB("The Movie Database"),
   /** The imdb. */
-  IMDB("IMDB");
+  IMDB("IMDb"),
+  /** The OFDB. */
+  OFDB("OFDb.de Online-Filmdatenbank");
 
   /** The title. */
   private String title;

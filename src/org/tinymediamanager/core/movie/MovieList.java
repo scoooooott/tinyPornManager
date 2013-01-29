@@ -46,6 +46,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
+import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.ui.moviesets.MovieSetTreeModel;
@@ -477,6 +478,11 @@ public class MovieList extends AbstractModelObject {
   public IMediaMetadataProvider getMetadataProvider(MovieScrapers scraper) {
     IMediaMetadataProvider metadataProvider = null;
     switch (scraper) {
+      case OFDB:
+        LOGGER.debug("get instance of OfdbMetadataProvider");
+        metadataProvider = new OfdbMetadataProvider();
+        break;
+
       case IMDB:
         LOGGER.debug("get instance of ImdbMetadataProvider");
         metadataProvider = new ImdbMetadataProvider(Globals.settings.getImdbSite());
@@ -551,6 +557,8 @@ public class MovieList extends AbstractModelObject {
 
     // hd-trailers.net
     IMediaTrailerProvider trailerProvider = new HDTrailersNet();
+    trailerProviders.add(trailerProvider);
+    trailerProvider = new OfdbMetadataProvider();
     trailerProviders.add(trailerProvider);
 
     return trailerProviders;
