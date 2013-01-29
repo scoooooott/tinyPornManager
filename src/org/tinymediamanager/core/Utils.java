@@ -21,7 +21,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.UUID;
 
@@ -50,7 +52,6 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
@@ -261,30 +262,55 @@ public class Utils {
   }
 
   /**
-   * Does a "ping" on our tracking server, sending the event (and the random
-   * UUID)
+   * Starts a thread and does a "ping" on our tracking server, sending the event
+   * (and the random UUID + some env vars)
    * 
    * @param event
    *          The event for the GET request
    */
-  public static void trackEvent(String event) {
-    try {
-      File uuidFile = new File("tmm.uuid");
-      if (!uuidFile.exists()) {
-        FileUtils.write(uuidFile, UUID.randomUUID().toString());
+  public static void trackEvent(final String event) {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          Thread.currentThread().setName("trackEventThread");
+          File uuidFile = new File("tmm.uuid");
+          if (!uuidFile.exists()) {
+            FileUtils.write(uuidFile, UUID.randomUUID().toString());
+          }
+
+          if (uuidFile.exists()) {
+            // 2013-01-29 10:20:43 | event=startup | os=Windows 7 | arch=amd64 | Java=1.6.0_26 | country=DE
+            String nfo = "&os=" + getEncProp("os.name") + "&arch=" + getEncProp("os.arch") + "&java=" + getEncProp("java.version") + "&lang="
+                + getEncProp("user.language") + "_" + getEncProp("user.country");
+            String uuid = FileUtils.readFileToString(uuidFile);
+            // TODO: used CachedUrl to minimize server load?!
+//            Url url = new Url("http://www.tinymediamanager.org/track.php?uuid=" + uuid + "&event=" + event + nfo);
+//            InputStream in = url.getInputStream();
+//            in.close();
+          }
+        }
+        catch (Exception e) {
+          LOGGER.warn("could not ping our update server...");
+        }
       }
-      /*
-       * if (uuidFile.exists()) { String uuid =
-       * FileUtils.readFileToString(uuidFile); // TODO: cached or not? depends
-       * on usage... Url url = new
-       * CachedUrl("http://update.tinymediamanager.org/track.php?uuid=" + uuid +
-       * "&event=" + event); InputStream in = url.getInputStream(); in.close();
-       * }
-       */
-    }
-    catch (IOException e) {
-      LOGGER.warn("Could not create UUID");
-    }
+    }).start();
   }
 
+  /**
+   * gets the UTF-8 encoded System property
+   * 
+   * @param prop
+   *          the property to fetch
+   * @return
+   */
+  @SuppressWarnings("deprecation")
+  private static String getEncProp(String prop) {
+    try {
+      return URLEncoder.encode(System.getProperty(prop), "UTF-8");
+    }
+    catch (UnsupportedEncodingException e) {
+      return URLEncoder.encode(System.getProperty(prop));
+    }
+  }
 }
