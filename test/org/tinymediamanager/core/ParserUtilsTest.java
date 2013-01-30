@@ -9,10 +9,10 @@ public class ParserUtilsTest {
 
   @Test
   public void getTitle() {
-    File f = new File("D:\\filme");
+    File f = new File("/media/Daten/Test_Filme");
     File[] fileArray = f.listFiles();
     for (File file : fileArray) {
-      if (!file.isDirectory()) {
+      if (file.isDirectory()) {
         System.out.println(ParserUtils.detectCleanMoviename(file.getName()));
       }
     }

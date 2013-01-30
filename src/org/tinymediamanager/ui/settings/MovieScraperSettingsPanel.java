@@ -80,21 +80,28 @@ public class MovieScraperSettingsPanel extends JPanel {
   /** The panel scraper metadata container. */
   private JPanel      panelScraperMetadataContainer;
 
+  /** The cb scraper ofdbde. */
+  private JCheckBox   cbScraperOfdbde;
+
+  /** The cb scraper tmdb. */
+  private JCheckBox   cbScraperTmdb;
+
   /**
    * Instantiates a new movie scraper settings panel.
    */
   public MovieScraperSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("177px"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     JPanel panelMovieScrapers = new JPanel();
     panelMovieScrapers.setBorder(new TitledBorder(null, "Scrapers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelMovieScrapers, "2, 2, left, top");
     panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JCheckBox cbScraperTmdb = new JCheckBox("The Movie Database");
+    cbScraperTmdb = new JCheckBox("The Movie Database");
     buttonGroupScraper = new ButtonGroup();
     buttonGroupScraper.add(cbScraperTmdb);
     cbScraperTmdb.setSelected(true);
@@ -122,6 +129,10 @@ public class MovieScraperSettingsPanel extends JPanel {
     cbImdbTranslateableContent = new JCheckBox("Plot/Title/Tagline from TMDB");
     panelMovieScrapers.add(cbImdbTranslateableContent, "3, 10");
 
+    cbScraperOfdbde = new JCheckBox("OFDb.de");
+    buttonGroupScraper.add(cbScraperOfdbde);
+    panelMovieScrapers.add(cbScraperOfdbde, "1, 12");
+
     panelScraperMetadataContainer = new JPanel();
     panelScraperMetadataContainer.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Metadata scrape defaults",
         TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
@@ -144,6 +155,10 @@ public class MovieScraperSettingsPanel extends JPanel {
         cbScraperImdb.setSelected(true);
         break;
 
+      case OFDB:
+        cbScraperOfdbde.setSelected(true);
+        break;
+
       case TMDB:
       default:
         cbScraperTmdb.setSelected(true);
@@ -159,7 +174,11 @@ public class MovieScraperSettingsPanel extends JPanel {
         checkChanges();
       }
     });
-
+    cbScraperOfdbde.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    });
   }
 
   /**
@@ -170,8 +189,11 @@ public class MovieScraperSettingsPanel extends JPanel {
     if (cbScraperImdb.isSelected()) {
       settings.setMovieScraper(MovieScrapers.IMDB);
     }
-    else {
+    if (cbScraperTmdb.isSelected()) {
       settings.setMovieScraper(MovieScrapers.TMDB);
+    }
+    if (cbScraperOfdbde.isSelected()) {
+      settings.setMovieScraper(MovieScrapers.OFDB);
     }
   }
 
