@@ -285,9 +285,9 @@ public class Utils {
                 + getEncProp("user.language") + "_" + getEncProp("user.country");
             String uuid = FileUtils.readFileToString(uuidFile);
             // TODO: used CachedUrl to minimize server load?!
-//            Url url = new Url("http://www.tinymediamanager.org/track.php?uuid=" + uuid + "&event=" + event + nfo);
-//            InputStream in = url.getInputStream();
-//            in.close();
+            Url url = new Url("http://tracker.tinymediamanager.org/track.php?uuid=" + uuid + "&event=" + event + nfo);
+            InputStream in = url.getInputStream();
+            in.close();
           }
         }
         catch (Exception e) {
