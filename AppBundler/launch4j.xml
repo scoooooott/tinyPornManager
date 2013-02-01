@@ -1,5 +1,5 @@
 <launch4jConfig>
-  <dontWrapJar>false</dontWrapJar>
+  <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>getdown.jar</jar>
   <outfile>../dist/tinyMediaManager.exe</outfile>
