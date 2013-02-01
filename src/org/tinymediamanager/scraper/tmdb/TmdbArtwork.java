@@ -16,43 +16,13 @@
 package org.tinymediamanager.scraper.tmdb;
 
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 /**
  * The Class TmdbArtwork.
  */
 public class TmdbArtwork {
-
-  /**
-   * The Enum PosterSizes.
-   */
-  public enum PosterSizes {
-    /** The original. */
-    original,
-    /** The w500. */
-    w500,
-    /** The w342. */
-    w342,
-    /** The w185. */
-    w185,
-    /** The w154. */
-    w154,
-    /** The w92. */
-    w92
-  }
-
-  /**
-   * The Enum FanartSizes.
-   */
-  public enum FanartSizes {
-    /** The original. */
-    original,
-    /** The w1280. */
-    w1280,
-    /** The w780. */
-    w780,
-    /** The w300. */
-    w300
-  }
 
   /** The type. */
   private MediaArtworkType type;

@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
+import javax.xml.bind.JAXBElement.GlobalScope;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -44,6 +45,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
+import org.tinymediamanager.scraper.fanarttv.FanartTvMetadataProvider;
 import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
@@ -526,8 +528,15 @@ public class MovieList extends AbstractModelObject {
     // if (artworkProvider == null) {
     LOGGER.debug("get instance of TmdbMetadataProvider");
     try {
-      IMediaArtworkProvider artworkProvider = new TmdbMetadataProvider();
-      artworkProviders.add(artworkProvider);
+      IMediaArtworkProvider artworkProvider = null;
+      if (Globals.settings.isImageScraperTmdb()) {
+        artworkProvider = new TmdbMetadataProvider();
+        artworkProviders.add(artworkProvider);
+      }
+      if (Globals.settings.isImageScraperFanartTv()) {
+        artworkProvider = new FanartTvMetadataProvider();
+        artworkProviders.add(artworkProvider);
+      }
     }
     catch (Exception e) {
       LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);

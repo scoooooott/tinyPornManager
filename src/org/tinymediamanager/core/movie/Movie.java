@@ -1528,7 +1528,10 @@ public class Movie extends AbstractModelObject {
       // poster
       for (MediaArtwork art : artwork) {
         if (art.getType() == MediaArtworkType.POSTER) {
-          setPosterUrl(art.getDownloadUrl());
+          setPosterUrl(art.getDefaultUrl());
+
+          LOGGER.debug(art.getSmallestArtwork());
+          LOGGER.debug(art.getBiggestArtwork());
 
           // did we get the tmdbid from artwork?
           if (tmdbId == 0 && art.getTmdbId() > 0) {
@@ -1541,7 +1544,10 @@ public class Movie extends AbstractModelObject {
       // fanart
       for (MediaArtwork art : artwork) {
         if (art.getType() == MediaArtworkType.BACKGROUND) {
-          setFanartUrl(art.getDownloadUrl());
+          setFanartUrl(art.getDefaultUrl());
+
+          LOGGER.debug(art.getSmallestArtwork());
+          LOGGER.debug(art.getBiggestArtwork());
 
           // did we get the tmdbid from artwork?
           if (tmdbId == 0 && art.getTmdbId() > 0) {

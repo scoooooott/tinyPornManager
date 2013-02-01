@@ -437,7 +437,7 @@ public class ImdbMetadataProviderTest {
     List<MediaArtwork> mediaArt = md.getFanart();
     assertEquals("fanart count", 1, mediaArt.size());
     MediaArtwork art = mediaArt.get(0);
-    assertEquals("poster", url, art.getDownloadUrl());
+    assertEquals("poster", url, art.getDefaultUrl());
   }
 
   private void checkGenres(List<MediaGenres> genres, MediaMetadata md) {

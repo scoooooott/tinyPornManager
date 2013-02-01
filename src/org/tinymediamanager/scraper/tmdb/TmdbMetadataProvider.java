@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.tmdb;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +55,6 @@ import com.omertron.themoviedbapi.model.ReleaseInfo;
 import com.omertron.themoviedbapi.model.Trailer;
 import com.omertron.themoviedbapi.tools.ApiUrl;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TmdbMetadataProvider.
  */
@@ -101,6 +101,38 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     public String toString() {
       return this.title;
     }
+  }
+
+  /**
+   * The Enum PosterSizes.
+   */
+  public enum PosterSizes {
+    /** The original. */
+    original,
+    /** The w500. */
+    w500,
+    /** The w342. */
+    w342,
+    /** The w185. */
+    w185,
+    /** The w154. */
+    w154,
+    /** The w92. */
+    w92
+  }
+
+  /**
+   * The Enum FanartSizes.
+   */
+  public enum FanartSizes {
+    /** The original. */
+    original,
+    /** The w1280. */
+    w1280,
+    /** The w780. */
+    w780,
+    /** The w300. */
+    w300
   }
 
   /**
@@ -433,24 +465,54 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     for (Artwork image : movieImages) {
       if (image.getArtworkType() == ArtworkType.POSTER && (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL)) {
-        String path = baseUrl + Globals.settings.getImageTmdbPosterSize() + image.getFilePath();
         MediaArtwork ma = new MediaArtwork();
-        ma.setDownloadUrl(path);
-        ma.setLabel("Poster");
+        ma.setDefaultUrl(baseUrl + Globals.settings.getImageTmdbPosterSize() + image.getFilePath());
+        ma.setPreviewUrl(baseUrl + PosterSizes.w185 + image.getFilePath());
         ma.setProviderId(getProviderInfo().getId());
         ma.setType(MediaArtworkType.POSTER);
+        ma.setLanguage(image.getLanguage());
         ma.setTmdbId(tmdbId);
+
+        // add different sizes
+        // original
+        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + PosterSizes.original + image.getFilePath());
+        // w500
+        if (500 < image.getWidth()) {
+          ma.addImageSize(500, image.getHeight() * 500 / image.getWidth(), baseUrl + PosterSizes.w500 + image.getFilePath());
+        }
+        // w342
+        if (342 < image.getWidth()) {
+          ma.addImageSize(342, image.getHeight() * 342 / image.getWidth(), baseUrl + PosterSizes.w342 + image.getFilePath());
+        }
+        // w185
+        if (185 < image.getWidth()) {
+          ma.addImageSize(185, image.getHeight() * 185 / image.getWidth(), baseUrl + PosterSizes.w185 + image.getFilePath());
+        }
+
         artwork.add(ma);
       }
 
       if (image.getArtworkType() == ArtworkType.BACKDROP && (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL)) {
-        String path = baseUrl + Globals.settings.getImageTmdbFanartSize() + image.getFilePath();
         MediaArtwork ma = new MediaArtwork();
-        ma.setDownloadUrl(path);
-        ma.setLabel("Backdrop");
+        ma.setDefaultUrl(baseUrl + Globals.settings.getImageTmdbFanartSize() + image.getFilePath());
+        ma.setPreviewUrl(baseUrl + FanartSizes.w300 + image.getFilePath());
         ma.setProviderId(getProviderInfo().getId());
         ma.setType(MediaArtworkType.BACKGROUND);
+        ma.setLanguage(image.getLanguage());
         ma.setTmdbId(tmdbId);
+
+        // add different sizes
+        // original (most of the time 1920x1080)
+        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + FanartSizes.original + image.getFilePath());
+        // 1280x720
+        if (1280 < image.getWidth()) {
+          ma.addImageSize(1280, image.getHeight() * 1280 / image.getWidth(), baseUrl + FanartSizes.w1280 + image.getFilePath());
+        }
+        // w300
+        if (300 < image.getWidth()) {
+          ma.addImageSize(300, image.getHeight() * 300 / image.getWidth(), baseUrl + FanartSizes.w300 + image.getFilePath());
+        }
+
         artwork.add(ma);
       }
 
@@ -572,32 +634,55 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
    *           the movie db exception
    */
   private List<Artwork> getArtworkFromTmdb(int tmdbId) throws MovieDbException {
-    List<String> uniqueUrls = new ArrayList<String>();
     List<Artwork> movieImages = null;
-    List<Artwork> movieImages_wo_lang = null;
     synchronized (tmdb) {
-      // posters and fanart (first search with lang)
-      movieImages = tmdb.getMovieImages(tmdbId, Globals.settings.getImageTmdbLangugage().name());
-      // posters and fanart (without lang)
-      movieImages_wo_lang = tmdb.getMovieImages(tmdbId, "");
+      // posters and fanart
+      movieImages = tmdb.getMovieImages(tmdbId, "");
     }
 
-    // fill list qith unique links
-    for (Artwork artwork : movieImages) {
-      if (!uniqueUrls.contains(artwork.getFilePath())) {
-        uniqueUrls.add(artwork.getFilePath());
-      }
-    }
-
-    // only add more unique urls
-    for (Artwork artwork : movieImages_wo_lang) {
-      if (!uniqueUrls.contains(artwork.getFilePath())) {
-        uniqueUrls.add(artwork.getFilePath());
-        movieImages.add(artwork);
-      }
-    }
+    // sort image list
+    Collections.sort(movieImages, new ArtworkComparator());
 
     return movieImages;
+  }
+
+  private static class ArtworkComparator implements Comparator<Artwork> {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     * 
+     * sort artwork: primary by language: preferred lang (ie de), en, others;
+     * then: score
+     */
+    @Override
+    public int compare(Artwork arg0, Artwork arg1) {
+      String preferredLangu = Globals.settings.getImageTmdbLangugage().name();
+
+      // check if first image is preferred langu
+      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
+        return -1;
+      }
+
+      // check if second image is preferred langu
+      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // check if the first image is en
+      if ("en".equals(arg0.getLanguage()) && !"en".equals(arg1.getLanguage())) {
+        return -1;
+      }
+
+      // check if the second image is en
+      if (!"en".equals(arg0.getLanguage()) && "en".equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // we did not sort until here; so lets sort with the rating
+      return arg0.getVoteAverage() > arg1.getVoteAverage() ? -1 : 1;
+    }
+
   }
 
   /*
@@ -615,110 +700,118 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
    * 
    */
 
-  /**
-   * Gets the artwork for the image chooser.
-   * 
-   * @param imdbId
-   *          the imdb id
-   * @param type
-   *          the type
-   * @return the artwork
-   * @throws Exception
-   *           the exception
-   */
-  public List<TmdbArtwork> getArtwork(String imdbId, MediaArtworkType type) throws Exception {
-    LOGGER.debug("TMDB: getArtwork(imdbId): " + imdbId);
+  // /**
+  // * Gets the artwork for the image chooser.
+  // *
+  // * @param imdbId
+  // * the imdb id
+  // * @param type
+  // * the type
+  // * @return the artwork
+  // * @throws Exception
+  // * the exception
+  // */
+  // public List<TmdbArtwork> getArtwork(String imdbId, MediaArtworkType type)
+  // throws Exception {
+  // LOGGER.debug("TMDB: getArtwork(imdbId): " + imdbId);
+  //
+  // List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
+  //
+  // // get the tmdbid for this imdbid
+  // MovieDb movieInfo = null;
+  // synchronized (tmdb) {
+  // movieInfo = tmdb.getMovieInfoImdb(imdbId,
+  // Globals.settings.getScraperTmdbLanguage().name());
+  // }
+  //
+  // int tmdbId = movieInfo.getId();
+  //
+  // // get images if a tmdb id has been found
+  // if (tmdbId > 0) {
+  // artwork = getArtwork(tmdbId, type);
+  // }
+  //
+  // return artwork;
+  // }
 
-    List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
+  // /**
+  // * Gets the artwork Gets the artwork for the image chooser.
+  // *
+  // * @param imdbId
+  // * the imdb id
+  // * @return the artwork
+  // * @throws Exception
+  // * the exception
+  // */
+  // public List<TmdbArtwork> getArtwork(String imdbId) throws Exception {
+  // LOGGER.debug("TMDB: getArtwork(imdbId): " + imdbId);
+  //
+  // List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
+  //
+  // // get the tmdbid for this imdbid
+  // MovieDb movieInfo = null;
+  // synchronized (tmdb) {
+  // movieInfo = tmdb.getMovieInfoImdb(imdbId,
+  // Globals.settings.getScraperTmdbLanguage().name());
+  // }
+  //
+  // int tmdbId = movieInfo.getId();
+  //
+  // // get images if a tmdb id has been found
+  // if (tmdbId > 0) {
+  // artwork = getArtwork(tmdbId);
+  // }
+  //
+  // return artwork;
+  // }
 
-    // get the tmdbid for this imdbid
-    MovieDb movieInfo = null;
-    synchronized (tmdb) {
-      movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
-    }
-
-    int tmdbId = movieInfo.getId();
-
-    // get images if a tmdb id has been found
-    if (tmdbId > 0) {
-      artwork = getArtwork(tmdbId, type);
-    }
-
-    return artwork;
-  }
-
-  /**
-   * Gets the artwork Gets the artwork for the image chooser.
-   * 
-   * @param imdbId
-   *          the imdb id
-   * @return the artwork
-   * @throws Exception
-   *           the exception
-   */
-  public List<TmdbArtwork> getArtwork(String imdbId) throws Exception {
-    LOGGER.debug("TMDB: getArtwork(imdbId): " + imdbId);
-
-    List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
-
-    // get the tmdbid for this imdbid
-    MovieDb movieInfo = null;
-    synchronized (tmdb) {
-      movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
-    }
-
-    int tmdbId = movieInfo.getId();
-
-    // get images if a tmdb id has been found
-    if (tmdbId > 0) {
-      artwork = getArtwork(tmdbId);
-    }
-
-    return artwork;
-  }
-
-  /**
-   * Gets the artwork Gets the artwork for the image chooser.
-   * 
-   * @param tmdbId
-   *          the tmdb id
-   * @param type
-   *          the type
-   * @return the artwork
-   * @throws Exception
-   *           the exception
-   */
-  public List<TmdbArtwork> getArtwork(int tmdbId, MediaArtworkType type) throws Exception {
-    LOGGER.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
-
-    String baseUrl = tmdb.getConfiguration().getBaseUrl();
-    List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
-
-    // posters and fanart
-    List<Artwork> movieImages = getArtworkFromTmdb(tmdbId);
-
-    for (Artwork image : movieImages) {
-      String path = "";
-
-      // artwork is a poster
-      if (image.getArtworkType() == ArtworkType.POSTER && type == MediaArtworkType.POSTER) {
-        TmdbArtwork poster = new TmdbArtwork(MediaArtworkType.POSTER, baseUrl, image.getFilePath());
-        poster.setWidth(image.getWidth());
-        poster.setHeight(image.getHeight());
-        artwork.add(poster);
-      }
-
-      // artwork is a fanart
-      if (image.getArtworkType() == ArtworkType.BACKDROP && type == MediaArtworkType.BACKGROUND) {
-        TmdbArtwork backdrop = new TmdbArtwork(MediaArtworkType.BACKGROUND, baseUrl, image.getFilePath());
-        backdrop.setWidth(image.getWidth());
-        backdrop.setHeight(image.getHeight());
-        artwork.add(backdrop);
-      }
-    }
-
-    return artwork;
-  }
+  // /**
+  // * Gets the artwork Gets the artwork for the image chooser.
+  // *
+  // * @param tmdbId
+  // * the tmdb id
+  // * @param type
+  // * the type
+  // * @return the artwork
+  // * @throws Exception
+  // * the exception
+  // */
+  // public List<TmdbArtwork> getArtwork(int tmdbId, MediaArtworkType type)
+  // throws Exception {
+  // LOGGER.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
+  //
+  // String baseUrl = tmdb.getConfiguration().getBaseUrl();
+  // List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
+  //
+  // // posters and fanart
+  // List<Artwork> movieImages = getArtworkFromTmdb(tmdbId);
+  //
+  // for (Artwork image : movieImages) {
+  // String path = "";
+  //
+  // // artwork is a poster
+  // if (image.getArtworkType() == ArtworkType.POSTER && type ==
+  // MediaArtworkType.POSTER) {
+  // TmdbArtwork poster = new TmdbArtwork(MediaArtworkType.POSTER, baseUrl,
+  // image.getFilePath());
+  // poster.setWidth(image.getWidth());
+  // poster.setHeight(image.getHeight());
+  // artwork.add(poster);
+  // }
+  //
+  // // artwork is a fanart
+  // if (image.getArtworkType() == ArtworkType.BACKDROP && type ==
+  // MediaArtworkType.BACKGROUND) {
+  // TmdbArtwork backdrop = new TmdbArtwork(MediaArtworkType.BACKGROUND,
+  // baseUrl, image.getFilePath());
+  // backdrop.setWidth(image.getWidth());
+  // backdrop.setHeight(image.getHeight());
+  // artwork.add(backdrop);
+  // }
+  // }
+  //
+  // return artwork;
+  // }
 
   // /**
   // * Gets the meta data.
@@ -1196,45 +1289,47 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   // return tmdbId;
   // }
 
-  /**
-   * Gets the artwork for image chooser.
-   * 
-   * @param tmdbId
-   *          the tmdb id
-   * @return the artwork
-   * @throws Exception
-   *           the exception
-   */
-  public List<TmdbArtwork> getArtwork(int tmdbId) throws Exception {
-    LOGGER.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
-
-    String baseUrl = tmdb.getConfiguration().getBaseUrl();
-    List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
-
-    // posters and fanart
-    List<Artwork> movieImages = getArtworkFromTmdb(tmdbId);
-
-    for (Artwork image : movieImages) {
-      String path = "";
-      // artwork is a poster
-      if (image.getArtworkType() == ArtworkType.POSTER) {
-        TmdbArtwork poster = new TmdbArtwork(MediaArtworkType.POSTER, baseUrl, image.getFilePath());
-        poster.setWidth(image.getWidth());
-        poster.setHeight(image.getHeight());
-        artwork.add(poster);
-      }
-
-      // artwork is a fanart
-      if (image.getArtworkType() == ArtworkType.BACKDROP) {
-        TmdbArtwork backdrop = new TmdbArtwork(MediaArtworkType.BACKGROUND, baseUrl, image.getFilePath());
-        backdrop.setWidth(image.getWidth());
-        backdrop.setHeight(image.getHeight());
-        artwork.add(backdrop);
-      }
-    }
-
-    return artwork;
-  }
+  // /**
+  // * Gets the artwork for image chooser.
+  // *
+  // * @param tmdbId
+  // * the tmdb id
+  // * @return the artwork
+  // * @throws Exception
+  // * the exception
+  // */
+  // public List<TmdbArtwork> getArtwork(int tmdbId) throws Exception {
+  // LOGGER.debug("TMDB: getArtwork(tmdbId): " + tmdbId);
+  //
+  // String baseUrl = tmdb.getConfiguration().getBaseUrl();
+  // List<TmdbArtwork> artwork = new ArrayList<TmdbArtwork>();
+  //
+  // // posters and fanart
+  // List<Artwork> movieImages = getArtworkFromTmdb(tmdbId);
+  //
+  // for (Artwork image : movieImages) {
+  // String path = "";
+  // // artwork is a poster
+  // if (image.getArtworkType() == ArtworkType.POSTER) {
+  // TmdbArtwork poster = new TmdbArtwork(MediaArtworkType.POSTER, baseUrl,
+  // image.getFilePath());
+  // poster.setWidth(image.getWidth());
+  // poster.setHeight(image.getHeight());
+  // artwork.add(poster);
+  // }
+  //
+  // // artwork is a fanart
+  // if (image.getArtworkType() == ArtworkType.BACKDROP) {
+  // TmdbArtwork backdrop = new TmdbArtwork(MediaArtworkType.BACKGROUND,
+  // baseUrl, image.getFilePath());
+  // backdrop.setWidth(image.getWidth());
+  // backdrop.setHeight(image.getHeight());
+  // artwork.add(backdrop);
+  // }
+  // }
+  //
+  // return artwork;
+  // }
 
   /**
    * Search for movie sets.

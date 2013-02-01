@@ -23,7 +23,7 @@ public class FanartTvTest {
     o.setImdbId("tt1194173");
 
     List<MediaArtwork> ma = ftv.getArtwork(o);
-    System.out.println(ma.get(0).getDownloadUrl());
+    System.out.println(ma.get(0).getDefaultUrl());
 
   }
 }

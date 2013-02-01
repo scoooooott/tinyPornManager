@@ -45,8 +45,8 @@ code = lib/themoviedbapi.jar
 code = lib/thetvdbapi.jar
 code = lib/vlcj.jar
 
-#resource = [windows] tinyMediaManager.exe
-resource = [!windows] getdown.jar
+resource = getdown.jar
+#resource = [windows] tinyMediaManager.exe #not yet - need more testing
 resource = [!windows] tinyMediaManager.sh
 resource = version
 resource = splashscreen.png

@@ -66,8 +66,7 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.AutocompleteComboBox;
-import org.tinymediamanager.ui.ImageChooser;
-import org.tinymediamanager.ui.ImageChooser.ImageType;
+import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -291,7 +290,7 @@ public class MovieEditor extends JDialog {
       lblPoster.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          ImageChooser dialog = new ImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster, null);
+          MovieImageChooser dialog = new MovieImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster, null);
           dialog.setVisible(true);
         }
       });
@@ -432,7 +431,7 @@ public class MovieEditor extends JDialog {
       lblFanart.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          ImageChooser dialog = new ImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart, extrathumbs);
+          MovieImageChooser dialog = new MovieImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart, extrathumbs);
           dialog.setVisible(true);
         }
       });

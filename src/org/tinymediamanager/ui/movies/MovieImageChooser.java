@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.movies;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,15 +50,20 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
-import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
-import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.ui.ImageLabel;
+import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.ToggleButtonUI;
+import org.tinymediamanager.ui.WrapLayout;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -68,13 +73,13 @@ import com.jgoodies.forms.layout.RowSpec;
 /**
  * The Class ImageChooser.
  */
-public class ImageChooser extends JDialog {
+public class MovieImageChooser extends JDialog {
 
   /** The Constant serialVersionUID. */
   private static final long   serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger LOGGER           = Logger.getLogger(ImageChooser.class);
+  private static final Logger LOGGER           = Logger.getLogger(MovieImageChooser.class);
 
   /**
    * The Enum ImageType.
@@ -129,6 +134,8 @@ public class ImageChooser extends JDialog {
   /** The action. */
   private final Action         action         = new SwingAction_2();
 
+  private final MovieList      movieList      = MovieList.getInstance();
+
   /**
    * Create the dialog.
    * 
@@ -143,7 +150,7 @@ public class ImageChooser extends JDialog {
    * @param extrathumbs
    *          the extrathumbs
    */
-  public ImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel, List<String> extrathumbs) {
+  public MovieImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel, List<String> extrathumbs) {
     setModal(true);
     setIconImage(Globals.logo);
     this.imageLabel = imageLabel;
@@ -241,23 +248,20 @@ public class ImageChooser extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      TmdbArtwork artwork = null;
-      PosterSizes posterSize = null;
-      FanartSizes fanartSize = null;
+      MediaArtwork artwork = null;
+      ImageSizeAndUrl resolution = null;
 
       // get selected button
       for (JToggleButton button : buttons) {
         if (button.isSelected()) {
-          Object clientProperty = button.getClientProperty("TmdbArtwork");
-          if (clientProperty instanceof TmdbArtwork) {
-            artwork = (TmdbArtwork) clientProperty;
-            clientProperty = button.getClientProperty("TmdbArtworkSize");
+          Object clientProperty = button.getClientProperty("MediaArtwork");
+          if (clientProperty instanceof MediaArtwork) {
+            artwork = (MediaArtwork) clientProperty;
+            clientProperty = button.getClientProperty("MediaArtworkSize");
             // try to get the size
             if (clientProperty instanceof JComboBox) {
               JComboBox cb = (JComboBox) clientProperty;
-              ImageResolution resolution = (ImageResolution) cb.getSelectedItem();
-              posterSize = resolution.getPosterSize();
-              fanartSize = resolution.getFanartSize();
+              resolution = (ImageSizeAndUrl) cb.getSelectedItem();
             }
             break;
           }
@@ -271,25 +275,11 @@ public class ImageChooser extends JDialog {
       }
 
       if (artwork != null) {
-        switch (type) {
-
-          case POSTER:
-            if (posterSize != null) {
-              imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(posterSize));
-            }
-            else {
-              imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbPosterSize()));
-            }
-            break;
-
-          case FANART:
-            if (fanartSize != null) {
-              imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(fanartSize));
-            }
-            else {
-              imageLabel.setImageUrl(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbFanartSize()));
-            }
-            break;
+        if (resolution != null) {
+          imageLabel.setImageUrl(resolution.getUrl());
+        }
+        else {
+          imageLabel.setImageUrl(artwork.getDefaultUrl());
         }
       }
 
@@ -298,25 +288,24 @@ public class ImageChooser extends JDialog {
         extrathumbs.clear();
         // get extrathumbs
         for (JToggleButton button : buttons) {
-          Object clientProperty = button.getClientProperty("TmdbArtworkExtrathumb");
+          Object clientProperty = button.getClientProperty("MediaArtworkExtrathumb");
           if (clientProperty instanceof JCheckBox) {
             JCheckBox chkbx = (JCheckBox) clientProperty;
             if (chkbx.isSelected()) {
-              clientProperty = button.getClientProperty("TmdbArtwork");
+              clientProperty = button.getClientProperty("MediaArtwork");
               if (clientProperty instanceof TmdbArtwork) {
-                artwork = (TmdbArtwork) clientProperty;
-                clientProperty = button.getClientProperty("TmdbArtworkSize");
+                artwork = (MediaArtwork) clientProperty;
+                clientProperty = button.getClientProperty("MediaArtworkSize");
                 // try to get the size
                 if (clientProperty instanceof JComboBox) {
                   JComboBox cb = (JComboBox) clientProperty;
-                  ImageResolution resolution = (ImageResolution) cb.getSelectedItem();
-                  fanartSize = resolution.getFanartSize();
+                  ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
 
-                  if (fanartSize != null) {
-                    extrathumbs.add(artwork.getUrlForSpecialArtwork(fanartSize));
+                  if (size != null) {
+                    extrathumbs.add(size.getUrl());
                   }
                   else {
-                    extrathumbs.add(artwork.getUrlForSpecialArtwork(Globals.settings.getImageTmdbFanartSize()));
+                    extrathumbs.add(artwork.getDefaultUrl());
                   }
                 }
               }
@@ -357,22 +346,20 @@ public class ImageChooser extends JDialog {
    * 
    * @param originalImage
    *          the original image
-   * @param tmdbArtwork
+   * @param artwork
    *          the tmdb artwork
    */
-  private void addImage(BufferedImage originalImage, TmdbArtwork tmdbArtwork) {
+  private void addImage(BufferedImage originalImage, MediaArtwork artwork) {
     int imageType = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
     Point size = null;
 
     GridBagLayout gbl = new GridBagLayout();
-    List<ImageResolution> resolutions = null;
 
     switch (type) {
       case FANART:
         gbl.columnWidths = new int[] { 300 };
         gbl.rowHeights = new int[] { 150 };
         size = ImageLabel.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
-        resolutions = ImageResolution.getFanartResolutions(tmdbArtwork.getHeight(), tmdbArtwork.getWidth());
         break;
 
       case POSTER:
@@ -380,7 +367,6 @@ public class ImageChooser extends JDialog {
         gbl.columnWidths = new int[] { 150 };
         gbl.rowHeights = new int[] { 250 };
         size = ImageLabel.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
-        resolutions = ImageResolution.getPosterResolutions(tmdbArtwork.getHeight(), tmdbArtwork.getWidth());
         break;
 
     }
@@ -406,7 +392,7 @@ public class ImageChooser extends JDialog {
     g.dispose();
     ImageIcon imageIcon = new ImageIcon(resizedImage);
     button.setIcon(imageIcon);
-    button.putClientProperty("TmdbArtwork", tmdbArtwork);
+    button.putClientProperty("MediaArtwork", artwork);
 
     buttonGroup.add(button);
     buttons.add(button);
@@ -417,8 +403,8 @@ public class ImageChooser extends JDialog {
     gbc.gridy = 1;
     gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(0, 5, 0, 0);
-    JComboBox cb = new JComboBox(resolutions.toArray());
-    button.putClientProperty("TmdbArtworkSize", cb);
+    JComboBox cb = new JComboBox(artwork.getImageSizes().toArray());
+    button.putClientProperty("MediaArtworkSize", cb);
     imagePanel.add(cb, gbc);
 
     if (type == ImageType.FANART) {
@@ -427,7 +413,7 @@ public class ImageChooser extends JDialog {
       gbc.gridy = 1;
       gbc.anchor = GridBagConstraints.EAST;
       JCheckBox chkbx = new JCheckBox();
-      button.putClientProperty("TmdbArtworkExtrathumb", chkbx);
+      button.putClientProperty("MediaArtworkExtrathumb", chkbx);
       imagePanel.add(chkbx, gbc);
     }
 
@@ -500,63 +486,54 @@ public class ImageChooser extends JDialog {
       startProgressBar("Downloading images");
 
       try {
-        TmdbMetadataProvider tmdb = new TmdbMetadataProvider();
-        List<TmdbArtwork> artwork = null;
-        switch (type) {
-          case POSTER:
-            // poster
-            if (tmdbId > 0) {
-              // retrieve via TMDB ID
-              artwork = tmdb.getArtwork(tmdbId, MediaArtworkType.POSTER);
-            }
-            else {
-              if (!StringUtils.isEmpty(imdbId)) {
-                // retrieve via IMDB ID
-                artwork = tmdb.getArtwork(imdbId, MediaArtworkType.POSTER);
-              }
-            }
-            break;
-
-          case FANART:
-            // fanart
-            if (tmdbId > 0) {
-              // retrieve via TMDB ID
-              artwork = tmdb.getArtwork(tmdbId, MediaArtworkType.BACKGROUND);
-            }
-            else {
-              if (!StringUtils.isEmpty(imdbId)) {
-                // retrieve via IMDB ID
-                artwork = tmdb.getArtwork(imdbId, MediaArtworkType.BACKGROUND);
-              }
-            }
-            break;
-        }
-
-        // prevent NPE
-        if (artwork == null) {
+        if (movieList.getArtworkProviders().size() == 0) {
           return null;
         }
 
-        for (TmdbArtwork tmdbArtwork : artwork) {
-          if (isCancelled()) {
-            return null;
+        // get images from all artworkproviders
+        for (IMediaArtworkProvider artworkProvider : movieList.getArtworkProviders()) {
+          MediaScrapeOptions options = new MediaScrapeOptions();
+          switch (type) {
+            case POSTER:
+              options.setArtworkType(MediaArtworkType.POSTER);
+              break;
+
+            case FANART:
+              options.setArtworkType(MediaArtworkType.BACKGROUND);
+              break;
           }
-          CachedUrl cachedUrl = null;
-          try {
-            cachedUrl = new CachedUrl(tmdbArtwork.getUrlForSmallArtwork());
-            Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
-            BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
-            addImage(bufferedImage, tmdbArtwork);
+
+          options.setImdbId(imdbId);
+          options.setTmdbId(tmdbId);
+
+          List<MediaArtwork> artwork = artworkProvider.getArtwork(options);
+          if (artwork == null) {
+            continue;
           }
-          catch (Exception e) {
-            LOGGER.error("DownloadTask", e);
-            // mark cache file as damaged
-            if (cachedUrl != null) {
-              cachedUrl.removeCachedFile();
+
+          // display all images
+          for (MediaArtwork art : artwork) {
+            if (isCancelled()) {
+              return null;
             }
+
+            CachedUrl cachedUrl = null;
+            try {
+              cachedUrl = new CachedUrl(art.getPreviewUrl());
+              Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+              BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
+              addImage(bufferedImage, art);
+            }
+            catch (Exception e) {
+              LOGGER.error("DownloadTask", e);
+              // mark cache file as damaged
+              if (cachedUrl != null) {
+                cachedUrl.removeCachedFile();
+              }
+            }
+
           }
         }
-
       }
       catch (NumberFormatException e) {
         LOGGER.error("DownloadTask", e);
@@ -579,189 +556,6 @@ public class ImageChooser extends JDialog {
     @Override
     public void done() {
       stopProgressBar();
-    }
-  }
-
-  /**
-   * The Class ImageResolution.
-   */
-  private static class ImageResolution {
-
-    /** The poster size. */
-    private PosterSizes posterSize;
-
-    /** The fanart size. */
-    private FanartSizes fanartSize;
-
-    /** The height. */
-    int                 height;
-
-    /** The width. */
-    int                 width;
-
-    /**
-     * Instantiates a new image resolution.
-     * 
-     * @param posterSize
-     *          the poster size
-     * @param fullHeight
-     *          the full height
-     * @param fullWidth
-     *          the full width
-     */
-    private ImageResolution(PosterSizes posterSize, int fullHeight, int fullWidth) {
-      this.posterSize = posterSize;
-      switch (this.posterSize) {
-        case w92:
-          this.width = 92;
-          break;
-
-        case w154:
-          this.width = 154;
-          break;
-
-        case w185:
-          this.width = 185;
-          break;
-
-        case w342:
-          this.width = 342;
-          break;
-
-        case w500:
-          this.width = 500;
-          break;
-
-        case original:
-          this.width = fullWidth;
-          this.height = fullHeight;
-          break;
-      }
-
-      if (posterSize != PosterSizes.original) {
-        calculateHeight(fullHeight, fullWidth);
-      }
-    }
-
-    /**
-     * Instantiates a new image resolution.
-     * 
-     * @param fanartSize
-     *          the fanart size
-     * @param fullHeight
-     *          the full height
-     * @param fullWidth
-     *          the full width
-     */
-    private ImageResolution(FanartSizes fanartSize, int fullHeight, int fullWidth) {
-      this.fanartSize = fanartSize;
-      switch (this.fanartSize) {
-        case w300:
-          this.width = 300;
-          break;
-
-        case w780:
-          this.width = 780;
-          break;
-
-        case w1280:
-          this.width = 1280;
-          break;
-
-        case original:
-          this.width = fullWidth;
-          this.height = fullHeight;
-          break;
-      }
-
-      if (fanartSize != FanartSizes.original) {
-        calculateHeight(fullHeight, fullWidth);
-      }
-    }
-
-    /**
-     * Calculate height.
-     * 
-     * @param fullHeight
-     *          the full height
-     * @param fullWidth
-     *          the full width
-     */
-    private void calculateHeight(int fullHeight, int fullWidth) {
-      this.height = fullHeight * this.width / fullWidth;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-      return new String(this.width + "x" + this.height);
-    }
-
-    /**
-     * Gets the poster size.
-     * 
-     * @return the poster size
-     */
-    public PosterSizes getPosterSize() {
-      return this.posterSize;
-    }
-
-    /**
-     * Gets the fanart size.
-     * 
-     * @return the fanart size
-     */
-    public FanartSizes getFanartSize() {
-      return this.fanartSize;
-    }
-
-    /**
-     * Gets the poster resolutions.
-     * 
-     * @param fullHeight
-     *          the full height
-     * @param fullWidth
-     *          the full width
-     * @return the poster resolutions
-     */
-    public static List<ImageResolution> getPosterResolutions(int fullHeight, int fullWidth) {
-      List<ImageResolution> resolutions = new ArrayList<ImageChooser.ImageResolution>();
-      for (PosterSizes size : PosterSizes.values()) {
-        // default should be the first in line
-        if (size == Globals.settings.getImageTmdbPosterSize()) {
-          resolutions.add(0, new ImageResolution(size, fullHeight, fullWidth));
-        }
-        else {
-          resolutions.add(new ImageResolution(size, fullHeight, fullWidth));
-        }
-      }
-      return resolutions;
-    }
-
-    /**
-     * Gets the fanart resolutions.
-     * 
-     * @param fullHeight
-     *          the full height
-     * @param fullWidth
-     *          the full width
-     * @return the fanart resolutions
-     */
-    public static List<ImageResolution> getFanartResolutions(int fullHeight, int fullWidth) {
-      List<ImageResolution> resolutions = new ArrayList<ImageChooser.ImageResolution>();
-      for (FanartSizes size : FanartSizes.values()) {
-        // default should be the first in line
-        if (size == Globals.settings.getImageTmdbFanartSize()) {
-          resolutions.add(0, new ImageResolution(size, fullHeight, fullWidth));
-        }
-        else {
-          resolutions.add(new ImageResolution(size, fullHeight, fullWidth));
-        }
-      }
-      return resolutions;
     }
   }
 

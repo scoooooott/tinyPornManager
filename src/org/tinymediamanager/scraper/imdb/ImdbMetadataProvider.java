@@ -619,7 +619,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
    */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
-      LOGGER.debug("search() " + query.toString());
+    LOGGER.debug("search() " + query.toString());
     /*
      * IMDb matches seem to come in several "flavours".
      * 
@@ -826,9 +826,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
    */
   private void processMediaArt(MediaMetadata md, MediaArtworkType type, String label, String image) {
     MediaArtwork ma = new MediaArtwork();
-    ma.setDownloadUrl(image);
-    ma.setLabel(label);
-    // ma.setProviderId(getInfo().getId());
+    ma.setPreviewUrl(image);
+    ma.setProviderId(getProviderInfo().getId());
     ma.setType(type);
     md.addMediaArt(ma);
   }

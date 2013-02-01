@@ -280,7 +280,8 @@ public class Utils {
           }
 
           if (uuidFile.exists()) {
-            // 2013-01-29 10:20:43 | event=startup | os=Windows 7 | arch=amd64 | Java=1.6.0_26 | country=DE
+            // 2013-01-29 10:20:43 | event=startup | os=Windows 7 | arch=amd64 |
+            // Java=1.6.0_26 | country=DE
             String nfo = "&os=" + getEncProp("os.name") + "&arch=" + getEncProp("os.arch") + "&java=" + getEncProp("java.version") + "&lang="
                 + getEncProp("user.language") + "_" + getEncProp("user.country");
             String uuid = FileUtils.readFileToString(uuidFile);

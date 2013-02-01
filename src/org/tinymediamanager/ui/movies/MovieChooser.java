@@ -64,8 +64,7 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.ui.ImageChooser;
-import org.tinymediamanager.ui.ImageChooser.ImageType;
+import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
@@ -386,7 +385,7 @@ public class MovieChooser extends JDialog implements ActionListener {
             // poster
             {
               ImageLabel lblImage = new ImageLabel();
-              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage, null);
+              MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage, null);
               dialog.setVisible(true);
               movieToScrape.setPosterUrl(lblImage.getImageUrl());
               movieToScrape.writeImages(true, false);
@@ -396,7 +395,7 @@ public class MovieChooser extends JDialog implements ActionListener {
             {
               ImageLabel lblImage = new ImageLabel();
               List<String> extrathumbs = new ArrayList<String>();
-              ImageChooser dialog = new ImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage, extrathumbs);
+              MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage, extrathumbs);
               dialog.setVisible(true);
               movieToScrape.setFanartUrl(lblImage.getImageUrl());
               movieToScrape.writeImages(false, true);

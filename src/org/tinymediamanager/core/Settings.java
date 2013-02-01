@@ -50,9 +50,9 @@ import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
-import org.tinymediamanager.scraper.tmdb.TmdbArtwork.FanartSizes;
-import org.tinymediamanager.scraper.tmdb.TmdbArtwork.PosterSizes;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -150,6 +150,10 @@ public class Settings extends AbstractModelObject {
   /** The Constant SCRAPE_BEST_IMAGE. */
   private final static String           SCRAPE_BEST_IMAGE         = "scrapeBestImage";
 
+  private final static String           IMAGE_SCRAPER_TMDB        = "imageScraperTmdb";
+
+  private final static String           IMAGE_SCRAPER_FANART_TV   = "imageScraperFanartTv";
+
   /** The video file types. */
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -200,6 +204,12 @@ public class Settings extends AbstractModelObject {
 
   /** The image tmdb poster size. */
   private PosterSizes                   imageTmdbPosterSize       = PosterSizes.w342;
+
+  /** The image tmdb scraper. */
+  private boolean                       imageScraperTmdb          = true;
+
+  /** The image fanart tv scraper. */
+  private boolean                       imageScraperFanartTv      = true;
 
   /** The image tmdb fanart size. */
   private FanartSizes                   imageTmdbFanartSize       = FanartSizes.original;
@@ -501,8 +511,8 @@ public class Settings extends AbstractModelObject {
   /**
    * Removes the video file type.
    * 
-   * @param type
-   *          the type
+   * @param prfx
+   *          the prfx
    */
   public void removeTitlePrefix(String prfx) {
     titlePrefix.remove(prfx);
@@ -611,7 +621,8 @@ public class Settings extends AbstractModelObject {
    */
   private void writeDefaultSettings() {
     // default video file types
-    // derived from http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
+    // derived from
+    // http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
     addVideoFileTypes(".3gp");
     addVideoFileTypes(".asf");
     addVideoFileTypes(".asx");
@@ -795,6 +806,26 @@ public class Settings extends AbstractModelObject {
     this.imageTmdbLangugage = newValue;
     // setDirty();
     firePropertyChange(IMAGE_TMDB_LANGU, oldValue, newValue);
+  }
+
+  public boolean isImageScraperTmdb() {
+    return imageScraperTmdb;
+  }
+
+  public boolean isImageScraperFanartTv() {
+    return imageScraperFanartTv;
+  }
+
+  public void setImageScraperTmdb(boolean newValue) {
+    boolean oldValue = this.imageScraperTmdb;
+    this.imageScraperTmdb = newValue;
+    firePropertyChange(IMAGE_SCRAPER_TMDB, oldValue, newValue);
+  }
+
+  public void setImageScraperFanartTv(boolean newValue) {
+    boolean oldValue = this.imageScraperFanartTv;
+    this.imageScraperFanartTv = newValue;
+    firePropertyChange(IMAGE_SCRAPER_FANART_TV, oldValue, newValue);
   }
 
   /**
@@ -1122,10 +1153,21 @@ public class Settings extends AbstractModelObject {
     this.scraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
   }
 
+  /**
+   * Gets the window config.
+   * 
+   * @return the window config
+   */
   public WindowConfig getWindowConfig() {
     return windowConfig;
   }
 
+  /**
+   * Sets the window config.
+   * 
+   * @param windowConfig
+   *          the new window config
+   */
   public void setWindowConfig(WindowConfig windowConfig) {
     this.windowConfig = windowConfig;
     this.windowConfig.addPropertyChangeListener(propertyChangeListener);
