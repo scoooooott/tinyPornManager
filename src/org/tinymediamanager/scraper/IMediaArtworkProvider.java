@@ -17,7 +17,6 @@ package org.tinymediamanager.scraper;
 
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface IMediaArtworkProvider.
  */

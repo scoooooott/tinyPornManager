@@ -58,7 +58,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieSettingsPanel.
  */

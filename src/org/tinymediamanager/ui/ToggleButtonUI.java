@@ -29,7 +29,6 @@ import com.jtattoo.plaf.BaseToggleButtonUI;
 import com.jtattoo.plaf.ColorHelper;
 import com.jtattoo.plaf.JTattooUtilities;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ToggleButtonUI.
  */

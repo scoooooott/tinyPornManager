@@ -20,7 +20,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MediaScrapeOptions.
  */

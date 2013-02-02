@@ -52,7 +52,6 @@ public class WatchedIconConverter extends Converter<Boolean, Icon> {
    */
   @Override
   public Boolean convertReverse(Icon arg0) {
-    // TODO Auto-generated method stub
     return null;
   }
 

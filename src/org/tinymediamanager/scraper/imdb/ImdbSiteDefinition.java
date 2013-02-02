@@ -20,7 +20,6 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Enum ImdbSiteDefinition.
  */

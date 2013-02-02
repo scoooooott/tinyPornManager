@@ -162,7 +162,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
       }
     }
     catch (Exception e) {
-      // TODO Auto-generated catch block
+      // TODO use logger
       e.printStackTrace();
     }
 

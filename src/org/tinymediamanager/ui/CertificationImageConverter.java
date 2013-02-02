@@ -24,7 +24,6 @@ import org.jdesktop.beansbinding.Converter;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.movies.MovieGenresPanel;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CertificationImageConverter.
  */

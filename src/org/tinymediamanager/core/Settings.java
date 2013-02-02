@@ -54,7 +54,6 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Settings.
  */

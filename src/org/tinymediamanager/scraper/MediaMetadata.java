@@ -24,7 +24,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MediaMetadata.
  */

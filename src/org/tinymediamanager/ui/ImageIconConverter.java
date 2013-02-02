@@ -52,7 +52,6 @@ public class ImageIconConverter extends Converter<Object, Object> {
    */
   @Override
   public Object convertReverse(Object arg0) {
-    // TODO Auto-generated method stub
     return null;
   }
 

@@ -19,7 +19,6 @@ import java.util.Locale;
 
 import org.jdesktop.beansbinding.Converter;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class VoteCountConverter.
  */

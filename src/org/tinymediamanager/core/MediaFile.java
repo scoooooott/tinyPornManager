@@ -33,7 +33,6 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MediaFile.
  * 

@@ -26,7 +26,6 @@ import org.tinymediamanager.ui.MainWindow;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieTableFormat.
  */

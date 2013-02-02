@@ -39,7 +39,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieDetailsPanel.
  */

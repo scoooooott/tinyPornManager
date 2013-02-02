@@ -19,7 +19,6 @@ import java.util.Comparator;
 
 import org.tinymediamanager.core.movie.Movie;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieComparator is used to (initial) sort the movies in the
  * moviepanel.
