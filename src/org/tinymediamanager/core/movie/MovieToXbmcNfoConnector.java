@@ -322,6 +322,25 @@ public class MovieToXbmcNfoConnector {
         }
         movie.setWatched(xbmc.isWatched());
 
+        // movieset
+        if (StringUtils.isNotEmpty(xbmc.getSet())) {
+          // search for that movieset
+          MovieList movieList = MovieList.getInstance();
+          MovieSet movieSet = movieList.findMovieSet(xbmc.getSet());
+          // no one found - create it
+          if (movieSet == null) {
+            movieSet = new MovieSet(xbmc.getSet());
+            movieSet.saveToDb();
+            movieList.addMovieSet(movieSet);
+            movieList.getMovieSetTreeModel().addMovieSet(movieSet);
+          }
+
+          // add movie to movieset
+          if (movieSet != null) {
+            movie.setMovieSet(movieSet);
+          }
+        }
+
         for (Object obj : xbmc.getActors()) {
           // every unused XML element will be shown as an actor - we have to
           // test it this way; else the program will crash

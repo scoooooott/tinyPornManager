@@ -458,65 +458,13 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       tmdbId = getTmdbIdFromImdbId(imdbId);
     }
 
-    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
-    List<Artwork> movieImages = getArtworkFromTmdb(tmdbId);
-
-    String baseUrl = tmdb.getConfiguration().getBaseUrl();
-
-    for (Artwork image : movieImages) {
-      if (image.getArtworkType() == ArtworkType.POSTER && (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL)) {
-        MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(baseUrl + Globals.settings.getImageTmdbPosterSize() + image.getFilePath());
-        ma.setPreviewUrl(baseUrl + PosterSizes.w185 + image.getFilePath());
-        ma.setProviderId(getProviderInfo().getId());
-        ma.setType(MediaArtworkType.POSTER);
-        ma.setLanguage(image.getLanguage());
-        ma.setTmdbId(tmdbId);
-
-        // add different sizes
-        // original
-        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + PosterSizes.original + image.getFilePath());
-        // w500
-        if (500 < image.getWidth()) {
-          ma.addImageSize(500, image.getHeight() * 500 / image.getWidth(), baseUrl + PosterSizes.w500 + image.getFilePath());
-        }
-        // w342
-        if (342 < image.getWidth()) {
-          ma.addImageSize(342, image.getHeight() * 342 / image.getWidth(), baseUrl + PosterSizes.w342 + image.getFilePath());
-        }
-        // w185
-        if (185 < image.getWidth()) {
-          ma.addImageSize(185, image.getHeight() * 185 / image.getWidth(), baseUrl + PosterSizes.w185 + image.getFilePath());
-        }
-
-        artwork.add(ma);
-      }
-
-      if (image.getArtworkType() == ArtworkType.BACKDROP && (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL)) {
-        MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(baseUrl + Globals.settings.getImageTmdbFanartSize() + image.getFilePath());
-        ma.setPreviewUrl(baseUrl + FanartSizes.w300 + image.getFilePath());
-        ma.setProviderId(getProviderInfo().getId());
-        ma.setType(MediaArtworkType.BACKGROUND);
-        ma.setLanguage(image.getLanguage());
-        ma.setTmdbId(tmdbId);
-
-        // add different sizes
-        // original (most of the time 1920x1080)
-        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + FanartSizes.original + image.getFilePath());
-        // 1280x720
-        if (1280 < image.getWidth()) {
-          ma.addImageSize(1280, image.getHeight() * 1280 / image.getWidth(), baseUrl + FanartSizes.w1280 + image.getFilePath());
-        }
-        // w300
-        if (300 < image.getWidth()) {
-          ma.addImageSize(300, image.getHeight() * 300 / image.getWidth(), baseUrl + FanartSizes.w300 + image.getFilePath());
-        }
-
-        artwork.add(ma);
-      }
-
+    List<Artwork> movieImages = null;
+    synchronized (tmdb) {
+      // posters and fanart
+      movieImages = tmdb.getMovieImages(tmdbId, "");
     }
+
+    List<MediaArtwork> artwork = prepareArtwork(movieImages, artworkType, tmdbId);
 
     // buffer the artwork
     MediaMetadata md = options.getMetadata();
@@ -624,27 +572,28 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return 0;
   }
 
-  /**
-   * Gets the artwork from tmdb.
-   * 
-   * @param tmdbId
-   *          the tmdb id
-   * @return the artwork from tmdb
-   * @throws MovieDbException
-   *           the movie db exception
-   */
-  private List<Artwork> getArtworkFromTmdb(int tmdbId) throws MovieDbException {
-    List<Artwork> movieImages = null;
-    synchronized (tmdb) {
-      // posters and fanart
-      movieImages = tmdb.getMovieImages(tmdbId, "");
-    }
-
-    // sort image list
-    Collections.sort(movieImages, new ArtworkComparator());
-
-    return movieImages;
-  }
+  // /**
+  // * Gets the artwork from tmdb.
+  // *
+  // * @param tmdbId
+  // * the tmdb id
+  // * @return the artwork from tmdb
+  // * @throws MovieDbException
+  // * the movie db exception
+  // */
+  // private List<Artwork> getArtworkFromTmdb(int tmdbId) throws
+  // MovieDbException {
+  // List<Artwork> movieImages = null;
+  // synchronized (tmdb) {
+  // // posters and fanart
+  // movieImages = tmdb.getMovieImages(tmdbId, "");
+  // }
+  //
+  // // sort image list
+  // Collections.sort(movieImages, new ArtworkComparator());
+  //
+  // return movieImages;
+  // }
 
   private static class ArtworkComparator implements Comparator<Artwork> {
     /*
@@ -1391,4 +1340,101 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return info;
   }
 
+  /**
+   * Gets the movie set artwork.
+   * 
+   * @param tmdbId
+   *          the tmdb id
+   * @param type
+   *          the type
+   * @return the movie set artwork
+   * @throws Exception
+   *           the exception
+   */
+  public List<MediaArtwork> getMovieSetArtwork(int tmdbId, MediaArtworkType type) throws Exception {
+    List<Artwork> tmdbArtwork = null;
+    synchronized (tmdb) {
+      tmdbArtwork = tmdb.getCollectionImages(tmdbId, "");
+    }
+
+    List<MediaArtwork> artwork = prepareArtwork(tmdbArtwork, type, tmdbId);
+
+    return artwork;
+  }
+
+  /**
+   * Prepare different sizes of the artwork.
+   * 
+   * @param tmdbArtwork
+   *          the tmdb artwork
+   * @param artworkType
+   *          the artwork type
+   * @param tmdbId
+   *          the tmdb id
+   * @return the list
+   */
+  public List<MediaArtwork> prepareArtwork(List<Artwork> tmdbArtwork, MediaArtworkType artworkType, int tmdbId) {
+    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+    String baseUrl = tmdb.getConfiguration().getBaseUrl();
+
+    // first sort the artwork
+    Collections.sort(tmdbArtwork, new ArtworkComparator());
+
+    // prepare all sizes
+    for (Artwork image : tmdbArtwork) {
+      if (image.getArtworkType() == ArtworkType.POSTER && (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL)) {
+        MediaArtwork ma = new MediaArtwork();
+        ma.setDefaultUrl(baseUrl + Globals.settings.getImageTmdbPosterSize() + image.getFilePath());
+        ma.setPreviewUrl(baseUrl + PosterSizes.w185 + image.getFilePath());
+        ma.setProviderId(getProviderInfo().getId());
+        ma.setType(MediaArtworkType.POSTER);
+        ma.setLanguage(image.getLanguage());
+        ma.setTmdbId(tmdbId);
+
+        // add different sizes
+        // original
+        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + PosterSizes.original + image.getFilePath());
+        // w500
+        if (500 < image.getWidth()) {
+          ma.addImageSize(500, image.getHeight() * 500 / image.getWidth(), baseUrl + PosterSizes.w500 + image.getFilePath());
+        }
+        // w342
+        if (342 < image.getWidth()) {
+          ma.addImageSize(342, image.getHeight() * 342 / image.getWidth(), baseUrl + PosterSizes.w342 + image.getFilePath());
+        }
+        // w185
+        if (185 < image.getWidth()) {
+          ma.addImageSize(185, image.getHeight() * 185 / image.getWidth(), baseUrl + PosterSizes.w185 + image.getFilePath());
+        }
+
+        artwork.add(ma);
+      }
+
+      if (image.getArtworkType() == ArtworkType.BACKDROP && (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL)) {
+        MediaArtwork ma = new MediaArtwork();
+        ma.setDefaultUrl(baseUrl + Globals.settings.getImageTmdbFanartSize() + image.getFilePath());
+        ma.setPreviewUrl(baseUrl + FanartSizes.w300 + image.getFilePath());
+        ma.setProviderId(getProviderInfo().getId());
+        ma.setType(MediaArtworkType.BACKGROUND);
+        ma.setLanguage(image.getLanguage());
+        ma.setTmdbId(tmdbId);
+
+        // add different sizes
+        // original (most of the time 1920x1080)
+        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + FanartSizes.original + image.getFilePath());
+        // 1280x720
+        if (1280 < image.getWidth()) {
+          ma.addImageSize(1280, image.getHeight() * 1280 / image.getWidth(), baseUrl + FanartSizes.w1280 + image.getFilePath());
+        }
+        // w300
+        if (300 < image.getWidth()) {
+          ma.addImageSize(300, image.getHeight() * 300 / image.getWidth(), baseUrl + FanartSizes.w300 + image.getFilePath());
+        }
+
+        artwork.add(ma);
+      }
+    }
+
+    return artwork;
+  }
 }

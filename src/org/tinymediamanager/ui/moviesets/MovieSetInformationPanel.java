@@ -196,56 +196,6 @@ public class MovieSetInformationPanel extends JPanel {
   }
 
   /**
-   * Inits the data bindings.
-   */
-  protected void initDataBindings() {
-    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty = BeanProperty.create("selectedMovieSet.name");
-    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSetSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        movieSetSelectionModelBeanProperty, lblMovieSetName, jLabelBeanProperty);
-    autoBinding.bind();
-    // //
-    // BeanProperty<MovieSetSelectionModel, List<Movie>>
-    // movieSetSelectionModelBeanProperty_1 =
-    // BeanProperty.create("selectedMovieSet.movies");
-    // JTableBinding<Movie, MovieSetSelectionModel, JTable> jTableBinding =
-    // SwingBindings.createJTableBinding(UpdateStrategy.READ, selectionModel,
-    // movieSetSelectionModelBeanProperty_1, tableAssignedMovies);
-    // //
-    // BeanProperty<Movie, String> movieBeanProperty =
-    // BeanProperty.create("name");
-    // jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Movieset parts").setEditable(false);
-    // //
-    // BeanProperty<Movie, String> movieBeanProperty_1 =
-    // BeanProperty.create("year");
-    // jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year").setEditable(false);
-    // //
-    // BeanProperty<Movie, Boolean> movieBeanProperty_2 =
-    // BeanProperty.create("watched");
-    // jTableBinding.addColumnBinding(movieBeanProperty_2).setColumnName("Watched").setEditable(false).setColumnClass(Boolean.class);
-    // //
-    // jTableBinding.setEditable(false);
-    // jTableBinding.bind();
-    //
-    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovieSet.posterUrl");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
-    AutoBinding<MovieSetSelectionModel, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        movieSetSelectionModelBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_3 = BeanProperty.create("selectedMovieSet.fanartUrl");
-    AutoBinding<MovieSetSelectionModel, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        movieSetSelectionModelBeanProperty_3, lblMovieSetFanart, imageLabelBeanProperty);
-    autoBinding_2.bind();
-    //
-    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovieSet.overview");
-    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSetSelectionModel, String, JTextPane, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        movieSetSelectionModelBeanProperty_4, tpOverview, jTextPaneBeanProperty);
-    autoBinding_3.bind();
-  }
-
-  /**
    * The Class MediaTableFormat.
    */
   private static class MovieInMovieSetTableFormat implements AdvancedTableFormat<Movie> {
@@ -332,5 +282,30 @@ public class MovieSetInformationPanel extends JPanel {
       return null;
     }
 
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty = BeanProperty.create("selectedMovieSet.name");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieSetSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        movieSetSelectionModelBeanProperty, lblMovieSetName, jLabelBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovieSet.overview");
+    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
+    AutoBinding<MovieSetSelectionModel, String, JTextPane, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        movieSetSelectionModelBeanProperty_4, tpOverview, jTextPaneBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovieSet.fanart");
+    BeanProperty<ImageLabel, String> imageLabelBeanProperty_1 = BeanProperty.create("imagePath");
+    AutoBinding<MovieSetSelectionModel, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        movieSetSelectionModelBeanProperty_1, lblMovieSetFanart, imageLabelBeanProperty_1);
+    autoBinding_2.bind();
+    //
+    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovieSet.poster");
+    AutoBinding<MovieSetSelectionModel, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        movieSetSelectionModelBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty_1);
+    autoBinding_1.bind();
   }
 }

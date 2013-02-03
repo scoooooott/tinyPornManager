@@ -384,6 +384,8 @@ public class MovieSetChooser extends JDialog implements ActionListener {
         movieSetToEdit.setName(model.getName());
         movieSetToEdit.setPosterUrl(model.getPosterUrl());
         movieSetToEdit.setFanartUrl(model.getFanartUrl());
+        movieSetToEdit.setTmdbId(model.getTmdbId());
+        movieSetToEdit.saveToDb();
 
         // assign movies
         if (cbAssignMovies.isSelected()) {
@@ -403,12 +405,15 @@ public class MovieSetChooser extends JDialog implements ActionListener {
 
             movie.setMovieSet(movieSetToEdit);
             movie.saveToDb();
-
             movieSetToEdit.addMovie(movie);
+
+            movie.writeNFO();
           }
+
+          // and finally save assignments
+          movieSetToEdit.saveToDb();
         }
 
-        movieSetToEdit.saveToDb();
       }
       setVisible(false);
       dispose();

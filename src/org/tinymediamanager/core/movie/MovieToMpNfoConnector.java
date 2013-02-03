@@ -290,6 +290,26 @@ public class MovieToMpNfoConnector {
           movie.setCertification(Certification.findCertification(mp.getMpaa()));
         }
 
+        // movieset
+        if (mp.getSets() != null && mp.getSets().size() > 0) {
+          MovieSets sets = mp.getSets().get(0);
+          // search for that movieset
+          MovieList movieList = MovieList.getInstance();
+          MovieSet movieSet = movieList.findMovieSet(sets.getName());
+          // no one found - create it
+          if (movieSet == null) {
+            movieSet = new MovieSet(sets.getName());
+            movieSet.saveToDb();
+            movieList.addMovieSet(movieSet);
+            movieList.getMovieSetTreeModel().addMovieSet(movieSet);
+          }
+
+          // add movie to movieset
+          if (movieSet != null) {
+            movie.setMovieSet(movieSet);
+          }
+        }
+
         for (Object obj : mp.getActors()) {
           // every unused XML element will be shown as an actor - we have to
           // test it this way; else the program will crash

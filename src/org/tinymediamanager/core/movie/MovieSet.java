@@ -15,44 +15,54 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
  * The Class MovieSet.
  */
 @Entity
 public class MovieSet extends AbstractModelObject {
+  /** The static LOGGER. */
+  private static final Logger LOGGER           = Logger.getLogger(MovieSet.class);
 
   /** The name. */
-  private String      name             = "";
+  private String              name             = "";
 
   /** The overview. */
-  private String      overview         = "";
+  private String              overview         = "";
 
   /** The poster url. */
-  private String      posterUrl        = "";
+  private String              posterUrl        = "";
 
-  /** The poster. */
-  private String      poster           = "";
+  /** The fanart url. */
+  private String              fanartUrl        = "";
 
-  private String      fanartUrl        = "";
-
-  private String      fanart           = "";
+  /** The tmdb id. */
+  private int                 tmdbId           = 0;
 
   /** The movies. */
-  private List<Movie> movies           = new ArrayList<Movie>();
+  private List<Movie>         movies           = new ArrayList<Movie>();
 
   /** The movies observable. */
   @Transient
-  private List<Movie> moviesObservable = ObservableCollections.observableList(movies);
+  private List<Movie>         moviesObservable = ObservableCollections.observableList(movies);
 
   /**
    * Instantiates a new movie set. Needed for JAXB
@@ -64,12 +74,12 @@ public class MovieSet extends AbstractModelObject {
    * Instantiates a new movie set.
    * 
    * @param name
-   *          the name
+   *          the new value
    */
-  public MovieSet(String newValue) {
+  public MovieSet(String name) {
     String oldValue = this.name;
-    this.name = newValue;
-    firePropertyChange("name", oldValue, newValue);
+    this.name = name;
+    firePropertyChange("name", oldValue, name);
   }
 
   /**
@@ -89,6 +99,29 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
+   * Gets the tmdb id.
+   * 
+   * @return the tmdb id
+   */
+  public int getTmdbId() {
+    return tmdbId;
+  }
+
+  /**
+   * Sets the tmdb id.
+   * 
+   * @param newValue
+   *          the new tmdb id
+   */
+  public void setTmdbId(int newValue) {
+    int oldValue = this.tmdbId;
+    this.tmdbId = newValue;
+    firePropertyChange("tmdbId", oldValue, newValue);
+  }
+
+  /**
+   * Gets the overview.
+   * 
    * @return the overview
    */
   public String getOverview() {
@@ -96,8 +129,10 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
-   * @param overview
-   *          the overview to set
+   * Sets the overview.
+   * 
+   * @param newValue
+   *          the new overview
    */
   public void setOverview(String newValue) {
     String oldValue = this.overview;
@@ -106,6 +141,8 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
+   * Gets the poster url.
+   * 
    * @return the posterUrl
    */
   public String getPosterUrl() {
@@ -113,50 +150,100 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
-   * @param posterUrl
-   *          the posterUrl to set
+   * Sets the poster url.
+   * 
+   * @param newValue
+   *          the new poster url
    */
   public void setPosterUrl(String newValue) {
     String oldValue = this.posterUrl;
     this.posterUrl = newValue;
+
+    // write new poster
+    writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", fanartUrl);
+
     firePropertyChange("posterUrl", oldValue, newValue);
-  }
-
-  /**
-   * @return the poster
-   */
-  public String getPoster() {
-    return poster;
-  }
-
-  /**
-   * @param poster
-   *          the poster to set
-   */
-  public void setPoster(String newValue) {
-    String oldValue = this.poster;
-    this.poster = newValue;
     firePropertyChange("poster", oldValue, newValue);
   }
 
+  /**
+   * Gets the fanart url.
+   * 
+   * @return the fanart url
+   */
   public String getFanartUrl() {
     return fanartUrl;
   }
 
-  public String getFanart() {
-    return fanart;
-  }
-
+  /**
+   * Sets the fanart url.
+   * 
+   * @param newValue
+   *          the new fanart url
+   */
   public void setFanartUrl(String newValue) {
     String oldValue = this.fanartUrl;
     this.fanartUrl = newValue;
+
+    // write new fanart
+    writeImageToMovieFolder(moviesObservable, "movieset-fanart.jpg", fanartUrl);
+
     firePropertyChange("fanartUrl", oldValue, newValue);
+    firePropertyChange("fanart", oldValue, newValue);
   }
 
-  public void setFanart(String newValue) {
-    String oldValue = this.fanart;
-    this.fanart = newValue;
-    firePropertyChange("fanart", oldValue, newValue);
+  public String getFanart() {
+    String fanart = "";
+
+    // try to get a fanart from one movie
+    for (Movie movie : moviesObservable) {
+      String filename = movie.getPath() + File.separator + "movieset-fanart.jpg";
+      File fanartFile = new File(filename);
+      if (fanartFile.exists()) {
+        return filename;
+      }
+    }
+
+    // we did not find an image from a movie - get the cached file from the url
+    File cachedFile = new File(ImageCache.getCacheDir() + File.separator + ImageCache.getCachedFileName(fanartUrl) + ".jpg");
+    if (cachedFile.exists()) {
+      return cachedFile.getPath();
+    }
+
+    // no cached file found - cache it via thread
+    if (StringUtils.isNotEmpty(fanartUrl)) {
+      ImageFetcher task = new ImageFetcher("fanart", fanartUrl);
+      Globals.executor.execute(task);
+    }
+
+    return fanart;
+  }
+
+  public String getPoster() {
+    String poster = "";
+
+    // try to get a fanart from one movie
+    for (Movie movie : moviesObservable) {
+      String filename = movie.getPath() + File.separator + "movieset-poster.jpg";
+      File posterFile = new File(filename);
+      if (posterFile.exists()) {
+        return filename;
+      }
+    }
+
+    // we did not find an image from a movie - get the cached file from the url
+    File cachedFile = new File(ImageCache.getCacheDir() + File.separator + ImageCache.getCachedFileName(posterUrl) + ".jpg");
+    if (cachedFile.exists()) {
+      return cachedFile.getPath();
+    }
+
+    // no cached file found - cache it via thread
+    if (StringUtils.isNotEmpty(posterUrl)) {
+      ImageFetcher task = new ImageFetcher("poster", posterUrl);
+      Globals.executor.execute(task);
+    }
+
+    return poster;
   }
 
   /**
@@ -180,6 +267,13 @@ public class MovieSet extends AbstractModelObject {
   public void addMovie(Movie movie) {
     moviesObservable.add(movie);
     saveToDb();
+
+    // write images
+    List<Movie> movies = new ArrayList<Movie>(1);
+    movies.add(movie);
+    writeImageToMovieFolder(movies, "movieset-fanart.jpg", fanartUrl);
+    writeImageToMovieFolder(movies, "movieset-poster.jpg", posterUrl);
+
     firePropertyChange("movies", null, moviesObservable);
     firePropertyChange("addedMovie", null, movie);
   }
@@ -191,8 +285,19 @@ public class MovieSet extends AbstractModelObject {
    *          the movie
    */
   public void removeMovie(Movie movie) {
+    // remove images from movie folder
+    File imageFile = new File(movie.getPath() + File.separator + "movieset-fanart.jpg");
+    if (imageFile.exists()) {
+      imageFile.delete();
+    }
+    imageFile = new File(movie.getPath() + File.separator + "movieset-poster.jpg");
+    if (imageFile.exists()) {
+      imageFile.delete();
+    }
+
     moviesObservable.remove(movie);
     saveToDb();
+
     firePropertyChange("movies", null, moviesObservable);
     firePropertyChange("removedMovie", null, movie);
   }
@@ -210,11 +315,24 @@ public class MovieSet extends AbstractModelObject {
    * Removes the all movies.
    */
   public void removeAllMovies() {
+    // remove images from movie folder
+    for (Movie movie : moviesObservable) {
+      File imageFile = new File(movie.getPath() + File.separator + "movieset-fanart.jpg");
+      if (imageFile.exists()) {
+        imageFile.delete();
+      }
+      imageFile = new File(movie.getPath() + File.separator + "movieset-poster.jpg");
+      if (imageFile.exists()) {
+        imageFile.delete();
+      }
+    }
+
     // store all old movies to remove the nodes in the tree
     List<Movie> oldValue = new ArrayList<Movie>(moviesObservable.size());
     oldValue.addAll(moviesObservable);
     moviesObservable.clear();
     saveToDb();
+
     firePropertyChange("movies", null, moviesObservable);
     firePropertyChange("removedAllMovies", oldValue, moviesObservable);
   }
@@ -250,5 +368,84 @@ public class MovieSet extends AbstractModelObject {
    */
   public int getMovieIndex(Movie movie) {
     return movies.indexOf(movie);
+  }
+
+  /**
+   * Write image to movie folder.
+   * 
+   * @param movies
+   *          the movies
+   * @param filename
+   *          the filename
+   * @param url
+   *          the url
+   */
+  private void writeImageToMovieFolder(List<Movie> movies, String filename, String url) {
+    // check for empty strings or movies
+    if (movies == null || movies.size() == 0 || StringUtils.isEmpty(filename) || StringUtils.isEmpty(url)) {
+      return;
+    }
+
+    // write image for all movies
+    try {
+      for (Movie movie : movies) {
+        CachedUrl cachedUrl = new CachedUrl(url);
+        FileOutputStream outputStream = new FileOutputStream(movie.getPath() + File.separator + filename);
+        InputStream is = cachedUrl.getInputStream();
+        IOUtils.copy(is, outputStream);
+        outputStream.close();
+        is.close();
+      }
+    }
+    catch (IOException e) {
+      LOGGER.warn(e);
+    }
+  }
+
+  /**
+   * Rewrite all images.
+   */
+  public void rewriteAllImages() {
+    writeImageToMovieFolder(moviesObservable, "movieset-fanart.jpg", fanartUrl);
+    writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", posterUrl);
+  }
+
+  /**
+   * The Class ImageFetcher.
+   */
+  private class ImageFetcher implements Runnable {
+
+    private String propertyName = "";
+
+    private String imageUrl     = "";
+
+    public ImageFetcher(String propertyName, String url) {
+      this.propertyName = propertyName;
+      this.imageUrl = url;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Runnable#run()
+     */
+    @Override
+    public void run() {
+      String filename = ImageCache.getCachedFileName(imageUrl);
+      File outputFile = new File(ImageCache.getCacheDir(), filename + ".jpg");
+
+      try {
+        CachedUrl url = new CachedUrl(imageUrl);
+        FileOutputStream outputStream = new FileOutputStream(outputFile);
+        InputStream is = url.getInputStream();
+        IOUtils.copy(is, outputStream);
+        outputStream.close();
+        is.close();
+        firePropertyChange(propertyName, "", filename);
+      }
+      catch (IOException e) {
+        LOGGER.warn(e);
+      }
+    }
   }
 }

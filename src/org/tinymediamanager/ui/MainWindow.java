@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui;
 
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,7 +37,6 @@ import javax.swing.JTabbedPane;
 
 import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.settings.SettingsPanel;
@@ -109,18 +109,36 @@ public class MainWindow extends JFrame {
 
     // debug menu
     JMenu debug = new JMenu("Debug");
-    JMenuItem clearDatabase = new JMenuItem("clear database");
+    JMenuItem clearDatabase = new JMenuItem("initialize database");
     debug.add(clearDatabase);
     clearDatabase.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        // delete all data from the database
-        MovieList movieList = MovieList.getInstance();
-        movieList.removeMovieSets();
-        movieList.removeMovies();
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        JOptionPane.showMessageDialog(null, "Database cleared. Please restart tinyMediaManager");
+        // delete the database
+        try {
+          Globals.shutdownDatabase();
+          File db = new File("tmm.odb");
+          if (db.exists()) {
+            db.delete();
+          }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          JOptionPane.showMessageDialog(null, "Database initialized. Please restart tinyMediaManager");
+        }
+        catch (Exception e) {
+          JOptionPane.showMessageDialog(null, "An error occured on database init. Please delete the file tmm.odb manually");
+          // open the tmm folder
+          try {
+            File path = new File(".");
+            // check whether this location exists
+            if (path.exists()) {
+              Desktop.getDesktop().open(path);
+            }
+          }
+          catch (Exception ex) {
+          }
+        }
+        System.exit(0);
       }
     });
     JMenuItem clearCache = new JMenuItem("clear cache");

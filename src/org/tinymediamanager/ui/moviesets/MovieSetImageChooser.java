@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.moviesets;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,16 +50,13 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -71,16 +68,17 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+// TODO: Auto-generated Javadoc
 /**
- * The Class ImageChooser.
+ * The Class MovieSetImageChooser.
  */
-public class MovieImageChooser extends JDialog {
+public class MovieSetImageChooser extends JDialog {
 
   /** The Constant serialVersionUID. */
   private static final long   serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger LOGGER           = Logger.getLogger(MovieImageChooser.class);
+  private static final Logger LOGGER           = Logger.getLogger(MovieSetImageChooser.class);
 
   /**
    * The Enum ImageType.
@@ -129,36 +127,29 @@ public class MovieImageChooser extends JDialog {
   /** The toggle button ui. */
   private final ToggleButtonUI toggleButtonUI = new ToggleButtonUI();
 
-  /** The extrathumbs. */
-  private List<String>         extrathumbs;
-
   /** The action. */
   private final Action         action         = new SwingAction_2();
 
+  /** The movie list. */
   private final MovieList      movieList      = MovieList.getInstance();
 
   /**
    * Create the dialog.
    * 
-   * @param imdbId
-   *          the imdb id
    * @param tmdbId
    *          the tmdb id
-   * @param type
+   * @param poster
    *          the type
    * @param imageLabel
    *          the image label
-   * @param extrathumbs
-   *          the extrathumbs
    */
-  public MovieImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel, List<String> extrathumbs) {
+  public MovieSetImageChooser(int tmdbId, ImageType poster, ImageLabel imageLabel) {
     setModal(true);
     setIconImage(Globals.logo);
     this.imageLabel = imageLabel;
-    this.type = type;
-    this.extrathumbs = extrathumbs;
+    this.type = poster;
 
-    switch (type) {
+    switch (poster) {
       case FANART:
         setTitle("Choose fanart");
         break;
@@ -222,7 +213,7 @@ public class MovieImageChooser extends JDialog {
       }
     }
 
-    task = new DownloadTask(imdbId, tmdbId);
+    task = new DownloadTask(tmdbId);
     task.execute();
   }
 
@@ -281,37 +272,6 @@ public class MovieImageChooser extends JDialog {
         }
         else {
           imageLabel.setImageUrl(artwork.getDefaultUrl());
-        }
-      }
-
-      // extrathumbs
-      if (type == ImageType.FANART) {
-        extrathumbs.clear();
-        // get extrathumbs
-        for (JToggleButton button : buttons) {
-          Object clientProperty = button.getClientProperty("MediaArtworkExtrathumb");
-          if (clientProperty instanceof JCheckBox) {
-            JCheckBox chkbx = (JCheckBox) clientProperty;
-            if (chkbx.isSelected()) {
-              clientProperty = button.getClientProperty("MediaArtwork");
-              if (clientProperty instanceof TmdbArtwork) {
-                artwork = (MediaArtwork) clientProperty;
-                clientProperty = button.getClientProperty("MediaArtworkSize");
-                // try to get the size
-                if (clientProperty instanceof JComboBox) {
-                  JComboBox cb = (JComboBox) clientProperty;
-                  ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
-
-                  if (size != null) {
-                    extrathumbs.add(size.getUrl());
-                  }
-                  else {
-                    extrathumbs.add(artwork.getDefaultUrl());
-                  }
-                }
-              }
-            }
-          }
         }
       }
 
@@ -457,23 +417,16 @@ public class MovieImageChooser extends JDialog {
    * The Class DownloadTask.
    */
   private class DownloadTask extends SwingWorker<Void, Void> {
-
-    /** The imdb id. */
-    private String imdbId;
-
     /** The tmdb id. */
-    private int    tmdbId;
+    private int tmdbId;
 
     /**
      * Instantiates a new download task.
      * 
-     * @param imdbId
-     *          the imdb id
      * @param tmdbId
      *          the tmdb id
      */
-    public DownloadTask(String imdbId, int tmdbId) {
-      this.imdbId = imdbId;
+    public DownloadTask(int tmdbId) {
       this.tmdbId = tmdbId;
     }
 
@@ -484,68 +437,70 @@ public class MovieImageChooser extends JDialog {
      */
     @Override
     public Void doInBackground() {
-      if (StringUtils.isEmpty(imdbId) && tmdbId == 0) {
-        JOptionPane.showMessageDialog(null, "No ID (imdbId or tmdbId) for searching available");
+      if (tmdbId == 0) {
+        JOptionPane.showMessageDialog(null, "No ID (tmdbId) for searching available");
         return null;
       }
 
       startProgressBar("Downloading images");
 
+      TmdbMetadataProvider artworkProvider;
       try {
-        if (movieList.getArtworkProviders().size() == 0) {
+        artworkProvider = new TmdbMetadataProvider();
+      }
+      catch (Exception e1) {
+        LOGGER.warn(e1);
+        return null;
+      }
+
+      MediaArtworkType artworkType = null;
+
+      switch (type) {
+        case FANART:
+          artworkType = MediaArtworkType.BACKGROUND;
+          break;
+
+        case POSTER:
+          artworkType = MediaArtworkType.POSTER;
+          break;
+
+        default:
+          return null;
+      }
+
+      List<MediaArtwork> artwork = null;
+      try {
+        artwork = artworkProvider.getMovieSetArtwork(tmdbId, artworkType);
+      }
+      catch (Exception e1) {
+        LOGGER.warn(e1);
+      }
+
+      // return if nothing has been found
+      if (artwork == null) {
+        return null;
+      }
+
+      // display all images
+      for (MediaArtwork art : artwork) {
+        if (isCancelled()) {
           return null;
         }
 
-        // get images from all artworkproviders
-        for (IMediaArtworkProvider artworkProvider : movieList.getArtworkProviders()) {
-          MediaScrapeOptions options = new MediaScrapeOptions();
-          switch (type) {
-            case POSTER:
-              options.setArtworkType(MediaArtworkType.POSTER);
-              break;
-
-            case FANART:
-              options.setArtworkType(MediaArtworkType.BACKGROUND);
-              break;
-          }
-
-          options.setImdbId(imdbId);
-          options.setTmdbId(tmdbId);
-
-          List<MediaArtwork> artwork = artworkProvider.getArtwork(options);
-          if (artwork == null) {
-            continue;
-          }
-
-          // display all images
-          for (MediaArtwork art : artwork) {
-            if (isCancelled()) {
-              return null;
-            }
-
-            CachedUrl cachedUrl = null;
-            try {
-              cachedUrl = new CachedUrl(art.getPreviewUrl());
-              Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
-              BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
-              addImage(bufferedImage, art);
-            }
-            catch (Exception e) {
-              LOGGER.error("DownloadTask", e);
-              // mark cache file as damaged
-              if (cachedUrl != null) {
-                cachedUrl.removeCachedFile();
-              }
-            }
-
+        CachedUrl cachedUrl = null;
+        try {
+          cachedUrl = new CachedUrl(art.getPreviewUrl());
+          Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+          BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
+          addImage(bufferedImage, art);
+        }
+        catch (Exception e) {
+          LOGGER.error("DownloadTask", e);
+          // mark cache file as damaged
+          if (cachedUrl != null) {
+            cachedUrl.removeCachedFile();
           }
         }
-      }
-      catch (NumberFormatException e) {
-        LOGGER.error("DownloadTask", e);
-      }
-      catch (Exception e) {
-        LOGGER.error("DownloadTask", e);
       }
 
       return null;

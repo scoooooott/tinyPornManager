@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
-import javax.xml.bind.JAXBElement.GlobalScope;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -83,6 +82,7 @@ public class MovieList extends AbstractModelObject {
   /** The tags observable. */
   private List<String>                 tagsObservable = ObservableCollections.observableList(new ArrayList<String>());
 
+  /** The movie set tree model. */
   private MovieSetTreeModel            movieSetTreeModel;
 
   /**
@@ -349,6 +349,10 @@ public class MovieList extends AbstractModelObject {
           movie.setDateAdded(new Date());
           LOGGER.debug("store movie " + dir.getPath());
           movie.saveToDb();
+          if (movie.getMovieSet() != null) {
+            movie.getMovieSet().addMovie(movie);
+            movie.getMovieSet().saveToDb();
+          }
           addMovie(movie);
         }
       }
@@ -389,6 +393,8 @@ public class MovieList extends AbstractModelObject {
    *          the search term
    * @param ImdbId
    *          the imdb id
+   * @param metadataProvider
+   *          the metadata provider
    * @return the list
    */
   public List<MediaSearchResult> searchMovie(String searchTerm, String ImdbId, IMediaMetadataProvider metadataProvider) {
@@ -408,6 +414,8 @@ public class MovieList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
+   * @param metadataProvider
+   *          the metadata provider
    * @return the list
    */
   private List<MediaSearchResult> searchMovie(String searchTerm, IMediaMetadataProvider metadataProvider) {
@@ -435,6 +443,8 @@ public class MovieList extends AbstractModelObject {
    * 
    * @param imdbId
    *          the imdb id
+   * @param metadataProvider
+   *          the metadata provider
    * @return the list
    */
   private List<MediaSearchResult> searchMovieByImdbId(String imdbId, IMediaMetadataProvider metadataProvider) {
@@ -683,6 +693,8 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * Gets the movie set list.
+   * 
    * @return the movieSetList
    */
   public List<MovieSet> getMovieSetList() {
@@ -693,6 +705,8 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * Sets the movie set list.
+   * 
    * @param movieSetList
    *          the movieSetList to set
    */
@@ -741,11 +755,40 @@ public class MovieList extends AbstractModelObject {
     }
   }
 
+  /**
+   * Gets the movie set tree model.
+   * 
+   * @return the movie set tree model
+   */
   public MovieSetTreeModel getMovieSetTreeModel() {
     return movieSetTreeModel;
   }
 
+  /**
+   * Sets the movie set tree model.
+   * 
+   * @param movieSetTreeModel
+   *          the new movie set tree model
+   */
   public void setMovieSetTreeModel(MovieSetTreeModel movieSetTreeModel) {
     this.movieSetTreeModel = movieSetTreeModel;
+  }
+
+  /**
+   * Find movie set.
+   * 
+   * @param name
+   *          the name
+   * @return the movie set
+   */
+  public MovieSet findMovieSet(String name) {
+    // search for the movieset by name
+    for (MovieSet movieSet : movieSetList) {
+      if (movieSet.getName().equals(name)) {
+        return movieSet;
+      }
+    }
+
+    return null;
   }
 }
