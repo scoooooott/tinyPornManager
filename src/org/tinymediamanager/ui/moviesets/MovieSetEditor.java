@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -42,8 +43,12 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.moviesets.MovieSetImageChooser.ImageType;
@@ -98,6 +103,12 @@ public class MovieSetEditor extends JDialog {
   /** The action cancel. */
   private final Action actionCancel        = new CancelAction();
 
+  /** The tf tmdb id. */
+  private JTextField   tfTmdbId;
+
+  /** The action search tmdb id. */
+  private final Action actionSearchTmdbId  = new SwingAction();
+
   /**
    * Instantiates a new movie set editor.
    * 
@@ -118,69 +129,93 @@ public class MovieSetEditor extends JDialog {
 
     JPanel panelContent = new JPanel();
     panelContent.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("2dlu"), FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), ColumnSpec.decode("2dlu"), },
-        new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("75px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+        ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("250px:grow"), ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("75px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
     getContentPane().add(panelContent, BorderLayout.CENTER);
 
     JLabel lblName = new JLabel("Title");
     panelContent.add(lblName, "2, 2, right, default");
 
     tfName = new JTextField();
-    panelContent.add(tfName, "4, 2, fill, default");
+    panelContent.add(tfName, "4, 2, 3, 1, fill, default");
     tfName.setColumns(10);
 
     lblPoster = new ImageLabel();
     lblPoster.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        MovieSetImageChooser dialog = new MovieSetImageChooser(movieSetToEdit.getTmdbId(), ImageType.POSTER, lblPoster);
+        int tmdbId = 0;
+        try {
+          tmdbId = Integer.parseInt(tfTmdbId.getText());
+        }
+        catch (Exception e1) {
+        }
+        MovieSetImageChooser dialog = new MovieSetImageChooser(tmdbId, ImageType.POSTER, lblPoster);
         dialog.setVisible(true);
       }
     });
-    panelContent.add(lblPoster, "6, 2, 1, 7, fill, fill");
+    panelContent.add(lblPoster, "8, 2, 1, 9, fill, fill");
+
+    JLabel lblTmdbid = new JLabel("TmdbId");
+    panelContent.add(lblTmdbid, "2, 4, right, default");
+
+    tfTmdbId = new JTextField();
+    panelContent.add(tfTmdbId, "4, 4, fill, default");
+    tfTmdbId.setColumns(10);
+
+    JButton btnSearchTmdbId = new JButton("New button");
+    btnSearchTmdbId.setAction(actionSearchTmdbId);
+    panelContent.add(btnSearchTmdbId, "6, 4, left, default");
 
     JLabel lblOverview = new JLabel("Overview");
-    panelContent.add(lblOverview, "2, 4, right, top");
+    panelContent.add(lblOverview, "2, 6, right, top");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
-    panelContent.add(scrollPaneOverview, "4, 4, fill, fill");
+    panelContent.add(scrollPaneOverview, "4, 6, 3, 1, fill, fill");
 
     tpOverview = new JTextPane();
     scrollPaneOverview.setViewportView(tpOverview);
 
     JLabel lblMovies = new JLabel("Movies");
-    panelContent.add(lblMovies, "2, 6, right, top");
+    panelContent.add(lblMovies, "2, 8, right, top");
 
     JScrollPane scrollPaneMovies = new JScrollPane();
-    panelContent.add(scrollPaneMovies, "4, 6, 1, 9, fill, fill");
+    panelContent.add(scrollPaneMovies, "4, 8, 3, 9, fill, fill");
 
     tableMovies = new JTable();
     scrollPaneMovies.setViewportView(tableMovies);
 
     JButton btnRemoveMovie = new JButton("");
     btnRemoveMovie.setAction(actionRemoveMovie);
-    panelContent.add(btnRemoveMovie, "2, 8, right, top");
+    panelContent.add(btnRemoveMovie, "2, 10, right, top");
 
     JButton btnMoveMovieUp = new JButton("");
     btnMoveMovieUp.setAction(actionMoveMovieUp);
-    panelContent.add(btnMoveMovieUp, "2, 10, right, top");
+    panelContent.add(btnMoveMovieUp, "2, 12, right, top");
 
     lblFanart = new ImageLabel();
     lblFanart.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        MovieSetImageChooser dialog = new MovieSetImageChooser(movieSetToEdit.getTmdbId(), ImageType.FANART, lblFanart);
+        int tmdbId = 0;
+        try {
+          tmdbId = Integer.parseInt(tfTmdbId.getText());
+        }
+        catch (Exception e1) {
+        }
+        MovieSetImageChooser dialog = new MovieSetImageChooser(tmdbId, ImageType.FANART, lblFanart);
         dialog.setVisible(true);
       }
     });
-    panelContent.add(lblFanart, "6, 10, 1, 5, fill, fill");
+    panelContent.add(lblFanart, "8, 12, 1, 5, fill, fill");
 
     JButton btnMoveMovieDown = new JButton("");
     btnMoveMovieDown.setAction(actionMoveMovieDown);
-    panelContent.add(btnMoveMovieDown, "2, 12, right, top");
+    panelContent.add(btnMoveMovieDown, "2, 14, right, top");
 
     /**
      * Button pane
@@ -206,6 +241,7 @@ public class MovieSetEditor extends JDialog {
 
     {
       tfName.setText(movieSetToEdit.getName());
+      tfTmdbId.setText(String.valueOf(movieSetToEdit.getTmdbId()));
       tpOverview.setText(movieSetToEdit.getOverview());
       lblPoster.setImageUrl(movieSetToEdit.getPosterUrl());
       moviesInSet.addAll(movieSetToEdit.getMovies());
@@ -354,6 +390,12 @@ public class MovieSetEditor extends JDialog {
         movieSetToEdit.removeMovie(movie);
       }
 
+      try {
+        movieSetToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
+      }
+      catch (Exception e1) {
+      }
+
       movieSetToEdit.saveToDb();
 
       setVisible(false);
@@ -403,5 +445,48 @@ public class MovieSetEditor extends JDialog {
     //
     jTableBinding.setEditable(false);
     jTableBinding.bind();
+  }
+
+  /**
+   * The Class SwingAction.
+   */
+  private class SwingAction extends AbstractAction {
+
+    /**
+     * Instantiates a new swing action.
+     */
+    public SwingAction() {
+      putValue(NAME, "Find TmdbId");
+      putValue(SHORT_DESCRIPTION, "Find TmdbId for this movie");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      // search for a tmdbId
+      try {
+        TmdbMetadataProvider tmdb = new TmdbMetadataProvider();
+        for (Movie movie : moviesInSet) {
+          MediaScrapeOptions options = new MediaScrapeOptions();
+          if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
+            options.setTmdbId(movie.getTmdbId());
+            options.setImdbId(movie.getImdbId());
+            MediaMetadata md = tmdb.getMetadata(options);
+            if (md.getTmdbIdSet() > 0) {
+              tfTmdbId.setText(String.valueOf(md.getTmdbIdSet()));
+              break;
+            }
+          }
+        }
+      }
+      catch (Exception e1) {
+        JOptionPane.showMessageDialog(null, "Sorry, no TmdbId could be found. Try to search for the movieset");
+      }
+
+    }
   }
 }

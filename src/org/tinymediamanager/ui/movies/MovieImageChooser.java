@@ -59,7 +59,6 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.tmdb.TmdbArtwork;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -294,7 +293,7 @@ public class MovieImageChooser extends JDialog {
             JCheckBox chkbx = (JCheckBox) clientProperty;
             if (chkbx.isSelected()) {
               clientProperty = button.getClientProperty("MediaArtwork");
-              if (clientProperty instanceof TmdbArtwork) {
+              if (clientProperty instanceof MediaArtwork) {
                 artwork = (MediaArtwork) clientProperty;
                 clientProperty = button.getClientProperty("MediaArtworkSize");
                 // try to get the size

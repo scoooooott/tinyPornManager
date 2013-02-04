@@ -312,6 +312,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
 
     md.setTmdbId(movie.getId());
+    if (movie.getBelongsToCollection() != null) {
+      md.setTmdbIdSet(movie.getBelongsToCollection().getId());
+    }
     md.setPlot(movie.getOverview());
     md.setTitle(movie.getTitle());
     md.setOriginalTitle(movie.getOriginalTitle());
@@ -372,23 +375,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       // }
     }
 
-    // List<Artwork> movieImages = getArtworkFromTmdb(tmdbId);
-    //
-    // for (Artwork image : movieImages) {
-    // if (image.getArtworkType() == ArtworkType.POSTER) {
-    // String path = baseUrl + Globals.settings.getImageTmdbPosterSize() +
-    // image.getFilePath();
-    // processMediaArt(md, MediaArtworkType.POSTER, "Poster", path);
-    // }
-    //
-    // if (image.getArtworkType() == ArtworkType.BACKDROP) {
-    // String path = baseUrl + Globals.settings.getImageTmdbFanartSize() +
-    // image.getFilePath();
-    // processMediaArt(md, MediaArtworkType.BACKGROUND, "Background", path);
-    // }
-    //
-    // }
-
     // cast
     List<Person> cast = null;
     synchronized (tmdb) {
@@ -429,12 +415,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     for (Genre genre : MediaGenres) {
       addGenre(genre, md);
     }
-
-    // // trailers
-    // List<MediaTrailer> trailers = getTrailers(tmdbId);
-    // for (MediaTrailer trailer : trailers) {
-    // md.addTrailer(trailer);
-    // }
 
     return md;
   }

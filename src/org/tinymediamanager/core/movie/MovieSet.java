@@ -268,6 +268,11 @@ public class MovieSet extends AbstractModelObject {
     moviesObservable.add(movie);
     saveToDb();
 
+    // // look for an tmdbid if no one available
+    // if (tmdbId == 0) {
+    // searchTmdbId();
+    // }
+
     // write images
     List<Movie> movies = new ArrayList<Movie>(1);
     movies.add(movie);
@@ -409,6 +414,31 @@ public class MovieSet extends AbstractModelObject {
     writeImageToMovieFolder(moviesObservable, "movieset-fanart.jpg", fanartUrl);
     writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", posterUrl);
   }
+
+  // /**
+  // * Search tmdb id for this movieset.
+  // */
+  // public void searchTmdbId() {
+  // try {
+  // TmdbMetadataProvider tmdb = new TmdbMetadataProvider();
+  // for (Movie movie : moviesObservable) {
+  // MediaScrapeOptions options = new MediaScrapeOptions();
+  // if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
+  // options.setTmdbId(movie.getTmdbId());
+  // options.setImdbId(movie.getImdbId());
+  // MediaMetadata md = tmdb.getMetadata(options);
+  // if (md.getTmdbIdSet() > 0) {
+  // setTmdbId(md.getTmdbIdSet());
+  // saveToDb();
+  // break;
+  // }
+  // }
+  // }
+  // }
+  // catch (Exception e) {
+  // LOGGER.warn(e);
+  // }
+  // }
 
   /**
    * The Class ImageFetcher.

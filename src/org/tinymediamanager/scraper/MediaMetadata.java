@@ -24,6 +24,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MediaMetadata.
  */
@@ -37,6 +38,9 @@ public class MediaMetadata {
 
   /** The tmdb id. */
   private int                   tmdbId            = 0;
+
+  /** The tmdb id set. */
+  private int                   tmdbIdSet         = 0;
 
   /** The plot. */
   private String                plot              = "";
@@ -109,6 +113,25 @@ public class MediaMetadata {
    */
   public int getTmdbId() {
     return tmdbId;
+  }
+
+  /**
+   * Gets the tmdb id set.
+   * 
+   * @return the tmdb id set
+   */
+  public int getTmdbIdSet() {
+    return tmdbIdSet;
+  }
+
+  /**
+   * Sets the tmdb id set.
+   * 
+   * @param tmdbIdSet
+   *          the new tmdb id set
+   */
+  public void setTmdbIdSet(int tmdbIdSet) {
+    this.tmdbIdSet = tmdbIdSet;
   }
 
   /**
