@@ -670,117 +670,83 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
+   * checks movie folder for poster and sets it
+   * @param name the filename within movie folder
+   * @return true/false if found (and set)
+   */
+  private boolean findAndSetPoster(String name) {
+    File p = new File(path + File.separator + name);
+    if (p.exists()) {
+      setPoster(p.getName());
+      LOGGER.debug("found poster " + p.getPath());
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
    * Find poster.
    */
   private void findPoster() {
-    String movieFileName = null;
+    boolean found = false;
 
+    // check plain
+    if (!found) {
+      found = findAndSetPoster("poster.jpg");
+    }
+    if (!found) {
+      found = findAndSetPoster("poster.png");
+    }
+    if (!found) {
+      found = findAndSetPoster("poster.tbn");
+    }
+    if (!found) {
+      found = findAndSetPoster("movie.jpg");
+    }
+    if (!found) {
+      found = findAndSetPoster("movie.png");
+    }
+    if (!found) {
+      found = findAndSetPoster("movie.tbn");
+    }
+    if (!found) {
+      found = findAndSetPoster("folder.jpg");
+    }
+    if (!found) {
+      found = findAndSetPoster("folder.png");
+    }
+    if (!found) {
+      found = findAndSetPoster("folder.tbn");
+    }
+
+    // check with moviename
+    if (!found) {
+      found = findAndSetPoster(getName() + "-poster.jpg");
+    }
+    if (!found) {
+      found = findAndSetPoster(getName() + "-poster.png");
+    }
+    if (!found) {
+      found = findAndSetPoster(getName() + "-poster.tbn");
+    }
+
+    // check with filename
     if (getMediaFiles().size() > 0) {
-      MediaFile mediaFile = getMediaFiles().get(0);
-      movieFileName = mediaFile.getFilename();
-    }
-
-    // <movie filename>.jpg
-    if (!StringUtils.isEmpty(movieFileName)) {
-      String poster = path + File.separator + FilenameUtils.getBaseName(movieFileName) + ".jpg";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
+      String mediafile =  getMediaFiles().get(0).getFilename();
+      if (!found) {
+        found = findAndSetPoster(FilenameUtils.getBaseName(mediafile) + "-poster.jpg");
+      }
+      if (!found) {
+        found = findAndSetPoster(FilenameUtils.getBaseName(mediafile) + "-poster.png");
+      }
+      if (!found) {
+        found = findAndSetPoster(FilenameUtils.getBaseName(mediafile) + "-poster.tbn");
       }
     }
-
-    // <movie filename>.tbn
-    if (!StringUtils.isEmpty(movieFileName)) {
-      String poster = path + File.separator + FilenameUtils.getBaseName(movieFileName) + ".tbn";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
-      }
-    }
-
-    // <movie filename>-poster.jpg
-    if (!StringUtils.isEmpty(movieFileName)) {
-      String poster = path + File.separator + FilenameUtils.getBaseName(movieFileName) + "-poster.jpg";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
-      }
-    }
-
-    // movie.jpg
-    {
-      String poster = path + File.separator + "movie.jpg";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
-      }
-    }
-
-    // movie.tbn
-    {
-      String poster = path + File.separator + "movie.tbn";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
-      }
-    }
-
-    // poster.jpg
-    {
-      String poster = path + File.separator + "poster.jpg";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
-      }
-    }
-
-    // poster.tbn
-    {
-      String poster = path + File.separator + "poster.tbn";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
-      }
-    }
-
-    // movie.jpg
-    {
-      String poster = path + File.separator + "movie.jpg";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
-      }
-    }
-
-    // folder.jpg
-    {
-      String poster = path + File.separator + "folder.jpg";
-      File imageFile = new File(poster);
-      if (imageFile.exists()) {
-        setPoster(FilenameUtils.getName(poster));
-        LOGGER.debug("found poster " + imageFile.getPath());
-        return;
-      }
-    }
-
+    
     // still not found anything? try *-poster.*
-    {
+    if (!found) {
       Pattern pattern = Pattern.compile("(?i).*-poster\\..{2,4}");
       File[] files = new File(path).listFiles();
       for (File file : files) {
@@ -788,47 +754,76 @@ public class Movie extends AbstractModelObject {
         if (matcher.matches()) {
           setPoster(FilenameUtils.getName(file.getName()));
           LOGGER.debug("found poster " + file.getPath());
-          return;
+          found = true;
         }
       }
+    }
+
+    if (!found) {
+      LOGGER.debug("Sorry, could not find poster.");
     }
   }
 
   /**
+   * checks movie folder for fanart and sets it
+   * @param name the filename within movie folder
+   * @return true/false if found (and set)
+   */
+  private boolean findAndSetFanart(String name) {
+    File p = new File(path + File.separator + name);
+    if (p.exists()) {
+      setFanart(p.getName());
+      LOGGER.debug("found fanart " + p.getPath());
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
    * Find fanart.
    */
   private void findFanart() {
-    String movieFileName = null;
+    boolean found = false;
 
+    // check plain
+    if (!found) {
+      found = findAndSetFanart("fanart.jpg");
+    }
+    if (!found) {
+      found = findAndSetFanart("fanart.png");
+    }
+    if (!found) {
+      found = findAndSetFanart("fanart.tbn");
+    }
+    
+    // check with moviename
+    if (!found) {
+      found = findAndSetFanart(getName() + "-fanart.jpg");
+    }
+    if (!found) {
+      found = findAndSetFanart(getName() + "-fanart.png");
+    }
+    if (!found) {
+      found = findAndSetFanart(getName() + "-fanart.tbn");
+    }
+
+    // check with filename
     if (getMediaFiles().size() > 0) {
-      MediaFile mediaFile = getMediaFiles().get(0);
-      movieFileName = mediaFile.getFilename();
-    }
-
-    // <movie filename>-fanart.jpg
-    if (!StringUtils.isEmpty(movieFileName)) {
-      String fanart = path + File.separator + FilenameUtils.getBaseName(movieFileName) + "-fanart.jpg";
-      File imageFile = new File(fanart);
-      if (imageFile.exists()) {
-        setFanart(FilenameUtils.getName(fanart));
-        LOGGER.debug("found fanart " + imageFile.getPath());
-        return;
+      String mediafile =  getMediaFiles().get(0).getFilename();
+      if (!found) {
+        found = findAndSetFanart(FilenameUtils.getBaseName(mediafile) + "-fanart.jpg");
+      }
+      if (!found) {
+        found = findAndSetFanart(FilenameUtils.getBaseName(mediafile) + "-fanart.png");
+      }
+      if (!found) {
+        found = findAndSetFanart(FilenameUtils.getBaseName(mediafile) + "-fanart.tbn");
       }
     }
-
-    // fanart.jpg
-    {
-      String fanart = path + File.separator + "fanart.jpg";
-      File imageFile = new File(fanart);
-      if (imageFile.exists()) {
-        setFanart(FilenameUtils.getName(fanart));
-        LOGGER.debug("found fanart " + imageFile.getPath());
-        return;
-      }
-    }
-
+    
     // still not found anything? try *-fanart.*
-    {
+    if (!found) {
       Pattern pattern = Pattern.compile("(?i).*-fanart\\..{2,4}");
       File[] files = new File(path).listFiles();
       for (File file : files) {
@@ -836,9 +831,13 @@ public class Movie extends AbstractModelObject {
         if (matcher.matches()) {
           setFanart(FilenameUtils.getName(file.getName()));
           LOGGER.debug("found fanart " + file.getPath());
-          return;
+          found = true;
         }
       }
+    }
+
+    if (!found) {
+      LOGGER.debug("Sorry, could not find fanart.");
     }
   }
 
