@@ -1711,6 +1711,121 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
+   * all XBMC supported poster names
+   * @param poster
+   * @return
+   */
+  private String getPosterFilename(MoviePosterNaming poster) {
+    String filename = path + File.separator;
+    String mediafile =  FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
+
+    switch (poster) {
+      case MOVIENAME_POSTER_PNG:
+        filename += getName() + ".png"; 
+        break;
+      case MOVIENAME_POSTER_JPG:
+        filename += getName() + ".jpg"; 
+        break;
+      case MOVIENAME_POSTER_TBN:
+        filename += getName() + ".tbn"; 
+        break;
+      case FILENAME_POSTER_PNG:
+        filename += mediafile + "-poster.png"; 
+        break;
+      case FILENAME_POSTER_JPG:
+        filename += mediafile + "-poster.jpg"; 
+        break;
+      case FILENAME_POSTER_TBN:
+        filename += mediafile + "-poster.tbn"; 
+        break;
+      case FILENAME_PNG:
+        filename += mediafile + ".png"; 
+        break;
+      case FILENAME_JPG:
+        filename += mediafile + ".jpg"; 
+        break;
+      case FILENAME_TBN:
+        filename += mediafile + ".tbn"; 
+        break;
+      case MOVIE_PNG:
+        filename += "movie.png"; 
+        break;
+      case MOVIE_JPG:
+        filename += "movie.jpg"; 
+        break;
+      case MOVIE_TBN:
+        filename += "movie.tbn"; 
+        break;
+      case POSTER_PNG:
+        filename += "poster.png"; 
+        break;
+      case POSTER_JPG:
+        filename += "poster.jpg"; 
+        break;
+      case POSTER_TBN:
+        filename += "poster.tbn"; 
+        break;
+      case FOLDER_PNG:
+        filename += "folder.png"; 
+        break;
+      case FOLDER_JPG:
+        filename += "folder.jpg"; 
+        break;
+      case FOLDER_TBN:
+        filename += "folder.tbn"; 
+        break;
+      default:
+        filename = ""; 
+        break;
+    }
+    return filename;
+  }
+  
+  /**
+   * all XBMC supported fanart names
+   * @param poster
+   * @return
+   */
+  private String getFanartFilename(MovieFanartNaming fanart) {
+    String filename = path + File.separator;
+    String mediafile =  FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
+
+    switch (fanart) {
+      case FANART_PNG:
+        filename += "fanart.png"; 
+        break;
+      case FANART_JPG:
+        filename += "fanart.jpg"; 
+        break;
+      case FANART_TBN:
+        filename += "fanart.tbn"; 
+        break;
+      case FILENAME_FANART_PNG:
+        filename += mediafile + "-fanart.png"; 
+        break;
+      case FILENAME_FANART_JPG:
+        filename += mediafile + "-fanart.jpg"; 
+        break;
+      case FILENAME_FANART_TBN:
+        filename += mediafile + "-fanart.tbn"; 
+        break;
+      case MOVIENAME_FANART_PNG:
+        filename += getName() + "-fanart.png"; 
+        break;
+      case MOVIENAME_FANART_JPG:
+        filename += getName() + "-fanart.jpg"; 
+        break;
+      case MOVIENAME_FANART_TBN:
+        filename += getName() + ".-fanart.tbn"; 
+        break;
+      default:
+        filename = ""; 
+        break;
+    }
+    return filename;
+  }
+  
+  /**
    * Write images.
    * 
    * @param poster
@@ -1734,41 +1849,7 @@ public class Movie extends AbstractModelObject {
         if (++i == 1) {
           firstImage = true;
         }
-
-        filename = this.path + File.separator;
-        switch (name) {
-          case FILENAME_TBN:
-            filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", ".tbn");
-            break;
-
-          case FILENAME_JPG:
-            filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", ".jpg");
-            break;
-
-          case FILENAME_POSTER_JPG:
-            filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", "-poster.jpg");
-            break;
-
-          case MOVIE_JPG:
-            filename = filename + "movie.jpg";
-            break;
-
-          case MOVIE_TBN:
-            filename = filename + "movie.tbn";
-            break;
-
-          case POSTER_JPG:
-            filename = filename + "poster.jpg";
-            break;
-
-          case POSTER_TBN:
-            filename = filename + "poster.tbn";
-            break;
-
-          case FOLDER_JPG:
-            filename = filename + "folder.jpg";
-            break;
-        }
+        filename = this.path + File.separator + getPosterFilename(name);
 
         // get image in thread
         MovieImageFetcher task = new MovieImageFetcher(this, getPosterUrl(), ArtworkType.POSTER, filename, firstImage);
@@ -1784,16 +1865,8 @@ public class Movie extends AbstractModelObject {
         if (++i == 1) {
           firstImage = true;
         }
-        filename = this.path + File.separator;
-        switch (name) {
-          case FILENAME_FANART_JPG:
-            filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", "-fanart.jpg");
-            break;
+        filename = this.path + File.separator + getFanartFilename(name);
 
-          case FANART_JPG:
-            filename = filename + "fanart.jpg";
-            break;
-        }
         // get image in thread
         MovieImageFetcher task = new MovieImageFetcher(this, getFanartUrl(), ArtworkType.BACKDROP, filename, firstImage);
         Globals.executor.execute(task);
