@@ -201,7 +201,7 @@ public class MovieImageSettingsPanel extends JPanel {
 
     // fanart filenames
     List<MovieFanartNaming> movieFanartFilenames = settings.getMovieFanartFilenames();
-    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_JPG)) {
+    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
       cbMovieFanartFilename1.setSelected(true);
     }
     if (movieFanartFilenames.contains(MovieFanartNaming.FANART_JPG)) {
@@ -259,7 +259,7 @@ public class MovieImageSettingsPanel extends JPanel {
     // set fanart filenames
     settings.clearMovieFanartFilenames();
     if (cbMovieFanartFilename1.isSelected()) {
-      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_JPG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
     }
     if (cbMovieFanartFilename2.isSelected()) {
       settings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);

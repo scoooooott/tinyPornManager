@@ -1786,7 +1786,7 @@ public class Movie extends AbstractModelObject {
         }
         filename = this.path + File.separator;
         switch (name) {
-          case FILENAME_JPG:
+          case FILENAME_FANART_JPG:
             filename = filename + getMediaFiles().get(0).getFilename().replaceAll("\\.[A-Za-z0-9]{3,4}$", "-fanart.jpg");
             break;
 

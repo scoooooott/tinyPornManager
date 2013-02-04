@@ -20,9 +20,27 @@ package org.tinymediamanager.core.movie;
  */
 public enum MovieFanartNaming {
 
-  /** The filename jpg. */
-  FILENAME_JPG,
+  /** [filename]-fanart.png */
+  FILENAME_FANART_PNG,
+  /** [filename]-fanart.jpg */
+  FILENAME_FANART_JPG,
+  /** [filename]-fanart.tbn */
+  @Deprecated
+  FILENAME_FANART_TBN,
 
-  /** The fanart jpg. */
-  FANART_JPG;
+  /** [moviename]-fanart.png */
+  MOVIENAME_FANART_PNG,
+  /** [moviename]-fanart.jpg */
+  MOVIENAME_FANART_JPG,
+  /** [moviename]-fanart.tbn */
+  @Deprecated
+  MOVIENAME_FANART_TBN,
+
+  /** fanart.png */
+  FANART_PNG,
+  /** fanart.jpg */
+  FANART_JPG,
+  /** fanart.tbn */
+  @Deprecated
+  FANART_TBN;
 }

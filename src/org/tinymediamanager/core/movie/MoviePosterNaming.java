@@ -21,27 +21,51 @@ package org.tinymediamanager.core.movie;
  */
 public enum MoviePosterNaming {
 
-  /** The filename tbn. */
+  /** [moviename]-poster.png */
+  MOVIENAME_POSTER_PNG,
+  /** [moviename]-poster.jpg */
+  MOVIENAME_POSTER_JPG,
+  /** [moviename]-poster.tbn */
+  @Deprecated
+  MOVIENAME_POSTER_TBN,
+
+  /** [filename].png */
+  FILENAME_PNG,
+  /** [filename].jpg */
+  FILENAME_JPG,
+  /** [filename].tbn */
+  @Deprecated
   FILENAME_TBN,
 
-  /** The filename jpg. */
-  FILENAME_JPG,
-
-  /** The filename poster jpg. */
+  /** [filename]-poster.png */
+  FILENAME_POSTER_PNG,
+  /** [filename]-poster.jpg */
   FILENAME_POSTER_JPG,
+  /** [filename]-poster.tbn */
+  @Deprecated
+  FILENAME_POSTER_TBN,
 
-  /** The movie jpg. */
+  /** movie.png */
+  MOVIE_PNG,
+  /** movie.jpg */
   MOVIE_JPG,
-
-  /** The movie tbn. */
+  /** movie.tbn */
+  @Deprecated
   MOVIE_TBN,
 
-  /** The poster jpg. */
+  /** poster.png */
+  POSTER_PNG,
+  /** poster.jpg */
   POSTER_JPG,
-
-  /** The poster tbn. */
+  /** poster.tbn */
+  @Deprecated
   POSTER_TBN,
 
-  /** The folder jpg. */
-  FOLDER_JPG;
+  /** folder.png */
+  FOLDER_PNG,
+  /** folder.jpg */
+  FOLDER_JPG,
+  /** folder.tbn */
+  @Deprecated
+  FOLDER_TBN;
 }

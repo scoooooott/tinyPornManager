@@ -138,7 +138,7 @@ public class MovieRenamer {
       }
 
       // to we need to rename the fanart?
-      if (i == 1 && Globals.settings.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_JPG)) {
+      if (i == 1 && Globals.settings.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
         String oldFanartFile = movie.getPath() + File.separator + fileWithoutExtension + "-fanart.jpg";
         String newFanartFile = movie.getPath() + File.separator + newFilename + "-fanart.jpg";
         try {
