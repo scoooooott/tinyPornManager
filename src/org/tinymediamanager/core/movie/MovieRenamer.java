@@ -201,35 +201,40 @@ public class MovieRenamer {
 
     LOGGER.debug("file expression: " + Globals.settings.getMovieRenamerFilename());
 
-    // move movie files first
-    for (MediaFile file : movie.getMediaFiles()) {
-      String newFilename = createDestination(Globals.settings.getMovieRenamerFilename(), movie);
+    // skip media file renaming on "disc" folder
+    if (movie.isDisc()) {
 
-      // get the filetype
-      String fileExtension = FilenameUtils.getExtension(file.getFilename());
-      String fileWithoutExtension = FilenameUtils.getBaseName(file.getFilename());
-      String oldFilename = movie.getPath() + File.separator + file.getFilename();
+      // move movie files first
+      for (MediaFile file : movie.getMediaFiles()) {
+        String newFilename = createDestination(Globals.settings.getMovieRenamerFilename(), movie);
 
-      // is there any stacking information in the filename?
-      String cleanFilename = Utils.cleanStackingMarkers(fileWithoutExtension);
-      if (!fileWithoutExtension.equals(cleanFilename)) {
-        String stackingInformation = fileWithoutExtension.replace(cleanFilename, "");
-        newFilename = newFilename + " " + stackingInformation;
+        // get the filetype
+        String fileExtension = FilenameUtils.getExtension(file.getFilename());
+        String fileWithoutExtension = FilenameUtils.getBaseName(file.getFilename());
+        String oldFilename = movie.getPath() + File.separator + file.getFilename();
+
+        // is there any stacking information in the filename?
+        String cleanFilename = Utils.cleanStackingMarkers(fileWithoutExtension);
+        if (!fileWithoutExtension.equals(cleanFilename)) {
+          String stackingInformation = fileWithoutExtension.replace(cleanFilename, "");
+          newFilename = newFilename + " " + stackingInformation;
+        }
+
+        // movie file
+        newFilename = movie.getPath() + File.separator + newFilename + "." + fileExtension;
+        try {
+          moveFile(oldFilename, newFilename);
+          file.setPath(movie.getPath());
+          file.setFilename(FilenameUtils.getName(newFilename));
+          // newFiles.add(FilenameUtils.getName(newFilename));
+        }
+        catch (Exception e) {
+          LOGGER.error("error moving file", e);
+          // newFiles.add(file);
+        }
       }
 
-      // movie file
-      newFilename = movie.getPath() + File.separator + newFilename + "." + fileExtension;
-      try {
-        moveFile(oldFilename, newFilename);
-        file.setPath(movie.getPath());
-        file.setFilename(FilenameUtils.getName(newFilename));
-        // newFiles.add(FilenameUtils.getName(newFilename));
-      }
-      catch (Exception e) {
-        LOGGER.error("error moving file", e);
-        // newFiles.add(file);
-      }
-    }
+    } // end isDisc
 
     // copies nfo to selected variants and does a cleanup afterwards
     if (!movie.getNfoFilename().isEmpty()) {

@@ -295,6 +295,9 @@ public class Movie extends AbstractModelObject {
   /** The movie set. */
   private MovieSet              movieSet;
 
+  /** is this a disc movie folder (video_ts / bdmv)? */
+  private boolean               isDisc               = false;
+
   /**
    * Instantiates a new movie. Needed for JAXB
    */
@@ -611,11 +614,13 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * Adds the to files.
+   * Adds the to files.<br>
+   * uses moviepath hardcoded and does not work for disc folders
    * 
    * @param newFile
    *          the new file
    */
+  @Deprecated
   public void addToFiles(String newFile) {
     // movieFiles.add(newFile);
     MediaFile mediaFile = new MediaFile(getPath(), newFile);
@@ -624,7 +629,21 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * Adds the to files.
+   * Adds a media file
+   * 
+   * @param path
+   *          the path of the media file (needs no to be the same as movie path)
+   * @param newFile
+   *          the new file
+   */
+  public void addToFiles(String path, String newFile) {
+    MediaFile mediaFile = new MediaFile(path, newFile);
+    mediaFile.gatherMediaInformation();
+    addToMediaFiles(mediaFile);
+  }
+
+  /**
+   * Adds the list of media files
    * 
    * @param videoFiles
    *          the video files
@@ -634,7 +653,7 @@ public class Movie extends AbstractModelObject {
       // check if that file exists for that movie
       if (!hasFile(file.getName())) {
         // create new movie file
-        addToFiles(file.getName());
+        addToFiles(file.getParent(), file.getName());
       }
     }
   }
@@ -2120,6 +2139,16 @@ public class Movie extends AbstractModelObject {
       movieSet.removeMovie(this);
     }
     setMovieSet(null);
+  }
+
+  /** is this a disc movie folder (video_ts / bdmv)? */
+  public boolean isDisc() {
+    return isDisc;
+  }
+
+  /** is this a disc movie folder (video_ts / bdmv)? */
+  public void setDisc(boolean isDisc) {
+    this.isDisc = isDisc;
   }
 
   // /**

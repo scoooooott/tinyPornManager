@@ -627,6 +627,7 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".asx");
     addVideoFileTypes(".avc");
     addVideoFileTypes(".avi");
+    addVideoFileTypes(".bdmv");
     addVideoFileTypes(".bin");
     addVideoFileTypes(".bivx");
     addVideoFileTypes(".dat");
