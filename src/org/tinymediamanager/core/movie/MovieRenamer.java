@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -37,47 +38,122 @@ public class MovieRenamer {
   private final static Logger LOGGER = Logger.getLogger(MovieRenamer.class);
 
   /**
-   * deletes all unselected Nfo variants
+   * prepares the NFO cleanup;<br>
+   * returns a list of ALL nfo names before (movie/file)renaming<br>
+   * (no cleanup done yet)
    * 
-   * @param movie
+   * @param m
    */
-  private static void cleanupNfos(Movie movie) {
+  private static ArrayList<String> prepareCleanupNfos(Movie m) {
+    MovieNfoNaming[] all = MovieNfoNaming.values();
+    ArrayList<String> oldfiles = new ArrayList<String>();
+    for (MovieNfoNaming old : all) {
+      oldfiles.add(m.getNfoFilename(old));
+    }
+    return oldfiles;
+  }
+
+  /**
+   * deletes all unselected Nfo variants movie object<br>
+   * alternatively, set the oldFilename parameter to cleanup an "old" pattern
+   * 
+   * @param m
+   */
+  private static void cleanupNfos(Movie m, ArrayList<String> oldFilenames) {
     List<MovieNfoNaming> setup = Globals.settings.getMovieNfoFilenames();
     MovieNfoNaming[] all = MovieNfoNaming.values();
     for (MovieNfoNaming unused : all) {
       if (!setup.contains(unused)) {
-        FileUtils.deleteQuietly(new File(movie.getNfoFilename(unused)));
+        FileUtils.deleteQuietly(new File(m.getNfoFilename(unused)));
       }
+      else {
+        // this is a needed (new filename) one, so potentially remove from old list
+        oldFilenames.remove(m.getNfoFilename(unused));
+      }
+    }
+    // delete what's left
+    for (String old : oldFilenames) {
+      FileUtils.deleteQuietly(new File(old));
     }
   }
 
   /**
-   * deletes all unselected poster variants
+   * prepares the poster cleanup;<br>
+   * returns a list of ALL poster names before (movie/file)renaming<br>
+   * (no cleanup done yet)
    * 
-   * @param movie
+   * @param m
    */
-  private static void cleanupPosters(Movie movie) {
+  private static ArrayList<String> prepareCleanupPosters(Movie m) {
+    MoviePosterNaming[] all = MoviePosterNaming.values();
+    ArrayList<String> oldfiles = new ArrayList<String>();
+    for (MoviePosterNaming old : all) {
+      oldfiles.add(m.getPosterFilename(old));
+    }
+    return oldfiles;
+  }
+
+  /**
+   * deletes all unselected poster variants movie object<br>
+   * alternatively, set the oldFilename parameter to cleanup an "old" pattern
+   * 
+   * @param m
+   */
+  private static void cleanupPosters(Movie m, ArrayList<String> oldFilenames) {
     List<MoviePosterNaming> setup = Globals.settings.getMoviePosterFilenames();
     MoviePosterNaming[] all = MoviePosterNaming.values();
     for (MoviePosterNaming unused : all) {
       if (!setup.contains(unused)) {
-        FileUtils.deleteQuietly(new File(movie.getPosterFilename(unused)));
+        FileUtils.deleteQuietly(new File(m.getPosterFilename(unused)));
       }
+      else {
+        // this is a needed (new filename) one, so potentially remove from old list
+        oldFilenames.remove(m.getPosterFilename(unused));
+      }
+    }
+    // delete what's left
+    for (String old : oldFilenames) {
+      FileUtils.deleteQuietly(new File(old));
     }
   }
 
   /**
-   * deletes all unselected poster variants
+   * prepares the Fanart cleanup;<br>
+   * returns a list of ALL fanart names before (movie/file)renaming<br>
+   * (no cleanup done yet)
    * 
-   * @param movie
+   * @param m
    */
-  private static void cleanupFanarts(Movie movie) {
+  private static ArrayList<String> prepareCleanupFanarts(Movie m) {
+    MovieFanartNaming[] all = MovieFanartNaming.values();
+    ArrayList<String> oldfiles = new ArrayList<String>();
+    for (MovieFanartNaming old : all) {
+      oldfiles.add(m.getFanartFilename(old));
+    }
+    return oldfiles;
+  }
+
+  /**
+   * deletes all unselected poster variants of movie object<br>
+   * alternatively, set the oldFilename parameter to cleanup an "old" pattern
+   * 
+   * @param m
+   */
+  private static void cleanupFanarts(Movie m, ArrayList<String> oldFilenames) {
     List<MovieFanartNaming> setup = Globals.settings.getMovieFanartFilenames();
     MovieFanartNaming[] all = MovieFanartNaming.values();
     for (MovieFanartNaming unused : all) {
       if (!setup.contains(unused)) {
-        FileUtils.deleteQuietly(new File(movie.getFanartFilename(unused)));
+        FileUtils.deleteQuietly(new File(m.getFanartFilename(unused)));
       }
+      else {
+        // this is a needed (new filename) one, so potentially remove from old list
+        oldFilenames.remove(m.getFanartFilename(unused));
+      }
+    }
+    // delete what's left
+    for (String old : oldFilenames) {
+      FileUtils.deleteQuietly(new File(old));
     }
   }
 
@@ -117,6 +193,11 @@ public class MovieRenamer {
         LOGGER.error("move folder", e);
       }
     }
+
+    // prepare the cleanup with "old" name
+    ArrayList<String> oldNfos = prepareCleanupNfos(movie);
+    ArrayList<String> oldFanarts = prepareCleanupFanarts(movie);
+    ArrayList<String> oldPosters = prepareCleanupPosters(movie);
 
     LOGGER.debug("file expression: " + Globals.settings.getMovieRenamerFilename());
 
@@ -164,7 +245,7 @@ public class MovieRenamer {
           LOGGER.error("error renaming Nfo", e);
         }
       }
-      cleanupNfos(movie);
+      cleanupNfos(movie, oldNfos);
     }
 
     // copies poster to selected variants and does a cleanup afterwards
@@ -181,7 +262,7 @@ public class MovieRenamer {
           LOGGER.error("error renaming poster", e);
         }
       }
-      cleanupPosters(movie);
+      cleanupPosters(movie, oldPosters);
     }
 
     // copies fanarts to selected variants and does a cleanup afterwards
@@ -198,7 +279,7 @@ public class MovieRenamer {
           LOGGER.error("error renaming fanart", e);
         }
       }
-      cleanupFanarts(movie);
+      cleanupFanarts(movie, oldFanarts);
     }
 
     movie.saveToDb();
