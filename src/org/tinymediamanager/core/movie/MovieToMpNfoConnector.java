@@ -205,23 +205,11 @@ public class MovieToMpNfoConnector {
     }
 
     // and marshall it
-    // String nfoFilename = movie.getPath() + File.separator + NFO_NAME;
     String nfoFilename = "";
     for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
       JAXBContext context;
       try {
-        switch (name) {
-          case FILENAME_NFO:
-            // nfoFilename = movie.getPath() + File.separator +
-            // movie.getMovieFiles().get(0).replaceAll("\\.[A-Za-z0-9]{3,4}$",
-            // ".nfo");
-            nfoFilename = movie.getPath() + File.separator + FilenameUtils.getBaseName(movie.getMediaFiles().get(0).getFilename()) + ".nfo";
-            break;
-
-          case MOVIE_NFO:
-            nfoFilename = movie.getPath() + File.separator + "movie.nfo";
-            break;
-        }
+        nfoFilename = movie.getNfoFilename(name);
         context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
@@ -246,7 +234,8 @@ public class MovieToMpNfoConnector {
       }
     }
 
-    return nfoFilename;
+    // return only the name w/o path
+    return FilenameUtils.getName(nfoFilename);
 
   }
 
@@ -328,7 +317,8 @@ public class MovieToMpNfoConnector {
           }
         }
 
-        movie.setNfoFilename(nfoFilename);
+       // set only the name w/o path
+        movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
 
       }
       catch (FileNotFoundException e) {

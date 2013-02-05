@@ -359,7 +359,12 @@ public class Movie extends AbstractModelObject {
    * @return the nfo filename
    */
   public String getNfoFilename() {
-    return nfoFilename;
+    if (!StringUtils.isEmpty(nfoFilename)) {
+      return path + File.separator + nfoFilename;
+    }
+    else {
+      return nfoFilename;
+    }
   }
 
   /**
@@ -675,7 +680,7 @@ public class Movie extends AbstractModelObject {
    * @return true/false if found (and set)
    */
   private boolean findAndSetPoster(String name) {
-    File p = new File(path + File.separator + name);
+    File p = new File(name);
     if (p.exists()) {
       setPoster(p.getName());
       LOGGER.debug("found poster " + p.getPath());
@@ -691,57 +696,10 @@ public class Movie extends AbstractModelObject {
   private void findPoster() {
     boolean found = false;
 
-    // check plain
-    if (!found) {
-      found = findAndSetPoster("poster.jpg");
-    }
-    if (!found) {
-      found = findAndSetPoster("poster.png");
-    }
-    if (!found) {
-      found = findAndSetPoster("poster.tbn");
-    }
-    if (!found) {
-      found = findAndSetPoster("movie.jpg");
-    }
-    if (!found) {
-      found = findAndSetPoster("movie.png");
-    }
-    if (!found) {
-      found = findAndSetPoster("movie.tbn");
-    }
-    if (!found) {
-      found = findAndSetPoster("folder.jpg");
-    }
-    if (!found) {
-      found = findAndSetPoster("folder.png");
-    }
-    if (!found) {
-      found = findAndSetPoster("folder.tbn");
-    }
-
-    // check with moviename
-    if (!found) {
-      found = findAndSetPoster(getName() + "-poster.jpg");
-    }
-    if (!found) {
-      found = findAndSetPoster(getName() + "-poster.png");
-    }
-    if (!found) {
-      found = findAndSetPoster(getName() + "-poster.tbn");
-    }
-
-    // check with filename
-    if (getMediaFiles().size() > 0) {
-      String mediafile =  getMediaFiles().get(0).getFilename();
+    MoviePosterNaming[] all = MoviePosterNaming.values();
+    for (MoviePosterNaming variant : all) {
       if (!found) {
-        found = findAndSetPoster(FilenameUtils.getBaseName(mediafile) + "-poster.jpg");
-      }
-      if (!found) {
-        found = findAndSetPoster(FilenameUtils.getBaseName(mediafile) + "-poster.png");
-      }
-      if (!found) {
-        found = findAndSetPoster(FilenameUtils.getBaseName(mediafile) + "-poster.tbn");
+        found = findAndSetPoster(getPosterFilename(variant));
       }
     }
     
@@ -770,7 +728,7 @@ public class Movie extends AbstractModelObject {
    * @return true/false if found (and set)
    */
   private boolean findAndSetFanart(String name) {
-    File p = new File(path + File.separator + name);
+    File p = new File(name);
     if (p.exists()) {
       setFanart(p.getName());
       LOGGER.debug("found fanart " + p.getPath());
@@ -786,39 +744,10 @@ public class Movie extends AbstractModelObject {
   private void findFanart() {
     boolean found = false;
 
-    // check plain
-    if (!found) {
-      found = findAndSetFanart("fanart.jpg");
-    }
-    if (!found) {
-      found = findAndSetFanart("fanart.png");
-    }
-    if (!found) {
-      found = findAndSetFanart("fanart.tbn");
-    }
-    
-    // check with moviename
-    if (!found) {
-      found = findAndSetFanart(getName() + "-fanart.jpg");
-    }
-    if (!found) {
-      found = findAndSetFanart(getName() + "-fanart.png");
-    }
-    if (!found) {
-      found = findAndSetFanart(getName() + "-fanart.tbn");
-    }
-
-    // check with filename
-    if (getMediaFiles().size() > 0) {
-      String mediafile =  getMediaFiles().get(0).getFilename();
+    MovieFanartNaming[] all = MovieFanartNaming.values();
+    for (MovieFanartNaming variant : all) {
       if (!found) {
-        found = findAndSetFanart(FilenameUtils.getBaseName(mediafile) + "-fanart.jpg");
-      }
-      if (!found) {
-        found = findAndSetFanart(FilenameUtils.getBaseName(mediafile) + "-fanart.png");
-      }
-      if (!found) {
-        found = findAndSetFanart(FilenameUtils.getBaseName(mediafile) + "-fanart.tbn");
+        found = findAndSetFanart(getFanartFilename(variant));
       }
     }
     
@@ -1712,10 +1641,10 @@ public class Movie extends AbstractModelObject {
 
   /**
    * all XBMC supported poster names
-   * @param poster
+   * @param MoviePosterNaming type
    * @return
    */
-  private String getPosterFilename(MoviePosterNaming poster) {
+  public String getPosterFilename(MoviePosterNaming poster) {
     String filename = path + File.separator;
     String mediafile =  FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
 
@@ -1783,10 +1712,10 @@ public class Movie extends AbstractModelObject {
   
   /**
    * all XBMC supported fanart names
-   * @param poster
+   * @param MovieFanartNaming type
    * @return
    */
-  private String getFanartFilename(MovieFanartNaming fanart) {
+  public String getFanartFilename(MovieFanartNaming fanart) {
     String filename = path + File.separator;
     String mediafile =  FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
 
@@ -1816,7 +1745,7 @@ public class Movie extends AbstractModelObject {
         filename += getName() + "-fanart.jpg"; 
         break;
       case MOVIENAME_FANART_TBN:
-        filename += getName() + ".-fanart.tbn"; 
+        filename += getName() + "-fanart.tbn";
         break;
       default:
         filename = ""; 
@@ -1825,6 +1754,30 @@ public class Movie extends AbstractModelObject {
     return filename;
   }
   
+  /**
+   * all XBMC supported NFO names
+   * 
+   * @param MovieNfoNaming type
+   * @return
+   */
+  public String getNfoFilename(MovieNfoNaming nfo) {
+    String filename = path + File.separator;
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
+
+    switch (nfo) {
+      case FILENAME_NFO:
+        filename += mediafile + ".nfo";
+        break;
+      case MOVIE_NFO:
+        filename += "movie.nfo";
+        break;
+      default:
+        filename = "";
+        break;
+    }
+    return filename;
+  }
+
   /**
    * Write images.
    * 
@@ -1849,7 +1802,7 @@ public class Movie extends AbstractModelObject {
         if (++i == 1) {
           firstImage = true;
         }
-        filename = this.path + File.separator + getPosterFilename(name);
+        filename = getPosterFilename(name);
 
         // get image in thread
         MovieImageFetcher task = new MovieImageFetcher(this, getPosterUrl(), ArtworkType.POSTER, filename, firstImage);
@@ -1865,7 +1818,7 @@ public class Movie extends AbstractModelObject {
         if (++i == 1) {
           firstImage = true;
         }
-        filename = this.path + File.separator + getFanartFilename(name);
+        filename = getFanartFilename(name);
 
         // get image in thread
         MovieImageFetcher task = new MovieImageFetcher(this, getFanartUrl(), ArtworkType.BACKDROP, filename, firstImage);

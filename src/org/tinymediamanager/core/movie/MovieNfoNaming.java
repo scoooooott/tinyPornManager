@@ -21,8 +21,8 @@ package org.tinymediamanager.core.movie;
  */
 public enum MovieNfoNaming {
 
-  /** The filename nfo. */
+  /** [filename].nfo */
   FILENAME_NFO,
-  /** The movie nfo. */
+  /** movie.nfo */
   MOVIE_NFO
 }

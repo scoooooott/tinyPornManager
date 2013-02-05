@@ -18,7 +18,6 @@ package org.tinymediamanager.core.movie;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -36,6 +35,51 @@ public class MovieRenamer {
 
   /** The Constant LOGGER. */
   private final static Logger LOGGER = Logger.getLogger(MovieRenamer.class);
+
+  /**
+   * deletes all unselected Nfo variants
+   * 
+   * @param movie
+   */
+  private static void cleanupNfos(Movie movie) {
+    List<MovieNfoNaming> setup = Globals.settings.getMovieNfoFilenames();
+    MovieNfoNaming[] all = MovieNfoNaming.values();
+    for (MovieNfoNaming unused : all) {
+      if (!setup.contains(unused)) {
+        FileUtils.deleteQuietly(new File(movie.getNfoFilename(unused)));
+      }
+    }
+  }
+
+  /**
+   * deletes all unselected poster variants
+   * 
+   * @param movie
+   */
+  private static void cleanupPosters(Movie movie) {
+    List<MoviePosterNaming> setup = Globals.settings.getMoviePosterFilenames();
+    MoviePosterNaming[] all = MoviePosterNaming.values();
+    for (MoviePosterNaming unused : all) {
+      if (!setup.contains(unused)) {
+        FileUtils.deleteQuietly(new File(movie.getPosterFilename(unused)));
+      }
+    }
+  }
+
+  /**
+   * deletes all unselected poster variants
+   * 
+   * @param movie
+   */
+  private static void cleanupFanarts(Movie movie) {
+    List<MovieFanartNaming> setup = Globals.settings.getMovieFanartFilenames();
+    MovieFanartNaming[] all = MovieFanartNaming.values();
+    for (MovieFanartNaming unused : all) {
+      if (!setup.contains(unused)) {
+        FileUtils.deleteQuietly(new File(movie.getFanartFilename(unused)));
+      }
+    }
+  }
 
   /**
    * Rename movie.
@@ -74,11 +118,9 @@ public class MovieRenamer {
       }
     }
 
-    // move movie files
     LOGGER.debug("file expression: " + Globals.settings.getMovieRenamerFilename());
-    int i = 1;
-    List<String> newFiles = new ArrayList<String>();
-    // for (String file : movie.getMovieFiles()) {
+
+    // move movie files first
     for (MediaFile file : movie.getMediaFiles()) {
       String newFilename = createDestination(Globals.settings.getMovieRenamerFilename(), movie);
 
@@ -94,65 +136,8 @@ public class MovieRenamer {
         newFilename = newFilename + " " + stackingInformation;
       }
 
-      // do we need to rename the nfo?
-      if (i == 1 && Globals.settings.getMovieNfoFilenames().contains(MovieNfoNaming.FILENAME_NFO)) {
-        String oldNfoFile = movie.getPath() + File.separator + fileWithoutExtension + ".nfo";
-        String newNfoFile = movie.getPath() + File.separator + newFilename + ".nfo";
-        try {
-          moveFile(oldNfoFile, newNfoFile);
-        }
-        catch (Exception e) {
-          LOGGER.error("move nfo", e);
-        }
-      }
-
-      // do we need to rename the posters?
-      if (i == 1
-          && (Globals.settings.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG) || Globals.settings.getMoviePosterFilenames()
-              .contains(MoviePosterNaming.FILENAME_TBN))) {
-        // poster as jpg
-        if (Globals.settings.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_JPG)) {
-          String oldPosterFile = movie.getPath() + File.separator + fileWithoutExtension + ".jpg";
-          String newPosterFile = movie.getPath() + File.separator + newFilename + ".jpg";
-          try {
-            moveFile(oldPosterFile, newPosterFile);
-            movie.setPoster(FilenameUtils.getName(newPosterFile));
-          }
-          catch (Exception e) {
-            LOGGER.error("move nfo", e);
-          }
-        }
-
-        // poster as tbn
-        if (Globals.settings.getMoviePosterFilenames().contains(MoviePosterNaming.FILENAME_TBN)) {
-          String oldPosterFile = movie.getPath() + File.separator + fileWithoutExtension + ".tbn";
-          String newPosterFile = movie.getPath() + File.separator + newFilename + ".tbn";
-          try {
-            moveFile(oldPosterFile, newPosterFile);
-            movie.setPoster(FilenameUtils.getName(newPosterFile));
-          }
-          catch (Exception e) {
-            LOGGER.error("move nfo", e);
-          }
-        }
-      }
-
-      // to we need to rename the fanart?
-      if (i == 1 && Globals.settings.getMovieFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART_JPG)) {
-        String oldFanartFile = movie.getPath() + File.separator + fileWithoutExtension + "-fanart.jpg";
-        String newFanartFile = movie.getPath() + File.separator + newFilename + "-fanart.jpg";
-        try {
-          moveFile(oldFanartFile, newFanartFile);
-          movie.setFanart(FilenameUtils.getName(newFanartFile));
-        }
-        catch (Exception e) {
-          LOGGER.error("move nfo", e);
-        }
-      }
-
-      newFilename = movie.getPath() + File.separator + newFilename + "." + fileExtension;
-
       // movie file
+      newFilename = movie.getPath() + File.separator + newFilename + "." + fileExtension;
       try {
         moveFile(oldFilename, newFilename);
         file.setPath(movie.getPath());
@@ -160,14 +145,62 @@ public class MovieRenamer {
         // newFiles.add(FilenameUtils.getName(newFilename));
       }
       catch (Exception e) {
-        LOGGER.error("move file", e);
+        LOGGER.error("error moving file", e);
         // newFiles.add(file);
       }
-
-      i++;
     }
 
-    // movie.setMovieFiles(newFiles);
+    // copies nfo to selected variants and does a cleanup afterwards
+    if (!movie.getNfoFilename().isEmpty()) {
+      String oldNfoFile = movie.getNfoFilename();
+      String newNfoFile = "";
+      for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
+        newNfoFile = movie.getNfoFilename(name);
+        try {
+          copyFile(oldNfoFile, newNfoFile);
+          movie.setNfoFilename(FilenameUtils.getName(newNfoFile));
+        }
+        catch (Exception e) {
+          LOGGER.error("error renaming Nfo", e);
+        }
+      }
+      cleanupNfos(movie);
+    }
+
+    // copies poster to selected variants and does a cleanup afterwards
+    if (!movie.getPoster().isEmpty()) {
+      String oldPosterFile = movie.getPoster();
+      String newPosterFile = "";
+      for (MoviePosterNaming name : Globals.settings.getMoviePosterFilenames()) {
+        newPosterFile = movie.getPosterFilename(name);
+        try {
+          copyFile(oldPosterFile, newPosterFile);
+          movie.setPoster(FilenameUtils.getName(newPosterFile));
+        }
+        catch (Exception e) {
+          LOGGER.error("error renaming poster", e);
+        }
+      }
+      cleanupPosters(movie);
+    }
+
+    // copies fanarts to selected variants and does a cleanup afterwards
+    if (!movie.getFanart().isEmpty()) {
+      String oldFanartFile = movie.getFanart();
+      String newFanartFile = "";
+      for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
+        newFanartFile = movie.getFanartFilename(name);
+        try {
+          copyFile(oldFanartFile, newFanartFile);
+          movie.setFanart(FilenameUtils.getName(newFanartFile));
+        }
+        catch (Exception e) {
+          LOGGER.error("error renaming fanart", e);
+        }
+      }
+      cleanupFanarts(movie);
+    }
+
     movie.saveToDb();
   }
 
@@ -255,15 +288,50 @@ public class MovieRenamer {
    */
   public static void moveFile(String oldFilename, String newFilename) throws Exception {
     if (!oldFilename.equals(newFilename)) {
-      File oldFile = new File(oldFilename);
-      if (oldFile.exists()) {
-        File newFile = new File(newFilename);
-        // TODO: FileUtils.deleteQuietly(new File(newFile)); first ?
-        FileUtils.moveFile(oldFile, newFile);
-        LOGGER.debug("moved file " + oldFilename + " to " + newFilename);
+      LOGGER.info("move file " + oldFilename + " to " + newFilename);
+      File newFile = new File(newFilename);
+      if (newFile.exists()) {
+        // overwrite?
+        LOGGER.warn(newFilename + " exists - do nothing.");
       }
       else {
-        throw new FileNotFoundException(oldFilename);
+        File oldFile = new File(oldFilename);
+        if (oldFile.exists()) {
+          FileUtils.moveFile(oldFile, newFile);
+        }
+        else {
+          throw new FileNotFoundException(oldFilename);
+        }
+      }
+    }
+  }
+
+  /**
+   * copies or moves file.
+   * 
+   * @param oldFilename
+   *          the old filename
+   * @param newFilename
+   *          the new filename
+   * @throws Exception
+   *           the exception
+   */
+  public static void copyFile(String oldFilename, String newFilename) throws Exception {
+    if (!oldFilename.equals(newFilename)) {
+      LOGGER.info("copy file " + oldFilename + " to " + newFilename);
+      File newFile = new File(newFilename);
+      if (newFile.exists()) {
+        // overwrite?
+        LOGGER.warn(newFilename + " exists - do nothing.");
+      }
+      else {
+        File oldFile = new File(oldFilename);
+        if (oldFile.exists()) {
+          FileUtils.copyFile(oldFile, newFile, true);
+        }
+        else {
+          throw new FileNotFoundException(oldFilename);
+        }
       }
     }
   }
