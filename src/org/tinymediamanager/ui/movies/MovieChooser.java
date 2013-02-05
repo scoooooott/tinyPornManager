@@ -64,9 +64,9 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -395,7 +395,8 @@ public class MovieChooser extends JDialog implements ActionListener {
             {
               ImageLabel lblImage = new ImageLabel();
               List<String> extrathumbs = new ArrayList<String>();
-              MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage, extrathumbs);
+              MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage,
+                  extrathumbs);
               dialog.setVisible(true);
               movieToScrape.setFanartUrl(lblImage.getImageUrl());
               movieToScrape.writeImages(false, true);
@@ -414,6 +415,9 @@ public class MovieChooser extends JDialog implements ActionListener {
           List<MediaTrailer> trailers = model.getTrailers();
           movieToScrape.setTrailers(trailers);
         }
+
+        // rewrite the complete NFO
+        movieToScrape.writeNFO();
 
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 

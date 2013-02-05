@@ -225,6 +225,7 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
             movie.setMetadata(md);
             movie.setArtwork(getArtwork(md));
             movie.setTrailers(getTrailers(md));
+            movie.writeNFO();
           }
           catch (Exception e) {
             LOGGER.error("movie.setMetadata", e);

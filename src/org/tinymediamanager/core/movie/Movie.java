@@ -561,7 +561,7 @@ public class Movie extends AbstractModelObject {
 
     tagsObservable.add(newTag);
     firePropertyChange(TAG, null, tagsObservable);
-    firePropertyChange("tagsAsString", null, tagsObservable);
+    firePropertyChange("tagAsString", null, newTag);
   }
 
   /**
@@ -573,7 +573,7 @@ public class Movie extends AbstractModelObject {
   public void removeFromTags(String removeTag) {
     tagsObservable.remove(removeTag);
     firePropertyChange(TAG, null, tagsObservable);
-    firePropertyChange("tagsAsString", null, tagsObservable);
+    firePropertyChange("tagAsString", null, removeTag);
   }
 
   /**
@@ -676,7 +676,9 @@ public class Movie extends AbstractModelObject {
 
   /**
    * checks movie folder for poster and sets it
-   * @param name the filename within movie folder
+   * 
+   * @param name
+   *          the filename within movie folder
    * @return true/false if found (and set)
    */
   private boolean findAndSetPoster(String name) {
@@ -685,11 +687,12 @@ public class Movie extends AbstractModelObject {
       setPoster(p.getName());
       LOGGER.debug("found poster " + p.getPath());
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
-  
+
   /**
    * Find poster.
    */
@@ -702,7 +705,7 @@ public class Movie extends AbstractModelObject {
         found = findAndSetPoster(getPosterFilename(variant));
       }
     }
-    
+
     // still not found anything? try *-poster.*
     if (!found) {
       Pattern pattern = Pattern.compile("(?i).*-poster\\..{2,4}");
@@ -724,7 +727,9 @@ public class Movie extends AbstractModelObject {
 
   /**
    * checks movie folder for fanart and sets it
-   * @param name the filename within movie folder
+   * 
+   * @param name
+   *          the filename within movie folder
    * @return true/false if found (and set)
    */
   private boolean findAndSetFanart(String name) {
@@ -733,11 +738,12 @@ public class Movie extends AbstractModelObject {
       setFanart(p.getName());
       LOGGER.debug("found fanart " + p.getPath());
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
-  
+
   /**
    * Find fanart.
    */
@@ -750,7 +756,7 @@ public class Movie extends AbstractModelObject {
         found = findAndSetFanart(getFanartFilename(variant));
       }
     }
-    
+
     // still not found anything? try *-fanart.*
     if (!found) {
       Pattern pattern = Pattern.compile("(?i).*-fanart\\..{2,4}");
@@ -1167,6 +1173,11 @@ public class Movie extends AbstractModelObject {
   public void downloadExtraThumbs(List<String> thumbs) {
     // init/delete old thumbs
     extraThumbs.clear();
+
+    // do not create extrathumbs folder, if no extrathumbs are selected
+    if (thumbs.size() == 0) {
+      return;
+    }
 
     try {
       String path = getPath() + File.separator + "extrathumbs";
@@ -1641,123 +1652,128 @@ public class Movie extends AbstractModelObject {
 
   /**
    * all XBMC supported poster names
-   * @param MoviePosterNaming type
+   * 
+   * @param MoviePosterNaming
+   *          type
    * @return
    */
   public String getPosterFilename(MoviePosterNaming poster) {
     String filename = path + File.separator;
-    String mediafile =  FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
 
     switch (poster) {
       case MOVIENAME_POSTER_PNG:
-        filename += getName() + ".png"; 
+        filename += getName() + ".png";
         break;
       case MOVIENAME_POSTER_JPG:
-        filename += getName() + ".jpg"; 
+        filename += getName() + ".jpg";
         break;
       case MOVIENAME_POSTER_TBN:
-        filename += getName() + ".tbn"; 
+        filename += getName() + ".tbn";
         break;
       case FILENAME_POSTER_PNG:
-        filename += mediafile + "-poster.png"; 
+        filename += mediafile + "-poster.png";
         break;
       case FILENAME_POSTER_JPG:
-        filename += mediafile + "-poster.jpg"; 
+        filename += mediafile + "-poster.jpg";
         break;
       case FILENAME_POSTER_TBN:
-        filename += mediafile + "-poster.tbn"; 
+        filename += mediafile + "-poster.tbn";
         break;
       case FILENAME_PNG:
-        filename += mediafile + ".png"; 
+        filename += mediafile + ".png";
         break;
       case FILENAME_JPG:
-        filename += mediafile + ".jpg"; 
+        filename += mediafile + ".jpg";
         break;
       case FILENAME_TBN:
-        filename += mediafile + ".tbn"; 
+        filename += mediafile + ".tbn";
         break;
       case MOVIE_PNG:
-        filename += "movie.png"; 
+        filename += "movie.png";
         break;
       case MOVIE_JPG:
-        filename += "movie.jpg"; 
+        filename += "movie.jpg";
         break;
       case MOVIE_TBN:
-        filename += "movie.tbn"; 
+        filename += "movie.tbn";
         break;
       case POSTER_PNG:
-        filename += "poster.png"; 
+        filename += "poster.png";
         break;
       case POSTER_JPG:
-        filename += "poster.jpg"; 
+        filename += "poster.jpg";
         break;
       case POSTER_TBN:
-        filename += "poster.tbn"; 
+        filename += "poster.tbn";
         break;
       case FOLDER_PNG:
-        filename += "folder.png"; 
+        filename += "folder.png";
         break;
       case FOLDER_JPG:
-        filename += "folder.jpg"; 
+        filename += "folder.jpg";
         break;
       case FOLDER_TBN:
-        filename += "folder.tbn"; 
+        filename += "folder.tbn";
         break;
       default:
-        filename = ""; 
+        filename = "";
         break;
     }
     return filename;
   }
-  
+
   /**
    * all XBMC supported fanart names
-   * @param MovieFanartNaming type
+   * 
+   * @param MovieFanartNaming
+   *          type
    * @return
    */
   public String getFanartFilename(MovieFanartNaming fanart) {
     String filename = path + File.separator;
-    String mediafile =  FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
 
     switch (fanart) {
       case FANART_PNG:
-        filename += "fanart.png"; 
+        filename += "fanart.png";
         break;
       case FANART_JPG:
-        filename += "fanart.jpg"; 
+        filename += "fanart.jpg";
         break;
       case FANART_TBN:
-        filename += "fanart.tbn"; 
+        filename += "fanart.tbn";
         break;
       case FILENAME_FANART_PNG:
-        filename += mediafile + "-fanart.png"; 
+        filename += mediafile + "-fanart.png";
         break;
       case FILENAME_FANART_JPG:
-        filename += mediafile + "-fanart.jpg"; 
+        filename += mediafile + "-fanart.jpg";
         break;
       case FILENAME_FANART_TBN:
-        filename += mediafile + "-fanart.tbn"; 
+        filename += mediafile + "-fanart.tbn";
         break;
       case MOVIENAME_FANART_PNG:
-        filename += getName() + "-fanart.png"; 
+        filename += getName() + "-fanart.png";
         break;
       case MOVIENAME_FANART_JPG:
-        filename += getName() + "-fanart.jpg"; 
+        filename += getName() + "-fanart.jpg";
         break;
       case MOVIENAME_FANART_TBN:
         filename += getName() + "-fanart.tbn";
         break;
       default:
-        filename = ""; 
+        filename = "";
         break;
     }
     return filename;
   }
-  
+
   /**
    * all XBMC supported NFO names
    * 
-   * @param MovieNfoNaming type
+   * @param MovieNfoNaming
+   *          type
    * @return
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
