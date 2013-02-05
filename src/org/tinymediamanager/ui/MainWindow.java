@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.net.URI;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -36,6 +37,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
@@ -50,29 +53,34 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MainWindow.
  */
 public class MainWindow extends JFrame {
+  /** The logger. */
+  private final static Logger LOGGER           = Logger.getLogger(MainWindow.class);
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
+  private static final long   serialVersionUID = 1L;
 
   /** The action exit. */
-  private final Action      actionExit       = new ExitAction();
+  private final Action        actionExit       = new ExitAction();
 
   /** The action about. */
-  private final Action      actionAbout      = new AboutAction();
+  private final Action        actionAbout      = new AboutAction();
 
   /** The action settings. */
-  private final Action      actionSettings   = new SettingsAction();
+  private final Action        actionSettings   = new SettingsAction();
 
   /** The action feedback. */
-  private final Action      actionFeedback   = new FeedbackAction();
+  private final Action        actionFeedback   = new FeedbackAction();
 
   /** The action bug report. */
-  private final Action      actionBugReport  = new BugReportAction();
+  private final Action        actionBugReport  = new BugReportAction();
+
+  /** The action donate. */
+  private final Action        actionDonate     = new DonateAction();
 
   /** The instance. */
-  private static MainWindow instance;
+  private static MainWindow   instance;
 
-  private JPanel            panelMovies;
+  private JPanel              panelMovies;
 
   /**
    * Create the application.
@@ -161,8 +169,11 @@ public class MainWindow extends JFrame {
 
     mnTmm = new JMenu("?");
     menuBar.add(mnTmm);
-    mntmExit = mnTmm.add(actionAbout);
-    mntmExit.setText("About");
+    JMenuItem mntmDonate = mnTmm.add(actionDonate);
+    mntmDonate.setText("Donate");
+    mnTmm.addSeparator();
+    JMenuItem mntmAbout = mnTmm.add(actionAbout);
+    mntmAbout.setText("About");
     // setVisible(true);
 
   }
@@ -322,8 +333,6 @@ public class MainWindow extends JFrame {
      * Instantiates a new feedback action.
      */
     public FeedbackAction() {
-      // putValue(NAME, "SwingAction");
-      // putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
     /*
@@ -360,8 +369,6 @@ public class MainWindow extends JFrame {
      * Instantiates a new feedback action.
      */
     public BugReportAction() {
-      // putValue(NAME, "SwingAction");
-      // putValue(SHORT_DESCRIPTION, "Some short description");
     }
 
     /*
@@ -374,6 +381,38 @@ public class MainWindow extends JFrame {
       JDialog dialog = new BugReportDialog();
       dialog.pack();
       dialog.setVisible(true);
+    }
+  }
+
+  /**
+   * The Class DonateAction.
+   */
+  private class DonateAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new feedback action.
+     */
+    public DonateAction() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      try {
+        String url = StringEscapeUtils
+            .unescapeHtml4("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=manuel%2elaggner%40gmail%2ecom&amp;lc=GB&amp;item_name=tinyMediaManager&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted");
+        Desktop.getDesktop().browse(new URI(url));
+      }
+      catch (Exception e1) {
+        LOGGER.error("Donate", e1);
+      }
     }
   }
 }
