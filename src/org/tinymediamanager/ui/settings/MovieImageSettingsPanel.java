@@ -20,6 +20,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -78,6 +79,9 @@ public class MovieImageSettingsPanel extends JPanel {
   private JCheckBox chckbxFanarttv;
   private JCheckBox chckbxTheMovieDatabase;
   private JLabel    lblAttentionFanartTv;
+  private JLabel    lblInfo1;
+  private JLabel    lblInfo2;
+  private JLabel    lblInfo3;
 
   public MovieImageSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
@@ -87,6 +91,7 @@ public class MovieImageSettingsPanel extends JPanel {
     panelMovieImages.setBorder(new TitledBorder(null, "Poster and Fanart", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelMovieImages, "2, 2, left, top");
     panelMovieImages.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -98,22 +103,22 @@ public class MovieImageSettingsPanel extends JPanel {
 
     chckbxTheMovieDatabase = new JCheckBox("The Movie Database");
     chckbxTheMovieDatabase.setSelected(true);
-    panelMovieImages.add(chckbxTheMovieDatabase, "4, 2");
+    panelMovieImages.add(chckbxTheMovieDatabase, "6, 2");
 
     chckbxFanarttv = new JCheckBox("Fanart.tv");
     chckbxFanarttv.setSelected(true);
-    panelMovieImages.add(chckbxFanarttv, "4, 4");
+    panelMovieImages.add(chckbxFanarttv, "6, 4");
 
     lblAttentionFanartTv = new JLabel("Attention: Fanart.tv does not provide poster");
     lblAttentionFanartTv.setFont(new Font("Dialog", Font.PLAIN, 10));
-    panelMovieImages.add(lblAttentionFanartTv, "4, 5, 3, 1");
+    panelMovieImages.add(lblAttentionFanartTv, "6, 5, 5, 1");
 
     JPanel panelMovieImagesTmdb = new JPanel();
     panelMovieImagesTmdb.setBorder(new TitledBorder(null, "The Movie Database", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelMovieImages.add(panelMovieImagesTmdb, "2, 7, 3, 1, fill, fill");
+    panelMovieImages.add(panelMovieImagesTmdb, "2, 7, 5, 1, fill, fill");
     panelMovieImagesTmdb.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblImageTmdbLanguage = new JLabel("Language");
@@ -138,37 +143,52 @@ public class MovieImageSettingsPanel extends JPanel {
     panelMovieImages.add(lblPosterFilename, "2, 9");
 
     cbMoviePosterFilename1 = new JCheckBox("<movie filename>.tbn");
-    panelMovieImages.add(cbMoviePosterFilename1, "4, 9");
+    panelMovieImages.add(cbMoviePosterFilename1, "6, 9");
+
+    lblInfo1 = new JLabel("");
+    lblInfo1.setToolTipText(".tbn is deprecated and will be removed soon");
+    lblInfo1.setIcon(new ImageIcon(MovieImageSettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    panelMovieImages.add(lblInfo1, "4, 9");
 
     cbMoviePosterFilename4 = new JCheckBox("poster.jpg");
-    panelMovieImages.add(cbMoviePosterFilename4, "6, 9");
+    panelMovieImages.add(cbMoviePosterFilename4, "10, 9");
 
     cbMoviePosterFilename7 = new JCheckBox("<movie filename>.jpg");
-    panelMovieImages.add(cbMoviePosterFilename7, "4, 10");
+    panelMovieImages.add(cbMoviePosterFilename7, "6, 10");
+
+    lblInfo2 = new JLabel("");
+    lblInfo2.setToolTipText(".tbn is deprecated and will be removed soon");
+    lblInfo2.setIcon(new ImageIcon(MovieImageSettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    panelMovieImages.add(lblInfo2, "8, 10");
 
     cbMoviePosterFilename5 = new JCheckBox("poster.tbn");
-    panelMovieImages.add(cbMoviePosterFilename5, "6, 10");
+    panelMovieImages.add(cbMoviePosterFilename5, "10, 10");
 
     cbMoviePosterFilename8 = new JCheckBox("<movie filename>-poster.jpg");
-    panelMovieImages.add(cbMoviePosterFilename8, "4, 11");
+    panelMovieImages.add(cbMoviePosterFilename8, "6, 11");
 
     cbMoviePosterFilename6 = new JCheckBox("folder.jpg");
-    panelMovieImages.add(cbMoviePosterFilename6, "6, 11");
+    panelMovieImages.add(cbMoviePosterFilename6, "10, 11");
 
     cbMoviePosterFilename2 = new JCheckBox("movie.jpg");
-    panelMovieImages.add(cbMoviePosterFilename2, "4, 12");
+    panelMovieImages.add(cbMoviePosterFilename2, "6, 12");
+
+    lblInfo3 = new JLabel("");
+    lblInfo3.setToolTipText(".tbn is deprecated and will be removed soon");
+    lblInfo3.setIcon(new ImageIcon(MovieImageSettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    panelMovieImages.add(lblInfo3, "8, 12");
 
     cbMoviePosterFilename3 = new JCheckBox("movie.tbn");
-    panelMovieImages.add(cbMoviePosterFilename3, "6, 12");
+    panelMovieImages.add(cbMoviePosterFilename3, "10, 12");
 
     JLabel lblFanartFileNaming = new JLabel("Fanart file naming");
     panelMovieImages.add(lblFanartFileNaming, "2, 14");
 
     cbMovieFanartFilename1 = new JCheckBox("<movie filename>-fanart.jpg");
-    panelMovieImages.add(cbMovieFanartFilename1, "4, 14");
+    panelMovieImages.add(cbMovieFanartFilename1, "6, 14");
 
     cbMovieFanartFilename2 = new JCheckBox("fanart.jpg");
-    panelMovieImages.add(cbMovieFanartFilename2, "4, 15");
+    panelMovieImages.add(cbMovieFanartFilename2, "6, 15");
 
     initDataBindings();
 

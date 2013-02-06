@@ -161,7 +161,7 @@ public class Settings extends AbstractModelObject {
   /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String>            videoFileTypes            = new ArrayList<String>();
+  private final List<String>            videoFileTypes            = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The movie data sources. */
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)

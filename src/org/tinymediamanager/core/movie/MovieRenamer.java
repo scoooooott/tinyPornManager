@@ -67,7 +67,8 @@ public class MovieRenamer {
         FileUtils.deleteQuietly(new File(m.getNfoFilename(unused)));
       }
       else {
-        // this is a needed (new filename) one, so potentially remove from old list
+        // this is a needed (new filename) one, so potentially remove from old
+        // list
         oldFilenames.remove(m.getNfoFilename(unused));
       }
     }
@@ -107,7 +108,8 @@ public class MovieRenamer {
         FileUtils.deleteQuietly(new File(m.getPosterFilename(unused)));
       }
       else {
-        // this is a needed (new filename) one, so potentially remove from old list
+        // this is a needed (new filename) one, so potentially remove from old
+        // list
         oldFilenames.remove(m.getPosterFilename(unused));
       }
     }
@@ -147,7 +149,8 @@ public class MovieRenamer {
         FileUtils.deleteQuietly(new File(m.getFanartFilename(unused)));
       }
       else {
-        // this is a needed (new filename) one, so potentially remove from old list
+        // this is a needed (new filename) one, so potentially remove from old
+        // list
         oldFilenames.remove(m.getFanartFilename(unused));
       }
     }
@@ -202,7 +205,7 @@ public class MovieRenamer {
     LOGGER.debug("file expression: " + Globals.settings.getMovieRenamerFilename());
 
     // skip media file renaming on "disc" folder
-    if (movie.isDisc()) {
+    if (!movie.isDisc()) {
 
       // move movie files first
       for (MediaFile file : movie.getMediaFiles()) {
