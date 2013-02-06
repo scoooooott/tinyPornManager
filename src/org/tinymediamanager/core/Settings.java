@@ -54,134 +54,146 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Settings.
  */
 @XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractModelObject {
   /** The Constant logger. */
-  private static final Logger           LOGGER                    = Logger.getLogger(Settings.class);
+  private static final Logger           LOGGER                      = Logger.getLogger(Settings.class);
 
   /** The instance. */
   private static Settings               instance;
 
   /** The Constant CONFIG_FILE. */
-  private final static String           CONFIG_FILE               = "config.xml";
+  private final static String           CONFIG_FILE                 = "config.xml";
 
   /** The Constant MOVIE_DATA_SOURCE. */
-  private final static String           MOVIE_DATA_SOURCE         = "movieDataSource";
+  private final static String           MOVIE_DATA_SOURCE           = "movieDataSource";
 
   /** The Constant PATH. */
-  private final static String           PATH                      = "path";
+  private final static String           PATH                        = "path";
 
   /** The Constant TITLE_PREFIX. */
-  private final static String           TITLE_PREFIX              = "titlePrefix";
+  private final static String           TITLE_PREFIX                = "titlePrefix";
 
   /** The Constant TITLE_PREFIX. */
-  private final static String           PREFIX                    = "prefix";
+  private final static String           PREFIX                      = "prefix";
 
   /** The Constant VIDEO_FILE_TYPE. */
-  private final static String           VIDEO_FILE_TYPE           = "videoFileTypes";
+  private final static String           VIDEO_FILE_TYPE             = "videoFileTypes";
 
   /** The Constant FILETYPE. */
-  private final static String           FILETYPE                  = "filetype";
+  private final static String           FILETYPE                    = "filetype";
 
   /** The Constant PROXY_HOST. */
-  private final static String           PROXY_HOST                = "proxyHost";
+  private final static String           PROXY_HOST                  = "proxyHost";
 
   /** The Constant PROXY_PORT. */
-  private final static String           PROXY_PORT                = "proxyPort";
+  private final static String           PROXY_PORT                  = "proxyPort";
 
   /** The Constant PROXY_USERNAME. */
-  private final static String           PROXY_USERNAME            = "proxyUsername";
+  private final static String           PROXY_USERNAME              = "proxyUsername";
 
   /** The Constant PROXY_PASSWORD. */
-  private final static String           PROXY_PASSWORD            = "proxyPassword";
+  private final static String           PROXY_PASSWORD              = "proxyPassword";
 
   /** The Constant SCRAPER_TMDB_LANGU. */
-  private final static String           SCRAPER_TMDB_LANGU        = "scraperTmdbLanguage";
+  private final static String           SCRAPER_TMDB_LANGU          = "scraperTmdbLanguage";
 
   /** The Constant IMAGE_TMDB_LANGU. */
-  private final static String           IMAGE_TMDB_LANGU          = "imageTmdbLanguage";
+  private final static String           IMAGE_TMDB_LANGU            = "imageTmdbLanguage";
 
   /** The Constant IMAGE_TMDB_POSTER. */
-  private final static String           IMAGE_TMDB_POSTER         = "imageTmdbPosterSize";
+  private final static String           IMAGE_TMDB_POSTER           = "imageTmdbPosterSize";
 
   /** The Constant IMAGE_TMDB_FANART. */
-  private final static String           IMAGE_TMDB_FANART         = "imageTmdbFanartSize";
+  private final static String           IMAGE_TMDB_FANART           = "imageTmdbFanartSize";
 
   /** The Constant CERTIFICATION_COUNTRY. */
-  private final static String           CERTIFICATION_COUNTRY     = "certificationCountry";
+  private final static String           CERTIFICATION_COUNTRY       = "certificationCountry";
 
   /** The Constant MOVIE_CONNECTOR. */
-  private final static String           MOVIE_CONNECTOR           = "movieConnector";
+  private final static String           MOVIE_CONNECTOR             = "movieConnector";
 
   /** The Constant MOVIE_NFO_FILENAME. */
-  private final static String           MOVIE_NFO_FILENAME        = "movieNfoFilename";
+  private final static String           MOVIE_NFO_FILENAME          = "movieNfoFilename";
 
   /** The Constant MOVIE_POSTER_FILENAME. */
-  private final static String           MOVIE_POSTER_FILENAME     = "moviePosterFilename";
+  private final static String           MOVIE_POSTER_FILENAME       = "moviePosterFilename";
 
   /** The Constant MOVIE_FANART_FILENAME. */
-  private final static String           MOVIE_FANART_FILENAME     = "movieFanartFilename";
+  private final static String           MOVIE_FANART_FILENAME       = "movieFanartFilename";
 
   /** The Constant FILENAME. */
-  private final static String           FILENAME                  = "filename";
+  private final static String           FILENAME                    = "filename";
 
   /** The Constant MOVIE_RENAMER_PATHNAME. */
-  private final static String           MOVIE_RENAMER_PATHNAME    = "movieRenamerPathname";
+  private final static String           MOVIE_RENAMER_PATHNAME      = "movieRenamerPathname";
 
   /** The Constant MOVIE_RENAMER_FILENAME. */
-  private final static String           MOVIE_RENAMER_FILENAME    = "movieRenamerFilename";
+  private final static String           MOVIE_RENAMER_FILENAME      = "movieRenamerFilename";
 
   /** The Constant MOVIE_SCRAPER. */
-  private final static String           MOVIE_SCRAPER             = "movieScraper";
+  private final static String           MOVIE_SCRAPER               = "movieScraper";
 
   /** The Constant IMDB_SCRAPE_FOREIGN_LANGU. */
-  private final static String           IMDB_SCRAPE_FOREIGN_LANGU = "imdbScrapeForeignLanguage";
+  private final static String           IMDB_SCRAPE_FOREIGN_LANGU   = "imdbScrapeForeignLanguage";
 
   /** The Constant IMDB_SITE. */
-  private final static String           IMDB_SITE                 = "imdbSite";
+  private final static String           IMDB_SITE                   = "imdbSite";
 
   /** The Constant CLEAR_CACHE_SHUTDOWN. */
-  private final static String           CLEAR_CACHE_SHUTDOWN      = "clearCacheShutdown";
+  private final static String           CLEAR_CACHE_SHUTDOWN        = "clearCacheShutdown";
 
   /** The Constant SCRAPE_BEST_IMAGE. */
-  private final static String           SCRAPE_BEST_IMAGE         = "scrapeBestImage";
+  private final static String           SCRAPE_BEST_IMAGE           = "scrapeBestImage";
 
-  private final static String           IMAGE_SCRAPER_TMDB        = "imageScraperTmdb";
+  /** The Constant IMAGE_SCRAPER_TMDB. */
+  private final static String           IMAGE_SCRAPER_TMDB          = "imageScraperTmdb";
 
-  private final static String           IMAGE_SCRAPER_FANART_TV   = "imageScraperFanartTv";
+  /** The Constant IMAGE_SCRAPER_FANART_TV. */
+  private final static String           IMAGE_SCRAPER_FANART_TV     = "imageScraperFanartTv";
+
+  /** The Constant TRAILER_SCRAPER_TMDB. */
+  private final static String           TRAILER_SCRAPER_TMDB        = "trailerScraperTmdb";
+
+  /** The Constant TRAILER_SCRAPER_HD_TRAILERS. */
+  private final static String           TRAILER_SCRAPER_HD_TRAILERS = "trailerScraperHdTrailers";
+
+  /** The Constant TRAILER_SCRAPER_OFDB. */
+  private final static String           TRAILER_SCRAPER_OFDB        = "trailerScraperOfdb";
 
   /** The video file types. */
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
-  private final List<String>            titlePrefix               = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>            titlePrefix                 = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
-  private final List<String>            videoFileTypes            = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>            videoFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The movie data sources. */
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>            movieDataSources          = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>            movieDataSources            = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The movie nfo filenames. */
   @XmlElementWrapper(name = MOVIE_NFO_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieNfoNaming>    movieNfoFilenames         = new ArrayList<MovieNfoNaming>();
+  private final List<MovieNfoNaming>    movieNfoFilenames           = new ArrayList<MovieNfoNaming>();
 
   /** The movie poster filenames. */
   @XmlElementWrapper(name = MOVIE_POSTER_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MoviePosterNaming> moviePosterFilenames      = new ArrayList<MoviePosterNaming>();
+  private final List<MoviePosterNaming> moviePosterFilenames        = new ArrayList<MoviePosterNaming>();
 
   /** The movie fanart filenames. */
   @XmlElementWrapper(name = MOVIE_FANART_FILENAME)
   @XmlElement(name = FILENAME)
-  private final List<MovieFanartNaming> movieFanartFilenames      = new ArrayList<MovieFanartNaming>();
+  private final List<MovieFanartNaming> movieFanartFilenames        = new ArrayList<MovieFanartNaming>();
 
   /** The proxy host. */
   private String                        proxyHost;
@@ -196,58 +208,67 @@ public class Settings extends AbstractModelObject {
   private String                        proxyPassword;
 
   /** The scraper tmdb language. */
-  private Languages                     scraperTmdbLanguage       = Languages.en;
+  private Languages                     scraperTmdbLanguage         = Languages.en;
 
   /** The image tmdb langugage. */
-  private Languages                     imageTmdbLangugage        = Languages.en;
+  private Languages                     imageTmdbLangugage          = Languages.en;
 
   /** The image tmdb poster size. */
-  private PosterSizes                   imageTmdbPosterSize       = PosterSizes.w342;
+  private PosterSizes                   imageTmdbPosterSize         = PosterSizes.w342;
 
   /** The image tmdb scraper. */
-  private boolean                       imageScraperTmdb          = true;
+  private boolean                       imageScraperTmdb            = true;
 
   /** The image fanart tv scraper. */
-  private boolean                       imageScraperFanartTv      = true;
+  private boolean                       imageScraperFanartTv        = true;
 
   /** The image tmdb fanart size. */
-  private FanartSizes                   imageTmdbFanartSize       = FanartSizes.original;
+  private FanartSizes                   imageTmdbFanartSize         = FanartSizes.original;
 
   /** The country for certification. */
-  private CountryCode                   certificationCountry      = CountryCode.US;
+  private CountryCode                   certificationCountry        = CountryCode.US;
 
   /** The movie connector. */
-  private MovieConnectors               movieConnector            = MovieConnectors.XBMC;
+  private MovieConnectors               movieConnector              = MovieConnectors.XBMC;
 
   /** The movie renamer pathname. */
-  private String                        movieRenamerPathname      = "$T ($Y)";
+  private String                        movieRenamerPathname        = "$T ($Y)";
 
   /** The movie renamer filename. */
-  private String                        movieRenamerFilename      = "$T ($Y)";
+  private String                        movieRenamerFilename        = "$T ($Y)";
 
   /** The imdb scrape foreign language. */
-  private boolean                       imdbScrapeForeignLanguage = false;
+  private boolean                       imdbScrapeForeignLanguage   = false;
 
   /** The movie scraper. */
-  private MovieScrapers                 movieScraper              = MovieScrapers.TMDB;
+  private MovieScrapers                 movieScraper                = MovieScrapers.TMDB;
 
   /** The dirty flag. */
-  private boolean                       dirty                     = false;
+  private boolean                       dirty                       = false;
 
   /** The clear cache on shutdown. */
-  private boolean                       clearCacheShutdown        = false;
+  private boolean                       clearCacheShutdown          = false;
 
   /** The scrape best image. */
-  private boolean                       scrapeBestImage           = true;
+  private boolean                       scrapeBestImage             = true;
 
   /** The imdb site. */
-  private ImdbSiteDefinition            imdbSite                  = ImdbSiteDefinition.IMDB_COM;
+  private ImdbSiteDefinition            imdbSite                    = ImdbSiteDefinition.IMDB_COM;
 
   /** The scraperMetadata configuration. */
-  private ScraperMetadataConfig         scraperMetadataConfig     = null;
+  private ScraperMetadataConfig         scraperMetadataConfig       = null;
 
   /** The window config. */
-  private WindowConfig                  windowConfig              = null;
+  private WindowConfig                  windowConfig                = null;
+
+  /** The trailer tmdb scraper. */
+  private boolean                       trailerScraperTmdb          = true;
+
+  /** The trailer hd-trailers.net scraper. */
+  private boolean                       trailerScraperHdTrailers    = true;
+
+  /** The trailer ofdb.de scraper. */
+  private boolean                       trailerScraperOfdb          = true;
 
   /** The property change listener. */
   private PropertyChangeListener        propertyChangeListener;
@@ -810,20 +831,42 @@ public class Settings extends AbstractModelObject {
     firePropertyChange(IMAGE_TMDB_LANGU, oldValue, newValue);
   }
 
+  /**
+   * Checks if is image scraper tmdb.
+   * 
+   * @return true, if is image scraper tmdb
+   */
   public boolean isImageScraperTmdb() {
     return imageScraperTmdb;
   }
 
+  /**
+   * Checks if is image scraper fanart tv.
+   * 
+   * @return true, if is image scraper fanart tv
+   */
   public boolean isImageScraperFanartTv() {
     return imageScraperFanartTv;
   }
 
+  /**
+   * Sets the image scraper tmdb.
+   * 
+   * @param newValue
+   *          the new image scraper tmdb
+   */
   public void setImageScraperTmdb(boolean newValue) {
     boolean oldValue = this.imageScraperTmdb;
     this.imageScraperTmdb = newValue;
     firePropertyChange(IMAGE_SCRAPER_TMDB, oldValue, newValue);
   }
 
+  /**
+   * Sets the image scraper fanart tv.
+   * 
+   * @param newValue
+   *          the new image scraper fanart tv
+   */
   public void setImageScraperFanartTv(boolean newValue) {
     boolean oldValue = this.imageScraperFanartTv;
     this.imageScraperFanartTv = newValue;
@@ -1153,6 +1196,69 @@ public class Settings extends AbstractModelObject {
   public void setScraperMetadataConfig(ScraperMetadataConfig scraperMetadataConfig) {
     this.scraperMetadataConfig = scraperMetadataConfig;
     this.scraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  /**
+   * Checks if is trailer scraper tmdb.
+   * 
+   * @return true, if is trailer scraper tmdb
+   */
+  public boolean isTrailerScraperTmdb() {
+    return trailerScraperTmdb;
+  }
+
+  /**
+   * Checks if is trailer scraper hd trailers.
+   * 
+   * @return true, if is trailer scraper hd trailers
+   */
+  public boolean isTrailerScraperHdTrailers() {
+    return trailerScraperHdTrailers;
+  }
+
+  /**
+   * Sets the trailer scraper tmdb.
+   * 
+   * @param newValue
+   *          the new trailer scraper tmdb
+   */
+  public void setTrailerScraperTmdb(boolean newValue) {
+    boolean oldValue = this.trailerScraperTmdb;
+    this.trailerScraperTmdb = newValue;
+    firePropertyChange(TRAILER_SCRAPER_TMDB, oldValue, newValue);
+  }
+
+  /**
+   * Sets the trailer scraper hd trailers.
+   * 
+   * @param newValue
+   *          the new trailer scraper hd trailers
+   */
+  public void setTrailerScraperHdTrailers(boolean newValue) {
+    boolean oldValue = this.trailerScraperHdTrailers;
+    this.trailerScraperHdTrailers = newValue;
+    firePropertyChange(TRAILER_SCRAPER_HD_TRAILERS, oldValue, newValue);
+  }
+
+  /**
+   * Checks if is trailer scraper ofdb.
+   * 
+   * @return true, if is trailer scraper ofdb
+   */
+  public boolean isTrailerScraperOfdb() {
+    return trailerScraperOfdb;
+  }
+
+  /**
+   * Sets the trailer scraper ofdb.
+   * 
+   * @param newValue
+   *          the new trailer scraper ofdb
+   */
+  public void setTrailerScraperOfdb(boolean newValue) {
+    boolean oldValue = this.trailerScraperOfdb;
+    this.trailerScraperOfdb = newValue;
+    firePropertyChange(TRAILER_SCRAPER_OFDB, oldValue, newValue);
   }
 
   /**

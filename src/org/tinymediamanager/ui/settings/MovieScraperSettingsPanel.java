@@ -87,6 +87,7 @@ public class MovieScraperSettingsPanel extends JPanel {
   private JPanel      panel;
   private JCheckBox   cbTheMovieDatabase;
   private JCheckBox   cbHdtrailersnet;
+  private JCheckBox   cbOfdbde;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -155,13 +156,17 @@ public class MovieScraperSettingsPanel extends JPanel {
         null));
     add(panel, "2, 4, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     cbTheMovieDatabase = new JCheckBox("The Movie Database");
     panel.add(cbTheMovieDatabase, "1, 2");
 
     cbHdtrailersnet = new JCheckBox("HD-Trailers.net");
     panel.add(cbHdtrailersnet, "1, 4");
+
+    cbOfdbde = new JCheckBox("OFDb.de");
+    panel.add(cbOfdbde, "1, 6");
 
     initDataBindings();
 
@@ -214,9 +219,6 @@ public class MovieScraperSettingsPanel extends JPanel {
     }
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<Settings, Languages> settingsBeanProperty_8 = BeanProperty.create("scraperTmdbLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
@@ -244,5 +246,20 @@ public class MovieScraperSettingsPanel extends JPanel {
     AutoBinding<Settings, ImdbSiteDefinition, JComboBox, Object> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, cbImdbSite, jComboBoxBeanProperty);
     autoBinding_1.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("trailerScraperTmdb");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, cbTheMovieDatabase, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("trailerScraperHdTrailers");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_3, cbHdtrailersnet, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("trailerScraperOfdb");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_4, cbOfdbde, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }

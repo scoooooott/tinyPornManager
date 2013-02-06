@@ -299,11 +299,11 @@ public class MovieList extends AbstractModelObject {
    * @param dataSource
    *          the data source
    */
-  // BD 2.3 http://www.blu-raydisc.com/assets/Downloadablefile/BD-ROM_Audio_Visual_Application_Format_Specifications-18780.pdf
+  // BD 2.3
+  // http://www.blu-raydisc.com/assets/Downloadablefile/BD-ROM_Audio_Visual_Application_Format_Specifications-18780.pdf
   private void findDiscInDirectory(File dir, String dataSource) {
     String parentDir = dir.getParent();
     LOGGER.debug("find Disc in directory " + dir.getPath() + " parent: " + parentDir);
-
 
     // check if there are any videofiles in that subdir
     FilenameFilter filter = new FilenameFilter() {
@@ -666,19 +666,27 @@ public class MovieList extends AbstractModelObject {
     LOGGER.debug("get instances of IMediaTrailerProviders");
 
     // tmdb
-    try {
-      IMediaTrailerProvider trailerProvider = new TmdbMetadataProvider();
-      trailerProviders.add(trailerProvider);
-    }
-    catch (Exception e) {
-      LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
+    if (Globals.settings.isTrailerScraperTmdb()) {
+      try {
+        IMediaTrailerProvider trailerProvider = new TmdbMetadataProvider();
+        trailerProviders.add(trailerProvider);
+      }
+      catch (Exception e) {
+        LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
+      }
     }
 
     // hd-trailers.net
-    IMediaTrailerProvider trailerProvider = new HDTrailersNet();
-    trailerProviders.add(trailerProvider);
-    trailerProvider = new OfdbMetadataProvider();
-    trailerProviders.add(trailerProvider);
+    if (Globals.settings.isTrailerScraperHdTrailers()) {
+      IMediaTrailerProvider trailerProvider = new HDTrailersNet();
+      trailerProviders.add(trailerProvider);
+    }
+
+    // ofdb.de
+    if (Globals.settings.isTrailerScraperOfdb()) {
+      IMediaTrailerProvider trailerProvider = new OfdbMetadataProvider();
+      trailerProviders.add(trailerProvider);
+    }
 
     return trailerProviders;
   }
