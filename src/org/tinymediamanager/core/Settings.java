@@ -639,6 +639,8 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".h264");
     addVideoFileTypes(".img");
     addVideoFileTypes(".iso");
+    addVideoFileTypes(".mts");
+    addVideoFileTypes(".mt2s");
     addVideoFileTypes(".m2ts");
     addVideoFileTypes(".m2v");
     addVideoFileTypes(".m4v");
