@@ -312,8 +312,11 @@ public class MovieToXbmcNfoConnector {
         movie.setDirector(xbmc.getDirector());
         movie.setWriter(xbmc.getCredits());
         movie.setProductionCompany(xbmc.getStudio());
-        if (!StringUtils.isEmpty(xbmc.getMpaa())) {
-          movie.setCertification(Certification.findCertification(xbmc.getMpaa()));
+        if (!StringUtils.isEmpty(xbmc.getCertifications())) {
+          movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getCertifications()));
+        }
+        if (!StringUtils.isEmpty(xbmc.getMpaa()) && movie.getCertification() == Certification.NOT_RATED) {
+          movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getMpaa()));
         }
         movie.setWatched(xbmc.isWatched());
 

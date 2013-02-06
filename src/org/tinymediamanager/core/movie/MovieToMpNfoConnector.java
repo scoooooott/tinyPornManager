@@ -282,7 +282,7 @@ public class MovieToMpNfoConnector {
         movie.setWriter(mp.getCredits());
         movie.setProductionCompany(mp.getStudio());
         if (!StringUtils.isEmpty(mp.getMpaa())) {
-          movie.setCertification(Certification.findCertification(mp.getMpaa()));
+          movie.setCertification(Certification.parseCertificationStringForSetupCountry(mp.getMpaa()));
         }
 
         // movieset
