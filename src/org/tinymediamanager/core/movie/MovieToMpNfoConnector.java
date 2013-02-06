@@ -87,7 +87,7 @@ public class MovieToMpNfoConnector {
   private String              tagline;
 
   /** The runtime. */
-  private int                 runtime;
+  private String              runtime;
 
   /** The thumb. */
   private String              thumb;
@@ -171,7 +171,7 @@ public class MovieToMpNfoConnector {
     }
 
     mp.setTagline(movie.getTagline());
-    mp.setRuntime(movie.getRuntime());
+    mp.setRuntime(String.valueOf(movie.getRuntime()));
     mp.setThumb(movie.getPoster());
     mp.addFanart(movie.getFanart());
     mp.setId(movie.getImdbId());
@@ -264,7 +264,13 @@ public class MovieToMpNfoConnector {
         movie.setYear(mp.getYear());
         movie.setOverview(mp.getPlot());
         movie.setTagline(mp.getTagline());
-        movie.setRuntime(mp.getRuntime());
+        try {
+          String rt = mp.getRuntime().replaceAll("[^0-9]", ""); 
+          movie.setRuntime(Integer.parseInt(rt));
+        }
+        catch (Exception e) {
+          LOGGER.warn("could not parse runtime: " + mp.getRuntime());
+        }
         movie.setPoster(mp.getThumb());
 
         if (mp.getFanart() != null && mp.getFanart().size() > 0) {
@@ -551,7 +557,7 @@ public class MovieToMpNfoConnector {
    * @return the runtime
    */
   @XmlElement(name = "runtime")
-  public int getRuntime() {
+  public String getRuntime() {
     return runtime;
   }
 
@@ -561,7 +567,7 @@ public class MovieToMpNfoConnector {
    * @param runtime
    *          the new runtime
    */
-  public void setRuntime(int runtime) {
+  public void setRuntime(String runtime) {
     this.runtime = runtime;
   }
 

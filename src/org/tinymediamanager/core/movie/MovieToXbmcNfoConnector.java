@@ -85,7 +85,7 @@ public class MovieToXbmcNfoConnector {
   private String              tagline;
 
   /** The runtime. */
-  private int                 runtime;
+  private String              runtime;
 
   /** The thumb. */
   private String              thumb;
@@ -184,7 +184,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.setTagline(movie.getTagline());
-    xbmc.setRuntime(movie.getRuntime());
+    xbmc.setRuntime(String.valueOf(movie.getRuntime()));
     xbmc.setThumb(movie.getPoster());
     xbmc.setId(movie.getImdbId());
     xbmc.setTmdbId(movie.getTmdbId());
@@ -293,7 +293,13 @@ public class MovieToXbmcNfoConnector {
         movie.setYear(xbmc.getYear());
         movie.setOverview(xbmc.getPlot());
         movie.setTagline(xbmc.getTagline());
-        movie.setRuntime(xbmc.getRuntime());
+        try {
+          String rt = xbmc.getRuntime().replaceAll("[^0-9]", ""); 
+          movie.setRuntime(Integer.parseInt(rt));
+        }
+        catch (Exception e) {
+          LOGGER.warn("could not parse runtime: " + xbmc.getRuntime());
+        }
         if (StringUtils.isNotEmpty(xbmc.getThumb()) && xbmc.getThumb().contains("http://")) {
           movie.setPosterUrl(xbmc.getThumb());
         }
@@ -615,7 +621,7 @@ public class MovieToXbmcNfoConnector {
    * @return the runtime
    */
   @XmlElement(name = "runtime")
-  public int getRuntime() {
+  public String getRuntime() {
     return runtime;
   }
 
@@ -625,7 +631,7 @@ public class MovieToXbmcNfoConnector {
    * @param runtime
    *          the new runtime
    */
-  public void setRuntime(int runtime) {
+  public void setRuntime(String runtime) {
     this.runtime = runtime;
   }
 
