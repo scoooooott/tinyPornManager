@@ -342,9 +342,12 @@ public class MovieToXbmcNfoConnector {
         }
 
         for (String genre : xbmc.getGenres()) {
-          MediaGenres genreFound = MediaGenres.getGenre(genre);
-          if (genreFound != null) {
-            movie.addGenre(genreFound);
+          String[] genres = genre.split("/");
+          for (String g : genres) {
+            MediaGenres genreFound = MediaGenres.getGenre(g.trim());
+            if (genreFound != null) {
+              movie.addGenre(genreFound);
+            }
           }
         }
 
