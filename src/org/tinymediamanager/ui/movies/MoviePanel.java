@@ -815,15 +815,16 @@ public class MoviePanel extends JPanel {
      */
     public void actionPerformed(ActionEvent e) {
       // check if renaming options are set
-      if (StringUtils.isEmpty(Globals.settings.getMovieRenamerPathname()) || StringUtils.isEmpty(Globals.settings.getMovieRenamerFilename())) {
-        JOptionPane.showMessageDialog(null, "renaming options are not set");
-        return;
-      }
+      // removed; empty values are now skipped in renamer directly
+      //      if (StringUtils.isEmpty(Globals.settings.getMovieRenamerPathname()) || StringUtils.isEmpty(Globals.settings.getMovieRenamerFilename())) {
+      //        JOptionPane.showMessageDialog(null, "renaming options are not set");
+      //        return;
+      //      }
       // check is renaming options make sense
-      if (!Globals.settings.getMovieRenamerPathname().contains("$") || !Globals.settings.getMovieRenamerFilename().contains("$")) {
-        JOptionPane.showMessageDialog(null, "renaming options without pattern are not allowed");
-        return;
-      }
+      //      if (!Globals.settings.getMovieRenamerPathname().contains("$") || !Globals.settings.getMovieRenamerFilename().contains("$")) {
+      //        JOptionPane.showMessageDialog(null, "renaming options without pattern are not allowed");
+      //        return;
+      //      }
 
       // for (int row : table.getSelectedRows()) {
       // row = table.convertRowIndexToModel(row);

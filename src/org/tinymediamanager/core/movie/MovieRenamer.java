@@ -181,20 +181,25 @@ public class MovieRenamer {
     String newPathname = createDestination(Globals.settings.getMovieRenamerPathname(), movie);
     String oldPathname = movie.getPath();
 
-    newPathname = movie.getDataSource() + File.separator + newPathname;
+    if (!newPathname.isEmpty()) {
+      newPathname = movie.getDataSource() + File.separator + newPathname;
 
-    // move directory if needed
-    if (!StringUtils.equals(oldPathname, newPathname)) {
-      File srcDir = new File(oldPathname);
-      File destDir = new File(newPathname);
-      try {
-        FileUtils.moveDirectory(srcDir, destDir);
-        LOGGER.debug("moved folder " + oldPathname + " to " + newPathname);
-        movie.setPath(newPathname);
+      // move directory if needed
+      if (!StringUtils.equals(oldPathname, newPathname)) {
+        File srcDir = new File(oldPathname);
+        File destDir = new File(newPathname);
+        try {
+          FileUtils.moveDirectory(srcDir, destDir);
+          LOGGER.debug("moved folder " + oldPathname + " to " + newPathname);
+          movie.setPath(newPathname);
+        }
+        catch (IOException e) {
+          LOGGER.error("move folder", e);
+        }
       }
-      catch (IOException e) {
-        LOGGER.error("move folder", e);
-      }
+    }
+    else {
+      LOGGER.info("Folder rename settings were empty - NOT renaming folder");
     }
 
     // prepare the cleanup with "old" name
@@ -203,41 +208,47 @@ public class MovieRenamer {
     ArrayList<String> oldPosters = prepareCleanupPosters(movie);
 
     LOGGER.debug("file expression: " + Globals.settings.getMovieRenamerFilename());
+    if (!Globals.settings.getMovieRenamerFilename().isEmpty()) {
 
-    // skip media file renaming on "disc" folder
-    if (!movie.isDisc()) {
+      // skip media file renaming on "disc" folder
+      if (!movie.isDisc()) {
 
-      // move movie files first
-      for (MediaFile file : movie.getMediaFiles()) {
-        String newFilename = createDestination(Globals.settings.getMovieRenamerFilename(), movie);
+        // move movie files first
+        for (MediaFile file : movie.getMediaFiles()) {
+          String newFilename = createDestination(Globals.settings.getMovieRenamerFilename(), movie);
 
-        // get the filetype
-        String fileExtension = FilenameUtils.getExtension(file.getFilename());
-        String fileWithoutExtension = FilenameUtils.getBaseName(file.getFilename());
-        String oldFilename = movie.getPath() + File.separator + file.getFilename();
+          // get the filetype
+          String fileExtension = FilenameUtils.getExtension(file.getFilename());
+          String fileWithoutExtension = FilenameUtils.getBaseName(file.getFilename());
+          String oldFilename = movie.getPath() + File.separator + file.getFilename();
 
-        // is there any stacking information in the filename?
-        String cleanFilename = Utils.cleanStackingMarkers(fileWithoutExtension);
-        if (!fileWithoutExtension.equals(cleanFilename)) {
-          String stackingInformation = fileWithoutExtension.replace(cleanFilename, "");
-          newFilename = newFilename + " " + stackingInformation;
+          // is there any stacking information in the filename?
+          String cleanFilename = Utils.cleanStackingMarkers(fileWithoutExtension);
+          if (!fileWithoutExtension.equals(cleanFilename)) {
+            String stackingInformation = fileWithoutExtension.replace(cleanFilename, "");
+            newFilename = newFilename + " " + stackingInformation;
+          }
+
+          // movie file
+          newFilename = movie.getPath() + File.separator + newFilename + "." + fileExtension;
+          try {
+            moveFile(oldFilename, newFilename);
+            file.setPath(movie.getPath());
+            file.setFilename(FilenameUtils.getName(newFilename));
+            // newFiles.add(FilenameUtils.getName(newFilename));
+          }
+          catch (Exception e) {
+            LOGGER.error("error moving file", e);
+            // newFiles.add(file);
+          }
         }
 
-        // movie file
-        newFilename = movie.getPath() + File.separator + newFilename + "." + fileExtension;
-        try {
-          moveFile(oldFilename, newFilename);
-          file.setPath(movie.getPath());
-          file.setFilename(FilenameUtils.getName(newFilename));
-          // newFiles.add(FilenameUtils.getName(newFilename));
-        }
-        catch (Exception e) {
-          LOGGER.error("error moving file", e);
-          // newFiles.add(file);
-        }
-      }
+      } // end isDisc
 
-    } // end isDisc
+    } // end skip file rename if empty
+    else {
+      LOGGER.info("File rename settings were empty - NOT renaming files");
+    }
 
     // copies nfo to selected variants and does a cleanup afterwards
     if (!movie.getNfoFilename().isEmpty()) {

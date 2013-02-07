@@ -295,7 +295,7 @@ public class MovieSettingsPanel extends JPanel {
     JTextPane txtrChooseAFolder = new JTextPane();
     txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtrChooseAFolder
-        .setText("Choose a folder and file renaming pattern.\nExample:\nDatasource = /media/movies\nFolder name = $1/$T [$Y]\nFile name = $T\n\nResult:\nFolder name = /media/movies/A/Aladdin [1992]/\nFile name = Aladdin.avi");
+        .setText("Choose a folder and file renaming pattern.\nExample:\nDatasource = /media/movies\nFolder name = $1/$T [$Y]\nFile name = $T\n\nResult:\nFolder name = /media/movies/A/Aladdin [1992]/\nFile name = Aladdin.avi\n\n\n\nIf fields are empty, the renaming will be skipped!");
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtrChooseAFolder, "2, 6, 3, 1, fill, fill");
 
