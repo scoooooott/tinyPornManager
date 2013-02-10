@@ -103,9 +103,6 @@ public class TinyMediaManager {
             updateProgress(g2, "update check", 10);
             splash.update();
           }
-          // write a random number to file, to identify this instance (for
-          // updater, tracking, whatsoever)
-          Utils.trackEvent("startup");
 
           LOGGER.debug("starting tinyMediaManager");
           LOGGER.debug("default encoding " + System.getProperty("file.encoding"));
@@ -211,6 +208,10 @@ public class TinyMediaManager {
             updateProgress(g2, "finished starting", 100);
             splash.update();
           }
+
+          // write a random number to file, to identify this instance (for
+          // updater, tracking, whatsoever)
+          Utils.trackEvent("startup");
 
           TmmWindowSaver.loadSettings(window);
           window.setVisible(true);

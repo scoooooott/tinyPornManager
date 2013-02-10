@@ -35,7 +35,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
@@ -49,7 +48,6 @@ import javax.swing.SwingWorker;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.gpl.JSplitButton.JSplitButton;
 import org.gpl.JSplitButton.action.SplitButtonActionListener;
@@ -63,6 +61,7 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScrapeTask;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.ui.BorderCellRenderer;
 import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.JSearchTextField;
@@ -87,10 +86,10 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MoviePanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long      serialVersionUID         = 1L;
+  private static final long      serialVersionUID             = 1L;
 
   /** The logger. */
-  private final static Logger    LOGGER                   = Logger.getLogger(MoviePanel.class);
+  private final static Logger    LOGGER                       = Logger.getLogger(MoviePanel.class);
 
   /** The movie list. */
   private MovieList              movieList;
@@ -102,37 +101,40 @@ public class MoviePanel extends JPanel {
   private JTable                 table;
 
   /** The action update data sources. */
-  private final Action           actionUpdateDataSources  = new UpdateDataSourcesAction(false);
+  private final Action           actionUpdateDataSources      = new UpdateDataSourcesAction(false);
 
   /** The action update data sources. */
-  private final Action           actionUpdateDataSources2 = new UpdateDataSourcesAction(true);
+  private final Action           actionUpdateDataSources2     = new UpdateDataSourcesAction(true);
 
   /** The action scrape. */
-  private final Action           actionScrape             = new SingleScrapeAction(false);
+  private final Action           actionScrape                 = new SingleScrapeAction(false);
 
   /** The action scrape. */
-  private final Action           actionScrape2            = new SingleScrapeAction(true);
+  private final Action           actionScrape2                = new SingleScrapeAction(true);
 
   /** The action edit movie. */
-  private final Action           actionEditMovie          = new EditAction(false);
+  private final Action           actionEditMovie              = new EditAction(false);
 
   /** The action edit movie. */
-  private final Action           actionEditMovie2         = new EditAction(true);
+  private final Action           actionEditMovie2             = new EditAction(true);
 
   /** The action scrape unscraped movies. */
-  private final Action           actionScrapeUnscraped    = new UnscrapedScrapeAction();
+  private final Action           actionScrapeUnscraped        = new UnscrapedScrapeAction();
 
   /** The action scrape selected movies. */
-  private final Action           actionScrapeSelected     = new SelectedScrapeAction();
+  private final Action           actionScrapeSelected         = new SelectedScrapeAction();
+
+  /** The action scrape metadata selected. */
+  private final Action           actionScrapeMetadataSelected = new SelectedScrapeMetadataAction();
 
   /** The action rename. */
-  private final Action           actionRename             = new RenameAction(false);
+  private final Action           actionRename                 = new RenameAction(false);
 
   /** The action rename2. */
-  private final Action           actionRename2            = new RenameAction(true);
+  private final Action           actionRename2                = new RenameAction(true);
 
   /** The action remove2. */
-  private final Action           actionRemove2            = new RemoveAction(true);
+  private final Action           actionRemove2                = new RemoveAction(true);
 
   /** The label progressAction. */
   private JLabel                 lblProgressAction;
@@ -195,10 +197,10 @@ public class MoviePanel extends JPanel {
   private JButton                btnMediaInformation;
   // private final Action action = new SwingAction();
   /** The action media information. */
-  private final Action           actionMediaInformation   = new MediaInformationAction(false);
+  private final Action           actionMediaInformation       = new MediaInformationAction(false);
 
   /** The action media information2. */
-  private final Action           actionMediaInformation2  = new MediaInformationAction(true);
+  private final Action           actionMediaInformation2      = new MediaInformationAction(true);
 
   // /** The window config. */
   // private WindowConfig windowConfig;
@@ -382,6 +384,7 @@ public class MoviePanel extends JPanel {
     menu.add(actionScrape2);
     menu.add(actionScrapeSelected);
     menu.add(actionScrapeUnscraped);
+    menu.add(actionScrapeMetadataSelected);
     menu.addSeparator();
     menu.add(actionEditMovie2);
     menu.add(actionRename2);
@@ -393,6 +396,7 @@ public class MoviePanel extends JPanel {
     JPopupMenu popupMenu = new JPopupMenu();
     popupMenu.add(actionScrape2);
     popupMenu.add(actionScrapeSelected);
+    popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.addSeparator();
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionRename2);
@@ -504,7 +508,7 @@ public class MoviePanel extends JPanel {
      */
     public SingleScrapeAction(boolean withTitle) {
       if (withTitle) {
-        putValue(NAME, "Scrape selected movies");
+        putValue(NAME, "Search & scrape selected movies");
         putValue(LARGE_ICON_KEY, "");
       }
       else {
@@ -554,7 +558,7 @@ public class MoviePanel extends JPanel {
      * Instantiates a new UnscrapedScrapeAction.
      */
     public UnscrapedScrapeAction() {
-      putValue(NAME, "Scrape unscraped movies - force best match");
+      putValue(NAME, "Search & scrape unscraped movies - force best match");
       putValue(SHORT_DESCRIPTION, "Search & scrape all unscraped movies");
     }
 
@@ -565,11 +569,20 @@ public class MoviePanel extends JPanel {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-
       List<Movie> unscrapedMovies = movieList.getUnscrapedMovies();
-      // scrapeTask = new ScrapeTask(unscrapedMovies);
-      scrapeTask = new MovieScrapeTask(unscrapedMovies, lblProgressAction, progressBar, btnCancelScraper);
-      scrapeTask.execute();
+      if (unscrapedMovies.size() > 0) {
+        MovieScrapeMetadata dialog = new MovieScrapeMetadata("Search & scrape unscraped movies - force best match");
+        dialog.setVisible(true);
+        // get options from dialog
+        MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
+        // do we want to scrape?
+        if (dialog.shouldStartScrape()) {
+          // scrape
+          scrapeTask = new MovieScrapeTask(unscrapedMovies, true, options, lblProgressAction, progressBar, btnCancelScraper);
+          scrapeTask.execute();
+        }
+        dialog.dispose();
+      }
     }
   }
 
@@ -585,7 +598,7 @@ public class MoviePanel extends JPanel {
      * Instantiates a new UnscrapedScrapeAction.
      */
     public SelectedScrapeAction() {
-      putValue(NAME, "Scrape selected movies - force best match");
+      putValue(NAME, "Search & scrape selected movies - force best match");
       putValue(SHORT_DESCRIPTION, "Search & scrape all selected movies");
     }
 
@@ -608,8 +621,61 @@ public class MoviePanel extends JPanel {
 
       if (selectedMovies.size() > 0) {
         // scrapeTask = new ScrapeTask(selectedMovies);
-        scrapeTask = new MovieScrapeTask(selectedMovies, lblProgressAction, progressBar, btnCancelScraper);
-        scrapeTask.execute();
+        MovieScrapeMetadata dialog = new MovieScrapeMetadata("Search & scrape selected movies - force best match");
+        dialog.setVisible(true);
+        // get options from dialog
+        MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
+        // do we want to scrape?
+        if (dialog.shouldStartScrape()) {
+          // scrape
+          scrapeTask = new MovieScrapeTask(selectedMovies, true, options, lblProgressAction, progressBar, btnCancelScraper);
+          scrapeTask.execute();
+        }
+        dialog.dispose();
+      }
+    }
+  }
+
+  /**
+   * The Class SelectedScrapeMetadataAction.
+   */
+  private class SelectedScrapeMetadataAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new UnscrapedScrapeAction.
+     */
+    public SelectedScrapeMetadataAction() {
+      putValue(NAME, "Scrape metadata for selected movies");
+      putValue(SHORT_DESCRIPTION, "Scrape metadata for selected movies");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      List<Movie> selectedMovies = new ArrayList<Movie>();
+      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
+        selectedMovies.add(movie);
+      }
+
+      if (selectedMovies.size() > 0) {
+        MovieScrapeMetadata dialog = new MovieScrapeMetadata("Scrape metadata for selected movies");
+        dialog.setVisible(true);
+        // get options from dialog
+        MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
+        // do we want to scrape?
+        if (dialog.shouldStartScrape()) {
+          // scrape
+          scrapeTask = new MovieScrapeTask(selectedMovies, false, options, lblProgressAction, progressBar, btnCancelScraper);
+          scrapeTask.execute();
+        }
+        dialog.dispose();
       }
     }
   }
@@ -816,15 +882,18 @@ public class MoviePanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
       // check if renaming options are set
       // removed; empty values are now skipped in renamer directly
-      //      if (StringUtils.isEmpty(Globals.settings.getMovieRenamerPathname()) || StringUtils.isEmpty(Globals.settings.getMovieRenamerFilename())) {
-      //        JOptionPane.showMessageDialog(null, "renaming options are not set");
-      //        return;
-      //      }
+      // if (StringUtils.isEmpty(Globals.settings.getMovieRenamerPathname()) ||
+      // StringUtils.isEmpty(Globals.settings.getMovieRenamerFilename())) {
+      // JOptionPane.showMessageDialog(null, "renaming options are not set");
+      // return;
+      // }
       // check is renaming options make sense
-      //      if (!Globals.settings.getMovieRenamerPathname().contains("$") || !Globals.settings.getMovieRenamerFilename().contains("$")) {
-      //        JOptionPane.showMessageDialog(null, "renaming options without pattern are not allowed");
-      //        return;
-      //      }
+      // if (!Globals.settings.getMovieRenamerPathname().contains("$") ||
+      // !Globals.settings.getMovieRenamerFilename().contains("$")) {
+      // JOptionPane.showMessageDialog(null,
+      // "renaming options without pattern are not allowed");
+      // return;
+      // }
 
       // for (int row : table.getSelectedRows()) {
       // row = table.convertRowIndexToModel(row);
@@ -879,9 +948,9 @@ public class MoviePanel extends JPanel {
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-      if (table.getSelectedRow() != -1) {
-        maybeShowPopup(e);
-      }
+      // if (table.getSelectedRow() != -1) {
+      maybeShowPopup(e);
+      // }
     }
 
     /**
@@ -892,6 +961,21 @@ public class MoviePanel extends JPanel {
      */
     private void maybeShowPopup(MouseEvent e) {
       if (e.isPopupTrigger()) {
+        boolean selected = false;
+        // check the selected rows
+        int row = table.rowAtPoint(e.getPoint());
+        int[] selectedRows = table.getSelectedRows();
+        for (int selectedRow : selectedRows) {
+          if (selectedRow == row) {
+            selected = true;
+          }
+        }
+
+        // if the row, which has been right clicked is not selected - select it
+        if (!selected) {
+          table.getSelectionModel().setSelectionInterval(row, row);
+        }
+
         popup.show(e.getComponent(), e.getX(), e.getY());
       }
     }
@@ -952,9 +1036,8 @@ public class MoviePanel extends JPanel {
         putValue(LARGE_ICON_KEY, "");
       }
       else {
-//        putValue(NAME, "MI");
-         putValue(LARGE_ICON_KEY, new
-         ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
+        // putValue(NAME, "MI");
+        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
         putValue(SHORT_DESCRIPTION, "Update media information of selected movies");
       }
     }

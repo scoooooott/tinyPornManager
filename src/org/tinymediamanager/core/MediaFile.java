@@ -597,6 +597,11 @@ public class MediaFile extends AbstractModelObject {
    * Gathers the media information via the native mediainfo lib.
    */
   public void gatherMediaInformation() {
+    // check for supported filetype
+    if (!isValidMediainfoFormat()) {
+      return;
+    }
+
     // video codec
     // e.g. XviD, x264, DivX 5, MPEG-4 Visual, AVC, etc.
     String videoCodec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
@@ -715,6 +720,23 @@ public class MediaFile extends AbstractModelObject {
     Globals.entityManager.getTransaction().begin();
     Globals.entityManager.persist(this);
     Globals.entityManager.getTransaction().commit();
+  }
+
+  /**
+   * Checks if is valid mediainfo format.
+   * 
+   * @return true, if is valid mediainfo format
+   */
+  private boolean isValidMediainfoFormat() {
+    String extension = FilenameUtils.getExtension(filename);
+
+    // check unsupported extensions
+    if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "iso".equals(extension) || "img".equals(extension)
+        || "nrg".equals(extension)) {
+      return false;
+    }
+
+    return true;
   }
 
 }

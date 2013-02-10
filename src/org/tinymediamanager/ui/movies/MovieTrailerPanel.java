@@ -42,6 +42,7 @@ import org.tinymediamanager.ui.TableColumnAdjuster;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
 
@@ -65,7 +66,7 @@ public class MovieTrailerPanel extends JPanel {
   private TableColumnAdjuster           tableColumnAdjuster = null;
 
   /** The trailer event list. */
-  private EventList<MediaTrailer>       trailerEventList    = new BasicEventList<MediaTrailer>();
+  private EventList<MediaTrailer>       trailerEventList    = GlazedLists.threadSafeList(new BasicEventList<MediaTrailer>());
 
   /** The trailer table model. */
   private EventTableModel<MediaTrailer> trailerTableModel   = null;

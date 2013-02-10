@@ -878,13 +878,17 @@ public class Settings extends AbstractModelObject {
    */
   public void setProxy() {
     if (useProxy()) {
-      System.setProperty("proxyPort", getProxyPort());
       System.setProperty("proxyHost", getProxyHost());
-      if (getProxyUsername() != null) {
+
+      if (StringUtils.isNotEmpty(getProxyPort())) {
+        System.setProperty("proxyPort", getProxyPort());
+      }
+
+      if (StringUtils.isNotEmpty(getProxyUsername())) {
         System.setProperty("http.proxyUser", getProxyUsername());
         System.setProperty("https.proxyUser", getProxyUsername());
       }
-      if (getProxyPassword() != null) {
+      if (StringUtils.isNotEmpty(getProxyPassword())) {
         System.setProperty("http.proxyPassword", getProxyPassword());
         System.setProperty("https.proxyPassword", getProxyPassword());
       }
@@ -898,7 +902,11 @@ public class Settings extends AbstractModelObject {
    * @return true, if successful
    */
   public boolean useProxy() {
-    if (!StringUtils.isEmpty(getProxyHost()) && !StringUtils.isEmpty(getProxyPort())) {
+    if (StringUtils.isNotEmpty(getProxyHost()) /*
+                                                * &&
+                                                * !StringUtils.isEmpty(getProxyPort
+                                                * ())
+                                                */) {
       return true;
     }
     return false;

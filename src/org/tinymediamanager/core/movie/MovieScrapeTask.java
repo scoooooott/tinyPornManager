@@ -26,7 +26,9 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
 import org.apache.log4j.Logger;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -35,6 +37,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieScrapeTask.
  * 
@@ -43,28 +46,43 @@ import org.tinymediamanager.scraper.MediaTrailer;
 public class MovieScrapeTask extends SwingWorker<Object, Object> {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = Logger.getLogger(MovieScrapeTask.class);
+  private final static Logger         LOGGER = Logger.getLogger(MovieScrapeTask.class);
 
   /** The movies to scrape. */
-  private List<Movie>         moviesToScrape;
+  private List<Movie>                 moviesToScrape;
+
+  /** The do search. */
+  private boolean                     doSearch;
+
+  private MovieSearchAndScrapeOptions options;
 
   /** The movie count. */
-  private int                 movieCount;
+  private int                         movieCount;
 
   /** The lbl description. */
-  private JLabel              lblDescription;
+  private JLabel                      lblDescription;
 
   /** The progress bar. */
-  private JProgressBar        progressBar;
+  private JProgressBar                progressBar;
 
   /** The btn cancel. */
-  private JButton             btnCancel;
+  private JButton                     btnCancel;
 
   /**
    * Instantiates a new movie scrape task.
    * 
    * @param moviesToScrape
    *          the movies to scrape
+   * @param doSearch
+   *          the do search
+   * @param scraperMetadataConfig
+   *          the scraper metadata config
+   * @param metadataProvider
+   *          the metadata provider
+   * @param artworkProviders
+   *          the artwork providers
+   * @param trailerProviders
+   *          the trailer providers
    * @param label
    *          the label
    * @param progressBar
@@ -72,8 +90,11 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
    * @param button
    *          the button
    */
-  public MovieScrapeTask(List<Movie> moviesToScrape, JLabel label, JProgressBar progressBar, JButton button) {
+  public MovieScrapeTask(List<Movie> moviesToScrape, boolean doSearch, MovieSearchAndScrapeOptions options, JLabel label, JProgressBar progressBar,
+      JButton button) {
     this.moviesToScrape = moviesToScrape;
+    this.doSearch = doSearch;
+    this.options = options;
     this.movieCount = moviesToScrape.size();
     this.lblDescription = label;
     this.progressBar = progressBar;
@@ -93,8 +114,14 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
 
     // start 3 threads
     executor.execute(new Worker(this));
-    executor.execute(new Worker(this));
-    executor.execute(new Worker(this));
+    // start second thread, if there are more than one movies to scrape
+    if (movieCount > 1) {
+      executor.execute(new Worker(this));
+    }
+    // start third thread, if there are more than two movies to scrape
+    if (movieCount > 2) {
+      executor.execute(new Worker(this));
+    }
 
     executor.shutdown();
 
@@ -176,6 +203,7 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
    */
   private class Worker implements Runnable {
 
+    /** The movie list. */
     private MovieList       movieList;
 
     /** The scrape task. */
@@ -199,6 +227,13 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
     @Override
     public void run() {
       movieList = MovieList.getInstance();
+      // set up scrapers
+      ScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
+      IMediaMetadataProvider mediaMetadataProvider = movieList.getMetadataProvider(options.getMetadataScraper());
+      List<IMediaArtworkProvider> artworkProviders = movieList.getArtworkProviders(options.getArtworkScrapers());
+      List<IMediaTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
+
+      // do work
       while (true) {
         Movie movie = scrapeTask.getNextMovie();
         if (movie == null) {
@@ -206,30 +241,59 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
         }
 
         // scrape movie
-        List<MediaSearchResult> results = movieList.searchMovie(movie.getName(), movie.getImdbId(), null);
-        if (results != null && !results.isEmpty()) {
-          MediaSearchResult result1 = results.get(0);
-          // check if there is an other result with 100% score
-          if (results.size() > 1) {
-            MediaSearchResult result2 = results.get(1);
-            // if both results have 100% score - do not take any result
-            if (result1.getScore() == 1 && result2.getScore() == 1) {
-              continue;
+
+        // search movie
+        MediaSearchResult result1 = null;
+        if (doSearch) {
+          List<MediaSearchResult> results = movieList.searchMovie(movie.getName(), movie.getImdbId(), mediaMetadataProvider);
+          if (results != null && !results.isEmpty()) {
+            result1 = results.get(0);
+            // check if there is an other result with 100% score
+            if (results.size() > 1) {
+              MediaSearchResult result2 = results.get(1);
+              // if both results have 100% score - do not take any result
+              if (result1.getScore() == 1 && result2.getScore() == 1) {
+                continue;
+              }
             }
           }
-          // get metadata, artwork and trailers
-          try {
-            MediaScrapeOptions options = new MediaScrapeOptions();
-            options.setResult(result1);
-            MediaMetadata md = movieList.getMetadataProvider().getMetadata(options);
+        }
+
+        // get metadata, artwork and trailers
+        try {
+          MediaScrapeOptions options = new MediaScrapeOptions();
+          options.setResult(result1);
+
+          // we didn't do a search - pass imdbid and tmdbid from movie object
+          if (!doSearch) {
+            options.setImdbId(movie.getImdbId());
+            options.setTmdbId(movie.getTmdbId());
+          }
+
+          // scrape metadata if wanted
+          MediaMetadata md = null;
+
+          if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
+              || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
+              || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
+              || scraperMetadataConfig.isYear()) {
+            md = mediaMetadataProvider.getMetadata(options);
             movie.setMetadata(md);
-            movie.setArtwork(getArtwork(md));
-            movie.setTrailers(getTrailers(md));
-            movie.writeNFO();
           }
-          catch (Exception e) {
-            LOGGER.error("movie.setMetadata", e);
+
+          // scrape artwork if wanted
+          if (scraperMetadataConfig.isArtwork()) {
+            movie.setArtwork(getArtwork(movie, md, artworkProviders));
           }
+
+          // scrape trailer if wanted
+          if (scraperMetadataConfig.isTrailer()) {
+            movie.setTrailers(getTrailers(movie, md, trailerProviders));
+          }
+          movie.writeNFO();
+        }
+        catch (Exception e) {
+          LOGGER.error("movie.setMetadata", e);
         }
       }
     }
@@ -237,19 +301,21 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
     /**
      * Gets the artwork.
      * 
+     * @param metadata
+     *          the metadata
      * @return the artwork
      */
-    public List<MediaArtwork> getArtwork(MediaMetadata metadata) {
+    public List<MediaArtwork> getArtwork(Movie movie, MediaMetadata metadata, List<IMediaArtworkProvider> artworkProviders) {
       List<MediaArtwork> artwork = null;
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
-      options.setImdbId(metadata.getImdbId());
-      options.setTmdbId(metadata.getTmdbId());
+      options.setImdbId(movie.getImdbId());
+      options.setTmdbId(movie.getTmdbId());
 
       // scrape providers till one artwork has been found
-      for (IMediaArtworkProvider artworkProvider : movieList.getArtworkProviders()) {
+      for (IMediaArtworkProvider artworkProvider : artworkProviders) {
         try {
           artwork = artworkProvider.getArtwork(options);
         }
@@ -274,18 +340,20 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
     /**
      * Gets the trailers.
      * 
+     * @param metadata
+     *          the metadata
      * @return the trailers
      */
-    private List<MediaTrailer> getTrailers(MediaMetadata metadata) {
+    private List<MediaTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<IMediaTrailerProvider> trailerProviders) {
       List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setMetadata(metadata);
-      options.setImdbId(metadata.getImdbId());
-      options.setTmdbId(metadata.getTmdbId());
+      options.setImdbId(movie.getImdbId());
+      options.setTmdbId(movie.getTmdbId());
 
       // scrape trailers
-      for (IMediaTrailerProvider trailerProvider : movieList.getTrailerProviders()) {
+      for (IMediaTrailerProvider trailerProvider : trailerProviders) {
         try {
           List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
           trailers.addAll(foundTrailers);

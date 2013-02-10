@@ -216,16 +216,16 @@ public class CachedUrl extends Url {
   public File getCachedFile() {
     return getCachedFile(props);
   }
-  
+
   /**
    * Removes the cached file. For example if an image download is broken
    */
-  public void removeCachedFile(){
-	File f = getCachedFile();
-	if (f.exists()) {
-	  LOGGER.info("Removing Cached Url File: " + f);
-	  f.delete();
-	}
+  public void removeCachedFile() {
+    File f = getCachedFile();
+    if (f.exists()) {
+      LOGGER.info("Removing Cached Url File: " + f);
+      f.delete();
+    }
   }
 
   /**
@@ -287,6 +287,11 @@ public class CachedUrl extends Url {
       is = new FileInputStream(file);
     }
     File f = getCachedFile();
+    if (is == null) {
+      LOGGER.debug("Url " + url + ": did not receive a response; writing empty file");
+      f.createNewFile();
+      return;
+    }
     FileOutputStream fos = new FileOutputStream(f);
     IOUtils.copy(is, fos);
     fos.flush();
@@ -294,7 +299,6 @@ public class CachedUrl extends Url {
     is.close();
     LOGGER.debug("Url " + url + " Cached To: " + f.getAbsolutePath());
     PropertiesUtils.store(props, getPropertyFile(), "Cached Url Properties");
-    LOGGER.debug("Properties for cached url are now stored: " + getPropertyFile().getAbsolutePath());
   }
 
   /**

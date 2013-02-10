@@ -80,29 +80,6 @@ public class Url {
   public Url(String url) {
     if (client == null) {
       client = Utils.getHttpClient();
-      // SchemeRegistry schemeRegistry = new SchemeRegistry();
-      // schemeRegistry.register(new Scheme("http", 80,
-      // PlainSocketFactory.getSocketFactory()));
-      //
-      // PoolingClientConnectionManager cm = new
-      // PoolingClientConnectionManager(schemeRegistry);
-      // // Increase max total connection to 20
-      // cm.setMaxTotal(20);
-      // // Increase default max connection per route to 5
-      // cm.setDefaultMaxPerRoute(5);
-      //
-      // client = new DefaultHttpClient(cm);
-      //
-      // HttpParams params = client.getParams();
-      // HttpConnectionParams.setConnectionTimeout(params, 5000);
-      // HttpConnectionParams.setSoTimeout(params, 5000);
-      // HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
-      // client.setHttpRequestRetryHandler(new
-      // DefaultHttpRequestRetryHandler());
-      //
-      // if ((Globals.settings.useProxy())) {
-      // setProxy(client);
-      // }
     }
     this.url = url;
   }
@@ -140,11 +117,10 @@ public class Url {
 
       if (entity != null) {
         is = new ByteArrayInputStream(EntityUtils.toByteArray(entity));
-        // is = new BufferedInputStream(entity.getContent());
       }
     }
     catch (Exception e) {
-      LOGGER.warn("fetch data", e);
+      LOGGER.warn("fetch data - " + e.getMessage());
     }
     finally {
       EntityUtils.consume(entity);
@@ -171,54 +147,8 @@ public class Url {
    * @return the http client
    */
   protected DefaultHttpClient getHttpClient() {
-    // DefaultHttpClient client = new DefaultHttpClient();
-    //
-    // HttpParams params = client.getParams();
-    // HttpConnectionParams.setConnectionTimeout(params, 5000);
-    // HttpConnectionParams.setSoTimeout(params, 5000);
-    // HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
-    // client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler());
-    //
-    // if ((Globals.settings.useProxy())) {
-    // setProxy(client);
-    // }
-
     return client;
   }
-
-  // /**
-  // * Sets the proxy.
-  // *
-  // * @param httpClient
-  // * the new proxy
-  // */
-  // protected void setProxy(DefaultHttpClient httpClient) {
-  // HttpHost proxyHost = new HttpHost(Globals.settings.getProxyHost(),
-  // Integer.parseInt(Globals.settings.getProxyPort()));
-  //
-  // // authenticate
-  // if (!StringUtils.isEmpty(Globals.settings.getProxyUsername()) &&
-  // !StringUtils.isEmpty(Globals.settings.getProxyPassword())) {
-  // if (Globals.settings.getProxyUsername().contains("\\")) {
-  // // use NTLM
-  // int offset = Globals.settings.getProxyUsername().indexOf("\\");
-  // String domain = Globals.settings.getProxyUsername().substring(0, offset);
-  // String username = Globals.settings.getProxyUsername().substring(offset + 1,
-  // Globals.settings.getProxyUsername().length());
-  // httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, new
-  // NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
-  // } else {
-  // httpClient.getCredentialsProvider()
-  // .setCredentials(AuthScope.ANY, new
-  // UsernamePasswordCredentials(Globals.settings.getProxyUsername(),
-  // Globals.settings.getProxyPassword()));
-  // }
-  // }
-  //
-  // // set proxy
-  // httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,
-  // proxyHost);
-  // }
 
   public String toString() {
     return url;

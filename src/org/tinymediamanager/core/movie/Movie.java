@@ -1307,22 +1307,6 @@ public class Movie extends AbstractModelObject {
       }
     }
 
-    // // poster
-    // if (config.isArtwork()) {
-    // List<MediaArtwork> art = metadata.getMediaArt(MediaArtworkType.POSTER);
-    // if (art.size() > 0) {
-    // MediaArtwork poster = art.get(0);
-    // setPosterUrl(poster.getDownloadUrl());
-    // }
-    //
-    // // fanart
-    // art = metadata.getMediaArt(MediaArtworkType.BACKGROUND);
-    // if (art.size() > 0) {
-    // MediaArtwork fanart = art.get(0);
-    // setFanartUrl(fanart.getDownloadUrl());
-    // }
-    // }
-
     // cast
     if (config.isCast()) {
       setProductionCompany(metadata.getProductionCompany());
@@ -1366,27 +1350,6 @@ public class Movie extends AbstractModelObject {
       }
     }
 
-    // // trailer
-    // if (config.isTrailer()) {
-    // removeAllTrailers();
-    // List<MediaTrailer> trailers = metadata.getTrailers();
-    // for (MediaTrailer trailer : trailers) {
-    // if (this.trailer.size() == 0) {
-    // trailer.setInNfo(Boolean.TRUE);
-    // }
-    // addTrailer(trailer);
-    // }
-    //
-    // // extra trailer from hdtrailers.net
-    // trailers = HDTrailersNet.getTrailers(this);
-    // for (MediaTrailer trailer : trailers) {
-    // if (this.trailer.size() == 0) {
-    // trailer.setInNfo(Boolean.TRUE);
-    // }
-    // addTrailer(trailer);
-    // }
-    // }
-
     // set scraped
     setScraped(true);
 
@@ -1396,7 +1359,6 @@ public class Movie extends AbstractModelObject {
 
     // update DB
     saveToDb();
-
   }
 
   /**

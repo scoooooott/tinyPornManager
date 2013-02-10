@@ -57,6 +57,7 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MovieList.
  */
@@ -634,24 +635,84 @@ public class MovieList extends AbstractModelObject {
    * @return the artwork provider
    */
   public List<IMediaArtworkProvider> getArtworkProviders() {
-    List<IMediaArtworkProvider> artworkProviders = new ArrayList<IMediaArtworkProvider>();
-    // if (artworkProvider == null) {
-    LOGGER.debug("get instance of TmdbMetadataProvider");
-    try {
-      IMediaArtworkProvider artworkProvider = null;
-      if (Globals.settings.isImageScraperTmdb()) {
-        artworkProvider = new TmdbMetadataProvider();
-        artworkProviders.add(artworkProvider);
-      }
-      if (Globals.settings.isImageScraperFanartTv()) {
-        artworkProvider = new FanartTvMetadataProvider();
-        artworkProviders.add(artworkProvider);
-      }
-    }
-    catch (Exception e) {
-      LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
-    }
+    // List<IMediaArtworkProvider> artworkProviders = new
+    // ArrayList<IMediaArtworkProvider>();
+    // // if (artworkProvider == null) {
+    // IMediaArtworkProvider artworkProvider = null;
+    //
+    // try {
+    // if (Globals.settings.isImageScraperTmdb()) {
+    // LOGGER.debug("get instance of TmdbMetadataProvider");
+    // artworkProvider = new TmdbMetadataProvider();
+    // artworkProviders.add(artworkProvider);
     // }
+    // }
+    // catch (Exception e) {
+    // LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
+    // }
+    // try {
+    // if (Globals.settings.isImageScraperFanartTv()) {
+    // LOGGER.debug("get instance of FanartTvMetadataProvider");
+    // artworkProvider = new FanartTvMetadataProvider();
+    // artworkProviders.add(artworkProvider);
+    // }
+    // }
+    // catch (Exception e) {
+    // LOGGER.warn("failed to get instance of FanartTvMetadataProvider", e);
+    // }
+    // // }
+
+    List<MovieArtworkScrapers> scrapers = new ArrayList<MovieArtworkScrapers>();
+    if (Globals.settings.isImageScraperTmdb()) {
+      scrapers.add(MovieArtworkScrapers.TMDB);
+    }
+
+    if (Globals.settings.isImageScraperFanartTv()) {
+      scrapers.add(MovieArtworkScrapers.FANART_TV);
+    }
+
+    return getArtworkProviders(scrapers);
+  }
+
+  /**
+   * Gets the artwork providers.
+   * 
+   * @param scrapers
+   *          the scrapers
+   * @return the artwork providers
+   */
+  public List<IMediaArtworkProvider> getArtworkProviders(List<MovieArtworkScrapers> scrapers) {
+    List<IMediaArtworkProvider> artworkProviders = new ArrayList<IMediaArtworkProvider>();
+
+    IMediaArtworkProvider artworkProvider = null;
+
+    // tmdb
+    if (scrapers.contains(MovieArtworkScrapers.TMDB)) {
+      try {
+        if (Globals.settings.isImageScraperTmdb()) {
+          LOGGER.debug("get instance of TmdbMetadataProvider");
+          artworkProvider = new TmdbMetadataProvider();
+          artworkProviders.add(artworkProvider);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
+      }
+    }
+
+    // fanart.tv
+    if (scrapers.contains(MovieArtworkScrapers.FANART_TV)) {
+      try {
+        if (Globals.settings.isImageScraperFanartTv()) {
+          LOGGER.debug("get instance of FanartTvMetadataProvider");
+          artworkProvider = new FanartTvMetadataProvider();
+          artworkProviders.add(artworkProvider);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("failed to get instance of FanartTvMetadataProvider", e);
+      }
+    }
 
     return artworkProviders;
   }
@@ -662,11 +723,63 @@ public class MovieList extends AbstractModelObject {
    * @return the trailer providers
    */
   public List<IMediaTrailerProvider> getTrailerProviders() {
+    // List<IMediaTrailerProvider> trailerProviders = new
+    // ArrayList<IMediaTrailerProvider>();
+    // LOGGER.debug("get instances of IMediaTrailerProviders");
+    //
+    // // tmdb
+    // if (Globals.settings.isTrailerScraperTmdb()) {
+    // try {
+    // IMediaTrailerProvider trailerProvider = new TmdbMetadataProvider();
+    // trailerProviders.add(trailerProvider);
+    // }
+    // catch (Exception e) {
+    // LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
+    // }
+    // }
+    //
+    // // hd-trailers.net
+    // if (Globals.settings.isTrailerScraperHdTrailers()) {
+    // IMediaTrailerProvider trailerProvider = new HDTrailersNet();
+    // trailerProviders.add(trailerProvider);
+    // }
+    //
+    // // ofdb.de
+    // if (Globals.settings.isTrailerScraperOfdb()) {
+    // IMediaTrailerProvider trailerProvider = new OfdbMetadataProvider();
+    // trailerProviders.add(trailerProvider);
+    // }
+    //
+    // return trailerProviders;
+    List<MovieTrailerScrapers> scrapers = new ArrayList<MovieTrailerScrapers>();
+
+    if (Globals.settings.isTrailerScraperTmdb()) {
+      scrapers.add(MovieTrailerScrapers.TMDB);
+    }
+
+    if (Globals.settings.isTrailerScraperHdTrailers()) {
+      scrapers.add(MovieTrailerScrapers.HDTRAILERS);
+    }
+
+    if (Globals.settings.isTrailerScraperOfdb()) {
+      scrapers.add(MovieTrailerScrapers.OFDB);
+    }
+
+    return getTrailerProviders(scrapers);
+  }
+
+  /**
+   * Gets the trailer providers.
+   * 
+   * @param scrapers
+   *          the scrapers
+   * @return the trailer providers
+   */
+  public List<IMediaTrailerProvider> getTrailerProviders(List<MovieTrailerScrapers> scrapers) {
     List<IMediaTrailerProvider> trailerProviders = new ArrayList<IMediaTrailerProvider>();
-    LOGGER.debug("get instances of IMediaTrailerProviders");
 
     // tmdb
-    if (Globals.settings.isTrailerScraperTmdb()) {
+    if (scrapers.contains(MovieTrailerScrapers.TMDB)) {
       try {
         IMediaTrailerProvider trailerProvider = new TmdbMetadataProvider();
         trailerProviders.add(trailerProvider);
@@ -676,14 +789,14 @@ public class MovieList extends AbstractModelObject {
       }
     }
 
-    // hd-trailers.net
-    if (Globals.settings.isTrailerScraperHdTrailers()) {
+    // hd-trailer.net
+    if (scrapers.contains(MovieTrailerScrapers.HDTRAILERS)) {
       IMediaTrailerProvider trailerProvider = new HDTrailersNet();
       trailerProviders.add(trailerProvider);
     }
 
     // ofdb.de
-    if (Globals.settings.isTrailerScraperOfdb()) {
+    if (scrapers.contains(MovieTrailerScrapers.OFDB)) {
       IMediaTrailerProvider trailerProvider = new OfdbMetadataProvider();
       trailerProviders.add(trailerProvider);
     }
