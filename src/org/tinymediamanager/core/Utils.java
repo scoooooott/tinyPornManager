@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
-import java.net.ProxySelector;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.UUID;
@@ -33,15 +32,19 @@ import javax.net.ssl.SSLException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.NTCredentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
@@ -236,43 +239,38 @@ public class Utils {
    *          the new proxy
    */
   protected static void setProxy(DefaultHttpClient httpClient) {
-    // HttpHost proxyHost = null;
-    // if (StringUtils.isNotEmpty(Globals.settings.getProxyPort())) {
-    // proxyHost = new HttpHost(Globals.settings.getProxyHost(),
-    // Integer.parseInt(Globals.settings.getProxyPort()));
-    // }
-    // else {
-    // proxyHost = new HttpHost(Globals.settings.getProxyHost());
-    // }
-    //
-    // // authenticate
-    // if (!StringUtils.isEmpty(Globals.settings.getProxyUsername()) &&
-    // !StringUtils.isEmpty(Globals.settings.getProxyPassword())) {
-    // if (Globals.settings.getProxyUsername().contains("\\")) {
-    // // use NTLM
-    // int offset = Globals.settings.getProxyUsername().indexOf("\\");
-    // String domain = Globals.settings.getProxyUsername().substring(0, offset);
-    // String username = Globals.settings.getProxyUsername().substring(offset +
-    // 1, Globals.settings.getProxyUsername().length());
-    // httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
-    // new NTCredentials(username, Globals.settings.getProxyPassword(), "",
-    // domain));
-    // }
-    // else {
-    // httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
-    // new UsernamePasswordCredentials(Globals.settings.getProxyUsername(),
-    // Globals.settings.getProxyPassword()));
-    // }
-    // }
-    //
-    // // set proxy
-    // httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,
-    // proxyHost);
+    HttpHost proxyHost = null;
+    if (StringUtils.isNotEmpty(Globals.settings.getProxyPort())) {
+      proxyHost = new HttpHost(Globals.settings.getProxyHost(), Integer.parseInt(Globals.settings.getProxyPort()));
+    }
+    else {
+      proxyHost = new HttpHost(Globals.settings.getProxyHost());
+    }
 
-    // try to get proxy settings from JRE
-    ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(httpClient.getConnectionManager().getSchemeRegistry(),
-        ProxySelector.getDefault());
-    httpClient.setRoutePlanner(routePlanner);
+    // authenticate
+    if (!StringUtils.isEmpty(Globals.settings.getProxyUsername()) && !StringUtils.isEmpty(Globals.settings.getProxyPassword())) {
+      if (Globals.settings.getProxyUsername().contains("\\")) {
+        // use NTLM
+        int offset = Globals.settings.getProxyUsername().indexOf("\\");
+        String domain = Globals.settings.getProxyUsername().substring(0, offset);
+        String username = Globals.settings.getProxyUsername().substring(offset + 1, Globals.settings.getProxyUsername().length());
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
+            new NTCredentials(username, Globals.settings.getProxyPassword(), "", domain));
+      }
+      else {
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY,
+            new UsernamePasswordCredentials(Globals.settings.getProxyUsername(), Globals.settings.getProxyPassword()));
+      }
+    }
+
+    // set proxy
+    httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+
+    // try to get proxy settings from JRE - is probably added in HttpClient 4.3
+    // ProxySelectorRoutePlanner routePlanner = new
+    // ProxySelectorRoutePlanner(httpClient.getConnectionManager().getSchemeRegistry(),
+    // ProxySelector.getDefault());
+    // httpClient.setRoutePlanner(routePlanner);
   }
 
   /**

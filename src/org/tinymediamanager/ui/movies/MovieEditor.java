@@ -66,10 +66,10 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.AutocompleteComboBox;
-import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -765,10 +765,12 @@ public class MovieEditor extends JDialog {
         movieToEdit.addToCast(actor);
       }
 
-      movieToEdit.removeAllGenres();
-      for (MediaGenres genre : genres) {
-        movieToEdit.addGenre(genre);
-      }
+      // two way sync of genres (so selection won't get killed
+      // movieToEdit.removeAllGenres();
+      // for (MediaGenres genre : genres) {
+      // movieToEdit.addGenre(genre);
+      // }
+      movieToEdit.setGenres(genres);
 
       movieToEdit.removeAllTrailers();
       for (MediaTrailer trailer : trailers) {

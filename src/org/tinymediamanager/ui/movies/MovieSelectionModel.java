@@ -85,7 +85,9 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     propertyChangeListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-        firePropertyChange(evt);
+        if (evt.getSource() == selectedMovie) {
+          firePropertyChange(evt);
+        }
       }
     };
   }
@@ -162,7 +164,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
       Movie oldValue = selectedMovie;
       selectedMovie = selectedMovies.get(0);
 
-      // register propertychangelistener to handle changes in a movie
+      // unregister propertychangelistener
       if (oldValue != null) {
         oldValue.removePropertyChangeListener(propertyChangeListener);
         // oldValue.removePropertyChangeListenerFromChildren(propertyChangeListener);
@@ -178,6 +180,11 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     if (selectedMovies.size() == 0) {
       Movie oldValue = selectedMovie;
       selectedMovie = initalMovie;
+      // unregister propertychangelistener
+      if (oldValue != null) {
+        oldValue.removePropertyChangeListener(propertyChangeListener);
+        // oldValue.removePropertyChangeListenerFromChildren(propertyChangeListener);
+      }
       firePropertyChange(SELECTED_MOVIE, oldValue, selectedMovie);
     }
   }
@@ -251,5 +258,4 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     Comparator<Movie> comparator = new MovieExtendedComparator(column, ascending);
     sortedList.setComparator(comparator);
   }
-
 }

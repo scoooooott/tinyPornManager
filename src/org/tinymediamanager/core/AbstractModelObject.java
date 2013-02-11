@@ -19,7 +19,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractModelObject.
  */
@@ -69,7 +68,11 @@ public abstract class AbstractModelObject {
    *          the listener
    */
   public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-    propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
+    try {
+      propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
+    }
+    catch (AssertionError e) {
+    }
   }
 
   /**
@@ -83,7 +86,11 @@ public abstract class AbstractModelObject {
    *          the new value
    */
   protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-    propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
+    try {
+      propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
+    }
+    catch (AssertionError e) {
+    }
   }
 
   /**

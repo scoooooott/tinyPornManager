@@ -1344,10 +1344,11 @@ public class Movie extends AbstractModelObject {
 
     // genres
     if (config.isGenres()) {
-      removeAllGenres();
-      for (MediaGenres genre : metadata.getGenres()) {
-        addGenre(genre);
-      }
+      // removeAllGenres();
+      // for (MediaGenres genre : metadata.getGenres()) {
+      // addGenre(genre);
+      // }
+      setGenres(metadata.getGenres());
     }
 
     // set scraped
@@ -1912,6 +1913,28 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("genresAsString", null, newValue);
   }
 
+  public void setGenres(List<MediaGenres> genres) {
+    // two way sync of genres
+
+    // first, add new ones
+    for (MediaGenres genre : genres) {
+      if (!this.genres.contains(genre)) {
+        this.genres.add(genre);
+      }
+    }
+
+    // second remove old ones
+    for (int i = this.genres.size() - 1; i >= 0; i--) {
+      MediaGenres genre = this.genres.get(i);
+      if (!genres.contains(genre)) {
+        this.genres.remove(genre);
+      }
+    }
+
+    firePropertyChange(GENRE, null, genres);
+    firePropertyChange("genresAsString", null, genres);
+  }
+
   /**
    * Removes the genre.
    * 
@@ -1924,14 +1947,14 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("genresAsString", null, genre);
   }
 
-  /**
-   * Removes the all genres.
-   */
-  public void removeAllGenres() {
-    genres.clear();
-    firePropertyChange(GENRE, null, genres);
-    firePropertyChange("genresAsString", null, genres);
-  }
+  // /**
+  // * Removes the all genres.
+  // */
+  // public void removeAllGenres() {
+  // genres.clear();
+  // firePropertyChange(GENRE, null, genres.toArray());
+  // firePropertyChange("genresAsString", null, genres);
+  // }
 
   /**
    * Gets the certifications.
