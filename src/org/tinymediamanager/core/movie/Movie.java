@@ -579,11 +579,33 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("tagAsString", null, removeTag);
   }
 
-  /**
-   * Clear tags.
-   */
-  public void clearTags() {
-    tagsObservable.clear();
+  // /**
+  // * Clear tags.
+  // */
+  // public void clearTags() {
+  // tagsObservable.clear();
+  // firePropertyChange(TAG, null, tagsObservable);
+  // firePropertyChange("tagsAsString", null, tagsObservable);
+  // }
+
+  public void setTags(List<String> newTags) {
+    // two way sync of tags
+
+    // first, add new ones
+    for (String tag : newTags) {
+      if (!this.tagsObservable.contains(tag)) {
+        this.tagsObservable.add(tag);
+      }
+    }
+
+    // second remove old ones
+    for (int i = this.tagsObservable.size() - 1; i >= 0; i--) {
+      String tag = this.tagsObservable.get(i);
+      if (!newTags.contains(tag)) {
+        this.tagsObservable.remove(tag);
+      }
+    }
+
     firePropertyChange(TAG, null, tagsObservable);
     firePropertyChange("tagsAsString", null, tagsObservable);
   }
@@ -1310,8 +1332,8 @@ public class Movie extends AbstractModelObject {
     // cast
     if (config.isCast()) {
       setProductionCompany(metadata.getProductionCompany());
-      removeAllActors();
       List<MediaCastMember> cast = metadata.getCastMembers();
+      List<MovieCast> actors = new ArrayList<MovieCast>();
       String director = "";
       String writer = "";
       for (MediaCastMember member : cast) {
@@ -1322,7 +1344,8 @@ public class Movie extends AbstractModelObject {
         switch (member.getType()) {
           case ACTOR:
             castMember.setType(CastType.ACTOR);
-            addToCast(castMember);
+            // addToCast(castMember);
+            actors.add(castMember);
             break;
           case DIRECTOR:
             if (!StringUtils.isEmpty(director)) {
@@ -1338,6 +1361,7 @@ public class Movie extends AbstractModelObject {
             break;
         }
       }
+      setActors(actors);
       setDirector(director);
       setWriter(writer);
     }
@@ -1485,11 +1509,33 @@ public class Movie extends AbstractModelObject {
     }
   }
 
-  /**
-   * Removes the all actors.
-   */
-  public void removeAllActors() {
-    castObservable.clear();
+  // /**
+  // * Removes the all actors.
+  // */
+  // public void removeAllActors() {
+  // castObservable.clear();
+  // firePropertyChange("cast", null, this.getCast());
+  // firePropertyChange("actors", null, this.getCast());
+  // }
+
+  public void setActors(List<MovieCast> newCast) {
+    // two way sync of cast
+
+    // first add the new ones
+    for (MovieCast cast : newCast) {
+      if (!castObservable.contains(cast)) {
+        castObservable.add(cast);
+      }
+    }
+
+    // second remove unused
+    for (int i = castObservable.size() - 1; i >= 0; i--) {
+      MovieCast cast = castObservable.get(i);
+      if (!newCast.contains(cast)) {
+        castObservable.remove(cast);
+      }
+    }
+
     firePropertyChange("cast", null, this.getCast());
     firePropertyChange("actors", null, this.getCast());
   }
@@ -1913,6 +1959,12 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("genresAsString", null, newValue);
   }
 
+  /**
+   * Sets the genres.
+   * 
+   * @param genres
+   *          the new genres
+   */
   public void setGenres(List<MediaGenres> genres) {
     // two way sync of genres
 

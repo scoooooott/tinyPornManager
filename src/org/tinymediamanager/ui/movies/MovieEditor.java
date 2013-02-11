@@ -760,10 +760,12 @@ public class MovieEditor extends JDialog {
       movieToEdit.setWriter(tfWriter.getText());
       movieToEdit.setProductionCompany(tfProductionCompanies.getText());
 
-      movieToEdit.removeAllActors();
-      for (MovieCast actor : cast) {
-        movieToEdit.addToCast(actor);
-      }
+      // two way sync of actors
+      // movieToEdit.removeAllActors();
+      // for (MovieCast actor : cast) {
+      // movieToEdit.addToCast(actor);
+      // }
+      movieToEdit.setActors(cast);
 
       // two way sync of genres (so selection won't get killed
       // movieToEdit.removeAllGenres();
@@ -777,10 +779,12 @@ public class MovieEditor extends JDialog {
         movieToEdit.addTrailer(trailer);
       }
 
-      movieToEdit.clearTags();
-      for (String tag : tags) {
-        movieToEdit.addToTags(tag);
-      }
+      // two way sync of tags
+      // movieToEdit.clearTags();
+      // for (String tag : tags) {
+      // movieToEdit.addToTags(tag);
+      // }
+      movieToEdit.setTags(tags);
 
       movieToEdit.setDateAdded((Date) spDateAdded.getValue());
 

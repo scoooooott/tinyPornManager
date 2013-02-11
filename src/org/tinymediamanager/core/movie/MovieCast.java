@@ -17,6 +17,7 @@ package org.tinymediamanager.core.movie;
 
 import javax.persistence.Entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -186,5 +187,26 @@ public class MovieCast extends AbstractModelObject {
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    if (!(obj instanceof MovieCast)) {
+      return false;
+    }
+
+    MovieCast cast = (MovieCast) obj;
+
+    // checks of equality
+    if (StringUtils.equals(name, cast.name) && StringUtils.equals(character, cast.character) && StringUtils.equals(thumb, cast.thumb)
+        && type == cast.type) {
+      return true;
+    }
+
+    return false;
   }
 }
