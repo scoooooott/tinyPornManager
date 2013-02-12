@@ -761,6 +761,13 @@ public class Movie extends AbstractModelObject {
       }
     }
 
+    // we did not find a poster, try to get it if an url exists
+    if (!found && StringUtils.isNotEmpty(posterUrl)) {
+      writeImages(true, false);
+      found = true;
+      LOGGER.debug("got poster url: " + posterUrl + " ; try to download this");
+    }
+
     if (!found) {
       LOGGER.debug("Sorry, could not find poster.");
     }
@@ -810,6 +817,13 @@ public class Movie extends AbstractModelObject {
           found = true;
         }
       }
+    }
+
+    // we did not find a poster, try to get it if an url exists
+    if (!found && StringUtils.isNotEmpty(fanartUrl)) {
+      writeImages(false, true);
+      found = true;
+      LOGGER.debug("got fanart url: " + fanartUrl + " ; try to download this");
     }
 
     if (!found) {
