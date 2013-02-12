@@ -22,7 +22,6 @@ code = lib/commons-logging.jar
 code = lib/fanarttvapi.jar
 code = lib/forms.jar
 code = lib/glazedlists.jar
-code = lib/httpclient-cache.jar
 code = lib/httpclient.jar
 code = lib/httpcore.jar
 code = lib/httpmime.jar
