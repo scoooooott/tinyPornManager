@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -800,9 +801,19 @@ public class MoviePanel extends JPanel {
     @Override
     public Void doInBackground() {
       try {
+        // first search for new movies
         for (String path : Globals.settings.getMovieDataSource()) {
           startProgressBar("Updating " + path);
           movieList.findMoviesInPath(path);
+        }
+
+        // second - remove orphaned movies
+        for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
+          Movie movie = movieList.getMovies().get(i);
+          File movieDir = new File(movie.getPath());
+          if (!movieDir.exists()) {
+            movieList.getMovies().remove(movie);
+          }
         }
       }
       catch (Exception e) {
