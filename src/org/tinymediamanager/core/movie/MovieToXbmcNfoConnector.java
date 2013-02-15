@@ -265,7 +265,9 @@ public class MovieToXbmcNfoConnector {
       JAXBContext context;
       try {
         nfoFilename = movie.getNfoFilename(name);
-        context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+        synchronized (JAXBContext.class) {
+          context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+        }
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -306,7 +308,9 @@ public class MovieToXbmcNfoConnector {
     JAXBContext context;
     Movie movie = null;
     try {
-      context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+      synchronized (JAXBContext.class) {
+        context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+      }
       Unmarshaller um = context.createUnmarshaller();
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
       MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
@@ -383,15 +387,10 @@ public class MovieToXbmcNfoConnector {
         }
       }
 
-      for (Object obj : xbmc.getActors()) {
-        // every unused XML element will be shown as an actor - we have to
-        // test it this way; else the program will crash
-        if (obj instanceof Actor) {
-          Actor actor = (Actor) obj;
-          MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
-          cast.setThumb(actor.getThumb());
-          movie.addToCast(cast);
-        }
+      for (Actor actor : xbmc.getActors()) {
+        MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
+        cast.setThumb(actor.getThumb());
+        movie.addToCast(cast);
       }
 
       for (String genre : xbmc.getGenres()) {
@@ -498,7 +497,16 @@ public class MovieToXbmcNfoConnector {
    * @return the actors
    */
   public List<Actor> getActors() {
-    return actors;
+    // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
+    // filter Actors out
+    List<Actor> pureActors = new ArrayList<Actor>();
+    for (Object obj : actors) {
+      if (obj instanceof Actor) {
+        Actor actor = (Actor) obj;
+        pureActors.add(actor);
+      }
+    }
+    return pureActors;
   }
 
   /**

@@ -210,7 +210,9 @@ public class MovieToMpNfoConnector {
       JAXBContext context;
       try {
         nfoFilename = movie.getNfoFilename(name);
-        context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
+        synchronized (JAXBContext.class) {
+          context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
+        }
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -251,7 +253,9 @@ public class MovieToMpNfoConnector {
     JAXBContext context;
     Movie movie = null;
     try {
-      context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
+      synchronized (JAXBContext.class) {
+        context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
+      }
       Unmarshaller um = context.createUnmarshaller();
       try {
         Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
@@ -265,7 +269,7 @@ public class MovieToMpNfoConnector {
         movie.setOverview(mp.getPlot());
         movie.setTagline(mp.getTagline());
         try {
-          String rt = mp.getRuntime().replaceAll("[^0-9]", ""); 
+          String rt = mp.getRuntime().replaceAll("[^0-9]", "");
           movie.setRuntime(Integer.parseInt(rt));
         }
         catch (Exception e) {
@@ -305,15 +309,10 @@ public class MovieToMpNfoConnector {
           }
         }
 
-        for (Object obj : mp.getActors()) {
-          // every unused XML element will be shown as an actor - we have to
-          // test it this way; else the program will crash
-          if (obj instanceof Actor) {
-            Actor actor = (Actor) obj;
-            MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
-            cast.setThumb(actor.getThumb());
-            movie.addToCast(cast);
-          }
+        for (Actor actor : mp.getActors()) {
+          MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
+          cast.setThumb(actor.getThumb());
+          movie.addToCast(cast);
         }
 
         for (String genre : mp.getGenres()) {
@@ -326,7 +325,7 @@ public class MovieToMpNfoConnector {
           }
         }
 
-       // set only the name w/o path
+        // set only the name w/o path
         movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
 
       }
@@ -388,7 +387,16 @@ public class MovieToMpNfoConnector {
    * @return the actors
    */
   public List<Actor> getActors() {
-    return actors;
+    // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
+    // filter Actors out
+    List<Actor> pureActors = new ArrayList<Actor>();
+    for (Object obj : actors) {
+      if (obj instanceof Actor) {
+        Actor actor = (Actor) obj;
+        pureActors.add(actor);
+      }
+    }
+    return pureActors;
   }
 
   /**
