@@ -188,7 +188,13 @@ public class MovieToXbmcNfoConnector {
     xbmc.setThumb(movie.getPoster());
     xbmc.setId(movie.getImdbId());
     xbmc.setTmdbId(movie.getTmdbId());
-    xbmc.setStudio(movie.getProductionCompany());
+
+    // only write first studio
+    String[] studio = movie.getProductionCompany().split(", ");
+    if (studio.length > 0) {
+      xbmc.setStudio(studio[0]);
+    }
+
     xbmc.setWatched(movie.isWatched());
     if (xbmc.isWatched()) {
       xbmc.setPlaycount(1);
@@ -282,107 +288,105 @@ public class MovieToXbmcNfoConnector {
     try {
       context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
       Unmarshaller um = context.createUnmarshaller();
+      Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
+      MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+      movie = new Movie();
+      movie.setName(xbmc.getTitle());
+      movie.setOriginalName(xbmc.getOriginaltitle());
+      movie.setRating(xbmc.getRating());
+      movie.setVotes(xbmc.getVotes());
+      movie.setYear(xbmc.getYear());
+      movie.setOverview(xbmc.getPlot());
+      movie.setTagline(xbmc.getTagline());
       try {
-        Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
-        MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
-        movie = new Movie();
-        movie.setName(xbmc.getTitle());
-        movie.setOriginalName(xbmc.getOriginaltitle());
-        movie.setRating(xbmc.getRating());
-        movie.setVotes(xbmc.getVotes());
-        movie.setYear(xbmc.getYear());
-        movie.setOverview(xbmc.getPlot());
-        movie.setTagline(xbmc.getTagline());
-        try {
-          String rt = xbmc.getRuntime().replaceAll("[^0-9]", ""); 
-          movie.setRuntime(Integer.parseInt(rt));
-        }
-        catch (Exception e) {
-          LOGGER.warn("could not parse runtime: " + xbmc.getRuntime());
-        }
-        if (StringUtils.isNotEmpty(xbmc.getThumb()) && xbmc.getThumb().contains("http://")) {
-          movie.setPosterUrl(xbmc.getThumb());
-        }
-        else {
-          movie.setPoster(xbmc.getThumb());
-        }
-
-        movie.setImdbId(xbmc.getId());
-        movie.setTmdbId(xbmc.getTmdbId());
-        movie.setDirector(xbmc.getDirector());
-        movie.setWriter(xbmc.getCredits());
-        movie.setProductionCompany(xbmc.getStudio());
-        if (!StringUtils.isEmpty(xbmc.getCertifications())) {
-          movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getCertifications()));
-        }
-        if (!StringUtils.isEmpty(xbmc.getMpaa()) && movie.getCertification() == Certification.NOT_RATED) {
-          movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getMpaa()));
-        }
-        movie.setWatched(xbmc.isWatched());
-
-        // movieset
-        if (StringUtils.isNotEmpty(xbmc.getSet())) {
-          // search for that movieset
-          MovieList movieList = MovieList.getInstance();
-          MovieSet movieSet = movieList.findMovieSet(xbmc.getSet());
-          // no one found - create it
-          if (movieSet == null) {
-            movieSet = new MovieSet(xbmc.getSet());
-            movieSet.saveToDb();
-            movieList.addMovieSet(movieSet);
-            movieList.getMovieSetTreeModel().addMovieSet(movieSet);
-          }
-
-          // add movie to movieset
-          if (movieSet != null) {
-            movie.setMovieSet(movieSet);
-          }
-        }
-
-        for (Object obj : xbmc.getActors()) {
-          // every unused XML element will be shown as an actor - we have to
-          // test it this way; else the program will crash
-          if (obj instanceof Actor) {
-            Actor actor = (Actor) obj;
-            MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
-            cast.setThumb(actor.getThumb());
-            movie.addToCast(cast);
-          }
-        }
-
-        for (String genre : xbmc.getGenres()) {
-          String[] genres = genre.split("/");
-          for (String g : genres) {
-            MediaGenres genreFound = MediaGenres.getGenre(g.trim());
-            if (genreFound != null) {
-              movie.addGenre(genreFound);
-            }
-          }
-        }
-
-        if (StringUtils.isNotEmpty(xbmc.getTrailer())) {
-          MediaTrailer trailer = new MediaTrailer();
-          trailer.setName("fromNFO");
-          trailer.setProvider("from NFO");
-          trailer.setQuality("unknown");
-          trailer.setUrl(xbmc.getTrailer());
-          trailer.setInNfo(true);
-          movie.addTrailer(trailer);
-        }
-
-        for (String tag : xbmc.getTags()) {
-          movie.addToTags(tag);
-        }
-
-        // set only the name w/o path
-        movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
-
+        String rt = xbmc.getRuntime().replaceAll("[^0-9]", "");
+        movie.setRuntime(Integer.parseInt(rt));
       }
-      catch (FileNotFoundException e) {
-        LOGGER.error("setData", e);
-        return null;
+      catch (Exception e) {
+        LOGGER.warn("could not parse runtime: " + xbmc.getRuntime());
       }
+      if (StringUtils.isNotEmpty(xbmc.getThumb()) && xbmc.getThumb().contains("http://")) {
+        movie.setPosterUrl(xbmc.getThumb());
+      }
+      else {
+        movie.setPoster(xbmc.getThumb());
+      }
+
+      movie.setImdbId(xbmc.getId());
+      movie.setTmdbId(xbmc.getTmdbId());
+      movie.setDirector(xbmc.getDirector());
+      movie.setWriter(xbmc.getCredits());
+      movie.setProductionCompany(xbmc.getStudio());
+      if (!StringUtils.isEmpty(xbmc.getCertifications())) {
+        movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getCertifications()));
+      }
+      if (!StringUtils.isEmpty(xbmc.getMpaa()) && movie.getCertification() == Certification.NOT_RATED) {
+        movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getMpaa()));
+      }
+      movie.setWatched(xbmc.isWatched());
+
+      // movieset
+      if (StringUtils.isNotEmpty(xbmc.getSet())) {
+        // search for that movieset
+        MovieList movieList = MovieList.getInstance();
+        MovieSet movieSet = movieList.findMovieSet(xbmc.getSet());
+        // no one found - create it
+        if (movieSet == null) {
+          movieSet = new MovieSet(xbmc.getSet());
+          movieSet.saveToDb();
+          movieList.addMovieSet(movieSet);
+          movieList.getMovieSetTreeModel().addMovieSet(movieSet);
+        }
+
+        // add movie to movieset
+        if (movieSet != null) {
+          movie.setMovieSet(movieSet);
+        }
+      }
+
+      for (Object obj : xbmc.getActors()) {
+        // every unused XML element will be shown as an actor - we have to
+        // test it this way; else the program will crash
+        if (obj instanceof Actor) {
+          Actor actor = (Actor) obj;
+          MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
+          cast.setThumb(actor.getThumb());
+          movie.addToCast(cast);
+        }
+      }
+
+      for (String genre : xbmc.getGenres()) {
+        String[] genres = genre.split("/");
+        for (String g : genres) {
+          MediaGenres genreFound = MediaGenres.getGenre(g.trim());
+          if (genreFound != null) {
+            movie.addGenre(genreFound);
+          }
+        }
+      }
+
+      if (StringUtils.isNotEmpty(xbmc.getTrailer())) {
+        MediaTrailer trailer = new MediaTrailer();
+        trailer.setName("fromNFO");
+        trailer.setProvider("from NFO");
+        trailer.setQuality("unknown");
+        trailer.setUrl(xbmc.getTrailer());
+        trailer.setInNfo(true);
+        movie.addTrailer(trailer);
+      }
+
+      for (String tag : xbmc.getTags()) {
+        movie.addToTags(tag);
+      }
+
+      // set only the name w/o path
+      movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
     }
+    catch (FileNotFoundException e) {
+      LOGGER.error("setData", e);
+      return null;
+    }
+
     catch (Exception e) {
       LOGGER.error("setData", e);
       return null;
