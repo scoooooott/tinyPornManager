@@ -100,7 +100,8 @@ public class MovieToXbmcNfoConnector {
   private String              filenameandpath;
 
   /** The director. */
-  private String              director;
+  @XmlElement(name = "director")
+  private List<String>        director;
 
   /** The sudio. */
   private String              studio;
@@ -120,7 +121,8 @@ public class MovieToXbmcNfoConnector {
   private String              certifications;
 
   /** the credits. */
-  private String              credits;
+  @XmlElement(name = "credits")
+  private List<String>        credits;
 
   /** The watched. */
   private boolean             watched;
@@ -148,6 +150,8 @@ public class MovieToXbmcNfoConnector {
     actors = new ArrayList<MovieToXbmcNfoConnector.Actor>();
     genres = new ArrayList<String>();
     tags = new ArrayList<String>();
+    director = new ArrayList<String>();
+    credits = new ArrayList<String>();
   }
 
   /**
@@ -190,9 +194,11 @@ public class MovieToXbmcNfoConnector {
     xbmc.setTmdbId(movie.getTmdbId());
 
     // only write first studio
-    String[] studio = movie.getProductionCompany().split(", ");
-    if (studio.length > 0) {
-      xbmc.setStudio(studio[0]);
+    if (StringUtils.isNotEmpty(movie.getProductionCompany())) {
+      String[] studio = movie.getProductionCompany().split(", ");
+      if (studio.length > 0) {
+        xbmc.setStudio(studio[0]);
+      }
     }
 
     xbmc.setWatched(movie.isWatched());
@@ -211,8 +217,22 @@ public class MovieToXbmcNfoConnector {
       xbmc.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles().get(0).getFilename());
     }
 
-    xbmc.setDirector(movie.getDirector());
-    xbmc.setCredits(movie.getWriter());
+    // support of frodo director tags
+    if (StringUtils.isNotEmpty(movie.getDirector())) {
+      String directors[] = movie.getDirector().split(", ");
+      for (String director : directors) {
+        xbmc.addDirector(director);
+      }
+    }
+
+    // support of frodo credits tags
+    if (StringUtils.isNotEmpty(movie.getWriter())) {
+      String writers[] = movie.getWriter().split(", ");
+      for (String writer : writers) {
+        xbmc.addCredits(writer);
+      }
+    }
+
     for (MovieCast cast : movie.getActors()) {
       xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
     }
@@ -314,8 +334,27 @@ public class MovieToXbmcNfoConnector {
 
       movie.setImdbId(xbmc.getId());
       movie.setTmdbId(xbmc.getTmdbId());
-      movie.setDirector(xbmc.getDirector());
-      movie.setWriter(xbmc.getCredits());
+
+      // convert director to internal format
+      String director = "";
+      for (String dir : xbmc.getDirector()) {
+        if (!StringUtils.isEmpty(director)) {
+          director += ", ";
+        }
+        director += dir;
+      }
+      movie.setDirector(director);
+
+      // convert writer to internal format
+      String writer = "";
+      for (String wri : xbmc.getCredits()) {
+        if (StringUtils.isNotEmpty(writer)) {
+          writer += ", ";
+        }
+        writer += wri;
+      }
+      movie.setWriter(writer);
+
       movie.setProductionCompany(xbmc.getStudio());
       if (!StringUtils.isEmpty(xbmc.getCertifications())) {
         movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getCertifications()));
@@ -707,8 +746,7 @@ public class MovieToXbmcNfoConnector {
    * 
    * @return the director
    */
-  @XmlElement(name = "director")
-  public String getDirector() {
+  public List<String> getDirector() {
     return director;
   }
 
@@ -718,8 +756,8 @@ public class MovieToXbmcNfoConnector {
    * @param director
    *          the new director
    */
-  public void setDirector(String director) {
-    this.director = director;
+  public void addDirector(String director) {
+    this.director.add(director);
   }
 
   /**
@@ -787,8 +825,7 @@ public class MovieToXbmcNfoConnector {
    * 
    * @return the credits
    */
-  @XmlElement(name = "credits")
-  public String getCredits() {
+  public List<String> getCredits() {
     return credits;
   }
 
@@ -798,8 +835,8 @@ public class MovieToXbmcNfoConnector {
    * @param credits
    *          the new credits
    */
-  public void setCredits(String credits) {
-    this.credits = credits;
+  public void addCredits(String credits) {
+    this.credits.add(credits);
   }
 
   /**
