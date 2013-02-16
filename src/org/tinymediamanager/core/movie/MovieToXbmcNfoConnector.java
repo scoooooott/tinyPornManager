@@ -108,7 +108,7 @@ public class MovieToXbmcNfoConnector {
 
   /** The actors. */
   @XmlAnyElement(lax = true)
-  private List<Actor>         actors;
+  private List<Object>        actors;
 
   /** The genres. */
   @XmlElement(name = "genre")
@@ -147,7 +147,7 @@ public class MovieToXbmcNfoConnector {
    * Instantiates a new movie to xbmc nfo connector.
    */
   public MovieToXbmcNfoConnector() {
-    actors = new ArrayList<MovieToXbmcNfoConnector.Actor>();
+    actors = new ArrayList();
     genres = new ArrayList<String>();
     tags = new ArrayList<String>();
     director = new ArrayList<String>();
