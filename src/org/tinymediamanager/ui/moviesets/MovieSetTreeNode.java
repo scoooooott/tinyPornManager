@@ -46,7 +46,7 @@ public class MovieSetTreeNode extends DefaultMutableTreeNode {
     // return movie name
     if (getUserObject() instanceof Movie) {
       Movie movie = (Movie) getUserObject();
-      return movie.getSortTitle();
+      return movie.getNameSortable();
     }
 
     // fallback: call super

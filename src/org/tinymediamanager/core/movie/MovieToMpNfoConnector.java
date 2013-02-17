@@ -111,7 +111,7 @@ public class MovieToMpNfoConnector {
 
   /** The actors. */
   @XmlAnyElement(lax = true)
-  private List<Actor>         actors;
+  private List<Object>        actors;
 
   /** The genres. */
   @XmlElementWrapper(name = "genres")
@@ -131,7 +131,7 @@ public class MovieToMpNfoConnector {
    * Instantiates a new movie to mp nfo connector.
    */
   public MovieToMpNfoConnector() {
-    actors = new ArrayList<MovieToMpNfoConnector.Actor>();
+    actors = new ArrayList();
     genres = new ArrayList<String>();
     fanart = new ArrayList<String>();
     sets = new ArrayList<MovieSets>();

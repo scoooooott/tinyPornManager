@@ -608,6 +608,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         return 1;
       }
 
+      // if rating is the same, return 0
+      if (arg0.getVoteAverage() == arg1.getVoteAverage()) {
+        return 0;
+      }
+
       // we did not sort until here; so lets sort with the rating
       return arg0.getVoteAverage() > arg1.getVoteAverage() ? -1 : 1;
     }

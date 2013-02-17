@@ -256,8 +256,11 @@ public class MovieToXbmcNfoConnector {
     if (movie.getMovieSet() != null) {
       MovieSet movieSet = movie.getMovieSet();
       xbmc.setSet(movieSet.getName());
-      xbmc.setSorttitle(movieSet.getName() + (movieSet.getMovieIndex(movie) + 1));
+      // xbmc.setSorttitle(movieSet.getName() + (movieSet.getMovieIndex(movie) +
+      // 1));
     }
+
+    xbmc.setSorttitle(movie.getSortTitle());
 
     // and marshall it
     String nfoFilename = "";
@@ -386,6 +389,8 @@ public class MovieToXbmcNfoConnector {
           movie.setMovieSet(movieSet);
         }
       }
+
+      movie.setSortTitle(xbmc.getSorttitle());
 
       for (Actor actor : xbmc.getActors()) {
         MovieCast cast = new MovieCast(actor.getName(), actor.getRole());

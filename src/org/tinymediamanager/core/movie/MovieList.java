@@ -444,6 +444,7 @@ public class MovieList extends AbstractModelObject {
           movie.saveToDb();
           if (movie.getMovieSet() != null) {
             movie.getMovieSet().addMovie(movie);
+            movie.getMovieSet().sortMovies();
             movie.getMovieSet().saveToDb();
           }
           addMovie(movie);

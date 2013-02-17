@@ -87,7 +87,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   public Object getColumnValue(Movie movie, int column) {
     switch (column) {
       case 0:
-        return movie.getSortTitle();
+        return movie.getNameSortable();
 
       case 1:
         return movie.getYear();

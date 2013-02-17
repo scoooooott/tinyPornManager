@@ -377,10 +377,24 @@ public class MovieSetEditor extends JDialog {
         movieSetToEdit.setFanartUrl(lblFanart.getImageUrl());
       }
 
-      // sort movies in the right order (and rewrite their nfo)
-      movieSetToEdit.removeAllMovies();
+      // delete movies
+      for (int i = movieSetToEdit.getMovies().size() - 1; i >= 0; i--) {
+        Movie movie = movieSetToEdit.getMovies().get(i);
+        if (!moviesInSet.contains(movie)) {
+          movie.setMovieSet(null);
+          movieSetToEdit.removeMovie(movie);
+          movie.writeNFO();
+        }
+      }
+
+      // sort movies in the right order
+      for (int i = 0; i < moviesInSet.size(); i++) {
+        Movie movie = moviesInSet.get(i);
+        movie.setSortTitle(movieSetToEdit.getName() + (i + 1));
+      }
+      movieSetToEdit.sortMovies();
+      // and rewrite NFO
       for (Movie movie : moviesInSet) {
-        movieSetToEdit.addMovie(movie);
         movie.writeNFO();
       }
 

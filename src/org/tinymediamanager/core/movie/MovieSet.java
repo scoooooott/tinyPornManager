@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -317,6 +319,13 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
+   * Sort movies.
+   */
+  public void sortMovies() {
+    Collections.sort(moviesObservable, new MovieInMovieSetComparator());
+  }
+
+  /**
    * Removes the all movies.
    */
   public void removeAllMovies() {
@@ -477,5 +486,19 @@ public class MovieSet extends AbstractModelObject {
         LOGGER.warn(e);
       }
     }
+  }
+
+  private class MovieInMovieSetComparator implements Comparator<Movie> {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public int compare(Movie o1, Movie o2) {
+      return o1.getSortTitle().compareTo(o2.getSortTitle());
+    }
+
   }
 }

@@ -390,7 +390,8 @@ public class MovieSetChooser extends JDialog implements ActionListener {
         // assign movies
         if (cbAssignMovies.isSelected()) {
           movieSetToEdit.removeAllMovies();
-          for (MovieInSet movieInSet : model.getMovies()) {
+          for (int i = 0; i < model.getMovies().size(); i++) {
+            MovieInSet movieInSet = model.getMovies().get(i);
             Movie movie = movieInSet.getMovie();
             if (movie == null) {
               continue;
@@ -404,6 +405,7 @@ public class MovieSetChooser extends JDialog implements ActionListener {
             }
 
             movie.setMovieSet(movieSetToEdit);
+            movie.setSortTitle(movieSetToEdit.getName() + (i + 1));
             movie.saveToDb();
             movieSetToEdit.addMovie(movie);
 

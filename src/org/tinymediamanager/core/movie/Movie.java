@@ -180,6 +180,9 @@ public class Movie extends AbstractModelObject {
   private String                name                 = "";
 
   @Transient
+  private String                nameSortable         = "";
+
+  /** The sorttitle. */
   private String                sortTitle            = "";
 
   /** The original name. */
@@ -305,16 +308,46 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
+   * Gets the sort title.
+   * 
+   * @return the sort title
+   */
+  public String getSortTitle() {
+    return sortTitle;
+  }
+
+  /**
+   * Sets the sort title.
+   * 
+   * @param newValue
+   *          the new sort title
+   */
+  public void setSortTitle(String newValue) {
+    String oldValue = this.sortTitle;
+    this.sortTitle = newValue;
+    firePropertyChange(SORT_TITLE, oldValue, newValue);
+  }
+
+  /**
+   * Sets the sort title from movie set.
+   */
+  public void setSortTitleFromMovieSet() {
+    if (movieSet != null) {
+      setSortTitle(movieSet.getName() + (movieSet.getMovieIndex(this) + 1));
+    }
+  }
+
+  /**
    * Returns the sortable variant of title<br>
    * eg "The Bourne Legacy" -> "Bourne Legacy, The"
    * 
    * @return the title in its sortable format
    */
-  public String getSortTitle() {
-    if (StringUtils.isEmpty(sortTitle)) {
-      sortTitle = Utils.getSortableName(this.getName());
+  public String getNameSortable() {
+    if (StringUtils.isEmpty(nameSortable)) {
+      nameSortable = Utils.getSortableName(this.getName());
     }
-    return sortTitle;
+    return nameSortable;
   }
 
   // /**
@@ -1567,7 +1600,7 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("nameForUi", oldValue, newValue);
 
     sortTitle = "";
-    firePropertyChange(SORT_TITLE, oldValue, newValue);
+    firePropertyChange("nameSortable", oldValue, newValue);
   }
 
   /**
@@ -2179,6 +2212,12 @@ public class Movie extends AbstractModelObject {
   public void setMovieSet(MovieSet newValue) {
     MovieSet oldValue = this.movieSet;
     this.movieSet = newValue;
+
+    // remove movieset-sorttitle
+    if (oldValue != null && newValue == null) {
+      setSortTitle("");
+    }
+
     firePropertyChange("movieset", oldValue, newValue);
   }
 
