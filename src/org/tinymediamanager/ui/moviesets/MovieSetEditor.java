@@ -45,6 +45,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -392,16 +393,19 @@ public class MovieSetEditor extends JDialog {
         Movie movie = moviesInSet.get(i);
         movie.setSortTitle(movieSetToEdit.getName() + (i + 1));
       }
-      movieSetToEdit.sortMovies();
-      // and rewrite NFO
-      for (Movie movie : moviesInSet) {
-        movie.writeNFO();
-      }
 
       // remove removed movies
       for (Movie movie : removedMovies) {
         movie.removeFromMovieSet();
         movieSetToEdit.removeMovie(movie);
+      }
+
+      MovieList.getInstance().sortMoviesInMovieSet(movieSetToEdit);
+      // movieSetToEdit.sortMovies();
+
+      // and rewrite NFO
+      for (Movie movie : moviesInSet) {
+        movie.writeNFO();
       }
 
       try {

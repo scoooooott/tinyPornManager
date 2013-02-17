@@ -20,20 +20,19 @@ import java.util.Comparator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 
-public class MovieSetTreeNode extends DefaultMutableTreeNode {
+public class MovieSetRootTreeNode extends DefaultMutableTreeNode {
 
   protected Comparator nodeComparator = new Comparator() {
                                         @Override
                                         public int compare(Object o1, Object o2) {
                                           if (o1 instanceof MovieTreeNode && o2 instanceof MovieTreeNode) {
-                                            MovieTreeNode node1 = (MovieTreeNode) o1;
-                                            Movie movie1 = (Movie) node1.getUserObject();
-                                            MovieTreeNode node2 = (MovieTreeNode) o2;
-                                            Movie movie2 = (Movie) node2.getUserObject();
-                                            return movie1.getSortTitle().compareTo(movie2.getSortTitle());
+                                            MovieSetTreeNode node1 = (MovieSetTreeNode) o1;
+                                            MovieSet movieSet1 = (MovieSet) node1.getUserObject();
+                                            MovieSetTreeNode node2 = (MovieSetTreeNode) o2;
+                                            MovieSet movieSet2 = (MovieSet) node2.getUserObject();
+                                            return movieSet1.getName().compareTo(movieSet2.getName());
                                           }
                                           return o1.toString().compareToIgnoreCase(o2.toString());
                                         }
@@ -57,8 +56,8 @@ public class MovieSetTreeNode extends DefaultMutableTreeNode {
    * @param userObject
    *          the user object
    */
-  public MovieSetTreeNode(Object userObject) {
-    super(userObject);
+  public MovieSetRootTreeNode() {
+    super("MovieSets");
   }
 
   /**

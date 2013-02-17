@@ -444,7 +444,8 @@ public class MovieList extends AbstractModelObject {
           movie.saveToDb();
           if (movie.getMovieSet() != null) {
             movie.getMovieSet().addMovie(movie);
-            movie.getMovieSet().sortMovies();
+            sortMoviesInMovieSet(movie.getMovieSet());
+            // movie.getMovieSet().sortMovies();
             movie.getMovieSet().saveToDb();
           }
           addMovie(movie);
@@ -1012,5 +1013,10 @@ public class MovieList extends AbstractModelObject {
     }
 
     return null;
+  }
+
+  public void sortMoviesInMovieSet(MovieSet movieSet) {
+    movieSet.sortMovies();
+    movieSetTreeModel.sortMoviesInMovieSet(movieSet);
   }
 }
