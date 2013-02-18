@@ -659,8 +659,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     sb.append("find?q=");
     try {
       // search site was everytime in UTF-8
-      // sb.append(URLEncoder.encode(searchTerm,
-      // imdbSite.getCharset().displayName()));
       sb.append(URLEncoder.encode(searchTerm, "UTF-8"));
     }
     catch (UnsupportedEncodingException ex) {
@@ -675,9 +673,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     Document doc;
     try {
       CachedUrl url = new CachedUrl(sb.toString());
-
-      // doc = Jsoup.parse(url.getInputStream(),
-      // imdbSite.getCharset().displayName(), "");
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "");
     }
     catch (Exception e) {
@@ -743,6 +738,13 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           continue;
         }
 
+        // filter out unwanted results
+        Pattern unwanted = Pattern.compile(".*\\(TV Episode\\).*|.*\\(Video\\).*|.*\\(Short\\).*");
+        Matcher matcher = unwanted.matcher(element.text());
+        if (matcher.find()) {
+          continue;
+        }
+
         // get the name inside the link
         Elements anchors = element.getElementsByTag("a");
         for (Element a : anchors) {
@@ -752,7 +754,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
             // parse id
             String href = a.attr("href");
-            Matcher matcher = imdbIdPattern.matcher(href);
+            matcher = imdbIdPattern.matcher(href);
             while (matcher.find()) {
               if (matcher.group(1) != null) {
                 movieId = matcher.group(1);

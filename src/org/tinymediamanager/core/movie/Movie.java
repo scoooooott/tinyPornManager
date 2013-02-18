@@ -1336,6 +1336,12 @@ public class Movie extends AbstractModelObject {
    * @param metadata
    */
   public void setMetadata(MediaMetadata metadata, ScraperMetadataConfig config) {
+    // check if metadata has at least a name
+    if (StringUtils.isEmpty(metadata.getTitle())) {
+      LOGGER.warn("wanted to save empty metadata for " + getName());
+      return;
+    }
+
     setImdbId(metadata.getImdbId());
     setTmdbId(metadata.getTmdbId());
 

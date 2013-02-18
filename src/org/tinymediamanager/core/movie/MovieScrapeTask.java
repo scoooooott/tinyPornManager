@@ -260,40 +260,42 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
         }
 
         // get metadata, artwork and trailers
-        try {
-          MediaScrapeOptions options = new MediaScrapeOptions();
-          options.setResult(result1);
+        if ((doSearch && result1 != null) || !doSearch) {
+          try {
+            MediaScrapeOptions options = new MediaScrapeOptions();
+            options.setResult(result1);
 
-          // we didn't do a search - pass imdbid and tmdbid from movie object
-          if (!doSearch) {
-            options.setImdbId(movie.getImdbId());
-            options.setTmdbId(movie.getTmdbId());
+            // we didn't do a search - pass imdbid and tmdbid from movie object
+            if (!doSearch) {
+              options.setImdbId(movie.getImdbId());
+              options.setTmdbId(movie.getTmdbId());
+            }
+
+            // scrape metadata if wanted
+            MediaMetadata md = null;
+
+            if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
+                || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
+                || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
+                || scraperMetadataConfig.isYear()) {
+              md = mediaMetadataProvider.getMetadata(options);
+              movie.setMetadata(md);
+            }
+
+            // scrape artwork if wanted
+            if (scraperMetadataConfig.isArtwork()) {
+              movie.setArtwork(getArtwork(movie, md, artworkProviders));
+            }
+
+            // scrape trailer if wanted
+            if (scraperMetadataConfig.isTrailer()) {
+              movie.setTrailers(getTrailers(movie, md, trailerProviders));
+            }
+            movie.writeNFO();
           }
-
-          // scrape metadata if wanted
-          MediaMetadata md = null;
-
-          if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
-              || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
-              || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
-              || scraperMetadataConfig.isYear()) {
-            md = mediaMetadataProvider.getMetadata(options);
-            movie.setMetadata(md);
+          catch (Exception e) {
+            LOGGER.error("movie.setMetadata", e);
           }
-
-          // scrape artwork if wanted
-          if (scraperMetadataConfig.isArtwork()) {
-            movie.setArtwork(getArtwork(movie, md, artworkProviders));
-          }
-
-          // scrape trailer if wanted
-          if (scraperMetadataConfig.isTrailer()) {
-            movie.setTrailers(getTrailers(movie, md, trailerProviders));
-          }
-          movie.writeNFO();
-        }
-        catch (Exception e) {
-          LOGGER.error("movie.setMetadata", e);
         }
       }
     }
