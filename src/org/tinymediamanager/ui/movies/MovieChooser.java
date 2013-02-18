@@ -239,10 +239,9 @@ public class MovieChooser extends JDialog implements ActionListener {
                   selectedRow = table.convertRowIndexToModel(selectedRow);
                   try {
                     MovieChooserModel model = moviesFound.get(selectedRow);
-                    if (!model.isScraped()) {
+                    if (model != MovieChooserModel.emptyResult && !model.isScraped()) {
                       ScrapeTask task = new ScrapeTask(model);
                       task.execute();
-
                     }
                   }
                   catch (Exception ex) {
@@ -366,63 +365,66 @@ public class MovieChooser extends JDialog implements ActionListener {
       int row = table.getSelectedRow();
       if (row >= 0) {
         MovieChooserModel model = moviesFound.get(row);
-        MediaMetadata md = model.getMetadata();
+        if (model != MovieChooserModel.emptyResult) {
+          MediaMetadata md = model.getMetadata();
 
-        // did the user want to choose the images?
-        if (!Globals.settings.isScrapeBestImage()) {
-          md.clearMediaArt();
-        }
-
-        // set scraped metadata
-        movieToScrape.setMetadata(md);
-
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-        // get images?
-        if (Globals.settings.getScraperMetadataConfig().isArtwork()) {
-          // let the user choose the images
+          // did the user want to choose the images?
           if (!Globals.settings.isScrapeBestImage()) {
-            // poster
-            {
-              ImageLabel lblImage = new ImageLabel();
-              MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage, null);
-              dialog.setVisible(true);
-              movieToScrape.setPosterUrl(lblImage.getImageUrl());
-              movieToScrape.writeImages(true, false);
-            }
+            md.clearMediaArt();
+          }
 
-            // fanart
-            {
-              ImageLabel lblImage = new ImageLabel();
-              List<String> extrathumbs = new ArrayList<String>();
-              MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage,
-                  extrathumbs);
-              dialog.setVisible(true);
-              movieToScrape.setFanartUrl(lblImage.getImageUrl());
-              movieToScrape.writeImages(false, true);
-              movieToScrape.downloadExtraThumbs(extrathumbs);
+          // set scraped metadata
+          movieToScrape.setMetadata(md);
+
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+          // get images?
+          if (Globals.settings.getScraperMetadataConfig().isArtwork()) {
+            // let the user choose the images
+            if (!Globals.settings.isScrapeBestImage()) {
+              // poster
+              {
+                ImageLabel lblImage = new ImageLabel();
+                MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage,
+                    null);
+                dialog.setVisible(true);
+                movieToScrape.setPosterUrl(lblImage.getImageUrl());
+                movieToScrape.writeImages(true, false);
+              }
+
+              // fanart
+              {
+                ImageLabel lblImage = new ImageLabel();
+                List<String> extrathumbs = new ArrayList<String>();
+                MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage,
+                    extrathumbs);
+                dialog.setVisible(true);
+                movieToScrape.setFanartUrl(lblImage.getImageUrl());
+                movieToScrape.writeImages(false, true);
+                movieToScrape.downloadExtraThumbs(extrathumbs);
+              }
+            }
+            else {
+              // get artwork directly from provider
+              List<MediaArtwork> artwork = model.getArtwork();
+              movieToScrape.setArtwork(artwork);
             }
           }
-          else {
-            // get artwork directly from provider
-            List<MediaArtwork> artwork = model.getArtwork();
-            movieToScrape.setArtwork(artwork);
+
+          // get trailers?
+          if (Globals.settings.getScraperMetadataConfig().isTrailer()) {
+            List<MediaTrailer> trailers = model.getTrailers();
+            movieToScrape.setTrailers(trailers);
           }
+
+          // rewrite the complete NFO
+          movieToScrape.writeNFO();
+
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+          this.setVisible(false);
+          dispose();
         }
-
-        // get trailers?
-        if (Globals.settings.getScraperMetadataConfig().isTrailer()) {
-          List<MediaTrailer> trailers = model.getTrailers();
-          movieToScrape.setTrailers(trailers);
-        }
-
-        // rewrite the complete NFO
-        movieToScrape.writeNFO();
-
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-        this.setVisible(false);
-        dispose();
       }
     }
     if ("Cancel".equals(e.getActionCommand())) {
@@ -500,8 +502,14 @@ public class MovieChooser extends JDialog implements ActionListener {
       startProgressBar("searching for: " + searchTerm);
       List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId, metadataProvider);
       moviesFound.clear();
-      for (MediaSearchResult result : searchResult) {
-        moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
+      if (searchResult.size() == 0) {
+        // display empty result
+        moviesFound.add(MovieChooserModel.emptyResult);
+      }
+      else {
+        for (MediaSearchResult result : searchResult) {
+          moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
+        }
       }
 
       return null;

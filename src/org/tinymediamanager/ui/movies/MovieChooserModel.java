@@ -37,43 +37,46 @@ import org.tinymediamanager.scraper.MediaTrailer;
 public class MovieChooserModel extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger         LOGGER  = Logger.getLogger(MovieChooserModel.class);
+  private static final Logger           LOGGER           = Logger.getLogger(MovieChooserModel.class);
+
+  /** The Constant emptyResult. */
+  public static final MovieChooserModel emptyResult      = new MovieChooserModel();
 
   /** The metadata provider. */
-  private IMediaMetadataProvider      metadataProvider;
+  private IMediaMetadataProvider        metadataProvider = null;
 
   /** The artwork provider. */
-  private List<IMediaArtworkProvider> artworkProviders;
+  private List<IMediaArtworkProvider>   artworkProviders = null;
 
   /** The trailer provider. */
-  private List<IMediaTrailerProvider> trailerProviders;
+  private List<IMediaTrailerProvider>   trailerProviders = null;
 
   /** The result. */
-  private MediaSearchResult           result;
+  private MediaSearchResult             result           = null;
 
   /** The metadata. */
-  private MediaMetadata               metadata;
+  private MediaMetadata                 metadata         = null;
 
   /** The name. */
-  private String                      name;
+  private String                        name             = "";
 
   /** The overview. */
-  private String                      overview;
+  private String                        overview         = "";
 
   /** The year. */
-  private String                      year;
+  private String                        year             = "";
 
   /** The combined name. */
-  private String                      combinedName;
+  private String                        combinedName     = "";
 
   /** The poster url. */
-  private String                      posterUrl;
+  private String                        posterUrl        = "";
 
   /** The tagline. */
-  private String                      tagline;
+  private String                        tagline          = "";
 
   /** The scraped. */
-  private boolean                     scraped = false;
+  private boolean                       scraped          = false;
 
   /* new scraper logic */
   /**
@@ -101,6 +104,14 @@ public class MovieChooserModel extends AbstractModelObject {
     setYear(result.getYear());
     // combined name (name (year))
     setCombinedName();
+  }
+
+  /**
+   * create the empty search result
+   */
+  private MovieChooserModel() {
+    setName("nothing found");
+    combinedName = name;
   }
 
   /**
