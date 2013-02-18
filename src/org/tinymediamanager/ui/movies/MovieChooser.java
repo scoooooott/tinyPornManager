@@ -379,7 +379,7 @@ public class MovieChooser extends JDialog implements ActionListener {
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
           // get images?
-          if (Globals.settings.getScraperMetadataConfig().isArtwork()) {
+          if (scraperMetadataConfig.isArtwork()) {
             // let the user choose the images
             if (!Globals.settings.isScrapeBestImage()) {
               // poster
@@ -412,7 +412,7 @@ public class MovieChooser extends JDialog implements ActionListener {
           }
 
           // get trailers?
-          if (Globals.settings.getScraperMetadataConfig().isTrailer()) {
+          if (scraperMetadataConfig.isTrailer()) {
             List<MediaTrailer> trailers = model.getTrailers();
             movieToScrape.setTrailers(trailers);
           }

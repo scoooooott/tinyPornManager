@@ -165,6 +165,9 @@ public class Settings extends AbstractModelObject {
   /** The Constant TRAILER_SCRAPER_OFDB. */
   private final static String           TRAILER_SCRAPER_OFDB        = "trailerScraperOfdb";
 
+  /** The Constant WRITE_ACTOR_IMAGES. */
+  private final static String           WRITE_ACTOR_IMAGES          = "writeActorImages";
+
   /** The video file types. */
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -269,6 +272,9 @@ public class Settings extends AbstractModelObject {
 
   /** The trailer ofdb.de scraper. */
   private boolean                       trailerScraperOfdb          = true;
+
+  /** The write actor images. */
+  private boolean                       writeActorImages            = false;
 
   /** The property change listener. */
   private PropertyChangeListener        propertyChangeListener;
@@ -1267,6 +1273,27 @@ public class Settings extends AbstractModelObject {
     boolean oldValue = this.trailerScraperOfdb;
     this.trailerScraperOfdb = newValue;
     firePropertyChange(TRAILER_SCRAPER_OFDB, oldValue, newValue);
+  }
+
+  /**
+   * Checks if is write actor images.
+   * 
+   * @return true, if is write actor images
+   */
+  public boolean isWriteActorImages() {
+    return writeActorImages;
+  }
+
+  /**
+   * Sets the write actor images.
+   * 
+   * @param newValue
+   *          the new write actor images
+   */
+  public void setWriteActorImages(boolean newValue) {
+    boolean oldValue = this.writeActorImages;
+    this.writeActorImages = newValue;
+    firePropertyChange(WRITE_ACTOR_IMAGES, oldValue, newValue);
   }
 
   /**

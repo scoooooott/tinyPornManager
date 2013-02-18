@@ -746,6 +746,10 @@ public class Movie extends AbstractModelObject {
     // fanart - fanart.jpg
     findFanart();
 
+    // actor images
+    if (Globals.settings.isWriteActorImages()) {
+      findActorImages();
+    }
   }
 
   /**
@@ -861,6 +865,23 @@ public class Movie extends AbstractModelObject {
 
     if (!found) {
       LOGGER.debug("Sorry, could not find fanart.");
+    }
+  }
+
+  /**
+   * Find actor images.
+   */
+  private void findActorImages() {
+    String actorsDirPath = getPath() + File.separator + MovieCast.ACTOR_DIR;
+
+    // second download missing images
+    for (MovieCast actor : getActors()) {
+      String actorName = actor.getName().replace(" ", "_");
+      File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
+      // set path if it is empty and an image exists
+      if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
+        actor.setThumbPath(MovieCast.ACTOR_DIR + File.separator + actorName + ".tbn");
+      }
     }
   }
 
@@ -1417,6 +1438,7 @@ public class Movie extends AbstractModelObject {
       setActors(actors);
       setDirector(director);
       setWriter(writer);
+      writeActorImages();
     }
 
     // genres
@@ -1562,15 +1584,12 @@ public class Movie extends AbstractModelObject {
     }
   }
 
-  // /**
-  // * Removes the all actors.
-  // */
-  // public void removeAllActors() {
-  // castObservable.clear();
-  // firePropertyChange("cast", null, this.getCast());
-  // firePropertyChange("actors", null, this.getCast());
-  // }
-
+  /**
+   * Sets the actors.
+   * 
+   * @param newCast
+   *          the new actors
+   */
   public void setActors(List<MovieCast> newCast) {
     // two way sync of cast
 
@@ -1924,6 +1943,16 @@ public class Movie extends AbstractModelObject {
     }
   }
 
+  public void writeActorImages() {
+    // check if actor images shall be written
+    if (!Globals.settings.isWriteActorImages()) {
+      return;
+    }
+
+    MovieActorImageFetcher task = new MovieActorImageFetcher(this);
+    Globals.executor.execute(task);
+  }
+
   /**
    * Write nfo.
    */
@@ -2051,15 +2080,6 @@ public class Movie extends AbstractModelObject {
     firePropertyChange(GENRE, null, genre);
     firePropertyChange("genresAsString", null, genre);
   }
-
-  // /**
-  // * Removes the all genres.
-  // */
-  // public void removeAllGenres() {
-  // genres.clear();
-  // firePropertyChange(GENRE, null, genres.toArray());
-  // firePropertyChange("genresAsString", null, genres);
-  // }
 
   /**
    * Gets the certifications.
@@ -2246,52 +2266,4 @@ public class Movie extends AbstractModelObject {
   public void setDisc(boolean isDisc) {
     this.isDisc = isDisc;
   }
-
-  // /**
-  // * Adds the property change listener to children.
-  // *
-  // * @param prop
-  // * the prop
-  // */
-  // public void addPropertyChangeListenerToChildren(PropertyChangeListener
-  // prop) {
-  // // // actor
-  // // for (MovieCast cast : castObservable) {
-  // // cast.addPropertyChangeListener(prop);
-  // // }
-  // //
-  // // // trailer
-  // // for (MediaTrailer trailer : trailerObservable) {
-  // // trailer.addPropertyChangeListener(prop);
-  // // }
-  //
-  // // media files
-  // for (MediaFile file : mediaFilesObservable) {
-  // file.addPropertyChangeListener(prop);
-  // }
-  // }
-  //
-  // /**
-  // * Removes the property change listener from children.
-  // *
-  // * @param prop
-  // * the prop
-  // */
-  // public void removePropertyChangeListenerFromChildren(PropertyChangeListener
-  // prop) {
-  // // // actor
-  // // for (MovieCast cast : castObservable) {
-  // // cast.removePropertyChangeListener(prop);
-  // // }
-  // //
-  // // // trailer
-  // // for (MediaTrailer trailer : trailerObservable) {
-  // // trailer.removePropertyChangeListener(prop);
-  // // }
-  //
-  // // media files
-  // for (MediaFile file : mediaFilesObservable) {
-  // file.removePropertyChangeListener(prop);
-  // }
-  // }
 }

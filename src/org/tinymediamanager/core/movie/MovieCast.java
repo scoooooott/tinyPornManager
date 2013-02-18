@@ -29,6 +29,8 @@ import org.tinymediamanager.core.AbstractModelObject;
 @Entity
 public class MovieCast extends AbstractModelObject {
 
+  public static final String ACTOR_DIR = ".actors";
+
   /**
    * The Enum CastType.
    */
@@ -39,13 +41,16 @@ public class MovieCast extends AbstractModelObject {
   }
 
   /** The name. */
-  private String   name;
+  private String   name      = "";
 
   /** The character. */
-  private String   character;
+  private String   character = "";
 
   /** The thumbnail. */
-  private String   thumb;
+  private String   thumb     = "";
+
+  /** The thumb path. */
+  private String   thumbPath = "";
 
   /** The type. */
   private CastType type;
@@ -54,9 +59,6 @@ public class MovieCast extends AbstractModelObject {
    * Instantiates a new movie cast.
    */
   public MovieCast() {
-    this.name = "";
-    this.character = "";
-    this.thumb = "";
   }
 
   /**
@@ -70,8 +72,6 @@ public class MovieCast extends AbstractModelObject {
   public MovieCast(String name, CastType castType) {
     this.name = name;
     this.type = castType;
-    this.character = "";
-    this.thumb = "";
   }
 
   /**
@@ -86,7 +86,6 @@ public class MovieCast extends AbstractModelObject {
     this.name = name;
     this.character = character;
     this.type = CastType.ACTOR;
-    this.thumb = "";
   }
 
   /**
@@ -164,7 +163,7 @@ public class MovieCast extends AbstractModelObject {
   /**
    * Sets the thumb.
    * 
-   * @param thumb
+   * @param newValue
    *          the new thumb
    */
   public void setThumb(String newValue) {
@@ -174,13 +173,32 @@ public class MovieCast extends AbstractModelObject {
   }
 
   /**
+   * Gets the thumb path.
+   * 
+   * @return the thumb path
+   */
+  public String getThumbPath() {
+    return thumbPath;
+  }
+
+  /**
+   * Sets the thumb path.
+   * 
+   * @param newValue
+   *          the new thumb path
+   */
+  public void setThumbPath(String newValue) {
+    String oldValue = this.thumbPath;
+    thumbPath = newValue;
+    firePropertyChange("thumbPath", oldValue, newValue);
+  }
+
+  /**
    * <p>
    * Uses <code>ReflectionToStringBuilder</code> to generate a
    * <code>toString</code> for the specified object.
    * </p>
    * 
-   * @param object
-   *          the Object to be output
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */

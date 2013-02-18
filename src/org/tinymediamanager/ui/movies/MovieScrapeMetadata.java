@@ -31,6 +31,7 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieArtworkScrapers;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
@@ -92,7 +93,24 @@ public class MovieScrapeMetadata extends JDialog {
     setIconImage(Globals.logo);
     setModal(true);
 
-    movieSearchAndScrapeConfig.setScraperMetadataConfig(Globals.settings.getScraperMetadataConfig());
+    // copy the values
+    ScraperMetadataConfig settings = Globals.settings.getScraperMetadataConfig();
+
+    ScraperMetadataConfig scraperMetadataConfig = new ScraperMetadataConfig();
+    scraperMetadataConfig.setTitle(settings.isTitle());
+    scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
+    scraperMetadataConfig.setTagline(settings.isTagline());
+    scraperMetadataConfig.setPlot(settings.isPlot());
+    scraperMetadataConfig.setRating(settings.isRating());
+    scraperMetadataConfig.setRuntime(settings.isRuntime());
+    scraperMetadataConfig.setYear(settings.isYear());
+    scraperMetadataConfig.setCertification(settings.isCertification());
+    scraperMetadataConfig.setCast(settings.isCast());
+    scraperMetadataConfig.setGenres(settings.isGenres());
+    scraperMetadataConfig.setArtwork(settings.isArtwork());
+    scraperMetadataConfig.setTrailer(settings.isTrailer());
+
+    movieSearchAndScrapeConfig.setScraperMetadataConfig(scraperMetadataConfig);
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, BorderLayout.CENTER);

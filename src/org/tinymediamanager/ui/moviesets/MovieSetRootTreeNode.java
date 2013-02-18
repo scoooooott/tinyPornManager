@@ -76,6 +76,8 @@ public class MovieSetRootTreeNode extends DefaultMutableTreeNode {
   }
 
   public void sort() {
-    Collections.sort(this.children, nodeComparator);
+    if (this.children != null) {
+      Collections.sort(this.children, nodeComparator);
+    }
   }
 }
