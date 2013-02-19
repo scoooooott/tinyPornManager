@@ -2015,9 +2015,11 @@ public class Movie extends AbstractModelObject {
    */
   public synchronized void saveToDb() {
     // update DB
-    Globals.entityManager.getTransaction().begin();
-    Globals.entityManager.persist(this);
-    Globals.entityManager.getTransaction().commit();
+    synchronized (Globals.entityManager) {
+      Globals.entityManager.getTransaction().begin();
+      Globals.entityManager.persist(this);
+      Globals.entityManager.getTransaction().commit();
+    }
   }
 
   /**

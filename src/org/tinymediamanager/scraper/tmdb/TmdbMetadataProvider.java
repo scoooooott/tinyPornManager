@@ -39,6 +39,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MetadataUtil;
+import org.tinymediamanager.thirdparty.RingBuffer;
 
 import com.omertron.themoviedbapi.MovieDbException;
 import com.omertron.themoviedbapi.TheMovieDbApi;
@@ -61,14 +62,16 @@ import com.omertron.themoviedbapi.tools.ApiUrl;
 public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtworkProvider, IMediaTrailerProvider {
 
   /** The Constant logger. */
-  private static final Logger      LOGGER       = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger           LOGGER            = Logger.getLogger(TmdbMetadataProvider.class);
 
   /** The tmdb. */
-  private static TheMovieDbApi     tmdb;
+  private static TheMovieDbApi          tmdb;
+
+  private static final RingBuffer<Long> connectionCounter = new RingBuffer<Long>(30);
 
   /** The provider info. */
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("tmdb", "themoviedb.org",
-                                                    "Scraper for themoviedb.org which is able to scrape movie metadata, artwork and trailers");
+  private static MediaProviderInfo      providerInfo      = new MediaProviderInfo("tmdb", "themoviedb.org",
+                                                              "Scraper for themoviedb.org which is able to scrape movie metadata, artwork and trailers");
 
   /**
    * The Enum Languages.
@@ -222,6 +225,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       // moviesFound = tmdb.searchMovie(searchString,
       // Globals.settings.getScraperTmdbLanguage().name(), false);
       // new api
+      trackConnections();
       moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getScraperTmdbLanguage().name(), false, 0);
       baseUrl = tmdb.getConfiguration().getBaseUrl();
     }
@@ -307,6 +311,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     MovieDb movie = null;
     String baseUrl = null;
     synchronized (tmdb) {
+      trackConnections();
       movie = tmdb.getMovieInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
       baseUrl = tmdb.getConfiguration().getBaseUrl();
     }
@@ -348,6 +353,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // get certification
     List<ReleaseInfo> releaseInfo = null;
     synchronized (tmdb) {
+      trackConnections();
       releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
     }
 
@@ -378,6 +384,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // cast
     List<Person> cast = null;
     synchronized (tmdb) {
+      trackConnections();
       cast = tmdb.getMovieCasts(tmdbId);
     }
 
@@ -440,6 +447,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     List<Artwork> movieImages = null;
     synchronized (tmdb) {
+      trackConnections();
       // posters and fanart
       movieImages = tmdb.getMovieImages(tmdbId, "");
     }
@@ -485,6 +493,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     try {
       synchronized (tmdb) {
+        trackConnections();
         // get trailers from tmdb (with specified langu and without)
         List<Trailer> tmdbTrailers = tmdb.getMovieTrailers(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
         List<Trailer> tmdbTrailersWoLang = tmdb.getMovieTrailers(tmdbId, "");
@@ -543,6 +552,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // get the tmdbid for this imdbid
     MovieDb movieInfo = null;
     synchronized (tmdb) {
+      trackConnections();
       movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
     }
 
@@ -1275,7 +1285,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   public List<Collection> searchMovieSets(String setName) {
     List<Collection> movieSetsFound = null;
     synchronized (tmdb) {
-
+      trackConnections();
       try {
         movieSetsFound = tmdb.searchCollection(setName, Globals.settings.getScraperTmdbLanguage().name(), 0);
         String baseUrl = tmdb.getConfiguration().getBaseUrl();
@@ -1339,6 +1349,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   public List<MediaArtwork> getMovieSetArtwork(int tmdbId, MediaArtworkType type) throws Exception {
     List<Artwork> tmdbArtwork = null;
     synchronized (tmdb) {
+      trackConnections();
       tmdbArtwork = tmdb.getCollectionImages(tmdbId, "");
     }
 
@@ -1421,5 +1432,26 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
 
     return artwork;
+  }
+
+  /**
+   * Track connections and throttle if needed.
+   */
+  private void trackConnections() {
+    Long currentTime = System.currentTimeMillis();
+    if (connectionCounter.count() == connectionCounter.maxSize()) {
+      Long oldestConnection = connectionCounter.getTailItem();
+      if (oldestConnection > (currentTime - 10000)) {
+        LOGGER.debug("connection limit reached, throttling " + connectionCounter);
+        try {
+          Thread.sleep(11000 - (currentTime - oldestConnection));
+        }
+        catch (InterruptedException e) {
+        }
+      }
+    }
+
+    currentTime = System.currentTimeMillis();
+    connectionCounter.add(currentTime);
   }
 }
