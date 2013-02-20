@@ -2257,6 +2257,7 @@ public class Movie extends AbstractModelObject {
       movieSet.removeMovie(this);
     }
     setMovieSet(null);
+    setSortTitle("");
   }
 
   /** is this a disc movie folder (video_ts / bdmv)? */
