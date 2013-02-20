@@ -110,7 +110,11 @@ public class MovieDetailsPanel extends JPanel {
 
   /** The lbl movie path. */
   private LinkLabel           lblMoviePath;
+
+  /** The lbl movieset t. */
   private JLabel              lblMoviesetT;
+
+  /** The lbl movie set. */
   private JLabel              lblMovieSet;
 
   /**
@@ -122,37 +126,15 @@ public class MovieDetailsPanel extends JPanel {
   public MovieDetailsPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
 
-    setLayout(new FormLayout(new ColumnSpec[] {
-    		FormFactory.RELATED_GAP_COLSPEC,
-    		FormFactory.DEFAULT_COLSPEC,
-    		FormFactory.UNRELATED_GAP_COLSPEC,
-    		ColumnSpec.decode("25px"),
-    		FormFactory.RELATED_GAP_COLSPEC,
-    		ColumnSpec.decode("default:grow"),
-    		FormFactory.RELATED_GAP_COLSPEC,
-    		FormFactory.DEFAULT_COLSPEC,
-    		FormFactory.UNRELATED_GAP_COLSPEC,
-    		ColumnSpec.decode("default:grow"),
-    		FormFactory.RELATED_GAP_COLSPEC,},
-    	new RowSpec[] {
-    		FormFactory.RELATED_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
-    		new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
-    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.NARROW_LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,}));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
+        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel("Original Title");
     add(lblOriginalTitleT, "2, 2");
@@ -195,12 +177,12 @@ public class MovieDetailsPanel extends JPanel {
     // lblProduction.setWrapStyleWord(true);
     lblProduction = new JLabel();
     add(lblProduction, "4, 10, 7, 1");
-    
-        lblMoviesetT = new JLabel("Movieset");
-        add(lblMoviesetT, "2, 12");
-    
-        lblMovieSet = new JLabel("");
-        add(lblMovieSet, "4, 12, 5, 1");
+
+    lblMoviesetT = new JLabel("Movieset");
+    add(lblMoviesetT, "2, 12");
+
+    lblMovieSet = new JLabel("");
+    add(lblMovieSet, "4, 12, 5, 1");
 
     lblTagsT = new JLabel("Tags");
     add(lblTagsT, "2, 14");
@@ -271,6 +253,9 @@ public class MovieDetailsPanel extends JPanel {
     initDataBindings();
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalName");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");

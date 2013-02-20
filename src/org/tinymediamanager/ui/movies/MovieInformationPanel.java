@@ -37,8 +37,10 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.ui.ActorImageLabel;
 import org.tinymediamanager.ui.CertificationImageConverter;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.StarRater;
@@ -128,15 +130,21 @@ public class MovieInformationPanel extends JPanel {
   private JPanel              panelMediaInformation;
 
   /** The lbl actor thumb. */
-  private ImageLabel          lblActorThumb;
+  private ActorImageLabel     lblActorThumb;
 
   /** The panel movie trailer. */
   private MovieTrailerPanel   panelMovieTrailer;
 
   /** The movie selection model. */
   private MovieSelectionModel movieSelectionModel;
+
+  /** The lbl new label. */
   private JLabel              lblNewLabel;
+
+  /** The lbl new label_1. */
   private JLabel              lblNewLabel_1;
+
+  /** The lbl new label_2. */
   private JLabel              lblNewLabel_2;
 
   /**
@@ -302,7 +310,7 @@ public class MovieInformationPanel extends JPanel {
     tableCast = new JTable();
     scrollPaneMovieCast.setViewportView(tableCast);
 
-    lblActorThumb = new ImageLabel();
+    lblActorThumb = new ActorImageLabel();
     panelMovieCast.add(lblActorThumb, "6, 2, 1, 6, fill, fill");
 
     panelMediaInformation = new MovieMediaInformationPanel(movieSelectionModel);
@@ -316,9 +324,40 @@ public class MovieInformationPanel extends JPanel {
   }
 
   /**
-   * Inits the data bindings.
+   * Inits the panel (steps which has to be done after binding in calling class)
    */
-  private void initDataBindings() {
+  public void init() {
+    if (tableCast.getModel().getRowCount() > 0) {
+      tableCast.getSelectionModel().setSelectionInterval(0, 0);
+    }
+    else {
+      lblActorThumb.setImageUrl("");
+    }
+
+    // changes upon movie selection
+    tableCast.getModel().addTableModelListener(new TableModelListener() {
+      public void tableChanged(TableModelEvent e) {
+        // change to the first actor on movie change
+        if (tableCast.getModel().getRowCount() > 0) {
+          tableCast.getSelectionModel().setSelectionInterval(0, 0);
+        }
+        else {
+          lblActorThumb.setImageUrl("");
+        }
+      }
+    });
+  }
+
+  /**
+   * Gets the split pane vertical.
+   * 
+   * @return the split pane vertical
+   */
+  public JSplitPane getSplitPaneVertical() {
+    return splitPaneVertical;
+  }
+
+  protected void initDataBindings() {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.nameForUi");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
@@ -375,12 +414,6 @@ public class MovieInformationPanel extends JPanel {
     jTableBinding.setEditable(false);
     jTableBinding.bind();
     //
-    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.thumb");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty_1 = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast, jTableBeanProperty,
-        lblActorThumb, imageLabelBeanProperty_1);
-    autoBinding_18.bind();
-    //
     BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_19 = BeanProperty.create("selectedMovie.hasRating");
     BeanProperty<StarRater, Boolean> starRaterBeanProperty_1 = BeanProperty.create("visible");
     AutoBinding<MovieSelectionModel, Boolean, StarRater, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ,
@@ -419,39 +452,17 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_7, lblWatchedImage, jLabelBeanProperty_2);
     autoBinding_8.setConverter(new WatchedIconConverter());
     autoBinding_8.bind();
-  }
-
-  /**
-   * Inits the panel (steps which has to be done after binding in calling class)
-   */
-  public void init() {
-    if (tableCast.getModel().getRowCount() > 0) {
-      tableCast.getSelectionModel().setSelectionInterval(0, 0);
-    }
-    else {
-      lblActorThumb.setImageUrl("");
-    }
-
-    // changes upon movie selection
-    tableCast.getModel().addTableModelListener(new TableModelListener() {
-      public void tableChanged(TableModelEvent e) {
-        // change to the first actor on movie change
-        if (tableCast.getModel().getRowCount() > 0) {
-          tableCast.getSelectionModel().setSelectionInterval(0, 0);
-        }
-        else {
-          lblActorThumb.setImageUrl("");
-        }
-      }
-    });
-  }
-
-  /**
-   * Gets the split pane vertical.
-   * 
-   * @return the split pane vertical
-   */
-  public JSplitPane getSplitPaneVertical() {
-    return splitPaneVertical;
+    //
+    BeanProperty<MovieSelectionModel, Movie> movieSelectionModelBeanProperty_8 = BeanProperty.create("selectedMovie");
+    BeanProperty<ActorImageLabel, Movie> actorImageLabelBeanProperty = BeanProperty.create("movie");
+    AutoBinding<MovieSelectionModel, Movie, ActorImageLabel, Movie> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_8, lblActorThumb, actorImageLabelBeanProperty);
+    autoBinding_9.bind();
+    //
+    BeanProperty<JTable, MovieCast> jTableBeanProperty = BeanProperty.create("selectedElement");
+    BeanProperty<ActorImageLabel, MovieCast> actorImageLabelBeanProperty_1 = BeanProperty.create("actor");
+    AutoBinding<JTable, MovieCast, ActorImageLabel, MovieCast> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast,
+        jTableBeanProperty, lblActorThumb, actorImageLabelBeanProperty_1);
+    autoBinding_10.bind();
   }
 }
