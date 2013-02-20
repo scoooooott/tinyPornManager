@@ -323,6 +323,7 @@ public class MovieSet extends AbstractModelObject {
    */
   public void sortMovies() {
     Collections.sort(moviesObservable, new MovieInMovieSetComparator());
+    firePropertyChange("movies", null, moviesObservable);
   }
 
   /**
@@ -490,6 +491,9 @@ public class MovieSet extends AbstractModelObject {
     }
   }
 
+  /**
+   * The Class MovieInMovieSetComparator.
+   */
   private class MovieInMovieSetComparator implements Comparator<Movie> {
 
     /*

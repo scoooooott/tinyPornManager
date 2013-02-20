@@ -53,8 +53,8 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "mpaa", "certifications", "id", "tmdbId", "filenameandpath", "trailer", "watched", "playcount", "genres", "studio", "credits", "director",
-    "tags", "actors" })
+    "mpaa", "certifications", "id", "tmdbId", "filenameandpath", "trailer", "fileinfo", "watched", "playcount", "genres", "studio", "credits",
+    "director", "tags", "actors" })
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -142,6 +142,8 @@ public class MovieToXbmcNfoConnector {
 
   /** The sorttitle. */
   private String              sorttitle;
+
+  // private Fileinfo fileinfo;
 
   /**
    * Instantiates a new movie to xbmc nfo connector.
@@ -261,6 +263,30 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.setSorttitle(movie.getSortTitle());
+
+    // // fileinfo
+    // for (MediaFile mediaFile : movie.getMediaFiles()) {
+    // if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
+    // break;
+    // }
+    //
+    // if (xbmc.getFileinfo() == null) {
+    // Fileinfo info = new Fileinfo();
+    // info.streamdetails.video.codec = mediaFile.getVideoCodec();
+    // info.streamdetails.video.aspect =
+    // String.valueOf(mediaFile.getAspectRatio());
+    // info.streamdetails.video.width = mediaFile.getVideoWidth();
+    // info.streamdetails.video.height = mediaFile.getVideoHeight();
+    // info.streamdetails.video.durationinseconds = mediaFile.getDuration();
+    //
+    // Audio audio = new Audio();
+    // audio.codec = mediaFile.getAudioCodec();
+    // audio.language = "";
+    // audio.channels = mediaFile.getAudioChannels();
+    // info.streamdetails.audio.add(audio);
+    // xbmc.setFileinfo(info);
+    // }
+    // }
 
     // and marshall it
     String nfoFilename = "";
@@ -972,6 +998,14 @@ public class MovieToXbmcNfoConnector {
     this.sorttitle = sorttitle;
   }
 
+  // public Fileinfo getFileinfo() {
+  // return fileinfo;
+  // }
+  //
+  // public void setFileinfo(Fileinfo fileinfo) {
+  // this.fileinfo = fileinfo;
+  // }
+
   // inner class actor to represent actors
   /**
    * The Class Actor.
@@ -1072,4 +1106,46 @@ public class MovieToXbmcNfoConnector {
 
   }
 
+  // static class Fileinfo {
+  // @XmlElement
+  // Streamdetails streamdetails;
+  //
+  // public Fileinfo() {
+  // streamdetails = new Streamdetails();
+  // }
+  // }
+  //
+  // static class Streamdetails {
+  // @XmlElement
+  // Video video;
+  // @XmlElement
+  // List<Audio> audio;
+  //
+  // public Streamdetails() {
+  // video = new Video();
+  // audio = new ArrayList<Audio>();
+  // }
+  // }
+  //
+  // static class Video {
+  // @XmlElement
+  // String codec;
+  // @XmlElement
+  // String aspect;
+  // @XmlElement
+  // int width;
+  // @XmlElement
+  // int height;
+  // @XmlElement
+  // int durationinseconds;
+  // }
+  //
+  // static class Audio {
+  // @XmlElement
+  // String codec;
+  // @XmlElement
+  // String language;
+  // @XmlElement
+  // String channels;
+  // }
 }

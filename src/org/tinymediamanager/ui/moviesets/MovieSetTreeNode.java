@@ -25,31 +25,31 @@ import org.tinymediamanager.core.movie.MovieSet;
 
 public class MovieSetTreeNode extends DefaultMutableTreeNode {
 
-  protected Comparator nodeComparator = new Comparator() {
-                                        @Override
-                                        public int compare(Object o1, Object o2) {
-                                          if (o1 instanceof MovieTreeNode && o2 instanceof MovieTreeNode) {
-                                            MovieTreeNode node1 = (MovieTreeNode) o1;
-                                            Movie movie1 = (Movie) node1.getUserObject();
-                                            MovieTreeNode node2 = (MovieTreeNode) o2;
-                                            Movie movie2 = (Movie) node2.getUserObject();
-                                            return movie1.getSortTitle().compareTo(movie2.getSortTitle());
-                                          }
-                                          return o1.toString().compareToIgnoreCase(o2.toString());
-                                        }
+  protected static final Comparator nodeComparator = new Comparator() {
+                                                     @Override
+                                                     public int compare(Object o1, Object o2) {
+                                                       if (o1 instanceof MovieTreeNode && o2 instanceof MovieTreeNode) {
+                                                         MovieTreeNode node1 = (MovieTreeNode) o1;
+                                                         Movie movie1 = (Movie) node1.getUserObject();
+                                                         MovieTreeNode node2 = (MovieTreeNode) o2;
+                                                         Movie movie2 = (Movie) node2.getUserObject();
+                                                         return movie1.getSortTitle().compareTo(movie2.getSortTitle());
+                                                       }
+                                                       return o1.toString().compareToIgnoreCase(o2.toString());
+                                                     }
 
-                                        @Override
-                                        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-                                        public boolean equals(Object obj) {
-                                          return false;
-                                        }
+                                                     @Override
+                                                     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+                                                     public boolean equals(Object obj) {
+                                                       return false;
+                                                     }
 
-                                        @Override
-                                        public int hashCode() {
-                                          int hash = 7;
-                                          return hash;
-                                        }
-                                      };
+                                                     @Override
+                                                     public int hashCode() {
+                                                       int hash = 7;
+                                                       return hash;
+                                                     }
+                                                   };
 
   /**
    * Instantiates a new movie set tree node.
