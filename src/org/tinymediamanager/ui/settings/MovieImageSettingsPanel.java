@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -25,6 +26,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -82,10 +84,12 @@ public class MovieImageSettingsPanel extends JPanel {
   private JLabel    lblInfo1;
   private JLabel    lblInfo2;
   private JLabel    lblInfo3;
+  private JPanel    panelActorThumbs;
+  private JCheckBox cbActorImages;
 
   public MovieImageSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JPanel panelMovieImages = new JPanel();
     panelMovieImages.setBorder(new TitledBorder(null, "Poster and Fanart", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -189,6 +193,16 @@ public class MovieImageSettingsPanel extends JPanel {
 
     cbMovieFanartFilename2 = new JCheckBox("fanart.jpg");
     panelMovieImages.add(cbMovieFanartFilename2, "6, 15");
+
+    panelActorThumbs = new JPanel();
+    panelActorThumbs.setBorder(new TitledBorder(new LineBorder(new Color(99, 130, 191)), "Actor Images", TitledBorder.LEADING, TitledBorder.TOP,
+        null, null));
+    add(panelActorThumbs, "2, 4");
+    panelActorThumbs.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    cbActorImages = new JCheckBox("download actor images to .actors");
+    panelActorThumbs.add(cbActorImages, "2, 2");
 
     initDataBindings();
 
@@ -313,5 +327,10 @@ public class MovieImageSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, chckbxFanarttv, jCheckBoxBeanProperty);
     autoBinding_1.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("writeActorImages");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, cbActorImages, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }
