@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -143,7 +144,8 @@ public class MovieToXbmcNfoConnector {
   /** The sorttitle. */
   private String              sorttitle;
 
-  // private Fileinfo fileinfo;
+  /** The fileinfo. */
+  private Fileinfo            fileinfo;
 
   /**
    * Instantiates a new movie to xbmc nfo connector.
@@ -264,29 +266,28 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.setSorttitle(movie.getSortTitle());
 
-    // // fileinfo
-    // for (MediaFile mediaFile : movie.getMediaFiles()) {
-    // if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
-    // break;
-    // }
-    //
-    // if (xbmc.getFileinfo() == null) {
-    // Fileinfo info = new Fileinfo();
-    // info.streamdetails.video.codec = mediaFile.getVideoCodec();
-    // info.streamdetails.video.aspect =
-    // String.valueOf(mediaFile.getAspectRatio());
-    // info.streamdetails.video.width = mediaFile.getVideoWidth();
-    // info.streamdetails.video.height = mediaFile.getVideoHeight();
-    // info.streamdetails.video.durationinseconds = mediaFile.getDuration();
-    //
-    // Audio audio = new Audio();
-    // audio.codec = mediaFile.getAudioCodec();
-    // audio.language = "";
-    // audio.channels = mediaFile.getAudioChannels();
-    // info.streamdetails.audio.add(audio);
-    // xbmc.setFileinfo(info);
-    // }
-    // }
+    // fileinfo
+    for (MediaFile mediaFile : movie.getMediaFiles()) {
+      if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
+        break;
+      }
+
+      if (xbmc.getFileinfo() == null) {
+        Fileinfo info = new Fileinfo();
+        info.streamdetails.video.codec = mediaFile.getVideoCodec();
+        info.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
+        info.streamdetails.video.width = mediaFile.getVideoWidth();
+        info.streamdetails.video.height = mediaFile.getVideoHeight();
+        info.streamdetails.video.durationinseconds = mediaFile.getDuration();
+
+        Audio audio = new Audio();
+        audio.codec = mediaFile.getAudioCodec();
+        audio.language = "";
+        audio.channels = mediaFile.getAudioChannels();
+        info.streamdetails.audio.add(audio);
+        xbmc.setFileinfo(info);
+      }
+    }
 
     // and marshall it
     String nfoFilename = "";
@@ -998,13 +999,24 @@ public class MovieToXbmcNfoConnector {
     this.sorttitle = sorttitle;
   }
 
-  // public Fileinfo getFileinfo() {
-  // return fileinfo;
-  // }
-  //
-  // public void setFileinfo(Fileinfo fileinfo) {
-  // this.fileinfo = fileinfo;
-  // }
+  /**
+   * Gets the fileinfo.
+   * 
+   * @return the fileinfo
+   */
+  public Fileinfo getFileinfo() {
+    return fileinfo;
+  }
+
+  /**
+   * Sets the fileinfo.
+   * 
+   * @param fileinfo
+   *          the new fileinfo
+   */
+  public void setFileinfo(Fileinfo fileinfo) {
+    this.fileinfo = fileinfo;
+  }
 
   // inner class actor to represent actors
   /**
@@ -1106,46 +1118,86 @@ public class MovieToXbmcNfoConnector {
 
   }
 
-  // static class Fileinfo {
-  // @XmlElement
-  // Streamdetails streamdetails;
-  //
-  // public Fileinfo() {
-  // streamdetails = new Streamdetails();
-  // }
-  // }
-  //
-  // static class Streamdetails {
-  // @XmlElement
-  // Video video;
-  // @XmlElement
-  // List<Audio> audio;
-  //
-  // public Streamdetails() {
-  // video = new Video();
-  // audio = new ArrayList<Audio>();
-  // }
-  // }
-  //
-  // static class Video {
-  // @XmlElement
-  // String codec;
-  // @XmlElement
-  // String aspect;
-  // @XmlElement
-  // int width;
-  // @XmlElement
-  // int height;
-  // @XmlElement
-  // int durationinseconds;
-  // }
-  //
-  // static class Audio {
-  // @XmlElement
-  // String codec;
-  // @XmlElement
-  // String language;
-  // @XmlElement
-  // String channels;
-  // }
+  /**
+   * The Class Fileinfo.
+   */
+  static class Fileinfo {
+
+    /** The streamdetails. */
+    @XmlElement
+    Streamdetails streamdetails;
+
+    /**
+     * Instantiates a new fileinfo.
+     */
+    public Fileinfo() {
+      streamdetails = new Streamdetails();
+    }
+  }
+
+  /**
+   * The Class Streamdetails.
+   */
+  static class Streamdetails {
+
+    /** The video. */
+    @XmlElement
+    Video       video;
+
+    /** The audio. */
+    @XmlElement
+    List<Audio> audio;
+
+    /**
+     * Instantiates a new streamdetails.
+     */
+    public Streamdetails() {
+      video = new Video();
+      audio = new ArrayList<Audio>();
+    }
+  }
+
+  /**
+   * The Class Video.
+   */
+  static class Video {
+
+    /** The codec. */
+    @XmlElement
+    String codec;
+
+    /** The aspect. */
+    @XmlElement
+    String aspect;
+
+    /** The width. */
+    @XmlElement
+    int    width;
+
+    /** The height. */
+    @XmlElement
+    int    height;
+
+    /** The durationinseconds. */
+    @XmlElement
+    int    durationinseconds;
+  }
+
+  /**
+   * The Class Audio.
+   */
+  static class Audio {
+
+    /** The codec. */
+    @XmlElement
+    String codec;
+
+    /** The language. */
+    @XmlElement
+    String language;
+
+    /** The channels. */
+    @XmlElement
+    String channels;
+  }
 }
