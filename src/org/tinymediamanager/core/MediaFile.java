@@ -260,6 +260,16 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
+   * Closes the connection to the mediainfo lib
+   */
+  private synchronized void closeMediaInfo() {
+    if (mediaInfo != null) {
+      mediaInfo.close();
+      mediaInfo = null;
+    }
+  }
+
+  /**
    * Gets the real mediainfo values.
    * 
    * @param streamKind
@@ -710,6 +720,9 @@ public class MediaFile extends AbstractModelObject {
      * TimeUnit.MILLISECONDS.toSeconds(millis) -
      * TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
      */
+
+    // close mediainfo lib
+    closeMediaInfo();
   }
 
   /**
