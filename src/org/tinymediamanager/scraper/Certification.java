@@ -234,6 +234,28 @@ public enum Certification {
   }
 
   /**
+   * generates a certification string from certs list, country alpha2
+   * 
+   * @param certs
+   *          list of certifications
+   * @return certification string like "US:R / UK:15 / SW:15"
+   */
+  public static String generateCertificationStringFromList(ArrayList<Certification> certs) {
+    if (certs == null || certs.isEmpty()) {
+      return "";
+    }
+    String certstring = "";
+    for (Certification c : certs) {
+      certstring += " / " + c.getCountry().getAlpha2() + ":" + c.getName();
+      if (c.getCountry() == CountryCode.GB) {
+        // GB is official, but skins often parse UK
+        certstring += " / UK:" + c.getName();
+      }
+    }
+    return certstring.substring(3).trim(); // strip off first slash
+  }
+
+  /**
    * Parses a given certification string for the localized country setup in
    * setting
    * 
