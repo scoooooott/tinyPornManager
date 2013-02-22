@@ -346,7 +346,7 @@ public class MovieList extends AbstractModelObject {
       // does the PARENT path exists for an other movie?
       Movie movie = getMovieByPath(parentDir);
       if (movie == null) {
-        LOGGER.debug("no movie exists in path " + parentDir);
+        LOGGER.debug("movie not yet in our DB, so add " + parentDir);
         // movie did not exist - try to parse a NFO file in parent folder
         movie = Movie.parseNFO(parentDir, videoFiles);
         if (movie == null) {
@@ -425,7 +425,7 @@ public class MovieList extends AbstractModelObject {
       // does this path exists for an other movie?
       Movie movie = getMovieByPath(dir.getPath());
       if (movie == null) {
-        LOGGER.debug("no movie exists in path " + dir.getPath());
+        LOGGER.debug("movie not yet in our DB, so add " + dir.getPath());
         // movie did not exist - try to parse a NFO file
         movie = Movie.parseNFO(dir.getPath(), videoFiles);
         if (movie == null) {
