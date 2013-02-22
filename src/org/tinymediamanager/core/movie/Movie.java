@@ -65,6 +65,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.omertron.themoviedbapi.model.ArtworkType;
 
+// TODO: Auto-generated Javadoc
 /**
  * The main class for movies.
  */
@@ -179,6 +180,7 @@ public class Movie extends AbstractModelObject {
   /** The name. */
   private String                name                 = "";
 
+  /** The name sortable. */
   @Transient
   private String                nameSortable         = "";
 
@@ -298,7 +300,7 @@ public class Movie extends AbstractModelObject {
   /** The movie set. */
   private MovieSet              movieSet;
 
-  /** is this a disc movie folder (video_ts / bdmv)? */
+  /** is this a disc movie folder (video_ts / bdmv)?. */
   private boolean               isDisc               = false;
 
   /**
@@ -339,7 +341,7 @@ public class Movie extends AbstractModelObject {
 
   /**
    * Returns the sortable variant of title<br>
-   * eg "The Bourne Legacy" -> "Bourne Legacy, The"
+   * eg "The Bourne Legacy" -> "Bourne Legacy, The".
    * 
    * @return the title in its sortable format
    */
@@ -547,10 +549,10 @@ public class Movie extends AbstractModelObject {
    * <code>&lt;movie&gt;-trailer.ext</code><br>
    * Downloads to .tmp file first and renames after successful download.
    * 
-   * @author Myron Boyle
    * @param trailerToDownload
    *          the MediaTrailer object to download
    * @return true/false if successful
+   * @author Myron Boyle
    */
   public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
     // get trailer filename from NFO file
@@ -621,6 +623,12 @@ public class Movie extends AbstractModelObject {
   // firePropertyChange("tagsAsString", null, tagsObservable);
   // }
 
+  /**
+   * Sets the tags.
+   * 
+   * @param newTags
+   *          the new tags
+   */
   public void setTags(List<String> newTags) {
     // two way sync of tags
 
@@ -684,7 +692,7 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * Adds a media file
+   * Adds a media file.
    * 
    * @param path
    *          the path of the media file (needs no to be the same as movie path)
@@ -698,7 +706,7 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * Adds the list of media files
+   * Adds the list of media files.
    * 
    * @param videoFiles
    *          the video files
@@ -753,7 +761,7 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * checks movie folder for poster and sets it
+   * checks movie folder for poster and sets it.
    * 
    * @param name
    *          the filename within movie folder
@@ -811,7 +819,7 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * checks movie folder for fanart and sets it
+   * checks movie folder for fanart and sets it.
    * 
    * @param name
    *          the filename within movie folder
@@ -1751,11 +1759,11 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * all XBMC supported poster names
+   * all XBMC supported poster names.
    * 
-   * @param MoviePosterNaming
-   *          type
-   * @return
+   * @param poster
+   *          the poster
+   * @return the poster filename
    */
   public String getPosterFilename(MoviePosterNaming poster) {
     String filename = path + File.separator;
@@ -1824,11 +1832,11 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * all XBMC supported fanart names
+   * all XBMC supported fanart names.
    * 
-   * @param MovieFanartNaming
-   *          type
-   * @return
+   * @param fanart
+   *          the fanart
+   * @return the fanart filename
    */
   public String getFanartFilename(MovieFanartNaming fanart) {
     String filename = path + File.separator;
@@ -1870,11 +1878,11 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * all XBMC supported NFO names
+   * all XBMC supported NFO names.
    * 
-   * @param MovieNfoNaming
-   *          type
-   * @return
+   * @param nfo
+   *          the nfo
+   * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
     String filename = path + File.separator;
@@ -1943,6 +1951,9 @@ public class Movie extends AbstractModelObject {
     }
   }
 
+  /**
+   * Write actor images.
+   */
   public void writeActorImages() {
     // check if actor images shall be written
     if (!Globals.settings.isWriteActorImages()) {
@@ -2216,8 +2227,6 @@ public class Movie extends AbstractModelObject {
    * <code>toString</code> for the specified object.
    * </p>
    * 
-   * @param object
-   *          the Object to be output
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */
@@ -2227,6 +2236,8 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
+   * Gets the movie set.
+   * 
    * @return the movieset
    */
   public MovieSet getMovieSet() {
@@ -2234,8 +2245,10 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * @param movieset
-   *          the movieset to set
+   * Sets the movie set.
+   * 
+   * @param newValue
+   *          the new movie set
    */
   public void setMovieSet(MovieSet newValue) {
     MovieSet oldValue = this.movieSet;
@@ -2260,13 +2273,65 @@ public class Movie extends AbstractModelObject {
     setSortTitle("");
   }
 
-  /** is this a disc movie folder (video_ts / bdmv)? */
+  /**
+   * is this a disc movie folder (video_ts / bdmv)?.
+   * 
+   * @return true, if is disc
+   */
   public boolean isDisc() {
     return isDisc;
   }
 
-  /** is this a disc movie folder (video_ts / bdmv)? */
+  /**
+   * is this a disc movie folder (video_ts / bdmv)?.
+   * 
+   * @param isDisc
+   *          the new disc
+   */
   public void setDisc(boolean isDisc) {
     this.isDisc = isDisc;
+  }
+
+  /**
+   * Gets the media info video format (i.e. 720p).
+   * 
+   * @return the media info video format
+   */
+  public String getMediaInfoVideoFormat() {
+    if (mediaFiles.size() > 0) {
+      MediaFile mediaFile = mediaFiles.get(0);
+      return mediaFile.getVideoFormat();
+    }
+
+    return "";
+  }
+
+  /**
+   * Gets the media info video codec (i.e. divx)
+   * 
+   * @return the media info video codec
+   */
+  public String getMediaInfoVideoCodec() {
+    if (mediaFiles.size() > 0) {
+      MediaFile mediaFile = mediaFiles.get(0);
+      return mediaFile.getVideoCodec();
+    }
+
+    return "";
+  }
+
+  /**
+   * Gets the media info audio codec (i.e mp3) and channels (i.e. 6 at 5.1
+   * sound)
+   * 
+   * @return the media info audio codec
+   */
+  public String getMediaInfoAudioCodecAndChannels() {
+    if (mediaFiles.size() > 0) {
+      MediaFile mediaFile = mediaFiles.get(0);
+      return mediaFile.getAudioCodec() + "_" + mediaFile.getAudioChannels();
+    }
+
+    return "";
   }
 }

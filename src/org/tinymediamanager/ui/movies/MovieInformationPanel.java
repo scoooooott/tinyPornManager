@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.movies;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.List;
 
@@ -43,6 +44,9 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.ActorImageLabel;
 import org.tinymediamanager.ui.CertificationImageConverter;
 import org.tinymediamanager.ui.ImageLabel;
+import org.tinymediamanager.ui.MediaInfoAudioCodecConverter;
+import org.tinymediamanager.ui.MediaInfoVideoCodecConverter;
+import org.tinymediamanager.ui.MediaInfoVideoFormatConverter;
 import org.tinymediamanager.ui.StarRater;
 import org.tinymediamanager.ui.VoteCountConverter;
 import org.tinymediamanager.ui.WatchedIconConverter;
@@ -139,13 +143,13 @@ public class MovieInformationPanel extends JPanel {
   private MovieSelectionModel movieSelectionModel;
 
   /** The lbl new label. */
-  private JLabel              lblNewLabel;
+  private JLabel              lblMediaLogoResolution;
 
   /** The lbl new label_1. */
-  private JLabel              lblNewLabel_1;
+  private JLabel              lblMediaLogoVideoCodec;
 
   /** The lbl new label_2. */
-  private JLabel              lblNewLabel_2;
+  private JLabel              lblMediaLogoAudio;
 
   /**
    * Instantiates a new movie information panel.
@@ -233,26 +237,20 @@ public class MovieInformationPanel extends JPanel {
     layeredPaneImages.setLayer(panelGenres, 2);
     layeredPaneImages.add(panelGenres, "2, 2, 2, 2, right, bottom");
 
-    // JPanel panelLogos = new JPanel();
-    // panelLogos.setOpaque(false);
-    // layeredPaneImages.setLayer(panelLogos, 2);
-    // layeredPaneImages.add(panelLogos, "2, 2, 2, 2, right, top");
-    // panelLogos.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-    //
-    // lblNewLabel = new JLabel("");
-    // lblNewLabel.setIcon(new
-    // ImageIcon(MovieInformationPanel.class.getResource("/org/tinymediamanager/ui/images/1080P (1).png")));
-    // panelLogos.add(lblNewLabel);
-    //
-    // lblNewLabel_1 = new JLabel("");
-    // lblNewLabel_1.setIcon(new
-    // ImageIcon(MovieInformationPanel.class.getResource("/org/tinymediamanager/ui/images/H264.png")));
-    // panelLogos.add(lblNewLabel_1);
-    //
-    // lblNewLabel_2 = new JLabel("");
-    // lblNewLabel_2.setIcon(new
-    // ImageIcon(MovieInformationPanel.class.getResource("/org/tinymediamanager/ui/images/AC3 5.1.png")));
-    // panelLogos.add(lblNewLabel_2);
+    JPanel panelLogos = new JPanel();
+    panelLogos.setOpaque(false);
+    layeredPaneImages.setLayer(panelLogos, 2);
+    layeredPaneImages.add(panelLogos, "2, 2, 2, 2, right, top");
+    panelLogos.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+    lblMediaLogoResolution = new JLabel("");
+    panelLogos.add(lblMediaLogoResolution);
+
+    lblMediaLogoVideoCodec = new JLabel("");
+    panelLogos.add(lblMediaLogoVideoCodec);
+
+    lblMediaLogoAudio = new JLabel("");
+    panelLogos.add(lblMediaLogoAudio);
 
     JPanel panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
@@ -464,5 +462,24 @@ public class MovieInformationPanel extends JPanel {
     AutoBinding<JTable, MovieCast, ActorImageLabel, MovieCast> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast,
         jTableBeanProperty, lblActorThumb, actorImageLabelBeanProperty_1);
     autoBinding_10.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.mediaInfoVideoFormat");
+    AutoBinding<MovieSelectionModel, String, JLabel, Icon> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_9, lblMediaLogoResolution, jLabelBeanProperty_2);
+    autoBinding_11.setConverter(new MediaInfoVideoFormatConverter());
+    autoBinding_11.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_10 = BeanProperty.create("selectedMovie.mediaInfoVideoCodec");
+    AutoBinding<MovieSelectionModel, String, JLabel, Icon> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_10, lblMediaLogoVideoCodec, jLabelBeanProperty_2);
+    autoBinding_12.setConverter(new MediaInfoVideoCodecConverter());
+    autoBinding_12.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_11 = BeanProperty
+        .create("selectedMovie.mediaInfoAudioCodecAndChannels");
+    AutoBinding<MovieSelectionModel, String, JLabel, Icon> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_11, lblMediaLogoAudio, jLabelBeanProperty_2);
+    autoBinding_13.setConverter(new MediaInfoAudioCodecConverter());
+    autoBinding_13.bind();
   }
 }

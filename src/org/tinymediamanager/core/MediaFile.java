@@ -633,32 +633,30 @@ public class MediaFile extends AbstractModelObject {
     // get first extension
     setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
 
-    // video format
-    setVideoFormat("");
-    String v = getMediaInfo(StreamKind.Video, 0, "Height");
-    if (!v.isEmpty()) {
-      int height;
-      try {
-        height = Integer.parseInt(v);
-        int ns = 0;
-        int[] hs = new int[] { 1080, 720, 576, 540, 480, 360, 240, 120 };
-        for (int i = 0; i < hs.length - 1; i++) {
-          if (height > hs[i + 1]) {
-            ns = hs[i];
-            break;
-          }
-        }
-
-        if (ns > 0) {
-          // e.g. 720p, nobody actually wants files to be tagged as interlaced,
-          // e.g. 720i
-          setVideoFormat(String.format("%dp", ns));
-        }
-      }
-      catch (NumberFormatException e) {
-        setVideoFormat("");
-      }
-    }
+    // String v = getMediaInfo(StreamKind.Video, 0, "Height");
+    // if (!v.isEmpty()) {
+    // int height;
+    // try {
+    // height = Integer.parseInt(v);
+    // int ns = 0;
+    // int[] hs = new int[] { 1080, 720, 576, 540, 480, 360, 240, 120 };
+    // for (int i = 0; i < hs.length - 1; i++) {
+    // if (height > hs[i + 1]) {
+    // ns = hs[i];
+    // break;
+    // }
+    // }
+    //
+    // if (ns > 0) {
+    // // e.g. 720p, nobody actually wants files to be tagged as interlaced,
+    // // e.g. 720i
+    // setVideoFormat(String.format("%dp", ns));
+    // }
+    // }
+    // catch (NumberFormatException e) {
+    // setVideoFormat("");
+    // }
+    // }
 
     // exact video format
     String height = getMediaInfo(StreamKind.Video, 0, "Height");
@@ -689,6 +687,37 @@ public class MediaFile extends AbstractModelObject {
         setVideoHeight(0);
       }
     }
+
+    // video format
+    String format = "";
+    if (StringUtils.isNotEmpty(width)) {
+      try {
+        int w = Integer.parseInt(width);
+
+        // 1080
+        if (w >= 1920) {
+          format = "1080p";
+        }
+
+        // 720
+        if (format.isEmpty() && w >= 1280) {
+          format = "720p";
+        }
+
+        // SD with aspect ratio
+        if (format.isEmpty() && w > 0) {
+          if (isWidescreen()) {
+            format = "SD 16:9";
+          }
+          else {
+            format = "SD 4:3";
+          }
+        }
+      }
+      catch (NumberFormatException e) {
+      }
+    }
+    setVideoFormat(format);
 
     // overall bitrate (OverallBitRate/String)
     String br = getMediaInfo(StreamKind.General, 0, "OverallBitRate");
