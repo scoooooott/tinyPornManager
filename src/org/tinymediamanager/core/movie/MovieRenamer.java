@@ -273,6 +273,14 @@ public class MovieRenamer {
       String newPosterFile = "";
       for (MoviePosterNaming name : Globals.settings.getMoviePosterFilenames()) {
         newPosterFile = movie.getPosterFilename(name);
+
+        // only store .png as png and .jpg as jpg
+        String generatedFiletype = FilenameUtils.getExtension(newPosterFile);
+        String providedFiletype = FilenameUtils.getExtension(oldPosterFile);
+        if (!generatedFiletype.equals(providedFiletype)) {
+          continue;
+        }
+
         try {
           copyFile(oldPosterFile, newPosterFile);
           movie.setPoster(FilenameUtils.getName(newPosterFile));
@@ -290,6 +298,14 @@ public class MovieRenamer {
       String newFanartFile = "";
       for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
         newFanartFile = movie.getFanartFilename(name);
+
+        // only store .png as png and .jpg as jpg
+        String generatedFiletype = FilenameUtils.getExtension(newFanartFile);
+        String providedFiletype = FilenameUtils.getExtension(oldFanartFile);
+        if (!generatedFiletype.equals(providedFiletype)) {
+          continue;
+        }
+
         try {
           copyFile(oldFanartFile, newFanartFile);
           movie.setFanart(FilenameUtils.getName(newFanartFile));

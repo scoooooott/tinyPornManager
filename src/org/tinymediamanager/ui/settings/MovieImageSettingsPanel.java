@@ -26,6 +26,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -46,6 +48,9 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The Class MovieImageSettingsPanel.
+ */
 public class MovieImageSettingsPanel extends JPanel {
 
   /** The settings. */
@@ -60,33 +65,64 @@ public class MovieImageSettingsPanel extends JPanel {
   /** The cb image tmdb language. */
   private JComboBox cbImageTmdbLanguage;
 
+  /** The cb movie poster filename1. */
   private JCheckBox cbMoviePosterFilename1;
 
+  /** The cb movie poster filename2. */
   private JCheckBox cbMoviePosterFilename2;
 
+  /** The cb movie poster filename3. */
   private JCheckBox cbMoviePosterFilename3;
 
+  /** The cb movie poster filename4. */
   private JCheckBox cbMoviePosterFilename4;
 
+  /** The cb movie poster filename5. */
   private JCheckBox cbMoviePosterFilename5;
 
+  /** The cb movie poster filename6. */
   private JCheckBox cbMoviePosterFilename6;
 
+  /** The cb movie poster filename7. */
   private JCheckBox cbMoviePosterFilename7;
 
+  /** The cb movie fanart filename1. */
   private JCheckBox cbMovieFanartFilename1;
 
+  /** The cb movie fanart filename2. */
   private JCheckBox cbMovieFanartFilename2;
-  private JCheckBox cbMoviePosterFilename8;
-  private JCheckBox chckbxFanarttv;
-  private JCheckBox chckbxTheMovieDatabase;
-  private JLabel    lblAttentionFanartTv;
-  private JLabel    lblInfo1;
-  private JLabel    lblInfo2;
-  private JLabel    lblInfo3;
-  private JPanel    panelActorThumbs;
-  private JCheckBox cbActorImages;
 
+  /** The cb movie poster filename8. */
+  private JCheckBox cbMoviePosterFilename8;
+
+  /** The chckbx fanarttv. */
+  private JCheckBox chckbxFanarttv;
+
+  /** The chckbx the movie database. */
+  private JCheckBox chckbxTheMovieDatabase;
+
+  /** The lbl attention fanart tv. */
+  private JLabel    lblAttentionFanartTv;
+
+  /** The lbl info1. */
+  private JLabel    lblInfo1;
+
+  /** The lbl info2. */
+  private JLabel    lblInfo2;
+
+  /** The lbl info3. */
+  private JLabel    lblInfo3;
+
+  /** The panel actor thumbs. */
+  private JPanel    panelActorThumbs;
+
+  /** The cb actor images. */
+  private JCheckBox cbActorImages;
+  private JTextPane tpFileNamingHint;
+
+  /**
+   * Instantiates a new movie image settings panel.
+   */
   public MovieImageSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -94,13 +130,14 @@ public class MovieImageSettingsPanel extends JPanel {
     JPanel panelMovieImages = new JPanel();
     panelMovieImages.setBorder(new TitledBorder(null, "Poster and Fanart", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelMovieImages, "2, 2, left, top");
-    panelMovieImages.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+    panelMovieImages.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSource = new JLabel("Source");
     panelMovieImages.add(lblSource, "2, 2");
@@ -194,6 +231,13 @@ public class MovieImageSettingsPanel extends JPanel {
     cbMovieFanartFilename2 = new JCheckBox("fanart.jpg");
     panelMovieImages.add(cbMovieFanartFilename2, "6, 15");
 
+    tpFileNamingHint = new JTextPane();
+    tpFileNamingHint
+        .setText("Note: every file naming option ending with .jpg will alternatively store a png. It depends on the source of the image file");
+    tpFileNamingHint.setBackground(UIManager.getColor("Panel.background"));
+    tpFileNamingHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    panelMovieImages.add(tpFileNamingHint, "2, 17, 9, 1, fill, fill");
+
     panelActorThumbs = new JPanel();
     panelActorThumbs.setBorder(new TitledBorder(new LineBorder(new Color(99, 130, 191)), "Actor Images", TitledBorder.LEADING, TitledBorder.TOP,
         null, null));
@@ -262,6 +306,9 @@ public class MovieImageSettingsPanel extends JPanel {
     cbMovieFanartFilename2.addItemListener(listener);
   }
 
+  /**
+   * Check changes.
+   */
   public void checkChanges() {
     // set poster filenames
     settings.clearMoviePosterFilenames();
@@ -270,36 +317,46 @@ public class MovieImageSettingsPanel extends JPanel {
     }
     if (cbMoviePosterFilename2.isSelected()) {
       settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_PNG);
     }
     if (cbMoviePosterFilename3.isSelected()) {
       settings.addMoviePosterFilename(MoviePosterNaming.MOVIE_TBN);
     }
     if (cbMoviePosterFilename4.isSelected()) {
       settings.addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
     }
     if (cbMoviePosterFilename5.isSelected()) {
       settings.addMoviePosterFilename(MoviePosterNaming.POSTER_TBN);
     }
     if (cbMoviePosterFilename6.isSelected()) {
       settings.addMoviePosterFilename(MoviePosterNaming.FOLDER_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FOLDER_PNG);
     }
     if (cbMoviePosterFilename7.isSelected()) {
       settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_PNG);
     }
     if (cbMoviePosterFilename8.isSelected()) {
       settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
+      settings.addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_PNG);
     }
 
     // set fanart filenames
     settings.clearMovieFanartFilenames();
     if (cbMovieFanartFilename1.isSelected()) {
       settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_PNG);
     }
     if (cbMovieFanartFilename2.isSelected()) {
       settings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
+      settings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<Settings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("imageTmdbPosterSize");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");

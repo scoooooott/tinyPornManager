@@ -1926,7 +1926,15 @@ public class Movie extends AbstractModelObject {
         if (++i == 1) {
           firstImage = true;
         }
+
         filename = getPosterFilename(name);
+
+        // only store .png as png and .jpg as jpg
+        String generatedFiletype = FilenameUtils.getExtension(filename);
+        String providedFiletype = FilenameUtils.getExtension(getPosterUrl());
+        if (!generatedFiletype.equals(providedFiletype)) {
+          continue;
+        }
 
         // get image in thread
         MovieImageFetcher task = new MovieImageFetcher(this, getPosterUrl(), ArtworkType.POSTER, filename, firstImage);
@@ -1943,6 +1951,13 @@ public class Movie extends AbstractModelObject {
           firstImage = true;
         }
         filename = getFanartFilename(name);
+
+        // only store .png as png and .jpg as jpg
+        String generatedFiletype = FilenameUtils.getExtension(filename);
+        String providedFiletype = FilenameUtils.getExtension(getFanartUrl());
+        if (!generatedFiletype.equals(providedFiletype)) {
+          continue;
+        }
 
         // get image in thread
         MovieImageFetcher task = new MovieImageFetcher(this, getFanartUrl(), ArtworkType.BACKDROP, filename, firstImage);
