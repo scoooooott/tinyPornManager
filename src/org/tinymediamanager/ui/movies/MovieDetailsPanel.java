@@ -116,6 +116,8 @@ public class MovieDetailsPanel extends JPanel {
 
   /** The lbl movie set. */
   private JLabel              lblMovieSet;
+  private JLabel              lblSpokenLanguagesT;
+  private JLabel              lblSpokenLanguages;
 
   /**
    * Instantiates a new movie details panel.
@@ -134,7 +136,8 @@ public class MovieDetailsPanel extends JPanel {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel("Original Title");
     add(lblOriginalTitleT, "2, 2");
@@ -170,28 +173,29 @@ public class MovieDetailsPanel extends JPanel {
     add(lblProductionT, "2, 10, default, top");
     lblProductionT.setLabelFor(lblProduction);
 
-    // lblProduction = new JTextArea("");
-    // lblProduction.setLineWrap(true);
-    // lblProduction.setEditable(false);
-    // lblProduction.setOpaque(false);
-    // lblProduction.setWrapStyleWord(true);
     lblProduction = new JLabel();
     add(lblProduction, "4, 10, 7, 1");
 
+    lblSpokenLanguagesT = new JLabel("Spoken languages");
+    add(lblSpokenLanguagesT, "2, 12");
+
+    lblSpokenLanguages = new JLabel("");
+    add(lblSpokenLanguages, "4, 12, 7, 1");
+
     lblMoviesetT = new JLabel("Movieset");
-    add(lblMoviesetT, "2, 12");
+    add(lblMoviesetT, "2, 14");
 
     lblMovieSet = new JLabel("");
-    add(lblMovieSet, "4, 12, 5, 1");
+    add(lblMovieSet, "4, 14, 5, 1");
 
     lblTagsT = new JLabel("Tags");
-    add(lblTagsT, "2, 14");
+    add(lblTagsT, "2, 16");
 
     lblTags = new JLabel("");
-    add(lblTags, "4, 14, 7, 1");
+    add(lblTags, "4, 16, 7, 1");
 
     lblImdbIdT = new JLabel("IMDB Id");
-    add(lblImdbIdT, "2, 16");
+    add(lblImdbIdT, "2, 18");
 
     lblImdbId = new LinkLabel("");
     lblImdbId.addActionListener(new ActionListener() {
@@ -205,11 +209,11 @@ public class MovieDetailsPanel extends JPanel {
       }
     });
 
-    add(lblImdbId, "4, 16, 3, 1, left, default");
+    add(lblImdbId, "4, 18, 3, 1, left, default");
     lblImdbIdT.setLabelFor(lblImdbId);
 
     lblTmdbIdT = new JLabel("TMDB Id");
-    add(lblTmdbIdT, "8, 16");
+    add(lblTmdbIdT, "8, 18");
 
     lblTmdbId = new LinkLabel("");
     lblTmdbId.addActionListener(new ActionListener() {
@@ -222,11 +226,11 @@ public class MovieDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblTmdbId, "10, 16, left, default");
+    add(lblTmdbId, "10, 18, left, default");
     lblTmdbIdT.setLabelFor(lblTmdbId);
 
     lblMoviePathT = new JLabel("Path");
-    add(lblMoviePathT, "2, 18");
+    add(lblMoviePathT, "2, 20");
 
     lblMoviePath = new LinkLabel("");
     lblMoviePath.addActionListener(new ActionListener() {
@@ -248,14 +252,11 @@ public class MovieDetailsPanel extends JPanel {
     });
     lblMoviePathT.setLabelFor(lblMoviePath);
     lblMoviePathT.setLabelFor(lblMoviePath);
-    add(lblMoviePath, "4, 18, 7, 1");
+    add(lblMoviePath, "4, 20, 7, 1");
 
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalName");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
@@ -309,5 +310,10 @@ public class MovieDetailsPanel extends JPanel {
         movieSelectionModelBeanProperty_1, lblMovieSet, jLabelBeanProperty);
     autoBinding_1.setConverter(new MovieSetConverter());
     autoBinding_1.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.spokenLanguages");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_2, lblSpokenLanguages, jLabelBeanProperty);
+    autoBinding_2.bind();
   }
 }

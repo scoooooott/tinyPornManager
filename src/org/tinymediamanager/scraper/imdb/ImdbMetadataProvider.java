@@ -380,6 +380,30 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         }
 
         /*
+         * <div class="info"><h5>Language:</h5><div class="info-content"><a
+         * href="/language/en">English</a> | <a href="/language/de">German</a> |
+         * <a href="/language/fr">French</a> | <a
+         * href="/language/it">Italian</a></div>
+         */
+        // Spoken languages
+        if (h5Title.matches("(?i)Language.*")) {
+          Elements a = element.getElementsByTag("a");
+          String spokenLanguages = "";
+          for (Element anchor : a) {
+            Pattern pattern = Pattern.compile("/language/(.*)");
+            Matcher matcher = pattern.matcher(anchor.attr("href"));
+            if (matcher.matches()) {
+              String langu = matcher.group(1);
+              if (StringUtils.isNotEmpty(spokenLanguages)) {
+                spokenLanguages += ", ";
+              }
+              spokenLanguages += langu;
+            }
+          }
+          md.setSpokenLanguages(spokenLanguages);
+        }
+
+        /*
          * <div class="info"> <h5>Writers:</h5> <div class="info-content"> <a
          * href="/name/nm0152312/" onclick=
          * "(new Image()).src='/rg/writerlist/position-1/images/b.gif?link=name/nm0152312/';"

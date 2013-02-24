@@ -713,8 +713,10 @@ public class Settings extends AbstractModelObject {
     setCertificationCountry(CountryCode.US);
     setMovieConnector(MovieConnectors.XBMC);
     addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
-    addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
-    addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
+    addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
+    addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
+    addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
+    addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
     setMovieScraper(MovieScrapers.TMDB);
     setImdbScrapeForeignLanguage(false);
 

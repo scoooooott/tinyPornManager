@@ -72,6 +72,9 @@ public class MediaMetadata {
   /** The release date. */
   private String                releaseDate       = "";
 
+  /** The spoken languages. */
+  private String                spokenLanguages   = "";
+
   /** The cast members. */
   private List<MediaCastMember> castMembers       = new ArrayList<MediaCastMember>();
 
@@ -402,6 +405,25 @@ public class MediaMetadata {
    */
   public void setProductionCompany(String productionCompany) {
     this.productionCompany = productionCompany;
+  }
+
+  /**
+   * Sets the spoken languages.
+   * 
+   * @param spokenLanguages
+   *          the new spoken languages
+   */
+  public void setSpokenLanguages(String spokenLanguages) {
+    this.spokenLanguages = spokenLanguages;
+  }
+
+  /**
+   * Gets the spoken languages.
+   * 
+   * @return the spoken languages
+   */
+  public String getSpokenLanguages() {
+    return this.spokenLanguages;
   }
 
   /**

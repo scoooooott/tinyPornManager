@@ -48,6 +48,7 @@ import com.omertron.themoviedbapi.model.ArtworkType;
 import com.omertron.themoviedbapi.model.Collection;
 import com.omertron.themoviedbapi.model.CollectionInfo;
 import com.omertron.themoviedbapi.model.Genre;
+import com.omertron.themoviedbapi.model.Language;
 import com.omertron.themoviedbapi.model.MovieDb;
 import com.omertron.themoviedbapi.model.Person;
 import com.omertron.themoviedbapi.model.PersonType;
@@ -327,6 +328,16 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     md.setRuntime(movie.getRuntime());
     md.setTagline(movie.getTagline());
     md.setVoteCount(movie.getVoteCount());
+
+    String spokenLanguages = "";
+    for (Language lang : movie.getSpokenLanguages()) {
+      if (StringUtils.isNotEmpty(spokenLanguages)) {
+        spokenLanguages += ", ";
+      }
+
+      spokenLanguages += lang.getIsoCode();
+    }
+    md.setSpokenLanguages(spokenLanguages);
 
     if (movie.getImdbID() != null && MetadataUtil.isValidImdbId(movie.getImdbID())) {
       md.setImdbId(movie.getImdbID());

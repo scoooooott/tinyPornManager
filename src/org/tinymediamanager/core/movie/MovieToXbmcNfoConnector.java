@@ -54,8 +54,13 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "mpaa", "certifications", "id", "tmdbId", "filenameandpath", "trailer", "fileinfo", "watched", "playcount", "genres", "studio", "credits",
-    "director", "tags", "actors" })
+    "mpaa", "certifications", "id", "tmdbId", "trailer", "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags",
+    "actors" })
+// @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle",
+// "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
+// "mpaa", "certifications", "id", "tmdbId", "filenameandpath", "trailer",
+// "fileinfo", "watched", "playcount", "genres", "studio", "credits",
+// "director", "tags", "actors" })
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -97,8 +102,8 @@ public class MovieToXbmcNfoConnector {
   /** The tmdbid. */
   private int                 tmdbId;
 
-  /** The filenameandpath. */
-  private String              filenameandpath;
+  // /** The filenameandpath. */
+  // private String filenameandpath;
 
   /** The director. */
   @XmlElement(name = "director")
@@ -193,7 +198,7 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.setTagline(movie.getTagline());
     xbmc.setRuntime(String.valueOf(movie.getRuntime()));
-    xbmc.setThumb(movie.getPoster());
+    // xbmc.setThumb(movie.getPoster());
     xbmc.setId(movie.getImdbId());
     xbmc.setTmdbId(movie.getTmdbId());
 
@@ -216,10 +221,11 @@ public class MovieToXbmcNfoConnector {
       xbmc.setCertifications(movie.getCertification().toString());
     }
 
-    // filename and path
-    if (movie.getMediaFiles().size() > 0) {
-      xbmc.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles().get(0).getFilename());
-    }
+    // // filename and path
+    // if (movie.getMediaFiles().size() > 0) {
+    // xbmc.setFilenameandpath(movie.getPath() + File.separator +
+    // movie.getMediaFiles().get(0).getFilename());
+    // }
 
     // support of frodo director tags
     if (StringUtils.isNotEmpty(movie.getDirector())) {
@@ -359,6 +365,7 @@ public class MovieToXbmcNfoConnector {
       catch (Exception e) {
         LOGGER.warn("could not parse runtime: " + xbmc.getRuntime());
       }
+
       if (StringUtils.isNotEmpty(xbmc.getThumb()) && xbmc.getThumb().contains("http://")) {
         movie.setPosterUrl(xbmc.getThumb());
       }
@@ -761,25 +768,25 @@ public class MovieToXbmcNfoConnector {
     this.id = id;
   }
 
-  /**
-   * Gets the filenameandpath.
-   * 
-   * @return the filenameandpath
-   */
-  @XmlElement(name = "filenameandpath")
-  public String getFilenameandpath() {
-    return filenameandpath;
-  }
-
-  /**
-   * Sets the filenameandpath.
-   * 
-   * @param filenameandpath
-   *          the new filenameandpath
-   */
-  public void setFilenameandpath(String filenameandpath) {
-    this.filenameandpath = filenameandpath;
-  }
+  // /**
+  // * Gets the filenameandpath.
+  // *
+  // * @return the filenameandpath
+  // */
+  // @XmlElement(name = "filenameandpath")
+  // public String getFilenameandpath() {
+  // return filenameandpath;
+  // }
+  //
+  // /**
+  // * Sets the filenameandpath.
+  // *
+  // * @param filenameandpath
+  // * the new filenameandpath
+  // */
+  // public void setFilenameandpath(String filenameandpath) {
+  // this.filenameandpath = filenameandpath;
+  // }
 
   /**
    * Gets the director.

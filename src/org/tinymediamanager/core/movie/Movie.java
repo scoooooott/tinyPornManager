@@ -168,6 +168,9 @@ public class Movie extends AbstractModelObject {
   /** The Constant TAG. */
   protected final static String TAG                  = "tag";
 
+  /** The Constant SPOKEN_LANGUAGES. */
+  protected final static String SPOKEN_LANGUAGES     = "spokenLanguages";
+
   /** The Constant logger. */
   @XmlTransient
   private static final Logger   LOGGER               = Logger.getLogger(Movie.class);
@@ -302,6 +305,9 @@ public class Movie extends AbstractModelObject {
 
   /** is this a disc movie folder (video_ts / bdmv)?. */
   private boolean               isDisc               = false;
+
+  /** The spoken languages. */
+  private String                spokenLanguages      = "";
 
   /**
    * Instantiates a new movie. Needed for JAXB
@@ -1404,6 +1410,8 @@ public class Movie extends AbstractModelObject {
       setRuntime(metadata.getRuntime());
     }
 
+    setSpokenLanguages(metadata.getSpokenLanguages());
+
     // certifications
     if (config.isCertification()) {
       if (metadata.getCertifications() != null && metadata.getCertifications().size() > 0) {
@@ -2348,5 +2356,26 @@ public class Movie extends AbstractModelObject {
     }
 
     return "";
+  }
+
+  /**
+   * Sets the spoken languages.
+   * 
+   * @param newValue
+   *          the new spoken languages
+   */
+  public void setSpokenLanguages(String newValue) {
+    String oldValue = this.spokenLanguages;
+    this.spokenLanguages = newValue;
+    firePropertyChange(SPOKEN_LANGUAGES, oldValue, newValue);
+  }
+
+  /**
+   * Gets the spoken languages.
+   * 
+   * @return the spoken languages
+   */
+  public String getSpokenLanguages() {
+    return this.spokenLanguages;
   }
 }
