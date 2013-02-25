@@ -37,7 +37,7 @@ public enum Certification {
 
   /** UK/GB certifications. */
   GB_UC(CountryCode.GB, "UC", new String[] { "UC" }), GB_U(CountryCode.GB, "U", new String[] { "U" }), GB_PG(CountryCode.GB, "PG",
-      new String[] { "PG" }), GB_12A(CountryCode.GB, "12A", new String[] { "12A" }), GB_12(CountryCode.DE, "12", new String[] { "12" }), GB_15(
+      new String[] { "PG" }), GB_12A(CountryCode.GB, "12A", new String[] { "12A" }), GB_12(CountryCode.GB, "12", new String[] { "12" }), GB_15(
       CountryCode.GB, "15", new String[] { "15" }), GB_18(CountryCode.GB, "18", new String[] { "18" }), GB_R18(CountryCode.GB, "R18",
       new String[] { "R18" }),
 
@@ -264,14 +264,18 @@ public enum Certification {
    * @return the localized certification if found, else *ANY* language cert
    *         found
    */
-  // <certification>USA:R / UK:15 / Sweden:15 / Spain:18 / South Korea:15 / Singapore:NC-16 / Portugal:M/16 / Philippines:R-18 / Norway:15 / New Zealand:M / Netherlands:16 / Malaysia:U / Malaysia:18PL / Ireland:18 / Iceland:16 / Hungary:18 / Germany:16 / Finland:K-15 / Canada:18A / Canada:18+ / Brazil:16 / Australia:M / Argentina:16</certification>
+  // <certification>USA:R / UK:15 / Sweden:15 / Spain:18 / South Korea:15 /
+  // Singapore:NC-16 / Portugal:M/16 / Philippines:R-18 / Norway:15 / New
+  // Zealand:M / Netherlands:16 / Malaysia:U / Malaysia:18PL / Ireland:18 /
+  // Iceland:16 / Hungary:18 / Germany:16 / Finland:K-15 / Canada:18A /
+  // Canada:18+ / Brazil:16 / Australia:M / Argentina:16</certification>
   public static Certification parseCertificationStringForSetupCountry(String name) {
     Certification cert = NOT_RATED;
     name = name.trim();
     if (name.contains("/")) {
       // multiple countries
       String[] countries = name.split("/");
-      // first try to find by setup  CertLanguage
+      // first try to find by setup CertLanguage
       for (String c : countries) {
         c = c.trim();
         if (c.contains(":")) {
@@ -288,7 +292,8 @@ public enum Certification {
           }
         }
       }
-      // still not found localized cert? parse the name to find *ANY* certificate 
+      // still not found localized cert? parse the name to find *ANY*
+      // certificate
       for (String c : countries) {
         c = c.trim();
         if (c.contains(":")) {

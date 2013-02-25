@@ -812,7 +812,7 @@ public class MoviePanel extends JPanel {
           Movie movie = movieList.getMovies().get(i);
           File movieDir = new File(movie.getPath());
           if (!movieDir.exists()) {
-            movieList.getMovies().remove(movie);
+            movieList.removeMovie(movie);
           }
         }
       }

@@ -53,14 +53,9 @@ import org.tinymediamanager.scraper.MediaTrailer;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
-@XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "mpaa", "certifications", "id", "tmdbId", "trailer", "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags",
-    "actors" })
-// @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle",
-// "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-// "mpaa", "certifications", "id", "tmdbId", "filenameandpath", "trailer",
-// "fileinfo", "watched", "playcount", "genres", "studio", "credits",
-// "director", "tags", "actors" })
+@XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
+    "runtime", "thumb", "mpaa", "certifications", "id", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired", "fileinfo",
+    "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "resume", "lastplayed", "dateadded" })
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -153,6 +148,31 @@ public class MovieToXbmcNfoConnector {
   private Fileinfo            fileinfo;
 
   /**
+   * not supported tags, but used to retrain in NFO
+   */
+
+  @XmlElement
+  String                      epbookmark;
+  @XmlElement
+  String                      top250;
+  @XmlElement
+  String                      lastplayed;
+  @XmlElement
+  String                      country;
+  @XmlElement
+  String                      status;
+  @XmlElement
+  String                      code;
+  @XmlElement
+  String                      aired;
+  @XmlElement
+  String                      premiered;
+  @XmlElement
+  Resume                      resume;
+  @XmlElement
+  String                      dateadded;
+
+  /**
    * Instantiates a new movie to xbmc nfo connector.
    */
   public MovieToXbmcNfoConnector() {
@@ -171,7 +191,35 @@ public class MovieToXbmcNfoConnector {
    * @return the string
    */
   public static String setData(Movie movie) {
-    MovieToXbmcNfoConnector xbmc = new MovieToXbmcNfoConnector();
+    JAXBContext context;
+    MovieToXbmcNfoConnector xbmc = null;
+
+    // load existing NFO if possible
+    for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
+      File file = new File(movie.getNfoFilename(name));
+      if (file.exists()) {
+        synchronized (JAXBContext.class) {
+          try {
+            context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+            Unmarshaller um = context.createUnmarshaller();
+            Reader in = new InputStreamReader(new FileInputStream(file), "UTF-8");
+            xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+          }
+          catch (Exception e) {
+            LOGGER.error("failed to parse " + movie.getNfoFilename(name), e);
+          }
+        }
+      }
+      if (xbmc != null) {
+        break;
+      }
+    }
+
+    // create new
+    if (xbmc == null) {
+      xbmc = new MovieToXbmcNfoConnector();
+    }
+
     // set data
     xbmc.setTitle(movie.getName());
     xbmc.setOriginaltitle(movie.getOriginalName());
@@ -298,7 +346,6 @@ public class MovieToXbmcNfoConnector {
     // and marshall it
     String nfoFilename = "";
     for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
-      JAXBContext context;
       try {
         nfoFilename = movie.getNfoFilename(name);
         synchronized (JAXBContext.class) {
@@ -1206,5 +1253,13 @@ public class MovieToXbmcNfoConnector {
     /** The channels. */
     @XmlElement
     String channels;
+  }
+
+  static class Resume {
+    @XmlElement
+    String position;
+
+    @XmlElement
+    String total;
   }
 }
