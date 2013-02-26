@@ -2073,9 +2073,11 @@ public class Movie extends AbstractModelObject {
    *          the new value
    */
   public void addGenre(MediaGenres newValue) {
-    genres.add(newValue);
-    firePropertyChange(GENRE, null, newValue);
-    firePropertyChange("genresAsString", null, newValue);
+    if (!genres.contains(newValue)) {
+      genres.add(newValue);
+      firePropertyChange(GENRE, null, newValue);
+      firePropertyChange("genresAsString", null, newValue);
+    }
   }
 
   /**
@@ -2113,9 +2115,11 @@ public class Movie extends AbstractModelObject {
    *          the genre
    */
   public void removeGenre(MediaGenres genre) {
-    genres.remove(genre);
-    firePropertyChange(GENRE, null, genre);
-    firePropertyChange("genresAsString", null, genre);
+    if (genres.contains(genre)) {
+      genres.remove(genre);
+      firePropertyChange(GENRE, null, genre);
+      firePropertyChange("genresAsString", null, genre);
+    }
   }
 
   /**

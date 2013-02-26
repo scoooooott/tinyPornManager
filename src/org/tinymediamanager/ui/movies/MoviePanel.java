@@ -203,6 +203,9 @@ public class MoviePanel extends JPanel {
   /** The action media information2. */
   private final Action           actionMediaInformation2      = new MediaInformationAction(true);
 
+  /** The action batch edit. */
+  private final Action           actionBatchEdit              = new BatchEditAction();
+
   // /** The window config. */
   // private WindowConfig windowConfig;
 
@@ -388,6 +391,7 @@ public class MoviePanel extends JPanel {
     menu.add(actionScrapeMetadataSelected);
     menu.addSeparator();
     menu.add(actionEditMovie2);
+    menu.add(actionBatchEdit);
     menu.add(actionRename2);
     menu.add(actionRemove2);
     menu.addSeparator();
@@ -400,6 +404,7 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.addSeparator();
     popupMenu.add(actionEditMovie2);
+    popupMenu.add(actionBatchEdit);
     popupMenu.add(actionRename2);
     popupMenu.add(actionRemove2);
     popupMenu.add(actionMediaInformation2);
@@ -1074,6 +1079,41 @@ public class MoviePanel extends JPanel {
           }
         }
       }
+    }
+  }
+
+  /**
+   * The Class BatchEditAction.
+   */
+  private class BatchEditAction extends AbstractAction {
+
+    /**
+     * Instantiates a new batch edit action.
+     */
+    public BatchEditAction() {
+      putValue(NAME, "Bulk editing");
+      putValue(SHORT_DESCRIPTION, "Change genres, tags, movieset and watched flag for all selected movies");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      List<Movie> selectedMovies = new ArrayList<Movie>();
+      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
+        selectedMovies.add(movie);
+      }
+
+      // get data of all files within all selected movies
+      if (selectedMovies.size() > 0) {
+        MovieBatchEditor editor = new MovieBatchEditor(selectedMovies);
+        editor.setVisible(true);
+      }
+
     }
   }
 }

@@ -205,6 +205,7 @@ public class MainWindow extends JFrame {
 
     // shutdown listener - to clean database connections safetly
     addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
         try {
           // save unsaved settings
