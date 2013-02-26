@@ -1931,10 +1931,6 @@ public class Movie extends AbstractModelObject {
       int i = 0;
       for (MoviePosterNaming name : Globals.settings.getMoviePosterFilenames()) {
         boolean firstImage = false;
-        if (++i == 1) {
-          firstImage = true;
-        }
-
         filename = getPosterFilename(name);
 
         // only store .png as png and .jpg as jpg
@@ -1942,6 +1938,10 @@ public class Movie extends AbstractModelObject {
         String providedFiletype = FilenameUtils.getExtension(getPosterUrl());
         if (!generatedFiletype.equals(providedFiletype)) {
           continue;
+        }
+
+        if (++i == 1) {
+          firstImage = true;
         }
 
         // get image in thread
@@ -1955,9 +1955,6 @@ public class Movie extends AbstractModelObject {
       int i = 0;
       for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
         boolean firstImage = false;
-        if (++i == 1) {
-          firstImage = true;
-        }
         filename = getFanartFilename(name);
 
         // only store .png as png and .jpg as jpg
@@ -1965,6 +1962,10 @@ public class Movie extends AbstractModelObject {
         String providedFiletype = FilenameUtils.getExtension(getFanartUrl());
         if (!generatedFiletype.equals(providedFiletype)) {
           continue;
+        }
+
+        if (++i == 1) {
+          firstImage = true;
         }
 
         // get image in thread

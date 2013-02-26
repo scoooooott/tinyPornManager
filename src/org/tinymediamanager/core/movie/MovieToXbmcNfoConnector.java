@@ -284,6 +284,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     // support of frodo credits tags
+    xbmc.credits.clear();
     if (StringUtils.isNotEmpty(movie.getWriter())) {
       String writers[] = movie.getWriter().split(", ");
       for (String writer : writers) {
@@ -291,10 +292,12 @@ public class MovieToXbmcNfoConnector {
       }
     }
 
+    xbmc.actors.clear();
     for (MovieCast cast : movie.getActors()) {
       xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
     }
 
+    xbmc.genres.clear();
     for (MediaGenres genre : movie.getGenres()) {
       xbmc.addGenre(genre.toString());
     }
@@ -306,6 +309,7 @@ public class MovieToXbmcNfoConnector {
       }
     }
 
+    xbmc.tags.clear();
     for (String tag : movie.getTags()) {
       xbmc.addTag(tag);
     }
