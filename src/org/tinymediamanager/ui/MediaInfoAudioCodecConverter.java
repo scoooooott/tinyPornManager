@@ -53,7 +53,7 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
       URL file = MediaInfoAudioCodecConverter.class.getResource(sb.toString());
       if (file == null) {
         // strip out channels info
-        String codec = arg0.replaceFirst("_[0-9]ch", "ch");
+        String codec = arg0.replaceFirst("_.*ch", "");
         sb = new StringBuilder("/images/mediainfo/audio/");
         sb.append(codec.toLowerCase());
         sb.append(".png");
