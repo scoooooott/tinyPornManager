@@ -362,12 +362,15 @@ public class MovieList extends AbstractModelObject {
           movie.setDataSource(dataSource);
           movie.setDisc(true); // sets as Disc Folder
           movie.setDateAdded(new Date());
-          LOGGER.debug("store movie " + parentDir);
+          LOGGER.info("store movie in DB" + parentDir);
           movie.saveToDb();
           if (movie.getMovieSet() != null) {
+            LOGGER.debug("movie is part of a movieset");
             movie.getMovieSet().addMovie(movie);
+            sortMoviesInMovieSet(movie.getMovieSet());
             movie.getMovieSet().saveToDb();
           }
+          LOGGER.debug("add movie to GUI");
           addMovie(movie);
         }
       }
@@ -440,14 +443,16 @@ public class MovieList extends AbstractModelObject {
         if (movie != null) {
           movie.setDataSource(dataSource);
           movie.setDateAdded(new Date());
-          LOGGER.debug("store movie " + dir.getPath());
+          LOGGER.info("store movie in DB" + dir.getPath());
           movie.saveToDb();
           if (movie.getMovieSet() != null) {
+            LOGGER.debug("movie is part of a movieset");
             movie.getMovieSet().addMovie(movie);
             sortMoviesInMovieSet(movie.getMovieSet());
             // movie.getMovieSet().sortMovies();
             movie.getMovieSet().saveToDb();
           }
+          LOGGER.debug("add movie to GUI");
           addMovie(movie);
         }
       }
