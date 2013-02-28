@@ -544,12 +544,14 @@ public class MoviePanel extends JPanel {
         selectedMovies.add(movie);
       }
       for (Movie movie : selectedMovies) {
-        MovieChooser dialogMovieChooser = new MovieChooser(movie);
-        dialogMovieChooser.pack();
-        dialogMovieChooser.setVisible(true);
+        MovieChooser dialogMovieChooser = new MovieChooser(movie, selectedMovies.size() > 1 ? true : false);
+        // dialogMovieChooser.pack();
+        // dialogMovieChooser.setVisible(true);
+        if (!dialogMovieChooser.showDialog()) {
+          break;
+        }
       }
     }
-
   }
 
   /**
@@ -725,9 +727,18 @@ public class MoviePanel extends JPanel {
       // // dialogMovieEditor.pack();
       // dialogMovieEditor.setVisible(true);
       // }
+      List<Movie> selectedMovies = new ArrayList<Movie>();
+      // save all selected movies in an extra list (maybe scraping of one movie
+      // changes the whole list)
       for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        MovieEditor dialogMovieEditor = new MovieEditor(movie);
-        dialogMovieEditor.setVisible(true);
+        selectedMovies.add(movie);
+      }
+      for (Movie movie : selectedMovies) {
+        MovieEditor dialogMovieEditor = new MovieEditor(movie, selectedMovies.size() > 1 ? true : false);
+        // dialogMovieEditor.setVisible(true);
+        if (!dialogMovieEditor.showDialog()) {
+          break;
+        }
       }
     }
   }

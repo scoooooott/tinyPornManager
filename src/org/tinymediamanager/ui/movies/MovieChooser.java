@@ -64,6 +64,7 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
@@ -135,13 +136,16 @@ public class MovieChooser extends JDialog implements ActionListener {
   /** The trailer providers. */
   private List<IMediaTrailerProvider> trailerProviders;
 
+  /** The continue queue. */
+  private boolean                     continueQueue         = true;
+
   /**
    * Create the dialog.
    * 
    * @param movie
    *          the movie
    */
-  public MovieChooser(Movie movie) {
+  public MovieChooser(Movie movie, boolean inQueue) {
     setTitle("search movie");
     setName("movieChooser");
     setBounds(5, 5, 1111, 643);
@@ -307,30 +311,43 @@ public class MovieChooser extends JDialog implements ActionListener {
     }
 
     {
-      JPanel buttonPane = new JPanel();
-      contentPanel.add(buttonPane, "1, 9");
+      JPanel bottomPane = new JPanel();
+      contentPanel.add(bottomPane, "1, 9");
       {
-        JButton okButton = new JButton("Ok");
-        okButton.setActionCommand("OK");
-        okButton.addActionListener(this);
-        buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-            ColumnSpec.decode("100px"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
+        bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+            FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
         {
           progressBar = new JProgressBar();
-          buttonPane.add(progressBar, "2, 2");
+          bottomPane.add(progressBar, "2, 2");
         }
         {
           lblProgressAction = new JLabel("");
-          buttonPane.add(lblProgressAction, "4, 2");
+          bottomPane.add(lblProgressAction, "4, 2");
         }
-        buttonPane.add(okButton, "5, 2, fill, top");
-      }
-      {
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.setActionCommand("Cancel");
-        cancelButton.addActionListener(this);
-        buttonPane.add(cancelButton, "7, 2, fill, top");
+        {
+          JPanel buttonPane = new JPanel();
+          bottomPane.add(buttonPane, "5, 2, fill, fill");
+          EqualsLayout layout = new EqualsLayout(5);
+          layout.setMinWidth(100);
+          buttonPane.setLayout(layout);
+          JButton okButton = new JButton("Ok");
+          buttonPane.add(okButton, "1, 1, fill, top");
+          okButton.setActionCommand("OK");
+          okButton.addActionListener(this);
+
+          JButton cancelButton = new JButton("Cancel");
+          buttonPane.add(cancelButton, "3, 1, fill, top");
+          cancelButton.setActionCommand("Cancel");
+          cancelButton.addActionListener(this);
+
+          if (inQueue) {
+            JButton abortButton = new JButton("Abort queue");
+            buttonPane.add(abortButton, "5, 1, fill, top");
+            abortButton.setActionCommand("Abort");
+            abortButton.addActionListener(this);
+          }
+        }
       }
     }
 
@@ -427,7 +444,16 @@ public class MovieChooser extends JDialog implements ActionListener {
         }
       }
     }
+
+    // cancel
     if ("Cancel".equals(e.getActionCommand())) {
+      this.setVisible(false);
+      dispose();
+    }
+
+    // Abort queue
+    if ("Abort".equals(e.getActionCommand())) {
+      continueQueue = false;
       this.setVisible(false);
       dispose();
     }
@@ -609,6 +635,18 @@ public class MovieChooser extends JDialog implements ActionListener {
     AutoBinding<JTable, String, JTextArea, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
         lblMovieName, jTextAreaBeanProperty_1);
     autoBinding_3.bind();
+  }
+
+  /**
+   * Shows the dialog and returns whether the work on the queue should be
+   * continued.
+   * 
+   * @return true, if successful
+   */
+  public boolean showDialog() {
+    pack();
+    setVisible(true);
+    return continueQueue;
   }
 
   /**

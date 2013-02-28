@@ -66,6 +66,7 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.AutocompleteComboBox;
+import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -233,13 +234,19 @@ public class MovieEditor extends JDialog {
   /** The tf spoken languages. */
   private JTextField         tfSpokenLanguages;
 
+  /** The continue queue. */
+  private boolean            continueQueue        = true;
+
+  /** The abort action. */
+  private final Action       abortAction          = new SwingAction_10();
+
   /**
    * Create the dialog.
    * 
    * @param movie
    *          the movie
    */
-  public MovieEditor(Movie movie) {
+  public MovieEditor(Movie movie, boolean inQueue) {
     setModal(true);
     setIconImage(Globals.logo);
     setTitle("Edit Movie");
@@ -618,22 +625,28 @@ public class MovieEditor extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      EqualsLayout layout = new EqualsLayout(5);
+      layout.setMinWidth(100);
+      buttonPane.setLayout(layout);
       {
         JButton okButton = new JButton("OK");
+        buttonPane.add(okButton, "2, 1, fill, top");
         okButton.setAction(actionOK);
         okButton.setActionCommand("OK");
-        buttonPane.add(okButton, "2, 2, fill, top");
         getRootPane().setDefaultButton(okButton);
       }
       {
         JButton cancelButton = new JButton("Cancel");
+        buttonPane.add(cancelButton, "4, 1, fill, top");
         cancelButton.setAction(actionCancel);
         cancelButton.setActionCommand("Cancel");
-        buttonPane.add(cancelButton, "4, 2, fill, top");
       }
+      if (inQueue) {
+        JButton btnAbort = new JButton("Abort queue");
+        btnAbort.setAction(abortAction);
+        buttonPane.add(btnAbort, "6, 1, fill, top");
+      }
+
     }
     initDataBindings();
 
@@ -1106,6 +1119,17 @@ public class MovieEditor extends JDialog {
     jListBinding_1.bind();
   }
 
+  /**
+   * Shows the dialog and returns whether the work on the queue should be
+   * continued.
+   * 
+   * @return true, if successful
+   */
+  public boolean showDialog() {
+    setVisible(true);
+    return continueQueue;
+  }
+
   private class SwingAction_8 extends AbstractAction {
     public SwingAction_8() {
       // putValue(NAME, "SwingAction_8");
@@ -1149,6 +1173,19 @@ public class MovieEditor extends JDialog {
 
     public void actionPerformed(ActionEvent e) {
       toggleSorttitle();
+    }
+  }
+
+  private class SwingAction_10 extends AbstractAction {
+    public SwingAction_10() {
+      putValue(NAME, "Abort queue");
+      putValue(SHORT_DESCRIPTION, "Abort editing all selected movies");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      continueQueue = false;
+      setVisible(false);
+      dispose();
     }
   }
 }

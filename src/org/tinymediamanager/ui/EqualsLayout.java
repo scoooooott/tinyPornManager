@@ -24,37 +24,108 @@ import java.awt.LayoutManager;
 import javax.swing.SwingConstants;
 
 /**
+ * The Class EqualsLayout.
+ * 
  * @author Santhosh Kumar - santhosh@in.fiorano.com
  */
 public class EqualsLayout implements LayoutManager, SwingConstants {
+
+  /** The gap. */
   private int gap;
+
+  /** The alignment. */
   private int alignment;
 
+  /** The min width. */
+  private int minWidth = 0;
+
+  /**
+   * Instantiates a new equals layout.
+   * 
+   * @param alignment
+   *          the alignment
+   * @param gap
+   *          the gap
+   */
   public EqualsLayout(int alignment, int gap) {
     setGap(gap);
     setAlignment(alignment);
   }
 
+  /**
+   * Instantiates a new equals layout.
+   * 
+   * @param gap
+   *          the gap
+   */
   public EqualsLayout(int gap) {
     this(RIGHT, gap);
   }
 
+  /**
+   * Gets the alignment.
+   * 
+   * @return the alignment
+   */
   public int getAlignment() {
     return alignment;
   }
 
+  /**
+   * Sets the alignment.
+   * 
+   * @param alignment
+   *          the new alignment
+   */
   public void setAlignment(int alignment) {
     this.alignment = alignment;
   }
 
+  /**
+   * Gets the gap.
+   * 
+   * @return the gap
+   */
   public int getGap() {
     return gap;
   }
 
+  /**
+   * Sets the min width.
+   * 
+   * @param width
+   *          the new min width
+   */
+  public void setMinWidth(int width) {
+    this.minWidth = width;
+  }
+
+  /**
+   * Gets the min width.
+   * 
+   * @return the min width
+   */
+  public int getMinWidth() {
+    return this.minWidth;
+  }
+
+  /**
+   * Sets the gap.
+   * 
+   * @param gap
+   *          the new gap
+   */
   public void setGap(int gap) {
     this.gap = gap;
   }
 
+  /**
+   * Dimensions.
+   * 
+   * @param children
+   *          the children
+   * @return the dimension[]
+   */
   private Dimension[] dimensions(Component children[]) {
     int maxWidth = 0;
     int maxHeight = 0;
@@ -70,11 +141,20 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
       }
     }
 
+    if (maxWidth < minWidth) {
+      maxWidth = minWidth;
+    }
+
     int usedWidth = maxWidth * visibleCount + gap * (visibleCount - 1);
     int usedHeight = maxHeight;
     return new Dimension[] { new Dimension(maxWidth, maxHeight), new Dimension(usedWidth, usedHeight), };
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.LayoutManager#layoutContainer(java.awt.Container)
+   */
   public void layoutContainer(Container container) {
     Insets insets = container.getInsets();
 
@@ -106,10 +186,20 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.LayoutManager#minimumLayoutSize(java.awt.Container)
+   */
   public Dimension minimumLayoutSize(Container c) {
     return preferredLayoutSize(c);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container)
+   */
   public Dimension preferredLayoutSize(Container container) {
     Insets insets = container.getInsets();
 
@@ -122,9 +212,20 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
     return new Dimension(insets.left + usedWidth + insets.right, insets.top + usedHeight + insets.bottom);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String,
+   * java.awt.Component)
+   */
   public void addLayoutComponent(String string, Component comp) {
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.LayoutManager#removeLayoutComponent(java.awt.Component)
+   */
   public void removeLayoutComponent(Component c) {
   }
 }
