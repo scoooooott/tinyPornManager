@@ -276,6 +276,7 @@ public class MovieToXbmcNfoConnector {
     // }
 
     // support of frodo director tags
+    xbmc.director.clear();
     if (StringUtils.isNotEmpty(movie.getDirector())) {
       String directors[] = movie.getDirector().split(", ");
       for (String director : directors) {
