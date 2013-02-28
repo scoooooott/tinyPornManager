@@ -131,7 +131,8 @@ public class FeedbackDialog extends JDialog {
         try {
           List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 
-          String message = new String("Feedback from " + tfName.getText() + "\nEmail: " + tfEmail.getText() + "\n\n");
+          String message = new String("Feedback from " + tfName.getText() + "\nEmail: " + tfEmail.getText() + "\nUUID: "
+              + System.getProperty("tmm.uuid") + "\n\n");
           message += textArea.getText();
 
           nameValuePairs.add(new BasicNameValuePair("message", message));

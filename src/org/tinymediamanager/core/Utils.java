@@ -297,6 +297,7 @@ public class Utils {
             String nfo = "&os=" + getEncProp("os.name") + "&arch=" + getEncProp("os.arch") + "&java=" + getEncProp("java.version") + "&lang="
                 + getEncProp("user.language") + "_" + getEncProp("user.country");
             String uuid = FileUtils.readFileToString(uuidFile);
+            System.setProperty("tmm.uuid", uuid);
             // TODO: used CachedUrl to minimize server load?!
             Url url = new Url("http://tracker.tinymediamanager.org/track.php?uuid=" + uuid + "&event=" + event + nfo);
             InputStream in = url.getInputStream();

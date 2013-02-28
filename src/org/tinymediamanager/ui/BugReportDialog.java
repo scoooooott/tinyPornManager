@@ -164,6 +164,8 @@ public class BugReportDialog extends JDialog {
           message.append(System.getProperty("os.name"));
           message.append(" ");
           message.append(System.getProperty("os.version"));
+          message.append("\nUUID: ");
+          message.append(System.getProperty("tmm.uuid"));
           message.append("\n\n");
           message.append(textArea.getText());
 
