@@ -362,7 +362,7 @@ public class MovieList extends AbstractModelObject {
           movie.setDataSource(dataSource);
           movie.setDisc(true); // sets as Disc Folder
           movie.setDateAdded(new Date());
-          LOGGER.info("store movie in DB" + parentDir);
+          LOGGER.info("store movie into DB " + parentDir);
           movie.saveToDb();
           if (movie.getMovieSet() != null) {
             LOGGER.debug("movie is part of a movieset");
@@ -443,7 +443,7 @@ public class MovieList extends AbstractModelObject {
         if (movie != null) {
           movie.setDataSource(dataSource);
           movie.setDateAdded(new Date());
-          LOGGER.info("store movie in DB" + dir.getPath());
+          LOGGER.info("store movie into DB " + dir.getPath());
           movie.saveToDb();
           if (movie.getMovieSet() != null) {
             LOGGER.debug("movie is part of a movieset");
