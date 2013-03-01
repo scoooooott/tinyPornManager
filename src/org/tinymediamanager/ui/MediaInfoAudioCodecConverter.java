@@ -21,12 +21,16 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.Converter;
 
 /**
  * The Class ImageIconConverter.
  */
 public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
+
+  /** The Constant LOGGER. */
+  private static final Logger   LOGGER     = Logger.getLogger(MediaInfoAudioCodecConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();
@@ -66,6 +70,7 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
 
     }
     catch (Exception e) {
+      LOGGER.warn(e.getMessage());
     }
 
     // we did not get any file: return the empty

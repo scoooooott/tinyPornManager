@@ -144,6 +144,7 @@ public class MainWindow extends JFrame {
             }
           }
           catch (Exception ex) {
+            LOGGER.warn(ex.getMessage());
           }
         }
         System.exit(0);
@@ -160,6 +161,7 @@ public class MainWindow extends JFrame {
             FileUtils.deleteDirectory(cache);
           }
           catch (Exception e) {
+            LOGGER.warn(e.getMessage());
           }
         }
       }
@@ -221,6 +223,7 @@ public class MainWindow extends JFrame {
           }
         }
         catch (Exception ex) {
+          LOGGER.warn(ex.getMessage());
         }
         Globals.executor.shutdownNow();
         dispose();

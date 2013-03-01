@@ -408,12 +408,14 @@ public class MovieSetEditor extends JDialog {
         movie.writeNFO();
       }
 
+      int tmdbId = 0;
       try {
-        movieSetToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
+
+        tmdbId = Integer.parseInt(tfTmdbId.getText());
       }
       catch (Exception e1) {
       }
-
+      movieSetToEdit.setTmdbId(tmdbId);
       movieSetToEdit.saveToDb();
 
       setVisible(false);

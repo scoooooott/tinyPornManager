@@ -117,5 +117,8 @@ public class MovieImageFetcher implements Runnable {
         }
       }
     }
+    catch (Exception e) {
+      LOGGER.error("Thread crashed", e);
+    }
   }
 }

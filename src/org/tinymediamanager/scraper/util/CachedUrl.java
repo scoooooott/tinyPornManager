@@ -349,6 +349,7 @@ public class CachedUrl extends Url {
         }
       }
       catch (Exception e) {
+        LOGGER.warn(e.getMessage());
       }
     }
   }

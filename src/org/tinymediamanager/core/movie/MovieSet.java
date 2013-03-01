@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -503,7 +504,15 @@ public class MovieSet extends AbstractModelObject {
      */
     @Override
     public int compare(Movie o1, Movie o2) {
-      return o1.getSortTitle().compareTo(o2.getSortTitle());
+      Collator collator = null;
+
+      if (o1 == null || o2 == null) {
+        return 0;
+      }
+
+      collator = Collator.getInstance();
+      return collator.compare(o1.getSortTitle(), o2.getSortTitle());
+      // return o1.getSortTitle().compareTo(o2.getSortTitle());
     }
 
   }

@@ -833,7 +833,7 @@ public class MoviePanel extends JPanel {
         }
       }
       catch (Exception e) {
-        e.printStackTrace();
+        LOGGER.error("Thread crashed", e);
       }
       return null;
     }

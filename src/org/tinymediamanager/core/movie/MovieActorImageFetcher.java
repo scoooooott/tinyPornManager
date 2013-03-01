@@ -50,71 +50,77 @@ public class MovieActorImageFetcher implements Runnable {
    */
   @Override
   public void run() {
-    String actorsDirPath = movie.getPath() + File.separator + MovieCast.ACTOR_DIR;
+    // try/catch block in the root of the thread to log crashes
+    try {
+      String actorsDirPath = movie.getPath() + File.separator + MovieCast.ACTOR_DIR;
 
-    // check if actors folder exists
-    File actorsDir = new File(actorsDirPath);
-    if (!actorsDir.exists()) {
-      actorsDir.mkdirs();
-    }
+      // check if actors folder exists
+      File actorsDir = new File(actorsDirPath);
+      if (!actorsDir.exists()) {
+        actorsDir.mkdirs();
+      }
 
-    // first check which actors images can be deleted
-    FilenameFilter filter = new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        // do not start with .
-        if (name.toLowerCase().startsWith("."))
+      // first check which actors images can be deleted
+      FilenameFilter filter = new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          // do not start with .
+          if (name.toLowerCase().startsWith("."))
+            return false;
+
+          // check if filetype is in our settings
+          if (name.toLowerCase().endsWith("tbn")) {
+            return true;
+          }
+
           return false;
+        }
+      };
 
-        // check if filetype is in our settings
-        if (name.toLowerCase().endsWith("tbn")) {
-          return true;
+      File[] imageFiles = actorsDir.listFiles(filter);
+      for (File file : imageFiles) {
+        boolean found = false;
+        // check if there is an actor for this file
+        String name = FilenameUtils.getBaseName(file.getName()).replace("_", " ");
+        for (MovieCast actor : movie.getActors()) {
+          if (actor.getName().equals(name)) {
+            found = true;
+            break;
+          }
         }
 
-        return false;
+        // delete image if not found
+        if (!found) {
+          FileUtils.deleteQuietly(file);
+        }
       }
-    };
 
-    File[] imageFiles = actorsDir.listFiles(filter);
-    for (File file : imageFiles) {
-      boolean found = false;
-      // check if there is an actor for this file
-      String name = FilenameUtils.getBaseName(file.getName()).replace("_", " ");
+      // second download missing images
       for (MovieCast actor : movie.getActors()) {
-        if (actor.getName().equals(name)) {
-          found = true;
-          break;
+        String actorName = actor.getName().replace(" ", "_");
+        File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
+        if (!actorImage.exists() && StringUtils.isNotEmpty(actor.getThumb())) {
+          try {
+            CachedUrl cachedUrl = new CachedUrl(actor.getThumb());
+            FileOutputStream outputStream = new FileOutputStream(actorImage);
+            InputStream is = cachedUrl.getInputStream();
+            IOUtils.copy(is, outputStream);
+            outputStream.close();
+            is.close();
+            actor.setThumbPath(MovieCast.ACTOR_DIR + File.separator + actorName + ".tbn");
+          }
+          catch (IOException e) {
+            LOGGER.warn("Problem getting actor image: " + e.getMessage());
+          }
         }
-      }
 
-      // delete image if not found
-      if (!found) {
-        FileUtils.deleteQuietly(file);
-      }
-    }
-
-    // second download missing images
-    for (MovieCast actor : movie.getActors()) {
-      String actorName = actor.getName().replace(" ", "_");
-      File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
-      if (!actorImage.exists() && StringUtils.isNotEmpty(actor.getThumb())) {
-        try {
-          CachedUrl cachedUrl = new CachedUrl(actor.getThumb());
-          FileOutputStream outputStream = new FileOutputStream(actorImage);
-          InputStream is = cachedUrl.getInputStream();
-          IOUtils.copy(is, outputStream);
-          outputStream.close();
-          is.close();
+        // set path if it is empty and an image exists
+        if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
           actor.setThumbPath(MovieCast.ACTOR_DIR + File.separator + actorName + ".tbn");
         }
-        catch (IOException e) {
-          LOGGER.warn("Problem getting actor image: " + e.getMessage());
-        }
       }
-
-      // set path if it is empty and an image exists
-      if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
-        actor.setThumbPath(MovieCast.ACTOR_DIR + File.separator + actorName + ".tbn");
-      }
+    }
+    catch (Exception e) {
+      LOGGER.error("Thread crashed: ", e);
     }
   }
 }

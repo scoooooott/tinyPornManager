@@ -206,6 +206,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
               mis.imdbId = md.getImdbId();
             }
             catch (Exception e) {
+              LOGGER.warn(e.getMessage());
             }
           }
         }

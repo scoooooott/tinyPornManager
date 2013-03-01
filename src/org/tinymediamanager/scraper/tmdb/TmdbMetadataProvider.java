@@ -545,6 +545,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
     }
     catch (MovieDbException e) {
+      LOGGER.error(e.getMessage());
     }
 
     return trailers;
@@ -1458,6 +1459,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
           Thread.sleep(11000 - (currentTime - oldestConnection));
         }
         catch (InterruptedException e) {
+          LOGGER.warn(e.getMessage());
         }
       }
     }

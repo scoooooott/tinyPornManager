@@ -226,77 +226,83 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
      */
     @Override
     public void run() {
-      movieList = MovieList.getInstance();
-      // set up scrapers
-      ScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
-      IMediaMetadataProvider mediaMetadataProvider = movieList.getMetadataProvider(options.getMetadataScraper());
-      List<IMediaArtworkProvider> artworkProviders = movieList.getArtworkProviders(options.getArtworkScrapers());
-      List<IMediaTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
+      try {
+        movieList = MovieList.getInstance();
+        // set up scrapers
+        ScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
+        IMediaMetadataProvider mediaMetadataProvider = movieList.getMetadataProvider(options.getMetadataScraper());
+        List<IMediaArtworkProvider> artworkProviders = movieList.getArtworkProviders(options.getArtworkScrapers());
+        List<IMediaTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
 
-      // do work
-      while (true) {
-        Movie movie = scrapeTask.getNextMovie();
-        if (movie == null) {
-          break;
-        }
+        // do work
+        while (true) {
+          Movie movie = scrapeTask.getNextMovie();
+          if (movie == null) {
+            break;
+          }
 
-        // scrape movie
+          // scrape movie
 
-        // search movie
-        MediaSearchResult result1 = null;
-        if (doSearch) {
-          List<MediaSearchResult> results = movieList.searchMovie(movie.getName(), movie.getImdbId(), mediaMetadataProvider);
-          if (results != null && !results.isEmpty()) {
-            result1 = results.get(0);
-            // check if there is an other result with 100% score
-            if (results.size() > 1) {
-              MediaSearchResult result2 = results.get(1);
-              // if both results have 100% score - do not take any result
-              if (result1.getScore() == 1 && result2.getScore() == 1) {
-                continue;
+          // search movie
+          MediaSearchResult result1 = null;
+          if (doSearch) {
+            List<MediaSearchResult> results = movieList.searchMovie(movie.getName(), movie.getImdbId(), mediaMetadataProvider);
+            if (results != null && !results.isEmpty()) {
+              result1 = results.get(0);
+              // check if there is an other result with 100% score
+              if (results.size() > 1) {
+                MediaSearchResult result2 = results.get(1);
+                // if both results have 100% score - do not take any result
+                if (result1.getScore() == 1 && result2.getScore() == 1) {
+                  continue;
+                }
               }
             }
           }
-        }
 
-        // get metadata, artwork and trailers
-        if ((doSearch && result1 != null) || !doSearch) {
-          try {
-            MediaScrapeOptions options = new MediaScrapeOptions();
-            options.setResult(result1);
+          // get metadata, artwork and trailers
+          if ((doSearch && result1 != null) || !doSearch) {
+            try {
+              MediaScrapeOptions options = new MediaScrapeOptions();
+              options.setResult(result1);
 
-            // we didn't do a search - pass imdbid and tmdbid from movie object
-            if (!doSearch) {
-              options.setImdbId(movie.getImdbId());
-              options.setTmdbId(movie.getTmdbId());
+              // we didn't do a search - pass imdbid and tmdbid from movie
+              // object
+              if (!doSearch) {
+                options.setImdbId(movie.getImdbId());
+                options.setTmdbId(movie.getTmdbId());
+              }
+
+              // scrape metadata if wanted
+              MediaMetadata md = null;
+
+              if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
+                  || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
+                  || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
+                  || scraperMetadataConfig.isYear()) {
+                md = mediaMetadataProvider.getMetadata(options);
+                movie.setMetadata(md);
+              }
+
+              // scrape artwork if wanted
+              if (scraperMetadataConfig.isArtwork()) {
+                movie.setArtwork(getArtwork(movie, md, artworkProviders));
+              }
+
+              // scrape trailer if wanted
+              if (scraperMetadataConfig.isTrailer()) {
+                movie.setTrailers(getTrailers(movie, md, trailerProviders));
+              }
+              movie.writeNFO();
             }
-
-            // scrape metadata if wanted
-            MediaMetadata md = null;
-
-            if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
-                || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
-                || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
-                || scraperMetadataConfig.isYear()) {
-              md = mediaMetadataProvider.getMetadata(options);
-              movie.setMetadata(md);
+            catch (Exception e) {
+              LOGGER.error("movie.setMetadata", e);
             }
-
-            // scrape artwork if wanted
-            if (scraperMetadataConfig.isArtwork()) {
-              movie.setArtwork(getArtwork(movie, md, artworkProviders));
-            }
-
-            // scrape trailer if wanted
-            if (scraperMetadataConfig.isTrailer()) {
-              movie.setTrailers(getTrailers(movie, md, trailerProviders));
-            }
-            movie.writeNFO();
           }
-          catch (Exception e) {
-            LOGGER.error("movie.setMetadata", e);
-          }
         }
+      }
+      catch (Exception e) {
+        LOGGER.error("Thread crashed", e);
       }
     }
 

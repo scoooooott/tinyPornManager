@@ -63,6 +63,8 @@ public class TinyMediaManager {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
+          Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
+
           Toolkit tk = Toolkit.getDefaultToolkit();
           tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
 
@@ -199,6 +201,7 @@ public class TinyMediaManager {
               Thread.sleep(3000 - (timeEnd - timeStart));
             }
             catch (Exception e) {
+              LOGGER.warn(e.getMessage());
             }
           }
           MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
@@ -333,6 +336,7 @@ public class TinyMediaManager {
               desktop.setExecutable(true);
             }
             catch (IOException e) {
+              LOGGER.warn(e.getMessage());
             }
           }
         }

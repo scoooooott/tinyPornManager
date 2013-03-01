@@ -299,6 +299,7 @@ public class MovieChooserModel extends AbstractModelObject {
         trailers.addAll(foundTrailers);
       }
       catch (Exception e) {
+        LOGGER.warn(e.getMessage());
       }
     }
 

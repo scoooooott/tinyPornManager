@@ -35,6 +35,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.MyTable;
@@ -55,6 +56,9 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MovieTrailerPanel.
  */
 public class MovieTrailerPanel extends JPanel {
+
+  /** The logger. */
+  private static Logger                 LOGGER              = Logger.getLogger(MovieTrailerPanel.class);
 
   /** The movie selection model. */
   private MovieSelectionModel           movieSelectionModel;
@@ -282,6 +286,7 @@ public class MovieTrailerPanel extends JPanel {
           Desktop.getDesktop().browse(new URI((String) table.getModel().getValueAt(row, col)));
         }
         catch (Exception ex) {
+          LOGGER.warn(ex.getMessage());
         }
       }
     }

@@ -24,6 +24,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaGenres;
 
@@ -31,6 +32,9 @@ import org.tinymediamanager.scraper.MediaGenres;
  * The Class MovieGenresPanel.
  */
 public class MovieGenresPanel extends JPanel {
+
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER = Logger.getLogger(MovieGenresPanel.class);
 
   /** The model. */
   private MovieSelectionModel movieSelectionModel;
@@ -52,7 +56,8 @@ public class MovieGenresPanel extends JPanel {
         Object source = propertyChangeEvent.getSource();
 
         // react on selection of a movie or change of genres
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || (source.getClass() == Movie.class && "genre".equals(property))) {
+        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
+            || (source.getClass() == Movie.class && "genre".equals(property))) {
           buildImages();
         }
       }
@@ -75,7 +80,9 @@ public class MovieGenresPanel extends JPanel {
         Icon image = new ImageIcon(MovieGenresPanel.class.getResource(sb.toString()));
         JLabel lblImage = new JLabel(image);
         add(lblImage);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
+        LOGGER.warn(e.getMessage());
       }
     }
     // add unknown if there is no genre
@@ -84,7 +91,9 @@ public class MovieGenresPanel extends JPanel {
         Icon image = new ImageIcon(MovieGenresPanel.class.getResource("/images/genres/unknown.png"));
         JLabel lblImage = new JLabel(image);
         add(lblImage);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
+        LOGGER.warn(e.getMessage());
       }
     }
   }

@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
 import org.tinymediamanager.ReleaseInfo;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -42,13 +43,16 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class AboutDialog.
  */
 public class AboutDialog extends JDialog {
-  private static final long serialVersionUID = 1L;
+  private static final long   serialVersionUID = 1L;
+
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER           = Logger.getLogger(AboutDialog.class);
 
   /** The content panel. */
-  private final JPanel      contentPanel     = new JPanel();
+  private final JPanel        contentPanel     = new JPanel();
 
   /** The action. */
-  private final Action      action           = new SwingAction();
+  private final Action        action           = new SwingAction();
 
   /**
    * Create the dialog.
@@ -105,6 +109,7 @@ public class AboutDialog extends JDialog {
             Desktop.getDesktop().browse(new URI(lblHomepage.getNormalText()));
           }
           catch (Exception e) {
+            LOGGER.warn(e.getMessage());
           }
         }
       });

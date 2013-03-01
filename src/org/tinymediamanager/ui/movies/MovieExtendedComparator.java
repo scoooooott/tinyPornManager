@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.util.Comparator;
 
+import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.Movie;
 
 /**
@@ -24,6 +25,9 @@ import org.tinymediamanager.core.movie.Movie;
  * moviepanel.
  */
 public class MovieExtendedComparator implements Comparator<Movie> {
+
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER = Logger.getLogger(MovieExtendedComparator.class);
 
   /**
    * The Enum SortColumn.
@@ -225,6 +229,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       }
     }
     catch (Exception e) {
+      LOGGER.warn(e.getMessage());
     }
 
     // sort ascending or descending

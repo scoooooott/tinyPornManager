@@ -249,7 +249,7 @@ public class MovieChooser extends JDialog implements ActionListener {
                     }
                   }
                   catch (Exception ex) {
-
+                    LOGGER.warn(ex.getMessage());
                   }
                 }
               }

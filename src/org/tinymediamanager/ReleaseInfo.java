@@ -19,19 +19,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 /**
  * The Class ReleaseInfo.
  */
 public class ReleaseInfo {
 
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER = Logger.getLogger(ReleaseInfo.class);
+
   /** The version. */
-  private static String version;
+  private static String       version;
 
   /** The build. */
-  private static String build;
+  private static String       build;
 
   /** The build date. */
-  private static String buildDate;
+  private static String       buildDate;
 
   static {
     FileInputStream fileInputStream = null;
@@ -53,6 +58,7 @@ public class ReleaseInfo {
         }
       }
       catch (IOException e) {
+        LOGGER.warn(e.getMessage());
       }
     }
   }
