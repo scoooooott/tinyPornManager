@@ -83,7 +83,7 @@ public class MovieBatchEditor extends JDialog {
     setIconImage(Globals.logo);
     setTitle("Edit Movies");
     setName("movieBatchEditor");
-    setBounds(5, 5, 300, 250);
+    setBounds(5, 5, 350, 230);
     TmmWindowSaver.loadSettings(this);
     getContentPane().setLayout(new BorderLayout(0, 0));
 

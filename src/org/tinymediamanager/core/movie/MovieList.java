@@ -342,37 +342,42 @@ public class MovieList extends AbstractModelObject {
     File[] videoFiles = dir.listFiles(filter);
     // movie files found in directory?
     if (videoFiles.length > 0) {
-      LOGGER.debug("found video files in " + dir.getPath());
-      // does the PARENT path exists for an other movie?
-      Movie movie = getMovieByPath(parentDir);
-      if (movie == null) {
-        LOGGER.debug("movie not yet in our DB, so add " + parentDir);
-        // movie did not exist - try to parse a NFO file in parent folder
-        movie = Movie.parseNFO(parentDir, videoFiles);
+      try {
+        LOGGER.debug("found video files in " + dir.getPath());
+        // does the PARENT path exists for an other movie?
+        Movie movie = getMovieByPath(parentDir);
         if (movie == null) {
-          // movie did not exist - create new one
-          movie = new Movie();
-          movie.setName(ParserUtils.detectCleanMoviename(FilenameUtils.getBaseName(parentDir)));
-          movie.setPath(parentDir);
-          movie.addToFiles(videoFiles);
-          movie.findImages();
-        }
-        // persist movie
-        if (movie != null) {
-          movie.setDataSource(dataSource);
-          movie.setDisc(true); // sets as Disc Folder
-          movie.setDateAdded(new Date());
-          LOGGER.info("store movie into DB " + parentDir);
-          movie.saveToDb();
-          if (movie.getMovieSet() != null) {
-            LOGGER.debug("movie is part of a movieset");
-            movie.getMovieSet().addMovie(movie);
-            sortMoviesInMovieSet(movie.getMovieSet());
-            movie.getMovieSet().saveToDb();
+          LOGGER.debug("movie not yet in our DB, so add " + parentDir);
+          // movie did not exist - try to parse a NFO file in parent folder
+          movie = Movie.parseNFO(parentDir, videoFiles);
+          if (movie == null) {
+            // movie did not exist - create new one
+            movie = new Movie();
+            movie.setName(ParserUtils.detectCleanMoviename(FilenameUtils.getBaseName(parentDir)));
+            movie.setPath(parentDir);
+            movie.addToFiles(videoFiles);
+            movie.findImages();
           }
-          LOGGER.debug("add movie to GUI");
-          addMovie(movie);
+          // persist movie
+          if (movie != null) {
+            movie.setDataSource(dataSource);
+            movie.setDisc(true); // sets as Disc Folder
+            movie.setDateAdded(new Date());
+            LOGGER.info("store movie into DB " + parentDir);
+            movie.saveToDb();
+            if (movie.getMovieSet() != null) {
+              LOGGER.debug("movie is part of a movieset");
+              movie.getMovieSet().addMovie(movie);
+              sortMoviesInMovieSet(movie.getMovieSet());
+              movie.getMovieSet().saveToDb();
+            }
+            LOGGER.debug("add movie to GUI");
+            addMovie(movie);
+          }
         }
+      }
+      catch (Exception e) {
+        LOGGER.error(e.getMessage());
       }
     }
     // already found Disc folder - DO NOT dig deeper
@@ -424,39 +429,43 @@ public class MovieList extends AbstractModelObject {
     File[] videoFiles = dir.listFiles(filter);
     // movie files found in directory?
     if (videoFiles.length > 0) {
-      LOGGER.debug("found video files in " + dir.getPath());
-      // does this path exists for an other movie?
-      Movie movie = getMovieByPath(dir.getPath());
-      if (movie == null) {
-        LOGGER.debug("movie not yet in our DB, so add " + dir.getPath());
-        // movie did not exist - try to parse a NFO file
-        movie = Movie.parseNFO(dir.getPath(), videoFiles);
+      try {
+        LOGGER.debug("found video files in " + dir.getPath());
+        // does this path exists for an other movie?
+        Movie movie = getMovieByPath(dir.getPath());
         if (movie == null) {
-          // movie did not exist - create new one
-          movie = new Movie();
-          movie.setName(ParserUtils.detectCleanMoviename(dir.getName()));
-          movie.setPath(dir.getPath());
-          movie.addToFiles(videoFiles);
-          movie.findImages();
-        }
-        // persist movie
-        if (movie != null) {
-          movie.setDataSource(dataSource);
-          movie.setDateAdded(new Date());
-          LOGGER.info("store movie into DB " + dir.getPath());
-          movie.saveToDb();
-          if (movie.getMovieSet() != null) {
-            LOGGER.debug("movie is part of a movieset");
-            movie.getMovieSet().addMovie(movie);
-            sortMoviesInMovieSet(movie.getMovieSet());
-            // movie.getMovieSet().sortMovies();
-            movie.getMovieSet().saveToDb();
+          LOGGER.debug("movie not yet in our DB, so add " + dir.getPath());
+          // movie did not exist - try to parse a NFO file
+          movie = Movie.parseNFO(dir.getPath(), videoFiles);
+          if (movie == null) {
+            // movie did not exist - create new one
+            movie = new Movie();
+            movie.setName(ParserUtils.detectCleanMoviename(dir.getName()));
+            movie.setPath(dir.getPath());
+            movie.addToFiles(videoFiles);
+            movie.findImages();
           }
-          LOGGER.debug("add movie to GUI");
-          addMovie(movie);
+          // persist movie
+          if (movie != null) {
+            movie.setDataSource(dataSource);
+            movie.setDateAdded(new Date());
+            LOGGER.info("store movie into DB " + dir.getPath());
+            movie.saveToDb();
+            if (movie.getMovieSet() != null) {
+              LOGGER.debug("movie is part of a movieset");
+              movie.getMovieSet().addMovie(movie);
+              sortMoviesInMovieSet(movie.getMovieSet());
+              // movie.getMovieSet().sortMovies();
+              movie.getMovieSet().saveToDb();
+            }
+            LOGGER.debug("add movie to GUI");
+            addMovie(movie);
+          }
         }
       }
-
+      catch (Exception e) {
+        LOGGER.error(e.getMessage());
+      }
     }
     else {
       // no - dig deeper

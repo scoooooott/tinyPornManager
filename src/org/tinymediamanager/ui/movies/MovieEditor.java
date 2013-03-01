@@ -623,8 +623,14 @@ public class MovieEditor extends JDialog {
      * Button pane
      */
     {
+      JPanel bottomPane = new JPanel();
+      getContentPane().add(bottomPane, BorderLayout.SOUTH);
+      bottomPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("371px:grow"), FormFactory.DEFAULT_COLSPEC,
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+
       JPanel buttonPane = new JPanel();
-      getContentPane().add(buttonPane, BorderLayout.SOUTH);
+      bottomPane.add(buttonPane, "2, 2, left, top");
       EqualsLayout layout = new EqualsLayout(5);
       layout.setMinWidth(100);
       buttonPane.setLayout(layout);
