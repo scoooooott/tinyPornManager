@@ -44,7 +44,7 @@ public class MovieExporter {
     LOGGER.info("preparing movie export; using " + template);
     String extension = ".html";
     if (template.toLowerCase().contains("csv")) {
-      extension = ".xls";
+      extension = ".csv";
     }
 
     Configuration cfg = new Configuration();
