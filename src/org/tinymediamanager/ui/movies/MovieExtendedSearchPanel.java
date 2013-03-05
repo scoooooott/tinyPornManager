@@ -24,13 +24,12 @@ import javax.swing.Action;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 import org.tinymediamanager.ui.CollapsiblePanel;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
@@ -137,7 +136,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
     this.movieSelectionModel = model;
 
-//    JPanel panel = new JPanel();
+    // JPanel panel = new JPanel();
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -173,7 +172,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     lblGenre = new JLabel("Genre");
     panel.add(lblGenre, "4, 5, right, default");
 
-    cbGenre = new JComboBox(MediaGenres.values());
+    cbGenre = new JComboBox(MediaGenres2.values());
     cbGenre.setAction(actionFilter);
     panel.add(cbGenre, "6, 5, fill, default");
 
@@ -304,7 +303,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
       // filter by genre
       if (cbFilterGenre.isSelected()) {
-        MediaGenres genre = (MediaGenres) cbGenre.getSelectedItem();
+        MediaGenres2 genre = (MediaGenres2) cbGenre.getSelectedItem();
         if (genre != null) {
           searchOptions.put(SearchOptions.GENRE, genre);
         }

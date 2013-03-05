@@ -63,7 +63,7 @@ import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.AutocompleteComboBox;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -128,7 +128,7 @@ public class MovieEditor extends JDialog {
   private List<MovieCast>    cast                 = ObservableCollections.observableList(new ArrayList<MovieCast>());
 
   /** The genres. */
-  private List<MediaGenres>  genres               = ObservableCollections.observableList(new ArrayList<MediaGenres>());
+  private List<MediaGenres2> genres               = ObservableCollections.observableList(new ArrayList<MediaGenres2>());
 
   /** The trailers. */
   private List<MediaTrailer> trailers             = ObservableCollections.observableList(new ArrayList<MediaTrailer>());
@@ -561,7 +561,7 @@ public class MovieEditor extends JDialog {
       details2Panel.add(btnRemoveGenre, "6, 6, right, top");
     }
     {
-      cbGenres = new JComboBox(MediaGenres.values());
+      cbGenres = new JComboBox(MediaGenres2.values());
       details2Panel.add(cbGenres, "8,8");
     }
 
@@ -694,7 +694,7 @@ public class MovieEditor extends JDialog {
         cast.add(actor);
       }
 
-      for (MediaGenres genre : movie.getGenres()) {
+      for (MediaGenres2 genre : movie.getGenres()) {
         genres.add(genre);
       }
 
@@ -988,7 +988,7 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      MediaGenres newGenre = (MediaGenres) cbGenres.getSelectedItem();
+      MediaGenres2 newGenre = (MediaGenres2) cbGenres.getSelectedItem();
       // add genre if it is not already in the list
       if (!genres.contains(newGenre)) {
         genres.add(newGenre);
@@ -1019,7 +1019,7 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      MediaGenres newGenre = (MediaGenres) listGenres.getSelectedValue();
+      MediaGenres2 newGenre = (MediaGenres2) listGenres.getSelectedValue();
       // remove genre
       if (newGenre != null) {
         genres.remove(newGenre);
@@ -1093,7 +1093,7 @@ public class MovieEditor extends JDialog {
     //
     jTableBinding.bind();
     //
-    JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
+    JListBinding<MediaGenres2, List<MediaGenres2>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
     JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,

@@ -22,9 +22,8 @@ import java.io.InputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.CachedUrl;
-
-import com.omertron.themoviedbapi.model.ArtworkType;
 
 /**
  * @author manuel
@@ -36,11 +35,11 @@ public class MovieImageFetcher implements Runnable {
 
   private Movie               movie;
   private String              url;
-  private ArtworkType         type;
+  private MediaArtworkType    type;
   private String              filename;
   private boolean             firstImage;
 
-  public MovieImageFetcher(Movie movie, String url, ArtworkType type, String filename, boolean firstImage) {
+  public MovieImageFetcher(Movie movie, String url, MediaArtworkType type, String filename, boolean firstImage) {
     this.movie = movie;
     this.url = url;
     this.type = type;
@@ -65,7 +64,7 @@ public class MovieImageFetcher implements Runnable {
             movie.setPoster("");
             break;
 
-          case BACKDROP:
+          case BACKGROUND:
             oldFilename = movie.getFanart();
             movie.setFanart("");
             break;
@@ -92,7 +91,7 @@ public class MovieImageFetcher implements Runnable {
             movie.saveToDb();
             break;
 
-          case BACKDROP:
+          case BACKGROUND:
             movie.setFanart(FilenameUtils.getName(filename));
             movie.saveToDb();
             break;
@@ -110,7 +109,7 @@ public class MovieImageFetcher implements Runnable {
             movie.saveToDb();
             break;
 
-          case BACKDROP:
+          case BACKGROUND:
             movie.setFanart(oldFilename);
             movie.saveToDb();
             break;

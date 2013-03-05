@@ -38,7 +38,7 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -342,7 +342,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
             Elements a = div.first().getElementsByTag("a");
             for (Element anchor : a) {
               if (anchor.attr("href").matches("/Sections/Genres/.*")) {
-                MediaGenres genre = MediaGenres.getGenre(anchor.ownText());
+                MediaGenres2 genre = MediaGenres2.getGenre(anchor.ownText());
                 if (genre != null && !md.getGenres().contains(genre)) {
                   md.addGenre(genre);
                 }

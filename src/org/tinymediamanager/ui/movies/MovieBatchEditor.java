@@ -37,7 +37,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 import org.tinymediamanager.ui.AutocompleteComboBox;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
@@ -99,7 +99,7 @@ public class MovieBatchEditor extends JDialog {
       JLabel lblGenres = new JLabel("Genre");
       panelContent.add(lblGenres, "2, 2, right, default");
 
-      cbGenres = new JComboBox(MediaGenres.values());
+      cbGenres = new JComboBox(MediaGenres2.values());
       panelContent.add(cbGenres, "4, 2, fill, default");
 
       JButton btnAddGenre = new JButton("");
@@ -110,7 +110,7 @@ public class MovieBatchEditor extends JDialog {
         public void actionPerformed(ActionEvent e) {
           changed = true;
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
+          MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
           for (Movie movie : moviesToEdit) {
             movie.addGenre(genre);
           }
@@ -127,7 +127,7 @@ public class MovieBatchEditor extends JDialog {
         public void actionPerformed(ActionEvent e) {
           changed = true;
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
+          MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
           for (Movie movie : moviesToEdit) {
             movie.removeGenre(genre);
           }

@@ -45,7 +45,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
@@ -299,7 +299,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.genres.clear();
-    for (MediaGenres genre : movie.getGenres()) {
+    for (MediaGenres2 genre : movie.getGenres()) {
       xbmc.addGenre(genre.toString());
     }
 
@@ -494,7 +494,7 @@ public class MovieToXbmcNfoConnector {
       for (String genre : xbmc.getGenres()) {
         String[] genres = genre.split("/");
         for (String g : genres) {
-          MediaGenres genreFound = MediaGenres.getGenre(g.trim());
+          MediaGenres2 genreFound = MediaGenres2.getGenre(g.trim());
           if (genreFound != null) {
             movie.addGenre(genreFound);
           }

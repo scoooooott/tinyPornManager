@@ -57,7 +57,6 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieList.
  */
@@ -225,7 +224,8 @@ public class MovieList extends AbstractModelObject {
         for (Object obj : movies) {
           if (obj instanceof Movie) {
             Movie movie = (Movie) obj;
-            movie.setObservables();
+            // movie.setObservables();
+            movie.initializeAfterLoading();
             addMovie(movie);
           }
           else {

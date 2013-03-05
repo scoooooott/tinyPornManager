@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 
 /**
  * The Class MovieGenresPanel.
@@ -71,8 +71,8 @@ public class MovieGenresPanel extends JPanel {
    */
   private void buildImages() {
     removeAll();
-    List<MediaGenres> genres = movieSelectionModel.getSelectedMovie().getGenres();
-    for (MediaGenres genre : genres) {
+    List<MediaGenres2> genres = movieSelectionModel.getSelectedMovie().getGenres();
+    for (MediaGenres2 genre : genres) {
       try {
         StringBuilder sb = new StringBuilder("/images/genres/");
         sb.append(genre.name().toLowerCase());

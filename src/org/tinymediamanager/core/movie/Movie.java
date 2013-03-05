@@ -56,6 +56,7 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
@@ -63,9 +64,6 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
-import com.omertron.themoviedbapi.model.ArtworkType;
-
-// TODO: Auto-generated Javadoc
 /**
  * The main class for movies.
  */
@@ -260,7 +258,15 @@ public class Movie extends AbstractModelObject {
   private boolean               watched              = false;
 
   /** The genres. */
+  @Deprecated
   private List<MediaGenres>     genres               = new ArrayList<MediaGenres>();
+
+  /** The new genres based on an enum like class. */
+  private List<String>          genres2              = new ArrayList<String>();
+
+  /** The genres2 for access. */
+  @Transient
+  private List<MediaGenres2>    genres2ForAccess     = new ArrayList<MediaGenres2>();
 
   /** The cast. */
   @OneToMany(cascade = CascadeType.ALL)
@@ -466,11 +472,33 @@ public class Movie extends AbstractModelObject {
   /**
    * Sets the observable cast list.
    */
-  public void setObservables() {
+  private void setObservables() {
     castObservable = ObservableCollections.observableList(cast);
     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
     trailerObservable = ObservableCollections.observableList(trailer);
     tagsObservable = ObservableCollections.observableList(tags);
+  }
+
+  /**
+   * Initialize after loading.
+   */
+  public void initializeAfterLoading() {
+    // set observables
+    setObservables();
+
+    // load genres
+    for (String genre : genres2) {
+      addGenre(MediaGenres2.getGenre(genre));
+    }
+
+    // migrate old genres
+    if (genres != null && genres.size() > 0) {
+      for (MediaGenres genre : genres) {
+        addGenre(MediaGenres2.getGenre(genre.name()));
+      }
+      genres.clear();
+      saveToDb();
+    }
   }
 
   /**
@@ -1945,7 +1973,7 @@ public class Movie extends AbstractModelObject {
         }
 
         // get image in thread
-        MovieImageFetcher task = new MovieImageFetcher(this, getPosterUrl(), ArtworkType.POSTER, filename, firstImage);
+        MovieImageFetcher task = new MovieImageFetcher(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
         Globals.executor.execute(task);
       }
     }
@@ -1969,7 +1997,7 @@ public class Movie extends AbstractModelObject {
         }
 
         // get image in thread
-        MovieImageFetcher task = new MovieImageFetcher(this, getFanartUrl(), ArtworkType.BACKDROP, filename, firstImage);
+        MovieImageFetcher task = new MovieImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
         Globals.executor.execute(task);
       }
     }
@@ -2062,8 +2090,8 @@ public class Movie extends AbstractModelObject {
    * 
    * @return the genres
    */
-  public List<MediaGenres> getGenres() {
-    return genres;
+  public List<MediaGenres2> getGenres() {
+    return genres2ForAccess;
   }
 
   /**
@@ -2072,9 +2100,12 @@ public class Movie extends AbstractModelObject {
    * @param newValue
    *          the new value
    */
-  public void addGenre(MediaGenres newValue) {
-    if (!genres.contains(newValue)) {
-      genres.add(newValue);
+  public void addGenre(MediaGenres2 newValue) {
+    if (!genres2ForAccess.contains(newValue)) {
+      genres2ForAccess.add(newValue);
+      if (!genres2.contains(newValue.name())) {
+        genres2.add(newValue.name());
+      }
       firePropertyChange(GENRE, null, newValue);
       firePropertyChange("genresAsString", null, newValue);
     }
@@ -2086,21 +2117,25 @@ public class Movie extends AbstractModelObject {
    * @param genres
    *          the new genres
    */
-  public void setGenres(List<MediaGenres> genres) {
+  public void setGenres(List<MediaGenres2> genres) {
     // two way sync of genres
 
     // first, add new ones
-    for (MediaGenres genre : genres) {
-      if (!this.genres.contains(genre)) {
-        this.genres.add(genre);
+    for (MediaGenres2 genre : genres) {
+      if (!this.genres2ForAccess.contains(genre)) {
+        this.genres2ForAccess.add(genre);
+        if (!genres2.contains(genre.name())) {
+          this.genres2.add(genre.name());
+        }
       }
     }
 
     // second remove old ones
-    for (int i = this.genres.size() - 1; i >= 0; i--) {
-      MediaGenres genre = this.genres.get(i);
+    for (int i = this.genres2ForAccess.size() - 1; i >= 0; i--) {
+      MediaGenres2 genre = this.genres2ForAccess.get(i);
       if (!genres.contains(genre)) {
-        this.genres.remove(genre);
+        this.genres2ForAccess.remove(genre);
+        this.genres2.remove(genre.name());
       }
     }
 
@@ -2114,9 +2149,10 @@ public class Movie extends AbstractModelObject {
    * @param genre
    *          the genre
    */
-  public void removeGenre(MediaGenres genre) {
-    if (genres.contains(genre)) {
-      genres.remove(genre);
+  public void removeGenre(MediaGenres2 genre) {
+    if (genres2ForAccess.contains(genre)) {
+      genres2ForAccess.remove(genre);
+      genres2.remove(genre.name());
       firePropertyChange(GENRE, null, genre);
       firePropertyChange("genresAsString", null, genre);
     }
@@ -2161,7 +2197,7 @@ public class Movie extends AbstractModelObject {
    */
   public String getGenresAsString() {
     StringBuilder sb = new StringBuilder();
-    for (MediaGenres genre : genres) {
+    for (MediaGenres2 genre : genres2ForAccess) {
       if (!StringUtils.isEmpty(sb)) {
         sb.append(", ");
       }

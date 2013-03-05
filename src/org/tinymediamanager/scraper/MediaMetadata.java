@@ -82,7 +82,7 @@ public class MediaMetadata {
   private List<MediaArtwork>    fanart            = new ArrayList<MediaArtwork>();
 
   /** The genres. */
-  private List<MediaGenres>     genres            = new ArrayList<MediaGenres>();
+  private List<MediaGenres2>    genres            = new ArrayList<MediaGenres2>();
 
   /** The certifications. */
   private List<Certification>   certifications    = new ArrayList<Certification>();
@@ -342,7 +342,7 @@ public class MediaMetadata {
    * 
    * @return the genres
    */
-  public List<MediaGenres> getGenres() {
+  public List<MediaGenres2> getGenres() {
     return genres;
   }
 
@@ -432,7 +432,7 @@ public class MediaMetadata {
    * @param genre
    *          the genre
    */
-  public void addGenre(MediaGenres genre) {
+  public void addGenre(MediaGenres2 genre) {
     genres.add(genre);
   }
 

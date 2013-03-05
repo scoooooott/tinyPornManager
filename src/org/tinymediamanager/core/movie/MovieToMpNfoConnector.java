@@ -48,7 +48,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieToMpNfoConnector.Actor;
 import org.tinymediamanager.core.movie.MovieToMpNfoConnector.MovieSets;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 
 /**
  * The Class MovieTompNfoConnector.
@@ -193,7 +193,7 @@ public class MovieToMpNfoConnector {
       mp.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
     }
 
-    for (MediaGenres genre : movie.getGenres()) {
+    for (MediaGenres2 genre : movie.getGenres()) {
       mp.addGenre(genre.toString());
     }
 
@@ -318,7 +318,7 @@ public class MovieToMpNfoConnector {
         for (String genre : mp.getGenres()) {
           String[] genres = genre.split("/");
           for (String g : genres) {
-            MediaGenres genreFound = MediaGenres.getGenre(g.trim());
+            MediaGenres2 genreFound = MediaGenres2.getGenre(g.trim());
             if (genreFound != null) {
               movie.addGenre(genreFound);
             }

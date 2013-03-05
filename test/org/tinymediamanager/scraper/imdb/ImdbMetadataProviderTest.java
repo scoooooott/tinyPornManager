@@ -15,7 +15,7 @@ import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -169,14 +169,14 @@ public class ImdbMetadataProviderTest {
     // md);
 
     // check genres
-    List<MediaGenres> genres = new ArrayList<MediaGenres>();
-    genres.add(MediaGenres.ANIMATION);
-    genres.add(MediaGenres.ACTION);
-    genres.add(MediaGenres.ADVENTURE);
-    genres.add(MediaGenres.FANTASY);
-    genres.add(MediaGenres.MYSTERY);
-    genres.add(MediaGenres.SCIENCE_FICTION);
-    genres.add(MediaGenres.THRILLER);
+    List<MediaGenres2> genres = new ArrayList<MediaGenres2>();
+    genres.add(MediaGenres2.ANIMATION);
+    genres.add(MediaGenres2.ACTION);
+    genres.add(MediaGenres2.ADVENTURE);
+    genres.add(MediaGenres2.FANTASY);
+    genres.add(MediaGenres2.MYSTERY);
+    genres.add(MediaGenres2.SCIENCE_FICTION);
+    genres.add(MediaGenres2.THRILLER);
     checkGenres(genres, md);
 
     // check plot
@@ -232,10 +232,10 @@ public class ImdbMetadataProviderTest {
     // md);
 
     // check genres
-    genres = new ArrayList<MediaGenres>();
-    genres.add(MediaGenres.MYSTERY);
-    genres.add(MediaGenres.SCIENCE_FICTION);
-    genres.add(MediaGenres.THRILLER);
+    genres = new ArrayList<MediaGenres2>();
+    genres.add(MediaGenres2.MYSTERY);
+    genres.add(MediaGenres2.SCIENCE_FICTION);
+    genres.add(MediaGenres2.THRILLER);
     checkGenres(genres, md);
 
     // check plot
@@ -291,13 +291,13 @@ public class ImdbMetadataProviderTest {
     // md);
 
     // check genres
-    genres = new ArrayList<MediaGenres>();
-    genres.add(MediaGenres.ANIMATION);
-    genres.add(MediaGenres.ACTION);
-    genres.add(MediaGenres.ADVENTURE);
-    genres.add(MediaGenres.COMEDY);
-    genres.add(MediaGenres.FAMILY);
-    genres.add(MediaGenres.FANTASY);
+    genres = new ArrayList<MediaGenres2>();
+    genres.add(MediaGenres2.ANIMATION);
+    genres.add(MediaGenres2.ACTION);
+    genres.add(MediaGenres2.ADVENTURE);
+    genres.add(MediaGenres2.COMEDY);
+    genres.add(MediaGenres2.FAMILY);
+    genres.add(MediaGenres2.FANTASY);
     checkGenres(genres, md);
 
     // check plot
@@ -352,14 +352,14 @@ public class ImdbMetadataProviderTest {
     // md);
 
     // check genres
-    genres = new ArrayList<MediaGenres>();
-    genres.add(MediaGenres.ANIMATION);
-    genres.add(MediaGenres.ACTION);
-    genres.add(MediaGenres.ADVENTURE);
-    genres.add(MediaGenres.FANTASY);
-    genres.add(MediaGenres.MYSTERY);
-    genres.add(MediaGenres.SCIENCE_FICTION);
-    genres.add(MediaGenres.THRILLER);
+    genres = new ArrayList<MediaGenres2>();
+    genres.add(MediaGenres2.ANIMATION);
+    genres.add(MediaGenres2.ACTION);
+    genres.add(MediaGenres2.ADVENTURE);
+    genres.add(MediaGenres2.FANTASY);
+    genres.add(MediaGenres2.MYSTERY);
+    genres.add(MediaGenres2.SCIENCE_FICTION);
+    genres.add(MediaGenres2.THRILLER);
     checkGenres(genres, md);
 
     // check plot
@@ -440,7 +440,7 @@ public class ImdbMetadataProviderTest {
     assertEquals("poster", url, art.getDefaultUrl());
   }
 
-  private void checkGenres(List<MediaGenres> genres, MediaMetadata md) {
+  private void checkGenres(List<MediaGenres2> genres, MediaMetadata md) {
     // cehck not null
     assertNotNull("genres", md.getGenres());
 
@@ -448,7 +448,7 @@ public class ImdbMetadataProviderTest {
     assertEquals("genres count", genres.size(), md.getGenres().size());
 
     // check each genre if there is a counterpart in metadata
-    for (MediaGenres genre : genres) {
+    for (MediaGenres2 genre : genres) {
       assertTrue("contains genre", md.getGenres().contains(genre));
     }
   }

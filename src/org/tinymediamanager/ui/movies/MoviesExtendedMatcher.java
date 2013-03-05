@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
-import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaGenres2;
 
 import ca.odell.glazedlists.matchers.Matcher;
 
@@ -77,7 +77,7 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
 
     // check against genre
     if (searchOptions.containsKey(SearchOptions.GENRE)) {
-      MediaGenres genre = (MediaGenres) searchOptions.get(SearchOptions.GENRE);
+      MediaGenres2 genre = (MediaGenres2) searchOptions.get(SearchOptions.GENRE);
       if (!movie.getGenres().contains(genre)) {
         return false;
       }
