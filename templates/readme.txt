@@ -32,7 +32,7 @@ Display a String variable
 
 Display a Date variable
     ${DateVariable}
-    ${DateVariable;date(yyyy-MM-dd)}
+    ${DateVariable;date(dd.MM.yyyy HH:mm:ss Z)}  // or whatever pattern you like
 
 =================================================================================
 Eg: to print some movie details

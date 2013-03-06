@@ -13,6 +13,7 @@ ${foreach movies movie}
         <tr class="${if odd_movie}odd${end}${if even_movie}even${end}">
             <td>${movie.name}</td>
             <td>${movie.year}</td>
+            <td>${movie.dateAdded;date(yyyy-MM-dd)}</td>
             <td>
             ${foreach movie.genres genre , }${genre}${end}
             </td>

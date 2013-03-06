@@ -4,6 +4,7 @@ ${foreach movies movie}
     <movie>
         <name>${movie.name}</name>
         <year>${movie.year}</year>
+        <added>${movie.dateAdded;date(yyyy-MM-dd)}</added>
     </movie>
 ${end}
 <movies>

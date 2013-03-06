@@ -16,8 +16,12 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -28,7 +32,10 @@ import org.tinymediamanager.Globals;
 import ca.odell.glazedlists.ObservableElementList;
 
 import com.floreysoft.jmte.Engine;
+import com.floreysoft.jmte.NamedRenderer;
+import com.floreysoft.jmte.RenderFormatInfo;
 import com.floreysoft.jmte.encoder.XMLEncoder;
+import com.floreysoft.jmte.message.ParseException;
 
 /**
  * This class exports a list of movies to various formats according to
@@ -56,6 +63,7 @@ public class MovieExporter {
     LOGGER.info("preparing movie export; using " + template);
 
     Engine engine = Engine.createCachingEngine();
+    engine.registerNamedRenderer(new MovieExporter.NamedDateRenderer()); // our custom date renderer
 
     String extension = ".html";
     if (template.toLowerCase().contains("html")) {
@@ -111,6 +119,69 @@ public class MovieExporter {
     else {
       LOGGER.warn("invalid template name - must start with 'list' or ' detail'");
     }
-
   }
+
+  public static class NamedDateRenderer implements NamedRenderer {
+
+    private static final String DEFAULT_PATTERN         = "dd.MM.yyyy HH:mm:ss Z";
+    private final String        regexPatternDescription = "Was weiß ich denn?";
+
+    private Date convert(Object o, DateFormat dateFormat) {
+      if (o instanceof Date) {
+        return (Date) o;
+      }
+      else if (o instanceof Number) {
+        long longValue = ((Number) o).longValue();
+        return new Date(longValue);
+      }
+      else if (o instanceof String) {
+        try {
+          try {
+            return dateFormat.parse((String) o);
+          }
+          catch (java.text.ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
+        catch (ParseException e) {
+        }
+      }
+      return null;
+    }
+
+    @Override
+    public String getName() {
+      return "date";
+    }
+
+    @Override
+    public Class<?>[] getSupportedClasses() {
+      return new Class[] { Date.class, String.class, Integer.class, Long.class };
+    }
+
+    @Override
+    public String render(Object o, String pattern, Locale locale) {
+      String patternToUse = pattern != null ? pattern : DEFAULT_PATTERN;
+      try {
+        DateFormat dateFormat = new SimpleDateFormat(patternToUse);
+        Date value = convert(o, dateFormat);
+        if (value != null) {
+          String format = dateFormat.format(value);
+          return format;
+        }
+      }
+      catch (IllegalArgumentException iae) {
+      }
+      catch (NullPointerException npe) {
+      }
+      return null;
+    }
+
+    @Override
+    public RenderFormatInfo getFormatInfo() {
+      return null;
+    }
+  }
+
 }

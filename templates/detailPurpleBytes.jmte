@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="no" lang="no">
-<head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <style type="text/css">
  a  {color:#E9DFD3}
  body{font-family:Tahoma; font-size:8pt; cursor:default}
@@ -33,32 +33,36 @@ function NewWin(el){var w=640,h=480,l=(screen.width-w)/2,t=(screen.height-h)/2,w
  <div style="top:62px; left:157px">
   <div style="top:0px; width:345px" id="SH"><div id="C1">Original Title</div><div id="B1">.</div><div style="width:230px" id="OriginalTitle" name="OriginalTitle" class="C2">${movie.originalName}</div></div>
   <div style="top:18px; width:335px" id="SH"><div id="C1">Director</div><div id="B1">.</div><div style="width:220px" id="Director" name="Director" class="C2">_MOVIE_DIRECTOR_</div></div>
-  <div style="top:36px; width:325px" id="SH"><div id="C1">Genre</div><div id="B1">.</div><div style="width:210px" class="C2"><span id="Genre" name="Genre"><#list movie.genres as genre>${genre} </#list></span></div></div>
-  <div style="top:54px; width:315px" id="SH"><div id="C1">Country</div><div id="B1">.</div><div style="width:200px" class="C2"><span id="Year" name="Year">_MOVIE_YEAR_</span>&nbsp;-&nbsp;<span id="Country" name="Country">_MOVIE_COUNTRY_</span></div></div>
+  <div style="top:36px; width:325px" id="SH"><div id="C1">Genre</div><div id="B1">.</div><div style="width:210px" class="C2"><span id="Genre" name="Genre">${foreach movie.genres genre , }${genre}${end}</span></div></div>
+  <div style="top:54px; width:315px" id="SH"><div id="C1">Country</div><div id="B1">.</div><div style="width:200px" class="C2"><span id="Year" name="Year">${movie.year}</span>&nbsp;-&nbsp;<span id="Country" name="Country">_MOVIE_COUNTRY_</span></div></div>
   <div style="top:72px; width:305px" id="SH"><div id="C1">Public Rating</div><div id="B1">.</div><div style="width:190px" id="Rating" name="Rating" class="C2">_MOVIE_RATED_</div></div>
-  <div style="top:90px; width:295px" id="SH"><div id="C1">Language</div><div id="B1">.</div><div style="width:180px" id="OriginalLanguage" name="OriginalLanguage" class="C2">_MOVIE_LANGUAGE_</div></div>
+  <div style="top:90px; width:295px" id="SH"><div id="C1">Language</div><div id="B1">.</div><div style="width:180px" id="OriginalLanguage" name="OriginalLanguage" class="C2">${movie.spokenLanguages}</div></div>
   <div style="top:108px; width:285px" id="SH"><div id="C1">MPAA Rating</div><div id="B1">.</div><div style="width:170px" id="MPAA" name="MPAA" class="C2">_MOVIE_MPAA_</div></div>
   <div style="top:126px; width:275px" id="SH"><div id="C1">Encoded Lang.</div><div id="B1">.</div><div style="width:160px" id="Language" name="Language" class="C2">_MOVIE_LANGUAGEENCODED_</div></div>
-  <div style="top:144px; width:265px" id="SH"><div id="C1">Date added</div><div id="B1">.</div><div style="width:150px" id="DateInsert" name="DateInsert" class="C2">${movie.dateAdded;date(yyyy-MM-dd)}</div></div>
+  <div style="top:144px; width:265px" id="SH"><div id="C1">Date added</div><div id="B1">.</div><div style="width:150px" id="DateInsert" name="DateInsert" class="C2">${movie.dateAdded ;date(yyyy-MM-dd)}</div></div>
  </div>
 
+${foreach movie.mediaFiles mf}
+ ${if first_mf}
  <div style="top:62px; left:525px">
-  <div style="top:0px; left:0px; width:191px" id="SH"><div id="C1">Codec</div><div id="B2">.</div><div style="width:75px" id="Codec" name="Codec" class="C2">_MOVIE_CODEC_</div></div>
-  <div style="top:18px; left:-10px; width:201px" id="SH"><div id="C1">BitRate</div><div id="B2">.</div><div style="width:85px" id="Bitrate" name="Bitrate" class="C2">_MOVIE_BITRATE_</div></div>
-  <div style="top:36px; left:-20px; width:211px" id="SH"><div id="C1">Resolution</div><div id="B2">.</div><div style="width:95px" class="C2"><span id="Resolution" name="Resolution">_MOVIE_RESOLUTION_</span>&nbsp;@&nbsp;<span id="FPS" name="FPS">_MOVIE_FPS_</span></div></div>
-  <div style="top:54px; left:-30px; width:221px" id="SH"><div id="C1">Audio Format</div><div id="B2">.</div><div style="width:105px" id="AudioCodec" name="AudioCodec" class="C2">_MOVIE_AUDIO_</div></div>
+  <div style="top:0px; left:0px; width:191px" id="SH"><div id="C1">Codec</div><div id="B2">.</div><div style="width:75px" id="Codec" name="Codec" class="C2">${mf.videoCodec}</div></div>
+  <div style="top:18px; left:-10px; width:201px" id="SH"><div id="C1">BitRate</div><div id="B2">.</div><div style="width:85px" id="Bitrate" name="Bitrate" class="C2">${foreach movie.mediaFiles mf}${if first_mf}${mf.overallBitRate} kbps${end}${end}</div></div>
+  <div style="top:36px; left:-20px; width:211px" id="SH"><div id="C1">Resolution</div><div id="B2">.</div><div style="width:95px" class="C2"><span id="Resolution" name="Resolution">${mf.videoWidth}x${mf.videoHeight}</span>&nbsp;@&nbsp;<span id="FPS" name="FPS">_MOVIE_FPS_</span></div></div>
+  <div style="top:54px; left:-30px; width:221px" id="SH"><div id="C1">Audio Format</div><div id="B2">.</div><div style="width:105px" id="AudioCodec" name="AudioCodec" class="C2">${mf.audioCodec}</div></div>
   <div style="top:72px; left:-40px; width:231px" id="SH"><div id="C1">Audio BitRate</div><div id="B2">.</div><div style="width:115px" id="AudioBitRate" name="AudioBitRate" class="C2">_MOVIE_ABITRATE_</div></div>
-  <div style="top:90px; left:-50px; width:241px" id="SH"><div id="C1">Channels</div><div id="B2">.</div><div style="width:125px" class="C2"><span id="Channels" name="Channels">_MOVIE_CHANNELS_</span>&nbsp;-&nbsp;<span id="SampleRate" name="SampleRate">_MOVIE_SRATE_</span></div></div>
+  <div style="top:90px; left:-50px; width:241px" id="SH"><div id="C1">Channels</div><div id="B2">.</div><div style="width:125px" class="C2"><span id="Channels" name="Channels">${mf.audioChannels}</span>&nbsp;-&nbsp;<span id="SampleRate" name="SampleRate">_MOVIE_SRATE_</span></div></div>
   <div style="top:108px; left:-60px; width:251px" id="SH"><div id="C1">N&deg; CD</div><div id="B2">.</div><div style="width:135px" class="C2"><span id="Disk" name="Disk">_MOVIE_NCD_</span>&nbsp;-&nbsp;<span id="Filesize" name="Filesize">_MOVIE_FILESIZE_</span></div></div>
   <div style="top:126px; left:-70px; width:261px" id="SH"><div id="C1">Playtime</div><div id="B2">.</div><div style="width:145px" id="Length" name="Length" class="C2">${movie.runtime}</div></div>
   <div style="top:144px; left:-80px; width:271px" id="SH"><div id="C1">Creator</div><div id="B2">.</div><div style="width:155px" id="Ripped" name="Ripped" class="C2">_MOVIE_RIPPER_</div></div>
  </div>
+ ${end}
+${end}
 
  <div id="SH" style="top:239px; left:47px; width:271px; height:130px">
   <div class="C3" style="width:264px">Starring</div>
   <div class="C4" style="width:250px; height:102px"></div>
   <div style="top:84px; left:-6px; width:270px; height:40px"><div class="S1" style="height:30px"></div><div class="S1" style="top:0px; left:11px; height:40px"></div><div class="S1" style="top:20px; left:22px; width:20px; height:20px"></div><div class="S1" style="left:43px; height:30px"></div><div class="S1" style="top:0px; left:54px; height:40px"></div><div class="S1" style="top:15px; left:65px; height:25px"></div><div class="S1" style="top:25px; left:76px; width:20px; height:15px"></div><div class="S1" style="top:0px; left:97px; height:40px"></div><div class="S1" style="left:108px; height:30px"></div><div class="S1" style="top:20px; left:119px; height:20px"></div><div class="S1" style="left:130px; width:20px; height:30px"></div><div class="S1" style="top:0px; left:151px; height:40px"></div><div class="S1" style="left:162px; height:30px"></div><div class="S1" style="top:20px; left:173px; width:20px; height:20px"></div><div class="S1" style="left:194px; height:30px"></div><div class="S1" style="top:0px; left:205px; height:40px"></div><div class="S1" style="top:15px; left:216px; height:25px"></div><div class="S1" style="top:25px; left:227px; width:20px; height:15px"></div><div class="S1" style="top:0px; left:248px; height:40px"></div><div class="S1" style="top:15px; left:259px; height:25px"></div></div>
-  <div class="C4" style="width:250px; height:102px; background:none" id="Actors" name="Actors"><#list movie.cast as c>${c.name} - ${c.character}<br/></#list></div>
+  <div class="C4" style="width:250px; height:102px; background:none" id="Actors" name="Actors">${foreach movie.cast c}${c.name} - ${c.character}<br/>${end}</div>
  </div>
 
  <div id="SH" style="top:239px; left:339px; width:378px; height:130px">
