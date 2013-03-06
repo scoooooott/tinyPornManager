@@ -16,7 +16,7 @@
 package org.tinymediamanager.core.movie;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,12 +26,14 @@ import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 
 import ca.odell.glazedlists.ObservableElementList;
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
+
+import com.floreysoft.jmte.Engine;
 
 /**
- * The Class MovieRenamer.
+ * This class exports a list of movies to various formats according to
+ * templates.
+ * 
+ * @author Myron Boyle
  */
 public class MovieExporter {
 
@@ -40,53 +42,64 @@ public class MovieExporter {
 
   private static final String TEMPLATE_DIRECTORY = "templates";
 
+  /**
+   * exports movie list according to template file
+   * 
+   * @param movies
+   *          list of movies
+   * @param template
+   *          filename of template
+   * @throws Exception
+   */
   public static void export(ObservableElementList<Movie> movies, String template) throws Exception {
     LOGGER.info("preparing movie export; using " + template);
     String extension = ".html";
     if (template.toLowerCase().contains("csv")) {
       extension = ".csv";
     }
-
-    Configuration cfg = new Configuration();
-    cfg.setDirectoryForTemplateLoading(new File(TEMPLATE_DIRECTORY));
-    cfg.setObjectWrapper(new DefaultObjectWrapper());
-
-    Template temp = cfg.getTemplate(template, "UTF-8");
+    else if (template.toLowerCase().contains("xml")) {
+      extension = ".xml";
+    }
 
     if (template.toLowerCase().startsWith("list")) {
       LOGGER.info("generating movie list");
-      File out = new File(TEMPLATE_DIRECTORY, FilenameUtils.getBaseName(template) + extension);
-      FileUtils.deleteQuietly(out);
+      File f = new File(TEMPLATE_DIRECTORY, FilenameUtils.getBaseName(template) + extension);
+      FileUtils.deleteQuietly(f);
 
-      // Map root = new HashMap(); // since we only put movies in there, use type args
-      Map<String, ObservableElementList<Movie>> root = new HashMap<String, ObservableElementList<Movie>>();
-      root.put("movies", movies);
+      Map<String, Object> root = new HashMap<String, Object>();
+      root.put("movies", new ArrayList<Movie>(movies));
 
-      FileWriter fw = new FileWriter(out);
-      temp.process(root, fw);
-      fw.flush();
-      LOGGER.info("movie list generated: " + out.getAbsolutePath());
+      Engine engine = Engine.createDefaultEngine();
+      String temp = FileUtils.readFileToString(new File(TEMPLATE_DIRECTORY, template), "UTF-8");
+      String output = engine.transform(temp, root);
+
+      FileUtils.writeStringToFile(f, output, "UTF-8");
+      LOGGER.info("movie list generated: " + f.getAbsolutePath());
     }
     else if (template.toLowerCase().startsWith("detail")) {
       LOGGER.info("generating movie detail pages");
-      File out = new File(TEMPLATE_DIRECTORY, FilenameUtils.getBaseName(template));
-      FileUtils.deleteDirectory(out);
-      out.mkdirs();
+      File dir = new File(TEMPLATE_DIRECTORY, FilenameUtils.getBaseName(template));
+      FileUtils.deleteDirectory(dir);
+      dir.mkdirs();
+
+      Engine engine = Engine.createDefaultEngine();
+      String temp = FileUtils.readFileToString(new File(TEMPLATE_DIRECTORY, template), "UTF-8");
 
       // TODO: HTML pages per movie could be perfectly multithreaded ;)
       for (Movie movie : movies) {
 
         LOGGER.debug("processing movie " + movie.getName());
         // get preferred movie name like set up in movie renamer
-        File fname = new File(out, MovieRenamer.createDestination(Globals.settings.getMovieRenamerFilename(), movie) + extension);
-        FileWriter fw = new FileWriter(fname);
-        Map<String, Movie> hm = new HashMap<String, Movie>();
-        hm.put("movie", movie);
-        temp.process(hm, fw);
-        fw.flush();
+        File f = new File(dir, MovieRenamer.createDestination(Globals.settings.getMovieRenamerFilename(), movie) + extension);
+
+        Map<String, Object> root = new HashMap<String, Object>();
+        root.put("movie", movie);
+
+        String output = engine.transform(temp, root);
+        FileUtils.writeStringToFile(f, output, "UTF-8");
 
       }
-      LOGGER.info("movie detail pages generated: " + out.getAbsolutePath());
+      LOGGER.info("movie detail pages generated: " + dir.getAbsolutePath());
     }
     else {
       LOGGER.warn("invalid template name - must start with 'list' or ' detail'");

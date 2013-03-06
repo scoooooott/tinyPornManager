@@ -9,18 +9,15 @@
         .even { color:blue; }
     </style>
     <table border="1">
-<#list movies as movie>
-    <#assign trCss = (movie_index % 2 == 0)?string("even","odd")>
-        <tr class="${trCss}">
-            <td>${movie.name?xhtml}</td>
+${foreach movies movie}
+        <tr class="${if odd_movie}odd${end}${if even_movie}even${end}">
+            <td>${movie.name}</td>
             <td>${movie.year}</td>
             <td>
-            <#list movie.genres as genre>
-                ${genre}<br/>
-            </#list>
+            ${foreach movie.genres genre , }${genre}${end}
             </td>
         </tr>
-</#list>
+${end}
     </table>
 
     </body>

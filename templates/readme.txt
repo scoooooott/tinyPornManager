@@ -3,50 +3,43 @@ A short description how templating works :)
 
 Please do not work on the provided ones.
 They will be overwritten on each startup ;)
-If you want to change/extend them, just copy them to a new .ftl file.
+If you want to change/extend them, just copy them to a new .jmte file.
 
 Templates starting with "list" are for movie lists, 
 where starting with "detail" are for a single movie details page (d'oh!)
 
-We use freemarker, so the reference guide for the experts is located here:
-http://freemarker.sourceforge.net/docs/ref.html
+We use the "Java Minimal Template Engine", so the reference guide for the experts is located here:
+http://jmte.googlecode.com/svn/trunk/doc/index.html
 
 =================================================================================
 Basics:
 =================================================================================
 Iterate over a List():
-<#list LISTNAME as VARIABLE>
+${foreach LISTNAME as VARIABLE}
     ${VARIABLE}   <!-- print out variable -->
     [...] do more
-</#list>
+${end}
 
 Display a String variable
     ${StringName}
 
 Display a Date variable
-    ${DateVariable?date}
-    ${DateVariable?time}
-    ${DateVariable?datetime}
-    ${DateVariable?string.<format>}
-
-For encoding of values, use the following:
-    ${movie.name?html}
-    ${movie.name?xml}
-    ${movie.name?xhtml}
+    ${DateVariable}
+    ${DateVariable;date(yyyy-MM-dd)}
 
 =================================================================================
 Eg: to print some movie details
-<#list movies as movie>
+${foreach movies movie}
     ${movie.name} - ${movie.year}
-</#list>
+${end}
 
 Eg: to print some movie details, with genres
-<#list movies as movie>
+${foreach movies movie}
     ${movie.name}
-    <#list movie.genres as genre>
-        - ${genre}
-    </#list>
-</#list>
+    ${foreach movie.genres genre , }       // " , " comma is used here as genre seperator
+        ${genre}
+    ${end}
+${end}
 =================================================================================
 
 

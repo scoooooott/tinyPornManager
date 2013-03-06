@@ -1,0 +1,3 @@
+sep=,
+${foreach movies movie}${movie.name},${movie.year},${movie.path}
+${end}

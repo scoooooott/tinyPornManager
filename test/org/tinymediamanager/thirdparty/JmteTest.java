@@ -5,7 +5,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.MovieList;
 
-public class FreemarkerTest {
+public class JmteTest {
 
   @Test
   public void testList() throws Exception {
@@ -14,7 +14,8 @@ public class FreemarkerTest {
     MovieList ml = MovieList.getInstance();
     ml.loadMoviesFromDatabase();
 
-    MovieExporter.export(ml.getMovies(), "listExampleHTML.ftl");
+    MovieExporter.export(ml.getMovies(), "listExampleHTML.jmte");
+    MovieExporter.export(ml.getMovies(), "listExampleCSV.jmte");
 
     Globals.shutdownDatabase();
   }
@@ -26,7 +27,7 @@ public class FreemarkerTest {
     MovieList ml = MovieList.getInstance();
     ml.loadMoviesFromDatabase();
 
-    MovieExporter.export(ml.getMovies(), "detailPurpleBytes.ftl");
+    MovieExporter.export(ml.getMovies(), "detailPurpleBytes.jmte");
 
     Globals.shutdownDatabase();
   }

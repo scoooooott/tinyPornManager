@@ -1,3 +1,4 @@
+asm-3.3.1.jar
 beansbinding-1.2.1.jar
 commons-codec-1.6.jar
 commons-io-2.1.jar
@@ -9,6 +10,7 @@ httpclient-4.2.3.jar
 httpcore-4.2.3.jar
 httpmime-4.2.3.jar
 jdom.jar
+jmte-unbundled-3.1.jar
 JSplitButton_1.2.jar
 log4j-1.2.16.jar
 objectdb-2.4.4_12.jar
@@ -26,4 +28,4 @@ jackson-core-2.1.2.jar
 jackson-annotations-2.1.2.jar
 jna-3.5.1.jar
 platform-3.5.1.jar
-vlcj-2.2.0-SNAPSHOT.jar
+vlcj-2.2.0.jar
