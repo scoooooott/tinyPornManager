@@ -99,7 +99,9 @@ public class MovieBatchEditor extends JDialog {
       JLabel lblGenres = new JLabel("Genre");
       panelContent.add(lblGenres, "2, 2, right, default");
 
-      cbGenres = new JComboBox(MediaGenres2.values());
+      // cbGenres = new JComboBox(MediaGenres2.values());
+      cbGenres = new AutocompleteComboBox(MediaGenres2.values());
+      cbGenres.setEditable(true);
       panelContent.add(cbGenres, "4, 2, fill, default");
 
       JButton btnAddGenre = new JButton("");
@@ -110,9 +112,23 @@ public class MovieBatchEditor extends JDialog {
         public void actionPerformed(ActionEvent e) {
           changed = true;
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
-          for (Movie movie : moviesToEdit) {
-            movie.addGenre(genre);
+          MediaGenres2 genre = null;
+          Object item = cbGenres.getSelectedItem();
+
+          // genre
+          if (item instanceof MediaGenres2) {
+            genre = (MediaGenres2) item;
+          }
+
+          // newly created genre?
+          if (item instanceof String) {
+            genre = MediaGenres2.getGenre((String) item);
+          }
+          // MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
+          if (genre != null) {
+            for (Movie movie : moviesToEdit) {
+              movie.addGenre(genre);
+            }
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }

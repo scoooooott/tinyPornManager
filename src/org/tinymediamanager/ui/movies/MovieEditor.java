@@ -561,7 +561,9 @@ public class MovieEditor extends JDialog {
       details2Panel.add(btnRemoveGenre, "6, 6, right, top");
     }
     {
-      cbGenres = new JComboBox(MediaGenres2.values());
+      // cbGenres = new JComboBox(MediaGenres2.values());
+      cbGenres = new AutocompleteComboBox(MediaGenres2.values());
+      cbGenres.setEditable(true);
       details2Panel.add(cbGenres, "8,8");
     }
 
@@ -988,9 +990,21 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      MediaGenres2 newGenre = (MediaGenres2) cbGenres.getSelectedItem();
+      MediaGenres2 newGenre = null;
+      Object item = cbGenres.getSelectedItem();
+
+      // genre
+      if (item instanceof MediaGenres2) {
+        newGenre = (MediaGenres2) item;
+      }
+
+      // newly created genre?
+      if (item instanceof String) {
+        newGenre = MediaGenres2.getGenre((String) item);
+      }
+
       // add genre if it is not already in the list
-      if (!genres.contains(newGenre)) {
+      if (newGenre != null && !genres.contains(newGenre)) {
         genres.add(newGenre);
       }
     }
