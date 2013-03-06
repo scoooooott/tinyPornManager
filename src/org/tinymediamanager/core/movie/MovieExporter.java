@@ -24,10 +24,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
 
 import ca.odell.glazedlists.ObservableElementList;
 
 import com.floreysoft.jmte.Engine;
+import com.floreysoft.jmte.encoder.XMLEncoder;
 
 /**
  * This class exports a list of movies to various formats according to
@@ -53,12 +55,20 @@ public class MovieExporter {
    */
   public static void export(ObservableElementList<Movie> movies, String template) throws Exception {
     LOGGER.info("preparing movie export; using " + template);
+
+    Engine engine = Engine.createCachingEngine();
+
     String extension = ".html";
-    if (template.toLowerCase().contains("csv")) {
+    if (template.toLowerCase().contains("html")) {
+      extension = ".html";
+      engine.setEncoder(new XMLEncoder()); // special char replacement
+    }
+    else if (template.toLowerCase().contains("csv")) {
       extension = ".csv";
     }
     else if (template.toLowerCase().contains("xml")) {
       extension = ".xml";
+      engine.setEncoder(new XMLEncoder()); // special char replacement
     }
 
     if (template.toLowerCase().startsWith("list")) {
@@ -69,7 +79,6 @@ public class MovieExporter {
       Map<String, Object> root = new HashMap<String, Object>();
       root.put("movies", new ArrayList<Movie>(movies));
 
-      Engine engine = Engine.createDefaultEngine();
       String temp = FileUtils.readFileToString(new File(TEMPLATE_DIRECTORY, template), "UTF-8");
       String output = engine.transform(temp, root);
 
@@ -82,7 +91,6 @@ public class MovieExporter {
       FileUtils.deleteDirectory(dir);
       dir.mkdirs();
 
-      Engine engine = Engine.createDefaultEngine();
       String temp = FileUtils.readFileToString(new File(TEMPLATE_DIRECTORY, template), "UTF-8");
 
       // TODO: HTML pages per movie could be perfectly multithreaded ;)
