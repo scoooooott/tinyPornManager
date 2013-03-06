@@ -1,19 +1,26 @@
 
 A short description how templating works :)
-
-Please do not work on the provided ones.
-They will be overwritten on each startup ;)
-If you want to change/extend them, just copy them to a new .jmte file.
-
-Templates starting with "list" are for movie lists, 
-where starting with "detail" are for a single movie details page (d'oh!)
-
 We use the "Java Minimal Template Engine", so the reference guide for the experts is located here:
 http://jmte.googlecode.com/svn/trunk/doc/index.html
+
+Please do not work on the provided files.
+They will be overwritten on each startup ;)
+If you want to change/extend them, just copy them to a new .jmte file.
+If it's a cool template, let us know so we could redistribute it :)
+
+Templates starting with "list" are for movie listings, 
+where starting with "detail" are for a single movie details page (d'oh!)
+
+If there's the value "CSV" within the name, a .csv file will be created.
+Same for HTML and XML, but here we encode special characters correctly.
+All files are UTF8 encoded; but UTF8 chars in CSV work only on Excel 2007 and up.
 
 =================================================================================
 Basics:
 =================================================================================
+Comments in template - will not be rendered:
+${-- this is a comment}
+
 Iterate over a List():
 ${foreach LISTNAME as VARIABLE}
     ${VARIABLE}   <!-- print out variable -->

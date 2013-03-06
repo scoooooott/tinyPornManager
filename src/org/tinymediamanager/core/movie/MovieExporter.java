@@ -24,7 +24,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.Utils;
 
 import ca.odell.glazedlists.ObservableElementList;
 
