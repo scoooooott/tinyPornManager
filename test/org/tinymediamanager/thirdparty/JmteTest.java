@@ -16,6 +16,7 @@ public class JmteTest {
 
     MovieExporter.export(ml.getMovies(), "listExampleHTML.jmte");
     MovieExporter.export(ml.getMovies(), "listExampleCSV.jmte");
+    MovieExporter.export(ml.getMovies(), "listExampleXML.jmte");
 
     Globals.shutdownDatabase();
   }
