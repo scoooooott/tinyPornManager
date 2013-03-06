@@ -6,13 +6,14 @@ http://jmte.googlecode.com/svn/trunk/doc/index.html
 Please do not work on the provided files.
 They will be overwritten on each startup ;)
 If you want to change/extend them, just copy them to a new .jmte file.
+(keep the .csv|.html|.xml as double extension as well, so we can identify the contents)
 If it's a cool template, let us know so we could redistribute it :)
 
 Templates starting with "list" are for movie listings, 
 where starting with "detail" are for a single movie details page (d'oh!)
 
-If there's the value "CSV" within the name, a .csv file will be created.
-Same for HTML and XML, but here we encode special characters correctly.
+If there's the filename ends with ".csv.jmte", a CSV file will be created.
+Same for ".html.jmte" and ".xml.jmte", but here we encode special characters correctly.
 All files are UTF8 encoded; but UTF8 chars in CSV work only on Excel 2007 and up.
 
 =================================================================================

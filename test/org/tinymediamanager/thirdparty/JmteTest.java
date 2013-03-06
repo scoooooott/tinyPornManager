@@ -14,9 +14,9 @@ public class JmteTest {
     MovieList ml = MovieList.getInstance();
     ml.loadMoviesFromDatabase();
 
-    MovieExporter.export(ml.getMovies(), "listExampleHTML.jmte");
-    MovieExporter.export(ml.getMovies(), "listExampleCSV.jmte");
-    MovieExporter.export(ml.getMovies(), "listExampleXML.jmte");
+    MovieExporter.export(ml.getMovies(), "listExample.html.jmte");
+    MovieExporter.export(ml.getMovies(), "listExample.csv.jmte");
+    MovieExporter.export(ml.getMovies(), "listExample.xml.jmte");
 
     Globals.shutdownDatabase();
   }
@@ -28,7 +28,7 @@ public class JmteTest {
     MovieList ml = MovieList.getInstance();
     ml.loadMoviesFromDatabase();
 
-    MovieExporter.export(ml.getMovies(), "detailPurpleBytes.jmte");
+    MovieExporter.export(ml.getMovies(), "detailPurpleBytes.html.jmte");
 
     Globals.shutdownDatabase();
   }

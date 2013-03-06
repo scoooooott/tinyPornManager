@@ -64,29 +64,20 @@ public class MovieExporter {
 
     Engine engine = Engine.createCachingEngine();
     engine.registerNamedRenderer(new MovieExporter.NamedDateRenderer()); // our custom date renderer
+    if (template.toLowerCase().contains(".html") || template.toLowerCase().contains(".xml")) {
+      engine.setEncoder(new XMLEncoder()); // special char replacement
+    }
 
-    String extension = ".html";
-    if (template.toLowerCase().contains("html")) {
-      extension = ".html";
-      engine.setEncoder(new XMLEncoder()); // special char replacement
-    }
-    else if (template.toLowerCase().contains("csv")) {
-      extension = ".csv";
-    }
-    else if (template.toLowerCase().contains("xml")) {
-      extension = ".xml";
-      engine.setEncoder(new XMLEncoder()); // special char replacement
-    }
+    String temp = FileUtils.readFileToString(new File(TEMPLATE_DIRECTORY, template), "UTF-8");
 
     if (template.toLowerCase().startsWith("list")) {
       LOGGER.info("generating movie list");
-      File f = new File(TEMPLATE_DIRECTORY, FilenameUtils.getBaseName(template) + extension);
+      File f = new File(TEMPLATE_DIRECTORY, FilenameUtils.getBaseName(template));
       FileUtils.deleteQuietly(f);
 
       Map<String, Object> root = new HashMap<String, Object>();
       root.put("movies", new ArrayList<Movie>(movies));
 
-      String temp = FileUtils.readFileToString(new File(TEMPLATE_DIRECTORY, template), "UTF-8");
       String output = engine.transform(temp, root);
 
       FileUtils.writeStringToFile(f, output, "UTF-8");
@@ -98,21 +89,18 @@ public class MovieExporter {
       FileUtils.deleteDirectory(dir);
       dir.mkdirs();
 
-      String temp = FileUtils.readFileToString(new File(TEMPLATE_DIRECTORY, template), "UTF-8");
-
       // TODO: HTML pages per movie could be perfectly multithreaded ;)
       for (Movie movie : movies) {
-
         LOGGER.debug("processing movie " + movie.getName());
         // get preferred movie name like set up in movie renamer
-        File f = new File(dir, MovieRenamer.createDestination(Globals.settings.getMovieRenamerFilename(), movie) + extension);
+        File f = new File(dir, MovieRenamer.createDestination(Globals.settings.getMovieRenamerFilename(), movie) + "."
+            + FilenameUtils.getExtension(FilenameUtils.getBaseName(template)));
 
         Map<String, Object> root = new HashMap<String, Object>();
         root.put("movie", movie);
 
         String output = engine.transform(temp, root);
         FileUtils.writeStringToFile(f, output, "UTF-8");
-
       }
       LOGGER.info("movie detail pages generated: " + dir.getAbsolutePath());
     }
@@ -123,8 +111,9 @@ public class MovieExporter {
 
   public static class NamedDateRenderer implements NamedRenderer {
 
-    private static final String DEFAULT_PATTERN         = "dd.MM.yyyy HH:mm:ss Z";
-    private final String        regexPatternDescription = "Was weiß ich denn?";
+    private static final String DEFAULT_PATTERN = "dd.MM.yyyy HH:mm:ss Z";
+
+    //private final String        regexPatternDescription = "Was weiß ich denn?";
 
     private Date convert(Object o, DateFormat dateFormat) {
       if (o instanceof Date) {
