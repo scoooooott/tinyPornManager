@@ -275,7 +275,9 @@ public class MovieToMpNfoConnector {
         catch (Exception e) {
           LOGGER.warn("could not parse runtime: " + mp.getRuntime());
         }
-        movie.setPoster(mp.getThumb());
+        if (mp.getThumb() != null) {
+          movie.setPoster(mp.getThumb());
+        }
 
         if (mp.getFanart() != null && mp.getFanart().size() > 0) {
           movie.setFanart(mp.getFanart().get(0));

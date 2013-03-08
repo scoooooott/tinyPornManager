@@ -418,11 +418,13 @@ public class MovieToXbmcNfoConnector {
         LOGGER.warn("could not parse runtime: " + xbmc.getRuntime());
       }
 
-      if (StringUtils.isNotEmpty(xbmc.getThumb()) && xbmc.getThumb().contains("http://")) {
-        movie.setPosterUrl(xbmc.getThumb());
-      }
-      else {
-        movie.setPoster(xbmc.getThumb());
+      if (xbmc.getThumb() != null) {
+        if (xbmc.getThumb().contains("http://")) {
+          movie.setPosterUrl(xbmc.getThumb());
+        }
+        else {
+          movie.setPoster(xbmc.getThumb());
+        }
       }
 
       movie.setImdbId(xbmc.getId());
