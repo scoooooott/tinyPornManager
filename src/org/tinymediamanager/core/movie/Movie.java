@@ -1668,7 +1668,7 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("name", oldValue, newValue);
     firePropertyChange("nameForUi", oldValue, newValue);
 
-    sortTitle = "";
+    nameSortable = "";
     firePropertyChange("nameSortable", oldValue, newValue);
   }
 
