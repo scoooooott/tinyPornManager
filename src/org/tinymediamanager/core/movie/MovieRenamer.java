@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -189,12 +190,12 @@ public class MovieRenamer {
         File srcDir = new File(oldPathname);
         File destDir = new File(newPathname);
         try {
-          FileUtils.moveDirectory(srcDir, destDir);
-          LOGGER.debug("moved folder " + oldPathname + " to " + newPathname);
+          // FileUtils.moveDirectory(srcDir, destDir);
+          moveDirectorySafe(srcDir, destDir);
           movie.setPath(newPathname);
         }
         catch (IOException e) {
-          LOGGER.error("move folder", e);
+          LOGGER.error("error moving folder: ", e);
         }
       }
     }
@@ -318,6 +319,78 @@ public class MovieRenamer {
     }
 
     movie.saveToDb();
+  }
+
+  /**
+   * modified version of commons-io FileUtils.moveDirectory();<br>
+   * since renameTo() might not work in first place, retry it up to 5 times.<br>
+   * (better wait 5 sec for success, than always copying a 50gig directory ;)
+   * 
+   * @param srcDir
+   *          the directory to be moved
+   * @param destDir
+   *          the destination directory
+   * @throws NullPointerException
+   *           if source or destination is {@code null}
+   * @throws FileExistsException
+   *           if the destination directory exists
+   * @throws IOException
+   *           if source or destination is invalid
+   * @throws IOException
+   *           if an IO error occurs moving the file
+   * @author Myron Boyle
+   */
+  private static void moveDirectorySafe(File srcDir, File destDir) throws IOException {
+    // rip-off from http://svn.apache.org/repos/asf/commons/proper/io/trunk/src/main/java/org/apache/commons/io/FileUtils.java
+    if (srcDir == null) {
+      throw new NullPointerException("Source must not be null");
+    }
+    if (destDir == null) {
+      throw new NullPointerException("Destination must not be null");
+    }
+    LOGGER.debug("try to move folder " + srcDir.getName() + " to " + destDir.getName());
+    if (!srcDir.exists()) {
+      throw new FileNotFoundException("Source '" + srcDir + "' does not exist");
+    }
+    if (!srcDir.isDirectory()) {
+      throw new IOException("Source '" + srcDir + "' is not a directory");
+    }
+    if (destDir.exists()) {
+      throw new FileExistsException("Destination '" + destDir + "' already exists");
+    }
+
+    // rename folder; try 5 times and wait a sec
+    boolean rename = false;
+    for (int i = 0; i < 5; i++) {
+      rename = srcDir.renameTo(destDir);
+      if (rename) {
+        break; // ok it worked, step out
+      }
+      try {
+        LOGGER.debug("rename did not work - sleep a while and try again...");
+        Thread.sleep(1000);
+      }
+      catch (InterruptedException e) {
+        LOGGER.warn("I'm so excited - could not sleep");
+      }
+    }
+
+    // ok, we tried it 5 times - it still seems to be locked somehow. Continue with copying.
+    if (!rename) {
+      if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath())) {
+        throw new IOException("Cannot move directory: " + srcDir + " to a subdirectory of itself: " + destDir);
+      }
+      FileUtils.copyDirectory(srcDir, destDir);
+      FileUtils.deleteDirectory(srcDir);
+      if (srcDir.exists()) {
+        // since the copy itself worked, do not throw an exception here;
+        // else the new movie path won't be set in the calling function, and the movie file renaming fails
+        LOGGER.warn("Failed to delete original directory '" + srcDir + "' after successfully copying to '" + destDir + "'");
+      }
+    }
+    else {
+      LOGGER.info("Successfully moved folder " + srcDir.getName() + " to " + destDir.getName());
+    }
   }
 
   /**
