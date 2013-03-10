@@ -393,9 +393,9 @@ public class MoviePanel extends JPanel {
     menu.add(actionEditMovie2);
     menu.add(actionBatchEdit);
     menu.add(actionRename2);
-    menu.add(actionRemove2);
-    menu.addSeparator();
     menu.add(actionMediaInformation2);
+    menu.addSeparator();
+    menu.add(actionRemove2);
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
@@ -406,8 +406,9 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionBatchEdit);
     popupMenu.add(actionRename2);
-    popupMenu.add(actionRemove2);
     popupMenu.add(actionMediaInformation2);
+    popupMenu.addSeparator();
+    popupMenu.add(actionRemove2);
 
     MouseListener popupListener = new PopupListener(popupMenu);
     table.addMouseListener(popupListener);
