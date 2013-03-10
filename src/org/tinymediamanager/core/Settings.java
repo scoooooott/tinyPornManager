@@ -111,6 +111,12 @@ public class Settings extends AbstractModelObject {
   /** The Constant IMAGE_TMDB_FANART. */
   private final static String           IMAGE_TMDB_FANART           = "imageTmdbFanartSize";
 
+  /** The Constant IMAGE_EXTRATHUMBS. */
+  private final static String           IMAGE_EXTRATHUMBS           = "imageExtraThumbs";
+
+  /** The Constant IMAGE_EXTRAFANART. */
+  private final static String           IMAGE_EXTRAFANART           = "imageExtraFanart";
+
   /** The Constant CERTIFICATION_COUNTRY. */
   private final static String           CERTIFICATION_COUNTRY       = "certificationCountry";
 
@@ -227,6 +233,12 @@ public class Settings extends AbstractModelObject {
 
   /** The image tmdb fanart size. */
   private FanartSizes                   imageTmdbFanartSize         = FanartSizes.original;
+
+  /** The image extra thumbs. */
+  private boolean                       imageExtraThumbs            = false;
+
+  /** The image extra fanart. */
+  private boolean                       imageExtraFanart            = false;
 
   /** The country for certification. */
   private CountryCode                   certificationCountry        = CountryCode.US;
@@ -964,6 +976,48 @@ public class Settings extends AbstractModelObject {
     this.imageTmdbFanartSize = newValue;
     // setDirty();
     firePropertyChange(IMAGE_TMDB_FANART, oldValue, newValue);
+  }
+
+  /**
+   * Checks if is image extra thumbs.
+   * 
+   * @return true, if is image extra thumbs
+   */
+  public boolean isImageExtraThumbs() {
+    return imageExtraThumbs;
+  }
+
+  /**
+   * Checks if is image extra fanart.
+   * 
+   * @return true, if is image extra fanart
+   */
+  public boolean isImageExtraFanart() {
+    return imageExtraFanart;
+  }
+
+  /**
+   * Sets the image extra thumbs.
+   * 
+   * @param newValue
+   *          the new image extra thumbs
+   */
+  public void setImageExtraThumbs(boolean newValue) {
+    boolean oldValue = this.imageExtraThumbs;
+    this.imageExtraThumbs = newValue;
+    firePropertyChange(IMAGE_EXTRATHUMBS, oldValue, newValue);
+  }
+
+  /**
+   * Sets the image extra fanart.
+   * 
+   * @param newValue
+   *          the new image extra fanart
+   */
+  public void setImageExtraFanart(boolean newValue) {
+    boolean oldValue = this.imageExtraFanart;
+    this.imageExtraFanart = newValue;
+    firePropertyChange(IMAGE_EXTRAFANART, oldValue, newValue);
   }
 
   /**

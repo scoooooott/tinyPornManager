@@ -403,7 +403,7 @@ public class MovieChooser extends JDialog implements ActionListener {
               {
                 ImageLabel lblImage = new ImageLabel();
                 MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage,
-                    null);
+                    null, null);
                 dialog.setVisible(true);
                 movieToScrape.setPosterUrl(lblImage.getImageUrl());
                 movieToScrape.writeImages(true, false);
@@ -413,12 +413,22 @@ public class MovieChooser extends JDialog implements ActionListener {
               {
                 ImageLabel lblImage = new ImageLabel();
                 List<String> extrathumbs = new ArrayList<String>();
+                List<String> extrafanarts = new ArrayList<String>();
                 MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage,
-                    extrathumbs);
+                    extrathumbs, extrafanarts);
                 dialog.setVisible(true);
                 movieToScrape.setFanartUrl(lblImage.getImageUrl());
                 movieToScrape.writeImages(false, true);
-                movieToScrape.downloadExtraThumbs(extrathumbs);
+
+                // set extrathumbs and extrafanarts
+                movieToScrape.setExtraThumbs(extrathumbs);
+                movieToScrape.setExtraFanarts(extrafanarts);
+                if (extrafanarts.size() > 0 && extrathumbs.size() > 0) {
+                  movieToScrape.writeExtraImages(true, true);
+                }
+
+                // movieToScrape.downloadExtraThumbs(extrathumbs);
+                // movieToScrape.downloadExtraFanarts(extrafanarts);
               }
             }
             else {

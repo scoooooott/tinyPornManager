@@ -306,6 +306,9 @@ public class Movie extends AbstractModelObject {
   /** The extra thumbs. */
   private List<String>          extraThumbs          = new ArrayList<String>();
 
+  /** The extra fanarts. */
+  private List<String>          extraFanarts         = new ArrayList<String>();
+
   /** The movie set. */
   private MovieSet              movieSet;
 
@@ -1342,8 +1345,9 @@ public class Movie extends AbstractModelObject {
       // fetch and store images
       for (int i = 0; i < thumbs.size(); i++) {
         String url = thumbs.get(i);
+        String providedFiletype = FilenameUtils.getExtension(url);
         CachedUrl cachedUrl = new CachedUrl(url);
-        FileOutputStream outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + ".jpg");
+        FileOutputStream outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + "." + providedFiletype);
         InputStream is = cachedUrl.getInputStream();
         IOUtils.copy(is, outputStream);
         outputStream.close();
@@ -1353,6 +1357,80 @@ public class Movie extends AbstractModelObject {
     catch (IOException e) {
       LOGGER.warn("download extrathumbs", e);
     }
+  }
+
+  /**
+   * Gets the extra fanarts.
+   * 
+   * @return the extra fanarts
+   */
+  public List<String> getExtraFanarts() {
+    return extraFanarts;
+  }
+
+  /**
+   * Sets the extra fanarts.
+   * 
+   * @param extraFanarts
+   *          the new extra fanarts
+   */
+  public void setExtraFanarts(List<String> extraFanarts) {
+    this.extraFanarts = extraFanarts;
+  }
+
+  /**
+   * Download extra thumbs.
+   * 
+   * @param thumbs
+   *          the thumbs
+   */
+  public void downloadExtraFanarts(List<String> fanarts) {
+    // init/delete old fanarts
+    extraFanarts.clear();
+
+    // do not create extrafanarts folder, if no extrafanarts are selected
+    if (fanarts.size() == 0) {
+      return;
+    }
+
+    try {
+      String path = getPath() + File.separator + "extrafanarts";
+      File folder = new File(path);
+      if (folder.exists()) {
+        FileUtils.deleteDirectory(folder);
+      }
+
+      folder.mkdirs();
+
+      // fetch and store images
+      for (int i = 0; i < fanarts.size(); i++) {
+        String url = fanarts.get(i);
+        String providedFiletype = FilenameUtils.getExtension(url);
+        CachedUrl cachedUrl = new CachedUrl(url);
+        FileOutputStream outputStream = new FileOutputStream(path + File.separator + "fanart" + (i + 1) + "." + providedFiletype);
+        InputStream is = cachedUrl.getInputStream();
+        IOUtils.copy(is, outputStream);
+        outputStream.close();
+        is.close();
+      }
+    }
+    catch (IOException e) {
+      LOGGER.warn("download extrafanarts", e);
+    }
+  }
+
+  /**
+   * Write extra images.
+   * 
+   * @param extrathumbs
+   *          the extrathumbs
+   * @param extrafanart
+   *          the extrafanart
+   */
+  public void writeExtraImages(boolean extrathumbs, boolean extrafanart) {
+    // get images in thread
+    MovieExtraImageFetcher task = new MovieExtraImageFetcher(this, false, true);
+    Globals.executor.execute(task);
   }
 
   /**

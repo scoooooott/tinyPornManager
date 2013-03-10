@@ -225,6 +225,9 @@ public class MovieEditor extends JDialog {
   /** The extrathumbs. */
   private List<String>       extrathumbs          = new ArrayList<String>();
 
+  /** The extrafanarts. */
+  private List<String>       extrafanarts         = new ArrayList<String>();
+
   /** The cb movie set. */
   private JComboBox          cbMovieSet;
 
@@ -306,7 +309,7 @@ public class MovieEditor extends JDialog {
       lblPoster.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          MovieImageChooser dialog = new MovieImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster, null);
+          MovieImageChooser dialog = new MovieImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster, null, null);
           dialog.setVisible(true);
         }
       });
@@ -466,7 +469,8 @@ public class MovieEditor extends JDialog {
       lblFanart.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          MovieImageChooser dialog = new MovieImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart, extrathumbs);
+          MovieImageChooser dialog = new MovieImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart,
+              extrathumbs, extrafanarts);
           dialog.setVisible(true);
         }
       });
@@ -709,6 +713,7 @@ public class MovieEditor extends JDialog {
       }
 
       extrathumbs.addAll(movieToEdit.getExtraThumbs());
+      extrafanarts.addAll(movieToEdit.getExtraFanarts());
 
       cbCertification.setSelectedItem(movie.getCertification());
 
@@ -818,6 +823,14 @@ public class MovieEditor extends JDialog {
       if (extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
           || !movieToEdit.getExtraThumbs().containsAll(extrathumbs)) {
         movieToEdit.downloadExtraThumbs(extrathumbs);
+        movieToEdit.writeExtraImages(true, false);
+      }
+
+      // set extrafanarts
+      if (extrafanarts.size() != movieToEdit.getExtraFanarts().size() || !extrafanarts.containsAll(movieToEdit.getExtraFanarts())
+          || !movieToEdit.getExtraFanarts().containsAll(extrafanarts)) {
+        movieToEdit.downloadExtraFanarts(extrafanarts);
+        movieToEdit.writeExtraImages(false, true);
       }
 
       movieToEdit.setDirector(tfDirector.getText());

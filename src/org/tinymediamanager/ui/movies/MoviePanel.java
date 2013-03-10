@@ -60,7 +60,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieRenamer;
+import org.tinymediamanager.core.movie.MovieRenameTask;
 import org.tinymediamanager.core.movie.MovieScrapeTask;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.ui.BorderCellRenderer;
@@ -144,7 +144,10 @@ public class MoviePanel extends JPanel {
   private JProgressBar           progressBar;
 
   /** The scrape task. */
-  private MovieScrapeTask        scrapeTask;
+  private MovieScrapeTask        scrapeTask                   = null;
+
+  /** The rename task. */
+  private MovieRenameTask        renameTask                   = null;
 
   /** The button cancelScraper. */
   private JButton                btnCancelScraper;
@@ -373,8 +376,13 @@ public class MoviePanel extends JPanel {
     btnCancelScraper.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        // scrapeTask.cancel(false);
-        scrapeTask.cancel();
+        if (scrapeTask != null && !scrapeTask.isDone()) {
+          scrapeTask.cancel();
+        }
+
+        if (renameTask != null && !renameTask.isDone()) {
+          renameTask.cancel();
+        }
       }
     });
     progressBar.setVisible(false);
@@ -908,29 +916,11 @@ public class MoviePanel extends JPanel {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      // check if renaming options are set
-      // removed; empty values are now skipped in renamer directly
-      // if (StringUtils.isEmpty(Globals.settings.getMovieRenamerPathname()) ||
-      // StringUtils.isEmpty(Globals.settings.getMovieRenamerFilename())) {
-      // JOptionPane.showMessageDialog(null, "renaming options are not set");
-      // return;
-      // }
-      // check is renaming options make sense
-      // if (!Globals.settings.getMovieRenamerPathname().contains("$") ||
-      // !Globals.settings.getMovieRenamerFilename().contains("$")) {
-      // JOptionPane.showMessageDialog(null,
-      // "renaming options without pattern are not allowed");
-      // return;
-      // }
+      List<Movie> selectedMovies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
 
-      // for (int row : table.getSelectedRows()) {
-      // row = table.convertRowIndexToModel(row);
-      // Movie movie = movieList.getMovies().get(row);
-      // MovieRenamer.renameMovie(movie);
-      // }
-      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        MovieRenamer.renameMovie(movie);
-      }
+      // rename
+      renameTask = new MovieRenameTask(selectedMovies, lblProgressAction, progressBar, btnCancelScraper);
+      renameTask.execute();
     }
   }
 

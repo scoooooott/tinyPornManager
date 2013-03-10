@@ -26,6 +26,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
@@ -54,71 +55,85 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieImageSettingsPanel extends JPanel {
 
   /** The settings. */
-  private Settings  settings = Settings.getInstance();
+  private Settings   settings = Settings.getInstance();
 
   /** The cb image tmdb poster size. */
-  private JComboBox cbImageTmdbPosterSize;
+  private JComboBox  cbImageTmdbPosterSize;
 
   /** The cb image tmdb fanart size. */
-  private JComboBox cbImageTmdbFanartSize;
+  private JComboBox  cbImageTmdbFanartSize;
 
   /** The cb image tmdb language. */
-  private JComboBox cbImageTmdbLanguage;
+  private JComboBox  cbImageTmdbLanguage;
 
   /** The cb movie poster filename1. */
-  private JCheckBox cbMoviePosterFilename1;
+  private JCheckBox  cbMoviePosterFilename1;
 
   /** The cb movie poster filename2. */
-  private JCheckBox cbMoviePosterFilename2;
+  private JCheckBox  cbMoviePosterFilename2;
 
   /** The cb movie poster filename3. */
-  private JCheckBox cbMoviePosterFilename3;
+  private JCheckBox  cbMoviePosterFilename3;
 
   /** The cb movie poster filename4. */
-  private JCheckBox cbMoviePosterFilename4;
+  private JCheckBox  cbMoviePosterFilename4;
 
   /** The cb movie poster filename5. */
-  private JCheckBox cbMoviePosterFilename5;
+  private JCheckBox  cbMoviePosterFilename5;
 
   /** The cb movie poster filename6. */
-  private JCheckBox cbMoviePosterFilename6;
+  private JCheckBox  cbMoviePosterFilename6;
 
   /** The cb movie poster filename7. */
-  private JCheckBox cbMoviePosterFilename7;
+  private JCheckBox  cbMoviePosterFilename7;
 
   /** The cb movie fanart filename1. */
-  private JCheckBox cbMovieFanartFilename1;
+  private JCheckBox  cbMovieFanartFilename1;
 
   /** The cb movie fanart filename2. */
-  private JCheckBox cbMovieFanartFilename2;
+  private JCheckBox  cbMovieFanartFilename2;
 
   /** The cb movie poster filename8. */
-  private JCheckBox cbMoviePosterFilename8;
+  private JCheckBox  cbMoviePosterFilename8;
 
   /** The chckbx fanarttv. */
-  private JCheckBox chckbxFanarttv;
+  private JCheckBox  chckbxFanarttv;
 
   /** The chckbx the movie database. */
-  private JCheckBox chckbxTheMovieDatabase;
+  private JCheckBox  chckbxTheMovieDatabase;
 
   /** The lbl attention fanart tv. */
-  private JLabel    lblAttentionFanartTv;
+  private JLabel     lblAttentionFanartTv;
 
   /** The lbl info1. */
-  private JLabel    lblInfo1;
+  private JLabel     lblInfo1;
 
   /** The lbl info2. */
-  private JLabel    lblInfo2;
+  private JLabel     lblInfo2;
 
   /** The lbl info3. */
-  private JLabel    lblInfo3;
+  private JLabel     lblInfo3;
 
   /** The panel actor thumbs. */
-  private JPanel    panelActorThumbs;
+  private JPanel     panelActorThumbs;
 
   /** The cb actor images. */
-  private JCheckBox cbActorImages;
-  private JTextPane tpFileNamingHint;
+  private JCheckBox  cbActorImages;
+
+  /** The tp file naming hint. */
+  private JTextPane  tpFileNamingHint;
+
+  /** The chckbx enable extrathumbs. */
+  private JCheckBox  chckbxEnableExtrathumbs;
+
+  /** The chckbx enable extrafanart. */
+  private JCheckBox  chckbxEnableExtrafanart;
+
+  /** The separator. */
+  private JSeparator separator;
+
+  /** The separator_1. */
+  private JSeparator separator_1;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -134,9 +149,11 @@ public class MovieImageSettingsPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSource = new JLabel("Source");
@@ -154,9 +171,12 @@ public class MovieImageSettingsPanel extends JPanel {
     lblAttentionFanartTv.setFont(new Font("Dialog", Font.PLAIN, 10));
     panelMovieImages.add(lblAttentionFanartTv, "6, 5, 5, 1");
 
+    separator = new JSeparator();
+    panelMovieImages.add(separator, "1, 7, 10, 1");
+
     JPanel panelMovieImagesTmdb = new JPanel();
     panelMovieImagesTmdb.setBorder(new TitledBorder(null, "The Movie Database", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelMovieImages.add(panelMovieImagesTmdb, "2, 7, 5, 1, fill, fill");
+    panelMovieImages.add(panelMovieImagesTmdb, "2, 9, 5, 1, fill, fill");
     panelMovieImagesTmdb.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
@@ -181,65 +201,74 @@ public class MovieImageSettingsPanel extends JPanel {
     panelMovieImagesTmdb.add(cbImageTmdbFanartSize, "4, 6, fill, default");
 
     JLabel lblPosterFilename = new JLabel("Poster file naming");
-    panelMovieImages.add(lblPosterFilename, "2, 9");
+    panelMovieImages.add(lblPosterFilename, "2, 11");
 
     cbMoviePosterFilename1 = new JCheckBox("<movie filename>.tbn");
-    panelMovieImages.add(cbMoviePosterFilename1, "6, 9");
+    panelMovieImages.add(cbMoviePosterFilename1, "6, 11");
 
     lblInfo1 = new JLabel("");
     lblInfo1.setToolTipText(".tbn is deprecated and will be removed soon");
     lblInfo1.setIcon(new ImageIcon(MovieImageSettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
-    panelMovieImages.add(lblInfo1, "4, 9");
+    panelMovieImages.add(lblInfo1, "4, 11");
 
     cbMoviePosterFilename4 = new JCheckBox("poster.jpg");
-    panelMovieImages.add(cbMoviePosterFilename4, "10, 9");
+    panelMovieImages.add(cbMoviePosterFilename4, "10, 11");
 
     cbMoviePosterFilename7 = new JCheckBox("<movie filename>.jpg");
-    panelMovieImages.add(cbMoviePosterFilename7, "6, 10");
+    panelMovieImages.add(cbMoviePosterFilename7, "6, 12");
 
     lblInfo2 = new JLabel("");
     lblInfo2.setToolTipText(".tbn is deprecated and will be removed soon");
     lblInfo2.setIcon(new ImageIcon(MovieImageSettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
-    panelMovieImages.add(lblInfo2, "8, 10");
+    panelMovieImages.add(lblInfo2, "8, 12");
 
     cbMoviePosterFilename5 = new JCheckBox("poster.tbn");
-    panelMovieImages.add(cbMoviePosterFilename5, "10, 10");
+    panelMovieImages.add(cbMoviePosterFilename5, "10, 12");
 
     cbMoviePosterFilename8 = new JCheckBox("<movie filename>-poster.jpg");
-    panelMovieImages.add(cbMoviePosterFilename8, "6, 11");
+    panelMovieImages.add(cbMoviePosterFilename8, "6, 13");
 
     cbMoviePosterFilename6 = new JCheckBox("folder.jpg");
-    panelMovieImages.add(cbMoviePosterFilename6, "10, 11");
+    panelMovieImages.add(cbMoviePosterFilename6, "10, 13");
 
     cbMoviePosterFilename2 = new JCheckBox("movie.jpg");
-    panelMovieImages.add(cbMoviePosterFilename2, "6, 12");
+    panelMovieImages.add(cbMoviePosterFilename2, "6, 14");
 
     lblInfo3 = new JLabel("");
     lblInfo3.setToolTipText(".tbn is deprecated and will be removed soon");
     lblInfo3.setIcon(new ImageIcon(MovieImageSettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
-    panelMovieImages.add(lblInfo3, "8, 12");
+    panelMovieImages.add(lblInfo3, "8, 14");
 
     cbMoviePosterFilename3 = new JCheckBox("movie.tbn");
-    panelMovieImages.add(cbMoviePosterFilename3, "10, 12");
+    panelMovieImages.add(cbMoviePosterFilename3, "10, 14");
 
     JLabel lblFanartFileNaming = new JLabel("Fanart file naming");
-    panelMovieImages.add(lblFanartFileNaming, "2, 14");
+    panelMovieImages.add(lblFanartFileNaming, "2, 16");
 
     cbMovieFanartFilename1 = new JCheckBox("<movie filename>-fanart.jpg");
-    panelMovieImages.add(cbMovieFanartFilename1, "6, 14");
+    panelMovieImages.add(cbMovieFanartFilename1, "6, 16");
 
     cbMovieFanartFilename2 = new JCheckBox("fanart.jpg");
-    panelMovieImages.add(cbMovieFanartFilename2, "6, 15");
+    panelMovieImages.add(cbMovieFanartFilename2, "6, 17");
 
     tpFileNamingHint = new JTextPane();
     tpFileNamingHint
         .setText("Note: every file naming option ending with .jpg will alternatively store a png. It depends on the source of the image file");
     tpFileNamingHint.setBackground(UIManager.getColor("Panel.background"));
     tpFileNamingHint.setFont(new Font("Dialog", Font.PLAIN, 10));
-    panelMovieImages.add(tpFileNamingHint, "2, 17, 9, 1, fill, fill");
+    panelMovieImages.add(tpFileNamingHint, "2, 19, 9, 1, fill, fill");
+
+    separator_1 = new JSeparator();
+    panelMovieImages.add(separator_1, "1, 21, 10, 1");
+
+    chckbxEnableExtrathumbs = new JCheckBox("Enable extrathumbs");
+    panelMovieImages.add(chckbxEnableExtrathumbs, "2, 23");
+
+    chckbxEnableExtrafanart = new JCheckBox("Enable extrafanart");
+    panelMovieImages.add(chckbxEnableExtrafanart, "2, 25");
 
     panelActorThumbs = new JPanel();
-    panelActorThumbs.setBorder(new TitledBorder(new LineBorder(new Color(99, 130, 191)), "Actor Images", TitledBorder.LEADING, TitledBorder.TOP,
+    panelActorThumbs.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Actor Images", TitledBorder.LEADING, TitledBorder.TOP,
         null, null));
     add(panelActorThumbs, "2, 4");
     panelActorThumbs.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
@@ -354,9 +383,6 @@ public class MovieImageSettingsPanel extends JPanel {
     }
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<Settings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("imageTmdbPosterSize");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
@@ -389,5 +415,15 @@ public class MovieImageSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_2, cbActorImages, jCheckBoxBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("imageExtraFanart");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_3, chckbxEnableExtrafanart, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("imageExtraThumbs");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_4, chckbxEnableExtrathumbs, jCheckBoxBeanProperty);
+    autoBinding_7.bind();
   }
 }
