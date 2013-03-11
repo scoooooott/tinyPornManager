@@ -179,7 +179,7 @@ public class MovieToMpNfoConnector {
 
     // certification
     if (movie.getCertification() != null) {
-      mp.setMpaa(movie.getCertification().toString());
+      mp.setMpaa(Certification.generateCertificationStringWithAlternateNames(movie.getCertification()));
     }
 
     // filename and path

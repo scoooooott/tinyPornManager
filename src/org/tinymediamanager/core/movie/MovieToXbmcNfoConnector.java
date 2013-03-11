@@ -265,8 +265,8 @@ public class MovieToXbmcNfoConnector {
 
     // certifications
     if (movie.getCertification() != null) {
-      xbmc.setMpaa(movie.getCertification().toString());
-      xbmc.setCertifications(movie.getCertification().toString());
+      xbmc.setMpaa(Certification.generateCertificationStringWithAlternateNames(movie.getCertification()));
+      xbmc.setCertifications(Certification.generateCertificationStringWithAlternateNames(movie.getCertification()));
     }
 
     // // filename and path

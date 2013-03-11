@@ -27,8 +27,9 @@ import org.tinymediamanager.Globals;
 public enum Certification {
 
   /** US certifications. */
-  US_G(CountryCode.US, "G", new String[] { "G" }), US_PG(CountryCode.US, "PG", new String[] { "PG" }), US_PG13(CountryCode.US, "PG-13",
-      new String[] { "PG-13" }), US_R(CountryCode.US, "R", new String[] { "R" }), US_NC17(CountryCode.US, "NC-17", new String[] { "NC-17" }),
+  US_G(CountryCode.US, "G", new String[] { "G", "Rated G" }), US_PG(CountryCode.US, "PG", new String[] { "PG", "Rated PG" }), US_PG13(CountryCode.US,
+      "PG-13", new String[] { "PG-13", "Rated PG-13" }), US_R(CountryCode.US, "R", new String[] { "R", "Rated R" }), US_NC17(CountryCode.US, "NC-17",
+      new String[] { "NC-17", "Rated NC-17" }),
 
   /** DE certifications. */
   DE_FSK0(CountryCode.DE, "FSK 0", new String[] { "FSK 0", "FSK0", "0" }), DE_FSK6(CountryCode.DE, "FSK 6", new String[] { "FSK 6", "FSK6", "6",
@@ -47,7 +48,7 @@ public enum Certification {
       CountryCode.RU, "18+", new String[] { "18+" }),
 
   /** NL certifications. */
-  NL_AL(CountryCode.NL, "NL", new String[] { "AL" }), NL_6(CountryCode.NL, "6", new String[] { "6" }),
+  NL_AL(CountryCode.NL, "AL", new String[] { "AL" }), NL_6(CountryCode.NL, "6", new String[] { "6" }),
   NL_9(CountryCode.NL, "9", new String[] { "9" }), NL_12(CountryCode.NL, "12", new String[] { "12" }), NL_16(CountryCode.NL, "16",
       new String[] { "16" }),
 
@@ -182,17 +183,16 @@ public enum Certification {
     this.possibleNotations = possibleNotations;
   }
 
-  /**
-   * Gets the country.
-   * 
-   * @return the country
-   */
   public CountryCode getCountry() {
     return this.country;
   }
 
   public String getName() {
     return this.name;
+  }
+
+  public String[] getPossibleNotations() {
+    return possibleNotations;
   }
 
   /**
@@ -250,6 +250,29 @@ public enum Certification {
       if (c.getCountry() == CountryCode.GB) {
         // GB is official, but skins often parse UK
         certstring += " / UK:" + c.getName();
+      }
+    }
+    return certstring.substring(3).trim(); // strip off first slash
+  }
+
+  /**
+   * generates a certification string for country alpha2 (including all
+   * different variants); so skins parsing with substr will find them :)<br>
+   * eg: "DE:FSK 16 / DE:FSK16 / DE:16 / DE:ab 16"
+   * 
+   * @param country
+   *          countrycode
+   * @return certification string like "US:R / UK:15 / SW:15"
+   */
+  public static String generateCertificationStringWithAlternateNames(Certification cert) {
+    if (cert == null) {
+      return "";
+    }
+    String certstring = "";
+    for (String notation : cert.getPossibleNotations()) {
+      certstring += " / " + cert.getCountry().getAlpha2() + ":" + notation;
+      if (cert.getCountry() == CountryCode.GB) {
+        certstring += " / UK:" + notation;
       }
     }
     return certstring.substring(3).trim(); // strip off first slash
