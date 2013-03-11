@@ -193,7 +193,9 @@ public class MovieRenamer {
         try {
           // FileUtils.moveDirectory(srcDir, destDir);
           ok = moveDirectorySafe(srcDir, destDir);
-          movie.setPath(newPathname);
+          if (ok) {
+            movie.setPath(newPathname);
+          }
         }
         catch (IOException e) {
           LOGGER.error("error moving folder: ", e);
