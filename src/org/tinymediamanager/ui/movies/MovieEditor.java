@@ -822,33 +822,21 @@ public class MovieEditor extends JDialog {
       // set extrathumbs
       if (extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
           || !movieToEdit.getExtraThumbs().containsAll(extrathumbs)) {
-        movieToEdit.downloadExtraThumbs(extrathumbs);
+        // movieToEdit.downloadExtraThumbs(extrathumbs);
         movieToEdit.writeExtraImages(true, false);
       }
 
       // set extrafanarts
       if (extrafanarts.size() != movieToEdit.getExtraFanarts().size() || !extrafanarts.containsAll(movieToEdit.getExtraFanarts())
           || !movieToEdit.getExtraFanarts().containsAll(extrafanarts)) {
-        movieToEdit.downloadExtraFanarts(extrafanarts);
+        // movieToEdit.downloadExtraFanarts(extrafanarts);
         movieToEdit.writeExtraImages(false, true);
       }
 
       movieToEdit.setDirector(tfDirector.getText());
       movieToEdit.setWriter(tfWriter.getText());
       movieToEdit.setProductionCompany(tfProductionCompanies.getText());
-
-      // two way sync of actors
-      // movieToEdit.removeAllActors();
-      // for (MovieCast actor : cast) {
-      // movieToEdit.addToCast(actor);
-      // }
       movieToEdit.setActors(cast);
-
-      // two way sync of genres (so selection won't get killed
-      // movieToEdit.removeAllGenres();
-      // for (MediaGenres genre : genres) {
-      // movieToEdit.addGenre(genre);
-      // }
       movieToEdit.setGenres(genres);
 
       movieToEdit.removeAllTrailers();
@@ -856,13 +844,7 @@ public class MovieEditor extends JDialog {
         movieToEdit.addTrailer(trailer);
       }
 
-      // two way sync of tags
-      // movieToEdit.clearTags();
-      // for (String tag : tags) {
-      // movieToEdit.addToTags(tag);
-      // }
       movieToEdit.setTags(tags);
-
       movieToEdit.setDateAdded((Date) spDateAdded.getValue());
 
       // movie set

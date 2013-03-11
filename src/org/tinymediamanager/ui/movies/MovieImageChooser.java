@@ -289,38 +289,67 @@ public class MovieImageChooser extends JDialog {
 
       // extrathumbs
       if (type == ImageType.FANART && Globals.settings.isImageExtraThumbs()) {
-        extraThumbs.clear();
-        // get extrathumbs
-        for (JToggleButton button : buttons) {
-          Object clientProperty = button.getClientProperty("MediaArtworkExtrathumb");
-          if (clientProperty instanceof JCheckBox) {
-            JCheckBox chkbx = (JCheckBox) clientProperty;
-            if (chkbx.isSelected()) {
-              clientProperty = button.getClientProperty("MediaArtwork");
-              if (clientProperty instanceof MediaArtwork) {
-                artwork = (MediaArtwork) clientProperty;
-                clientProperty = button.getClientProperty("MediaArtworkSize");
-                // try to get the size
-                if (clientProperty instanceof JComboBox) {
-                  JComboBox cb = (JComboBox) clientProperty;
-                  ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
+        processExtraThumbs();
+      }
 
-                  if (size != null) {
-                    extraThumbs.add(size.getUrl());
-                  }
-                  else {
-                    extraThumbs.add(artwork.getDefaultUrl());
-                  }
-                }
-              }
-            }
-          }
-        }
+      // extrafanart
+      if (type == ImageType.FANART && Globals.settings.isImageExtraFanart()) {
+        processExtraFanart();
       }
 
       task.cancel(true);
       setVisible(false);
       dispose();
+    }
+
+    /**
+     * Process extra thumbs.
+     */
+    private void processExtraThumbs() {
+      extraThumbs.clear();
+      // get extrathumbs
+      for (JToggleButton button : buttons) {
+        if (button.getClientProperty("MediaArtworkExtrathumb") instanceof JCheckBox
+            && button.getClientProperty("MediaArtwork") instanceof MediaArtwork && button.getClientProperty("MediaArtworkSize") instanceof JComboBox) {
+          JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrathumb");
+          if (chkbx.isSelected()) {
+            MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
+            JComboBox cb = (JComboBox) button.getClientProperty("MediaArtworkSize");
+            ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
+            if (size != null) {
+              extraThumbs.add(size.getUrl());
+            }
+            else {
+              extraThumbs.add(artwork.getDefaultUrl());
+            }
+          }
+        }
+      }
+    }
+
+    /**
+     * Process extra fanart.
+     */
+    private void processExtraFanart() {
+      extraFanarts.clear();
+      // get extrafanart
+      for (JToggleButton button : buttons) {
+        if (button.getClientProperty("MediaArtworkExtrafanart") instanceof JCheckBox
+            && button.getClientProperty("MediaArtwork") instanceof MediaArtwork && button.getClientProperty("MediaArtworkSize") instanceof JComboBox) {
+          JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrafanart");
+          if (chkbx.isSelected()) {
+            MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
+            JComboBox cb = (JComboBox) button.getClientProperty("MediaArtworkSize");
+            ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
+            if (size != null) {
+              extraFanarts.add(size.getUrl());
+            }
+            else {
+              extraFanarts.add(artwork.getDefaultUrl());
+            }
+          }
+        }
+      }
     }
   }
 
@@ -361,15 +390,15 @@ public class MovieImageChooser extends JDialog {
 
     switch (type) {
       case FANART:
-        gbl.columnWidths = new int[] { 300 };
-        gbl.rowHeights = new int[] { 150 };
+        gbl.columnWidths = new int[] { 130 };
+        gbl.rowHeights = new int[] { 180 };
         size = ImageLabel.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
       case POSTER:
       default:
-        gbl.columnWidths = new int[] { 150 };
-        gbl.rowHeights = new int[] { 250 };
+        gbl.columnWidths = new int[] { 180 };
+        gbl.rowHeights = new int[] { 270 };
         size = ImageLabel.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
@@ -390,6 +419,7 @@ public class MovieImageChooser extends JDialog {
     JToggleButton button = new JToggleButton();
     button.setBackground(Color.white);
     button.setUI(toggleButtonUI);
+    button.setMargin(new Insets(10, 10, 10, 10));
     BufferedImage resizedImage = new BufferedImage(size.x, size.y, imageType);
     Graphics2D g = resizedImage.createGraphics();
     g.drawImage(originalImage, 0, 0, size.x, size.y, null);
@@ -405,7 +435,7 @@ public class MovieImageChooser extends JDialog {
     gbc = new GridBagConstraints();
     gbc.gridx = 0;
     gbc.gridy = 1;
-    gbc.anchor = GridBagConstraints.WEST;
+    gbc.anchor = GridBagConstraints.LAST_LINE_START;
     gbc.insets = new Insets(0, 5, 0, 0);
     JComboBox cb = new JComboBox(artwork.getImageSizes().toArray());
     button.putClientProperty("MediaArtworkSize", cb);
@@ -414,10 +444,17 @@ public class MovieImageChooser extends JDialog {
     // should we provide an option for extrathumbs
     if (type == ImageType.FANART && Globals.settings.isImageExtraThumbs()) {
       gbc = new GridBagConstraints();
+      gbc.gridx = 1;
+      gbc.gridy = 1;
+      gbc.anchor = GridBagConstraints.LINE_END;
+      JLabel label = new JLabel("Extrathumb");
+      imagePanel.add(label, gbc);
+
+      gbc = new GridBagConstraints();
       gbc.gridx = 2;
       gbc.gridy = 1;
-      gbc.anchor = GridBagConstraints.EAST;
-      JCheckBox chkbx = new JCheckBox("Extrathumb");
+      gbc.anchor = GridBagConstraints.LINE_END;
+      JCheckBox chkbx = new JCheckBox();
       button.putClientProperty("MediaArtworkExtrathumb", chkbx);
       imagePanel.add(chkbx, gbc);
     }
@@ -425,10 +462,17 @@ public class MovieImageChooser extends JDialog {
     // should we provide an option for extrafanart
     if (type == ImageType.FANART && Globals.settings.isImageExtraFanart()) {
       gbc = new GridBagConstraints();
+      gbc.gridx = 1;
+      gbc.gridy = Globals.settings.isImageExtraThumbs() ? 2 : 1;
+      gbc.anchor = GridBagConstraints.LINE_END;
+      JLabel label = new JLabel("Extrafanart");
+      imagePanel.add(label, gbc);
+
+      gbc = new GridBagConstraints();
       gbc.gridx = 2;
-      gbc.gridy = 2;
-      gbc.anchor = GridBagConstraints.EAST;
-      JCheckBox chkbx = new JCheckBox("Extrafanart");
+      gbc.gridy = Globals.settings.isImageExtraThumbs() ? 2 : 1;
+      gbc.anchor = GridBagConstraints.LINE_END;
+      JCheckBox chkbx = new JCheckBox();
       button.putClientProperty("MediaArtworkExtrafanart", chkbx);
       imagePanel.add(chkbx, gbc);
     }
@@ -436,7 +480,6 @@ public class MovieImageChooser extends JDialog {
     panelImages.add(imagePanel);
     panelImages.validate();
     panelImages.getParent().validate();
-
   }
 
   /**
