@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.Utils;
@@ -1346,9 +1347,17 @@ public class Movie extends AbstractModelObject {
       for (int i = 0; i < thumbs.size(); i++) {
         String url = thumbs.get(i);
         String providedFiletype = FilenameUtils.getExtension(url);
-        CachedUrl cachedUrl = new CachedUrl(url);
+
         FileOutputStream outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + "." + providedFiletype);
-        InputStream is = cachedUrl.getInputStream();
+        InputStream is = null;
+        if (Globals.settings.isImageExtraThumbsResize() && Globals.settings.getImageExtraThumbsSize() > 0) {
+          is = ImageCache.scaleImage(url, Globals.settings.getImageExtraThumbsSize());
+        }
+        else {
+          CachedUrl cachedUrl = new CachedUrl(url);
+          is = cachedUrl.getInputStream();
+        }
+
         IOUtils.copy(is, outputStream);
         outputStream.close();
         is.close();
@@ -1429,7 +1438,7 @@ public class Movie extends AbstractModelObject {
    */
   public void writeExtraImages(boolean extrathumbs, boolean extrafanart) {
     // get images in thread
-    MovieExtraImageFetcher task = new MovieExtraImageFetcher(this, false, true);
+    MovieExtraImageFetcher task = new MovieExtraImageFetcher(this, extrafanart, extrathumbs);
     Globals.executor.execute(task);
   }
 

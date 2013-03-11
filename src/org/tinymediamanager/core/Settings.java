@@ -114,6 +114,12 @@ public class Settings extends AbstractModelObject {
   /** The Constant IMAGE_EXTRATHUMBS. */
   private final static String           IMAGE_EXTRATHUMBS           = "imageExtraThumbs";
 
+  /** The Constant IMAGE_EXTRATHUMBS_RESIZE. */
+  private final static String           IMAGE_EXTRATHUMBS_RESIZE    = "imageExtraThumbsResize";
+
+  /** The Constant IMAGE_EXTRATHUMBS_SIZE. */
+  private final static String           IMAGE_EXTRATHUMBS_SIZE      = "imageExtraThumbsSize";
+
   /** The Constant IMAGE_EXTRAFANART. */
   private final static String           IMAGE_EXTRAFANART           = "imageExtraFanart";
 
@@ -236,6 +242,12 @@ public class Settings extends AbstractModelObject {
 
   /** The image extra thumbs. */
   private boolean                       imageExtraThumbs            = false;
+
+  /** The image extra thumbs resize. */
+  private boolean                       imageExtraThumbsResize      = true;
+
+  /** The image extra thumbs size. */
+  private int                           imageExtraThumbsSize        = 300;
 
   /** The image extra fanart. */
   private boolean                       imageExtraFanart            = false;
@@ -985,6 +997,48 @@ public class Settings extends AbstractModelObject {
    */
   public boolean isImageExtraThumbs() {
     return imageExtraThumbs;
+  }
+
+  /**
+   * Checks if is image extra thumbs resize.
+   * 
+   * @return true, if is image extra thumbs resize
+   */
+  public boolean isImageExtraThumbsResize() {
+    return imageExtraThumbsResize;
+  }
+
+  /**
+   * Gets the image extra thumbs size.
+   * 
+   * @return the image extra thumbs size
+   */
+  public int getImageExtraThumbsSize() {
+    return imageExtraThumbsSize;
+  }
+
+  /**
+   * Sets the image extra thumbs resize.
+   * 
+   * @param newValue
+   *          the new image extra thumbs resize
+   */
+  public void setImageExtraThumbsResize(boolean newValue) {
+    boolean oldValue = this.imageExtraThumbsResize;
+    this.imageExtraThumbsResize = newValue;
+    firePropertyChange(IMAGE_EXTRATHUMBS_RESIZE, oldValue, newValue);
+  }
+
+  /**
+   * Sets the image extra thumbs size.
+   * 
+   * @param newValue
+   *          the new image extra thumbs size
+   */
+  public void setImageExtraThumbsSize(int newValue) {
+    int oldValue = this.imageExtraThumbsSize;
+    this.imageExtraThumbsSize = newValue;
+    firePropertyChange(IMAGE_EXTRATHUMBS_SIZE, oldValue, newValue);
   }
 
   /**

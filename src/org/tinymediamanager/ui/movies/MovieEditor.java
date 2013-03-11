@@ -823,6 +823,7 @@ public class MovieEditor extends JDialog {
       if (extrathumbs.size() != movieToEdit.getExtraThumbs().size() || !extrathumbs.containsAll(movieToEdit.getExtraThumbs())
           || !movieToEdit.getExtraThumbs().containsAll(extrathumbs)) {
         // movieToEdit.downloadExtraThumbs(extrathumbs);
+        movieToEdit.setExtraThumbs(extrathumbs);
         movieToEdit.writeExtraImages(true, false);
       }
 
@@ -830,6 +831,7 @@ public class MovieEditor extends JDialog {
       if (extrafanarts.size() != movieToEdit.getExtraFanarts().size() || !extrafanarts.containsAll(movieToEdit.getExtraFanarts())
           || !movieToEdit.getExtraFanarts().containsAll(extrafanarts)) {
         // movieToEdit.downloadExtraFanarts(extrafanarts);
+        movieToEdit.setExtraFanarts(extrafanarts);
         movieToEdit.writeExtraImages(false, true);
       }
 

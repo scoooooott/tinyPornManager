@@ -15,11 +15,30 @@
  */
 package org.tinymediamanager.core;
 
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
+import org.tinymediamanager.scraper.util.CachedUrl;
+
+import com.bric.image.pixel.Scaling;
 
 /**
  * @author manuel
@@ -68,4 +87,46 @@ public class ImageCache {
     }
   }
 
+  /**
+   * Scale image to fit in the given width.
+   * 
+   * @param imageUrl
+   *          the image url
+   * @param width
+   *          the width
+   * @return the input stream
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
+  public static InputStream scaleImage(String imageUrl, int width) throws IOException {
+    CachedUrl cachedUrl = new CachedUrl(imageUrl);
+    Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+    BufferedImage originalImage = com.bric.image.ImageLoader.createImage(image);
+
+    Point size = new Point();
+    size.x = width;
+    size.y = size.x * originalImage.getHeight() / originalImage.getWidth();
+
+    BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
+
+    // convert to rgb
+    BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+    ColorConvertOp xformOp = new ColorConvertOp(null);
+    xformOp.filter(scaledImage, rgb);
+
+    ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+    ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
+    jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+    jpgWrtPrm.setCompressionQuality(0.8f);
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageOutputStream output = ImageIO.createImageOutputStream(baos);
+    imgWrtr.setOutput(output);
+    IIOImage outputImage = new IIOImage(rgb, null, null);
+    imgWrtr.write(null, outputImage, jpgWrtPrm);
+    imgWrtr.dispose();
+
+    return new ByteArrayInputStream(baos.toByteArray());
+  }
 }

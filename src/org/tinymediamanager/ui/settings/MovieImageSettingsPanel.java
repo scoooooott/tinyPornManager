@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
@@ -134,6 +135,8 @@ public class MovieImageSettingsPanel extends JPanel {
 
   /** The separator_1. */
   private JSeparator separator_1;
+  private JCheckBox  chckbxResizeExtrathumbsTo;
+  private JSpinner   spExtrathumbWidth;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -263,6 +266,12 @@ public class MovieImageSettingsPanel extends JPanel {
 
     chckbxEnableExtrathumbs = new JCheckBox("Enable extrathumbs");
     panelMovieImages.add(chckbxEnableExtrathumbs, "2, 23");
+
+    chckbxResizeExtrathumbsTo = new JCheckBox("Resize extrathumbs to (width)");
+    panelMovieImages.add(chckbxResizeExtrathumbsTo, "6, 23");
+
+    spExtrathumbWidth = new JSpinner();
+    panelMovieImages.add(spExtrathumbWidth, "10, 23");
 
     chckbxEnableExtrafanart = new JCheckBox("Enable extrafanart");
     panelMovieImages.add(chckbxEnableExtrafanart, "2, 25");
@@ -425,5 +434,26 @@ public class MovieImageSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, chckbxEnableExtrathumbs, jCheckBoxBeanProperty);
     autoBinding_7.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+        chckbxResizeExtrathumbsTo, jCheckBoxBeanProperty_1, chckbxEnableExtrathumbs, jCheckBoxBeanProperty);
+    autoBinding_8.bind();
+    //
+    BeanProperty<JSpinner, Boolean> jSpinnerBeanProperty = BeanProperty.create("enabled");
+    AutoBinding<JSpinner, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, spExtrathumbWidth,
+        jSpinnerBeanProperty, chckbxResizeExtrathumbsTo, jCheckBoxBeanProperty);
+    autoBinding_9.bind();
+    //
+    BeanProperty<Settings, Integer> settingsBeanProperty_8 = BeanProperty.create("imageExtraThumbsSize");
+    BeanProperty<JSpinner, Object> jSpinnerBeanProperty_1 = BeanProperty.create("value");
+    AutoBinding<Settings, Integer, JSpinner, Object> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_8, spExtrathumbWidth, jSpinnerBeanProperty_1);
+    autoBinding_10.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_9 = BeanProperty.create("imageExtraThumbsResize");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_9, chckbxResizeExtrathumbsTo, jCheckBoxBeanProperty);
+    autoBinding_11.bind();
   }
 }
