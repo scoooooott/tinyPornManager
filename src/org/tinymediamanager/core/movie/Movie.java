@@ -1403,7 +1403,7 @@ public class Movie extends AbstractModelObject {
     }
 
     try {
-      String path = getPath() + File.separator + "extrafanarts";
+      String path = getPath() + File.separator + "extrafanart";
       File folder = new File(path);
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
