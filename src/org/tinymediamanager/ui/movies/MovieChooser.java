@@ -423,7 +423,7 @@ public class MovieChooser extends JDialog implements ActionListener {
                 // set extrathumbs and extrafanarts
                 movieToScrape.setExtraThumbs(extrathumbs);
                 movieToScrape.setExtraFanarts(extrafanarts);
-                if (extrafanarts.size() > 0 && extrathumbs.size() > 0) {
+                if (extrafanarts.size() > 0 || extrathumbs.size() > 0) {
                   movieToScrape.writeExtraImages(true, true);
                 }
 

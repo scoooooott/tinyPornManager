@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -137,6 +138,10 @@ public class MovieImageSettingsPanel extends JPanel {
   private JSeparator separator_1;
   private JCheckBox  chckbxResizeExtrathumbsTo;
   private JSpinner   spExtrathumbWidth;
+  private JLabel     lblDownload;
+  private JSpinner   spDownloadCountExtrathumbs;
+  private JLabel     lblDownloadCount;
+  private JSpinner   spDownloadCountExtrafanart;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -148,7 +153,7 @@ public class MovieImageSettingsPanel extends JPanel {
     JPanel panelMovieImages = new JPanel();
     panelMovieImages.setBorder(new TitledBorder(null, "Poster and Fanart", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelMovieImages, "2, 2, left, top");
-    panelMovieImages.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+    panelMovieImages.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -157,6 +162,7 @@ public class MovieImageSettingsPanel extends JPanel {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSource = new JLabel("Source");
@@ -271,10 +277,25 @@ public class MovieImageSettingsPanel extends JPanel {
     panelMovieImages.add(chckbxResizeExtrathumbsTo, "6, 23");
 
     spExtrathumbWidth = new JSpinner();
-    panelMovieImages.add(spExtrathumbWidth, "10, 23");
+    spExtrathumbWidth.setPreferredSize(new Dimension(49, 20));
+    panelMovieImages.add(spExtrathumbWidth, "10, 23, left, default");
+
+    lblDownload = new JLabel("Download count");
+    panelMovieImages.add(lblDownload, "2, 25, right, default");
+
+    spDownloadCountExtrathumbs = new JSpinner();
+    spDownloadCountExtrathumbs.setPreferredSize(new Dimension(39, 20));
+    panelMovieImages.add(spDownloadCountExtrathumbs, "6, 25, left, default");
 
     chckbxEnableExtrafanart = new JCheckBox("Enable extrafanart");
-    panelMovieImages.add(chckbxEnableExtrafanart, "2, 25");
+    panelMovieImages.add(chckbxEnableExtrafanart, "2, 27");
+
+    lblDownloadCount = new JLabel("Download count");
+    panelMovieImages.add(lblDownloadCount, "2, 29, right, default");
+
+    spDownloadCountExtrafanart = new JSpinner();
+    spDownloadCountExtrafanart.setPreferredSize(new Dimension(39, 20));
+    panelMovieImages.add(spDownloadCountExtrafanart, "6, 29, left, default");
 
     panelActorThumbs = new JPanel();
     panelActorThumbs.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Actor Images", TitledBorder.LEADING, TitledBorder.TOP,
@@ -455,5 +476,23 @@ public class MovieImageSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, chckbxResizeExtrathumbsTo, jCheckBoxBeanProperty);
     autoBinding_11.bind();
+    //
+    BeanProperty<Settings, Integer> settingsBeanProperty_10 = BeanProperty.create("imageExtraThumbsCount");
+    AutoBinding<Settings, Integer, JSpinner, Object> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_10, spDownloadCountExtrathumbs, jSpinnerBeanProperty_1);
+    autoBinding_12.bind();
+    //
+    BeanProperty<Settings, Integer> settingsBeanProperty_11 = BeanProperty.create("imageExtraFanartCount");
+    AutoBinding<Settings, Integer, JSpinner, Object> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_11, spDownloadCountExtrafanart, jSpinnerBeanProperty_1);
+    autoBinding_13.bind();
+    //
+    AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+        chckbxEnableExtrafanart, jCheckBoxBeanProperty, spDownloadCountExtrafanart, jSpinnerBeanProperty);
+    autoBinding_14.bind();
+    //
+    AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+        chckbxEnableExtrathumbs, jCheckBoxBeanProperty, spDownloadCountExtrathumbs, jSpinnerBeanProperty);
+    autoBinding_15.bind();
   }
 }

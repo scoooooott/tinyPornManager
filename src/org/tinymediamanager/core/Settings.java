@@ -120,8 +120,14 @@ public class Settings extends AbstractModelObject {
   /** The Constant IMAGE_EXTRATHUMBS_SIZE. */
   private final static String           IMAGE_EXTRATHUMBS_SIZE      = "imageExtraThumbsSize";
 
+  /** The Constant IMAGE_EXTRATHUMBS_COUNT. */
+  private final static String           IMAGE_EXTRATHUMBS_COUNT     = "imageExtraThumbsCount";
+
   /** The Constant IMAGE_EXTRAFANART. */
   private final static String           IMAGE_EXTRAFANART           = "imageExtraFanart";
+
+  /** The Constant IMAGE_EXTRAFANART_COUNT. */
+  private final static String           IMAGE_EXTRAFANART_COUNT     = "imageExtraFanartCount";
 
   /** The Constant CERTIFICATION_COUNTRY. */
   private final static String           CERTIFICATION_COUNTRY       = "certificationCountry";
@@ -249,8 +255,14 @@ public class Settings extends AbstractModelObject {
   /** The image extra thumbs size. */
   private int                           imageExtraThumbsSize        = 300;
 
+  /** The image extra thumbs count. */
+  private int                           imageExtraThumbsCount       = 5;
+
   /** The image extra fanart. */
   private boolean                       imageExtraFanart            = false;
+
+  /** The image extra fanart count. */
+  private int                           imageExtraFanartCount       = 5;
 
   /** The country for certification. */
   private CountryCode                   certificationCountry        = CountryCode.US;
@@ -1039,6 +1051,48 @@ public class Settings extends AbstractModelObject {
     int oldValue = this.imageExtraThumbsSize;
     this.imageExtraThumbsSize = newValue;
     firePropertyChange(IMAGE_EXTRATHUMBS_SIZE, oldValue, newValue);
+  }
+
+  /**
+   * Gets the image extra thumbs count.
+   * 
+   * @return the image extra thumbs count
+   */
+  public int getImageExtraThumbsCount() {
+    return imageExtraThumbsCount;
+  }
+
+  /**
+   * Sets the image extra thumbs count.
+   * 
+   * @param newValue
+   *          the new image extra thumbs count
+   */
+  public void setImageExtraThumbsCount(int newValue) {
+    int oldValue = this.imageExtraThumbsCount;
+    this.imageExtraThumbsCount = newValue;
+    firePropertyChange(IMAGE_EXTRATHUMBS_COUNT, oldValue, newValue);
+  }
+
+  /**
+   * Gets the image extra fanart count.
+   * 
+   * @return the image extra fanart count
+   */
+  public int getImageExtraFanartCount() {
+    return imageExtraFanartCount;
+  }
+
+  /**
+   * Sets the image extra fanart count.
+   * 
+   * @param newValue
+   *          the new image extra fanart count
+   */
+  public void setImageExtraFanartCount(int newValue) {
+    int oldValue = this.imageExtraFanartCount;
+    this.imageExtraFanartCount = newValue;
+    firePropertyChange(IMAGE_EXTRAFANART_COUNT, oldValue, newValue);
   }
 
   /**

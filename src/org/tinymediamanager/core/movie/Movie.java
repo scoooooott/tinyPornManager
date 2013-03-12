@@ -1708,6 +1708,39 @@ public class Movie extends AbstractModelObject {
         }
       }
 
+      // extrathumbs
+      List<String> extrathumbs = new ArrayList<String>();
+      if (Globals.settings.isImageExtraThumbs() && Globals.settings.getImageExtraThumbsCount() > 0) {
+        for (MediaArtwork art : artwork) {
+          if (art.getType() == MediaArtworkType.BACKGROUND) {
+            extrathumbs.add(art.getDefaultUrl());
+            if (extrathumbs.size() >= Globals.settings.getImageExtraThumbsCount()) {
+              break;
+            }
+          }
+        }
+        setExtraThumbs(extrathumbs);
+      }
+
+      // extrafanarts
+      List<String> extrafanarts = new ArrayList<String>();
+      if (Globals.settings.isImageExtraFanart() && Globals.settings.getImageExtraFanartCount() > 0) {
+        for (MediaArtwork art : artwork) {
+          if (art.getType() == MediaArtworkType.BACKGROUND) {
+            extrafanarts.add(art.getDefaultUrl());
+            if (extrafanarts.size() >= Globals.settings.getImageExtraFanartCount()) {
+              break;
+            }
+          }
+        }
+        setExtraFanarts(extrafanarts);
+      }
+
+      // download extra images
+      if (extrathumbs.size() > 0 || extrafanarts.size() > 0) {
+        writeExtraImages(true, true);
+      }
+
       // download images
       writeImages(true, true);
       // update DB
