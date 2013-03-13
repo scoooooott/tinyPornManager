@@ -17,8 +17,9 @@ package org.tinymediamanager;
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -33,15 +34,21 @@ import org.tinymediamanager.ui.MainWindow;
 public class Globals {
 
   /** The settings. */
-  public static final Settings        settings = Settings.getInstance();
+  public static final Settings           settings = Settings.getInstance();
 
   /** The emf. */
-  private static EntityManagerFactory emf;
+  private static EntityManagerFactory    emf;
 
   /** The entity manager. */
-  public static EntityManager         entityManager;
+  public static EntityManager            entityManager;
 
-  public static final ExecutorService executor = Executors.newFixedThreadPool(10);
+  // public static final ExecutorService executor = Executors.newFixedThreadPool(10);
+  // see source of newFixedThreadPool
+  public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(1, // min threads 
+                                                      10, // max threads 
+                                                      5, TimeUnit.SECONDS, // time to wait before resizing pool
+                                                      new LinkedBlockingQueue<Runnable>() // our queue
+                                                  );
 
   /**
    * Start database.

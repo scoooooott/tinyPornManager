@@ -24,11 +24,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.URI;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -81,6 +85,8 @@ public class MainWindow extends JFrame {
   private static MainWindow   instance;
 
   private JPanel              panelMovies;
+  private JLabel              statusBar;
+  private Future              statusTask;
 
   /**
    * Create the application.
@@ -178,6 +184,9 @@ public class MainWindow extends JFrame {
     mntmAbout.setText("About");
     // setVisible(true);
 
+    // Globals.executor.execute(new MyStatusbarThread());
+    // use a Future to be able to cancel it
+    statusTask = Globals.executor.submit(new MyStatusbarThread());
   }
 
   /**
@@ -187,14 +196,20 @@ public class MainWindow extends JFrame {
     // set the logo
     setIconImage(Globals.logo);
     setBounds(5, 5, 1100, 727);
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // do nothing, we have our own windowClosing() listener
+    // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), ColumnSpec.decode("1dlu"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), RowSpec.decode("fill:1dlu"), }));
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(425dlu;default):grow"), RowSpec.decode("fill:15dlu:grow"), }));
 
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
     tabbedPane.setTabPlacement(JTabbedPane.LEFT);
     getContentPane().add(tabbedPane, "1, 2, fill, fill");
+
+    statusBar = new JLabel("Status OK");
+    getContentPane().add(statusBar, "1, 3");
 
     panelMovies = new MoviePanel();
     VerticalTextIcon.addTab(tabbedPane, "Movies", panelMovies);
@@ -205,32 +220,77 @@ public class MainWindow extends JFrame {
     JPanel panelSettings = new SettingsPanel();
     VerticalTextIcon.addTab(tabbedPane, "Settings", panelSettings);
 
-    // shutdown listener - to clean database connections safetly
+    // shutdown listener - to clean database connections safely
     addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
-        try {
-          // save unsaved settings
-          Globals.settings.saveSettings();
-          // close database connection
-          Globals.shutdownDatabase();
-          // clear cache directory
-          if (Globals.settings.isClearCacheShutdown()) {
-            File cache = new File("cache");
-            if (cache.exists()) {
-              FileUtils.deleteDirectory(cache);
+        int confirm = 0;
+        // if there are more than 1 (= status) threads running, display exit confirmation
+        if (Globals.executor.getActiveCount() > 1) {
+          confirm = JOptionPane.showOptionDialog(null, "Are you sure you want to close tinyMediaManager?\nSome threads seem to be still running...",
+              "Exit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+        }
+        if (confirm == JOptionPane.YES_OPTION) {
+          LOGGER.info("bye bye");
+          try {
+            // send shutdown signal
+            Globals.executor.shutdown();
+            // cancel our status task (send interrupt())
+            statusTask.cancel(true);
+            // save unsaved settings
+            Globals.settings.saveSettings();
+            // close database connection
+            Globals.shutdownDatabase();
+            // clear cache directory
+            if (Globals.settings.isClearCacheShutdown()) {
+              File cache = new File("cache");
+              if (cache.exists()) {
+                FileUtils.deleteDirectory(cache);
+              }
             }
           }
+          catch (Exception ex) {
+            LOGGER.warn(ex.getMessage());
+          }
+          dispose();
+          try {
+            // wait a bit for threads to finish (if any)
+            Globals.executor.awaitTermination(2, TimeUnit.SECONDS);
+            // hard kill
+            Globals.executor.shutdownNow();
+          }
+          catch (InterruptedException e1) {
+            LOGGER.debug("Global thread shutdown");
+          }
+          System.exit(0); // calling the method is a must
         }
-        catch (Exception ex) {
-          LOGGER.warn(ex.getMessage());
-        }
-        Globals.executor.shutdownNow();
-        dispose();
-        System.exit(0); // calling the method is a must
       }
     });
+  }
 
+  // status bar thread
+  private class MyStatusbarThread implements Runnable {
+    private ThreadPoolExecutor ex = Globals.executor;
+
+    public MyStatusbarThread() {
+    }
+
+    @Override
+    public void run() {
+      Thread.currentThread().setName("statusBar thread");
+      try {
+        while (!Thread.interrupted()) {
+          String text = String.format(" active threads [%d/%d]", this.ex.getPoolSize(), this.ex.getMaximumPoolSize());
+          // LOGGER.debug(text);
+          MainWindow.instance.statusBar.setText(text);
+          Thread.sleep(2000);
+        }
+      }
+      catch (InterruptedException e) {
+        // called on cancel(), so don't log it
+        // LOGGER.debug("statusBar thread shutdown");
+      }
+    }
   }
 
   /**
