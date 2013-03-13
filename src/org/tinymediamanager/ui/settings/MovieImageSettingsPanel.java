@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ItemEvent;
@@ -29,9 +28,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -142,13 +141,18 @@ public class MovieImageSettingsPanel extends JPanel {
   private JSpinner   spDownloadCountExtrathumbs;
   private JLabel     lblDownloadCount;
   private JSpinner   spDownloadCountExtrafanart;
+  private JPanel     panel;
+  private JCheckBox  chckbxStoreMoviesetArtwork;
+  private JTextField tfMovieSetArtworkFolder;
+  private JLabel     lblFoldername;
 
   /**
    * Instantiates a new movie image settings panel.
    */
   public MovieImageSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JPanel panelMovieImages = new JPanel();
     panelMovieImages.setBorder(new TitledBorder(null, "Poster and Fanart", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -298,7 +302,7 @@ public class MovieImageSettingsPanel extends JPanel {
     panelMovieImages.add(spDownloadCountExtrafanart, "6, 29, left, default");
 
     panelActorThumbs = new JPanel();
-    panelActorThumbs.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Actor Images", TitledBorder.LEADING, TitledBorder.TOP,
+    panelActorThumbs.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Actor Images", TitledBorder.LEADING, TitledBorder.TOP,
         null, null));
     add(panelActorThumbs, "2, 4");
     panelActorThumbs.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
@@ -306,6 +310,24 @@ public class MovieImageSettingsPanel extends JPanel {
 
     cbActorImages = new JCheckBox("download actor images to .actors");
     panelActorThumbs.add(cbActorImages, "2, 2");
+
+    panel = new JPanel();
+    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Moviset artwork", TitledBorder.LEADING, TitledBorder.TOP, null,
+        null));
+    add(panel, "2, 6, fill, fill");
+    panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    chckbxStoreMoviesetArtwork = new JCheckBox("Store movieset artwork in a separate folder");
+    panel.add(chckbxStoreMoviesetArtwork, "2, 2, 3, 1");
+
+    lblFoldername = new JLabel("Folder name (in root of every datasource)");
+    panel.add(lblFoldername, "2, 4, right, default");
+
+    tfMovieSetArtworkFolder = new JTextField();
+    panel.add(tfMovieSetArtworkFolder, "4, 4, fill, default");
+    tfMovieSetArtworkFolder.setColumns(10);
 
     initDataBindings();
 
@@ -494,5 +516,21 @@ public class MovieImageSettingsPanel extends JPanel {
     AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
         chckbxEnableExtrathumbs, jCheckBoxBeanProperty, spDownloadCountExtrathumbs, jSpinnerBeanProperty);
     autoBinding_15.bind();
+    //
+    BeanProperty<Settings, String> settingsBeanProperty_12 = BeanProperty.create("movieSetArtworkFolder");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
+    AutoBinding<Settings, String, JTextField, String> autoBinding_16 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_12, tfMovieSetArtworkFolder, jTextFieldBeanProperty);
+    autoBinding_16.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_13 = BeanProperty.create("enableMovieSetArtworkFolder");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_13, chckbxStoreMoviesetArtwork, jCheckBoxBeanProperty);
+    autoBinding_17.bind();
+    //
+    BeanProperty<JTextField, Boolean> jTextFieldBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JTextField, Boolean> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+        chckbxStoreMoviesetArtwork, jCheckBoxBeanProperty, tfMovieSetArtworkFolder, jTextFieldBeanProperty_1);
+    autoBinding_18.bind();
   }
 }

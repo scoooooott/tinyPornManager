@@ -1348,12 +1348,14 @@ public class Movie extends AbstractModelObject {
         String url = thumbs.get(i);
         String providedFiletype = FilenameUtils.getExtension(url);
 
-        FileOutputStream outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + "." + providedFiletype);
+        FileOutputStream outputStream = null;
         InputStream is = null;
         if (Globals.settings.isImageExtraThumbsResize() && Globals.settings.getImageExtraThumbsSize() > 0) {
+          outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + ".jpg");
           is = ImageCache.scaleImage(url, Globals.settings.getImageExtraThumbsSize());
         }
         else {
+          outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + "." + providedFiletype);
           CachedUrl cachedUrl = new CachedUrl(url);
           is = cachedUrl.getInputStream();
         }

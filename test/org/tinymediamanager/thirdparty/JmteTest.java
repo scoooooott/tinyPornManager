@@ -28,7 +28,7 @@ public class JmteTest {
     MovieList ml = MovieList.getInstance();
     ml.loadMoviesFromDatabase();
 
-    MovieExporter.export(ml.getMovies(), "detailPurpleBytes.html.jmte");
+    MovieExporter.export(ml.getMovies(), "detailPurpleBytes2.html.jmte");
 
     Globals.shutdownDatabase();
   }

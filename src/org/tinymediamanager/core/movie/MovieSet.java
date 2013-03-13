@@ -28,6 +28,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -164,6 +165,10 @@ public class MovieSet extends AbstractModelObject {
 
     // write new poster
     writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", fanartUrl);
+    // write to artwork folder
+    if (Globals.settings.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(Globals.settings.getMovieSetArtworkFolder())) {
+      writeImagesToArtworkFolder(true, false);
+    }
 
     firePropertyChange("posterUrl", oldValue, newValue);
     firePropertyChange("poster", oldValue, newValue);
@@ -190,6 +195,11 @@ public class MovieSet extends AbstractModelObject {
 
     // write new fanart
     writeImageToMovieFolder(moviesObservable, "movieset-fanart.jpg", fanartUrl);
+
+    // write to artwork folder
+    if (Globals.settings.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(Globals.settings.getMovieSetArtworkFolder())) {
+      writeImagesToArtworkFolder(false, true);
+    }
 
     firePropertyChange("fanartUrl", oldValue, newValue);
     firePropertyChange("fanart", oldValue, newValue);
@@ -405,18 +415,13 @@ public class MovieSet extends AbstractModelObject {
     }
 
     // write image for all movies
-    try {
-      for (Movie movie : movies) {
-        CachedUrl cachedUrl = new CachedUrl(url);
-        FileOutputStream outputStream = new FileOutputStream(movie.getPath() + File.separator + filename);
-        InputStream is = cachedUrl.getInputStream();
-        IOUtils.copy(is, outputStream);
-        outputStream.close();
-        is.close();
+    for (Movie movie : movies) {
+      try {
+        writeImage(url, movie.getPath() + File.separator + filename);
       }
-    }
-    catch (IOException e) {
-      LOGGER.warn(e);
+      catch (IOException e) {
+        LOGGER.warn(e);
+      }
     }
   }
 
@@ -426,6 +431,65 @@ public class MovieSet extends AbstractModelObject {
   public void rewriteAllImages() {
     writeImageToMovieFolder(moviesObservable, "movieset-fanart.jpg", fanartUrl);
     writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", posterUrl);
+
+    // write to artwork folder
+    if (Globals.settings.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(Globals.settings.getMovieSetArtworkFolder())) {
+      writeImagesToArtworkFolder(true, true);
+    }
+  }
+
+  private void writeImagesToArtworkFolder(boolean poster, boolean fanart) {
+    // write images to all datasources
+    for (String datasource : Globals.settings.getMovieDataSource()) {
+      File artworkFolder = new File(datasource + File.separator + Globals.settings.getMovieSetArtworkFolder());
+
+      // check if folder exists
+      if (!artworkFolder.exists()) {
+        artworkFolder.mkdirs();
+      }
+
+      // write files
+      try {
+        // poster
+        if (poster && StringUtils.isNotBlank(posterUrl)) {
+          String providedFiletype = FilenameUtils.getExtension(posterUrl);
+          writeImage(posterUrl, artworkFolder.getPath() + File.separator + name + "-folder." + providedFiletype);
+        }
+      }
+      catch (IOException e) {
+        LOGGER.warn(e);
+      }
+
+      try {
+        // fanart
+        if (fanart && StringUtils.isNotBlank(fanartUrl)) {
+          String providedFiletype = FilenameUtils.getExtension(fanartUrl);
+          writeImage(fanartUrl, artworkFolder.getPath() + File.separator + name + "-fanart." + providedFiletype);
+        }
+      }
+      catch (IOException e) {
+        LOGGER.warn(e);
+      }
+    }
+  }
+
+  /**
+   * Write image.
+   * 
+   * @param url
+   *          the url
+   * @param pathAndFilename
+   *          the path and filename
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
+  private void writeImage(String url, String pathAndFilename) throws IOException {
+    CachedUrl cachedUrl = new CachedUrl(url);
+    FileOutputStream outputStream = new FileOutputStream(pathAndFilename);
+    InputStream is = cachedUrl.getInputStream();
+    IOUtils.copy(is, outputStream);
+    outputStream.close();
+    is.close();
   }
 
   // /**
