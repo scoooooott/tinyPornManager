@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -26,6 +27,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -45,8 +47,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
@@ -193,35 +197,118 @@ public class MovieImageChooser extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+          FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+          ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+          ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), }));
+      {
+        JPanel panelExtraButtons = new JPanel();
+        buttonPane.add(panelExtraButtons, "2, 1, 1, 2, fill, bottom");
+        if (type == ImageType.FANART) {
+          panelExtraButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+          {
+            if (Globals.settings.isImageExtraThumbs()) {
+              JButton btnMarkExtrathumbs = new JButton("");
+              btnMarkExtrathumbs.setMargin(new Insets(0, 0, 0, 0));
+              btnMarkExtrathumbs.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/checkall.png")));
+              btnMarkExtrathumbs.setToolTipText("Mark all extrathumbs");
+              btnMarkExtrathumbs.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                  for (JToggleButton button : buttons) {
+                    if (button.getClientProperty("MediaArtworkExtrathumb") instanceof JCheckBox) {
+                      JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrathumb");
+                      chkbx.setSelected(true);
+                    }
+                  }
+                }
+              });
+              panelExtraButtons.add(btnMarkExtrathumbs);
+              JButton btnUnMarkExtrathumbs = new JButton("");
+              btnUnMarkExtrathumbs.setMargin(new Insets(0, 0, 0, 0));
+              btnUnMarkExtrathumbs.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/uncheckall.png")));
+              btnUnMarkExtrathumbs.setToolTipText("Unmark all extrathumbs");
+              btnUnMarkExtrathumbs.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                  for (JToggleButton button : buttons) {
+                    if (button.getClientProperty("MediaArtworkExtrathumb") instanceof JCheckBox) {
+                      JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrathumb");
+                      chkbx.setSelected(false);
+                    }
+                  }
+                }
+              });
+              panelExtraButtons.add(btnUnMarkExtrathumbs);
+            }
+            if (Globals.settings.isImageExtraThumbs() && Globals.settings.isImageExtraFanart()) {
+              JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
+              separator.setPreferredSize(new Dimension(2, 16));
+              panelExtraButtons.add(separator);
+            }
+            if (Globals.settings.isImageExtraFanart()) {
+              JButton btnMarkExtrafanart = new JButton("");
+              btnMarkExtrafanart.setMargin(new Insets(0, 0, 0, 0));
+              btnMarkExtrafanart.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/checkall.png")));
+              btnMarkExtrafanart.setToolTipText("Mark all extrafanart");
+              btnMarkExtrafanart.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                  for (JToggleButton button : buttons) {
+                    if (button.getClientProperty("MediaArtworkExtrafanart") instanceof JCheckBox) {
+                      JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrafanart");
+                      chkbx.setSelected(true);
+                    }
+                  }
+                }
+              });
+              panelExtraButtons.add(btnMarkExtrafanart);
+              JButton btnUnMarkExtrafanart = new JButton("");
+              btnUnMarkExtrafanart.setMargin(new Insets(0, 0, 0, 0));
+              btnUnMarkExtrafanart.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/uncheckall.png")));
+              btnUnMarkExtrafanart.setToolTipText("Unmark all extrafanart");
+              btnUnMarkExtrafanart.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                  for (JToggleButton button : buttons) {
+                    if (button.getClientProperty("MediaArtworkExtrafanart") instanceof JCheckBox) {
+                      JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrafanart");
+                      chkbx.setSelected(false);
+                    }
+                  }
+                }
+              });
+              panelExtraButtons.add(btnUnMarkExtrafanart);
+            }
+          }
+        }
+      }
       {
         progressBar = new JProgressBar();
-        buttonPane.add(progressBar, "2, 2");
+        buttonPane.add(progressBar, "3, 2");
       }
       {
         lblProgressAction = new JLabel("");
-        buttonPane.add(lblProgressAction, "4, 2");
+        buttonPane.add(lblProgressAction, "5, 2");
       }
       {
         JButton okButton = new JButton("OK");
         okButton.setAction(actionOK);
         okButton.setActionCommand("OK");
-        buttonPane.add(okButton, "6, 2, fill, top");
+        buttonPane.add(okButton, "7, 2, fill, top");
         getRootPane().setDefaultButton(okButton);
       }
       {
         JButton btnAddFile = new JButton("Add file");
         btnAddFile.setAction(action);
-        buttonPane.add(btnAddFile, "8, 2, fill, top");
+        buttonPane.add(btnAddFile, "9, 2, fill, top");
       }
       {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setAction(actionCancel);
         cancelButton.setActionCommand("Cancel");
-        buttonPane.add(cancelButton, "10, 2, fill, top");
+        buttonPane.add(cancelButton, "11, 2, fill, top");
       }
     }
 
