@@ -24,12 +24,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.URI;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -39,6 +39,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -84,9 +85,17 @@ public class MainWindow extends JFrame {
   /** The instance. */
   private static MainWindow   instance;
 
+  /** The panel movies. */
   private JPanel              panelMovies;
-  private JLabel              statusBar;
-  private Future              statusTask;
+
+  /** The panel status bar. */
+  private JPanel              panelStatusBar;
+
+  /** The lbl loading img. */
+  private JLabel              lblLoadingImg;
+
+  /** The status task. */
+  private StatusbarThread     statusTask       = new StatusbarThread();
 
   /**
    * Create the application.
@@ -186,7 +195,7 @@ public class MainWindow extends JFrame {
 
     // Globals.executor.execute(new MyStatusbarThread());
     // use a Future to be able to cancel it
-    statusTask = Globals.executor.submit(new MyStatusbarThread());
+    statusTask.execute();
   }
 
   /**
@@ -208,8 +217,14 @@ public class MainWindow extends JFrame {
     tabbedPane.setTabPlacement(JTabbedPane.LEFT);
     getContentPane().add(tabbedPane, "1, 2, fill, fill");
 
-    statusBar = new JLabel("Status OK");
-    getContentPane().add(statusBar, "1, 3");
+    panelStatusBar = new JPanel();
+    getContentPane().add(panelStatusBar, "1, 3");
+    panelStatusBar.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("14px"), }));
+
+    lblLoadingImg = new JLabel("");
+    panelStatusBar.add(lblLoadingImg, "4, 2");
 
     panelMovies = new MoviePanel();
     VerticalTextIcon.addTab(tabbedPane, "Movies", panelMovies);
@@ -225,7 +240,8 @@ public class MainWindow extends JFrame {
       @Override
       public void windowClosing(WindowEvent e) {
         int confirm = 0;
-        // if there are more than 1 (= status) threads running, display exit confirmation
+        // if there are more than 1 (= status) threads running, display exit
+        // confirmation
         if (Globals.executor.getActiveCount() > 1) {
           confirm = JOptionPane.showOptionDialog(null, "Are you sure you want to close tinyMediaManager?\nSome threads seem to be still running...",
               "Exit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
@@ -269,20 +285,47 @@ public class MainWindow extends JFrame {
   }
 
   // status bar thread
-  private class MyStatusbarThread implements Runnable {
+  /**
+   * The Class StatusbarThread.
+   */
+  private class StatusbarThread extends SwingWorker<Void, Void> {
+
+    /** The loading. */
+    private final ImageIcon    loading;
+
+    /** The ex. */
     private ThreadPoolExecutor ex = Globals.executor;
 
-    public MyStatusbarThread() {
+    /**
+     * Instantiates a new statusbar thread.
+     */
+    public StatusbarThread() {
+      loading = new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/loading.gif"));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#doInBackground()
+     */
     @Override
-    public void run() {
+    public Void doInBackground() {
       Thread.currentThread().setName("statusBar thread");
       try {
         while (!Thread.interrupted()) {
-          String text = String.format(" active threads [%d/%d]", this.ex.getPoolSize(), this.ex.getMaximumPoolSize());
+          if (this.ex.getActiveCount() > 0) {
+            if (lblLoadingImg.getIcon() != loading) {
+              lblLoadingImg.setIcon(loading);
+            }
+          }
+          else {
+            if (lblLoadingImg.getIcon() == loading) {
+              lblLoadingImg.setIcon(null);
+            }
+          }
+          String text = String.format(" active threads [%d/%d]", this.ex.getActiveCount(), this.ex.getMaximumPoolSize());
           // LOGGER.debug(text);
-          MainWindow.instance.statusBar.setText(text);
+          lblLoadingImg.setToolTipText(text);
           Thread.sleep(2000);
         }
       }
@@ -290,6 +333,7 @@ public class MainWindow extends JFrame {
         // called on cancel(), so don't log it
         // LOGGER.debug("statusBar thread shutdown");
       }
+      return null;
     }
   }
 
