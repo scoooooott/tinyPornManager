@@ -42,11 +42,11 @@ public class Globals {
   /** The entity manager. */
   public static EntityManager            entityManager;
 
-  // public static final ExecutorService executor = Executors.newFixedThreadPool(10);
+  // public static final ExecutorService executor2 = Executors.newFixedThreadPool(10);
   // see source of newFixedThreadPool
-  public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(0, // min threads 
-                                                      10, // max threads 
-                                                      5, TimeUnit.SECONDS, // time to wait before resizing pool
+  // see weird logic: http://www.kimchy.org/juc-executorservice-gotcha/
+  public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, // max threads
+                                                      5, TimeUnit.SECONDS, // time to wait before closing idlo
                                                       new LinkedBlockingQueue<Runnable>() // our queue
                                                   );
 
