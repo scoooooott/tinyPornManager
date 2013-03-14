@@ -165,9 +165,8 @@ public class MovieImageSettingsPanel extends JPanel {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSource = new JLabel("Source");
     panelMovieImages.add(lblSource, "2, 2");
@@ -284,22 +283,22 @@ public class MovieImageSettingsPanel extends JPanel {
     spExtrathumbWidth.setPreferredSize(new Dimension(49, 20));
     panelMovieImages.add(spExtrathumbWidth, "10, 23, left, default");
 
-    lblDownload = new JLabel("Download count");
-    panelMovieImages.add(lblDownload, "2, 25, right, default");
+    lblDownload = new JLabel("maximum of downloaded images on automatic scraping");
+    panelMovieImages.add(lblDownload, "2, 24, 5, 1, right, default");
 
     spDownloadCountExtrathumbs = new JSpinner();
-    spDownloadCountExtrathumbs.setPreferredSize(new Dimension(39, 20));
-    panelMovieImages.add(spDownloadCountExtrathumbs, "6, 25, left, default");
+    spDownloadCountExtrathumbs.setPreferredSize(new Dimension(49, 20));
+    panelMovieImages.add(spDownloadCountExtrathumbs, "10, 24, left, default");
 
     chckbxEnableExtrafanart = new JCheckBox("Enable extrafanart");
-    panelMovieImages.add(chckbxEnableExtrafanart, "2, 27");
+    panelMovieImages.add(chckbxEnableExtrafanart, "2, 26");
 
-    lblDownloadCount = new JLabel("Download count");
-    panelMovieImages.add(lblDownloadCount, "2, 29, right, default");
+    lblDownloadCount = new JLabel("maximum of downloaded images on automatic scraping");
+    panelMovieImages.add(lblDownloadCount, "2, 27, 5, 1, right, default");
 
     spDownloadCountExtrafanart = new JSpinner();
-    spDownloadCountExtrafanart.setPreferredSize(new Dimension(39, 20));
-    panelMovieImages.add(spDownloadCountExtrafanart, "6, 29, left, default");
+    spDownloadCountExtrafanart.setPreferredSize(new Dimension(49, 20));
+    panelMovieImages.add(spDownloadCountExtrafanart, "10, 27, left, default");
 
     panelActorThumbs = new JPanel();
     panelActorThumbs.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Actor Images", TitledBorder.LEADING, TitledBorder.TOP,
