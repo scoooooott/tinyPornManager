@@ -44,7 +44,7 @@ public class Globals {
 
   // public static final ExecutorService executor = Executors.newFixedThreadPool(10);
   // see source of newFixedThreadPool
-  public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(1, // min threads 
+  public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(0, // min threads 
                                                       10, // max threads 
                                                       5, TimeUnit.SECONDS, // time to wait before resizing pool
                                                       new LinkedBlockingQueue<Runnable>() // our queue

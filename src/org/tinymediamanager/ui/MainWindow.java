@@ -240,9 +240,8 @@ public class MainWindow extends JFrame {
       @Override
       public void windowClosing(WindowEvent e) {
         int confirm = 0;
-        // if there are more than 1 (= status) threads running, display exit
-        // confirmation
-        if (Globals.executor.getActiveCount() > 1) {
+        // if there are some threads running, display exit confirmation
+        if (Globals.executor.getActiveCount() > 0) {
           confirm = JOptionPane.showOptionDialog(null, "Are you sure you want to close tinyMediaManager?\nSome threads seem to be still running...",
               "Exit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
         }
