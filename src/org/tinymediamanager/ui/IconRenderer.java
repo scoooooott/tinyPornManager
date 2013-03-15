@@ -22,11 +22,19 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * The Class IconRenderer.
  */
 public class IconRenderer extends DefaultTableCellRenderer {
   private static final long serialVersionUID = 1L;
+
+  private String            tooltip;
+
+  public IconRenderer(String tooltip) {
+    this.tooltip = tooltip;
+  }
 
   /*
    * (non-Javadoc)
@@ -38,11 +46,18 @@ public class IconRenderer extends DefaultTableCellRenderer {
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     if (value instanceof ImageIcon) {
       setIcon((ImageIcon) value);
-    } else {
+    }
+    else {
       setText((value == null) ? "" : value.toString());
       setIcon(null);
     }
     setHorizontalAlignment(JLabel.CENTER);
+
+    // set a tooltip
+    if (StringUtils.isNotBlank(tooltip)) {
+      setToolTipText(tooltip);
+    }
+
     return this;
   }
 

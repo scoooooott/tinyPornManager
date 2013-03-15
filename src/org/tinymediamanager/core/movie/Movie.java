@@ -439,7 +439,19 @@ public class Movie extends AbstractModelObject {
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!StringUtils.isEmpty(poster)) {
+    if (!StringUtils.isEmpty(poster) && !StringUtils.isEmpty(fanart)) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Gets the checks for trailer.
+   * 
+   * @return the checks for trailer
+   */
+  public Boolean getHasTrailer() {
+    if (trailer != null && trailer.size() > 0) {
       return true;
     }
     return false;

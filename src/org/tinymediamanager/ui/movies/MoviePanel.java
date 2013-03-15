@@ -389,20 +389,29 @@ public class MoviePanel extends JPanel {
     table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
 
     // NFO column
-    table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer());
+    table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer("NFO"));
     table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
     URL imageURL = MainWindow.class.getResource("images/File.png");
     if (imageURL != null) {
       table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
     }
 
-    // poster column
-    table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer());
+    // Images column
+    table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer("Images"));
     table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
     imageURL = null;
     imageURL = MainWindow.class.getResource("images/Image.png");
     if (imageURL != null) {
       table.getColumnModel().getColumn(3).setHeaderValue(new ImageIcon(imageURL));
+    }
+
+    // trailer column
+    table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer("Trailer"));
+    table.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(20);
+    imageURL = null;
+    imageURL = MainWindow.class.getResource("images/ClapBoard.png");
+    if (imageURL != null) {
+      table.getColumnModel().getColumn(4).setHeaderValue(new ImageIcon(imageURL));
     }
 
     table.setSelectionModel(movieSelectionModel.getSelectionModel());

@@ -226,7 +226,7 @@ public class MainWindow extends JFrame {
 
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), ColumnSpec.decode("1dlu"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(425dlu;default):grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(400dlu;default):grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, }));
 
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
@@ -239,7 +239,7 @@ public class MainWindow extends JFrame {
         new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC,
             FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
             FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { RowSpec.decode("20px"), }));
 
     lblProgressAction = new JLabel("");
     panelStatusBar.add(lblProgressAction, "3, 1, default, default");
@@ -323,6 +323,7 @@ public class MainWindow extends JFrame {
         }
       }
     });
+
   }
 
   // status bar thread

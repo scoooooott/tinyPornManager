@@ -311,7 +311,7 @@ public class MovieImageSettingsPanel extends JPanel {
     panelActorThumbs.add(cbActorImages, "2, 2");
 
     panel = new JPanel();
-    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Moviset artwork", TitledBorder.LEADING, TitledBorder.TOP, null,
+    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Movieset artwork", TitledBorder.LEADING, TitledBorder.TOP, null,
         null));
     add(panel, "2, 6, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,

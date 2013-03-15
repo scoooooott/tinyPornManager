@@ -50,7 +50,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
    */
   @Override
   public int getColumnCount() {
-    return 4;
+    return 5;
   }
 
   /*
@@ -72,6 +72,9 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
       case 3:
         return "Images";
+
+      case 4:
+        return "Trailer";
     }
 
     throw new IllegalStateException();
@@ -103,6 +106,12 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
           return checkIcon;
         }
         return crossIcon;
+
+      case 4:
+        if (movie.getHasTrailer()) {
+          return checkIcon;
+        }
+        return crossIcon;
     }
 
     throw new IllegalStateException();
@@ -123,6 +132,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
       case 2:
       case 3:
+      case 4:
         return ImageIcon.class;
     }
 
@@ -144,7 +154,8 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
       case 2:
       case 3:
-        return null;
+      case 4:
+        return imageComparator;
     }
 
     throw new IllegalStateException();
