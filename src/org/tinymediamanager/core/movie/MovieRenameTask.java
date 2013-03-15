@@ -17,19 +17,15 @@ package org.tinymediamanager.core.movie;
 
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingWorker;
-
 import org.apache.log4j.Logger;
+import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
  * The Class MovieRenameTask.
  * 
  * @author manuel
  */
-public class MovieRenameTask extends SwingWorker<Object, Object> {
+public class MovieRenameTask extends TmmSwingWorker {
 
   /** The Constant LOGGER. */
   private final static Logger LOGGER = Logger.getLogger(MovieRenameTask.class);
@@ -39,15 +35,6 @@ public class MovieRenameTask extends SwingWorker<Object, Object> {
 
   /** The movie count. */
   private int                 movieCount;
-
-  /** The lbl description. */
-  private JLabel              lblDescription;
-
-  /** The progress bar. */
-  private JProgressBar        progressBar;
-
-  /** The btn cancel. */
-  private JButton             btnCancel;
 
   private boolean             cancel = false;
 
@@ -63,12 +50,9 @@ public class MovieRenameTask extends SwingWorker<Object, Object> {
    * @param button
    *          the button
    */
-  public MovieRenameTask(List<Movie> moviesToRename, JLabel label, JProgressBar progressBar, JButton button) {
+  public MovieRenameTask(List<Movie> moviesToRename) {
     this.moviesToRename = moviesToRename;
     this.movieCount = moviesToRename.size();
-    this.lblDescription = label;
-    this.progressBar = progressBar;
-    this.btnCancel = button;
   }
 
   /*
@@ -77,7 +61,7 @@ public class MovieRenameTask extends SwingWorker<Object, Object> {
    * @see javax.swing.SwingWorker#doInBackground()
    */
   @Override
-  protected Object doInBackground() throws Exception {
+  protected Void doInBackground() throws Exception {
     // rename movies
     for (int i = 0; i < moviesToRename.size(); i++) {
       if (cancel) {
@@ -121,18 +105,18 @@ public class MovieRenameTask extends SwingWorker<Object, Object> {
    *          the value
    */
   private void startProgressBar(String description, int value) {
-    lblDescription.setText(description);
+    lblProgressAction.setText(description);
     progressBar.setVisible(true);
     progressBar.setValue(value);
-    btnCancel.setVisible(true);
+    btnCancelTask.setVisible(true);
   }
 
   /**
    * Stop progress bar.
    */
   private void stopProgressBar() {
-    lblDescription.setText("");
+    lblProgressAction.setText("");
     progressBar.setVisible(false);
-    btnCancel.setVisible(false);
+    btnCancelTask.setVisible(false);
   }
 }

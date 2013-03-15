@@ -20,11 +20,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingWorker;
-
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
@@ -36,13 +31,14 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
  * The Class MovieScrapeTask.
  * 
  * @author manuel
  */
-public class MovieScrapeTask extends SwingWorker<Object, Object> {
+public class MovieScrapeTask extends TmmSwingWorker {
 
   /** The Constant LOGGER. */
   private final static Logger         LOGGER = Logger.getLogger(MovieScrapeTask.class);
@@ -57,15 +53,6 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
 
   /** The movie count. */
   private int                         movieCount;
-
-  /** The lbl description. */
-  private JLabel                      lblDescription;
-
-  /** The progress bar. */
-  private JProgressBar                progressBar;
-
-  /** The btn cancel. */
-  private JButton                     btnCancel;
 
   /**
    * Instantiates a new movie scrape task.
@@ -89,15 +76,11 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
    * @param button
    *          the button
    */
-  public MovieScrapeTask(List<Movie> moviesToScrape, boolean doSearch, MovieSearchAndScrapeOptions options, JLabel label, JProgressBar progressBar,
-      JButton button) {
+  public MovieScrapeTask(List<Movie> moviesToScrape, boolean doSearch, MovieSearchAndScrapeOptions options) {
     this.moviesToScrape = moviesToScrape;
     this.doSearch = doSearch;
     this.options = options;
     this.movieCount = moviesToScrape.size();
-    this.lblDescription = label;
-    this.progressBar = progressBar;
-    this.btnCancel = button;
   }
 
   /*
@@ -106,7 +89,7 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
    * @see javax.swing.SwingWorker#doInBackground()
    */
   @Override
-  protected Object doInBackground() throws Exception {
+  protected Void doInBackground() throws Exception {
     startProgressBar("scraping movies", 0);
 
     ExecutorService executor = Executors.newFixedThreadPool(3);
@@ -182,19 +165,19 @@ public class MovieScrapeTask extends SwingWorker<Object, Object> {
    *          the value
    */
   private void startProgressBar(String description, int value) {
-    lblDescription.setText(description);
+    lblProgressAction.setText(description);
     progressBar.setVisible(true);
     progressBar.setValue(value);
-    btnCancel.setVisible(true);
+    btnCancelTask.setVisible(true);
   }
 
   /**
    * Stop progress bar.
    */
   private void stopProgressBar() {
-    lblDescription.setText("");
+    lblProgressAction.setText("");
     progressBar.setVisible(false);
-    btnCancel.setVisible(false);
+    btnCancelTask.setVisible(false);
   }
 
   /**

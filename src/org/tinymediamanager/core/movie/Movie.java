@@ -1352,7 +1352,13 @@ public class Movie extends AbstractModelObject {
         InputStream is = null;
         if (Globals.settings.isImageExtraThumbsResize() && Globals.settings.getImageExtraThumbsSize() > 0) {
           outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + ".jpg");
-          is = ImageCache.scaleImage(url, Globals.settings.getImageExtraThumbsSize());
+          try {
+            is = ImageCache.scaleImage(url, Globals.settings.getImageExtraThumbsSize());
+          }
+          catch (Exception e) {
+            LOGGER.warn("problem with rescaling: " + e.getMessage());
+            continue;
+          }
         }
         else {
           outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + "." + providedFiletype);

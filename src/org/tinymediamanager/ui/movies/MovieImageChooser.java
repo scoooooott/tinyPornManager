@@ -198,17 +198,19 @@ public class MovieImageChooser extends JDialog {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
       buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-          ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-          ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, },
-          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), }));
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), }));
       {
-        JPanel panelExtraButtons = new JPanel();
-        buttonPane.add(panelExtraButtons, "2, 1, 1, 2, fill, bottom");
         if (type == ImageType.FANART) {
+          JPanel panelExtraButtons = new JPanel();
+          buttonPane.add(panelExtraButtons, "2, 2, fill, bottom");
           panelExtraButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
           {
             if (Globals.settings.isImageExtraThumbs()) {
+              JLabel labelThumbs = new JLabel("Extrathumbs:");
+              panelExtraButtons.add(labelThumbs);
               JButton btnMarkExtrathumbs = new JButton("");
               btnMarkExtrathumbs.setMargin(new Insets(0, 0, 0, 0));
               btnMarkExtrathumbs.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/checkall.png")));
@@ -248,6 +250,8 @@ public class MovieImageChooser extends JDialog {
               panelExtraButtons.add(separator);
             }
             if (Globals.settings.isImageExtraFanart()) {
+              JLabel labelFanart = new JLabel("Extrafanart:");
+              panelExtraButtons.add(labelFanart);
               JButton btnMarkExtrafanart = new JButton("");
               btnMarkExtrafanart.setMargin(new Insets(0, 0, 0, 0));
               btnMarkExtrafanart.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/checkall.png")));
@@ -284,31 +288,32 @@ public class MovieImageChooser extends JDialog {
           }
         }
       }
+
       {
         progressBar = new JProgressBar();
-        buttonPane.add(progressBar, "3, 2");
+        buttonPane.add(progressBar, "2, 4");
       }
       {
         lblProgressAction = new JLabel("");
-        buttonPane.add(lblProgressAction, "5, 2");
+        buttonPane.add(lblProgressAction, "4, 4");
       }
       {
         JButton okButton = new JButton("OK");
         okButton.setAction(actionOK);
         okButton.setActionCommand("OK");
-        buttonPane.add(okButton, "7, 2, fill, top");
+        buttonPane.add(okButton, "6, 4, fill, top");
         getRootPane().setDefaultButton(okButton);
       }
       {
         JButton btnAddFile = new JButton("Add file");
         btnAddFile.setAction(action);
-        buttonPane.add(btnAddFile, "9, 2, fill, top");
+        buttonPane.add(btnAddFile, "8, 4, fill, top");
       }
       {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setAction(actionCancel);
         cancelButton.setActionCommand("Cancel");
-        buttonPane.add(cancelButton, "11, 2, fill, top");
+        buttonPane.add(cancelButton, "10, 4, fill, top");
       }
     }
 

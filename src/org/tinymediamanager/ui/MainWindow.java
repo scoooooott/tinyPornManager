@@ -18,6 +18,7 @@ package org.tinymediamanager.ui;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dialog;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -30,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,6 +40,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 
@@ -93,6 +96,18 @@ public class MainWindow extends JFrame {
 
   /** The lbl loading img. */
   private JLabel              lblLoadingImg;
+
+  /** The label progressAction. */
+  private JLabel              lblProgressAction;
+
+  /** The progress bar. */
+  private JProgressBar        progressBar;
+
+  /** The button cancelScraper. */
+  private JButton             btnCancelTask;
+
+  /** The active task. */
+  private TmmSwingWorker      activeTask;
 
   /** The status task. */
   private StatusbarThread     statusTask       = new StatusbarThread();
@@ -211,20 +226,47 @@ public class MainWindow extends JFrame {
 
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), ColumnSpec.decode("1dlu"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(425dlu;default):grow"), RowSpec.decode("fill:15dlu:grow"), }));
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(425dlu;default):grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
 
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
     tabbedPane.setTabPlacement(JTabbedPane.LEFT);
     getContentPane().add(tabbedPane, "1, 2, fill, fill");
 
     panelStatusBar = new JPanel();
-    getContentPane().add(panelStatusBar, "1, 3");
-    panelStatusBar.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("14px"), }));
+    getContentPane().add(panelStatusBar, "1, 4");
+    panelStatusBar.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC,
+            FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+            FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+
+    lblProgressAction = new JLabel("");
+    panelStatusBar.add(lblProgressAction, "3, 1, default, default");
+
+    progressBar = new JProgressBar();
+    panelStatusBar.add(progressBar, "5, 1");
+
+    btnCancelTask = new JButton("");
+    panelStatusBar.add(btnCancelTask, "7, 1");
+    btnCancelTask.setVisible(false);
+    btnCancelTask.setContentAreaFilled(false);
+    btnCancelTask.setBorderPainted(false);
+    btnCancelTask.setBorder(null);
+    btnCancelTask.setMargin(new Insets(0, 0, 0, 0));
+    btnCancelTask.setIcon(new ImageIcon(MoviePanel.class.getResource("/org/tinymediamanager/ui/images/Button_Stop.png")));
+    btnCancelTask.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        if (activeTask != null && !activeTask.isDone()) {
+          activeTask.cancel();
+        }
+      }
+    });
+    progressBar.setVisible(false);
 
     lblLoadingImg = new JLabel("");
-    panelStatusBar.add(lblLoadingImg, "4, 2");
+    panelStatusBar.add(lblLoadingImg, "9, 1");
 
     panelMovies = new MoviePanel();
     VerticalTextIcon.addTab(tabbedPane, "Movies", panelMovies);
@@ -399,6 +441,27 @@ public class MainWindow extends JFrame {
       Dialog aboutDialog = new AboutDialog();
       aboutDialog.setVisible(true);
     }
+  }
+
+  /**
+   * Executes a "main" task. A "main" task is a task which can't be parallelized
+   * 
+   * @param task
+   *          the task
+   * @return true, if successful
+   */
+  public static boolean executeMainTask(TmmSwingWorker task) {
+    if (instance == null) {
+      return false;
+    }
+    if (instance.activeTask == null || instance.activeTask.isDone()) {
+      instance.activeTask = task;
+      instance.activeTask.setUIElements(instance.lblProgressAction, instance.progressBar, instance.btnCancelTask);
+      instance.activeTask.execute();
+      return true;
+    }
+
+    return false;
   }
 
   /**

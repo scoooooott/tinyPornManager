@@ -477,16 +477,6 @@ public class MovieImageSettingsPanel extends JPanel {
         settingsBeanProperty_4, chckbxEnableExtrathumbs, jCheckBoxBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
-    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        chckbxResizeExtrathumbsTo, jCheckBoxBeanProperty_1, chckbxEnableExtrathumbs, jCheckBoxBeanProperty);
-    autoBinding_8.bind();
-    //
-    BeanProperty<JSpinner, Boolean> jSpinnerBeanProperty = BeanProperty.create("enabled");
-    AutoBinding<JSpinner, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, spExtrathumbWidth,
-        jSpinnerBeanProperty, chckbxResizeExtrathumbsTo, jCheckBoxBeanProperty);
-    autoBinding_9.bind();
-    //
     BeanProperty<Settings, Integer> settingsBeanProperty_8 = BeanProperty.create("imageExtraThumbsSize");
     BeanProperty<JSpinner, Object> jSpinnerBeanProperty_1 = BeanProperty.create("value");
     AutoBinding<Settings, Integer, JSpinner, Object> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
@@ -508,6 +498,7 @@ public class MovieImageSettingsPanel extends JPanel {
         settingsBeanProperty_11, spDownloadCountExtrafanart, jSpinnerBeanProperty_1);
     autoBinding_13.bind();
     //
+    BeanProperty<JSpinner, Boolean> jSpinnerBeanProperty = BeanProperty.create("enabled");
     AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
         chckbxEnableExtrafanart, jCheckBoxBeanProperty, spDownloadCountExtrafanart, jSpinnerBeanProperty);
     autoBinding_14.bind();
@@ -527,9 +518,13 @@ public class MovieImageSettingsPanel extends JPanel {
         settingsBeanProperty_13, chckbxStoreMoviesetArtwork, jCheckBoxBeanProperty);
     autoBinding_17.bind();
     //
-    BeanProperty<JTextField, Boolean> jTextFieldBeanProperty_1 = BeanProperty.create("enabled");
-    AutoBinding<JCheckBox, Boolean, JTextField, Boolean> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
-        chckbxStoreMoviesetArtwork, jCheckBoxBeanProperty, tfMovieSetArtworkFolder, jTextFieldBeanProperty_1);
-    autoBinding_18.bind();
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+        chckbxEnableExtrathumbs, jCheckBoxBeanProperty, chckbxResizeExtrathumbsTo, jCheckBoxBeanProperty_1);
+    autoBinding_8.bind();
+    //
+    AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, chckbxEnableExtrathumbs,
+        jCheckBoxBeanProperty, spExtrathumbWidth, jSpinnerBeanProperty);
+    autoBinding_9.bind();
   }
 }

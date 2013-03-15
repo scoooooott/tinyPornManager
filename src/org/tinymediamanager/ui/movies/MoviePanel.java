@@ -16,9 +16,7 @@
 package org.tinymediamanager.ui.movies;
 
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -36,16 +34,15 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingWorker;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -68,6 +65,7 @@ import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.JSearchTextField;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.MyTable;
+import org.tinymediamanager.ui.TmmSwingWorker;
 
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
@@ -136,24 +134,6 @@ public class MoviePanel extends JPanel {
 
   /** The action remove2. */
   private final Action           actionRemove2                = new RemoveAction(true);
-
-  /** The label progressAction. */
-  private JLabel                 lblProgressAction;
-
-  /** The progress bar. */
-  private JProgressBar           progressBar;
-
-  /** The scrape task. */
-  private MovieScrapeTask        scrapeTask                   = null;
-
-  /** The rename task. */
-  private MovieRenameTask        renameTask                   = null;
-
-  /** The button cancelScraper. */
-  private JButton                btnCancelScraper;
-
-  /** The panel progress bar. */
-  private JPanel                 panelProgressBar;
 
   /** The panel movie count. */
   private JPanel                 panelMovieCount;
@@ -233,7 +213,7 @@ public class MoviePanel extends JPanel {
 
     setLayout(new FormLayout(
         new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
     splitPaneHorizontal = new JSplitPane();
     splitPaneHorizontal.setContinuousLayout(true);
@@ -241,9 +221,11 @@ public class MoviePanel extends JPanel {
 
     JPanel panelMovieList = new JPanel();
     splitPaneHorizontal.setLeftComponent(panelMovieList);
-    panelMovieList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
-        ColumnSpec.decode("150px:grow"), }, new RowSpec[] { RowSpec.decode("26px"), FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:max(200px;default):grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelMovieList
+        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
+            ColumnSpec.decode("150px:grow"), }, new RowSpec[] { RowSpec.decode("26px"), FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("fill:max(200px;default):grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
 
     JToolBar toolBar = new JToolBar();
     toolBar.setRollover(true);
@@ -331,12 +313,8 @@ public class MoviePanel extends JPanel {
     panelExtendedSearch = new MovieExtendedSearchPanel(movieSelectionModel);
     panelMovieList.add(panelExtendedSearch, "2, 5, 2, 1, fill, fill");
 
-    panelRight = new MovieInformationPanel(movieSelectionModel);
-    splitPaneHorizontal.setRightComponent(panelRight);
-    splitPaneHorizontal.setContinuousLayout(true);
-
     JPanel panelStatus = new JPanel();
-    add(panelStatus, "2, 3, fill, fill");
+    panelMovieList.add(panelStatus, "2, 6, 2, 1");
     panelStatus.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("1px"),
         ColumnSpec.decode("146px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec
         .decode("fill:default:grow"), }));
@@ -356,36 +334,9 @@ public class MoviePanel extends JPanel {
     lblMovieCountTotal = new JLabel("");
     panelMovieCount.add(lblMovieCountTotal);
 
-    panelProgressBar = new JPanel();
-    panelStatus.add(panelProgressBar, "5, 1, right, fill");
-
-    lblProgressAction = new JLabel("");
-    panelProgressBar.add(lblProgressAction);
-
-    progressBar = new JProgressBar();
-    panelProgressBar.add(progressBar);
-
-    btnCancelScraper = new JButton("");
-    panelProgressBar.add(btnCancelScraper);
-    btnCancelScraper.setVisible(false);
-    btnCancelScraper.setContentAreaFilled(false);
-    btnCancelScraper.setBorderPainted(false);
-    btnCancelScraper.setBorder(null);
-    btnCancelScraper.setMargin(new Insets(0, 0, 0, 0));
-    btnCancelScraper.setIcon(new ImageIcon(MoviePanel.class.getResource("/org/tinymediamanager/ui/images/Button_Stop.png")));
-    btnCancelScraper.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        if (scrapeTask != null && !scrapeTask.isDone()) {
-          scrapeTask.cancel();
-        }
-
-        if (renameTask != null && !renameTask.isDone()) {
-          renameTask.cancel();
-        }
-      }
-    });
-    progressBar.setVisible(false);
+    panelRight = new MovieInformationPanel(movieSelectionModel);
+    splitPaneHorizontal.setRightComponent(panelRight);
+    splitPaneHorizontal.setContinuousLayout(true);
 
     // beansbinding init
     initDataBindings();
@@ -502,8 +453,10 @@ public class MoviePanel extends JPanel {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      UpdateDataSourcesTask task = new UpdateDataSourcesTask();
-      task.execute();
+      TmmSwingWorker task = new UpdateDataSourcesTask();
+      if (!MainWindow.executeMainTask(task)) {
+        JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+      }
     }
   }
 
@@ -595,8 +548,11 @@ public class MoviePanel extends JPanel {
         // do we want to scrape?
         if (dialog.shouldStartScrape()) {
           // scrape
-          scrapeTask = new MovieScrapeTask(unscrapedMovies, true, options, lblProgressAction, progressBar, btnCancelScraper);
-          scrapeTask.execute();
+          TmmSwingWorker scrapeTask = new MovieScrapeTask(unscrapedMovies, true, options);
+          if (!MainWindow.executeMainTask(scrapeTask)) {
+            // inform that only one task at a time can be executed
+            JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+          }
         }
         dialog.dispose();
       }
@@ -645,8 +601,10 @@ public class MoviePanel extends JPanel {
         // do we want to scrape?
         if (dialog.shouldStartScrape()) {
           // scrape
-          scrapeTask = new MovieScrapeTask(selectedMovies, true, options, lblProgressAction, progressBar, btnCancelScraper);
-          scrapeTask.execute();
+          TmmSwingWorker scrapeTask = new MovieScrapeTask(selectedMovies, true, options);
+          if (!MainWindow.executeMainTask(scrapeTask)) {
+            JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+          }
         }
         dialog.dispose();
       }
@@ -689,8 +647,10 @@ public class MoviePanel extends JPanel {
         // do we want to scrape?
         if (dialog.shouldStartScrape()) {
           // scrape
-          scrapeTask = new MovieScrapeTask(selectedMovies, false, options, lblProgressAction, progressBar, btnCancelScraper);
-          scrapeTask.execute();
+          TmmSwingWorker scrapeTask = new MovieScrapeTask(selectedMovies, false, options);
+          if (!MainWindow.executeMainTask(scrapeTask)) {
+            JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+          }
         }
         dialog.dispose();
       }
@@ -810,7 +770,7 @@ public class MoviePanel extends JPanel {
   /**
    * The Class UpdateDataSourcesTask.
    */
-  private class UpdateDataSourcesTask extends SwingWorker<Void, Void> {
+  private class UpdateDataSourcesTask extends TmmSwingWorker {
     /**
      * Instantiates a new scrape task.
      * 
@@ -882,6 +842,16 @@ public class MoviePanel extends JPanel {
       progressBar.setVisible(false);
       // btnCancelScraper.setVisible(false);
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.tinymediamanager.ui.TmmSwingWorker#cancel()
+     */
+    @Override
+    public void cancel() {
+      cancel(true);
+    }
   }
 
   /**
@@ -919,8 +889,10 @@ public class MoviePanel extends JPanel {
       List<Movie> selectedMovies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
 
       // rename
-      renameTask = new MovieRenameTask(selectedMovies, lblProgressAction, progressBar, btnCancelScraper);
-      renameTask.execute();
+      TmmSwingWorker renameTask = new MovieRenameTask(selectedMovies);
+      if (!MainWindow.executeMainTask(renameTask)) {
+        JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+      }
     }
   }
 
