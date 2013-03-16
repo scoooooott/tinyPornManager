@@ -14,6 +14,7 @@ ui.status_text = FFFFFF
 
 # Application jar files, on classpath
 code = tmm.jar
+code = lib/asm.jar
 code = lib/beansbinding.jar
 code = lib/commons-codec.jar
 code = lib/commons-io.jar
@@ -29,6 +30,7 @@ code = lib/jackson-annotations.jar
 code = lib/jackson-core.jar
 code = lib/jackson-databind.jar
 code = lib/jdom.jar
+code = lib/jmte-unbundled.jar
 code = lib/jna.jar
 code = lib/jsoup.jar
 code = lib/JSplitButton.jar
@@ -45,7 +47,7 @@ code = lib/thetvdbapi.jar
 code = lib/vlcj.jar
 
 resource = getdown.jar
-#resource = [windows] tinyMediaManager.exe #not yet - need more testing
+resource = [windows] tinyMediaManager.exe
 resource = [!windows] tinyMediaManager.sh
 resource = version
 resource = splashscreen.png
@@ -65,6 +67,12 @@ resource = [windows-amd64] native/windows-amd64/MediaInfo.dll
 resource = [windows-x64] native/windows-x64/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/mingwm10.dll
+
+# templates
+resource = templates/readme.txt
+resource = templates/listExample.csv.jmte
+resource = templates/listExample.html.jmte
+resource = templates/listExample.xml.jmte
 
 
 # The main entry point for the application
