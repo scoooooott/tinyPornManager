@@ -357,6 +357,7 @@ public class MovieList extends AbstractModelObject {
             movie.setPath(parentDir);
             movie.addToFiles(videoFiles);
             movie.findImages();
+            movie.addLocalTrailers();
           }
           // persist movie
           if (movie != null) {
@@ -444,6 +445,7 @@ public class MovieList extends AbstractModelObject {
             movie.setPath(dir.getPath());
             movie.addToFiles(videoFiles);
             movie.findImages();
+            movie.addLocalTrailers();
           }
           // persist movie
           if (movie != null) {

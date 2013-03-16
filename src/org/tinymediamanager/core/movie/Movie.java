@@ -811,6 +811,31 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
+   * Find local trailers
+   */
+  public void addLocalTrailers() {
+    LOGGER.debug("try to find local/downloaded trailers");
+
+    FilenameFilter filter = new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return name.matches("(?i)^sample\\..{2,4}") || name.matches("(?i).*-trailer\\..{2,4}");
+      }
+    };
+
+    File[] trailerFiles = new File(path).listFiles(filter);
+    for (File file : trailerFiles) {
+      MediaTrailer mt = new MediaTrailer();
+      mt.setName(file.getName());
+      mt.setProvider("downloaded");
+      mt.setQuality("unknown");
+      mt.setInNfo(false);
+      mt.setUrl(file.toURI().toString());
+      addTrailer(mt);
+    }
+      
+  }
+
+  /**
    * checks movie folder for poster and sets it.
    * 
    * @param name
@@ -1252,6 +1277,7 @@ public class Movie extends AbstractModelObject {
         movie.setPath(path);
         movie.addToFiles(videoFiles);
         movie.findImages();
+        movie.addLocalTrailers();
         break;
       }
 
