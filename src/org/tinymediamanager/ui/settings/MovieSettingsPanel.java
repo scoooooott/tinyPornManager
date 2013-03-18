@@ -142,13 +142,15 @@ public class MovieSettingsPanel extends JPanel {
     btnRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         int row = tableMovieSources.convertRowIndexToModel(tableMovieSources.getSelectedRow());
-        String path = Globals.settings.getMovieDataSource().get(row);
-        String[] choices = { "Continue", "Abort" };
-        int decision = JOptionPane.showOptionDialog(null, "If you remove " + path
-            + " from your data sources, all movies inside this path will also be removed. Continue?", "Remove datasource", JOptionPane.YES_NO_OPTION,
-            JOptionPane.PLAIN_MESSAGE, null, choices, "Abort");
-        if (decision == 0) {
-          Globals.settings.removeMovieDataSources(path);
+        if (row != -1) { // nothing selected 
+          String path = Globals.settings.getMovieDataSource().get(row);
+          String[] choices = { "Continue", "Abort" };
+          int decision = JOptionPane.showOptionDialog(null, "If you remove " + path
+              + " from your data sources, all movies inside this path will also be removed. Continue?", "Remove datasource",
+              JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices, "Abort");
+          if (decision == 0) {
+            Globals.settings.removeMovieDataSources(path);
+          }
         }
       }
     });
