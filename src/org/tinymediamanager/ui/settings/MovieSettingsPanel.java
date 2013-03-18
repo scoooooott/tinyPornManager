@@ -50,6 +50,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieConnectors;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.ui.JNativeFileChooser;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -126,7 +127,7 @@ public class MovieSettingsPanel extends JPanel {
     JButton btnAdd = new JButton("Add");
     btnAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        JFileChooser fileChooser = new JFileChooser();
+        JNativeFileChooser fileChooser = new JNativeFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {

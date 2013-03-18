@@ -65,6 +65,7 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.ImageLabel;
+import org.tinymediamanager.ui.JNativeFileChooser;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.ToggleButtonUI;
 import org.tinymediamanager.ui.WrapLayout;
@@ -735,7 +736,7 @@ public class MovieImageChooser extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      JFileChooser fileChooser = new JFileChooser();
+      JNativeFileChooser fileChooser = new JNativeFileChooser();
       FileFilter filter = new ImageFileFilter();
       fileChooser.setFileFilter(filter);
       fileChooser.setMultiSelectionEnabled(false);

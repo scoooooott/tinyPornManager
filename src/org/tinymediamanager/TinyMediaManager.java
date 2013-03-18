@@ -63,7 +63,8 @@ public class TinyMediaManager {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
-          // after 5 secs of beeing idle, the threads are removed till 0; see Globals
+          // after 5 secs of beeing idle, the threads are removed till 0; see
+          // Globals
           Globals.executor.allowCoreThreadTimeOut(true);
 
           Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
