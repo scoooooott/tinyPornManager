@@ -58,16 +58,17 @@ import org.tinymediamanager.scraper.util.Url;
 public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider, IMediaArtworkProvider {
 
   /** The Constant LOGGER. */
-  private static final Logger              LOGGER       = Logger.getLogger(ZelluloidMetadataProvider.class);
+  private static final Logger              LOGGER        = Logger.getLogger(ZelluloidMetadataProvider.class);
 
-  private static final String              BASE_URL     = "http://www.zelluloid.de";
+  private static final String              BASE_URL      = "http://www.zelluloid.de";
+  private static final String              PAGE_ENCODING = "ISO-8859-1";
 
   /** The Constant instance. */
   private static ZelluloidMetadataProvider instance;
 
   /** The provider info. */
-  private static MediaProviderInfo         providerInfo = new MediaProviderInfo("zelluloid", "zelluloid.de",
-                                                            "Scraper for german zelluloid.de which is able to scrape movie metadata");
+  private static MediaProviderInfo         providerInfo  = new MediaProviderInfo("zelluloid", "zelluloid.de",
+                                                             "Scraper for german zelluloid.de which is able to scrape movie metadata");
 
   /**
    * Gets the single instance of OfdbMetadataProvider.
@@ -118,7 +119,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       LOGGER.debug("get details page");
       url = new CachedUrl(options.getResult().getUrl());
       InputStream in = url.getInputStream();
-      Document doc = Jsoup.parse(in, "UTF-8", "");
+      Document doc = Jsoup.parse(in, PAGE_ENCODING, "");
       in.close();
 
       // parse plot
@@ -169,7 +170,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       // details page
       url = new CachedUrl(BASE_URL + "/filme/details.php3?id=" + id);
       in = url.getInputStream();
-      doc = Jsoup.parse(in, "UTF-8", "");
+      doc = Jsoup.parse(in, PAGE_ENCODING, "");
       in.close();
 
       Element tab = doc.getElementById("ccdetails");
@@ -207,6 +208,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
               mcm.setType(MediaCastMember.CastType.ACTOR);
               // System.out.println("Cast: " + mcm.getCharacter() + " - " + mcm.getName());
               md.addCastMember(mcm);
+              // TODO: parse actor detail pages :/
             }
           }
           else if (header == 2) {
@@ -245,7 +247,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       // get links page
       url = new CachedUrl(BASE_URL + "/filme/links.php3?id=" + id);
       in = url.getInputStream();
-      doc = Jsoup.parse(in, "UTF-8", "");
+      doc = Jsoup.parse(in, PAGE_ENCODING, "");
       in.close();
 
       el = doc.getElementsByAttributeValueContaining("href", "german.imdb.com");
