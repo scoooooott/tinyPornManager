@@ -51,6 +51,7 @@ import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.ParserUtils;
+import org.tinymediamanager.scraper.zelluloid.ZelluloidMetadataProvider;
 import org.tinymediamanager.ui.moviesets.MovieSetTreeModel;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -612,6 +613,11 @@ public class MovieList extends AbstractModelObject {
       case OFDB:
         LOGGER.debug("get instance of OfdbMetadataProvider");
         metadataProvider = new OfdbMetadataProvider();
+        break;
+
+      case ZELLULOID:
+        LOGGER.debug("get instance of ZelluloidMetadataProvider");
+        metadataProvider = new ZelluloidMetadataProvider();
         break;
 
       case IMDB:
