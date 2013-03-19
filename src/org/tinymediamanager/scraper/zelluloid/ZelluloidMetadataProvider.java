@@ -31,6 +31,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -54,7 +55,7 @@ import org.tinymediamanager.scraper.util.Url;
  * 
  * @author Myron Boyle (myron0815@gmx.net)
  */
-public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider {
+public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider, IMediaArtworkProvider {
 
   /** The Constant LOGGER. */
   private static final Logger              LOGGER       = Logger.getLogger(ZelluloidMetadataProvider.class);
@@ -102,6 +103,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     md.setOriginalTitle(Utils.removeSortableName(options.getResult().getOriginalTitle()));
     md.setTitle(Utils.removeSortableName(options.getResult().getTitle()));
     md.setYear(options.getResult().getYear());
+    md.setOriginalTitle(options.getResult().getOriginalTitle());
 
     String id = "";
     if (StringUtils.isEmpty(options.getResult().getId())) {
@@ -128,8 +130,9 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       el = doc.getElementsByAttributeValueStarting("pic", "/images/poster");
       if (el.size() == 1) {
         MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(el.get(0).attr("pic"));
+        ma.setDefaultUrl(BASE_URL + el.get(0).attr("pic"));
         ma.setType(MediaArtworkType.POSTER);
+        ma.setProviderId(getProviderInfo().getId());
         md.addMediaArt(ma);
       }
 
@@ -197,36 +200,40 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
           el = tr.getElementsByTag("td");
           if (header == 1) {
             // actors
-            mcm.setCharacter(el.get(0).text());
-            mcm.setName(el.get(1).text());
-            mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
-            mcm.setType(MediaCastMember.CastType.ACTOR);
-            //System.out.println("Cast: " + mcm.getCharacter() + " - " + mcm.getName());
-            md.addCastMember(mcm);
+            if (el.size() == 2) {
+              mcm.setCharacter(el.get(0).text());
+              mcm.setName(el.get(1).text());
+              mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
+              mcm.setType(MediaCastMember.CastType.ACTOR);
+              // System.out.println("Cast: " + mcm.getCharacter() + " - " + mcm.getName());
+              md.addCastMember(mcm);
+            }
           }
           else if (header == 2) {
             //crew
-            String crewrole = el.get(0).html().trim();
-            mcm.setName(el.get(1).getElementsByTag("a").text());
-            if (crewrole.equals("&nbsp;")) {
-              mcm.setPart(lastRole);
+            if (el.size() == 2) {
+              String crewrole = el.get(0).html().trim();
+              mcm.setName(el.get(1).getElementsByTag("a").text());
+              if (crewrole.equals("&nbsp;")) {
+                mcm.setPart(lastRole);
+              }
+              else {
+                mcm.setPart(crewrole);
+                lastRole = crewrole;
+              }
+              if (crewrole.equals("Regie")) {
+                mcm.setType(MediaCastMember.CastType.DIRECTOR);
+              }
+              else if (crewrole.equals("Drehbuch")) {
+                mcm.setType(MediaCastMember.CastType.WRITER);
+              }
+              else {
+                mcm.setType(MediaCastMember.CastType.OTHER);
+              }
+              mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
+              // System.out.println("Crew: " + mcm.getPart() + " - " + mcm.getName());
+              md.addCastMember(mcm);
             }
-            else {
-              mcm.setPart(crewrole);
-              lastRole = crewrole;
-            }
-            if (crewrole.equals("Regie")) {
-              mcm.setType(MediaCastMember.CastType.DIRECTOR);
-            }
-            else if (crewrole.equals("Drehbuch")) {
-              mcm.setType(MediaCastMember.CastType.WRITER);
-            }
-            else {
-              mcm.setType(MediaCastMember.CastType.OTHER);
-            }
-            mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
-            //System.out.println("Crew: " + mcm.getPart() + " - " + mcm.getName());
-            md.addCastMember(mcm);
           }
           else if (header == 3) {
             // production
@@ -363,6 +370,16 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     // http://www.zelluloid.de/filme/trailer.php3?id=7614
+    return null;
+  }
+
+  @Override
+  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
+    LOGGER.debug("getArtwork() " + options.toString());
+    List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
+    String searchString = "";
+    String imdb = "";
+
     return null;
   }
 }
