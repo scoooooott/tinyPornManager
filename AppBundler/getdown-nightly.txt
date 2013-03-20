@@ -49,7 +49,7 @@ code = lib/DJNativeSwing.jar
 code = lib/DJNativeSwing-SWT.jar 
 
 resource = getdown.jar
-resource = [windows] tinyMediaManager.exe
+# resource = [windows] tinyMediaManager.exe # nah, do not distribute always generated exe
 resource = [!windows] tinyMediaManager.sh
 resource = version
 resource = splashscreen.png

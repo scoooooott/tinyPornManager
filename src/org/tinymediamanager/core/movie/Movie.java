@@ -1900,7 +1900,7 @@ public class Movie extends AbstractModelObject {
   }
 
   /**
-   * Sets the rating.
+   * Sets the rating (range 0-10)
    * 
    * @param newValue
    *          the new rating

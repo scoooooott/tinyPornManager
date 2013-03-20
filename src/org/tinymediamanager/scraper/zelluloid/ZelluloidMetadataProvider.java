@@ -160,7 +160,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
         // <div>87%</div>
         String r = e.getElementsByTag("div").text().replace("%", "");
         try {
-          md.setRating(Double.valueOf(r));
+          md.setRating(Double.valueOf(r) / 10); // only 0-10
         }
         catch (Exception e2) {
           LOGGER.warn("cannot convert rating: " + r);

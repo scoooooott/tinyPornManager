@@ -251,7 +251,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Sets the rating.
+   * Sets the rating (range 0-10)
    * 
    * @param rating
    *          the new rating
