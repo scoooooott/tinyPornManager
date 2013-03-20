@@ -20,12 +20,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -50,7 +50,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieConnectors;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
-import org.tinymediamanager.ui.JNativeFileChooser;
+import org.tinymediamanager.ui.TmmUIHelper;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -127,12 +127,19 @@ public class MovieSettingsPanel extends JPanel {
     JButton btnAdd = new JButton("Add");
     btnAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        JNativeFileChooser fileChooser = new JNativeFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int result = fileChooser.showOpenDialog(null);
-        if (result == JFileChooser.APPROVE_OPTION) {
-          settings.addMovieDataSources(fileChooser.getSelectedFile().getAbsolutePath());
+        File file = TmmUIHelper.selectDirectory("add datasource");
+        if (file != null && file.exists() && file.isDirectory()) {
+          settings.addMovieDataSources(file.getAbsolutePath());
         }
+
+        // JNativeFileChooser fileChooser = new JNativeFileChooser();
+        // fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //
+        // int result = fileChooser.showOpenDialog(null);
+        //
+        // if (result == JFileChooser.APPROVE_OPTION) {
+        // settings.addMovieDataSources(fileChooser.getSelectedFile().getAbsolutePath());
+        // }
       }
     });
 
@@ -142,7 +149,7 @@ public class MovieSettingsPanel extends JPanel {
     btnRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         int row = tableMovieSources.convertRowIndexToModel(tableMovieSources.getSelectedRow());
-        if (row != -1) { // nothing selected 
+        if (row != -1) { // nothing selected
           String path = Globals.settings.getMovieDataSource().get(row);
           String[] choices = { "Continue", "Abort" };
           int decision = JOptionPane.showOptionDialog(null, "If you remove " + path

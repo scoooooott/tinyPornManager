@@ -48,7 +48,7 @@ public class DynaEnum<E extends DynaEnum<E>> {
   }
 
   /** The ordinal. */
-  private final int ordinal;
+  protected final int ordinal;
 
   /**
    * Ordinal.

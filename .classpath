@@ -38,5 +38,7 @@
 	<classpathentry kind="lib" path="lib/fanarttvapi.jar" sourcepath="buildsupport/fanarttvapi-1.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/asm.jar"/>
 	<classpathentry kind="lib" path="lib/jmte-unbundled.jar"/>
+	<classpathentry kind="lib" path="lib/DJNativeSwing-SWT.jar"/>
+	<classpathentry kind="lib" path="lib/DJNativeSwing.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

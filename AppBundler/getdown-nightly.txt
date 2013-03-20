@@ -45,6 +45,8 @@ code = lib/Scaling-bin.jar
 code = lib/themoviedbapi.jar
 code = lib/thetvdbapi.jar
 code = lib/vlcj.jar
+code = lib/DJNativeSwing.jar
+code = lib/DJNativeSwing-SWT.jar 
 
 resource = getdown.jar
 resource = [windows] tinyMediaManager.exe
@@ -86,3 +88,4 @@ jvmarg = -Xms64m
 jvmarg = -Xmx512m
 jvmarg = -splash:splashscreen.png
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
+jvmarg = [linux] -Djava.ext.dirs=/usr/share/java

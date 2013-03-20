@@ -41,7 +41,10 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
+
+import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 
 import com.sun.jna.Platform;
 
@@ -60,6 +63,13 @@ public class TinyMediaManager {
    *          the arguments
    */
   public static void main(String[] args) {
+    // initialize SWT if needed
+    TmmUIHelper.init();
+    if (TmmUIHelper.swt != null) {
+      NativeInterface.open();
+    }
+
+    // start EDT
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
@@ -347,5 +357,9 @@ public class TinyMediaManager {
         }
       }
     });
+
+    if (TmmUIHelper.swt != null) {
+      NativeInterface.runEventPump();
+    }
   }
 }

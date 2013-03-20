@@ -41,7 +41,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -65,7 +64,7 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.ImageLabel;
-import org.tinymediamanager.ui.JNativeFileChooser;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.ToggleButtonUI;
 import org.tinymediamanager.ui.WrapLayout;
@@ -736,12 +735,14 @@ public class MovieImageChooser extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      JNativeFileChooser fileChooser = new JNativeFileChooser();
-      FileFilter filter = new ImageFileFilter();
-      fileChooser.setFileFilter(filter);
-      fileChooser.setMultiSelectionEnabled(false);
-      if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-        String fileName = fileChooser.getSelectedFile().getPath();
+      // JNativeFileChooser fileChooser = new JNativeFileChooser();
+      // FileFilter filter = new ImageFileFilter();
+      // fileChooser.setFileFilter(filter);
+      // fileChooser.setMultiSelectionEnabled(false);
+      // if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+      File file = TmmUIHelper.selectFile("Choose an image");
+      if (file != null && file.exists() && file.isFile()) {
+        String fileName = file.getPath();
 
         switch (type) {
           case POSTER:
