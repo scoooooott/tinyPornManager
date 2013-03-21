@@ -357,7 +357,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
     lblProgressAction.setText(description);
     progressBar.setVisible(true);
     progressBar.setIndeterminate(true);
-    // btnCancelScraper.setVisible(true);
+    btnCancelTask.setVisible(true);
   }
 
   /**
@@ -367,7 +367,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
     lblProgressAction.setText("");
     progressBar.setIndeterminate(false);
     progressBar.setVisible(false);
-    // btnCancelScraper.setVisible(false);
+    btnCancelTask.setVisible(false);
   }
 
   /*

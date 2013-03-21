@@ -23,16 +23,14 @@ import org.apache.commons.lang3.SystemUtils;
 
 public class JNativeFileChooser extends JFileChooser {
 
-  private static final String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
-
   /*
    * (non-Javadoc)
    * 
    * @see javax.swing.JFileChooser#updateUI()
    */
   public void updateUI() {
-    if (!SystemUtils.IS_OS_LINUX) {
-      // on windows and mac osx set the native laf
+    if (SystemUtils.IS_OS_WINDOWS) {
+      // on windows set the native laf
       LookAndFeel old = UIManager.getLookAndFeel();
       try {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -52,7 +50,7 @@ public class JNativeFileChooser extends JFileChooser {
       }
     }
     else {
-      // on linux as is
+      // on linux/mac as is
       super.updateUI();
     }
   }

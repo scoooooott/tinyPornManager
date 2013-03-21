@@ -161,8 +161,8 @@ public class TmmUIHelper {
     // reset system property
     System.setProperty("apple.awt.fileDialogForDirectories", "false");
 
-    if (StringUtils.isNotEmpty(chooser.getDirectory())) {
-      return new File(chooser.getDirectory());
+    if (StringUtils.isNotEmpty(chooser.getFile())) {
+      return new File(chooser.getDirectory() + File.separator + chooser.getFile());
     }
     else {
       return null;
