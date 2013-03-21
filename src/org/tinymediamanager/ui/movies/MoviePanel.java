@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,13 +52,13 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieRenameTask;
 import org.tinymediamanager.core.movie.MovieScrapeTask;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.MovieUpdateDatasourceTask;
 import org.tinymediamanager.ui.BorderCellRenderer;
 import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.JSearchTextField;
@@ -462,7 +461,7 @@ public class MoviePanel extends JPanel {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      TmmSwingWorker task = new UpdateDataSourcesTask();
+      TmmSwingWorker task = new MovieUpdateDatasourceTask();
       if (!MainWindow.executeMainTask(task)) {
         JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
       }
@@ -774,93 +773,6 @@ public class MoviePanel extends JPanel {
       }
     }
 
-  }
-
-  /**
-   * The Class UpdateDataSourcesTask.
-   */
-  private class UpdateDataSourcesTask extends TmmSwingWorker {
-    /**
-     * Instantiates a new scrape task.
-     * 
-     */
-    public UpdateDataSourcesTask() {
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
-    @Override
-    public Void doInBackground() {
-      try {
-        // first search for new movies
-        for (String path : Globals.settings.getMovieDataSource()) {
-          startProgressBar("Updating " + path);
-          movieList.findMoviesInPath(path);
-        }
-
-        // second - remove orphaned movies
-        for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
-          Movie movie = movieList.getMovies().get(i);
-          File movieDir = new File(movie.getPath());
-          if (!movieDir.exists()) {
-            movieList.removeMovie(movie);
-          }
-        }
-      }
-      catch (Exception e) {
-        LOGGER.error("Thread crashed", e);
-      }
-      return null;
-    }
-
-    /*
-     * Executed in event dispatching thread
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
-    @Override
-    public void done() {
-      stopProgressBar();
-    }
-
-    /**
-     * Start progress bar.
-     * 
-     * @param description
-     *          the description
-     */
-    private void startProgressBar(String description) {
-      lblProgressAction.setText(description);
-      progressBar.setVisible(true);
-      progressBar.setIndeterminate(true);
-      // btnCancelScraper.setVisible(true);
-    }
-
-    /**
-     * Stop progress bar.
-     */
-    private void stopProgressBar() {
-      lblProgressAction.setText("");
-      progressBar.setIndeterminate(false);
-      progressBar.setVisible(false);
-      // btnCancelScraper.setVisible(false);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.tinymediamanager.ui.TmmSwingWorker#cancel()
-     */
-    @Override
-    public void cancel() {
-      cancel(true);
-    }
   }
 
   /**

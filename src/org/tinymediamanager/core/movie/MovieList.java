@@ -17,20 +17,14 @@ package org.tinymediamanager.core.movie;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -50,7 +44,6 @@ import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
-import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.zelluloid.ZelluloidMetadataProvider;
 import org.tinymediamanager.ui.moviesets.MovieSetTreeModel;
 
@@ -269,233 +262,13 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
-   * find movies in path.
-   * 
-   * @param path
-   *          the path
-   */
-  public void findMoviesInPath(String path) {
-    LOGGER.debug("find movies in path " + path);
-    File filePath = new File(path);
-    for (File subdir : filePath.listFiles()) {
-      if (subdir.isDirectory()) {
-        if (subdir.getName().equals("VIDEO_TS")) {
-          findDiscInDirectory(subdir, path);
-        }
-        else if (subdir.getName().equals("BDMV")) {
-          findDiscInDirectory(subdir, path);
-        }
-        else {
-          findMovieInDirectory(subdir, path);
-        }
-      }
-    }
-  }
-
-  /**
-   * Special handling for "Disc" folders.<br>
-   * create meta files in parent directory.
-   * 
-   * @param dir
-   *          the dir
-   * @param dataSource
-   *          the data source
-   */
-  // BD 2.3
-  // http://www.blu-raydisc.com/assets/Downloadablefile/BD-ROM_Audio_Visual_Application_Format_Specifications-18780.pdf
-  private void findDiscInDirectory(File dir, String dataSource) {
-    String parentDir = dir.getParent();
-    LOGGER.debug("find Disc in directory " + dir.getPath() + " parent: " + parentDir);
-
-    // check if there are any videofiles in that subdir
-    FilenameFilter filter = new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        boolean typeFound = false;
-
-        // do not start with .
-        if (name.toLowerCase().startsWith("."))
-          return false;
-
-        // check against sample.*
-        Pattern pattern = Pattern.compile("(?i)^sample\\..{2,4}");
-        Matcher matcher = pattern.matcher(name);
-        if (matcher.matches())
-          return false;
-
-        // check against *-trailer.*
-        pattern = Pattern.compile("(?i).*-trailer\\..{2,4}");
-        matcher = pattern.matcher(name);
-        if (matcher.matches())
-          return false;
-
-        // check if filetype is in our settigns
-        for (String type : settings.getVideoFileType()) {
-          if (name.toLowerCase().endsWith(type.toLowerCase())) {
-            typeFound = true;
-            break;
-          }
-        }
-
-        return typeFound;
-      }
-    };
-
-    File[] videoFiles = dir.listFiles(filter);
-    // movie files found in directory?
-    if (videoFiles.length > 0) {
-      try {
-        LOGGER.debug("found video files in " + dir.getPath());
-        // does the PARENT path exists for an other movie?
-        Movie movie = getMovieByPath(parentDir);
-        if (movie == null) {
-          LOGGER.debug("movie not yet in our DB, so add " + parentDir);
-          // movie did not exist - try to parse a NFO file in parent folder
-          movie = Movie.parseNFO(parentDir, videoFiles);
-          if (movie == null) {
-            // movie did not exist - create new one
-            movie = new Movie();
-            movie.setName(ParserUtils.detectCleanMoviename(FilenameUtils.getBaseName(parentDir)));
-            movie.setPath(parentDir);
-            movie.addToFiles(videoFiles);
-            movie.findImages();
-            movie.addLocalTrailers();
-          }
-          // persist movie
-          if (movie != null) {
-            movie.setDataSource(dataSource);
-            movie.setDisc(true); // sets as Disc Folder
-            movie.setDateAdded(new Date());
-            LOGGER.info("store movie into DB " + parentDir);
-            movie.saveToDb();
-            if (movie.getMovieSet() != null) {
-              LOGGER.debug("movie is part of a movieset");
-              movie.getMovieSet().addMovie(movie);
-              sortMoviesInMovieSet(movie.getMovieSet());
-              movie.getMovieSet().saveToDb();
-            }
-            LOGGER.debug("add movie to GUI");
-            addMovie(movie);
-          }
-        }
-      }
-      catch (Exception e) {
-        LOGGER.error(e.getMessage());
-      }
-    }
-    // already found Disc folder - DO NOT dig deeper
-  }
-
-  /**
-   * Find movie in directory.
-   * 
-   * @param dir
-   *          the dir
-   * @param dataSource
-   *          the data source
-   */
-  private void findMovieInDirectory(File dir, String dataSource) {
-    LOGGER.debug("find movies in directory " + dir.getPath());
-    // check if there are any videofiles in that subdir
-    FilenameFilter filter = new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        boolean typeFound = false;
-
-        // do not start with .
-        if (name.toLowerCase().startsWith("."))
-          return false;
-
-        // check against sample.*
-        Pattern pattern = Pattern.compile("(?i)^sample\\..{2,4}");
-        Matcher matcher = pattern.matcher(name);
-        if (matcher.matches())
-          return false;
-
-        // check against *-trailer.*
-        pattern = Pattern.compile("(?i).*-trailer\\..{2,4}");
-        matcher = pattern.matcher(name);
-        if (matcher.matches())
-          return false;
-
-        // check if filetype is in our settigns
-        for (String type : settings.getVideoFileType()) {
-          if (name.toLowerCase().endsWith(type.toLowerCase())) {
-            typeFound = true;
-            break;
-          }
-        }
-
-        return typeFound;
-      }
-    };
-
-    File[] videoFiles = dir.listFiles(filter);
-    // movie files found in directory?
-    if (videoFiles.length > 0) {
-      try {
-        LOGGER.debug("found video files in " + dir.getPath());
-        // does this path exists for an other movie?
-        Movie movie = getMovieByPath(dir.getPath());
-        if (movie == null) {
-          LOGGER.debug("movie not yet in our DB, so add " + dir.getPath());
-          // movie did not exist - try to parse a NFO file
-          movie = Movie.parseNFO(dir.getPath(), videoFiles);
-          if (movie == null) {
-            // movie did not exist - create new one
-            movie = new Movie();
-            movie.setName(ParserUtils.detectCleanMoviename(dir.getName()));
-            movie.setPath(dir.getPath());
-            movie.addToFiles(videoFiles);
-            movie.findImages();
-            movie.addLocalTrailers();
-          }
-          // persist movie
-          if (movie != null) {
-            movie.setDataSource(dataSource);
-            movie.setDateAdded(new Date());
-            LOGGER.info("store movie into DB " + dir.getPath());
-            movie.saveToDb();
-            if (movie.getMovieSet() != null) {
-              LOGGER.debug("movie is part of a movieset");
-              movie.getMovieSet().addMovie(movie);
-              sortMoviesInMovieSet(movie.getMovieSet());
-              // movie.getMovieSet().sortMovies();
-              movie.getMovieSet().saveToDb();
-            }
-            LOGGER.debug("add movie to GUI");
-            addMovie(movie);
-          }
-        }
-      }
-      catch (Exception e) {
-        LOGGER.error(e.getMessage());
-      }
-    }
-    else {
-      // no - dig deeper
-      for (File subdir : dir.listFiles()) {
-        if (subdir.isDirectory()) {
-          if (subdir.getName().equals("VIDEO_TS")) {
-            findDiscInDirectory(subdir, dataSource);
-          }
-          else if (subdir.getName().equals("BDMV")) {
-            findDiscInDirectory(subdir, dataSource);
-          }
-          else {
-            findMovieInDirectory(subdir, dataSource);
-          }
-        }
-      }
-    }
-  }
-
-  /**
    * Gets the movie by path.
    * 
    * @param path
    *          the path
    * @return the movie by path
    */
-  private Movie getMovieByPath(String path) {
+  public synchronized Movie getMovieByPath(String path) {
 
     for (Movie movie : movieList) {
       if (movie.getPath().compareTo(path) == 0) {
