@@ -148,7 +148,7 @@ public class TmmUIHelper {
    *           the error
    */
   private static File openDirectoryDialog(String title) throws Exception, Error {
-    if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
+    if (!SystemUtils.IS_OS_MAC && !SystemUtils.IS_OS_MAC_OSX) {
       throw new Exception("not on osx");
     }
 
