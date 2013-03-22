@@ -438,38 +438,44 @@ public class MovieSet extends AbstractModelObject {
     }
   }
 
+  /**
+   * Write images to artwork folder.
+   * 
+   * @param poster
+   *          the poster
+   * @param fanart
+   *          the fanart
+   */
   private void writeImagesToArtworkFolder(boolean poster, boolean fanart) {
-    // write images to all datasources
-    for (String datasource : Globals.settings.getMovieDataSource()) {
-      File artworkFolder = new File(datasource + File.separator + Globals.settings.getMovieSetArtworkFolder());
+    // write images to artwork folder
+    File artworkFolder = new File(Globals.settings.getMovieSetArtworkFolder());
 
-      // check if folder exists
-      if (!artworkFolder.exists()) {
-        artworkFolder.mkdirs();
-      }
+    // check if folder exists
+    if (!artworkFolder.exists()) {
+      artworkFolder.mkdirs();
+    }
 
-      // write files
-      try {
-        // poster
-        if (poster && StringUtils.isNotBlank(posterUrl)) {
-          String providedFiletype = FilenameUtils.getExtension(posterUrl);
-          writeImage(posterUrl, artworkFolder.getPath() + File.separator + name + "-folder." + providedFiletype);
-        }
+    // write files
+    try {
+      // poster
+      if (poster && StringUtils.isNotBlank(posterUrl)) {
+        String providedFiletype = FilenameUtils.getExtension(posterUrl);
+        writeImage(posterUrl, artworkFolder.getPath() + File.separator + name + "-folder." + providedFiletype);
       }
-      catch (IOException e) {
-        LOGGER.warn(e);
-      }
+    }
+    catch (IOException e) {
+      LOGGER.warn(e);
+    }
 
-      try {
-        // fanart
-        if (fanart && StringUtils.isNotBlank(fanartUrl)) {
-          String providedFiletype = FilenameUtils.getExtension(fanartUrl);
-          writeImage(fanartUrl, artworkFolder.getPath() + File.separator + name + "-fanart." + providedFiletype);
-        }
+    try {
+      // fanart
+      if (fanart && StringUtils.isNotBlank(fanartUrl)) {
+        String providedFiletype = FilenameUtils.getExtension(fanartUrl);
+        writeImage(fanartUrl, artworkFolder.getPath() + File.separator + name + "-fanart." + providedFiletype);
       }
-      catch (IOException e) {
-        LOGGER.warn(e);
-      }
+    }
+    catch (IOException e) {
+      LOGGER.warn(e);
     }
   }
 

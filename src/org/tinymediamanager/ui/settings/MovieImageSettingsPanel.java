@@ -17,11 +17,15 @@ package org.tinymediamanager.ui.settings;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -44,6 +48,7 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
+import org.tinymediamanager.ui.TmmUIHelper;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -145,6 +150,7 @@ public class MovieImageSettingsPanel extends JPanel {
   private JCheckBox  chckbxStoreMoviesetArtwork;
   private JTextField tfMovieSetArtworkFolder;
   private JLabel     lblFoldername;
+  private JButton    btnSelectFolder;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -315,18 +321,29 @@ public class MovieImageSettingsPanel extends JPanel {
         null));
     add(panel, "2, 6, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     chckbxStoreMoviesetArtwork = new JCheckBox("Store movieset artwork in a separate folder");
     panel.add(chckbxStoreMoviesetArtwork, "2, 2, 3, 1");
 
-    lblFoldername = new JLabel("Folder name (in root of every datasource)");
+    lblFoldername = new JLabel("Folder name");
     panel.add(lblFoldername, "2, 4, right, default");
 
     tfMovieSetArtworkFolder = new JTextField();
     panel.add(tfMovieSetArtworkFolder, "4, 4, fill, default");
     tfMovieSetArtworkFolder.setColumns(10);
+
+    btnSelectFolder = new JButton("Select folder");
+    btnSelectFolder.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        File file = TmmUIHelper.selectDirectory("select movieset artwork folder");
+        if (file != null && file.exists() && file.isDirectory()) {
+          tfMovieSetArtworkFolder.setText(file.getAbsolutePath());
+        }
+      }
+    });
+    panel.add(btnSelectFolder, "6, 4");
 
     initDataBindings();
 
