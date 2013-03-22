@@ -117,10 +117,15 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       id = options.getResult().getId();
     }
 
+    String detailurl = options.getResult().getUrl();
+    if (StringUtils.isEmpty(detailurl)) {
+      detailurl = BASE_URL + "/filme/index.php3?id=" + id;
+    }
+
     Url url;
     try {
       LOGGER.debug("get details page");
-      url = new CachedUrl(options.getResult().getUrl());
+      url = new CachedUrl(detailurl);
       InputStream in = url.getInputStream();
       Document doc = Jsoup.parse(in, PAGE_ENCODING, "");
       in.close();
@@ -165,6 +170,9 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       // parse original title
       if (StringUtils.isEmpty(md.getOriginalTitle())) {
         md.setOriginalTitle(StrgUtils.substr(doc.toString(), "Originaltitel: (.*?)\\<"));
+      }
+      if (StringUtils.isEmpty(md.getOriginalTitle())) {
+        md.setOriginalTitle(md.getTitle());
       }
 
       // parse runtime
@@ -247,13 +255,14 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
               mcm.setName(el.get(1).getElementsByTag("a").text());
               mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
               mcm.setType(MediaCastMember.CastType.ACTOR);
-              // System.out.println("Cast: " + mcm.getCharacter() + " - " + mcm.getName());
+              // System.out.println("Cast: " + mcm.getCharacter() + " - " +
+              // mcm.getName());
               md.addCastMember(mcm);
               // TODO: parse actor detail pages :/
             }
           }
           else if (header == 2) {
-            //crew
+            // crew
             if (el.size() == 2) {
               String crewrole = el.get(0).html().trim();
               mcm.setName(el.get(1).getElementsByTag("a").text());
@@ -274,7 +283,8 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
                 mcm.setType(MediaCastMember.CastType.OTHER);
               }
               mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
-              // System.out.println("Crew: " + mcm.getPart() + " - " + mcm.getName());
+              // System.out.println("Crew: " + mcm.getPart() + " - " +
+              // mcm.getName());
               md.addCastMember(mcm);
             }
           }
@@ -358,10 +368,28 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     Elements filme = doc.getElementsByAttributeValueStarting("href", "hit.php");
     LOGGER.debug("found " + filme.size() + " search results");
     if (filme == null || filme.isEmpty()) {
+      if (!doc.getElementsByTag("title").text().contains("Suche nach")) {
+        // redirected to detail page
+        MediaSearchResult msr = new MediaSearchResult(providerInfo.getId());
+        Elements el = doc.getElementsByAttributeValueStarting("href", "index.php3?id=");
+        if (el.size() > 0) {
+          msr.setId(StrgUtils.substr(el.get(0).attr("href"), "id=(\\d+)"));
+        }
+        msr.setTitle(StrgUtils.substr(doc.getElementsByTag("title").text(), "(.*?)\\|").trim());
+        el = doc.getElementsByAttributeValueContaining("href", "az.php3?j=");
+        if (el.size() == 1) {
+          msr.setYear(el.get(0).text());
+        }
+        resultList.add(msr);
+      }
       return resultList;
     }
 
-    // <a href="hit.php3?hit=d6900d7d9baf66ba77d8e59cc425da9e-movie-7614-17114331-1" class="normLight">Avatar - Aufbruch nach Pandora</B> <nobr>(2009)</nobr><br /><span class="smallLight" style="color:#ccc;">Avatar</span></a>
+    // <a
+    // href="hit.php3?hit=d6900d7d9baf66ba77d8e59cc425da9e-movie-7614-17114331-1"
+    // class="normLight">Avatar - Aufbruch nach Pandora</B>
+    // <nobr>(2009)</nobr><br /><span class="smallLight"
+    // style="color:#ccc;">Avatar</span></a>
 
     // map to merge 2 results :/
     Map<String, MediaSearchResult> res = new HashMap<String, MediaSearchResult>();
@@ -394,11 +422,14 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
           sr.setOriginalTitle(a.getElementsByTag("span").text());
         }
         if (StringUtils.isEmpty(sr.getYear())) {
-          sr.setYear(StrgUtils.substr(a.getElementsByTag("nobr").text(), ".*(\\d{4}).*")); // any 4 digit
+          sr.setYear(StrgUtils.substr(a.getElementsByTag("nobr").text(), ".*(\\d{4}).*")); // any
+                                                                                           // 4
+                                                                                           // digit
         }
         sr.setMediaType(MediaType.MOVIE);
         sr.setUrl(BASE_URL + "/filme/index.php3?id=" + id);
-        //sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(), "images(.*?)\\&quot"));
+        // sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(),
+        // "images(.*?)\\&quot"));
 
         sr.setScore(MetadataUtil.calculateScore(searchTerm, sr.getTitle()));
         // populate extra args
