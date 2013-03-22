@@ -18,7 +18,10 @@ package org.tinymediamanager.scraper.zelluloid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,6 +140,44 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
         md.addMediaArt(ma);
       }
 
+      // parse year
+      if (StringUtils.isEmpty(md.getYear())) {
+        el = doc.getElementsByAttributeValueContaining("href", "az.php3?j=");
+        if (el.size() == 1) {
+          md.setYear(el.get(0).text());
+        }
+      }
+
+      // parse cinema release
+      el = doc.getElementsByAttributeValueContaining("href", "?v=w");
+      if (el.size() > 0) {
+        try {
+          SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+          Date d = sdf.parse(el.get(0).text());
+          sdf = new SimpleDateFormat("yyyy-MM-dd");
+          md.setReleaseDate(sdf.format(d));
+        }
+        catch (Exception e) {
+          LOGGER.warn("cannot parse cinema release date: " + el.get(0).text());
+        }
+      }
+
+      // parse original title
+      if (StringUtils.isEmpty(md.getOriginalTitle())) {
+        md.setOriginalTitle(StrgUtils.substr(doc.toString(), "Originaltitel: (.*?)\\<"));
+      }
+
+      // parse runtime
+      String rt = (StrgUtils.substr(doc.toString(), "ca.&nbsp;(.*?)&nbsp;min"));
+      if (!rt.isEmpty()) {
+        try {
+          md.setRuntime(Integer.valueOf(rt));
+        }
+        catch (Exception e2) {
+          LOGGER.warn("cannot convert runtime: " + rt);
+        }
+      }
+
       // parse genres
       el = doc.getElementsByAttributeValueContaining("href", "az.php3?g=");
       for (Element g : el) {
@@ -203,7 +244,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
             // actors
             if (el.size() == 2) {
               mcm.setCharacter(el.get(0).text());
-              mcm.setName(el.get(1).text());
+              mcm.setName(el.get(1).getElementsByTag("a").text());
               mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
               mcm.setType(MediaCastMember.CastType.ACTOR);
               // System.out.println("Cast: " + mcm.getCharacter() + " - " + mcm.getName());
@@ -253,6 +294,9 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       el = doc.getElementsByAttributeValueContaining("href", "german.imdb.com");
       if (el != null && el.size() > 0) {
         String imdb = StrgUtils.substr(el.get(0).attr("href"), "(tt\\d{7})");
+        if (imdb.isEmpty()) {
+          imdb = "tt" + StrgUtils.substr(el.get(0).attr("href"), "\\?(\\d+)");
+        }
         md.setImdbId(imdb);
       }
     }
@@ -285,26 +329,27 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     LOGGER.debug("search() " + options.toString());
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
-    String searchString = "";
+    String searchUrl = "";
+    String searchTerm = "";
     String imdb = "";
 
     // only title search
     if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
-      String title = options.get(MediaSearchOptions.SearchParam.TITLE);
-      searchString = BASE_URL + "/suche/index.php3?qstring=" + URLEncoder.encode(cleanSearch(title), "UTF-8");
-      LOGGER.debug("search with title: " + title);
+      searchTerm = cleanSearch(options.get(MediaSearchOptions.SearchParam.TITLE));
+      searchUrl = BASE_URL + "/suche/index.php3?qstring=" + URLEncoder.encode(searchTerm, "UTF-8");
+      LOGGER.debug("search with title: " + searchTerm);
     }
     else if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
-      String query = options.get(MediaSearchOptions.SearchParam.QUERY);
-      searchString = BASE_URL + "/suche/index.php3?qstring=" + URLEncoder.encode(cleanSearch(query), "UTF-8");
-      LOGGER.debug("search for everything: " + query);
+      searchTerm = cleanSearch(options.get(MediaSearchOptions.SearchParam.QUERY));
+      searchUrl = BASE_URL + "/suche/index.php3?qstring=" + URLEncoder.encode(searchTerm, "UTF-8");
+      LOGGER.debug("search for everything: " + searchTerm);
     }
     else {
       LOGGER.debug("empty searchString");
       return resultList;
     }
 
-    Url url = new CachedUrl(searchString);
+    Url url = new CachedUrl(searchUrl);
     InputStream in = url.getInputStream();
     Document doc = Jsoup.parse(in, "UTF-8", "");
     in.close();
@@ -355,6 +400,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
         sr.setUrl(BASE_URL + "/filme/index.php3?id=" + id);
         //sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(), "images(.*?)\\&quot"));
 
+        sr.setScore(MetadataUtil.calculateScore(searchTerm, sr.getTitle()));
         // populate extra args
         MetadataUtil.copySearchQueryToSearchResult(options, sr);
         res.put(id, sr);
@@ -366,6 +412,8 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     for (String r : res.keySet()) {
       resultList.add(res.get(r));
     }
+    Collections.sort(resultList);
+    Collections.reverse(resultList);
     return resultList;
   }
 
