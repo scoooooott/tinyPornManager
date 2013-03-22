@@ -131,14 +131,6 @@ public class MovieSettingsPanel extends JPanel {
         if (file != null && file.exists() && file.isDirectory()) {
           settings.addMovieDataSources(file.getAbsolutePath());
         }
-        // JNativeFileChooser fileChooser = new JNativeFileChooser();
-        // fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        //
-        // int result = fileChooser.showOpenDialog(null);
-        //
-        // if (result == JFileChooser.APPROVE_OPTION) {
-        // settings.addMovieDataSources(fileChooser.getSelectedFile().getAbsolutePath());
-        // }
       }
     });
 

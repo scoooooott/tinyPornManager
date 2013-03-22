@@ -179,7 +179,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
      */
     @Override
     public int compare(FanartTvArtwork arg0, FanartTvArtwork arg1) {
-      String preferredLangu = Globals.settings.getImageTmdbLangugage().name();
+      String preferredLangu = Globals.settings.getScraperLanguage().name();
 
       // check if first image is preferred langu
       if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {

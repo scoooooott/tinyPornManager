@@ -101,9 +101,6 @@ public class Settings extends AbstractModelObject {
   /** The Constant SCRAPER_TMDB_LANGU. */
   private final static String           SCRAPER_TMDB_LANGU             = "scraperTmdbLanguage";
 
-  /** The Constant IMAGE_TMDB_LANGU. */
-  private final static String           IMAGE_TMDB_LANGU               = "imageTmdbLanguage";
-
   /** The Constant IMAGE_TMDB_POSTER. */
   private final static String           IMAGE_TMDB_POSTER              = "imageTmdbPosterSize";
 
@@ -235,9 +232,6 @@ public class Settings extends AbstractModelObject {
 
   /** The scraper tmdb language. */
   private Languages                     scraperTmdbLanguage            = Languages.en;
-
-  /** The image tmdb langugage. */
-  private Languages                     imageTmdbLangugage             = Languages.en;
 
   /** The image tmdb poster size. */
   private PosterSizes                   imageTmdbPosterSize            = PosterSizes.w342;
@@ -752,8 +746,7 @@ public class Settings extends AbstractModelObject {
     addTitlePrefix("Ein");
     addTitlePrefix("Eine");
 
-    setScraperTmdbLanguage(Languages.en);
-    setImageTmdbLangugage(Languages.en);
+    setScraperLanguage(Languages.en);
     setImageTmdbPosterSize(PosterSizes.w342);
     setImageTmdbFanartSize(FanartSizes.original);
 
@@ -861,29 +854,6 @@ public class Settings extends AbstractModelObject {
     this.proxyPassword = newValue;
     // setDirty();
     firePropertyChange(PROXY_PASSWORD, oldValue, newValue);
-  }
-
-  /**
-   * Gets the image tmdb langugage.
-   * 
-   * @return the image tmdb langugage
-   */
-  @XmlElement(name = IMAGE_TMDB_LANGU)
-  public Languages getImageTmdbLangugage() {
-    return imageTmdbLangugage;
-  }
-
-  /**
-   * Sets the image tmdb langugage.
-   * 
-   * @param newValue
-   *          the new image tmdb langugage
-   */
-  public void setImageTmdbLangugage(Languages newValue) {
-    Languages oldValue = this.imageTmdbLangugage;
-    this.imageTmdbLangugage = newValue;
-    // setDirty();
-    firePropertyChange(IMAGE_TMDB_LANGU, oldValue, newValue);
   }
 
   /**
@@ -1187,17 +1157,17 @@ public class Settings extends AbstractModelObject {
    * @return the scraper tmdb language
    */
   @XmlElement(name = SCRAPER_TMDB_LANGU)
-  public Languages getScraperTmdbLanguage() {
+  public Languages getScraperLanguage() {
     return scraperTmdbLanguage;
   }
 
   /**
-   * Sets the scraper tmdb language.
+   * Sets the scraper language.
    * 
    * @param newValue
-   *          the new scraper tmdb language
+   *          the new scraper language
    */
-  public void setScraperTmdbLanguage(Languages newValue) {
+  public void setScraperLanguage(Languages newValue) {
     Languages oldValue = this.scraperTmdbLanguage;
     this.scraperTmdbLanguage = newValue;
     // setDirty();

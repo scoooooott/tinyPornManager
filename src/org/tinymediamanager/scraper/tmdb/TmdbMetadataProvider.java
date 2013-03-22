@@ -216,7 +216,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // begin search
     LOGGER.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
-    tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getScraperTmdbLanguage().name());
+    tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getScraperLanguage().name());
     URL url = tmdbSearchMovie.buildUrl();
     LOGGER.debug(url.toString().replace("&api_key=6247670ec93f4495a36297ff88f7cd15", "&<API_KEY>"));
 
@@ -224,10 +224,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     synchronized (tmdb) {
       // old api
       // moviesFound = tmdb.searchMovie(searchString,
-      // Globals.settings.getScraperTmdbLanguage().name(), false);
+      // Globals.settings.getScraperLanguage().name(), false);
       // new api
       trackConnections();
-      moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getScraperTmdbLanguage().name(), false, 0);
+      moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getScraperLanguage().name(), false, 0);
       baseUrl = tmdb.getConfiguration().getBaseUrl();
     }
 
@@ -313,7 +313,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     String baseUrl = null;
     synchronized (tmdb) {
       trackConnections();
-      movie = tmdb.getMovieInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
+      movie = tmdb.getMovieInfo(tmdbId, Globals.settings.getScraperLanguage().name());
       baseUrl = tmdb.getConfiguration().getBaseUrl();
     }
 
@@ -365,7 +365,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     List<ReleaseInfo> releaseInfo = null;
     synchronized (tmdb) {
       trackConnections();
-      releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
+      releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getScraperLanguage().name());
     }
 
     for (ReleaseInfo info : releaseInfo) {
@@ -506,7 +506,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       synchronized (tmdb) {
         trackConnections();
         // get trailers from tmdb (with specified langu and without)
-        List<Trailer> tmdbTrailers = tmdb.getMovieTrailers(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
+        List<Trailer> tmdbTrailers = tmdb.getMovieTrailers(tmdbId, Globals.settings.getScraperLanguage().name());
         List<Trailer> tmdbTrailersWoLang = tmdb.getMovieTrailers(tmdbId, "");
         tmdbTrailers.addAll(tmdbTrailersWoLang);
 
@@ -565,7 +565,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     MovieDb movieInfo = null;
     synchronized (tmdb) {
       trackConnections();
-      movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperTmdbLanguage().name());
+      movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperLanguage().name());
     }
 
     if (movieInfo != null) {
@@ -608,7 +608,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
      */
     @Override
     public int compare(Artwork arg0, Artwork arg1) {
-      String preferredLangu = Globals.settings.getImageTmdbLangugage().name();
+      String preferredLangu = Globals.settings.getScraperLanguage().name();
 
       // check if first image is preferred langu
       if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
@@ -677,7 +677,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   // MovieDb movieInfo = null;
   // synchronized (tmdb) {
   // movieInfo = tmdb.getMovieInfoImdb(imdbId,
-  // Globals.settings.getScraperTmdbLanguage().name());
+  // Globals.settings.getScraperLanguage().name());
   // }
   //
   // int tmdbId = movieInfo.getId();
@@ -708,7 +708,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   // MovieDb movieInfo = null;
   // synchronized (tmdb) {
   // movieInfo = tmdb.getMovieInfoImdb(imdbId,
-  // Globals.settings.getScraperTmdbLanguage().name());
+  // Globals.settings.getScraperLanguage().name());
   // }
   //
   // int tmdbId = movieInfo.getId();
@@ -787,7 +787,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   // String baseUrl = null;
   // synchronized (tmdb) {
   // movie = tmdb.getMovieInfo(tmdbId,
-  // Globals.settings.getScraperTmdbLanguage().name());
+  // Globals.settings.getScraperLanguage().name());
   // baseUrl = tmdb.getConfiguration().getBaseUrl();
   // }
   //
@@ -827,7 +827,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   // List<ReleaseInfo> releaseInfo = null;
   // synchronized (tmdb) {
   // releaseInfo = tmdb.getMovieReleaseInfo(tmdbId,
-  // Globals.settings.getScraperTmdbLanguage().name());
+  // Globals.settings.getScraperLanguage().name());
   // }
   //
   // for (ReleaseInfo info : releaseInfo) {
@@ -1159,7 +1159,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   // MovieDb movieInfo = null;
   // synchronized (tmdb) {
   // movieInfo = tmdb.getMovieInfoImdb(imdbId,
-  // Globals.settings.getScraperTmdbLanguage().name());
+  // Globals.settings.getScraperLanguage().name());
   // }
   // int tmdbId = movieInfo.getId();
   //
@@ -1235,7 +1235,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   // try {
   // synchronized (tmdb) {
   // movieInfo = tmdb.getMovieInfoImdb(imdbId,
-  // Globals.settings.getScraperTmdbLanguage().name());
+  // Globals.settings.getScraperLanguage().name());
   // }
   // tmdbId = movieInfo.getId();
   // }
@@ -1299,7 +1299,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     synchronized (tmdb) {
       trackConnections();
       try {
-        movieSetsFound = tmdb.searchCollection(setName, Globals.settings.getScraperTmdbLanguage().name(), 0);
+        movieSetsFound = tmdb.searchCollection(setName, Globals.settings.getScraperLanguage().name(), 0);
         String baseUrl = tmdb.getConfiguration().getBaseUrl();
         for (Collection collection : movieSetsFound) {
           collection.setPosterPath(baseUrl + "w342" + collection.getPosterPath());
@@ -1339,7 +1339,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       return info;
     }
 
-    info = tmdb.getCollectionInfo(tmdbId, Globals.settings.getScraperTmdbLanguage().name());
+    info = tmdb.getCollectionInfo(tmdbId, Globals.settings.getScraperLanguage().name());
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
     info.setPosterPath(baseUrl + "w342" + info.getPosterPath());

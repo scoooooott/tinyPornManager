@@ -44,9 +44,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 import org.tinymediamanager.ui.TmmUIHelper;
 
@@ -68,9 +66,6 @@ public class MovieImageSettingsPanel extends JPanel {
 
   /** The cb image tmdb fanart size. */
   private JComboBox  cbImageTmdbFanartSize;
-
-  /** The cb image tmdb language. */
-  private JComboBox  cbImageTmdbLanguage;
 
   /** The cb movie poster filename1. */
   private JCheckBox  cbMoviePosterFilename1;
@@ -196,27 +191,20 @@ public class MovieImageSettingsPanel extends JPanel {
     panelMovieImagesTmdb.setBorder(new TitledBorder(null, "The Movie Database", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     panelMovieImages.add(panelMovieImagesTmdb, "2, 9, 5, 1, fill, fill");
     panelMovieImagesTmdb.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
-
-    JLabel lblImageTmdbLanguage = new JLabel("Language");
-    panelMovieImagesTmdb.add(lblImageTmdbLanguage, "2, 2, right, default");
-
-    cbImageTmdbLanguage = new JComboBox(TmdbMetadataProvider.Languages.values());
-    panelMovieImagesTmdb.add(cbImageTmdbLanguage, "4, 2, fill, default");
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblImageTmdbPosterSize = new JLabel("Poster size");
-    panelMovieImagesTmdb.add(lblImageTmdbPosterSize, "2, 4, right, default");
+    panelMovieImagesTmdb.add(lblImageTmdbPosterSize, "2, 2, right, default");
 
     cbImageTmdbPosterSize = new JComboBox(PosterSizes.values());
-    panelMovieImagesTmdb.add(cbImageTmdbPosterSize, "4, 4, fill, default");
+    panelMovieImagesTmdb.add(cbImageTmdbPosterSize, "4, 2, fill, default");
 
     JLabel lblImageTmdbFanartSize = new JLabel("Fanart size");
-    panelMovieImagesTmdb.add(lblImageTmdbFanartSize, "2, 6, right, default");
+    panelMovieImagesTmdb.add(lblImageTmdbFanartSize, "2, 4, right, default");
 
     cbImageTmdbFanartSize = new JComboBox(FanartSizes.values());
-    panelMovieImagesTmdb.add(cbImageTmdbFanartSize, "4, 6, fill, default");
+    panelMovieImagesTmdb.add(cbImageTmdbFanartSize, "4, 4, fill, default");
 
     JLabel lblPosterFilename = new JLabel("Poster file naming");
     panelMovieImages.add(lblPosterFilename, "2, 11");
@@ -462,11 +450,6 @@ public class MovieImageSettingsPanel extends JPanel {
     AutoBinding<Settings, FanartSizes, JComboBox, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, cbImageTmdbFanartSize, jComboBoxBeanProperty);
     autoBinding_5.bind();
-    //
-    BeanProperty<Settings, Languages> settingsBeanProperty_7 = BeanProperty.create("imageTmdbLangugage");
-    AutoBinding<Settings, Languages, JComboBox, Object> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_7, cbImageTmdbLanguage, jComboBoxBeanProperty);
-    autoBinding_6.bind();
     //
     BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("imageScraperTmdb");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
