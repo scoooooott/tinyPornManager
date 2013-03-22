@@ -190,7 +190,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
         // LOGGER.info(p);
         md.setPlot(p);
-        md.setTagline(p.substring(0, 150));
+        md.setTagline(p.length() > 150 ? p.substring(0, 150) : p);
       }
 
       // http://www.ofdb.de/view.php?page=film_detail&fid=226745

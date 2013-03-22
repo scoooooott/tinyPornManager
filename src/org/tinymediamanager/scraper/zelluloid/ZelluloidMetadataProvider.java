@@ -128,7 +128,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       // parse plot
       String plot = doc.getElementsByAttributeValue("class", "bigtext").text();
       md.setPlot(plot);
-      md.setTagline(plot.substring(0, 150));
+      md.setTagline(plot.length() > 150 ? plot.substring(0, 150) : plot);
 
       // parse poster
       el = doc.getElementsByAttributeValueStarting("pic", "/images/poster");
@@ -351,7 +351,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
 
     Url url = new CachedUrl(searchUrl);
     InputStream in = url.getInputStream();
-    Document doc = Jsoup.parse(in, "UTF-8", "");
+    Document doc = Jsoup.parse(in, PAGE_ENCODING, "");
     in.close();
 
     // only look for movie links
