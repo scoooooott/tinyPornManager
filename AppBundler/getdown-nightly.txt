@@ -71,10 +71,7 @@ resource = [windows-x86] native/windows-x86/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/mingwm10.dll
 
 # templates
-resource = templates/readme.txt
-resource = templates/listExample.csv.jmte
-resource = templates/listExample.html.jmte
-resource = templates/listExample.xml.jmte
+resource = templates/*
 
 
 # The main entry point for the application
@@ -88,4 +85,6 @@ jvmarg = -Xms64m
 jvmarg = -Xmx512m
 jvmarg = -splash:splashscreen.png
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
-jvmarg = [linux] -Djava.ext.dirs=/usr/share/java
+jvmarg = [linux] -Djava.ext.dirs=/usr/share/java:lib
+jvmarg = [windows] -Djava.ext.dirs=lib
+jvmarg = [mac os x] -Djava.ext.dirs=lib
