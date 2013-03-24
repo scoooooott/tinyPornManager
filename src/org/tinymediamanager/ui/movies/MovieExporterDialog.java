@@ -77,8 +77,14 @@ public class MovieExporterDialog extends JDialog {
 
   /** The lbl template name. */
   private JLabel               lblTemplateName;
+
+  /** The lbl url. */
   private JLabel               lblUrl;
+
+  /** The tp description. */
   private JTextPane            tpDescription;
+
+  /** The chckbx template with detail. */
   private JCheckBox            chckbxTemplateWithDetail;
 
   /**
@@ -90,17 +96,18 @@ public class MovieExporterDialog extends JDialog {
   public MovieExporterDialog(List<Movie> moviesToExport) {
     setTitle("export movies");
     setName("movieExporter");
-    setBounds(5, 5, 500, 300);
+    setBounds(5, 5, 600, 300);
     TmmWindowSaver.loadSettings(this);
     setIconImage(Globals.logo);
     setModal(true);
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
             FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
+            RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     JSplitPane splitPane = new JSplitPane();
+    splitPane.setResizeWeight(0.7);
     getContentPane().add(splitPane, "2, 2, 3, 1, fill, fill");
 
     JScrollPane scrollPane = new JScrollPane();
@@ -134,6 +141,7 @@ public class MovieExporterDialog extends JDialog {
 
     tpDescription = new JTextPane();
     scrollPaneDescription.setViewportView(tpDescription);
+    splitPane.setDividerLocation(300);
 
     tfExportDir = new JTextField();
     getContentPane().add(tfExportDir, "2, 4, fill, default");
@@ -191,6 +199,9 @@ public class MovieExporterDialog extends JDialog {
     initDataBindings();
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     JListBinding<ExportTemplate, List<ExportTemplate>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, templatesFound,
         list);
