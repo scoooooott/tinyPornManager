@@ -68,6 +68,23 @@ resource = [windows-x64] native/windows-x64/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/mingwm10.dll
 
+# templates
+resource = templates/readme.txt
+resource = templates/DetailExample2Html/detail.jmte  
+resource = templates/DetailExample2Html/list.jmte  
+resource = templates/DetailExample2Html/main.html  
+resource = templates/DetailExample2Html/nopicture.gif  
+resource = templates/DetailExample2Html/template.conf
+resource = templates/DetailExampleHtml/detail.jmte  
+resource = templates/DetailExampleHtml/list.jmte  
+resource = templates/DetailExampleHtml/nopicture.gif  
+resource = templates/DetailExampleHtml/template.conf
+resource = templates/ListExampleCsv/list.jmte  
+resource = templates/ListExampleCsv/template.conf
+resource = templates/ListExampleHtml/list.jmte  
+resource = templates/ListExampleHtml/template.conf
+resource = templates/ListExampleXml/list.jmte  
+resource = templates/ListExampleXml/template.conf
 
 # The main entry point for the application
 class = org.tinymediamanager.TinyMediaManager
@@ -81,4 +98,6 @@ jvmarg = -Xmx512m
 jvmarg = -Xss512k
 jvmarg = -splash:splashscreen.png
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
-jvmarg = [linux] -Djava.ext.dirs=/usr/share/java
+jvmarg = [linux] -Djava.ext.dirs=/usr/share/java:lib
+jvmarg = [windows] -Djava.ext.dirs=lib
+jvmarg = [mac os x] -Djava.ext.dirs=lib
