@@ -21,6 +21,8 @@ type={movie}                                    (needed for deciding between mov
 list=<path to list template>                    (needed - each template needs at least a list file)
 detail=<path to detail template>                (optional - if the template has detail pages for each movie)
 extension={html|xml|csv}                        (optional - filetype; if nothing specified here, tmm will take html)
+description=<free text>                         (optional - to provide some description for the UI)
+url=<url to homepage>                           (optional - url to the template; used in UI)
 
 The exporter will create a index.html (or movielist.csv/movielist.xml) for movie listings and 
 movies/<export name of movie>.html for detail pages (<export name of movie> will build the way you defined it in the 

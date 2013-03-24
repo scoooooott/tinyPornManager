@@ -25,16 +25,22 @@ import org.tinymediamanager.core.movie.MovieExporter.TemplateType;
 public class ExportTemplate extends AbstractModelObject {
 
   /** The name. */
-  private String       name   = "";
+  private String       name        = "";
 
   /** The path. */
-  private String       path   = "";
+  private String       path        = "";
 
   /** The type. */
   private TemplateType type;
 
   /** The detail. */
-  private boolean      detail = false;
+  private boolean      detail      = false;
+
+  /** The description. */
+  private String       description = "";
+
+  /** The url. */
+  private String       url         = "";
 
   /**
    * Gets the name.
@@ -118,6 +124,48 @@ public class ExportTemplate extends AbstractModelObject {
     boolean oldValue = this.detail;
     this.detail = newValue;
     firePropertyChange("detail", oldValue, newValue);
+  }
+
+  /**
+   * Gets the description.
+   * 
+   * @return the description
+   */
+  public String getDescription() {
+    return description;
+  }
+
+  /**
+   * Gets the url.
+   * 
+   * @return the url
+   */
+  public String getUrl() {
+    return url;
+  }
+
+  /**
+   * Sets the description.
+   * 
+   * @param newValue
+   *          the new description
+   */
+  public void setDescription(String newValue) {
+    String oldValue = this.description;
+    this.description = newValue;
+    firePropertyChange("description", oldValue, newValue);
+  }
+
+  /**
+   * Sets the url.
+   * 
+   * @param url
+   *          the new url
+   */
+  public void setUrl(String newValue) {
+    String oldValue = this.url;
+    this.url = newValue;
+    firePropertyChange("url", oldValue, newValue);
   }
 
 }

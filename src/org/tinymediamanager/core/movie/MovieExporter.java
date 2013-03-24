@@ -112,6 +112,8 @@ public class MovieExporter {
         template.setName(properties.getProperty("name"));
         template.setType(TemplateType.MOVIE);
         template.setPath(dir.getAbsolutePath());
+        template.setUrl(properties.getProperty("url"));
+        template.setDescription(properties.getProperty("description"));
         if (StringUtils.isNotBlank(properties.getProperty("detail"))) {
           template.setDetail(true);
         }

@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -28,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -75,6 +77,9 @@ public class MovieExporterDialog extends JDialog {
 
   /** The lbl template name. */
   private JLabel               lblTemplateName;
+  private JLabel               lblUrl;
+  private JTextPane            tpDescription;
+  private JCheckBox            chckbxTemplateWithDetail;
 
   /**
    * Create the dialog.
@@ -106,11 +111,29 @@ public class MovieExporterDialog extends JDialog {
 
     JPanel panelExporterDetails = new JPanel();
     splitPane.setRightComponent(panelExporterDetails);
-    panelExporterDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelExporterDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     lblTemplateName = new JLabel("");
-    panelExporterDetails.add(lblTemplateName, "2, 2");
+    panelExporterDetails.add(lblTemplateName, "2, 2, 3, 1");
+
+    lblUrl = new JLabel("");
+    panelExporterDetails.add(lblUrl, "2, 4, 3, 1");
+
+    chckbxTemplateWithDetail = new JCheckBox("");
+    chckbxTemplateWithDetail.setEnabled(false);
+    panelExporterDetails.add(chckbxTemplateWithDetail, "2, 6");
+
+    JLabel lblDetails = new JLabel("Template contains detail pages");
+    panelExporterDetails.add(lblDetails, "4, 6");
+
+    JScrollPane scrollPaneDescription = new JScrollPane();
+    panelExporterDetails.add(scrollPaneDescription, "2, 8, 3, 1, fill, fill");
+
+    tpDescription = new JTextPane();
+    scrollPaneDescription.setViewportView(tpDescription);
 
     tfExportDir = new JTextField();
     getContentPane().add(tfExportDir, "2, 4, fill, default");
@@ -168,9 +191,6 @@ public class MovieExporterDialog extends JDialog {
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     JListBinding<ExportTemplate, List<ExportTemplate>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, templatesFound,
         list);
@@ -185,5 +205,22 @@ public class MovieExporterDialog extends JDialog {
     AutoBinding<JList, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty,
         lblTemplateName, jLabelBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<JList, String> jListBeanProperty_1 = BeanProperty.create("selectedElement.url");
+    AutoBinding<JList, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_1, lblUrl,
+        jLabelBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<JList, String> jListBeanProperty_2 = BeanProperty.create("selectedElement.description");
+    BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
+    AutoBinding<JList, String, JTextPane, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_2,
+        tpDescription, jTextPaneBeanProperty);
+    autoBinding_2.bind();
+    //
+    BeanProperty<JList, Boolean> jListBeanProperty_3 = BeanProperty.create("selectedElement.detail");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<JList, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, list, jListBeanProperty_3,
+        chckbxTemplateWithDetail, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
   }
 }
