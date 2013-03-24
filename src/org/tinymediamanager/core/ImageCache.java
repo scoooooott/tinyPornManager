@@ -41,7 +41,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 import com.bric.image.pixel.Scaling;
 
 /**
- * @author manuel
+ * @author Manuel Laggner
  * 
  */
 public class ImageCache {

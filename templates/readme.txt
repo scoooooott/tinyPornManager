@@ -5,16 +5,29 @@ http://jmte.googlecode.com/svn/trunk/doc/index.html
 
 Please do not work on the provided files.
 They will be overwritten on each startup ;)
-If you want to change/extend them, just copy them to a new .jmte file.
-(keep the .csv|.html|.xml as double extension as well, so we can identify the contents)
+If you want to change/extend them, just copy them to a new directory including the altered template.conf.
+
 If it's a cool template, let us know so we could redistribute it :)
 
 Templates starting with "list" are for movie listings, 
-where starting with "detail" are for a single movie details page (d'oh!)
+where starting with "detail" are for a listing including single movie details pages (d'oh!)
 
-If there's the filename ends with ".csv.jmte", a CSV file will be created.
-Same for ".html.jmte" and ".xml.jmte", but here we encode special characters correctly.
-All files are UTF8 encoded; but UTF8 chars in CSV work only on Excel 2007 and up.
+=================================================================================
+Configuration:
+=================================================================================
+Each template has to be in its own directory including a template.conf file containing:
+name=<name of template>                         (needed for displaying in UI)
+type={movie}                                    (needed for deciding between movie templates and others)
+list=<path to list template>                    (needed - each template needs at least a list file)
+detail=<path to detail template>                (optional - if the template has detail pages for each movie)
+extension={html|xml|csv}                        (optional - filetype; if nothing specified here, tmm will take html)
+
+The exporter will create a index.html (or movielist.csv/movielist.xml) for movie listings and 
+movies/<export name of movie>.html for detail pages (<export name of movie> will build the way you defined it in the 
+renamer settings or <moviename> if nothing is defined there)
+
+Beside the 2 (or 3 in case of a detail template) file there can be other files/directories in the template directory, 
+which will be copied to the export destination (e.g. stylesheets, images, ...)
 
 =================================================================================
 Basics:
@@ -52,13 +65,13 @@ ${end}
 
 
 Following variables can be used:
-(as part of movie variable)
 
+Movie:
 Date                  dateAdded
 List<MediaFile>       mediaFiles
 List<MediaGenres>     genres
 List<MediaTrailer>    trailer
-List<MovieCast>       cast
+List<MovieCast>       actors        
 List<String>          extraThumbs
 List<String>          tags
 MovieSet              movieSet;
@@ -89,3 +102,27 @@ float                 rating
 int                   runtime
 int                   tmdbId
 int                   votes
+
+MovieCast:
+String                character
+String                name
+
+MediaFile:
+String                path
+String                filename
+String                filesize
+String                videoCodec      
+String                audioCodec      
+String                audioChannels   
+String                containerFormat  
+String                videoFormat      
+String                exactVideoFormat 
+int                   videoWidth       
+int                   videoHeight      
+int                   overallBitRate   
+int                   duration         
+
+MediaTrailer:
+String                name
+String                url
+String                provider

@@ -23,7 +23,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
 /**
  * The Class MovieRenameTask.
  * 
- * @author manuel
+ * @author Manuel Laggner
  */
 public class MovieRenameTask extends TmmSwingWorker {
 

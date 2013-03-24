@@ -134,6 +134,9 @@ public class MoviePanel extends JPanel {
   /** The action remove2. */
   private final Action           actionRemove2                = new RemoveAction(true);
 
+  /** The action export. */
+  private final Action           actionExport                 = new ExportAction(true);
+
   /** The panel movie count. */
   private JPanel                 panelMovieCount;
 
@@ -352,6 +355,7 @@ public class MoviePanel extends JPanel {
     menu.add(actionBatchEdit);
     menu.add(actionRename2);
     menu.add(actionMediaInformation2);
+    menu.add(actionExport);
     menu.addSeparator();
     menu.add(actionRemove2);
 
@@ -365,6 +369,7 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionBatchEdit);
     popupMenu.add(actionRename2);
     popupMenu.add(actionMediaInformation2);
+    popupMenu.add(actionExport);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
 
@@ -773,6 +778,50 @@ public class MoviePanel extends JPanel {
       }
     }
 
+  }
+
+  /**
+   * The Class ExportAction.
+   */
+  private class ExportAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new RemoveAction.
+     * 
+     * @param withTitle
+     *          the with title
+     */
+    public ExportAction(boolean withTitle) {
+      if (withTitle) {
+        putValue(LARGE_ICON_KEY, "");
+        putValue(NAME, "Export selected movies");
+      }
+      else {
+        // putValue(LARGE_ICON_KEY, new
+        // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+        putValue(SHORT_DESCRIPTION, "Export selected movies");
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+      List<Movie> movies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
+
+      // export selected movies
+      if (movies.size() > 0) {
+        MovieExporterDialog dialog = new MovieExporterDialog(movies);
+        dialog.setVisible(true);
+      }
+    }
   }
 
   /**

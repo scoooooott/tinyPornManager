@@ -29,7 +29,7 @@ import chrriis.dj.nativeswing.swtimpl.components.JDirectoryDialog;
 import chrriis.dj.nativeswing.swtimpl.components.JFileDialog;
 
 /**
- * @author manuel
+ * @author Manuel Laggner
  * 
  */
 public class TmmUIHelper {

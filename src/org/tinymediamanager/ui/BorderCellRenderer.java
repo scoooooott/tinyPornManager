@@ -12,7 +12,7 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
- * @author manuel
+ * @author Manuel Laggner
  * 
  */
 public class BorderCellRenderer extends DefaultTableCellRenderer {

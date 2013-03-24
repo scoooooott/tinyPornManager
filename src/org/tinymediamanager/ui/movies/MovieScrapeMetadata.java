@@ -48,7 +48,7 @@ import com.jgoodies.forms.layout.RowSpec;
 /**
  * The Class MovieScrapeMetadata.
  * 
- * @author manuel
+ * @author Manuel Laggner
  */
 public class MovieScrapeMetadata extends JDialog {
 

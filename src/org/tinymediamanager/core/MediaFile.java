@@ -36,7 +36,7 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 /**
  * The Class MediaFile.
  * 
- * @author manuel
+ * @author Manuel Laggner
  */
 @Entity
 public class MediaFile extends AbstractModelObject {

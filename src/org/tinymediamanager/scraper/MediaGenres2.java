@@ -18,7 +18,7 @@ package org.tinymediamanager.scraper;
 /**
  * The Class MediaGenres2.
  * 
- * @author manuel
+ * @author Manuel Laggner
  */
 public class MediaGenres2 extends DynaEnum<MediaGenres2> {
   /** The action. */

@@ -201,7 +201,8 @@ public class MovieRenamer {
           LOGGER.error("error moving folder: ", e);
         }
         if (!ok) {
-          // FIXME: when we were not able to rename folder, display error msg and abort!!!
+          // FIXME: when we were not able to rename folder, display error msg
+          // and abort!!!
           return;
         }
       }
@@ -349,7 +350,8 @@ public class MovieRenamer {
    * @author Myron Boyle
    */
   private static boolean moveDirectorySafe(File srcDir, File destDir) throws IOException {
-    // rip-off from http://svn.apache.org/repos/asf/commons/proper/io/trunk/src/main/java/org/apache/commons/io/FileUtils.java
+    // rip-off from
+    // http://svn.apache.org/repos/asf/commons/proper/io/trunk/src/main/java/org/apache/commons/io/FileUtils.java
     if (srcDir == null) {
       throw new NullPointerException("Source must not be null");
     }
@@ -383,7 +385,8 @@ public class MovieRenamer {
       }
     }
 
-    // ok, we tried it 5 times - it still seems to be locked somehow. Continue with copying as fallback
+    // ok, we tried it 5 times - it still seems to be locked somehow. Continue
+    // with copying as fallback
     // NOOO - we don't like to have some files copied and some not.
 
     if (!rename) {
@@ -410,48 +413,48 @@ public class MovieRenamer {
     String newDestination = template;
 
     // replace token title ($T)
-    if (newDestination.contains("$T")) {
+    if (newDestination.contains("$T") && StringUtils.isNotEmpty(movie.getName())) {
       newDestination = newDestination.replaceAll("\\$T", movie.getName());
     }
 
     // replace token first letter of title ($1)
-    if (newDestination.contains("$1")) {
+    if (newDestination.contains("$1") && StringUtils.isNotEmpty(movie.getName())) {
       newDestination = newDestination.replaceAll("\\$1", movie.getName().substring(0, 1));
     }
 
     // replace token year ($Y)
-    if (newDestination.contains("$Y")) {
+    if (newDestination.contains("$Y") && StringUtils.isNotEmpty(movie.getYear())) {
       newDestination = newDestination.replaceAll("\\$Y", movie.getYear());
     }
 
     // replace token orignal title ($O)
-    if (newDestination.contains("$O")) {
+    if (newDestination.contains("$O") && StringUtils.isNotEmpty(movie.getOriginalName())) {
       newDestination = newDestination.replaceAll("\\$O", movie.getOriginalName());
     }
 
     // replace token IMDBid ($I)
-    if (newDestination.contains("$I")) {
+    if (newDestination.contains("$I") && StringUtils.isNotEmpty(movie.getImdbId())) {
       newDestination = newDestination.replaceAll("\\$I", movie.getImdbId());
     }
 
     // replace token sort title ($E)
-    if (newDestination.contains("$E")) {
+    if (newDestination.contains("$E") && StringUtils.isNotEmpty(movie.getSortTitle())) {
       newDestination = newDestination.replaceAll("\\$E", movie.getSortTitle());
     }
 
     // replace token resolution ($R)
-    if (newDestination.contains("$R")) {
+    if (newDestination.contains("$R") && movie.getMediaFiles().size() > 0) {
       newDestination = newDestination.replaceAll("\\$R", movie.getMediaFiles().get(0).getVideoResolution());
     }
 
     // replace token audio codec + channels ($A)
-    if (newDestination.contains("$A")) {
+    if (newDestination.contains("$A") && movie.getMediaFiles().size() > 0) {
       newDestination = newDestination.replaceAll("\\$A", movie.getMediaFiles().get(0).getAudioCodec() + "-"
           + movie.getMediaFiles().get(0).getAudioChannels());
     }
 
     // replace token video codec + channels ($V)
-    if (newDestination.contains("$V")) {
+    if (newDestination.contains("$V") && movie.getMediaFiles().size() > 0) {
       newDestination = newDestination.replaceAll("\\$V", movie.getMediaFiles().get(0).getVideoCodec() + "-"
           + movie.getMediaFiles().get(0).getVideoFormat());
     }

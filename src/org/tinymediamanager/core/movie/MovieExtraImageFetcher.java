@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 /**
  * The Class MovieExtraImageFetcher.
  * 
- * @author manuel
+ * @author Manuel Laggner
  */
 public class MovieExtraImageFetcher implements Runnable {
 

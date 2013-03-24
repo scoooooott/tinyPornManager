@@ -4,7 +4,7 @@
 package org.tinymediamanager.core.movie;
 
 /**
- * @author manuel
+ * @author Manuel Laggner
  * 
  */
 public enum MovieConnectors {

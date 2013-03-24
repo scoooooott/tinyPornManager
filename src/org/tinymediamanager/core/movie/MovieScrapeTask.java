@@ -36,7 +36,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
 /**
  * The Class MovieScrapeTask.
  * 
- * @author manuel
+ * @author Manuel Laggner
  */
 public class MovieScrapeTask extends TmmSwingWorker {
 

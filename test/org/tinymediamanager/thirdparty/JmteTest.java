@@ -1,5 +1,7 @@
 package org.tinymediamanager.thirdparty;
 
+import java.io.File;
+
 import org.junit.Test;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieExporter;
@@ -14,9 +16,9 @@ public class JmteTest {
     MovieList ml = MovieList.getInstance();
     ml.loadMoviesFromDatabase();
 
-    MovieExporter.export(ml.getMovies(), "listExample.html.jmte");
-    MovieExporter.export(ml.getMovies(), "listExample.csv.jmte");
-    MovieExporter.export(ml.getMovies(), "listExample.xml.jmte");
+    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "ListExampleHtml", "export" + File.separator + "ListExampleHtml");
+    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "ListExampleCsv", "export" + File.separator + "ListExampleCsv");
+    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "ListExampleXml", "export" + File.separator + "ListExampleXml");
 
     Globals.shutdownDatabase();
   }
@@ -28,7 +30,8 @@ public class JmteTest {
     MovieList ml = MovieList.getInstance();
     ml.loadMoviesFromDatabase();
 
-    MovieExporter.export(ml.getMovies(), "detailPurpleBytes2.html.jmte");
+    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "DetailExampleHtml", "export" + File.separator + "DetailExampleHtml");
+    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "DetailExample2Html", "export" + File.separator + "DetailExample2Html");
 
     Globals.shutdownDatabase();
   }

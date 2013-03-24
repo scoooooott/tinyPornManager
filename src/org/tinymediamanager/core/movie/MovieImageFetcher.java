@@ -26,7 +26,7 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
- * @author manuel
+ * @author Manuel Laggner
  * 
  */
 public class MovieImageFetcher implements Runnable {

@@ -21,7 +21,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
 /**
- * @author manuel
+ * @author Manuel Laggner
  * 
  */
 public abstract class TmmSwingWorker extends SwingWorker<Void, Void> {

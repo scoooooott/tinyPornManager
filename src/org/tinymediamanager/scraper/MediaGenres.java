@@ -19,7 +19,7 @@ package org.tinymediamanager.scraper;
 /**
  * The Enum MediaGenres.
  * 
- * @author manuel
+ * @author Manuel Laggner
  */
 public enum MediaGenres {
   /** The action. */

@@ -31,7 +31,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 /**
  * The Class MovieActorImageFetcher.
  * 
- * @author manuel
+ * @author Manuel Laggner
  */
 public class MovieActorImageFetcher implements Runnable {
 
