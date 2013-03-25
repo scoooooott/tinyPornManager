@@ -220,7 +220,12 @@ public class MovieList extends AbstractModelObject {
             Movie movie = (Movie) obj;
             // movie.setObservables();
             movie.initializeAfterLoading();
-            addMovie(movie);
+
+            // for performance reasons we add movies directly
+            // addMovie(movie);
+            movieList.add(movie);
+            updateTags(movie);
+            movie.addPropertyChangeListener(tagListener);
           }
           else {
             LOGGER.error("retrieved no movie: " + obj);
@@ -244,7 +249,10 @@ public class MovieList extends AbstractModelObject {
           if (obj instanceof MovieSet) {
             MovieSet movieSet = (MovieSet) obj;
             movieSet.setObservables();
-            addMovieSet(movieSet);
+
+            // for performance reasons we add moviesets directly
+            // addMovieSet(movieSet);
+            this.movieSetList.add(movieSet);
           }
         }
       }
