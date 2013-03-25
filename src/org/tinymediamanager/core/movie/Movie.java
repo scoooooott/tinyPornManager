@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.movie;
 
+import static org.tinymediamanager.core.Constants.*;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -30,8 +32,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
@@ -46,8 +47,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.Utils;
@@ -69,16 +70,11 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * The main class for movies.
  */
 @Entity
-public class Movie extends AbstractModelObject {
-
-  /** The Constant TITLE. */
-  protected final static String TITLE                = "title";
+@Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
+public class Movie extends MediaEntity {
 
   /** The Constant TITLE. */
   protected final static String SORT_TITLE           = "sortTitle";
-
-  /** The Constant ORIGINAL_TITLE. */
-  protected final static String ORIGINAL_TITLE       = "originaltitle";
 
   /** The Constant RATING. */
   protected final static String RATING               = "rating";
@@ -101,11 +97,11 @@ public class Movie extends AbstractModelObject {
   /** The Constant RUNTIME. */
   protected final static String RUNTIME              = "runtime";
 
-  /** The Constant THUMB. */
-  protected final static String THUMB                = "thumb";
-
-  /** The Constant THUMB_PATH. */
-  protected final static String THUMB_PATH           = "thumbpath";
+  // /** The Constant THUMB. */
+  // protected final static String THUMB = "thumb";
+  //
+  // /** The Constant THUMB_PATH. */
+  // protected final static String THUMB_PATH = "thumbpath";
 
   /** The Constant ID. */
   protected final static String ID                   = "id";
@@ -113,11 +109,8 @@ public class Movie extends AbstractModelObject {
   /** The Constant IMDB_ID. */
   protected final static String IMDB_ID              = "imdbid";
 
-  /** The Constant FILENAME_AND_PATH. */
-  protected final static String FILENAME_AND_PATH    = "filenameandpath";
-
-  /** The Constant PATH. */
-  protected final static String PATH                 = "path";
+  // /** The Constant FILENAME_AND_PATH. */
+  // protected final static String FILENAME_AND_PATH = "filenameandpath";
 
   /** The Constant DIRECTOR. */
   protected final static String DIRECTOR             = "director";
@@ -152,9 +145,6 @@ public class Movie extends AbstractModelObject {
   /** The Constant MEDIA_FILES. */
   protected final static String MEDIA_FILES          = "mediaFiles";
 
-  /** The Constant DATE_ADDED. */
-  protected final static String DATE_ADDED           = "dateAdded";
-
   /** The Constant DATE_ADDED_AS_STRING. */
   protected final static String DATE_ADDED_AS_STRING = "dateAddedAsString";
 
@@ -174,13 +164,13 @@ public class Movie extends AbstractModelObject {
   @XmlTransient
   private static final Logger   LOGGER               = Logger.getLogger(Movie.class);
 
-  /** The id. */
-  @Id
-  @GeneratedValue
-  private Long                  id;
+  // /** The id. */
+  // @Id
+  // @GeneratedValue
+  // private Long id;
 
-  /** The name. */
-  private String                name                 = "";
+  // /** The name. */
+  // private String name = "";
 
   /** The name sortable. */
   @Transient
@@ -189,8 +179,8 @@ public class Movie extends AbstractModelObject {
   /** The sorttitle. */
   private String                sortTitle            = "";
 
-  /** The original name. */
-  private String                originalName         = "";
+  // /** The original name. */
+  // private String originalName = "";
 
   /** The year. */
   private String                year                 = "";
@@ -201,8 +191,8 @@ public class Movie extends AbstractModelObject {
   /** The tmdb id. */
   private int                   tmdbId               = 0;
 
-  /** The overview. */
-  private String                overview             = "";
+  // /** The overview. */
+  // private String overview = "";
 
   /** The tagline. */
   private String                tagline              = "";
@@ -227,9 +217,6 @@ public class Movie extends AbstractModelObject {
 
   /** The poster. */
   private String                poster               = "";
-
-  /** The path. */
-  private String                path                 = "";
 
   /** The nfo filename. */
   private String                nfoFilename          = "";
@@ -832,7 +819,7 @@ public class Movie extends AbstractModelObject {
       mt.setUrl(file.toURI().toString());
       addTrailer(mt);
     }
-      
+
   }
 
   /**
@@ -1026,14 +1013,14 @@ public class Movie extends AbstractModelObject {
     return fanartUrl;
   }
 
-  /**
-   * Gets the id.
-   * 
-   * @return the id
-   */
-  public Long getId() {
-    return id;
-  }
+  // /**
+  // * Gets the id.
+  // *
+  // * @return the id
+  // */
+  // public Long getId() {
+  // return id;
+  // }
 
   /**
    * Gets the imdb id.
@@ -1065,41 +1052,32 @@ public class Movie extends AbstractModelObject {
     firePropertyChange("tmdbId", oldValue, newValue);
   }
 
-  /**
-   * Gets the name.
-   * 
-   * @return the name
-   */
-  public String getName() {
-    return name;
-  }
+  // /**
+  // * Gets the name.
+  // *
+  // * @return the name
+  // */
+  // public String getName() {
+  // return name;
+  // }
 
-  /**
-   * Gets the original name.
-   * 
-   * @return the original name
-   */
-  public String getOriginalName() {
-    return originalName;
-  }
+  // /**
+  // * Gets the original name.
+  // *
+  // * @return the original name
+  // */
+  // public String getOriginalName() {
+  // return originalName;
+  // }
 
-  /**
-   * Gets the overview.
-   * 
-   * @return the overview
-   */
-  public String getOverview() {
-    return overview;
-  }
-
-  /**
-   * Gets the path.
-   * 
-   * @return the path
-   */
-  public String getPath() {
-    return path;
-  }
+  // /**
+  // * Gets the overview.
+  // *
+  // * @return the overview
+  // */
+  // public String getOverview() {
+  // return overview;
+  // }
 
   /**
    * Gets the poster.
@@ -1488,15 +1466,15 @@ public class Movie extends AbstractModelObject {
     Globals.executor.execute(task);
   }
 
-  /**
-   * Sets the id.
-   * 
-   * @param id
-   *          the new id
-   */
-  public void setId(Long id) {
-    this.id = id;
-  }
+  // /**
+  // * Sets the id.
+  // *
+  // * @param id
+  // * the new id
+  // */
+  // public void setId(Long id) {
+  // this.id = id;
+  // }
 
   /**
    * Sets the imdb id.
@@ -1829,50 +1807,36 @@ public class Movie extends AbstractModelObject {
    *          the new name
    */
   public void setName(String newValue) {
-    String oldValue = name;
-    name = newValue;
-    firePropertyChange("name", oldValue, newValue);
-    firePropertyChange("nameForUi", oldValue, newValue);
+    super.setName(newValue);
 
+    String oldValue = this.nameSortable;
     nameSortable = "";
-    firePropertyChange("nameSortable", oldValue, newValue);
+    firePropertyChange("nameSortable", oldValue, nameSortable);
   }
 
-  /**
-   * Sets the original name.
-   * 
-   * @param newValue
-   *          the new original name
-   */
-  public void setOriginalName(String newValue) {
-    String oldValue = originalName;
-    originalName = newValue;
-    firePropertyChange("originalName", oldValue, newValue);
-  }
+  // /**
+  // * Sets the original name.
+  // *
+  // * @param newValue
+  // * the new original name
+  // */
+  // public void setOriginalName(String newValue) {
+  // String oldValue = originalName;
+  // originalName = newValue;
+  // firePropertyChange("originalName", oldValue, newValue);
+  // }
 
-  /**
-   * Sets the overview.
-   * 
-   * @param newValue
-   *          the new overview
-   */
-  public void setOverview(String newValue) {
-    String oldValue = overview;
-    overview = newValue;
-    firePropertyChange("overview", oldValue, newValue);
-  }
-
-  /**
-   * Sets the path.
-   * 
-   * @param newValue
-   *          the new path
-   */
-  public void setPath(String newValue) {
-    String oldValue = path;
-    path = newValue;
-    firePropertyChange("path", oldValue, newValue);
-  }
+  // /**
+  // * Sets the overview.
+  // *
+  // * @param newValue
+  // * the new overview
+  // */
+  // public void setOverview(String newValue) {
+  // String oldValue = overview;
+  // overview = newValue;
+  // firePropertyChange("overview", oldValue, newValue);
+  // }
 
   /**
    * Sets the poster.
