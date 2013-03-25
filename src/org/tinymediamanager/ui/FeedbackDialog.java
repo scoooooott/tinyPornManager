@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -51,22 +52,23 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class FeedbackDialog.
  */
 public class FeedbackDialog extends JDialog {
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
+  private static final long           serialVersionUID = 1L;
 
   /** The text field. */
-  private JTextField        tfName;
+  private JTextField                  tfName;
 
   /** The text area. */
-  private JTextArea         textArea;
-  private JTextField        tfEmail;
+  private JTextArea                   textArea;
+  private JTextField                  tfEmail;
 
   /**
    * Instantiates a new feedback dialog.
    */
   public FeedbackDialog() {
-    setTitle("Send feedback");
+    setTitle(BUNDLE.getString("Feedback"));
     setName("feedback");
     setBounds(100, 100, 450, 303);
     TmmWindowSaver.loadSettings(this);
@@ -87,21 +89,21 @@ public class FeedbackDialog extends JDialog {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
         RowSpec.decode("default:grow"), }));
 
-    JLabel lblName = new JLabel("Name (optional)");
+    JLabel lblName = new JLabel(BUNDLE.getString("Feedback.name"));
     panelContent.add(lblName, "2, 2, right, default");
 
     tfName = new JTextField();
     panelContent.add(tfName, "4, 2, fill, default");
     tfName.setColumns(10);
 
-    JLabel lblEmailoptional = new JLabel("Email (optional)");
+    JLabel lblEmailoptional = new JLabel(BUNDLE.getString("Feedback.email"));
     panelContent.add(lblEmailoptional, "2, 4, right, default");
 
     tfEmail = new JTextField();
     panelContent.add(tfEmail, "4, 4, fill, default");
     tfEmail.setColumns(10);
 
-    JLabel lblFeedback = new JLabel("Feedback");
+    JLabel lblFeedback = new JLabel(BUNDLE.getString("Feedback.message"));
     panelContent.add(lblFeedback, "2, 6, right, top");
 
     JScrollPane scrollPane = new JScrollPane();
@@ -116,12 +118,12 @@ public class FeedbackDialog extends JDialog {
     panelButtons.setLayout(new EqualsLayout(5));
     getContentPane().add(panelButtons, "2, 4, fill, fill");
 
-    JButton btnSend = new JButton("Send feedback");
+    JButton btnSend = new JButton(BUNDLE.getString("Feedback"));
     btnSend.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         // check if feedback is provided
         if (StringUtils.isEmpty(textArea.getText())) {
-          JOptionPane.showMessageDialog(null, "Feedback is empty");
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.message.empty"));
           return;
         }
 
@@ -145,18 +147,18 @@ public class FeedbackDialog extends JDialog {
 
         }
         catch (IOException e) {
-          JOptionPane.showMessageDialog(null, "Error sending feedback");
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.error"));
           return;
         }
 
-        JOptionPane.showMessageDialog(null, "Feedback sent");
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.ok"));
         setVisible(false);
         dispose();
       }
     });
     panelButtons.add(btnSend);
 
-    JButton btnCacnel = new JButton("Cancel");
+    JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel"));
     btnCacnel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);

@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -59,33 +60,34 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class FeedbackDialog.
  */
 public class BugReportDialog extends JDialog {
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = 1L;
+  private static final long           serialVersionUID = 1L;
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER           = Logger.getLogger(BugReportDialog.class);
+  private static final Logger         LOGGER           = Logger.getLogger(BugReportDialog.class);
 
   /** The text field. */
-  private JTextField          textField;
+  private JTextField                  textField;
 
   /** The text area. */
-  private JTextArea           textArea;
+  private JTextArea                   textArea;
 
   /** The chckbx logs. */
-  private JCheckBox           chckbxLogs;
+  private JCheckBox                   chckbxLogs;
 
   /** The chckbx configxml. */
-  private JCheckBox           chckbxConfigxml;
+  private JCheckBox                   chckbxConfigxml;
 
   /** The chckbx database. */
-  private JCheckBox           chckbxDatabase;
+  private JCheckBox                   chckbxDatabase;
 
   /**
    * Instantiates a new feedback dialog.
    */
   public BugReportDialog() {
-    setTitle("Report a bug");
+    setTitle(BUNDLE.getString("BugReport"));
     setName("bugReport");
     setIconImage(Globals.logo);
     setModal(true);
@@ -106,14 +108,14 @@ public class BugReportDialog extends JDialog {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblName = new JLabel("Name (optional)");
+    JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name"));
     panelContent.add(lblName, "2, 2, right, default");
 
     textField = new JTextField();
     panelContent.add(textField, "4, 2, fill, default");
     textField.setColumns(10);
 
-    JLabel lblFeedback = new JLabel("Description");
+    JLabel lblFeedback = new JLabel(BUNDLE.getString("BugReport.description"));
     panelContent.add(lblFeedback, "2, 4, right, top");
 
     JScrollPane scrollPane = new JScrollPane();
@@ -124,10 +126,10 @@ public class BugReportDialog extends JDialog {
     textArea.setLineWrap(true);
     textArea.setWrapStyleWord(true);
 
-    JLabel lblAttachments = new JLabel("Attachments");
+    JLabel lblAttachments = new JLabel(BUNDLE.getString("BugReport.attachments"));
     panelContent.add(lblAttachments, "2, 6");
 
-    chckbxLogs = new JCheckBox("Logs");
+    chckbxLogs = new JCheckBox(BUNDLE.getString("BugReport.logs"));
     chckbxLogs.setSelected(true);
     panelContent.add(chckbxLogs, "4, 6");
 
@@ -141,12 +143,12 @@ public class BugReportDialog extends JDialog {
     panelButtons.setLayout(new EqualsLayout(5));
     getContentPane().add(panelButtons, "2, 4, fill, fill");
 
-    JButton btnSend = new JButton("Send bug report");
+    JButton btnSend = new JButton(BUNDLE.getString("BugReport.send"));
     btnSend.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         // check if feedback is provided
         if (StringUtils.isEmpty(textArea.getText())) {
-          JOptionPane.showMessageDialog(null, "No description provided");
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("BugReport.description.empty"));
           return;
         }
 
@@ -245,21 +247,21 @@ public class BugReportDialog extends JDialog {
 
         }
         catch (IOException e) {
-          JOptionPane.showMessageDialog(null, "Error sending bug report");
+          JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.error"));
           return;
         }
         finally {
           post.releaseConnection();
         }
 
-        JOptionPane.showMessageDialog(null, "Bug report sent");
+        JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.ok"));
         setVisible(false);
         dispose();
       }
     });
     panelButtons.add(btnSend);
 
-    JButton btnCacnel = new JButton("Cancel");
+    JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel"));
     btnCacnel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);

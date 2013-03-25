@@ -88,7 +88,7 @@
             <manifest>
                 <attribute name="Main-Class" value="org.tinymediamanager.TinyMediaManager" />
                 <attribute name="SplashScreen-Image" value="org/tinymediamanager/ui/images/splashscreen.png" />
-                <attribute name="Class-Path" value=". ${jar.classpath}" />
+                <attribute name="Class-Path" value=". locale/ ${jar.classpath}" />
                 <attribute name="Implementation-Title" value="tinyMediaManager"/>
                 <attribute name="Implementation-Version" value="${version} (r${svn.info.revision})"/> 
                 <attribute name="Build-Date" value="${DSTAMP}-${TSTAMP}"/>
@@ -162,6 +162,9 @@
         </copy>
         <copy todir="${build.dir}/templates">
             <fileset dir="templates"/>
+        </copy>
+        <copy todir="${build.dir}/locale">
+            <fileset dir="locale"/>
         </copy>
         <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.exe" />
         <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />

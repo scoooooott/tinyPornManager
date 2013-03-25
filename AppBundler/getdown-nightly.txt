@@ -20,6 +20,8 @@ code = lib/commons-codec.jar
 code = lib/commons-io.jar
 code = lib/commons-lang3.jar
 code = lib/commons-logging.jar
+code = lib/DJNativeSwing.jar
+code = lib/DJNativeSwing-SWT.jar 
 code = lib/fanarttvapi.jar
 code = lib/forms.jar
 code = lib/glazedlists.jar
@@ -45,15 +47,16 @@ code = lib/Scaling-bin.jar
 code = lib/themoviedbapi.jar
 code = lib/thetvdbapi.jar
 code = lib/vlcj.jar
-code = lib/DJNativeSwing.jar
-code = lib/DJNativeSwing-SWT.jar 
 
 resource = getdown.jar
-# resource = [windows] tinyMediaManager.exe # nah, do not distribute always generated exe
+#resource = [windows] tinyMediaManager.exe #not yet - need more testing
 resource = [!windows] tinyMediaManager.sh
 resource = version
 resource = splashscreen.png
 resource = objectdb.conf
+
+# translations
+resource = locale/messages_de.properties
 
 # mediainfo native libs
 resource = [linux-amd64] native/linux-amd64/libmediainfo.so
@@ -97,8 +100,9 @@ allow_offline = true
 # jvm args
 jvmarg = -Xms64m 
 jvmarg = -Xmx512m
+jvmarg = -Xss512k
 jvmarg = -splash:splashscreen.png
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
-jvmarg = [linux] -Djava.ext.dirs=/usr/share/java:lib
-jvmarg = [windows] -Djava.ext.dirs=lib
-jvmarg = [mac os x] -Djava.ext.dirs=lib
+jvmarg = [linux] -Djava.ext.dirs=/usr/share/java:lib:locale
+jvmarg = [windows] -Djava.ext.dirs=lib;locale
+jvmarg = [mac os x] -Djava.ext.dirs=lib:locale

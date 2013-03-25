@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,22 +44,23 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class AboutDialog.
  */
 public class AboutDialog extends JDialog {
-  private static final long   serialVersionUID = 1L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 1L;
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER           = Logger.getLogger(AboutDialog.class);
+  private static final Logger         LOGGER           = Logger.getLogger(AboutDialog.class);
 
   /** The content panel. */
-  private final JPanel        contentPanel     = new JPanel();
+  private final JPanel                contentPanel     = new JPanel();
 
   /** The action. */
-  private final Action        action           = new SwingAction();
+  private final Action                action           = new SwingAction();
 
   /**
    * Create the dialog.
    */
   public AboutDialog() {
-    setTitle("About");
+    setTitle(BUNDLE.getString("MainWindow.mntmAbout.text"));
     setName("aboutDialog");
     setResizable(false);
     setModal(true);
@@ -166,7 +168,7 @@ public class AboutDialog extends JDialog {
      * Instantiates a new swing action.
      */
     public SwingAction() {
-      putValue(NAME, "Ok");
+      putValue(NAME, BUNDLE.getString("Button.ok"));
     }
 
     /*

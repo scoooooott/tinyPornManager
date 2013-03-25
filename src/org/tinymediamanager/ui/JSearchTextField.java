@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ResourceBundle;
 
 import javax.swing.UIManager;
 
@@ -32,19 +33,20 @@ import javax.swing.UIManager;
  * @author Georgios Migdos <cyberpython@gmail.com>
  */
 public class JSearchTextField extends JIconTextField implements FocusListener {
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
+  private static final long           serialVersionUID = 1L;
 
   /** The text when not focused. */
-  private String            textWhenNotFocused;
+  private String                      textWhenNotFocused;
 
   /**
    * Instantiates a new j search text field.
    */
   public JSearchTextField() {
     super();
-    this.textWhenNotFocused = "Search...";
+    this.textWhenNotFocused = BUNDLE.getString("Searchfield");
     this.addFocusListener(this);
   }
 

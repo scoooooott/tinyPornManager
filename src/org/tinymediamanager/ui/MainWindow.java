@@ -25,6 +25,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.URI;
+import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -61,56 +62,57 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class MainWindow.
  */
 public class MainWindow extends JFrame {
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   /** The logger. */
-  private final static Logger LOGGER           = Logger.getLogger(MainWindow.class);
+  private final static Logger         LOGGER           = Logger.getLogger(MainWindow.class);
 
   /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = 1L;
+  private static final long           serialVersionUID = 1L;
 
   /** The action exit. */
-  private final Action        actionExit       = new ExitAction();
+  private final Action                actionExit       = new ExitAction();
 
   /** The action about. */
-  private final Action        actionAbout      = new AboutAction();
+  private final Action                actionAbout      = new AboutAction();
 
   /** The action settings. */
-  private final Action        actionSettings   = new SettingsAction();
+  private final Action                actionSettings   = new SettingsAction();
 
   /** The action feedback. */
-  private final Action        actionFeedback   = new FeedbackAction();
+  private final Action                actionFeedback   = new FeedbackAction();
 
   /** The action bug report. */
-  private final Action        actionBugReport  = new BugReportAction();
+  private final Action                actionBugReport  = new BugReportAction();
 
   /** The action donate. */
-  private final Action        actionDonate     = new DonateAction();
+  private final Action                actionDonate     = new DonateAction();
 
   /** The instance. */
-  private static MainWindow   instance;
+  private static MainWindow           instance;
 
   /** The panel movies. */
-  private JPanel              panelMovies;
+  private JPanel                      panelMovies;
 
   /** The panel status bar. */
-  private JPanel              panelStatusBar;
+  private JPanel                      panelStatusBar;
 
   /** The lbl loading img. */
-  private JLabel              lblLoadingImg;
+  private JLabel                      lblLoadingImg;
 
   /** The label progressAction. */
-  private JLabel              lblProgressAction;
+  private JLabel                      lblProgressAction;
 
   /** The progress bar. */
-  private JProgressBar        progressBar;
+  private JProgressBar                progressBar;
 
   /** The button cancelScraper. */
-  private JButton             btnCancelTask;
+  private JButton                     btnCancelTask;
 
   /** The active task. */
-  private TmmSwingWorker      activeTask;
+  private TmmSwingWorker              activeTask;
 
   /** The status task. */
-  private StatusbarThread     statusTask       = new StatusbarThread();
+  private StatusbarThread             statusTask       = new StatusbarThread();
 
   /**
    * Create the application.
@@ -134,20 +136,20 @@ public class MainWindow extends JFrame {
     // mntmSettings.setText("Settings");
 
     JMenuItem mntmFeedback = mnTmm.add(actionFeedback);
-    mntmFeedback.setText("Send feedback");
+    mntmFeedback.setText(BUNDLE.getString("Feedback")); //$NON-NLS-1$
 
     JMenuItem mntmBugReport = mnTmm.add(actionBugReport);
-    mntmBugReport.setText("Report a bug");
+    mntmBugReport.setText(BUNDLE.getString("BugReport")); //$NON-NLS-1$
 
     mnTmm.addSeparator();
 
     JMenuItem mntmExit = mnTmm.add(actionExit);
-    mntmExit.setText("Exit");
+    mntmExit.setText(BUNDLE.getString("exit")); //$NON-NLS-1$
     initialize();
 
     // debug menu
-    JMenu debug = new JMenu("Debug");
-    JMenuItem clearDatabase = new JMenuItem("initialize database");
+    JMenu debug = new JMenu(BUNDLE.getString("debug")); //$NON-NLS-1$
+    JMenuItem clearDatabase = new JMenuItem(BUNDLE.getString("clearDatabase")); //$NON-NLS-1$
     debug.add(clearDatabase);
     clearDatabase.addActionListener(new ActionListener() {
       @Override
@@ -161,10 +163,10 @@ public class MainWindow extends JFrame {
             db.delete();
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-          JOptionPane.showMessageDialog(null, "Database initialized. Please restart tinyMediaManager");
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("clearDatabase.info"));
         }
         catch (Exception e) {
-          JOptionPane.showMessageDialog(null, "An error occured on database init. Please delete the file tmm.odb manually");
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("clearDatabase.error"));
           // open the tmm folder
           try {
             File path = new File(".");
@@ -180,7 +182,7 @@ public class MainWindow extends JFrame {
         System.exit(0);
       }
     });
-    JMenuItem clearCache = new JMenuItem("clear cache");
+    JMenuItem clearCache = new JMenuItem(BUNDLE.getString("clearCache")); //$NON-NLS-1$
     debug.add(clearCache);
     clearCache.addActionListener(new ActionListener() {
       @Override
@@ -202,10 +204,10 @@ public class MainWindow extends JFrame {
     mnTmm = new JMenu("?");
     menuBar.add(mnTmm);
     JMenuItem mntmDonate = mnTmm.add(actionDonate);
-    mntmDonate.setText("Donate");
+    mntmDonate.setText(BUNDLE.getString("donate")); //$NON-NLS-1$
     mnTmm.addSeparator();
     JMenuItem mntmAbout = mnTmm.add(actionAbout);
-    mntmAbout.setText("About");
+    mntmAbout.setText(BUNDLE.getString("about")); //$NON-NLS-1$
     // setVisible(true);
 
     // Globals.executor.execute(new MyStatusbarThread());
@@ -269,13 +271,13 @@ public class MainWindow extends JFrame {
     panelStatusBar.add(lblLoadingImg, "9, 1");
 
     panelMovies = new MoviePanel();
-    VerticalTextIcon.addTab(tabbedPane, "Movies", panelMovies);
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("movies"), panelMovies);
 
     JPanel panelMovieSets = new MovieSetPanel();
-    VerticalTextIcon.addTab(tabbedPane, "Movie sets", panelMovieSets);
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("moviesets"), panelMovieSets);
 
     JPanel panelSettings = new SettingsPanel();
-    VerticalTextIcon.addTab(tabbedPane, "Settings", panelSettings);
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("settings"), panelSettings);
 
     // shutdown listener - to clean database connections safely
     addWindowListener(new WindowAdapter() {
@@ -284,8 +286,8 @@ public class MainWindow extends JFrame {
         int confirm = 0;
         // if there are some threads running, display exit confirmation
         if (Globals.executor.getActiveCount() > 0) {
-          confirm = JOptionPane.showOptionDialog(null, "Are you sure you want to close tinyMediaManager?\nSome threads seem to be still running...",
-              "Exit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+          confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("exit.runningtasks"), BUNDLE.getString("exit.confirmation"),
+              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
         }
         if (confirm == JOptionPane.YES_OPTION) {
           LOGGER.info("bye bye");
@@ -365,7 +367,8 @@ public class MainWindow extends JFrame {
               lblLoadingImg.setIcon(null);
             }
           }
-          String text = String.format(" active threads [%d/%d]", this.ex.getActiveCount(), this.ex.getMaximumPoolSize());
+          String text = String.format(" " + BUNDLE.getString("status.activethreads") + " [%d/%d]", this.ex.getActiveCount(),
+              this.ex.getMaximumPoolSize());
           // LOGGER.debug(text);
           lblLoadingImg.setToolTipText(text);
           Thread.sleep(2000);
