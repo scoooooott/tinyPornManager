@@ -87,7 +87,7 @@ public class BugReportDialog extends JDialog {
    * Instantiates a new feedback dialog.
    */
   public BugReportDialog() {
-    setTitle(BUNDLE.getString("BugReport"));
+    setTitle(BUNDLE.getString("BugReport")); //$NON-NLS-1$
     setName("bugReport");
     setIconImage(Globals.logo);
     setModal(true);
@@ -108,14 +108,14 @@ public class BugReportDialog extends JDialog {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name"));
+    JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");
 
     textField = new JTextField();
     panelContent.add(textField, "4, 2, fill, default");
     textField.setColumns(10);
 
-    JLabel lblFeedback = new JLabel(BUNDLE.getString("BugReport.description"));
+    JLabel lblFeedback = new JLabel(BUNDLE.getString("BugReport.description")); //$NON-NLS-1$
     panelContent.add(lblFeedback, "2, 4, right, top");
 
     JScrollPane scrollPane = new JScrollPane();
@@ -126,10 +126,10 @@ public class BugReportDialog extends JDialog {
     textArea.setLineWrap(true);
     textArea.setWrapStyleWord(true);
 
-    JLabel lblAttachments = new JLabel(BUNDLE.getString("BugReport.attachments"));
+    JLabel lblAttachments = new JLabel(BUNDLE.getString("BugReport.attachments")); //$NON-NLS-1$
     panelContent.add(lblAttachments, "2, 6");
 
-    chckbxLogs = new JCheckBox(BUNDLE.getString("BugReport.logs"));
+    chckbxLogs = new JCheckBox(BUNDLE.getString("BugReport.logs")); //$NON-NLS-1$
     chckbxLogs.setSelected(true);
     panelContent.add(chckbxLogs, "4, 6");
 
@@ -143,12 +143,12 @@ public class BugReportDialog extends JDialog {
     panelButtons.setLayout(new EqualsLayout(5));
     getContentPane().add(panelButtons, "2, 4, fill, fill");
 
-    JButton btnSend = new JButton(BUNDLE.getString("BugReport.send"));
+    JButton btnSend = new JButton(BUNDLE.getString("BugReport.send")); //$NON-NLS-1$
     btnSend.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         // check if feedback is provided
         if (StringUtils.isEmpty(textArea.getText())) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("BugReport.description.empty"));
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("BugReport.description.empty")); //$NON-NLS-1$
           return;
         }
 
@@ -247,21 +247,21 @@ public class BugReportDialog extends JDialog {
 
         }
         catch (IOException e) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.error"));
+          JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.error")); //$NON-NLS-1$
           return;
         }
         finally {
           post.releaseConnection();
         }
 
-        JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.ok"));
+        JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.ok")); //$NON-NLS-1$
         setVisible(false);
         dispose();
       }
     });
     panelButtons.add(btnSend);
 
-    JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel"));
+    JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     btnCacnel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);

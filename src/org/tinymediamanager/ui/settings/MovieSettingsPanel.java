@@ -22,6 +22,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -51,6 +52,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieConnectors;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -62,38 +64,41 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSettingsPanel extends JPanel {
 
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 1L;
+
   /** The settings. */
-  private Settings   settings = Settings.getInstance();
+  private Settings                    settings         = Settings.getInstance();
 
   /** The table movie sources. */
-  private JTable     tableMovieSources;
+  private JTable                      tableMovieSources;
 
   /** The cb nfo format. */
-  private JComboBox  cbNfoFormat;
+  private JComboBox                   cbNfoFormat;
 
   /** The cb movie nfo filename1. */
-  private JCheckBox  cbMovieNfoFilename1;
+  private JCheckBox                   cbMovieNfoFilename1;
 
   /** The cb movie nfo filename2. */
-  private JCheckBox  cbMovieNfoFilename2;
+  private JCheckBox                   cbMovieNfoFilename2;
 
   /** The tf movie path. */
-  private JTextField tfMoviePath;
+  private JTextField                  tfMoviePath;
 
   /** The tf movie filename. */
-  private JTextField tfMovieFilename;
+  private JTextField                  tfMovieFilename;
 
   /** The tf sort prefix. */
-  private JTextField tfSortPrefix;
+  private JTextField                  tfSortPrefix;
 
   /** The list sort prefixes. */
-  private JList      listSortPrefixes;
+  private JList                       listSortPrefixes;
 
   /** The tf filetype. */
-  private JTextField tfFiletype;
+  private JTextField                  tfFiletype;
 
   /** The list filetypes. */
-  private JList      listFiletypes;
+  private JList                       listFiletypes;
 
   /**
    * Instantiates a new movie settings panel.
@@ -105,7 +110,8 @@ public class MovieSettingsPanel extends JPanel {
 
     JPanel panelMovieDataSources = new JPanel();
 
-    panelMovieDataSources.setBorder(new TitledBorder(null, "Data Sources", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelMovieDataSources.setBorder(new TitledBorder(null,
+        BUNDLE.getString("Settings.datasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelMovieDataSources, "2, 2, fill, top");
     panelMovieDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(72dlu;default)"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(66dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
@@ -124,10 +130,10 @@ public class MovieSettingsPanel extends JPanel {
     panelMovieSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JButton btnAdd = new JButton("Add");
+    JButton btnAdd = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectDirectory("add datasource");
+        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
         if (file != null && file.exists() && file.isDirectory()) {
           settings.addMovieDataSources(file.getAbsolutePath());
         }
@@ -136,16 +142,16 @@ public class MovieSettingsPanel extends JPanel {
 
     panelMovieSourcesButtons.add(btnAdd, "2, 1, fill, top");
 
-    JButton btnRemove = new JButton("Remove");
+    JButton btnRemove = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         int row = tableMovieSources.convertRowIndexToModel(tableMovieSources.getSelectedRow());
         if (row != -1) { // nothing selected
           String path = Globals.settings.getMovieDataSource().get(row);
-          String[] choices = { "Continue", "Abort" };
-          int decision = JOptionPane.showOptionDialog(null, "If you remove " + path
-              + " from your data sources, all movies inside this path will also be removed. Continue?", "Remove datasource",
-              JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices, "Abort");
+          String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
+          int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.datasource.remove.info"), path),
+              BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
+              BUNDLE.getString("Button.abort")); //$NON-NLS-1$
           if (decision == 0) {
             Globals.settings.removeMovieDataSources(path);
           }
@@ -154,23 +160,24 @@ public class MovieSettingsPanel extends JPanel {
     });
     panelMovieSourcesButtons.add(btnRemove, "2, 3, fill, top");
 
-    JLabel lblNfoFormat = new JLabel("NFO format");
+    JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
     panelMovieDataSources.add(lblNfoFormat, "2, 4, right, default");
 
     cbNfoFormat = new JComboBox(MovieConnectors.values());
     panelMovieDataSources.add(cbNfoFormat, "4, 4, fill, default");
 
-    JLabel lblNfoFileNaming = new JLabel("NFO file naming");
+    JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
     panelMovieDataSources.add(lblNfoFileNaming, "2, 6, right, default");
 
-    cbMovieNfoFilename1 = new JCheckBox("<movie filename>.nfo");
+    cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
     panelMovieDataSources.add(cbMovieNfoFilename1, "4, 6");
 
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
     panelMovieDataSources.add(cbMovieNfoFilename2, "4, 7");
 
     JPanel panel = new JPanel();
-    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Filetypes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panel.setBorder(new TitledBorder(
+        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.filetypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panel, "4, 2, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
@@ -182,13 +189,15 @@ public class MovieSettingsPanel extends JPanel {
     listFiletypes = new JList();
     scrollPane_1.setViewportView(listFiletypes);
 
-    JButton btnRemoveFiletype = new JButton("Remove");
+    JButton btnRemoveFiletype = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemoveFiletype.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         int row = listFiletypes.getSelectedIndex();
-        String prefix = Globals.settings.getVideoFileType().get(row);
-        Globals.settings.removeVideoFileType(prefix);
+        if (row != -1) {
+          String prefix = Globals.settings.getVideoFileType().get(row);
+          Globals.settings.removeVideoFileType(prefix);
+        }
       }
     });
     panel.add(btnRemoveFiletype, "4, 2, default, bottom");
@@ -197,7 +206,7 @@ public class MovieSettingsPanel extends JPanel {
     panel.add(tfFiletype, "2, 4, fill, default");
     tfFiletype.setColumns(10);
 
-    JButton btnAddFiletype = new JButton("Add");
+    JButton btnAddFiletype = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAddFiletype.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -210,15 +219,15 @@ public class MovieSettingsPanel extends JPanel {
     panel.add(btnAddFiletype, "4, 4");
 
     JPanel panelSortOptions = new JPanel();
-    panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Movielist sorting", TitledBorder.LEADING,
-        TitledBorder.TOP, null, null));
+    panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelSortOptions, "4, 4, fill, fill");
     panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblSortingPrefixes = new JLabel("Title prefixes");
+    JLabel lblSortingPrefixes = new JLabel(BUNDLE.getString("Settings.titlePrefix")); //$NON-NLS-1$
     panelSortOptions.add(lblSortingPrefixes, "2, 2");
 
     JScrollPane scrollPaneSortPrefixes = new JScrollPane();
@@ -227,13 +236,15 @@ public class MovieSettingsPanel extends JPanel {
     listSortPrefixes = new JList();
     scrollPaneSortPrefixes.setViewportView(listSortPrefixes);
 
-    JButton btnRemoveSortPrefix = new JButton("Remove");
+    JButton btnRemoveSortPrefix = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
     btnRemoveSortPrefix.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         int row = listSortPrefixes.getSelectedIndex();
-        String prefix = Globals.settings.getTitlePrefix().get(row);
-        Globals.settings.removeTitlePrefix(prefix);
+        if (row != -1) {
+          String prefix = Globals.settings.getTitlePrefix().get(row);
+          Globals.settings.removeTitlePrefix(prefix);
+        }
       }
     });
     panelSortOptions.add(btnRemoveSortPrefix, "4, 4, default, bottom");
@@ -242,7 +253,7 @@ public class MovieSettingsPanel extends JPanel {
     panelSortOptions.add(tfSortPrefix, "2, 6, fill, default");
     tfSortPrefix.setColumns(10);
 
-    JButton btnAddSortPrefix = new JButton("Add");
+    JButton btnAddSortPrefix = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
     btnAddSortPrefix.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -256,21 +267,20 @@ public class MovieSettingsPanel extends JPanel {
 
     JTextPane tpSortingHints = new JTextPane();
     tpSortingHints.setFont(new Font("Dialog", Font.PLAIN, 10));
-    tpSortingHints
-        .setText("Choose prefixes, which will affect the sort order of the movielist.\n\nExample:    The\nThe Bourne Identity   will be shown as    Bourne Identity, The\n\nIf you want to disable this feature, just clear the list");
+    tpSortingHints.setText(BUNDLE.getString("Settings.sorting.info")); //$NON-NLS-1$
     tpSortingHints.setBackground(UIManager.getColor("Panel.background"));
     panelSortOptions.add(tpSortingHints, "2, 8, 3, 1, fill, fill");
 
     // the panel renamer
     JPanel panelRenamer = new JPanel();
-    panelRenamer.setBorder(new TitledBorder(null, "Renamer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelRenamer, "2, 4, fill, fill");
     panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
 
-    JLabel lblMoviePath = new JLabel("Folder name");
+    JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
     panelRenamer.add(lblMoviePath, "2, 2, right, default");
 
     tfMoviePath = new JTextField();
@@ -280,12 +290,11 @@ public class MovieSettingsPanel extends JPanel {
     JTextPane txtpntTitle = new JTextPane();
     txtpntTitle.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
-    txtpntTitle
-        .setText("Available pattern:\r\n$T = Title\r\n$O = OriginalTitle\r\n$1 = first letter of the title\r\n$Y = Year\r\n$I = IMDB number\r\n$E = Sort title\r\n$R = Video resolution\r\n$A = audio code + channels\r\n$V = video code + format");
+    txtpntTitle.setText(BUNDLE.getString("Settings.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
     panelRenamer.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
 
-    JLabel lblMovieFilename = new JLabel("File name");
+    JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
     panelRenamer.add(lblMovieFilename, "2, 4, right, fill");
 
     tfMovieFilename = new JTextField();
@@ -295,8 +304,7 @@ public class MovieSettingsPanel extends JPanel {
 
     JTextPane txtrChooseAFolder = new JTextPane();
     txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
-    txtrChooseAFolder
-        .setText("Choose a folder and file renaming pattern.\nExample:\nDatasource = /media/movies\nFolder name = $1/$T [$Y]\nFile name = $T\n\nResult:\nFolder name = /media/movies/A/Aladdin [1992]/\nFile name = Aladdin.avi\n\n\n\nIf fields are empty, the renaming will be skipped!");
+    txtrChooseAFolder.setText(BUNDLE.getString("Settings.renamer.example")); //$NON-NLS-1$
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtrChooseAFolder, "2, 6, 3, 1, fill, fill");
 

@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -29,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.l2fprod.common.swing.JButtonBar;
 import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
@@ -37,18 +39,19 @@ import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
  * The Class SettingsPanel.
  */
 public class SettingsPanel extends JPanel {
-  private static final long         serialVersionUID = 1L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 1L;
 
   /** The settings. */
-  private Settings                  settings         = Settings.getInstance();
+  private Settings                    settings         = Settings.getInstance();
 
-  private Component                 currentComponent;
-  private JButtonBar                toolbar;
+  private Component                   currentComponent;
+  private JButtonBar                  toolbar;
 
-  private GeneralSettingsPanel      panelGeneralSettings;
-  private MovieSettingsPanel        panelMovieSettings;
-  private MovieScraperSettingsPanel panelScraperMovieSettings;
-  private MovieImageSettingsPanel   panelImageMovieSettings;
+  private GeneralSettingsPanel        panelGeneralSettings;
+  private MovieSettingsPanel          panelMovieSettings;
+  private MovieScraperSettingsPanel   panelScraperMovieSettings;
+  private MovieImageSettingsPanel     panelImageMovieSettings;
 
   /**
    * Create the panel.
@@ -63,13 +66,13 @@ public class SettingsPanel extends JPanel {
 
     ButtonGroup group = new ButtonGroup();
     panelMovieSettings = new MovieSettingsPanel();
-    addButton("Movies", "/org/tinymediamanager/ui/images/show_reel.png", panelMovieSettings, toolbar, group);
+    addButton(BUNDLE.getString("Settings.movies"), "/org/tinymediamanager/ui/images/show_reel.png", panelMovieSettings, toolbar, group); //$NON-NLS-1$
     panelScraperMovieSettings = new MovieScraperSettingsPanel();
-    addButton("<html>Movies -<br>Scraper</html>", "/org/tinymediamanager/ui/images/show_reel.png", panelScraperMovieSettings, toolbar, group);
+    addButton(BUNDLE.getString("Settings.scraper"), "/org/tinymediamanager/ui/images/show_reel.png", panelScraperMovieSettings, toolbar, group); //$NON-NLS-1$
     panelImageMovieSettings = new MovieImageSettingsPanel();
-    addButton("<html>Movies -<br>Images</html>", "/org/tinymediamanager/ui/images/show_reel.png", panelImageMovieSettings, toolbar, group);
+    addButton(BUNDLE.getString("Settings.images"), "/org/tinymediamanager/ui/images/show_reel.png", panelImageMovieSettings, toolbar, group); //$NON-NLS-1$
     panelGeneralSettings = new GeneralSettingsPanel();
-    addButton("General", "/org/tinymediamanager/ui/images/Action-configure-icon.png", panelGeneralSettings, toolbar, group);
+    addButton(BUNDLE.getString("Settings.general"), "/org/tinymediamanager/ui/images/Action-configure-icon.png", panelGeneralSettings, toolbar, group); //$NON-NLS-1$
 
     // // button panel
     // JPanel buttonPanel = new JPanel();
@@ -108,6 +111,8 @@ public class SettingsPanel extends JPanel {
 
   private void addButton(String title, String iconUrl, final Component component, JButtonBar bar, ButtonGroup group) {
     Action action = new AbstractAction(title, new ImageIcon(SettingsPanel.class.getResource(iconUrl))) {
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
         show(component);
       }

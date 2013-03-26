@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.settings;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -38,6 +39,7 @@ import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -50,47 +52,50 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieScraperSettingsPanel extends JPanel {
 
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 1L;
+
   /** The settings. */
-  private Settings    settings = Settings.getInstance();
+  private Settings                    settings         = Settings.getInstance();
 
   /** The button group scraper. */
-  private ButtonGroup buttonGroupScraper;
+  private ButtonGroup                 buttonGroupScraper;
 
   /** The cb scraper tmdb language. */
-  private JComboBox   cbScraperTmdbLanguage;
+  private JComboBox                   cbScraperTmdbLanguage;
 
   /** The cb country. */
-  private JComboBox   cbCountry;
+  private JComboBox                   cbCountry;
 
   /** The cb imdb translateable content. */
-  private JCheckBox   cbImdbTranslateableContent;
+  private JCheckBox                   cbImdbTranslateableContent;
 
   /** The cb scraper imdb. */
-  private JCheckBox   cbScraperImdb;
+  private JCheckBox                   cbScraperImdb;
 
   /** The chckbx automatically scrape images. */
-  private JCheckBox   chckbxAutomaticallyScrapeImages;
+  private JCheckBox                   chckbxAutomaticallyScrapeImages;
 
   /** The cb imdb site. */
-  private JComboBox   cbImdbSite;
+  private JComboBox                   cbImdbSite;
 
   /** The panel scraper metadata. */
-  private JPanel      panelScraperMetadata;
+  private JPanel                      panelScraperMetadata;
 
   /** The panel scraper metadata container. */
-  private JPanel      panelScraperMetadataContainer;
+  private JPanel                      panelScraperMetadataContainer;
 
   /** The cb scraper ofdbde. */
-  private JCheckBox   cbScraperOfdbde;
+  private JCheckBox                   cbScraperOfdbde;
 
   /** The cb scraper tmdb. */
-  private JCheckBox   cbScraperTmdb;
-  private JPanel      panel;
-  private JCheckBox   cbTheMovieDatabase;
-  private JCheckBox   cbHdtrailersnet;
-  private JCheckBox   cbOfdbde;
-  private JCheckBox   cbScraperZelluloidde;
-  private JSeparator  separator;
+  private JCheckBox                   cbScraperTmdb;
+  private JPanel                      panel;
+  private JCheckBox                   cbTheMovieDatabase;
+  private JCheckBox                   cbHdtrailersnet;
+  private JCheckBox                   cbOfdbde;
+  private JCheckBox                   cbScraperZelluloidde;
+  private JSeparator                  separator;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -100,8 +105,8 @@ public class MovieScraperSettingsPanel extends JPanel {
         FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
     JPanel panelMovieScrapers = new JPanel();
-    panelMovieScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Metadata scraper", TitledBorder.LEADING,
-        TitledBorder.TOP, null, null));
+    panelMovieScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.metadata"),
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelMovieScrapers, "2, 2, fill, top");
     panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -123,7 +128,7 @@ public class MovieScraperSettingsPanel extends JPanel {
     cbImdbSite = new JComboBox(ImdbSiteDefinition.values());
     panelMovieScrapers.add(cbImdbSite, "3, 4, fill, default");
 
-    cbImdbTranslateableContent = new JCheckBox("Plot/Title/Tagline from TMDB");
+    cbImdbTranslateableContent = new JCheckBox(BUNDLE.getString("Settings.getfromTMDB")); //$NON-NLS-1$
     panelMovieScrapers.add(cbImdbTranslateableContent, "3, 5");
 
     cbScraperOfdbde = new JCheckBox("OFDb.de");
@@ -137,21 +142,21 @@ public class MovieScraperSettingsPanel extends JPanel {
     separator = new JSeparator();
     panelMovieScrapers.add(separator, "1, 11, 3, 1");
 
-    JLabel lblScraperLanguage = new JLabel("Preferred language");
+    JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
     panelMovieScrapers.add(lblScraperLanguage, "1, 13, right, default");
 
     cbScraperTmdbLanguage = new JComboBox(TmdbMetadataProvider.Languages.values());
     panelMovieScrapers.add(cbScraperTmdbLanguage, "3, 13");
 
-    JLabel lblCountry = new JLabel("Certification country");
+    JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
     panelMovieScrapers.add(lblCountry, "1, 15, right, default");
 
     cbCountry = new JComboBox(CountryCode.values());
     panelMovieScrapers.add(cbCountry, "3, 15, fill, default");
 
     panelScraperMetadataContainer = new JPanel();
-    panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Metadata scrape defaults",
-        TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+    panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.defaults"),
+        TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
     add(panelScraperMetadataContainer, "4, 2, fill, top");
     panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -159,12 +164,12 @@ public class MovieScraperSettingsPanel extends JPanel {
     panelScraperMetadata = new MovieScraperMetadataPanel(settings.getScraperMetadataConfig());
     panelScraperMetadataContainer.add(panelScraperMetadata, "1, 1, 2, 1, fill, default");
 
-    chckbxAutomaticallyScrapeImages = new JCheckBox("automatically scrape images (without selection)");
+    chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
     panelScraperMetadataContainer.add(chckbxAutomaticallyScrapeImages, "2, 3");
 
     panel = new JPanel();
-    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Trailer scraper", TitledBorder.LEADING, TitledBorder.TOP, null,
-        null));
+    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.trailer"), TitledBorder.LEADING,
+        TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panel, "2, 4, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,

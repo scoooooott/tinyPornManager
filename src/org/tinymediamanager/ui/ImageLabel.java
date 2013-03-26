@@ -27,6 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
@@ -43,36 +44,37 @@ import com.bric.image.pixel.Scaling;
  * The Class ImageLabel.
  */
 public class ImageLabel extends JLabel {
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = 1L;
+  private static final long           serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger LOGGER           = Logger.getLogger(ImageLabel.class);
+  private static final Logger         LOGGER           = Logger.getLogger(ImageLabel.class);
 
   /** The Constant CACHE_DIR. */
-  private static final String CACHE_DIR        = "cache/image";
+  private static final String         CACHE_DIR        = "cache/image";
 
   /** The original image. */
-  private BufferedImage       originalImage;
+  private BufferedImage               originalImage;
 
   /** The image url. */
-  private String              imageUrl;
+  private String                      imageUrl;
 
   /** The image path. */
-  private String              imagePath;
+  private String                      imagePath;
 
   /** The draw border. */
-  private boolean             drawBorder;
+  private boolean                     drawBorder;
 
   /** The draw full width. */
-  private boolean             drawFullWidth;
+  private boolean                     drawFullWidth;
 
   /** The url cache dir. */
-  private File                imageCacheDir    = null;
+  private File                        imageCacheDir    = null;
 
   /** The worker. */
-  private ImageFetcher        worker;
+  private ImageFetcher                worker;
 
   /**
    * Instantiates a new image label.
@@ -252,7 +254,7 @@ public class ImageLabel extends JLabel {
       int diagonalSize = (int) Math.sqrt(this.getWidth() * this.getWidth() + this.getHeight() * this.getHeight());
 
       // draw text
-      String text = "no image found";
+      String text = BUNDLE.getString("no.image.found"); //$NON-NLS-1$
       Graphics2D g2 = (Graphics2D) g;
       AffineTransform orig = g2.getTransform();
       AffineTransform at = new AffineTransform(orig);

@@ -46,7 +46,7 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
    */
   public JSearchTextField() {
     super();
-    this.textWhenNotFocused = BUNDLE.getString("Searchfield");
+    this.textWhenNotFocused = BUNDLE.getString("Searchfield"); //$NON-NLS-1$
     this.addFocusListener(this);
   }
 

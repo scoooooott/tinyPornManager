@@ -163,10 +163,10 @@ public class MainWindow extends JFrame {
             db.delete();
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("clearDatabase.info"));
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("clearDatabase.info")); //$NON-NLS-1$
         }
         catch (Exception e) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("clearDatabase.error"));
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("clearDatabase.error")); //$NON-NLS-1$
           // open the tmm folder
           try {
             File path = new File(".");
@@ -271,13 +271,13 @@ public class MainWindow extends JFrame {
     panelStatusBar.add(lblLoadingImg, "9, 1");
 
     panelMovies = new MoviePanel();
-    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("movies"), panelMovies);
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("movies"), panelMovies); //$NON-NLS-1$
 
     JPanel panelMovieSets = new MovieSetPanel();
-    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("moviesets"), panelMovieSets);
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("moviesets"), panelMovieSets); //$NON-NLS-1$
 
     JPanel panelSettings = new SettingsPanel();
-    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("settings"), panelSettings);
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("settings"), panelSettings); //$NON-NLS-1$
 
     // shutdown listener - to clean database connections safely
     addWindowListener(new WindowAdapter() {
@@ -287,7 +287,7 @@ public class MainWindow extends JFrame {
         // if there are some threads running, display exit confirmation
         if (Globals.executor.getActiveCount() > 0) {
           confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("exit.runningtasks"), BUNDLE.getString("exit.confirmation"),
-              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
         }
         if (confirm == JOptionPane.YES_OPTION) {
           LOGGER.info("bye bye");
@@ -368,7 +368,7 @@ public class MainWindow extends JFrame {
             }
           }
           String text = String.format(" " + BUNDLE.getString("status.activethreads") + " [%d/%d]", this.ex.getActiveCount(),
-              this.ex.getMaximumPoolSize());
+              this.ex.getMaximumPoolSize()); //$NON-NLS-1$
           // LOGGER.debug(text);
           lblLoadingImg.setToolTipText(text);
           Thread.sleep(2000);

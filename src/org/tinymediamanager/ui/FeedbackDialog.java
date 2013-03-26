@@ -68,7 +68,7 @@ public class FeedbackDialog extends JDialog {
    * Instantiates a new feedback dialog.
    */
   public FeedbackDialog() {
-    setTitle(BUNDLE.getString("Feedback"));
+    setTitle(BUNDLE.getString("Feedback")); //$NON-NLS-1$
     setName("feedback");
     setBounds(100, 100, 450, 303);
     TmmWindowSaver.loadSettings(this);
@@ -89,21 +89,21 @@ public class FeedbackDialog extends JDialog {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
         RowSpec.decode("default:grow"), }));
 
-    JLabel lblName = new JLabel(BUNDLE.getString("Feedback.name"));
+    JLabel lblName = new JLabel(BUNDLE.getString("Feedback.name")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");
 
     tfName = new JTextField();
     panelContent.add(tfName, "4, 2, fill, default");
     tfName.setColumns(10);
 
-    JLabel lblEmailoptional = new JLabel(BUNDLE.getString("Feedback.email"));
+    JLabel lblEmailoptional = new JLabel(BUNDLE.getString("Feedback.email")); //$NON-NLS-1$
     panelContent.add(lblEmailoptional, "2, 4, right, default");
 
     tfEmail = new JTextField();
     panelContent.add(tfEmail, "4, 4, fill, default");
     tfEmail.setColumns(10);
 
-    JLabel lblFeedback = new JLabel(BUNDLE.getString("Feedback.message"));
+    JLabel lblFeedback = new JLabel(BUNDLE.getString("Feedback.message")); //$NON-NLS-1$
     panelContent.add(lblFeedback, "2, 6, right, top");
 
     JScrollPane scrollPane = new JScrollPane();
@@ -118,12 +118,12 @@ public class FeedbackDialog extends JDialog {
     panelButtons.setLayout(new EqualsLayout(5));
     getContentPane().add(panelButtons, "2, 4, fill, fill");
 
-    JButton btnSend = new JButton(BUNDLE.getString("Feedback"));
+    JButton btnSend = new JButton(BUNDLE.getString("Feedback")); //$NON-NLS-1$
     btnSend.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         // check if feedback is provided
         if (StringUtils.isEmpty(textArea.getText())) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.message.empty"));
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.message.empty")); //$NON-NLS-1$
           return;
         }
 
@@ -147,18 +147,18 @@ public class FeedbackDialog extends JDialog {
 
         }
         catch (IOException e) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.error"));
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.error")); //$NON-NLS-1$
           return;
         }
 
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.ok"));
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.ok")); //$NON-NLS-1$
         setVisible(false);
         dispose();
       }
     });
     panelButtons.add(btnSend);
 
-    JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel"));
+    JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     btnCacnel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);

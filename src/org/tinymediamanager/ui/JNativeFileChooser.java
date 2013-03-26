@@ -23,6 +23,8 @@ import org.apache.commons.lang3.SystemUtils;
 
 public class JNativeFileChooser extends JFileChooser {
 
+  private static final long serialVersionUID = 1L;
+
   /*
    * (non-Javadoc)
    * 

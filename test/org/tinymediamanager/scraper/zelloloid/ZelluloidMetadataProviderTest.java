@@ -22,7 +22,7 @@ public class ZelluloidMetadataProviderTest {
 
       MediaSearchResult msr = new MediaSearchResult("zelluloid");
       msr.setId("7614");
-      msr.setUrl("http://www.zelluloid.de/filme/index.php3?id=322");
+      msr.setUrl("http://www.zelluloid.de/filme/index.php3?id=7614");
 
       MediaScrapeOptions scop = new MediaScrapeOptions();
       scop.setResult(msr);

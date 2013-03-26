@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.util.ResourceBundle;
+
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,6 +29,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -37,38 +40,41 @@ import com.jgoodies.forms.layout.RowSpec;
  * The Class GeneralSettingsPanel.
  */
 public class GeneralSettingsPanel extends JPanel {
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 1L;
 
   /** The settings. */
-  private Settings       settings = Settings.getInstance();
+  private Settings                    settings         = Settings.getInstance();
 
   /** The panel proxy settings. */
-  private JPanel         panelProxySettings;
+  private JPanel                      panelProxySettings;
 
   /** The tf proxy host. */
-  private JTextField     tfProxyHost;
+  private JTextField                  tfProxyHost;
 
   /** The tf proxy port. */
-  private JTextField     tfProxyPort;
+  private JTextField                  tfProxyPort;
 
   /** The tf proxy username. */
-  private JTextField     tfProxyUsername;
+  private JTextField                  tfProxyUsername;
 
   /** The tf proxy password. */
-  private JPasswordField tfProxyPassword;
-  private JCheckBox      chckbxClearCacheShutdown;
+  private JPasswordField              tfProxyPassword;
+  private JCheckBox                   chckbxClearCacheShutdown;
 
   public GeneralSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("214px"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("214px"), }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     panelProxySettings = new JPanel();
-    panelProxySettings.setBorder(new TitledBorder(null, "Proxy Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelProxySettings, "2, 2, left, top");
-    panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblProxyHost = new JLabel("Host");
+    JLabel lblProxyHost = new JLabel(BUNDLE.getString("Settings.proxyhost")); //$NON-NLS-1$
     panelProxySettings.add(lblProxyHost, "2, 2, right, default");
 
     tfProxyHost = new JTextField();
@@ -76,7 +82,7 @@ public class GeneralSettingsPanel extends JPanel {
     panelProxySettings.add(tfProxyHost, "4, 2, fill, default");
     tfProxyHost.setColumns(10);
 
-    JLabel lblProxyPort = new JLabel("Port");
+    JLabel lblProxyPort = new JLabel(BUNDLE.getString("Settings.proxyport")); //$NON-NLS-1$
     panelProxySettings.add(lblProxyPort, "2, 4, right, default");
 
     tfProxyPort = new JTextField();
@@ -84,7 +90,7 @@ public class GeneralSettingsPanel extends JPanel {
     panelProxySettings.add(tfProxyPort, "4, 4, fill, default");
     tfProxyPort.setColumns(10);
 
-    JLabel lblProxyUser = new JLabel("Username");
+    JLabel lblProxyUser = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
     panelProxySettings.add(lblProxyUser, "2, 6, right, default");
 
     tfProxyUsername = new JTextField();
@@ -92,14 +98,14 @@ public class GeneralSettingsPanel extends JPanel {
     panelProxySettings.add(tfProxyUsername, "4, 6, fill, default");
     tfProxyUsername.setColumns(10);
 
-    JLabel lblProxyPassword = new JLabel("Password");
+    JLabel lblProxyPassword = new JLabel(BUNDLE.getString("Settings.proxypass")); //$NON-NLS-1$
     panelProxySettings.add(lblProxyPassword, "2, 8, right, default");
 
     tfProxyPassword = new JPasswordField();
     lblProxyPassword.setLabelFor(tfProxyPassword);
     panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
 
-    chckbxClearCacheShutdown = new JCheckBox("Clear cache on shutdown");
+    chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearCache")); //$NON-NLS-1$
     add(chckbxClearCacheShutdown, "2, 4");
 
     initDataBindings();
@@ -108,32 +114,32 @@ public class GeneralSettingsPanel extends JPanel {
   protected void initDataBindings() {
     BeanProperty<Settings, String> settingsBeanProperty = BeanProperty.create("proxyHost");
     BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty, tfProxyHost,
-        jTextFieldBeanProperty);
+    AutoBinding<Settings, String, JTextField, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty, tfProxyHost, jTextFieldBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<Settings, String> settingsBeanProperty_1 = BeanProperty.create("proxyPort");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_1, tfProxyPort,
-        jTextFieldBeanProperty_1);
+    AutoBinding<Settings, String, JTextField, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, tfProxyPort, jTextFieldBeanProperty_1);
     autoBinding_1.bind();
     //
     BeanProperty<Settings, String> settingsBeanProperty_2 = BeanProperty.create("proxyUsername");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_2 = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_2, tfProxyUsername,
-        jTextFieldBeanProperty_2);
+    AutoBinding<Settings, String, JTextField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, tfProxyUsername, jTextFieldBeanProperty_2);
     autoBinding_2.bind();
     //
     BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("proxyPassword");
     BeanProperty<JPasswordField, String> jPasswordFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<Settings, String, JPasswordField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_3, tfProxyPassword,
-        jPasswordFieldBeanProperty);
+    AutoBinding<Settings, String, JPasswordField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_3, tfProxyPassword, jPasswordFieldBeanProperty);
     autoBinding_3.bind();
     //
     BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("clearCacheShutdown");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty_4,
-        chckbxClearCacheShutdown, jCheckBoxBeanProperty);
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_4, chckbxClearCacheShutdown, jCheckBoxBeanProperty);
     autoBinding_4.bind();
   }
 }

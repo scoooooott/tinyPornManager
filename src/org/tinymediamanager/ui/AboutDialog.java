@@ -60,7 +60,7 @@ public class AboutDialog extends JDialog {
    * Create the dialog.
    */
   public AboutDialog() {
-    setTitle(BUNDLE.getString("MainWindow.mntmAbout.text"));
+    setTitle(BUNDLE.getString("about")); //$NON-NLS-1$
     setName("aboutDialog");
     setResizable(false);
     setModal(true);
@@ -168,7 +168,7 @@ public class AboutDialog extends JDialog {
      * Instantiates a new swing action.
      */
     public SwingAction() {
-      putValue(NAME, BUNDLE.getString("Button.ok"));
+      putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
     }
 
     /*

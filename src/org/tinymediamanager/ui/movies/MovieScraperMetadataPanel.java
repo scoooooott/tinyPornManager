@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.util.ResourceBundle;
+
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
@@ -23,6 +25,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.ScraperMetadataConfig;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -34,44 +37,47 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieScraperMetadataPanel extends JPanel {
 
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 1L;
+
   /** The config. */
-  private ScraperMetadataConfig config;
+  private ScraperMetadataConfig       config;
 
   /** The chckbx title. */
-  private JCheckBox             chckbxTitle;
+  private JCheckBox                   chckbxTitle;
 
   /** The chckbx original title. */
-  private JCheckBox             chckbxOriginalTitle;
+  private JCheckBox                   chckbxOriginalTitle;
 
   /** The chckbx tagline. */
-  private JCheckBox             chckbxTagline;
+  private JCheckBox                   chckbxTagline;
 
   /** The chckbx plot. */
-  private JCheckBox             chckbxPlot;
+  private JCheckBox                   chckbxPlot;
 
   /** The chckbx rating. */
-  private JCheckBox             chckbxRating;
+  private JCheckBox                   chckbxRating;
 
   /** The chckbx runtime. */
-  private JCheckBox             chckbxRuntime;
+  private JCheckBox                   chckbxRuntime;
 
   /** The chckbx year. */
-  private JCheckBox             chckbxYear;
+  private JCheckBox                   chckbxYear;
 
   /** The chckbx certification. */
-  private JCheckBox             chckbxCertification;
+  private JCheckBox                   chckbxCertification;
 
   /** The chckbx cast. */
-  private JCheckBox             chckbxCast;
+  private JCheckBox                   chckbxCast;
 
   /** The chckbx genres. */
-  private JCheckBox             chckbxGenres;
+  private JCheckBox                   chckbxGenres;
 
   /** The chckbx artwork. */
-  private JCheckBox             chckbxArtwork;
+  private JCheckBox                   chckbxArtwork;
 
   /** The chckbx trailer. */
-  private JCheckBox             chckbxTrailer;
+  private JCheckBox                   chckbxTrailer;
 
   /**
    * Instantiates a new movie scraper metadata panel.
@@ -86,40 +92,40 @@ public class MovieScraperMetadataPanel extends JPanel {
         FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    chckbxTitle = new JCheckBox("Title");
+    chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "2, 2");
 
-    chckbxOriginalTitle = new JCheckBox("Original title");
+    chckbxOriginalTitle = new JCheckBox(BUNDLE.getString("metatag.otitle")); //$NON-NLS-1$
     add(chckbxOriginalTitle, "4, 2");
 
-    chckbxTagline = new JCheckBox("Tagline");
+    chckbxTagline = new JCheckBox(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
     add(chckbxTagline, "6, 2");
 
-    chckbxPlot = new JCheckBox("Plot");
+    chckbxPlot = new JCheckBox(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
     add(chckbxPlot, "8, 2");
 
-    chckbxRating = new JCheckBox("Rating");
+    chckbxRating = new JCheckBox(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
     add(chckbxRating, "2, 4");
 
-    chckbxRuntime = new JCheckBox("Runtime");
+    chckbxRuntime = new JCheckBox(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
     add(chckbxRuntime, "4, 4");
 
-    chckbxYear = new JCheckBox("Year");
+    chckbxYear = new JCheckBox(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
     add(chckbxYear, "6, 4");
 
-    chckbxCertification = new JCheckBox("Certification");
+    chckbxCertification = new JCheckBox(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
     add(chckbxCertification, "8, 4");
 
-    chckbxCast = new JCheckBox("Cast");
+    chckbxCast = new JCheckBox(BUNDLE.getString("metatag.cast")); //$NON-NLS-1$
     add(chckbxCast, "2, 6");
 
-    chckbxGenres = new JCheckBox("Genres");
+    chckbxGenres = new JCheckBox(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     add(chckbxGenres, "4, 6");
 
-    chckbxArtwork = new JCheckBox("Artwork");
+    chckbxArtwork = new JCheckBox(BUNDLE.getString("metatag.artwork")); //$NON-NLS-1$
     add(chckbxArtwork, "6, 6");
 
-    chckbxTrailer = new JCheckBox("Trailer");
+    chckbxTrailer = new JCheckBox(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
     add(chckbxTrailer, "8, 6");
 
     initDataBindings();
