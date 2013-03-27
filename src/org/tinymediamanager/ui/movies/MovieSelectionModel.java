@@ -34,6 +34,8 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 
 /**
  * The Class MovieSelectionModel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieSelectionModel extends AbstractModelObject implements ListSelectionListener {
 

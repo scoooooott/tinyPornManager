@@ -42,12 +42,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
-import org.tinymediamanager.core.movie.MovieConnectors;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.core.movie.MovieScrapers;
+import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
@@ -56,6 +56,8 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 /**
  * The Class Settings.
+ * 
+ * @author Manuel Laggner
  */
 @XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractModelObject {

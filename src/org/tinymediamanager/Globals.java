@@ -30,6 +30,8 @@ import org.tinymediamanager.ui.MainWindow;
 
 /**
  * The Class Globals.
+ * 
+ * @author Manuel Laggner
  */
 public class Globals {
 
@@ -42,12 +44,21 @@ public class Globals {
   /** The entity manager. */
   public static EntityManager            entityManager;
 
-  // public static final ExecutorService executor2 = Executors.newFixedThreadPool(10);
+  // public static final ExecutorService executor2 =
+  // Executors.newFixedThreadPool(10);
   // see source of newFixedThreadPool
   // see weird logic: http://www.kimchy.org/juc-executorservice-gotcha/
-  public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, // max threads
-                                                      5, TimeUnit.SECONDS, // time to wait before closing idlo
-                                                      new LinkedBlockingQueue<Runnable>() // our queue
+  /** The Constant executor. */
+  public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, // max
+                                                                                   // threads
+                                                      5, TimeUnit.SECONDS, // time
+                                                                           // to
+                                                                           // wait
+                                                                           // before
+                                                                           // closing
+                                                                           // idlo
+                                                      new LinkedBlockingQueue<Runnable>() // our
+                                                                                          // queue
                                                   );
 
   /**
@@ -72,6 +83,6 @@ public class Globals {
     emf.close();
   }
 
-  /** The logo */
+  /** The logo. */
   public final static Image logo = Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
 }

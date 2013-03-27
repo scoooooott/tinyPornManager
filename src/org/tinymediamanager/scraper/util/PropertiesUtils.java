@@ -25,6 +25,8 @@ import java.util.Properties;
 
 /**
  * The Class PropertiesUtils.
+ * 
+ * @author Manuel Laggner
  */
 public class PropertiesUtils {
 
@@ -43,7 +45,8 @@ public class PropertiesUtils {
     try {
       is = new FileInputStream(f);
       props.load(is);
-    } finally {
+    }
+    finally {
       if (is != null) {
         is.close();
       }
@@ -63,7 +66,8 @@ public class PropertiesUtils {
   public static void load(Properties props, InputStream is) throws IOException {
     try {
       props.load(is);
-    } finally {
+    }
+    finally {
       is.close();
     }
   }
@@ -85,11 +89,13 @@ public class PropertiesUtils {
     try {
       os = new FileOutputStream(out);
       props.store(os, msg);
-    } finally {
+    }
+    finally {
       if (os != null) {
         try {
           os.flush();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
         }
         os.close();
       }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -37,7 +37,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.AutocompleteComboBox;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
@@ -48,29 +48,34 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieBatchEditor.
+ * 
+ * @author Manuel Laggner
  */
-public class MovieBatchEditor extends JDialog {
+public class MovieBatchEditorDialog extends JDialog {
+
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = -8515248604267310279L;
 
   /** The movie list. */
-  private MovieList   movieList = MovieList.getInstance();
+  private MovieList         movieList        = MovieList.getInstance();
 
   /** The movies to edit. */
-  private List<Movie> moviesToEdit;
+  private List<Movie>       moviesToEdit;
 
   /** The changed. */
-  private boolean     changed   = false;
+  private boolean           changed          = false;
 
   /** The cb genres. */
-  private JComboBox   cbGenres;
+  private JComboBox         cbGenres;
 
   /** The cb tags. */
-  private JComboBox   cbTags;
+  private JComboBox         cbTags;
 
   /** The cb movie set. */
-  private JComboBox   cbMovieSet;
+  private JComboBox         cbMovieSet;
 
   /** The chckbx watched. */
-  private JCheckBox   chckbxWatched;
+  private JCheckBox         chckbxWatched;
 
   /**
    * Instantiates a new movie batch editor.
@@ -78,7 +83,7 @@ public class MovieBatchEditor extends JDialog {
    * @param movies
    *          the movies
    */
-  public MovieBatchEditor(final List<Movie> movies) {
+  public MovieBatchEditorDialog(final List<Movie> movies) {
     setModal(true);
     setIconImage(Globals.logo);
     setTitle("Edit Movies");
@@ -100,29 +105,29 @@ public class MovieBatchEditor extends JDialog {
       panelContent.add(lblGenres, "2, 2, right, default");
 
       // cbGenres = new JComboBox(MediaGenres2.values());
-      cbGenres = new AutocompleteComboBox(MediaGenres2.values());
+      cbGenres = new AutocompleteComboBox(MediaGenres.values());
       cbGenres.setEditable(true);
       panelContent.add(cbGenres, "4, 2, fill, default");
 
       JButton btnAddGenre = new JButton("");
-      btnAddGenre.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
       btnAddGenre.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
           changed = true;
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MediaGenres2 genre = null;
+          MediaGenres genre = null;
           Object item = cbGenres.getSelectedItem();
 
           // genre
-          if (item instanceof MediaGenres2) {
-            genre = (MediaGenres2) item;
+          if (item instanceof MediaGenres) {
+            genre = (MediaGenres) item;
           }
 
           // newly created genre?
           if (item instanceof String) {
-            genre = MediaGenres2.getGenre((String) item);
+            genre = MediaGenres.getGenre((String) item);
           }
           // MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
           if (genre != null) {
@@ -136,14 +141,14 @@ public class MovieBatchEditor extends JDialog {
       panelContent.add(btnAddGenre, "6, 2");
 
       JButton btnRemoveGenre = new JButton("");
-      btnRemoveGenre.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveGenre.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
           changed = true;
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          MediaGenres2 genre = (MediaGenres2) cbGenres.getSelectedItem();
+          MediaGenres genre = (MediaGenres) cbGenres.getSelectedItem();
           for (Movie movie : moviesToEdit) {
             movie.removeGenre(genre);
           }
@@ -160,7 +165,7 @@ public class MovieBatchEditor extends JDialog {
       panelContent.add(cbTags, "4, 4, fill, default");
 
       JButton btnAddTag = new JButton("");
-      btnAddTag.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       btnAddTag.addActionListener(new ActionListener() {
         @Override
@@ -177,7 +182,7 @@ public class MovieBatchEditor extends JDialog {
       panelContent.add(btnAddTag, "6, 4");
 
       JButton btnRemoveTag = new JButton("");
-      btnRemoveTag.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTag.addActionListener(new ActionListener() {
         @Override
@@ -201,7 +206,7 @@ public class MovieBatchEditor extends JDialog {
 
       JButton btnSetMovieSet = new JButton("");
       btnSetMovieSet.setMargin(new Insets(2, 2, 2, 2));
-      btnSetMovieSet.setIcon(new ImageIcon(MovieBatchEditor.class.getResource("/org/tinymediamanager/ui/images/Checkmark_big.png")));
+      btnSetMovieSet.setIcon(new ImageIcon(MovieBatchEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Checkmark_big.png")));
       btnSetMovieSet.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -239,7 +244,7 @@ public class MovieBatchEditor extends JDialog {
 
       JButton btnWatched = new JButton("");
       btnWatched.setMargin(new Insets(2, 2, 2, 2));
-      btnWatched.setIcon(new ImageIcon(MovieBatchEditor.class.getResource("/org/tinymediamanager/ui/images/Checkmark_big.png")));
+      btnWatched.setIcon(new ImageIcon(MovieBatchEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Checkmark_big.png")));
       btnWatched.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {

@@ -34,10 +34,15 @@ import javax.swing.JPanel;
  * @since August 30, 2010
  */
 public class StarRater extends JPanel {
+
+  /** The Constant serialVersionUID. */
   private static final long  serialVersionUID      = 1L;
 
+  /** The Constant STAR_BACKGROUND_IMAGE. */
   private static final Image STAR_BACKGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(
                                                        MainWindow.class.getResource("/org/tinymediamanager/ui/images/24.png"));
+
+  /** The Constant STAR_FOREGROUND_IMAGE. */
   private static final Image STAR_FOREGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(
                                                        MainWindow.class.getResource("/org/tinymediamanager/ui/images/mark24.png"));
 
@@ -72,7 +77,7 @@ public class StarRater extends JPanel {
   /** The rating [0, n]. 0 = no rating. */
   private float              rating;
 
-  /** The rating which has to be painted (rating / factor) */
+  /** The rating which has to be painted (rating / factor). */
   private float              paintRating;
 
   /** The selection [0, n]. 0 = no selection. */
@@ -80,8 +85,8 @@ public class StarRater extends JPanel {
 
   /** The rollover [0, n]. 0 = no rollover. */
   private int                rollover;
-  /** True for clicked this time. */
 
+  /** True for clicked this time. */
   private boolean            done;
 
   /**
@@ -96,6 +101,8 @@ public class StarRater extends JPanel {
    * 
    * @param stars
    *          The number of stars n.
+   * @param factor
+   *          the factor
    */
   public StarRater(int stars, int factor) {
     this(stars, factor, 0f);
@@ -106,6 +113,8 @@ public class StarRater extends JPanel {
    * 
    * @param stars
    *          The number of stars n.
+   * @param factor
+   *          the factor
    * @param rating
    *          The rating [0, n]. 0 = no rating.
    */
@@ -118,6 +127,8 @@ public class StarRater extends JPanel {
    * 
    * @param stars
    *          The number of stars n.
+   * @param factor
+   *          the factor
    * @param rating
    *          The rating [0, n]. 0 = no rating.
    * @param selection

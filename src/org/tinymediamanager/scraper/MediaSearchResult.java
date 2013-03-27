@@ -24,6 +24,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * The Class MediaSearchResult.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaSearchResult implements Comparable<MediaSearchResult> {
   /** The provider id. */
@@ -365,8 +367,6 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    * <code>toString</code> for the specified object.
    * </p>
    * 
-   * @param object
-   *          the Object to be output
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */

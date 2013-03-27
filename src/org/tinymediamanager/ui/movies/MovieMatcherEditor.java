@@ -24,6 +24,8 @@ import ca.odell.glazedlists.matchers.Matcher;
 
 /**
  * The Class MovieMatcherEditor.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieMatcherEditor extends AbstractMatcherEditor<Movie> {
 

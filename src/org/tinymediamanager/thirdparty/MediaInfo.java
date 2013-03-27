@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2013 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.thirdparty;
 
 import java.io.Closeable;
@@ -16,8 +31,14 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 
+/**
+ * The Class MediaInfo.
+ * 
+ * @author Myron Boyle
+ */
 public class MediaInfo implements Closeable {
 
+  /** The Constant LOGGER. */
   private static final Logger LOGGER = Logger.getLogger(MediaInfo.class);
 
   static {
@@ -38,11 +59,12 @@ public class MediaInfo implements Closeable {
 
   /**
    * the internal pointer handle of mediainfo<br>
+   * .
    */
   private Pointer             handle;
 
   /**
-   * checks if the internal handle is null
+   * checks if the internal handle is null.
    * 
    * @return true/false
    */
@@ -50,6 +72,9 @@ public class MediaInfo implements Closeable {
     return handle != null ? true : false;
   }
 
+  /**
+   * Instantiates a new media info.
+   */
   public MediaInfo() {
     try {
       handle = MediaInfoLibrary.INSTANCE.New();
@@ -61,6 +86,13 @@ public class MediaInfo implements Closeable {
     }
   }
 
+  /**
+   * Open.
+   * 
+   * @param file
+   *          the file
+   * @return true, if successful
+   */
   public synchronized boolean open(File file) {
     if (isLoaded()) {
       return file.isFile() && MediaInfoLibrary.INSTANCE.Open(handle, new WString(file.getAbsolutePath())) > 0;
@@ -70,6 +102,11 @@ public class MediaInfo implements Closeable {
     }
   }
 
+  /**
+   * Inform.
+   * 
+   * @return the string
+   */
   public synchronized String inform() {
     if (isLoaded()) {
       return MediaInfoLibrary.INSTANCE.Inform(handle).toString();
@@ -79,10 +116,26 @@ public class MediaInfo implements Closeable {
     }
   }
 
+  /**
+   * Option.
+   * 
+   * @param option
+   *          the option
+   * @return the string
+   */
   public String option(String option) {
     return option(option, "");
   }
 
+  /**
+   * Option.
+   * 
+   * @param option
+   *          the option
+   * @param value
+   *          the value
+   * @return the string
+   */
   public synchronized String option(String option, String value) {
     if (isLoaded()) {
       return MediaInfoLibrary.INSTANCE.Option(handle, new WString(option), new WString(value)).toString();
@@ -92,28 +145,91 @@ public class MediaInfo implements Closeable {
     }
   }
 
+  /**
+   * Gets the.
+   * 
+   * @param streamKind
+   *          the stream kind
+   * @param streamNumber
+   *          the stream number
+   * @param parameter
+   *          the parameter
+   * @return the string
+   */
   public String get(StreamKind streamKind, int streamNumber, String parameter) {
     return get(streamKind, streamNumber, parameter, InfoKind.Text, InfoKind.Name);
   }
 
+  /**
+   * Gets the.
+   * 
+   * @param streamKind
+   *          the stream kind
+   * @param streamNumber
+   *          the stream number
+   * @param parameter
+   *          the parameter
+   * @param infoKind
+   *          the info kind
+   * @return the string
+   */
   public String get(StreamKind streamKind, int streamNumber, String parameter, InfoKind infoKind) {
     return get(streamKind, streamNumber, parameter, infoKind, InfoKind.Name);
   }
 
+  /**
+   * Gets the.
+   * 
+   * @param streamKind
+   *          the stream kind
+   * @param streamNumber
+   *          the stream number
+   * @param parameter
+   *          the parameter
+   * @param infoKind
+   *          the info kind
+   * @param searchKind
+   *          the search kind
+   * @return the string
+   */
   public synchronized String get(StreamKind streamKind, int streamNumber, String parameter, InfoKind infoKind, InfoKind searchKind) {
     if (isLoaded()) {
-      return MediaInfoLibrary.INSTANCE
-          .Get(handle, streamKind.ordinal(), streamNumber, new WString(parameter), infoKind.ordinal(), searchKind.ordinal()).toString();
+      return MediaInfoLibrary.INSTANCE.Get(handle, streamKind.ordinal(), streamNumber, new WString(parameter), infoKind.ordinal(),
+          searchKind.ordinal()).toString();
     }
     else {
       return "";
     }
   }
 
+  /**
+   * Gets the.
+   * 
+   * @param streamKind
+   *          the stream kind
+   * @param streamNumber
+   *          the stream number
+   * @param parameterIndex
+   *          the parameter index
+   * @return the string
+   */
   public String get(StreamKind streamKind, int streamNumber, int parameterIndex) {
     return get(streamKind, streamNumber, parameterIndex, InfoKind.Text);
   }
 
+  /**
+   * Gets the.
+   * 
+   * @param streamKind
+   *          the stream kind
+   * @param streamNumber
+   *          the stream number
+   * @param parameterIndex
+   *          the parameter index
+   * @param infoKind
+   *          the info kind
+   * @return the string
+   */
   public synchronized String get(StreamKind streamKind, int streamNumber, int parameterIndex, InfoKind infoKind) {
     if (isLoaded()) {
       return MediaInfoLibrary.INSTANCE.GetI(handle, streamKind.ordinal(), streamNumber, parameterIndex, infoKind.ordinal()).toString();
@@ -123,6 +239,13 @@ public class MediaInfo implements Closeable {
     }
   }
 
+  /**
+   * Stream count.
+   * 
+   * @param streamKind
+   *          the stream kind
+   * @return the int
+   */
   public synchronized int streamCount(StreamKind streamKind) {
     if (isLoaded()) {
       return MediaInfoLibrary.INSTANCE.Count_Get(handle, streamKind.ordinal(), -1);
@@ -132,6 +255,15 @@ public class MediaInfo implements Closeable {
     }
   }
 
+  /**
+   * Parameter count.
+   * 
+   * @param streamKind
+   *          the stream kind
+   * @param streamNumber
+   *          the stream number
+   * @return the int
+   */
   public synchronized int parameterCount(StreamKind streamKind, int streamNumber) {
     if (isLoaded()) {
       return MediaInfoLibrary.INSTANCE.Count_Get(handle, streamKind.ordinal(), streamNumber);
@@ -141,6 +273,11 @@ public class MediaInfo implements Closeable {
     }
   }
 
+  /**
+   * Snapshot.
+   * 
+   * @return the map
+   */
   public Map<StreamKind, List<Map<String, String>>> snapshot() {
     Map<StreamKind, List<Map<String, String>>> mediaInfo = new EnumMap<StreamKind, List<Map<String, String>>>(StreamKind.class);
 
@@ -161,6 +298,15 @@ public class MediaInfo implements Closeable {
     return mediaInfo;
   }
 
+  /**
+   * Snapshot.
+   * 
+   * @param streamKind
+   *          the stream kind
+   * @param streamNumber
+   *          the stream number
+   * @return the map
+   */
   public Map<String, String> snapshot(StreamKind streamKind, int streamNumber) {
     Map<String, String> streamInfo = new LinkedHashMap<String, String>();
 
@@ -175,6 +321,11 @@ public class MediaInfo implements Closeable {
     return streamInfo;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.io.Closeable#close()
+   */
   @Override
   public synchronized void close() {
     if (isLoaded()) {
@@ -182,6 +333,9 @@ public class MediaInfo implements Closeable {
     }
   }
 
+  /**
+   * Dispose.
+   */
   public synchronized void dispose() {
     if (handle == null)
       return;
@@ -191,15 +345,44 @@ public class MediaInfo implements Closeable {
     handle = null;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#finalize()
+   */
   @Override
   protected void finalize() {
     dispose();
   }
 
+  /**
+   * The Enum StreamKind.
+   * 
+   * @author Manuel Laggner
+   */
   public enum StreamKind {
-    General, Video, Audio, Text, Chapters, Image, Menu;
+
+    /** The General. */
+    General,
+    /** The Video. */
+    Video,
+    /** The Audio. */
+    Audio,
+    /** The Text. */
+    Text,
+    /** The Chapters. */
+    Chapters,
+    /** The Image. */
+    Image,
+    /** The Menu. */
+    Menu;
   }
 
+  /**
+   * The Enum InfoKind.
+   * 
+   * @author Manuel Laggner
+   */
   public enum InfoKind {
     /**
      * Unique name of parameter.
@@ -216,6 +399,7 @@ public class MediaInfo implements Closeable {
      */
     Measure,
 
+    /** The Options. */
     Options,
 
     /**
@@ -245,26 +429,62 @@ public class MediaInfo implements Closeable {
     Domain;
   }
 
+  /**
+   * Version.
+   * 
+   * @return the string
+   */
   public static String version() {
     return staticOption("Info_Version");
   }
 
+  /**
+   * Parameters.
+   * 
+   * @return the string
+   */
   public static String parameters() {
     return staticOption("Info_Parameters");
   }
 
+  /**
+   * Codecs.
+   * 
+   * @return the string
+   */
   public static String codecs() {
     return staticOption("Info_Codecs");
   }
 
+  /**
+   * Capacities.
+   * 
+   * @return the string
+   */
   public static String capacities() {
     return staticOption("Info_Capacities");
   }
 
+  /**
+   * Static option.
+   * 
+   * @param option
+   *          the option
+   * @return the string
+   */
   public static String staticOption(String option) {
     return staticOption(option, "");
   }
 
+  /**
+   * Static option.
+   * 
+   * @param option
+   *          the option
+   * @param value
+   *          the value
+   * @return the string
+   */
   public static String staticOption(String option, String value) {
     try {
       return MediaInfoLibrary.INSTANCE.Option(null, new WString(option), new WString(value)).toString();
@@ -277,7 +497,13 @@ public class MediaInfo implements Closeable {
   }
 
   /**
-   * Helper for easy usage
+   * Helper for easy usage.
+   * 
+   * @param file
+   *          the file
+   * @return the map
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
    */
   public static Map<StreamKind, List<Map<String, String>>> snapshot(File file) throws IOException {
     MediaInfo mi = new MediaInfo();

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.movie.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,13 +43,20 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.movie.MovieToXbmcNfoConnector.Actor;
+import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
  * The Class MovieToXbmcNfoConnector.
+ * 
+ * @author Manuel Laggner
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
@@ -147,28 +154,44 @@ public class MovieToXbmcNfoConnector {
   /** The fileinfo. */
   private Fileinfo            fileinfo;
 
-  /**
-   * not supported tags, but used to retrain in NFO
-   */
+  /** not supported tags, but used to retrain in NFO. */
 
   @XmlElement
   String                      epbookmark;
+
+  /** The top250. */
   @XmlElement
   String                      top250;
+
+  /** The lastplayed. */
   @XmlElement
   String                      lastplayed;
+
+  /** The country. */
   @XmlElement
   String                      country;
+
+  /** The status. */
   @XmlElement
   String                      status;
+
+  /** The code. */
   @XmlElement
   String                      code;
+
+  /** The aired. */
   @XmlElement
   String                      aired;
+
+  /** The premiered. */
   @XmlElement
   String                      premiered;
+
+  /** The resume. */
   @XmlElement
   Resume                      resume;
+
+  /** The dateadded. */
   @XmlElement
   String                      dateadded;
 
@@ -222,11 +245,11 @@ public class MovieToXbmcNfoConnector {
 
     // set data
     xbmc.setTitle(movie.getName());
-    xbmc.setOriginaltitle(movie.getOriginalName());
+    xbmc.setOriginaltitle(movie.getOriginalTitle());
     xbmc.setRating(movie.getRating());
     xbmc.setVotes(movie.getVotes());
     xbmc.setYear(movie.getYear());
-    xbmc.setPlot(movie.getOverview());
+    xbmc.setPlot(movie.getPlot());
 
     // outline is only the first 200 characters of the plot
     int spaceIndex = 0;
@@ -299,7 +322,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.genres.clear();
-    for (MediaGenres2 genre : movie.getGenres()) {
+    for (MediaGenres genre : movie.getGenres()) {
       xbmc.addGenre(genre.toString());
     }
 
@@ -403,12 +426,12 @@ public class MovieToXbmcNfoConnector {
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
       MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
       movie = new Movie();
-      movie.setName(xbmc.getTitle());
-      movie.setOriginalName(xbmc.getOriginaltitle());
+      movie.setTitle(xbmc.getTitle());
+      movie.setOriginalTitle(xbmc.getOriginaltitle());
       movie.setRating(xbmc.getRating());
       movie.setVotes(xbmc.getVotes());
       movie.setYear(xbmc.getYear());
-      movie.setOverview(xbmc.getPlot());
+      movie.setPlot(xbmc.getPlot());
       movie.setTagline(xbmc.getTagline());
       try {
         String rt = xbmc.getRuntime().replaceAll("[^0-9]", "");
@@ -496,7 +519,7 @@ public class MovieToXbmcNfoConnector {
       for (String genre : xbmc.getGenres()) {
         String[] genres = genre.split("/");
         for (String g : genres) {
-          MediaGenres2 genreFound = MediaGenres2.getGenre(g.trim());
+          MediaGenres genreFound = MediaGenres.getGenre(g.trim());
           if (genreFound != null) {
             movie.addGenre(genreFound);
           }
@@ -1089,6 +1112,8 @@ public class MovieToXbmcNfoConnector {
   // inner class actor to represent actors
   /**
    * The Class Actor.
+   * 
+   * @author Manuel Laggner
    */
   @XmlRootElement(name = "actor")
   public static class Actor {
@@ -1188,6 +1213,8 @@ public class MovieToXbmcNfoConnector {
 
   /**
    * The Class Fileinfo.
+   * 
+   * @author Manuel Laggner
    */
   static class Fileinfo {
 
@@ -1205,6 +1232,8 @@ public class MovieToXbmcNfoConnector {
 
   /**
    * The Class Streamdetails.
+   * 
+   * @author Manuel Laggner
    */
   static class Streamdetails {
 
@@ -1227,6 +1256,8 @@ public class MovieToXbmcNfoConnector {
 
   /**
    * The Class Video.
+   * 
+   * @author Manuel Laggner
    */
   static class Video {
 
@@ -1253,6 +1284,8 @@ public class MovieToXbmcNfoConnector {
 
   /**
    * The Class Audio.
+   * 
+   * @author Manuel Laggner
    */
   static class Audio {
 
@@ -1269,10 +1302,18 @@ public class MovieToXbmcNfoConnector {
     String channels;
   }
 
+  /**
+   * The Class Resume.
+   * 
+   * @author Manuel Laggner
+   */
   static class Resume {
+
+    /** The position. */
     @XmlElement
     String position;
 
+    /** The total. */
     @XmlElement
     String total;
   }

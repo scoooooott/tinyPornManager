@@ -55,6 +55,8 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieMediaInformationPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieMediaInformationPanel extends JPanel {
 
@@ -337,6 +339,8 @@ public class MovieMediaInformationPanel extends JPanel {
 
   /**
    * The Class MediaTableFormat.
+   * 
+   * @author Manuel Laggner
    */
   private static class MediaTableFormat implements AdvancedTableFormat<MediaFile> {
 

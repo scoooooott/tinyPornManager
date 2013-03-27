@@ -21,6 +21,8 @@ import java.beans.PropertyChangeSupport;
 
 /**
  * The Class AbstractModelObject.
+ * 
+ * @author Manuel Laggner
  */
 public abstract class AbstractModelObject {
 

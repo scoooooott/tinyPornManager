@@ -33,17 +33,20 @@ import org.tinymediamanager.core.Utils;
 
 /**
  * The Class Url.
+ * 
+ * @author Manuel Laggner
  */
 public class Url {
   /** The log. */
   private static final Logger      LOGGER  = Logger.getLogger(Url.class);
 
+  /** The client. */
   private static DefaultHttpClient client;
 
   /** The url. */
   protected String                 url     = null;
 
-  /** the headers sent from server */
+  /** the headers sent from server. */
   private Header[]                 headers = null;
 
   // /** The Constant HTTP_USER_AGENT. */
@@ -52,7 +55,7 @@ public class Url {
 
   /**
    * gets the specified header value from this connection<br>
-   * You need to call this AFTER getInputstream()
+   * You need to call this AFTER getInputstream().
    * 
    * @param header
    *          the header you want to know (like Content-Length)
@@ -150,6 +153,11 @@ public class Url {
     return client;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#toString()
+   */
   public String toString() {
     return url;
   }

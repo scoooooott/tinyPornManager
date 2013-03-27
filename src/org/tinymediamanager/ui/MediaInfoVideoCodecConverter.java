@@ -26,6 +26,8 @@ import org.jdesktop.beansbinding.Converter;
 
 /**
  * The Class ImageIconConverter.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
 

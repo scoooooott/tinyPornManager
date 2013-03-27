@@ -17,64 +17,16 @@ package org.tinymediamanager.scraper;
 
 /**
  * The Enum MediaType.
+ * 
+ * @author Manuel Laggner
  */
 public enum MediaType {
 
   /** The tv. */
-  TV("TV", "TV"),
+  TV,
 
   /** The movie. */
-  MOVIE("Movies", "Movie"),
-
-  /** The music. */
-  MUSIC("Music", "Music"),
-
-  /** The music videos. */
-  MUSIC_VIDEOS("MusicVideos", "MusicVideo"),
-
-  // Genre and Actor are special types
-  /** The genre. */
-  GENRE("Genres", "Genre"),
-
-  /** The actor. */
-  ACTOR("Actors", "Actor");
-
-  /** The dir. */
-  private String dir = null;
-
-  /** The sage value. */
-  private String sageValue;
-
-  /**
-   * Instantiates a new media type.
-   * 
-   * @param dir
-   *          the dir
-   * @param sageValue
-   *          the sage value
-   */
-  private MediaType(String dir, String sageValue) {
-    this.dir = dir;
-    this.sageValue = sageValue;
-  }
-
-  /**
-   * Dir name.
-   * 
-   * @return the string
-   */
-  public String dirName() {
-    return dir;
-  }
-
-  /**
-   * Sage value.
-   * 
-   * @return the string
-   */
-  public String sageValue() {
-    return sageValue;
-  }
+  MOVIE;
 
   /**
    * To media type.
@@ -94,22 +46,6 @@ public enum MediaType {
 
     if ("tv".equals(id)) {
       return TV;
-    }
-
-    if ("genre".equals(id) || "genres".equals(id)) {
-      return GENRE;
-    }
-
-    if ("actor".equals(id) || "actors".equals(id)) {
-      return ACTOR;
-    }
-
-    if ("music".equals(id)) {
-      return MUSIC;
-    }
-
-    if ("musicvideos".equals(id)) {
-      return MUSIC;
     }
 
     return null;

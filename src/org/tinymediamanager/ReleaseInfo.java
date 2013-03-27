@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class ReleaseInfo.
+ * 
+ * @author Manuel Laggner
  */
 public class ReleaseInfo {
 

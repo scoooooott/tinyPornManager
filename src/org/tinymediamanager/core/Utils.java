@@ -56,19 +56,25 @@ import org.tinymediamanager.scraper.util.Url;
 
 /**
  * The Class Utils.
+ * 
+ * @author Manuel Laggner / Myron Boyle
  */
 public class Utils {
 
+  /** The client. */
   private static DefaultHttpClient client;
   /** The Constant HTTP_USER_AGENT. */
-  protected static final String    HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
+  protected static final String    HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:19.0) Gecko/20100101 Firefox/19.0";
 
+  /** The Constant LOGGER. */
   private static final Logger      LOGGER          = Logger.getLogger(Utils.class);
 
   /**
    * Returns the sortable variant of title/originaltitle<br>
-   * eg "The Bourne Legacy" -> "Bourne Legacy, The"
+   * eg "The Bourne Legacy" -> "Bourne Legacy, The".
    * 
+   * @param title
+   *          the title
    * @return the title/originaltitle in its sortable format
    * @author Myron Boyle
    */
@@ -87,10 +93,10 @@ public class Utils {
 
   /**
    * Returns the common name of title/originaltitle when it is named sortable<br>
-   * eg "Bourne Legacy, The" -> "The Bourne Legacy"
+   * eg "Bourne Legacy, The" -> "The Bourne Legacy".
    * 
-   * @param the
-   *          title/originaltitle in its sortable format
+   * @param title
+   *          the title
    * @return the original title
    * @author Myron Boyle
    */
@@ -129,6 +135,13 @@ public class Utils {
     return fileData.toString();
   }
 
+  /**
+   * Clean stacking markers.
+   * 
+   * @param filename
+   *          the filename
+   * @return the string
+   */
   public static String cleanStackingMarkers(String filename) {
     if (!StringUtils.isEmpty(filename)) {
       return filename.replaceAll("(?i)\\|?((cd|dvd|part|dis[ck])([0-9]))", "");
@@ -136,6 +149,13 @@ public class Utils {
     return filename;
   }
 
+  /**
+   * Checks if is valid imdb id.
+   * 
+   * @param imdbId
+   *          the imdb id
+   * @return true, if is valid imdb id
+   */
   public static boolean isValidImdbId(String imdbId) {
     if (StringUtils.isEmpty(imdbId)) {
       return false;
@@ -144,6 +164,13 @@ public class Utils {
     return imdbId.matches("tt\\d{7}");
   }
 
+  /**
+   * Replace acutes html.
+   * 
+   * @param str
+   *          the str
+   * @return the string
+   */
   @Deprecated
   public static String replaceAcutesHTML(String str) {
     // TODO: use StringEscapeUtils
@@ -163,6 +190,13 @@ public class Utils {
     return str;
   }
 
+  /**
+   * Unquote.
+   * 
+   * @param str
+   *          the str
+   * @return the string
+   */
   public static String unquote(String str) {
     if (str == null)
       return null;
@@ -171,6 +205,11 @@ public class Utils {
 
   /*
    * provide a httpclient with proxy set
+   */
+  /**
+   * Gets the http client.
+   * 
+   * @return the http client
    */
   public static DefaultHttpClient getHttpClient() {
     SchemeRegistry schemeRegistry = new SchemeRegistry();
@@ -275,7 +314,7 @@ public class Utils {
 
   /**
    * Starts a thread and does a "ping" on our tracking server, sending the event
-   * (and the random UUID + some env vars)
+   * (and the random UUID + some env vars).
    * 
    * @param event
    *          The event for the GET request
@@ -312,11 +351,11 @@ public class Utils {
   }
 
   /**
-   * gets the UTF-8 encoded System property
+   * gets the UTF-8 encoded System property.
    * 
    * @param prop
    *          the property to fetch
-   * @return
+   * @return the enc prop
    */
   @SuppressWarnings("deprecation")
   private static String getEncProp(String prop) {

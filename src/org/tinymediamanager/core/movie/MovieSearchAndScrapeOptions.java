@@ -23,6 +23,8 @@ import org.tinymediamanager.core.ScraperMetadataConfig;
 
 /**
  * The Class MovieSearchAndScrapeConfig.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieSearchAndScrapeOptions {
   /** The scraper metadata config. */

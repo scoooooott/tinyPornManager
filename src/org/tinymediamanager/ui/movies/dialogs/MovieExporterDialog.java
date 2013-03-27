@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,6 +54,8 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieExporter.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieExporterDialog extends JDialog {
 

@@ -44,6 +44,8 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.movies.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
+import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
+import org.tinymediamanager.ui.moviesets.dialogs.MovieSetEditorDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -52,6 +54,8 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieSetTreePanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieSetPanel extends JPanel {
 
@@ -192,6 +196,8 @@ public class MovieSetPanel extends JPanel {
 
   /**
    * The Class AddMovieSetAction.
+   * 
+   * @author Manuel Laggner
    */
   private class AddMovieSetAction extends AbstractAction {
 
@@ -222,6 +228,8 @@ public class MovieSetPanel extends JPanel {
 
   /**
    * The Class RemoveMovieSetAction.
+   * 
+   * @author Manuel Laggner
    */
   private class RemoveMovieSetAction extends AbstractAction {
 
@@ -268,6 +276,8 @@ public class MovieSetPanel extends JPanel {
 
   /**
    * The Class SearchMovieSetAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SearchMovieSetAction extends AbstractAction {
 
@@ -299,7 +309,7 @@ public class MovieSetPanel extends JPanel {
               MovieSet movieSet = (MovieSet) node.getUserObject();
 
               // display movie set chooser
-              MovieSetChooser chooser = new MovieSetChooser(movieSet);
+              MovieSetChooserDialog chooser = new MovieSetChooserDialog(movieSet);
               chooser.setVisible(true);
             }
           }
@@ -321,6 +331,8 @@ public class MovieSetPanel extends JPanel {
 
   /**
    * The Class EditMovieSetAction.
+   * 
+   * @author Manuel Laggner
    */
   private class EditMovieSetAction extends AbstractAction {
 
@@ -352,7 +364,7 @@ public class MovieSetPanel extends JPanel {
               MovieSet movieSet = (MovieSet) node.getUserObject();
 
               // display movie set chooser
-              MovieSetEditor editor = new MovieSetEditor(movieSet);
+              MovieSetEditorDialog editor = new MovieSetEditorDialog(movieSet);
               editor.setVisible(true);
             }
           }

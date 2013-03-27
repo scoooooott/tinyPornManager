@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2013 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.thirdparty;
 
 import static java.util.Collections.*;
@@ -11,8 +26,14 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 
+/**
+ * The Interface MediaInfoLibrary.
+ * 
+ * @author Myron Boyle
+ */
 interface MediaInfoLibrary extends Library {
 
+  /** The instance. */
   MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary("mediainfo", MediaInfoLibrary.class,
                                 singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper() {
 
@@ -35,6 +56,7 @@ interface MediaInfoLibrary extends Library {
    * tags).
    * 
    * @param handle
+   *          the handle
    * @param file
    *          full name of the file to open
    * @return 1 if file was opened, 0 if file was not not opened
@@ -45,6 +67,7 @@ interface MediaInfoLibrary extends Library {
    * Configure or get information about MediaInfo.
    * 
    * @param handle
+   *          the handle
    * @param option
    *          The name of option
    * @param value
@@ -58,6 +81,7 @@ interface MediaInfoLibrary extends Library {
    * Get all details about a file.
    * 
    * @param handle
+   *          the handle
    * @return All details about a file in one string
    */
   WString Inform(Pointer handle);
@@ -66,6 +90,7 @@ interface MediaInfoLibrary extends Library {
    * Get a piece of information about a file (parameter is a string).
    * 
    * @param handle
+   *          the handle
    * @param streamKind
    *          Kind of stream (general, video, audio...)
    * @param streamNumber
@@ -87,14 +112,13 @@ interface MediaInfoLibrary extends Library {
    * Get a piece of information about a file (parameter is an integer).
    * 
    * @param handle
+   *          the handle
    * @param streamKind
    *          Kind of stream (general, video, audio...)
    * @param streamNumber
    *          Stream number in Kind of stream (first, second...)
-   * @param parameter
-   *          Parameter you are looking for in the stream (Codec, width,
-   *          bitrate...), in integer format (first parameter, second
-   *          parameter...)
+   * @param parameterIndex
+   *          the parameter index
    * @param infoKind
    *          Kind of information you want about the parameter (the text, the
    *          measure, the help...)
@@ -108,6 +132,7 @@ interface MediaInfoLibrary extends Library {
    * piece of information in this stream.
    * 
    * @param handle
+   *          the handle
    * @param streamKind
    *          Kind of stream (general, video, audio...)
    * @param streamNumber
@@ -120,6 +145,7 @@ interface MediaInfoLibrary extends Library {
    * Close a file opened before with Open().
    * 
    * @param handle
+   *          the handle
    */
   void Close(Pointer handle);
 
@@ -127,6 +153,7 @@ interface MediaInfoLibrary extends Library {
    * Dispose of a handle created with New().
    * 
    * @param handle
+   *          the handle
    */
   void Delete(Pointer handle);
 

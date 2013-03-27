@@ -23,6 +23,8 @@ import org.w3c.dom.NodeList;
 
 /**
  * The Class DOMUtils.
+ * 
+ * @author Manuel Laggner
  */
 public class DOMUtils {
 

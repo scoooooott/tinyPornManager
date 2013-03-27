@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2013 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.scraper.hdtrailersnet;
 
 import java.io.IOException;
@@ -19,6 +34,11 @@ import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.Url;
 
+/**
+ * The Class HDTrailersNet.
+ * 
+ * @author Myron Boyle
+ */
 public class HDTrailersNet implements IMediaTrailerProvider {
 
   /** The Constant logger. */
@@ -28,9 +48,18 @@ public class HDTrailersNet implements IMediaTrailerProvider {
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("hdtrailersnet", "hd-trailers.net",
                                                     "Scraper for hd-trailers.net which is able to scrape trailers");
 
+  /**
+   * Instantiates a new hD trailers net.
+   */
   public HDTrailersNet() {
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaTrailerProvider#getTrailers(org.
+   * tinymediamanager.scraper.MediaScrapeOptions)
+   */
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getTrailers() " + options.toString());
@@ -149,10 +178,11 @@ public class HDTrailersNet implements IMediaTrailerProvider {
   }
 
   /**
-   * Returns the "Source" for this trailer by parsing the URL
+   * Returns the "Source" for this trailer by parsing the URL.
    * 
    * @param url
-   * @return
+   *          the url
+   * @return the provider from url
    */
   private static String getProviderFromUrl(String url) {
     url = url.toLowerCase();

@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 
 /**
  * The Class StringUtils.
+ * 
+ * @author Manuel Laggner
  */
 public class StrgUtils {
 
@@ -87,13 +89,14 @@ public class StrgUtils {
       int v = Integer.parseInt(encodeString);
       String format = "%0" + padding + "d";
       return String.format(format, v);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return encodeString;
     }
   }
 
   /**
-   * gets regular expression based substring
+   * gets regular expression based substring.
    * 
    * @param str
    *          the string to search

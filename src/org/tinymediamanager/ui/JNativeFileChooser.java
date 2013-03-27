@@ -21,8 +21,14 @@ import javax.swing.UIManager;
 
 import org.apache.commons.lang3.SystemUtils;
 
+/**
+ * The Class JNativeFileChooser.
+ * 
+ * @author Manuel Laggner
+ */
 public class JNativeFileChooser extends JFileChooser {
 
+  /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
 
   /*
@@ -30,6 +36,7 @@ public class JNativeFileChooser extends JFileChooser {
    * 
    * @see javax.swing.JFileChooser#updateUI()
    */
+  @Override
   public void updateUI() {
     if (SystemUtils.IS_OS_WINDOWS) {
       // on windows set the native laf

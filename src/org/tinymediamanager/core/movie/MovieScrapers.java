@@ -17,6 +17,8 @@ package org.tinymediamanager.core.movie;
 
 /**
  * The Enum MovieScrapers.
+ * 
+ * @author Manuel Laggner
  */
 public enum MovieScrapers {
 
@@ -24,7 +26,8 @@ public enum MovieScrapers {
   TMDB("The Movie Database"),
   /** The imdb. */
   IMDB("IMDb"),
-  /** The zelluloid scraper */
+
+  /** The zelluloid scraper. */
   ZELLULOID("Zelluloid.de"),
   /** The OFDB. */
   OFDB("OFDb.de Online-Filmdatenbank");

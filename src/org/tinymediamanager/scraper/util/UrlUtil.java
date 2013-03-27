@@ -26,6 +26,8 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class UrlUtil.
+ * 
+ * @author Manuel Laggner
  */
 public class UrlUtil {
 
@@ -50,8 +52,10 @@ public class UrlUtil {
   }
 
   /**
-   * Returns file extension from url
+   * Returns file extension from url.
    * 
+   * @param url
+   *          the url
    * @return file extension or empty string
    * @throws URISyntaxException
    *           if url is not valid

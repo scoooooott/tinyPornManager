@@ -18,6 +18,8 @@ package org.tinymediamanager.core.movie;
 
 /**
  * The Enum MovieNfoNaming.
+ * 
+ * @author Manuel Laggner
  */
 public enum MovieNfoNaming {
 

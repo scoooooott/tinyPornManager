@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class ScraperMetadataConfig.
+ * 
+ * @author Manuel Laggner
  */
 @XmlRootElement(name = "ScraperMetadata")
 public class ScraperMetadataConfig extends AbstractModelObject {

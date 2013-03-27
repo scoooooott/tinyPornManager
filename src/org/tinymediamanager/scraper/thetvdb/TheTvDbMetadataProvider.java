@@ -30,6 +30,8 @@ import com.moviejukebox.thetvdb.TheTVDB;
 
 /**
  * The Class TheTvDbMetadataProvider.
+ * 
+ * @author Manuel Laggner
  */
 public class TheTvDbMetadataProvider implements IMediaMetadataProvider {
 

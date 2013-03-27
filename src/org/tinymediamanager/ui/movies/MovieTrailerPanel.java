@@ -54,6 +54,8 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieTrailerPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieTrailerPanel extends JPanel {
 
@@ -126,6 +128,8 @@ public class MovieTrailerPanel extends JPanel {
 
   /**
    * The Class TrailerTableFormat.
+   * 
+   * @author Manuel Laggner
    */
   private static class TrailerTableFormat implements AdvancedTableFormat<MediaTrailer> {
 
@@ -241,6 +245,8 @@ public class MovieTrailerPanel extends JPanel {
 
   /**
    * The Class URLRenderer.
+   * 
+   * @author Manuel Laggner
    */
   private static class URLRenderer extends DefaultTableCellRenderer implements MouseListener, MouseMotionListener {
 
@@ -373,6 +379,8 @@ public class MovieTrailerPanel extends JPanel {
 
   /**
    * The Class NullSelectionModel.
+   * 
+   * @author Manuel Laggner
    */
   private static class NullSelectionModel implements ListSelectionModel {
 

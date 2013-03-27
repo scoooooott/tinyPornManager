@@ -31,6 +31,8 @@ import com.jtattoo.plaf.JTattooUtilities;
 
 /**
  * The Class ToggleButtonUI.
+ * 
+ * @author Manuel Laggner
  */
 public class ToggleButtonUI extends BaseToggleButtonUI {
 

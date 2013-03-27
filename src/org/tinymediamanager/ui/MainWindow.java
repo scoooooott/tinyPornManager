@@ -60,8 +60,12 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MainWindow.
+ * 
+ * @author Manuel Laggner
  */
 public class MainWindow extends JFrame {
+
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   /** The logger. */
   private final static Logger         LOGGER           = Logger.getLogger(MainWindow.class);
@@ -74,9 +78,6 @@ public class MainWindow extends JFrame {
 
   /** The action about. */
   private final Action                actionAbout      = new AboutAction();
-
-  /** The action settings. */
-  private final Action                actionSettings   = new SettingsAction();
 
   /** The action feedback. */
   private final Action                actionFeedback   = new FeedbackAction();
@@ -331,6 +332,8 @@ public class MainWindow extends JFrame {
   // status bar thread
   /**
    * The Class StatusbarThread.
+   * 
+   * @author Manuel Laggner
    */
   private class StatusbarThread extends SwingWorker<Void, Void> {
 
@@ -384,6 +387,8 @@ public class MainWindow extends JFrame {
 
   /**
    * The Class ExitAction.
+   * 
+   * @author Manuel Laggner
    */
   private class ExitAction extends AbstractAction {
 
@@ -421,6 +426,8 @@ public class MainWindow extends JFrame {
 
   /**
    * The Class AboutAction.
+   * 
+   * @author Manuel Laggner
    */
   private class AboutAction extends AbstractAction {
 
@@ -469,34 +476,9 @@ public class MainWindow extends JFrame {
   }
 
   /**
-   * The Class SettingsAction.
-   */
-  private class SettingsAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new settings action.
-     */
-    public SettingsAction() {
-      // putValue(NAME, "SwingAction");
-      // putValue(SHORT_DESCRIPTION, "Some short description");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-
-    }
-  }
-
-  /**
    * The Class FeedbackAction.
+   * 
+   * @author Manuel Laggner
    */
   private class FeedbackAction extends AbstractAction {
 
@@ -533,6 +515,8 @@ public class MainWindow extends JFrame {
 
   /**
    * The Class BugReportAction.
+   * 
+   * @author Manuel Laggner
    */
   private class BugReportAction extends AbstractAction {
 
@@ -560,6 +544,8 @@ public class MainWindow extends JFrame {
 
   /**
    * The Class DonateAction.
+   * 
+   * @author Manuel Laggner
    */
   private class DonateAction extends AbstractAction {
 

@@ -29,14 +29,19 @@ import chrriis.dj.nativeswing.swtimpl.components.JDirectoryDialog;
 import chrriis.dj.nativeswing.swtimpl.components.JFileDialog;
 
 /**
- * @author Manuel Laggner
+ * The Class TmmUIHelper.
  * 
+ * @author Manuel Laggner
  */
 public class TmmUIHelper {
 
+  /** The swt. */
   @SuppressWarnings("rawtypes")
   public static Class swt;
 
+  /**
+   * Inits the.
+   */
   public static void init() {
     try {
       swt = ClassLoader.getSystemClassLoader().loadClass("org.eclipse.swt.widgets.FileDialog");
@@ -88,10 +93,12 @@ public class TmmUIHelper {
   }
 
   /**
-   * Select a file or directory using the JFileChooser
+   * Select a file or directory using the JFileChooser.
    * 
    * @param mode
    *          the mode
+   * @param dialogTitle
+   *          the dialog title
    * @return the file
    */
   private static File openJFileChooser(int mode, String dialogTitle) {

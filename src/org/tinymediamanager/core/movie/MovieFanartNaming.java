@@ -17,6 +17,8 @@ package org.tinymediamanager.core.movie;
 
 /**
  * The Enum MovieFanartNaming.
+ * 
+ * @author Manuel Laggner
  */
 public enum MovieFanartNaming {
 

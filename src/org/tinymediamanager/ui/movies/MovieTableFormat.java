@@ -28,6 +28,8 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
 
 /**
  * The Class MovieTableFormat.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
@@ -90,7 +92,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   public Object getColumnValue(Movie movie, int column) {
     switch (column) {
       case 0:
-        return movie.getNameSortable();
+        return movie.getTitleSortable();
 
       case 1:
         return movie.getYear();
@@ -163,6 +165,8 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
   /**
    * The Class StringComparator.
+   * 
+   * @author Manuel Laggner
    */
   private static class StringComparator implements Comparator<String> {
 
@@ -185,6 +189,8 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
   /**
    * The Class ImageComparator.
+   * 
+   * @author Manuel Laggner
    */
   private static class ImageComparator implements Comparator<ImageIcon> {
 

@@ -20,11 +20,15 @@ import java.util.Map;
 
 /**
  * The Class SearchQuery.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaSearchOptions {
 
   /**
    * The Enum SearchOption.
+   * 
+   * @author Manuel Laggner
    */
   public enum SearchParam {
     /** The query. */
@@ -47,7 +51,7 @@ public class MediaSearchOptions {
   private Map<SearchParam, String> options = new HashMap<SearchParam, String>();
 
   /** The type. */
-  private MediaType                 type;
+  private MediaType                type;
 
   /**
    * Instantiates a new search query.

@@ -32,6 +32,8 @@ import org.tinymediamanager.core.Utils;
 
 /**
  * The Class MovieRenamer.
+ * 
+ * @author Manuel Laggner / Myron Boyle
  */
 public class MovieRenamer {
 
@@ -41,9 +43,11 @@ public class MovieRenamer {
   /**
    * prepares the NFO cleanup;<br>
    * returns a list of ALL nfo names before (movie/file)renaming<br>
-   * (no cleanup done yet)
+   * (no cleanup done yet).
    * 
    * @param m
+   *          the m
+   * @return the array list
    */
   private static ArrayList<String> prepareCleanupNfos(Movie m) {
     MovieNfoNaming[] all = MovieNfoNaming.values();
@@ -56,9 +60,12 @@ public class MovieRenamer {
 
   /**
    * deletes all unselected Nfo variants movie object<br>
-   * alternatively, set the oldFilename parameter to cleanup an "old" pattern
+   * alternatively, set the oldFilename parameter to cleanup an "old" pattern.
    * 
    * @param m
+   *          the m
+   * @param oldFilenames
+   *          the old filenames
    */
   private static void cleanupNfos(Movie m, ArrayList<String> oldFilenames) {
     List<MovieNfoNaming> setup = Globals.settings.getMovieNfoFilenames();
@@ -82,9 +89,11 @@ public class MovieRenamer {
   /**
    * prepares the poster cleanup;<br>
    * returns a list of ALL poster names before (movie/file)renaming<br>
-   * (no cleanup done yet)
+   * (no cleanup done yet).
    * 
    * @param m
+   *          the m
+   * @return the array list
    */
   private static ArrayList<String> prepareCleanupPosters(Movie m) {
     MoviePosterNaming[] all = MoviePosterNaming.values();
@@ -97,9 +106,12 @@ public class MovieRenamer {
 
   /**
    * deletes all unselected poster variants movie object<br>
-   * alternatively, set the oldFilename parameter to cleanup an "old" pattern
+   * alternatively, set the oldFilename parameter to cleanup an "old" pattern.
    * 
    * @param m
+   *          the m
+   * @param oldFilenames
+   *          the old filenames
    */
   private static void cleanupPosters(Movie m, ArrayList<String> oldFilenames) {
     List<MoviePosterNaming> setup = Globals.settings.getMoviePosterFilenames();
@@ -123,9 +135,11 @@ public class MovieRenamer {
   /**
    * prepares the Fanart cleanup;<br>
    * returns a list of ALL fanart names before (movie/file)renaming<br>
-   * (no cleanup done yet)
+   * (no cleanup done yet).
    * 
    * @param m
+   *          the m
+   * @return the array list
    */
   private static ArrayList<String> prepareCleanupFanarts(Movie m) {
     MovieFanartNaming[] all = MovieFanartNaming.values();
@@ -138,9 +152,12 @@ public class MovieRenamer {
 
   /**
    * deletes all unselected poster variants of movie object<br>
-   * alternatively, set the oldFilename parameter to cleanup an "old" pattern
+   * alternatively, set the oldFilename parameter to cleanup an "old" pattern.
    * 
    * @param m
+   *          the m
+   * @param oldFilenames
+   *          the old filenames
    */
   private static void cleanupFanarts(Movie m, ArrayList<String> oldFilenames) {
     List<MovieFanartNaming> setup = Globals.settings.getMovieFanartFilenames();
@@ -176,7 +193,7 @@ public class MovieRenamer {
     }
     LOGGER.debug("movie path: " + movie.getPath());
     LOGGER.debug("movie name: " + movie.getName());
-    LOGGER.debug("movie originalname: " + movie.getOriginalName());
+    LOGGER.debug("movie originalTitle: " + movie.getOriginalTitle());
     LOGGER.debug("movie year: " + movie.getYear());
     LOGGER.debug("path expression: " + Globals.settings.getMovieRenamerPathname());
     String newPathname = createDestination(Globals.settings.getMovieRenamerPathname(), movie);
@@ -339,12 +356,7 @@ public class MovieRenamer {
    *          the directory to be moved
    * @param destDir
    *          the destination directory
-   * @throws NullPointerException
-   *           if source or destination is {@code null}
-   * @throws FileExistsException
-   *           if the destination directory exists
-   * @throws IOException
-   *           if source or destination is invalid
+   * @return true, if successful
    * @throws IOException
    *           if an IO error occurs moving the file
    * @author Myron Boyle
@@ -428,8 +440,8 @@ public class MovieRenamer {
     }
 
     // replace token orignal title ($O)
-    if (newDestination.contains("$O") && StringUtils.isNotEmpty(movie.getOriginalName())) {
-      newDestination = newDestination.replaceAll("\\$O", movie.getOriginalName());
+    if (newDestination.contains("$O") && StringUtils.isNotEmpty(movie.getOriginalTitle())) {
+      newDestination = newDestination.replaceAll("\\$O", movie.getOriginalTitle());
     }
 
     // replace token IMDBid ($I)

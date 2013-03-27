@@ -19,6 +19,8 @@ import java.util.List;
 
 /**
  * The Interface IMediaArtworkProvider.
+ * 
+ * @author Manuel Laggner
  */
 public interface IMediaArtworkProvider {
 

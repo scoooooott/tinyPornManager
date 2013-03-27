@@ -22,13 +22,13 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class ParserUtils.
+ * 
+ * @author Manuel Laggner
  */
 public class ParserUtils {
 
-  private static final Logger LOGGER         = Logger.getLogger(ParserUtils.class);
-
-  /** The date in brackets. */
-  private static Pattern      dateInBrackets = Pattern.compile("(.*)\\s+\\(([0-9]{4})\\)");
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER = Logger.getLogger(ParserUtils.class);
 
   /**
    * Tries to get movie name from filename<br>

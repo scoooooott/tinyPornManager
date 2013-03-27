@@ -50,6 +50,8 @@ import com.sun.jna.Platform;
 
 /**
  * The Class TinyMediaManager.
+ * 
+ * @author Manuel Laggner
  */
 public class TinyMediaManager {
 

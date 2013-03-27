@@ -38,9 +38,15 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class GeneralSettingsPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class GeneralSettingsPanel extends JPanel {
+
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
   /** The settings. */
@@ -60,8 +66,13 @@ public class GeneralSettingsPanel extends JPanel {
 
   /** The tf proxy password. */
   private JPasswordField              tfProxyPassword;
+
+  /** The chckbx clear cache shutdown. */
   private JCheckBox                   chckbxClearCacheShutdown;
 
+  /**
+   * Instantiates a new general settings panel.
+   */
   public GeneralSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("214px"), }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -111,6 +122,9 @@ public class GeneralSettingsPanel extends JPanel {
     initDataBindings();
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<Settings, String> settingsBeanProperty = BeanProperty.create("proxyHost");
     BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");

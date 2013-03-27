@@ -19,6 +19,8 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class Log4jBackstop.
+ * 
+ * @author Manuel Laggner
  */
 class Log4jBackstop implements Thread.UncaughtExceptionHandler {
 

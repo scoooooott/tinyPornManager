@@ -35,7 +35,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -152,7 +152,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       // Genre: <a href="view.php?page=genre&Genre=Action">Action</a>
       el = doc.getElementsByAttributeValueContaining("href", "page=genre");
       for (Element g : el) {
-        MediaGenres2 genre = MediaGenres2.getGenre(g.text());
+        MediaGenres genre = MediaGenres.getGenre(g.text());
         if (genre != null && !md.getGenres().contains(genre)) {
           md.addGenre(genre);
         }

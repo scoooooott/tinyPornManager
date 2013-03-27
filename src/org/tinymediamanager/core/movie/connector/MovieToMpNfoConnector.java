@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.movie.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,13 +45,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.MovieToMpNfoConnector.Actor;
-import org.tinymediamanager.core.movie.MovieToMpNfoConnector.MovieSets;
+import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.Actor;
+import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.MovieSets;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 
 /**
  * The Class MovieTompNfoConnector.
+ * 
+ * @author Manuel Laggner
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class })
@@ -148,11 +155,11 @@ public class MovieToMpNfoConnector {
     MovieToMpNfoConnector mp = new MovieToMpNfoConnector();
     // set data
     mp.setTitle(movie.getName());
-    mp.setOriginaltitle(movie.getOriginalName());
+    mp.setOriginaltitle(movie.getOriginalTitle());
     mp.setRating(movie.getRating());
     mp.setVotes(movie.getVotes());
     mp.setYear(movie.getYear());
-    mp.setPlot(movie.getOverview());
+    mp.setPlot(movie.getPlot());
 
     // outline is only the first 200 characters of the plot
     int spaceIndex = 0;
@@ -193,7 +200,7 @@ public class MovieToMpNfoConnector {
       mp.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
     }
 
-    for (MediaGenres2 genre : movie.getGenres()) {
+    for (MediaGenres genre : movie.getGenres()) {
       mp.addGenre(genre.toString());
     }
 
@@ -261,12 +268,12 @@ public class MovieToMpNfoConnector {
         Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
         MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(in);
         movie = new Movie();
-        movie.setName(mp.getTitle());
-        movie.setOriginalName(mp.getOriginaltitle());
+        movie.setTitle(mp.getTitle());
+        movie.setOriginalTitle(mp.getOriginaltitle());
         movie.setRating(mp.getRating());
         movie.setVotes(mp.getVotes());
         movie.setYear(mp.getYear());
-        movie.setOverview(mp.getPlot());
+        movie.setPlot(mp.getPlot());
         movie.setTagline(mp.getTagline());
         try {
           String rt = mp.getRuntime().replaceAll("[^0-9]", "");
@@ -320,7 +327,7 @@ public class MovieToMpNfoConnector {
         for (String genre : mp.getGenres()) {
           String[] genres = genre.split("/");
           for (String g : genres) {
-            MediaGenres2 genreFound = MediaGenres2.getGenre(g.trim());
+            MediaGenres genreFound = MediaGenres.getGenre(g.trim());
             if (genreFound != null) {
               movie.addGenre(genreFound);
             }
@@ -774,6 +781,8 @@ public class MovieToMpNfoConnector {
   // inner class actor to represent actors
   /**
    * The Class Actor.
+   * 
+   * @author Manuel Laggner
    */
   @XmlRootElement(name = "actor")
   public static class Actor {
@@ -874,6 +883,8 @@ public class MovieToMpNfoConnector {
   // inner class actor to represent movie sets
   /**
    * The Class MovieSets.
+   * 
+   * @author Manuel Laggner
    */
   public static class MovieSets {
 

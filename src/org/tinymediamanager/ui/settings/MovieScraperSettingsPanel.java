@@ -49,10 +49,15 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieScraperSettingsPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieScraperSettingsPanel extends JPanel {
 
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
   /** The settings. */
@@ -90,11 +95,23 @@ public class MovieScraperSettingsPanel extends JPanel {
 
   /** The cb scraper tmdb. */
   private JCheckBox                   cbScraperTmdb;
+
+  /** The panel. */
   private JPanel                      panel;
+
+  /** The cb the movie database. */
   private JCheckBox                   cbTheMovieDatabase;
+
+  /** The cb hdtrailersnet. */
   private JCheckBox                   cbHdtrailersnet;
+
+  /** The cb ofdbde. */
   private JCheckBox                   cbOfdbde;
+
+  /** The cb scraper zelluloidde. */
   private JCheckBox                   cbScraperZelluloidde;
+
+  /** The separator. */
   private JSeparator                  separator;
 
   /**
@@ -247,6 +264,9 @@ public class MovieScraperSettingsPanel extends JPanel {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<Settings, Languages> settingsBeanProperty_8 = BeanProperty.create("scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");

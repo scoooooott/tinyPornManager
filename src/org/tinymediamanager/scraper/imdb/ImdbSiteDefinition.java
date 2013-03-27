@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * The Enum ImdbSiteDefinition.
+ * 
+ * @author Manuel Laggner
  */
 public enum ImdbSiteDefinition {
   // akas.imdb.com - international site

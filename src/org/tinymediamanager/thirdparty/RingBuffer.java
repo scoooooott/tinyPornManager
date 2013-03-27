@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2013 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.thirdparty;
 
 import java.util.Iterator;
@@ -15,22 +30,48 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <p>
  * This class is fully thread-safe and reentrant.
  * 
- * @author David
- * 
  * @param <T>
+ *          the generic type
+ * @author David
  */
 public class RingBuffer<T> {
+
+  /** The max size. */
   private final int              maxSize;
+
+  /** The data. */
   private T[]                    data;
+
+  /** The head. */
   private int                    head;
+
+  /** The tail. */
   private int                    tail;
+
+  /** The tail wrap count. */
   private int                    tailWrapCount;
+
+  /** The in overflow. */
   private boolean                inOverflow = false;
+
+  /** The count. */
   private AtomicInteger          count      = new AtomicInteger();
+
+  /** The mod count. */
   private AtomicInteger          modCount   = new AtomicInteger();
+
+  /** The head lock. */
   private ReentrantReadWriteLock headLock;
+
+  /** The tail lock. */
   private ReentrantReadWriteLock tailLock;
 
+  /**
+   * Instantiates a new ring buffer.
+   * 
+   * @param maxSize
+   *          the max size
+   */
   @SuppressWarnings("unchecked")
   public RingBuffer(int maxSize) {
     headLock = new ReentrantReadWriteLock();
@@ -40,6 +81,9 @@ public class RingBuffer<T> {
     head = tail = 0;
   }
 
+  /**
+   * Clear.
+   */
   @SuppressWarnings("unchecked")
   public void clear() {
     headLock.writeLock().lock();
@@ -52,14 +96,26 @@ public class RingBuffer<T> {
     headLock.writeLock().unlock();
   }
 
+  /**
+   * Lock tail.
+   */
   protected void lockTail() {
     tailLock.writeLock().lock();
   }
 
+  /**
+   * Unlock tail.
+   */
   protected void unlockTail() {
     tailLock.writeLock().lock();
   }
 
+  /**
+   * Adds the.
+   * 
+   * @param object
+   *          the object
+   */
   public void add(T object) {
     headLock.writeLock().lock();
     try {
@@ -89,10 +145,20 @@ public class RingBuffer<T> {
     }
   }
 
+  /**
+   * Gets the tail item.
+   * 
+   * @return the tail item
+   */
   public T getTailItem() {
     return data[tail];
   }
 
+  /**
+   * Removes the.
+   * 
+   * @return the t
+   */
   public T remove() {
     tailLock.writeLock().lock();
     if (isEmpty()) {
@@ -110,6 +176,12 @@ public class RingBuffer<T> {
     return obj;
   }
 
+  /**
+   * Removes the.
+   * 
+   * @param numToRemove
+   *          the num to remove
+   */
   public void remove(int numToRemove) {
     tailLock.writeLock().lock();
     if (isEmpty()) {
@@ -144,22 +216,70 @@ public class RingBuffer<T> {
     tailLock.writeLock().unlock();
   }
 
+  /**
+   * Iterator.
+   * 
+   * @return the iterator
+   */
   public Iterator<T> iterator() {
     return new RingBufferIterator<T>(this);
   }
 
+  /**
+   * The Class RingBufferIterator.
+   * 
+   * @param <T>
+   *          the generic type
+   * @author Manuel Laggner
+   */
   private static class RingBufferIterator<T> implements Iterator<T> {
+
+    /** The next. */
     private int                 next;
+
+    /** The next wrap count. */
     private int                 nextWrapCount;
+
+    /** The buffer. */
     private final RingBuffer<T> buffer;
+
+    /** The mode. */
     private Mode                mode;
+
+    /** The has next. */
     private boolean             hasNext;
+
+    /** The expected mod count. */
     private int                 expectedModCount;
 
+    /**
+     * The Enum Mode.
+     * 
+     * @author Manuel Laggner
+     */
     private enum Mode {
-      EMPTY, MODE1, MODE2LEFT, MODE2RIGHT, START, END, INVALID
+
+      /** The empty. */
+      EMPTY,
+      /** The MOD e1. */
+      MODE1,
+      /** The MOD e2 left. */
+      MODE2LEFT,
+      /** The MOD e2 right. */
+      MODE2RIGHT,
+      /** The start. */
+      START,
+      /** The end. */
+      END,
+      /** The invalid. */
+      INVALID
     }
 
+    /**
+     * Mode.
+     * 
+     * @return the mode
+     */
     private Mode mode() {
       if (buffer.isEmpty()) {
         return Mode.EMPTY;
@@ -187,6 +307,12 @@ public class RingBuffer<T> {
       return Mode.INVALID;
     }
 
+    /**
+     * Instantiates a new ring buffer iterator.
+     * 
+     * @param buffer
+     *          the buffer
+     */
     public RingBufferIterator(RingBuffer<T> buffer) {
       this.buffer = buffer;
       next = buffer.tail;
@@ -196,6 +322,11 @@ public class RingBuffer<T> {
       expectedModCount = buffer.modCount.get();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Iterator#hasNext()
+     */
     @Override
     public boolean hasNext() {
       buffer.headLock.readLock().lock();
@@ -206,6 +337,11 @@ public class RingBuffer<T> {
       return hasNext;
     }
 
+    /**
+     * Calc has next.
+     * 
+     * @return true, if successful
+     */
     private boolean calcHasNext() {
       if (mode == Mode.INVALID) {
         return false;
@@ -321,6 +457,11 @@ public class RingBuffer<T> {
       return false;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Iterator#next()
+     */
     @Override
     // This really should be called atomically with hasNext...
     public T next() {
@@ -338,32 +479,67 @@ public class RingBuffer<T> {
       return item;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Iterator#remove()
+     */
     @Override
     public void remove() {
       throw new UnsupportedOperationException();
     }
   }
 
+  /**
+   * Count.
+   * 
+   * @return the int
+   */
   public int count() {
     return count.get();
   }
 
+  /**
+   * Max size.
+   * 
+   * @return the int
+   */
   public int maxSize() {
     return maxSize;
   }
 
+  /**
+   * Checks if is empty.
+   * 
+   * @return true, if is empty
+   */
   public boolean isEmpty() {
     return (count.get() == 0);
   }
 
+  /**
+   * Head.
+   * 
+   * @return the int
+   */
   int head() {
     return head;
   }
 
+  /**
+   * Tail.
+   * 
+   * @return the int
+   */
   int tail() {
     return tail;
   }
 
+  /**
+   * Tail wrap count.
+   * 
+   * @return the int
+   */
   int tailWrapCount() {
     return tailWrapCount;
   }

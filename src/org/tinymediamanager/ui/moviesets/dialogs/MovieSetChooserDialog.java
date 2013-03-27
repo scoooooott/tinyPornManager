@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.moviesets;
+package org.tinymediamanager.ui.moviesets.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -56,6 +56,7 @@ import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.moviesets.MovieSetChooserModel;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel.MovieInSet;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -66,11 +67,16 @@ import com.omertron.themoviedbapi.model.Collection;
 
 /**
  * The Class MovieSetChooserPanel.
+ * 
+ * @author Manuel Laggner
  */
-public class MovieSetChooser extends JDialog implements ActionListener {
+public class MovieSetChooserDialog extends JDialog implements ActionListener {
+
+  /** The Constant serialVersionUID. */
+  private static final long          serialVersionUID = -1023959850452480592L;
 
   /** The static LOGGER. */
-  private static final Logger        LOGGER         = Logger.getLogger(MovieSetChooser.class);
+  private static final Logger        LOGGER           = Logger.getLogger(MovieSetChooserDialog.class);
 
   /** The movie set to edit. */
   private MovieSet                   movieSetToEdit;
@@ -94,10 +100,10 @@ public class MovieSetChooser extends JDialog implements ActionListener {
   private ImageLabel                 lblMovieSetPoster;
 
   /** The movies found. */
-  private List<MovieSetChooserModel> movieSetsFound = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
+  private List<MovieSetChooserModel> movieSetsFound   = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
 
   /** The action search. */
-  private final Action               actionSearch   = new SearchAction();
+  private final Action               actionSearch     = new SearchAction();
 
   /** The table movies. */
   private JTable                     tableMovies;
@@ -111,7 +117,7 @@ public class MovieSetChooser extends JDialog implements ActionListener {
    * @param movieSet
    *          the movie set
    */
-  public MovieSetChooser(MovieSet movieSet) {
+  public MovieSetChooserDialog(MovieSet movieSet) {
     setTitle("search movie set");
     setName("movieSetChooser");
     setBounds(5, 5, 865, 578);
@@ -281,6 +287,8 @@ public class MovieSetChooser extends JDialog implements ActionListener {
 
   /**
    * The Class SearchTask.
+   * 
+   * @author Manuel Laggner
    */
   private class SearchTask extends SwingWorker<Void, Void> {
 
@@ -340,6 +348,8 @@ public class MovieSetChooser extends JDialog implements ActionListener {
 
   /**
    * The Class SearchAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SearchAction extends AbstractAction {
 
@@ -424,6 +434,8 @@ public class MovieSetChooser extends JDialog implements ActionListener {
 
   /**
    * The Class ScrapeTask.
+   * 
+   * @author Manuel Laggner
    */
   private class ScrapeTask extends SwingWorker<Void, Void> {
 
@@ -488,6 +500,9 @@ public class MovieSetChooser extends JDialog implements ActionListener {
     progressBar.setIndeterminate(false);
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     JTableBinding<MovieSetChooserModel, List<MovieSetChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
         movieSetsFound, tableMovieSets);

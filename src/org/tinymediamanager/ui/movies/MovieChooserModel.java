@@ -33,6 +33,8 @@ import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
  * The Class MovieChooserModel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieChooserModel extends AbstractModelObject {
 
@@ -107,7 +109,7 @@ public class MovieChooserModel extends AbstractModelObject {
   }
 
   /**
-   * create the empty search result
+   * create the empty search result.
    */
   private MovieChooserModel() {
     setName("nothing found");

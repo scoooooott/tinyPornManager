@@ -19,6 +19,8 @@ import java.util.List;
 
 /**
  * The Interface IMediaMetadataProvider.
+ * 
+ * @author Manuel Laggner
  */
 public interface IMediaMetadataProvider {
 

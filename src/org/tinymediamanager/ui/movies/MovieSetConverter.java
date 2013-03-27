@@ -20,6 +20,8 @@ import org.tinymediamanager.core.movie.MovieSet;
 
 /**
  * The Class ImageIconConverter.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieSetConverter extends Converter<MovieSet, String> {
 

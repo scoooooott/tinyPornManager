@@ -19,7 +19,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tinymediamanager.core.movie.Movie;
 
+/**
+ * The Class MovieTreeNode.
+ * 
+ * @author Manuel Laggner
+ */
 public class MovieTreeNode extends DefaultMutableTreeNode {
+
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = 8311072585615953333L;
 
   /**
    * Instantiates a new movie tree node.
@@ -32,14 +40,16 @@ public class MovieTreeNode extends DefaultMutableTreeNode {
   }
 
   /**
-   * provides the right name of the node for display
+   * provides the right name of the node for display.
+   * 
+   * @return the string
    */
   @Override
   public String toString() {
     // return movie name
     if (getUserObject() instanceof Movie) {
       Movie movie = (Movie) getUserObject();
-      return movie.getNameSortable();
+      return movie.getTitleSortable();
     }
 
     // fallback: call super

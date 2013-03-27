@@ -22,6 +22,8 @@ import org.jdesktop.beansbinding.Converter;
 
 /**
  * The Class WatchedIconConverter.
+ * 
+ * @author Manuel Laggner
  */
 public class WatchedIconConverter extends Converter<Boolean, Icon> {
 

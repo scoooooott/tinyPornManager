@@ -42,9 +42,15 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class AboutDialog.
+ * 
+ * @author Manuel Laggner
  */
 public class AboutDialog extends JDialog {
+
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
   /** The Constant LOGGER. */
@@ -160,8 +166,12 @@ public class AboutDialog extends JDialog {
 
   /**
    * The Class SwingAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /**

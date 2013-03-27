@@ -17,20 +17,124 @@ package org.tinymediamanager.core;
 
 /**
  * The Class Constants.
+ * 
+ * @author Manuel Laggner
  */
 public final class Constants {
 
+  /**
+   * Instantiates a new constants.
+   */
   private Constants() {
   }
 
-  public final static String NAME          = "name";
-  public final static String NAME_FOR_UI   = "nameForUi";
+  /** The Constant TITLE. */
+  public final static String TITLE                = "title";
 
-  public final static String ORIGINAL_NAME = "originalName";
+  /** The Constant TITLE_FOR_UI. */
+  public final static String TITLE_FOR_UI         = "titleForUi";
 
-  public final static String DATE_ADDED    = "dateAdded";
+  /** The Constant TITLE_SORTABLE. */
+  public final static String TITLE_SORTABLE       = "titleSortable";
 
-  public final static String OVERVIEW      = "overview";
-  public final static String PATH          = "path";
+  /** The Constant ORIGINAL_TITLE. */
+  public final static String ORIGINAL_TITLE       = "originalTitle";
 
+  /** The Constant DATE_ADDED. */
+  public final static String DATE_ADDED           = "dateAdded";
+
+  /** The Constant PLOT. */
+  public final static String PLOT                 = "plot";
+
+  /** The Constant PATH. */
+  public final static String PATH                 = "path";
+
+  /** The Constant SORT_TITLE. */
+  public final static String SORT_TITLE           = "sortTitle";
+
+  /** The Constant MEDIA_FILES. */
+  public final static String MEDIA_FILES          = "mediaFiles";
+
+  /** The Constant TRAILER. */
+  public final static String TRAILER              = "trailer";
+
+  /** The Constant TAG. */
+  public final static String TAG                  = "tag";
+
+  /** The Constant DATA_SOURCE. */
+  public final static String DATA_SOURCE          = "dataSource";
+
+  /** The Constant VOTES. */
+  public final static String VOTES                = "votes";
+
+  /** The Constant WRITER. */
+  public final static String WRITER               = "writer";
+
+  /** The Constant Production Company. */
+  public final static String PRODUCTION_COMPANY   = "productionCompany";
+
+  /** The Constant GENRE. */
+  public final static String GENRE                = "genre";
+
+  /** The Constant GENRES_AS_STRING. */
+  public final static String GENRES_AS_STRING     = "genresAsString";
+
+  /** The Constant CERTIFICATION. */
+  public final static String CERTIFICATION        = "certification";
+
+  /** The Constant DIRECTOR. */
+  public final static String DIRECTOR             = "director";
+
+  /** The Constant DATE_ADDED_AS_STRING. */
+  public final static String DATE_ADDED_AS_STRING = "dateAddedAsString";
+
+  /** The Constant WATCHED. */
+  public final static String WATCHED              = "watched";
+
+  /** The Constant SPOKEN_LANGUAGES. */
+  public final static String SPOKEN_LANGUAGES     = "spokenLanguages";
+
+  /** The Constant RATING. */
+  public final static String RATING               = "rating";
+
+  /** The Constant YEAR. */
+  public final static String YEAR                 = "year";
+
+  /** The Constant POSTER_URL. */
+  public final static String POSTER_URL           = "posterUrl";
+
+  /** The Constant POSTER. */
+  public final static String POSTER               = "poster";
+
+  /** The Constant FANART_URL. */
+  public final static String FANART_URL           = "fanartUrl";
+
+  /** The Constant FANART. */
+  public final static String FANART               = "fanart";
+
+  /** The Constant HAS_IMAGES. */
+  public final static String HAS_IMAGES           = "hasImages";
+
+  /** The Constant SCRAPED. */
+  public final static String SCRAPED              = "scraped";
+
+  /** The Constant NFO_FILENAME. */
+  public final static String NFO_FILENAME         = "nfoFilename";
+
+  /** The Constant HAS_NFO_FILE. */
+  public final static String HAS_NFO_FILE         = "hasNfoFile";
+
+  /** The Constant CAST. */
+  public final static String CAST                 = "cast";
+
+  /** The Constant ACTORS. */
+  public final static String ACTORS               = "actors";
+
+  /** The Constant TAGS_AS_STRING. */
+  public final static String TAGS_AS_STRING       = "tagAsString";
+
+  /** The Constant TMDBID. */
+  public final static String TMDBID               = "tmdbId";
+
+  public final static String MOVIESET             = "movieset";
 }

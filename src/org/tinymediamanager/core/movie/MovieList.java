@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -53,6 +52,8 @@ import ca.odell.glazedlists.ObservableElementList;
 
 /**
  * The Class MovieList.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieList extends AbstractModelObject {
 
@@ -61,9 +62,6 @@ public class MovieList extends AbstractModelObject {
 
   /** The instance. */
   private static MovieList             instance;
-
-  /** The settings. */
-  private final Settings               settings       = Settings.getInstance();
 
   /** The movie list. */
   private ObservableElementList<Movie> movieList;
@@ -818,6 +816,12 @@ public class MovieList extends AbstractModelObject {
     return null;
   }
 
+  /**
+   * Sort movies in movie set.
+   * 
+   * @param movieSet
+   *          the movie set
+   */
   public void sortMoviesInMovieSet(MovieSet movieSet) {
     movieSet.sortMovies();
     movieSetTreeModel.sortMoviesInMovieSet(movieSet);

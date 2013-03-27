@@ -24,9 +24,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MediaMetadata.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaMetadata {
 
@@ -82,7 +83,7 @@ public class MediaMetadata {
   private List<MediaArtwork>    fanart            = new ArrayList<MediaArtwork>();
 
   /** The genres. */
-  private List<MediaGenres2>    genres            = new ArrayList<MediaGenres2>();
+  private List<MediaGenres>     genres            = new ArrayList<MediaGenres>();
 
   /** The certifications. */
   private List<Certification>   certifications    = new ArrayList<Certification>();
@@ -251,7 +252,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Sets the rating (range 0-10)
+   * Sets the rating (range 0-10).
    * 
    * @param rating
    *          the new rating
@@ -342,7 +343,7 @@ public class MediaMetadata {
    * 
    * @return the genres
    */
-  public List<MediaGenres2> getGenres() {
+  public List<MediaGenres> getGenres() {
     return genres;
   }
 
@@ -432,7 +433,7 @@ public class MediaMetadata {
    * @param genre
    *          the genre
    */
-  public void addGenre(MediaGenres2 genre) {
+  public void addGenre(MediaGenres genre) {
     genres.add(genre);
   }
 

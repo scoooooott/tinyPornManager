@@ -22,6 +22,8 @@ import org.tinymediamanager.ui.movies.MoviePanel;
 
 /**
  * The Class ImageIconConverter.
+ * 
+ * @author Manuel Laggner
  */
 public class ImageIconConverter extends Converter<Object, Object> {
 

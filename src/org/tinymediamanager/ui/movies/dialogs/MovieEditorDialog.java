@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -63,14 +63,14 @@ import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.AutocompleteComboBox;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
+import org.tinymediamanager.ui.movies.dialogs.MovieImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -79,8 +79,10 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieEditor.
+ * 
+ * @author Manuel Laggner
  */
-public class MovieEditor extends JDialog {
+public class MovieEditorDialog extends JDialog {
 
   /** The Constant serialVersionUID. */
   private static final long  serialVersionUID     = 1L;
@@ -128,7 +130,7 @@ public class MovieEditor extends JDialog {
   private List<MovieCast>    cast                 = ObservableCollections.observableList(new ArrayList<MovieCast>());
 
   /** The genres. */
-  private List<MediaGenres2> genres               = ObservableCollections.observableList(new ArrayList<MediaGenres2>());
+  private List<MediaGenres>  genres               = ObservableCollections.observableList(new ArrayList<MediaGenres>());
 
   /** The trailers. */
   private List<MediaTrailer> trailers             = ObservableCollections.observableList(new ArrayList<MediaTrailer>());
@@ -217,6 +219,7 @@ public class MovieEditor extends JDialog {
   /** The action_3. */
   private final Action       action_3             = new SwingAction_9();
 
+  /** The action toggle movie set. */
   private final Action       actionToggleMovieSet = new ToggleMovieSetAction();
 
   /** The sp date added. */
@@ -248,8 +251,10 @@ public class MovieEditor extends JDialog {
    * 
    * @param movie
    *          the movie
+   * @param inQueue
+   *          the in queue
    */
-  public MovieEditor(Movie movie, boolean inQueue) {
+  public MovieEditorDialog(Movie movie, boolean inQueue) {
     setModal(true);
     setIconImage(Globals.logo);
     setTitle("Edit Movie");
@@ -309,7 +314,8 @@ public class MovieEditor extends JDialog {
       lblPoster.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          MovieImageChooser dialog = new MovieImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster, null, null);
+          MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster,
+              null, null);
           dialog.setVisible(true);
         }
       });
@@ -469,7 +475,7 @@ public class MovieEditor extends JDialog {
       lblFanart.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          MovieImageChooser dialog = new MovieImageChooser(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart,
+          MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart,
               extrathumbs, extrafanarts);
           dialog.setVisible(true);
         }
@@ -531,7 +537,7 @@ public class MovieEditor extends JDialog {
       JButton btnAddActor = new JButton("Add Actor");
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(actionAddActor);
-      btnAddActor.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddActor.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       details2Panel.add(btnAddActor, "2, 4, right, top");
     }
     {
@@ -545,7 +551,7 @@ public class MovieEditor extends JDialog {
     {
       JButton btnAddGenre = new JButton("");
       btnAddGenre.setAction(actionAddGenre);
-      btnAddGenre.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddGenre, "6, 4, right, top");
     }
@@ -553,7 +559,7 @@ public class MovieEditor extends JDialog {
       JButton btnRemoveActor = new JButton("Remove Actor");
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(actionRemoveActor);
-      btnRemoveActor.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveActor.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       details2Panel.add(btnRemoveActor, "2,6, right, top");
     }
 
@@ -561,12 +567,12 @@ public class MovieEditor extends JDialog {
       JButton btnRemoveGenre = new JButton("");
       btnRemoveGenre.setAction(actionRemoveGenre);
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveGenre.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       details2Panel.add(btnRemoveGenre, "6, 6, right, top");
     }
     {
       // cbGenres = new JComboBox(MediaGenres2.values());
-      cbGenres = new AutocompleteComboBox(MediaGenres2.values());
+      cbGenres = new AutocompleteComboBox(MediaGenres.values());
       cbGenres.setEditable(true);
       details2Panel.add(cbGenres, "8,8");
     }
@@ -584,14 +590,14 @@ public class MovieEditor extends JDialog {
     {
       JButton btnAddTrailer = new JButton("");
       btnAddTrailer.setAction(action);
-      btnAddTrailer.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTrailer.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTrailer, "2, 12, right, top");
     }
     {
       JButton btnRemoveTrailer = new JButton("");
       btnRemoveTrailer.setAction(action_1);
-      btnRemoveTrailer.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTrailer.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTrailer, "2, 14, right, top");
     }
@@ -608,14 +614,14 @@ public class MovieEditor extends JDialog {
     {
       JButton btnAddTag = new JButton("");
       btnAddTag.setAction(action_2);
-      btnAddTag.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTag, "2, 18, right, top");
     }
     {
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setAction(action_3);
-      btnRemoveTag.setIcon(new ImageIcon(MovieEditor.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTag, "2, 20, right, top");
     }
@@ -665,12 +671,12 @@ public class MovieEditor extends JDialog {
     {
       lblMoviePath.setText(movie.getPath());
       tfTitle.setText(movie.getName());
-      tfOriginalTitle.setText(movie.getOriginalName());
+      tfOriginalTitle.setText(movie.getOriginalTitle());
       tfSorttitle.setText(movie.getSortTitle());
       tpTagline.setText(movie.getTagline());
       tfImdbId.setText(movie.getImdbId());
       tfTmdbId.setText(String.valueOf(movie.getTmdbId()));
-      tpPlot.setText(movie.getOverview());
+      tpPlot.setText(movie.getPlot());
       tfDirector.setText(movie.getDirector());
       tfWriter.setText(movie.getWriter());
       lblPoster.setImagePath(movie.getPoster());
@@ -700,7 +706,7 @@ public class MovieEditor extends JDialog {
         cast.add(actor);
       }
 
-      for (MediaGenres2 genre : movie.getGenres()) {
+      for (MediaGenres genre : movie.getGenres()) {
         genres.add(genre);
       }
 
@@ -755,6 +761,9 @@ public class MovieEditor extends JDialog {
     });
   }
 
+  /**
+   * Toggle sorttitle.
+   */
   private void toggleSorttitle() {
     Object obj = cbMovieSet.getSelectedItem();
     if (obj instanceof String) {
@@ -767,6 +776,8 @@ public class MovieEditor extends JDialog {
 
   /**
    * The Class SwingAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction extends AbstractAction {
 
@@ -788,8 +799,8 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      movieToEdit.setName(tfTitle.getText());
-      movieToEdit.setOriginalName(tfOriginalTitle.getText());
+      movieToEdit.setTitle(tfTitle.getText());
+      movieToEdit.setOriginalTitle(tfOriginalTitle.getText());
       movieToEdit.setTagline(tpTagline.getText());
       movieToEdit.setYear(String.valueOf(spYear.getValue()));
       movieToEdit.setRuntime((Integer) spRuntime.getValue());
@@ -883,6 +894,8 @@ public class MovieEditor extends JDialog {
 
   /**
    * The Class SwingAction_1.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_1 extends AbstractAction {
 
@@ -911,6 +924,8 @@ public class MovieEditor extends JDialog {
 
   /**
    * The Class SwingAction_4.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_4 extends AbstractAction {
 
@@ -938,6 +953,8 @@ public class MovieEditor extends JDialog {
 
   /**
    * The Class SwingAction_5.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_5 extends AbstractAction {
 
@@ -966,6 +983,8 @@ public class MovieEditor extends JDialog {
 
   /**
    * The Class SwingAction_2.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_2 extends AbstractAction {
 
@@ -987,17 +1006,17 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      MediaGenres2 newGenre = null;
+      MediaGenres newGenre = null;
       Object item = cbGenres.getSelectedItem();
 
       // genre
-      if (item instanceof MediaGenres2) {
-        newGenre = (MediaGenres2) item;
+      if (item instanceof MediaGenres) {
+        newGenre = (MediaGenres) item;
       }
 
       // newly created genre?
       if (item instanceof String) {
-        newGenre = MediaGenres2.getGenre((String) item);
+        newGenre = MediaGenres.getGenre((String) item);
       }
 
       // add genre if it is not already in the list
@@ -1009,6 +1028,8 @@ public class MovieEditor extends JDialog {
 
   /**
    * The Class SwingAction_3.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_3 extends AbstractAction {
 
@@ -1030,7 +1051,7 @@ public class MovieEditor extends JDialog {
      * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      MediaGenres2 newGenre = (MediaGenres2) listGenres.getSelectedValue();
+      MediaGenres newGenre = (MediaGenres) listGenres.getSelectedValue();
       // remove genre
       if (newGenre != null) {
         genres.remove(newGenre);
@@ -1040,6 +1061,8 @@ public class MovieEditor extends JDialog {
 
   /**
    * The Class SwingAction_6.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_6 extends AbstractAction {
 
@@ -1069,8 +1092,13 @@ public class MovieEditor extends JDialog {
 
   /**
    * The Class SwingAction_7.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_7 extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6956921050689930101L;
 
     /**
      * Instantiates a new swing action_7.
@@ -1093,6 +1121,9 @@ public class MovieEditor extends JDialog {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     JTableBinding<MovieCast, List<MovieCast>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
     //
@@ -1104,7 +1135,7 @@ public class MovieEditor extends JDialog {
     //
     jTableBinding.bind();
     //
-    JListBinding<MediaGenres2, List<MediaGenres2>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
+    JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
     JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,
@@ -1147,12 +1178,30 @@ public class MovieEditor extends JDialog {
     return continueQueue;
   }
 
+  /**
+   * The Class SwingAction_8.
+   * 
+   * @author Manuel Laggner
+   */
   private class SwingAction_8 extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 9160043031922897785L;
+
+    /**
+     * Instantiates a new swing action_8.
+     */
     public SwingAction_8() {
       // putValue(NAME, "SwingAction_8");
       putValue(SHORT_DESCRIPTION, "add tag");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       String newTag = (String) cbTags.getSelectedItem();
       boolean tagFound = false;
@@ -1172,33 +1221,87 @@ public class MovieEditor extends JDialog {
     }
   }
 
+  /**
+   * The Class SwingAction_9.
+   * 
+   * @author Manuel Laggner
+   */
   private class SwingAction_9 extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1580945350962234235L;
+
+    /**
+     * Instantiates a new swing action_9.
+     */
     public SwingAction_9() {
       // putValue(NAME, "SwingAction_9");
       putValue(SHORT_DESCRIPTION, "Remove selected tag");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       String tag = (String) listTags.getSelectedValue();
       tags.remove(tag);
     }
   }
 
+  /**
+   * The Class ToggleMovieSetAction.
+   * 
+   * @author Manuel Laggner
+   */
   private class ToggleMovieSetAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5666621763248388091L;
+
+    /**
+     * Instantiates a new toggle movie set action.
+     */
     public ToggleMovieSetAction() {
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       toggleSorttitle();
     }
   }
 
+  /**
+   * The Class SwingAction_10.
+   * 
+   * @author Manuel Laggner
+   */
   private class SwingAction_10 extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7652218354710642510L;
+
+    /**
+     * Instantiates a new swing action_10.
+     */
     public SwingAction_10() {
       putValue(NAME, "Abort queue");
       putValue(SHORT_DESCRIPTION, "Abort editing all selected movies");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       continueQueue = false;
       setVisible(false);

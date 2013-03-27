@@ -53,7 +53,7 @@
 ${foreach movies movie}
     <tr class="boldrow">
       <!-- print movie name and set the id to "det+id" --> 
-      <td><div class="top"><div class="header"><a onclick="ShowDetails(det${movie.id})" href="javascript:"><b>${movie.name}</b></a>
+      <td><div class="top"><div class="header"><a onclick="ShowDetails(det${movie.id})" href="javascript:"><b>${movie.title}</b></a>
           <!-- print movie year -->
           <div style="font-size:11px;position:absolute;top:0;right:0;"><b>${movie.year}</b></div>
           </div><br>
@@ -62,7 +62,7 @@ ${foreach movies movie}
             <!-- print movie genres -->
             <b>Genres:</b>${foreach movie.genres genre , }${genre}${end}<br>
             <!-- print movie plot -->
-            <b>Plot:</b>${movie.overview}<br>&nbsp;
+            <b>Plot:</b>${movie.plot}<br>&nbsp;
           </div>
       </td>
     </tr>

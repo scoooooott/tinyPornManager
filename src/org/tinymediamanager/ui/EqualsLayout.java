@@ -155,6 +155,7 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
    * 
    * @see java.awt.LayoutManager#layoutContainer(java.awt.Container)
    */
+  @Override
   public void layoutContainer(Container container) {
     Insets insets = container.getInsets();
 
@@ -191,6 +192,7 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
    * 
    * @see java.awt.LayoutManager#minimumLayoutSize(java.awt.Container)
    */
+  @Override
   public Dimension minimumLayoutSize(Container c) {
     return preferredLayoutSize(c);
   }
@@ -200,6 +202,7 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
    * 
    * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container)
    */
+  @Override
   public Dimension preferredLayoutSize(Container container) {
     Insets insets = container.getInsets();
 
@@ -218,6 +221,7 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
    * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String,
    * java.awt.Component)
    */
+  @Override
   public void addLayoutComponent(String string, Component comp) {
   }
 
@@ -226,6 +230,7 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
    * 
    * @see java.awt.LayoutManager#removeLayoutComponent(java.awt.Component)
    */
+  @Override
   public void removeLayoutComponent(Component c) {
   }
 }

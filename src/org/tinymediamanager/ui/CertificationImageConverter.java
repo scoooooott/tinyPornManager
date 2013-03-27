@@ -26,6 +26,8 @@ import org.tinymediamanager.ui.movies.MovieGenresPanel;
 
 /**
  * The Class CertificationImageConverter.
+ * 
+ * @author Manuel Laggner
  */
 public class CertificationImageConverter extends Converter<Certification, Icon> {
 

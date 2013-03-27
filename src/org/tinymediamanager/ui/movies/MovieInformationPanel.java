@@ -56,7 +56,14 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+/**
+ * The Class MovieInformationPanel.
+ * 
+ * @author Manuel Laggner
+ */
 public class MovieInformationPanel extends JPanel {
+  /** The Constant serialVersionUID. */
+  private static final long   serialVersionUID = -8527284262749511617L;
 
   /** The split pane vertical. */
   private JSplitPane          splitPaneVertical;
@@ -322,7 +329,8 @@ public class MovieInformationPanel extends JPanel {
   }
 
   /**
-   * Inits the panel (steps which has to be done after binding in calling class)
+   * Inits the panel (steps which has to be done after binding in calling
+   * class).
    */
   public void init() {
     if (tableCast.getModel().getRowCount() > 0) {
@@ -355,8 +363,11 @@ public class MovieInformationPanel extends JPanel {
     return splitPaneVertical;
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.nameForUi");
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.titleForUi");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty, lblMovieName, jLabelBeanProperty);
@@ -383,7 +394,7 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_5, lblMoviePoster, imageLabelBeanProperty);
     autoBinding_6.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_14 = BeanProperty.create("selectedMovie.overview");
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_14 = BeanProperty.create("selectedMovie.plot");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, String, JTextPane, String> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_14, tpOverview, jTextPaneBeanProperty);

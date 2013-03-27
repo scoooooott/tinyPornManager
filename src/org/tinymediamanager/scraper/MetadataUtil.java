@@ -24,6 +24,8 @@ import org.tinymediamanager.scraper.util.Similarity;
 
 /**
  * The Class MetadataUtil.
+ * 
+ * @author Manuel Laggner
  */
 public class MetadataUtil {
 

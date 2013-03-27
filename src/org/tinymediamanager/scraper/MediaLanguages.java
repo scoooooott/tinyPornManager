@@ -17,20 +17,24 @@ package org.tinymediamanager.scraper;
 
 /**
  * The Class MediaLanguages.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaLanguages {
 
   /** The id. */
   private String id;
-  
+
   /** The description. */
   private String description;
 
   /**
    * Instantiates a new media languages.
-   *
-   * @param id the id
-   * @param description the description
+   * 
+   * @param id
+   *          the id
+   * @param description
+   *          the description
    */
   public MediaLanguages(String id, String description) {
     this.id = id;
@@ -39,7 +43,7 @@ public class MediaLanguages {
 
   /**
    * Gets the id.
-   *
+   * 
    * @return the id
    */
   public String getId() {
@@ -48,14 +52,16 @@ public class MediaLanguages {
 
   /**
    * Gets the description.
-   *
+   * 
    * @return the description
    */
   public String getDescription() {
     return this.description;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#toString()
    */
   public String toString() {

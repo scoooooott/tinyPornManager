@@ -13,124 +13,124 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.tinymediamanager.scraper;
 
 /**
- * The Enum MediaGenres.
+ * The Class MediaGenres2.
  * 
  * @author Manuel Laggner
  */
-public enum MediaGenres {
+public class MediaGenres extends DynaEnum<MediaGenres> {
   /** The action. */
-  ACTION("Action", new String[] {}),
+  public final static MediaGenres ACTION          = new MediaGenres("ACTION", 0, "Action", new String[] {});
   /** The adventure. */
-  ADVENTURE("Adventure", new String[] { "Abenteuer" }),
+  public final static MediaGenres ADVENTURE       = new MediaGenres("ADVENTURE", 1, "Adventure", new String[] { "Abenteuer" });
   /** The animation. */
-  ANIMATION("Animation", new String[] { "Anime", "Zeichentrick" }),
+  public final static MediaGenres ANIMATION       = new MediaGenres("ANIMATION", 2, "Animation", new String[] { "Anime", "Zeichentrick" });
   /** The animal. */
-  ANIMAL("Animal", new String[] { "Tierfilm" }),
+  public final static MediaGenres ANIMAL          = new MediaGenres("ANIMAL", 3, "Animal", new String[] { "Tierfilm" });
   /** The Biography. */
-  BIOGRAPHY("Biography", new String[] { "Biographie" }),
+  public final static MediaGenres BIOGRAPHY       = new MediaGenres("BIOGRAPHY", 4, "Biography", new String[] { "Biographie" });
   /** The comedy. */
-  COMEDY("Comedy", new String[] { "Komödie" }),
+  public final static MediaGenres COMEDY          = new MediaGenres("COMEDY", 5, "Comedy", new String[] { "Komödie" });
   /** The crime. */
-  CRIME("Crime", new String[] { "Krimi" }),
+  public final static MediaGenres CRIME           = new MediaGenres("CRIME", 6, "Crime", new String[] { "Krimi" });
   /** The disaster. */
-  DISASTER("Disaster", new String[] { "Katastrophen", "Katastrophenfilm" }),
+  public final static MediaGenres DISASTER        = new MediaGenres("DISASTER", 7, "Disaster", new String[] { "Katastrophen", "Katastrophenfilm" });
   /** The documentary. */
-  DOCUMENTARY("Documentary", new String[] { "Dokumentation", "Mondo" }),
+  public final static MediaGenres DOCUMENTARY     = new MediaGenres("DOCUMENTARY", 8, "Documentary", new String[] { "Dokumentation", "Mondo" });
   /** The drama. */
-  DRAMA("Drama", new String[] {}),
+  public final static MediaGenres DRAMA           = new MediaGenres("DRAMA", 9, "Drama", new String[] {});
   /** The eastern. */
-  EASTERN("Eastern", new String[] {}),
+  public final static MediaGenres EASTERN         = new MediaGenres("EASTERN", 10, "Eastern", new String[] {});
   /** The erotic. */
-  EROTIC("Erotic", new String[] { "Erotik", "Sex", "Adult" }),
+  public final static MediaGenres EROTIC          = new MediaGenres("EROTIC", 11, "Erotic", new String[] { "Erotik", "Sex", "Adult" });
   /** The family. */
-  FAMILY("Family", new String[] { "Kinder-/Familienfilm", "Familie" }),
+  public final static MediaGenres FAMILY          = new MediaGenres("FAMILY", 12, "Family", new String[] { "Kinder-/Familienfilm", "Familie" });
   /** The fan film. */
-  FAN_FILM("Fan Film", new String[] { "Fan-Film" }),
+  public final static MediaGenres FAN_FILM        = new MediaGenres("FAN_FILM", 13, "Fan Film", new String[] { "Fan-Film" });
   /** The fantasy. */
-  FANTASY("Fantasy", new String[] {}),
+  public final static MediaGenres FANTASY         = new MediaGenres("FANTASY", 14, "Fantasy", new String[] {});
   /** The film noir. */
-  FILM_NOIR("Film Noir", new String[] { "Film-Noir", "Neo-noir" }),
+  public final static MediaGenres FILM_NOIR       = new MediaGenres("FILM_NOIR", 15, "Film Noir", new String[] { "Film-Noir", "Neo-noir" });
   /** The foreign. */
-  FOREIGN("Foreign", new String[] {}),
+  public final static MediaGenres FOREIGN         = new MediaGenres("FOREIGN", 16, "Foreign", new String[] {});
   /** The game show. */
-  GAME_SHOW("Gameshow", new String[] { "Game-Show" }),
+  public final static MediaGenres GAME_SHOW       = new MediaGenres("GAME_SHOW", 17, "Gameshow", new String[] { "Game-Show" });
   /** The history. */
-  HISTORY("History", new String[] { "Historienfilm", "Geschichte", "Historie" }),
+  public final static MediaGenres HISTORY         = new MediaGenres("HISTORY", 18, "History", new String[] { "Historienfilm", "Geschichte",
+      "Historie"                                  });
   /** The holiday. */
-  HOLIDAY("Holiday", new String[] {}),
+  public final static MediaGenres HOLIDAY         = new MediaGenres("HOLIDAY", 19, "Holiday", new String[] {});
   /** The horror. */
-  HORROR("Horror", new String[] { "Splatter", "Grusel" }),
+  public final static MediaGenres HORROR          = new MediaGenres("HORROR", 20, "Horror", new String[] { "Splatter", "Grusel" });
   /** The indie. */
-  INDIE("Indie", new String[] { "Experimentalfilm", "Amateur" }),
+  public final static MediaGenres INDIE           = new MediaGenres("INDIE", 21, "Indie", new String[] { "Experimentalfilm", "Amateur" });
   /** The music. */
-  MUSIC("Music", new String[] { "Musikfilm", "Musik" }),
+  public final static MediaGenres MUSIC           = new MediaGenres("MUSIC", 22, "Music", new String[] { "Musikfilm", "Musik" });
   /** The musical. */
-  MUSICAL("Musical", new String[] {}),
+  public final static MediaGenres MUSICAL         = new MediaGenres("MUSICAL", 23, "Musical", new String[] {});
   /** The mystery. */
-  MYSTERY("Mystery", new String[] {}),
+  public final static MediaGenres MYSTERY         = new MediaGenres("MYSTERY", 24, "Mystery", new String[] {});
   /** The neo noir. */
-  NEO_NOIR("Neo Noir", new String[] {}),
+  public final static MediaGenres NEO_NOIR        = new MediaGenres("NEO_NOIR", 25, "Neo Noir", new String[] {});
   /** The news. */
-  NEWS("News", new String[] { "Nachrichten" }),
+  public final static MediaGenres NEWS            = new MediaGenres("NEWS", 26, "News", new String[] { "Nachrichten" });
   /** The reality tv. */
-  REALITY_TV("Reality TV", new String[] { "Reality-TV" }),
+  public final static MediaGenres REALITY_TV      = new MediaGenres("REALITY_TV", 27, "Reality TV", new String[] { "Reality-TV" });
   /** The road movie. */
-  ROAD_MOVIE("Road Movie", new String[] {}),
+  public final static MediaGenres ROAD_MOVIE      = new MediaGenres("ROAD_MOVIE", 28, "Road Movie", new String[] {});
   /** The romance. */
-  ROMANCE("Romance", new String[] { "Liebe/Romantik", "Romanze", "Lovestory" }),
+  public final static MediaGenres ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance", new String[] { "Liebe/Romantik", "Romanze",
+      "Lovestory"                                 });
   /** The science fiction. */
-  SCIENCE_FICTION("Science Fiction", new String[] { "Sci-Fi", "Science-Fiction" }),
-  /** The (tv) series. */
-  SERIES("Series", new String[] { "Serie", "TV-Serie", "TV-Mini-Serie" }),
+  public final static MediaGenres SCIENCE_FICTION = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction", new String[] { "Sci-Fi",
+      "Science-Fiction"                           });
+  /** The = new MediaGenres2(tv) series. */
+  public final static MediaGenres SERIES          = new MediaGenres("SERIES", 31, "Series", new String[] { "Serie", "TV-Serie", "TV-Mini-Serie" });
   /** The short. */
-  SHORT("Short", new String[] { "Kurzfilm" }),
+  public final static MediaGenres SHORT           = new MediaGenres("SHORT", 32, "Short", new String[] { "Kurzfilm" });
   /** The silent ones. */
-  SILENT_MOVIE("Silent Movie", new String[] { "Stummfilm" }),
+  public final static MediaGenres SILENT_MOVIE    = new MediaGenres("SILENT_MOVIE", 33, "Silent Movie", new String[] { "Stummfilm" });
   /** The sport. */
-  SPORT("Sport", new String[] { "Kampfsport" }),
+  public final static MediaGenres SPORT           = new MediaGenres("SPORT", 34, "Sport", new String[] { "Kampfsport" });
   /** The sporting event. */
-  SPORTING_EVENT("Sporting Event", new String[] { "Sportereignis" }),
+  public final static MediaGenres SPORTING_EVENT  = new MediaGenres("SPORTING_EVENT", 35, "Sporting Event", new String[] { "Sportereignis" });
   /** The sports film. */
-  SPORTS_FILM("Sports Film", new String[] { "Sportfilm", "Sport Film" }),
+  public final static MediaGenres SPORTS_FILM     = new MediaGenres("SPORTS_FILM", 36, "Sports Film", new String[] { "Sportfilm", "Sport Film" });
   /** The suspense. */
-  SUSPENSE("Suspense", new String[] {}),
+  public final static MediaGenres SUSPENSE        = new MediaGenres("SUSPENSE", 37, "Suspense", new String[] {});
   /** The talk show. */
-  TALK_SHOW("Talk show", new String[] { "Talk-Show" }),
+  public final static MediaGenres TALK_SHOW       = new MediaGenres("TALK_SHOW", 38, "Talk show", new String[] { "Talk-Show" });
   /** The tv movie. */
-  TV_MOVIE("TV Movie", new String[] { "TV-Film", "TV-Pilotfilm" }),
+  public final static MediaGenres TV_MOVIE        = new MediaGenres("TV_MOVIE", 39, "TV Movie", new String[] { "TV-Film", "TV-Pilotfilm" });
   /** The thriller. */
-  THRILLER("Thriller", new String[] {}),
+  public final static MediaGenres THRILLER        = new MediaGenres("THRILLER", 40, "Thriller", new String[] {});
   /** The war. */
-  WAR("War", new String[] { "Krieg", "Kriegsfilm" }),
+  public final static MediaGenres WAR             = new MediaGenres("WAR", 41, "War", new String[] { "Krieg", "Kriegsfilm" });
   /** The western. */
-  WESTERN("Western", new String[] {});
+  public final static MediaGenres WESTERN         = new MediaGenres("WESTERN", 42, "Western", new String[] {});
 
   /** The name. */
-  private String   name;
+  private String                   name;
 
   /** The alternate names. */
-  private String[] alternateNames;
-
-  /**
-   * Instantiates a new genres.
-   */
-  private MediaGenres() {
-    this.name = "";
-  }
+  private String[]                 alternateNames;
 
   /**
    * Instantiates a new genres.
    * 
+   * @param enumName
+   *          the enum name
+   * @param ordinal
+   *          the ordinal
    * @param name
    *          the name
    * @param alternateNames
    *          the alternate names
    */
-  private MediaGenres(String name, String[] alternateNames) {
+  private MediaGenres(String enumName, int ordinal, String name, String[] alternateNames) {
+    super(enumName, ordinal);
     this.name = name;
     this.alternateNames = alternateNames;
   }
@@ -138,10 +138,19 @@ public enum MediaGenres {
   /*
    * (non-Javadoc)
    * 
-   * @see java.lang.Enum#toString()
+   * @see org.tinymediamanager.core.DynaEnum#toString()
    */
   public String toString() {
     return this.name;
+  }
+
+  /**
+   * Values.
+   * 
+   * @return the media genres2[]
+   */
+  public static MediaGenres[] values() {
+    return values(MediaGenres.class);
   }
 
   /**
@@ -153,7 +162,11 @@ public enum MediaGenres {
    */
   public static MediaGenres getGenre(String name) {
     for (MediaGenres genre : values()) {
-      // check if the name matches
+      // check if the "enum" name matches
+      if (genre.name().equals(name)) {
+        return genre;
+      }
+      // check if the printable name matches
       if (genre.name.equals(name)) {
         return genre;
       }
@@ -164,6 +177,8 @@ public enum MediaGenres {
         }
       }
     }
-    return null;
+
+    // dynamically create new one
+    return new MediaGenres(name, values().length, name, new String[] {});
   }
 }

@@ -20,6 +20,8 @@ import org.tinymediamanager.core.AbstractModelObject;
 
 /**
  * The Class TvShowList.
+ * 
+ * @author Manuel Laggner
  */
 public class TvShowList extends AbstractModelObject {
 

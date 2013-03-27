@@ -23,6 +23,8 @@ import ca.odell.glazedlists.TextFilterator;
 
 /**
  * The Class MovieFilterator is used to search movies.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieFilterator implements TextFilterator<Movie> {
 
@@ -35,7 +37,7 @@ public class MovieFilterator implements TextFilterator<Movie> {
   @Override
   public void getFilterStrings(List<String> baseList, Movie movie) {
     baseList.add(movie.getName());
-    baseList.add(movie.getOriginalName());
+    baseList.add(movie.getOriginalTitle());
   }
 
 }

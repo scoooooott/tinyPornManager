@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.moviesets;
+package org.tinymediamanager.ui.moviesets.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -52,63 +52,67 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.moviesets.MovieSetImageChooser.ImageType;
+import org.tinymediamanager.ui.moviesets.dialogs.MovieSetImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieSetEditor.
+ * 
+ * @author Manuel Laggner
  */
-public class MovieSetEditor extends JDialog {
+public class MovieSetEditorDialog extends JDialog {
+
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID    = -4446433759280691976L;
 
   /** The movie set to edit. */
-  private MovieSet     movieSetToEdit;
+  private MovieSet          movieSetToEdit;
 
   /** The tf name. */
-  private JTextField   tfName;
+  private JTextField        tfName;
 
   /** The table movies. */
-  private JTable       tableMovies;
+  private JTable            tableMovies;
 
   /** The lbl poster. */
-  private ImageLabel   lblPoster;
+  private ImageLabel        lblPoster;
 
   /** The lbl fanart. */
-  private ImageLabel   lblFanart;
+  private ImageLabel        lblFanart;
 
   /** The tp overview. */
-  private JTextPane    tpOverview;
+  private JTextPane         tpOverview;
 
   /** The movies in set. */
-  private List<Movie>  moviesInSet         = ObservableCollections.observableList(new ArrayList<Movie>());
+  private List<Movie>       moviesInSet         = ObservableCollections.observableList(new ArrayList<Movie>());
 
   /** The removed movies. */
-  private List<Movie>  removedMovies       = new ArrayList<Movie>();
+  private List<Movie>       removedMovies       = new ArrayList<Movie>();
 
   /** The action remove movie. */
-  private final Action actionRemoveMovie   = new RemoveMovieAction();
+  private final Action      actionRemoveMovie   = new RemoveMovieAction();
 
   /** The action move movie up. */
-  private final Action actionMoveMovieUp   = new MoveUpAction();
+  private final Action      actionMoveMovieUp   = new MoveUpAction();
 
   /** The action move movie down. */
-  private final Action actionMoveMovieDown = new MoveDownAction();
+  private final Action      actionMoveMovieDown = new MoveDownAction();
 
   /** The action ok. */
-  private final Action actionOk            = new OkAction();
+  private final Action      actionOk            = new OkAction();
 
   /** The action cancel. */
-  private final Action actionCancel        = new CancelAction();
+  private final Action      actionCancel        = new CancelAction();
 
   /** The tf tmdb id. */
-  private JTextField   tfTmdbId;
+  private JTextField        tfTmdbId;
 
   /** The action search tmdb id. */
-  private final Action actionSearchTmdbId  = new SwingAction();
+  private final Action      actionSearchTmdbId  = new SwingAction();
 
   /**
    * Instantiates a new movie set editor.
@@ -116,7 +120,7 @@ public class MovieSetEditor extends JDialog {
    * @param movieSet
    *          the movie set
    */
-  public MovieSetEditor(MovieSet movieSet) {
+  public MovieSetEditorDialog(MovieSet movieSet) {
     setModal(true);
     setIconImage(Globals.logo);
     setTitle("Edit Movieset");
@@ -155,7 +159,7 @@ public class MovieSetEditor extends JDialog {
         }
         catch (Exception e1) {
         }
-        MovieSetImageChooser dialog = new MovieSetImageChooser(tmdbId, ImageType.POSTER, lblPoster);
+        MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.POSTER, lblPoster);
         dialog.setVisible(true);
       }
     });
@@ -208,7 +212,7 @@ public class MovieSetEditor extends JDialog {
         }
         catch (Exception e1) {
         }
-        MovieSetImageChooser dialog = new MovieSetImageChooser(tmdbId, ImageType.FANART, lblFanart);
+        MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.FANART, lblFanart);
         dialog.setVisible(true);
       }
     });
@@ -266,6 +270,8 @@ public class MovieSetEditor extends JDialog {
 
   /**
    * The Class RemoveMovieAction.
+   * 
+   * @author Manuel Laggner
    */
   private class RemoveMovieAction extends AbstractAction {
 
@@ -293,6 +299,8 @@ public class MovieSetEditor extends JDialog {
 
   /**
    * The Class MoveUpAction.
+   * 
+   * @author Manuel Laggner
    */
   private class MoveUpAction extends AbstractAction {
 
@@ -321,6 +329,8 @@ public class MovieSetEditor extends JDialog {
 
   /**
    * The Class MoveDownAction.
+   * 
+   * @author Manuel Laggner
    */
   private class MoveDownAction extends AbstractAction {
 
@@ -349,6 +359,8 @@ public class MovieSetEditor extends JDialog {
 
   /**
    * The Class OkAction.
+   * 
+   * @author Manuel Laggner
    */
   private class OkAction extends AbstractAction {
 
@@ -425,6 +437,8 @@ public class MovieSetEditor extends JDialog {
 
   /**
    * The Class CancelAction.
+   * 
+   * @author Manuel Laggner
    */
   private class CancelAction extends AbstractAction {
 
@@ -469,6 +483,8 @@ public class MovieSetEditor extends JDialog {
 
   /**
    * The Class SwingAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction extends AbstractAction {
 

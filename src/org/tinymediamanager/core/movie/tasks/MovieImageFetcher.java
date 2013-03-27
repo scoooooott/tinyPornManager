@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.movie.tasks;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,23 +22,49 @@ import java.io.InputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
- * @author Manuel Laggner
+ * The Class MovieImageFetcher.
  * 
+ * @author Manuel Laggner
  */
 public class MovieImageFetcher implements Runnable {
 
+  /** The Constant LOGGER. */
   private final static Logger LOGGER = Logger.getLogger(MovieImageFetcher.class);
 
+  /** The movie. */
   private Movie               movie;
+
+  /** The url. */
   private String              url;
+
+  /** The type. */
   private MediaArtworkType    type;
+
+  /** The filename. */
   private String              filename;
+
+  /** The first image. */
   private boolean             firstImage;
 
+  /**
+   * Instantiates a new movie image fetcher.
+   * 
+   * @param movie
+   *          the movie
+   * @param url
+   *          the url
+   * @param type
+   *          the type
+   * @param filename
+   *          the filename
+   * @param firstImage
+   *          the first image
+   */
   public MovieImageFetcher(Movie movie, String url, MediaArtworkType type, String filename, boolean firstImage) {
     this.movie = movie;
     this.url = url;

@@ -55,16 +55,21 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieRenameTask;
-import org.tinymediamanager.core.movie.MovieScrapeTask;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
-import org.tinymediamanager.core.movie.MovieUpdateDatasourceTask;
+import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
+import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
+import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.ui.BorderCellRenderer;
 import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.JSearchTextField;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.TmmSwingWorker;
+import org.tinymediamanager.ui.movies.dialogs.MovieBatchEditorDialog;
+import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
+import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
+import org.tinymediamanager.ui.movies.dialogs.MovieExporterDialog;
+import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
 
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
@@ -80,6 +85,8 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MoviePanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MoviePanel extends JPanel {
 
@@ -181,7 +188,7 @@ public class MoviePanel extends JPanel {
 
   /** The btn media information. */
   private JButton                btnMediaInformation;
-  // private final Action action = new SwingAction();
+
   /** The action media information. */
   private final Action           actionMediaInformation       = new MediaInformationAction(false);
 
@@ -190,9 +197,6 @@ public class MoviePanel extends JPanel {
 
   /** The action batch edit. */
   private final Action           actionBatchEdit              = new BatchEditAction();
-
-  // /** The window config. */
-  // private WindowConfig windowConfig;
 
   /**
    * Create the panel.
@@ -204,8 +208,6 @@ public class MoviePanel extends JPanel {
     movieList = MovieList.getInstance();
     sortedMovies = new SortedList<Movie>(movieList.getMovies(), new MovieComparator());
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
-    // movieSelectionModel = new MovieSelectionModel(sortedMovies);
-    // windowConfig = Globals.settings.getWindowConfig();
 
     // build menu
     menu = new JMenu("Movies");
@@ -235,7 +237,7 @@ public class MoviePanel extends JPanel {
     toolBar.setOpaque(false);
     panelMovieList.add(toolBar, "2, 1, left, fill");
 
-    JButton buttonUpdateDataSources = toolBar.add(actionUpdateDataSources);
+    toolBar.add(actionUpdateDataSources);
     JSplitButton buttonScrape = new JSplitButton(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
     // temp fix for size of the button
     buttonScrape.setText("   ");
@@ -263,7 +265,7 @@ public class MoviePanel extends JPanel {
     buttonScrape.setPopupMenu(popup);
     toolBar.add(buttonScrape);
 
-    JButton buttonEdit = toolBar.add(actionEditMovie);
+    toolBar.add(actionEditMovie);
 
     btnRen = new JButton("REN");
     btnRen.setAction(actionRename);
@@ -435,6 +437,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class UpdateDataSourcesAction.
+   * 
+   * @author Manuel Laggner
    */
   private class UpdateDataSourcesAction extends AbstractAction {
 
@@ -475,6 +479,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class SingleScrapeAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SingleScrapeAction extends AbstractAction {
 
@@ -519,7 +525,7 @@ public class MoviePanel extends JPanel {
         selectedMovies.add(movie);
       }
       for (Movie movie : selectedMovies) {
-        MovieChooser dialogMovieChooser = new MovieChooser(movie, selectedMovies.size() > 1 ? true : false);
+        MovieChooserDialog dialogMovieChooser = new MovieChooserDialog(movie, selectedMovies.size() > 1 ? true : false);
         // dialogMovieChooser.pack();
         // dialogMovieChooser.setVisible(true);
         if (!dialogMovieChooser.showDialog()) {
@@ -531,6 +537,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class UnscrapedScrapeAction.
+   * 
+   * @author Manuel Laggner
    */
   private class UnscrapedScrapeAction extends AbstractAction {
 
@@ -554,7 +562,7 @@ public class MoviePanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
       List<Movie> unscrapedMovies = movieList.getUnscrapedMovies();
       if (unscrapedMovies.size() > 0) {
-        MovieScrapeMetadata dialog = new MovieScrapeMetadata("Search & scrape unscraped movies - force best match");
+        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog("Search & scrape unscraped movies - force best match");
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -574,6 +582,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class UnscrapedScrapeAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SelectedScrapeAction extends AbstractAction {
 
@@ -607,7 +617,7 @@ public class MoviePanel extends JPanel {
 
       if (selectedMovies.size() > 0) {
         // scrapeTask = new ScrapeTask(selectedMovies);
-        MovieScrapeMetadata dialog = new MovieScrapeMetadata("Search & scrape selected movies - force best match");
+        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog("Search & scrape selected movies - force best match");
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -626,6 +636,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class SelectedScrapeMetadataAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SelectedScrapeMetadataAction extends AbstractAction {
 
@@ -653,7 +665,7 @@ public class MoviePanel extends JPanel {
       }
 
       if (selectedMovies.size() > 0) {
-        MovieScrapeMetadata dialog = new MovieScrapeMetadata("Scrape metadata for selected movies");
+        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog("Scrape metadata for selected movies");
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -672,6 +684,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class EditAction.
+   * 
+   * @author Manuel Laggner
    */
   private class EditAction extends AbstractAction {
 
@@ -716,7 +730,7 @@ public class MoviePanel extends JPanel {
         selectedMovies.add(movie);
       }
       for (Movie movie : selectedMovies) {
-        MovieEditor dialogMovieEditor = new MovieEditor(movie, selectedMovies.size() > 1 ? true : false);
+        MovieEditorDialog dialogMovieEditor = new MovieEditorDialog(movie, selectedMovies.size() > 1 ? true : false);
         // dialogMovieEditor.setVisible(true);
         if (!dialogMovieEditor.showDialog()) {
           break;
@@ -727,6 +741,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class RemoveAction.
+   * 
+   * @author Manuel Laggner
    */
   private class RemoveAction extends AbstractAction {
 
@@ -782,6 +798,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class ExportAction.
+   * 
+   * @author Manuel Laggner
    */
   private class ExportAction extends AbstractAction {
 
@@ -826,6 +844,8 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class RenameAction.
+   * 
+   * @author Manuel Laggner
    */
   private class RenameAction extends AbstractAction {
 
@@ -972,23 +992,20 @@ public class MoviePanel extends JPanel {
     //
   }
 
-  // private class SwingAction extends AbstractAction {
-  // public SwingAction() {
-  // putValue(NAME, "SwingAction");
-  // putValue(SHORT_DESCRIPTION, "Some short description");
-  // }
-  //
-  // public void actionPerformed(ActionEvent e) {
-  // }
-  // }
-
   /**
    * The Class MediaInformationAction.
+   * 
+   * @author Manuel Laggner
    */
   private class MediaInformationAction extends AbstractAction {
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -2779609579926382991L;
 
     /**
      * Instantiates a new media information action.
+     * 
+     * @param withTitle
+     *          the with title
      */
     public MediaInformationAction(boolean withTitle) {
       if (withTitle) {
@@ -1028,8 +1045,12 @@ public class MoviePanel extends JPanel {
 
   /**
    * The Class BatchEditAction.
+   * 
+   * @author Manuel Laggner
    */
   private class BatchEditAction extends AbstractAction {
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1193886444149690516L;
 
     /**
      * Instantiates a new batch edit action.
@@ -1054,7 +1075,7 @@ public class MoviePanel extends JPanel {
 
       // get data of all files within all selected movies
       if (selectedMovies.size() > 0) {
-        MovieBatchEditor editor = new MovieBatchEditor(selectedMovies);
+        MovieBatchEditorDialog editor = new MovieBatchEditorDialog(selectedMovies);
         editor.setVisible(true);
       }
 

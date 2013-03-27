@@ -17,33 +17,69 @@ package org.tinymediamanager.core;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 /**
  * The Class MediaEntity.
+ * 
+ * @author Manuel Laggner
  */
-
 @MappedSuperclass
 public abstract class MediaEntity extends AbstractModelObject {
 
   /** The id. */
   @Id
   @GeneratedValue
-  protected Long   id;
+  protected Long    id;
 
-  /** The name. */
-  protected String name         = "";
+  /** The title. */
+  protected String  title             = "";
 
-  /** The original name. */
-  protected String originalName = "";
+  /** The original title. */
+  protected String  originalTitle     = "";
+
+  /** The year. */
+  protected String  year              = "";
 
   /** The overview. */
-  protected String overview     = "";
+  protected String  plot              = "";
+
+  /** The rating. */
+  protected float   rating            = 0f;
 
   /** The path. */
-  protected String path         = "";
+  protected String  path              = "";
+
+  /** The fanart url. */
+  protected String  fanartUrl         = "";
+
+  /** The fanart. */
+  protected String  fanart            = "";
+
+  /** The poster url. */
+  protected String  posterUrl         = "";
+
+  /** The poster. */
+  protected String  poster            = "";
+
+  /** The date added. */
+  protected Date    dateAdded         = new Date();
+
+  /** The production company. */
+  protected String  productionCompany = "";
+
+  /** The scraped. */
+  protected boolean scraped           = false;
+
+  /** The duplicate flag. */
+  @Transient
+  private boolean   duplicate         = false;
 
   /**
    * Gets the id.
@@ -55,30 +91,46 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
+   * Gets the fanart url.
+   * 
+   * @return the fanart url
+   */
+  public String getFanartUrl() {
+    return fanartUrl;
+  }
+
+  /**
+   * Gets the path to the fanart.
+   * 
+   * @return the fanart
+   */
+  abstract public String getFanart();
+
+  /**
    * Gets the name.
    * 
    * @return the name
    */
   public String getName() {
-    return name;
+    return title;
   }
 
   /**
-   * Gets the original name.
+   * Gets the original title.
    * 
-   * @return the original name
+   * @return the original title
    */
-  public String getOriginalName() {
-    return originalName;
+  public String getOriginalTitle() {
+    return originalTitle;
   }
 
   /**
-   * Gets the overview.
+   * Gets the plot.
    * 
-   * @return the overview
+   * @return the plot
    */
-  public String getOverview() {
-    return overview;
+  public String getPlot() {
+    return plot;
   }
 
   /**
@@ -91,11 +143,38 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
-   * Gets the name for ui.
+   * Gets the poster url.
    * 
-   * @return the name for ui
+   * @return the poster url
    */
-  abstract public String getNameForUi();
+  public String getPosterUrl() {
+    return posterUrl;
+  }
+
+  /**
+   * Gets the path to the poster.
+   * 
+   * @return the poster
+   */
+  abstract public String getPoster();
+
+  /**
+   * Gets the rating.
+   * 
+   * @return the rating
+   */
+  public float getRating() {
+    return rating;
+  }
+
+  /**
+   * Gets the year.
+   * 
+   * @return the year
+   */
+  public String getYear() {
+    return year;
+  }
 
   /**
    * Sets the id.
@@ -108,40 +187,39 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
-   * Sets the name.
+   * Sets the title.
    * 
    * @param newValue
-   *          the new name
+   *          the new title
    */
-  public void setName(String newValue) {
-    String oldValue = name;
-    name = newValue;
-    firePropertyChange(NAME, oldValue, newValue);
-    firePropertyChange(NAME_FOR_UI, oldValue, newValue);
+  public void setTitle(String newValue) {
+    String oldValue = title;
+    title = newValue;
+    firePropertyChange(TITLE, oldValue, newValue);
   }
 
   /**
-   * Sets the original name.
+   * Sets the original title.
    * 
    * @param newValue
-   *          the new original name
+   *          the new original title
    */
-  public void setOriginalName(String newValue) {
-    String oldValue = originalName;
-    originalName = newValue;
-    firePropertyChange(ORIGINAL_NAME, oldValue, newValue);
+  public void setOriginalTitle(String newValue) {
+    String oldValue = originalTitle;
+    originalTitle = newValue;
+    firePropertyChange(ORIGINAL_TITLE, oldValue, newValue);
   }
 
   /**
-   * Sets the overview.
+   * Sets the plot.
    * 
    * @param newValue
-   *          the new overview
+   *          the new plot
    */
-  public void setOverview(String newValue) {
-    String oldValue = overview;
-    overview = newValue;
-    firePropertyChange(OVERVIEW, oldValue, newValue);
+  public void setPlot(String newValue) {
+    String oldValue = plot;
+    plot = newValue;
+    firePropertyChange(PLOT, oldValue, newValue);
   }
 
   /**
@@ -154,5 +232,168 @@ public abstract class MediaEntity extends AbstractModelObject {
     String oldValue = path;
     path = newValue;
     firePropertyChange(PATH, oldValue, newValue);
+  }
+
+  /**
+   * Sets the rating.
+   * 
+   * @param newValue
+   *          the new rating
+   */
+  public void setRating(float newValue) {
+    float oldValue = rating;
+    rating = newValue;
+    firePropertyChange(RATING, oldValue, newValue);
+  }
+
+  /**
+   * Sets the year.
+   * 
+   * @param newValue
+   *          the new year
+   */
+  public void setYear(String newValue) {
+    String oldValue = year;
+    year = newValue;
+    firePropertyChange(YEAR, oldValue, newValue);
+  }
+
+  /**
+   * Sets the poster url.
+   * 
+   * @param newValue
+   *          the new poster url
+   */
+  public void setPosterUrl(String newValue) {
+    String oldValue = posterUrl;
+    posterUrl = newValue;
+    firePropertyChange(POSTER_URL, oldValue, newValue);
+  }
+
+  /**
+   * Sets the poster.
+   * 
+   * @param poster
+   *          the new poster
+   */
+  abstract public void setPoster(String poster);
+
+  /**
+   * Sets the fanart url.
+   * 
+   * @param newValue
+   *          the new fanart url
+   */
+  public void setFanartUrl(String newValue) {
+    String oldValue = fanartUrl;
+    fanartUrl = newValue;
+    firePropertyChange(FANART_URL, oldValue, newValue);
+  }
+
+  /**
+   * Sets the fanart.
+   * 
+   * @param fanart
+   *          the new fanart
+   */
+  abstract public void setFanart(String fanart);
+
+  /**
+   * Gets the date added.
+   * 
+   * @return the date added
+   */
+  public Date getDateAdded() {
+    return dateAdded;
+  }
+
+  /**
+   * Gets the date added as string.
+   * 
+   * @return the date added as string
+   */
+  public String getDateAddedAsString() {
+    if (dateAdded == null) {
+      return "";
+    }
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+    return sdf.format(dateAdded);
+  }
+
+  /**
+   * Sets the date added.
+   * 
+   * @param newValue
+   *          the new date added
+   */
+  public void setDateAdded(Date newValue) {
+    Date oldValue = this.dateAdded;
+    this.dateAdded = newValue;
+    firePropertyChange(DATE_ADDED, oldValue, newValue);
+    firePropertyChange(DATE_ADDED_AS_STRING, oldValue, newValue);
+  }
+
+  /**
+   * Gets the production company.
+   * 
+   * @return the production company
+   */
+  public String getProductionCompany() {
+    return productionCompany;
+  }
+
+  /**
+   * Sets the production company.
+   * 
+   * @param newValue
+   *          the new production company
+   */
+  public void setProductionCompany(String newValue) {
+    String oldValue = this.productionCompany;
+    this.productionCompany = newValue;
+    firePropertyChange(PRODUCTION_COMPANY, oldValue, newValue);
+  }
+
+  /**
+   * Sets the scraped.
+   * 
+   * @param newValue
+   *          the new scraped
+   */
+  protected void setScraped(boolean newValue) {
+    this.scraped = newValue;
+    firePropertyChange(SCRAPED, false, newValue);
+  }
+
+  /**
+   * checks if this movie has been scraped.
+   * 
+   * @return isScraped
+   */
+  public boolean isScraped() {
+    return scraped;
+  }
+
+  /**
+   * Sets the duplicate.
+   */
+  public void setDuplicate() {
+    this.duplicate = true;
+  }
+
+  /**
+   * Clear duplicate.
+   */
+  public void clearDuplicate() {
+    this.duplicate = false;
+  }
+
+  /**
+   * Checks if is duplicate.
+   * 
+   * @return true, if is duplicate
+   */
+  public boolean isDuplicate() {
+    return this.duplicate;
   }
 }

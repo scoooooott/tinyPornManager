@@ -34,10 +34,15 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieScraperMetadataPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieScraperMetadataPanel extends JPanel {
 
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
   /** The config. */

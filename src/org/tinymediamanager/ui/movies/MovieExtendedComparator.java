@@ -23,6 +23,8 @@ import org.tinymediamanager.core.movie.Movie;
 /**
  * The Class MovieComparator is used to (initial) sort the movies in the
  * moviepanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieExtendedComparator implements Comparator<Movie> {
 
@@ -31,6 +33,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
   /**
    * The Enum SortColumn.
+   * 
+   * @author Manuel Laggner
    */
   public enum SortColumn {
     /** The Title. */
@@ -71,6 +75,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
   /**
    * The Enum WatchedFlag.
+   * 
+   * @author Manuel Laggner
    */
   public enum WatchedFlag {
 
@@ -103,6 +109,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
   /**
    * The Enum SortOrder.
+   * 
+   * @author Manuel Laggner
    */
   public enum SortOrder {
 
@@ -136,6 +144,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
   /**
    * The Enum MovieInMovieSet.
+   * 
+   * @author Manuel Laggner
    */
   public enum MovieInMovieSet {
 

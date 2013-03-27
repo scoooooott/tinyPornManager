@@ -40,7 +40,7 @@ import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -63,7 +63,10 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   /** The Constant LOGGER. */
   private static final Logger              LOGGER        = Logger.getLogger(ZelluloidMetadataProvider.class);
 
+  /** The Constant BASE_URL. */
   private static final String              BASE_URL      = "http://www.zelluloid.de";
+
+  /** The Constant PAGE_ENCODING. */
   private static final String              PAGE_ENCODING = "ISO-8859-1";
 
   /** The Constant instance. */
@@ -91,11 +94,22 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   public ZelluloidMetadataProvider() {
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getProviderInfo()
+   */
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetadata(org.
+   * tinymediamanager.scraper.MediaScrapeOptions)
+   */
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
@@ -189,7 +203,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       // parse genres
       el = doc.getElementsByAttributeValueContaining("href", "az.php3?g=");
       for (Element g : el) {
-        MediaGenres2 genre = MediaGenres2.getGenre(g.text());
+        MediaGenres genre = MediaGenres.getGenre(g.text());
         if (genre != null && !md.getGenres().contains(genre)) {
           md.addGenre(genre);
         }
@@ -320,11 +334,11 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
 
   /**
    * Removes all weird characters from search as well some "stopwords" as
-   * der|die|das|the|a
+   * der|die|das|the|a.
    * 
    * @param q
    *          the query string to clean
-   * @return
+   * @return the string
    */
   private String cleanSearch(String q) {
     q = " " + q.toLowerCase() + " "; // easier regex
@@ -335,6 +349,13 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     return q.trim();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.tinymediamanager.scraper.IMediaMetadataProvider#search(org.tinymediamanager
+   * .scraper.MediaSearchOptions)
+   */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     LOGGER.debug("search() " + options.toString());
@@ -448,12 +469,24 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     return resultList;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaTrailerProvider#getTrailers(org.
+   * tinymediamanager.scraper.MediaScrapeOptions)
+   */
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     // http://www.zelluloid.de/filme/trailer.php3?id=7614
     return null;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getArtwork(org.
+   * tinymediamanager.scraper.MediaScrapeOptions)
+   */
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getArtwork() " + options.toString());

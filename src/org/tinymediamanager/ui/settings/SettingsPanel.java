@@ -37,20 +37,36 @@ import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
 
 /**
  * The Class SettingsPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class SettingsPanel extends JPanel {
+
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
   /** The settings. */
   private Settings                    settings         = Settings.getInstance();
 
+  /** The current component. */
   private Component                   currentComponent;
+
+  /** The toolbar. */
   private JButtonBar                  toolbar;
 
+  /** The panel general settings. */
   private GeneralSettingsPanel        panelGeneralSettings;
+
+  /** The panel movie settings. */
   private MovieSettingsPanel          panelMovieSettings;
+
+  /** The panel scraper movie settings. */
   private MovieScraperSettingsPanel   panelScraperMovieSettings;
+
+  /** The panel image movie settings. */
   private MovieImageSettingsPanel     panelImageMovieSettings;
 
   /**
@@ -100,6 +116,12 @@ public class SettingsPanel extends JPanel {
     });
   }
 
+  /**
+   * Show.
+   * 
+   * @param component
+   *          the component
+   */
   private void show(Component component) {
     if (currentComponent != null) {
       remove(currentComponent);
@@ -109,6 +131,20 @@ public class SettingsPanel extends JPanel {
     repaint();
   }
 
+  /**
+   * Adds the button.
+   * 
+   * @param title
+   *          the title
+   * @param iconUrl
+   *          the icon url
+   * @param component
+   *          the component
+   * @param bar
+   *          the bar
+   * @param group
+   *          the group
+   */
   private void addButton(String title, String iconUrl, final Component component, JButtonBar bar, ButtonGroup group) {
     Action action = new AbstractAction(title, new ImageIcon(SettingsPanel.class.getResource(iconUrl))) {
       private static final long serialVersionUID = 1L;

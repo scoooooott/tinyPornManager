@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -33,32 +33,35 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * The Class Trailer.
+ * 
+ * @author Manuel Laggner
  */
-@Entity
+@Embeddable
 public class MediaTrailer extends AbstractModelObject {
 
-  private static final Logger LOGGER           = Logger.getLogger(MediaTrailer.class);
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER   = Logger.getLogger(MediaTrailer.class);
 
   /** The name. */
-  private String  name     = "";
+  private String              name     = "";
 
   /** The url. */
-  private String  url      = "";
+  private String              url      = "";
 
   /** The quality. */
-  private String  quality  = "";
+  private String              quality  = "";
 
   /** The provider. */
-  private String  provider = "";
+  private String              provider = "";
 
   /** The inNfo. */
-  private Boolean inNfo    = Boolean.FALSE;
+  private Boolean             inNfo    = Boolean.FALSE;
 
   /** The size (as string). */
-  private String  size     = "";
+  private String              size     = "";
 
   /** The date (as string). */
-  private String  date     = "";
+  private String              date     = "";
 
   /**
    * Instantiates a new trailer.
@@ -219,8 +222,6 @@ public class MediaTrailer extends AbstractModelObject {
    * <code>toString</code> for the specified object.
    * </p>
    * 
-   * @param object
-   *          the Object to be output
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */
@@ -230,7 +231,7 @@ public class MediaTrailer extends AbstractModelObject {
   }
 
   /**
-   * Downloads Trailer to specified file
+   * Downloads Trailer to specified file.
    * 
    * @param file
    *          the absolute file on file system, overwrites existing trailer!

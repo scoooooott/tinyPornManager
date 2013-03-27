@@ -32,7 +32,6 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import com.omertron.themoviedbapi.model.Collection;
 import com.omertron.themoviedbapi.model.CollectionInfo;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieSetChooserModel.
  */

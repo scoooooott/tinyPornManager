@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core.movie;
 
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -26,7 +26,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 /**
  * The Class MovieCast.
  */
-@Entity
+@Embeddable
 public class MovieCast extends AbstractModelObject {
 
   public static final String ACTOR_DIR = ".actors";

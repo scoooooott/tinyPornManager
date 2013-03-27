@@ -23,24 +23,41 @@ import org.tinymediamanager.core.movie.MovieCast;
 
 /**
  * The Class ActorImageLabel.
+ * 
+ * @author Manuel Laggner
  */
 public class ActorImageLabel extends ImageLabel {
 
-  private Movie     movie;
-  private MovieCast actor;
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = -1768796209645569296L;
 
+  /** The movie. */
+  private Movie             movie;
+
+  /**
+   * Instantiates a new actor image label.
+   */
   public ActorImageLabel() {
     super();
   }
 
+  /**
+   * Sets the movie.
+   * 
+   * @param movie
+   *          the new movie
+   */
   public void setMovie(Movie movie) {
     this.movie = movie;
-    this.actor = null;
   }
 
+  /**
+   * Sets the actor.
+   * 
+   * @param actor
+   *          the new actor
+   */
   public void setActor(MovieCast actor) {
-    this.actor = actor;
-
     if (actor != null) {
       if (movie != null && StringUtils.isNotEmpty(actor.getThumbPath())) {
         File actorThumb = new File(movie.getPath() + File.separator + actor.getThumbPath());

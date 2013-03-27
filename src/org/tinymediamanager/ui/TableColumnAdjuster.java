@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2013 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.Component;
@@ -32,17 +47,42 @@ import javax.swing.table.TableModel;
  *  or more of the other columns must decrease. Because of this the resize mode
  *  of RESIZE_ALL_COLUMNS will work the best.
  */
+/**
+ * The Class TableColumnAdjuster.
+ * 
+ * @author Manuel Laggner
+ */
 public class TableColumnAdjuster implements PropertyChangeListener, TableModelListener {
+
+  /** The table. */
   private JTable                    table;
+
+  /** The spacing. */
   private int                       spacing;
+
+  /** The is column header included. */
   private boolean                   isColumnHeaderIncluded;
+
+  /** The is column data included. */
   private boolean                   isColumnDataIncluded;
+
+  /** The is only adjust larger. */
   private boolean                   isOnlyAdjustLarger;
+
+  /** The is dynamic adjustment. */
   private boolean                   isDynamicAdjustment;
+
+  /** The column sizes. */
   private Map<TableColumn, Integer> columnSizes = new HashMap<TableColumn, Integer>();
 
   /*
    * Specify the table and use default spacing
+   */
+  /**
+   * Instantiates a new table column adjuster.
+   * 
+   * @param table
+   *          the table
    */
   public TableColumnAdjuster(JTable table) {
     this(table, 6);
@@ -50,6 +90,14 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 
   /*
    * Specify the table and spacing
+   */
+  /**
+   * Instantiates a new table column adjuster.
+   * 
+   * @param table
+   *          the table
+   * @param spacing
+   *          the spacing
    */
   public TableColumnAdjuster(JTable table, int spacing) {
     this.table = table;
@@ -64,6 +112,9 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Adjust the widths of all the columns in the table
    */
+  /**
+   * Adjust columns.
+   */
   public void adjustColumns() {
     TableColumnModel tcm = table.getColumnModel();
 
@@ -74,6 +125,12 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 
   /*
    * Adjust the width of the specified column in the table
+   */
+  /**
+   * Adjust column.
+   * 
+   * @param column
+   *          the column
    */
   public void adjustColumn(final int column) {
     TableColumn tableColumn = table.getColumnModel().getColumn(column);
@@ -90,6 +147,13 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 
   /*
    * Calculated the width based on the column name
+   */
+  /**
+   * Gets the column header width.
+   * 
+   * @param column
+   *          the column
+   * @return the column header width
    */
   private int getColumnHeaderWidth(int column) {
     if (!isColumnHeaderIncluded)
@@ -109,6 +173,13 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 
   /*
    * Calculate the width based on the widest cell renderer for the given column.
+   */
+  /**
+   * Gets the column data width.
+   * 
+   * @param column
+   *          the column
+   * @return the column data width
    */
   private int getColumnDataWidth(int column) {
     if (!isColumnDataIncluded)
@@ -132,6 +203,15 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Get the preferred width for the specified cell
    */
+  /**
+   * Gets the cell data width.
+   * 
+   * @param row
+   *          the row
+   * @param column
+   *          the column
+   * @return the cell data width
+   */
   private int getCellDataWidth(int row, int column) {
     // Inovke the renderer for the cell to calculate the preferred width
 
@@ -144,6 +224,14 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 
   /*
    * Update the TableColumn with the newly calculated width
+   */
+  /**
+   * Update table column.
+   * 
+   * @param column
+   *          the column
+   * @param width
+   *          the width
    */
   private void updateTableColumn(int column, int width) {
     final TableColumn tableColumn = table.getColumnModel().getColumn(column);
@@ -167,6 +255,9 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Restore the widths of the columns in the table to its previous width
    */
+  /**
+   * Restore columns.
+   */
   public void restoreColumns() {
     TableColumnModel tcm = table.getColumnModel();
 
@@ -177,6 +268,12 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 
   /*
    * Restore the width of the specified column to its previous width
+   */
+  /**
+   * Restore column.
+   * 
+   * @param column
+   *          the column
    */
   private void restoreColumn(int column) {
     TableColumn tableColumn = table.getColumnModel().getColumn(column);
@@ -191,12 +288,24 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Indicates whether to include the header in the width calculation
    */
+  /**
+   * Sets the column header included.
+   * 
+   * @param isColumnHeaderIncluded
+   *          the new column header included
+   */
   public void setColumnHeaderIncluded(boolean isColumnHeaderIncluded) {
     this.isColumnHeaderIncluded = isColumnHeaderIncluded;
   }
 
   /*
    * Indicates whether to include the model data in the width calculation
+   */
+  /**
+   * Sets the column data included.
+   * 
+   * @param isColumnDataIncluded
+   *          the new column data included
    */
   public void setColumnDataIncluded(boolean isColumnDataIncluded) {
     this.isColumnDataIncluded = isColumnDataIncluded;
@@ -205,6 +314,12 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Indicates whether columns can only be increased in size
    */
+  /**
+   * Sets the only adjust larger.
+   * 
+   * @param isOnlyAdjustLarger
+   *          the new only adjust larger
+   */
   public void setOnlyAdjustLarger(boolean isOnlyAdjustLarger) {
     this.isOnlyAdjustLarger = isOnlyAdjustLarger;
   }
@@ -212,6 +327,12 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Indicate whether changes to the model should cause the width to be
    * dynamically recalculated.
+   */
+  /**
+   * Sets the dynamic adjustment.
+   * 
+   * @param isDynamicAdjustment
+   *          the new dynamic adjustment
    */
   public void setDynamicAdjustment(boolean isDynamicAdjustment) {
     // May need to add or remove the TableModelListener when changed
@@ -233,6 +354,13 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   //
   // Implement the PropertyChangeListener
   //
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent
+   * )
+   */
   public void propertyChange(PropertyChangeEvent e) {
     // When the TableModel changes we need to update the listeners
     // and column widths
@@ -250,6 +378,12 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   //
   // Implement the TableModelListener
   //
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.
+   * TableModelEvent)
+   */
   public void tableChanged(TableModelEvent e) {
     if (!isColumnDataIncluded)
       return;
@@ -288,6 +422,9 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Install Actions to give user control of certain functionality.
    */
+  /**
+   * Install actions.
+   */
   private void installActions() {
     installColumnAction(true, true, "adjustColumn", "control ADD");
     installColumnAction(false, true, "adjustColumns", "control shift ADD");
@@ -301,6 +438,18 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Update the input and action maps with a new ColumnAction
    */
+  /**
+   * Install column action.
+   * 
+   * @param isSelectedColumn
+   *          the is selected column
+   * @param isAdjust
+   *          the is adjust
+   * @param key
+   *          the key
+   * @param keyStroke
+   *          the key stroke
+   */
   private void installColumnAction(boolean isSelectedColumn, boolean isAdjust, String key, String keyStroke) {
     Action action = new ColumnAction(isSelectedColumn, isAdjust);
     KeyStroke ks = KeyStroke.getKeyStroke(keyStroke);
@@ -310,6 +459,18 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 
   /*
    * Update the input and action maps with new ToggleAction
+   */
+  /**
+   * Install toggle action.
+   * 
+   * @param isToggleDynamic
+   *          the is toggle dynamic
+   * @param isToggleLarger
+   *          the is toggle larger
+   * @param key
+   *          the key
+   * @param keyStroke
+   *          the key stroke
    */
   private void installToggleAction(boolean isToggleDynamic, boolean isToggleLarger, String key, String keyStroke) {
     Action action = new ToggleAction(isToggleDynamic, isToggleLarger);
@@ -321,15 +482,38 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * Action to adjust or restore the width of a single column or all columns
    */
+  /**
+   * The Class ColumnAction.
+   * 
+   * @author Manuel Laggner
+   */
   class ColumnAction extends AbstractAction {
+
+    /** The is selected column. */
     private boolean isSelectedColumn;
+
+    /** The is adjust. */
     private boolean isAdjust;
 
+    /**
+     * Instantiates a new column action.
+     * 
+     * @param isSelectedColumn
+     *          the is selected column
+     * @param isAdjust
+     *          the is adjust
+     */
     public ColumnAction(boolean isSelectedColumn, boolean isAdjust) {
       this.isSelectedColumn = isSelectedColumn;
       this.isAdjust = isAdjust;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
       // Handle selected column(s) width change actions
@@ -357,15 +541,38 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
    * Toggle properties of the TableColumnAdjuster so the user can customize the
    * functionality to their preferences
    */
+  /**
+   * The Class ToggleAction.
+   * 
+   * @author Manuel Laggner
+   */
   class ToggleAction extends AbstractAction {
+
+    /** The is toggle dynamic. */
     private boolean isToggleDynamic;
+
+    /** The is toggle larger. */
     private boolean isToggleLarger;
 
+    /**
+     * Instantiates a new toggle action.
+     * 
+     * @param isToggleDynamic
+     *          the is toggle dynamic
+     * @param isToggleLarger
+     *          the is toggle larger
+     */
     public ToggleAction(boolean isToggleDynamic, boolean isToggleLarger) {
       this.isToggleDynamic = isToggleDynamic;
       this.isToggleLarger = isToggleLarger;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
       if (isToggleDynamic) {

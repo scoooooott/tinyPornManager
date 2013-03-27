@@ -31,6 +31,8 @@ import org.tinymediamanager.ui.movies.MoviePanel;
 
 /**
  * The Class TmmWindowSaver.
+ * 
+ * @author Manuel Laggner
  */
 public class TmmWindowSaver implements AWTEventListener {
 

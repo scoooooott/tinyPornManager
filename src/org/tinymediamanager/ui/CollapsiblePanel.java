@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012-2013 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.tinymediamanager.ui;
 
 import java.awt.BorderLayout;
@@ -28,11 +43,16 @@ import javax.swing.border.TitledBorder;
 
 /**
  * The user-triggered collapsible panel containing the component (trigger) in
- * the titled border
+ * the titled border.
+ * 
+ * @author Manuel Laggner
  */
 public class CollapsiblePanel extends JPanel {
+
+  /** The Constant serialVersionUID. */
   public static final long serialVersionUID    = -343234;
 
+  /** The border. */
   CollapsibleTitledBorder  border;                                                           // includes
                                                                                               // upper
                                                                                               // left
@@ -40,28 +60,38 @@ public class CollapsiblePanel extends JPanel {
                                                                                               // and
                                                                                               // line
                                                                                               // type
+  /** The collapsed border line. */
   Border                   collapsedBorderLine = BorderFactory.createEmptyBorder(2, 2, 2, 2); // no
-                                                                                              // border
+  // border
+  /** The expanded border line. */
   Border                   expandedBorderLine  = null;                                       // default
-                                                                                              // is
-                                                                                              // used,
-                                                                                              // etched
-                                                                                              // lowered
-                                                                                              // border
-                                                                                              // on
-                                                                                              // MAC????
+  // is
+  // used,
+  // etched
+  // lowered
+  // border
+  // on
+  // MAC????
+  /** The title component. */
   AbstractButton           titleComponent;                                                   // displayed
-                                                                                              // in
-                                                                                              // the
-                                                                                              // titled
-                                                                                              // border
+  // in
+  // the
+  // titled
+  // border
+  /** The Constant EXPANDED. */
   final static int         COLLAPSED           = 0, EXPANDED = 1;                            // Expand/Collapse
-                                                                                              // button,image
-                                                                                              // States
+  // button,image
+  // States
+  /** The icon arrow. */
   ImageIcon[]              iconArrow           = createExpandAndCollapseIcon();
-  JButton                  arrow               = createArrowButton();                         // the
+
+  /** The arrow. */
+  JButton                  arrow               = createArrowButton();                        // the
                                                                                               // arrow
+  /** The panel. */
   protected JPanel         panel;
+
+  /** The collapsed. */
   boolean                  collapsed;                                                        // stores
                                                                                               // current
                                                                                               // state
@@ -107,6 +137,8 @@ public class CollapsiblePanel extends JPanel {
    * @param text
    *          Title of the collapsible panel in string format, used to create a
    *          button with text and an arrow icon
+   * @param component
+   *          the component
    */
   public CollapsiblePanel(String text, JRadioButton component) {
     collapsed = !component.isSelected();
@@ -153,6 +185,12 @@ public class CollapsiblePanel extends JPanel {
     titleComponent.setBounds(componentRectangle);
   }
 
+  /**
+   * Sets the title component text.
+   * 
+   * @param text
+   *          the new title component text
+   */
   public void setTitleComponentText(String text) {
     if (titleComponent instanceof JButton) {
       titleComponent.setText(text);
@@ -160,6 +198,11 @@ public class CollapsiblePanel extends JPanel {
     placeTitleComponent();
   }
 
+  /**
+   * Gets the content pane.
+   * 
+   * @return the content pane
+   */
   public JPanel getContentPane() {
     return panel;
   }
@@ -190,6 +233,11 @@ public class CollapsiblePanel extends JPanel {
     updateUI();
   }
 
+  /**
+   * Checks if is collapsed.
+   * 
+   * @return true, if is collapsed
+   */
   public boolean isCollapsed() {
     return collapsed;
   }
@@ -217,6 +265,8 @@ public class CollapsiblePanel extends JPanel {
 
   /**
    * Returns a button with an arrow icon and a collapse/expand action listener.
+   * 
+   * @return the j button
    */
   private JButton createArrowButton() {
     JButton button = new JButton("arrow", iconArrow[COLLAPSED]);
@@ -239,38 +289,93 @@ public class CollapsiblePanel extends JPanel {
   /**
    * Expanding or collapsing of extra content on the user's click of the
    * titledBorder component.
+   * 
+   * @author Manuel Laggner
    */
   private class ExpandAndCollapseAction extends AbstractAction implements ActionListener, ItemListener {
+
+    /** The Constant serialVersionUID. */
     public static final long serialVersionUID = -343231;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       setCollapsed(!isCollapsed());
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+     */
+    @Override
     public void itemStateChanged(ItemEvent e) {
       setCollapsed(!isCollapsed());
     }
   }
 
   /**
-   * Special titled border that includes a component in the title area
+   * Special titled border that includes a component in the title area.
+   * 
+   * @author Manuel Laggner
    */
   private class CollapsibleTitledBorder extends TitledBorder {
+
+    /** The Constant serialVersionUID. */
     public static final long serialVersionUID = -343230;
+
+    /** The component. */
     JComponent               component;
 
+    /**
+     * Instantiates a new collapsible titled border.
+     * 
+     * @param component
+     *          the component
+     */
     public CollapsibleTitledBorder(JComponent component) {
       this(null, component, LEFT, TOP);
     }
 
+    /**
+     * Instantiates a new collapsible titled border.
+     * 
+     * @param border
+     *          the border
+     */
     public CollapsibleTitledBorder(Border border) {
       this(border, null, LEFT, TOP);
     }
 
+    /**
+     * Instantiates a new collapsible titled border.
+     * 
+     * @param border
+     *          the border
+     * @param component
+     *          the component
+     */
     public CollapsibleTitledBorder(Border border, JComponent component) {
       this(border, component, LEFT, TOP);
     }
 
+    /**
+     * Instantiates a new collapsible titled border.
+     * 
+     * @param border
+     *          the border
+     * @param component
+     *          the component
+     * @param titleJustification
+     *          the title justification
+     * @param titlePosition
+     *          the title position
+     */
     public CollapsibleTitledBorder(Border border, JComponent component, int titleJustification, int titlePosition) {
       // TitledBorder needs border, title, justification, position, font, and
       // color
@@ -281,6 +386,13 @@ public class CollapsiblePanel extends JPanel {
       }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.border.TitledBorder#paintBorder(java.awt.Component,
+     * java.awt.Graphics, int, int, int, int)
+     */
+    @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
       Rectangle borderR = new Rectangle(x + EDGE_SPACING, y + EDGE_SPACING, width - (EDGE_SPACING * 2), height - (EDGE_SPACING * 2));
       Insets borderInsets;
@@ -326,6 +438,13 @@ public class CollapsiblePanel extends JPanel {
       g.setColor(col);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.border.TitledBorder#getBorderInsets(java.awt.Component,
+     * java.awt.Insets)
+     */
+    @Override
     public Insets getBorderInsets(Component c, Insets insets) {
       Insets borderInsets;
       if (border != null) {
@@ -369,14 +488,34 @@ public class CollapsiblePanel extends JPanel {
       return insets;
     }
 
+    /**
+     * Gets the title component.
+     * 
+     * @return the title component
+     */
     public JComponent getTitleComponent() {
       return component;
     }
 
+    /**
+     * Sets the title component.
+     * 
+     * @param component
+     *          the new title component
+     */
     public void setTitleComponent(JComponent component) {
       this.component = component;
     }
 
+    /**
+     * Gets the component rect.
+     * 
+     * @param rect
+     *          the rect
+     * @param borderInsets
+     *          the border insets
+     * @return the component rect
+     */
     public Rectangle getComponentRect(Rectangle rect, Insets borderInsets) {
       Dimension compD = component.getPreferredSize();
       Rectangle compR = new Rectangle(0, 0, compD.width, compD.height);

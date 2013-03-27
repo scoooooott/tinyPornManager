@@ -33,6 +33,8 @@ import javax.swing.UIManager;
  * @author Georgios Migdos <cyberpython@gmail.com>
  */
 public class JSearchTextField extends JIconTextField implements FocusListener {
+
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
@@ -107,6 +109,7 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
    * 
    * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
    */
+  @Override
   public void focusGained(FocusEvent e) {
     this.repaint();
   }
@@ -116,6 +119,7 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
    * 
    * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
    */
+  @Override
   public void focusLost(FocusEvent e) {
     this.repaint();
   }

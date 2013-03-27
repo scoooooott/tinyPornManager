@@ -31,6 +31,8 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 /**
  * The Class TmmTabbedPaneUI.
+ * 
+ * @author Manuel Laggner
  */
 public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
 
@@ -84,8 +86,8 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
    * java.awt.FontMetrics, int, java.lang.String, javax.swing.Icon,
    * java.awt.Rectangle, java.awt.Rectangle, java.awt.Rectangle, boolean)
    */
-  protected void layoutLabel(int tabPlacement, FontMetrics metrics, int tabIndex, String title, Icon icon, Rectangle tabRect, Rectangle iconRect, Rectangle textRect,
-      boolean isSelected) {
+  protected void layoutLabel(int tabPlacement, FontMetrics metrics, int tabIndex, String title, Icon icon, Rectangle tabRect, Rectangle iconRect,
+      Rectangle textRect, boolean isSelected) {
     Rectangle tabRectPeq = new Rectangle(tabRect);
     // tabRectPeq.width -= inclTab;
     super.layoutLabel(tabPlacement, metrics, tabIndex, title, icon, tabRectPeq, iconRect, textRect, isSelected);
@@ -118,7 +120,8 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
           if (i < lines.length - 2) {
             carp.addPoint(tabPane.getWidth() - 2 * fila, lines[i + 1]);
             carp.addPoint(0, lines[i + 1]);
-          } else {
+          }
+          else {
             carp.addPoint(tabPane.getWidth() - 2 * fila, lines[i] + rects[selectedIndex].height);
             carp.addPoint(0, lines[i] + rects[selectedIndex].height);
           }
@@ -131,7 +134,8 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
           g.setColor(darkShadow.darker());
           g.drawPolygon(carp);
         }
-      } else {
+      }
+      else {
         int fila = 0;
         for (int i = 0; i < lines.length - 1; i++, fila++) {
           Polygon carp = new Polygon();
@@ -205,7 +209,8 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
       // System.out.println("Tab is Selected");
       g2D.setColor(tabPane.getBackground());
       // g2D.setPaint(gradientShadow);
-    } else {
+    }
+    else {
       // g2D.setPaint( gradientShadow);
       g2D.setColor(tabPane.getBackgroundAt(tabIndex));
       // g2D.setColor(selectColor);
@@ -228,8 +233,8 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
   }
 
   /**
-   * Este metodo devuelve un tama�o mas grande de lo necesario, haciendoer
-   * hueco para la decoracion.
+   * Este metodo devuelve un tama�o mas grande de lo necesario, haciendoer hueco
+   * para la decoracion.
    * 
    * @param tabPlacement
    *          the tab placement
@@ -258,7 +263,8 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
   protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
     if (tabPlacement == LEFT || tabPlacement == RIGHT) {
       return super.calculateTabHeight(tabPlacement, tabIndex, fontHeight);
-    } else {
+    }
+    else {
       return anchoFocoH + super.calculateTabHeight(tabPlacement, tabIndex, fontHeight);
     }
   }
@@ -304,7 +310,8 @@ public class TmmTabbedPaneUI extends BasicTabbedPaneUI {
    * @param isSelected
    *          the is selected
    */
-  protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect, boolean isSelected) {
+  protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect,
+      boolean isSelected) {
     // if (/* tabPane.hasFocus() && */isSelected) {
     // g.setColor(UIManager.getColor("ScrollBar.thumbShadow"));
     // g.drawPolygon(shape);

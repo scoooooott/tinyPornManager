@@ -23,6 +23,8 @@ import org.tinymediamanager.core.movie.MovieSet;
 
 /**
  * The Class MovieSelectionModel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieSetSelectionModel extends AbstractModelObject {
 

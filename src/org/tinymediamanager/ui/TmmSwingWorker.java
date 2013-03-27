@@ -21,8 +21,9 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
 /**
- * @author Manuel Laggner
+ * The Class TmmSwingWorker.
  * 
+ * @author Manuel Laggner
  */
 public abstract class TmmSwingWorker extends SwingWorker<Void, Void> {
 
@@ -51,5 +52,8 @@ public abstract class TmmSwingWorker extends SwingWorker<Void, Void> {
     btnCancelTask = button;
   }
 
+  /**
+   * Cancel.
+   */
   public abstract void cancel();
 }

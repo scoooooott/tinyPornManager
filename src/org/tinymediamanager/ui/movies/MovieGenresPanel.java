@@ -26,15 +26,20 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 
 /**
  * The Class MovieGenresPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieGenresPanel extends JPanel {
 
+  /** The Constant serialVersionUID. */
+  private static final long   serialVersionUID = -6585642654072040266L;
+
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(MovieGenresPanel.class);
+  private static final Logger LOGGER           = Logger.getLogger(MovieGenresPanel.class);
 
   /** The model. */
   private MovieSelectionModel movieSelectionModel;
@@ -71,8 +76,8 @@ public class MovieGenresPanel extends JPanel {
    */
   private void buildImages() {
     removeAll();
-    List<MediaGenres2> genres = movieSelectionModel.getSelectedMovie().getGenres();
-    for (MediaGenres2 genre : genres) {
+    List<MediaGenres> genres = movieSelectionModel.getSelectedMovie().getGenres();
+    for (MediaGenres genre : genres) {
       try {
         StringBuilder sb = new StringBuilder("/images/genres/");
         sb.append(genre.name().toLowerCase());

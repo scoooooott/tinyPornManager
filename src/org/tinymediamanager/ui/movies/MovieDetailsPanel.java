@@ -41,11 +41,12 @@ import com.jgoodies.forms.layout.Sizes;
 
 /**
  * The Class MovieDetailsPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieDetailsPanel extends JPanel {
-
   /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = 1L;
+  private static final long   serialVersionUID = 6273970118830324299L;
 
   /** The logger. */
   private final static Logger LOGGER           = Logger.getLogger(MovieDetailsPanel.class);
@@ -63,7 +64,6 @@ public class MovieDetailsPanel extends JPanel {
   private JLabel              lblProductionT;
 
   /** The lbl production. */
-  // private JTextArea lblProduction;
   private JLabel              lblProduction;
 
   /** The lbl genres t. */
@@ -116,7 +116,11 @@ public class MovieDetailsPanel extends JPanel {
 
   /** The lbl movie set. */
   private JLabel              lblMovieSet;
+
+  /** The lbl spoken languages t. */
   private JLabel              lblSpokenLanguagesT;
+
+  /** The lbl spoken languages. */
   private JLabel              lblSpokenLanguages;
 
   /**
@@ -257,8 +261,11 @@ public class MovieDetailsPanel extends JPanel {
     initDataBindings();
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalName");
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_6 = BeanProperty.create("selectedMovie.originalTitle");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_6, lblOriginalTitle, jLabelBeanProperty);
@@ -290,7 +297,7 @@ public class MovieDetailsPanel extends JPanel {
         movieSelectionModelBeanProperty_9, lblCertification, jLabelBeanProperty);
     autoBinding_10.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovie.tagAsString");
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovie.tagsAsString");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_4, lblTags, jLabelBeanProperty);
     autoBinding_4.bind();

@@ -26,11 +26,15 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class MediaArt.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaArtwork {
 
   /**
    * The Enum MediaArtworkType.
+   * 
+   * @author Manuel Laggner
    */
   public enum MediaArtworkType {
     /** The background. */
@@ -295,6 +299,8 @@ public class MediaArtwork {
 
   /**
    * The Class ImageSizeAndUrl.
+   * 
+   * @author Manuel Laggner
    */
   public static class ImageSizeAndUrl implements Comparable<ImageSizeAndUrl> {
 

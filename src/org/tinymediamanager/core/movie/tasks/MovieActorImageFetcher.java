@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.movie.tasks;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,6 +26,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**

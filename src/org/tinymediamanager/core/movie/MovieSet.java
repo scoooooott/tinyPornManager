@@ -40,6 +40,8 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
  * The Class MovieSet.
+ * 
+ * @author Manuel Laggner
  */
 @Entity
 public class MovieSet extends AbstractModelObject {
@@ -205,6 +207,11 @@ public class MovieSet extends AbstractModelObject {
     firePropertyChange("fanart", oldValue, newValue);
   }
 
+  /**
+   * Gets the fanart.
+   * 
+   * @return the fanart
+   */
   public String getFanart() {
     String fanart = "";
 
@@ -232,6 +239,11 @@ public class MovieSet extends AbstractModelObject {
     return fanart;
   }
 
+  /**
+   * Gets the poster.
+   * 
+   * @return the poster
+   */
   public String getPoster() {
     String poster = "";
 
@@ -525,13 +537,25 @@ public class MovieSet extends AbstractModelObject {
 
   /**
    * The Class ImageFetcher.
+   * 
+   * @author Manuel Laggner
    */
   private class ImageFetcher implements Runnable {
 
+    /** The property name. */
     private String propertyName = "";
 
+    /** The image url. */
     private String imageUrl     = "";
 
+    /**
+     * Instantiates a new image fetcher.
+     * 
+     * @param propertyName
+     *          the property name
+     * @param url
+     *          the url
+     */
     public ImageFetcher(String propertyName, String url) {
       this.propertyName = propertyName;
       this.imageUrl = url;
@@ -564,6 +588,8 @@ public class MovieSet extends AbstractModelObject {
 
   /**
    * The Class MovieInMovieSetComparator.
+   * 
+   * @author Manuel Laggner
    */
   private class MovieInMovieSetComparator implements Comparator<Movie> {
 

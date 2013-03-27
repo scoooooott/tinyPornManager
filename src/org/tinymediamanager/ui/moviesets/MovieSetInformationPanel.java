@@ -52,8 +52,13 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieSetInformationPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieSetInformationPanel extends JPanel {
+
+  /** The Constant serialVersionUID. */
+  private static final long      serialVersionUID = -8166784589262658147L;
 
   /** The selection model. */
   private MovieSetSelectionModel selectionModel;
@@ -95,13 +100,13 @@ public class MovieSetInformationPanel extends JPanel {
   private EventList<Movie>       movieEventList;
 
   /** The media file table model. */
-  private EventTableModel<Movie> movieTableModel = null;
+  private EventTableModel<Movie> movieTableModel  = null;
 
   /**
    * Instantiates a new movie set information panel.
    * 
-   * @param selectionModel
-   *          the selection model
+   * @param model
+   *          the model
    */
   public MovieSetInformationPanel(MovieSetSelectionModel model) {
     this.selectionModel = model;
@@ -197,6 +202,8 @@ public class MovieSetInformationPanel extends JPanel {
 
   /**
    * The Class MediaTableFormat.
+   * 
+   * @author Manuel Laggner
    */
   private static class MovieInMovieSetTableFormat implements AdvancedTableFormat<Movie> {
 
@@ -284,6 +291,9 @@ public class MovieSetInformationPanel extends JPanel {
 
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty = BeanProperty.create("selectedMovieSet.name");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");

@@ -26,12 +26,23 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * The Class IconRenderer.
+ * 
+ * @author Manuel Laggner
  */
 public class IconRenderer extends DefaultTableCellRenderer {
+
+  /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
 
+  /** The tooltip. */
   private String            tooltip;
 
+  /**
+   * Instantiates a new icon renderer.
+   * 
+   * @param tooltip
+   *          the tooltip
+   */
   public IconRenderer(String tooltip) {
     this.tooltip = tooltip;
   }
@@ -43,6 +54,7 @@ public class IconRenderer extends DefaultTableCellRenderer {
    * javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent
    * (javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
    */
+  @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     if (value instanceof ImageIcon) {
       setIcon((ImageIcon) value);

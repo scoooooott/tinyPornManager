@@ -26,11 +26,40 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+/**
+ * The Class AutocompleteComboBox.
+ * 
+ * @author Manuel Laggner
+ */
+@SuppressWarnings("rawtypes")
 public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySelectionManager {
-  private String searchFor;
-  private long   lap;
 
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = 6366300597464784607L;
+
+  /** The search for. */
+  private String            searchFor;
+
+  /** The lap. */
+  private long              lap;
+
+  /**
+   * The Class CBDocument.
+   * 
+   * @author Manuel Laggner
+   */
   public class CBDocument extends PlainDocument {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 8263475765974828640L;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.text.PlainDocument#insertString(int, java.lang.String,
+     * javax.swing.text.AttributeSet)
+     */
+    @Override
     public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
       if (str == null)
         return;
@@ -40,6 +69,13 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
     }
   }
 
+  /**
+   * Instantiates a new autocomplete combo box.
+   * 
+   * @param items
+   *          the items
+   */
+  @SuppressWarnings("unchecked")
   public AutocompleteComboBox(Object[] items) {
     super(items);
     lap = new java.util.Date().getTime();
@@ -50,6 +86,7 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
       if (tf != null) {
         tf.setDocument(new CBDocument());
         addActionListener(new ActionListener() {
+          @Override
           public void actionPerformed(ActionEvent evt) {
             JTextField tf = (JTextField) getEditor().getEditorComponent();
             String text = tf.getText();
@@ -70,6 +107,13 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.JComboBox.KeySelectionManager#selectionForKey(char,
+   * javax.swing.ComboBoxModel)
+   */
+  @Override
   public int selectionForKey(char aKey, ComboBoxModel aModel) {
     long now = new java.util.Date().getTime();
     if (searchFor != null && aKey == KeyEvent.VK_BACK_SPACE && searchFor.length() > 0) {
@@ -93,6 +137,12 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
     return -1;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.JComboBox#fireActionEvent()
+   */
+  @Override
   public void fireActionEvent() {
     super.fireActionEvent();
   }

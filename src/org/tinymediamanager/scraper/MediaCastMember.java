@@ -24,11 +24,28 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * The Class CastMember.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaCastMember {
 
+  /**
+   * The Enum CastType.
+   * 
+   * @author Manuel Laggner
+   */
   public enum CastType {
-    ACTOR, WRITER, DIRECTOR, OTHER, ALL
+
+    /** The actor. */
+    ACTOR,
+    /** The writer. */
+    WRITER,
+    /** The director. */
+    DIRECTOR,
+    /** The other. */
+    OTHER,
+    /** The all. */
+    ALL
   }
 
   /** The id. */
@@ -222,8 +239,6 @@ public class MediaCastMember {
    * <code>toString</code> for the specified object.
    * </p>
    * 
-   * @param object
-   *          the Object to be output
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */

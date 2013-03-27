@@ -22,14 +22,55 @@ import org.tinymediamanager.core.MediaEntity;
 
 /**
  * The Class TvShow.
+ * 
+ * @author Manuel Laggner
  */
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShow extends MediaEntity {
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#getFanart()
+   */
   @Override
-  public String getNameForUi() {
-    return name;
+  public String getFanart() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#getPoster()
+   */
+  @Override
+  public String getPoster() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setPoster(java.lang.String)
+   */
+  @Override
+  public void setPoster(String poster) {
+    // TODO Auto-generated method stub
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setFanart(java.lang.String)
+   */
+  @Override
+  public void setFanart(String fanart) {
+    // TODO Auto-generated method stub
+
   }
 
 }

@@ -35,6 +35,8 @@ import javax.swing.table.TableModel;
 
 /**
  * The Class MyTable.
+ * 
+ * @author Manuel Laggner
  */
 public class MyTable extends JTable {
 
@@ -159,8 +161,12 @@ public class MyTable extends JTable {
   /**
    * Creates a JViewport that draws a striped backgroud corresponding to the row
    * positions of the given JTable.
+   * 
+   * @author Manuel Laggner
    */
   private static class StripedViewport extends JViewport {
+
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The table. */

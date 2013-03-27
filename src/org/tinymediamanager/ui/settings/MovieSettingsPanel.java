@@ -49,8 +49,8 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.core.movie.MovieConnectors;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -61,10 +61,15 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieSettingsPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieSettingsPanel extends JPanel {
 
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
   /** The settings. */

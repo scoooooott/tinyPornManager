@@ -29,7 +29,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.CollapsiblePanel;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
@@ -44,21 +44,25 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieExtendedSearchPanel.
+ * 
+ * @author Manuel Laggner
  */
-@SuppressWarnings("serial")
 public class MovieExtendedSearchPanel extends CollapsiblePanel {
+
+  /** The Constant serialVersionUID. */
+  private static final long   serialVersionUID = -4170930017190753789L;
 
   /** The cb search watched. */
   private JCheckBox           cbFilterWatched;
 
   /** The action sort. */
-  private final Action        actionSort   = new SortAction();
+  private final Action        actionSort       = new SortAction();
 
   /** The movie selection model. */
   private MovieSelectionModel movieSelectionModel;
 
   /** The movie list. */
-  private MovieList           movieList    = MovieList.getInstance();
+  private MovieList           movieList        = MovieList.getInstance();
 
   /** The lbl genre. */
   private JLabel              lblGenre;
@@ -97,7 +101,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
   private JTextField          tfCastMember;
 
   /** The action filter. */
-  private final Action        actionFilter = new FilterAction();
+  private final Action        actionFilter     = new FilterAction();
 
   /** The cb filter tag. */
   private JCheckBox           cbFilterTag;
@@ -172,7 +176,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     lblGenre = new JLabel("Genre");
     panel.add(lblGenre, "4, 5, right, default");
 
-    cbGenre = new JComboBox(MediaGenres2.values());
+    cbGenre = new JComboBox(MediaGenres.values());
     cbGenre.setAction(actionFilter);
     panel.add(cbGenre, "6, 5, fill, default");
 
@@ -240,6 +244,8 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
   /**
    * The Class SortAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SortAction extends AbstractAction {
 
@@ -267,6 +273,8 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
   /**
    * The Class FilterAction.
+   * 
+   * @author Manuel Laggner
    */
   private class FilterAction extends AbstractAction {
 
@@ -303,7 +311,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
       // filter by genre
       if (cbFilterGenre.isSelected()) {
-        MediaGenres2 genre = (MediaGenres2) cbGenre.getSelectedItem();
+        MediaGenres genre = (MediaGenres) cbGenre.getSelectedItem();
         if (genre != null) {
           searchOptions.put(SearchOptions.GENRE, genre);
         }

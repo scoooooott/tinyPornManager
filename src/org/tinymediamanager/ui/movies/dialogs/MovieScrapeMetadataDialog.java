@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -38,22 +38,25 @@ import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieTrailerScrapers;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MovieScrapeMetadata.
  * 
  * @author Manuel Laggner
  */
-public class MovieScrapeMetadata extends JDialog {
+public class MovieScrapeMetadataDialog extends JDialog {
+
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID           = 3826984454317979241L;
 
   /** The Constant LOGGER. */
-  private static final Logger         LOGGER                     = Logger.getLogger(MovieScrapeMetadata.class);
+  private static final Logger         LOGGER                     = Logger.getLogger(MovieScrapeMetadataDialog.class);
 
   /** The movie search and scrape config. */
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
@@ -85,7 +88,7 @@ public class MovieScrapeMetadata extends JDialog {
    * @param title
    *          the title
    */
-  public MovieScrapeMetadata(String title) {
+  public MovieScrapeMetadataDialog(String title) {
     setTitle(title);
     setName("updateMetadata");
     setBounds(5, 5, 533, 257);

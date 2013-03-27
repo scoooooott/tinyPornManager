@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.moviesets.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -27,7 +26,6 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -46,22 +44,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -75,18 +69,22 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class ImageChooser.
+ * The Class MovieSetImageChooser.
+ * 
+ * @author Manuel Laggner
  */
-public class MovieImageChooser extends JDialog {
+public class MovieSetImageChooserDialog extends JDialog {
 
   /** The Constant serialVersionUID. */
   private static final long   serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger LOGGER           = Logger.getLogger(MovieImageChooser.class);
+  private static final Logger LOGGER           = Logger.getLogger(MovieSetImageChooserDialog.class);
 
   /**
    * The Enum ImageType.
+   * 
+   * @author Manuel Laggner
    */
   public enum ImageType {
 
@@ -132,40 +130,29 @@ public class MovieImageChooser extends JDialog {
   /** The toggle button ui. */
   private final ToggleButtonUI toggleButtonUI = new ToggleButtonUI();
 
-  /** The extra thumbs. */
-  private List<String>         extraThumbs;
-
-  /** The extra fanarts. */
-  private List<String>         extraFanarts;
-
   /** The action. */
   private final Action         action         = new SwingAction_2();
 
+  /** The movie list. */
   private final MovieList      movieList      = MovieList.getInstance();
 
   /**
    * Create the dialog.
    * 
-   * @param imdbId
-   *          the imdb id
    * @param tmdbId
    *          the tmdb id
-   * @param type
+   * @param poster
    *          the type
    * @param imageLabel
    *          the image label
-   * @param extrathumbs
-   *          the extrathumbs
    */
-  public MovieImageChooser(String imdbId, int tmdbId, ImageType type, ImageLabel imageLabel, List<String> extraThumbs, List<String> extraFanarts) {
+  public MovieSetImageChooserDialog(int tmdbId, ImageType poster, ImageLabel imageLabel) {
     setModal(true);
     setIconImage(Globals.logo);
     this.imageLabel = imageLabel;
-    this.type = type;
-    this.extraThumbs = extraThumbs;
-    this.extraFanarts = extraFanarts;
+    this.type = poster;
 
-    switch (type) {
+    switch (poster) {
       case FANART:
         setTitle("Choose fanart");
         break;
@@ -197,132 +184,46 @@ public class MovieImageChooser extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), }));
-      {
-        if (type == ImageType.FANART) {
-          JPanel panelExtraButtons = new JPanel();
-          buttonPane.add(panelExtraButtons, "2, 2, fill, bottom");
-          panelExtraButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
-          {
-            if (Globals.settings.isImageExtraThumbs()) {
-              JLabel labelThumbs = new JLabel("Extrathumbs:");
-              panelExtraButtons.add(labelThumbs);
-              JButton btnMarkExtrathumbs = new JButton("");
-              btnMarkExtrathumbs.setMargin(new Insets(0, 0, 0, 0));
-              btnMarkExtrathumbs.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/checkall.png")));
-              btnMarkExtrathumbs.setToolTipText("Mark all extrathumbs");
-              btnMarkExtrathumbs.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                  for (JToggleButton button : buttons) {
-                    if (button.getClientProperty("MediaArtworkExtrathumb") instanceof JCheckBox) {
-                      JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrathumb");
-                      chkbx.setSelected(true);
-                    }
-                  }
-                }
-              });
-              panelExtraButtons.add(btnMarkExtrathumbs);
-              JButton btnUnMarkExtrathumbs = new JButton("");
-              btnUnMarkExtrathumbs.setMargin(new Insets(0, 0, 0, 0));
-              btnUnMarkExtrathumbs.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/uncheckall.png")));
-              btnUnMarkExtrathumbs.setToolTipText("Unmark all extrathumbs");
-              btnUnMarkExtrathumbs.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                  for (JToggleButton button : buttons) {
-                    if (button.getClientProperty("MediaArtworkExtrathumb") instanceof JCheckBox) {
-                      JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrathumb");
-                      chkbx.setSelected(false);
-                    }
-                  }
-                }
-              });
-              panelExtraButtons.add(btnUnMarkExtrathumbs);
-            }
-            if (Globals.settings.isImageExtraThumbs() && Globals.settings.isImageExtraFanart()) {
-              JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-              separator.setPreferredSize(new Dimension(2, 16));
-              panelExtraButtons.add(separator);
-            }
-            if (Globals.settings.isImageExtraFanart()) {
-              JLabel labelFanart = new JLabel("Extrafanart:");
-              panelExtraButtons.add(labelFanart);
-              JButton btnMarkExtrafanart = new JButton("");
-              btnMarkExtrafanart.setMargin(new Insets(0, 0, 0, 0));
-              btnMarkExtrafanart.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/checkall.png")));
-              btnMarkExtrafanart.setToolTipText("Mark all extrafanart");
-              btnMarkExtrafanart.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                  for (JToggleButton button : buttons) {
-                    if (button.getClientProperty("MediaArtworkExtrafanart") instanceof JCheckBox) {
-                      JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrafanart");
-                      chkbx.setSelected(true);
-                    }
-                  }
-                }
-              });
-              panelExtraButtons.add(btnMarkExtrafanart);
-              JButton btnUnMarkExtrafanart = new JButton("");
-              btnUnMarkExtrafanart.setMargin(new Insets(0, 0, 0, 0));
-              btnUnMarkExtrafanart.setIcon(new ImageIcon(MovieImageChooser.class.getResource("/org/tinymediamanager/ui/images/uncheckall.png")));
-              btnUnMarkExtrafanart.setToolTipText("Unmark all extrafanart");
-              btnUnMarkExtrafanart.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                  for (JToggleButton button : buttons) {
-                    if (button.getClientProperty("MediaArtworkExtrafanart") instanceof JCheckBox) {
-                      JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrafanart");
-                      chkbx.setSelected(false);
-                    }
-                  }
-                }
-              });
-              panelExtraButtons.add(btnUnMarkExtrafanart);
-            }
-          }
-        }
-      }
-
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("23px"), }));
       {
         progressBar = new JProgressBar();
-        buttonPane.add(progressBar, "2, 4");
+        buttonPane.add(progressBar, "2, 2");
       }
       {
         lblProgressAction = new JLabel("");
-        buttonPane.add(lblProgressAction, "4, 4");
+        buttonPane.add(lblProgressAction, "4, 2");
       }
       {
         JButton okButton = new JButton("OK");
         okButton.setAction(actionOK);
         okButton.setActionCommand("OK");
-        buttonPane.add(okButton, "6, 4, fill, top");
+        buttonPane.add(okButton, "6, 2, fill, top");
         getRootPane().setDefaultButton(okButton);
       }
       {
         JButton btnAddFile = new JButton("Add file");
         btnAddFile.setAction(action);
-        buttonPane.add(btnAddFile, "8, 4, fill, top");
+        buttonPane.add(btnAddFile, "8, 2, fill, top");
       }
       {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setAction(actionCancel);
         cancelButton.setActionCommand("Cancel");
-        buttonPane.add(cancelButton, "10, 4, fill, top");
+        buttonPane.add(cancelButton, "10, 2, fill, top");
       }
     }
 
-    task = new DownloadTask(imdbId, tmdbId);
+    task = new DownloadTask(tmdbId);
     task.execute();
   }
 
   /**
    * The Class SwingAction.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction extends AbstractAction {
 
@@ -379,69 +280,9 @@ public class MovieImageChooser extends JDialog {
         }
       }
 
-      // extrathumbs
-      if (type == ImageType.FANART && Globals.settings.isImageExtraThumbs()) {
-        processExtraThumbs();
-      }
-
-      // extrafanart
-      if (type == ImageType.FANART && Globals.settings.isImageExtraFanart()) {
-        processExtraFanart();
-      }
-
       task.cancel(true);
       setVisible(false);
       dispose();
-    }
-
-    /**
-     * Process extra thumbs.
-     */
-    private void processExtraThumbs() {
-      extraThumbs.clear();
-      // get extrathumbs
-      for (JToggleButton button : buttons) {
-        if (button.getClientProperty("MediaArtworkExtrathumb") instanceof JCheckBox
-            && button.getClientProperty("MediaArtwork") instanceof MediaArtwork && button.getClientProperty("MediaArtworkSize") instanceof JComboBox) {
-          JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrathumb");
-          if (chkbx.isSelected()) {
-            MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
-            JComboBox cb = (JComboBox) button.getClientProperty("MediaArtworkSize");
-            ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
-            if (size != null) {
-              extraThumbs.add(size.getUrl());
-            }
-            else {
-              extraThumbs.add(artwork.getDefaultUrl());
-            }
-          }
-        }
-      }
-    }
-
-    /**
-     * Process extra fanart.
-     */
-    private void processExtraFanart() {
-      extraFanarts.clear();
-      // get extrafanart
-      for (JToggleButton button : buttons) {
-        if (button.getClientProperty("MediaArtworkExtrafanart") instanceof JCheckBox
-            && button.getClientProperty("MediaArtwork") instanceof MediaArtwork && button.getClientProperty("MediaArtworkSize") instanceof JComboBox) {
-          JCheckBox chkbx = (JCheckBox) button.getClientProperty("MediaArtworkExtrafanart");
-          if (chkbx.isSelected()) {
-            MediaArtwork artwork = (MediaArtwork) button.getClientProperty("MediaArtwork");
-            JComboBox cb = (JComboBox) button.getClientProperty("MediaArtworkSize");
-            ImageSizeAndUrl size = (ImageSizeAndUrl) cb.getSelectedItem();
-            if (size != null) {
-              extraFanarts.add(size.getUrl());
-            }
-            else {
-              extraFanarts.add(artwork.getDefaultUrl());
-            }
-          }
-        }
-      }
     }
   }
 
@@ -482,15 +323,15 @@ public class MovieImageChooser extends JDialog {
 
     switch (type) {
       case FANART:
-        gbl.columnWidths = new int[] { 130 };
-        gbl.rowHeights = new int[] { 180 };
+        gbl.columnWidths = new int[] { 300 };
+        gbl.rowHeights = new int[] { 150 };
         size = ImageLabel.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
       case POSTER:
       default:
-        gbl.columnWidths = new int[] { 180 };
-        gbl.rowHeights = new int[] { 270 };
+        gbl.columnWidths = new int[] { 150 };
+        gbl.rowHeights = new int[] { 250 };
         size = ImageLabel.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
@@ -511,7 +352,6 @@ public class MovieImageChooser extends JDialog {
     JToggleButton button = new JToggleButton();
     button.setBackground(Color.white);
     button.setUI(toggleButtonUI);
-    button.setMargin(new Insets(10, 10, 10, 10));
     BufferedImage resizedImage = new BufferedImage(size.x, size.y, imageType);
     Graphics2D g = resizedImage.createGraphics();
     g.drawImage(originalImage, 0, 0, size.x, size.y, null);
@@ -527,55 +367,32 @@ public class MovieImageChooser extends JDialog {
     gbc = new GridBagConstraints();
     gbc.gridx = 0;
     gbc.gridy = 1;
-    gbc.anchor = GridBagConstraints.LAST_LINE_START;
+    gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(0, 5, 0, 0);
     JComboBox cb = new JComboBox(artwork.getImageSizes().toArray());
     button.putClientProperty("MediaArtworkSize", cb);
     imagePanel.add(cb, gbc);
 
-    // should we provide an option for extrathumbs
-    if (type == ImageType.FANART && Globals.settings.isImageExtraThumbs()) {
-      gbc = new GridBagConstraints();
-      gbc.gridx = 1;
-      gbc.gridy = 1;
-      gbc.anchor = GridBagConstraints.LINE_END;
-      JLabel label = new JLabel("Extrathumb");
-      imagePanel.add(label, gbc);
-
+    if (type == ImageType.FANART) {
       gbc = new GridBagConstraints();
       gbc.gridx = 2;
       gbc.gridy = 1;
-      gbc.anchor = GridBagConstraints.LINE_END;
+      gbc.anchor = GridBagConstraints.EAST;
       JCheckBox chkbx = new JCheckBox();
       button.putClientProperty("MediaArtworkExtrathumb", chkbx);
-      imagePanel.add(chkbx, gbc);
-    }
-
-    // should we provide an option for extrafanart
-    if (type == ImageType.FANART && Globals.settings.isImageExtraFanart()) {
-      gbc = new GridBagConstraints();
-      gbc.gridx = 1;
-      gbc.gridy = Globals.settings.isImageExtraThumbs() ? 2 : 1;
-      gbc.anchor = GridBagConstraints.LINE_END;
-      JLabel label = new JLabel("Extrafanart");
-      imagePanel.add(label, gbc);
-
-      gbc = new GridBagConstraints();
-      gbc.gridx = 2;
-      gbc.gridy = Globals.settings.isImageExtraThumbs() ? 2 : 1;
-      gbc.anchor = GridBagConstraints.LINE_END;
-      JCheckBox chkbx = new JCheckBox();
-      button.putClientProperty("MediaArtworkExtrafanart", chkbx);
       imagePanel.add(chkbx, gbc);
     }
 
     panelImages.add(imagePanel);
     panelImages.validate();
     panelImages.getParent().validate();
+
   }
 
   /**
    * The Class SwingAction_1.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_1 extends AbstractAction {
 
@@ -605,25 +422,20 @@ public class MovieImageChooser extends JDialog {
 
   /**
    * The Class DownloadTask.
+   * 
+   * @author Manuel Laggner
    */
   private class DownloadTask extends SwingWorker<Void, Void> {
-
-    /** The imdb id. */
-    private String imdbId;
-
     /** The tmdb id. */
-    private int    tmdbId;
+    private int tmdbId;
 
     /**
      * Instantiates a new download task.
      * 
-     * @param imdbId
-     *          the imdb id
      * @param tmdbId
      *          the tmdb id
      */
-    public DownloadTask(String imdbId, int tmdbId) {
-      this.imdbId = imdbId;
+    public DownloadTask(int tmdbId) {
       this.tmdbId = tmdbId;
     }
 
@@ -634,68 +446,70 @@ public class MovieImageChooser extends JDialog {
      */
     @Override
     public Void doInBackground() {
-      if (StringUtils.isEmpty(imdbId) && tmdbId == 0) {
-        JOptionPane.showMessageDialog(null, "No ID (imdbId or tmdbId) for searching available");
+      if (tmdbId == 0) {
+        JOptionPane.showMessageDialog(null, "No ID (tmdbId) for searching available");
         return null;
       }
 
       startProgressBar("Downloading images");
 
+      TmdbMetadataProvider artworkProvider;
       try {
-        if (movieList.getArtworkProviders().size() == 0) {
+        artworkProvider = new TmdbMetadataProvider();
+      }
+      catch (Exception e1) {
+        LOGGER.warn(e1);
+        return null;
+      }
+
+      MediaArtworkType artworkType = null;
+
+      switch (type) {
+        case FANART:
+          artworkType = MediaArtworkType.BACKGROUND;
+          break;
+
+        case POSTER:
+          artworkType = MediaArtworkType.POSTER;
+          break;
+
+        default:
+          return null;
+      }
+
+      List<MediaArtwork> artwork = null;
+      try {
+        artwork = artworkProvider.getMovieSetArtwork(tmdbId, artworkType);
+      }
+      catch (Exception e1) {
+        LOGGER.warn(e1);
+      }
+
+      // return if nothing has been found
+      if (artwork == null) {
+        return null;
+      }
+
+      // display all images
+      for (MediaArtwork art : artwork) {
+        if (isCancelled()) {
           return null;
         }
 
-        // get images from all artworkproviders
-        for (IMediaArtworkProvider artworkProvider : movieList.getArtworkProviders()) {
-          MediaScrapeOptions options = new MediaScrapeOptions();
-          switch (type) {
-            case POSTER:
-              options.setArtworkType(MediaArtworkType.POSTER);
-              break;
-
-            case FANART:
-              options.setArtworkType(MediaArtworkType.BACKGROUND);
-              break;
-          }
-
-          options.setImdbId(imdbId);
-          options.setTmdbId(tmdbId);
-
-          List<MediaArtwork> artwork = artworkProvider.getArtwork(options);
-          if (artwork == null) {
-            continue;
-          }
-
-          // display all images
-          for (MediaArtwork art : artwork) {
-            if (isCancelled()) {
-              return null;
-            }
-
-            CachedUrl cachedUrl = null;
-            try {
-              cachedUrl = new CachedUrl(art.getPreviewUrl());
-              Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
-              BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
-              addImage(bufferedImage, art);
-            }
-            catch (Exception e) {
-              LOGGER.error("DownloadTask", e);
-              // mark cache file as damaged
-              if (cachedUrl != null) {
-                cachedUrl.removeCachedFile();
-              }
-            }
-
+        CachedUrl cachedUrl = null;
+        try {
+          cachedUrl = new CachedUrl(art.getPreviewUrl());
+          Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+          BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
+          addImage(bufferedImage, art);
+        }
+        catch (Exception e) {
+          LOGGER.error("DownloadTask", e);
+          // mark cache file as damaged
+          if (cachedUrl != null) {
+            cachedUrl.removeCachedFile();
           }
         }
-      }
-      catch (NumberFormatException e) {
-        LOGGER.error("DownloadTask", e);
-      }
-      catch (Exception e) {
-        LOGGER.error("DownloadTask", e);
       }
 
       return null;
@@ -717,6 +531,8 @@ public class MovieImageChooser extends JDialog {
 
   /**
    * The Class SwingAction_2.
+   * 
+   * @author Manuel Laggner
    */
   private class SwingAction_2 extends AbstractAction {
 
@@ -763,6 +579,8 @@ public class MovieImageChooser extends JDialog {
 
     /**
      * The Class ImageFileFilter.
+     * 
+     * @author Manuel Laggner
      */
     public class ImageFileFilter extends FileFilter {
 

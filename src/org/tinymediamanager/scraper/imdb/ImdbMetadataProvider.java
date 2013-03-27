@@ -38,7 +38,7 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
-import org.tinymediamanager.scraper.MediaGenres2;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -51,6 +51,8 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
  * The Class ImdbMetadataProvider.
+ * 
+ * @author Manuel Laggner
  */
 public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
@@ -90,6 +92,12 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     return providerInfo;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetadata(org.
+   * tinymediamanager.scraper.MediaScrapeOptions)
+   */
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
@@ -342,7 +350,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
             Elements a = div.first().getElementsByTag("a");
             for (Element anchor : a) {
               if (anchor.attr("href").matches("/Sections/Genres/.*")) {
-                MediaGenres2 genre = MediaGenres2.getGenre(anchor.ownText());
+                MediaGenres genre = MediaGenres.getGenre(anchor.ownText());
                 if (genre != null && !md.getGenres().contains(genre)) {
                   md.addGenre(genre);
                 }
@@ -877,6 +885,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
   /**
    * The Class ImdbWorker.
+   * 
+   * @author Manuel Laggner
    */
   private class ImdbWorker implements Callable<Document> {
 
@@ -917,6 +927,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
   /**
    * The Class TmdbWorker.
+   * 
+   * @author Manuel Laggner
    */
   private class TmdbWorker implements Callable<MediaMetadata> {
 

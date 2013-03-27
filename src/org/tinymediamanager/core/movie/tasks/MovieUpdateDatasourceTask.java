@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.movie.tasks;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -26,11 +26,15 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
  * The Class UpdateDataSourcesTask.
+ * 
+ * @author Manuel Laggner
  */
 
 public class MovieUpdateDatasourceTask extends TmmSwingWorker {
@@ -190,7 +194,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
           if (movie == null) {
             // movie did not exist - create new one
             movie = new Movie();
-            movie.setName(ParserUtils.detectCleanMoviename(FilenameUtils.getBaseName(parentDir)));
+            movie.setTitle(ParserUtils.detectCleanMoviename(FilenameUtils.getBaseName(parentDir)));
             movie.setPath(parentDir);
             movie.addToFiles(videoFiles);
             movie.findImages();
@@ -283,7 +287,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
           if (movie == null) {
             // movie did not exist - create new one
             movie = new Movie();
-            movie.setName(ParserUtils.detectCleanMoviename(dir.getName()));
+            movie.setTitle(ParserUtils.detectCleanMoviename(dir.getName()));
             movie.setPath(dir.getPath());
             movie.addToFiles(videoFiles);
             movie.findImages();

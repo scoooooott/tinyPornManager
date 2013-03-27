@@ -34,6 +34,8 @@ import org.tinymediamanager.core.movie.MovieSet;
 
 /**
  * The Class MovieSetTreeModel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieSetTreeModel implements TreeModel {
 
@@ -46,8 +48,10 @@ public class MovieSetTreeModel implements TreeModel {
   /** The node map to store the node for Objects. */
   private HashMap<Object, TreeNode> nodeMap   = new HashMap<Object, TreeNode>();
 
+  /** The property change listener. */
   private PropertyChangeListener    propertyChangeListener;
 
+  /** The movie list. */
   MovieList                         movieList = MovieList.getInstance();
 
   /**
@@ -219,6 +223,14 @@ public class MovieSetTreeModel implements TreeModel {
     movieSet.addPropertyChangeListener(propertyChangeListener);
   }
 
+  /**
+   * Adds the movie.
+   * 
+   * @param movieSet
+   *          the movie set
+   * @param movie
+   *          the movie
+   */
   private void addMovie(MovieSet movieSet, Movie movie) {
     // get the movie set node
     MovieSetTreeNode parent = (MovieSetTreeNode) nodeMap.get(movieSet);
@@ -237,6 +249,14 @@ public class MovieSetTreeModel implements TreeModel {
     }
   }
 
+  /**
+   * Removes the movie.
+   * 
+   * @param movieSet
+   *          the movie set
+   * @param movie
+   *          the movie
+   */
   private void removeMovie(MovieSet movieSet, Movie movie) {
     // get the movie set node
     MovieSetTreeNode parent = (MovieSetTreeNode) nodeMap.get(movieSet);
@@ -254,6 +274,12 @@ public class MovieSetTreeModel implements TreeModel {
     }
   }
 
+  /**
+   * Removes the movie set.
+   * 
+   * @param movieSet
+   *          the movie set
+   */
   public void removeMovieSet(MovieSet movieSet) {
     MovieSetTreeNode node = (MovieSetTreeNode) nodeMap.get(movieSet);
     int index = root.getIndex(node);

@@ -22,6 +22,8 @@ import org.tinymediamanager.core.movie.Movie;
 /**
  * The Class MovieComparator is used to (initial) sort the movies in the
  * moviepanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieComparator implements Comparator<Movie> {
 
@@ -32,7 +34,7 @@ public class MovieComparator implements Comparator<Movie> {
    */
   @Override
   public int compare(Movie movie1, Movie movie2) {
-    return movie1.getNameSortable().toLowerCase().compareTo(movie2.getNameSortable().toLowerCase());
+    return movie1.getTitleSortable().toLowerCase().compareTo(movie2.getTitleSortable().toLowerCase());
   }
 
 }

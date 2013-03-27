@@ -29,6 +29,7 @@ import java.util.Map;
  * 
  * @param <E>
  *          the element type
+ * @author Manuel Laggner
  */
 public class DynaEnum<E extends DynaEnum<E>> {
 

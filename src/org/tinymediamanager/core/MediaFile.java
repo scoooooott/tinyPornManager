@@ -19,7 +19,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
 import org.apache.commons.io.FileUtils;
@@ -38,7 +38,7 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
  * 
  * @author Manuel Laggner
  */
-@Entity
+@Embeddable
 public class MediaFile extends AbstractModelObject {
 
   /** The Constant LOGGER. */

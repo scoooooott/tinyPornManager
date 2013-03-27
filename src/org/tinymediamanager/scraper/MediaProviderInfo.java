@@ -21,6 +21,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * The Class ProviderInfo.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaProviderInfo {
 
@@ -112,8 +114,6 @@ public class MediaProviderInfo {
    * <code>toString</code> for the specified object.
    * </p>
    * 
-   * @param object
-   *          the Object to be output
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */

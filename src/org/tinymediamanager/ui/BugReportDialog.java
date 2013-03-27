@@ -58,8 +58,12 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class FeedbackDialog.
+ * 
+ * @author Manuel Laggner
  */
 public class BugReportDialog extends JDialog {
+
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
@@ -145,6 +149,7 @@ public class BugReportDialog extends JDialog {
 
     JButton btnSend = new JButton(BUNDLE.getString("BugReport.send")); //$NON-NLS-1$
     btnSend.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent arg0) {
         // check if feedback is provided
         if (StringUtils.isEmpty(textArea.getText())) {
@@ -263,6 +268,7 @@ public class BugReportDialog extends JDialog {
 
     JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     btnCacnel.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
         dispose();

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -67,7 +67,9 @@ import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.movies.MovieImageChooser.ImageType;
+import org.tinymediamanager.ui.movies.MovieChooserModel;
+import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
+import org.tinymediamanager.ui.movies.dialogs.MovieImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -76,14 +78,16 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieChooser.
+ * 
+ * @author Manuel Laggner
  */
-public class MovieChooser extends JDialog implements ActionListener {
+public class MovieChooserDialog extends JDialog implements ActionListener {
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID      = 1L;
 
   /** The static LOGGER. */
-  private static final Logger         LOGGER                = Logger.getLogger(MovieChooser.class);
+  private static final Logger         LOGGER                = Logger.getLogger(MovieChooserDialog.class);
 
   /** The content panel. */
   private final JPanel                contentPanel          = new JPanel();
@@ -144,8 +148,10 @@ public class MovieChooser extends JDialog implements ActionListener {
    * 
    * @param movie
    *          the movie
+   * @param inQueue
+   *          the in queue
    */
-  public MovieChooser(Movie movie, boolean inQueue) {
+  public MovieChooserDialog(Movie movie, boolean inQueue) {
     setTitle("search movie");
     setName("movieChooser");
     setBounds(5, 5, 1111, 643);
@@ -402,8 +408,8 @@ public class MovieChooser extends JDialog implements ActionListener {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();
-                MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER, lblImage,
-                    null, null);
+                MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER,
+                    lblImage, null, null);
                 dialog.setVisible(true);
                 movieToScrape.setPosterUrl(lblImage.getImageUrl());
                 movieToScrape.writeImages(true, false);
@@ -414,8 +420,8 @@ public class MovieChooser extends JDialog implements ActionListener {
                 ImageLabel lblImage = new ImageLabel();
                 List<String> extrathumbs = new ArrayList<String>();
                 List<String> extrafanarts = new ArrayList<String>();
-                MovieImageChooser dialog = new MovieImageChooser(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART, lblImage,
-                    extrathumbs, extrafanarts);
+                MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART,
+                    lblImage, extrathumbs, extrafanarts);
                 dialog.setVisible(true);
                 movieToScrape.setFanartUrl(lblImage.getImageUrl());
                 movieToScrape.writeImages(false, true);
@@ -506,6 +512,8 @@ public class MovieChooser extends JDialog implements ActionListener {
 
   /**
    * The Class SearchTask.
+   * 
+   * @author Manuel Laggner
    */
   private class SearchTask extends SwingWorker<Void, Void> {
 
@@ -567,6 +575,8 @@ public class MovieChooser extends JDialog implements ActionListener {
 
   /**
    * The Class ScrapeTask.
+   * 
+   * @author Manuel Laggner
    */
   private class ScrapeTask extends SwingWorker<Void, Void> {
 
@@ -661,6 +671,8 @@ public class MovieChooser extends JDialog implements ActionListener {
 
   /**
    * The Class ChangeScraperAction.
+   * 
+   * @author Manuel Laggner
    */
   private class ChangeScraperAction extends AbstractAction {
 

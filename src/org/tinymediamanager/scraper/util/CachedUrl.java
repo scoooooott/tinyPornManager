@@ -33,6 +33,8 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class CachedUrl.
+ * 
+ * @author Manuel Laggner
  */
 public class CachedUrl extends Url {
 
@@ -185,6 +187,8 @@ public class CachedUrl extends Url {
   /**
    * Checks if is image file.
    * 
+   * @param props
+   *          the props
    * @return true, if is image file
    */
   private static boolean isImageFile(Properties props) {
@@ -198,6 +202,8 @@ public class CachedUrl extends Url {
    * 
    * @param cachedFile
    *          the cached file
+   * @param props
+   *          the props
    * @return true, if is expired
    */
   private static boolean isExpired(File cachedFile, Properties props) {

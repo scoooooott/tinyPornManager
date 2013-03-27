@@ -22,6 +22,8 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
 /**
  * The Class MediaScrapeOptions.
+ * 
+ * @author Manuel Laggner
  */
 public class MediaScrapeOptions {
 

@@ -17,6 +17,8 @@ package org.tinymediamanager.core.movie;
 
 /**
  * The Enum MovieScrapers.
+ * 
+ * @author Manuel Laggner
  */
 public enum MovieArtworkScrapers {
 

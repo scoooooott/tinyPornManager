@@ -51,7 +51,12 @@ import com.floreysoft.jmte.message.ParseException;
 public class MovieExporter {
 
   public enum TemplateType {
-    MOVIE, TV_SHOW
+
+    /** The movie. */
+    MOVIE,
+
+    /** The tv show. */
+    TV_SHOW
   }
 
   /** The Constant LOGGER. */
@@ -63,8 +68,6 @@ public class MovieExporter {
   /**
    * Find templates for the given type.
    * 
-   * @param type
-   *          the type
    * @return the list
    */
   public static List<ExportTemplate> findTemplates() {
@@ -272,6 +275,8 @@ public class MovieExporter {
 
   /**
    * The Class NamedDateRenderer.
+   * 
+   * @author Manuel Laggner
    */
   public static class NamedDateRenderer implements NamedRenderer {
 
@@ -368,6 +373,11 @@ public class MovieExporter {
     }
   }
 
+  /**
+   * The Class MovieFilenameRenderer.
+   * 
+   * @author Manuel Laggner
+   */
   public static class MovieFilenameRenderer implements NamedRenderer {
 
     /*
@@ -419,6 +429,8 @@ public class MovieExporter {
 
   /**
    * The Class HtmlEncoder.
+   * 
+   * @author Manuel Laggner
    */
   public static class HtmlEncoder implements Encoder {
     /*

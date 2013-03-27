@@ -57,10 +57,15 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class MovieImageSettingsPanel.
+ * 
+ * @author Manuel Laggner
  */
 public class MovieImageSettingsPanel extends JPanel {
 
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
   /** The settings. */
@@ -140,16 +145,38 @@ public class MovieImageSettingsPanel extends JPanel {
 
   /** The separator_1. */
   private JSeparator                  separator_1;
+
+  /** The chckbx resize extrathumbs to. */
   private JCheckBox                   chckbxResizeExtrathumbsTo;
+
+  /** The sp extrathumb width. */
   private JSpinner                    spExtrathumbWidth;
+
+  /** The lbl download. */
   private JLabel                      lblDownload;
+
+  /** The sp download count extrathumbs. */
   private JSpinner                    spDownloadCountExtrathumbs;
+
+  /** The lbl download count. */
   private JLabel                      lblDownloadCount;
+
+  /** The sp download count extrafanart. */
   private JSpinner                    spDownloadCountExtrafanart;
+
+  /** The panel. */
   private JPanel                      panel;
+
+  /** The chckbx store movieset artwork. */
   private JCheckBox                   chckbxStoreMoviesetArtwork;
+
+  /** The tf movie set artwork folder. */
   private JTextField                  tfMovieSetArtworkFolder;
+
+  /** The lbl foldername. */
   private JLabel                      lblFoldername;
+
+  /** The btn select folder. */
   private JButton                     btnSelectFolder;
 
   /**
@@ -443,6 +470,9 @@ public class MovieImageSettingsPanel extends JPanel {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<Settings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("imageTmdbPosterSize");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");

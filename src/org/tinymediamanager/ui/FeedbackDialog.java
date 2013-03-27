@@ -50,8 +50,12 @@ import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class FeedbackDialog.
+ * 
+ * @author Manuel Laggner
  */
 public class FeedbackDialog extends JDialog {
+
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
@@ -62,6 +66,8 @@ public class FeedbackDialog extends JDialog {
 
   /** The text area. */
   private JTextArea                   textArea;
+
+  /** The tf email. */
   private JTextField                  tfEmail;
 
   /**
@@ -120,6 +126,7 @@ public class FeedbackDialog extends JDialog {
 
     JButton btnSend = new JButton(BUNDLE.getString("Feedback")); //$NON-NLS-1$
     btnSend.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent arg0) {
         // check if feedback is provided
         if (StringUtils.isEmpty(textArea.getText())) {
@@ -160,6 +167,7 @@ public class FeedbackDialog extends JDialog {
 
     JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     btnCacnel.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
         dispose();

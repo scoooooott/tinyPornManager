@@ -19,6 +19,8 @@ import java.util.List;
 
 /**
  * The Interface IMediaTrailerProvider.
+ * 
+ * @author Manuel Laggner
  */
 public interface IMediaTrailerProvider {
 

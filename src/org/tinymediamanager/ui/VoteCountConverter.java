@@ -21,6 +21,8 @@ import org.jdesktop.beansbinding.Converter;
 
 /**
  * The Class VoteCountConverter.
+ * 
+ * @author Manuel Laggner
  */
 public class VoteCountConverter extends Converter<Integer, String> {
 

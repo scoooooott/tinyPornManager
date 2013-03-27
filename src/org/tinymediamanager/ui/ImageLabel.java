@@ -42,8 +42,12 @@ import com.bric.image.pixel.Scaling;
 
 /**
  * The Class ImageLabel.
+ * 
+ * @author Manuel Laggner
  */
 public class ImageLabel extends JLabel {
+
+  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
@@ -206,6 +210,7 @@ public class ImageLabel extends JLabel {
    * 
    * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
    */
+  @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
     if (originalImage != null) {
@@ -401,6 +406,8 @@ public class ImageLabel extends JLabel {
 
   /**
    * The Class ImageFetcher.
+   * 
+   * @author Manuel Laggner
    */
   private class ImageFetcher extends SwingWorker<BufferedImage, Void> {
 
