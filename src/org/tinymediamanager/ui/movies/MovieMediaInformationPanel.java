@@ -389,7 +389,7 @@ public class MovieMediaInformationPanel extends JPanel {
           return BUNDLE.getString("metatag.audiocodec"); //$NON-NLS-1$
 
         case 7:
-          return BUNDLE.getString("metatag.AChannels"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.audiochannels"); //$NON-NLS-1$
 
       }
 
