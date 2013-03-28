@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.movies;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -30,6 +31,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class MovieChooserModel.
@@ -37,6 +39,9 @@ import org.tinymediamanager.scraper.MediaTrailer;
  * @author Manuel Laggner
  */
 public class MovieChooserModel extends AbstractModelObject {
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant logger. */
   private static final Logger           LOGGER           = Logger.getLogger(MovieChooserModel.class);
@@ -112,7 +117,7 @@ public class MovieChooserModel extends AbstractModelObject {
    * create the empty search result.
    */
   private MovieChooserModel() {
-    setName("nothing found");
+    setName(BUNDLE.getString("moviechooser.nothingfound")); //$NON-NLS-1$
     combinedName = name;
   }
 

@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -48,6 +49,7 @@ import org.tinymediamanager.ui.MediaInfoAudioCodecConverter;
 import org.tinymediamanager.ui.MediaInfoVideoCodecConverter;
 import org.tinymediamanager.ui.MediaInfoVideoFormatConverter;
 import org.tinymediamanager.ui.StarRater;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.VoteCountConverter;
 import org.tinymediamanager.ui.WatchedIconConverter;
 
@@ -62,101 +64,104 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieInformationPanel extends JPanel {
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = -8527284262749511617L;
+  private static final long           serialVersionUID = -8527284262749511617L;
 
   /** The split pane vertical. */
-  private JSplitPane          splitPaneVertical;
+  private JSplitPane                  splitPaneVertical;
 
   /** The panel top. */
-  private JPanel              panelTop;
+  private JPanel                      panelTop;
 
   /** The panel watched image. */
-  private JPanel              panelWatchedImage;
+  private JPanel                      panelWatchedImage;
 
   /** The panel movie logos. */
-  private JPanel              panelMovieLogos;
+  private JPanel                      panelMovieLogos;
 
   /** The panel rating. */
-  private StarRater           panelRatingStars;
+  private StarRater                   panelRatingStars;
 
   /** The lbl watched image. */
-  private JLabel              lblWatchedImage;
+  private JLabel                      lblWatchedImage;
 
   /** The lbl movie name. */
-  private JLabel              lblMovieName;
+  private JLabel                      lblMovieName;
 
   /** The label rating. */
-  private JLabel              lblRating;
+  private JLabel                      lblRating;
 
   /** The lbl vote count. */
-  private JLabel              lblVoteCount;
+  private JLabel                      lblVoteCount;
 
   /** The lbl original name. */
-  private JLabel              lblTagline;
+  private JLabel                      lblTagline;
 
   /** The lbl certification image. */
-  private JLabel              lblCertificationImage;
+  private JLabel                      lblCertificationImage;
 
   /** The lbl movie background. */
-  private ImageLabel          lblMovieBackground;
+  private ImageLabel                  lblMovieBackground;
 
   /** The lbl movie poster. */
-  private ImageLabel          lblMoviePoster;
+  private ImageLabel                  lblMoviePoster;
 
   /** The table cast. */
-  private JTable              tableCast;
+  private JTable                      tableCast;
 
   /** The tabbed pane movie details. */
-  private JTabbedPane         tabbedPaneMovieDetails;
+  private JTabbedPane                 tabbedPaneMovieDetails;
 
   /** The panel overview. */
-  private JPanel              panelOverview;
+  private JPanel                      panelOverview;
 
   /** The panel movie cast. */
-  private JPanel              panelMovieCast;
+  private JPanel                      panelMovieCast;
 
   /** The panel details. */
-  private JPanel              panelDetails;
+  private JPanel                      panelDetails;
 
   /** The lbl director t. */
-  private JLabel              lblDirectorT;
+  private JLabel                      lblDirectorT;
 
   /** The lbl director. */
-  private JLabel              lblDirector;
+  private JLabel                      lblDirector;
 
   /** The lbl writer t. */
-  private JLabel              lblWriterT;
+  private JLabel                      lblWriterT;
 
   /** The lbl writer. */
-  private JLabel              lblWriter;
+  private JLabel                      lblWriter;
 
   /** The lbl actors. */
-  private JLabel              lblActors;
+  private JLabel                      lblActors;
 
   /** The text pane. */
-  private JTextPane           tpOverview;
+  private JTextPane                   tpOverview;
 
   /** The panel media information. */
-  private JPanel              panelMediaInformation;
+  private JPanel                      panelMediaInformation;
 
   /** The lbl actor thumb. */
-  private ActorImageLabel     lblActorThumb;
+  private ActorImageLabel             lblActorThumb;
 
   /** The panel movie trailer. */
-  private MovieTrailerPanel   panelMovieTrailer;
+  private MovieTrailerPanel           panelMovieTrailer;
 
   /** The movie selection model. */
-  private MovieSelectionModel movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The lbl new label. */
-  private JLabel              lblMediaLogoResolution;
+  private JLabel                      lblMediaLogoResolution;
 
   /** The lbl new label_1. */
-  private JLabel              lblMediaLogoVideoCodec;
+  private JLabel                      lblMediaLogoVideoCodec;
 
   /** The lbl new label_2. */
-  private JLabel              lblMediaLogoAudio;
+  private JLabel                      lblMediaLogoAudio;
 
   /**
    * Instantiates a new movie information panel.
@@ -268,10 +273,10 @@ public class MovieInformationPanel extends JPanel {
     splitPaneVertical.setBottomComponent(panelBottom);
 
     panelDetails = new MovieDetailsPanel(movieSelectionModel);
-    tabbedPaneMovieDetails.addTab("Details", null, panelDetails, null);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.details"), null, panelDetails, null); //$NON-NLS-1$
 
     panelOverview = new JPanel();
-    tabbedPaneMovieDetails.addTab("Overview", null, panelOverview, null);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.overview"), null, panelOverview, null); //$NON-NLS-1$
     panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:default:grow"), }));
     // panelMovieDetails.add(tabbedPaneMovieDetails, "2, 3, fill, fill");
@@ -289,23 +294,23 @@ public class MovieInformationPanel extends JPanel {
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("80px"),
         RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
-    lblDirectorT = new JLabel("Director");
+    lblDirectorT = new JLabel(BUNDLE.getString("movieinformation.director")); //$NON-NLS-1$
     panelMovieCast.add(lblDirectorT, "2, 2");
 
     lblDirector = new JLabel("");
     lblDirectorT.setLabelFor(lblDirector);
     panelMovieCast.add(lblDirector, "4, 2, 3, 1");
 
-    lblWriterT = new JLabel("Writer");
+    lblWriterT = new JLabel(BUNDLE.getString("movieinformation.writer")); //$NON-NLS-1$
     panelMovieCast.add(lblWriterT, "2, 4");
 
     lblWriter = new JLabel("");
     lblWriterT.setLabelFor(lblWriter);
     panelMovieCast.add(lblWriter, "4, 4, 3, 1");
 
-    tabbedPaneMovieDetails.addTab("Cast", null, panelMovieCast, null);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.cast"), null, panelMovieCast, null); //$NON-NLS-1$
 
-    lblActors = new JLabel("Actors");
+    lblActors = new JLabel(BUNDLE.getString("movieinformation.actors")); //$NON-NLS-1$
     panelMovieCast.add(lblActors, "2, 6, default, top");
 
     JScrollPane scrollPaneMovieCast = new JScrollPane();
@@ -319,18 +324,17 @@ public class MovieInformationPanel extends JPanel {
     panelMovieCast.add(lblActorThumb, "6, 2, 1, 6, fill, fill");
 
     panelMediaInformation = new MovieMediaInformationPanel(movieSelectionModel);
-    tabbedPaneMovieDetails.addTab("Media Information", null, panelMediaInformation, null);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
 
     panelMovieTrailer = new MovieTrailerPanel(movieSelectionModel);
-    tabbedPaneMovieDetails.addTab("Trailer", null, panelMovieTrailer, null);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.trailer"), null, panelMovieTrailer, null); //$NON-NLS-1$
 
     // beansbinding init
     initDataBindings();
   }
 
   /**
-   * Inits the panel (steps which has to be done after binding in calling
-   * class).
+   * Inits the panel (steps which has to be done after binding in calling class).
    */
   public void init() {
     if (tableCast.getModel().getRowCount() > 0) {

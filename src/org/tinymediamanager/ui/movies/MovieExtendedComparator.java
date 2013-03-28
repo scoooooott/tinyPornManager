@@ -16,20 +16,24 @@
 package org.tinymediamanager.ui.movies;
 
 import java.util.Comparator;
+import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
- * The Class MovieComparator is used to (initial) sort the movies in the
- * moviepanel.
+ * The Class MovieComparator is used to (initial) sort the movies in the moviepanel.
  * 
  * @author Manuel Laggner
  */
 public class MovieExtendedComparator implements Comparator<Movie> {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(MovieExtendedComparator.class);
+  private static final Logger         LOGGER = Logger.getLogger(MovieExtendedComparator.class);
 
   /**
    * The Enum SortColumn.
@@ -38,17 +42,17 @@ public class MovieExtendedComparator implements Comparator<Movie> {
    */
   public enum SortColumn {
     /** The Title. */
-    TITLE("Title"),
+    TITLE(BUNDLE.getString("metatag.title")), //$NON-NLS-1$,
     /** The Year. */
-    YEAR("Year"),
+    YEAR(BUNDLE.getString("metatag.year")), //$NON-NLS-1$,
     /** The date added. */
-    DATE_ADDED("Date added"),
+    DATE_ADDED(BUNDLE.getString("metatag.dateadded")), //$NON-NLS-1$,
     /** The watched. */
-    WATCHED("Watched"),
+    WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$,
     /** The rating. */
-    RATING("Rating"),
+    RATING(BUNDLE.getString("metatag.rating")), //$NON-NLS-1$,
     /** The runtime. */
-    RUNTIME("Runtime");
+    RUNTIME(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$,
 
     /** The title. */
     private String title;
@@ -81,9 +85,9 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   public enum WatchedFlag {
 
     /** The watched. */
-    WATCHED("Watched"),
+    WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$,
     /** The not watched. */
-    NOT_WATCHED("Not watched");
+    NOT_WATCHED(BUNDLE.getString("metatag.notwatched")); //$NON-NLS-1$,
     /** The title. */
     private String title;
 
@@ -115,9 +119,9 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   public enum SortOrder {
 
     /** The ascending. */
-    ASCENDING("Ascending"),
+    ASCENDING(BUNDLE.getString("sort.ascending")), //$NON-NLS-1$
     /** The descending. */
-    DESCENDING("Descending");
+    DESCENDING(BUNDLE.getString("sort.descending")); //$NON-NLS-1$
 
     /** The title. */
     private String title;
@@ -150,9 +154,9 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   public enum MovieInMovieSet {
 
     /** The in movieset. */
-    IN_MOVIESET("Movies in a movieset"),
+    IN_MOVIESET(BUNDLE.getString("movie.inmovieset")), //$NON-NLS-1$
     /** The not in movieset. */
-    NOT_IN_MOVIESET("Movies not in a movieset");
+    NOT_IN_MOVIESET(BUNDLE.getString("movie.notinmovieset")); //$NON-NLS-1$
 
     /** The title. */
     private String title;

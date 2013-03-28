@@ -100,7 +100,7 @@ public class MovieScraperMetadataPanel extends JPanel {
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "2, 2");
 
-    chckbxOriginalTitle = new JCheckBox(BUNDLE.getString("metatag.otitle")); //$NON-NLS-1$
+    chckbxOriginalTitle = new JCheckBox(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
     add(chckbxOriginalTitle, "4, 2");
 
     chckbxTagline = new JCheckBox(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$

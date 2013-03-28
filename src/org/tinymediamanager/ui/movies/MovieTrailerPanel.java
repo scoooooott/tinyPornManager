@@ -26,6 +26,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URI;
 import java.util.Comparator;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,6 +41,7 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.UTF8Control;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -58,6 +60,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieTrailerPanel extends JPanel {
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle   BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
+
+  /** The Constant serialVersionUID. */
+  private static final long             serialVersionUID    = 1L;
 
   /** The logger. */
   private static Logger                 LOGGER              = Logger.getLogger(MovieTrailerPanel.class);
@@ -158,19 +166,19 @@ public class MovieTrailerPanel extends JPanel {
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return "NFO";
+          return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
 
         case 1:
-          return "Name";
+          return BUNDLE.getString("metatag.name"); //$NON-NLS-1$
 
         case 2:
-          return "Source";
+          return BUNDLE.getString("metatag.source"); //$NON-NLS-1$
 
         case 3:
-          return "Quality";
+          return BUNDLE.getString("metatag.quality"); //$NON-NLS-1$
 
         case 4:
-          return "Url";
+          return BUNDLE.getString("metatag.url"); //$NON-NLS-1$
       }
 
       throw new IllegalStateException();
@@ -179,9 +187,7 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object,
-     * int)
+     * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object, int)
      */
     @Override
     public Object getColumnValue(MediaTrailer trailer, int column) {
@@ -233,8 +239,7 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
+     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
      */
     @Override
     public Comparator getColumnComparator(int arg0) {
@@ -265,9 +270,8 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent
-     * (javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+     * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent (javax.swing.JTable, java.lang.Object, boolean, boolean, int,
+     * int)
      */
     @Override
     public Component getTableCellRendererComponent(JTable table, final Object value, boolean arg2, boolean arg3, int arg4, int arg5) {
@@ -328,8 +332,7 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
      */
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -355,8 +358,7 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
      */
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -365,9 +367,7 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
-     * )
+     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent )
      */
     @Override
     public void mouseDragged(MouseEvent arg0) {
@@ -473,8 +473,7 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.ListSelectionModel#insertIndexInterval(int, int,
-     * boolean)
+     * @see javax.swing.ListSelectionModel#insertIndexInterval(int, int, boolean)
      */
     public void insertIndexInterval(int index, int length, boolean before) {
     }
@@ -523,9 +522,7 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * javax.swing.ListSelectionModel#addListSelectionListener(javax.swing.event
-     * .ListSelectionListener)
+     * @see javax.swing.ListSelectionModel#addListSelectionListener(javax.swing.event .ListSelectionListener)
      */
     public void addListSelectionListener(ListSelectionListener lsl) {
     }
@@ -533,9 +530,7 @@ public class MovieTrailerPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * javax.swing.ListSelectionModel#removeListSelectionListener(javax.swing
-     * .event.ListSelectionListener)
+     * @see javax.swing.ListSelectionModel#removeListSelectionListener(javax.swing .event.ListSelectionListener)
      */
     public void removeListSelectionListener(ListSelectionListener lsl) {
     }

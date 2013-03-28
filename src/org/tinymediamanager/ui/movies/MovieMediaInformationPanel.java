@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Comparator;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -40,6 +41,7 @@ import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.ui.LinkLabel;
 import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.UTF8Control;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -60,53 +62,56 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieMediaInformationPanel extends JPanel {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long          serialVersionUID    = 1L;
+  private static final long           serialVersionUID    = 1L;
 
   /** The logger. */
-  private final static Logger        LOGGER              = Logger.getLogger(MovieMediaInformationPanel.class);
+  private final static Logger         LOGGER              = Logger.getLogger(MovieMediaInformationPanel.class);
 
   /** The movie selection model. */
-  private MovieSelectionModel        movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The lbl files t. */
-  private JLabel                     lblFilesT;
+  private JLabel                      lblFilesT;
 
   /** The scroll pane files. */
-  private JScrollPane                scrollPaneFiles;
+  private JScrollPane                 scrollPaneFiles;
 
   /** The table files. */
-  private JTable                     tableFiles;
+  private JTable                      tableFiles;
 
   /** The lbl movie path. */
-  private LinkLabel                  lblMoviePath;
+  private LinkLabel                   lblMoviePath;
 
   /** The lbl date added t. */
-  private JLabel                     lblDateAddedT;
+  private JLabel                      lblDateAddedT;
 
   /** The lbl date added. */
-  private JLabel                     lblDateAdded;
+  private JLabel                      lblDateAdded;
 
   /** The cb watched. */
-  private JCheckBox                  cbWatched;
+  private JCheckBox                   cbWatched;
 
   /** The lbl watched t. */
-  private JLabel                     lblWatchedT;
+  private JLabel                      lblWatchedT;
 
   /** The lbl movie path t. */
-  private JLabel                     lblMoviePathT;
+  private JLabel                      lblMoviePathT;
 
   /** The btn play. */
-  private JButton                    btnPlay;
+  private JButton                     btnPlay;
 
   /** The table column adjuster. */
-  private TableColumnAdjuster        tableColumnAdjuster = null;
+  private TableColumnAdjuster         tableColumnAdjuster = null;
 
   /** The media file event list. */
-  private EventList<MediaFile>       mediaFileEventList;
+  private EventList<MediaFile>        mediaFileEventList;
 
   /** The media file table model. */
-  private EventTableModel<MediaFile> mediaFileTableModel = null;
+  private EventTableModel<MediaFile>  mediaFileTableModel = null;
 
   /**
    * Instantiates a new movie media information panel.
@@ -125,13 +130,13 @@ public class MovieMediaInformationPanel extends JPanel {
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
-    lblDateAddedT = new JLabel("Added on");
+    lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
     add(lblDateAddedT, "2, 2");
 
     lblDateAdded = new JLabel("");
     add(lblDateAdded, "4, 2");
 
-    lblWatchedT = new JLabel("Watched");
+    lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
     add(lblWatchedT, "6, 2");
 
     cbWatched = new JCheckBox("");
@@ -204,7 +209,7 @@ public class MovieMediaInformationPanel extends JPanel {
     // });
     // add(btnPlay, "10, 2");
 
-    lblMoviePathT = new JLabel("Path");
+    lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     add(lblMoviePathT, "2, 4");
 
     lblMoviePath = new LinkLabel("");
@@ -229,7 +234,7 @@ public class MovieMediaInformationPanel extends JPanel {
     lblMoviePathT.setLabelFor(lblMoviePath);
     add(lblMoviePath, "4, 4, 5, 1");
 
-    lblFilesT = new JLabel("Files");
+    lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
     add(lblFilesT, "2, 6, default, top");
 
     scrollPaneFiles = new JScrollPane();
@@ -363,28 +368,28 @@ public class MovieMediaInformationPanel extends JPanel {
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return "Filename";
+          return BUNDLE.getString("metatag.filename"); //$NON-NLS-1$
 
         case 1:
-          return "Size";
+          return BUNDLE.getString("metatag.size"); //$NON-NLS-1$
 
         case 2:
-          return "Runtime";
+          return BUNDLE.getString("metatag.runtime"); //$NON-NLS-1$
 
         case 3:
-          return "VCodec";
+          return BUNDLE.getString("metatag.videocodec"); //$NON-NLS-1$
 
         case 4:
-          return "Resolution";
+          return BUNDLE.getString("metatag.resolution"); //$NON-NLS-1$
 
         case 5:
-          return "VBitrate";
+          return BUNDLE.getString("metatag.videobitrate"); //$NON-NLS-1$
 
         case 6:
-          return "ACodec";
+          return BUNDLE.getString("metatag.audiocodec"); //$NON-NLS-1$
 
         case 7:
-          return "AChannels";
+          return BUNDLE.getString("metatag.AChannels"); //$NON-NLS-1$
 
       }
 
@@ -394,9 +399,7 @@ public class MovieMediaInformationPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object,
-     * int)
+     * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object, int)
      */
     @Override
     public Object getColumnValue(MediaFile mediaFile, int column) {
@@ -454,8 +457,7 @@ public class MovieMediaInformationPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
+     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
      */
     @Override
     public Comparator getColumnComparator(int arg0) {

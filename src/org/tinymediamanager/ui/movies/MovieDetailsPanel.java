@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URI;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,6 +33,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.LinkLabel;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -45,83 +47,87 @@ import com.jgoodies.forms.layout.Sizes;
  * @author Manuel Laggner
  */
 public class MovieDetailsPanel extends JPanel {
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = 6273970118830324299L;
+  private static final long           serialVersionUID = 6273970118830324299L;
 
   /** The logger. */
-  private final static Logger LOGGER           = Logger.getLogger(MovieDetailsPanel.class);
+  private final static Logger         LOGGER           = Logger.getLogger(MovieDetailsPanel.class);
 
   /** The movie selection model. */
-  private MovieSelectionModel movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The lbl original title t. */
-  private JLabel              lblOriginalTitleT;
+  private JLabel                      lblOriginalTitleT;
 
   /** The lbl original title. */
-  private JLabel              lblOriginalTitle;
+  private JLabel                      lblOriginalTitle;
 
   /** The lbl production t. */
-  private JLabel              lblProductionT;
+  private JLabel                      lblProductionT;
 
   /** The lbl production. */
-  private JLabel              lblProduction;
+  private JLabel                      lblProduction;
 
   /** The lbl genres t. */
-  private JLabel              lblGenresT;
+  private JLabel                      lblGenresT;
 
   /** The lbl genres. */
-  private JLabel              lblGenres;
+  private JLabel                      lblGenres;
 
   /** The lbl certification t. */
-  private JLabel              lblCertificationT;
+  private JLabel                      lblCertificationT;
 
   /** The lbl certification. */
-  private JLabel              lblCertification;
+  private JLabel                      lblCertification;
 
   /** The lbl imdb id t. */
-  private JLabel              lblImdbIdT;
+  private JLabel                      lblImdbIdT;
 
   /** The lbl tmdb id t. */
-  private JLabel              lblTmdbIdT;
+  private JLabel                      lblTmdbIdT;
 
   /** The lbl imdb id. */
-  private LinkLabel           lblImdbId;
+  private LinkLabel                   lblImdbId;
 
   /** The lbl tmdb id. */
-  private LinkLabel           lblTmdbId;
+  private LinkLabel                   lblTmdbId;
 
   /** The lbl runtime t. */
-  private JLabel              lblRuntimeT;
+  private JLabel                      lblRuntimeT;
 
   /** The lbl runtime. */
-  private JLabel              lblRuntime;
+  private JLabel                      lblRuntime;
 
   /** The lbl minutes. */
-  private JLabel              lblMinutes;
+  private JLabel                      lblMinutes;
 
   /** The lbl tags t. */
-  private JLabel              lblTagsT;
+  private JLabel                      lblTagsT;
 
   /** The lbl tags. */
-  private JLabel              lblTags;
+  private JLabel                      lblTags;
 
   /** The lbl movie path t. */
-  private JLabel              lblMoviePathT;
+  private JLabel                      lblMoviePathT;
 
   /** The lbl movie path. */
-  private LinkLabel           lblMoviePath;
+  private LinkLabel                   lblMoviePath;
 
   /** The lbl movieset t. */
-  private JLabel              lblMoviesetT;
+  private JLabel                      lblMoviesetT;
 
   /** The lbl movie set. */
-  private JLabel              lblMovieSet;
+  private JLabel                      lblMovieSet;
 
   /** The lbl spoken languages t. */
-  private JLabel              lblSpokenLanguagesT;
+  private JLabel                      lblSpokenLanguagesT;
 
   /** The lbl spoken languages. */
-  private JLabel              lblSpokenLanguages;
+  private JLabel                      lblSpokenLanguages;
 
   /**
    * Instantiates a new movie details panel.
@@ -143,20 +149,20 @@ public class MovieDetailsPanel extends JPanel {
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    lblOriginalTitleT = new JLabel("Original Title");
+    lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
     add(lblOriginalTitleT, "2, 2");
 
     lblOriginalTitle = new JLabel("");
     add(lblOriginalTitle, "4, 2, 7, 1");
 
-    lblGenresT = new JLabel("Genres");
+    lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     add(lblGenresT, "2, 4");
     lblGenresT.setLabelFor(lblGenres);
 
     lblGenres = new JLabel("");
     add(lblGenres, "4, 4, 7, 1");
 
-    lblRuntimeT = new JLabel("Runtime");
+    lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
     add(lblRuntimeT, "2, 6");
     lblRuntimeT.setLabelFor(lblRuntime);
 
@@ -166,39 +172,39 @@ public class MovieDetailsPanel extends JPanel {
     lblMinutes = new JLabel("min");
     add(lblMinutes, "6, 6");
 
-    lblCertificationT = new JLabel("Certification");
+    lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
     add(lblCertificationT, "2, 8");
     lblCertificationT.setLabelFor(lblCertification);
 
     lblCertification = new JLabel("");
     add(lblCertification, "4, 8, 7, 1");
 
-    lblProductionT = new JLabel("Production");
+    lblProductionT = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
     add(lblProductionT, "2, 10, default, top");
     lblProductionT.setLabelFor(lblProduction);
 
     lblProduction = new JLabel();
     add(lblProduction, "4, 10, 7, 1");
 
-    lblSpokenLanguagesT = new JLabel("Spoken languages");
+    lblSpokenLanguagesT = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
     add(lblSpokenLanguagesT, "2, 12");
 
     lblSpokenLanguages = new JLabel("");
     add(lblSpokenLanguages, "4, 12, 7, 1");
 
-    lblMoviesetT = new JLabel("Movieset");
+    lblMoviesetT = new JLabel(BUNDLE.getString("movieset")); //$NON-NLS-1$
     add(lblMoviesetT, "2, 14");
 
     lblMovieSet = new JLabel("");
     add(lblMovieSet, "4, 14, 5, 1");
 
-    lblTagsT = new JLabel("Tags");
+    lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
     add(lblTagsT, "2, 16");
 
     lblTags = new JLabel("");
     add(lblTags, "4, 16, 7, 1");
 
-    lblImdbIdT = new JLabel("IMDB Id");
+    lblImdbIdT = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
     add(lblImdbIdT, "2, 18");
 
     lblImdbId = new LinkLabel("");
@@ -216,7 +222,7 @@ public class MovieDetailsPanel extends JPanel {
     add(lblImdbId, "4, 18, 3, 1, left, default");
     lblImdbIdT.setLabelFor(lblImdbId);
 
-    lblTmdbIdT = new JLabel("TMDB Id");
+    lblTmdbIdT = new JLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
     add(lblTmdbIdT, "8, 18");
 
     lblTmdbId = new LinkLabel("");
@@ -233,7 +239,7 @@ public class MovieDetailsPanel extends JPanel {
     add(lblTmdbId, "10, 18, left, default");
     lblTmdbIdT.setLabelFor(lblTmdbId);
 
-    lblMoviePathT = new JLabel("Path");
+    lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     add(lblMoviePathT, "2, 20");
 
     lblMoviePath = new LinkLabel("");

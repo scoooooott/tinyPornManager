@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.movies;
 
 import java.util.Comparator;
+import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.ui.ImageIconConverter;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.UTF8Control;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 
@@ -32,6 +34,9 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
  * @author Manuel Laggner
  */
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
   /** The Constant checkIcon. */
   private final static ImageIcon       checkIcon        = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
@@ -64,19 +69,19 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   public String getColumnName(int column) {
     switch (column) {
       case 0:
-        return "Title";
+        return BUNDLE.getString("metatag.title"); //$NON-NLS-1$
 
       case 1:
-        return "Year";
+        return BUNDLE.getString("metatag.year"); //$NON-NLS-1$
 
       case 2:
-        return "NFO";
+        return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
 
       case 3:
-        return "Images";
+        return BUNDLE.getString("metatag.images"); //$NON-NLS-1$
 
       case 4:
-        return "Trailer";
+        return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
     }
 
     throw new IllegalStateException();
@@ -85,8 +90,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   /*
    * (non-Javadoc)
    * 
-   * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object,
-   * int)
+   * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object, int)
    */
   @Override
   public Object getColumnValue(Movie movie, int column) {

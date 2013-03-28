@@ -23,6 +23,7 @@ import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -65,6 +66,7 @@ import org.tinymediamanager.ui.JSearchTextField;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.TmmSwingWorker;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.dialogs.MovieBatchEditorDialog;
 import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
 import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
@@ -90,113 +92,116 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MoviePanel extends JPanel {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE                       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long      serialVersionUID             = 1L;
+  private static final long           serialVersionUID             = 1L;
 
   /** The logger. */
-  private final static Logger    LOGGER                       = Logger.getLogger(MoviePanel.class);
+  private final static Logger         LOGGER                       = Logger.getLogger(MoviePanel.class);
 
   /** The movie list. */
-  private MovieList              movieList;
+  private MovieList                   movieList;
 
   /** The text field. */
-  private JTextField             textField;
+  private JTextField                  textField;
 
   /** The table. */
-  private JTable                 table;
+  private JTable                      table;
 
   /** The action update data sources. */
-  private final Action           actionUpdateDataSources      = new UpdateDataSourcesAction(false);
+  private final Action                actionUpdateDataSources      = new UpdateDataSourcesAction(false);
 
   /** The action update data sources. */
-  private final Action           actionUpdateDataSources2     = new UpdateDataSourcesAction(true);
+  private final Action                actionUpdateDataSources2     = new UpdateDataSourcesAction(true);
 
   /** The action scrape. */
-  private final Action           actionScrape                 = new SingleScrapeAction(false);
+  private final Action                actionScrape                 = new SingleScrapeAction(false);
 
   /** The action scrape. */
-  private final Action           actionScrape2                = new SingleScrapeAction(true);
+  private final Action                actionScrape2                = new SingleScrapeAction(true);
 
   /** The action edit movie. */
-  private final Action           actionEditMovie              = new EditAction(false);
+  private final Action                actionEditMovie              = new EditAction(false);
 
   /** The action edit movie. */
-  private final Action           actionEditMovie2             = new EditAction(true);
+  private final Action                actionEditMovie2             = new EditAction(true);
 
   /** The action scrape unscraped movies. */
-  private final Action           actionScrapeUnscraped        = new UnscrapedScrapeAction();
+  private final Action                actionScrapeUnscraped        = new UnscrapedScrapeAction();
 
   /** The action scrape selected movies. */
-  private final Action           actionScrapeSelected         = new SelectedScrapeAction();
+  private final Action                actionScrapeSelected         = new SelectedScrapeAction();
 
   /** The action scrape metadata selected. */
-  private final Action           actionScrapeMetadataSelected = new SelectedScrapeMetadataAction();
+  private final Action                actionScrapeMetadataSelected = new SelectedScrapeMetadataAction();
 
   /** The action rename. */
-  private final Action           actionRename                 = new RenameAction(false);
+  private final Action                actionRename                 = new RenameAction(false);
 
   /** The action rename2. */
-  private final Action           actionRename2                = new RenameAction(true);
+  private final Action                actionRename2                = new RenameAction(true);
 
   /** The action remove2. */
-  private final Action           actionRemove2                = new RemoveAction(true);
+  private final Action                actionRemove2                = new RemoveAction(true);
 
   /** The action export. */
-  private final Action           actionExport                 = new ExportAction(true);
+  private final Action                actionExport                 = new ExportAction(true);
 
   /** The panel movie count. */
-  private JPanel                 panelMovieCount;
+  private JPanel                      panelMovieCount;
 
   /** The lbl movie count. */
-  private JLabel                 lblMovieCount;
+  private JLabel                      lblMovieCount;
 
   /** The lbl movie count int. */
-  private JLabel                 lblMovieCountTotal;
+  private JLabel                      lblMovieCountTotal;
 
   /** The btn ren. */
-  private JButton                btnRen;
+  private JButton                     btnRen;
 
   /** The menu. */
-  private JMenu                  menu;
+  private JMenu                       menu;
 
   /** The movie table model. */
-  private EventTableModel<Movie> movieTableModel;
+  private EventTableModel<Movie>      movieTableModel;
 
   /** The movie selection model. */
-  private MovieSelectionModel    movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The sorted movies. */
-  private SortedList<Movie>      sortedMovies;
+  private SortedList<Movie>           sortedMovies;
 
   /** The text filtered movies. */
-  private FilterList<Movie>      textFilteredMovies;
+  private FilterList<Movie>           textFilteredMovies;
 
   /** The panel extended search. */
-  private JPanel                 panelExtendedSearch;
+  private JPanel                      panelExtendedSearch;
 
   /** The lbl movie count of. */
-  private JLabel                 lblMovieCountOf;
+  private JLabel                      lblMovieCountOf;
 
   /** The lbl movie count filtered. */
-  private JLabel                 lblMovieCountFiltered;
+  private JLabel                      lblMovieCountFiltered;
 
   /** The split pane horizontal. */
-  private JSplitPane             splitPaneHorizontal;
+  private JSplitPane                  splitPaneHorizontal;
 
   /** The panel right. */
-  private MovieInformationPanel  panelRight;
+  private MovieInformationPanel       panelRight;
 
   /** The btn media information. */
-  private JButton                btnMediaInformation;
+  private JButton                     btnMediaInformation;
 
   /** The action media information. */
-  private final Action           actionMediaInformation       = new MediaInformationAction(false);
+  private final Action                actionMediaInformation       = new MediaInformationAction(false);
 
   /** The action media information2. */
-  private final Action           actionMediaInformation2      = new MediaInformationAction(true);
+  private final Action                actionMediaInformation2      = new MediaInformationAction(true);
 
   /** The action batch edit. */
-  private final Action           actionBatchEdit              = new BatchEditAction();
+  private final Action                actionBatchEdit              = new BatchEditAction();
 
   /**
    * Create the panel.
@@ -210,7 +215,7 @@ public class MoviePanel extends JPanel {
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
     // build menu
-    menu = new JMenu("Movies");
+    menu = new JMenu(BUNDLE.getString("movies")); //$NON-NLS-1$
     JFrame mainFrame = MainWindow.getFrame();
     JMenuBar menuBar = mainFrame.getJMenuBar();
     menuBar.add(menu);
@@ -454,25 +459,23 @@ public class MoviePanel extends JPanel {
     public UpdateDataSourcesAction(boolean withTitle) {
       // putValue(NAME, "UDS");
       if (withTitle) {
-        putValue(NAME, "Update data sources");
+        putValue(NAME, BUNDLE.getString("movie.update.datasource")); //$NON-NLS-1$
         putValue(LARGE_ICON_KEY, "");
       }
       else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
-        putValue(SHORT_DESCRIPTION, "Update data sources");
       }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       TmmSwingWorker task = new MovieUpdateDatasourceTask();
       if (!MainWindow.executeMainTask(task)) {
-        JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }
     }
   }
@@ -495,20 +498,19 @@ public class MoviePanel extends JPanel {
      */
     public SingleScrapeAction(boolean withTitle) {
       if (withTitle) {
-        putValue(NAME, "Search & scrape selected movies");
+        putValue(NAME, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
         putValue(LARGE_ICON_KEY, "");
       }
       else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-        putValue(SHORT_DESCRIPTION, "Search & scrape movie");
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected.desc")); //$NON-NLS-1$
       }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       // for (int row : table.getSelectedRows()) {
@@ -549,20 +551,19 @@ public class MoviePanel extends JPanel {
      * Instantiates a new UnscrapedScrapeAction.
      */
     public UnscrapedScrapeAction() {
-      putValue(NAME, "Search & scrape unscraped movies - force best match");
-      putValue(SHORT_DESCRIPTION, "Search & scrape all unscraped movies");
+      putValue(NAME, BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.unscraped.desc")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       List<Movie> unscrapedMovies = movieList.getUnscrapedMovies();
       if (unscrapedMovies.size() > 0) {
-        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog("Search & scrape unscraped movies - force best match");
+        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -572,7 +573,7 @@ public class MoviePanel extends JPanel {
           TmmSwingWorker scrapeTask = new MovieScrapeTask(unscrapedMovies, true, options);
           if (!MainWindow.executeMainTask(scrapeTask)) {
             // inform that only one task at a time can be executed
-            JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
           }
         }
         dialog.dispose();
@@ -594,15 +595,14 @@ public class MoviePanel extends JPanel {
      * Instantiates a new UnscrapedScrapeAction.
      */
     public SelectedScrapeAction() {
-      putValue(NAME, "Search & scrape selected movies - force best match");
-      putValue(SHORT_DESCRIPTION, "Search & scrape all selected movies");
+      putValue(NAME, BUNDLE.getString("movie.scrape.selected.force")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected.force.desc")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       // List<Movie> selectedMovies = new ArrayList<Movie>();
@@ -617,7 +617,7 @@ public class MoviePanel extends JPanel {
 
       if (selectedMovies.size() > 0) {
         // scrapeTask = new ScrapeTask(selectedMovies);
-        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog("Search & scrape selected movies - force best match");
+        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.selected.force")); //$NON-NLS-1$
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -626,7 +626,7 @@ public class MoviePanel extends JPanel {
           // scrape
           TmmSwingWorker scrapeTask = new MovieScrapeTask(selectedMovies, true, options);
           if (!MainWindow.executeMainTask(scrapeTask)) {
-            JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
           }
         }
         dialog.dispose();
@@ -648,15 +648,14 @@ public class MoviePanel extends JPanel {
      * Instantiates a new UnscrapedScrapeAction.
      */
     public SelectedScrapeMetadataAction() {
-      putValue(NAME, "Scrape metadata for selected movies");
-      putValue(SHORT_DESCRIPTION, "Scrape metadata for selected movies");
+      putValue(NAME, BUNDLE.getString("movie.scrape.metadata")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.metadata.desc")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       List<Movie> selectedMovies = new ArrayList<Movie>();
@@ -665,7 +664,7 @@ public class MoviePanel extends JPanel {
       }
 
       if (selectedMovies.size() > 0) {
-        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog("Scrape metadata for selected movies");
+        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.metadata")); //$NON-NLS-1$
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -674,7 +673,7 @@ public class MoviePanel extends JPanel {
           // scrape
           TmmSwingWorker scrapeTask = new MovieScrapeTask(selectedMovies, false, options);
           if (!MainWindow.executeMainTask(scrapeTask)) {
-            JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
           }
         }
         dialog.dispose();
@@ -701,19 +700,18 @@ public class MoviePanel extends JPanel {
     public EditAction(boolean withTitle) {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
-        putValue(NAME, "Edit movie");
+        putValue(NAME, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
       }
       else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-        putValue(SHORT_DESCRIPTION, "Edit movie");
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
       }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       // for (int row : table.getSelectedRows()) {
@@ -758,20 +756,19 @@ public class MoviePanel extends JPanel {
     public RemoveAction(boolean withTitle) {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
-        putValue(NAME, "Remove selected movies");
+        putValue(NAME, BUNDLE.getString("movie.remove")); //$NON-NLS-1$
       }
       else {
         // putValue(LARGE_ICON_KEY, new
         // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-        putValue(SHORT_DESCRIPTION, "Remove selected movies");
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.remove")); //$NON-NLS-1$
       }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
     public void actionPerformed(ActionEvent arg0) {
@@ -815,20 +812,19 @@ public class MoviePanel extends JPanel {
     public ExportAction(boolean withTitle) {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
-        putValue(NAME, "Export selected movies");
+        putValue(NAME, BUNDLE.getString("movie.export")); //$NON-NLS-1$
       }
       else {
         // putValue(LARGE_ICON_KEY, new
         // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-        putValue(SHORT_DESCRIPTION, "Export selected movies");
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.export")); //$NON-NLS-1$
       }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
     public void actionPerformed(ActionEvent arg0) {
@@ -861,19 +857,18 @@ public class MoviePanel extends JPanel {
     public RenameAction(boolean withTitle) {
       if (withTitle) {
         putValue(LARGE_ICON_KEY, "");
-        putValue(NAME, "Rename selected movies");
+        putValue(NAME, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
       }
       else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-        putValue(SHORT_DESCRIPTION, "rename selected movies");
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
       }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       List<Movie> selectedMovies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
@@ -881,16 +876,14 @@ public class MoviePanel extends JPanel {
       // rename
       TmmSwingWorker renameTask = new MovieRenameTask(selectedMovies);
       if (!MainWindow.executeMainTask(renameTask)) {
-        JOptionPane.showMessageDialog(null, "Only one operation at one time is allowed");
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }
     }
   }
 
   /**
-   * The listener interface for receiving popup events. The class that is
-   * interested in processing a popup event implements this interface, and the
-   * object created with that class is registered with a component using the
-   * component's <code>addPopupListener<code> method. When
+   * The listener interface for receiving popup events. The class that is interested in processing a popup event implements this interface, and the
+   * object created with that class is registered with a component using the component's <code>addPopupListener<code> method. When
    * the popup event occurs, that object's appropriate
    * method is invoked.
    * 
@@ -1009,21 +1002,20 @@ public class MoviePanel extends JPanel {
      */
     public MediaInformationAction(boolean withTitle) {
       if (withTitle) {
-        putValue(NAME, "Update media information of selected movies");
+        putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
         putValue(LARGE_ICON_KEY, "");
       }
       else {
         // putValue(NAME, "MI");
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-        putValue(SHORT_DESCRIPTION, "Update media information of selected movies");
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
       }
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       List<Movie> selectedMovies = new ArrayList<Movie>();
@@ -1056,15 +1048,14 @@ public class MoviePanel extends JPanel {
      * Instantiates a new batch edit action.
      */
     public BatchEditAction() {
-      putValue(NAME, "Bulk editing");
-      putValue(SHORT_DESCRIPTION, "Change genres, tags, movieset and watched flag for all selected movies");
+      putValue(NAME, BUNDLE.getString("movie.bulkedit")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.bulkedit.desc")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
     public void actionPerformed(ActionEvent e) {

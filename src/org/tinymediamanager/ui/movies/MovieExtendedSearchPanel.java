@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.movies;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -31,6 +32,7 @@ import javax.swing.event.DocumentListener;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.CollapsiblePanel;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
@@ -49,83 +51,86 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = -4170930017190753789L;
+  private static final long           serialVersionUID = -4170930017190753789L;
 
   /** The cb search watched. */
-  private JCheckBox           cbFilterWatched;
+  private JCheckBox                   cbFilterWatched;
 
   /** The action sort. */
-  private final Action        actionSort       = new SortAction();
+  private final Action                actionSort       = new SortAction();
 
   /** The movie selection model. */
-  private MovieSelectionModel movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The movie list. */
-  private MovieList           movieList        = MovieList.getInstance();
+  private MovieList                   movieList        = MovieList.getInstance();
 
   /** The lbl genre. */
-  private JLabel              lblGenre;
+  private JLabel                      lblGenre;
 
   /** The cb genre. */
-  private JComboBox           cbGenre;
+  private JComboBox                   cbGenre;
 
   /** The cb sort column. */
-  private JComboBox           cbSortColumn;
+  private JComboBox                   cbSortColumn;
 
   /** The cb sort order. */
-  private JComboBox           cbSortOrder;
+  private JComboBox                   cbSortOrder;
 
   /** The lbl filter by. */
-  private JLabel              lblFilterBy;
+  private JLabel                      lblFilterBy;
 
   /** The lbl watched flag. */
-  private JLabel              lblWatchedFlag;
+  private JLabel                      lblWatchedFlag;
 
   /** The cb watched. */
-  private JComboBox           cbWatched;
+  private JComboBox                   cbWatched;
 
   /** The cb filter genre. */
-  private JCheckBox           cbFilterGenre;
+  private JCheckBox                   cbFilterGenre;
 
   /** The lbl sort by. */
-  private JLabel              lblSortBy;
+  private JLabel                      lblSortBy;
 
   /** The cb filter cast. */
-  private JCheckBox           cbFilterCast;
+  private JCheckBox                   cbFilterCast;
 
   /** The lbl cast member. */
-  private JLabel              lblCastMember;
+  private JLabel                      lblCastMember;
 
   /** The tf cast member. */
-  private JTextField          tfCastMember;
+  private JTextField                  tfCastMember;
 
   /** The action filter. */
-  private final Action        actionFilter     = new FilterAction();
+  private final Action                actionFilter     = new FilterAction();
 
   /** The cb filter tag. */
-  private JCheckBox           cbFilterTag;
+  private JCheckBox                   cbFilterTag;
 
   /** The lbl tag. */
-  private JLabel              lblTag;
+  private JLabel                      lblTag;
 
   /** The cb tag. */
-  private JComboBox           cbTag;
+  private JComboBox                   cbTag;
 
   /** The cb filter duplicates. */
-  private JCheckBox           cbFilterDuplicates;
+  private JCheckBox                   cbFilterDuplicates;
 
   /** The lbl show duplicates. */
-  private JLabel              lblShowDuplicates;
+  private JLabel                      lblShowDuplicates;
 
   /** The cb filter movieset. */
-  private JCheckBox           cbFilterMovieset;
+  private JCheckBox                   cbFilterMovieset;
 
   /** The lbl movies in movieset. */
-  private JLabel              lblMoviesInMovieset;
+  private JLabel                      lblMoviesInMovieset;
 
   /** The cb movieset. */
-  private JComboBox           cbMovieset;
+  private JComboBox                   cbMovieset;
 
   /**
    * Instantiates a new movie extended search panel.
@@ -134,7 +139,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
    *          the model
    */
   public MovieExtendedSearchPanel(MovieSelectionModel model) {
-    super("Extended filter and sort options");
+    super(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
 
     Font font = new Font("Dialog", Font.PLAIN, 10);
 
@@ -148,21 +153,21 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    lblFilterBy = new JLabel("filter by");
+    lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     panel.add(lblFilterBy, "2, 1, 3, 1");
 
     cbFilterDuplicates = new JCheckBox("");
     cbFilterDuplicates.setAction(actionFilter);
     panel.add(cbFilterDuplicates, "2, 3");
 
-    lblShowDuplicates = new JLabel("Show duplicates");
+    lblShowDuplicates = new JLabel(BUNDLE.getString("movieextendedsearch.duplicates")); //$NON-NLS-1$
     panel.add(lblShowDuplicates, "4, 3, right, default");
 
     cbFilterWatched = new JCheckBox("");
     cbFilterWatched.setAction(actionFilter);
     panel.add(cbFilterWatched, "2, 4");
 
-    lblWatchedFlag = new JLabel("Watched flag");
+    lblWatchedFlag = new JLabel(BUNDLE.getString("movieextendedsearch.watched")); //$NON-NLS-1$
     panel.add(lblWatchedFlag, "4, 4, right, default");
 
     cbWatched = new JComboBox(WatchedFlag.values());
@@ -173,7 +178,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     cbFilterGenre.setAction(actionFilter);
     panel.add(cbFilterGenre, "2, 5");
 
-    lblGenre = new JLabel("Genre");
+    lblGenre = new JLabel(BUNDLE.getString("movieextendedsearch.genre")); //$NON-NLS-1$
     panel.add(lblGenre, "4, 5, right, default");
 
     cbGenre = new JComboBox(MediaGenres.values());
@@ -184,7 +189,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     cbFilterCast.setAction(actionFilter);
     panel.add(cbFilterCast, "2, 6");
 
-    lblCastMember = new JLabel("Cast member");
+    lblCastMember = new JLabel(BUNDLE.getString("movieextendedsearch.cast")); //$NON-NLS-1$
     panel.add(lblCastMember, "4, 6, right, default");
 
     tfCastMember = new JTextField();
@@ -208,7 +213,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     cbFilterTag.setAction(actionFilter);
     panel.add(cbFilterTag, "2, 7");
 
-    lblTag = new JLabel("Tag");
+    lblTag = new JLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
     panel.add(lblTag, "4, 7, right, default");
 
     cbTag = new JComboBox(movieList.getTagsInMovies().toArray());
@@ -220,14 +225,14 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     cbFilterMovieset.setAction(actionFilter);
     panel.add(cbFilterMovieset, "2, 8");
 
-    lblMoviesInMovieset = new JLabel("Movies in movieset");
+    lblMoviesInMovieset = new JLabel(BUNDLE.getString("movieextendedsearch.movieset")); //$NON-NLS-1$
     panel.add(lblMoviesInMovieset, "4, 8, right, default");
 
     cbMovieset = new JComboBox(MovieInMovieSet.values());
     cbMovieset.setAction(actionFilter);
     panel.add(cbMovieset, "6, 8, fill, default");
 
-    lblSortBy = new JLabel("sort by");
+    lblSortBy = new JLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
     panel.add(lblSortBy, "2, 10, 3, 1");
 
     cbSortColumn = new JComboBox(SortColumn.values());
@@ -258,8 +263,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       SortColumn column = (SortColumn) cbSortColumn.getSelectedItem();
@@ -287,8 +291,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       HashMap<SearchOptions, Object> searchOptions = new HashMap<SearchOptions, Object>();
