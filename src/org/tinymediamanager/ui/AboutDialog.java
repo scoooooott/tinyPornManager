@@ -110,7 +110,7 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblHomepage, "2, 12, right, default");
     }
     {
-      final LinkLabel lblHomepage = new LinkLabel("http://code.google.com/p/tinymediamanager/");
+      final LinkLabel lblHomepage = new LinkLabel("http://www.tinymediamanager.org/");
       lblHomepage.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent arg0) {
           try {
@@ -128,12 +128,12 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblThanksTo, "2, 16, right, default");
     }
     {
-      JLabel lblXysm = new JLabel("xysm for excessive testing and lots of feedback");
-      contentPanel.add(lblXysm, "6, 16");
+      JLabel lblMyronForHelping = new JLabel("Myron for helping me with coding, scrapers, localization, setup, builds...");
+      contentPanel.add(lblMyronForHelping, "6, 16");
     }
     {
-      JLabel lblMyronForHelping = new JLabel("Myron for helping me with scrapers and builds");
-      contentPanel.add(lblMyronForHelping, "6, 18");
+      JLabel lblXysm = new JLabel("xysm for excessive testing and lots of feedback");
+      contentPanel.add(lblXysm, "6, 18");
     }
     {
       JLabel lblXzener = new JLabel("Xzener for genre images");
