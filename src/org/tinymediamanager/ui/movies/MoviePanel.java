@@ -215,7 +215,7 @@ public class MoviePanel extends JPanel {
     sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
     // build menu
-    menu = new JMenu(BUNDLE.getString("movies")); //$NON-NLS-1$
+    menu = new JMenu(BUNDLE.getString("tmm.movies")); //$NON-NLS-1$
     JFrame mainFrame = MainWindow.getFrame();
     JMenuBar menuBar = mainFrame.getJMenuBar();
     menuBar.add(menu);

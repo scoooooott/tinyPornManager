@@ -272,13 +272,13 @@ public class MainWindow extends JFrame {
     panelStatusBar.add(lblLoadingImg, "9, 1");
 
     panelMovies = new MoviePanel();
-    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("movies"), panelMovies); //$NON-NLS-1$
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.movies"), panelMovies); //$NON-NLS-1$
 
     JPanel panelMovieSets = new MovieSetPanel();
-    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("moviesets"), panelMovieSets); //$NON-NLS-1$
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.moviesets"), panelMovieSets); //$NON-NLS-1$
 
     JPanel panelSettings = new SettingsPanel();
-    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("settings"), panelSettings); //$NON-NLS-1$
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.settings"), panelSettings); //$NON-NLS-1$
 
     // shutdown listener - to clean database connections safely
     addWindowListener(new WindowAdapter() {
