@@ -1,5 +1,6 @@
 package org.tinymediamanager.core.tvshow;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,30 +10,38 @@ import java.util.regex.Pattern;
 public class EpisodeMatching {
 
   public static class EpisodeMatchingResult {
-    public int           season   = 0;
+    public int           season   = -1;
     public List<Integer> episodes = new ArrayList<Integer>();
   }
 
-  public static EpisodeMatchingResult detectEpisode(String name) {
+  public static EpisodeMatchingResult detectEpisode(File file) {
     EpisodeMatchingResult result = new EpisodeMatchingResult();
 
-    // FIXME: patters quite fine, but second find should start AFTER complete first match, not inbetween
-    Pattern regex = Pattern.compile("(?i)[epx_-]+(\\d{1,2})");
-    // episode fixed to 2 chars
-    Matcher m = regex.matcher(name);
-    System.out.print(padRight(name + ": ", 40));
-    // FIXME: add season detection
+    // season detection
+    Pattern regex = Pattern.compile("(?i)(s|season)[\\s]*(\\d{1,2})");
+    Matcher m = regex.matcher(file.getAbsolutePath());
+    if (m.find()) {
+      int s = result.season;
+      try {
+        s = Integer.parseInt(m.group(2));
+      }
+      catch (NumberFormatException nfe) {
+        // can not happen from regex since we only come here with max 2 numeric chars
+      }
+      result.season = s;
+    }
 
+    // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
+    regex = Pattern.compile("(?i)[epx_-]+(\\d{1,2})"); // episode fixed to 2 chars
+    m = regex.matcher(file.getName());
     while (m.find()) {
       int ep = 0;
-
       try {
         ep = Integer.parseInt(m.group(1));
       }
       catch (NumberFormatException nfe) {
         // can not happen from regex since we only come here with max 2 numeric chars
       }
-
       if (ep > 0 && !result.episodes.contains(ep)) {
         result.episodes.add(ep);
       }
@@ -41,7 +50,7 @@ public class EpisodeMatching {
 
     // parse Roman
     regex = Pattern.compile("(?i)(part|pt)[\\._]+([MDCLXVI]+)");
-    m = regex.matcher(name);
+    m = regex.matcher(file.getName());
     while (m.find()) {
       int ep = 0;
       ep = decodeRoman(m.group(2));
@@ -93,13 +102,5 @@ public class EpisodeMatching {
     // decode the last character, which is always added
     result += decodeSingleRoman(uRoman.charAt(uRoman.length() - 1));
     return result;
-  }
-
-  public static String padRight(String s, int n) {
-    return String.format("%1$-" + n + "s", s);
-  }
-
-  public static String padLeft(String s, int n) {
-    return String.format("%1$" + n + "s", s);
   }
 }

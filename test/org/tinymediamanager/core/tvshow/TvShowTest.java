@@ -43,8 +43,11 @@ public class TvShowTest {
 
     TvShowList instance = TvShowList.getInstance();
     instance.findTvShowsInPath("/home/manuel/Videos/Test_Serien/");
+    //instance.findTvShowsInPath("D:\\_neu\\Test_Serien");
     for (TvShow show : instance.getTvShows()) {
-      System.out.println(show);
+      for (TvEpisode ep : show.getEpisodes()) {
+        System.out.println(show.getName() + " - Season " + ep.getSeason());
+      }
     }
 
     Globals.entityManager.close();
@@ -104,7 +107,7 @@ public class TvShowTest {
 
   private String detectEpisode(String name) {
     StringBuilder sb = new StringBuilder();
-    EpisodeMatchingResult result = EpisodeMatching.detectEpisode(name);
+    EpisodeMatchingResult result = EpisodeMatching.detectEpisode(new File(name));
     for (int ep : result.episodes) {
       sb.append(" E:");
       sb.append(ep);

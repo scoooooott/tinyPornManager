@@ -15,7 +15,10 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.EPISODE;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.SEASON;
+import static org.tinymediamanager.core.Constants.TV_SHOW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +45,7 @@ public class TvEpisode extends MediaEntity {
 
   private TvShow          tvShow               = null;
   private int             episode              = 0;
-  private int             season               = 0;
+  private int             season               = -1;
 
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)

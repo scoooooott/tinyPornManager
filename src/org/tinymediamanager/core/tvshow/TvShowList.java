@@ -15,7 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.TV_SHOWS;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -112,6 +112,7 @@ public class TvShowList extends AbstractModelObject {
   }
 
   private void findTvEpisodes(TvShow tvShow, File dir) {
+    LOGGER.debug("parsing " + dir.getPath());
     // crawl this folder and try to find every episode in it
     File[] content = dir.listFiles();
     for (File file : content) {
@@ -124,7 +125,7 @@ public class TvShowList extends AbstractModelObject {
         TvEpisode episode = getTvEpisodeByFile(file);
         if (episode == null) {
           // try to check what episode//season
-          EpisodeMatchingResult result = EpisodeMatching.detectEpisode(file.getName());
+          EpisodeMatchingResult result = EpisodeMatching.detectEpisode(file);
           if (result.episodes.size() > 0) {
             // episode(s) found; check if there was also a season found
             int season = 0;
