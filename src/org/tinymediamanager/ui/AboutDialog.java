@@ -66,7 +66,7 @@ public class AboutDialog extends JDialog {
    * Create the dialog.
    */
   public AboutDialog() {
-    setTitle(BUNDLE.getString("about")); //$NON-NLS-1$
+    setTitle(BUNDLE.getString("tmm.about")); //$NON-NLS-1$
     setName("aboutDialog");
     setResizable(false);
     setModal(true);
@@ -184,8 +184,7 @@ public class AboutDialog extends JDialog {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       setVisible(false);

@@ -395,7 +395,7 @@ public class MovieEditorDialog extends JDialog {
       details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");
     }
     {
-      JLabel lblMovieSet = new JLabel(BUNDLE.getString("movieset")); //$NON-NLS-1$"Movie set");
+      JLabel lblMovieSet = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$"Movie set");
       details1Panel.add(lblMovieSet, "2, 16, right, default");
     }
     {

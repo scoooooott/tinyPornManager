@@ -145,12 +145,12 @@ public class MainWindow extends JFrame {
     mnTmm.addSeparator();
 
     JMenuItem mntmExit = mnTmm.add(actionExit);
-    mntmExit.setText(BUNDLE.getString("exit")); //$NON-NLS-1$
+    mntmExit.setText(BUNDLE.getString("tmm.exit")); //$NON-NLS-1$
     initialize();
 
     // debug menu
-    JMenu debug = new JMenu(BUNDLE.getString("debug")); //$NON-NLS-1$
-    JMenuItem clearDatabase = new JMenuItem(BUNDLE.getString("clearDatabase")); //$NON-NLS-1$
+    JMenu debug = new JMenu(BUNDLE.getString("tmm.debug")); //$NON-NLS-1$
+    JMenuItem clearDatabase = new JMenuItem(BUNDLE.getString("tmm.cleardatabase")); //$NON-NLS-1$
     debug.add(clearDatabase);
     clearDatabase.addActionListener(new ActionListener() {
       @Override
@@ -164,10 +164,10 @@ public class MainWindow extends JFrame {
             db.delete();
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("clearDatabase.info")); //$NON-NLS-1$
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.cleardatabase.info")); //$NON-NLS-1$
         }
         catch (Exception e) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("clearDatabase.error")); //$NON-NLS-1$
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.cleardatabase.error")); //$NON-NLS-1$
           // open the tmm folder
           try {
             File path = new File(".");
@@ -183,7 +183,7 @@ public class MainWindow extends JFrame {
         System.exit(0);
       }
     });
-    JMenuItem clearCache = new JMenuItem(BUNDLE.getString("clearCache")); //$NON-NLS-1$
+    JMenuItem clearCache = new JMenuItem(BUNDLE.getString("tmm.clearcache")); //$NON-NLS-1$
     debug.add(clearCache);
     clearCache.addActionListener(new ActionListener() {
       @Override
@@ -205,10 +205,10 @@ public class MainWindow extends JFrame {
     mnTmm = new JMenu("?");
     menuBar.add(mnTmm);
     JMenuItem mntmDonate = mnTmm.add(actionDonate);
-    mntmDonate.setText(BUNDLE.getString("donate")); //$NON-NLS-1$
+    mntmDonate.setText(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
     mnTmm.addSeparator();
     JMenuItem mntmAbout = mnTmm.add(actionAbout);
-    mntmAbout.setText(BUNDLE.getString("about")); //$NON-NLS-1$
+    mntmAbout.setText(BUNDLE.getString("tmm.about")); //$NON-NLS-1$
     // setVisible(true);
 
     // Globals.executor.execute(new MyStatusbarThread());
@@ -287,7 +287,7 @@ public class MainWindow extends JFrame {
         int confirm = 0;
         // if there are some threads running, display exit confirmation
         if (Globals.executor.getActiveCount() > 0) {
-          confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("exit.runningtasks"), BUNDLE.getString("exit.confirmation"),
+          confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),
               JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
         }
         if (confirm == JOptionPane.YES_OPTION) {
@@ -406,8 +406,7 @@ public class MainWindow extends JFrame {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       instance.setVisible(false);
@@ -445,8 +444,7 @@ public class MainWindow extends JFrame {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       Dialog aboutDialog = new AboutDialog();
@@ -494,8 +492,7 @@ public class MainWindow extends JFrame {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       JDialog dialog = new FeedbackDialog();
@@ -532,8 +529,7 @@ public class MainWindow extends JFrame {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       JDialog dialog = new BugReportDialog();
@@ -561,8 +557,7 @@ public class MainWindow extends JFrame {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       try {

@@ -203,7 +203,7 @@ public class MovieBatchEditorDialog extends JDialog {
       });
       panelContent.add(btnRemoveTag, "8, 4");
 
-      JLabel lblMovieSet = new JLabel(BUNDLE.getString("movieset")); //$NON-NLS-1$
+      JLabel lblMovieSet = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
       panelContent.add(lblMovieSet, "2, 6, right, default");
 
       cbMovieSet = new JComboBox();

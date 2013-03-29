@@ -48,7 +48,7 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
    */
   public JSearchTextField() {
     super();
-    this.textWhenNotFocused = BUNDLE.getString("Searchfield"); //$NON-NLS-1$
+    this.textWhenNotFocused = BUNDLE.getString("tmm.searchfield"); //$NON-NLS-1$
     this.addFocusListener(this);
   }
 
@@ -74,8 +74,7 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.tinymediamanager.ui.JIconTextField#paintComponent(java.awt.Graphics)
+   * @see org.tinymediamanager.ui.JIconTextField#paintComponent(java.awt.Graphics)
    */
   @Override
   protected void paintComponent(Graphics g) {

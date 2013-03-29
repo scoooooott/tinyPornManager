@@ -192,7 +192,7 @@ public class MovieDetailsPanel extends JPanel {
     lblSpokenLanguages = new JLabel("");
     add(lblSpokenLanguages, "4, 12, 7, 1");
 
-    lblMoviesetT = new JLabel(BUNDLE.getString("movieset")); //$NON-NLS-1$
+    lblMoviesetT = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
     add(lblMoviesetT, "2, 14");
 
     lblMovieSet = new JLabel("");
