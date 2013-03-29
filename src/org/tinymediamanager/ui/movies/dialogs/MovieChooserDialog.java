@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -67,6 +68,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieChooserModel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 import org.tinymediamanager.ui.movies.dialogs.MovieImageChooserDialog.ImageType;
@@ -82,6 +84,9 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieChooserDialog extends JDialog implements ActionListener {
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                 //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID      = 1L;
@@ -152,7 +157,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
    *          the in queue
    */
   public MovieChooserDialog(Movie movie, boolean inQueue) {
-    setTitle("search movie");
+    setTitle(BUNDLE.getString("moviechooser.search")); //$NON-NLS-1$
     setName("movieChooser");
     setBounds(5, 5, 1111, 643);
     TmmWindowSaver.loadSettings(this);
@@ -192,7 +197,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
           FormFactory.DEFAULT_ROWSPEC, }));
       {
-        JLabel lblScraper = new JLabel("Scraper");
+        JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "2, 1, right, default");
       }
       {
@@ -209,7 +214,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       }
 
       {
-        JButton btnSearch = new JButton("Search");
+        JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
         panelSearchField.add(btnSearch, "7, 3");
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
@@ -308,7 +313,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       }
     }
     {
-      JLabel lblScrapeFollowingItems = new JLabel("Scrape following items");
+      JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("moviechooser.scrape")); //$NON-NLS-1$
       contentPanel.add(lblScrapeFollowingItems, "1, 6");
     }
     {
@@ -337,18 +342,18 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           EqualsLayout layout = new EqualsLayout(5);
           layout.setMinWidth(100);
           buttonPane.setLayout(layout);
-          JButton okButton = new JButton("Ok");
+          JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
           buttonPane.add(okButton, "1, 1, fill, top");
           okButton.setActionCommand("OK");
           okButton.addActionListener(this);
 
-          JButton cancelButton = new JButton("Cancel");
+          JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           buttonPane.add(cancelButton, "3, 1, fill, top");
           cancelButton.setActionCommand("Cancel");
           cancelButton.addActionListener(this);
 
           if (inQueue) {
-            JButton abortButton = new JButton("Abort queue");
+            JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
             buttonPane.add(abortButton, "5, 1, fill, top");
             abortButton.setActionCommand("Abort");
             abortButton.addActionListener(this);
@@ -374,8 +379,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
    */
   /**
    * Action performed.
@@ -543,7 +547,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar("searching for: " + searchTerm);
+      startProgressBar(BUNDLE.getString("moviechooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
       List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId, metadataProvider);
       moviesFound.clear();
       if (searchResult.size() == 0) {
@@ -600,7 +604,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar("scraping: " + model.getName());
+      startProgressBar(BUNDLE.getString("moviechooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
       model.scrapeMetaData();
 
       return null;
@@ -628,7 +632,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         moviesFound, table);
     //
     BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
-    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setColumnName("Search result").setEditable(false);
+    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setColumnName(BUNDLE.getString("moviechooser.searchresult")).setEditable(false); //$NON-NLS-1$
     //
     jTableBinding.bind();
     //
@@ -658,8 +662,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   }
 
   /**
-   * Shows the dialog and returns whether the work on the queue should be
-   * continued.
+   * Shows the dialog and returns whether the work on the queue should be continued.
    * 
    * @return true, if successful
    */
@@ -685,8 +688,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       MovieScrapers selectedScraper = (MovieScrapers) cbScraper.getSelectedItem();

@@ -10,7 +10,7 @@ public class EpisodeMatching {
 
   private String detectEpisode(String name) {
     // FIXME: patters quite fine, but second find should start AFTER complete first match, not inbetween
-    Pattern regex = Pattern.compile("(?i)[ex_-]+[p]?(\\d{1,2})");
+    Pattern regex = Pattern.compile("(?i)[epx_-]+(\\d{1,2})");
     // episode fixed to 2 chars
     Matcher m = regex.matcher(name);
     System.out.print(padRight(name + ": ", 40));
@@ -115,8 +115,7 @@ public class EpisodeMatching {
   public static int decodeRoman(String roman) {
     int result = 0;
     String uRoman = roman.toUpperCase(); // case-insensitive
-    for (int i = 0; i < uRoman.length() - 1; i++) {// loop over all but the last
-                                                   // character
+    for (int i = 0; i < uRoman.length() - 1; i++) { // loop over all but the last character
       // if this character has a lower value than the next character
       if (decodeSingleRoman(uRoman.charAt(i)) < decodeSingleRoman(uRoman.charAt(i + 1))) {
         // subtract it

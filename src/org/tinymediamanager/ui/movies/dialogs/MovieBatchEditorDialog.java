@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,6 +41,7 @@ import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.AutocompleteComboBox;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -53,29 +55,32 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieBatchEditorDialog extends JDialog {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -8515248604267310279L;
+  private static final long           serialVersionUID = -8515248604267310279L;
 
   /** The movie list. */
-  private MovieList         movieList        = MovieList.getInstance();
+  private MovieList                   movieList        = MovieList.getInstance();
 
   /** The movies to edit. */
-  private List<Movie>       moviesToEdit;
+  private List<Movie>                 moviesToEdit;
 
   /** The changed. */
-  private boolean           changed          = false;
+  private boolean                     changed          = false;
 
   /** The cb genres. */
-  private JComboBox         cbGenres;
+  private JComboBox                   cbGenres;
 
   /** The cb tags. */
-  private JComboBox         cbTags;
+  private JComboBox                   cbTags;
 
   /** The cb movie set. */
-  private JComboBox         cbMovieSet;
+  private JComboBox                   cbMovieSet;
 
   /** The chckbx watched. */
-  private JCheckBox         chckbxWatched;
+  private JCheckBox                   chckbxWatched;
 
   /**
    * Instantiates a new movie batch editor.
@@ -86,7 +91,7 @@ public class MovieBatchEditorDialog extends JDialog {
   public MovieBatchEditorDialog(final List<Movie> movies) {
     setModal(true);
     setIconImage(Globals.logo);
-    setTitle("Edit Movies");
+    setTitle(BUNDLE.getString("movie.edit")); //$NON-NLS-1$
     setName("movieBatchEditor");
     setBounds(5, 5, 350, 230);
     TmmWindowSaver.loadSettings(this);
@@ -101,7 +106,7 @@ public class MovieBatchEditorDialog extends JDialog {
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-      JLabel lblGenres = new JLabel("Genre");
+      JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
       panelContent.add(lblGenres, "2, 2, right, default");
 
       // cbGenres = new JComboBox(MediaGenres2.values());
@@ -198,7 +203,7 @@ public class MovieBatchEditorDialog extends JDialog {
       });
       panelContent.add(btnRemoveTag, "8, 4");
 
-      JLabel lblMovieSet = new JLabel("Movie set");
+      JLabel lblMovieSet = new JLabel(BUNDLE.getString("movieset")); //$NON-NLS-1$
       panelContent.add(lblMovieSet, "2, 6, right, default");
 
       cbMovieSet = new JComboBox();
@@ -236,7 +241,7 @@ public class MovieBatchEditorDialog extends JDialog {
       });
       panelContent.add(btnSetMovieSet, "6, 6");
 
-      JLabel lblWatched = new JLabel("Watched");
+      JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       panelContent.add(lblWatched, "2, 8, right, default");
 
       chckbxWatched = new JCheckBox("");
@@ -265,7 +270,7 @@ public class MovieBatchEditorDialog extends JDialog {
       flowLayout.setAlignment(FlowLayout.RIGHT);
       getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
-      JButton btnClose = new JButton("Close");
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       btnClose.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {

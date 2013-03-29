@@ -259,7 +259,7 @@ public class ImageLabel extends JLabel {
       int diagonalSize = (int) Math.sqrt(this.getWidth() * this.getWidth() + this.getHeight() * this.getHeight());
 
       // draw text
-      String text = BUNDLE.getString("no.image.found"); //$NON-NLS-1$
+      String text = BUNDLE.getString("image.nonefound"); //$NON-NLS-1$
       Graphics2D g2 = (Graphics2D) g;
       AffineTransform orig = g2.getTransform();
       AffineTransform at = new AffineTransform(orig);

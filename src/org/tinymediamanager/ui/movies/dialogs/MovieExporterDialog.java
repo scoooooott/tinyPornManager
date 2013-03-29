@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -46,6 +47,7 @@ import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -59,35 +61,38 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieExporterDialog extends JDialog {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long    serialVersionUID = 1L;
+  private static final long           serialVersionUID = 1L;
 
   /** The static LOGGER. */
-  private static final Logger  LOGGER           = Logger.getLogger(MovieExporterDialog.class);
+  private static final Logger         LOGGER           = Logger.getLogger(MovieExporterDialog.class);
 
   /** The movies. */
-  private List<Movie>          movies;
+  private List<Movie>                 movies;
 
   /** The templates found. */
-  private List<ExportTemplate> templatesFound;
+  private List<ExportTemplate>        templatesFound;
 
   /** The tf export dir. */
-  private JTextField           tfExportDir;
+  private JTextField                  tfExportDir;
 
   /** The list. */
-  private JList                list;
+  private JList                       list;
 
   /** The lbl template name. */
-  private JLabel               lblTemplateName;
+  private JLabel                      lblTemplateName;
 
   /** The lbl url. */
-  private JLabel               lblUrl;
+  private JLabel                      lblUrl;
 
   /** The tp description. */
-  private JTextPane            tpDescription;
+  private JTextPane                   tpDescription;
 
   /** The chckbx template with detail. */
-  private JCheckBox            chckbxTemplateWithDetail;
+  private JCheckBox                   chckbxTemplateWithDetail;
 
   /**
    * Create the dialog.
@@ -96,7 +101,7 @@ public class MovieExporterDialog extends JDialog {
    *          the movies to export
    */
   public MovieExporterDialog(List<Movie> moviesToExport) {
-    setTitle("export movies");
+    setTitle(BUNDLE.getString("movie.export")); //$NON-NLS-1$
     setName("movieExporter");
     setBounds(5, 5, 600, 300);
     TmmWindowSaver.loadSettings(this);
@@ -135,7 +140,7 @@ public class MovieExporterDialog extends JDialog {
     chckbxTemplateWithDetail.setEnabled(false);
     panelExporterDetails.add(chckbxTemplateWithDetail, "2, 6");
 
-    JLabel lblDetails = new JLabel("Template contains detail pages");
+    JLabel lblDetails = new JLabel(BUNDLE.getString("movie.export.detail")); //$NON-NLS-1$
     panelExporterDetails.add(lblDetails, "4, 6");
 
     JScrollPane scrollPaneDescription = new JScrollPane();
@@ -149,10 +154,10 @@ public class MovieExporterDialog extends JDialog {
     getContentPane().add(tfExportDir, "2, 4, fill, default");
     tfExportDir.setColumns(10);
 
-    JButton btnSetDestination = new JButton("Set export destination");
+    JButton btnSetDestination = new JButton(BUNDLE.getString("movie.export.setdestination")); //$NON-NLS-1$
     btnSetDestination.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        File file = TmmUIHelper.selectDirectory("select export directory");
+        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("movie.export.selectdirectory")); //$NON-NLS-1$
         if (file != null) {
           tfExportDir.setText(file.getAbsolutePath());
         }
@@ -187,7 +192,7 @@ public class MovieExporterDialog extends JDialog {
     });
     panelButtons.add(btnExport);
 
-    JButton btnCancel = new JButton("Cancel");
+    JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     btnCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         MovieExporterDialog.this.setVisible(false);

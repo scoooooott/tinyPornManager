@@ -122,7 +122,7 @@ public class MovieScraperSettingsPanel extends JPanel {
         FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
     JPanel panelMovieScrapers = new JPanel();
-    panelMovieScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.metadata"),
+    panelMovieScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.metadata.defaults"),
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelMovieScrapers, "2, 2, fill, top");
     panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
@@ -185,7 +185,7 @@ public class MovieScraperSettingsPanel extends JPanel {
     panelScraperMetadataContainer.add(chckbxAutomaticallyScrapeImages, "2, 3");
 
     panel = new JPanel();
-    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.trailer"), TitledBorder.LEADING,
+    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.trailer"), TitledBorder.LEADING,
         TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panel, "2, 4, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,

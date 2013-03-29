@@ -169,7 +169,7 @@ public class MovieDetailsPanel extends JPanel {
     lblRuntime = new JLabel("");
     add(lblRuntime, "4, 6");
 
-    lblMinutes = new JLabel("min");
+    lblMinutes = new JLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$
     add(lblMinutes, "6, 6");
 
     lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$

@@ -226,19 +226,19 @@ public class MovieImageSettingsPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("Settings.postersize")); //$NON-NLS-1$
+    JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size")); //$NON-NLS-1$
     panelMovieImagesTmdb.add(lblImageTmdbPosterSize, "2, 2, right, default");
 
     cbImageTmdbPosterSize = new JComboBox(PosterSizes.values());
     panelMovieImagesTmdb.add(cbImageTmdbPosterSize, "4, 2, fill, default");
 
-    JLabel lblImageTmdbFanartSize = new JLabel(BUNDLE.getString("Settings.fanartsize")); //$NON-NLS-1$
+    JLabel lblImageTmdbFanartSize = new JLabel(BUNDLE.getString("image.fanart.size")); //$NON-NLS-1$
     panelMovieImagesTmdb.add(lblImageTmdbFanartSize, "2, 4, right, default");
 
     cbImageTmdbFanartSize = new JComboBox(FanartSizes.values());
     panelMovieImagesTmdb.add(cbImageTmdbFanartSize, "4, 4, fill, default");
 
-    JLabel lblPosterFilename = new JLabel(BUNDLE.getString("Settings.posternaming")); //$NON-NLS-1$
+    JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming")); //$NON-NLS-1$
     panelMovieImages.add(lblPosterFilename, "2, 11");
 
     cbMoviePosterFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".tbn"); //$NON-NLS-1$
@@ -280,7 +280,7 @@ public class MovieImageSettingsPanel extends JPanel {
     cbMoviePosterFilename3 = new JCheckBox("movie.tbn");
     panelMovieImages.add(cbMoviePosterFilename3, "10, 14");
 
-    JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("Settings.fanartnaming")); //$NON-NLS-1$
+    JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming")); //$NON-NLS-1$
     panelMovieImages.add(lblFanartFileNaming, "2, 16");
 
     cbMovieFanartFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-fanart.jpg"); //$NON-NLS-1$

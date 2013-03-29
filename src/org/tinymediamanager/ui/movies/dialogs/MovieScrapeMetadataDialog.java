@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -38,6 +39,7 @@ import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieTrailerScrapers;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -51,6 +53,9 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieScrapeMetadataDialog extends JDialog {
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID           = 3826984454317979241L;
@@ -126,13 +131,13 @@ public class MovieScrapeMetadataDialog extends JDialog {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblMetadataScraperT = new JLabel("Metadata scraper");
+    JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata")); //$NON-NLS-1$
     panelScraper.add(lblMetadataScraperT, "2, 1, right, default");
 
     cbMetadataScraper = new JComboBox(MovieScrapers.values());
     panelScraper.add(cbMetadataScraper, "4, 1, 3, 1, fill, default");
 
-    JLabel lblArtworkScraper = new JLabel("Artwork scraper");
+    JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
     panelScraper.add(lblArtworkScraper, "2, 3, right, default");
 
     chckbxTheMovieDb = new JCheckBox("The Movie DB");
@@ -141,7 +146,7 @@ public class MovieScrapeMetadataDialog extends JDialog {
     chckbxFanarttv = new JCheckBox("Fanart.tv");
     panelScraper.add(chckbxFanarttv, "6, 3");
 
-    JLabel lblTrailerScraper = new JLabel("Trailer scraper");
+    JLabel lblTrailerScraper = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
     panelScraper.add(lblTrailerScraper, "2, 5, right, default");
 
     chckbxTheMovieDb_1 = new JCheckBox("The Movie DB");
@@ -160,8 +165,8 @@ public class MovieScrapeMetadataDialog extends JDialog {
           FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
-      panelScraperMetadataSetting.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Select metadata to be scraped",
-          TitledBorder.LEADING, TitledBorder.TOP, null, null));
+      panelScraperMetadataSetting.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), BUNDLE.getString("scraper.metadata.select"),
+          TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$,
       panelCenter.add(panelScraperMetadataSetting, "2, 2");
     }
 
@@ -169,7 +174,7 @@ public class MovieScrapeMetadataDialog extends JDialog {
     panelButtons.setLayout(new EqualsLayout(5));
     panelContent.add(panelButtons, BorderLayout.SOUTH);
 
-    JButton btnStart = new JButton("Start scraping");
+    JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
     btnStart.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -179,7 +184,7 @@ public class MovieScrapeMetadataDialog extends JDialog {
     });
     panelButtons.add(btnStart);
 
-    JButton btnCancel = new JButton("Cancel");
+    JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     btnCancel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
