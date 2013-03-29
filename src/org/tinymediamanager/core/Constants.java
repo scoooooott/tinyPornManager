@@ -137,4 +137,10 @@ public final class Constants {
   public final static String TMDBID               = "tmdbId";
 
   public final static String MOVIESET             = "movieset";
+
+  public final static String TV_SHOW              = "tvShow";
+  public final static String TV_SHOWS             = "tvShows";
+  public final static String EPISODE              = "episode";
+  public final static String EPISODES             = "episodes";
+  public final static String SEASON               = "season";
 }

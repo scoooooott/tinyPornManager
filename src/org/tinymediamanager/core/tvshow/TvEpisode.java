@@ -15,10 +15,21 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import static org.tinymediamanager.core.Constants.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
+import org.tinymediamanager.core.MediaFile;
 
 /**
  * The Class TvEpisode.
@@ -28,6 +39,18 @@ import org.tinymediamanager.core.MediaEntity;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvEpisode extends MediaEntity {
+
+  private TvShow          tvShow               = null;
+  private int             episode              = 0;
+  private int             season               = 0;
+
+  /** The media files. */
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<MediaFile> mediaFiles           = new ArrayList<MediaFile>();
+
+  /** The media files observable. */
+  @Transient
+  private List<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
   /*
    * (non-Javadoc)
@@ -71,6 +94,83 @@ public class TvEpisode extends MediaEntity {
   public void setFanart(String fanart) {
     // TODO Auto-generated method stub
 
+  }
+
+  public TvShow getTvShow() {
+    return tvShow;
+  }
+
+  public void setTvShow(TvShow newValue) {
+    TvShow oldValue = this.tvShow;
+    this.tvShow = newValue;
+    firePropertyChange(TV_SHOW, oldValue, newValue);
+  }
+
+  public int getEpisode() {
+    return episode;
+  }
+
+  public int getSeason() {
+    return season;
+  }
+
+  public void setEpisode(int newValue) {
+    int oldValue = this.episode;
+    this.episode = newValue;
+    firePropertyChange(EPISODE, oldValue, newValue);
+  }
+
+  public void setSeason(int newValue) {
+    int oldValue = this.season;
+    this.season = newValue;
+    firePropertyChange(SEASON, oldValue, newValue);
+  }
+
+  public void initializeAfterLoading() {
+    mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+  }
+
+  /**
+   * Adds the to media files.
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void addToMediaFiles(MediaFile obj) {
+    mediaFilesObservable.add(obj);
+    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
+  }
+
+  /**
+   * Gets the media files.
+   * 
+   * @return the media files
+   */
+  public List<MediaFile> getMediaFiles() {
+    return mediaFilesObservable;
+  }
+
+  /**
+   * Removes the from media files.
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void removeFromMediaFiles(MediaFile obj) {
+    mediaFilesObservable.remove(obj);
+    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
+  }
+
+  /**
+   * Save to db.
+   */
+  public synchronized void saveToDb() {
+    // update DB
+    synchronized (Globals.entityManager) {
+      Globals.entityManager.getTransaction().begin();
+      Globals.entityManager.persist(this);
+      Globals.entityManager.getTransaction().commit();
+    }
   }
 
 }

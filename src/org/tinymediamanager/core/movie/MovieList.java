@@ -438,33 +438,6 @@ public class MovieList extends AbstractModelObject {
    * @return the artwork provider
    */
   public List<IMediaArtworkProvider> getArtworkProviders() {
-    // List<IMediaArtworkProvider> artworkProviders = new
-    // ArrayList<IMediaArtworkProvider>();
-    // // if (artworkProvider == null) {
-    // IMediaArtworkProvider artworkProvider = null;
-    //
-    // try {
-    // if (Globals.settings.isImageScraperTmdb()) {
-    // LOGGER.debug("get instance of TmdbMetadataProvider");
-    // artworkProvider = new TmdbMetadataProvider();
-    // artworkProviders.add(artworkProvider);
-    // }
-    // }
-    // catch (Exception e) {
-    // LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
-    // }
-    // try {
-    // if (Globals.settings.isImageScraperFanartTv()) {
-    // LOGGER.debug("get instance of FanartTvMetadataProvider");
-    // artworkProvider = new FanartTvMetadataProvider();
-    // artworkProviders.add(artworkProvider);
-    // }
-    // }
-    // catch (Exception e) {
-    // LOGGER.warn("failed to get instance of FanartTvMetadataProvider", e);
-    // }
-    // // }
-
     List<MovieArtworkScrapers> scrapers = new ArrayList<MovieArtworkScrapers>();
     if (Globals.settings.isImageScraperTmdb()) {
       scrapers.add(MovieArtworkScrapers.TMDB);
@@ -526,34 +499,6 @@ public class MovieList extends AbstractModelObject {
    * @return the trailer providers
    */
   public List<IMediaTrailerProvider> getTrailerProviders() {
-    // List<IMediaTrailerProvider> trailerProviders = new
-    // ArrayList<IMediaTrailerProvider>();
-    // LOGGER.debug("get instances of IMediaTrailerProviders");
-    //
-    // // tmdb
-    // if (Globals.settings.isTrailerScraperTmdb()) {
-    // try {
-    // IMediaTrailerProvider trailerProvider = new TmdbMetadataProvider();
-    // trailerProviders.add(trailerProvider);
-    // }
-    // catch (Exception e) {
-    // LOGGER.warn("failed to get instance of TmdbMetadataProvider", e);
-    // }
-    // }
-    //
-    // // hd-trailers.net
-    // if (Globals.settings.isTrailerScraperHdTrailers()) {
-    // IMediaTrailerProvider trailerProvider = new HDTrailersNet();
-    // trailerProviders.add(trailerProvider);
-    // }
-    //
-    // // ofdb.de
-    // if (Globals.settings.isTrailerScraperOfdb()) {
-    // IMediaTrailerProvider trailerProvider = new OfdbMetadataProvider();
-    // trailerProviders.add(trailerProvider);
-    // }
-    //
-    // return trailerProviders;
     List<MovieTrailerScrapers> scrapers = new ArrayList<MovieTrailerScrapers>();
 
     if (Globals.settings.isTrailerScraperTmdb()) {
