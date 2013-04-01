@@ -25,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.Transient;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -33,7 +34,10 @@ import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
+import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 
@@ -83,8 +87,12 @@ public class TvShow extends MediaEntity {
    */
   @Override
   public String getFanart() {
-    // TODO Auto-generated method stub
-    return null;
+    if (!StringUtils.isEmpty(fanart)) {
+      return path + File.separator + fanart;
+    }
+    else {
+      return fanart;
+    }
   }
 
   /*
@@ -94,8 +102,12 @@ public class TvShow extends MediaEntity {
    */
   @Override
   public String getPoster() {
-    // TODO Auto-generated method stub
-    return null;
+    if (!StringUtils.isEmpty(poster)) {
+      return path + File.separator + poster;
+    }
+    else {
+      return poster;
+    }
   }
 
   /*
@@ -104,9 +116,11 @@ public class TvShow extends MediaEntity {
    * @see org.tinymediamanager.core.MediaEntity#setPoster(java.lang.String)
    */
   @Override
-  public void setPoster(String poster) {
-    // TODO Auto-generated method stub
-
+  public void setPoster(String newValue) {
+    String oldValue = this.poster;
+    this.poster = newValue;
+    firePropertyChange(POSTER, oldValue, newValue);
+    firePropertyChange(HAS_IMAGES, false, true);
   }
 
   /*
@@ -115,9 +129,39 @@ public class TvShow extends MediaEntity {
    * @see org.tinymediamanager.core.MediaEntity#setFanart(java.lang.String)
    */
   @Override
-  public void setFanart(String fanart) {
-    // TODO Auto-generated method stub
+  public void setFanart(String newValue) {
+    String oldValue = this.fanart;
+    this.fanart = newValue;
+    firePropertyChange(FANART, oldValue, newValue);
+    firePropertyChange(HAS_IMAGES, false, true);
+  }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#getBanner()
+   */
+  @Override
+  public String getBanner() {
+    if (!StringUtils.isEmpty(banner)) {
+      return path + File.separator + banner;
+    }
+    else {
+      return banner;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setBanner(java.lang.String)
+   */
+  @Override
+  public void setBanner(String newValue) {
+    String oldValue = this.banner;
+    this.banner = newValue;
+    firePropertyChange(BANNER, oldValue, newValue);
+    firePropertyChange(HAS_IMAGES, false, true);
   }
 
   /**
@@ -217,18 +261,6 @@ public class TvShow extends MediaEntity {
     String oldValue = this.dataSource;
     this.dataSource = newValue;
     firePropertyChange(DATA_SOURCE, oldValue, newValue);
-  }
-
-  /**
-   * Save to db.
-   */
-  public synchronized void saveToDb() {
-    // update DB
-    synchronized (Globals.entityManager) {
-      Globals.entityManager.getTransaction().begin();
-      Globals.entityManager.persist(this);
-      Globals.entityManager.getTransaction().commit();
-    }
   }
 
   /**
@@ -344,6 +376,12 @@ public class TvShow extends MediaEntity {
     return sb.toString();
   }
 
+  /**
+   * Sets the metadata.
+   * 
+   * @param metadata
+   *          the new metadata
+   */
   public void setMetadata(MediaMetadata metadata) {
     // check if metadata has at least a name
     if (StringUtils.isEmpty(metadata.getTitle())) {
@@ -364,6 +402,106 @@ public class TvShow extends MediaEntity {
 
     // update DB
     saveToDb();
+  }
+
+  /**
+   * Sets the artwork.
+   * 
+   * @param artwork
+   *          the new artwork
+   */
+  public void setArtwork(List<MediaArtwork> artwork) {
+    setArtwork(artwork, Globals.settings.getTvShowScraperMetadataConfig());
+  }
+
+  /**
+   * Sets the artwork.
+   * 
+   * @param artwork
+   *          the artwork
+   * @param config
+   *          the config
+   */
+  public void setArtwork(List<MediaArtwork> artwork, TvShowScraperMetadataConfig config) {
+    if (config.isArtwork()) {
+      // poster
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.POSTER) {
+          // set url
+          setPosterUrl(art.getDefaultUrl());
+          // and download it
+          writePosterImage();
+          break;
+        }
+      }
+
+      // fanart
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.BACKGROUND) {
+          // set url
+          setFanartUrl(art.getDefaultUrl());
+          // and download it
+          writeFanartImage();
+          break;
+        }
+      }
+
+      // banner
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.BANNER) {
+          // set url
+          setBannerUrl(art.getDefaultUrl());
+          // and download it
+          writeBannerImage();
+          break;
+        }
+      }
+
+      // update DB
+      saveToDb();
+    }
+  }
+
+  /**
+   * Write poster image.
+   */
+  public void writePosterImage() {
+    if (StringUtils.isNotEmpty(getPosterUrl())) {
+      boolean firstImage = true;
+      // create correct filename
+      String filename = path + File.separator + "poster." + FilenameUtils.getExtension(getPosterUrl());
+      // get image in thread
+      MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
+      Globals.executor.execute(task);
+    }
+  }
+
+  /**
+   * Write fanart image.
+   */
+  public void writeFanartImage() {
+    if (StringUtils.isNotEmpty(getFanartUrl())) {
+      boolean firstImage = true;
+      // create correct filename
+      String filename = path + File.separator + "fanart." + FilenameUtils.getExtension(getFanartUrl());
+      // get image in thread
+      MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
+      Globals.executor.execute(task);
+    }
+  }
+
+  /**
+   * Write banner image.
+   */
+  public void writeBannerImage() {
+    if (StringUtils.isNotEmpty(getBannerUrl())) {
+      boolean firstImage = true;
+      // create correct filename
+      String filename = path + File.separator + "banner." + FilenameUtils.getExtension(getBannerUrl());
+      // get image in thread
+      MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getBannerUrl(), MediaArtworkType.BANNER, filename, firstImage);
+      Globals.executor.execute(task);
+    }
   }
 
   /**

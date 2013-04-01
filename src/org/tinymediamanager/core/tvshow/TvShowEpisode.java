@@ -96,6 +96,28 @@ public class TvShowEpisode extends MediaEntity {
 
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#getBanner()
+   */
+  @Override
+  public String getBanner() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setBanner(java.lang.String)
+   */
+  @Override
+  public void setBanner(String banner) {
+    // TODO Auto-generated method stub
+
+  }
+
   public TvShow getTvShow() {
     return tvShow;
   }
@@ -194,5 +216,4 @@ public class TvShowEpisode extends MediaEntity {
       Globals.entityManager.getTransaction().commit();
     }
   }
-
 }

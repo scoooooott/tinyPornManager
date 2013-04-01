@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.ResourceBundle;
 
@@ -81,6 +80,9 @@ public class TvShowInformationPanel extends JPanel {
 
   /** The lbl tv show poster. */
   private ImageLabel                  lblTvShowPoster;
+
+  /** The lbl tv show banner. */
+  private ImageLabel                  lblTvShowBanner;
 
   /** The panel bottom. */
   private JPanel                      panelBottom;
@@ -164,25 +166,23 @@ public class TvShowInformationPanel extends JPanel {
     JLayeredPane layeredPaneImages = new JLayeredPane();
     panelTop.add(layeredPaneImages, "1, 2, 4, 1, fill, fill");
     layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px"),
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"),
-        RowSpec.decode("fill:default:grow"), }));
+        ColumnSpec.decode("default:grow"), ColumnSpec.decode("400px"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"),
+        RowSpec.decode("top:100px"), RowSpec.decode("80px"), RowSpec.decode("fill:default:grow"), }));
 
     lblTvShowBackground = new ImageLabel(false, true);
-    layeredPaneImages.add(lblTvShowBackground, "1, 1, 3, 3, fill, fill");
+    layeredPaneImages.add(lblTvShowBackground, "1, 1, 4, 4, fill, fill");
 
     lblTvShowPoster = new ImageLabel();
     layeredPaneImages.setLayer(lblTvShowPoster, 1);
-    layeredPaneImages.add(lblTvShowPoster, "2, 2, fill, fill");
+    layeredPaneImages.add(lblTvShowPoster, "2, 2, 1, 2, fill, fill");
 
     JPanel panelGenres = new TvShowGenresPanel(tvShowSelectionModel);
     layeredPaneImages.setLayer(panelGenres, 2);
-    layeredPaneImages.add(panelGenres, "2, 2, 2, 2, right, bottom");
+    layeredPaneImages.add(panelGenres, "2, 3, 3, 2, right, bottom");
 
-    JPanel panelLogos = new JPanel();
-    panelLogos.setOpaque(false);
-    layeredPaneImages.setLayer(panelLogos, 2);
-    layeredPaneImages.add(panelLogos, "2, 2, 2, 2, right, top");
-    panelLogos.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+    lblTvShowBanner = new ImageLabel();
+    layeredPaneImages.setLayer(lblTvShowBanner, 2);
+    layeredPaneImages.add(lblTvShowBanner, "4, 1, 1, 2, fill, fill");
 
     panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
@@ -240,5 +240,31 @@ public class TvShowInformationPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, Float, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
     autoBinding_3.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Long> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.id");
+    AutoBinding<TvShowSelectionModel, Long, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_3, lblTtvdbId, jLabelBeanProperty);
+    autoBinding_4.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_4 = BeanProperty.create("selectedTvShow.imdbId");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_4, lblImdbId, jLabelBeanProperty);
+    autoBinding_5.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.fanart");
+    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imagePath");
+    AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowSelectionModel, tvShowSelectionModelBeanProperty_5, lblTvShowBackground, imageLabelBeanProperty);
+    autoBinding_6.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShow.poster");
+    AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowSelectionModel, tvShowSelectionModelBeanProperty_6, lblTvShowPoster, imageLabelBeanProperty);
+    autoBinding_7.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_7 = BeanProperty.create("selectedTvShow.banner");
+    AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowSelectionModel, tvShowSelectionModelBeanProperty_7, lblTvShowBanner, imageLabelBeanProperty);
+    autoBinding_8.bind();
   }
 }

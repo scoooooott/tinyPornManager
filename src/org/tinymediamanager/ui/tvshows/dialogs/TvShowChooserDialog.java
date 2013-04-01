@@ -422,8 +422,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
             // else {
             // get artwork directly from provider
             List<MediaArtwork> artwork = model.getArtwork();
-            // TODO write images
-            // tvShowToScrape.setArtwork(artwork);
+            tvShowToScrape.setArtwork(artwork);
             // }
           }
 

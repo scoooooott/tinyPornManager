@@ -30,7 +30,6 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -160,9 +159,6 @@ public class TvShowChooserModel extends AbstractModelObject {
    * @return the overview
    */
   public String getOverview() {
-    // if (metadata == null) {
-    // scrapeMetaData();
-    // }
     return overview;
   }
 
@@ -263,7 +259,6 @@ public class TvShowChooserModel extends AbstractModelObject {
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
     options.setImdbId(metadata.getImdbId());
-    options.setTmdbId(metadata.getTmdbId());
 
     // scrape providers till one artwork has been found
     for (IMediaArtworkProvider artworkProvider : artworkProviders) {
@@ -287,32 +282,32 @@ public class TvShowChooserModel extends AbstractModelObject {
     return artwork;
   }
 
-  /**
-   * Gets the trailers.
-   * 
-   * @return the trailers
-   */
-  public List<MediaTrailer> getTrailers() {
-    List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
-
-    MediaScrapeOptions options = new MediaScrapeOptions();
-    options.setMetadata(metadata);
-    options.setImdbId(metadata.getImdbId());
-    options.setTmdbId(metadata.getTmdbId());
-
-    // scrape trailers
-    for (IMediaTrailerProvider trailerProvider : trailerProviders) {
-      try {
-        List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
-        trailers.addAll(foundTrailers);
-      }
-      catch (Exception e) {
-        LOGGER.warn(e.getMessage());
-      }
-    }
-
-    return trailers;
-  }
+  // /**
+  // * Gets the trailers.
+  // *
+  // * @return the trailers
+  // */
+  // public List<MediaTrailer> getTrailers() {
+  // List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+  //
+  // MediaScrapeOptions options = new MediaScrapeOptions();
+  // options.setMetadata(metadata);
+  // options.setImdbId(metadata.getImdbId());
+  // options.setTmdbId(metadata.getTmdbId());
+  //
+  // // scrape trailers
+  // for (IMediaTrailerProvider trailerProvider : trailerProviders) {
+  // try {
+  // List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
+  // trailers.addAll(foundTrailers);
+  // }
+  // catch (Exception e) {
+  // LOGGER.warn(e.getMessage());
+  // }
+  // }
+  //
+  // return trailers;
+  // }
 
   /**
    * Gets the metadata.

@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.util.HashMap;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -28,25 +30,25 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 public class MediaScrapeOptions {
 
   /** The result. */
-  private MediaSearchResult result;
+  private MediaSearchResult       result;
 
   /** The metadata. */
-  private MediaMetadata     metadata;
+  private MediaMetadata           metadata;
 
   /** The imdb id. */
-  private String            imdbId      = "";
+  private String                  imdbId      = "";
 
   /** The tmdb id. */
-  private int               tmdbId      = 0;
+  private int                     tmdbId      = 0;
 
-  /** The id. */
-  private String            id          = "";
+  /** The ids. */
+  private HashMap<String, String> ids         = new HashMap<String, String>();
 
   /** The type. */
-  private MediaType         type;
+  private MediaType               type;
 
   /** The artwork type. */
-  private MediaArtworkType  artworkType = MediaArtworkType.ALL;
+  private MediaArtworkType        artworkType = MediaArtworkType.ALL;
 
   /**
    * Instantiates a new media scrape options.
@@ -77,20 +79,24 @@ public class MediaScrapeOptions {
   /**
    * Gets the id.
    * 
+   * @param key
+   *          the key
    * @return the id
    */
-  public String getId() {
-    return id;
+  public String getId(String key) {
+    return ids.get(key);
   }
 
   /**
    * Sets the id.
    * 
+   * @param key
+   *          the key
    * @param id
    *          the new id
    */
-  public void setId(String id) {
-    this.id = id;
+  public void setId(String key, String id) {
+    this.ids.put(key, id);
   }
 
   /**

@@ -19,11 +19,14 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+
+import org.tinymediamanager.Globals;
 
 /**
  * The Class MediaEntity.
@@ -36,50 +39,59 @@ public abstract class MediaEntity extends AbstractModelObject {
   /** The id. */
   @Id
   @GeneratedValue
-  protected Long    id;
+  protected Long                    id;
+
+  /** The ids to store the ID from several metadataproviders. */
+  protected HashMap<String, Object> ids               = new HashMap<String, Object>();
 
   /** The title. */
-  protected String  title             = "";
+  protected String                  title             = "";
 
   /** The original title. */
-  protected String  originalTitle     = "";
+  protected String                  originalTitle     = "";
 
   /** The year. */
-  protected String  year              = "";
+  protected String                  year              = "";
 
   /** The overview. */
-  protected String  plot              = "";
+  protected String                  plot              = "";
 
   /** The rating. */
-  protected float   rating            = 0f;
+  protected float                   rating            = 0f;
 
   /** The path. */
-  protected String  path              = "";
+  protected String                  path              = "";
 
   /** The fanart url. */
-  protected String  fanartUrl         = "";
+  protected String                  fanartUrl         = "";
 
   /** The fanart. */
-  protected String  fanart            = "";
+  protected String                  fanart            = "";
 
   /** The poster url. */
-  protected String  posterUrl         = "";
+  protected String                  posterUrl         = "";
 
   /** The poster. */
-  protected String  poster            = "";
+  protected String                  poster            = "";
+
+  /** The banner url. */
+  protected String                  bannerUrl         = "";
+
+  /** The banner. */
+  protected String                  banner            = "";
 
   /** The date added. */
-  protected Date    dateAdded         = new Date();
+  protected Date                    dateAdded         = new Date();
 
   /** The production company. */
-  protected String  productionCompany = "";
+  protected String                  productionCompany = "";
 
   /** The scraped. */
-  protected boolean scraped           = false;
+  protected boolean                 scraped           = false;
 
   /** The duplicate flag. */
   @Transient
-  private boolean   duplicate         = false;
+  private boolean                   duplicate         = false;
 
   /**
    * Gets the id.
@@ -157,6 +169,22 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return the poster
    */
   abstract public String getPoster();
+
+  /**
+   * Gets the banner url.
+   * 
+   * @return the banner url
+   */
+  public String getBannerUrl() {
+    return bannerUrl;
+  }
+
+  /**
+   * Gets the banner.
+   * 
+   * @return the banner
+   */
+  abstract public String getBanner();
 
   /**
    * Gets the rating.
@@ -279,6 +307,26 @@ public abstract class MediaEntity extends AbstractModelObject {
   abstract public void setPoster(String poster);
 
   /**
+   * Sets the banner url.
+   * 
+   * @param newValue
+   *          the new banner url
+   */
+  public void setBannerUrl(String newValue) {
+    String oldValue = bannerUrl;
+    bannerUrl = newValue;
+    firePropertyChange(BANNER_URL, oldValue, newValue);
+  }
+
+  /**
+   * Sets the banner.
+   * 
+   * @param banner
+   *          the new banner
+   */
+  abstract public void setBanner(String banner);
+
+  /**
    * Sets the fanart url.
    * 
    * @param newValue
@@ -395,5 +443,40 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public boolean isDuplicate() {
     return this.duplicate;
+  }
+
+  /**
+   * Sets the id.
+   * 
+   * @param key
+   *          the key
+   * @param value
+   *          the value
+   */
+  public void setId(String key, Object value) {
+    ids.put(key, value);
+  }
+
+  /**
+   * Gets the id.
+   * 
+   * @param key
+   *          the key
+   * @return the id
+   */
+  public Object getId(String key) {
+    return ids.get(key);
+  }
+
+  /**
+   * Save to db.
+   */
+  public synchronized void saveToDb() {
+    // update DB
+    synchronized (Globals.entityManager) {
+      Globals.entityManager.getTransaction().begin();
+      Globals.entityManager.persist(this);
+      Globals.entityManager.getTransaction().commit();
+    }
   }
 }

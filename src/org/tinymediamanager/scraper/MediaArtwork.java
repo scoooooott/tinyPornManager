@@ -45,6 +45,8 @@ public class MediaArtwork {
     POSTER,
     /** The actor. */
     ACTOR,
+    /** The season. */
+    SEASON,
     /** All. */
     ALL;
   }
@@ -244,8 +246,7 @@ public class MediaArtwork {
   }
 
   /**
-   * gets the Url for the smallest available artwork (most used for previews -
-   * imagechooser).
+   * gets the Url for the smallest available artwork (most used for previews - imagechooser).
    * 
    * @return the url for small artwork
    */
@@ -264,8 +265,7 @@ public class MediaArtwork {
   }
 
   /**
-   * gets the Url for the biggest available artwork (most used for real
-   * downloads).
+   * gets the Url for the biggest available artwork (most used for real downloads).
    * 
    * @return the url for biggest artwork
    */
@@ -285,8 +285,7 @@ public class MediaArtwork {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result

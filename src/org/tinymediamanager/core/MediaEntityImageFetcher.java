@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie.tasks;
+package org.tinymediamanager.core;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,22 +22,21 @@ import java.io.InputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
- * The Class MovieImageFetcher.
+ * The Class MediaEntityImageFetcher.
  * 
  * @author Manuel Laggner
  */
-public class MovieImageFetcher implements Runnable {
+public class MediaEntityImageFetcher implements Runnable {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = Logger.getLogger(MovieImageFetcher.class);
+  private final static Logger LOGGER = Logger.getLogger(MediaEntityImageFetcher.class);
 
-  /** The movie. */
-  private Movie               movie;
+  /** The entity. */
+  private MediaEntity         entity;
 
   /** The url. */
   private String              url;
@@ -52,10 +51,10 @@ public class MovieImageFetcher implements Runnable {
   private boolean             firstImage;
 
   /**
-   * Instantiates a new movie image fetcher.
+   * Instantiates a new media entity image fetcher.
    * 
-   * @param movie
-   *          the movie
+   * @param entity
+   *          the entity
    * @param url
    *          the url
    * @param type
@@ -65,8 +64,8 @@ public class MovieImageFetcher implements Runnable {
    * @param firstImage
    *          the first image
    */
-  public MovieImageFetcher(Movie movie, String url, MediaArtworkType type, String filename, boolean firstImage) {
-    this.movie = movie;
+  public MediaEntityImageFetcher(MediaEntity entity, String url, MediaArtworkType type, String filename, boolean firstImage) {
+    this.entity = entity;
     this.url = url;
     this.type = type;
     this.filename = filename;
@@ -86,13 +85,18 @@ public class MovieImageFetcher implements Runnable {
       if (firstImage) {
         switch (type) {
           case POSTER:
-            oldFilename = movie.getPoster();
-            movie.setPoster("");
+            oldFilename = entity.getPoster();
+            entity.setPoster("");
             break;
 
           case BACKGROUND:
-            oldFilename = movie.getFanart();
-            movie.setFanart("");
+            oldFilename = entity.getFanart();
+            entity.setFanart("");
+            break;
+
+          case BANNER:
+            oldFilename = entity.getBanner();
+            entity.setBanner("");
             break;
         }
       }
@@ -113,13 +117,18 @@ public class MovieImageFetcher implements Runnable {
         LOGGER.debug("set " + type + " " + FilenameUtils.getName(filename));
         switch (type) {
           case POSTER:
-            movie.setPoster(FilenameUtils.getName(filename));
-            movie.saveToDb();
+            entity.setPoster(FilenameUtils.getName(filename));
+            entity.saveToDb();
             break;
 
           case BACKGROUND:
-            movie.setFanart(FilenameUtils.getName(filename));
-            movie.saveToDb();
+            entity.setFanart(FilenameUtils.getName(filename));
+            entity.saveToDb();
+            break;
+
+          case BANNER:
+            entity.setBanner(FilenameUtils.getName(filename));
+            entity.saveToDb();
             break;
         }
       }
@@ -131,13 +140,18 @@ public class MovieImageFetcher implements Runnable {
       if (firstImage) {
         switch (type) {
           case POSTER:
-            movie.setPoster(oldFilename);
-            movie.saveToDb();
+            entity.setPoster(oldFilename);
+            entity.saveToDb();
             break;
 
           case BACKGROUND:
-            movie.setFanart(oldFilename);
-            movie.saveToDb();
+            entity.setFanart(oldFilename);
+            entity.saveToDb();
+            break;
+
+          case BANNER:
+            entity.setBanner(oldFilename);
+            entity.saveToDb();
             break;
         }
       }

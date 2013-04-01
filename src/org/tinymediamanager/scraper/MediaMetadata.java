@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -32,64 +33,67 @@ import org.tinymediamanager.scraper.MediaCastMember.CastType;
 public class MediaMetadata {
 
   /** The provider id. */
-  private String                providerId;
+  private String                  providerId;
 
   /** The imdb id. */
-  private String                imdbId            = "";
+  private String                  imdbId            = "";
 
   /** The tmdb id. */
-  private int                   tmdbId            = 0;
+  private int                     tmdbId            = 0;
+
+  /** a hashmap storing other ids. */
+  private HashMap<String, String> ids               = new HashMap<String, String>();
 
   /** The tmdb id set. */
-  private int                   tmdbIdSet         = 0;
+  private int                     tmdbIdSet         = 0;
 
   /** The plot. */
-  private String                plot              = "";
+  private String                  plot              = "";
 
   /** The title. */
-  private String                title             = "";
+  private String                  title             = "";
 
   /** The original title. */
-  private String                originalTitle     = "";
+  private String                  originalTitle     = "";
 
   /** The rating. */
-  private double                rating            = 0.0;
+  private double                  rating            = 0.0;
 
   /** The vote count. */
-  private int                   voteCount         = 0;
+  private int                     voteCount         = 0;
 
   /** The runtime. */
-  private int                   runtime           = 0;
+  private int                     runtime           = 0;
 
   /** The tagline. */
-  private String                tagline           = "";
+  private String                  tagline           = "";
 
   /** The production company. */
-  private String                productionCompany = "";
+  private String                  productionCompany = "";
 
   /** The year. */
-  private String                year              = "";
+  private String                  year              = "";
 
   /** The release date. */
-  private String                releaseDate       = "";
+  private String                  releaseDate       = "";
 
   /** The spoken languages. */
-  private String                spokenLanguages   = "";
+  private String                  spokenLanguages   = "";
 
   /** The cast members. */
-  private List<MediaCastMember> castMembers       = new ArrayList<MediaCastMember>();
+  private List<MediaCastMember>   castMembers       = new ArrayList<MediaCastMember>();
 
   /** The fanart. */
-  private List<MediaArtwork>    fanart            = new ArrayList<MediaArtwork>();
+  private List<MediaArtwork>      fanart            = new ArrayList<MediaArtwork>();
 
   /** The genres. */
-  private List<MediaGenres>     genres            = new ArrayList<MediaGenres>();
+  private List<MediaGenres>       genres            = new ArrayList<MediaGenres>();
 
   /** The certifications. */
-  private List<Certification>   certifications    = new ArrayList<Certification>();
+  private List<Certification>     certifications    = new ArrayList<Certification>();
 
   /** The trailers. */
-  private List<MediaTrailer>    trailers          = new ArrayList<MediaTrailer>();
+  private List<MediaTrailer>      trailers          = new ArrayList<MediaTrailer>();
 
   /**
    * Instantiates a new media metadata.
@@ -555,9 +559,31 @@ public class MediaMetadata {
   }
 
   /**
+   * Sets the id.
+   * 
+   * @param key
+   *          the key
+   * @param id
+   *          the id
+   */
+  public void setId(String key, String id) {
+    ids.put(key, id);
+  }
+
+  /**
+   * Gets the id.
+   * 
+   * @param key
+   *          the key
+   * @return the id
+   */
+  public String getId(String key) {
+    return ids.get(key);
+  }
+
+  /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result

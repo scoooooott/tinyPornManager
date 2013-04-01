@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper.thetvdb;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -54,7 +56,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
   private static TheTVDBApi        tvdb;
 
   /** The provider info. */
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("ttvdb", "thetvdb.com",
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo("tvdb", "thetvdb.com",
                                                     "Scraper for thetvdb.com which is able to scrape tv series metadata and artwork");
 
   /**
@@ -180,6 +182,10 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     sr.setTitle(show.getSeriesName());
     sr.setPosterUrl(show.getPoster());
 
+    if (show.getFirstAired() != null && show.getFirstAired().length() > 3) {
+      sr.setYear(show.getFirstAired().substring(0, 4));
+    }
+
     // populate extra args
     MetadataUtil.copySearchQueryToSearchResult(options, sr);
 
@@ -188,6 +194,13 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     return sr;
   }
 
+  /**
+   * Gets the tv show metadata.
+   * 
+   * @param options
+   *          the options
+   * @return the tv show metadata
+   */
   private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     String id = "";
@@ -199,7 +212,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
 
     // do we have an id from the options?
     if (StringUtils.isEmpty(id)) {
-      id = options.getId();
+      id = options.getId(providerInfo.getId());
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -212,6 +225,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     }
 
     // populate metadata
+    md.setId(providerInfo.getId(), show.getId());
     md.setTitle(show.getSeriesName());
     md.setImdbId(show.getImdbId());
     md.setPlot(show.getOverview());
@@ -226,6 +240,13 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     return md;
   }
 
+  /**
+   * Gets the tv show episode metadata.
+   * 
+   * @param options
+   *          the options
+   * @return the tv show episode metadata
+   */
   private MediaMetadata getTvShowEpisodeMetadata(MediaScrapeOptions options) {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
@@ -240,7 +261,17 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
-    String id = options.getId();
+    String id = "";
+
+    // check if there is a metadata containing an id
+    if (options.getMetadata() != null) {
+      id = options.getMetadata().getId(providerInfo.getId());
+    }
+
+    // get the id from the options
+    if (StringUtils.isEmpty(id)) {
+      id = options.getId(providerInfo.getId());
+    }
 
     if (StringUtils.isEmpty(id)) {
       return artwork;
@@ -256,7 +287,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     switch (options.getArtworkType()) {
       case ALL:
         bannerList = new ArrayList<Banner>(banners.getSeasonList());
-        bannerList.addAll(banners.getSeasonList());
+        bannerList.addAll(banners.getSeriesList());
         bannerList.addAll(banners.getPosterList());
         bannerList.addAll(banners.getFanartList());
         break;
@@ -280,6 +311,9 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       return artwork;
     }
 
+    // sort bannerlist
+    Collections.sort(bannerList, new BannerComparator());
+
     // build output
     for (Banner banner : bannerList) {
       MediaArtwork ma = new MediaArtwork();
@@ -287,12 +321,77 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       ma.setPreviewUrl(banner.getThumb());
       ma.setLanguage(banner.getLanguage());
 
-      // TODO set type
-      // ma.setType(type);
+      // set banner type
+      switch (banner.getBannerType()) {
+        case poster:
+          ma.setType(MediaArtworkType.POSTER);
+          break;
+
+        case series:
+          ma.setType(MediaArtworkType.BANNER);
+          break;
+
+        case season:
+          ma.setType(MediaArtworkType.SEASON);
+          break;
+
+        case fanart:
+        default:
+          ma.setType(MediaArtworkType.BACKGROUND);
+          break;
+      }
 
       artwork.add(ma);
     }
 
     return artwork;
+  }
+
+  /**
+   * The Class ArtworkComparator.
+   * 
+   * @author Manuel Laggner
+   */
+  private static class BannerComparator implements Comparator<Banner> {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     * 
+     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
+     */
+    @Override
+    public int compare(Banner arg0, Banner arg1) {
+      String preferredLangu = Globals.settings.getScraperLanguage().name();
+
+      // check if first image is preferred langu
+      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
+        return -1;
+      }
+
+      // check if second image is preferred langu
+      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // check if the first image is en
+      if ("en".equals(arg0.getLanguage()) && !"en".equals(arg1.getLanguage())) {
+        return -1;
+      }
+
+      // check if the second image is en
+      if (!"en".equals(arg0.getLanguage()) && "en".equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // if rating is the same, return 0
+      if (arg0.getRating() == arg1.getRating()) {
+        return 0;
+      }
+
+      // we did not sort until here; so lets sort with the rating
+      return arg0.getRating() > arg1.getRating() ? -1 : 1;
+    }
+
   }
 }

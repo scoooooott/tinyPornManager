@@ -55,7 +55,7 @@ public class TvShowScraperTest {
     IMediaMetadataProvider mp = new TheTvDbMetadataProvider();
     MediaScrapeOptions options = new MediaScrapeOptions();
     options.setType(MediaType.TV_SHOW);
-    options.setId("81189");
+    options.setId("tvdb", "81189");
 
     try {
       MediaMetadata md = mp.getMetadata(options);

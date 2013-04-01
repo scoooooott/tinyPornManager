@@ -47,6 +47,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
+import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieCast.CastType;
@@ -55,7 +56,6 @@ import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.movie.tasks.MovieExtraImageFetcher;
-import org.tinymediamanager.core.movie.tasks.MovieImageFetcher;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -1737,7 +1737,7 @@ public class Movie extends MediaEntity {
         }
 
         // get image in thread
-        MovieImageFetcher task = new MovieImageFetcher(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
+        MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
         Globals.executor.execute(task);
       }
     }
@@ -1761,7 +1761,7 @@ public class Movie extends MediaEntity {
         }
 
         // get image in thread
-        MovieImageFetcher task = new MovieImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
+        MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
         Globals.executor.execute(task);
       }
     }
@@ -1814,18 +1814,6 @@ public class Movie extends MediaEntity {
     String oldValue = this.writer;
     this.writer = newValue;
     firePropertyChange(WRITER, oldValue, newValue);
-  }
-
-  /**
-   * Save to db.
-   */
-  public synchronized void saveToDb() {
-    // update DB
-    synchronized (Globals.entityManager) {
-      Globals.entityManager.getTransaction().begin();
-      Globals.entityManager.persist(this);
-      Globals.entityManager.getTransaction().commit();
-    }
   }
 
   /**
@@ -2102,4 +2090,26 @@ public class Movie extends MediaEntity {
   public String getSpokenLanguages() {
     return this.spokenLanguages;
   }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#getBanner()
+   */
+  @Override
+  public String getBanner() {
+    // TODO implement banners for movies
+    return "";
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setBanner(java.lang.String)
+   */
+  @Override
+  public void setBanner(String banner) {
+    // TODO implement banners for movies
+  }
+
 }

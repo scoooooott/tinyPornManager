@@ -112,6 +112,12 @@ public final class Constants {
   /** The Constant FANART. */
   public final static String FANART               = "fanart";
 
+  /** The Constant BANNER_URL. */
+  public final static String BANNER_URL           = "bannerUrl";
+
+  /** The Constant BANNER. */
+  public final static String BANNER               = "banner";
+
   /** The Constant HAS_IMAGES. */
   public final static String HAS_IMAGES           = "hasImages";
 
@@ -136,13 +142,27 @@ public final class Constants {
   /** The Constant TMDBID. */
   public final static String TMDBID               = "tmdbId";
 
+  /** The Constant MOVIESET. */
   public final static String MOVIESET             = "movieset";
 
+  /** The Constant TV_SHOW. */
   public final static String TV_SHOW              = "tvShow";
+
+  /** The Constant TV_SHOWS. */
   public final static String TV_SHOWS             = "tvShows";
+
+  /** The Constant TV_SHOW_COUNT. */
   public final static String TV_SHOW_COUNT        = "tvShowCount";
+
+  /** The Constant EPISODE. */
   public final static String EPISODE              = "episode";
+
+  /** The Constant EPISODES. */
   public final static String EPISODES             = "episodes";
+
+  /** The Constant SEASON. */
   public final static String SEASON               = "season";
+
+  /** The Constant SEASONS. */
   public final static String SEASONS              = "seasons";
 }

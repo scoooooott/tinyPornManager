@@ -39,7 +39,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
 /**
  * The Class TvShowList.
@@ -215,13 +214,13 @@ public class TvShowList extends AbstractModelObject {
     // the tv db
     if (scrapers.contains(TvShowArtworkScrapers.TVDB)) {
       try {
-        LOGGER.debug("get instance of TheTvMetadataProvider");
-        artworkProvider = new TmdbMetadataProvider();
+        LOGGER.debug("get instance of TheTvDbMetadataProvider");
+        artworkProvider = new TheTvDbMetadataProvider();
         artworkProviders.add(artworkProvider);
 
       }
       catch (Exception e) {
-        LOGGER.warn("failed to get instance of TheTvMetadataProvider", e);
+        LOGGER.warn("failed to get instance of TheTvDbMetadataProvider", e);
       }
     }
 
