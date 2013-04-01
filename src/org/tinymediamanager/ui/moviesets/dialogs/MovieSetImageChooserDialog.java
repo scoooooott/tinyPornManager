@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -61,6 +62,7 @@ import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.ToggleButtonUI;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.WrapLayout;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -75,11 +77,14 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSetImageChooserDialog extends JDialog {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long   serialVersionUID = 1L;
+  private static final long           serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger LOGGER           = Logger.getLogger(MovieSetImageChooserDialog.class);
+  private static final Logger         LOGGER           = Logger.getLogger(MovieSetImageChooserDialog.class);
 
   /**
    * The Enum ImageType.
@@ -154,15 +159,16 @@ public class MovieSetImageChooserDialog extends JDialog {
 
     switch (poster) {
       case FANART:
-        setTitle("Choose fanart");
+        setTitle(BUNDLE.getString("image.choose.fanart")); //$NON-NLS-1$
         break;
 
       case POSTER:
-        setTitle("Choose poster");
+        setTitle(BUNDLE.getString("image.choose.poster")); //$NON-NLS-1$
         break;
     }
 
     setName("imageChooser");
+
     setBounds(5, 5, 1000, 590);
     TmmWindowSaver.loadSettings(this);
 
@@ -197,19 +203,19 @@ public class MovieSetImageChooserDialog extends JDialog {
         buttonPane.add(lblProgressAction, "4, 2");
       }
       {
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
         okButton.setAction(actionOK);
         okButton.setActionCommand("OK");
         buttonPane.add(okButton, "6, 2, fill, top");
         getRootPane().setDefaultButton(okButton);
       }
       {
-        JButton btnAddFile = new JButton("Add file");
+        JButton btnAddFile = new JButton(BUNDLE.getString("Button.addfile")); //$NON-NLS-1$
         btnAddFile.setAction(action);
         buttonPane.add(btnAddFile, "8, 2, fill, top");
       }
       {
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         cancelButton.setAction(actionCancel);
         cancelButton.setActionCommand("Cancel");
         buttonPane.add(cancelButton, "10, 2, fill, top");
@@ -234,15 +240,14 @@ public class MovieSetImageChooserDialog extends JDialog {
      * Instantiates a new swing action.
      */
     public SwingAction() {
-      putValue(NAME, "OK");
-      putValue(SHORT_DESCRIPTION, "Set selected image");
+      putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("image.seteselected")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       MediaArtwork artwork = null;
@@ -267,7 +272,7 @@ public class MovieSetImageChooserDialog extends JDialog {
 
       // nothing selected
       if (artwork == null) {
-        JOptionPane.showMessageDialog(null, "no image selected!");
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("image.noneselected")); //$NON-NLS-1$
         return;
       }
 
@@ -403,15 +408,14 @@ public class MovieSetImageChooserDialog extends JDialog {
      * Instantiates a new swing action_1.
      */
     public SwingAction_1() {
-      putValue(NAME, "Cancel");
-      putValue(SHORT_DESCRIPTION, "Cancel");
+      putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       task.cancel(true);
@@ -447,11 +451,11 @@ public class MovieSetImageChooserDialog extends JDialog {
     @Override
     public Void doInBackground() {
       if (tmdbId == 0) {
-        JOptionPane.showMessageDialog(null, "No ID (tmdbId) for searching available");
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("image.download.noid")); //$NON-NLS-1$
         return null;
       }
 
-      startProgressBar("Downloading images");
+      startProgressBar(BUNDLE.getString("image.download.progress")); //$NON-NLS-1$
 
       TmdbMetadataProvider artworkProvider;
       try {
@@ -536,19 +540,21 @@ public class MovieSetImageChooserDialog extends JDialog {
    */
   private class SwingAction_2 extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new swing action_2.
      */
     public SwingAction_2() {
-      putValue(NAME, "Choose file");
-      putValue(SHORT_DESCRIPTION, "Choose a file");
+      putValue(NAME, BUNDLE.getString("image.choose.file")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("image.choose.file")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       // JNativeFileChooser fileChooser = new JNativeFileChooser();
@@ -556,7 +562,7 @@ public class MovieSetImageChooserDialog extends JDialog {
       // fileChooser.setFileFilter(filter);
       // fileChooser.setMultiSelectionEnabled(false);
       // if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-      File file = TmmUIHelper.selectFile("Choose an image");
+      File file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
       if (file != null && file.exists() && file.isFile()) {
         String fileName = file.getPath();
 
@@ -584,8 +590,11 @@ public class MovieSetImageChooserDialog extends JDialog {
      */
     public class ImageFileFilter extends FileFilter {
 
+      /** The Constant serialVersionUID. */
+      private static final long serialVersionUID = 1L;
+
       /** The ok file extensions. */
-      private final String[] okFileExtensions = new String[] { "jpg", "png" };
+      private final String[]    okFileExtensions = new String[] { "jpg", "png" };
 
       /*
        * (non-Javadoc)

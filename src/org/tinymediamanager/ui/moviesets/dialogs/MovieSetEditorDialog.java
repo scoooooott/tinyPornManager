@@ -22,6 +22,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -52,6 +53,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -66,53 +68,56 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSetEditorDialog extends JDialog {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID    = -4446433759280691976L;
+  private static final long           serialVersionUID    = -4446433759280691976L;
 
   /** The movie set to edit. */
-  private MovieSet          movieSetToEdit;
+  private MovieSet                    movieSetToEdit;
 
   /** The tf name. */
-  private JTextField        tfName;
+  private JTextField                  tfName;
 
   /** The table movies. */
-  private JTable            tableMovies;
+  private JTable                      tableMovies;
 
   /** The lbl poster. */
-  private ImageLabel        lblPoster;
+  private ImageLabel                  lblPoster;
 
   /** The lbl fanart. */
-  private ImageLabel        lblFanart;
+  private ImageLabel                  lblFanart;
 
   /** The tp overview. */
-  private JTextPane         tpOverview;
+  private JTextPane                   tpOverview;
 
   /** The movies in set. */
-  private List<Movie>       moviesInSet         = ObservableCollections.observableList(new ArrayList<Movie>());
+  private List<Movie>                 moviesInSet         = ObservableCollections.observableList(new ArrayList<Movie>());
 
   /** The removed movies. */
-  private List<Movie>       removedMovies       = new ArrayList<Movie>();
+  private List<Movie>                 removedMovies       = new ArrayList<Movie>();
 
   /** The action remove movie. */
-  private final Action      actionRemoveMovie   = new RemoveMovieAction();
+  private final Action                actionRemoveMovie   = new RemoveMovieAction();
 
   /** The action move movie up. */
-  private final Action      actionMoveMovieUp   = new MoveUpAction();
+  private final Action                actionMoveMovieUp   = new MoveUpAction();
 
   /** The action move movie down. */
-  private final Action      actionMoveMovieDown = new MoveDownAction();
+  private final Action                actionMoveMovieDown = new MoveDownAction();
 
   /** The action ok. */
-  private final Action      actionOk            = new OkAction();
+  private final Action                actionOk            = new OkAction();
 
   /** The action cancel. */
-  private final Action      actionCancel        = new CancelAction();
+  private final Action                actionCancel        = new CancelAction();
 
   /** The tf tmdb id. */
-  private JTextField        tfTmdbId;
+  private JTextField                  tfTmdbId;
 
   /** The action search tmdb id. */
-  private final Action      actionSearchTmdbId  = new SwingAction();
+  private final Action                actionSearchTmdbId  = new SwingAction();
 
   /**
    * Instantiates a new movie set editor.
@@ -123,7 +128,7 @@ public class MovieSetEditorDialog extends JDialog {
   public MovieSetEditorDialog(MovieSet movieSet) {
     setModal(true);
     setIconImage(Globals.logo);
-    setTitle("Edit Movieset");
+    setTitle(BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
     setName("movieSetEditor");
     setBounds(5, 5, 800, 500);
     TmmWindowSaver.loadSettings(this);
@@ -142,7 +147,7 @@ public class MovieSetEditorDialog extends JDialog {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
     getContentPane().add(panelContent, BorderLayout.CENTER);
 
-    JLabel lblName = new JLabel("Title");
+    JLabel lblName = new JLabel(BUNDLE.getString("movieset.title")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");
 
     tfName = new JTextField();
@@ -165,18 +170,18 @@ public class MovieSetEditorDialog extends JDialog {
     });
     panelContent.add(lblPoster, "8, 2, 1, 9, fill, fill");
 
-    JLabel lblTmdbid = new JLabel("TmdbId");
+    JLabel lblTmdbid = new JLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
     panelContent.add(lblTmdbid, "2, 4, right, default");
 
     tfTmdbId = new JTextField();
     panelContent.add(tfTmdbId, "4, 4, fill, default");
     tfTmdbId.setColumns(10);
 
-    JButton btnSearchTmdbId = new JButton("New button");
+    JButton btnSearchTmdbId = new JButton("");
     btnSearchTmdbId.setAction(actionSearchTmdbId);
     panelContent.add(btnSearchTmdbId, "6, 4, left, default");
 
-    JLabel lblOverview = new JLabel("Overview");
+    JLabel lblOverview = new JLabel(BUNDLE.getString("movieinformation.overview")); //$NON-NLS-1$
     panelContent.add(lblOverview, "2, 6, right, top");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
@@ -185,7 +190,7 @@ public class MovieSetEditorDialog extends JDialog {
     tpOverview = new JTextPane();
     scrollPaneOverview.setViewportView(tpOverview);
 
-    JLabel lblMovies = new JLabel("Movies");
+    JLabel lblMovies = new JLabel(BUNDLE.getString("tmm.movies")); //$NON-NLS-1$
     panelContent.add(lblMovies, "2, 8, right, top");
 
     JScrollPane scrollPaneMovies = new JScrollPane();
@@ -232,13 +237,13 @@ public class MovieSetEditorDialog extends JDialog {
           FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), ColumnSpec.decode("2dlu"), }, new RowSpec[] {
           FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
-        JButton btnOk = new JButton("OK");
+        JButton btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
         btnOk.setAction(actionOk);
         buttonPane.add(btnOk, "2, 2, fill, top");
         getRootPane().setDefaultButton(btnOk);
       }
       {
-        JButton btnCancel = new JButton("Cancel");
+        JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         btnCancel.setAction(actionCancel);
         buttonPane.add(btnCancel, "4, 2, fill, top");
       }
@@ -275,19 +280,21 @@ public class MovieSetEditorDialog extends JDialog {
    */
   private class RemoveMovieAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new removes the movie action.
      */
     public RemoveMovieAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
-      putValue(SHORT_DESCRIPTION, "Remove marked movie from movieset");
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.remove")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       int row = tableMovies.getSelectedRow();
@@ -304,19 +311,21 @@ public class MovieSetEditorDialog extends JDialog {
    */
   private class MoveUpAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new move up action.
      */
     public MoveUpAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Button_Up.png")));
-      putValue(SHORT_DESCRIPTION, "Move marked movie up");
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.moveup")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       int row = tableMovies.getSelectedRow();
@@ -334,19 +343,21 @@ public class MovieSetEditorDialog extends JDialog {
    */
   private class MoveDownAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new move down action.
      */
     public MoveDownAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Button_Down.png")));
-      putValue(SHORT_DESCRIPTION, "Move marked movie down");
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.movedown")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       int row = tableMovies.getSelectedRow();
@@ -364,19 +375,21 @@ public class MovieSetEditorDialog extends JDialog {
    */
   private class OkAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new ok action.
      */
     public OkAction() {
-      putValue(NAME, "Save");
-      putValue(SHORT_DESCRIPTION, "Save changes");
+      putValue(NAME, BUNDLE.getString("Button.save")); //$NON-NLS-1$);
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.save")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       movieSetToEdit.setName(tfName.getText());
@@ -442,19 +455,21 @@ public class MovieSetEditorDialog extends JDialog {
    */
   private class CancelAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new cancel action.
      */
     public CancelAction() {
-      putValue(NAME, "Cancel");
-      putValue(SHORT_DESCRIPTION, "Discard changes");
+      putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.discard")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
@@ -469,13 +484,14 @@ public class MovieSetEditorDialog extends JDialog {
     JTableBinding<Movie, List<Movie>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, moviesInSet, tableMovies);
     //
     BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName("Name").setEditable(false);
+    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false); //$NON-NLS-1$
     //
     BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
-    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName("Year");
+    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
     //
     BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("watched");
-    jTableBinding.addColumnBinding(movieBeanProperty_2).setColumnName("Watched").setEditable(false).setColumnClass(Boolean.class);
+    jTableBinding.addColumnBinding(movieBeanProperty_2)
+        .setColumnName(BUNDLE.getString("metatag.watched")).setEditable(false).setColumnClass(Boolean.class); //$NON-NLS-1$
     //
     jTableBinding.setEditable(false);
     jTableBinding.bind();
@@ -488,19 +504,21 @@ public class MovieSetEditorDialog extends JDialog {
    */
   private class SwingAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new swing action.
      */
     public SwingAction() {
-      putValue(NAME, "Find TmdbId");
-      putValue(SHORT_DESCRIPTION, "Find TmdbId for this movie");
+      putValue(NAME, BUNDLE.getString("movieset.tmdb.find")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.tmdb.desc")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       // search for a tmdbId
@@ -520,7 +538,7 @@ public class MovieSetEditorDialog extends JDialog {
         }
       }
       catch (Exception e1) {
-        JOptionPane.showMessageDialog(null, "Sorry, no TmdbId could be found. Try to search for the movieset");
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("movieset.tmdb.error")); //$NON-NLS-1$
       }
 
     }

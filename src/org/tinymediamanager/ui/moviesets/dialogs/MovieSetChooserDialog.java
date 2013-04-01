@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -56,6 +57,7 @@ import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel.MovieInSet;
 
@@ -72,44 +74,47 @@ import com.omertron.themoviedbapi.model.Collection;
  */
 public class MovieSetChooserDialog extends JDialog implements ActionListener {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                    //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long          serialVersionUID = -1023959850452480592L;
+  private static final long           serialVersionUID = -1023959850452480592L;
 
   /** The static LOGGER. */
-  private static final Logger        LOGGER           = Logger.getLogger(MovieSetChooserDialog.class);
+  private static final Logger         LOGGER           = Logger.getLogger(MovieSetChooserDialog.class);
 
   /** The movie set to edit. */
-  private MovieSet                   movieSetToEdit;
+  private MovieSet                    movieSetToEdit;
 
   /** The lbl progress action. */
-  private JLabel                     lblProgressAction;
+  private JLabel                      lblProgressAction;
 
   /** The progress bar. */
-  private JProgressBar               progressBar;
+  private JProgressBar                progressBar;
 
   /** The tf movie set name. */
-  private JTextField                 tfMovieSetName;
+  private JTextField                  tfMovieSetName;
 
   /** The table movie sets. */
-  private JTable                     tableMovieSets;
+  private JTable                      tableMovieSets;
 
   /** The lbl movie name. */
-  private JTextArea                  lblMovieSetName;
+  private JTextArea                   lblMovieSetName;
 
   /** The lbl movie poster. */
-  private ImageLabel                 lblMovieSetPoster;
+  private ImageLabel                  lblMovieSetPoster;
 
   /** The movies found. */
-  private List<MovieSetChooserModel> movieSetsFound   = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
+  private List<MovieSetChooserModel>  movieSetsFound   = ObservableCollections.observableList(new ArrayList<MovieSetChooserModel>());
 
   /** The action search. */
-  private final Action               actionSearch     = new SearchAction();
+  private final Action                actionSearch     = new SearchAction();
 
   /** The table movies. */
-  private JTable                     tableMovies;
+  private JTable                      tableMovies;
 
   /** The cb assign movies. */
-  private JCheckBox                  cbAssignMovies;
+  private JCheckBox                   cbAssignMovies;
 
   /**
    * Instantiates a new movie set chooser panel.
@@ -118,7 +123,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
    *          the movie set
    */
   public MovieSetChooserDialog(MovieSet movieSet) {
-    setTitle("search movie set");
+    setTitle(BUNDLE.getString("movieset.search")); //$NON-NLS-1$
     setName("movieSetChooser");
     setBounds(5, 5, 865, 578);
     TmmWindowSaver.loadSettings(this);
@@ -225,7 +230,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
 
         }
         {
-          cbAssignMovies = new JCheckBox("Assign movies to this movieset");
+          cbAssignMovies = new JCheckBox(BUNDLE.getString("movieset.movie.assign")); //$NON-NLS-1$
           panelSearchDetail.add(cbAssignMovies, "2, 7, 3, 1");
         }
       }
@@ -248,16 +253,16 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
           buttonPane.add(lblProgressAction, "4, 2, fill, center");
         }
         {
-          JButton btnSave = new JButton("Save");
+          JButton btnSave = new JButton(BUNDLE.getString("Button.save")); //$NON-NLS-1$
           btnSave.setActionCommand("Save");
-          btnSave.setToolTipText("Save movie set metadata");
+          btnSave.setToolTipText(BUNDLE.getString("movieset.save.desc")); //$NON-NLS-1$
           btnSave.addActionListener(this);
           buttonPane.add(btnSave, "8, 2, fill, top");
         }
         {
-          JButton btnCancel = new JButton("Cancel");
+          JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           btnCancel.setActionCommand("Cancel");
-          btnCancel.setToolTipText("Cancel");
+          btnCancel.setToolTipText(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           btnCancel.addActionListener(this);
           buttonPane.add(btnCancel, "10, 2, fill, top");
         }
@@ -312,7 +317,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar("searching for: " + searchTerm);
+      startProgressBar(BUNDLE.getString("moviechooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
       TmdbMetadataProvider mp;
       try {
         mp = new TmdbMetadataProvider();
@@ -353,19 +358,21 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
    */
   private class SearchAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new search action.
      */
     public SearchAction() {
-      putValue(NAME, "Search");
-      putValue(SHORT_DESCRIPTION, "Search movie set metadata");
+      putValue(NAME, BUNDLE.getString("Button.search")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       searchMovie();
@@ -375,8 +382,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
    */
   @Override
   public void actionPerformed(ActionEvent arg0) {
@@ -459,7 +465,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar("scraping: " + model.getName());
+      startProgressBar(BUNDLE.getString("moviechooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
       model.scrapeMetadata();
 
       return null;
@@ -508,7 +514,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
         movieSetsFound, tableMovieSets);
     //
     BeanProperty<MovieSetChooserModel, String> movieSetChooserModelBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setColumnName("Name").setEditable(false);
+    jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false); //$NON-NLS-1$
     //
     jTableBinding.bind();
     //
@@ -517,10 +523,10 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
         jTableBeanProperty, tableMovies);
     //
     BeanProperty<MovieInSet, String> movieInSetBeanProperty = BeanProperty.create("name");
-    jTableBinding_1.addColumnBinding(movieInSetBeanProperty).setColumnName("Movie").setEditable(false);
+    jTableBinding_1.addColumnBinding(movieInSetBeanProperty).setColumnName(BUNDLE.getString("tmm.movie")).setEditable(false); //$NON-NLS-1$
     //
     BeanProperty<MovieInSet, String> movieInSetBeanProperty_2 = BeanProperty.create("movie.name");
-    jTableBinding_1.addColumnBinding(movieInSetBeanProperty_2).setColumnName("matched Movie").setEditable(false);
+    jTableBinding_1.addColumnBinding(movieInSetBeanProperty_2).setColumnName(BUNDLE.getString("movieset.movie.matched")).setEditable(false); //$NON-NLS-1$
     //
     jTableBinding_1.bind();
     //

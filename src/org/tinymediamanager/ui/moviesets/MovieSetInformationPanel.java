@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -37,6 +38,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.ImageLabel;
+import org.tinymediamanager.ui.UTF8Control;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -57,50 +59,53 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSetInformationPanel extends JPanel {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long      serialVersionUID = -8166784589262658147L;
+  private static final long           serialVersionUID = -8166784589262658147L;
 
   /** The selection model. */
-  private MovieSetSelectionModel selectionModel;
+  private MovieSetSelectionModel      selectionModel;
 
   /** The lbl movie set name. */
-  private JLabel                 lblMovieSetName;
+  private JLabel                      lblMovieSetName;
 
   /** The table assigned movies. */
-  private JTable                 tableAssignedMovies;
+  private JTable                      tableAssignedMovies;
 
   /** The lbl movie set poster. */
-  private ImageLabel             lblMovieSetPoster;
+  private ImageLabel                  lblMovieSetPoster;
 
   /** The panel. */
-  private JPanel                 panel;
+  private JPanel                      panel;
 
   /** The layered pane. */
-  private JLayeredPane           layeredPane;
+  private JLayeredPane                layeredPane;
 
   /** The lbl movie set fanart. */
-  private ImageLabel             lblMovieSetFanart;
+  private ImageLabel                  lblMovieSetFanart;
 
   /** The panel south. */
-  private JSplitPane             panelSouth;
+  private JSplitPane                  panelSouth;
 
   /** The scroll pane overview. */
-  private JScrollPane            scrollPaneOverview;
+  private JScrollPane                 scrollPaneOverview;
 
   /** The tp overview. */
-  private JTextPane              tpOverview;
+  private JTextPane                   tpOverview;
 
   /** The panel overview. */
-  private JPanel                 panelOverview;
+  private JPanel                      panelOverview;
 
   /** The lbl overview. */
-  private JLabel                 lblOverview;
+  private JLabel                      lblOverview;
 
   /** The media file event list. */
-  private EventList<Movie>       movieEventList;
+  private EventList<Movie>            movieEventList;
 
   /** The media file table model. */
-  private EventTableModel<Movie> movieTableModel  = null;
+  private EventTableModel<Movie>      movieTableModel  = null;
 
   /**
    * Instantiates a new movie set information panel.
@@ -148,7 +153,7 @@ public class MovieSetInformationPanel extends JPanel {
     panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("250px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("24px:grow"), }));
 
-    lblOverview = new JLabel("Overview");
+    lblOverview = new JLabel(BUNDLE.getString("movieinformation.overview")); //$NON-NLS-1$
     panelOverview.add(lblOverview, "1, 2");
 
     scrollPaneOverview = new JScrollPane();
@@ -226,13 +231,13 @@ public class MovieSetInformationPanel extends JPanel {
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return "Movieset parts";
+          return BUNDLE.getString("movieset.parts"); //$NON-NLS-1$
 
         case 1:
-          return "Year";
+          return BUNDLE.getString("metatag.year"); //$NON-NLS-1$
 
         case 2:
-          return "Watched";
+          return BUNDLE.getString("metatag.watched"); //$NON-NLS-1$
       }
 
       throw new IllegalStateException();

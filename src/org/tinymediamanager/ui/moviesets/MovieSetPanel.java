@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.moviesets;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -42,6 +43,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
@@ -59,41 +61,44 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSetPanel extends JPanel {
 
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
   /** The Constant serialVersionUID. */
-  private static final long      serialVersionUID     = 1L;
+  private static final long           serialVersionUID     = 1L;
 
   /** The split pane horizontal. */
-  private JSplitPane             splitPaneHorizontal;
+  private JSplitPane                  splitPaneHorizontal;
 
   /** The movie selection model. */
-  private MovieSelectionModel    movieSelectionModel;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The movieset selection model. */
-  private MovieSetSelectionModel movieSetSelectionModel;
+  private MovieSetSelectionModel      movieSetSelectionModel;
 
   /** The movie list. */
-  private MovieList              movieList            = MovieList.getInstance();
+  private MovieList                   movieList            = MovieList.getInstance();
 
   /** The action add movie set. */
-  private final Action           actionAddMovieSet    = new AddMovieSetAction();
+  private final Action                actionAddMovieSet    = new AddMovieSetAction();
 
   /** The tree. */
-  private JTree                  tree;
+  private JTree                       tree;
 
   /** The tree model. */
-  private MovieSetTreeModel      treeModel;
+  private MovieSetTreeModel           treeModel;
 
   /** The action remove movie set. */
-  private final Action           actionRemoveMovieSet = new RemoveMovieSetAction();
+  private final Action                actionRemoveMovieSet = new RemoveMovieSetAction();
 
   /** The action search movie set. */
-  private final Action           actionSearchMovieSet = new SearchMovieSetAction();
+  private final Action                actionSearchMovieSet = new SearchMovieSetAction();
 
   /** The lbl movie set count. */
-  private JLabel                 lblMovieSetCount;
+  private JLabel                      lblMovieSetCount;
 
   /** The action edit movie set. */
-  private final Action           actionEditMovieSet   = new EditMovieSetAction();
+  private final Action                actionEditMovieSet   = new EditMovieSetAction();
 
   /**
    * Instantiates a new movie set panel.
@@ -201,12 +206,15 @@ public class MovieSetPanel extends JPanel {
    */
   private class AddMovieSetAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new adds the movie set action.
      */
     public AddMovieSetAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Add.png")));
-      putValue(SHORT_DESCRIPTION, "Add a movie set");
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
     }
 
     /*
@@ -215,7 +223,7 @@ public class MovieSetPanel extends JPanel {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      String name = JOptionPane.showInputDialog(null, "Movieset title : ", "", 1);
+      String name = JOptionPane.showInputDialog(null, BUNDLE.getString("movieset.title"), "", 1); //$NON-NLS-1$
       if (StringUtils.isNotEmpty(name)) {
         MovieSet movieSet = new MovieSet(name);
         movieSet.saveToDb();
@@ -232,12 +240,15 @@ public class MovieSetPanel extends JPanel {
    */
   private class RemoveMovieSetAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new removes the movie set action.
      */
     public RemoveMovieSetAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
-      putValue(SHORT_DESCRIPTION, "Remove selected movie set");
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
     }
 
     /*
@@ -265,12 +276,15 @@ public class MovieSetPanel extends JPanel {
    */
   private class SearchMovieSetAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new search movie set action.
      */
     public SearchMovieSetAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-      putValue(SHORT_DESCRIPTION, "Search TMDB for movieset metadata");
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
     }
 
     /*
@@ -319,12 +333,15 @@ public class MovieSetPanel extends JPanel {
    */
   private class EditMovieSetAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiates a new edits the movie set action.
      */
     public EditMovieSetAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-      putValue(SHORT_DESCRIPTION, "Edit movieset");
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
     }
 
     /*
