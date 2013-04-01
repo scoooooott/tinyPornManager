@@ -107,11 +107,11 @@ public abstract class MediaEntity extends AbstractModelObject {
   abstract public String getFanart();
 
   /**
-   * Gets the name.
+   * Gets the title.
    * 
-   * @return the name
+   * @return the title
    */
-  public String getName() {
+  public String getTitle() {
     return title;
   }
 

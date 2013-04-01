@@ -43,8 +43,7 @@ import com.floreysoft.jmte.encoder.XMLEncoder;
 import com.floreysoft.jmte.message.ParseException;
 
 /**
- * This class exports a list of movies to various formats according to
- * templates.
+ * This class exports a list of movies to various formats according to templates.
  * 
  * @author Myron Boyle / Manuel Laggner
  */
@@ -239,7 +238,7 @@ public class MovieExporter {
       detailsDir.mkdirs();
 
       for (Movie movie : movies) {
-        LOGGER.debug("processing movie " + movie.getName());
+        LOGGER.debug("processing movie " + movie.getTitle());
         // get preferred movie name like set up in movie renamer
         File detailsExportFile = new File(detailsDir, MovieRenamer.createDestination(Globals.settings.getMovieRenamerFilename(), movie) + "."
             + fileExtension);
@@ -341,8 +340,7 @@ public class MovieExporter {
     /*
      * (non-Javadoc)
      * 
-     * @see com.floreysoft.jmte.NamedRenderer#render(java.lang.Object,
-     * java.lang.String, java.util.Locale)
+     * @see com.floreysoft.jmte.NamedRenderer#render(java.lang.Object, java.lang.String, java.util.Locale)
      */
     @Override
     public String render(Object o, String pattern, Locale locale) {
@@ -413,8 +411,7 @@ public class MovieExporter {
     /*
      * (non-Javadoc)
      * 
-     * @see com.floreysoft.jmte.NamedRenderer#render(java.lang.Object,
-     * java.lang.String, java.util.Locale)
+     * @see com.floreysoft.jmte.NamedRenderer#render(java.lang.Object, java.lang.String, java.util.Locale)
      */
     @Override
     public String render(Object o, String pattern, Locale locale) {

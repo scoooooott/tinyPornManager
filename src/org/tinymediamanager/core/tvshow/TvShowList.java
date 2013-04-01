@@ -15,21 +15,31 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.TV_SHOWS;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.tvshow.EpisodeMatching.EpisodeMatchingResult;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
+import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.MetadataUtil;
+import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
 /**
  * The Class TvShowList.
@@ -74,9 +84,188 @@ public class TvShowList extends AbstractModelObject {
     firePropertyChange(TV_SHOWS, null, tvShowList);
   }
 
+  /**
+   * Removes the datasource.
+   * 
+   * @param path
+   *          the path
+   */
+  public void removeDatasource(String path) {
+    if (StringUtils.isEmpty(path)) {
+      return;
+    }
+
+    for (int i = tvShowList.size() - 1; i >= 0; i--) {
+      TvShow tvShow = tvShowList.get(i);
+      if (path.equals(tvShow.getDataSource())) {
+        removeTvShow(tvShow);
+      }
+    }
+  }
+
+  /**
+   * Removes the tv show.
+   * 
+   * @param tvShow
+   *          the tvShow
+   */
+  public void removeTvShow(TvShow tvShow) {
+    int oldValue = tvShowList.size();
+    tvShow.removeAllEpisodes();
+    tvShowList.remove(tvShow);
+    Globals.entityManager.getTransaction().begin();
+    Globals.entityManager.remove(tvShow);
+    Globals.entityManager.getTransaction().commit();
+    firePropertyChange(TV_SHOWS, null, tvShowList);
+    firePropertyChange(TV_SHOW_COUNT, oldValue, tvShowList.size());
+  }
+
+  /**
+   * Load tv shows from database.
+   */
+  public void loadTvShowsFromDatabase() {
+    List<TvShow> tvShows = null;
+    try {
+      // load tv shows
+      TypedQuery<TvShow> query = Globals.entityManager.createQuery("SELECT tvShow FROM TvShow tvShow", TvShow.class);
+      tvShows = query.getResultList();
+      if (tvShows != null) {
+        LOGGER.debug("found " + tvShows.size() + " tv shows in database");
+        for (Object obj : tvShows) {
+          if (obj instanceof TvShow) {
+            TvShow tvShow = (TvShow) obj;
+            tvShow.initializeAfterLoading();
+
+            // for performance reasons we add tv shows directly
+            tvShowList.add(tvShow);
+          }
+          else {
+            LOGGER.error("retrieved no tv show: " + obj);
+          }
+        }
+
+      }
+      else {
+        LOGGER.debug("found no movies in database");
+      }
+    }
+    catch (PersistenceException e) {
+      LOGGER.error("loadTvShowsFromDatabase", e);
+    }
+    catch (Exception e) {
+      LOGGER.error("loadTvShowsFromDatabase", e);
+    }
+  }
+
+  /**
+   * Gets the metadata provider.
+   * 
+   * @return the metadata provider
+   */
+  public IMediaMetadataProvider getMetadataProvider() {
+    TvShowScrapers scraper = Globals.settings.getTvShowScraper();
+    return getMetadataProvider(scraper);
+  }
+
+  /**
+   * Gets the metadata provider.
+   * 
+   * @param scraper
+   *          the scraper
+   * @return the metadata provider
+   */
+  public IMediaMetadataProvider getMetadataProvider(TvShowScrapers scraper) {
+    IMediaMetadataProvider metadataProvider = null;
+    switch (scraper) {
+      case TVDB:
+      default:
+        LOGGER.debug("get instance of TheTvDbMetadataProvider");
+        metadataProvider = new TheTvDbMetadataProvider();
+        break;
+
+    }
+
+    return metadataProvider;
+  }
+
+  /**
+   * Gets the artwork provider.
+   * 
+   * @return the artwork provider
+   */
+  public List<IMediaArtworkProvider> getArtworkProviders() {
+    List<TvShowArtworkScrapers> scrapers = new ArrayList<TvShowArtworkScrapers>();
+    scrapers.add(TvShowArtworkScrapers.TVDB);
+
+    return getArtworkProviders(scrapers);
+  }
+
+  /**
+   * Gets the artwork providers.
+   * 
+   * @param scrapers
+   *          the scrapers
+   * @return the artwork providers
+   */
+  public List<IMediaArtworkProvider> getArtworkProviders(List<TvShowArtworkScrapers> scrapers) {
+    List<IMediaArtworkProvider> artworkProviders = new ArrayList<IMediaArtworkProvider>();
+
+    IMediaArtworkProvider artworkProvider = null;
+
+    // the tv db
+    if (scrapers.contains(TvShowArtworkScrapers.TVDB)) {
+      try {
+        LOGGER.debug("get instance of TheTvMetadataProvider");
+        artworkProvider = new TmdbMetadataProvider();
+        artworkProviders.add(artworkProvider);
+
+      }
+      catch (Exception e) {
+        LOGGER.warn("failed to get instance of TheTvMetadataProvider", e);
+      }
+    }
+
+    return artworkProviders;
+  }
+
+  /**
+   * Search tv show.
+   * 
+   * @param searchTerm
+   *          the search term
+   * @param metadataProvider
+   *          the metadata provider
+   * @return the list
+   */
+  public List<MediaSearchResult> searchTvShow(String searchTerm, IMediaMetadataProvider metadataProvider) {
+    // format searchstring
+    searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
+
+    List<MediaSearchResult> searchResult = null;
+    try {
+      IMediaMetadataProvider provider = metadataProvider;
+      // get a new metadataprovider if nothing is set
+      if (provider == null) {
+        provider = getMetadataProvider();
+      }
+      searchResult = provider.search(new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm));
+    }
+    catch (Exception e) {
+      LOGGER.error("searchMovie", e);
+    }
+
+    return searchResult;
+  }
+
   /************************************************************************
    * 
    ************************************************************************/
+  public void udpateDatasources() {
+    for (String datasource : Globals.settings.getTvShowDataSource()) {
+      findTvShowsInPath(datasource);
+    }
+  }
+
   public void findTvShowsInPath(String path) {
     LOGGER.debug("find tv shows in path " + path);
     File filePath = new File(path);
@@ -122,27 +311,27 @@ public class TvShowList extends AbstractModelObject {
           continue;
         }
 
-        TvEpisode episode = getTvEpisodeByFile(file);
+        TvShowEpisode episode = getTvEpisodeByFile(file);
         if (episode == null) {
           // try to check what episode//season
           EpisodeMatchingResult result = EpisodeMatching.detectEpisode(file);
           if (result.episodes.size() > 0) {
-            // episode(s) found; check if there was also a season found
-            int season = 0;
-            if (result.season == 0) {
-              // try to get the result from the parent folder
-              Pattern pattern = Pattern.compile("{1,2}[0-9]$");
-              Matcher matcher = pattern.matcher(dir.getPath());
-              if (matcher.find()) {
-                season = Integer.parseInt(matcher.group());
-              }
-            }
+            // // episode(s) found; check if there was also a season found
+            // int season = 0;
+            // if (result.season == 0) {
+            // // try to get the result from the parent folder
+            // Pattern pattern = Pattern.compile("{1,2}[0-9]$");
+            // Matcher matcher = pattern.matcher(dir.getPath());
+            // if (matcher.find()) {
+            // season = Integer.parseInt(matcher.group());
+            // }
+            // }
 
             // add it
             for (int ep : result.episodes) {
-              episode = new TvEpisode();
+              episode = new TvShowEpisode();
               episode.setEpisode(ep);
-              episode.setSeason(season);
+              episode.setSeason(result.season);
               episode.setTvShow(tvShow);
               episode.addToMediaFiles(new MediaFile(file.getPath(), file.getName()));
               episode.saveToDb();
@@ -176,7 +365,7 @@ public class TvShowList extends AbstractModelObject {
     return null;
   }
 
-  public synchronized TvEpisode getTvEpisodeByFile(File file) {
+  public synchronized TvShowEpisode getTvEpisodeByFile(File file) {
     // validy check
     if (file == null || !file.exists()) {
       return null;
@@ -184,7 +373,7 @@ public class TvShowList extends AbstractModelObject {
 
     // check if that file is in any tv show/episode
     for (TvShow show : getTvShows()) {
-      for (TvEpisode episode : show.getEpisodes()) {
+      for (TvShowEpisode episode : show.getEpisodes()) {
         for (MediaFile mediaFile : episode.getMediaFiles()) {
           if (file.equals(mediaFile.getFile())) {
             return episode;

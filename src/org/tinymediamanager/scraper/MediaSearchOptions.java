@@ -56,7 +56,8 @@ public class MediaSearchOptions {
   /**
    * Instantiates a new search query.
    */
-  public MediaSearchOptions() {
+  public MediaSearchOptions(MediaType type) {
+    this.type = type;
   }
 
   /**

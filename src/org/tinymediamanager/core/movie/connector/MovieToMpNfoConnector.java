@@ -154,7 +154,7 @@ public class MovieToMpNfoConnector {
   public static String setData(Movie movie) {
     MovieToMpNfoConnector mp = new MovieToMpNfoConnector();
     // set data
-    mp.setTitle(movie.getName());
+    mp.setTitle(movie.getTitle());
     mp.setOriginaltitle(movie.getOriginalTitle());
     mp.setRating(movie.getRating());
     mp.setVotes(movie.getVotes());
@@ -349,7 +349,7 @@ public class MovieToMpNfoConnector {
     }
 
     // only return if a movie name has been found
-    if (StringUtils.isEmpty(movie.getName())) {
+    if (StringUtils.isEmpty(movie.getTitle())) {
       return null;
     }
 

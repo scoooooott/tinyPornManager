@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
-
-import java.util.List;
-
-import org.tinymediamanager.core.movie.Movie;
-
-import ca.odell.glazedlists.TextFilterator;
+package org.tinymediamanager.core.tvshow;
 
 /**
- * The Class MovieFilterator is used to search movies.
+ * The Enum MovieScrapers.
  * 
  * @author Manuel Laggner
  */
-public class MovieFilterator implements TextFilterator<Movie> {
+public enum TvShowScrapers {
+
+  /** The tmdb. */
+  TVDB("The TV Database");
+
+  /** The title. */
+  private String title;
+
+  /**
+   * Instantiates a new movie scrapers.
+   * 
+   * @param title
+   *          the title
+   */
+  private TvShowScrapers(String title) {
+    this.title = title;
+  }
 
   /*
    * (non-Javadoc)
    * 
-   * @see ca.odell.glazedlists.TextFilterator#getFilterStrings(java.util.List, java.lang.Object)
+   * @see java.lang.Enum#toString()
    */
-  @Override
-  public void getFilterStrings(List<String> baseList, Movie movie) {
-    baseList.add(movie.getTitle());
-    baseList.add(movie.getOriginalTitle());
+  public String toString() {
+    return this.title;
   }
 
 }

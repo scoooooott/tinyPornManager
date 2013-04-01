@@ -349,7 +349,7 @@ public class MovieList extends AbstractModelObject {
   private List<MediaSearchResult> searchMovieByImdbId(String imdbId, IMediaMetadataProvider metadataProvider) {
 
     List<MediaSearchResult> searchResult = null;
-    MediaSearchOptions options = new MediaSearchOptions();
+    MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
     options.setMediaType(MediaType.MOVIE);
     options.set(SearchParam.IMDBID, imdbId);
 

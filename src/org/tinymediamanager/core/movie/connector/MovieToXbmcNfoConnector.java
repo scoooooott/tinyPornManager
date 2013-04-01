@@ -244,7 +244,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     // set data
-    xbmc.setTitle(movie.getName());
+    xbmc.setTitle(movie.getTitle());
     xbmc.setOriginaltitle(movie.getOriginalTitle());
     xbmc.setRating(movie.getRating());
     xbmc.setVotes(movie.getVotes());
@@ -554,7 +554,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     // only return if a movie name has been found
-    if (StringUtils.isEmpty(movie.getName())) {
+    if (StringUtils.isEmpty(movie.getTitle())) {
       return null;
     }
 

@@ -12,13 +12,15 @@ public class EpisodeMatching {
   public static class EpisodeMatchingResult {
     public int           season   = -1;
     public List<Integer> episodes = new ArrayList<Integer>();
+    public String        name     = "";
   }
 
   public static EpisodeMatchingResult detectEpisode(File file) {
     EpisodeMatchingResult result = new EpisodeMatchingResult();
 
     // season detection
-    Pattern regex = Pattern.compile("(?i)(s|season)[\\s]*(\\d{1,2})");
+    // TODO only parse the dirs between root of tv show and the file
+    Pattern regex = Pattern.compile("(?i)(s|season|staffel)[\\s]*(\\d{1,2})");
     Matcher m = regex.matcher(file.getAbsolutePath());
     if (m.find()) {
       int s = result.season;
@@ -58,6 +60,8 @@ public class EpisodeMatching {
         result.episodes.add(ep);
       }
     }
+
+    // FIXME parse name
 
     Collections.sort(result.episodes);
     return result;

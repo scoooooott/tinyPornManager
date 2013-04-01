@@ -241,15 +241,13 @@ public class MovieSetInformationPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object,
-     * int)
+     * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object, int)
      */
     @Override
     public Object getColumnValue(Movie movie, int column) {
       switch (column) {
         case 0:
-          return movie.getName();
+          return movie.getTitle();
 
         case 1:
           return movie.getYear();
@@ -281,8 +279,7 @@ public class MovieSetInformationPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
+     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
      */
     @Override
     public Comparator getColumnComparator(int arg0) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies.dialogs;
+package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -54,24 +54,24 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieScrapers;
+import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.movies.MovieChooserModel;
-import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
-import org.tinymediamanager.ui.movies.dialogs.MovieImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
+import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -79,29 +79,29 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class MovieChooser.
+ * The Class TvShowChooserDialog.
  * 
  * @author Manuel Laggner
  */
-public class MovieChooserDialog extends JDialog implements ActionListener {
-
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                 //$NON-NLS-1$
+public class TvShowChooserDialog extends JDialog implements ActionListener {
 
   /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID      = 1L;
+  private static final long           serialVersionUID      = 2371518113606870230L;
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
 
   /** The static LOGGER. */
-  private static final Logger         LOGGER                = Logger.getLogger(MovieChooserDialog.class);
+  private static final Logger         LOGGER                = Logger.getLogger(TvShowChooserDialog.class);
 
   /** The content panel. */
   private final JPanel                contentPanel          = new JPanel();
 
-  /** The movie list. */
-  private MovieList                   movieList             = MovieList.getInstance();
+  /** The tv show list. */
+  private TvShowList                  tvShowList            = TvShowList.getInstance();
 
-  /** The movie to scrape. */
-  private Movie                       movieToScrape;
+  /** The tv show to scrape. */
+  private TvShow                      tvShowToScrape;
 
   /** The text field search string. */
   private JTextField                  textFieldSearchString;
@@ -112,14 +112,14 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   /** The table. */
   private JTable                      table;
 
-  /** The lbl movie name. */
-  private JTextArea                   lblMovieName;
+  /** The lbl tv show name. */
+  private JTextArea                   lblTvShowName;
 
-  /** The tp movie description. */
-  private JTextPane                   tpMovieDescription;
+  /** The tp tv show overview. */
+  private JTextPane                   tpTvShowOverview;
 
-  /** The lbl movie poster. */
-  private ImageLabel                  lblMoviePoster;
+  /** The lbl tv show poster. */
+  private ImageLabel                  lblTvShowPoster;
 
   /** The lbl progress action. */
   private JLabel                      lblProgressAction;
@@ -127,14 +127,11 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   /** The progress bar. */
   private JProgressBar                progressBar;
 
-  /** The movies found. */
-  private List<MovieChooserModel>     moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
-
-  /** The lbl tagline. */
-  private JTextArea                   lblTagline;
+  /** The tv shows found. */
+  private List<TvShowChooserModel>    tvShowsFound          = ObservableCollections.observableList(new ArrayList<TvShowChooserModel>());
 
   /** The scraper metadata config. */
-  private MovieScraperMetadataConfig  scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
 
   /** The metadata provider. */
   private IMediaMetadataProvider      metadataProvider;
@@ -149,26 +146,26 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   private boolean                     continueQueue         = true;
 
   /**
-   * Create the dialog.
+   * Instantiates a new tv show chooser dialog.
    * 
-   * @param movie
-   *          the movie
+   * @param tvShow
+   *          the tv show
    * @param inQueue
    *          the in queue
    */
-  public MovieChooserDialog(Movie movie, boolean inQueue) {
+  public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
     setTitle(BUNDLE.getString("moviechooser.search")); //$NON-NLS-1$
-    setName("movieChooser");
+    setName("tvShowChooser");
     setBounds(5, 5, 1111, 643);
     TmmWindowSaver.loadSettings(this);
     setIconImage(Globals.logo);
     setModal(true);
 
     // copy the values
-    MovieScraperMetadataConfig settings = Globals.settings.getMovieScraperMetadataConfig();
-    metadataProvider = movieList.getMetadataProvider();
-    artworkProviders = movieList.getArtworkProviders();
-    trailerProviders = movieList.getTrailerProviders();
+    TvShowScraperMetadataConfig settings = Globals.settings.getTvShowScraperMetadataConfig();
+    metadataProvider = tvShowList.getMetadataProvider();
+    artworkProviders = tvShowList.getArtworkProviders();
+    // trailerProviders = tvShowList.getTrailerProviders();
 
     scraperMetadataConfig.setTitle(settings.isTitle());
     scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
@@ -201,8 +198,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         panelSearchField.add(lblScraper, "2, 1, right, default");
       }
       {
-        cbScraper = new JComboBox(MovieScrapers.values());
-        MovieScrapers defaultScraper = Globals.settings.getMovieScraper();
+        cbScraper = new JComboBox(TvShowScrapers.values());
+        TvShowScrapers defaultScraper = Globals.settings.getTvShowScraper();
         cbScraper.setSelectedItem(defaultScraper);
         cbScraper.setAction(new ChangeScraperAction());
         panelSearchField.add(cbScraper, "4, 1, fill, default");
@@ -218,7 +215,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         panelSearchField.add(btnSearch, "7, 3");
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
-            searchMovie(textFieldSearchString.getText(), "");
+            searchTvShow(textFieldSearchString.getText());
           }
         });
         getRootPane().setDefaultButton(btnSearch);
@@ -253,8 +250,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
                   int selectedRow = lsm.getMinSelectionIndex();
                   selectedRow = table.convertRowIndexToModel(selectedRow);
                   try {
-                    MovieChooserModel model = moviesFound.get(selectedRow);
-                    if (model != MovieChooserModel.emptyResult && !model.isScraped()) {
+                    TvShowChooserModel model = tvShowsFound.get(selectedRow);
+                    if (model != TvShowChooserModel.emptyResult && !model.isScraped()) {
                       ScrapeTask task = new ScrapeTask(model);
                       task.execute();
                     }
@@ -276,24 +273,16 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("250px"),
             FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
         {
-          lblMovieName = new JTextArea("");
-          lblMovieName.setLineWrap(true);
-          lblMovieName.setOpaque(false);
-          lblMovieName.setWrapStyleWord(true);
-          lblMovieName.setFont(new Font("Dialog", Font.BOLD, 14));
-          panelSearchDetail.add(lblMovieName, "2, 1, 3, 1, fill, top");
+          lblTvShowName = new JTextArea("");
+          lblTvShowName.setLineWrap(true);
+          lblTvShowName.setOpaque(false);
+          lblTvShowName.setWrapStyleWord(true);
+          lblTvShowName.setFont(new Font("Dialog", Font.BOLD, 14));
+          panelSearchDetail.add(lblTvShowName, "2, 1, 3, 1, fill, top");
         }
         {
-          lblTagline = new JTextArea("");
-          lblTagline.setLineWrap(true);
-          lblTagline.setOpaque(false);
-          lblTagline.setWrapStyleWord(true);
-          lblTagline.setEditable(false);
-          panelSearchDetail.add(lblTagline, "2, 2, 3, 1");
-        }
-        {
-          lblMoviePoster = new ImageLabel();// new JLabel("");
-          panelSearchDetail.add(lblMoviePoster, "2, 4, fill, fill");
+          lblTvShowPoster = new ImageLabel();// new JLabel("");
+          panelSearchDetail.add(lblTvShowPoster, "2, 4, fill, fill");
         }
         {
           JPanel panel = new JPanel();
@@ -306,8 +295,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           JScrollPane scrollPane = new JScrollPane();
           panelSearchDetail.add(scrollPane, "2, 6, 3, 1, fill, fill");
           {
-            tpMovieDescription = new JTextPane();
-            scrollPane.setViewportView(tpMovieDescription);
+            tpTvShowOverview = new JTextPane();
+            scrollPane.setViewportView(tpTvShowOverview);
           }
         }
       }
@@ -317,7 +306,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       contentPanel.add(lblScrapeFollowingItems, "1, 6");
     }
     {
-      JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(scraperMetadataConfig);
+      JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(scraperMetadataConfig);
       contentPanel.add(panelScraperMetadataSetting, "1, 7, fill, fill");
     }
 
@@ -363,15 +352,12 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     }
 
     {
-      movieToScrape = movie;
+      tvShowToScrape = tvShow;
       progressBar.setVisible(false);
       initDataBindings();
 
-      textFieldSearchString.setText(movieToScrape.getTitle());
-      searchMovie(textFieldSearchString.getText(), movieToScrape.getImdbId());
-
-      // // initial search only by name
-      // searchMovie(textFieldSearchString.getText(), "");
+      textFieldSearchString.setText(tvShowToScrape.getTitle());
+      searchTvShow(textFieldSearchString.getText());
     }
 
   }
@@ -391,8 +377,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     if ("OK".equals(e.getActionCommand())) {
       int row = table.getSelectedRow();
       if (row >= 0) {
-        MovieChooserModel model = moviesFound.get(row);
-        if (model != MovieChooserModel.emptyResult) {
+        TvShowChooserModel model = tvShowsFound.get(row);
+        if (model != TvShowChooserModel.emptyResult) {
           MediaMetadata md = model.getMetadata();
 
           // did the user want to choose the images?
@@ -401,61 +387,55 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           }
 
           // set scraped metadata
-          movieToScrape.setMetadata(md);
+          tvShowToScrape.setMetadata(md);
 
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
           // get images?
           if (scraperMetadataConfig.isArtwork()) {
-            // let the user choose the images
-            if (!Globals.settings.isScrapeBestImage()) {
-              // poster
-              {
-                ImageLabel lblImage = new ImageLabel();
-                MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER,
-                    lblImage, null, null);
-                dialog.setVisible(true);
-                movieToScrape.setPosterUrl(lblImage.getImageUrl());
-                movieToScrape.writeImages(true, false);
-              }
-
-              // fanart
-              {
-                ImageLabel lblImage = new ImageLabel();
-                List<String> extrathumbs = new ArrayList<String>();
-                List<String> extrafanarts = new ArrayList<String>();
-                MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART,
-                    lblImage, extrathumbs, extrafanarts);
-                dialog.setVisible(true);
-                movieToScrape.setFanartUrl(lblImage.getImageUrl());
-                movieToScrape.writeImages(false, true);
-
-                // set extrathumbs and extrafanarts
-                movieToScrape.setExtraThumbs(extrathumbs);
-                movieToScrape.setExtraFanarts(extrafanarts);
-                if (extrafanarts.size() > 0 || extrathumbs.size() > 0) {
-                  movieToScrape.writeExtraImages(true, true);
-                }
-
-                // movieToScrape.downloadExtraThumbs(extrathumbs);
-                // movieToScrape.downloadExtraFanarts(extrafanarts);
-              }
-            }
-            else {
-              // get artwork directly from provider
-              List<MediaArtwork> artwork = model.getArtwork();
-              movieToScrape.setArtwork(artwork);
-            }
+            // TODO implement manual image choosing
+            // // let the user choose the images
+            // if (!Globals.settings.isScrapeBestImage()) {
+            // // poster
+            // {
+            // ImageLabel lblImage = new ImageLabel();
+            // MovieImageChooserDialog dialog = new MovieImageChooserDialog(tvShowToScrape.getImdbId(), tvShowToScrape.getTmdbId(),
+            // ImageType.POSTER, lblImage, null, null);
+            // dialog.setVisible(true);
+            // tvShowToScrape.setPosterUrl(lblImage.getImageUrl());
+            // tvShowToScrape.writeImages(true, false);
+            // }
+            //
+            // // fanart
+            // {
+            // ImageLabel lblImage = new ImageLabel();
+            // List<String> extrathumbs = new ArrayList<String>();
+            // List<String> extrafanarts = new ArrayList<String>();
+            // MovieImageChooserDialog dialog = new MovieImageChooserDialog(tvShowToScrape.getImdbId(), tvShowToScrape.getTmdbId(),
+            // ImageType.FANART, lblImage, extrathumbs, extrafanarts);
+            // dialog.setVisible(true);
+            // tvShowToScrape.setFanartUrl(lblImage.getImageUrl());
+            // tvShowToScrape.writeImages(false, true);
+            //
+            // }
+            // }
+            // else {
+            // get artwork directly from provider
+            List<MediaArtwork> artwork = model.getArtwork();
+            // TODO write images
+            // tvShowToScrape.setArtwork(artwork);
+            // }
           }
 
-          // get trailers?
-          if (scraperMetadataConfig.isTrailer()) {
-            List<MediaTrailer> trailers = model.getTrailers();
-            movieToScrape.setTrailers(trailers);
-          }
+          // TODO do we need trailers?
+          // // get trailers?
+          // if (scraperMetadataConfig.isTrailer()) {
+          // List<MediaTrailer> trailers = model.getTrailers();
+          // tvShowToScrape.setTrailers(trailers);
+          // }
 
           // rewrite the complete NFO
-          movieToScrape.writeNFO();
+          tvShowToScrape.writeNFO();
 
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
@@ -481,15 +461,13 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   }
 
   /**
-   * Search movie.
+   * Search tv show.
    * 
    * @param searchTerm
    *          the search term
-   * @param imdbId
-   *          the imdb id
    */
-  private void searchMovie(String searchTerm, String imdbId) {
-    SearchTask task = new SearchTask(searchTerm, imdbId);
+  private void searchTvShow(String searchTerm) {
+    SearchTask task = new SearchTask(searchTerm);
     task.execute();
   }
 
@@ -524,20 +502,14 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     /** The search term. */
     private String searchTerm;
 
-    /** The imdb id. */
-    private String imdbId;
-
     /**
      * Instantiates a new search task.
      * 
      * @param searchTerm
      *          the search term
-     * @param imdbId
-     *          the imdb id
      */
-    public SearchTask(String searchTerm, String imdbId) {
+    public SearchTask(String searchTerm) {
       this.searchTerm = searchTerm;
-      this.imdbId = imdbId;
     }
 
     /*
@@ -548,15 +520,15 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("moviechooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId, metadataProvider);
-      moviesFound.clear();
+      List<MediaSearchResult> searchResult = tvShowList.searchTvShow(searchTerm, metadataProvider);
+      tvShowsFound.clear();
       if (searchResult.size() == 0) {
         // display empty result
-        moviesFound.add(MovieChooserModel.emptyResult);
+        tvShowsFound.add(TvShowChooserModel.emptyResult);
       }
       else {
         for (MediaSearchResult result : searchResult) {
-          moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
+          tvShowsFound.add(new TvShowChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
         }
       }
 
@@ -585,7 +557,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   private class ScrapeTask extends SwingWorker<Void, Void> {
 
     /** The model. */
-    private MovieChooserModel model;
+    private TvShowChooserModel model;
 
     /**
      * Instantiates a new scrape task.
@@ -593,7 +565,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
      * @param model
      *          the model
      */
-    public ScrapeTask(MovieChooserModel model) {
+    public ScrapeTask(TvShowChooserModel model) {
       this.model = model;
     }
 
@@ -628,10 +600,10 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        moviesFound, table);
+    JTableBinding<TvShowChooserModel, List<TvShowChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+        tvShowsFound, table);
     //
-    BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
+    BeanProperty<TvShowChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
     jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setColumnName(BUNDLE.getString("moviechooser.searchresult")).setEditable(false); //$NON-NLS-1$
     //
     jTableBinding.bind();
@@ -639,25 +611,19 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
-        tpMovieDescription, jTextPaneBeanProperty);
+        tpTvShowOverview, jTextPaneBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
     AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2,
-        lblMoviePoster, imageLabelBeanProperty);
+        lblTvShowPoster, imageLabelBeanProperty);
     autoBinding_2.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.tagline");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty,
-        lblTagline, jTextAreaBeanProperty);
-    autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
     BeanProperty<JTextArea, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
     AutoBinding<JTable, String, JTextArea, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
-        lblMovieName, jTextAreaBeanProperty_1);
+        lblTvShowName, jTextAreaBeanProperty_1);
     autoBinding_3.bind();
   }
 
@@ -693,7 +659,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
       MovieScrapers selectedScraper = (MovieScrapers) cbScraper.getSelectedItem();
       metadataProvider = MovieList.getInstance().getMetadataProvider(selectedScraper);
-      searchMovie(textFieldSearchString.getText(), "");
+      searchTvShow(textFieldSearchString.getText());
     }
   }
 }

@@ -39,6 +39,12 @@ public class MediaScrapeOptions {
   /** The tmdb id. */
   private int               tmdbId      = 0;
 
+  /** The id. */
+  private String            id          = "";
+
+  /** The type. */
+  private MediaType         type;
+
   /** The artwork type. */
   private MediaArtworkType  artworkType = MediaArtworkType.ALL;
 
@@ -66,6 +72,25 @@ public class MediaScrapeOptions {
    */
   public void setResult(MediaSearchResult result) {
     this.result = result;
+  }
+
+  /**
+   * Gets the id.
+   * 
+   * @return the id
+   */
+  public String getId() {
+    return id;
+  }
+
+  /**
+   * Sets the id.
+   * 
+   * @param id
+   *          the new id
+   */
+  public void setId(String id) {
+    this.id = id;
   }
 
   /**
@@ -145,9 +170,27 @@ public class MediaScrapeOptions {
   }
 
   /**
+   * Gets the type.
+   * 
+   * @return the type
+   */
+  public MediaType getType() {
+    return type;
+  }
+
+  /**
+   * Sets the type.
+   * 
+   * @param type
+   *          the new type
+   */
+  public void setType(MediaType type) {
+    this.type = type;
+  }
+
+  /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result

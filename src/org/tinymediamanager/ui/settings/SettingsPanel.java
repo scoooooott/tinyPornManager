@@ -69,6 +69,8 @@ public class SettingsPanel extends JPanel {
   /** The panel image movie settings. */
   private MovieImageSettingsPanel     panelImageMovieSettings;
 
+  private TvShowSettingsPanel         panelTvShowSettings;
+
   /**
    * Create the panel.
    */
@@ -87,29 +89,13 @@ public class SettingsPanel extends JPanel {
     addButton(BUNDLE.getString("Settings.scraper"), "/org/tinymediamanager/ui/images/show_reel.png", panelScraperMovieSettings, toolbar, group); //$NON-NLS-1$
     panelImageMovieSettings = new MovieImageSettingsPanel();
     addButton(BUNDLE.getString("Settings.images"), "/org/tinymediamanager/ui/images/show_reel.png", panelImageMovieSettings, toolbar, group); //$NON-NLS-1$
+    panelTvShowSettings = new TvShowSettingsPanel();
+    addButton(BUNDLE.getString("Settings.tvshow"), "/org/tinymediamanager/ui/images/tv_show.png", panelTvShowSettings, toolbar, group); //$NON-NLS-1$
     panelGeneralSettings = new GeneralSettingsPanel();
     addButton(BUNDLE.getString("Settings.general"), "/org/tinymediamanager/ui/images/Action-configure-icon.png", panelGeneralSettings, toolbar, group); //$NON-NLS-1$
 
-    // // button panel
-    // JPanel buttonPanel = new JPanel();
-    // // add(buttonPanel, "2, 4, fill, fill");
-    // add("South", buttonPanel);
-    // buttonPanel.setLayout(new FormLayout(new ColumnSpec[] {
-    // FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-    // FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), }, new
-    // RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
-    //
-    // JButton btnSaveSettings = new JButton("Save");
-    // buttonPanel.add(btnSaveSettings, "4, 1");
-    // btnSaveSettings.addActionListener(new ActionListener() {
-    // public void actionPerformed(ActionEvent arg0) {
-    //
-    // // save settings
-    // settings.saveSettings();
-    // }
-    // });
-
     addComponentListener(new ComponentAdapter() {
+      @Override
       public void componentHidden(ComponentEvent e) {
         settings.saveSettings();
       }

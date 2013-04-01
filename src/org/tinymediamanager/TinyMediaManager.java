@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.MainWindow;
@@ -150,6 +151,9 @@ public class TinyMediaManager {
 
           MovieList movieList = MovieList.getInstance();
           movieList.loadMoviesFromDatabase();
+
+          TvShowList tvShowList = TvShowList.getInstance();
+          tvShowList.loadTvShowsFromDatabase();
 
           // set native dir (needs to be absolute)
           // String nativepath =

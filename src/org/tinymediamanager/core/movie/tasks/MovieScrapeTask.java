@@ -21,9 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
-import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -214,7 +214,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
       try {
         movieList = MovieList.getInstance();
         // set up scrapers
-        ScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
+        MovieScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
         IMediaMetadataProvider mediaMetadataProvider = movieList.getMetadataProvider(options.getMetadataScraper());
         List<IMediaArtworkProvider> artworkProviders = movieList.getArtworkProviders(options.getArtworkScrapers());
         List<IMediaTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
@@ -231,7 +231,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
           // search movie
           MediaSearchResult result1 = null;
           if (doSearch) {
-            List<MediaSearchResult> results = movieList.searchMovie(movie.getName(), movie.getImdbId(), mediaMetadataProvider);
+            List<MediaSearchResult> results = movieList.searchMovie(movie.getTitle(), movie.getImdbId(), mediaMetadataProvider);
             if (results != null && !results.isEmpty()) {
               result1 = results.get(0);
               // check if there is an other result with 100% score

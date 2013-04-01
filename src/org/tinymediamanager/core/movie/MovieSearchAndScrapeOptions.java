@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.ScraperMetadataConfig;
 
 /**
  * The Class MovieSearchAndScrapeConfig.
@@ -28,7 +27,7 @@ import org.tinymediamanager.core.ScraperMetadataConfig;
  */
 public class MovieSearchAndScrapeOptions {
   /** The scraper metadata config. */
-  private ScraperMetadataConfig      scraperMetadataConfig;
+  private MovieScraperMetadataConfig scraperMetadataConfig;
 
   /** The media metadata provider. */
   private MovieScrapers              metadataScraper;
@@ -49,7 +48,7 @@ public class MovieSearchAndScrapeOptions {
    * Load default Settings.
    */
   public void loadDefaults() {
-    scraperMetadataConfig = Globals.settings.getScraperMetadataConfig();
+    scraperMetadataConfig = Globals.settings.getMovieScraperMetadataConfig();
     // metadata
     metadataScraper = Globals.settings.getMovieScraper();
 
@@ -81,7 +80,7 @@ public class MovieSearchAndScrapeOptions {
    * 
    * @return the scraper metadata config
    */
-  public ScraperMetadataConfig getScraperMetadataConfig() {
+  public MovieScraperMetadataConfig getScraperMetadataConfig() {
     return scraperMetadataConfig;
   }
 
@@ -118,7 +117,7 @@ public class MovieSearchAndScrapeOptions {
    * @param scraperMetadataConfig
    *          the new scraper metadata config
    */
-  public void setScraperMetadataConfig(ScraperMetadataConfig scraperMetadataConfig) {
+  public void setScraperMetadataConfig(MovieScraperMetadataConfig scraperMetadataConfig) {
     this.scraperMetadataConfig = scraperMetadataConfig;
   }
 

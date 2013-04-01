@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.tinymediamanager.core.movie.MovieSet;
 
@@ -30,34 +31,10 @@ import org.tinymediamanager.core.movie.MovieSet;
 public class MovieSetRootTreeNode extends DefaultMutableTreeNode {
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -1209627220507076339L;
+  private static final long    serialVersionUID = -1209627220507076339L;
 
   /** The node comparator. */
-  protected Comparator      nodeComparator   = new Comparator() {
-                                               @Override
-                                               public int compare(Object o1, Object o2) {
-                                                 if (o1 instanceof MovieTreeNode && o2 instanceof MovieTreeNode) {
-                                                   MovieSetTreeNode node1 = (MovieSetTreeNode) o1;
-                                                   MovieSet movieSet1 = (MovieSet) node1.getUserObject();
-                                                   MovieSetTreeNode node2 = (MovieSetTreeNode) o2;
-                                                   MovieSet movieSet2 = (MovieSet) node2.getUserObject();
-                                                   return movieSet1.getName().compareTo(movieSet2.getName());
-                                                 }
-                                                 return o1.toString().compareToIgnoreCase(o2.toString());
-                                               }
-
-                                               @Override
-                                               @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-                                               public boolean equals(Object obj) {
-                                                 return false;
-                                               }
-
-                                               @Override
-                                               public int hashCode() {
-                                                 int hash = 7;
-                                                 return hash;
-                                               }
-                                             };
+  private Comparator<TreeNode> nodeComparator;
 
   /**
    * Instantiates a new movie set tree node.
@@ -65,6 +42,20 @@ public class MovieSetRootTreeNode extends DefaultMutableTreeNode {
    */
   public MovieSetRootTreeNode() {
     super("MovieSets");
+
+    nodeComparator = new Comparator<TreeNode>() {
+      @Override
+      public int compare(TreeNode o1, TreeNode o2) {
+        if (o1 instanceof MovieTreeNode && o2 instanceof MovieTreeNode) {
+          MovieSetTreeNode node1 = (MovieSetTreeNode) o1;
+          MovieSet movieSet1 = (MovieSet) node1.getUserObject();
+          MovieSetTreeNode node2 = (MovieSetTreeNode) o2;
+          MovieSet movieSet2 = (MovieSet) node2.getUserObject();
+          return movieSet1.getName().compareTo(movieSet2.getName());
+        }
+        return o1.toString().compareToIgnoreCase(o2.toString());
+      }
+    };
   }
 
   /**

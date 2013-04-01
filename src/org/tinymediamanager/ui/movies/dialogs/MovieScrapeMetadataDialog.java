@@ -32,8 +32,8 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieArtworkScrapers;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieTrailerScrapers;
@@ -102,9 +102,9 @@ public class MovieScrapeMetadataDialog extends JDialog {
     setModal(true);
 
     // copy the values
-    ScraperMetadataConfig settings = Globals.settings.getScraperMetadataConfig();
+    MovieScraperMetadataConfig settings = Globals.settings.getMovieScraperMetadataConfig();
 
-    ScraperMetadataConfig scraperMetadataConfig = new ScraperMetadataConfig();
+    MovieScraperMetadataConfig scraperMetadataConfig = new MovieScraperMetadataConfig();
     scraperMetadataConfig.setTitle(settings.isTitle());
     scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
     scraperMetadataConfig.setTagline(settings.isTagline());

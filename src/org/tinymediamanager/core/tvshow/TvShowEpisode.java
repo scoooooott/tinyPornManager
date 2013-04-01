@@ -15,10 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.EPISODE;
-import static org.tinymediamanager.core.Constants.MEDIA_FILES;
-import static org.tinymediamanager.core.Constants.SEASON;
-import static org.tinymediamanager.core.Constants.TV_SHOW;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +38,7 @@ import org.tinymediamanager.core.MediaFile;
  */
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
-public class TvEpisode extends MediaEntity {
+public class TvShowEpisode extends MediaEntity {
 
   private TvShow          tvShow               = null;
   private int             episode              = 0;
@@ -121,12 +118,34 @@ public class TvEpisode extends MediaEntity {
     int oldValue = this.episode;
     this.episode = newValue;
     firePropertyChange(EPISODE, oldValue, newValue);
+    firePropertyChange(TITLE_FOR_UI, "", newValue);
+  }
+
+  @Override
+  public void setTitle(String newValue) {
+    super.setTitle(newValue);
+    firePropertyChange(TITLE_FOR_UI, "", newValue);
   }
 
   public void setSeason(int newValue) {
     int oldValue = this.season;
     this.season = newValue;
     firePropertyChange(SEASON, oldValue, newValue);
+    firePropertyChange(TITLE_FOR_UI, "", newValue);
+  }
+
+  /**
+   * Gets the title for ui.
+   * 
+   * @return the title for ui
+   */
+  public String getTitleForUi() {
+    StringBuffer titleForUi = new StringBuffer();
+    if (episode > 0 && season > 0) {
+      titleForUi.append(String.format("S%02dE%02d - ", season, episode));
+    }
+    titleForUi.append(title);
+    return titleForUi.toString();
   }
 
   public void initializeAfterLoading() {

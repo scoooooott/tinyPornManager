@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core;
+package org.tinymediamanager.core.movie;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.tinymediamanager.core.AbstractModelObject;
+
 /**
- * The Class ScraperMetadataConfig.
+ * The Class MovieScraperMetadataConfig.
  * 
  * @author Manuel Laggner
  */
-@XmlRootElement(name = "ScraperMetadata")
-public class ScraperMetadataConfig extends AbstractModelObject {
+@XmlRootElement(name = "MovieScraperMetadata")
+public class MovieScraperMetadataConfig extends AbstractModelObject {
 
   /** The title. */
   private boolean title         = true;
@@ -64,7 +66,7 @@ public class ScraperMetadataConfig extends AbstractModelObject {
   /**
    * Instantiates a new scraper metadata config.
    */
-  public ScraperMetadataConfig() {
+  public MovieScraperMetadataConfig() {
 
   }
 

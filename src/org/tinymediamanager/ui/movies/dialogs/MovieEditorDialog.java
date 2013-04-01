@@ -675,7 +675,7 @@ public class MovieEditorDialog extends JDialog {
 
     {
       lblMoviePath.setText(movie.getPath());
-      tfTitle.setText(movie.getName());
+      tfTitle.setText(movie.getTitle());
       tfOriginalTitle.setText(movie.getOriginalTitle());
       tfSorttitle.setText(movie.getSortTitle());
       tpTagline.setText(movie.getTagline());

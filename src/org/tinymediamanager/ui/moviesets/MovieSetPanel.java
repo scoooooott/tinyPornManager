@@ -212,8 +212,7 @@ public class MovieSetPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       String name = JOptionPane.showInputDialog(null, "Movieset title : ", "", 1);
@@ -244,8 +243,7 @@ public class MovieSetPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
@@ -253,21 +251,7 @@ public class MovieSetPanel extends JPanel {
       if (paths != null) {
         for (TreePath path : paths) {
           if (path.getPathCount() > 1) {
-
-            // DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-            // path.getLastPathComponent();
-            // if (node.getUserObject() instanceof MovieSet) {
-            // MovieSet movieSet = (MovieSet) node.getUserObject();
-            // System.out.println(movieSet.getName());
-            // }
-            // if (node.getUserObject() instanceof Movie) {
-            // Movie movie = (Movie) node.getUserObject();
-            // System.out.println(movie.getName());
-            // }
-            //
             treeModel.remove(path);
-
-            // tree.addSelectionPath(path.getParentPath());
           }
         }
       }
@@ -292,8 +276,7 @@ public class MovieSetPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
@@ -347,8 +330,7 @@ public class MovieSetPanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();

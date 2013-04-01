@@ -178,7 +178,7 @@ public class MovieScraperSettingsPanel extends JPanel {
     panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    panelScraperMetadata = new MovieScraperMetadataPanel(settings.getScraperMetadataConfig());
+    panelScraperMetadata = new MovieScraperMetadataPanel(settings.getMovieScraperMetadataConfig());
     panelScraperMetadataContainer.add(panelScraperMetadata, "1, 1, 2, 1, fill, default");
 
     chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$

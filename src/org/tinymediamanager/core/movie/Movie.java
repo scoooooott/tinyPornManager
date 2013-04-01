@@ -48,7 +48,6 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieCast.CastType;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
@@ -218,7 +217,7 @@ public class Movie extends MediaEntity {
    */
   public String getTitleSortable() {
     if (StringUtils.isEmpty(titleSortable)) {
-      titleSortable = Utils.getSortableName(this.getName());
+      titleSortable = Utils.getSortableName(this.getTitle());
     }
     return titleSortable;
   }
@@ -402,8 +401,7 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Downloads trailer to movie folder (get from NFO), naming
-   * <code>&lt;movie&gt;-trailer.ext</code><br>
+   * Downloads trailer to movie folder (get from NFO), naming <code>&lt;movie&gt;-trailer.ext</code><br>
    * Downloads to .tmp file first and renames after successful download.
    * 
    * @param trailerToDownload
@@ -1192,7 +1190,7 @@ public class Movie extends MediaEntity {
    *          the new metadata
    */
   public void setMetadata(MediaMetadata md) {
-    setMetadata(md, Globals.settings.getScraperMetadataConfig());
+    setMetadata(md, Globals.settings.getMovieScraperMetadataConfig());
   }
 
   /**
@@ -1206,10 +1204,10 @@ public class Movie extends MediaEntity {
   /**
    * @param metadata
    */
-  public void setMetadata(MediaMetadata metadata, ScraperMetadataConfig config) {
+  public void setMetadata(MediaMetadata metadata, MovieScraperMetadataConfig config) {
     // check if metadata has at least a name
     if (StringUtils.isEmpty(metadata.getTitle())) {
-      LOGGER.warn("wanted to save empty metadata for " + getName());
+      LOGGER.warn("wanted to save empty metadata for " + getTitle());
       return;
     }
 
@@ -1360,7 +1358,7 @@ public class Movie extends MediaEntity {
    *          the new artwork
    */
   public void setArtwork(MediaMetadata md) {
-    setArtwork(md, Globals.settings.getScraperMetadataConfig());
+    setArtwork(md, Globals.settings.getMovieScraperMetadataConfig());
   }
 
   /**
@@ -1371,7 +1369,7 @@ public class Movie extends MediaEntity {
    * @param config
    *          the config
    */
-  public void setArtwork(MediaMetadata md, ScraperMetadataConfig config) {
+  public void setArtwork(MediaMetadata md, MovieScraperMetadataConfig config) {
     setArtwork(md.getMediaArt(MediaArtworkType.ALL), config);
   }
 
@@ -1382,7 +1380,7 @@ public class Movie extends MediaEntity {
    *          the new artwork
    */
   public void setArtwork(List<MediaArtwork> artwork) {
-    setArtwork(artwork, Globals.settings.getScraperMetadataConfig());
+    setArtwork(artwork, Globals.settings.getMovieScraperMetadataConfig());
   }
 
   /**
@@ -1393,7 +1391,7 @@ public class Movie extends MediaEntity {
    * @param config
    *          the config
    */
-  public void setArtwork(List<MediaArtwork> artwork, ScraperMetadataConfig config) {
+  public void setArtwork(List<MediaArtwork> artwork, MovieScraperMetadataConfig config) {
     if (config.isArtwork()) {
       // poster
       for (MediaArtwork art : artwork) {
@@ -1577,13 +1575,13 @@ public class Movie extends MediaEntity {
 
     switch (poster) {
       case MOVIENAME_POSTER_PNG:
-        filename += getName() + ".png";
+        filename += getTitle() + ".png";
         break;
       case MOVIENAME_POSTER_JPG:
-        filename += getName() + ".jpg";
+        filename += getTitle() + ".jpg";
         break;
       case MOVIENAME_POSTER_TBN:
-        filename += getName() + ".tbn";
+        filename += getTitle() + ".tbn";
         break;
       case FILENAME_POSTER_PNG:
         filename += mediafile + "-poster.png";
@@ -1668,13 +1666,13 @@ public class Movie extends MediaEntity {
         filename += mediafile + "-fanart.tbn";
         break;
       case MOVIENAME_FANART_PNG:
-        filename += getName() + "-fanart.png";
+        filename += getTitle() + "-fanart.png";
         break;
       case MOVIENAME_FANART_JPG:
-        filename += getName() + "-fanart.jpg";
+        filename += getTitle() + "-fanart.jpg";
         break;
       case MOVIENAME_FANART_TBN:
-        filename += getName() + "-fanart.tbn";
+        filename += getTitle() + "-fanart.tbn";
         break;
       default:
         filename = "";
@@ -1974,8 +1972,7 @@ public class Movie extends MediaEntity {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
@@ -2072,8 +2069,7 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Gets the media info audio codec (i.e mp3) and channels (i.e. 6 at 5.1
-   * sound)
+   * Gets the media info audio codec (i.e mp3) and channels (i.e. 6 at 5.1 sound)
    * 
    * @return the media info audio codec
    */

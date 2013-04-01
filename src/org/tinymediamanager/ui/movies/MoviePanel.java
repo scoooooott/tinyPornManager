@@ -457,7 +457,6 @@ public class MoviePanel extends JPanel {
      *          the with title
      */
     public UpdateDataSourcesAction(boolean withTitle) {
-      // putValue(NAME, "UDS");
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("movie.update.datasource")); //$NON-NLS-1$
         putValue(LARGE_ICON_KEY, "");
@@ -513,23 +512,13 @@ public class MoviePanel extends JPanel {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      // for (int row : table.getSelectedRows()) {
-      // row = table.convertRowIndexToModel(row);
-      // Movie movie = movieList.getMovies().get(row);
-      // MovieChooser dialogMovieChooser = new MovieChooser(movie);
-      // dialogMovieChooser.pack();
-      // dialogMovieChooser.setVisible(true);
-      // }
       List<Movie> selectedMovies = new ArrayList<Movie>();
-      // save all selected movies in an extra list (maybe scraping of one movie
-      // changes the whole list)
+      // save all selected movies in an extra list (maybe scraping of one movie changes the whole list)
       for (Movie movie : movieSelectionModel.getSelectedMovies()) {
         selectedMovies.add(movie);
       }
       for (Movie movie : selectedMovies) {
         MovieChooserDialog dialogMovieChooser = new MovieChooserDialog(movie, selectedMovies.size() > 1 ? true : false);
-        // dialogMovieChooser.pack();
-        // dialogMovieChooser.setVisible(true);
         if (!dialogMovieChooser.showDialog()) {
           break;
         }

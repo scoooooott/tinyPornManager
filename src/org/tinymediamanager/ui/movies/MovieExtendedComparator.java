@@ -213,7 +213,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       // try to sort the chosen column
       switch (sortColumn) {
         case TITLE:
-          sortOrder = movie1.getName().toLowerCase().compareTo(movie2.getName().toLowerCase());
+          sortOrder = movie1.getTitle().toLowerCase().compareTo(movie2.getTitle().toLowerCase());
           break;
 
         case YEAR:

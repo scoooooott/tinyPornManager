@@ -192,7 +192,7 @@ public class MovieRenamer {
       return;
     }
     LOGGER.debug("movie path: " + movie.getPath());
-    LOGGER.debug("movie name: " + movie.getName());
+    LOGGER.debug("movie name: " + movie.getTitle());
     LOGGER.debug("movie originalTitle: " + movie.getOriginalTitle());
     LOGGER.debug("movie year: " + movie.getYear());
     LOGGER.debug("path expression: " + Globals.settings.getMovieRenamerPathname());
@@ -425,13 +425,13 @@ public class MovieRenamer {
     String newDestination = template;
 
     // replace token title ($T)
-    if (newDestination.contains("$T") && StringUtils.isNotEmpty(movie.getName())) {
-      newDestination = newDestination.replaceAll("\\$T", movie.getName());
+    if (newDestination.contains("$T") && StringUtils.isNotEmpty(movie.getTitle())) {
+      newDestination = newDestination.replaceAll("\\$T", movie.getTitle());
     }
 
     // replace token first letter of title ($1)
-    if (newDestination.contains("$1") && StringUtils.isNotEmpty(movie.getName())) {
-      newDestination = newDestination.replaceAll("\\$1", movie.getName().substring(0, 1));
+    if (newDestination.contains("$1") && StringUtils.isNotEmpty(movie.getTitle())) {
+      newDestination = newDestination.replaceAll("\\$1", movie.getTitle().substring(0, 1));
     }
 
     // replace token year ($Y)

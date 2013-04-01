@@ -22,8 +22,11 @@ package org.tinymediamanager.scraper;
  */
 public enum MediaType {
 
-  /** The tv. */
-  TV,
+  /** The tv show. */
+  TV_SHOW,
+
+  /** The tv episode. */
+  TV_EPISODE,
 
   /** The movie. */
   MOVIE;
@@ -40,12 +43,16 @@ public enum MediaType {
       return null;
 
     id = id.toLowerCase();
-    if ("movie".equals(id) || "movies".equals(id)) {
+    if ("movie".equalsIgnoreCase(id) || "movies".equalsIgnoreCase(id)) {
       return MOVIE;
     }
 
-    if ("tv".equals(id)) {
-      return TV;
+    if ("tv".equalsIgnoreCase(id) || "tvShow".equalsIgnoreCase(id)) {
+      return TV_SHOW;
+    }
+
+    if ("episode".equalsIgnoreCase(id) || "tvEpisode".equalsIgnoreCase(id)) {
+      return TV_EPISODE;
     }
 
     return null;

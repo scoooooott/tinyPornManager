@@ -43,10 +43,10 @@ public class TvShowTest {
 
     TvShowList instance = TvShowList.getInstance();
     instance.findTvShowsInPath("/home/manuel/Videos/Test_Serien/");
-    //instance.findTvShowsInPath("D:\\_neu\\Test_Serien");
+    // instance.findTvShowsInPath("D:\\_neu\\Test_Serien");
     for (TvShow show : instance.getTvShows()) {
-      for (TvEpisode ep : show.getEpisodes()) {
-        System.out.println(show.getName() + " - Season " + ep.getSeason());
+      for (TvShowEpisode ep : show.getEpisodes()) {
+        System.out.println(show.getTitle() + " - Season " + ep.getSeason());
       }
     }
 

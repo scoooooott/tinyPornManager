@@ -52,7 +52,7 @@ public class MovieSetTreeModel implements TreeModel {
   private PropertyChangeListener    propertyChangeListener;
 
   /** The movie list. */
-  MovieList                         movieList = MovieList.getInstance();
+  private MovieList                 movieList = MovieList.getInstance();
 
   /**
    * Instantiates a new movie set tree model.
@@ -159,8 +159,7 @@ public class MovieSetTreeModel implements TreeModel {
   /*
    * (non-Javadoc)
    * 
-   * @see javax.swing.tree.TreeModel#getIndexOfChild(java.lang.Object,
-   * java.lang.Object)
+   * @see javax.swing.tree.TreeModel#getIndexOfChild(java.lang.Object, java.lang.Object)
    */
   public int getIndexOfChild(Object parent, Object child) {
     return ((TreeNode) parent).getIndex((TreeNode) child);
@@ -169,8 +168,7 @@ public class MovieSetTreeModel implements TreeModel {
   /*
    * (non-Javadoc)
    * 
-   * @see javax.swing.tree.TreeModel#addTreeModelListener(javax.swing.event.
-   * TreeModelListener)
+   * @see javax.swing.tree.TreeModel#addTreeModelListener(javax.swing.event. TreeModelListener)
    */
   public void addTreeModelListener(TreeModelListener listener) {
     listeners.add(listener);
@@ -179,8 +177,7 @@ public class MovieSetTreeModel implements TreeModel {
   /*
    * (non-Javadoc)
    * 
-   * @see javax.swing.tree.TreeModel#removeTreeModelListener(javax.swing.event.
-   * TreeModelListener)
+   * @see javax.swing.tree.TreeModel#removeTreeModelListener(javax.swing.event. TreeModelListener)
    */
   public void removeTreeModelListener(TreeModelListener listener) {
     listeners.remove(listener);
@@ -189,13 +186,11 @@ public class MovieSetTreeModel implements TreeModel {
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * javax.swing.tree.TreeModel#valueForPathChanged(javax.swing.tree.TreePath,
-   * java.lang.Object)
+   * @see javax.swing.tree.TreeModel#valueForPathChanged(javax.swing.tree.TreePath, java.lang.Object)
    */
   @Override
   public void valueForPathChanged(TreePath path, Object newValue) {
-    // foo
+    // TODO
   }
 
   /**

@@ -52,6 +52,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.settings.SettingsPanel;
+import org.tinymediamanager.ui.tvshows.TvShowPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -276,6 +277,9 @@ public class MainWindow extends JFrame {
 
     JPanel panelMovieSets = new MovieSetPanel();
     VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.moviesets"), panelMovieSets); //$NON-NLS-1$
+
+    JPanel panelTvShows = new TvShowPanel();
+    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.tvshows"), panelTvShows); //$NON-NLS-1$
 
     JPanel panelSettings = new SettingsPanel();
     VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.settings"), panelSettings); //$NON-NLS-1$
