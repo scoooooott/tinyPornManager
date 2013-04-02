@@ -303,6 +303,10 @@ public class MovieRenamer {
         // only store .png as png and .jpg as jpg
         String generatedFiletype = FilenameUtils.getExtension(newPosterFile);
         String providedFiletype = FilenameUtils.getExtension(oldPosterFile);
+        if (providedFiletype.equals("tbn") && generatedFiletype.equals("jpg")) {
+          // treat old TBNs as JPGs when renaming to JPG
+          providedFiletype = "jpg";
+        }
         if (!generatedFiletype.equals(providedFiletype)) {
           continue;
         }
@@ -328,6 +332,10 @@ public class MovieRenamer {
         // only store .png as png and .jpg as jpg
         String generatedFiletype = FilenameUtils.getExtension(newFanartFile);
         String providedFiletype = FilenameUtils.getExtension(oldFanartFile);
+        if (providedFiletype.equals("tbn") && generatedFiletype.equals("jpg")) {
+          // treat old TBNs as JPGs when renaming to JPG
+          providedFiletype = "jpg";
+        }
         if (!generatedFiletype.equals(providedFiletype)) {
           continue;
         }
