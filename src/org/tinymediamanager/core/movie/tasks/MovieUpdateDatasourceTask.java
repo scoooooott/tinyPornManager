@@ -60,7 +60,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
    */
   public MovieUpdateDatasourceTask() {
     movieList = MovieList.getInstance();
-    dataSources = new ArrayList<String>(Globals.settings.getMovieDataSource());
+    dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
     fileTypes = new ArrayList<String>(Globals.settings.getVideoFileType());
   }
 

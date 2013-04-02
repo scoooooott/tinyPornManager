@@ -375,7 +375,7 @@ public class MovieList extends AbstractModelObject {
    * @return the metadata provider
    */
   public IMediaMetadataProvider getMetadataProvider() {
-    MovieScrapers scraper = Globals.settings.getMovieScraper();
+    MovieScrapers scraper = Globals.settings.getMovieSettings().getMovieScraper();
     return getMetadataProvider(scraper);
   }
 
@@ -401,7 +401,7 @@ public class MovieList extends AbstractModelObject {
 
       case IMDB:
         LOGGER.debug("get instance of ImdbMetadataProvider");
-        metadataProvider = new ImdbMetadataProvider(Globals.settings.getImdbSite());
+        metadataProvider = new ImdbMetadataProvider(Globals.settings.getMovieSettings().getImdbSite());
         break;
 
       case TMDB:
@@ -439,11 +439,11 @@ public class MovieList extends AbstractModelObject {
    */
   public List<IMediaArtworkProvider> getArtworkProviders() {
     List<MovieArtworkScrapers> scrapers = new ArrayList<MovieArtworkScrapers>();
-    if (Globals.settings.isImageScraperTmdb()) {
+    if (Globals.settings.getMovieSettings().isImageScraperTmdb()) {
       scrapers.add(MovieArtworkScrapers.TMDB);
     }
 
-    if (Globals.settings.isImageScraperFanartTv()) {
+    if (Globals.settings.getMovieSettings().isImageScraperFanartTv()) {
       scrapers.add(MovieArtworkScrapers.FANART_TV);
     }
 
@@ -465,7 +465,7 @@ public class MovieList extends AbstractModelObject {
     // tmdb
     if (scrapers.contains(MovieArtworkScrapers.TMDB)) {
       try {
-        if (Globals.settings.isImageScraperTmdb()) {
+        if (Globals.settings.getMovieSettings().isImageScraperTmdb()) {
           LOGGER.debug("get instance of TmdbMetadataProvider");
           artworkProvider = new TmdbMetadataProvider();
           artworkProviders.add(artworkProvider);
@@ -479,7 +479,7 @@ public class MovieList extends AbstractModelObject {
     // fanart.tv
     if (scrapers.contains(MovieArtworkScrapers.FANART_TV)) {
       try {
-        if (Globals.settings.isImageScraperFanartTv()) {
+        if (Globals.settings.getMovieSettings().isImageScraperFanartTv()) {
           LOGGER.debug("get instance of FanartTvMetadataProvider");
           artworkProvider = new FanartTvMetadataProvider();
           artworkProviders.add(artworkProvider);
@@ -501,15 +501,15 @@ public class MovieList extends AbstractModelObject {
   public List<IMediaTrailerProvider> getTrailerProviders() {
     List<MovieTrailerScrapers> scrapers = new ArrayList<MovieTrailerScrapers>();
 
-    if (Globals.settings.isTrailerScraperTmdb()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperTmdb()) {
       scrapers.add(MovieTrailerScrapers.TMDB);
     }
 
-    if (Globals.settings.isTrailerScraperHdTrailers()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperHdTrailers()) {
       scrapers.add(MovieTrailerScrapers.HDTRAILERS);
     }
 
-    if (Globals.settings.isTrailerScraperOfdb()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperOfdb()) {
       scrapers.add(MovieTrailerScrapers.OFDB);
     }
 

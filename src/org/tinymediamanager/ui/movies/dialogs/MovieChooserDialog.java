@@ -202,7 +202,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       }
       {
         cbScraper = new JComboBox(MovieScrapers.values());
-        MovieScrapers defaultScraper = Globals.settings.getMovieScraper();
+        MovieScrapers defaultScraper = Globals.settings.getMovieSettings().getMovieScraper();
         cbScraper.setSelectedItem(defaultScraper);
         cbScraper.setAction(new ChangeScraperAction());
         panelSearchField.add(cbScraper, "4, 1, fill, default");
@@ -396,7 +396,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           MediaMetadata md = model.getMetadata();
 
           // did the user want to choose the images?
-          if (!Globals.settings.isScrapeBestImage()) {
+          if (!Globals.settings.getMovieSettings().isScrapeBestImage()) {
             md.clearMediaArt();
           }
 
@@ -408,7 +408,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           // get images?
           if (scraperMetadataConfig.isArtwork()) {
             // let the user choose the images
-            if (!Globals.settings.isScrapeBestImage()) {
+            if (!Globals.settings.getMovieSettings().isScrapeBestImage()) {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();

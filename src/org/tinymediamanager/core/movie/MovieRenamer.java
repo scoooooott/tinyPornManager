@@ -68,7 +68,7 @@ public class MovieRenamer {
    *          the old filenames
    */
   private static void cleanupNfos(Movie m, ArrayList<String> oldFilenames) {
-    List<MovieNfoNaming> setup = Globals.settings.getMovieNfoFilenames();
+    List<MovieNfoNaming> setup = Globals.settings.getMovieSettings().getMovieNfoFilenames();
     MovieNfoNaming[] all = MovieNfoNaming.values();
     for (MovieNfoNaming unused : all) {
       if (!setup.contains(unused)) {
@@ -114,7 +114,7 @@ public class MovieRenamer {
    *          the old filenames
    */
   private static void cleanupPosters(Movie m, ArrayList<String> oldFilenames) {
-    List<MoviePosterNaming> setup = Globals.settings.getMoviePosterFilenames();
+    List<MoviePosterNaming> setup = Globals.settings.getMovieSettings().getMoviePosterFilenames();
     MoviePosterNaming[] all = MoviePosterNaming.values();
     for (MoviePosterNaming unused : all) {
       if (!setup.contains(unused)) {
@@ -160,7 +160,7 @@ public class MovieRenamer {
    *          the old filenames
    */
   private static void cleanupFanarts(Movie m, ArrayList<String> oldFilenames) {
-    List<MovieFanartNaming> setup = Globals.settings.getMovieFanartFilenames();
+    List<MovieFanartNaming> setup = Globals.settings.getMovieSettings().getMovieFanartFilenames();
     MovieFanartNaming[] all = MovieFanartNaming.values();
     for (MovieFanartNaming unused : all) {
       if (!setup.contains(unused)) {
@@ -195,8 +195,8 @@ public class MovieRenamer {
     LOGGER.debug("movie name: " + movie.getTitle());
     LOGGER.debug("movie originalTitle: " + movie.getOriginalTitle());
     LOGGER.debug("movie year: " + movie.getYear());
-    LOGGER.debug("path expression: " + Globals.settings.getMovieRenamerPathname());
-    String newPathname = createDestination(Globals.settings.getMovieRenamerPathname(), movie);
+    LOGGER.debug("path expression: " + Globals.settings.getMovieSettings().getMovieRenamerPathname());
+    String newPathname = createDestination(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
     String oldPathname = movie.getPath();
 
     if (!newPathname.isEmpty()) {
@@ -233,15 +233,15 @@ public class MovieRenamer {
     ArrayList<String> oldFanarts = prepareCleanupFanarts(movie);
     ArrayList<String> oldPosters = prepareCleanupPosters(movie);
 
-    LOGGER.debug("file expression: " + Globals.settings.getMovieRenamerFilename());
-    if (!Globals.settings.getMovieRenamerFilename().isEmpty()) {
+    LOGGER.debug("file expression: " + Globals.settings.getMovieSettings().getMovieRenamerFilename());
+    if (!Globals.settings.getMovieSettings().getMovieRenamerFilename().isEmpty()) {
 
       // skip media file renaming on "disc" folder
       if (!movie.isDisc()) {
 
         // move movie files first
         for (MediaFile file : movie.getMediaFiles()) {
-          String newFilename = createDestination(Globals.settings.getMovieRenamerFilename(), movie);
+          String newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
 
           // get the filetype
           String fileExtension = FilenameUtils.getExtension(file.getFilename());
@@ -280,7 +280,7 @@ public class MovieRenamer {
     if (!movie.getNfoFilename().isEmpty()) {
       String oldNfoFile = movie.getNfoFilename();
       String newNfoFile = "";
-      for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
+      for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
         newNfoFile = movie.getNfoFilename(name);
         try {
           copyFile(oldNfoFile, newNfoFile);
@@ -297,7 +297,7 @@ public class MovieRenamer {
     if (!movie.getPoster().isEmpty()) {
       String oldPosterFile = movie.getPoster();
       String newPosterFile = "";
-      for (MoviePosterNaming name : Globals.settings.getMoviePosterFilenames()) {
+      for (MoviePosterNaming name : Globals.settings.getMovieSettings().getMoviePosterFilenames()) {
         newPosterFile = movie.getPosterFilename(name);
 
         // only store .png as png and .jpg as jpg
@@ -326,7 +326,7 @@ public class MovieRenamer {
     if (!movie.getFanart().isEmpty()) {
       String oldFanartFile = movie.getFanart();
       String newFanartFile = "";
-      for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
+      for (MovieFanartNaming name : Globals.settings.getMovieSettings().getMovieFanartFilenames()) {
         newFanartFile = movie.getFanartFilename(name);
 
         // only store .png as png and .jpg as jpg

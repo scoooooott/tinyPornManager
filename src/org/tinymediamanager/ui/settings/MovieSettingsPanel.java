@@ -140,7 +140,7 @@ public class MovieSettingsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser")); //$NON-NLS-1$
         if (file != null && file.exists() && file.isDirectory()) {
-          settings.addMovieDataSources(file.getAbsolutePath());
+          settings.getMovieSettings().addMovieDataSources(file.getAbsolutePath());
         }
       }
     });
@@ -152,13 +152,13 @@ public class MovieSettingsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         int row = tableMovieSources.convertRowIndexToModel(tableMovieSources.getSelectedRow());
         if (row != -1) { // nothing selected
-          String path = Globals.settings.getMovieDataSource().get(row);
+          String path = Globals.settings.getMovieSettings().getMovieDataSource().get(row);
           String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
           int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.datasource.remove.info"), path),
               BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
               BUNDLE.getString("Button.abort")); //$NON-NLS-1$
           if (decision == 0) {
-            Globals.settings.removeMovieDataSources(path);
+            Globals.settings.getMovieSettings().removeMovieDataSources(path);
           }
         }
       }
@@ -316,7 +316,7 @@ public class MovieSettingsPanel extends JPanel {
     initDataBindings();
 
     // NFO filenames
-    List<MovieNfoNaming> movieNfoFilenames = settings.getMovieNfoFilenames();
+    List<MovieNfoNaming> movieNfoFilenames = settings.getMovieSettings().getMovieNfoFilenames();
     if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {
       cbMovieNfoFilename1.setSelected(true);
     }
@@ -345,20 +345,17 @@ public class MovieSettingsPanel extends JPanel {
    */
   private void checkChanges() {
     // set NFO filenames
-    settings.clearMovieNfoFilenames();
+    settings.getMovieSettings().clearMovieNfoFilenames();
     if (cbMovieNfoFilename1.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
+      settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
     }
     if (cbMovieNfoFilename2.isSelected()) {
-      settings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
+      settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
     }
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
-    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieDataSource");
+    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieSettings.movieDataSource");
     JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,
         tableMovieSources);
     //
@@ -367,19 +364,19 @@ public class MovieSettingsPanel extends JPanel {
     //
     jTableBinding.bind();
     //
-    BeanProperty<Settings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieConnector");
+    BeanProperty<Settings, MovieConnectors> settingsBeanProperty_10 = BeanProperty.create("movieSettings.movieConnector");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
     AutoBinding<Settings, MovieConnectors, JComboBox, Object> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
     autoBinding_9.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_11 = BeanProperty.create("movieRenamerPathname");
+    BeanProperty<Settings, String> settingsBeanProperty_11 = BeanProperty.create("movieSettings.movieRenamerPathname");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_3 = BeanProperty.create("text");
     AutoBinding<Settings, String, JTextField, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_11, tfMoviePath, jTextFieldBeanProperty_3);
     autoBinding_10.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_12 = BeanProperty.create("movieRenamerFilename");
+    BeanProperty<Settings, String> settingsBeanProperty_12 = BeanProperty.create("movieSettings.movieRenamerFilename");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_4 = BeanProperty.create("text");
     AutoBinding<Settings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);

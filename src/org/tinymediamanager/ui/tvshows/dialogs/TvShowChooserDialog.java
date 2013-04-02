@@ -382,7 +382,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           MediaMetadata md = model.getMetadata();
 
           // did the user want to choose the images?
-          if (!Globals.settings.isScrapeBestImage()) {
+          if (!Globals.settings.getMovieSettings().isScrapeBestImage()) {
             md.clearMediaArt();
           }
 

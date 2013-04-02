@@ -204,7 +204,7 @@ public class MovieScraperSettingsPanel extends JPanel {
     initDataBindings();
 
     // set movie Scrapers
-    MovieScrapers movieScraper = settings.getMovieScraper();
+    MovieScrapers movieScraper = settings.getMovieSettings().getMovieScraper();
     switch (movieScraper) {
       case IMDB:
         cbScraperImdb.setSelected(true);
@@ -251,16 +251,16 @@ public class MovieScraperSettingsPanel extends JPanel {
   public void checkChanges() {
     // save scraper
     if (cbScraperImdb.isSelected()) {
-      settings.setMovieScraper(MovieScrapers.IMDB);
+      settings.getMovieSettings().setMovieScraper(MovieScrapers.IMDB);
     }
     if (cbScraperTmdb.isSelected()) {
-      settings.setMovieScraper(MovieScrapers.TMDB);
+      settings.getMovieSettings().setMovieScraper(MovieScrapers.TMDB);
     }
     if (cbScraperOfdbde.isSelected()) {
-      settings.setMovieScraper(MovieScrapers.OFDB);
+      settings.getMovieSettings().setMovieScraper(MovieScrapers.OFDB);
     }
     if (cbScraperZelluloidde.isSelected()) {
-      settings.setMovieScraper(MovieScrapers.ZELLULOID);
+      settings.getMovieSettings().setMovieScraper(MovieScrapers.ZELLULOID);
     }
   }
 
@@ -279,33 +279,33 @@ public class MovieScraperSettingsPanel extends JPanel {
         settingsBeanProperty_9, cbCountry, jComboBoxBeanProperty);
     autoBinding_8.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_13 = BeanProperty.create("imdbScrapeForeignLanguage");
+    BeanProperty<Settings, Boolean> settingsBeanProperty_13 = BeanProperty.create("movieSettings.imdbScrapeForeignLanguage");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_13, cbImdbTranslateableContent, jCheckBoxBeanProperty);
     autoBinding_12.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("scrapeBestImage");
+    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("movieSettings.scrapeBestImage");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<Settings, ImdbSiteDefinition> settingsBeanProperty_1 = BeanProperty.create("imdbSite");
+    BeanProperty<Settings, ImdbSiteDefinition> settingsBeanProperty_1 = BeanProperty.create("movieSettings.imdbSite");
     AutoBinding<Settings, ImdbSiteDefinition, JComboBox, Object> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, cbImdbSite, jComboBoxBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("trailerScraperTmdb");
+    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.trailerScraperTmdb");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_2, cbTheMovieDatabase, jCheckBoxBeanProperty);
     autoBinding_2.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("trailerScraperHdTrailers");
+    BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("movieSettings.trailerScraperHdTrailers");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, cbHdtrailersnet, jCheckBoxBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("trailerScraperOfdb");
+    BeanProperty<Settings, Boolean> settingsBeanProperty_4 = BeanProperty.create("movieSettings.trailerScraperOfdb");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, cbOfdbde, jCheckBoxBeanProperty);
     autoBinding_4.bind();

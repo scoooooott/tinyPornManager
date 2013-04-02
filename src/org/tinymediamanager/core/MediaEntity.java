@@ -34,6 +34,7 @@ import org.tinymediamanager.Globals;
  * @author Manuel Laggner
  */
 @MappedSuperclass
+// @Entity
 public abstract class MediaEntity extends AbstractModelObject {
 
   /** The id. */

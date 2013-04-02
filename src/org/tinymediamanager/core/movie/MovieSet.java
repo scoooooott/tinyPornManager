@@ -168,7 +168,8 @@ public class MovieSet extends AbstractModelObject {
     // write new poster
     writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", fanartUrl);
     // write to artwork folder
-    if (Globals.settings.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(Globals.settings.getMovieSetArtworkFolder())) {
+    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
+        && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(true, false);
     }
 
@@ -199,7 +200,8 @@ public class MovieSet extends AbstractModelObject {
     writeImageToMovieFolder(moviesObservable, "movieset-fanart.jpg", fanartUrl);
 
     // write to artwork folder
-    if (Globals.settings.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(Globals.settings.getMovieSetArtworkFolder())) {
+    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
+        && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(false, true);
     }
 
@@ -445,7 +447,8 @@ public class MovieSet extends AbstractModelObject {
     writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", posterUrl);
 
     // write to artwork folder
-    if (Globals.settings.isEnableMovieSetArtworkFolder() && StringUtils.isNotBlank(Globals.settings.getMovieSetArtworkFolder())) {
+    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
+        && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(true, true);
     }
   }
@@ -460,7 +463,7 @@ public class MovieSet extends AbstractModelObject {
    */
   private void writeImagesToArtworkFolder(boolean poster, boolean fanart) {
     // write images to artwork folder
-    File artworkFolder = new File(Globals.settings.getMovieSetArtworkFolder());
+    File artworkFolder = new File(Globals.settings.getMovieSettings().getMovieSetArtworkFolder());
 
     // check if folder exists
     if (!artworkFolder.exists()) {

@@ -586,7 +586,7 @@ public class Movie extends MediaEntity {
     findFanart();
 
     // actor images
-    if (Globals.settings.isWriteActorImages()) {
+    if (Globals.settings.getMovieSettings().isWriteActorImages()) {
       findActorImages();
     }
   }
@@ -946,7 +946,7 @@ public class Movie extends MediaEntity {
     File[] nfoFiles = directory.listFiles(filter);
     for (File file : nfoFiles) {
       LOGGER.debug("parsing nfo" + file.getPath());
-      switch (Globals.settings.getMovieConnector()) {
+      switch (Globals.settings.getMovieSettings().getMovieConnector()) {
         case XBMC:
           movie = MovieToXbmcNfoConnector.getData(file.getPath());
           break;
@@ -1071,10 +1071,10 @@ public class Movie extends MediaEntity {
 
         FileOutputStream outputStream = null;
         InputStream is = null;
-        if (Globals.settings.isImageExtraThumbsResize() && Globals.settings.getImageExtraThumbsSize() > 0) {
+        if (Globals.settings.getMovieSettings().isImageExtraThumbsResize() && Globals.settings.getMovieSettings().getImageExtraThumbsSize() > 0) {
           outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + ".jpg");
           try {
-            is = ImageCache.scaleImage(url, Globals.settings.getImageExtraThumbsSize());
+            is = ImageCache.scaleImage(url, Globals.settings.getMovieSettings().getImageExtraThumbsSize());
           }
           catch (Exception e) {
             LOGGER.warn("problem with rescaling: " + e.getMessage());
@@ -1427,11 +1427,11 @@ public class Movie extends MediaEntity {
 
       // extrathumbs
       List<String> extrathumbs = new ArrayList<String>();
-      if (Globals.settings.isImageExtraThumbs() && Globals.settings.getImageExtraThumbsCount() > 0) {
+      if (Globals.settings.getMovieSettings().isImageExtraThumbs() && Globals.settings.getMovieSettings().getImageExtraThumbsCount() > 0) {
         for (MediaArtwork art : artwork) {
           if (art.getType() == MediaArtworkType.BACKGROUND) {
             extrathumbs.add(art.getDefaultUrl());
-            if (extrathumbs.size() >= Globals.settings.getImageExtraThumbsCount()) {
+            if (extrathumbs.size() >= Globals.settings.getMovieSettings().getImageExtraThumbsCount()) {
               break;
             }
           }
@@ -1441,11 +1441,11 @@ public class Movie extends MediaEntity {
 
       // extrafanarts
       List<String> extrafanarts = new ArrayList<String>();
-      if (Globals.settings.isImageExtraFanart() && Globals.settings.getImageExtraFanartCount() > 0) {
+      if (Globals.settings.getMovieSettings().isImageExtraFanart() && Globals.settings.getMovieSettings().getImageExtraFanartCount() > 0) {
         for (MediaArtwork art : artwork) {
           if (art.getType() == MediaArtworkType.BACKGROUND) {
             extrafanarts.add(art.getDefaultUrl());
-            if (extrafanarts.size() >= Globals.settings.getImageExtraFanartCount()) {
+            if (extrafanarts.size() >= Globals.settings.getMovieSettings().getImageExtraFanartCount()) {
               break;
             }
           }
@@ -1721,7 +1721,7 @@ public class Movie extends MediaEntity {
     if (poster && !StringUtils.isEmpty(getPosterUrl())) {
       // try {
       int i = 0;
-      for (MoviePosterNaming name : Globals.settings.getMoviePosterFilenames()) {
+      for (MoviePosterNaming name : Globals.settings.getMovieSettings().getMoviePosterFilenames()) {
         boolean firstImage = false;
         filename = getPosterFilename(name);
 
@@ -1745,7 +1745,7 @@ public class Movie extends MediaEntity {
     // fanart
     if (fanart && !StringUtils.isEmpty(getFanartUrl())) {
       int i = 0;
-      for (MovieFanartNaming name : Globals.settings.getMovieFanartFilenames()) {
+      for (MovieFanartNaming name : Globals.settings.getMovieSettings().getMovieFanartFilenames()) {
         boolean firstImage = false;
         filename = getFanartFilename(name);
 
@@ -1772,7 +1772,7 @@ public class Movie extends MediaEntity {
    */
   public void writeActorImages() {
     // check if actor images shall be written
-    if (!Globals.settings.isWriteActorImages()) {
+    if (!Globals.settings.getMovieSettings().isWriteActorImages()) {
       return;
     }
 
@@ -1784,7 +1784,7 @@ public class Movie extends MediaEntity {
    * Write nfo.
    */
   public void writeNFO() {
-    if (Globals.settings.getMovieConnector() == MovieConnectors.MP) {
+    if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP) {
       setNfoFilename(MovieToMpNfoConnector.setData(this));
     }
     else {

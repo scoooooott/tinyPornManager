@@ -197,28 +197,28 @@ public class MovieScrapeMetadataDialog extends JDialog {
     // set data
 
     // metadataprovider
-    MovieScrapers defaultScraper = Globals.settings.getMovieScraper();
+    MovieScrapers defaultScraper = Globals.settings.getMovieSettings().getMovieScraper();
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
     // artwork provider
-    if (Globals.settings.isImageScraperTmdb()) {
+    if (Globals.settings.getMovieSettings().isImageScraperTmdb()) {
       chckbxTheMovieDb.setSelected(true);
     }
 
-    if (Globals.settings.isImageScraperFanartTv()) {
+    if (Globals.settings.getMovieSettings().isImageScraperFanartTv()) {
       chckbxFanarttv.setSelected(true);
     }
 
     // trailer provider
-    if (Globals.settings.isTrailerScraperTmdb()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperTmdb()) {
       chckbxTheMovieDb_1.setSelected(true);
     }
 
-    if (Globals.settings.isTrailerScraperHdTrailers()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperHdTrailers()) {
       chckbxHdtrailernet.setSelected(true);
     }
 
-    if (Globals.settings.isTrailerScraperOfdb()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperOfdb()) {
       chckbxOfdbde.setSelected(true);
     }
   }

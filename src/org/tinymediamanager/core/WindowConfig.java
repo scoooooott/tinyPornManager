@@ -26,20 +26,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "WindowConfig")
 public class WindowConfig extends AbstractModelObject {
 
+  /** The keystore. */
   private HashMap<String, Object> keystore;
 
+  /**
+   * Instantiates a new window config.
+   */
   public WindowConfig() {
     keystore = new HashMap<String, Object>();
   }
 
+  /**
+   * Gets the keystore.
+   * 
+   * @return the keystore
+   */
   public HashMap<String, Object> getKeystore() {
     return keystore;
   }
 
+  /**
+   * Sets the keystore.
+   * 
+   * @param keystore
+   *          the keystore
+   */
   public void setKeystore(HashMap<String, Object> keystore) {
     this.keystore = keystore;
   }
 
+  /**
+   * Adds the param.
+   * 
+   * @param key
+   *          the key
+   * @param value
+   *          the value
+   */
   public void addParam(String key, Object value) {
     if (keystore.containsKey(key)) {
       keystore.remove(key);
@@ -48,10 +71,31 @@ public class WindowConfig extends AbstractModelObject {
     keystore.put(key, value);
   }
 
+  /**
+   * Gets the param.
+   * 
+   * @param key
+   *          the key
+   * @return the param
+   */
   private Object getParam(String key) {
     return keystore.get(key);
   }
 
+  /**
+   * Store window bounds.
+   * 
+   * @param name
+   *          the name
+   * @param x
+   *          the x
+   * @param y
+   *          the y
+   * @param width
+   *          the width
+   * @param height
+   *          the height
+   */
   public void storeWindowBounds(String name, int x, int y, int width, int height) {
     StringBuilder sb = new StringBuilder(name);
     sb.append("X");
@@ -72,6 +116,13 @@ public class WindowConfig extends AbstractModelObject {
     firePropertyChange(name, null, x);
   }
 
+  /**
+   * Gets the window bounds.
+   * 
+   * @param name
+   *          the name
+   * @return the window bounds
+   */
   public Rectangle getWindowBounds(String name) {
     Rectangle rect = new Rectangle();
 
@@ -94,6 +145,13 @@ public class WindowConfig extends AbstractModelObject {
     return rect;
   }
 
+  /**
+   * Gets the integer.
+   * 
+   * @param name
+   *          the name
+   * @return the integer
+   */
   public int getInteger(String name) {
     int i = 0;
     Object param = getParam(name);
@@ -106,6 +164,13 @@ public class WindowConfig extends AbstractModelObject {
     return i;
   }
 
+  /**
+   * Gets the boolean.
+   * 
+   * @param name
+   *          the name
+   * @return the boolean
+   */
   public boolean getBoolean(String name) {
     boolean b = false;
 

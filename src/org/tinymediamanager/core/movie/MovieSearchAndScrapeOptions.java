@@ -50,27 +50,27 @@ public class MovieSearchAndScrapeOptions {
   public void loadDefaults() {
     scraperMetadataConfig = Globals.settings.getMovieScraperMetadataConfig();
     // metadata
-    metadataScraper = Globals.settings.getMovieScraper();
+    metadataScraper = Globals.settings.getMovieSettings().getMovieScraper();
 
     // artwork
-    if (Globals.settings.isImageScraperTmdb()) {
+    if (Globals.settings.getMovieSettings().isImageScraperTmdb()) {
       artworkScrapers.add(MovieArtworkScrapers.TMDB);
     }
 
-    if (Globals.settings.isImageScraperFanartTv()) {
+    if (Globals.settings.getMovieSettings().isImageScraperFanartTv()) {
       artworkScrapers.add(MovieArtworkScrapers.FANART_TV);
     }
 
     // trailer
-    if (Globals.settings.isTrailerScraperTmdb()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperTmdb()) {
       trailerScrapers.add(MovieTrailerScrapers.TMDB);
     }
 
-    if (Globals.settings.isTrailerScraperHdTrailers()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperHdTrailers()) {
       trailerScrapers.add(MovieTrailerScrapers.HDTRAILERS);
     }
 
-    if (Globals.settings.isTrailerScraperOfdb()) {
+    if (Globals.settings.getMovieSettings().isTrailerScraperOfdb()) {
       trailerScrapers.add(MovieTrailerScrapers.OFDB);
     }
   }

@@ -218,7 +218,7 @@ public class MovieToXbmcNfoConnector {
     MovieToXbmcNfoConnector xbmc = null;
 
     // load existing NFO if possible
-    for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
+    for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
       File file = new File(movie.getNfoFilename(name));
       if (file.exists()) {
         synchronized (JAXBContext.class) {
@@ -373,7 +373,7 @@ public class MovieToXbmcNfoConnector {
 
     // and marshall it
     String nfoFilename = "";
-    for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
+    for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
       try {
         nfoFilename = movie.getNfoFilename(name);
         synchronized (JAXBContext.class) {

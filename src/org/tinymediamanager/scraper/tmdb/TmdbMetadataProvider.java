@@ -891,7 +891,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     for (Artwork image : tmdbArtwork) {
       if (image.getArtworkType() == ArtworkType.POSTER && (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL)) {
         MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(baseUrl + Globals.settings.getImageTmdbPosterSize() + image.getFilePath());
+        ma.setDefaultUrl(baseUrl + Globals.settings.getMovieSettings().getImageTmdbPosterSize() + image.getFilePath());
         ma.setPreviewUrl(baseUrl + PosterSizes.w185 + image.getFilePath());
         ma.setProviderId(getProviderInfo().getId());
         ma.setType(MediaArtworkType.POSTER);
@@ -919,7 +919,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
       if (image.getArtworkType() == ArtworkType.BACKDROP && (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL)) {
         MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(baseUrl + Globals.settings.getImageTmdbFanartSize() + image.getFilePath());
+        ma.setDefaultUrl(baseUrl + Globals.settings.getMovieSettings().getImageTmdbFanartSize() + image.getFilePath());
         ma.setPreviewUrl(baseUrl + FanartSizes.w300 + image.getFilePath());
         ma.setProviderId(getProviderInfo().getId());
         ma.setType(MediaArtworkType.BACKGROUND);

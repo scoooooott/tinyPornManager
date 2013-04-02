@@ -213,7 +213,7 @@ public class MovieToMpNfoConnector {
 
     // and marshall it
     String nfoFilename = "";
-    for (MovieNfoNaming name : Globals.settings.getMovieNfoFilenames()) {
+    for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
       JAXBContext context;
       try {
         nfoFilename = movie.getNfoFilename(name);
