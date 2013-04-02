@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
  * The Class MovieRenamer.
@@ -349,6 +350,26 @@ public class MovieRenamer {
         }
       }
       cleanupFanarts(movie, oldFanarts);
+    }
+
+    // rename local trailers
+    if (movie.getHasTrailer()) {
+      String newTName = FilenameUtils.getBaseName(movie.getMediaFiles().get(0).getFilename()) + "-trailer.";
+      for (MediaTrailer mt : movie.getTrailers()) {
+        if (mt.getProvider().equals("downloaded")) {
+          String ext = FilenameUtils.getExtension(mt.getName());
+          try {
+            moveFile(movie.getPath() + File.separator + mt.getName(), movie.getPath() + File.separator + newTName + ext);
+            mt.setName(newTName + ext);
+            mt.setUrl(new File(newTName + ext).toURI().toString());
+          }
+          catch (Exception e) {
+            LOGGER.error("error renaming local trailer", e);
+          }
+
+        }
+      }
+
     }
 
     movie.saveToDb();

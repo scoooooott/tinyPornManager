@@ -15,7 +15,30 @@
  */
 package org.tinymediamanager.core.movie;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.CAST;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.DATA_SOURCE;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_IMAGES;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MOVIESET;
+import static org.tinymediamanager.core.Constants.NFO_FILENAME;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TMDBID;
+import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.VOTES;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -410,13 +433,14 @@ public class Movie extends MediaEntity {
    * @author Myron Boyle
    */
   public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
-    // get trailer filename from NFO file
-    String tfile = this.getNfoFilename().replaceAll("(?i)\\.nfo$", "-trailer.");
     try {
+      // get trailer filename from first mediafile
+      String tfile = FilenameUtils.getBaseName(this.getMediaFiles().get(0).getFilename()) + "-trailer.";
       String ext = UrlUtil.getFileExtension(trailerToDownload.getUrl());
       if (ext.isEmpty()) {
         ext = "unknown";
       }
+      // TODO: push to threadpool
       // download to temp first
       trailerToDownload.downloadTo(tfile + ext + ".tmp");
       LOGGER.info("Trailer download successfully");
