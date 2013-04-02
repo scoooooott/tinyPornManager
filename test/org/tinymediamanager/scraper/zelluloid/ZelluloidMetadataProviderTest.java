@@ -1,4 +1,4 @@
-package org.tinymediamanager.scraper.zelloloid;
+package org.tinymediamanager.scraper.zelluloid;
 
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;

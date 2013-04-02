@@ -186,13 +186,14 @@ public class TvShowInformationPanel extends JPanel {
 
     panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("150px:grow"), }));
     add(panelBottom, "1, 4, fill, bottom");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
     panelBottom.add(scrollPaneOverview, "1, 2, fill, fill");
 
     tpOverview = new JTextPane();
+    tpOverview.setEditable(false);
     scrollPaneOverview.setViewportView(tpOverview);
 
     panelDetails = new JPanel();

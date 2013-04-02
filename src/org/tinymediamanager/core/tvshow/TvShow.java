@@ -394,6 +394,8 @@ public class TvShow extends MediaEntity {
     setRating((float) metadata.getRating());
     setPlot(metadata.getPlot());
 
+    setGenres(metadata.getGenres());
+
     // set scraped
     setScraped(true);
 

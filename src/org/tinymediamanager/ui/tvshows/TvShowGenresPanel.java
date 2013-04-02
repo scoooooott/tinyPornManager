@@ -25,7 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.scraper.MediaGenres;
 
 /**
@@ -52,9 +52,9 @@ public class TvShowGenresPanel extends JPanel {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
 
-        // react on selection of a movie or change of genres
+        // react on selection of a tv show or change of genres
         if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
-            || (source.getClass() == Movie.class && "genre".equals(property))) {
+            || (source.getClass() == TvShow.class && "genre".equals(property))) {
           buildImages();
         }
       }

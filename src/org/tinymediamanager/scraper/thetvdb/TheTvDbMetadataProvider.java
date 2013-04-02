@@ -28,6 +28,7 @@ import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -229,6 +230,12 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     md.setTitle(show.getSeriesName());
     md.setImdbId(show.getImdbId());
     md.setPlot(show.getOverview());
+
+    // genres
+    for (String genreAsString : show.getGenres()) {
+      MediaGenres genre = MediaGenres.getGenre(genreAsString);
+      md.addGenre(genre);
+    }
 
     try {
       md.setRating(Double.parseDouble(show.getRating()));
