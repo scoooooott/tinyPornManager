@@ -49,9 +49,9 @@ import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
-import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
+import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
@@ -73,14 +73,8 @@ public class Settings extends AbstractModelObject {
   /** The Constant CONFIG_FILE. */
   private final static String         CONFIG_FILE                 = "config.xml";
 
-  /** The Constant PATH. */
-  private final static String         PATH                        = "path";
-
   /** The Constant SCRAPER_TMDB_LANGU. */
   private final static String         SCRAPER_LANGU               = "scraperTmdbLanguage";
-
-  /** The Constant TV_SHOW_DATA_SOURCE. */
-  private final static String         TV_SHOW_DATA_SOURCE         = "tvShowDataSource";
 
   /** The Constant TITLE_PREFIX. */
   private final static String         TITLE_PREFIX                = "titlePrefix";
@@ -112,9 +106,6 @@ public class Settings extends AbstractModelObject {
   /** The Constant CLEAR_CACHE_SHUTDOWN. */
   private final static String         CLEAR_CACHE_SHUTDOWN        = "clearCacheShutdown";
 
-  /** The Constant TV_SHOW_SCRAPER. */
-  private final static String         TV_SHOW_SCRAPER             = "tvShowScraper";
-
   /** The video file types. */
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -124,11 +115,6 @@ public class Settings extends AbstractModelObject {
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>          videoFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
-
-  /** The movie data sources. */
-  @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
-  @XmlElement(name = PATH)
-  private final List<String>          tvShowDataSources           = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The proxy host. */
   private String                      proxyHost;
@@ -157,6 +143,9 @@ public class Settings extends AbstractModelObject {
   /** The movie settings. */
   private MovieSettings               movieSettings               = null;
 
+  /** The tv show settings. */
+  private TvShowSettings              tvShowSettings              = null;
+
   /** The movieScraperMetadata configuration. */
   private MovieScraperMetadataConfig  movieScraperMetadataConfig  = null;
 
@@ -165,9 +154,6 @@ public class Settings extends AbstractModelObject {
 
   /** The window config. */
   private WindowConfig                windowConfig                = null;
-
-  /** The tv show scraper. */
-  private TvShowScrapers              tvShowScraper               = TvShowScrapers.TVDB;
 
   /** The property change listener. */
   private PropertyChangeListener      propertyChangeListener;
@@ -186,6 +172,9 @@ public class Settings extends AbstractModelObject {
 
     // default values
     movieSettings = new MovieSettings();
+    movieSettings.addPropertyChangeListener(propertyChangeListener);
+    tvShowSettings = new TvShowSettings();
+    tvShowSettings.addPropertyChangeListener(propertyChangeListener);
     movieScraperMetadataConfig = new MovieScraperMetadataConfig();
     movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     tvShowScraperMetadataConfig = new TvShowScraperMetadataConfig();
@@ -246,39 +235,6 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Adds the tv show data sources.
-   * 
-   * @param path
-   *          the path
-   */
-  public void addTvShowDataSources(String path) {
-    tvShowDataSources.add(path);
-    firePropertyChange(TV_SHOW_DATA_SOURCE, null, tvShowDataSources);
-  }
-
-  /**
-   * Removes the tv show data sources.
-   * 
-   * @param path
-   *          the path
-   */
-  public void removeTvShowDataSources(String path) {
-    TvShowList tvShowList = TvShowList.getInstance();
-    tvShowList.removeDatasource(path);
-    tvShowDataSources.remove(path);
-    firePropertyChange(TV_SHOW_DATA_SOURCE, null, tvShowDataSources);
-  }
-
-  /**
-   * Gets the tv show data source.
-   * 
-   * @return the tv show data source
-   */
-  public List<String> getTvShowDataSource() {
-    return tvShowDataSources;
-  }
-
-  /**
    * Adds a title prefix.
    * 
    * @param prfx
@@ -286,7 +242,6 @@ public class Settings extends AbstractModelObject {
    */
   public void addTitlePrefix(String prfx) {
     titlePrefix.add(prfx);
-    // setDirty();
     firePropertyChange(TITLE_PREFIX, null, titlePrefix);
   }
 
@@ -298,7 +253,6 @@ public class Settings extends AbstractModelObject {
    */
   public void removeTitlePrefix(String prfx) {
     titlePrefix.remove(prfx);
-    // setDirty();
     firePropertyChange(TITLE_PREFIX, null, titlePrefix);
   }
 
@@ -319,7 +273,6 @@ public class Settings extends AbstractModelObject {
    */
   public void addVideoFileTypes(String type) {
     videoFileTypes.add(type);
-    // setDirty();
     firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
   }
 
@@ -331,7 +284,6 @@ public class Settings extends AbstractModelObject {
    */
   public void removeVideoFileType(String type) {
     videoFileTypes.remove(type);
-    // setDirty();
     firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
   }
 
@@ -402,8 +354,7 @@ public class Settings extends AbstractModelObject {
    * Write default settings.
    */
   private void writeDefaultSettings() {
-    // default video file types
-    // derived from
+    // default video file types derived from
     // http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
     addVideoFileTypes(".3gp");
     addVideoFileTypes(".asf");
@@ -475,6 +426,8 @@ public class Settings extends AbstractModelObject {
     movieSettings.setMovieScraper(MovieScrapers.TMDB);
     movieSettings.setImdbScrapeForeignLanguage(false);
 
+    tvShowSettings.setTvShowScraper(TvShowScrapers.TVDB);
+
     saveSettings();
   }
 
@@ -497,7 +450,6 @@ public class Settings extends AbstractModelObject {
   public void setProxyHost(String newValue) {
     String oldValue = this.proxyHost;
     this.proxyHost = newValue;
-    // setDirty();
     firePropertyChange(PROXY_HOST, oldValue, newValue);
   }
 
@@ -520,7 +472,6 @@ public class Settings extends AbstractModelObject {
   public void setProxyPort(String newValue) {
     String oldValue = this.proxyPort;
     this.proxyPort = newValue;
-    // setDirty();
     firePropertyChange(PROXY_PORT, oldValue, newValue);
   }
 
@@ -543,7 +494,6 @@ public class Settings extends AbstractModelObject {
   public void setProxyUsername(String newValue) {
     String oldValue = this.proxyUsername;
     this.proxyUsername = newValue;
-    // setDirty();
     firePropertyChange(PROXY_USERNAME, oldValue, newValue);
   }
 
@@ -567,7 +517,6 @@ public class Settings extends AbstractModelObject {
     newValue = StringEscapeUtils.escapeXml(newValue);
     String oldValue = this.proxyPassword;
     this.proxyPassword = newValue;
-    // setDirty();
     firePropertyChange(PROXY_PASSWORD, oldValue, newValue);
   }
 
@@ -600,9 +549,7 @@ public class Settings extends AbstractModelObject {
    * @return true, if successful
    */
   public boolean useProxy() {
-    if (StringUtils.isNotEmpty(getProxyHost()) /*
-                                                * && !StringUtils.isEmpty(getProxyPort ())
-                                                */) {
+    if (StringUtils.isNotEmpty(getProxyHost())) {
       return true;
     }
     return false;
@@ -649,7 +596,6 @@ public class Settings extends AbstractModelObject {
   public void setCertificationCountry(CountryCode newValue) {
     CountryCode oldValue = this.certificationCountry;
     certificationCountry = newValue;
-    // setDirty();
     firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
 
@@ -692,6 +638,26 @@ public class Settings extends AbstractModelObject {
    */
   public MovieSettings getMovieSettings() {
     return this.movieSettings;
+  }
+
+  /**
+   * Sets the tv show settings.
+   * 
+   * @param tvShowSettings
+   *          the new tv show settings
+   */
+  public void setTvShowSettings(TvShowSettings tvShowSettings) {
+    this.tvShowSettings = tvShowSettings;
+    this.tvShowSettings.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  /**
+   * Gets the tv show settings.
+   * 
+   * @return the tv show settings
+   */
+  public TvShowSettings getTvShowSettings() {
+    return this.tvShowSettings;
   }
 
   /**
@@ -752,26 +718,5 @@ public class Settings extends AbstractModelObject {
   public void setWindowConfig(WindowConfig windowConfig) {
     this.windowConfig = windowConfig;
     this.windowConfig.addPropertyChangeListener(propertyChangeListener);
-  }
-
-  /**
-   * Gets the tv show scraper.
-   * 
-   * @return the tv show scraper
-   */
-  public TvShowScrapers getTvShowScraper() {
-    return tvShowScraper;
-  }
-
-  /**
-   * Sets the tv show scraper.
-   * 
-   * @param newValue
-   *          the new tv show scraper
-   */
-  public void setTvShowScraper(TvShowScrapers newValue) {
-    TvShowScrapers oldValue = this.tvShowScraper;
-    this.tvShowScraper = newValue;
-    firePropertyChange(TV_SHOW_SCRAPER, oldValue, newValue);
   }
 }

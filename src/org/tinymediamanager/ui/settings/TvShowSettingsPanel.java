@@ -109,7 +109,7 @@ public class TvShowSettingsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
         if (file != null && file.exists() && file.isDirectory()) {
-          settings.addTvShowDataSources(file.getAbsolutePath());
+          settings.getTvShowSettings().addTvShowDataSources(file.getAbsolutePath());
         }
       }
     });
@@ -122,13 +122,13 @@ public class TvShowSettingsPanel extends JPanel {
       public void actionPerformed(ActionEvent arg0) {
         int row = tableTvShowSources.convertRowIndexToModel(tableTvShowSources.getSelectedRow());
         if (row != -1) { // nothing selected
-          String path = Globals.settings.getTvShowDataSource().get(row);
+          String path = Globals.settings.getTvShowSettings().getTvShowDataSource().get(row);
           String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
           int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.tvshowdatasource.remove.info"), path),
               BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
               BUNDLE.getString("Button.abort")); //$NON-NLS-1$
           if (decision == 0) {
-            Globals.settings.removeTvShowDataSources(path);
+            Globals.settings.getTvShowSettings().removeTvShowDataSources(path);
           }
         }
       }
@@ -181,7 +181,7 @@ public class TvShowSettingsPanel extends JPanel {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("tvShowDataSource");
+    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("tvShowSettings.tvShowDataSource");
     JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,
         tableTvShowSources);
     //
@@ -190,13 +190,13 @@ public class TvShowSettingsPanel extends JPanel {
     //
     jTableBinding.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_11 = BeanProperty.create("tvShowRenamerPathname");
+    BeanProperty<Settings, String> settingsBeanProperty_11 = BeanProperty.create("tvShowSettings.tvShowRenamerPathname");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_3 = BeanProperty.create("text");
     AutoBinding<Settings, String, JTextField, String> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_11, tfTvShowPath, jTextFieldBeanProperty_3);
     autoBinding_10.bind();
     //
-    BeanProperty<Settings, String> settingsBeanProperty_12 = BeanProperty.create("tvShowRenamerFilename");
+    BeanProperty<Settings, String> settingsBeanProperty_12 = BeanProperty.create("tvShowSettings.tvShowRenamerFilename");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_4 = BeanProperty.create("text");
     AutoBinding<Settings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, tfTvShowFilename, jTextFieldBeanProperty_4);

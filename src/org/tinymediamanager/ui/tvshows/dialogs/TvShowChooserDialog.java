@@ -199,7 +199,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       }
       {
         cbScraper = new JComboBox(TvShowScrapers.values());
-        TvShowScrapers defaultScraper = Globals.settings.getTvShowScraper();
+        TvShowScrapers defaultScraper = Globals.settings.getTvShowSettings().getTvShowScraper();
         cbScraper.setSelectedItem(defaultScraper);
         cbScraper.setAction(new ChangeScraperAction());
         panelSearchField.add(cbScraper, "4, 1, fill, default");

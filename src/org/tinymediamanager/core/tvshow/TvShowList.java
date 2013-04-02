@@ -162,7 +162,7 @@ public class TvShowList extends AbstractModelObject {
    * @return the metadata provider
    */
   public IMediaMetadataProvider getMetadataProvider() {
-    TvShowScrapers scraper = Globals.settings.getTvShowScraper();
+    TvShowScrapers scraper = Globals.settings.getTvShowSettings().getTvShowScraper();
     return getMetadataProvider(scraper);
   }
 
@@ -260,7 +260,7 @@ public class TvShowList extends AbstractModelObject {
    * 
    ************************************************************************/
   public void udpateDatasources() {
-    for (String datasource : Globals.settings.getTvShowDataSource()) {
+    for (String datasource : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
       findTvShowsInPath(datasource);
     }
   }
