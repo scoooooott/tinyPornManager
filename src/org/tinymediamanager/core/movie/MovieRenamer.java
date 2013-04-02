@@ -433,50 +433,58 @@ public class MovieRenamer {
     String newDestination = template;
 
     // replace token title ($T)
-    if (newDestination.contains("$T") && StringUtils.isNotEmpty(movie.getTitle())) {
+    if (newDestination.contains("$T")) {
       newDestination = newDestination.replaceAll("\\$T", movie.getTitle());
     }
 
     // replace token first letter of title ($1)
-    if (newDestination.contains("$1") && StringUtils.isNotEmpty(movie.getTitle())) {
+    if (newDestination.contains("$1")) {
       newDestination = newDestination.replaceAll("\\$1", movie.getTitle().substring(0, 1));
     }
 
     // replace token year ($Y)
-    if (newDestination.contains("$Y") && StringUtils.isNotEmpty(movie.getYear())) {
+    if (newDestination.contains("$Y")) {
       newDestination = newDestination.replaceAll("\\$Y", movie.getYear());
     }
 
     // replace token orignal title ($O)
-    if (newDestination.contains("$O") && StringUtils.isNotEmpty(movie.getOriginalTitle())) {
+    if (newDestination.contains("$O")) {
       newDestination = newDestination.replaceAll("\\$O", movie.getOriginalTitle());
     }
 
     // replace token IMDBid ($I)
-    if (newDestination.contains("$I") && StringUtils.isNotEmpty(movie.getImdbId())) {
+    if (newDestination.contains("$I")) {
       newDestination = newDestination.replaceAll("\\$I", movie.getImdbId());
     }
 
     // replace token sort title ($E)
-    if (newDestination.contains("$E") && StringUtils.isNotEmpty(movie.getSortTitle())) {
+    if (newDestination.contains("$E")) {
       newDestination = newDestination.replaceAll("\\$E", movie.getSortTitle());
     }
 
-    // replace token resolution ($R)
-    if (newDestination.contains("$R") && movie.getMediaFiles().size() > 0) {
-      newDestination = newDestination.replaceAll("\\$R", movie.getMediaFiles().get(0).getVideoResolution());
-    }
+    if (movie.getMediaFiles().size() > 0) {
+      // replace token resolution ($R)
+      if (newDestination.contains("$R")) {
+        newDestination = newDestination.replaceAll("\\$R", movie.getMediaFiles().get(0).getVideoResolution());
+      }
 
-    // replace token audio codec + channels ($A)
-    if (newDestination.contains("$A") && movie.getMediaFiles().size() > 0) {
-      newDestination = newDestination.replaceAll("\\$A", movie.getMediaFiles().get(0).getAudioCodec() + "-"
-          + movie.getMediaFiles().get(0).getAudioChannels());
-    }
+      // replace token audio codec + channels ($A)
+      if (newDestination.contains("$A")) {
+        newDestination = newDestination.replaceAll("\\$A", movie.getMediaFiles().get(0).getAudioCodec() + "-"
+            + movie.getMediaFiles().get(0).getAudioChannels());
+      }
 
-    // replace token video codec + channels ($V)
-    if (newDestination.contains("$V") && movie.getMediaFiles().size() > 0) {
-      newDestination = newDestination.replaceAll("\\$V", movie.getMediaFiles().get(0).getVideoCodec() + "-"
-          + movie.getMediaFiles().get(0).getVideoFormat());
+      // replace token video codec + channels ($V)
+      if (newDestination.contains("$V")) {
+        newDestination = newDestination.replaceAll("\\$V", movie.getMediaFiles().get(0).getVideoCodec() + "-"
+            + movie.getMediaFiles().get(0).getVideoFormat());
+      }
+    }
+    else {
+      // no mediafiles; remove at least token (if available)
+      newDestination = newDestination.replaceAll("\\$R", "");
+      newDestination = newDestination.replaceAll("\\$A", "");
+      newDestination = newDestination.replaceAll("\\$V", "");
     }
 
     // replace token media source (BluRay|DVD|TV|...) ($S)
