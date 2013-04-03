@@ -85,6 +85,9 @@ public class Settings extends AbstractModelObject {
   /** The Constant VIDEO_FILE_TYPE. */
   private final static String         VIDEO_FILE_TYPE             = "videoFileTypes";
 
+  /** The Constant VIDEO_FILE_TYPE. */
+  private final static String         SUBTITLE_FILE_TYPE          = "subtitleFileTypes";
+
   /** The Constant FILETYPE. */
   private final static String         FILETYPE                    = "filetype";
 
@@ -115,6 +118,11 @@ public class Settings extends AbstractModelObject {
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>          videoFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
+
+  /** The video file types. */
+  @XmlElementWrapper(name = SUBTITLE_FILE_TYPE)
+  @XmlElement(name = FILETYPE)
+  private final List<String>          subtitleFileTypes           = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The proxy host. */
   private String                      proxyHost;
@@ -297,6 +305,37 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
+   * Adds the subtitle file types.
+   * 
+   * @param type
+   *          the type
+   */
+  public void addSubtitleFileTypes(String type) {
+    subtitleFileTypes.add(type);
+    firePropertyChange(SUBTITLE_FILE_TYPE, null, subtitleFileTypes);
+  }
+
+  /**
+   * Removes the subtitle file type.
+   * 
+   * @param type
+   *          the type
+   */
+  public void removeSubtitleFileType(String type) {
+    subtitleFileTypes.remove(type);
+    firePropertyChange(SUBTITLE_FILE_TYPE, null, subtitleFileTypes);
+  }
+
+  /**
+   * Gets the subtitle file type.
+   * 
+   * @return the subtitle file type
+   */
+  public List<String> getSubtitleFileType() {
+    return subtitleFileTypes;
+  }
+
+  /**
    * Save settings.
    */
   public void saveSettings() {
@@ -400,6 +439,12 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".vp3");
     addVideoFileTypes(".wmv");
     addVideoFileTypes(".xvid");
+
+    // default subtitle files
+    addSubtitleFileTypes(".srt");
+    addSubtitleFileTypes(".idx");
+    addSubtitleFileTypes(".sub");
+    addSubtitleFileTypes(".ssa");
 
     // default title prefix
     titlePrefix.clear();
