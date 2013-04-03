@@ -101,7 +101,7 @@ public class CachedUrl extends Url {
     }
 
     // sanity check
-    if (!url.toLowerCase().equals(props.getProperty("url").toLowerCase())) {
+    if (!url.equalsIgnoreCase(props.getProperty("url"))) {
       LOGGER.error("The Cached url does not match the one passed! " + props.getProperty("url") + " != " + url + "; Propfile Name: " + propFile);
       props.setProperty("url", url);
       File f = getCachedFile();

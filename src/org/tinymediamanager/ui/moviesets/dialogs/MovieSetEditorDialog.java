@@ -396,10 +396,10 @@ public class MovieSetEditorDialog extends JDialog {
       movieSetToEdit.setOverview(tpOverview.getText());
 
       // image changes
-      if (StringUtils.isNotEmpty(lblPoster.getImageUrl()) && lblPoster.getImageUrl() != movieSetToEdit.getPosterUrl()) {
+      if (StringUtils.isNotEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(movieSetToEdit.getPosterUrl())) {
         movieSetToEdit.setPosterUrl(lblPoster.getImageUrl());
       }
-      if (StringUtils.isNotEmpty(lblFanart.getImageUrl()) && lblFanart.getImageUrl() != movieSetToEdit.getFanartUrl()) {
+      if (StringUtils.isNotEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(movieSetToEdit.getFanartUrl())) {
         movieSetToEdit.setFanartUrl(lblFanart.getImageUrl());
       }
 

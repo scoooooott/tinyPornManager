@@ -68,7 +68,7 @@ public class MovieTrailerPanel extends JPanel {
   private static final long             serialVersionUID    = 1L;
 
   /** The logger. */
-  private static Logger                 LOGGER              = Logger.getLogger(MovieTrailerPanel.class);
+  private static final Logger           LOGGER              = Logger.getLogger(MovieTrailerPanel.class);
 
   /** The movie selection model. */
   private MovieSelectionModel           movieSelectionModel;

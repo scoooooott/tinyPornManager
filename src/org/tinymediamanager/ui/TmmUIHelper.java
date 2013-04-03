@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.log4j.Logger;
 
 import chrriis.dj.nativeswing.swtimpl.components.JDirectoryDialog;
 import chrriis.dj.nativeswing.swtimpl.components.JFileDialog;
@@ -35,9 +36,12 @@ import chrriis.dj.nativeswing.swtimpl.components.JFileDialog;
  */
 public class TmmUIHelper {
 
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER = Logger.getLogger(TmmUIHelper.class);
+
   /** The swt. */
   @SuppressWarnings("rawtypes")
-  public static Class swt;
+  public static Class         swt;
 
   /**
    * Inits the.
@@ -47,8 +51,10 @@ public class TmmUIHelper {
       swt = ClassLoader.getSystemClassLoader().loadClass("org.eclipse.swt.widgets.FileDialog");
     }
     catch (Exception e) {
+      LOGGER.warn("cannot open init filedialog" + e.getMessage());
     }
     catch (Error e) {
+      LOGGER.warn("cannot open init filedialog" + e.getMessage());
     }
   }
 
@@ -66,8 +72,10 @@ public class TmmUIHelper {
         return openDirectoryChooser(title);
       }
       catch (Exception e) {
+        LOGGER.warn("cannot open directory chooser" + e.getMessage());
       }
       catch (Error e) {
+        LOGGER.warn("cannot open directory chooser" + e.getMessage());
       }
     }
 
@@ -78,8 +86,10 @@ public class TmmUIHelper {
         return openDirectoryDialog(title);
       }
       catch (Exception e) {
+        LOGGER.warn("cannot open AWT directory chooser" + e.getMessage());
       }
       catch (Error e) {
+        LOGGER.warn("cannot open AWT directory chooser" + e.getMessage());
       }
       finally {
         // reset system property
@@ -190,9 +200,10 @@ public class TmmUIHelper {
         return openFileChooser(title);
       }
       catch (Exception e) {
-        e.printStackTrace();
+        LOGGER.warn("cannot open filechooser" + e.getMessage());
       }
       catch (UnsatisfiedLinkError e) {
+        LOGGER.warn("cannot find native" + e.getMessage());
       }
     }
 
@@ -203,8 +214,10 @@ public class TmmUIHelper {
         return openFileDialog(title);
       }
       catch (Exception e) {
+        LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
       }
       catch (Error e) {
+        LOGGER.warn("cannot open AWT filechooser" + e.getMessage());
       }
     }
 

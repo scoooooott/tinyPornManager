@@ -109,7 +109,7 @@ public class MovieExporter {
         continue;
       }
 
-      if (typeInConfig.toUpperCase().equals(TemplateType.MOVIE.name())) {
+      if (typeInConfig.equalsIgnoreCase(TemplateType.MOVIE.name())) {
         ExportTemplate template = new ExportTemplate();
         template.setName(properties.getProperty("name"));
         template.setType(TemplateType.MOVIE);
@@ -182,10 +182,10 @@ public class MovieExporter {
     engine.registerNamedRenderer(new MovieExporter.NamedDateRenderer());
     engine.registerNamedRenderer(new MovieExporter.MovieFilenameRenderer());
 
-    if (fileExtension.toLowerCase().equals("html")) {
+    if (fileExtension.equalsIgnoreCase("html")) {
       engine.setEncoder(new HtmlEncoder()); // special char replacement
     }
-    if (fileExtension.toLowerCase().equals("xml")) {
+    if (fileExtension.equalsIgnoreCase("xml")) {
       engine.setEncoder(new XMLEncoder()); // special char replacement
     }
 
@@ -202,13 +202,13 @@ public class MovieExporter {
 
     // prepare listfile
     File listExportFile = null;
-    if (fileExtension.toLowerCase().equals("html")) {
+    if (fileExtension.equalsIgnoreCase("html")) {
       listExportFile = new File(exportDir, "index.html");
     }
-    if (fileExtension.toLowerCase().equals("xml")) {
+    if (fileExtension.equalsIgnoreCase("xml")) {
       listExportFile = new File(exportDir, "movielist.xml");
     }
-    if (fileExtension.toLowerCase().equals("csv")) {
+    if (fileExtension.equalsIgnoreCase("csv")) {
       listExportFile = new File(exportDir, "movielist.csv");
     }
     if (listExportFile == null) {
@@ -307,8 +307,7 @@ public class MovieExporter {
             return dateFormat.parse((String) o);
           }
           catch (java.text.ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.warn("cannot convert date format", e);
           }
         }
         catch (ParseException e) {

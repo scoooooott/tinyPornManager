@@ -35,9 +35,8 @@ public class UrlUtil {
   private static final Logger LOGGER = Logger.getLogger(UrlUtil.class);
 
   /**
-   * Casts url string to URI, and does the correct encoding (rfc2396) of query
-   * string ONLY (eg "|" character). URLEncoder encodes everything which might
-   * break commons.http
+   * Casts url string to URI, and does the correct encoding (rfc2396) of query string ONLY (eg "|" character). URLEncoder encodes everything which
+   * might break commons.http
    * 
    * @param url
    *          the url as string
@@ -74,8 +73,7 @@ public class UrlUtil {
   }
 
   /**
-   * Returns the the entire Url Path except the filename, like doing a basedir
-   * on a filename.
+   * Returns the the entire Url Path except the filename, like doing a basedir on a filename.
    * 
    * @param url
    *          the url
@@ -84,7 +82,7 @@ public class UrlUtil {
   public static String getBaseUrl(String url) {
     String path = getPathName(url);
     if (path != null && path.contains("/")) {
-      path = path.substring(0, path.lastIndexOf("/"));
+      path = path.substring(0, path.lastIndexOf('/'));
     }
     return getDomainUrl(url) + path;
   }

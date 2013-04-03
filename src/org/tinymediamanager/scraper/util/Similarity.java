@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 
 /**
- * String Similarity taken from:
- * http://www.catalysoft.com/articles/StrikeAMatch.html
+ * String Similarity taken from: http://www.catalysoft.com/articles/StrikeAMatch.html
  * 
  * @author seans
  * 
@@ -45,15 +44,12 @@ public class Similarity {
 
     int numPairs = str.length() - 1;
     // address an issue where str is ""
-    if (numPairs < 0)
+    if (numPairs < 0) {
       numPairs = 0;
-
+    }
     String[] pairs = new String[numPairs];
-
     for (int i = 0; i < numPairs; i++) {
-
       pairs[i] = str.substring(i, i + 2);
-
     }
 
     return pairs;
@@ -69,25 +65,15 @@ public class Similarity {
   private ArrayList<String> wordLetterPairs(String str) {
 
     ArrayList<String> allPairs = new ArrayList<String>();
-
     // Tokenize the string and put the tokens/words into an array
-
     String[] words = str.split("\\s");
-
     // For each word
-
     for (int w = 0; w < words.length; w++) {
-
       // Find the pairs of characters
-
       String[] pairsInWord = letterPairs(words[w]);
-
       for (int p = 0; p < pairsInWord.length; p++) {
-
         allPairs.add(pairsInWord[p]);
-
       }
-
     }
 
     return allPairs;
@@ -105,7 +91,7 @@ public class Similarity {
   public float compareStrings(String str1, String str2) {
     if (str1 == null || str2 == null)
       return 0.0f;
-    if (str1.toUpperCase().equals(str2.toUpperCase())) {
+    if (str1.equalsIgnoreCase(str2)) {
       return 1.0f;
     }
 
@@ -114,29 +100,17 @@ public class Similarity {
       ArrayList<String> pairs2 = wordLetterPairs(str2.toUpperCase());
 
       int intersection = 0;
-
       int union = pairs1.size() + pairs2.size();
-
       for (int i = 0; i < pairs1.size(); i++) {
-
         Object pair1 = pairs1.get(i);
-
         for (int j = 0; j < pairs2.size(); j++) {
-
           Object pair2 = pairs2.get(j);
-
           if (pair1.equals(pair2)) {
-
             intersection++;
-
             pairs2.remove(j);
-
             break;
-
           }
-
         }
-
       }
 
       float score = (float) (2.0 * intersection) / union;
@@ -146,9 +120,10 @@ public class Similarity {
         // exception case... for some reason, "Batman Begins" ==
         // "Batman Begins 2"
         // for the lack of a better test...
-        if (str1.toUpperCase().equals(str2.toUpperCase())) {
+        if (str1.equalsIgnoreCase(str2)) {
           return score;
-        } else {
+        }
+        else {
           LOGGER.warn("Adjusted the perfect score to " + 0.90 + " for " + str1 + " and " + str2 + " because they are not equal.");
           // adjust the score, because only 2 strings should be equal.
           score = 0.90f;
@@ -158,7 +133,8 @@ public class Similarity {
         LOGGER.debug(String.format("Similarity Score: [%s][%s]=[%s]", str1, str2, score));
       }
       return score;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOGGER.debug("Exception in compareStrings str1 = " + str1 + " str12 = " + str2);
       return (float) 0.0;
     }

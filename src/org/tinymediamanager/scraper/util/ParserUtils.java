@@ -34,8 +34,7 @@ public class ParserUtils {
    * Tries to get movie name from filename<br>
    * 1. splits string using common delimiters ".- ()"<br>
    * 2. searches for first occurrence of common stopwords<br>
-   * 3. if last token is 4 digits, assume year and remove (only if we have at
-   * least 3 tokens)<br>
+   * 3. if last token is 4 digits, assume year and remove (only if we have at least 3 tokens)<br>
    * 4. everything before the first stopword must be the movie name :p
    * 
    * @param filename
@@ -69,7 +68,7 @@ public class ParserUtils {
       // search for stopword position
       if (s[i] != null && !s[i].isEmpty()) {
         for (String stop : stopwords) {
-          if (s[i].toLowerCase().equals(stop)) {
+          if (s[i].equalsIgnoreCase(stop)) {
             // remember lowest position
             if (i < firstFoundStopwordPosition) {
               firstFoundStopwordPosition = i;
@@ -124,10 +123,8 @@ public class ParserUtils {
   }
 
   /**
-   * Parses titles if they are in the form Title (Year). The first element is
-   * the title, and the second element is the date, both can be null. If the
-   * matcher fails to find the pattern, then the passed in title is set as the
-   * first element, which is the title.
+   * Parses titles if they are in the form Title (Year). The first element is the title, and the second element is the date, both can be null. If the
+   * matcher fails to find the pattern, then the passed in title is set as the first element, which is the title.
    * 
    * @param title
    *          the title

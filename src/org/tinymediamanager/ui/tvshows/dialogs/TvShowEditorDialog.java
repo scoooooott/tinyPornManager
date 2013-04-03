@@ -823,12 +823,12 @@ public class TvShowEditorDialog extends JDialog {
         movieToEdit.setCertification((Certification) certification);
       }
 
-      if (!StringUtils.isEmpty(lblPoster.getImageUrl()) && lblPoster.getImageUrl() != movieToEdit.getPosterUrl()) {
+      if (!StringUtils.isEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(movieToEdit.getPosterUrl())) {
         movieToEdit.setPosterUrl(lblPoster.getImageUrl());
         movieToEdit.writeImages(true, false);
       }
 
-      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && lblFanart.getImageUrl() != movieToEdit.getFanartUrl()) {
+      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(movieToEdit.getFanartUrl())) {
         movieToEdit.setFanartUrl(lblFanart.getImageUrl());
         movieToEdit.writeImages(false, true);
       }

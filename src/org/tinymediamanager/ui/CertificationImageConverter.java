@@ -20,6 +20,7 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.Converter;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.movies.MovieGenresPanel;
@@ -30,6 +31,9 @@ import org.tinymediamanager.ui.movies.MovieGenresPanel;
  * @author Manuel Laggner
  */
 public class CertificationImageConverter extends Converter<Certification, Icon> {
+
+  /** The Constant LOGGER. */
+  private static final Logger   LOGGER     = Logger.getLogger(CertificationImageConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();
@@ -62,7 +66,7 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.warn("cannot convert certification", e);
     }
 
     return emptyImage;

@@ -25,14 +25,12 @@ import org.apache.log4j.Logger;
 class Log4jBackstop implements Thread.UncaughtExceptionHandler {
 
   /** The logger. */
-  private static Logger LOGGER = Logger.getLogger(Log4jBackstop.class);
+  private static final Logger LOGGER = Logger.getLogger(Log4jBackstop.class);
 
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread
-   * , java.lang.Throwable)
+   * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread , java.lang.Throwable)
    */
   public void uncaughtException(Thread t, Throwable ex) {
     LOGGER.error("Uncaught exception in thread: " + t.getName(), ex);

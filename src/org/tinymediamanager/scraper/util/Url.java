@@ -79,7 +79,7 @@ public class Url {
       return "";
     }
     for (Header h : headersResponse) {
-      if (h.getName().toLowerCase().equals(header.toLowerCase())) {
+      if (h.getName().equalsIgnoreCase(header)) {
         return h.getValue();
       }
     }
