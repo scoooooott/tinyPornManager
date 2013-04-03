@@ -374,8 +374,9 @@ public class MainWindow extends JFrame {
               lblLoadingImg.setIcon(null);
             }
           }
-          String text = String.format(" " + BUNDLE.getString("status.activethreads") + " [%d/%d]", this.ex.getActiveCount(),
-              this.ex.getMaximumPoolSize()); //$NON-NLS-1$
+          String text = String.format(
+              "<html><body>" + BUNDLE.getString("status.activethreads") + " [%d/%d]<br>" + BUNDLE.getString("status.queuesize")
+                  + " %d </body></html>", this.ex.getActiveCount(), this.ex.getMaximumPoolSize(), this.ex.getQueue().size()); //$NON-NLS-1$
           // LOGGER.debug(text);
           lblLoadingImg.setToolTipText(text);
           Thread.sleep(2000);
