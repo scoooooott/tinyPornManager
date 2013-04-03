@@ -19,6 +19,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -26,6 +32,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -38,20 +45,25 @@ import org.tinymediamanager.core.Utils;
  */
 public class Url {
   /** The log. */
-  private static final Logger      LOGGER  = Logger.getLogger(Url.class);
+  private static final Logger      LOGGER          = Logger.getLogger(Url.class);
 
   /** The client. */
   private static DefaultHttpClient client;
 
   /** The url. */
-  protected String                 url     = null;
+  protected String                 url             = null;
 
   /** the headers sent from server. */
-  private Header[]                 headers = null;
+  protected Header[]               headersResponse = null;
+
+  /** The headers request. */
+  protected List<Header>           headersRequest  = new ArrayList<Header>();
+
+  /** The entity sent from server. */
+  protected HttpEntity             entity          = null;
 
   // /** The Constant HTTP_USER_AGENT. */
-  // protected static final String HTTP_USER_AGENT =
-  // "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
+  // protected static final String HTTP_USER_AGENT ="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
 
   /**
    * gets the specified header value from this connection<br>
@@ -63,10 +75,10 @@ public class Url {
    * @author Myron Boyle
    */
   public String getHeader(String header) {
-    if (headers == null) {
+    if (headersResponse == null) {
       return "";
     }
-    for (Header h : headers) {
+    for (Header h : headersResponse) {
       if (h.getName().toLowerCase().equals(header.toLowerCase())) {
         return h.getValue();
       }
@@ -99,6 +111,38 @@ public class Url {
   }
 
   /**
+   * Adds the header.
+   * 
+   * @param key
+   *          the key
+   * @param value
+   *          the value
+   */
+  public void addHeader(String key, String value) {
+    headersRequest.add(new BasicHeader(key, value));
+  }
+
+  /**
+   * Adds the header.
+   * 
+   * @param header
+   *          the header
+   */
+  public void addHeader(Header header) {
+    headersRequest.add(header);
+  }
+
+  /**
+   * Adds the headers.
+   * 
+   * @param headers
+   *          the headers
+   */
+  public void addHeaders(List<Header> headers) {
+    headersRequest.addAll(headers);
+  }
+
+  /**
    * Gets the input stream.
    * 
    * @return the input stream
@@ -108,14 +152,20 @@ public class Url {
   public InputStream getInputStream() throws IOException {
     DefaultHttpClient httpclient = getHttpClient();
     BasicHttpContext localContext = new BasicHttpContext();
+
     ByteArrayInputStream is = null;
-    HttpEntity entity = null;
 
     LOGGER.debug("getting " + url);
     HttpGet httpget = new HttpGet(url);
+
+    // set custom headers
+    for (Header header : headersRequest) {
+      httpget.addHeader(header);
+    }
+
     try {
       HttpResponse response = httpclient.execute(httpget, localContext);
-      headers = response.getAllHeaders();
+      headersResponse = response.getAllHeaders();
       entity = response.getEntity();
 
       if (entity != null) {
@@ -160,5 +210,37 @@ public class Url {
    */
   public String toString() {
     return url;
+  }
+
+  /**
+   * Gets the charset.
+   * 
+   * @return the charset
+   */
+  public Charset getCharset() {
+    Charset charset = null;
+    if (entity == null || entity.getContentType() == null) {
+      return Charset.defaultCharset();
+    }
+
+    String contentType = entity.getContentType().getValue();
+    if (contentType != null) {
+      // changed 'charset' to 'harset' in regexp because some sites send 'Charset'
+      Matcher m = Pattern.compile("harset *=[ '\"]*([^ ;'\"]+)[ ;'\"]*").matcher(contentType);
+      if (m.find()) {
+        String encoding = m.group(1);
+        try {
+          charset = Charset.forName(encoding);
+        }
+        catch (UnsupportedCharsetException e) {
+          // there will be used default charset
+        }
+      }
+    }
+    if (charset == null) {
+      charset = Charset.defaultCharset();
+    }
+
+    return charset;
   }
 }

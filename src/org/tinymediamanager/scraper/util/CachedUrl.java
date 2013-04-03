@@ -22,6 +22,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -125,8 +126,7 @@ public class CachedUrl extends Url {
       if (url == null)
         return null;
       // now uses a simple md5 hash, which should have a fairly low collision
-      // rate, especially for our
-      // limited use
+      // rate, especially for our limited use
       byte[] key = DigestUtils.md5(url);
       return new String(Hex.encodeHex(key));
     }
@@ -285,7 +285,14 @@ public class CachedUrl extends Url {
     InputStream is = null;
     if (!url.startsWith("file:")) {
       Url u = new Url(url);
+      u.addHeaders(headersRequest);
+
       is = u.getInputStream();
+
+      // also store encoding
+      if (u.getCharset() != null) {
+        props.setProperty("encoding", u.getCharset().toString());
+      }
     }
     else {
       String newUrl = url.replace("file:", "");
@@ -358,5 +365,24 @@ public class CachedUrl extends Url {
         LOGGER.warn(e.getMessage());
       }
     }
+  }
+
+  /**
+   * Gets the charset.
+   * 
+   * @return the charset
+   */
+  @Override
+  public Charset getCharset() {
+    Charset charset = null;
+
+    // take the charset from the cached file
+    Charset.forName(props.getProperty("encoding"));
+
+    if (charset == null) {
+      charset = Charset.defaultCharset();
+    }
+
+    return charset;
   }
 }
