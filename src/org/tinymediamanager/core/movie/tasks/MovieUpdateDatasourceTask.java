@@ -72,18 +72,25 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
   @Override
   public Void doInBackground() {
     try {
-      // first search for new movies
+      // add all directories in datasource(s) to threadpool for parsing
       for (String path : dataSources) {
-        // cancel task
-        if (cancel) {
-          return null;
-        }
-
         startProgressBar("Updating " + path);
         findMoviesInPath(path);
       }
 
-      // second - remove orphaned movies
+      // sleep until threadpool is empty (or cancelled)
+      while (!cancel && Globals.executor.getActiveCount() > 0) {
+        // LOGGER.trace("remaining: " + Globals.executor.getQueue().size());
+        Thread.sleep(500);
+      }
+      // if cancelled discard all (queued) tasks; started tasks will finish
+      if (cancel) {
+        LOGGER.info("Abort queue (discarding " + Globals.executor.getQueue().size() + " tasks)");
+        // unsafe according to javadoc/inet?!
+        Globals.executor.getQueue().clear();
+      }
+
+      LOGGER.info("removing orphaned movies...");
       for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
         Movie movie = movieList.getMovies().get(i);
         File movieDir = new File(movie.getPath());
@@ -91,6 +98,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
           movieList.removeMovie(movie);
         }
       }
+      LOGGER.info("Done updating datasource :)");
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -105,25 +113,44 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
    *          the path
    */
   private void findMoviesInPath(String path) {
-    LOGGER.debug("find movies in path " + path);
+    LOGGER.debug("find movies in datasource path: " + path);
     File filePath = new File(path);
     for (File subdir : filePath.listFiles()) {
-      // cancel task
-      if (cancel) {
-        return;
-      }
-
       if (subdir.isDirectory()) {
-        if (subdir.getName().equals("VIDEO_TS")) {
-          findDiscInDirectory(subdir, path);
-        }
-        else if (subdir.getName().equals("BDMV")) {
-          findDiscInDirectory(subdir, path);
-        }
-        else {
-          findMovieInDirectory(subdir, path);
-        }
+        Globals.executor.execute(new FindMovieTask(subdir, path));
       }
+    }
+  }
+
+  /**
+   * ThreadpoolWorker to work off ONE possible movie from root datasource directory
+   * 
+   * @author Myron Boyle
+   * @version 1.0
+   */
+  private class FindMovieTask implements Runnable {
+
+    private File   subdir     = null;
+    private String datasource = "";
+
+    public FindMovieTask(File subdir, String datasource) {
+      this.subdir = subdir;
+      this.datasource = datasource;
+    }
+
+    @Override
+    public void run() {
+      LOGGER.info("start parsing '" + subdir.getName() + "'");
+      if (subdir.getName().equals("VIDEO_TS")) {
+        findDiscInDirectory(subdir, datasource);
+      }
+      else if (subdir.getName().equals("BDMV")) {
+        findDiscInDirectory(subdir, datasource);
+      }
+      else {
+        findMovieInDirectory(subdir, datasource);
+      }
+      LOGGER.info("done parsing '" + subdir.getName() + "'");
     }
   }
 
@@ -139,11 +166,6 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
   // BD 2.3
   // http://www.blu-raydisc.com/assets/Downloadablefile/BD-ROM_Audio_Visual_Application_Format_Specifications-18780.pdf
   private void findDiscInDirectory(File dir, String dataSource) {
-    // cancel task
-    if (cancel) {
-      return;
-    }
-
     String parentDir = dir.getParent();
     LOGGER.debug("find Disc in directory " + dir.getPath() + " parent: " + parentDir);
 
@@ -234,11 +256,6 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
    *          the data source
    */
   private void findMovieInDirectory(File dir, String dataSource) {
-    // cancel task
-    if (cancel) {
-      return;
-    }
-
     LOGGER.debug("find movies in directory " + dir.getPath());
     // check if there are any videofiles in that subdir
     FilenameFilter filter = new FilenameFilter() {
