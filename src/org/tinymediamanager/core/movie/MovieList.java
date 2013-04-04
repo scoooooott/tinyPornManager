@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class MovieList extends AbstractModelObject {
   private PropertyChangeListener       tagListener;
 
   /** The tags observable. */
-  private List<String>                 tagsObservable = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>                 tagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
 
   /** The movie set tree model. */
   private MovieSetTreeModel            movieSetTreeModel;
@@ -240,7 +241,7 @@ public class MovieList extends AbstractModelObject {
       movieSets = querySets.getResultList();
       if (movieSets != null) {
         LOGGER.debug("found " + movieSets.size() + " movieSets in database");
-        movieSetList = ObservableCollections.observableList(new ArrayList<MovieSet>(movieSets.size()));
+        movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<MovieSet>(movieSets.size())));
 
         // load movie sets
         for (Object obj : movieSets) {
@@ -668,7 +669,7 @@ public class MovieList extends AbstractModelObject {
    */
   public List<MovieSet> getMovieSetList() {
     if (movieSetList == null) {
-      movieSetList = ObservableCollections.observableList(new ArrayList<MovieSet>());
+      movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<MovieSet>()));
     }
     return movieSetList;
   }

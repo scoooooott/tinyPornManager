@@ -19,6 +19,7 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
@@ -53,7 +54,7 @@ public class TvShowList extends AbstractModelObject {
   /** The instance. */
   private static TvShowList   instance   = null;
 
-  private List<TvShow>        tvShowList = ObservableCollections.observableList(new ArrayList<TvShow>());
+  private List<TvShow>        tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
 
   /**
    * Instantiates a new TvShowList.
