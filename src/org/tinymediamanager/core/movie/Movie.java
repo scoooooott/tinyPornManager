@@ -556,7 +556,7 @@ public class Movie extends MediaEntity {
    */
   public void addToFiles(String path, String newFile) {
     MediaFile mediaFile = new MediaFile(path, newFile);
-    mediaFile.gatherMediaInformation();
+    // mediaFile.gatherMediaInformation(); // will be executed afterwards
     addToMediaFiles(mediaFile);
   }
 

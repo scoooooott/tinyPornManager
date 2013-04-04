@@ -20,16 +20,17 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.ParserUtils;
-import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
  * The Class UpdateDataSourcesTask.
@@ -37,7 +38,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
  * @author Manuel Laggner
  */
 
-public class MovieUpdateDatasourceTask extends TmmSwingWorker {
+public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
   /** The Constant LOGGER. */
   private static final Logger LOGGER = Logger.getLogger(MovieUpdateDatasourceTask.class);
@@ -51,9 +52,6 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
   /** The movie list. */
   private MovieList           movieList;
 
-  /** The cancel. */
-  private boolean             cancel = false;
-
   /**
    * Instantiates a new scrape task.
    * 
@@ -62,6 +60,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
     movieList = MovieList.getInstance();
     dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
     fileTypes = new ArrayList<String>(Globals.settings.getVideoFileType());
+    initThreadPool(3, "update");
   }
 
   /*
@@ -72,25 +71,25 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
   @Override
   public Void doInBackground() {
     try {
-      // add all directories in datasource(s) to threadpool for parsing
+      startProgressBar("prepare scan...");
       for (String path : dataSources) {
-        startProgressBar("Updating " + path);
-        findMoviesInPath(path);
+        File filePath = new File(path);
+        for (File subdir : filePath.listFiles()) {
+          if (subdir.isDirectory()) {
+            submitTask(new FindMovieTask(subdir, path));
+          }
+        }
       }
 
-      // sleep until threadpool is empty (or cancelled)
-      while (!cancel && Globals.executor.getActiveCount() > 0) {
-        // LOGGER.trace("remaining: " + Globals.executor.getQueue().size());
-        Thread.sleep(500);
-      }
+      waitForCompletionOrCancel();
+
       // if cancelled discard all (queued) tasks; started tasks will finish
       if (cancel) {
-        LOGGER.info("Abort queue (discarding " + Globals.executor.getQueue().size() + " tasks)");
-        // unsafe according to javadoc/inet?!
-        Globals.executor.getQueue().clear();
+        LOGGER.info("Abort queue (discarding " + (getTaskcount() - getTaskdone()) + " tasks)");
       }
 
       LOGGER.info("removing orphaned movies...");
+      startProgressBar("cleanup...");
       for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
         Movie movie = movieList.getMovies().get(i);
         File movieDir = new File(movie.getPath());
@@ -112,14 +111,17 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
    * @param path
    *          the path
    */
-  private void findMoviesInPath(String path) {
+  private long findMoviesInPath(String path) {
     LOGGER.debug("find movies in datasource path: " + path);
     File filePath = new File(path);
+    long i = 0;
     for (File subdir : filePath.listFiles()) {
       if (subdir.isDirectory()) {
-        Globals.executor.execute(new FindMovieTask(subdir, path));
+        i++;
+        // Scheduler.submitIOTask(new FindMovieTask(subdir, path));
       }
     }
+    return i;
   }
 
   /**
@@ -128,7 +130,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
    * @author Myron Boyle
    * @version 1.0
    */
-  private class FindMovieTask implements Runnable {
+  private class FindMovieTask implements Callable<Object> {
 
     private File   subdir     = null;
     private String datasource = "";
@@ -139,8 +141,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
     }
 
     @Override
-    public void run() {
-      LOGGER.info("start parsing '" + subdir.getName() + "'");
+    public String call() throws Exception {
       if (subdir.getName().equals("VIDEO_TS")) {
         findDiscInDirectory(subdir, datasource);
       }
@@ -150,7 +151,7 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
       else {
         findMovieInDirectory(subdir, datasource);
       }
-      LOGGER.info("done parsing '" + subdir.getName() + "'");
+      return subdir.getName();
     }
   }
 
@@ -374,6 +375,21 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
    * @param description
    *          the description
    */
+  private void startProgressBar(String description, int max, int progress) {
+    lblProgressAction.setText(description);
+    progressBar.setVisible(true);
+    progressBar.setIndeterminate(false);
+    progressBar.setMaximum(max);
+    progressBar.setValue(progress);
+    btnCancelTask.setVisible(true);
+  }
+
+  /**
+   * Start progress bar.
+   * 
+   * @param description
+   *          the description
+   */
   private void startProgressBar(String description) {
     lblProgressAction.setText(description);
     progressBar.setVisible(true);
@@ -400,5 +416,10 @@ public class MovieUpdateDatasourceTask extends TmmSwingWorker {
   public void cancel() {
     cancel = true;
     cancel(false);
+  }
+
+  @Override
+  public void callback(Object obj) {
+    startProgressBar((String) obj, getTaskcount(), getTaskdone());
   }
 }

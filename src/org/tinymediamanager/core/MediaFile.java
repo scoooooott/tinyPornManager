@@ -232,8 +232,7 @@ public class MediaFile extends AbstractModelObject {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
@@ -273,15 +272,13 @@ public class MediaFile extends AbstractModelObject {
    * Gets the real mediainfo values.
    * 
    * @param streamKind
-   *          MediaInfo.StreamKind.(General|Video|Audio|Text|Chapters|Image|Menu
-   *          )
+   *          MediaInfo.StreamKind.(General|Video|Audio|Text|Chapters|Image|Menu )
    * @param streamNumber
    *          the stream number (0 for first)
    * @param keys
    *          the information you want to fetch
    * @return the media information you asked<br>
-   *         <b>OR AN EMPTY STRING IF MEDIAINFO COULD NOT BE LOADED</b> (never
-   *         NULL)
+   *         <b>OR AN EMPTY STRING IF MEDIAINFO COULD NOT BE LOADED</b> (never NULL)
    */
   private String getMediaInfo(StreamKind streamKind, int streamNumber, String... keys) {
     for (String key : keys) {
@@ -604,11 +601,28 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
-   * Gathers the media information via the native mediainfo lib.
+   * Gathers the media information via the native mediainfo lib.<br>
+   * If mediafile has already be scanned, it will be skipped.<br>
+   * Use gatherMediaInformation(boolean force) to force the execution.
    */
   public void gatherMediaInformation() {
+    gatherMediaInformation(false);
+  }
+
+  /**
+   * Gathers the media information via the native mediainfo lib.
+   * 
+   * @param force
+   *          forces the execution, will not stop on already imported files
+   */
+  public void gatherMediaInformation(boolean force) {
     // check for supported filetype
     if (!isValidMediainfoFormat()) {
+      return;
+    }
+
+    // mediainfo already gathered
+    if (!force && !getContainerFormat().isEmpty()) {
       return;
     }
 
@@ -745,8 +759,7 @@ public class MediaFile extends AbstractModelObject {
       }
     }
     /*
-     * String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(millis),
-     * TimeUnit.MILLISECONDS.toSeconds(millis) -
+     * String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) -
      * TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
      */
 
