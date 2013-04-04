@@ -62,9 +62,6 @@ public class Url {
   /** The entity sent from server. */
   protected HttpEntity             entity          = null;
 
-  // /** The Constant HTTP_USER_AGENT. */
-  // protected static final String HTTP_USER_AGENT ="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1";
-
   /**
    * gets the specified header value from this connection<br>
    * You need to call this AFTER getInputstream().
@@ -242,5 +239,18 @@ public class Url {
     }
 
     return charset;
+  }
+
+  /**
+   * Gets the content encoding.
+   * 
+   * @return the content encoding
+   */
+  public String getContentEncoding() {
+    if (entity == null || entity.getContentEncoding() == null) {
+      return null;
+    }
+
+    return entity.getContentEncoding().getValue();
   }
 }

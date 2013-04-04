@@ -1,22 +1,19 @@
 /*
- *      Copyright (c) 2004-2013 Stuart Boston
+ * Copyright 2012 - 2013 Manuel Laggner
  *
- *      This file is part of TheMovieDB API.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      TheMovieDB API is free software: you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation, either version 3 of the License, or
- *      any later version.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *      TheMovieDB API is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
- *
- *      You should have received a copy of the GNU General Public License
- *      along with TheMovieDB API.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package com.omertron.themoviedbapi.tools;
 
 import java.io.BufferedReader;
@@ -33,18 +30,33 @@ import org.tinymediamanager.scraper.util.Url;
 import com.omertron.themoviedbapi.MovieDbException;
 
 /**
- * Web browser with simple cookies support
+ * The Class WebBrowser - For use with TheMovieDB API including support for HTTPClient and Caching.
+ * 
+ * @author Manuel Laggner
  */
 public final class WebBrowser {
 
-  private static final Logger logger = Logger.getLogger(WebBrowser.class);
+  /** The Constant logger. */
+  private static final Logger LOGGER = Logger.getLogger(WebBrowser.class);
 
   // Hide the constructor
+  /**
+   * Instantiates a new web browser.
+   */
   protected WebBrowser() {
     // prevents calls from subclass
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * Request.
+   * 
+   * @param url
+   *          the url
+   * @return the string
+   * @throws MovieDbException
+   *           the movie db exception
+   */
   public static String request(String url) throws MovieDbException {
     try {
       return request(new URL(url));
@@ -54,87 +66,163 @@ public final class WebBrowser {
     }
   }
 
+  /**
+   * Request.
+   * 
+   * @param requestUrl
+   *          the request url
+   * @return the string
+   * @throws MovieDbException
+   *           the movie db exception
+   */
   public static String request(URL requestUrl) throws MovieDbException {
     StringWriter content = null;
+    BufferedReader in = null;
 
     try {
       content = new StringWriter();
 
-      BufferedReader in = null;
       Url url = null;
-      try {
-        url = new Url(requestUrl.toString());
-        url.addHeader("Accept", "application/json");
-        url.addHeader("Content-Type", "application/json");
+      url = new Url(requestUrl.toString());
+      url.addHeader("Accept", "application/json");
+      url.addHeader("Content-Type", "application/json");
 
-        in = new BufferedReader(new InputStreamReader(url.getInputStream(), url.getCharset()));
-        String line;
-        while ((line = in.readLine()) != null) {
-          content.write(line);
-        }
+      in = new BufferedReader(new InputStreamReader(url.getInputStream(), url.getCharset()));
+      String line;
+      while ((line = in.readLine()) != null) {
+        content.write(line);
       }
-      finally {
-        if (in != null) {
-          in.close();
-        }
-      }
-      System.out.println(content);
+
       return content.toString();
     }
     catch (IOException ex) {
       throw new MovieDbException(MovieDbException.MovieDbExceptionType.CONNECTION_ERROR, null, ex);
     }
     finally {
+      if (in != null) {
+        try {
+          in.close();
+        }
+        catch (IOException ex) {
+          LOGGER.debug("Failed to close BufferedReader: " + ex.getMessage());
+        }
+      }
       if (content != null) {
         try {
           content.close();
         }
         catch (IOException ex) {
-          logger.debug("Failed to close connection: " + ex.getMessage());
+          LOGGER.debug("Failed to close connection: " + ex.getMessage());
         }
       }
     }
   }
 
+  /**
+   * Gets the proxy host.
+   * 
+   * @return the proxy host
+   */
   public static String getProxyHost() {
     return Globals.settings.getProxyHost();
   }
 
+  /**
+   * Sets the proxy host.
+   * 
+   * @param myProxyHost
+   *          the new proxy host
+   */
   public static void setProxyHost(String myProxyHost) {
   }
 
+  /**
+   * Gets the proxy port.
+   * 
+   * @return the proxy port
+   */
   public static String getProxyPort() {
     return Globals.settings.getProxyPort();
   }
 
+  /**
+   * Sets the proxy port.
+   * 
+   * @param myProxyPort
+   *          the new proxy port
+   */
   public static void setProxyPort(String myProxyPort) {
   }
 
+  /**
+   * Gets the proxy username.
+   * 
+   * @return the proxy username
+   */
   public static String getProxyUsername() {
     return Globals.settings.getProxyUsername();
   }
 
+  /**
+   * Sets the proxy username.
+   * 
+   * @param myProxyUsername
+   *          the new proxy username
+   */
   public static void setProxyUsername(String myProxyUsername) {
   }
 
+  /**
+   * Gets the proxy password.
+   * 
+   * @return the proxy password
+   */
   public static String getProxyPassword() {
     return Globals.settings.getProxyPassword();
   }
 
+  /**
+   * Sets the proxy password.
+   * 
+   * @param myProxyPassword
+   *          the new proxy password
+   */
   public static void setProxyPassword(String myProxyPassword) {
   }
 
+  /**
+   * Gets the web timeout connect.
+   * 
+   * @return the web timeout connect
+   */
   public static int getWebTimeoutConnect() {
     return 0;
   }
 
+  /**
+   * Gets the web timeout read.
+   * 
+   * @return the web timeout read
+   */
   public static int getWebTimeoutRead() {
     return 0;
   }
 
+  /**
+   * Sets the web timeout connect.
+   * 
+   * @param webTimeoutConnect
+   *          the new web timeout connect
+   */
   public static void setWebTimeoutConnect(int webTimeoutConnect) {
   }
 
+  /**
+   * Sets the web timeout read.
+   * 
+   * @param webTimeoutRead
+   *          the new web timeout read
+   */
   public static void setWebTimeoutRead(int webTimeoutRead) {
   }
 }

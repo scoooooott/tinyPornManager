@@ -1,53 +1,41 @@
 /*
- *      Copyright (c) 2004-2012 Matthew Altman & Stuart Boston
+ * Copyright 2012 - 2013 Manuel Laggner
  *
- *      This file is part of TheTVDB API.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      TheTVDB API is free software: you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation, either version 3 of the License, or
- *      any later version.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *      TheTVDB API is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
- *
- *      You should have received a copy of the GNU General Public License
- *      along with TheTVDB API.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package com.omertron.thetvdbapi.tools;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.util.Url;
 
 /**
- * Web browser with simple cookies support
+ * The Class WebBrowser - For use with TheMovieDB API including support for HTTPClient and Caching.
+ * 
+ * @author Manuel Laggner
  */
 public final class WebBrowser {
 
-  private static final Logger                     logger               = Logger.getLogger(WebBrowser.class);
-  private static final Map<String, String>        BROWSER_PROPERTIES   = new HashMap<String, String>();
-  private static Map<String, Map<String, String>> cookies              = new HashMap<String, Map<String, String>>();
-  private static String                           proxyHost            = null;
-  private static String                           proxyPort            = null;
-  private static String                           proxyUsername        = null;
-  private static String                           proxyPassword        = null;
-  private static String                           proxyEncodedPassword = null;
-  private static int                              webTimeoutConnect    = 25000;                                     // 25 second timeout
-  private static int                              webTimeoutRead       = 90000;                                     // 90 second timeout
+  /** The Constant logger. */
+  private static final Logger LOGGER = Logger.getLogger(WebBrowser.class);
 
   /**
    * Constructor for WebBrowser. Does instantiates the browser properties.
@@ -57,71 +45,49 @@ public final class WebBrowser {
   }
 
   /**
-   * Request the web page at the specified URL
+   * Request the web page at the specified URL.
    * 
    * @param url
-   * @return
+   *          the url
+   * @return the string
    * @throws IOException
+   *           Signals that an I/O exception has occurred.
    */
   public static String request(String url) throws IOException {
     return request(new URL(url));
   }
 
   /**
-   * Open a connection using proxy parameters if they exist.
+   * Request the web page at the specified URL.
    * 
-   * @param url
-   * @return
+   * @param requestUrl
+   *          the url
+   * @return the string
    * @throws IOException
+   *           Signals that an I/O exception has occurred.
    */
-  public static URLConnection openProxiedConnection(URL url) throws IOException {
-    if (proxyHost != null) {
-      System.getProperties().put("proxySet", "true");
-      System.getProperties().put("proxyHost", proxyHost);
-      System.getProperties().put("proxyPort", proxyPort);
-    }
-
-    URLConnection cnx = url.openConnection();
-
-    if (proxyUsername != null) {
-      cnx.setRequestProperty("Proxy-Authorization", proxyEncodedPassword);
-    }
-
-    return cnx;
-  }
-
-  /**
-   * Request the web page at the specified URL
-   * 
-   * @param url
-   * @return
-   * @throws IOException
-   */
-  public static String request(URL url) throws IOException {
+  public static String request(URL requestUrl) throws IOException {
     StringBuilder content = new StringBuilder();
 
+    InputStream is = null;
     BufferedReader in = null;
-    URLConnection cnx = null;
     InputStreamReader isr = null;
     GZIPInputStream zis = null;
 
     try {
-      cnx = openProxiedConnection(url);
-
-      sendHeader(cnx);
-      readHeader(cnx);
+      Url url = new Url(requestUrl.toString());
+      is = url.getInputStream();
 
       // Check the content encoding of the connection. Null content encoding is standard HTTP
-      if (cnx.getContentEncoding() == null) {
-        // in = new BufferedReader(new InputStreamReader(cnx.getInputStream(), getCharset(cnx)));
-        isr = new InputStreamReader(cnx.getInputStream(), "UTF-8");
+      if (url.getContentEncoding() == null) {
+        isr = new InputStreamReader(is, url.getCharset());
       }
-      else if (cnx.getContentEncoding().equalsIgnoreCase("gzip")) {
-        zis = new GZIPInputStream(cnx.getInputStream());
+      else if (url.getContentEncoding().equalsIgnoreCase("gzip")) {
+        zis = new GZIPInputStream(is);
         isr = new InputStreamReader(zis, "UTF-8");
       }
       else {
-        logger.warn("Unknown content encoding " + cnx.getContentEncoding() + ", aborting");
+        LOGGER.warn("Unknown content encoding " + url.getContentEncoding() + ", aborting");
         return "";
       }
 
@@ -133,12 +99,15 @@ public final class WebBrowser {
       }
     }
     finally {
+      if (is != null) {
+        is.close();
+      }
       if (in != null) {
         try {
           in.close();
         }
         catch (IOException ex) {
-          logger.debug("Failed to close BufferedReader: " + ex.getMessage());
+          LOGGER.debug("Failed to close BufferedReader: " + ex.getMessage());
         }
       }
 
@@ -147,7 +116,7 @@ public final class WebBrowser {
           isr.close();
         }
         catch (IOException ex) {
-          logger.debug("Failed to close InputStreamReader: " + ex.getMessage());
+          LOGGER.debug("Failed to close InputStreamReader: " + ex.getMessage());
         }
       }
 
@@ -156,215 +125,118 @@ public final class WebBrowser {
           zis.close();
         }
         catch (IOException ex) {
-          logger.debug("Failed to close GZIPInputStream: " + ex.getMessage());
+          LOGGER.debug("Failed to close GZIPInputStream: " + ex.getMessage());
         }
-      }
-
-      if (cnx instanceof HttpURLConnection) {
-        ((HttpURLConnection) cnx).disconnect();
       }
     }
     return content.toString();
   }
 
   /**
-   * Set the header information for the connection
+   * Gets the proxy host.
    * 
-   * @param cnx
-   */
-  private static void sendHeader(URLConnection cnx) {
-    if (BROWSER_PROPERTIES.isEmpty()) {
-      BROWSER_PROPERTIES.put("User-Agent", "Mozilla/5.25 Netscape/5.0 (Windows; I; Win95)");
-    }
-
-    // send browser properties
-    for (Map.Entry<String, String> browserProperty : BROWSER_PROPERTIES.entrySet()) {
-      cnx.setRequestProperty(browserProperty.getKey(), browserProperty.getValue());
-    }
-    // send cookies
-    String cookieHeader = createCookieHeader(cnx);
-    if (!cookieHeader.isEmpty()) {
-      cnx.setRequestProperty("Cookie", cookieHeader);
-    }
-  }
-
-  /**
-   * Create the cookies for the header
-   * 
-   * @param cnx
-   * @return
-   */
-  private static String createCookieHeader(URLConnection cnx) {
-    String host = cnx.getURL().getHost();
-    StringBuilder cookiesHeader = new StringBuilder();
-    for (Map.Entry<String, Map<String, String>> domainCookies : cookies.entrySet()) {
-      if (host.endsWith(domainCookies.getKey())) {
-        for (Map.Entry<String, String> cookie : domainCookies.getValue().entrySet()) {
-          cookiesHeader.append(cookie.getKey());
-          cookiesHeader.append("=");
-          cookiesHeader.append(cookie.getValue());
-          cookiesHeader.append(";");
-        }
-      }
-    }
-    if (cookiesHeader.length() > 0) {
-      // remove last ; char
-      cookiesHeader.deleteCharAt(cookiesHeader.length() - 1);
-    }
-    return cookiesHeader.toString();
-  }
-
-  /**
-   * Read the header information into the cookies
-   * 
-   * @param cnx
-   */
-  private static void readHeader(URLConnection cnx) {
-    // read new cookies and update our cookies
-    for (Map.Entry<String, List<String>> header : cnx.getHeaderFields().entrySet()) {
-      if ("Set-Cookie".equals(header.getKey())) {
-        for (String cookieHeader : header.getValue()) {
-          String[] cookieElements = cookieHeader.split(" *; *");
-          if (cookieElements.length >= 1) {
-            String[] firstElem = cookieElements[0].split(" *= *");
-            String cookieName = firstElem[0];
-            String cookieValue = firstElem.length > 1 ? firstElem[1] : null;
-            String cookieDomain = null;
-            // find cookie domain
-            for (int i = 1; i < cookieElements.length; i++) {
-              String[] cookieElement = cookieElements[i].split(" *= *");
-              if ("domain".equals(cookieElement[0])) {
-                cookieDomain = cookieElement.length > 1 ? cookieElement[1] : null;
-                break;
-              }
-            }
-            if (cookieDomain == null) {
-              // if domain isn't set take current host
-              cookieDomain = cnx.getURL().getHost();
-            }
-            Map<String, String> domainCookies = cookies.get(cookieDomain);
-            if (domainCookies == null) {
-              domainCookies = new HashMap<String, String>();
-              cookies.put(cookieDomain, domainCookies);
-            }
-            // add or replace cookie
-            domainCookies.put(cookieName, cookieValue);
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * Return the proxy host name
-   * 
-   * @return
+   * @return the proxy host
    */
   public static String getProxyHost() {
-    return proxyHost;
+    return Globals.settings.getProxyHost();
   }
 
   /**
-   * Set the proxy host name
+   * Sets the proxy host.
    * 
-   * @param tvdbProxyHost
+   * @param myProxyHost
+   *          the new proxy host
    */
-  public static void setProxyHost(String tvdbProxyHost) {
-    WebBrowser.proxyHost = tvdbProxyHost;
+  public static void setProxyHost(String myProxyHost) {
   }
 
   /**
-   * Get the proxy port
+   * Gets the proxy port.
    * 
-   * @return
+   * @return the proxy port
    */
   public static String getProxyPort() {
-    return proxyPort;
+    return Globals.settings.getProxyPort();
   }
 
   /**
-   * Set the proxy port
+   * Sets the proxy port.
    * 
-   * @param proxyPort
+   * @param myProxyPort
+   *          the new proxy port
    */
-  public static void setProxyPort(String proxyPort) {
-    WebBrowser.proxyPort = proxyPort;
+  public static void setProxyPort(String myProxyPort) {
   }
 
   /**
-   * Get the proxy username
+   * Gets the proxy username.
    * 
-   * @return
+   * @return the proxy username
    */
   public static String getProxyUsername() {
-    return proxyUsername;
+    return Globals.settings.getProxyUsername();
   }
 
   /**
-   * Set the proxy username
+   * Sets the proxy username.
    * 
-   * @param proxyUsername
+   * @param myProxyUsername
+   *          the new proxy username
    */
-  public static void setProxyUsername(String proxyUsername) {
-    WebBrowser.proxyUsername = proxyUsername;
+  public static void setProxyUsername(String myProxyUsername) {
   }
 
   /**
-   * Get the proxy password
+   * Gets the proxy password.
    * 
-   * @return
+   * @return the proxy password
    */
   public static String getProxyPassword() {
-    return proxyPassword;
+    return Globals.settings.getProxyPassword();
   }
 
   /**
-   * Set the proxy password. Note this will automatically encode the password
+   * Sets the proxy password.
    * 
-   * @param proxyPassword
+   * @param myProxyPassword
+   *          the new proxy password
    */
-  public static void setProxyPassword(String proxyPassword) {
-    WebBrowser.proxyPassword = proxyPassword;
-
-    if (proxyUsername != null) {
-      proxyEncodedPassword = proxyUsername + ":" + proxyPassword;
-      proxyEncodedPassword = "Basic " + new String(Base64.encodeBase64((proxyUsername + ":" + proxyPassword).getBytes()));
-    }
+  public static void setProxyPassword(String myProxyPassword) {
   }
 
   /**
-   * Get the current web connect timeout value
+   * Gets the web timeout connect.
    * 
-   * @return
+   * @return the web timeout connect
    */
   public static int getWebTimeoutConnect() {
-    return webTimeoutConnect;
+    return 0;
   }
 
   /**
-   * Get the current web read timeout value
+   * Gets the web timeout read.
    * 
-   * @return
+   * @return the web timeout read
    */
   public static int getWebTimeoutRead() {
-    return webTimeoutRead;
+    return 0;
   }
 
   /**
-   * Set the web connect timeout value
+   * Sets the web timeout connect.
    * 
    * @param webTimeoutConnect
+   *          the new web timeout connect
    */
   public static void setWebTimeoutConnect(int webTimeoutConnect) {
-    WebBrowser.webTimeoutConnect = webTimeoutConnect;
   }
 
   /**
-   * Set the web read timeout value
+   * Sets the web timeout read.
    * 
    * @param webTimeoutRead
+   *          the new web timeout read
    */
   public static void setWebTimeoutRead(int webTimeoutRead) {
-    WebBrowser.webTimeoutRead = webTimeoutRead;
   }
 }
