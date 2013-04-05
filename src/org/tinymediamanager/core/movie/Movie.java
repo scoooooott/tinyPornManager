@@ -197,6 +197,9 @@ public class Movie extends MediaEntity {
   /** The spoken languages. */
   private String              spokenLanguages      = "";
 
+  /** Subtitles of movie (either from local or from mediafiles) */
+  private boolean             subtitles            = false;
+
   /**
    * Instantiates a new movie. Needed for JAXB
    */
@@ -654,7 +657,50 @@ public class Movie extends MediaEntity {
       mt.setUrl(file.toURI().toString());
       addTrailer(mt);
     }
+  }
 
+  /**
+   * Find local subtitles.
+   */
+  public void addLocalSubtitles() {
+    LOGGER.debug("try to find local/downloaded subtitles");
+
+    FilenameFilter filter = new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        for (String type : Globals.settings.getSubtitleFileType()) {
+          if (name.toLowerCase().endsWith(type)) {
+            return true;
+          }
+        }
+        return false;
+      }
+    };
+
+    File[] subtitles = new File(path).listFiles(filter);
+    for (File sub : subtitles) {
+      this.subtitles = true;
+      addToFiles(sub.getPath(), sub.getName(), MediaFileType.SUBTITLE);
+    }
+  }
+
+  /** has movie local (or any mediafile inline) subtitles? */
+  public boolean hasSubtitles() {
+    if (this.subtitles) {
+      return true; // local ones found
+    }
+
+    for (MediaFile mf : getMediaFiles()) {
+      if (mf.hasSubtitles()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /** set subtitles */
+  public void setSubtitles(boolean sub) {
+    this.subtitles = sub;
   }
 
   /**
@@ -1021,6 +1067,7 @@ public class Movie extends MediaEntity {
         movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
         movie.findImages();
         movie.addLocalTrailers();
+        movie.addLocalSubtitles();
         break;
       }
 

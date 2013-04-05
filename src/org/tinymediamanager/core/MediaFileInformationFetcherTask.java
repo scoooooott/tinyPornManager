@@ -48,6 +48,9 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     try {
       for (MediaFile mediaFile : m.getMediaFiles()) {
         mediaFile.gatherMediaInformation();
+        if (mediaFile.hasSubtitles()) {
+          m.setSubtitles(true);
+        }
       }
     }
     catch (Exception e) {

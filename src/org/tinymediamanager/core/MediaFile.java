@@ -17,6 +17,7 @@ package org.tinymediamanager.core;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.persistence.Embeddable;
@@ -100,6 +101,9 @@ public class MediaFile extends AbstractModelObject {
 
   /** the MediaFile type. */
   private MediaFileType       type             = MediaFileType.UNKNOWN;
+
+  /** inline subtitles of mediafile */
+  private ArrayList<String>   subtitles        = new ArrayList<String>();
 
   /** the mediainfo object. */
   @Transient
@@ -256,6 +260,16 @@ public class MediaFile extends AbstractModelObject {
   /** gets the stacking information */
   public void setStacking(int stacking) {
     this.stacking = stacking;
+  }
+
+  /** get parsed subtitles */
+  public ArrayList<String> getSubtitles() {
+    return subtitles;
+  }
+
+  /** dies his mediafile has subtitles */
+  public boolean hasSubtitles() {
+    return (subtitles != null && subtitles.size() > 0);
   }
 
   /**
@@ -652,6 +666,12 @@ public class MediaFile extends AbstractModelObject {
     // mediainfo already gathered
     if (!force && !getContainerFormat().isEmpty()) {
       return;
+    }
+
+    // parse inline subtitles
+    int cnt = getMediaInfo().streamCount(StreamKind.Text);
+    for (int i = 0; i < cnt; i++) {
+      subtitles.add(getMediaInfo(StreamKind.Text, i, "Language", "", ""));
     }
 
     LOGGER.debug("start MediaInfo for " + this.filename);

@@ -215,6 +215,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
             movie.findImages();
             movie.addLocalTrailers();
+            movie.addLocalSubtitles();
           }
           // persist movie
           if (movie != null) {
@@ -303,6 +304,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
             movie.findImages();
             movie.addLocalTrailers();
+            movie.addLocalSubtitles();
           }
           // persist movie
           if (movie != null) {
