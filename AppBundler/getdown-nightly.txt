@@ -46,11 +46,14 @@ code = lib/resources.jar
 code = lib/Scaling-bin.jar
 code = lib/themoviedbapi.jar
 code = lib/thetvdbapi.jar
-code = lib/vlcj.jar
+# code = lib/vlcj.jar
 
 # strings added to classpath
 plugin = lib/swt.jar
 plugin = locale/*
+
+# files to be deleted
+delete = lib/vlcj.jar
 
 resource = getdown.jar
 #resource = [windows] tinyMediaManager.exe #not yet - need more testing
