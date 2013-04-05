@@ -15,43 +15,45 @@
  */
 package org.tinymediamanager.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
+import org.tinymediamanager.core.movie.Movie;
 
 /**
  * The Class MediaFileInformationFetcherTask.
  * 
  * @author Manuel Laggner
  */
-public class MediaFileInformationFetcherTask implements Runnable {
+public class MediaFileInformationFetcherTask implements Callable<Object> {
 
   /** The Constant LOGGER. */
   private final static Logger LOGGER = Logger.getLogger(MediaFileInformationFetcherTask.class);
 
   /** The movie. */
-  private List<MediaFile>     mediaFiles;
+  private Movie               m;
 
-  public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles) {
-    this.mediaFiles = new ArrayList<MediaFile>(mediaFiles);
+  public MediaFileInformationFetcherTask(Movie movie) {
+    this.m = movie;
   }
 
   /*
    * (non-Javadoc)
    * 
-   * @see java.lang.Runnable#run()
+   * @see java.lang.Callable#call()
    */
   @Override
-  public void run() {
+  public String call() {
     // try/catch block in the root of the thread to log crashes
     try {
-      for (MediaFile mediaFile : mediaFiles) {
+      for (MediaFile mediaFile : m.getMediaFiles()) {
         mediaFile.gatherMediaInformation();
       }
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed: ", e);
     }
+    m.saveToDb();
+    return "getting MediaInfo from " + m.getTitle();
   }
 }

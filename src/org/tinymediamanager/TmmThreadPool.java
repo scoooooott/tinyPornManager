@@ -53,6 +53,9 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
    *          a name for the logging
    */
   public void initThreadPool(int threads, String name) {
+    this.taskcount = 0;
+    this.taskdone = 0;
+    this.cancel = false;
     this.poolname = name;
     pool = new ThreadPoolExecutor(threads, threads, // max threads
         2, TimeUnit.SECONDS, // time to wait before closing idle workers
@@ -70,8 +73,10 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
    *          the callable
    */
   public void submitTask(Callable<Object> task) {
-    taskcount++;
-    service.submit(task);
+    if (!cancel) {
+      taskcount++;
+      service.submit(task);
+    }
   }
 
   /**
@@ -81,8 +86,10 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
    *          the runnable
    */
   public void submitTask(Runnable task) {
-    taskcount++;
-    service.submit(task, null);
+    if (!cancel) {
+      taskcount++;
+      service.submit(task, null);
+    }
   }
 
   public void waitForCompletionOrCancel() {
@@ -102,6 +109,7 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
     }
     if (cancel) {
       try {
+        LOGGER.info("Abort queue (discarding " + (getTaskcount() - getTaskdone()) + " tasks)");
         pool.getQueue().clear();
         pool.awaitTermination(3, TimeUnit.SECONDS);
         pool.shutdownNow();

@@ -562,21 +562,20 @@ public class MovieRenamer {
     }
 
     if (movie.getMediaFiles(MediaFileType.MAIN_MOVIE).size() > 0) {
+      MediaFile mf = movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0);
       // replace token resolution ($R)
       if (newDestination.contains("$R")) {
-        newDestination = newDestination.replaceAll("\\$R", movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getVideoResolution());
+        newDestination = newDestination.replaceAll("\\$R", mf.getVideoResolution());
       }
 
       // replace token audio codec + channels ($A)
       if (newDestination.contains("$A")) {
-        newDestination = newDestination.replaceAll("\\$A", movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getAudioCodec() + "-"
-            + movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getAudioChannels());
+        newDestination = newDestination.replaceAll("\\$A", mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels());
       }
 
       // replace token video codec + channels ($V)
       if (newDestination.contains("$V")) {
-        newDestination = newDestination.replaceAll("\\$V", movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getVideoCodec() + "-"
-            + movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getVideoFormat());
+        newDestination = newDestination.replaceAll("\\$V", mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat());
       }
     }
     else {

@@ -476,9 +476,6 @@ public class MoviePanel extends JPanel {
       if (!MainWindow.executeMainTask(task)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }
-      else {
-        // update has been executed, now schedule mediainfo
-      }
     }
   }
 
@@ -1020,8 +1017,8 @@ public class MoviePanel extends JPanel {
         for (Movie movie : selectedMovies) {
           for (MediaFile file : movie.getMediaFiles()) {
             file.gatherMediaInformation(true);
-            file.saveToDb();
           }
+          movie.saveToDb();
         }
       }
     }

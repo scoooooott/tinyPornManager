@@ -25,9 +25,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
+import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
@@ -84,11 +86,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       waitForCompletionOrCancel();
 
-      // if cancelled discard all (queued) tasks; started tasks will finish
-      if (cancel) {
-        LOGGER.info("Abort queue (discarding " + (getTaskcount() - getTaskdone()) + " tasks)");
-      }
-
       LOGGER.info("removing orphaned movies...");
       startProgressBar("cleanup...");
       for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
@@ -99,30 +96,25 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
       LOGGER.info("Done updating datasource :)");
+
+      LOGGER.info("get MediaInfo...");
+      // update MediaInfo
+      startProgressBar("getting Mediainfo...");
+      initThreadPool(1, "mediainfo");
+      for (Movie m : movieList.getMovies()) {
+        submitTask(new MediaFileInformationFetcherTask(m));
+      }
+      waitForCompletionOrCancel();
+      if (cancel) {
+        cancel(false);// swing cancel
+      }
+      LOGGER.info("Done getting MediaInfo)");
+
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
     }
     return null;
-  }
-
-  /**
-   * find movies in path.
-   * 
-   * @param path
-   *          the path
-   */
-  private long findMoviesInPath(String path) {
-    LOGGER.debug("find movies in datasource path: " + path);
-    File filePath = new File(path);
-    long i = 0;
-    for (File subdir : filePath.listFiles()) {
-      if (subdir.isDirectory()) {
-        i++;
-        // Scheduler.submitIOTask(new FindMovieTask(subdir, path));
-      }
-    }
-    return i;
   }
 
   /**
@@ -377,7 +369,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    *          the description
    */
   private void startProgressBar(String description, int max, int progress) {
-    lblProgressAction.setText(description);
+    if (!StringUtils.isEmpty(description)) {
+      lblProgressAction.setText(description);
+    }
     progressBar.setVisible(true);
     progressBar.setIndeterminate(false);
     progressBar.setMaximum(max);
@@ -392,7 +386,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    *          the description
    */
   private void startProgressBar(String description) {
-    lblProgressAction.setText(description);
+    if (!StringUtils.isEmpty(description)) {
+      lblProgressAction.setText(description);
+    }
     progressBar.setVisible(true);
     progressBar.setIndeterminate(true);
     btnCancelTask.setVisible(true);
@@ -416,7 +412,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   @Override
   public void cancel() {
     cancel = true;
-    cancel(false);
+    // cancel(false);
   }
 
   @Override

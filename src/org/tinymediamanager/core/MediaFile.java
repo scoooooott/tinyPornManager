@@ -654,6 +654,8 @@ public class MediaFile extends AbstractModelObject {
       return;
     }
 
+    LOGGER.debug("start MediaInfo for " + this.filename);
+
     // video codec
     // e.g. XviD, x264, DivX 5, MPEG-4 Visual, AVC, etc.
     String videoCodec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
