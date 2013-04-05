@@ -689,7 +689,7 @@ public class Movie extends MediaEntity {
       return true; // local ones found
     }
 
-    for (MediaFile mf : getMediaFiles()) {
+    for (MediaFile mf : getMediaFiles(MediaFileType.MAIN_MOVIE)) {
       if (mf.hasSubtitles()) {
         return true;
       }
