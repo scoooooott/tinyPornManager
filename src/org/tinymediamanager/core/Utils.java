@@ -157,11 +157,45 @@ public class Utils {
    *          the filename
    * @return the stacking information
    */
-  public static String getStackingMarkers(String filename) {
+  public static String getStackingMarker(String filename) {
     if (!StringUtils.isEmpty(filename)) {
       return StrgUtils.substr(filename, "(?i)\\|?((cd|dvd|part|dis[ck])([0-9]))");
     }
     return "";
+  }
+
+  /**
+   * Returns the stacking prefix
+   * 
+   * @param filename
+   *          the filename
+   * @return the stacking information
+   */
+  public static String getStackingPrefix(String filename) {
+    return getStackingMarker(filename).replaceAll("[0-9]", "");
+  }
+
+  /**
+   * Returns the stacking information from filename
+   * 
+   * @param filename
+   *          the filename
+   * @return the stacking information
+   */
+  public static int getStackingNumber(String filename) {
+    if (!StringUtils.isEmpty(filename)) {
+      String stack = getStackingMarker(filename);
+      if (!stack.isEmpty()) {
+        try {
+          int s = Integer.parseInt(stack.replaceAll("[^0-9]", "")); // remove all non numbers
+          return s;
+        }
+        catch (Exception e) {
+          return 0;
+        }
+      }
+    }
+    return 0;
   }
 
   /**

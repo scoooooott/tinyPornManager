@@ -186,11 +186,13 @@ public class MovieRenamer {
     // build language lists
     String[] lang2 = Locale.getISOLanguages();
     List<String> langArray = new ArrayList<String>();
+    Locale intl = new Locale("en");
     for (String l : lang2) {
       Locale locale = new Locale(l);
-      langArray.add(locale.getDisplayName());
-      langArray.add(locale.getISO3Language());
-      langArray.add(l);
+      langArray.add(locale.getDisplayName(intl)); // english names
+      langArray.add(locale.getDisplayName()); // local names
+      langArray.add(locale.getISO3Language()); // 3 char
+      langArray.add(l); // 2 char
     }
 
     // filter known subtitles
@@ -212,28 +214,46 @@ public class MovieRenamer {
 
     for (File s : sub) {
       String basename = FilenameUtils.getBaseName(s.getName()); // file w/o ext
-      String stack = Utils.getStackingMarkers(basename);
+      String extension = FilenameUtils.getExtension(s.getName()); // file w/o ext
+      int stack = Utils.getStackingNumber(basename); // to match with MediaFile
       String lang = "";
       for (String l : langArray) {
-        if (basename.endsWith(l)) {
+        if (basename.toLowerCase().endsWith("." + l.toLowerCase())) { // make dot mandatory
           lang = l;
           break;
         }
       }
 
-    }
+      String newSubName = "";
 
-    // loop over each media file (for correct stacking information of subtitles)
-    for (MediaFile mf : m.getMediaFiles(MediaFileType.SUBTITLE)) {
-      String stacking = Utils.getStackingMarkers(mf.getFilename());
-      if (stacking.isEmpty()) {
-        // great, only one file
-
-        break; // step out
+      if (stack == 0) {
+        // fine, so match to first movie file
+        MediaFile mf = m.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0);
+        newSubName = FilenameUtils.getBaseName(mf.getFilename());
+        if (!lang.isEmpty()) {
+          newSubName += "." + lang;
+        }
       }
       else {
-        // multiple files, and therefor multiple subtitle files
+        // with stacking info; try to match
+        for (MediaFile mf : m.getMediaFiles(MediaFileType.MAIN_MOVIE)) {
+          if (mf.getStacking() == stack) {
+            newSubName = FilenameUtils.getBaseName(mf.getFilename());
+            if (!lang.isEmpty()) {
+              newSubName += "." + lang;
+            }
+          }
+        }
       }
+
+      newSubName += "." + extension;
+      try {
+        moveFile(s.getAbsolutePath(), m.getPath() + File.separator + newSubName);
+      }
+      catch (Exception e) {
+        LOGGER.error("error moving subtitles", e);
+      }
+
     }
   }
 
@@ -304,14 +324,13 @@ public class MovieRenamer {
 
           // get the filetype
           String fileExtension = FilenameUtils.getExtension(file.getFilename());
-          String fileWithoutExtension = FilenameUtils.getBaseName(file.getFilename());
           String oldFilename = movie.getPath() + File.separator + file.getFilename();
 
           // is there any stacking information in the filename?
-          String cleanFilename = Utils.cleanStackingMarkers(fileWithoutExtension);
-          if (!fileWithoutExtension.equals(cleanFilename)) {
-            String stackingInformation = fileWithoutExtension.replace(cleanFilename, "");
-            newFilename = newFilename + " " + stackingInformation;
+          // file.getStacking() != 0
+          String stacking = Utils.getStackingMarker(file.getFilename());
+          if (!stacking.isEmpty()) {
+            newFilename = newFilename + " " + stacking;
           }
 
           // movie file
@@ -429,7 +448,7 @@ public class MovieRenamer {
     }
 
     // rename subtitle files
-    // renameSubtitles(movie);
+    renameSubtitles(movie);
 
     movie.saveToDb();
   }

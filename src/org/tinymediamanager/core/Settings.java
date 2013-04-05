@@ -451,6 +451,7 @@ public class Settings extends AbstractModelObject {
     addSubtitleFileTypes(".pjs");
     addSubtitleFileTypes(".psb");
     addSubtitleFileTypes(".rt");
+    addSubtitleFileTypes(".srt");
     addSubtitleFileTypes(".smi");
     addSubtitleFileTypes(".ssf");
     addSubtitleFileTypes(".ssa");

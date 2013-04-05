@@ -572,6 +572,7 @@ public class Movie extends MediaEntity {
    */
   public void addToFiles(String path, String newFile, MediaFileType type) {
     MediaFile mediaFile = new MediaFile(path, newFile, type);
+    mediaFile.setStacking(Utils.getStackingNumber(newFile));
     // mediaFile.gatherMediaInformation(); // will be executed afterwards
     addToMediaFiles(mediaFile);
   }
