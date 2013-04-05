@@ -431,7 +431,7 @@ public class MovieRenamer {
 
     // rename local trailers
     if (movie.getHasTrailer()) {
-      String newTName = FilenameUtils.getBaseName(movie.getMediaFiles().get(0).getFilename()) + "-trailer.";
+      String newTName = FilenameUtils.getBaseName(movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename()) + "-trailer.";
       for (MediaTrailer mt : movie.getTrailers()) {
         if (mt.getProvider().equals("downloaded")) {
           String ext = FilenameUtils.getExtension(mt.getName());
