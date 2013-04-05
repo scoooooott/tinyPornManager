@@ -43,6 +43,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
@@ -349,7 +350,7 @@ public class MovieToXbmcNfoConnector {
     xbmc.setSorttitle(movie.getSortTitle());
 
     // fileinfo
-    for (MediaFile mediaFile : movie.getMediaFiles()) {
+    for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.MAIN_MOVIE)) {
       if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
         break;
       }

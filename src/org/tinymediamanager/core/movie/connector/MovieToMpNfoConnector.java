@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieCast;
 import org.tinymediamanager.core.movie.MovieList;
@@ -190,8 +191,8 @@ public class MovieToMpNfoConnector {
     }
 
     // filename and path
-    if (movie.getMediaFiles().size() > 0) {
-      mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles().get(0).getFilename());
+    if (movie.getMediaFiles(MediaFileType.MAIN_MOVIE).size() > 0) {
+      mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename());
     }
 
     mp.setDirector(movie.getDirector());

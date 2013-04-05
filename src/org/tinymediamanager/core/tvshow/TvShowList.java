@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.TV_SHOWS;
+import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.EpisodeMatching.EpisodeMatchingResult;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -333,7 +335,7 @@ public class TvShowList extends AbstractModelObject {
               episode.setEpisode(ep);
               episode.setSeason(result.season);
               episode.setTvShow(tvShow);
-              episode.addToMediaFiles(new MediaFile(file.getPath(), file.getName()));
+              episode.addToMediaFiles(new MediaFile(file.getPath(), file.getName(), MediaFileType.TV_SHOW));
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }

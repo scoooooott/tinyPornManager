@@ -72,6 +72,7 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieCast.CastType;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
@@ -385,6 +386,21 @@ public class Movie extends MediaEntity {
   }
 
   /**
+   * Gets the media files of a specific MediaFile type
+   * 
+   * @return the media files
+   */
+  public List<MediaFile> getMediaFiles(MediaFileType type) {
+    List<MediaFile> mf = new ArrayList<MediaFile>();
+    for (MediaFile mediaFile : this.mediaFilesObservable) {
+      if (mediaFile.getType().equals(type)) {
+        mf.add(mediaFile);
+      }
+    }
+    return mf;
+  }
+
+  /**
    * Removes the from media files.
    * 
    * @param obj
@@ -435,7 +451,7 @@ public class Movie extends MediaEntity {
   public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
     try {
       // get trailer filename from first mediafile
-      String tfile = FilenameUtils.getBaseName(this.getMediaFiles().get(0).getFilename()) + "-trailer.";
+      String tfile = FilenameUtils.getBaseName(this.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename()) + "-trailer.";
       String ext = UrlUtil.getFileExtension(trailerToDownload.getUrl());
       if (ext.isEmpty()) {
         ext = "unknown";
@@ -554,8 +570,8 @@ public class Movie extends MediaEntity {
    * @param newFile
    *          the new file
    */
-  public void addToFiles(String path, String newFile) {
-    MediaFile mediaFile = new MediaFile(path, newFile);
+  public void addToFiles(String path, String newFile, MediaFileType type) {
+    MediaFile mediaFile = new MediaFile(path, newFile, type);
     // mediaFile.gatherMediaInformation(); // will be executed afterwards
     addToMediaFiles(mediaFile);
   }
@@ -566,12 +582,12 @@ public class Movie extends MediaEntity {
    * @param videoFiles
    *          the video files
    */
-  public void addToFiles(File[] videoFiles) {
+  public void addToFiles(File[] videoFiles, MediaFileType type) {
     for (File file : videoFiles) {
       // check if that file exists for that movie
       if (!hasFile(file.getName())) {
         // create new movie file
-        addToFiles(file.getParent(), file.getName());
+        addToFiles(file.getParent(), file.getName(), type);
       }
     }
   }
@@ -1001,7 +1017,7 @@ public class Movie extends MediaEntity {
 
       if (movie != null) {
         movie.setPath(path);
-        movie.addToFiles(videoFiles);
+        movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
         movie.findImages();
         movie.addLocalTrailers();
         break;
@@ -1595,7 +1611,7 @@ public class Movie extends MediaEntity {
    */
   public String getPosterFilename(MoviePosterNaming poster) {
     String filename = path + File.separator;
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename());
 
     switch (poster) {
       case MOVIENAME_POSTER_PNG:
@@ -1668,7 +1684,7 @@ public class Movie extends MediaEntity {
    */
   public String getFanartFilename(MovieFanartNaming fanart) {
     String filename = path + File.separator;
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename());
 
     switch (fanart) {
       case FANART_PNG:
@@ -1714,7 +1730,7 @@ public class Movie extends MediaEntity {
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
     String filename = path + File.separator;
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles().get(0).getFilename());
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename());
 
     switch (nfo) {
       case FILENAME_NFO:

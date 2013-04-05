@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.MediaTrailer;
 
@@ -223,7 +224,7 @@ public class MovieRenamer {
     }
 
     // loop over each media file (for correct stacking information of subtitles)
-    for (MediaFile mf : m.getMediaFiles()) {
+    for (MediaFile mf : m.getMediaFiles(MediaFileType.SUBTITLE)) {
       String stacking = Utils.getStackingMarkers(mf.getFilename());
       if (stacking.isEmpty()) {
         // great, only one file
@@ -298,7 +299,7 @@ public class MovieRenamer {
       if (!movie.isDisc()) {
 
         // move movie files first
-        for (MediaFile file : movie.getMediaFiles()) {
+        for (MediaFile file : movie.getMediaFiles(MediaFileType.MAIN_MOVIE)) {
           String newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
 
           // get the filetype
@@ -541,22 +542,22 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll("\\$E", movie.getSortTitle());
     }
 
-    if (movie.getMediaFiles().size() > 0) {
+    if (movie.getMediaFiles(MediaFileType.MAIN_MOVIE).size() > 0) {
       // replace token resolution ($R)
       if (newDestination.contains("$R")) {
-        newDestination = newDestination.replaceAll("\\$R", movie.getMediaFiles().get(0).getVideoResolution());
+        newDestination = newDestination.replaceAll("\\$R", movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getVideoResolution());
       }
 
       // replace token audio codec + channels ($A)
       if (newDestination.contains("$A")) {
-        newDestination = newDestination.replaceAll("\\$A", movie.getMediaFiles().get(0).getAudioCodec() + "-"
-            + movie.getMediaFiles().get(0).getAudioChannels());
+        newDestination = newDestination.replaceAll("\\$A", movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getAudioCodec() + "-"
+            + movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getAudioChannels());
       }
 
       // replace token video codec + channels ($V)
       if (newDestination.contains("$V")) {
-        newDestination = newDestination.replaceAll("\\$V", movie.getMediaFiles().get(0).getVideoCodec() + "-"
-            + movie.getMediaFiles().get(0).getVideoFormat());
+        newDestination = newDestination.replaceAll("\\$V", movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getVideoCodec() + "-"
+            + movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getVideoFormat());
       }
     }
     else {

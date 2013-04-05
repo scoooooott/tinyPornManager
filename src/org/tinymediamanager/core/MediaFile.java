@@ -95,6 +95,12 @@ public class MediaFile extends AbstractModelObject {
   /** duration, runtime in sec. */
   private int                 duration         = 0;
 
+  /** stacking information */
+  private int                 stacking         = 0;
+
+  /** the MediaFile type. */
+  private MediaFileType       type             = MediaFileType.UNKNOWN;
+
   /** the mediainfo object. */
   @Transient
   private MediaInfo           mediaInfo;
@@ -115,9 +121,10 @@ public class MediaFile extends AbstractModelObject {
    * @param filename
    *          the filename
    */
-  public MediaFile(String path, String filename) {
+  public MediaFile(String path, String filename, MediaFileType type) {
     this.path = path;
     this.filename = filename;
+    this.type = type;
 
     File file = new File(this.path, this.filename);
     if (file.exists()) {
@@ -131,9 +138,10 @@ public class MediaFile extends AbstractModelObject {
    * @param pathAndFilename
    *          the path and filename
    */
-  public MediaFile(String pathAndFilename) {
+  public MediaFile(String pathAndFilename, MediaFileType type) {
     this.path = FilenameUtils.getPath(pathAndFilename);
     this.filename = FilenameUtils.getName(pathAndFilename);
+    this.type = type;
 
     File file = new File(this.path, this.filename);
     if (file.exists()) {
@@ -228,6 +236,26 @@ public class MediaFile extends AbstractModelObject {
   public String getFilesizeInMegabytes() {
     DecimalFormat df = new DecimalFormat("#0.00");
     return df.format(filesize / (1024.0 * 1024.0)) + " M";
+  }
+
+  /** gets the MediaFile type */
+  public MediaFileType getType() {
+    return type;
+  }
+
+  /** sets the MediaFile type */
+  public void setType(MediaFileType type) {
+    this.type = type;
+  }
+
+  /** gets the stacking information */
+  public int getStacking() {
+    return stacking;
+  }
+
+  /** gets the stacking information */
+  public void setStacking(int stacking) {
+    this.stacking = stacking;
   }
 
   /**

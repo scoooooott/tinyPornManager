@@ -28,6 +28,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.ParserUtils;
@@ -219,7 +220,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie = new Movie();
             movie.setTitle(ParserUtils.detectCleanMoviename(FilenameUtils.getBaseName(parentDir)));
             movie.setPath(parentDir);
-            movie.addToFiles(videoFiles);
+            movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
             movie.findImages();
             movie.addLocalTrailers();
           }
@@ -307,7 +308,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie = new Movie();
             movie.setTitle(ParserUtils.detectCleanMoviename(dir.getName()));
             movie.setPath(dir.getPath());
-            movie.addToFiles(videoFiles);
+            movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
             movie.findImages();
             movie.addLocalTrailers();
           }
