@@ -441,10 +441,25 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".xvid");
 
     // default subtitle files
-    addSubtitleFileTypes(".srt");
-    addSubtitleFileTypes(".idx");
+    addSubtitleFileTypes(".aqt");
+    addSubtitleFileTypes(".cvd");
+    addSubtitleFileTypes(".dks");
+    addSubtitleFileTypes(".jss");
     addSubtitleFileTypes(".sub");
+    addSubtitleFileTypes(".ttxt");
+    addSubtitleFileTypes(".mpl");
+    addSubtitleFileTypes(".pjs");
+    addSubtitleFileTypes(".psb");
+    addSubtitleFileTypes(".rt");
+    addSubtitleFileTypes(".smi");
+    addSubtitleFileTypes(".ssf");
     addSubtitleFileTypes(".ssa");
+    addSubtitleFileTypes(".svcd");
+    addSubtitleFileTypes(".usf");
+    addSubtitleFileTypes(".idx");
+    addSubtitleFileTypes(".ass");
+    addSubtitleFileTypes(".pgs");
+    addSubtitleFileTypes(".vobsub");
 
     // default title prefix
     titlePrefix.clear();

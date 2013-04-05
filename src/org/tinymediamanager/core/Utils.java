@@ -52,6 +52,7 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
@@ -147,6 +148,20 @@ public class Utils {
       return filename.replaceAll("(?i)\\|?((cd|dvd|part|dis[ck])([0-9]))", "");
     }
     return filename;
+  }
+
+  /**
+   * Returns the stacking information from filename
+   * 
+   * @param filename
+   *          the filename
+   * @return the stacking information
+   */
+  public static String getStackingMarkers(String filename) {
+    if (!StringUtils.isEmpty(filename)) {
+      return StrgUtils.substr(filename, "(?i)\\|?((cd|dvd|part|dis[ck])([0-9]))");
+    }
+    return "";
   }
 
   /**
@@ -313,8 +328,7 @@ public class Utils {
   }
 
   /**
-   * Starts a thread and does a "ping" on our tracking server, sending the event
-   * (and the random UUID + some env vars).
+   * Starts a thread and does a "ping" on our tracking server, sending the event (and the random UUID + some env vars).
    * 
    * @param event
    *          The event for the GET request

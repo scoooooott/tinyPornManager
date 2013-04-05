@@ -17,9 +17,11 @@ package org.tinymediamanager.core.movie;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
@@ -176,6 +178,61 @@ public class MovieRenamer {
     // delete what's left
     for (String old : oldFilenames) {
       FileUtils.deleteQuietly(new File(old));
+    }
+  }
+
+  private static void renameSubtitles(Movie m) {
+    // build language lists
+    String[] lang2 = Locale.getISOLanguages();
+    List<String> langArray = new ArrayList<String>();
+    for (String l : lang2) {
+      Locale locale = new Locale(l);
+      langArray.add(locale.getDisplayName());
+      langArray.add(locale.getISO3Language());
+      langArray.add(l);
+    }
+
+    // filter known subtitles
+    FilenameFilter filter = new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        for (String type : Globals.settings.getSubtitleFileType()) {
+          if (name.toLowerCase().endsWith(type)) {
+            return true;
+          }
+        }
+        return false;
+      }
+    };
+
+    File[] sub = new File(m.getPath()).listFiles(filter);
+    if (sub == null || sub.length == 0) {
+      return;
+    }
+
+    for (File s : sub) {
+      String basename = FilenameUtils.getBaseName(s.getName()); // file w/o ext
+      String stack = Utils.getStackingMarkers(basename);
+      String lang = "";
+      for (String l : langArray) {
+        if (basename.endsWith(l)) {
+          lang = l;
+          break;
+        }
+      }
+
+    }
+
+    // loop over each media file (for correct stacking information of subtitles)
+    for (MediaFile mf : m.getMediaFiles()) {
+      String stacking = Utils.getStackingMarkers(mf.getFilename());
+      if (stacking.isEmpty()) {
+        // great, only one file
+
+        break; // step out
+      }
+      else {
+        // multiple files, and therefor multiple subtitle files
+      }
     }
   }
 
@@ -366,11 +423,12 @@ public class MovieRenamer {
           catch (Exception e) {
             LOGGER.error("error renaming local trailer", e);
           }
-
         }
       }
-
     }
+
+    // rename subtitle files
+    // renameSubtitles(movie);
 
     movie.saveToDb();
   }
