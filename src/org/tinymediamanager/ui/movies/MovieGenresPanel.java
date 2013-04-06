@@ -86,6 +86,9 @@ public class MovieGenresPanel extends JPanel {
         JLabel lblImage = new JLabel(image);
         add(lblImage);
       }
+      catch (NullPointerException e) {
+        LOGGER.warn("genre image for genre " + genre.name() + " not available");
+      }
       catch (Exception e) {
         LOGGER.warn(e.getMessage());
       }

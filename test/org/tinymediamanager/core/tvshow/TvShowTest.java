@@ -33,6 +33,13 @@ public class TvShowTest {
 
   @Test
   public void testTvShows() {
+    try {
+      Thread.sleep(5000);
+    }
+    catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     File db = new File("tvshowtest.odb");
     if (db.exists()) {
       db.delete();
@@ -46,7 +53,7 @@ public class TvShowTest {
     // instance.findTvShowsInPath("D:\\_neu\\Test_Serien");
     for (TvShow show : instance.getTvShows()) {
       for (TvShowEpisode ep : show.getEpisodes()) {
-        System.out.println(show.getTitle() + " - Season " + ep.getSeason());
+        System.out.println(show.getTitle() + " - Season " + ep.getSeason() + " - Episode " + ep.getEpisode());
       }
     }
 

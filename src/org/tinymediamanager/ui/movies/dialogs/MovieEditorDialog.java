@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.Certification;
@@ -68,11 +68,12 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.AutocompleteComboBox;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.ImageChooserDialog;
+import org.tinymediamanager.ui.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.movies.dialogs.MovieImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -86,11 +87,11 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieEditorDialog extends JDialog {
 
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID     = -286251957529920347L;
+
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID     = 1L;
 
   /** The details1 panel. */
   private final JPanel                details1Panel        = new JPanel();
@@ -132,7 +133,7 @@ public class MovieEditorDialog extends JDialog {
   private ImageLabel                  lblFanart;
 
   /** The cast. */
-  private List<MovieCast>             cast                 = ObservableCollections.observableList(new ArrayList<MovieCast>());
+  private List<MovieActor>            cast                 = ObservableCollections.observableList(new ArrayList<MovieActor>());
 
   /** The genres. */
   private List<MediaGenres>           genres               = ObservableCollections.observableList(new ArrayList<MediaGenres>());
@@ -319,7 +320,7 @@ public class MovieEditorDialog extends JDialog {
       lblPoster.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.POSTER, lblPoster,
+          ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.POSTER, movieList.getArtworkProviders(), lblPoster,
               null, null);
           dialog.setVisible(true);
         }
@@ -480,7 +481,7 @@ public class MovieEditorDialog extends JDialog {
       lblFanart.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToEdit.getImdbId(), movieToEdit.getTmdbId(), ImageType.FANART, lblFanart,
+          ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.FANART, movieList.getArtworkProviders(), lblFanart,
               extrathumbs, extrafanarts);
           dialog.setVisible(true);
         }
@@ -702,10 +703,9 @@ public class MovieEditorDialog extends JDialog {
       spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
       spRating.setModel(new SpinnerNumberModel(movie.getRating(), 0.0, 10.0, 0.1));
 
-      for (MovieCast origCast : movie.getActors()) {
-        MovieCast actor = new MovieCast();
+      for (MovieActor origCast : movie.getActors()) {
+        MovieActor actor = new MovieActor();
         actor.setName(origCast.getName());
-        actor.setType(origCast.getType());
         actor.setCharacter(origCast.getCharacter());
         actor.setThumb(origCast.getThumb());
         cast.add(actor);
@@ -744,6 +744,16 @@ public class MovieEditorDialog extends JDialog {
     tableColumnAdjuster.setColumnDataIncluded(true);
     tableColumnAdjuster.setColumnHeaderIncluded(true);
     tableColumnAdjuster.adjustColumns();
+
+    // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
+    tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
+    tableActors.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
+
+    tableTrailer.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.quality")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.url")); //$NON-NLS-1$
 
     // implement listener to simulate button group
     tableTrailer.getModel().addTableModelListener(new TableModelListener() {
@@ -948,7 +958,7 @@ public class MovieEditorDialog extends JDialog {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      MovieCast actor = new MovieCast(BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
+      MovieActor actor = new MovieActor(BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
       cast.add(0, actor);
     }
   }
@@ -1125,13 +1135,13 @@ public class MovieEditorDialog extends JDialog {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    JTableBinding<MovieCast, List<MovieCast>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
+    JTableBinding<MovieActor, List<MovieActor>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
     //
-    BeanProperty<MovieCast, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
+    BeanProperty<MovieActor, String> movieCastBeanProperty = BeanProperty.create("name");
+    jTableBinding.addColumnBinding(movieCastBeanProperty);
     //
-    BeanProperty<MovieCast, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
+    BeanProperty<MovieActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
+    jTableBinding.addColumnBinding(movieCastBeanProperty_1);
     //
     jTableBinding.bind();
     //
@@ -1142,19 +1152,19 @@ public class MovieEditorDialog extends JDialog {
         tableTrailer);
     //
     BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnName(BUNDLE.getString("metatag.nfo")).setColumnClass(Boolean.class); //$NON-NLS-1$
+    jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
     //
     BeanProperty<MediaTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty_1).setColumnName(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
+    jTableBinding_1.addColumnBinding(trailerBeanProperty_1);
     //
     BeanProperty<MediaTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty_2).setColumnName(BUNDLE.getString("metatag.source")); //$NON-NLS-1$;
+    jTableBinding_1.addColumnBinding(trailerBeanProperty_2);
     //
     BeanProperty<MediaTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty_3).setColumnName(BUNDLE.getString("metatag.quality")); //$NON-NLS-1$
+    jTableBinding_1.addColumnBinding(trailerBeanProperty_3);
     //
     BeanProperty<MediaTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty_4).setColumnName(BUNDLE.getString("metatag.url")); //$NON-NLS-1$
+    jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
     //
     jTableBinding_1.bind();
     //

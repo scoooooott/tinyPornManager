@@ -770,12 +770,17 @@ public class MoviePanel extends JPanel {
       // movies.add(movie);
       // }
 
-      List<Movie> movies = movieSelectionModel.getSelectedMovies();
+      List<Movie> selectedMovies = new ArrayList<Movie>();
+      // save all selected movies in an extra list (maybe scraping of one movie
+      // changes the whole list)
+      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
+        selectedMovies.add(movie);
+      }
 
       // remove selected movies
-      if (movies.size() > 0) {
-        for (int i = 0; i < movies.size(); i++) {
-          movieList.removeMovie(movies.get(i));
+      if (selectedMovies.size() > 0) {
+        for (int i = 0; i < selectedMovies.size(); i++) {
+          movieList.removeMovie(selectedMovies.get(i));
         }
       }
     }

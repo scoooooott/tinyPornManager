@@ -67,6 +67,8 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.ImageChooserDialog;
+import org.tinymediamanager.ui.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -393,37 +395,43 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
 
           // get images?
           if (scraperMetadataConfig.isArtwork()) {
-            // TODO implement manual image choosing
-            // // let the user choose the images
-            // if (!Globals.settings.isScrapeBestImage()) {
-            // // poster
-            // {
-            // ImageLabel lblImage = new ImageLabel();
-            // MovieImageChooserDialog dialog = new MovieImageChooserDialog(tvShowToScrape.getImdbId(), tvShowToScrape.getTmdbId(),
-            // ImageType.POSTER, lblImage, null, null);
-            // dialog.setVisible(true);
-            // tvShowToScrape.setPosterUrl(lblImage.getImageUrl());
-            // tvShowToScrape.writeImages(true, false);
-            // }
-            //
-            // // fanart
-            // {
-            // ImageLabel lblImage = new ImageLabel();
-            // List<String> extrathumbs = new ArrayList<String>();
-            // List<String> extrafanarts = new ArrayList<String>();
-            // MovieImageChooserDialog dialog = new MovieImageChooserDialog(tvShowToScrape.getImdbId(), tvShowToScrape.getTmdbId(),
-            // ImageType.FANART, lblImage, extrathumbs, extrafanarts);
-            // dialog.setVisible(true);
-            // tvShowToScrape.setFanartUrl(lblImage.getImageUrl());
-            // tvShowToScrape.writeImages(false, true);
-            //
-            // }
-            // }
-            // else {
-            // get artwork directly from provider
-            List<MediaArtwork> artwork = model.getArtwork();
-            tvShowToScrape.setArtwork(artwork);
-            // }
+            // let the user choose the images
+            if (!Globals.settings.getMovieSettings().isScrapeBestImage()) {
+              // poster
+              {
+                ImageLabel lblImage = new ImageLabel();
+                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.POSTER, artworkProviders, lblImage, null, null);
+                dialog.setVisible(true);
+                tvShowToScrape.setPosterUrl(lblImage.getImageUrl());
+                tvShowToScrape.writePosterImage();
+              }
+
+              // fanart
+              {
+                ImageLabel lblImage = new ImageLabel();
+                List<String> extrathumbs = new ArrayList<String>();
+                List<String> extrafanarts = new ArrayList<String>();
+                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.FANART, artworkProviders, lblImage,
+                    extrathumbs, extrafanarts);
+                dialog.setVisible(true);
+                tvShowToScrape.setFanartUrl(lblImage.getImageUrl());
+                tvShowToScrape.writeFanartImage();
+              }
+
+              // banner
+              {
+                ImageLabel lblImage = new ImageLabel();
+                ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.BANNER, artworkProviders, lblImage, null, null);
+                dialog.setVisible(true);
+                tvShowToScrape.setFanartUrl(lblImage.getImageUrl());
+                tvShowToScrape.writeFanartImage();
+              }
+            }
+            else {
+              // get artwork directly from provider
+              List<MediaArtwork> artwork = model.getArtwork();
+              tvShowToScrape.setArtwork(artwork);
+            }
           }
 
           // TODO do we need trailers?

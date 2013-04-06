@@ -25,67 +25,54 @@ import org.tinymediamanager.core.AbstractModelObject;
 
 /**
  * The Class MovieCast.
+ * 
+ * @author Manuel Laggner
  */
 @Embeddable
-public class MovieCast extends AbstractModelObject {
+public class MovieActor extends AbstractModelObject {
 
+  /** The Constant ACTOR_DIR. */
   public static final String ACTOR_DIR = ".actors";
 
-  /**
-   * The Enum CastType.
-   */
-  public enum CastType {
-
-    /** The actor. */
-    ACTOR
-  }
-
   /** The name. */
-  private String   name      = "";
+  private String             name      = "";
 
   /** The character. */
-  private String   character = "";
+  private String             character = "";
 
   /** The thumbnail. */
-  private String   thumb     = "";
+  private String             thumb     = "";
 
   /** The thumb path. */
-  private String   thumbPath = "";
-
-  /** The type. */
-  private CastType type;
+  private String             thumbPath = "";
 
   /**
-   * Instantiates a new movie cast.
+   * Instantiates a new movie actor.
    */
-  public MovieCast() {
+  public MovieActor() {
   }
 
   /**
-   * Instantiates a new movie cast.
+   * Instantiates a new movie actor.
    * 
    * @param name
    *          the name
-   * @param castType
-   *          the cast type
    */
-  public MovieCast(String name, CastType castType) {
+  public MovieActor(String name) {
     this.name = name;
-    this.type = castType;
   }
 
   /**
-   * Instantiates a new movie cast.
+   * Instantiates a new movie actor.
    * 
    * @param name
    *          the name
    * @param character
    *          the character
    */
-  public MovieCast(String name, String character) {
+  public MovieActor(String name, String character) {
     this.name = name;
     this.character = character;
-    this.type = CastType.ACTOR;
   }
 
   /**
@@ -107,27 +94,6 @@ public class MovieCast extends AbstractModelObject {
    */
   public String getName() {
     return name;
-  }
-
-  /**
-   * Sets the type.
-   * 
-   * @param newValue
-   *          the new type
-   */
-  public void setType(CastType newValue) {
-    CastType oldValue = type;
-    type = newValue;
-    firePropertyChange("type", oldValue, newValue);
-  }
-
-  /**
-   * Gets the type.
-   * 
-   * @return the type
-   */
-  public CastType getType() {
-    return type;
   }
 
   /**
@@ -195,8 +161,7 @@ public class MovieCast extends AbstractModelObject {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
@@ -213,15 +178,14 @@ public class MovieCast extends AbstractModelObject {
    * @see java.lang.Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    if (!(obj instanceof MovieCast)) {
+    if (!(obj instanceof MovieActor)) {
       return false;
     }
 
-    MovieCast cast = (MovieCast) obj;
+    MovieActor cast = (MovieActor) obj;
 
     // checks of equality
-    if (StringUtils.equals(name, cast.name) && StringUtils.equals(character, cast.character) && StringUtils.equals(thumb, cast.thumb)
-        && type == cast.type) {
+    if (StringUtils.equals(name, cast.name) && StringUtils.equals(character, cast.character) && StringUtils.equals(thumb, cast.thumb)) {
       return true;
     }
 

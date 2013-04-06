@@ -83,8 +83,7 @@ public class MovieList extends AbstractModelObject {
    * Instantiates a new movie list.
    */
   private MovieList() {
-    // the tag listener: its used to always have a full list of all tags used in
-    // tmm
+    // the tag listener: its used to always have a full list of all tags used in tmm
     tagListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {

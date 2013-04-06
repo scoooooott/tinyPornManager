@@ -77,6 +77,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       startProgressBar("prepare scan...");
       for (String path : dataSources) {
         File filePath = new File(path);
+
+        // check whether the path is accessible (eg disconnected shares)
+        if (filePath.listFiles() == null) {
+          return null;
+        }
+
         for (File subdir : filePath.listFiles()) {
           if (subdir.isDirectory()) {
             submitTask(new FindMovieTask(subdir, path));

@@ -27,7 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
@@ -54,7 +54,7 @@ public class MovieActorImageFetcher implements Runnable {
   public void run() {
     // try/catch block in the root of the thread to log crashes
     try {
-      String actorsDirPath = movie.getPath() + File.separator + MovieCast.ACTOR_DIR;
+      String actorsDirPath = movie.getPath() + File.separator + MovieActor.ACTOR_DIR;
 
       // check if actors folder exists
       File actorsDir = new File(actorsDirPath);
@@ -83,7 +83,7 @@ public class MovieActorImageFetcher implements Runnable {
         boolean found = false;
         // check if there is an actor for this file
         String name = FilenameUtils.getBaseName(file.getName()).replace("_", " ");
-        for (MovieCast actor : movie.getActors()) {
+        for (MovieActor actor : movie.getActors()) {
           if (actor.getName().equals(name)) {
             found = true;
             break;
@@ -97,7 +97,7 @@ public class MovieActorImageFetcher implements Runnable {
       }
 
       // second download missing images
-      for (MovieCast actor : movie.getActors()) {
+      for (MovieActor actor : movie.getActors()) {
         String actorName = actor.getName().replace(" ", "_");
         File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
         if (!actorImage.exists() && StringUtils.isNotEmpty(actor.getThumb())) {
@@ -108,7 +108,7 @@ public class MovieActorImageFetcher implements Runnable {
             IOUtils.copy(is, outputStream);
             outputStream.close();
             is.close();
-            actor.setThumbPath(MovieCast.ACTOR_DIR + File.separator + actorName + ".tbn");
+            actor.setThumbPath(MovieActor.ACTOR_DIR + File.separator + actorName + ".tbn");
           }
           catch (IOException e) {
             LOGGER.warn("Problem getting actor image: " + e.getMessage());
@@ -117,7 +117,7 @@ public class MovieActorImageFetcher implements Runnable {
 
         // set path if it is empty and an image exists
         if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
-          actor.setThumbPath(MovieCast.ACTOR_DIR + File.separator + actorName + ".tbn");
+          actor.setThumbPath(MovieActor.ACTOR_DIR + File.separator + actorName + ".tbn");
         }
       }
     }

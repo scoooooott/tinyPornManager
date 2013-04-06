@@ -17,6 +17,8 @@ package org.tinymediamanager.ui.tvshows;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -42,6 +44,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -49,33 +52,51 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * @author Manuel Laggner
+ * The Class TvShowPanel.
  * 
+ * @author Manuel Laggner
  */
 public class TvShowPanel extends JPanel {
 
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE                  = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID        = -1923811385292825136L;
 
   /** The logger. */
   private final static Logger         LOGGER                  = Logger.getLogger(TvShowPanel.class);
 
+  /** The tree model. */
   private TvShowTreeModel             treeModel;
 
+  /** The tv show selection model. */
   private TvShowSelectionModel        tvShowSelectionModel;
 
+  /** The tv show episode selection model. */
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
 
+  /** The tv show list. */
   private TvShowList                  tvShowList              = TvShowList.getInstance();
 
+  /** The tree. */
   private JTree                       tree;
+
+  /** The panel right. */
   private JPanel                      panelRight;
 
+  /** The action update datasources. */
   private final Action                actionUpdateDatasources = new UpdateDatasourcesAction(false);
+
+  /** The action scrape. */
   private final Action                actionScrape            = new SingleScrapeAction(false);
 
+  /** The action edit. */
+  private final Action                actionEdit              = new EditAction(false);
+
+  /**
+   * Instantiates a new tv show panel.
+   */
   public TvShowPanel() {
     super();
 
@@ -133,6 +154,7 @@ public class TvShowPanel extends JPanel {
     // popup.add(item);
     // buttonScrape.setPopupMenu(popup);
     toolBar.add(buttonScrape);
+    toolBar.add(actionEdit);
 
     tree = new JTree(treeModel);
     tree.setRootVisible(false);
@@ -188,9 +210,48 @@ public class TvShowPanel extends JPanel {
     });
   }
 
+  /**
+   * Gets the selected tv shows.
+   * 
+   * @return the selected tv shows
+   */
+  private List<TvShow> getSelectedTvShows() {
+    List<TvShow> selectedTvShows = new ArrayList<TvShow>();
+
+    TreePath[] paths = tree.getSelectionPaths();
+
+    // filter out all tv shows from the selection
+    if (paths != null) {
+      for (TreePath path : paths) {
+        if (path.getPathCount() > 1) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+          if (node.getUserObject() instanceof TvShow) {
+            TvShow tvShow = (TvShow) node.getUserObject();
+            selectedTvShows.add(tvShow);
+          }
+        }
+      }
+    }
+
+    return selectedTvShows;
+  }
+
+  /**
+   * The Class UpdateDatasourcesAction.
+   * 
+   * @author Manuel Laggner
+   */
   private class UpdateDatasourcesAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5704371143505653741L;
 
+    /**
+     * Instantiates a new update datasources action.
+     * 
+     * @param withTitle
+     *          the with title
+     */
     public UpdateDatasourcesAction(boolean withTitle) {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.update.datasource")); //$NON-NLS-1$
@@ -201,6 +262,11 @@ public class TvShowPanel extends JPanel {
       }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent e) {
       tvShowList.udpateDatasources();
     }
@@ -213,6 +279,7 @@ public class TvShowPanel extends JPanel {
    */
   private class SingleScrapeAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 641704453374845709L;
 
     /**
@@ -238,23 +305,58 @@ public class TvShowPanel extends JPanel {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      TreePath[] paths = tree.getSelectionPaths();
-      // tree.clearSelection();
+      List<TvShow> selectedTvShows = getSelectedTvShows();
 
-      // filter out all movie sets from the selection
-      if (paths != null) {
-        for (TreePath path : paths) {
-          if (path.getPathCount() > 1) {
+      for (TvShow tvShow : selectedTvShows) {
+        // display tv show chooser
+        TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, selectedTvShows.size() > 1 ? true : false);
+        if (!chooser.showDialog()) {
+          break;
+        }
+      }
+    }
+  }
 
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            if (node.getUserObject() instanceof TvShow) {
-              TvShow tvShow = (TvShow) node.getUserObject();
+  /**
+   * The Class EditAction.
+   * 
+   * @author Manuel Laggner
+   */
+  private class EditAction extends AbstractAction {
 
-              // display tv show chooser
-              TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, paths.length > 1 ? true : false);
-              chooser.setVisible(true);
-            }
-          }
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -3911290901017607679L;
+
+    /**
+     * Instantiates a new edits the action.
+     * 
+     * @param withTitle
+     *          the with title
+     */
+    public EditAction(boolean withTitle) {
+      if (withTitle) {
+        putValue(NAME, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+        putValue(LARGE_ICON_KEY, "");
+      }
+      else {
+        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      List<TvShow> selectedTvShows = getSelectedTvShows();
+
+      for (TvShow tvShow : selectedTvShows) {
+        // display tv show chooser
+        TvShowEditorDialog editor = new TvShowEditorDialog(tvShow, selectedTvShows.size() > 1 ? true : false);
+        if (!editor.showDialog()) {
+          break;
         }
       }
     }

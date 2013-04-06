@@ -266,6 +266,7 @@ public class TvShowChooserModel extends AbstractModelObject {
         artwork = artworkProvider.getArtwork(options);
       }
       catch (Exception e) {
+        LOGGER.warn("could not get artwork from " + artworkProvider.getProviderInfo().getName() + ": " + e.getMessage());
         artwork = new ArrayList<MediaArtwork>();
       }
       // check if at least one artwork has been found

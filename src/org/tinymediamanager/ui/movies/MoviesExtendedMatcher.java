@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.scraper.MediaGenres;
 
 import ca.odell.glazedlists.matchers.Matcher;
@@ -126,7 +126,7 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
         }
 
         // actors
-        for (MovieCast cast : movie.getCast()) {
+        for (MovieActor cast : movie.getActors()) {
           if (StringUtils.isNotEmpty(cast.getName())) {
             matcher = pattern.matcher(cast.getName());
             if (matcher.find()) {

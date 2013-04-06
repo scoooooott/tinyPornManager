@@ -27,8 +27,7 @@ import java.util.ResourceBundle.Control;
 
 /**
  * Utility class fo UTF8 resource bundles<br>
- * See http://stackoverflow.com/questions/4428689/why-is-text-in-swedish-from-a-
- * resource-bundle-showing-up-as-gibberish
+ * See http://stackoverflow.com/questions/4428689/why-is-text-in-swedish-from-a- resource-bundle-showing-up-as-gibberish
  * 
  * @author Myron Boyle
  * @author BalusC
@@ -55,6 +54,7 @@ public class UTF8Control extends Control {
     else {
       stream = loader.getResourceAsStream(resourceName);
     }
+
     if (stream != null) {
       try {
         // Only this line is changed to make it to read properties files as

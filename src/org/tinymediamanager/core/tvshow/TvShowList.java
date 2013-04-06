@@ -18,6 +18,8 @@ package org.tinymediamanager.core.tvshow;
 import static org.tinymediamanager.core.Constants.TV_SHOWS;
 import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,17 +53,35 @@ import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
 public class TvShowList extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger LOGGER     = Logger.getLogger(TvShowList.class);
+  private static final Logger    LOGGER         = Logger.getLogger(TvShowList.class);
 
   /** The instance. */
-  private static TvShowList   instance   = null;
+  private static TvShowList      instance       = null;
 
-  private List<TvShow>        tvShowList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
+  /** The tv show list. */
+  private List<TvShow>           tvShowList     = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
+
+  /** The tag listener. */
+  private PropertyChangeListener tagListener;
+
+  /** The tags observable. */
+  private List<String>           tagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
 
   /**
    * Instantiates a new TvShowList.
    */
   private TvShowList() {
+    // the tag listener: its used to always have a full list of all tags used in tmm
+    tagListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        // listen to changes of tags
+        if ("tag".equals(evt.getPropertyName())) {
+          TvShow tvShow = (TvShow) evt.getSource();
+          updateTags(tvShow);
+        }
+      }
+    };
   }
 
   /**
@@ -77,12 +97,24 @@ public class TvShowList extends AbstractModelObject {
     return instance;
   }
 
+  /**
+   * Gets the tv shows.
+   * 
+   * @return the tv shows
+   */
   public List<TvShow> getTvShows() {
     return tvShowList;
   }
 
+  /**
+   * Adds the tv show.
+   * 
+   * @param newValue
+   *          the new value
+   */
   public void addTvShow(TvShow newValue) {
     tvShowList.add(newValue);
+    newValue.addPropertyChangeListener(tagListener);
     firePropertyChange(TV_SHOWS, null, tvShowList);
   }
 
@@ -259,15 +291,70 @@ public class TvShowList extends AbstractModelObject {
     return searchResult;
   }
 
-  /************************************************************************
+  /**
+   * Update tags.
    * 
-   ************************************************************************/
+   * @param tvShow
+   *          the tv show
+   */
+  private void updateTags(TvShow tvShow) {
+    for (String tagInTvShow : tvShow.getTags()) {
+      boolean tagFound = false;
+      for (String tag : tagsObservable) {
+        if (tagInTvShow.equals(tag)) {
+          tagFound = true;
+          break;
+        }
+      }
+      if (!tagFound) {
+        addTag(tagInTvShow);
+      }
+    }
+  }
+
+  /**
+   * Adds the tag.
+   * 
+   * @param newTag
+   *          the new tag
+   */
+  private void addTag(String newTag) {
+    for (String tag : tagsObservable) {
+      if (tag.equals(newTag)) {
+        return;
+      }
+    }
+
+    tagsObservable.add(newTag);
+    firePropertyChange("tag", null, tagsObservable);
+  }
+
+  /**
+   * Gets the tags in tv shows.
+   * 
+   * @return the tags in tv shows
+   */
+  public List<String> getTagsInTvShows() {
+    return tagsObservable;
+  }
+
+  /**
+   * **********************************************************************
+   * 
+   * **********************************************************************.
+   */
   public void udpateDatasources() {
     for (String datasource : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
       findTvShowsInPath(datasource);
     }
   }
 
+  /**
+   * Find tv shows in path.
+   * 
+   * @param path
+   *          the path
+   */
   public void findTvShowsInPath(String path) {
     LOGGER.debug("find tv shows in path " + path);
     File filePath = new File(path);
@@ -284,6 +371,12 @@ public class TvShowList extends AbstractModelObject {
     }
   }
 
+  /**
+   * Find tv show in directory.
+   * 
+   * @param dir
+   *          the dir
+   */
   private void findTvShowInDirectory(File dir) {
     // search for this tvshow folder in database
     TvShow tvShow = getTvShowByPath(dir.getPath());
@@ -302,6 +395,14 @@ public class TvShowList extends AbstractModelObject {
     }
   }
 
+  /**
+   * Find tv episodes.
+   * 
+   * @param tvShow
+   *          the tv show
+   * @param dir
+   *          the dir
+   */
   private void findTvEpisodes(TvShow tvShow, File dir) {
     LOGGER.debug("parsing " + dir.getPath());
     // crawl this folder and try to find every episode in it
@@ -367,6 +468,13 @@ public class TvShowList extends AbstractModelObject {
     return null;
   }
 
+  /**
+   * Gets the tv episode by file.
+   * 
+   * @param file
+   *          the file
+   * @return the tv episode by file
+   */
   public synchronized TvShowEpisode getTvEpisodeByFile(File file) {
     // validy check
     if (file == null || !file.exists()) {

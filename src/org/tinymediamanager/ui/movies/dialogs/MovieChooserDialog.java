@@ -66,12 +66,13 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.ImageChooserDialog;
+import org.tinymediamanager.ui.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieChooserModel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
-import org.tinymediamanager.ui.movies.dialogs.MovieImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -412,8 +413,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();
-                MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.POSTER,
-                    lblImage, null, null);
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.POSTER, artworkProviders, lblImage, null, null);
                 dialog.setVisible(true);
                 movieToScrape.setPosterUrl(lblImage.getImageUrl());
                 movieToScrape.writeImages(true, false);
@@ -424,8 +424,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
                 ImageLabel lblImage = new ImageLabel();
                 List<String> extrathumbs = new ArrayList<String>();
                 List<String> extrafanarts = new ArrayList<String>();
-                MovieImageChooserDialog dialog = new MovieImageChooserDialog(movieToScrape.getImdbId(), movieToScrape.getTmdbId(), ImageType.FANART,
-                    lblImage, extrathumbs, extrafanarts);
+                ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.FANART, artworkProviders, lblImage, extrathumbs,
+                    extrafanarts);
                 dialog.setVisible(true);
                 movieToScrape.setFanartUrl(lblImage.getImageUrl());
                 movieToScrape.writeImages(false, true);

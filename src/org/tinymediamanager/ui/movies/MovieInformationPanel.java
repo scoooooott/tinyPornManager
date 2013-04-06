@@ -40,7 +40,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.ActorImageLabel;
 import org.tinymediamanager.ui.CertificationImageConverter;
@@ -414,14 +414,14 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_16, lblWriter, jLabelBeanProperty);
     autoBinding_17.bind();
     //
-    BeanProperty<MovieSelectionModel, List<MovieCast>> movieSelectionModelBeanProperty_17 = BeanProperty.create("selectedMovie.cast");
-    JTableBinding<MovieCast, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
+    BeanProperty<MovieSelectionModel, List<MovieActor>> movieSelectionModelBeanProperty_17 = BeanProperty.create("selectedMovie.cast");
+    JTableBinding<MovieActor, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_17, tableCast);
     //
-    BeanProperty<MovieCast, String> movieCastBeanProperty = BeanProperty.create("name");
+    BeanProperty<MovieActor, String> movieCastBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName("Name").setEditable(false);
     //
-    BeanProperty<MovieCast, String> movieCastBeanProperty_1 = BeanProperty.create("character");
+    BeanProperty<MovieActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
     jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName("Character").setEditable(false);
     //
     jTableBinding.setEditable(false);
@@ -472,9 +472,9 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModel, movieSelectionModelBeanProperty_8, lblActorThumb, actorImageLabelBeanProperty);
     autoBinding_9.bind();
     //
-    BeanProperty<JTable, MovieCast> jTableBeanProperty = BeanProperty.create("selectedElement");
-    BeanProperty<ActorImageLabel, MovieCast> actorImageLabelBeanProperty_1 = BeanProperty.create("actor");
-    AutoBinding<JTable, MovieCast, ActorImageLabel, MovieCast> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast,
+    BeanProperty<JTable, MovieActor> jTableBeanProperty = BeanProperty.create("selectedElement");
+    BeanProperty<ActorImageLabel, MovieActor> actorImageLabelBeanProperty_1 = BeanProperty.create("actor");
+    AutoBinding<JTable, MovieActor, ActorImageLabel, MovieActor> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast,
         jTableBeanProperty, lblActorThumb, actorImageLabelBeanProperty_1);
     autoBinding_10.bind();
     //

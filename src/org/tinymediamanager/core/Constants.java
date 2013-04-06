@@ -165,4 +165,10 @@ public final class Constants {
 
   /** The Constant SEASONS. */
   public final static String SEASONS              = "seasons";
+
+  /** The Constant RUNTIME. */
+  public final static String RUNTIME              = "runtime";
+
+  /** The Constant IMDBID. */
+  public final static String IMDBID               = "imdbId";
 }

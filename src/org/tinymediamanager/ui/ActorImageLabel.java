@@ -19,7 +19,7 @@ import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieActor;
 
 /**
  * The Class ActorImageLabel.
@@ -57,7 +57,7 @@ public class ActorImageLabel extends ImageLabel {
    * @param actor
    *          the new actor
    */
-  public void setActor(MovieCast actor) {
+  public void setActor(MovieActor actor) {
     if (actor != null) {
       if (movie != null && StringUtils.isNotEmpty(actor.getThumbPath())) {
         File actorThumb = new File(movie.getPath() + File.separator + actor.getThumbPath());

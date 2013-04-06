@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -28,6 +30,8 @@ import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaCastMember;
+import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
@@ -230,6 +234,20 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     md.setTitle(show.getSeriesName());
     md.setImdbId(show.getImdbId());
     md.setPlot(show.getOverview());
+    try {
+      md.setRuntime(Integer.valueOf(show.getRuntime()));
+    }
+    catch (NumberFormatException e) {
+      md.setRuntime(0);
+    }
+
+    // actors
+    for (String actor : show.getActors()) {
+      MediaCastMember member = new MediaCastMember(CastType.ACTOR);
+      member.setName(actor);
+
+      md.addCastMember(member);
+    }
 
     // genres
     for (String genreAsString : show.getGenres()) {
@@ -272,7 +290,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
 
     // check if there is a metadata containing an id
     if (options.getMetadata() != null) {
-      id = options.getMetadata().getId(providerInfo.getId());
+      id = (String) options.getMetadata().getId(providerInfo.getId());
     }
 
     // get the id from the options
@@ -325,7 +343,13 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     for (Banner banner : bannerList) {
       MediaArtwork ma = new MediaArtwork();
       ma.setDefaultUrl(banner.getUrl());
-      ma.setPreviewUrl(banner.getThumb());
+      if (StringUtils.isNotBlank(banner.getThumb())) {
+        ma.setPreviewUrl(banner.getThumb());
+      }
+      else {
+        ma.setPreviewUrl(banner.getUrl());
+      }
+
       ma.setLanguage(banner.getLanguage());
 
       // set banner type
@@ -345,6 +369,21 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
         case fanart:
         default:
           ma.setType(MediaArtworkType.BACKGROUND);
+          // extract image sizes
+          if (StringUtils.isNotBlank(banner.getBannerType2().getType())) {
+            try {
+              Pattern pattern = Pattern.compile("([0-9]{3,4})x([0-9]{3,4})");
+              Matcher matcher = pattern.matcher(banner.getBannerType2().getType());
+              if (matcher.matches() && matcher.groupCount() > 1) {
+                ma.addImageSize(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), banner.getUrl());
+              }
+
+            }
+            catch (Exception e) {
+              LOGGER.debug("could not extract size from bannertype 2: " + banner.getBannerType2());
+            }
+
+          }
           break;
       }
 
@@ -392,7 +431,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       }
 
       // if rating is the same, return 0
-      if (arg0.getRating() == arg1.getRating()) {
+      if (arg0.getRating().equals(arg1.getRating())) {
         return 0;
       }
 

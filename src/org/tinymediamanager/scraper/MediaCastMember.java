@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.tinymediamanager.scraper;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.Embeddable;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -27,6 +29,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * 
  * @author Manuel Laggner
  */
+@Embeddable
 public class MediaCastMember {
 
   /**
@@ -54,11 +57,11 @@ public class MediaCastMember {
   /** The name. */
   private String       name;
 
-  /** The part. */
-  private String       part;
-
   /** The character. */
   private String       character;
+
+  /** The part. */
+  private String       part;
 
   /** The provider data url. */
   private String       providerDataUrl;
@@ -235,8 +238,7 @@ public class MediaCastMember {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result

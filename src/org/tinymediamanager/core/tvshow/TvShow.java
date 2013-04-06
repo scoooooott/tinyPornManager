@@ -20,9 +20,12 @@ import static org.tinymediamanager.core.Constants.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.apache.commons.io.FilenameUtils;
@@ -36,10 +39,13 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
+import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
  * The Class TvShow.
@@ -56,13 +62,21 @@ public class TvShow extends MediaEntity {
   /** The episodes. */
   private List<TvShowEpisode> episodes           = new ArrayList<TvShowEpisode>();
 
-  /** The movies observable. */
+  /** The episodes observable. */
   @Transient
   private List<TvShowEpisode> episodesObservable = ObservableCollections.observableList(episodes);
 
   /** The seasons. */
   @Transient
   private List<TvShowSeason>  seasons            = ObservableCollections.observableList(new ArrayList<TvShowSeason>());
+
+  /** The actors. */
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<TvShowActor>   actors             = new ArrayList<TvShowActor>();
+
+  /** The actors observables. */
+  @Transient
+  private List<TvShowActor>   actorsObservables  = ObservableCollections.observableList(actors);
 
   /** The new genres based on an enum like class. */
   private List<String>        genres             = new ArrayList<String>();
@@ -71,14 +85,41 @@ public class TvShow extends MediaEntity {
   @Transient
   private List<MediaGenres>   genresForAccess    = new ArrayList<MediaGenres>();
 
+  /** The tags. */
+  private List<String>        tags               = new ArrayList<String>();
+
+  /** The tags observable. */
+  @Transient
+  private List<String>        tagsObservable     = ObservableCollections.observableList(tags);
+
+  /** The trailer. */
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<MediaTrailer>  trailer            = new ArrayList<MediaTrailer>();
+
+  /** The trailer observable. */
+  @Transient
+  private List<MediaTrailer>  trailerObservable  = ObservableCollections.observableList(trailer);
+
+  /** The certification. */
+  private Certification       certification      = Certification.NOT_RATED;
+
   /** The data source. */
   private String              dataSource         = "";
 
-  /** The imdb id. */
-  private String              imdbId             = "";
-
   /** The nfo filename. */
   private String              nfoFilename        = "";
+
+  /** The director. */
+  private String              director           = "";
+
+  /** The writer. */
+  private String              writer             = "";
+
+  /** The runtime. */
+  private int                 runtime            = 0;
+
+  /** The votes. */
+  private int                 votes              = 0;
 
   /*
    * (non-Javadoc)
@@ -229,7 +270,10 @@ public class TvShow extends MediaEntity {
    * Initialize after loading.
    */
   public void initializeAfterLoading() {
+    actorsObservables = ObservableCollections.observableList(actors);
     episodesObservable = ObservableCollections.observableList(episodes);
+    tagsObservable = ObservableCollections.observableList(tags);
+    trailerObservable = ObservableCollections.observableList(trailer);
 
     // load genres
     for (String genre : genres) {
@@ -389,12 +433,56 @@ public class TvShow extends MediaEntity {
       return;
     }
 
+    // populate ids
+    for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
+      setId((String) entry.getKey(), entry.getValue().toString());
+    }
+
     setImdbId(metadata.getImdbId());
     setTitle(metadata.getTitle());
     setRating((float) metadata.getRating());
     setPlot(metadata.getPlot());
 
     setGenres(metadata.getGenres());
+
+    // cast
+    List<TvShowActor> actors = new ArrayList<TvShowActor>();
+    String director = "";
+    String writer = "";
+
+    for (MediaCastMember member : metadata.getCastMembers()) {
+      switch (member.getType()) {
+        case ACTOR:
+          TvShowActor actor = new TvShowActor();
+          actor.setName(member.getName());
+          actor.setCharacter(member.getCharacter());
+          actor.setThumb(member.getImageUrl());
+          actors.add(actor);
+          break;
+
+        case DIRECTOR:
+          if (!StringUtils.isEmpty(director)) {
+            director += ", ";
+          }
+          director += member.getName();
+          break;
+
+        case WRITER:
+          if (!StringUtils.isEmpty(writer)) {
+            writer += ", ";
+          }
+          writer += member.getName();
+          break;
+
+        default:
+          break;
+      }
+    }
+    setActors(actors);
+    setDirector(director);
+    setWriter(writer);
+    // TODO write actor images for tv shows
+    // writeActorImages();
 
     // set scraped
     setScraped(true);
@@ -558,7 +646,7 @@ public class TvShow extends MediaEntity {
    * @return the imdb id
    */
   public String getImdbId() {
-    return imdbId;
+    return String.valueOf(ids.get("imdbId"));
   }
 
   /**
@@ -568,9 +656,282 @@ public class TvShow extends MediaEntity {
    *          the new imdb id
    */
   public void setImdbId(String newValue) {
-    String oldValue = imdbId;
-    imdbId = newValue;
-    firePropertyChange("imdbId", oldValue, newValue);
+    String oldValue = getImdbId();
+    ids.put("imdbId", newValue);
+    firePropertyChange(IMDBID, oldValue, newValue);
+  }
+
+  /**
+   * Adds the to tags.
+   * 
+   * @param newTag
+   *          the new tag
+   */
+  public void addToTags(String newTag) {
+    for (String tag : tagsObservable) {
+      if (tag.equals(newTag)) {
+        return;
+      }
+    }
+
+    tagsObservable.add(newTag);
+    firePropertyChange(TAG, null, tagsObservable);
+    firePropertyChange(TAGS_AS_STRING, null, newTag);
+  }
+
+  /**
+   * Removes the from tags.
+   * 
+   * @param removeTag
+   *          the remove tag
+   */
+  public void removeFromTags(String removeTag) {
+    tagsObservable.remove(removeTag);
+    firePropertyChange(TAG, null, tagsObservable);
+    firePropertyChange(TAGS_AS_STRING, null, removeTag);
+  }
+
+  /**
+   * Sets the tags.
+   * 
+   * @param newTags
+   *          the new tags
+   */
+  public void setTags(List<String> newTags) {
+    // two way sync of tags
+
+    // first, add new ones
+    for (String tag : newTags) {
+      if (!this.tagsObservable.contains(tag)) {
+        this.tagsObservable.add(tag);
+      }
+    }
+
+    // second remove old ones
+    for (int i = this.tagsObservable.size() - 1; i >= 0; i--) {
+      String tag = this.tagsObservable.get(i);
+      if (!newTags.contains(tag)) {
+        this.tagsObservable.remove(tag);
+      }
+    }
+
+    firePropertyChange(TAG, null, tagsObservable);
+    firePropertyChange(TAGS_AS_STRING, null, tagsObservable);
+  }
+
+  /**
+   * Gets the tag as string.
+   * 
+   * @return the tag as string
+   */
+  public String getTagAsString() {
+    StringBuilder sb = new StringBuilder();
+    for (String tag : tags) {
+      if (!StringUtils.isEmpty(sb)) {
+        sb.append(", ");
+      }
+      sb.append(tag);
+    }
+    return sb.toString();
+  }
+
+  /**
+   * Gets the tags.
+   * 
+   * @return the tags
+   */
+  public List<String> getTags() {
+    return this.tagsObservable;
+  }
+
+  /**
+   * Gets the director.
+   * 
+   * @return the director
+   */
+  public String getDirector() {
+    return director;
+  }
+
+  /**
+   * Gets the writer.
+   * 
+   * @return the writer
+   */
+  public String getWriter() {
+    return writer;
+  }
+
+  /**
+   * Sets the director.
+   * 
+   * @param newValue
+   *          the new director
+   */
+  public void setDirector(String newValue) {
+    String oldValue = this.director;
+    this.director = newValue;
+    firePropertyChange(DIRECTOR, oldValue, newValue);
+  }
+
+  /**
+   * Sets the writer.
+   * 
+   * @param newValue
+   *          the new writer
+   */
+  public void setWriter(String newValue) {
+    String oldValue = this.writer;
+    this.writer = newValue;
+    firePropertyChange(WRITER, oldValue, newValue);
+  }
+
+  /**
+   * Gets the runtime.
+   * 
+   * @return the runtime
+   */
+  public int getRuntime() {
+    return runtime;
+  }
+
+  /**
+   * Sets the runtime.
+   * 
+   * @param newValue
+   *          the new runtime
+   */
+  public void setRuntime(int newValue) {
+    int oldValue = this.runtime;
+    this.runtime = newValue;
+    firePropertyChange(RUNTIME, oldValue, newValue);
+  }
+
+  /**
+   * Adds the actor.
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void addActor(TvShowActor obj) {
+    actorsObservables.add(obj);
+    firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * Gets the actors.
+   * 
+   * @return the actors
+   */
+  public List<TvShowActor> getActors() {
+    return this.actorsObservables;
+  }
+
+  /**
+   * Removes the actor.
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void removeActor(TvShowActor obj) {
+    actorsObservables.remove(obj);
+    firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * Sets the actors.
+   * 
+   * @param newActors
+   *          the new actors
+   */
+  public void setActors(List<TvShowActor> newActors) {
+    // two way sync of actors
+
+    // first add the new ones
+    for (TvShowActor actor : newActors) {
+      if (!actorsObservables.contains(actor)) {
+        actorsObservables.add(actor);
+      }
+    }
+
+    // second remove unused
+    for (int i = actorsObservables.size() - 1; i >= 0; i--) {
+      TvShowActor actor = actorsObservables.get(i);
+      if (!newActors.contains(actor)) {
+        actorsObservables.remove(actor);
+      }
+    }
+
+    firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * Gets the trailers.
+   * 
+   * @return the trailers
+   */
+  public List<MediaTrailer> getTrailers() {
+    return this.trailerObservable;
+  }
+
+  /**
+   * Adds the trailer.
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void addTrailer(MediaTrailer obj) {
+    trailerObservable.add(obj);
+    firePropertyChange(TRAILER, null, trailerObservable);
+  }
+
+  /**
+   * Removes the all trailers.
+   */
+  public void removeAllTrailers() {
+    trailerObservable.clear();
+    firePropertyChange(TRAILER, null, trailerObservable);
+  }
+
+  /**
+   * Gets the certifications.
+   * 
+   * @return the certifications
+   */
+  public Certification getCertification() {
+    return certification;
+  }
+
+  /**
+   * Sets the certifications.
+   * 
+   * @param newValue
+   *          the new certifications
+   */
+  public void setCertification(Certification newValue) {
+    this.certification = newValue;
+    firePropertyChange(CERTIFICATION, null, newValue);
+  }
+
+  /**
+   * Gets the votes.
+   * 
+   * @return the votes
+   */
+  public int getVotes() {
+    return votes;
+  }
+
+  /**
+   * Sets the votes.
+   * 
+   * @param newValue
+   *          the new votes
+   */
+  public void setVotes(int newValue) {
+    int oldValue = this.votes;
+    this.votes = newValue;
+    firePropertyChange(VOTES, oldValue, newValue);
   }
 
   /**

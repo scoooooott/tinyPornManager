@@ -35,17 +35,8 @@ public class MediaMetadata {
   /** The provider id. */
   private String                  providerId;
 
-  /** The imdb id. */
-  private String                  imdbId            = "";
-
-  /** The tmdb id. */
-  private int                     tmdbId            = 0;
-
   /** a hashmap storing other ids. */
-  private HashMap<String, String> ids               = new HashMap<String, String>();
-
-  /** The tmdb id set. */
-  private int                     tmdbIdSet         = 0;
+  private HashMap<String, Object> ids               = new HashMap<String, Object>();
 
   /** The plot. */
   private String                  plot              = "";
@@ -120,7 +111,12 @@ public class MediaMetadata {
    * @return the tmdb id
    */
   public int getTmdbId() {
-    return tmdbId;
+    try {
+      return (Integer) ids.get("tmdbId");
+    }
+    catch (NumberFormatException e) {
+      return 0;
+    }
   }
 
   /**
@@ -129,7 +125,12 @@ public class MediaMetadata {
    * @return the tmdb id set
    */
   public int getTmdbIdSet() {
-    return tmdbIdSet;
+    try {
+      return (Integer) ids.get("tmdbIdSet");
+    }
+    catch (NumberFormatException e) {
+      return 0;
+    }
   }
 
   /**
@@ -139,7 +140,7 @@ public class MediaMetadata {
    *          the new tmdb id set
    */
   public void setTmdbIdSet(int tmdbIdSet) {
-    this.tmdbIdSet = tmdbIdSet;
+    ids.put("tmdbIdSet", tmdbIdSet);
   }
 
   /**
@@ -203,7 +204,7 @@ public class MediaMetadata {
    *          the new tmdb id
    */
   public void setTmdbId(int tmdbId) {
-    this.tmdbId = tmdbId;
+    ids.put("tmdbId", tmdbId);
   }
 
   /**
@@ -212,7 +213,7 @@ public class MediaMetadata {
    * @return the imdb id
    */
   public String getImdbId() {
-    return imdbId;
+    return (String) ids.get("imdbId");
   }
 
   /**
@@ -222,7 +223,7 @@ public class MediaMetadata {
    *          the new imdb id
    */
   public void setImdbId(String imdbId) {
-    this.imdbId = imdbId;
+    ids.put("imdbId", imdbId);
   }
 
   /**
@@ -563,11 +564,11 @@ public class MediaMetadata {
    * 
    * @param key
    *          the key
-   * @param id
+   * @param object
    *          the id
    */
-  public void setId(String key, String id) {
-    ids.put(key, id);
+  public void setId(String key, Object object) {
+    ids.put(key, object);
   }
 
   /**
@@ -577,8 +578,17 @@ public class MediaMetadata {
    *          the key
    * @return the id
    */
-  public String getId(String key) {
+  public Object getId(String key) {
     return ids.get(key);
+  }
+
+  /**
+   * Gets the ids.
+   * 
+   * @return the ids
+   */
+  public HashMap<String, Object> getIds() {
+    return ids;
   }
 
   /**

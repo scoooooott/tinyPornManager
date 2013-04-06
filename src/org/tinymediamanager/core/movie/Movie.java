@@ -15,30 +15,7 @@
  */
 package org.tinymediamanager.core.movie;
 
-import static org.tinymediamanager.core.Constants.ACTORS;
-import static org.tinymediamanager.core.Constants.CAST;
-import static org.tinymediamanager.core.Constants.CERTIFICATION;
-import static org.tinymediamanager.core.Constants.DATA_SOURCE;
-import static org.tinymediamanager.core.Constants.DIRECTOR;
-import static org.tinymediamanager.core.Constants.FANART;
-import static org.tinymediamanager.core.Constants.GENRE;
-import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
-import static org.tinymediamanager.core.Constants.HAS_IMAGES;
-import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
-import static org.tinymediamanager.core.Constants.MEDIA_FILES;
-import static org.tinymediamanager.core.Constants.MOVIESET;
-import static org.tinymediamanager.core.Constants.NFO_FILENAME;
-import static org.tinymediamanager.core.Constants.SORT_TITLE;
-import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
-import static org.tinymediamanager.core.Constants.TAG;
-import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
-import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
-import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
-import static org.tinymediamanager.core.Constants.TMDBID;
-import static org.tinymediamanager.core.Constants.TRAILER;
-import static org.tinymediamanager.core.Constants.VOTES;
-import static org.tinymediamanager.core.Constants.WATCHED;
-import static org.tinymediamanager.core.Constants.WRITER;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,6 +25,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,7 +52,6 @@ import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.movie.MovieCast.CastType;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
@@ -111,12 +88,6 @@ public class Movie extends MediaEntity {
   /** The sorttitle. */
   private String              sortTitle            = "";
 
-  /** The imdb id. */
-  private String              imdbId               = "";
-
-  /** The tmdb id. */
-  private int                 tmdbId               = 0;
-
   /** The tagline. */
   private String              tagline              = "";
 
@@ -147,17 +118,17 @@ public class Movie extends MediaEntity {
   /** The new genres based on an enum like class. */
   private List<String>        genres               = new ArrayList<String>();
 
-  /** The genres2 for access. */
+  /** The genres for access. */
   @Transient
   private List<MediaGenres>   genresForAccess      = new ArrayList<MediaGenres>();
 
-  /** The cast. */
+  /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieCast>     cast                 = new ArrayList<MovieCast>();
+  private List<MovieActor>    actors               = new ArrayList<MovieActor>();
 
-  /** The cast observable. */
+  /** The actors observables. */
   @Transient
-  private List<MovieCast>     castObservable       = ObservableCollections.observableList(cast);
+  private List<MovieActor>    actorsObservables    = ObservableCollections.observableList(actors);
 
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
@@ -328,10 +299,10 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Sets the observable cast list.
+   * Sets the observables.
    */
   private void setObservables() {
-    castObservable = ObservableCollections.observableList(cast);
+    actorsObservables = ObservableCollections.observableList(actors);
     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
     trailerObservable = ObservableCollections.observableList(trailer);
     tagsObservable = ObservableCollections.observableList(tags);
@@ -351,20 +322,14 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Adds the to cast.
+   * Adds the actor.
    * 
    * @param obj
    *          the obj
    */
-  public void addToCast(MovieCast obj) {
-    castObservable.add(obj);
-    firePropertyChange(CAST, null, this.getCast());
-
-    switch (obj.getType()) {
-      case ACTOR:
-        firePropertyChange(ACTORS, null, this.getCast());
-        break;
-    }
+  public void addActor(MovieActor obj) {
+    actorsObservables.add(obj);
+    firePropertyChange(ACTORS, null, this.getActors());
 
   }
 
@@ -823,15 +788,15 @@ public class Movie extends MediaEntity {
    * Find actor images.
    */
   private void findActorImages() {
-    String actorsDirPath = getPath() + File.separator + MovieCast.ACTOR_DIR;
+    String actorsDirPath = getPath() + File.separator + MovieActor.ACTOR_DIR;
 
     // second download missing images
-    for (MovieCast actor : getActors()) {
+    for (MovieActor actor : getActors()) {
       String actorName = actor.getName().replace(" ", "_");
       File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
       // set path if it is empty and an image exists
       if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
-        actor.setThumbPath(MovieCast.ACTOR_DIR + File.separator + actorName + ".tbn");
+        actor.setThumbPath(MovieActor.ACTOR_DIR + File.separator + actorName + ".tbn");
       }
     }
   }
@@ -841,25 +806,8 @@ public class Movie extends MediaEntity {
    * 
    * @return the actors
    */
-  public List<MovieCast> getActors() {
-    List<MovieCast> actors = getCast();
-
-    for (int i = 0; i < actors.size(); i++) {
-      MovieCast cast = actors.get(i);
-      if (cast.getType() != CastType.ACTOR) {
-        actors.remove(cast);
-      }
-    }
-    return actors;
-  }
-
-  /**
-   * Gets the cast.
-   * 
-   * @return the cast
-   */
-  public List<MovieCast> getCast() {
-    return this.castObservable;
+  public List<MovieActor> getActors() {
+    return this.actorsObservables;
   }
 
   /**
@@ -892,7 +840,7 @@ public class Movie extends MediaEntity {
    * @return the imdb id
    */
   public String getImdbId() {
-    return imdbId;
+    return String.valueOf(ids.get("imdbId"));
   }
 
   /**
@@ -901,7 +849,12 @@ public class Movie extends MediaEntity {
    * @return the tmdb id
    */
   public int getTmdbId() {
-    return tmdbId;
+    try {
+      return (Integer) ids.get("tmdbId");
+    }
+    catch (NumberFormatException e) {
+      return 0;
+    }
   }
 
   /**
@@ -911,8 +864,8 @@ public class Movie extends MediaEntity {
    *          the new tmdb id
    */
   public void setTmdbId(int newValue) {
-    int oldValue = this.tmdbId;
-    this.tmdbId = newValue;
+    int oldValue = getTmdbId();
+    ids.put("tmdbId", newValue);
     firePropertyChange(TMDBID, oldValue, newValue);
   }
 
@@ -1078,22 +1031,14 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Removes the from cast.
+   * Removes the actor.
    * 
    * @param obj
    *          the obj
    */
-  public void removeFromCast(MovieCast obj) {
-    castObservable.remove(obj);
-    firePropertyChange("cast", null, this.getCast());
-
-    switch (obj.getType()) {
-      case ACTOR:
-        firePropertyChange("actors", null, this.getCast());
-        break;
-
-    }
-
+  public void removeActor(MovieActor obj) {
+    actorsObservables.remove(obj);
+    firePropertyChange(ACTORS, null, this.getActors());
   }
 
   /**
@@ -1266,8 +1211,8 @@ public class Movie extends MediaEntity {
    *          the new imdb id
    */
   public void setImdbId(String newValue) {
-    String oldValue = imdbId;
-    imdbId = newValue;
+    String oldValue = getImdbId();
+    ids.put("imdbId", newValue);
     firePropertyChange("imdbId", oldValue, newValue);
   }
 
@@ -1344,27 +1289,26 @@ public class Movie extends MediaEntity {
     // cast
     if (config.isCast()) {
       setProductionCompany(metadata.getProductionCompany());
-      List<MediaCastMember> cast = metadata.getCastMembers();
-      List<MovieCast> actors = new ArrayList<MovieCast>();
+      List<MovieActor> actors = new ArrayList<MovieActor>();
       String director = "";
       String writer = "";
-      for (MediaCastMember member : cast) {
-        MovieCast castMember = new MovieCast();
-        castMember.setName(member.getName());
-        castMember.setCharacter(member.getCharacter());
-        castMember.setThumb(member.getImageUrl());
+      for (MediaCastMember member : metadata.getCastMembers()) {
         switch (member.getType()) {
           case ACTOR:
-            castMember.setType(CastType.ACTOR);
-            // addToCast(castMember);
-            actors.add(castMember);
+            MovieActor actor = new MovieActor();
+            actor.setName(member.getName());
+            actor.setCharacter(member.getCharacter());
+            actor.setThumb(member.getImageUrl());
+            actors.add(actor);
             break;
+
           case DIRECTOR:
             if (!StringUtils.isEmpty(director)) {
               director += ", ";
             }
             director += member.getName();
             break;
+
           case WRITER:
             if (!StringUtils.isEmpty(writer)) {
               writer += ", ";
@@ -1424,8 +1368,10 @@ public class Movie extends MediaEntity {
   public MediaMetadata getMetadata() {
     MediaMetadata md = new MediaMetadata("");
 
-    md.setImdbId(imdbId);
-    md.setTmdbId(tmdbId);
+    for (Entry<String, Object> entry : ids.entrySet()) {
+      md.setId(entry.getKey(), entry.getValue());
+    }
+
     md.setTitle(title);
     md.setOriginalTitle(originalTitle);
     md.setTagline(tagline);
@@ -1490,7 +1436,7 @@ public class Movie extends MediaEntity {
           LOGGER.debug(art.getBiggestArtwork());
 
           // did we get the tmdbid from artwork?
-          if (tmdbId == 0 && art.getTmdbId() > 0) {
+          if (getTmdbId() == 0 && art.getTmdbId() > 0) {
             setTmdbId(art.getTmdbId());
           }
           break;
@@ -1506,7 +1452,7 @@ public class Movie extends MediaEntity {
           LOGGER.debug(art.getBiggestArtwork());
 
           // did we get the tmdbid from artwork?
-          if (tmdbId == 0 && art.getTmdbId() > 0) {
+          if (getTmdbId() == 0 && art.getTmdbId() > 0) {
             setTmdbId(art.getTmdbId());
           }
           break;
@@ -1556,29 +1502,28 @@ public class Movie extends MediaEntity {
   /**
    * Sets the actors.
    * 
-   * @param newCast
+   * @param newActors
    *          the new actors
    */
-  public void setActors(List<MovieCast> newCast) {
-    // two way sync of cast
+  public void setActors(List<MovieActor> newActors) {
+    // two way sync of actors
 
     // first add the new ones
-    for (MovieCast cast : newCast) {
-      if (!castObservable.contains(cast)) {
-        castObservable.add(cast);
+    for (MovieActor actor : newActors) {
+      if (!actorsObservables.contains(actor)) {
+        actorsObservables.add(actor);
       }
     }
 
     // second remove unused
-    for (int i = castObservable.size() - 1; i >= 0; i--) {
-      MovieCast cast = castObservable.get(i);
-      if (!newCast.contains(cast)) {
-        castObservable.remove(cast);
+    for (int i = actorsObservables.size() - 1; i >= 0; i--) {
+      MovieActor actor = actorsObservables.get(i);
+      if (!newActors.contains(actor)) {
+        actorsObservables.remove(actor);
       }
     }
 
-    firePropertyChange("cast", null, this.getCast());
-    firePropertyChange("actors", null, this.getCast());
+    firePropertyChange(ACTORS, null, this.getActors());
   }
 
   /*
@@ -1621,7 +1566,7 @@ public class Movie extends MediaEntity {
   public void setRuntime(int newValue) {
     int oldValue = this.runtime;
     this.runtime = newValue;
-    firePropertyChange("runtime", oldValue, newValue);
+    firePropertyChange(RUNTIME, oldValue, newValue);
   }
 
   /**

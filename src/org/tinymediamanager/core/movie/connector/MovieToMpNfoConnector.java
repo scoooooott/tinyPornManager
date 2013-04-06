@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieCast;
+import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MovieSet;
@@ -197,7 +197,7 @@ public class MovieToMpNfoConnector {
 
     mp.setDirector(movie.getDirector());
     mp.setCredits(movie.getWriter());
-    for (MovieCast cast : movie.getActors()) {
+    for (MovieActor cast : movie.getActors()) {
       mp.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
     }
 
@@ -320,9 +320,9 @@ public class MovieToMpNfoConnector {
         }
 
         for (Actor actor : mp.getActors()) {
-          MovieCast cast = new MovieCast(actor.getName(), actor.getRole());
+          MovieActor cast = new MovieActor(actor.getName(), actor.getRole());
           cast.setThumb(actor.getThumb());
-          movie.addToCast(cast);
+          movie.addActor(cast);
         }
 
         for (String genre : mp.getGenres()) {

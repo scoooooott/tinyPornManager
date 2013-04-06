@@ -21,8 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -36,11 +34,6 @@ import org.tinymediamanager.Globals;
 @MappedSuperclass
 // @Entity
 public abstract class MediaEntity extends AbstractModelObject {
-
-  /** The id. */
-  @Id
-  @GeneratedValue
-  protected Long                    id;
 
   /** The ids to store the ID from several metadataproviders. */
   protected HashMap<String, Object> ids               = new HashMap<String, Object>();
@@ -99,8 +92,8 @@ public abstract class MediaEntity extends AbstractModelObject {
    * 
    * @return the id
    */
-  public Long getId() {
-    return id;
+  public HashMap<String, Object> getIds() {
+    return ids;
   }
 
   /**
@@ -211,8 +204,8 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @param id
    *          the new id
    */
-  public void setId(Long id) {
-    this.id = id;
+  public void setIds(HashMap<String, Object> ids) {
+    this.ids = ids;
   }
 
   /**
