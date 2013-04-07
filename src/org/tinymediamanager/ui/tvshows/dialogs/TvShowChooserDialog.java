@@ -67,11 +67,11 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.ui.EqualsLayout;
-import org.tinymediamanager.ui.ImageChooserDialog;
-import org.tinymediamanager.ui.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 

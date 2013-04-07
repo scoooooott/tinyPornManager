@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -63,6 +63,12 @@ import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.ui.ImageLabel;
+import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.ToggleButtonUI;
+import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.WrapLayout;
 
 import com.bric.image.pixel.Scaling;
 import com.jgoodies.forms.factories.FormFactory;

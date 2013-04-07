@@ -15,28 +15,23 @@
  */
 package org.tinymediamanager.core.tvshow;
 
-import static org.tinymediamanager.core.Constants.TV_SHOWS;
-import static org.tinymediamanager.core.Constants.TV_SHOW_COUNT;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.tvshow.EpisodeMatching.EpisodeMatchingResult;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -59,13 +54,13 @@ public class TvShowList extends AbstractModelObject {
   private static TvShowList      instance       = null;
 
   /** The tv show list. */
-  private List<TvShow>           tvShowList     = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<TvShow>()));
+  private List<TvShow>           tvShowList     = ObservableCollections.observableList(new ArrayList<TvShow>());
 
   /** The tag listener. */
   private PropertyChangeListener tagListener;
 
   /** The tags observable. */
-  private List<String>           tagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String>           tagsObservable = ObservableCollections.observableList(new ArrayList<String>());
 
   /**
    * Instantiates a new TvShowList.
@@ -116,6 +111,7 @@ public class TvShowList extends AbstractModelObject {
     tvShowList.add(newValue);
     newValue.addPropertyChangeListener(tagListener);
     firePropertyChange(TV_SHOWS, null, tvShowList);
+    firePropertyChange(ADDED_TV_SHOW, null, newValue);
   }
 
   /**
@@ -339,118 +335,6 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
-   * **********************************************************************
-   * 
-   * **********************************************************************.
-   */
-  public void udpateDatasources() {
-    for (String datasource : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
-      findTvShowsInPath(datasource);
-    }
-  }
-
-  /**
-   * Find tv shows in path.
-   * 
-   * @param path
-   *          the path
-   */
-  public void findTvShowsInPath(String path) {
-    LOGGER.debug("find tv shows in path " + path);
-    File filePath = new File(path);
-    for (File subdir : filePath.listFiles()) {
-      // // cancel task
-      // if (cancel) {
-      // return;
-      // }
-
-      if (subdir.isDirectory()) {
-        // get the TV show from this subdir
-        findTvShowInDirectory(subdir);
-      }
-    }
-  }
-
-  /**
-   * Find tv show in directory.
-   * 
-   * @param dir
-   *          the dir
-   */
-  private void findTvShowInDirectory(File dir) {
-    // search for this tvshow folder in database
-    TvShow tvShow = getTvShowByPath(dir.getPath());
-    if (tvShow == null) {
-      // create new one
-      tvShow = new TvShow();
-      tvShow.setPath(dir.getPath());
-      tvShow.setTitle(dir.getName());
-      tvShow.saveToDb();
-      addTvShow(tvShow);
-    }
-
-    // find episodes in this tv show folder
-    if (tvShow != null) {
-      findTvEpisodes(tvShow, dir);
-    }
-  }
-
-  /**
-   * Find tv episodes.
-   * 
-   * @param tvShow
-   *          the tv show
-   * @param dir
-   *          the dir
-   */
-  private void findTvEpisodes(TvShow tvShow, File dir) {
-    LOGGER.debug("parsing " + dir.getPath());
-    // crawl this folder and try to find every episode in it
-    File[] content = dir.listFiles();
-    for (File file : content) {
-      if (file.isFile()) {
-        // check filetype
-        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()))) {
-          continue;
-        }
-
-        TvShowEpisode episode = getTvEpisodeByFile(file);
-        if (episode == null) {
-          // try to check what episode//season
-          EpisodeMatchingResult result = EpisodeMatching.detectEpisode(file);
-          if (result.episodes.size() > 0) {
-            // // episode(s) found; check if there was also a season found
-            // int season = 0;
-            // if (result.season == 0) {
-            // // try to get the result from the parent folder
-            // Pattern pattern = Pattern.compile("{1,2}[0-9]$");
-            // Matcher matcher = pattern.matcher(dir.getPath());
-            // if (matcher.find()) {
-            // season = Integer.parseInt(matcher.group());
-            // }
-            // }
-
-            // add it
-            for (int ep : result.episodes) {
-              episode = new TvShowEpisode();
-              episode.setEpisode(ep);
-              episode.setSeason(result.season);
-              episode.setTvShow(tvShow);
-              episode.addToMediaFiles(new MediaFile(file.getPath(), file.getName(), MediaFileType.TV_SHOW));
-              episode.saveToDb();
-              tvShow.addEpisode(episode);
-            }
-          }
-        }
-      }
-      if (file.isDirectory()) {
-        // dig deeper
-        findTvEpisodes(tvShow, file);
-      }
-    }
-  }
-
-  /**
    * Gets the movie by path.
    * 
    * @param path
@@ -481,10 +365,13 @@ public class TvShowList extends AbstractModelObject {
       return null;
     }
 
-    // check if that file is in any tv show/episode
-    for (TvShow show : getTvShows()) {
-      for (TvShowEpisode episode : show.getEpisodes()) {
-        for (MediaFile mediaFile : episode.getMediaFiles()) {
+    // check if that file is in any tv show/episode (iterating thread safe)
+    for (int i = 0; i < getTvShows().size(); i++) {
+      TvShow show = getTvShows().get(i);
+      for (int j = 0; j < show.getEpisodes().size(); j++) {
+        TvShowEpisode episode = show.getEpisodes().get(j);
+        for (int k = 0; k < episode.getMediaFiles().size(); k++) {
+          MediaFile mediaFile = episode.getMediaFiles().get(k);
           if (file.equals(mediaFile.getFile())) {
             return episode;
           }

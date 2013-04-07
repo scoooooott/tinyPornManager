@@ -224,7 +224,7 @@ public class TvShow extends MediaEntity {
     episodesObservable.add(episode);
     addToSeason(episode);
 
-    firePropertyChange(EPISODES, null, episodesObservable);
+    firePropertyChange(ADDED_EPISODE, null, episode);
   }
 
   /**
@@ -260,7 +260,7 @@ public class TvShow extends MediaEntity {
     if (season == null) {
       season = new TvShowSeason(episode.getSeason(), this);
       seasons.add(season);
-      firePropertyChange(SEASONS, null, seasons);
+      firePropertyChange(ADDED_SEASON, null, season);
     }
 
     return season;

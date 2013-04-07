@@ -78,7 +78,7 @@ public class TvShowSeason extends AbstractModelObject {
    */
   public void addEpisode(TvShowEpisode episode) {
     episodes.add(episode);
-    firePropertyChange(EPISODES, null, episodes);
+    firePropertyChange(ADDED_EPISODE, null, episodes);
   }
 
   /**

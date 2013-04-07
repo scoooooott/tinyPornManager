@@ -49,7 +49,8 @@ public class TvShowTest {
     Globals.entityManager = emf.createEntityManager();
 
     TvShowList instance = TvShowList.getInstance();
-    instance.findTvShowsInPath("/home/manuel/Videos/Test_Serien/");
+
+    // instance.findTvShowsInPath("/home/manuel/Videos/Test_Serien/");
     // instance.findTvShowsInPath("D:\\_neu\\Test_Serien");
     for (TvShow show : instance.getTvShows()) {
       for (TvShowEpisode ep : show.getEpisodes()) {

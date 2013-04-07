@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +42,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
@@ -34,6 +34,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.ui.LinkLabel;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;

@@ -151,6 +151,9 @@ public final class Constants {
   /** The Constant TV_SHOWS. */
   public final static String TV_SHOWS             = "tvShows";
 
+  /** The Constant ADDED_TV_SHOW. */
+  public final static String ADDED_TV_SHOW        = "addedTvShow";
+
   /** The Constant TV_SHOW_COUNT. */
   public final static String TV_SHOW_COUNT        = "tvShowCount";
 
@@ -158,13 +161,13 @@ public final class Constants {
   public final static String EPISODE              = "episode";
 
   /** The Constant EPISODES. */
-  public final static String EPISODES             = "episodes";
+  public final static String ADDED_EPISODE        = "addedEpisode";
 
   /** The Constant SEASON. */
   public final static String SEASON               = "season";
 
   /** The Constant SEASONS. */
-  public final static String SEASONS              = "seasons";
+  public final static String ADDED_SEASON         = "season";
 
   /** The Constant RUNTIME. */
   public final static String RUNTIME              = "runtime";

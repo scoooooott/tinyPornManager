@@ -25,6 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -42,6 +43,9 @@ import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
+import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
@@ -268,7 +272,10 @@ public class TvShowPanel extends JPanel {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      tvShowList.udpateDatasources();
+      TmmSwingWorker task = new TvShowUpdateDatasourceTask();
+      if (!MainWindow.executeMainTask(task)) {
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
+      }
     }
   }
 
