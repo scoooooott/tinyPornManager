@@ -111,12 +111,14 @@ public class MediaMetadata {
    * @return the tmdb id
    */
   public int getTmdbId() {
+    int id = 0;
     try {
-      return (Integer) ids.get("tmdbId");
+      id = (Integer) ids.get("tmdbId");
     }
-    catch (NumberFormatException e) {
+    catch (Exception e) {
       return 0;
     }
+    return id;
   }
 
   /**
@@ -125,12 +127,14 @@ public class MediaMetadata {
    * @return the tmdb id set
    */
   public int getTmdbIdSet() {
+    int id = 0;
     try {
-      return (Integer) ids.get("tmdbIdSet");
+      id = (Integer) ids.get("tmdbIdSet");
     }
-    catch (NumberFormatException e) {
+    catch (Exception e) {
       return 0;
     }
+    return id;
   }
 
   /**

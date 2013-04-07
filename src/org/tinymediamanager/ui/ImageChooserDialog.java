@@ -726,9 +726,6 @@ public class ImageChooserDialog extends JDialog {
           }
         }
       }
-      catch (NumberFormatException e) {
-        LOGGER.error("DownloadTask", e);
-      }
       catch (Exception e) {
         LOGGER.error("DownloadTask", e);
       }

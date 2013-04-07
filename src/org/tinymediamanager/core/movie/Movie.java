@@ -849,12 +849,14 @@ public class Movie extends MediaEntity {
    * @return the tmdb id
    */
   public int getTmdbId() {
+    int id = 0;
     try {
-      return (Integer) ids.get("tmdbId");
+      id = (Integer) ids.get("tmdbId");
     }
-    catch (NumberFormatException e) {
+    catch (Exception e) {
       return 0;
     }
+    return id;
   }
 
   /**
