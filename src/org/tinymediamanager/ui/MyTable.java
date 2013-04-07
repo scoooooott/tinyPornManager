@@ -33,12 +33,14 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import org.netbeans.swing.etable.ETable;
+
 /**
  * The Class MyTable.
  * 
  * @author Manuel Laggner
  */
-public class MyTable extends JTable {
+public class MyTable extends ETable {
 
   /** The Constant serialVersionUID. */
   private static final long             serialVersionUID = 1L;
@@ -86,11 +88,11 @@ public class MyTable extends JTable {
     // turn off grid painting as we'll handle this manually in order to paint
     // grid lines over the entire viewport.
     setShowGrid(false);
+    setPopupUsedFromTheCorner(true);
   }
 
   /**
-   * Creates a JTableHeader that paints the table header background to the right
-   * of the right-most column if neccesasry.
+   * Creates a JTableHeader that paints the table header background to the right of the right-most column if neccesasry.
    * 
    * @return the j table header
    */
@@ -115,8 +117,7 @@ public class MyTable extends JTable {
   }
 
   /**
-   * Paints the given JTable's table default header background at given x for
-   * the given width.
+   * Paints the given JTable's table default header background at given x for the given width.
    * 
    * @param g
    *          the g
@@ -140,9 +141,7 @@ public class MyTable extends JTable {
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * javax.swing.JTable#prepareRenderer(javax.swing.table.TableCellRenderer,
-   * int, int)
+   * @see javax.swing.JTable#prepareRenderer(javax.swing.table.TableCellRenderer, int, int)
    */
   @Override
   public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -159,8 +158,7 @@ public class MyTable extends JTable {
   // Stripe painting Viewport. //////////////////////////////////////////////
 
   /**
-   * Creates a JViewport that draws a striped backgroud corresponding to the row
-   * positions of the given JTable.
+   * Creates a JViewport that draws a striped backgroud corresponding to the row positions of the given JTable.
    * 
    * @author Manuel Laggner
    */
@@ -330,14 +328,13 @@ public class MyTable extends JTable {
     scrollPane.setViewport(new StripedViewport(table));
     scrollPane.getViewport().setView(table);
     // scrollPane.setBorder(BorderFactory.createEmptyBorder());
-    scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, createCornerComponent(table));
+    // scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, createCornerComponent(table));
     // scrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     return scrollPane;
   }
 
   /**
-   * Creates a component that paints the header background for use in a
-   * JScrollPane corner.
+   * Creates a component that paints the header background for use in a JScrollPane corner.
    * 
    * @param table
    *          the table

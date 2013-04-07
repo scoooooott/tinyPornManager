@@ -252,7 +252,14 @@ public class TvShowTreeModel implements TreeModel {
    */
   @Override
   public int getIndexOfChild(Object parent, Object child) {
-    return ((TreeNode) parent).getIndex((TreeNode) child);
+    TreeNode childNode = null;
+    if (child instanceof TreeNode) {
+      childNode = (TreeNode) child;
+    }
+    else {
+      childNode = nodeMap.get(child);
+    }
+    return ((TreeNode) parent).getIndex(childNode);
   }
 
   /*

@@ -28,11 +28,11 @@ import java.net.URI;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -382,7 +382,10 @@ public class MovieTrailerPanel extends JPanel {
    * 
    * @author Manuel Laggner
    */
-  private static class NullSelectionModel implements ListSelectionModel {
+  private static class NullSelectionModel extends DefaultListSelectionModel {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1956483331520197616L;
 
     /*
      * (non-Javadoc)

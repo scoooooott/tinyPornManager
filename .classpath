@@ -27,7 +27,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/glazedlists.jar"/>
+	<classpathentry kind="lib" path="lib/glazedlists.jar" sourcepath="buildsupport/glazedlists_java15-1.9.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/l2fprod-common-buttonbar.jar"/>
 	<classpathentry kind="lib" path="lib/l2fprod-common-shared.jar"/>
 	<classpathentry kind="lib" path="lib/resources.jar"/>
@@ -41,5 +41,6 @@
 	<classpathentry kind="lib" path="lib/jmte-unbundled.jar"/>
 	<classpathentry kind="lib" path="lib/DJNativeSwing-SWT.jar"/>
 	<classpathentry kind="lib" path="lib/DJNativeSwing.jar"/>
+	<classpathentry kind="lib" path="lib/org-netbeans-swing-outline-RELEASE73.jar" sourcepath="buildsupport/org-netbeans-swing-outline-RELEASE73-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

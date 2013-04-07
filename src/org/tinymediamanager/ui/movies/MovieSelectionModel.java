@@ -26,10 +26,10 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.ui.DefaultEventSelectionModel;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 
 /**
@@ -40,31 +40,31 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 public class MovieSelectionModel extends AbstractModelObject implements ListSelectionListener {
 
   /** The Constant SELECTED_MOVIE. */
-  private static final String           SELECTED_MOVIE = "selectedMovie";
+  private static final String               SELECTED_MOVIE = "selectedMovie";
 
   /** The selected movies. */
-  private List<Movie>                   selectedMovies;
+  private List<Movie>                       selectedMovies;
 
   /** The selected movie. */
-  private Movie                         selectedMovie;
+  private Movie                             selectedMovie;
 
   /** The inital movie. */
-  private Movie                         initalMovie    = new Movie();
+  private Movie                             initalMovie    = new Movie();
 
   /** The selection model. */
-  private EventSelectionModel<Movie>    selectionModel;
+  private DefaultEventSelectionModel<Movie> selectionModel;
 
   /** The matcher editor. */
-  private MovieMatcherEditor            matcherEditor;
+  private MovieMatcherEditor                matcherEditor;
 
   /** The table comparator chooser. */
-  private TableComparatorChooser<Movie> tableComparatorChooser;
+  private TableComparatorChooser<Movie>     tableComparatorChooser;
 
   /** The sorted list. */
-  private SortedList<Movie>             sortedList;
+  private SortedList<Movie>                 sortedList;
 
   /** The property change listener. */
-  private PropertyChangeListener        propertyChangeListener;
+  private PropertyChangeListener            propertyChangeListener;
 
   /**
    * Instantiates a new movie selection model. Usage in MoviePanel
@@ -78,7 +78,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public MovieSelectionModel(SortedList<Movie> sortedList, EventList<Movie> source, MovieMatcherEditor matcher) {
     this.sortedList = sortedList;
-    this.selectionModel = new EventSelectionModel<Movie>(source);
+    this.selectionModel = new DefaultEventSelectionModel<Movie>(source);
     this.selectionModel.addListSelectionListener(this);
     // this.matcherEditor = new MovieMatcherEditor();
     this.matcherEditor = matcher;
@@ -138,16 +138,14 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * 
    * @return the selection model
    */
-  public EventSelectionModel<Movie> getSelectionModel() {
+  public DefaultEventSelectionModel<Movie> getSelectionModel() {
     return selectionModel;
   }
 
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.
-   * ListSelectionEvent)
+   * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event. ListSelectionEvent)
    */
   /**
    * Value changed.

@@ -30,15 +30,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 
 import org.apache.log4j.Logger;
 import org.gpl.JSplitButton.JSplitButton;
 import org.gpl.JSplitButton.action.SplitButtonActionListener;
+import org.netbeans.swing.outline.DefaultOutlineModel;
+import org.netbeans.swing.outline.Outline;
+import org.netbeans.swing.outline.OutlineModel;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -84,7 +85,8 @@ public class TvShowPanel extends JPanel {
   private TvShowList                  tvShowList              = TvShowList.getInstance();
 
   /** The tree. */
-  private JTree                       tree;
+  // private JTree tree;
+  private Outline                     tree;
 
   /** The panel right. */
   private JPanel                      panelRight;
@@ -160,10 +162,74 @@ public class TvShowPanel extends JPanel {
     toolBar.add(buttonScrape);
     toolBar.add(actionEdit);
 
-    tree = new JTree(treeModel);
+    /*
+     * TEST
+     */
+
+    // Create the Outline's model, consisting of the TreeModel and the RowModel,
+    // together with two optional values: a boolen for something or other,
+    // and the display name for the first column:
+    OutlineModel mdl = DefaultOutlineModel.createOutlineModel(treeModel, new TvShowRowModel(), true, "TV shows");
+
+    // Initialize the Outline object:
+    tree = new Outline();
+
+    // By default, the root is shown, while here that isn't necessary:
     tree.setRootVisible(false);
-    tree.setShowsRootHandles(true);
+
+    // Assign the model to the Outline object:
+    tree.setModel(mdl);
+
+    // tree = new JTree(treeModel);
+    // tree.setRootVisible(false);
+    // tree.setShowsRootHandles(true);
     scrollPane.setViewportView(tree);
+
+    tree.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent arg0) {
+        if (arg0.getValueIsAdjusting()) {
+          return;
+        }
+
+        int row = tree.getSelectedRow();
+        Object obj = tree.getValueAt(row, 0);
+        if (!(obj instanceof DefaultMutableTreeNode)) {
+          return;
+        }
+
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
+
+        // click on a tv show
+        if (node instanceof TvShowTreeNode) {
+          TvShow tvShow = (TvShow) node.getUserObject();
+          tvShowSelectionModel.setSelectedTvShow(tvShow);
+          CardLayout cl = (CardLayout) (panelRight.getLayout());
+          cl.show(panelRight, "tvShow");
+        }
+        // click on a season
+        if (node instanceof TvShowSeasonTreeNode) {
+          TvShowSeason tvShowSeason = (TvShowSeason) node.getUserObject();
+          // act as a click on a tv show if a season of an other tv show has been clicked
+          if (tvShowSeason.getTvShow() != tvShowSelectionModel.getSelectedTvShow()) {
+            tvShowSelectionModel.setSelectedTvShow(tvShowSeason.getTvShow());
+            CardLayout cl = (CardLayout) (panelRight.getLayout());
+            cl.show(panelRight, "tvShow");
+          }
+        }
+        // click on an episode
+        if (node instanceof TvShowEpisodeTreeNode) {
+          TvShowEpisode tvShowEpisode = (TvShowEpisode) node.getUserObject();
+          tvShowEpisodeSelectionModel.setSelectedTvShowEpisode(tvShowEpisode);
+          CardLayout cl = (CardLayout) (panelRight.getLayout());
+          cl.show(panelRight, "tvShowEpisode");
+        }
+      }
+    });
+
+    /*
+     * TEST END
+     */
 
     panelRight = new JPanel();
     splitPane.setRightComponent(panelRight);
@@ -175,43 +241,43 @@ public class TvShowPanel extends JPanel {
     JPanel panelTvShowEpisode = new TvShowEpisodeInformationPanel(tvShowEpisodeSelectionModel);
     panelRight.add(panelTvShowEpisode, "tvShowEpisode");
 
-    tree.addTreeSelectionListener(new TreeSelectionListener() {
-      @Override
-      public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-        if (node != null) {
-          // click on a tv show
-          if (node.getUserObject() instanceof TvShow) {
-            TvShow tvShow = (TvShow) node.getUserObject();
-            tvShowSelectionModel.setSelectedTvShow(tvShow);
-            CardLayout cl = (CardLayout) (panelRight.getLayout());
-            cl.show(panelRight, "tvShow");
-          }
-
-          // click on a season
-          if (node.getUserObject() instanceof TvShowSeason) {
-            TvShowSeason tvShowSeason = (TvShowSeason) node.getUserObject();
-            // act as a click on a tv show if a season of an other tv show has been clicked
-            if (tvShowSeason.getTvShow() != tvShowSelectionModel.getSelectedTvShow()) {
-              tvShowSelectionModel.setSelectedTvShow(tvShowSeason.getTvShow());
-              CardLayout cl = (CardLayout) (panelRight.getLayout());
-              cl.show(panelRight, "tvShow");
-            }
-          }
-
-          // click on an episode
-          if (node.getUserObject() instanceof TvShowEpisode) {
-            TvShowEpisode tvShowEpisode = (TvShowEpisode) node.getUserObject();
-            tvShowEpisodeSelectionModel.setSelectedTvShowEpisode(tvShowEpisode);
-            CardLayout cl = (CardLayout) (panelRight.getLayout());
-            cl.show(panelRight, "tvShowEpisode");
-          }
-        }
-        else {
-          tvShowSelectionModel.setSelectedTvShow(null);
-        }
-      }
-    });
+    // tree.addTreeSelectionListener(new TreeSelectionListener() {
+    // @Override
+    // public void valueChanged(TreeSelectionEvent e) {
+    // DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+    // if (node != null) {
+    // // click on a tv show
+    // if (node.getUserObject() instanceof TvShow) {
+    // TvShow tvShow = (TvShow) node.getUserObject();
+    // tvShowSelectionModel.setSelectedTvShow(tvShow);
+    // CardLayout cl = (CardLayout) (panelRight.getLayout());
+    // cl.show(panelRight, "tvShow");
+    // }
+    //
+    // // click on a season
+    // if (node.getUserObject() instanceof TvShowSeason) {
+    // TvShowSeason tvShowSeason = (TvShowSeason) node.getUserObject();
+    // // act as a click on a tv show if a season of an other tv show has been clicked
+    // if (tvShowSeason.getTvShow() != tvShowSelectionModel.getSelectedTvShow()) {
+    // tvShowSelectionModel.setSelectedTvShow(tvShowSeason.getTvShow());
+    // CardLayout cl = (CardLayout) (panelRight.getLayout());
+    // cl.show(panelRight, "tvShow");
+    // }
+    // }
+    //
+    // // click on an episode
+    // if (node.getUserObject() instanceof TvShowEpisode) {
+    // TvShowEpisode tvShowEpisode = (TvShowEpisode) node.getUserObject();
+    // tvShowEpisodeSelectionModel.setSelectedTvShowEpisode(tvShowEpisode);
+    // CardLayout cl = (CardLayout) (panelRight.getLayout());
+    // cl.show(panelRight, "tvShowEpisode");
+    // }
+    // }
+    // else {
+    // tvShowSelectionModel.setSelectedTvShow(null);
+    // }
+    // }
+    // });
   }
 
   /**
@@ -222,20 +288,29 @@ public class TvShowPanel extends JPanel {
   private List<TvShow> getSelectedTvShows() {
     List<TvShow> selectedTvShows = new ArrayList<TvShow>();
 
-    TreePath[] paths = tree.getSelectionPaths();
-
-    // filter out all tv shows from the selection
-    if (paths != null) {
-      for (TreePath path : paths) {
-        if (path.getPathCount() > 1) {
-          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-          if (node.getUserObject() instanceof TvShow) {
-            TvShow tvShow = (TvShow) node.getUserObject();
-            selectedTvShows.add(tvShow);
-          }
-        }
+    int[] selectedRows = tree.getSelectedRows();
+    for (int i : selectedRows) {
+      if (tree.getValueAt(i, 0) instanceof TvShowTreeNode) {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getValueAt(i, 0);
+        TvShow tvShow = (TvShow) node.getUserObject();
+        selectedTvShows.add(tvShow);
       }
     }
+
+    // TreePath[] paths = tree.getSelectionPaths();
+    //
+    // // filter out all tv shows from the selection
+    // if (paths != null) {
+    // for (TreePath path : paths) {
+    // if (path.getPathCount() > 1) {
+    // DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+    // if (node.getUserObject() instanceof TvShow) {
+    // TvShow tvShow = (TvShow) node.getUserObject();
+    // selectedTvShows.add(tvShow);
+    // }
+    // }
+    // }
+    // }
 
     return selectedTvShows;
   }
