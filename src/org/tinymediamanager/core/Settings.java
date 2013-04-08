@@ -40,7 +40,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
@@ -65,7 +66,7 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 @XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractModelObject {
   /** The Constant logger. */
-  private static final Logger         LOGGER                      = Logger.getLogger(Settings.class);
+  private static final Logger         LOGGER                      = LoggerFactory.getLogger(Settings.class);
 
   /** The instance. */
   private static Settings             instance;

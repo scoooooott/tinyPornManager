@@ -19,7 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.Similarity;
 
 /**
@@ -30,7 +31,7 @@ import org.tinymediamanager.scraper.util.Similarity;
 public class MetadataUtil {
 
   /** The Constant log. */
-  private static final Logger LOGGER = Logger.getLogger(MetadataUtil.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MetadataUtil.class);
 
   /**
    * Return the best score for a title when compared to the search string. It

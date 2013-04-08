@@ -50,7 +50,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -78,13 +79,13 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieSetImageChooserDialog extends JDialog {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger         LOGGER           = Logger.getLogger(MovieSetImageChooserDialog.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieSetImageChooserDialog.class);
 
   /**
    * The Enum ImageType.
@@ -462,7 +463,7 @@ public class MovieSetImageChooserDialog extends JDialog {
         artworkProvider = new TmdbMetadataProvider();
       }
       catch (Exception e1) {
-        LOGGER.warn(e1);
+        LOGGER.warn("can't load artwork provider", e1);
         return null;
       }
 
@@ -486,7 +487,7 @@ public class MovieSetImageChooserDialog extends JDialog {
         artwork = artworkProvider.getMovieSetArtwork(tmdbId, artworkType);
       }
       catch (Exception e1) {
-        LOGGER.warn(e1);
+        LOGGER.warn("can't load artwork provider", e1);
       }
 
       // return if nothing has been found

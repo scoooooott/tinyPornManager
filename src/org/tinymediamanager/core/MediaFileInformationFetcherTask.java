@@ -17,7 +17,8 @@ package org.tinymediamanager.core;
 
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 
 /**
@@ -28,7 +29,7 @@ import org.tinymediamanager.core.movie.Movie;
 public class MediaFileInformationFetcherTask implements Callable<Object> {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = Logger.getLogger(MediaFileInformationFetcherTask.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
   /** The movie. */
   private Movie               m;

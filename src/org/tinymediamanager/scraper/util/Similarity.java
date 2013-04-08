@@ -17,7 +17,8 @@ package org.tinymediamanager.scraper.util;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * String Similarity taken from: http://www.catalysoft.com/articles/StrikeAMatch.html
@@ -31,7 +32,7 @@ public class Similarity {
   private static Similarity   instance = new Similarity();
 
   /** The Constant log. */
-  private static final Logger LOGGER   = Logger.getLogger(Similarity.class);
+  private static final Logger LOGGER   = LoggerFactory.getLogger(Similarity.class);
 
   /**
    * Letter pairs.

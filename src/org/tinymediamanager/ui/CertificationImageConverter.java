@@ -20,7 +20,8 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.Converter;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.movies.MovieGenresPanel;
@@ -33,7 +34,7 @@ import org.tinymediamanager.ui.movies.MovieGenresPanel;
 public class CertificationImageConverter extends Converter<Certification, Icon> {
 
   /** The Constant LOGGER. */
-  private static final Logger   LOGGER     = Logger.getLogger(CertificationImageConverter.class);
+  private static final Logger   LOGGER     = LoggerFactory.getLogger(CertificationImageConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();

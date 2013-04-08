@@ -31,7 +31,8 @@ import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ExportTemplate;
 
@@ -59,7 +60,7 @@ public class MovieExporter {
   }
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER             = Logger.getLogger(MovieExporter.class);
+  private final static Logger LOGGER             = LoggerFactory.getLogger(MovieExporter.class);
 
   /** The Constant TEMPLATE_DIRECTORY. */
   private static final String TEMPLATE_DIRECTORY = "templates";

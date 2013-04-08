@@ -22,7 +22,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class UrlUtil.
@@ -32,7 +33,7 @@ import org.apache.log4j.Logger;
 public class UrlUtil {
 
   /** The Constant log. */
-  private static final Logger LOGGER = Logger.getLogger(UrlUtil.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(UrlUtil.class);
 
   /**
    * Casts url string to URI, and does the correct encoding (rfc2396) of query string ONLY (eg "|" character). URLEncoder encodes everything which

@@ -20,8 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
@@ -38,7 +39,7 @@ import com.omertron.themoviedbapi.model.CollectionInfo;
 public class MovieSetChooserModel extends AbstractModelObject {
 
   /** The static LOGGER. */
-  private static final Logger  LOGGER    = Logger.getLogger(MovieSetChooserModel.class);
+  private static final Logger  LOGGER    = LoggerFactory.getLogger(MovieSetChooserModel.class);
 
   /** The name. */
   private String               name      = "";
@@ -251,7 +252,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
       }
     }
     catch (Exception e) {
-      LOGGER.warn(e);
+      LOGGER.warn("error while scraping metadata", e);
     }
 
   }

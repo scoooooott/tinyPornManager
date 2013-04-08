@@ -50,7 +50,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
@@ -68,7 +69,7 @@ public class Utils {
   protected static final String    HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:19.0) Gecko/20100101 Firefox/19.0";
 
   /** The Constant LOGGER. */
-  private static final Logger      LOGGER          = Logger.getLogger(Utils.class);
+  private static final Logger      LOGGER          = LoggerFactory.getLogger(Utils.class);
 
   /**
    * Returns the sortable variant of title/originaltitle<br>

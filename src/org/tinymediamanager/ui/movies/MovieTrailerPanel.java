@@ -36,7 +36,8 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.MyTable;
@@ -68,7 +69,7 @@ public class MovieTrailerPanel extends JPanel {
   private static final long             serialVersionUID    = 1L;
 
   /** The logger. */
-  private static final Logger           LOGGER              = Logger.getLogger(MovieTrailerPanel.class);
+  private static final Logger           LOGGER              = LoggerFactory.getLogger(MovieTrailerPanel.class);
 
   /** The movie selection model. */
   private MovieSelectionModel           movieSelectionModel;

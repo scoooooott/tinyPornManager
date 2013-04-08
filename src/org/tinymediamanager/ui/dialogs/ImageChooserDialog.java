@@ -55,7 +55,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -90,7 +91,7 @@ public class ImageChooserDialog extends JDialog {
   private static final long           serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger         LOGGER           = Logger.getLogger(ImageChooserDialog.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
 
   /**
    * The Enum ImageType.

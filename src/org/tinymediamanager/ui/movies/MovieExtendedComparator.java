@@ -18,7 +18,8 @@ package org.tinymediamanager.ui.movies;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -33,7 +34,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant LOGGER. */
-  private static final Logger         LOGGER = Logger.getLogger(MovieExtendedComparator.class);
+  private static final Logger         LOGGER = LoggerFactory.getLogger(MovieExtendedComparator.class);
 
   /**
    * The Enum SortColumn.

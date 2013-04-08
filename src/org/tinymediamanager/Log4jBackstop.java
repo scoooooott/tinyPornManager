@@ -15,7 +15,8 @@
  */
 package org.tinymediamanager;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class Log4jBackstop.
@@ -25,7 +26,7 @@ import org.apache.log4j.Logger;
 class Log4jBackstop implements Thread.UncaughtExceptionHandler {
 
   /** The logger. */
-  private static final Logger LOGGER = Logger.getLogger(Log4jBackstop.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Log4jBackstop.class);
 
   /*
    * (non-Javadoc)

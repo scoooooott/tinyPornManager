@@ -19,7 +19,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class ReleaseInfo.
@@ -29,7 +30,7 @@ import org.apache.log4j.Logger;
 public class ReleaseInfo {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(ReleaseInfo.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseInfo.class);
 
   /** The version. */
   private static String       version;

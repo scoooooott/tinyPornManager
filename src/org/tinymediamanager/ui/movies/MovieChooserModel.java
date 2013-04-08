@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -44,7 +45,7 @@ public class MovieChooserModel extends AbstractModelObject {
   private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant logger. */
-  private static final Logger           LOGGER           = Logger.getLogger(MovieChooserModel.class);
+  private static final Logger           LOGGER           = LoggerFactory.getLogger(MovieChooserModel.class);
 
   /** The Constant emptyResult. */
   public static final MovieChooserModel emptyResult      = new MovieChooserModel();

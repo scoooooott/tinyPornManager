@@ -26,7 +26,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
@@ -36,7 +37,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
 public abstract class TmmThreadPool extends TmmSwingWorker {
 
   /** The Constant LOGGER. */
-  private static final Logger       LOGGER    = Logger.getLogger(TmmThreadPool.class);
+  private static final Logger       LOGGER    = LoggerFactory.getLogger(TmmThreadPool.class);
   private ThreadPoolExecutor        pool      = null;
   private CompletionService<Object> service   = null;
   protected boolean                 cancel    = false;

@@ -27,7 +27,8 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -48,7 +49,7 @@ import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
 public class TvShowList extends AbstractModelObject {
 
   /** The Constant logger. */
-  private static final Logger    LOGGER         = Logger.getLogger(TvShowList.class);
+  private static final Logger    LOGGER         = LoggerFactory.getLogger(TvShowList.class);
 
   /** The instance. */
   private static TvShowList      instance       = null;

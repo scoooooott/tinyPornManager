@@ -43,7 +43,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
@@ -68,7 +69,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(MovieToMpNfoConnector.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
 
   /** The title. */
   private String              title;

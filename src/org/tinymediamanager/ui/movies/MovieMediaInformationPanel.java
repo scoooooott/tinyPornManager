@@ -32,7 +32,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -69,7 +70,7 @@ public class MovieMediaInformationPanel extends JPanel {
   private static final long           serialVersionUID    = 1L;
 
   /** The logger. */
-  private final static Logger         LOGGER              = Logger.getLogger(MovieMediaInformationPanel.class);
+  private final static Logger         LOGGER              = LoggerFactory.getLogger(MovieMediaInformationPanel.class);
 
   /** The movie selection model. */
   private MovieSelectionModel         movieSelectionModel;

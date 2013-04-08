@@ -22,7 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
@@ -66,7 +67,7 @@ import com.omertron.themoviedbapi.tools.ApiUrl;
 public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtworkProvider, IMediaTrailerProvider {
 
   /** The Constant logger. */
-  private static final Logger           LOGGER            = Logger.getLogger(TmdbMetadataProvider.class);
+  private static final Logger           LOGGER            = LoggerFactory.getLogger(TmdbMetadataProvider.class);
 
   /** The tmdb. */
   private static TheMovieDbApi          tmdb;

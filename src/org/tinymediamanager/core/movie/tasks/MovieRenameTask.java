@@ -17,7 +17,8 @@ package org.tinymediamanager.core.movie.tasks;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.ui.TmmSwingWorker;
@@ -30,7 +31,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
 public class MovieRenameTask extends TmmSwingWorker {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = Logger.getLogger(MovieRenameTask.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenameTask.class);
 
   /** The movies to rename. */
   private List<Movie>         moviesToRename;

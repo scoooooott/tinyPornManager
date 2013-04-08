@@ -47,7 +47,8 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.dialogs.AboutDialog;
 import org.tinymediamanager.ui.dialogs.BugReportDialog;
@@ -72,7 +73,7 @@ public class MainWindow extends JFrame {
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   /** The logger. */
-  private final static Logger         LOGGER           = Logger.getLogger(MainWindow.class);
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;

@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -61,7 +62,7 @@ import org.tinymediamanager.scraper.util.Url;
 public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider, IMediaArtworkProvider {
 
   /** The Constant LOGGER. */
-  private static final Logger              LOGGER        = Logger.getLogger(ZelluloidMetadataProvider.class);
+  private static final Logger              LOGGER        = LoggerFactory.getLogger(ZelluloidMetadataProvider.class);
 
   /** The Constant BASE_URL. */
   private static final String              BASE_URL      = "http://www.zelluloid.de";

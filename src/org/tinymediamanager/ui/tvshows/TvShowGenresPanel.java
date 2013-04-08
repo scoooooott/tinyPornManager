@@ -24,7 +24,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.scraper.MediaGenres;
 
@@ -37,7 +38,7 @@ public class TvShowGenresPanel extends JPanel {
   private static final long    serialVersionUID = -7111036144770559630L;
 
   /** The Constant LOGGER. */
-  private static final Logger  LOGGER           = Logger.getLogger(TvShowGenresPanel.class);
+  private static final Logger  LOGGER           = LoggerFactory.getLogger(TvShowGenresPanel.class);
 
   /** The model. */
   private TvShowSelectionModel tvShowSelectionModel;

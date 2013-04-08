@@ -29,7 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
@@ -43,7 +44,7 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 public class MediaFile extends AbstractModelObject {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER           = Logger.getLogger(MediaFile.class);
+  private static final Logger LOGGER           = LoggerFactory.getLogger(MediaFile.class);
 
   /** The Constant PATH. */
   private static final String PATH             = "path";

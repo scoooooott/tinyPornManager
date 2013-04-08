@@ -35,7 +35,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
 
 /**
@@ -45,7 +46,7 @@ import org.tinymediamanager.core.Utils;
  */
 public class Url {
   /** The log. */
-  private static final Logger      LOGGER          = Logger.getLogger(Url.class);
+  private static final Logger      LOGGER          = LoggerFactory.getLogger(Url.class);
 
   /** The client. */
   private static DefaultHttpClient client;

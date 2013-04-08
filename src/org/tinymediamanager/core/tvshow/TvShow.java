@@ -33,7 +33,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
@@ -57,7 +58,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 public class TvShow extends MediaEntity {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER             = Logger.getLogger(TvShow.class);
+  private static final Logger LOGGER             = LoggerFactory.getLogger(TvShow.class);
 
   /** The episodes. */
   private List<TvShowEpisode> episodes           = new ArrayList<TvShowEpisode>();

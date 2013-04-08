@@ -35,7 +35,8 @@ import javax.swing.SwingWorker;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.bric.image.pixel.Scaling;
@@ -54,7 +55,7 @@ public class ImageLabel extends JLabel {
   private static final long           serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger         LOGGER           = Logger.getLogger(ImageLabel.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageLabel.class);
 
   /** The Constant CACHE_DIR. */
   private static final String         CACHE_DIR        = "cache/image";

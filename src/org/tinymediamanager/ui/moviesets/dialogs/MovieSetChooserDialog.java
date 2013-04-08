@@ -43,7 +43,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -81,7 +82,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
   private static final long           serialVersionUID = -1023959850452480592L;
 
   /** The static LOGGER. */
-  private static final Logger         LOGGER           = Logger.getLogger(MovieSetChooserDialog.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
 
   /** The movie set to edit. */
   private MovieSet                    movieSetToEdit;

@@ -24,7 +24,8 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import chrriis.dj.nativeswing.swtimpl.components.JDirectoryDialog;
 import chrriis.dj.nativeswing.swtimpl.components.JFileDialog;
@@ -37,7 +38,7 @@ import chrriis.dj.nativeswing.swtimpl.components.JFileDialog;
 public class TmmUIHelper {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(TmmUIHelper.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TmmUIHelper.class);
 
   /** The swt. */
   @SuppressWarnings("rawtypes")

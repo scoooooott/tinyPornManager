@@ -46,7 +46,8 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Utils;
@@ -73,7 +74,7 @@ public class BugReportDialog extends JDialog {
   private static final long           serialVersionUID = 1L;
 
   /** The Constant LOGGER. */
-  private static final Logger         LOGGER           = Logger.getLogger(BugReportDialog.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
 
   /** The text field. */
   private JTextField                  textField;

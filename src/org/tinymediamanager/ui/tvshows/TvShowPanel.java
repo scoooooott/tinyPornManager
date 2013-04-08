@@ -34,7 +34,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.gpl.JSplitButton.JSplitButton;
 import org.gpl.JSplitButton.action.SplitButtonActionListener;
 import org.netbeans.swing.outline.DefaultOutlineModel;
@@ -70,7 +71,7 @@ public class TvShowPanel extends JPanel {
   private static final long           serialVersionUID        = -1923811385292825136L;
 
   /** The logger. */
-  private final static Logger         LOGGER                  = Logger.getLogger(TvShowPanel.class);
+  private final static Logger         LOGGER                  = LoggerFactory.getLogger(TvShowPanel.class);
 
   /** The tree model. */
   private TvShowTreeModel             treeModel;

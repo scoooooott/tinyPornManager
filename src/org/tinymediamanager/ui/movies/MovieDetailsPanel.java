@@ -26,7 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -55,7 +56,7 @@ public class MovieDetailsPanel extends JPanel {
   private static final long           serialVersionUID = 6273970118830324299L;
 
   /** The logger. */
-  private final static Logger         LOGGER           = Logger.getLogger(MovieDetailsPanel.class);
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieDetailsPanel.class);
 
   /** The movie selection model. */
   private MovieSelectionModel         movieSelectionModel;

@@ -24,7 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
@@ -39,7 +40,7 @@ import com.sun.jna.WString;
 public class MediaInfo implements Closeable {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(MediaInfo.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaInfo.class);
 
   static {
     try {

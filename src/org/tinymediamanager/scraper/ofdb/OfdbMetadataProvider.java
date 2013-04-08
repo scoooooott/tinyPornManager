@@ -26,7 +26,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,7 +58,7 @@ import org.tinymediamanager.scraper.util.Url;
 public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider {
 
   /** The Constant LOGGER. */
-  private static final Logger         LOGGER       = Logger.getLogger(OfdbMetadataProvider.class);
+  private static final Logger         LOGGER       = LoggerFactory.getLogger(OfdbMetadataProvider.class);
 
   private static final String         BASE_URL     = "http://www.ofdb.de";
 

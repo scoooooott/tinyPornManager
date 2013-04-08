@@ -45,7 +45,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -94,7 +95,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
 
   /** The static LOGGER. */
-  private static final Logger         LOGGER                = Logger.getLogger(TvShowChooserDialog.class);
+  private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowChooserDialog.class);
 
   /** The content panel. */
   private final JPanel                contentPanel          = new JPanel();

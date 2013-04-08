@@ -26,7 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,7 +58,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
   /** The Constant LOGGER. */
-  private static final Logger      LOGGER       = Logger.getLogger(ImdbMetadataProvider.class);
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 
   /** The imdb site. */
   private ImdbSiteDefinition       imdbSite;

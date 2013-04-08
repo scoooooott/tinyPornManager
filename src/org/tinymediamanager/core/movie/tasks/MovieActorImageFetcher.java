@@ -25,7 +25,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.scraper.util.CachedUrl;
@@ -37,7 +38,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  */
 public class MovieActorImageFetcher implements Runnable {
 
-  private final static Logger LOGGER = Logger.getLogger(MovieActorImageFetcher.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MovieActorImageFetcher.class);
 
   private Movie               movie;
 

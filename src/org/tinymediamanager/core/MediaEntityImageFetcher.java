@@ -21,7 +21,8 @@ import java.io.InputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
@@ -33,7 +34,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 public class MediaEntityImageFetcher implements Runnable {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = Logger.getLogger(MediaEntityImageFetcher.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityImageFetcher.class);
 
   /** The entity. */
   private MediaEntity         entity;

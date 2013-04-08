@@ -18,7 +18,8 @@ package org.tinymediamanager.scraper.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class ParserUtils.
@@ -28,7 +29,7 @@ import org.apache.log4j.Logger;
 public class ParserUtils {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(ParserUtils.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ParserUtils.class);
 
   /**
    * Tries to get movie name from filename<br>

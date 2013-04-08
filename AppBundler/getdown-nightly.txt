@@ -19,7 +19,6 @@ code = lib/beansbinding.jar
 code = lib/commons-codec.jar
 code = lib/commons-io.jar
 code = lib/commons-lang3.jar
-code = lib/commons-logging.jar
 code = lib/DJNativeSwing.jar
 code = lib/DJNativeSwing-SWT.jar 
 code = lib/fanarttvapi.jar
@@ -31,6 +30,7 @@ code = lib/httpmime.jar
 code = lib/jackson-annotations.jar
 code = lib/jackson-core.jar
 code = lib/jackson-databind.jar
+code = lib/jcl-over-slf4j-1.7.5.jar
 code = lib/jdom.jar
 code = lib/jmte-unbundled.jar
 code = lib/jna.jar
@@ -39,14 +39,15 @@ code = lib/JSplitButton.jar
 code = lib/JTattoo.jar
 code = lib/l2fprod-common-buttonbar.jar 
 code = lib/l2fprod-common-shared.jar 
-code = lib/log4j.jar
+code = lib/logback-classic-1.0.11.jar
+code = lib/logback-core-1.0.11.jar
 code = lib/objectdb.jar
 code = lib/platform.jar
 code = lib/resources.jar
 code = lib/Scaling-bin.jar
+code = lib/slf4j-api-1.7.5.jar
 code = lib/themoviedbapi.jar
 code = lib/thetvdbapi.jar
-# code = lib/vlcj.jar
 
 # strings added to classpath
 plugin = lib/swt.jar
@@ -54,6 +55,8 @@ plugin = locale/*
 
 # files to be deleted
 delete = lib/vlcj.jar
+delete = lib/commons-logging.jar
+delete = lib/log4j.jar
 
 resource = getdown.jar
 #resource = [windows] tinyMediaManager.exe #not yet - need more testing

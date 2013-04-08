@@ -27,7 +27,8 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
@@ -42,7 +43,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 public class MovieRenamer {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = Logger.getLogger(MovieRenamer.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamer.class);
 
   /**
    * prepares the NFO cleanup;<br>

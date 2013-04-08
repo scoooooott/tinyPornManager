@@ -20,7 +20,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -41,7 +42,7 @@ import com.omertron.fanarttvapi.model.FanartTvArtwork;
 public class FanartTvMetadataProvider implements IMediaArtworkProvider {
 
   /** The Constant LOGGER. */
-  private static final Logger      LOGGER       = Logger.getLogger(FanartTvMetadataProvider.class);
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
 
   /** The Constant BASE_URL. */
   private static final String      BASE_URL     = "http://www.fanart.tv";

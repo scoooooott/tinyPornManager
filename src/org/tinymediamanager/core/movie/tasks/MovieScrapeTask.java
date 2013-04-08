@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -44,7 +45,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
 public class MovieScrapeTask extends TmmSwingWorker {
 
   /** The Constant LOGGER. */
-  private final static Logger         LOGGER = Logger.getLogger(MovieScrapeTask.class);
+  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
 
   /** The movies to scrape. */
   private List<Movie>                 moviesToScrape;

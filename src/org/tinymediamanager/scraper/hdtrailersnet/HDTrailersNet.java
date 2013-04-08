@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,7 +43,7 @@ import org.tinymediamanager.scraper.util.Url;
 public class HDTrailersNet implements IMediaTrailerProvider {
 
   /** The Constant logger. */
-  private static final Logger      LOGGER       = Logger.getLogger(HDTrailersNet.class);
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(HDTrailersNet.class);
 
   /** The provider info. */
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("hdtrailersnet", "hd-trailers.net",

@@ -17,7 +17,8 @@ package org.tinymediamanager.core.movie.tasks;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 
 /**
@@ -28,7 +29,7 @@ import org.tinymediamanager.core.movie.Movie;
 public class MovieExtraImageFetcher implements Runnable {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = Logger.getLogger(MovieExtraImageFetcher.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MovieExtraImageFetcher.class);
 
   /** The movie. */
   private Movie               movie;

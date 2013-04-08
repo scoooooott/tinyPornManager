@@ -21,7 +21,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.Converter;
 
 /**
@@ -32,7 +33,7 @@ import org.jdesktop.beansbinding.Converter;
 public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
 
   /** The Constant LOGGER. */
-  private static final Logger   LOGGER     = Logger.getLogger(MediaInfoAudioCodecConverter.class);
+  private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoAudioCodecConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();

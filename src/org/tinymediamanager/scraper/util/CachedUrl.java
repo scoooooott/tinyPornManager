@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class CachedUrl.
@@ -40,7 +41,7 @@ import org.apache.log4j.Logger;
 public class CachedUrl extends Url {
 
   /** The Constant log. */
-  private static final Logger  LOGGER        = Logger.getLogger(CachedUrl.class);
+  private static final Logger  LOGGER        = LoggerFactory.getLogger(CachedUrl.class);
 
   /** The Constant CACHE_DIR. */
   private static final String  CACHE_DIR     = "cache/url";

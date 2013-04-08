@@ -33,7 +33,8 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -68,7 +69,7 @@ public class MovieExporterDialog extends JDialog {
   private static final long           serialVersionUID = 1L;
 
   /** The static LOGGER. */
-  private static final Logger         LOGGER           = Logger.getLogger(MovieExporterDialog.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieExporterDialog.class);
 
   /** The movies. */
   private List<Movie>                 movies;

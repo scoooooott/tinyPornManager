@@ -46,7 +46,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.gpl.JSplitButton.JSplitButton;
 import org.gpl.JSplitButton.action.SplitButtonActionListener;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -99,7 +100,7 @@ public class MoviePanel extends JPanel {
   private static final long           serialVersionUID             = 1L;
 
   /** The logger. */
-  private final static Logger         LOGGER                       = Logger.getLogger(MoviePanel.class);
+  private final static Logger         LOGGER                       = LoggerFactory.getLogger(MoviePanel.class);
 
   /** The movie list. */
   private MovieList                   movieList;

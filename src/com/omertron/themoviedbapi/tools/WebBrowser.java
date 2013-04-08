@@ -23,7 +23,8 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.util.Url;
 
@@ -37,7 +38,7 @@ import com.omertron.themoviedbapi.MovieDbException;
 public final class WebBrowser {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(WebBrowser.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(WebBrowser.class);
 
   // Hide the constructor
   /**

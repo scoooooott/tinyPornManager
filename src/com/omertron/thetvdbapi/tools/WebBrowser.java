@@ -23,7 +23,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.util.Url;
 
@@ -35,7 +36,7 @@ import org.tinymediamanager.scraper.util.Url;
 public final class WebBrowser {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(WebBrowser.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(WebBrowser.class);
 
   /**
    * Constructor for WebBrowser. Does instantiates the browser properties.

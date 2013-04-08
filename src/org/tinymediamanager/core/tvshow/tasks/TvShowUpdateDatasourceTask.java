@@ -22,7 +22,8 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.MediaFile;
@@ -42,7 +43,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = Logger.getLogger(TvShowUpdateDatasourceTask.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
 
   /** The data sources. */
   private List<String>        dataSources;

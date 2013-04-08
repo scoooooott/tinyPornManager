@@ -15,7 +15,30 @@
  */
 package org.tinymediamanager.core.movie;
 
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.ACTORS;
+import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.DATA_SOURCE;
+import static org.tinymediamanager.core.Constants.DIRECTOR;
+import static org.tinymediamanager.core.Constants.FANART;
+import static org.tinymediamanager.core.Constants.GENRE;
+import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
+import static org.tinymediamanager.core.Constants.HAS_IMAGES;
+import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MOVIESET;
+import static org.tinymediamanager.core.Constants.NFO_FILENAME;
+import static org.tinymediamanager.core.Constants.RUNTIME;
+import static org.tinymediamanager.core.Constants.SORT_TITLE;
+import static org.tinymediamanager.core.Constants.SPOKEN_LANGUAGES;
+import static org.tinymediamanager.core.Constants.TAG;
+import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
+import static org.tinymediamanager.core.Constants.TITLE_FOR_UI;
+import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TMDBID;
+import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.VOTES;
+import static org.tinymediamanager.core.Constants.WATCHED;
+import static org.tinymediamanager.core.Constants.WRITER;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,8 +66,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableCollections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
@@ -79,7 +103,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 public class Movie extends MediaEntity {
   /** The Constant logger. */
   @XmlTransient
-  private static final Logger LOGGER               = Logger.getLogger(Movie.class);
+  private static final Logger LOGGER               = LoggerFactory.getLogger(Movie.class);
 
   /** The title sortable. */
   @Transient
@@ -1434,8 +1458,8 @@ public class Movie extends MediaEntity {
         if (art.getType() == MediaArtworkType.POSTER) {
           setPosterUrl(art.getDefaultUrl());
 
-          LOGGER.debug(art.getSmallestArtwork());
-          LOGGER.debug(art.getBiggestArtwork());
+          LOGGER.debug(art.getSmallestArtwork().toString());
+          LOGGER.debug(art.getBiggestArtwork().toString());
 
           // did we get the tmdbid from artwork?
           if (getTmdbId() == 0 && art.getTmdbId() > 0) {
@@ -1450,8 +1474,8 @@ public class Movie extends MediaEntity {
         if (art.getType() == MediaArtworkType.BACKGROUND) {
           setFanartUrl(art.getDefaultUrl());
 
-          LOGGER.debug(art.getSmallestArtwork());
-          LOGGER.debug(art.getBiggestArtwork());
+          LOGGER.debug(art.getSmallestArtwork().toString());
+          LOGGER.debug(art.getBiggestArtwork().toString());
 
           // did we get the tmdbid from artwork?
           if (getTmdbId() == 0 && art.getTmdbId() > 0) {

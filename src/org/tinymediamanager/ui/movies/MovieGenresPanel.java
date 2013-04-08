@@ -24,7 +24,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaGenres;
 
@@ -39,7 +40,7 @@ public class MovieGenresPanel extends JPanel {
   private static final long   serialVersionUID = -6585642654072040266L;
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER           = Logger.getLogger(MovieGenresPanel.class);
+  private static final Logger LOGGER           = LoggerFactory.getLogger(MovieGenresPanel.class);
 
   /** The model. */
   private MovieSelectionModel movieSelectionModel;

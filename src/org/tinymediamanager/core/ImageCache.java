@@ -35,7 +35,8 @@ import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.bric.image.pixel.Scaling;
@@ -47,7 +48,7 @@ import com.bric.image.pixel.Scaling;
  */
 public class ImageCache {
   /** The static LOGGER. */
-  private static final Logger LOGGER    = Logger.getLogger(ImageCache.class);
+  private static final Logger LOGGER    = LoggerFactory.getLogger(ImageCache.class);
 
   /** The Constant CACHE_DIR. */
   public static final String  CACHE_DIR = "cache/image";

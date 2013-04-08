@@ -40,7 +40,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
@@ -67,7 +68,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = Logger.getLogger(MovieToXbmcNfoConnector.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
 
   /** The title. */
   private String              title;

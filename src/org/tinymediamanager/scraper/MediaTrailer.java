@@ -26,7 +26,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.scraper.util.UrlUtil;
@@ -40,7 +41,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 public class MediaTrailer extends AbstractModelObject {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER   = Logger.getLogger(MediaTrailer.class);
+  private static final Logger LOGGER   = LoggerFactory.getLogger(MediaTrailer.class);
 
   /** The name. */
   private String              name     = "";
