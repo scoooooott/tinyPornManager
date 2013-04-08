@@ -33,14 +33,12 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
-import org.netbeans.swing.etable.ETable;
-
 /**
  * The Class MyTable.
  * 
  * @author Manuel Laggner
  */
-public class MyTable extends ETable {
+public class MyTable extends JTable {
 
   /** The Constant serialVersionUID. */
   private static final long             serialVersionUID = 1L;
@@ -88,7 +86,7 @@ public class MyTable extends ETable {
     // turn off grid painting as we'll handle this manually in order to paint
     // grid lines over the entire viewport.
     setShowGrid(false);
-    setPopupUsedFromTheCorner(true);
+    // setPopupUsedFromTheCorner(true);
   }
 
   /**
