@@ -23,14 +23,12 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.scraper.MediaGenres;
 
-import ca.odell.glazedlists.matchers.Matcher;
-
 /**
  * The Class MoviesExtendedMatcher.
  * 
  * @author Manuel Laggner
  */
-public class MoviesExtendedMatcher implements Matcher<Movie> {
+public class MovieMatcher {
 
   /**
    * The Enum SearchOptions.
@@ -62,16 +60,17 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
    * @param searchOptions
    *          the search options
    */
-  public MoviesExtendedMatcher(HashMap<SearchOptions, Object> searchOptions) {
+  public MovieMatcher(HashMap<SearchOptions, Object> searchOptions) {
     this.searchOptions = searchOptions;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * Matches.
    * 
-   * @see ca.odell.glazedlists.matchers.Matcher#matches(java.lang.Object)
+   * @param movie
+   *          the movie
+   * @return true, if successful
    */
-  @Override
   public boolean matches(Movie movie) {
     // not null
     if (movie == null) {

@@ -20,10 +20,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -39,10 +40,11 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -52,6 +54,8 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.netbeans.swing.etable.ETable;
+import org.netbeans.swing.etable.QuickFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
@@ -61,8 +65,6 @@ import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
-import org.tinymediamanager.ui.BorderCellRenderer;
-import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.JSearchTextField;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.MyTable;
@@ -73,14 +75,6 @@ import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
 import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
 import org.tinymediamanager.ui.movies.dialogs.MovieExporterDialog;
 import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
-
-import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.matchers.MatcherEditor;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import ca.odell.glazedlists.swing.TableComparatorChooser;
-import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -95,115 +89,109 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MoviePanel extends JPanel {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle   BUNDLE                       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE                       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long             serialVersionUID             = 1L;
+  private static final long           serialVersionUID             = 1L;
 
   /** The logger. */
-  private final static Logger           LOGGER                       = LoggerFactory.getLogger(MoviePanel.class);
+  private final static Logger         LOGGER                       = LoggerFactory.getLogger(MoviePanel.class);
 
   /** The movie list. */
-  private MovieList                     movieList;
+  private MovieList                   movieList;
 
   /** The text field. */
-  private JTextField                    textField;
+  private JTextField                  textField;
 
   /** The table. */
-  private JTable                        table;
+  private ETable                      table;
 
   /** The action update data sources. */
-  private final Action                  actionUpdateDataSources      = new UpdateDataSourcesAction(false);
+  private final Action                actionUpdateDataSources      = new UpdateDataSourcesAction(false);
 
   /** The action update data sources. */
-  private final Action                  actionUpdateDataSources2     = new UpdateDataSourcesAction(true);
+  private final Action                actionUpdateDataSources2     = new UpdateDataSourcesAction(true);
 
   /** The action scrape. */
-  private final Action                  actionScrape                 = new SingleScrapeAction(false);
+  private final Action                actionScrape                 = new SingleScrapeAction(false);
 
   /** The action scrape. */
-  private final Action                  actionScrape2                = new SingleScrapeAction(true);
+  private final Action                actionScrape2                = new SingleScrapeAction(true);
 
   /** The action edit movie. */
-  private final Action                  actionEditMovie              = new EditAction(false);
+  private final Action                actionEditMovie              = new EditAction(false);
 
   /** The action edit movie. */
-  private final Action                  actionEditMovie2             = new EditAction(true);
+  private final Action                actionEditMovie2             = new EditAction(true);
 
   /** The action scrape unscraped movies. */
-  private final Action                  actionScrapeUnscraped        = new UnscrapedScrapeAction();
+  private final Action                actionScrapeUnscraped        = new UnscrapedScrapeAction();
 
   /** The action scrape selected movies. */
-  private final Action                  actionScrapeSelected         = new SelectedScrapeAction();
+  private final Action                actionScrapeSelected         = new SelectedScrapeAction();
 
   /** The action scrape metadata selected. */
-  private final Action                  actionScrapeMetadataSelected = new SelectedScrapeMetadataAction();
+  private final Action                actionScrapeMetadataSelected = new SelectedScrapeMetadataAction();
 
   /** The action rename. */
-  private final Action                  actionRename                 = new RenameAction(false);
+  private final Action                actionRename                 = new RenameAction(false);
 
   /** The action rename2. */
-  private final Action                  actionRename2                = new RenameAction(true);
+  private final Action                actionRename2                = new RenameAction(true);
 
   /** The action remove2. */
-  private final Action                  actionRemove2                = new RemoveAction(true);
+  private final Action                actionRemove2                = new RemoveAction(true);
 
   /** The action export. */
-  private final Action                  actionExport                 = new ExportAction(true);
+  private final Action                actionExport                 = new ExportAction(true);
 
   /** The panel movie count. */
-  private JPanel                        panelMovieCount;
+  private JPanel                      panelMovieCount;
 
   /** The lbl movie count. */
-  private JLabel                        lblMovieCount;
+  private JLabel                      lblMovieCount;
 
   /** The lbl movie count int. */
-  private JLabel                        lblMovieCountTotal;
+  private JLabel                      lblMovieCountTotal;
 
   /** The btn ren. */
-  private JButton                       btnRen;
+  private JButton                     btnRen;
 
   /** The menu. */
-  private JMenu                         menu;
+  private JMenu                       menu;
 
   /** The movie table model. */
-  private DefaultEventTableModel<Movie> movieTableModel;
+  private MovieTableModel             movieTableModel;
 
   /** The movie selection model. */
-  private MovieSelectionModel           movieSelectionModel;
-
-  /** The sorted movies. */
-  private SortedList<Movie>             sortedMovies;
-
-  /** The text filtered movies. */
-  private FilterList<Movie>             textFilteredMovies;
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The panel extended search. */
-  private JPanel                        panelExtendedSearch;
+  private JPanel                      panelExtendedSearch;
 
   /** The lbl movie count of. */
-  private JLabel                        lblMovieCountOf;
+  private JLabel                      lblMovieCountOf;
 
   /** The lbl movie count filtered. */
-  private JLabel                        lblMovieCountFiltered;
+  private JLabel                      lblMovieCountFiltered;
 
   /** The split pane horizontal. */
-  private JSplitPane                    splitPaneHorizontal;
+  private JSplitPane                  splitPaneHorizontal;
 
   /** The panel right. */
-  private MovieInformationPanel         panelRight;
+  private MovieInformationPanel       panelRight;
 
   /** The btn media information. */
-  private JButton                       btnMediaInformation;
+  private JButton                     btnMediaInformation;
 
   /** The action media information. */
-  private final Action                  actionMediaInformation       = new MediaInformationAction(false);
+  private final Action                actionMediaInformation       = new MediaInformationAction(false);
 
   /** The action media information2. */
-  private final Action                  actionMediaInformation2      = new MediaInformationAction(true);
+  private final Action                actionMediaInformation2      = new MediaInformationAction(true);
 
   /** The action batch edit. */
-  private final Action                  actionBatchEdit              = new BatchEditAction();
+  private final Action                actionBatchEdit              = new BatchEditAction();
 
   /**
    * Create the panel.
@@ -213,8 +201,6 @@ public class MoviePanel extends JPanel {
     // load movielist
     LOGGER.debug("loading MovieList");
     movieList = MovieList.getInstance();
-    sortedMovies = new SortedList<Movie>(GlazedListsSwing.swingThreadProxyList(movieList.getMovies()), new MovieComparator());
-    sortedMovies.setMode(SortedList.AVOID_MOVING_ELEMENTS);
 
     // build menu
     menu = new JMenu(BUNDLE.getString("tmm.movies")); //$NON-NLS-1$
@@ -287,16 +273,42 @@ public class MoviePanel extends JPanel {
     panelMovieList.add(textField, "3, 1, right, bottom");
     textField.setColumns(10);
 
-    // table = new JTable();
-    // build JTable
+    textField.getDocument().addDocumentListener(new DocumentListener() {
+      QuickFilter quickFilter = new QuickFilter() {
+                                @Override
+                                public boolean accept(Object aValue) {
+                                  Pattern pattern = Pattern.compile(textField.getText(), Pattern.CASE_INSENSITIVE);
+                                  Matcher matcher = pattern.matcher(aValue.toString());
+                                  if (matcher.find()) {
+                                    return true;
+                                  }
+                                  return false;
+                                }
+                              };
 
-    MatcherEditor<Movie> textMatcherEditor = new TextComponentMatcherEditor<Movie>(textField, new MovieFilterator());
-    MovieMatcherEditor movieMatcherEditor = new MovieMatcherEditor();
-    FilterList<Movie> extendedFilteredMovies = new FilterList<Movie>(sortedMovies, movieMatcherEditor);
-    textFilteredMovies = new FilterList<Movie>(extendedFilteredMovies, textMatcherEditor);
-    movieSelectionModel = new MovieSelectionModel(sortedMovies, textFilteredMovies, movieMatcherEditor);
-    movieTableModel = new DefaultEventTableModel<Movie>(textFilteredMovies, new MovieTableFormat());
+      @Override
+      public void removeUpdate(DocumentEvent arg0) {
+        // TODO Auto-generated method stub
+        table.setQuickFilter(0, quickFilter);
+      }
+
+      @Override
+      public void insertUpdate(DocumentEvent arg0) {
+        // TODO Auto-generated method stub
+        table.setQuickFilter(0, quickFilter);
+      }
+
+      @Override
+      public void changedUpdate(DocumentEvent arg0) {
+        // TODO Auto-generated method stub
+        table.setQuickFilter(0, quickFilter);
+      }
+    });
+
+    movieTableModel = new MovieTableModel();
     table = new MyTable(movieTableModel);
+    table.setColumnModel(new MovieTableColumnModel(table));
+    movieSelectionModel = new MovieSelectionModel(table);
 
     movieTableModel.addTableModelListener(new TableModelListener() {
       @Override
@@ -310,18 +322,12 @@ public class MoviePanel extends JPanel {
       }
     });
 
-    // install and save the comparator on the Table
-    movieSelectionModel.setTableComparatorChooser(TableComparatorChooser.install(table, sortedMovies, TableComparatorChooser.SINGLE_COLUMN));
-
-    // table = new MyTable();
     table.setFont(new Font("Dialog", Font.PLAIN, 11));
-    // scrollPane.setViewportView(table);
 
-    // JScrollPane scrollPane = new JScrollPane(table);
     JScrollPane scrollPane = MyTable.createStripedJScrollPane(table);
     panelMovieList.add(scrollPane, "2, 3, 2, 1, fill, fill");
 
-    panelExtendedSearch = new MovieExtendedSearchPanel(movieSelectionModel);
+    panelExtendedSearch = new MovieExtendedSearchPanel(movieTableModel);
     panelMovieList.add(panelExtendedSearch, "2, 5, 2, 1, fill, fill");
 
     JPanel panelStatus = new JPanel();
@@ -393,41 +399,7 @@ public class MoviePanel extends JPanel {
    * further initializations.
    */
   private void init() {
-    // moviename column
-    table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
 
-    // year column
-    table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
-    table.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
-    table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
-
-    // NFO column
-    table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer("NFO"));
-    table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
-    URL imageURL = MainWindow.class.getResource("images/File.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
-    }
-
-    // Images column
-    table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer("Images"));
-    table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
-    imageURL = null;
-    imageURL = MainWindow.class.getResource("images/Image.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(3).setHeaderValue(new ImageIcon(imageURL));
-    }
-
-    // trailer column
-    table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer("Trailer"));
-    table.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(20);
-    imageURL = null;
-    imageURL = MainWindow.class.getResource("images/ClapBoard.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(4).setHeaderValue(new ImageIcon(imageURL));
-    }
-
-    table.setSelectionModel(movieSelectionModel.getSelectionModel());
     // selecting first movie at startup
     if (movieList.getMovies() != null && movieList.getMovies().size() > 0) {
       ListSelectionModel selectionModel = table.getSelectionModel();

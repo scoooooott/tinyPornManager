@@ -33,12 +33,14 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import org.netbeans.swing.etable.ETable;
+
 /**
  * The Class MyTable.
  * 
  * @author Manuel Laggner
  */
-public class MyTable extends JTable {
+public class MyTable extends ETable {
 
   /** The Constant serialVersionUID. */
   private static final long             serialVersionUID = 1L;
@@ -67,7 +69,8 @@ public class MyTable extends JTable {
    *          the dm
    */
   public MyTable(TableModel dm) {
-    super(dm);
+    // super(dm);
+    setModel(dm);
     init();
   }
 
@@ -77,7 +80,7 @@ public class MyTable extends JTable {
   private void init() {
     // setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-    setTableHeader(createTableHeader());
+    // setTableHeader(createTableHeader());
     getTableHeader().setReorderingAllowed(false);
     setOpaque(false);
     setRowHeight(16);
@@ -86,7 +89,6 @@ public class MyTable extends JTable {
     // turn off grid painting as we'll handle this manually in order to paint
     // grid lines over the entire viewport.
     setShowGrid(false);
-    // setPopupUsedFromTheCorner(true);
   }
 
   /**
