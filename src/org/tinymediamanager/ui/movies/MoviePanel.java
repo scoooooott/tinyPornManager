@@ -310,17 +310,21 @@ public class MoviePanel extends JPanel {
     table.setColumnModel(new MovieTableColumnModel(table));
     movieSelectionModel = new MovieSelectionModel(table);
 
-    movieTableModel.addTableModelListener(new TableModelListener() {
+    TableModelListener ml = new TableModelListener() {
       @Override
       public void tableChanged(TableModelEvent arg0) {
         lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
+        System.out.println("TableModelListener");
         // select first movie if nothing is selected
         ListSelectionModel selectionModel = table.getSelectionModel();
         if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() > 0) {
-          selectionModel.setSelectionInterval(0, 0);
+          // selectionModel.setSelectionInterval(0, 0);
+          table.setRowSelectionInterval(0, 0);
         }
       }
-    });
+    };
+
+    movieTableModel.addTableModelListener(ml);
 
     table.setFont(new Font("Dialog", Font.PLAIN, 11));
 

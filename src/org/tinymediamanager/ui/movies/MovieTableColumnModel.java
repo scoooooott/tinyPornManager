@@ -60,12 +60,23 @@ public class MovieTableColumnModel extends ETableColumnModel implements TableCol
     }
     addColumn(trailer);
 
-    this.columns = new Column[5];
+    Column subtitle = new Column(5, table);
+    subtitle.setHeaderRenderer(new IconRenderer("Subtitles"));
+    subtitle.setMaxWidth(20);
+    imageURL = null;
+    imageURL = MainWindow.class.getResource("images/ClapBoard.png");
+    if (imageURL != null) {
+      subtitle.setHeaderValue(new ImageIcon(imageURL));
+    }
+    addColumn(subtitle);
+
+    this.columns = new Column[6];
     columns[0] = movieName;
     columns[1] = year;
     columns[2] = nfo;
     columns[3] = image;
     columns[4] = trailer;
+    columns[5] = subtitle;
   }
 
   @Override

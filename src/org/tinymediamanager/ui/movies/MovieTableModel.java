@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import org.tinymediamanager.core.movie.Movie;
@@ -43,7 +44,7 @@ public class MovieTableModel extends AbstractTableModel {
 
   @Override
   public int getColumnCount() {
-    return 5;
+    return 6;
   }
 
   @Override
@@ -73,6 +74,9 @@ public class MovieTableModel extends AbstractTableModel {
 
       case 4:
         return BUNDLE.getString("metatag.trailer"); //$NON-NLS-1$
+
+      case 5:
+        return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
     }
 
     throw new IllegalStateException();
@@ -105,6 +109,12 @@ public class MovieTableModel extends AbstractTableModel {
           return checkIcon;
         }
         return crossIcon;
+
+      case 5:
+        if (movie.hasSubtitles()) {
+          return checkIcon;
+        }
+        return crossIcon;
     }
 
     throw new IllegalStateException();
@@ -126,6 +136,7 @@ public class MovieTableModel extends AbstractTableModel {
       case 2:
       case 3:
       case 4:
+      case 5:
         return ImageIcon.class;
     }
 
@@ -143,7 +154,7 @@ public class MovieTableModel extends AbstractTableModel {
   public void sortMovies(MovieExtendedComparator.SortColumn column, boolean ascending) {
     comparator = new MovieExtendedComparator(column, ascending);
     sort();
-    fireTableDataChanged();
+    fireTableChanged(new TableModelEvent(this));
   }
 
   private void sort() {
@@ -169,7 +180,7 @@ public class MovieTableModel extends AbstractTableModel {
       }
     }
     sort();
-    fireTableDataChanged();
+    fireTableChanged(new TableModelEvent(this));
   }
 
 }

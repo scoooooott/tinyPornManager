@@ -24,6 +24,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.netbeans.swing.etable.ETable;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.Movie;
 
@@ -43,8 +44,8 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
   /** The selected movie. */
   private Movie                  selectedMovie;
 
-  /** The inital movie. */
-  private Movie                  initalMovie    = new Movie();
+  /** The initial movie. */
+  private Movie                  initialMovie   = new Movie();
 
   /** The table. */
   private JTable                 table;
@@ -61,7 +62,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * @param table
    *          the table
    */
-  public MovieSelectionModel(JTable table) {
+  public MovieSelectionModel(ETable table) {
     this.table = table;
     table.getSelectionModel().addListSelectionListener(this);
 
@@ -119,15 +120,17 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   @Override
   public void valueChanged(ListSelectionEvent e) {
-    if (e.getValueIsAdjusting()) {
+    if (e.getValueIsAdjusting() || e.getFirstIndex() < 0) {
       return;
     }
 
-    System.out.println("ping");
-
     selectedMovies.clear();
     for (int i : table.getSelectedRows()) {
-      selectedMovies.add(filteredMovies.get(table.convertRowIndexToModel(i)));
+      int modelRow = table.convertRowIndexToModel(i);
+      if (modelRow < 0) {
+        modelRow = 0;
+      }
+      selectedMovies.add(filteredMovies.get(modelRow));
     }
 
     // display first selected movie
@@ -146,9 +149,9 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     }
 
     // display empty movie (i.e. when all movies are removed from the list)
-    if (selectedMovies.size() == 0) {
+    if (selectedMovies.size() == 0 && selectedMovie != initialMovie) {
       Movie oldValue = selectedMovie;
-      selectedMovie = initalMovie;
+      selectedMovie = initialMovie;
       // unregister propertychangelistener
       if (oldValue != null) {
         oldValue.removePropertyChangeListener(propertyChangeListener);
