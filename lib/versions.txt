@@ -29,3 +29,4 @@ jackson-annotations-2.1.2.jar
 jna-3.5.1.jar
 platform-3.5.1.jar
 vlcj-2.2.0.jar
+outline-RELEASE73.jar

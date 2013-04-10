@@ -41,6 +41,7 @@ code = lib/l2fprod-common-buttonbar.jar
 code = lib/l2fprod-common-shared.jar 
 code = lib/log4j.jar
 code = lib/objectdb.jar
+code = lib/outline.jar
 code = lib/platform.jar
 code = lib/resources.jar
 code = lib/Scaling-bin.jar
