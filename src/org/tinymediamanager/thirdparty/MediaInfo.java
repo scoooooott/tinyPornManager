@@ -95,7 +95,7 @@ public class MediaInfo implements Closeable {
    * @return true, if successful
    */
   public synchronized boolean open(File file) {
-    if (isLoaded()) {
+    if (file != null && isLoaded()) {
       return file.isFile() && MediaInfoLibrary.INSTANCE.Open(handle, new WString(file.getAbsolutePath())) > 0;
     }
     else {
@@ -419,8 +419,7 @@ public class MediaInfo implements Closeable {
     Info,
 
     /**
-     * How this parameter is supported, could be N (No), B (Beta), R (Read
-     * only), W (Read/Write).
+     * How this parameter is supported, could be N (No), B (Beta), R (Read only), W (Read/Write).
      */
     HowTo,
 
