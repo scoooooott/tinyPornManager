@@ -64,7 +64,7 @@ public class MovieTableColumnModel extends ETableColumnModel implements TableCol
     subtitle.setHeaderRenderer(new IconRenderer("Subtitles"));
     subtitle.setMaxWidth(20);
     imageURL = null;
-    imageURL = MainWindow.class.getResource("images/ClapBoard.png");
+    imageURL = MainWindow.class.getResource("images/subtitle.png");
     if (imageURL != null) {
       subtitle.setHeaderValue(new ImageIcon(imageURL));
     }

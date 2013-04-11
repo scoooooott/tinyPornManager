@@ -431,7 +431,7 @@ public class MoviePanel extends JPanel {
     table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer("Subtitles"));
     table.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(20);
     imageURL = null;
-    imageURL = MainWindow.class.getResource("images/ClapBoard.png");
+    imageURL = MainWindow.class.getResource("images/subtitle.png");
     if (imageURL != null) {
       table.getColumnModel().getColumn(5).setHeaderValue(new ImageIcon(imageURL));
     }
