@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,20 @@ package org.tinymediamanager.ui.movies;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.netbeans.swing.etable.ETable;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.ui.DefaultEventSelectionModel;
+
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.swing.TableComparatorChooser;
 
 /**
  * The Class MovieSelectionModel.
@@ -36,38 +40,48 @@ import org.tinymediamanager.core.movie.Movie;
 public class MovieSelectionModel extends AbstractModelObject implements ListSelectionListener {
 
   /** The Constant SELECTED_MOVIE. */
-  private static final String    SELECTED_MOVIE = "selectedMovie";
+  private static final String               SELECTED_MOVIE = "selectedMovie";
 
   /** The selected movies. */
-  private List<Movie>            selectedMovies = new ArrayList<Movie>();
+  private List<Movie>                       selectedMovies;
 
   /** The selected movie. */
-  private Movie                  selectedMovie;
+  private Movie                             selectedMovie;
 
   /** The initial movie. */
-  private Movie                  initialMovie   = new Movie();
+  private Movie                             initialMovie   = new Movie();
 
-  /** The table. */
-  private JTable                 table;
+  /** The selection model. */
+  private DefaultEventSelectionModel<Movie> selectionModel;
 
-  /** The filtered movies. */
-  private final List<Movie>      filteredMovies;
+  /** The matcher editor. */
+  private MovieMatcherEditor                matcherEditor;
+
+  /** The table comparator chooser. */
+  private TableComparatorChooser<Movie>     tableComparatorChooser;
+
+  /** The sorted list. */
+  private SortedList<Movie>                 sortedList;
 
   /** The property change listener. */
-  private PropertyChangeListener propertyChangeListener;
+  private PropertyChangeListener            propertyChangeListener;
 
   /**
    * Instantiates a new movie selection model. Usage in MoviePanel
    * 
-   * @param table
-   *          the table
+   * @param sortedList
+   *          the sorted list
+   * @param source
+   *          the source
+   * @param matcher
+   *          the matcher
    */
-  public MovieSelectionModel(ETable table) {
-    this.table = table;
-    table.getSelectionModel().addListSelectionListener(this);
-
-    MovieTableModel model = (MovieTableModel) table.getModel();
-    this.filteredMovies = model.getFilteredMovies();
+  public MovieSelectionModel(SortedList<Movie> sortedList, EventList<Movie> source, MovieMatcherEditor matcher) {
+    this.sortedList = sortedList;
+    this.selectionModel = new DefaultEventSelectionModel<Movie>(source);
+    this.selectionModel.addListSelectionListener(this);
+    this.matcherEditor = matcher;
+    this.selectedMovies = selectionModel.getSelected();
 
     propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -80,10 +94,10 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
   }
 
   /**
-   * Instantiates a new movie selection model.
+   * Instantiates a new movie selection model. Usage in MovieSetPanel
    */
   public MovieSelectionModel() {
-    filteredMovies = new ArrayList<Movie>();
+
   }
 
   /**
@@ -107,6 +121,24 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
     firePropertyChange(SELECTED_MOVIE, oldValue, movie);
   }
 
+  /**
+   * Gets the matcher editor.
+   * 
+   * @return the matcher editor
+   */
+  public MovieMatcherEditor getMatcherEditor() {
+    return matcherEditor;
+  }
+
+  /**
+   * Gets the selection model.
+   * 
+   * @return the selection model
+   */
+  public DefaultEventSelectionModel<Movie> getSelectionModel() {
+    return selectionModel;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -120,17 +152,8 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   @Override
   public void valueChanged(ListSelectionEvent e) {
-    if (e.getValueIsAdjusting() || e.getFirstIndex() < 0) {
+    if (e.getValueIsAdjusting()) {
       return;
-    }
-
-    selectedMovies.clear();
-    for (int i : table.getSelectedRows()) {
-      int modelRow = table.convertRowIndexToModel(i);
-      if (modelRow < 0) {
-        modelRow = 0;
-      }
-      selectedMovies.add(filteredMovies.get(modelRow));
     }
 
     // display first selected movie
@@ -139,21 +162,21 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
       selectedMovie = selectedMovies.get(0);
 
       // unregister propertychangelistener
-      if (oldValue != null) {
+      if (oldValue != null && oldValue != initialMovie) {
         oldValue.removePropertyChangeListener(propertyChangeListener);
       }
-      if (selectedMovie != null) {
+      if (selectedMovie != null && selectedMovie != initialMovie) {
         selectedMovie.addPropertyChangeListener(propertyChangeListener);
       }
       firePropertyChange(SELECTED_MOVIE, oldValue, selectedMovie);
     }
 
     // display empty movie (i.e. when all movies are removed from the list)
-    if (selectedMovies.size() == 0 && selectedMovie != initialMovie) {
+    if (selectedMovies.size() == 0) {
       Movie oldValue = selectedMovie;
       selectedMovie = initialMovie;
       // unregister propertychangelistener
-      if (oldValue != null) {
+      if (oldValue != null && oldValue != initialMovie) {
         oldValue.removePropertyChangeListener(propertyChangeListener);
       }
       firePropertyChange(SELECTED_MOVIE, oldValue, selectedMovie);
@@ -176,5 +199,57 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public List<Movie> getSelectedMovies() {
     return selectedMovies;
+  }
+
+  /**
+   * Sets the selected movies.
+   * 
+   * @param selectedMovies
+   *          the new selected movies
+   */
+  public void setSelectedMovies(List<Movie> selectedMovies) {
+    this.selectedMovies = selectedMovies;
+  }
+
+  /**
+   * Filter movies.
+   * 
+   * @param filter
+   *          the filter
+   */
+  public void filterMovies(HashMap<MoviesExtendedMatcher.SearchOptions, Object> filter) {
+    matcherEditor.filterMovies(filter);
+  }
+
+  /**
+   * Gets the table comparator chooser.
+   * 
+   * @return the table comparator chooser
+   */
+  public TableComparatorChooser<Movie> getTableComparatorChooser() {
+    return tableComparatorChooser;
+  }
+
+  /**
+   * Sets the table comparator chooser.
+   * 
+   * @param tableComparatorChooser
+   *          the new table comparator chooser
+   */
+  public void setTableComparatorChooser(TableComparatorChooser<Movie> tableComparatorChooser) {
+    this.tableComparatorChooser = tableComparatorChooser;
+  }
+
+  /**
+   * Sort movies.
+   * 
+   * @param column
+   *          the column
+   * @param ascending
+   *          the ascending
+   */
+  public void sortMovies(MovieExtendedComparator.SortColumn column, boolean ascending) {
+    Comparator<Movie> comparator = new MovieExtendedComparator(column, ascending);
+    sortedList.setComparator(comparator);
   }
 }

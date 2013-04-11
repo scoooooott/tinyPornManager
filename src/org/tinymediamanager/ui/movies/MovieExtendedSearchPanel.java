@@ -37,7 +37,7 @@ import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.WatchedFlag;
-import org.tinymediamanager.ui.movies.MovieMatcher.SearchOptions;
+import org.tinymediamanager.ui.movies.MoviesExtendedMatcher.SearchOptions;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -63,7 +63,8 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
   /** The action sort. */
   private final Action                actionSort       = new SortAction();
 
-  private MovieTableModel             movieTableModel;
+  /** The movie selection model. */
+  private MovieSelectionModel         movieSelectionModel;
 
   /** The movie list. */
   private MovieList                   movieList        = MovieList.getInstance();
@@ -137,12 +138,12 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
    * @param model
    *          the model
    */
-  public MovieExtendedSearchPanel(MovieTableModel model) {
+  public MovieExtendedSearchPanel(MovieSelectionModel model) {
     super(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
 
     Font font = new Font("Dialog", Font.PLAIN, 10);
 
-    this.movieTableModel = model;
+    this.movieSelectionModel = model;
 
     // JPanel panel = new JPanel();
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
@@ -270,7 +271,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
       boolean ascending = order == SortOrder.ASCENDING ? true : false;
 
       // sort
-      movieTableModel.sortMovies(column, ascending);
+      movieSelectionModel.sortMovies(column, ascending);
     }
   }
 
@@ -341,7 +342,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
       }
 
       // apply the filter
-      movieTableModel.filterMovies(searchOptions);
+      movieSelectionModel.filterMovies(searchOptions);
     }
   }
 }

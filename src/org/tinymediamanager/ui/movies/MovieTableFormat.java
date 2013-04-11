@@ -198,7 +198,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       if (StringUtils.isEmpty(arg1)) {
         return 1;
       }
-      return arg0.compareTo(arg1);
+      return arg0.toLowerCase().compareTo(arg1.toLowerCase());
     }
   }
 

@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.movies;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
@@ -183,10 +184,13 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   }
 
   /** The sort column. */
-  private SortColumn sortColumn;
+  private SortColumn       sortColumn;
 
   /** The sort ascending. */
-  private boolean    sortAscending;
+  private boolean          sortAscending;
+
+  /** The string comparator. */
+  private StringComparator stringComparator = new StringComparator();
 
   /**
    * Instantiates a new movie extended comparator.
@@ -214,11 +218,13 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       // try to sort the chosen column
       switch (sortColumn) {
         case TITLE:
-          sortOrder = movie1.getTitle().toLowerCase().compareTo(movie2.getTitle().toLowerCase());
+          // sortOrder = movie1.getTitle().toLowerCase().compareTo(movie2.getTitle().toLowerCase());
+          sortOrder = stringComparator.compare(movie1.getTitle(), movie2.getTitle());
           break;
 
         case YEAR:
-          sortOrder = movie1.getYear().compareTo(movie2.getYear());
+          // sortOrder = movie1.getYear().compareTo(movie2.getYear());
+          sortOrder = stringComparator.compare(movie1.getYear(), movie2.getYear());
           break;
 
         case DATE_ADDED:
@@ -243,6 +249,9 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
       }
     }
+    catch (NullPointerException e) {
+      // do nothing here. there could be
+    }
     catch (Exception e) {
       LOGGER.warn(e.getMessage());
     }
@@ -253,6 +262,25 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     }
     else {
       return sortOrder * -1;
+    }
+  }
+
+  private static class StringComparator implements Comparator<String> {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public int compare(String arg0, String arg1) {
+      if (StringUtils.isEmpty(arg0)) {
+        return -1;
+      }
+      if (StringUtils.isEmpty(arg1)) {
+        return 1;
+      }
+      return arg0.toLowerCase().compareTo(arg1.toLowerCase());
     }
   }
 }
