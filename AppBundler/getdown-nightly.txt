@@ -38,7 +38,8 @@ code = lib/jsoup.jar
 code = lib/JSplitButton.jar
 code = lib/JTattoo.jar
 code = lib/l2fprod-common-buttonbar.jar 
-code = lib/l2fprod-common-shared.jar 
+code = lib/l2fprod-common-shared.jar
+code = lib/log4j-over-slf4j.jar 
 code = lib/logback-classic.jar
 code = lib/logback-core.jar
 code = lib/objectdb.jar
@@ -114,6 +115,6 @@ jvmarg = -Xmx512m
 jvmarg = -Xss512k
 jvmarg = -splash:splashscreen.png
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
-#jvmarg = [linux] -Djava.ext.dirs=/usr/share/java:lib:locale
-#jvmarg = [windows] -Djava.ext.dirs=lib;locale
-#jvmarg = [mac os x] -Djava.ext.dirs=lib:locale
+#jvmarg = [linux] -Djava.ext.dirs=/usr/share/java:lib
+#jvmarg = [windows] -Djava.ext.dirs=lib
+#jvmarg = [mac os x] -Djava.ext.dirs=lib
