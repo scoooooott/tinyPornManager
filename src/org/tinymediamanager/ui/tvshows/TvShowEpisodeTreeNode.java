@@ -20,26 +20,41 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 
 /**
- * @author Manuel Laggner
+ * The Class TvShowEpisodeTreeNode.
  * 
+ * @author Manuel Laggner
  */
 public class TvShowEpisodeTreeNode extends DefaultMutableTreeNode {
 
+  /** The Constant serialVersionUID. */
   private static final long serialVersionUID = -7108614568808831980L;
 
+  /**
+   * Instantiates a new tv show episode tree node.
+   * 
+   * @param userObject
+   *          the user object
+   */
   public TvShowEpisodeTreeNode(Object userObject) {
     super(userObject);
   }
 
   /**
-   * provides the right name of the node for display
+   * provides the right name of the node for display.
+   * 
+   * @return the string
    */
   @Override
   public String toString() {
-    // return movieSet name
+    // return episode name and number
     if (getUserObject() instanceof TvShowEpisode) {
       TvShowEpisode episode = (TvShowEpisode) getUserObject();
-      return episode.getEpisode() + ". " + episode.getTitle();
+      if (episode.getEpisode() >= 0) {
+        return episode.getEpisode() + ". " + episode.getTitle();
+      }
+      else {
+        return episode.getTitle();
+      }
     }
 
     // fallback: call super

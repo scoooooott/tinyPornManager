@@ -110,6 +110,10 @@ public class MediaFile extends AbstractModelObject {
   @Transient
   private MediaInfo           mediaInfo;
 
+  /** The file. */
+  @Transient
+  private File                file             = null;
+
   /**
    * Instantiates a new media file.
    */
@@ -131,7 +135,7 @@ public class MediaFile extends AbstractModelObject {
     this.filename = filename;
     this.type = type;
 
-    File file = new File(this.path, this.filename);
+    file = new File(this.path, this.filename);
     if (file.exists()) {
       setFilesize(FileUtils.sizeOf(file));
     }
@@ -144,11 +148,11 @@ public class MediaFile extends AbstractModelObject {
    *          the path and filename
    */
   public MediaFile(String pathAndFilename, MediaFileType type) {
-    this.path = FilenameUtils.getPath(pathAndFilename);
+    this.path = FilenameUtils.getFullPath(pathAndFilename);
     this.filename = FilenameUtils.getName(pathAndFilename);
     this.type = type;
 
-    File file = new File(this.path, this.filename);
+    file = new File(this.path, this.filename);
     if (file.exists()) {
       setFilesize(FileUtils.sizeOf(file));
     }
@@ -160,13 +164,16 @@ public class MediaFile extends AbstractModelObject {
    * @return the file handle or NULL if file does not exits
    */
   public File getFile() {
-    File f = new File(this.path, this.filename);
-    if (f.exists()) {
-      return f;
+    if (file == null) {
+      File f = new File(this.path, this.filename);
+      if (f.exists()) {
+        file = f;
+      }
+      else {
+        return null;
+      }
     }
-    else {
-      return null;
-    }
+    return file;
   }
 
   /**

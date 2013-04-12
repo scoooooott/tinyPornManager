@@ -28,10 +28,10 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.tvshow.EpisodeMatching;
-import org.tinymediamanager.core.tvshow.EpisodeMatching.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
 
 /**
@@ -162,6 +162,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     // find episodes in this tv show folder
     if (tvShow != null) {
       findTvEpisodes(tvShow, dir);
+      tvShow.saveToDb();
     }
   }
 
@@ -187,29 +188,30 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         TvShowEpisode episode = tvShowList.getTvEpisodeByFile(file);
         if (episode == null) {
           // try to check what episode//season
-          EpisodeMatchingResult result = EpisodeMatching.detectEpisode(file);
+          EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(file);
           if (result.episodes.size() > 0) {
-            // // episode(s) found; check if there was also a season found
-            // int season = 0;
-            // if (result.season == 0) {
-            // // try to get the result from the parent folder
-            // Pattern pattern = Pattern.compile("{1,2}[0-9]$");
-            // Matcher matcher = pattern.matcher(dir.getPath());
-            // if (matcher.find()) {
-            // season = Integer.parseInt(matcher.group());
-            // }
-            // }
-
             // add it
             for (int ep : result.episodes) {
               episode = new TvShowEpisode();
               episode.setEpisode(ep);
               episode.setSeason(result.season);
               episode.setTvShow(tvShow);
-              episode.addToMediaFiles(new MediaFile(file.getPath(), file.getName(), MediaFileType.TV_SHOW));
+              episode.setTitle(result.name);
+              episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
+          }
+          else {
+            // episode detection found nothing - simply add this file
+            episode = new TvShowEpisode();
+            episode.setEpisode(-1);
+            episode.setSeason(-1);
+            episode.setTitle(FilenameUtils.getBaseName(file.getName()));
+            episode.setTvShow(tvShow);
+            episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
+            episode.saveToDb();
+            tvShow.addEpisode(episode);
           }
         }
       }

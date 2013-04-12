@@ -27,9 +27,9 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
@@ -166,6 +166,9 @@ public class TvShowList extends AbstractModelObject {
           if (obj instanceof TvShow) {
             TvShow tvShow = (TvShow) obj;
             tvShow.initializeAfterLoading();
+            for (TvShowEpisode episode : tvShow.getEpisodes()) {
+              episode.initializeAfterLoading();
+            }
 
             // for performance reasons we add tv shows directly
             tvShowList.add(tvShow);
@@ -373,7 +376,7 @@ public class TvShowList extends AbstractModelObject {
         TvShowEpisode episode = show.getEpisodes().get(j);
         for (int k = 0; k < episode.getMediaFiles().size(); k++) {
           MediaFile mediaFile = episode.getMediaFiles().get(k);
-          if (file.equals(mediaFile.getFile())) {
+          if (file.getPath().equals(mediaFile.getFile().getPath())) {
             return episode;
           }
         }

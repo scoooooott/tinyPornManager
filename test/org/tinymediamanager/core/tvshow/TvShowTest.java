@@ -23,7 +23,7 @@ import javax.persistence.Persistence;
 import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.tvshow.EpisodeMatching.EpisodeMatchingResult;
+import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 
 /**
  * @author Manuel Laggner
@@ -71,7 +71,7 @@ public class TvShowTest {
     Assert.assertEquals("E:2", detectEpisode("name.s1e2.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.s01_e02.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.1x02.ext"));
-    // Assert.assertEquals("E:2", detectEpisode("name.102.ext")); // TODO
+    Assert.assertEquals("E:2", detectEpisode("name.102.ext"));
 
     // without season
     Assert.assertEquals("E:2", detectEpisode("name.ep02.ext"));
@@ -82,11 +82,11 @@ public class TvShowTest {
 
     // multi episode
     Assert.assertEquals("E:1 E:2", detectEpisode("name.s01e01.s01e02.ext"));
-    // Assert.assertEquals("E:1 E:2",detectEpisode("name.s01e01.episode1.title.s01e02.episode2.title.ext"));
+    Assert.assertEquals("E:1 E:2", detectEpisode("name.s01e01.episode1.title.s01e02.episode2.title.ext"));
     Assert.assertEquals("E:1 E:2 E:3", detectEpisode("name.s01e01.s01e02.s01e03.ext"));
-    // Assert.assertEquals("E:1 E:2", detectEpisode("name.1x01_1x02.ext"));
+    Assert.assertEquals("E:1 E:2", detectEpisode("name.1x01_1x02.ext"));
 
-    Assert.assertEquals("E:1 E:2", detectEpisode("name.s01e01 1x02.ext"));
+    Assert.assertEquals("E:1 E:2", detectEpisode("name.s01e01 1x02.ext")); // we won't support this
 
     Assert.assertEquals("E:1 E:2", detectEpisode("name.ep01.ep02.ext"));
     // multi episode short
@@ -115,7 +115,7 @@ public class TvShowTest {
 
   private String detectEpisode(String name) {
     StringBuilder sb = new StringBuilder();
-    EpisodeMatchingResult result = EpisodeMatching.detectEpisode(new File(name));
+    EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(new File(name));
     for (int ep : result.episodes) {
       sb.append(" E:");
       sb.append(ep);

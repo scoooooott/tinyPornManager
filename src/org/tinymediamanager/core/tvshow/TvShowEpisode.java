@@ -40,8 +40,13 @@ import org.tinymediamanager.core.MediaFile;
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShowEpisode extends MediaEntity {
 
+  /** The tv show. */
   private TvShow          tvShow               = null;
+
+  /** The episode. */
   private int             episode              = 0;
+
+  /** The season. */
   private int             season               = -1;
 
   /** The media files. */
@@ -118,24 +123,51 @@ public class TvShowEpisode extends MediaEntity {
 
   }
 
+  /**
+   * Gets the tv show.
+   * 
+   * @return the tv show
+   */
   public TvShow getTvShow() {
     return tvShow;
   }
 
+  /**
+   * Sets the tv show.
+   * 
+   * @param newValue
+   *          the new tv show
+   */
   public void setTvShow(TvShow newValue) {
     TvShow oldValue = this.tvShow;
     this.tvShow = newValue;
     firePropertyChange(TV_SHOW, oldValue, newValue);
   }
 
+  /**
+   * Gets the episode.
+   * 
+   * @return the episode
+   */
   public int getEpisode() {
     return episode;
   }
 
+  /**
+   * Gets the season.
+   * 
+   * @return the season
+   */
   public int getSeason() {
     return season;
   }
 
+  /**
+   * Sets the episode.
+   * 
+   * @param newValue
+   *          the new episode
+   */
   public void setEpisode(int newValue) {
     int oldValue = this.episode;
     this.episode = newValue;
@@ -143,12 +175,23 @@ public class TvShowEpisode extends MediaEntity {
     firePropertyChange(TITLE_FOR_UI, "", newValue);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setTitle(java.lang.String)
+   */
   @Override
   public void setTitle(String newValue) {
     super.setTitle(newValue);
     firePropertyChange(TITLE_FOR_UI, "", newValue);
   }
 
+  /**
+   * Sets the season.
+   * 
+   * @param newValue
+   *          the new season
+   */
   public void setSeason(int newValue) {
     int oldValue = this.season;
     this.season = newValue;
@@ -170,6 +213,9 @@ public class TvShowEpisode extends MediaEntity {
     return titleForUi.toString();
   }
 
+  /**
+   * Initialize after loading.
+   */
   public void initializeAfterLoading() {
     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
   }
