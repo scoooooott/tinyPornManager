@@ -149,13 +149,22 @@ public class TvShowTreeModel implements TreeModel {
     if (parent != null) {
       nodeMap.put(season, child);
       parent.add(child);
+
       int index = parent.getIndex(child);
 
-      // inform listeners
+      // inform listeners (tv show)
       TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
       for (TreeModelListener listener : listeners) {
         listener.treeNodesInserted(event);
       }
+
+      // inform listeners (root - to update the sum)
+      index = root.getIndex(parent);
+      event = new TreeModelEvent(this, root.getPath(), new int[] { index }, new Object[] { parent });
+      for (TreeModelListener listener : listeners) {
+        listener.treeNodesChanged(event);
+      }
+
     }
   }
 

@@ -51,6 +51,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   /** The file types. */
   private List<String>        fileTypes;
 
+  /** The tv show list. */
   private TvShowList          tvShowList;
 
   /**
@@ -122,17 +123,40 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     return null;
   }
 
+  /**
+   * The Class FindTvShowTask.
+   * 
+   * @author Manuel Laggner
+   */
   private class FindTvShowTask implements Callable<Object> {
 
+    /** The subdir. */
     private File       subdir     = null;
+
+    /** The datasource. */
     private String     datasource = "";
+
+    /** The tv show list. */
     private TvShowList tvShowList = TvShowList.getInstance();
 
+    /**
+     * Instantiates a new find tv show task.
+     * 
+     * @param subdir
+     *          the subdir
+     * @param datasource
+     *          the datasource
+     */
     public FindTvShowTask(File subdir, String datasource) {
       this.subdir = subdir;
       this.datasource = datasource;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.concurrent.Callable#call()
+     */
     @Override
     public String call() throws Exception {
       // get the TV show from this subdir
@@ -151,12 +175,18 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     // search for this tvshow folder in database
     TvShow tvShow = tvShowList.getTvShowByPath(dir.getPath());
     if (tvShow == null) {
-      // create new one
-      tvShow = new TvShow();
-      tvShow.setPath(dir.getPath());
-      tvShow.setTitle(dir.getName());
-      tvShow.saveToDb();
-      tvShowList.addTvShow(tvShow);
+      // tvShow did not exist - try to parse a NFO file in parent folder
+      tvShow = TvShow.parseNFO(dir);
+      if (tvShow == null) {
+        // create new one
+        tvShow = new TvShow();
+        tvShow.setPath(dir.getPath());
+        tvShow.setTitle(dir.getName());
+      }
+      if (tvShow != null) {
+        tvShow.saveToDb();
+        tvShowList.addTvShow(tvShow);
+      }
     }
 
     // find episodes in this tv show folder
@@ -240,6 +270,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * 
    * @param description
    *          the description
+   * @param max
+   *          the max
+   * @param progress
+   *          the progress
    */
   private void startProgressBar(String description, int max, int progress) {
     if (!StringUtils.isEmpty(description)) {
@@ -288,6 +322,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     // cancel(false);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.TmmThreadPool#callback(java.lang.Object)
+   */
   @Override
   public void callback(Object obj) {
     startProgressBar((String) obj, getTaskcount(), getTaskdone());

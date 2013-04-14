@@ -18,9 +18,12 @@ package org.tinymediamanager.core.tvshow;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -33,9 +36,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcher;
@@ -948,4 +951,205 @@ public class TvShow extends MediaEntity {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
+  /**
+   * Parses the nfo.
+   * 
+   * @param tvShowDirectory
+   *          the tv show directory
+   * @return the tv show
+   */
+  public static TvShow parseNFO(File tvShowDirectory) {
+    LOGGER.debug("try to find a nfo for " + tvShowDirectory.getPath());
+    // check if there are any NFOs in that directory
+    FilenameFilter filter = new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        // do not start with .
+        if (name.toLowerCase().startsWith("."))
+          return false;
+
+        // check if filetype is in our settings
+        if (name.toLowerCase().endsWith("nfo")) {
+          return true;
+        }
+
+        return false;
+      }
+    };
+
+    TvShow tvShow = null;
+    File[] nfoFiles = tvShowDirectory.listFiles(filter);
+
+    for (File file : nfoFiles) {
+      tvShow = TvShowToXbmcNfoConnector.getData(file.getPath());
+      if (tvShow != null) {
+        tvShow.setPath(tvShowDirectory.getPath());
+        tvShow.findImages();
+        break;
+      }
+
+      LOGGER.debug("did not find tv show informations in nfo");
+    }
+
+    return tvShow;
+  }
+
+  /**
+   * Find images.
+   */
+  public void findImages() {
+    // try to find images in tv show root folder
+
+    // find poster - poster.jpg/png
+    findPoster();
+
+    // fanart - fanart.jpg/png
+    findFanart();
+
+    // banner - banner.jpg/png
+    findBanner();
+  }
+
+  /**
+   * Find poster.
+   */
+  private void findPoster() {
+    boolean found = false;
+
+    File posterFile = new File(path, "poster.jpg");
+    if (posterFile.exists()) {
+      setPoster(posterFile.getName());
+      found = true;
+      LOGGER.debug("found poster " + posterFile.getPath());
+    }
+
+    if (!found) {
+      posterFile = new File(path, "poster.png");
+      if (posterFile.exists()) {
+        setPoster(posterFile.getName());
+        found = true;
+        LOGGER.debug("found poster " + posterFile.getPath());
+      }
+    }
+
+    // still not found anything? try *-poster.*
+    if (!found) {
+      Pattern pattern = Pattern.compile("(?i).*-poster\\..{2,4}");
+      File[] files = new File(path).listFiles();
+      for (File file : files) {
+        Matcher matcher = pattern.matcher(file.getName());
+        if (matcher.matches()) {
+          setPoster(FilenameUtils.getName(file.getName()));
+          LOGGER.debug("found poster " + file.getPath());
+          found = true;
+        }
+      }
+    }
+
+    // we did not find a poster, try to get it if an url exists
+    if (!found && StringUtils.isNotEmpty(posterUrl)) {
+      writePosterImage();
+      found = true;
+      LOGGER.debug("got poster url: " + posterUrl + " ; try to download this");
+    }
+
+    if (!found) {
+      LOGGER.debug("Sorry, could not find poster.");
+    }
+  }
+
+  /**
+   * Find fanart.
+   */
+  private void findFanart() {
+    boolean found = false;
+
+    File fanartFile = new File(path, "fanart.jpg");
+    if (fanartFile.exists()) {
+      setFanart(fanartFile.getName());
+      found = true;
+      LOGGER.debug("found fanart " + fanartFile.getPath());
+    }
+
+    if (!found) {
+      fanartFile = new File(path, "fanart.png");
+      if (fanartFile.exists()) {
+        setFanart(fanartFile.getName());
+        found = true;
+        LOGGER.debug("found fanart " + fanartFile.getPath());
+      }
+    }
+
+    // still not found anything? try *-fanart.*
+    if (!found) {
+      Pattern pattern = Pattern.compile("(?i).*-fanart\\..{2,4}");
+      File[] files = new File(path).listFiles();
+      for (File file : files) {
+        Matcher matcher = pattern.matcher(file.getName());
+        if (matcher.matches()) {
+          setFanart(FilenameUtils.getName(file.getName()));
+          LOGGER.debug("found fanart " + file.getPath());
+          found = true;
+        }
+      }
+    }
+
+    // we did not find a fanart, try to get it if an url exists
+    if (!found && StringUtils.isNotEmpty(fanartUrl)) {
+      writeFanartImage();
+      found = true;
+      LOGGER.debug("got fanart url: " + fanartUrl + " ; try to download this");
+    }
+
+    if (!found) {
+      LOGGER.debug("Sorry, could not find fanart.");
+    }
+  }
+
+  /**
+   * Find banner.
+   */
+  private void findBanner() {
+    boolean found = false;
+
+    File bannerFile = new File(path, "banner.jpg");
+    if (bannerFile.exists()) {
+      setBanner(bannerFile.getName());
+      found = true;
+      LOGGER.debug("found banner " + bannerFile.getPath());
+    }
+
+    if (!found) {
+      bannerFile = new File(path, "banner.png");
+      if (bannerFile.exists()) {
+        setBanner(bannerFile.getName());
+        found = true;
+        LOGGER.debug("found banner " + bannerFile.getPath());
+      }
+    }
+
+    // still not found anything? try *-banner.*
+    if (!found) {
+      Pattern pattern = Pattern.compile("(?i).*-banner\\..{2,4}");
+      File[] files = new File(path).listFiles();
+      for (File file : files) {
+        Matcher matcher = pattern.matcher(file.getName());
+        if (matcher.matches()) {
+          setBanner(FilenameUtils.getName(file.getName()));
+          LOGGER.debug("found banner " + file.getPath());
+          found = true;
+        }
+      }
+    }
+
+    // we did not find a banner, try to get it if an url exists
+    if (!found && StringUtils.isNotEmpty(bannerUrl)) {
+      writeBannerImage();
+      found = true;
+      LOGGER.debug("got banner url: " + bannerUrl + " ; try to download this");
+    }
+
+    if (!found) {
+      LOGGER.debug("Sorry, could not find banner.");
+    }
+  }
 }
