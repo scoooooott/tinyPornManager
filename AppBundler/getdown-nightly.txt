@@ -43,7 +43,6 @@ code = lib/log4j-over-slf4j.jar
 code = lib/logback-classic.jar
 code = lib/logback-core.jar
 code = lib/objectdb.jar
-code = lib/outline.jar
 code = lib/platform.jar
 code = lib/resources.jar
 code = lib/Scaling-bin.jar

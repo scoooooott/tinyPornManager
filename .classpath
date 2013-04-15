@@ -39,7 +39,6 @@
 	<classpathentry kind="lib" path="lib/jmte-unbundled.jar"/>
 	<classpathentry kind="lib" path="lib/DJNativeSwing-SWT.jar"/>
 	<classpathentry kind="lib" path="lib/DJNativeSwing.jar"/>
-	<classpathentry kind="lib" path="lib/outline.jar" sourcepath="buildsupport/org-netbeans-swing-outline-RELEASE73-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jcl-over-slf4j.jar"/>
 	<classpathentry kind="lib" path="lib/logback-classic.jar"/>
 	<classpathentry kind="lib" path="lib/logback-core.jar"/>
