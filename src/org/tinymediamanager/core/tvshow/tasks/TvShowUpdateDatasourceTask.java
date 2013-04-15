@@ -219,6 +219,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (episode == null) {
           // try to check what episode//season
           EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(file);
+
+          if (result.episodes.size() == 0) {
+            // try to parse out episodes/season from parent directory
+            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir, tvShow.getPath());
+          }
+
           if (result.episodes.size() > 0) {
             // did the search find a season?
             if (result.season == -1) {

@@ -24,6 +24,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class TvShowEpisodeAndSeasonParser.
@@ -31,28 +35,30 @@ import org.apache.commons.lang3.StringUtils;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeAndSeasonParser {
+  /** The Constant LOGGER. */
+  private final static Logger LOGGER   = LoggerFactory.getLogger(TvShowEpisodeAndSeasonParser.class);
 
   // foo.s01.e01, foo.s01_e01, S01E02 foo, S01 - E02
   /** The pattern1. */
-  private static Pattern pattern1 = Pattern.compile("[Ss]([0-9]+)[\\]\\[ ._-]*[Ee]([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern      pattern1 = Pattern.compile("[Ss]([0-9]+)[\\]\\[ ._-]*[Ee]([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // foo.ep01, foo.EP_01
   /** The pattern2. */
-  private static Pattern pattern2 = Pattern.compile("[\\._ -]()[Ee][Pp]_?([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern      pattern2 = Pattern.compile("[\\._ -]()[Ee][Pp]_?([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // foo.yyyy.mm.dd.*
   /** The pattern3. */
-  private static Pattern pattern3 = Pattern.compile("([0-9]{4})[\\.-]([0-9]{2})[\\.-]([0-9]{2})", Pattern.CASE_INSENSITIVE);
+  private static Pattern      pattern3 = Pattern.compile("([0-9]{4})[\\.-]([0-9]{2})[\\.-]([0-9]{2})", Pattern.CASE_INSENSITIVE);
   // foo.mm.dd.yyyy.*
   /** The pattern4. */
-  private static Pattern pattern4 = Pattern.compile("([0-9]{2})[\\.-]([0-9]{2})[\\.-]([0-9]{4})", Pattern.CASE_INSENSITIVE);
+  private static Pattern      pattern4 = Pattern.compile("([0-9]{2})[\\.-]([0-9]{2})[\\.-]([0-9]{4})", Pattern.CASE_INSENSITIVE);
   // foo.1x09* or just /1x09*
   /** The pattern5. */
-  private static Pattern pattern5 = Pattern.compile("[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern      pattern5 = Pattern.compile("[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // foo.103*, 103 foo
   /** The pattern6. */
-  private static Pattern pattern6 = Pattern.compile("[\\\\/\\._ -]([0-9]+)([0-9][0-9])([\\._ -][^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern      pattern6 = Pattern.compile("[\\\\/\\._ -]([0-9]+)([0-9][0-9])([\\._ -][^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // Part I, Pt.VI
   /** The pattern7. */
-  private static Pattern pattern7 = Pattern.compile("[\\/._ -]p(?:ar)?t[_. -]()([ivx]+)([._ -][^\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern      pattern7 = Pattern.compile("[\\/._ -]p(?:ar)?t[_. -]()([ivx]+)([._ -][^\\/]*)$", Pattern.CASE_INSENSITIVE);
 
   /**
    * The Class EpisodeMatchingResult.
@@ -60,7 +66,6 @@ public class TvShowEpisodeAndSeasonParser {
    * @author Manuel Laggner
    */
   public static class EpisodeMatchingResult {
-
     /** The season. */
     public int           season   = -1;
 
@@ -69,6 +74,16 @@ public class TvShowEpisodeAndSeasonParser {
 
     /** The name. */
     public String        name     = "";
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
   }
 
   /**
@@ -79,53 +94,43 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   public static EpisodeMatchingResult detectEpisodeFromFilename(File file) {
+    LOGGER.info("Detect episodes/seasons from " + file.getName());
     EpisodeMatchingResult result = new EpisodeMatchingResult();
     String fileName = file.getName();
 
     result = parseString(fileName);
+    Collections.sort(result.episodes);
 
-    // // season detection
-    // // TODO only parse the dirs between root of tv show and the file
-    // Pattern regex = Pattern.compile("(?i)(s|season|staffel)[\\s]*(\\d{1,2})");
-    // Matcher m = regex.matcher(file.getAbsolutePath());
-    // if (m.find()) {
-    // int s = result.season;
-    // try {
-    // s = Integer.parseInt(m.group(2));
-    // }
-    // catch (NumberFormatException nfe) {
-    // // can not happen from regex since we only come here with max 2 numeric chars
-    // }
-    // result.season = s;
-    // }
-    //
-    // // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
-    // regex = Pattern.compile("(?i)[epx_-]+(\\d{1,2})"); // episode fixed to 2 chars
-    // m = regex.matcher(file.getName());
-    // while (m.find()) {
-    // int ep = 0;
-    // try {
-    // ep = Integer.parseInt(m.group(1));
-    // }
-    // catch (NumberFormatException nfe) {
-    // // can not happen from regex since we only come here with max 2 numeric chars
-    // }
-    // if (ep > 0 && !result.episodes.contains(ep)) {
-    // result.episodes.add(ep);
-    // }
-    // }
-    // // parse XYY
-    //
-    // // parse Roman
-    // regex = Pattern.compile("(?i)(part|pt)[\\._]+([MDCLXVI]+)");
-    // m = regex.matcher(file.getName());
-    // while (m.find()) {
-    // int ep = 0;
-    // ep = decodeRoman(m.group(2));
-    // if (ep > 0 && !result.episodes.contains(ep)) {
-    // result.episodes.add(ep);
-    // }
-    // }
+    LOGGER.debug("returning result " + result);
+    return result;
+  }
+
+  /**
+   * Detect episode from directory.
+   * 
+   * @param directory
+   *          the directory
+   * @param rootDirOfTvShow
+   *          the root dir of tv show
+   * @return the episode matching result
+   */
+  public static EpisodeMatchingResult detectEpisodeFromDirectory(File directory, String rootDirOfTvShow) {
+    LOGGER.info("Detect episodes/seasons from " + directory.getAbsolutePath());
+    EpisodeMatchingResult result = new EpisodeMatchingResult();
+
+    // check if directory is the root of the tv show
+    if (directory.toURI().equals(new File(rootDirOfTvShow).toURI())) {
+      return result;
+    }
+
+    String directoryName = directory.getName();
+
+    result = parseString(directoryName);
+
+    if (result.episodes.size() == 0) {
+      // look one directory above
+      detectEpisodeFromDirectory(directory.getParentFile(), rootDirOfTvShow);
+    }
 
     Collections.sort(result.episodes);
     return result;
@@ -139,6 +144,7 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   private static EpisodeMatchingResult parseString(String stringToParse) {
+    LOGGER.debug("parse String " + stringToParse);
     EpisodeMatchingResult result = new EpisodeMatchingResult();
     EpisodeMatchingResult resultFromParser = new EpisodeMatchingResult();
 
@@ -201,6 +207,7 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   private static EpisodeMatchingResult parse(String searchString, Pattern pattern) {
+    LOGGER.debug("parsing " + searchString + " with " + pattern.toString());
     EpisodeMatchingResult result = new EpisodeMatchingResult();
     Matcher m = pattern.matcher(searchString);
 
@@ -246,6 +253,8 @@ public class TvShowEpisodeAndSeasonParser {
       }
     }
 
+    LOGGER.debug("matching result " + result);
+
     return result;
   }
 
@@ -257,14 +266,15 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the int
    */
   public static int detectSeason(String relativePath) {
+    LOGGER.info("detect season from " + relativePath);
     int season = -1;
 
     // season detection
-    Pattern regex = Pattern.compile("(?i)(s|season|staffel)[\\s]*(\\d{1,2})");
+    Pattern regex = Pattern.compile("(?i)(?:s|season|staffel|)[\\s]*(\\d+)");
     Matcher m = regex.matcher(relativePath);
     if (m.find()) {
       try {
-        season = Integer.parseInt(m.group(2));
+        season = Integer.parseInt(m.group(1));
       }
       catch (NumberFormatException nfe) {
         // can not happen from regex since we only come here with max 2 numeric chars
