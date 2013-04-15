@@ -250,6 +250,31 @@ public class TvShowEpisodeAndSeasonParser {
   }
 
   /**
+   * Detect season.
+   * 
+   * @param relativePath
+   *          the relative path
+   * @return the int
+   */
+  public static int detectSeason(String relativePath) {
+    int season = -1;
+
+    // season detection
+    Pattern regex = Pattern.compile("(?i)(s|season|staffel)[\\s]*(\\d{1,2})");
+    Matcher m = regex.matcher(relativePath);
+    if (m.find()) {
+      try {
+        season = Integer.parseInt(m.group(2));
+      }
+      catch (NumberFormatException nfe) {
+        // can not happen from regex since we only come here with max 2 numeric chars
+      }
+    }
+
+    return season;
+  }
+
+  /**
    * Decode single roman.
    * 
    * @param letter
