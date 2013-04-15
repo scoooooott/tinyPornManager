@@ -46,6 +46,7 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import com.omertron.thetvdbapi.TheTVDBApi;
 import com.omertron.thetvdbapi.model.Banner;
 import com.omertron.thetvdbapi.model.Banners;
+import com.omertron.thetvdbapi.model.Episode;
 import com.omertron.thetvdbapi.model.Series;
 
 /**
@@ -275,6 +276,51 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
    */
   private MediaMetadata getTvShowEpisodeMetadata(MediaScrapeOptions options) {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
+
+    String id = "";
+
+    // id from result
+    if (options.getResult() != null) {
+      id = options.getResult().getId();
+    }
+
+    // do we have an id from the options?
+    if (StringUtils.isEmpty(id)) {
+      id = options.getId(providerInfo.getId());
+    }
+
+    if (StringUtils.isEmpty(id)) {
+      return md;
+    }
+
+    // get episode number and season number
+    int seasonNr = -1;
+    int episodeNr = -1;
+
+    try {
+      seasonNr = Integer.parseInt(options.getId("seasonNr"));
+      episodeNr = Integer.parseInt(options.getId("episodeNr"));
+    }
+    catch (Exception e) {
+      LOGGER.warn("error parsing season/episode number");
+    }
+
+    if (seasonNr == -1 || episodeNr == -1) {
+      return md;
+    }
+
+    Episode episode = null;
+    synchronized (tvdb) {
+      episode = tvdb.getEpisode(id, seasonNr, episodeNr, Globals.settings.getScraperLanguage().name());
+    }
+
+    md.setPlot(episode.getOverview());
+    try {
+      md.setRating(Float.parseFloat(episode.getRating()));
+    }
+    catch (NumberFormatException e) {
+      md.setRating(0);
+    }
 
     return md;
   }
