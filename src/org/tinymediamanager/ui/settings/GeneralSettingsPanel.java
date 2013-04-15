@@ -15,9 +15,12 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -28,8 +31,11 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.UTF8Control;
+
+import ch.qos.logback.classic.Level;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -70,16 +76,24 @@ public class GeneralSettingsPanel extends JPanel {
   /** The chckbx clear cache shutdown. */
   private JCheckBox                   chckbxClearCacheShutdown;
 
+  /** The lbl loglevel. */
+  private JLabel                      lblLoglevel;
+
+  /** The combo box. */
+  private JComboBox                   comboBox;
+
   /**
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("214px"), }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(75px;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(150px;default)"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     panelProxySettings = new JPanel();
     panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelProxySettings, "2, 2, left, top");
+    add(panelProxySettings, "2, 2, 3, 1, fill, top");
     panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -117,9 +131,34 @@ public class GeneralSettingsPanel extends JPanel {
     panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
 
     chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearCache")); //$NON-NLS-1$
-    add(chckbxClearCacheShutdown, "2, 4");
+    add(chckbxClearCacheShutdown, "2, 4, 3, 1");
+
+    lblLoglevel = new JLabel("Loglevel");
+    add(lblLoglevel, "2, 6, right, default");
+
+    // listen to changes of the combo box
+    ItemListener listener = new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    };
+
+    Level[] levels = new Level[] { Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
+    comboBox = new JComboBox(levels);
+    comboBox.addItemListener(listener);
+    Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
+    comboBox.setSelectedItem(actualLevel);
+    add(comboBox, "4, 6, fill, default");
 
     initDataBindings();
+  }
+
+  private void checkChanges() {
+    Level level = (Level) comboBox.getSelectedItem();
+    int actualLevel = Globals.settings.getLogLevel();
+    if (actualLevel != level.levelInt) {
+      Globals.settings.setLogLevel(level.levelInt);
+    }
   }
 
   /**

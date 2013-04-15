@@ -40,9 +40,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
@@ -57,6 +57,8 @@ import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
+
+import ch.qos.logback.classic.Level;
 
 /**
  * The Class Settings.
@@ -110,6 +112,9 @@ public class Settings extends AbstractModelObject {
   /** The Constant CLEAR_CACHE_SHUTDOWN. */
   private final static String         CLEAR_CACHE_SHUTDOWN        = "clearCacheShutdown";
 
+  /** The Constant LOG_LEVEL. */
+  private final static String         LOG_LEVEL                   = "logLevel";
+
   /** The video file types. */
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -136,6 +141,9 @@ public class Settings extends AbstractModelObject {
 
   /** The proxy password. */
   private String                      proxyPassword;
+
+  /** The log level. */
+  private int                         logLevel                    = Level.DEBUG_INT;
 
   /** The scraper tmdb language. */
   private Languages                   scraperLanguage             = Languages.en;
@@ -615,6 +623,32 @@ public class Settings extends AbstractModelObject {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Gets the log level.
+   * 
+   * @return the log level
+   */
+  @XmlElement(name = LOG_LEVEL)
+  public int getLogLevel() {
+    return logLevel;
+  }
+
+  /**
+   * Sets the log level.
+   * 
+   * @param newValue
+   *          the new log level
+   */
+  public void setLogLevel(int newValue) {
+    int oldValue = this.logLevel;
+    this.logLevel = newValue;
+
+    ch.qos.logback.classic.Logger tl = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.tinymediamanager");
+    tl.setLevel(Level.toLevel(logLevel));
+
+    firePropertyChange(LOG_LEVEL, oldValue, newValue);
   }
 
   /**
