@@ -27,19 +27,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
-import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -59,7 +56,7 @@ import org.tinymediamanager.scraper.util.Url;
  * 
  * @author Myron Boyle (myron0815@gmx.net)
  */
-public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider, IMediaArtworkProvider {
+public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider {
 
   /** The Constant LOGGER. */
   private static final Logger              LOGGER        = LoggerFactory.getLogger(ZelluloidMetadataProvider.class);
@@ -108,8 +105,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   /*
    * (non-Javadoc)
    * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetadata(org.
-   * tinymediamanager.scraper.MediaScrapeOptions)
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetadata(org. tinymediamanager.scraper.MediaScrapeOptions)
    */
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
@@ -153,11 +149,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       // parse poster
       el = doc.getElementsByAttributeValueStarting("pic", "/images/poster");
       if (el.size() == 1) {
-        MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(BASE_URL + el.get(0).attr("pic"));
-        ma.setType(MediaArtworkType.POSTER);
-        ma.setProviderId(getProviderInfo().getId());
-        md.addMediaArt(ma);
+        md.setPosterUrl(BASE_URL + el.get(0).attr("pic"));
       }
 
       // parse year
@@ -334,8 +326,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   }
 
   /**
-   * Removes all weird characters from search as well some "stopwords" as
-   * der|die|das|the|a.
+   * Removes all weird characters from search as well some "stopwords" as der|die|das|the|a.
    * 
    * @param q
    *          the query string to clean
@@ -353,9 +344,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.tinymediamanager.scraper.IMediaMetadataProvider#search(org.tinymediamanager
-   * .scraper.MediaSearchOptions)
+   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#search(org.tinymediamanager .scraper.MediaSearchOptions)
    */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
@@ -473,28 +462,11 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   /*
    * (non-Javadoc)
    * 
-   * @see org.tinymediamanager.scraper.IMediaTrailerProvider#getTrailers(org.
-   * tinymediamanager.scraper.MediaScrapeOptions)
+   * @see org.tinymediamanager.scraper.IMediaTrailerProvider#getTrailers(org. tinymediamanager.scraper.MediaScrapeOptions)
    */
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     // http://www.zelluloid.de/filme/trailer.php3?id=7614
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getArtwork(org.
-   * tinymediamanager.scraper.MediaScrapeOptions)
-   */
-  @Override
-  public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
-    LOGGER.debug("getArtwork() " + options.toString());
-    List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
-    String searchString = "";
-    String imdb = "";
-
     return null;
   }
 }

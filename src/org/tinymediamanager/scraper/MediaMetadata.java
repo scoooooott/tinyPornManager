@@ -71,6 +71,9 @@ public class MediaMetadata {
   /** The spoken languages. */
   private String                  spokenLanguages   = "";
 
+  /** The poster url. */
+  private String                  posterUrl         = "";
+
   /** The cast members. */
   private List<MediaCastMember>   castMembers       = new ArrayList<MediaCastMember>();
 
@@ -545,7 +548,7 @@ public class MediaMetadata {
   }
 
   /**
-   * Adds the trailer.
+   * Adds the trailer. To use only when scraping the metadata also provides the trailers
    * 
    * @param trailer
    *          the trailer
@@ -593,6 +596,25 @@ public class MediaMetadata {
    */
   public HashMap<String, Object> getIds() {
     return ids;
+  }
+
+  /**
+   * Gets the poster url.
+   * 
+   * @return the poster url
+   */
+  public String getPosterUrl() {
+    return posterUrl;
+  }
+
+  /**
+   * Sets the poster url. To Use if a search result does not provide a link to the poster
+   * 
+   * @param posterUrl
+   *          the new poster url
+   */
+  public void setPosterUrl(String posterUrl) {
+    this.posterUrl = posterUrl;
   }
 
   /**

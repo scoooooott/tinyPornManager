@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
@@ -232,14 +233,19 @@ public class MovieChooserModel extends AbstractModelObject {
    */
   public void scrapeMetaData() {
     try {
+      // poster for preview
+      setPosterUrl(result.getPosterUrl());
+
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setResult(result);
       metadata = metadataProvider.getMetadata(options);
       setOverview(metadata.getPlot());
       setTagline(metadata.getTagline());
 
-      // poster for preview
-      setPosterUrl(result.getPosterUrl());
+      if (StringUtils.isBlank(posterUrl) && StringUtils.isNotBlank(metadata.getPosterUrl())) {
+        setPosterUrl(metadata.getPosterUrl());
+      }
+
       scraped = true;
 
     }

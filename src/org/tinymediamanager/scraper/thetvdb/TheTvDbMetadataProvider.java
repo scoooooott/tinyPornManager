@@ -241,6 +241,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     catch (NumberFormatException e) {
       md.setRuntime(0);
     }
+    md.setPosterUrl(show.getPoster());
 
     // actors
     for (String actor : show.getActors()) {
