@@ -17,6 +17,7 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +27,14 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
+import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
 /**
  * The Class TvEpisode.
@@ -64,8 +69,12 @@ public class TvShowEpisode extends MediaEntity {
    */
   @Override
   public String getFanart() {
-    // TODO Auto-generated method stub
-    return null;
+    if (!StringUtils.isEmpty(fanart)) {
+      return path + File.separator + fanart;
+    }
+    else {
+      return fanart;
+    }
   }
 
   /*
@@ -75,7 +84,6 @@ public class TvShowEpisode extends MediaEntity {
    */
   @Override
   public String getPoster() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -86,8 +94,6 @@ public class TvShowEpisode extends MediaEntity {
    */
   @Override
   public void setPoster(String poster) {
-    // TODO Auto-generated method stub
-
   }
 
   /*
@@ -96,9 +102,11 @@ public class TvShowEpisode extends MediaEntity {
    * @see org.tinymediamanager.core.MediaEntity#setFanart(java.lang.String)
    */
   @Override
-  public void setFanart(String fanart) {
-    // TODO Auto-generated method stub
-
+  public void setFanart(String newValue) {
+    String oldValue = this.fanart;
+    this.fanart = newValue;
+    firePropertyChange(FANART, oldValue, newValue);
+    firePropertyChange(HAS_IMAGES, false, true);
   }
 
   /*
@@ -108,7 +116,6 @@ public class TvShowEpisode extends MediaEntity {
    */
   @Override
   public String getBanner() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -119,8 +126,6 @@ public class TvShowEpisode extends MediaEntity {
    */
   @Override
   public void setBanner(String banner) {
-    // TODO Auto-generated method stub
-
   }
 
   /**
@@ -260,6 +265,21 @@ public class TvShowEpisode extends MediaEntity {
       Globals.entityManager.getTransaction().begin();
       Globals.entityManager.persist(this);
       Globals.entityManager.getTransaction().commit();
+    }
+  }
+
+  /**
+   * Write fanart image.
+   */
+  public void writeFanartImage() {
+    if (StringUtils.isNotEmpty(getFanartUrl())) {
+      boolean firstImage = true;
+      // create correct filename
+      MediaFile mf = getMediaFiles().get(0);
+      String filename = path + File.separator + FilenameUtils.getBaseName(mf.getFilename()) + "-fanart." + FilenameUtils.getExtension(getFanartUrl());
+      // get image in thread
+      MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
+      Globals.executor.execute(task);
     }
   }
 }

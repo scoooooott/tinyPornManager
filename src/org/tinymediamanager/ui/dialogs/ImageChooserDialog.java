@@ -696,6 +696,7 @@ public class ImageChooserDialog extends JDialog {
             case BANNER:
               options.setArtworkType(MediaArtworkType.BANNER);
               break;
+
           }
 
           // populate ids

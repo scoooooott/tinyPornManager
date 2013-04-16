@@ -41,6 +41,8 @@ import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
@@ -76,25 +78,36 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   /** The continue queue. */
   private boolean                     continueQueue    = true;
 
+  /** The tf title. */
   private JTextField                  tfTitle;
 
+  /** The lbl filename. */
   private JLabel                      lblFilename;
 
+  /** The sp episode. */
   private JSpinner                    spEpisode;
 
+  /** The sp season. */
   private JSpinner                    spSeason;
 
+  /** The lbl fanart. */
   private ImageLabel                  lblFanart;
 
+  /** The ta plot. */
   private JTextArea                   taPlot;
+
+  /** The tv show list. */
+  private TvShowList                  tvShowList;
 
   /**
    * Instantiates a new tv show episode scrape dialog.
    * 
    * @param episodeToScrape
    *          the episode to scrape
+   * @param inQueue
+   *          the in queue
    */
-  public TvShowEpisodeEditorDialog(TvShowEpisode episodeToScrape, boolean inQueue) {
+  public TvShowEpisodeEditorDialog(TvShowEpisode episode, boolean inQueue) {
     setTitle(BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
     setName("tvShowEpisodeScraper");
     TmmWindowSaver.loadSettings(this);
@@ -102,14 +115,15 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     setIconImage(Globals.logo);
     setModal(true);
 
-    this.episodeToScrape = episodeToScrape;
+    tvShowList = TvShowList.getInstance();
+    this.episodeToScrape = episode;
     getContentPane().setLayout(new BorderLayout());
     {
       JPanel contentPanel = new JPanel();
       getContentPane().add(contentPanel, BorderLayout.CENTER);
       contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("75px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"),
           FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"),
@@ -236,6 +250,12 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       episodeToScrape.setSeason((Integer) spSeason.getValue());
       episodeToScrape.setEpisode((Integer) spEpisode.getValue());
       episodeToScrape.setPlot(taPlot.getText());
+
+      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(episodeToScrape.getFanartUrl())) {
+        episodeToScrape.setFanartUrl(lblFanart.getImageUrl());
+        episodeToScrape.writeFanartImage();
+      }
+
       episodeToScrape.saveToDb();
 
       this.setVisible(false);
@@ -262,14 +282,31 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     }
   }
 
+  /**
+   * The Class ScrapeTask.
+   * 
+   * @author Manuel Laggner
+   */
   private class ScrapeTask extends SwingWorker<Void, Void> {
 
+    /** The mp. */
     IMediaMetadataProvider mp;
 
+    /**
+     * Instantiates a new scrape task.
+     * 
+     * @param mp
+     *          the mp
+     */
     public ScrapeTask(IMediaMetadataProvider mp) {
       this.mp = mp;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#doInBackground()
+     */
     @Override
     protected Void doInBackground() throws Exception {
       MediaScrapeOptions options = new MediaScrapeOptions();
@@ -286,6 +323,11 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         if (StringUtils.isNotBlank(metadata.getTitle())) {
           tfTitle.setText(metadata.getTitle());
           taPlot.setText(metadata.getPlot());
+          for (MediaArtwork ma : metadata.getFanart()) {
+            if (ma.getType() == MediaArtworkType.BACKGROUND) {
+              lblFanart.setImageUrl(ma.getDefaultUrl());
+            }
+          }
         }
       }
       catch (Exception e) {

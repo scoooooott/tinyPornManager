@@ -323,6 +323,12 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       md.setRating(0);
     }
 
+    // Banner
+    MediaArtwork ma = new MediaArtwork();
+    ma.setType(MediaArtworkType.BACKGROUND);
+    ma.setDefaultUrl(episode.getFilename());
+    md.addMediaArt(ma);
+
     return md;
   }
 

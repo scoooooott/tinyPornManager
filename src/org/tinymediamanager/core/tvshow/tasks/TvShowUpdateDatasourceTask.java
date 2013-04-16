@@ -234,6 +234,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             // add it
             for (int ep : result.episodes) {
               episode = new TvShowEpisode();
+              episode.setPath(dir.getPath());
               episode.setEpisode(ep);
               episode.setSeason(result.season);
               episode.setTvShow(tvShow);
@@ -246,6 +247,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           else {
             // episode detection found nothing - simply add this file
             episode = new TvShowEpisode();
+            episode.setPath(dir.getPath());
             episode.setEpisode(-1);
             episode.setSeason(-1);
             episode.setTitle(FilenameUtils.getBaseName(file.getName()));
