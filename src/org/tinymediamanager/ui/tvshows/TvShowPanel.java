@@ -50,6 +50,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowEpisodeEditorDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -241,6 +242,24 @@ public class TvShowPanel extends JPanel {
     return selectedTvShows;
   }
 
+  private List<Object> getSelectedObjects() {
+    List<Object> selectedObjects = new ArrayList<Object>();
+
+    TreePath[] paths = tree.getSelectionPaths();
+
+    // filter out all objects from the selection
+    if (paths != null) {
+      for (TreePath path : paths) {
+        if (path.getPathCount() > 1) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+          selectedObjects.add(node.getUserObject());
+        }
+      }
+    }
+
+    return selectedObjects;
+  }
+
   /**
    * The Class UpdateDatasourcesAction.
    * 
@@ -358,13 +377,24 @@ public class TvShowPanel extends JPanel {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      List<TvShow> selectedTvShows = getSelectedTvShows();
+      List<Object> selectedObjects = getSelectedObjects();
 
-      for (TvShow tvShow : selectedTvShows) {
-        // display tv show chooser
-        TvShowEditorDialog editor = new TvShowEditorDialog(tvShow, selectedTvShows.size() > 1 ? true : false);
-        if (!editor.showDialog()) {
-          break;
+      for (Object obj : selectedObjects) {
+        // display tv show editor
+        if (obj instanceof TvShow) {
+          TvShow tvShow = (TvShow) obj;
+          TvShowEditorDialog editor = new TvShowEditorDialog(tvShow, selectedObjects.size() > 1 ? true : false);
+          if (!editor.showDialog()) {
+            break;
+          }
+        }
+        // display tv episode editor
+        if (obj instanceof TvShowEpisode) {
+          TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
+          TvShowEpisodeEditorDialog editor = new TvShowEpisodeEditorDialog(tvShowEpisode, selectedObjects.size() > 1 ? true : false);
+          if (!editor.showDialog()) {
+            break;
+          }
         }
       }
     }

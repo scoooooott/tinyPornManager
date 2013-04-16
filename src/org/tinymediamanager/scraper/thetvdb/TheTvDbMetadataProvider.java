@@ -41,7 +41,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 
 import com.omertron.thetvdbapi.TheTVDBApi;
 import com.omertron.thetvdbapi.model.Banner;
@@ -57,7 +56,7 @@ import com.omertron.thetvdbapi.model.Series;
 public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaArtworkProvider {
 
   /** The Constant LOGGER. */
-  private static final Logger      LOGGER       = LoggerFactory.getLogger(TmdbMetadataProvider.class);
+  private static final Logger      LOGGER       = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
 
   /** The Constant instance. */
   private static TheTVDBApi        tvdb;
@@ -314,6 +313,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       episode = tvdb.getEpisode(id, seasonNr, episodeNr, Globals.settings.getScraperLanguage().name());
     }
 
+    md.setTitle(episode.getEpisodeName());
     md.setPlot(episode.getOverview());
     try {
       md.setRating(Float.parseFloat(episode.getRating()));
