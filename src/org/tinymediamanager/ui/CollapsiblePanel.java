@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 package org.tinymediamanager.ui;
-
-import java.awt.BorderLayout;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -41,9 +40,9 @@ import javax.swing.JRadioButton;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+
 /**
- * The user-triggered collapsible panel containing the component (trigger) in
- * the titled border.
+ * The user-triggered collapsible panel containing the component (trigger) in the titled border.
  * 
  * @author Manuel Laggner
  */
@@ -101,13 +100,11 @@ public class CollapsiblePanel extends JPanel {
                                                                                               // panel
 
   /**
-   * Constructor, using a group of option radio buttons to control the
-   * collapsible panel. The buttons should be created, grouped, and then used to
+   * Constructor, using a group of option radio buttons to control the collapsible panel. The buttons should be created, grouped, and then used to
    * construct their own collapsible panels.
    * 
    * @param component
-   *          Radio button that expands and collapses the panel based on if it
-   *          is selected or not
+   *          Radio button that expands and collapses the panel based on if it is selected or not
    */
   public CollapsiblePanel(JRadioButton component) {
     component.addItemListener(new CollapsiblePanel.ExpandAndCollapseAction());
@@ -120,8 +117,7 @@ public class CollapsiblePanel extends JPanel {
    * Constructor, using a label/button to control the collapsible panel.
    * 
    * @param text
-   *          Title of the collapsible panel in string format, used to create a
-   *          button with text and an arrow icon
+   *          Title of the collapsible panel in string format, used to create a button with text and an arrow icon
    */
   public CollapsiblePanel(String text) {
     arrow.setText(text);
@@ -131,12 +127,10 @@ public class CollapsiblePanel extends JPanel {
   }
 
   /**
-   * Constructor, using a group of button to control the collapsible panel while
-   * will a label text.
+   * Constructor, using a group of button to control the collapsible panel while will a label text.
    * 
    * @param text
-   *          Title of the collapsible panel in string format, used to create a
-   *          button with text and an arrow icon
+   *          Title of the collapsible panel in string format, used to create a button with text and an arrow icon
    * @param component
    *          the component
    */
@@ -161,8 +155,7 @@ public class CollapsiblePanel extends JPanel {
   }
 
   /**
-   * Sets layout, creates the content panel and adds it and the title component
-   * to the container, all constructors have this procedure in common.
+   * Sets layout, creates the content panel and adds it and the title component to the container, all constructors have this procedure in common.
    */
   private void commonConstructor() {
     setLayout(new BorderLayout());
@@ -175,8 +168,7 @@ public class CollapsiblePanel extends JPanel {
   }
 
   /**
-   * Sets the bounds of the border title component so that it is properly
-   * positioned.
+   * Sets the bounds of the border title component so that it is properly positioned.
    */
   private void placeTitleComponent() {
     Insets insets = this.getInsets();
@@ -208,9 +200,8 @@ public class CollapsiblePanel extends JPanel {
   }
 
   /**
-   * Collapses or expands the panel. add or remove the content pane, alternate
-   * between a frame and empty border, and change the title arrow. The current
-   * state is stored in the collapsed boolean.
+   * Collapses or expands the panel. add or remove the content pane, alternate between a frame and empty border, and change the title arrow. The
+   * current state is stored in the collapsed boolean.
    * 
    * @param collapse
    *          When set to true, the panel is collapsed, else it is expanded
@@ -243,11 +234,9 @@ public class CollapsiblePanel extends JPanel {
   }
 
   /**
-   * Returns an ImageIcon array with arrow images used for the different states
-   * of the panel.
+   * Returns an ImageIcon array with arrow images used for the different states of the panel.
    * 
-   * @return iconArrow An ImageIcon array holding the collapse and expanded
-   *         versions of the right hand side arrow
+   * @return iconArrow An ImageIcon array holding the collapse and expanded versions of the right hand side arrow
    */
   private ImageIcon[] createExpandAndCollapseIcon() {
     ImageIcon[] iconArrow = new ImageIcon[2];
@@ -287,8 +276,7 @@ public class CollapsiblePanel extends JPanel {
   }
 
   /**
-   * Expanding or collapsing of extra content on the user's click of the
-   * titledBorder component.
+   * Expanding or collapsing of extra content on the user's click of the titledBorder component.
    * 
    * @author Manuel Laggner
    */
@@ -300,8 +288,7 @@ public class CollapsiblePanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
       setCollapsed(!isCollapsed());
@@ -310,8 +297,7 @@ public class CollapsiblePanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+     * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
      */
     @Override
     public void itemStateChanged(ItemEvent e) {
@@ -389,8 +375,7 @@ public class CollapsiblePanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.border.TitledBorder#paintBorder(java.awt.Component,
-     * java.awt.Graphics, int, int, int, int)
+     * @see javax.swing.border.TitledBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int)
      */
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
@@ -441,8 +426,7 @@ public class CollapsiblePanel extends JPanel {
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.border.TitledBorder#getBorderInsets(java.awt.Component,
-     * java.awt.Insets)
+     * @see javax.swing.border.TitledBorder#getBorderInsets(java.awt.Component, java.awt.Insets)
      */
     @Override
     public Insets getBorderInsets(Component c, Insets insets) {

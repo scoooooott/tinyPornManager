@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 package org.tinymediamanager.ui.tvshows;
-
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -23,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import org.tinymediamanager.core.tvshow.TvShow;
+
 
 /**
  * The Class TvShowRootTreeNode.

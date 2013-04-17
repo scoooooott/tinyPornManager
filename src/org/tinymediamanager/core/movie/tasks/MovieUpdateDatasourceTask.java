@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 package org.tinymediamanager.core.movie.tasks;
-
-import java.io.File;
+import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +34,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.ParserUtils;
+
 
 /**
  * The Class UpdateDataSourcesTask.

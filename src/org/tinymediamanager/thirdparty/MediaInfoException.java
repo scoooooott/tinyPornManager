@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.thirdparty;
+import com.sun.jna.Platform;
 
-import com.sun.jna.Platform;
 
 /**
  * The Class MediaInfoException.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres GAME_SHOW       = new MediaGenres("GAME_SHOW", 17, "Gameshow", new String[] { "Game-Show" });
   /** The history. */
   public final static MediaGenres HISTORY         = new MediaGenres("HISTORY", 18, "History", new String[] { "Historienfilm", "Geschichte",
-      "Historie"                                  });
+      "Historie"                                 });
   /** The holiday. */
   public final static MediaGenres HOLIDAY         = new MediaGenres("HOLIDAY", 19, "Holiday", new String[] {});
   /** The horror. */
@@ -81,11 +81,11 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   /** The road movie. */
   public final static MediaGenres ROAD_MOVIE      = new MediaGenres("ROAD_MOVIE", 28, "Road Movie", new String[] {});
   /** The romance. */
-  public final static MediaGenres ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance", new String[] { "Liebe/Romantik", "Romanze",
-      "Lovestory"                                 });
+  public final static MediaGenres ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance",
+                                                      new String[] { "Liebe/Romantik", "Romanze", "Lovestory" });
   /** The science fiction. */
   public final static MediaGenres SCIENCE_FICTION = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction", new String[] { "Sci-Fi",
-      "Science-Fiction"                           });
+      "Science-Fiction"                          });
   /** The = new MediaGenres2(tv) series. */
   public final static MediaGenres SERIES          = new MediaGenres("SERIES", 31, "Series", new String[] { "Serie", "TV-Serie", "TV-Mini-Serie" });
   /** The short. */
@@ -112,10 +112,10 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres WESTERN         = new MediaGenres("WESTERN", 42, "Western", new String[] {});
 
   /** The name. */
-  private String                   name;
+  private String                  name;
 
   /** The alternate names. */
-  private String[]                 alternateNames;
+  private String[]                alternateNames;
 
   /**
    * Instantiates a new genres.

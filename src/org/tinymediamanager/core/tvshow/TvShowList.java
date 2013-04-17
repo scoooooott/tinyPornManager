@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 package org.tinymediamanager.core.tvshow;
-
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -40,6 +39,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
+
 
 /**
  * The Class TvShowList.

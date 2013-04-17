@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package org.tinymediamanager.ui;
-
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -32,6 +31,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+
 
 /*
  *  Class to manage the widths of colunmns in a table.
@@ -325,8 +325,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   }
 
   /*
-   * Indicate whether changes to the model should cause the width to be
-   * dynamically recalculated.
+   * Indicate whether changes to the model should cause the width to be dynamically recalculated.
    */
   /**
    * Sets the dynamic adjustment.
@@ -357,9 +356,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent
-   * )
+   * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent )
    */
   public void propertyChange(PropertyChangeEvent e) {
     // When the TableModel changes we need to update the listeners
@@ -381,8 +378,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   /*
    * (non-Javadoc)
    * 
-   * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.
-   * TableModelEvent)
+   * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event. TableModelEvent)
    */
   public void tableChanged(TableModelEvent e) {
     if (!isColumnDataIncluded)
@@ -511,8 +507,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -538,8 +533,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
   }
 
   /*
-   * Toggle properties of the TableColumnAdjuster so the user can customize the
-   * functionality to their preferences
+   * Toggle properties of the TableColumnAdjuster so the user can customize the functionality to their preferences
    */
   /**
    * The Class ToggleAction.
@@ -570,8 +564,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     @Override
     public void actionPerformed(ActionEvent e) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 package org.tinymediamanager.core.tvshow;
-
-import static org.tinymediamanager.core.Constants.*;
+import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -50,6 +49,7 @@ import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
+
 
 /**
  * The Class TvShow.

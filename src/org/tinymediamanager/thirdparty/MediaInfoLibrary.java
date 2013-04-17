@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 package org.tinymediamanager.thirdparty;
-
-import static java.util.Collections.*;
+import static java.util.Collections.*;
 
 import java.lang.reflect.Method;
 
@@ -25,6 +24,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
+
 
 /**
  * The Interface MediaInfoLibrary.
@@ -52,8 +52,7 @@ interface MediaInfoLibrary extends Library {
   Pointer New();
 
   /**
-   * Open a file and collect information about it (technical information and
-   * tags).
+   * Open a file and collect information about it (technical information and tags).
    * 
    * @param handle
    *          the handle
@@ -72,8 +71,7 @@ interface MediaInfoLibrary extends Library {
    *          The name of option
    * @param value
    *          The value of option
-   * @return Depends on the option: by default "" (nothing) means No, other
-   *         means Yes
+   * @return Depends on the option: by default "" (nothing) means No, other means Yes
    */
   WString Option(Pointer handle, WString option, WString value);
 
@@ -96,15 +94,12 @@ interface MediaInfoLibrary extends Library {
    * @param streamNumber
    *          Stream number in Kind of stream (first, second...)
    * @param parameter
-   *          Parameter you are looking for in the stream (Codec, width,
-   *          bitrate...), in string format ("Codec", "Width"...)
+   *          Parameter you are looking for in the stream (Codec, width, bitrate...), in string format ("Codec", "Width"...)
    * @param infoKind
-   *          Kind of information you want about the parameter (the text, the
-   *          measure, the help...)
+   *          Kind of information you want about the parameter (the text, the measure, the help...)
    * @param searchKind
    *          Where to look for the parameter
-   * @return a string about information you search, an empty string if there is
-   *         a problem
+   * @return a string about information you search, an empty string if there is a problem
    */
   WString Get(Pointer handle, int streamKind, int streamNumber, WString parameter, int infoKind, int searchKind);
 
@@ -120,16 +115,13 @@ interface MediaInfoLibrary extends Library {
    * @param parameterIndex
    *          the parameter index
    * @param infoKind
-   *          Kind of information you want about the parameter (the text, the
-   *          measure, the help...)
-   * @return a string about information you search, an empty string if there is
-   *         a problem
+   *          Kind of information you want about the parameter (the text, the measure, the help...)
+   * @return a string about information you search, an empty string if there is a problem
    */
   WString GetI(Pointer handle, int streamKind, int streamNumber, int parameterIndex, int infoKind);
 
   /**
-   * Count of streams of a stream kind (StreamNumber not filled), or count of
-   * piece of information in this stream.
+   * Count of streams of a stream kind (StreamNumber not filled), or count of piece of information in this stream.
    * 
    * @param handle
    *          the handle

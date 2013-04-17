@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Manuel Laggner
+ * Copyright 2012 - 2013 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,15 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 
 /**
- * @author Manuel Laggner
+ * The Class TvShowTest.
  * 
+ * @author Manuel Laggner
  */
 public class TvShowTest {
 
+  /**
+   * Test tv shows.
+   */
   @Test
   public void testTvShows() {
     try {
@@ -62,6 +66,9 @@ public class TvShowTest {
     emf.close();
   }
 
+  /**
+   * Test episode matching.
+   */
   @Test
   public void testEpisodeMatching() {
     // http://wiki.xbmc.org/index.php?title=Video_library/Naming_files/TV_shows
@@ -113,6 +120,13 @@ public class TvShowTest {
     Assert.assertEquals("E:2", detectEpisode("name.s01e02435454715743435435554.ext"));
   }
 
+  /**
+   * Detect episode.
+   * 
+   * @param name
+   *          the name
+   * @return the string
+   */
   private String detectEpisode(String name) {
     StringBuilder sb = new StringBuilder();
     EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(new File(name));
