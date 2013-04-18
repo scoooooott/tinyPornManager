@@ -118,11 +118,11 @@ public class TvShowEpisodeAndSeasonParser {
    * @param filename
    * @return
    */
-  public static EpisodeMatchingResult detectEpisodeFromFilenameAlternative(File file, String showname) {
+  public static EpisodeMatchingResult detectEpisodeFromFilenameAlternative(String name, String showname) {
     EpisodeMatchingResult result = new EpisodeMatchingResult();
 
     // remove problematic strings from name
-    String filename = ParserUtils.cleanTvEpisodeName(file.getName());
+    String filename = ParserUtils.cleanTvEpisodeName(name);
     if (showname != null && !showname.isEmpty()) {
       // remove string like tvshow name (440, 24, ...)
       filename = filename.replaceAll("(?i)^" + showname + "", "");

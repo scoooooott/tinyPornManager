@@ -62,6 +62,9 @@ public class TvShowEpisode extends MediaEntity {
   /** the first aired date */
   private Date            firstAired           = null;
 
+  /** is this episode in a disc folder structure? */
+  private boolean         disc                 = false;
+
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<MediaFile> mediaFiles           = new ArrayList<MediaFile>();
@@ -84,6 +87,25 @@ public class TvShowEpisode extends MediaEntity {
    */
   public void setFirstAired(Date aired) {
     this.firstAired = aired;
+  }
+
+  /**
+   * Is this episode in a disc folder structure?
+   * 
+   * @return true/false
+   */
+  public boolean isDisc() {
+    return disc;
+  }
+
+  /**
+   * This episode is in a disc folder structure
+   * 
+   * @param disc
+   *          true/false
+   */
+  public void setDisc(boolean disc) {
+    this.disc = disc;
   }
 
   /**

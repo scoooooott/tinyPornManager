@@ -233,7 +233,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
           if (result.episodes.size() == 0) {
             // if episode STILL empty, try Myron's way of parsing - lol
-            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(file, tvShow.getTitle());
+            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(file.getName(), tvShow.getTitle());
             LOGGER.debug(file.getName() + " - " + result.toString());
           }
 
@@ -272,7 +272,91 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
       if (file.isDirectory()) {
         // dig deeper
-        findTvEpisodes(tvShow, file);
+        if (file.getName().equals("VIDEO_TS")) {
+          findTvEpisodesAsDisc(tvShow, file);
+        }
+        else if (file.getName().equals("BDMV")) {
+          findTvEpisodesAsDisc(tvShow, file);
+        }
+        else {
+          findTvEpisodes(tvShow, file);
+        }
+      }
+    }
+  }
+
+  /**
+   * Find tv episodes.
+   * 
+   * @param tvShow
+   *          the tv show
+   * @param dir
+   *          the dir
+   */
+  private void findTvEpisodesAsDisc(TvShow tvShow, File dir) {
+    String parentDir = dir.getParent();
+    LOGGER.debug("parsing disc structure in " + dir.getPath() + " parent: " + parentDir);
+    // crawl this folder and try to find every episode in it
+    File[] content = dir.listFiles();
+    for (File file : content) {
+      if (file.isFile()) {
+        // check filetype
+        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()))) {
+          continue;
+        }
+
+        TvShowEpisode episode = tvShowList.getTvEpisodeByFile(file);
+        if (episode == null) {
+          // try to parse out episodes/season from parent directory
+          EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
+
+          if (result.season == -1) {
+            // did the search find a season?
+            // no -> search for it in the folder name (relative path between tv show root and the current dir)
+            result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath());
+          }
+
+          if (result.episodes.size() == 0) {
+            // if episode STILL empty, try Myron's way of parsing - lol
+            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(new File(tvShow.getPath()).toURI().relativize(file.toURI())
+                .getPath(), tvShow.getPath());
+            LOGGER.debug(file.getName() + " - " + result.toString());
+          }
+
+          if (result.episodes.size() > 0) {
+            // add it
+            for (int ep : result.episodes) {
+              episode = new TvShowEpisode();
+              episode.setPath(dir.getPath());
+              episode.setEpisode(ep);
+              episode.setSeason(result.season);
+              episode.setTvShow(tvShow);
+              if (result.name.isEmpty()) {
+                result.name = FilenameUtils.getBaseName(file.getName());
+              }
+              episode.setTitle(result.name);
+              episode.setFirstAired(result.date);
+              episode.setDisc(true);
+              episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
+              episode.saveToDb();
+              tvShow.addEpisode(episode);
+            }
+          }
+          else {
+            // episode detection found nothing - simply add this file
+            episode = new TvShowEpisode();
+            episode.setPath(dir.getPath());
+            episode.setEpisode(-1);
+            episode.setSeason(-1);
+            episode.setTitle(FilenameUtils.getBaseName(file.getName()));
+            episode.setTvShow(tvShow);
+            episode.setFirstAired(result.date);
+            episode.setDisc(true);
+            episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
+            episode.saveToDb();
+            tvShow.addEpisode(episode);
+          }
+        }
       }
     }
   }
