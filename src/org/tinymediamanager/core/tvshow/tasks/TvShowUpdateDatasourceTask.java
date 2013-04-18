@@ -225,12 +225,19 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir, tvShow.getPath());
           }
 
-          if (result.episodes.size() > 0) {
+          if (result.season == -1) {
             // did the search find a season?
-            if (result.season == -1) {
-              // no -> search for it in the foldername (relative path between tv show root and the current dir)
-              result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath());
-            }
+            // no -> search for it in the folder name (relative path between tv show root and the current dir)
+            result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath());
+          }
+
+          if (result.episodes.size() == 0) {
+            // if episode STILL empty, try Myron's way of parsing - lol
+            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(file, tvShow.getTitle());
+            LOGGER.debug(file.getName() + " - " + result.toString());
+          }
+
+          if (result.episodes.size() > 0) {
             // add it
             for (int ep : result.episodes) {
               episode = new TvShowEpisode();
@@ -238,7 +245,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setEpisode(ep);
               episode.setSeason(result.season);
               episode.setTvShow(tvShow);
+              if (result.name.isEmpty()) {
+                result.name = FilenameUtils.getBaseName(file.getName());
+              }
               episode.setTitle(result.name);
+              episode.setFirstAired(result.date);
               episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
               episode.saveToDb();
               tvShow.addEpisode(episode);
@@ -252,6 +263,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             episode.setSeason(-1);
             episode.setTitle(FilenameUtils.getBaseName(file.getName()));
             episode.setTvShow(tvShow);
+            episode.setFirstAired(result.date);
             episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
             episode.saveToDb();
             tvShow.addEpisode(episode);
