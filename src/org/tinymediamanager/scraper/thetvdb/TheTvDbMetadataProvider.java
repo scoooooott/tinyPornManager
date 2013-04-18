@@ -309,9 +309,25 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       return md;
     }
 
-    Episode episode = null;
+    List<Episode> episodes = new ArrayList<Episode>();
     synchronized (tvdb) {
-      episode = tvdb.getEpisode(id, seasonNr, episodeNr, Globals.settings.getScraperLanguage().name());
+      // switched to getAllEpisodes for performance - only 1 request needed for scraping multiple episodes of one tv show
+      // episode = tvdb.getEpisode(id, seasonNr, episodeNr, Globals.settings.getScraperLanguage().name());
+      episodes.addAll(tvdb.getAllEpisodes(id, Globals.settings.getScraperLanguage().name()));
+    }
+
+    Episode episode = null;
+
+    // filter out the episode
+    for (Episode ep : episodes) {
+      if (ep.getSeasonNumber() == seasonNr && ep.getEpisodeNumber() == episodeNr) {
+        episode = ep;
+        break;
+      }
+    }
+
+    if (episode == null) {
+      return md;
     }
 
     md.setTitle(episode.getEpisodeName());

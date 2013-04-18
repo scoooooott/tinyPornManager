@@ -26,6 +26,7 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
@@ -76,7 +77,7 @@ public final class WebBrowser {
     GZIPInputStream zis = null;
 
     try {
-      Url url = new Url(requestUrl.toString());
+      Url url = new CachedUrl(requestUrl.toString());
       is = url.getInputStream();
 
       // Check the content encoding of the connection. Null content encoding is standard HTTP

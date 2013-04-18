@@ -242,11 +242,6 @@ public class TvShowInformationPanel extends JPanel {
         tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<TvShowSelectionModel, Long> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.id");
-    AutoBinding<TvShowSelectionModel, Long, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
-        tvShowSelectionModelBeanProperty_3, lblTtvdbId, jLabelBeanProperty);
-    autoBinding_4.bind();
-    //
     BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_4 = BeanProperty.create("selectedTvShow.imdbId");
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_4, lblImdbId, jLabelBeanProperty);
@@ -267,5 +262,10 @@ public class TvShowInformationPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowSelectionModel, tvShowSelectionModelBeanProperty_7, lblTvShowBanner, imageLabelBeanProperty);
     autoBinding_8.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.tvdbId");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
+        tvShowSelectionModelBeanProperty_3, lblTtvdbId, jLabelBeanProperty);
+    autoBinding_4.bind();
   }
 }

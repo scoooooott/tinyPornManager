@@ -326,6 +326,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
           for (MediaArtwork ma : metadata.getFanart()) {
             if (ma.getType() == MediaArtworkType.BACKGROUND) {
               lblFanart.setImageUrl(ma.getDefaultUrl());
+              break;
             }
           }
         }

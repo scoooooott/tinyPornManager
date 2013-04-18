@@ -83,6 +83,7 @@ public class TvShowScraperMetadataPanel extends JPanel {
 
   /** The chckbx trailer. */
   private JCheckBox                   chckbxTrailer;
+  private JCheckBox                   chckbxScrapeEpisodes;
 
   /**
    * Instantiates a new tv show scraper metadata panel.
@@ -95,7 +96,8 @@ public class TvShowScraperMetadataPanel extends JPanel {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     chckbxTitle = new JCheckBox(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     add(chckbxTitle, "2, 2");
@@ -133,12 +135,12 @@ public class TvShowScraperMetadataPanel extends JPanel {
     chckbxTrailer = new JCheckBox(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
     add(chckbxTrailer, "8, 6");
 
+    chckbxScrapeEpisodes = new JCheckBox("Scrape episodes with valid episode/season number too");
+    add(chckbxScrapeEpisodes, "2, 8, 7, 1");
+
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<TvShowScraperMetadataConfig, Boolean> scraperMetadataConfigBeanProperty = BeanProperty.create("title");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
@@ -200,5 +202,10 @@ public class TvShowScraperMetadataPanel extends JPanel {
     AutoBinding<TvShowScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
         config, scraperMetadataConfigBeanProperty_11, chckbxTrailer, jCheckBoxBeanProperty);
     autoBinding_11.bind();
+    //
+    BeanProperty<TvShowScraperMetadataConfig, Boolean> tvShowScraperMetadataConfigBeanProperty = BeanProperty.create("episodes");
+    AutoBinding<TvShowScraperMetadataConfig, Boolean, JCheckBox, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+        config, tvShowScraperMetadataConfigBeanProperty, chckbxScrapeEpisodes, jCheckBoxBeanProperty);
+    autoBinding_12.bind();
   }
 }

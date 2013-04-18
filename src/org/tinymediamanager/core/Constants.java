@@ -174,4 +174,7 @@ public final class Constants {
 
   /** The Constant IMDBID. */
   public final static String IMDBID               = "imdbId";
+
+  /** The Constant TVDBID. */
+  public final static String TVDBID               = "tvdbId";
 }

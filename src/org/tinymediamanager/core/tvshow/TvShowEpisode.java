@@ -39,7 +39,9 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaMetadata;
 
 /**
  * The Class TvEpisode.
@@ -364,5 +366,26 @@ public class TvShowEpisode extends MediaEntity {
       MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
       Globals.executor.execute(task);
     }
+  }
+
+  public void setMetadata(MediaMetadata metadata) {
+
+    setTitle(metadata.getTitle());
+    setPlot(metadata.getPlot());
+
+    for (MediaArtwork ma : metadata.getFanart()) {
+      if (ma.getType() == MediaArtworkType.BACKGROUND) {
+        setFanartUrl(ma.getDefaultUrl());
+        writeFanartImage();
+        break;
+      }
+    }
+
+    // TODO
+    // write NFO
+    // writeNFO();
+
+    // update DB
+    saveToDb();
   }
 }

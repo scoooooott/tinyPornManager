@@ -63,6 +63,9 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
   /** The trailer. */
   private boolean trailer       = true;
 
+  /** The episodes. */
+  private boolean episodes      = true;
+
   /**
    * Instantiates a new scraper metadata config.
    */
@@ -318,6 +321,27 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
     boolean oldValue = this.trailer;
     this.trailer = newValue;
     firePropertyChange("trailer", oldValue, newValue);
+  }
+
+  /**
+   * Checks if is episodes.
+   * 
+   * @return true, if is episodes
+   */
+  public boolean isEpisodes() {
+    return episodes;
+  }
+
+  /**
+   * Sets the episodes.
+   * 
+   * @param newValue
+   *          the new episodes
+   */
+  public void setEpisodes(boolean newValue) {
+    boolean oldValue = this.episodes;
+    this.episodes = newValue;
+    firePropertyChange("episodes", oldValue, newValue);
   }
 
 }

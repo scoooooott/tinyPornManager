@@ -45,8 +45,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -54,6 +52,8 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieScrapers;
@@ -110,6 +110,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   private JTextField                  textFieldSearchString;
 
   /** The cb scraper. */
+  @SuppressWarnings("rawtypes")
   private JComboBox                   cbScraper;
 
   /** The table. */
@@ -156,6 +157,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
    * @param inQueue
    *          the in queue
    */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
     setTitle(BUNDLE.getString("moviechooser.search")); //$NON-NLS-1$
     setName("tvShowChooser");
@@ -284,7 +286,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           panelSearchDetail.add(lblTvShowName, "2, 1, 3, 1, fill, top");
         }
         {
-          lblTvShowPoster = new ImageLabel();// new JLabel("");
+          lblTvShowPoster = new ImageLabel();
           panelSearchDetail.add(lblTvShowPoster, "2, 4, fill, fill");
         }
         {
@@ -358,6 +360,9 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       tvShowToScrape = tvShow;
       progressBar.setVisible(false);
       initDataBindings();
+
+      // set column name - windowbuilder pro crashes otherwise
+      table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("moviechooser.searchresult")); //$NON-NLS-1$
 
       textFieldSearchString.setText(tvShowToScrape.getTitle());
       searchTvShow(textFieldSearchString.getText());
@@ -444,6 +449,11 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
 
           // rewrite the complete NFO
           tvShowToScrape.writeNFO();
+
+          // scrape episodes
+          if (scraperMetadataConfig.isEpisodes()) {
+            tvShowToScrape.scrapeAllEpisodes();
+          }
 
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
@@ -612,7 +622,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
         tvShowsFound, table);
     //
     BeanProperty<TvShowChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
-    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setColumnName(BUNDLE.getString("moviechooser.searchresult")).setEditable(false); //$NON-NLS-1$
+    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false);
     //
     jTableBinding.bind();
     //

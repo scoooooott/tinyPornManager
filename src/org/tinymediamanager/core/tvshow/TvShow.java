@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.core.tvshow;
-import static org.tinymediamanager.core.Constants.*;
+
+import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -42,6 +43,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
+import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -49,7 +51,6 @@ import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
-
 
 /**
  * The Class TvShow.
@@ -650,7 +651,11 @@ public class TvShow extends MediaEntity {
    * @return the imdb id
    */
   public String getImdbId() {
-    return String.valueOf(ids.get("imdbId"));
+    Object obj = ids.get("imdbId");
+    if (obj == null) {
+      return "";
+    }
+    return obj.toString();
   }
 
   /**
@@ -663,6 +668,31 @@ public class TvShow extends MediaEntity {
     String oldValue = getImdbId();
     ids.put("imdbId", newValue);
     firePropertyChange(IMDBID, oldValue, newValue);
+  }
+
+  /**
+   * Gets the tvdb id.
+   * 
+   * @return the tvdb id
+   */
+  public String getTvdbId() {
+    Object obj = ids.get("tvdb");
+    if (obj == null) {
+      return "";
+    }
+    return obj.toString();
+  }
+
+  /**
+   * Sets the tvdb id.
+   * 
+   * @param newValue
+   *          the new tvdb id
+   */
+  public void setTvdbId(String newValue) {
+    String oldValue = getImdbId();
+    ids.put("tvdb", newValue);
+    firePropertyChange(TVDBID, oldValue, newValue);
   }
 
   /**
@@ -1151,5 +1181,21 @@ public class TvShow extends MediaEntity {
     if (!found) {
       LOGGER.debug("Sorry, could not find banner.");
     }
+  }
+
+  /**
+   * Scrape all episodes.
+   */
+  public void scrapeAllEpisodes() {
+    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
+    for (TvShowEpisode episode : episodesObservable) {
+      if (episode.getSeason() > -1 && episode.getEpisode() > -1) {
+        episodes.add(episode);
+      }
+    }
+
+    // scrape episodes in a task
+    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
+    Globals.executor.execute(task);
   }
 }
