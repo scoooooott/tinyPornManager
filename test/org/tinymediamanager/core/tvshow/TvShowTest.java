@@ -24,6 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class TvShowTest.
@@ -37,19 +38,7 @@ public class TvShowTest {
    */
   @Test
   public void testTvShows() {
-    try {
-      Thread.sleep(5000);
-    }
-    catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    File db = new File("tvshowtest.odb");
-    if (db.exists()) {
-      db.delete();
-    }
-
-    EntityManagerFactory emf = Persistence.createEntityManagerFactory("tvshowtest.odb");
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("tmm.odb");
     Globals.entityManager = emf.createEntityManager();
 
     TvShowList instance = TvShowList.getInstance();
@@ -106,15 +95,20 @@ public class TvShowTest {
 
     // split episode
     // TODO: detect split?
-    detectEpisode("name.s01e01.1.ext");
-    detectEpisode("name.s01e01a.ext");
-    detectEpisode("name.1x01.1.ext");
-    detectEpisode("name.1x01a.ext");
-    detectEpisode("name.ep01.1.ext");
-    detectEpisode("name.101.1.ext");
-    detectEpisode("name.ep01a_01b.ext");
-    detectEpisode("name.s01e01.1.s01e01.2.ext");
-    detectEpisode("name.1x01.1x01.2.ext"); // (note this is (1x01.1)x(01.2) not (1x01).(1x01.2))
+    Assert.assertEquals("E:1", detectEpisode("name.s01e01.1.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.s01e01a.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.1x01.1.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.1x01a.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.ep01.1.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.101.1.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.ep01a_01b.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.s01e01.1.s01e01.2.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.1x01.1x01.2.ext")); // (note this is (1x01.1)x(01.2) not (1x01).(1x01.2))
+
+    detectEpisode("Episode.11.Ocean.Deep.BluRay.720p.x264-x264Crew.mkv");
+    detectEpisode("tvs-castle-dl-ituneshd-xvid-101.avi");
+    detectEpisode("440 - 2x09 - .avi");
+    // detectEpisode("");
 
     // parseInt testing
     Assert.assertEquals("E:2", detectEpisode("name.s01e02435454715743435435554.ext"));
@@ -130,10 +124,12 @@ public class TvShowTest {
   private String detectEpisode(String name) {
     StringBuilder sb = new StringBuilder();
     EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(new File(name));
+    // EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(new File(name), "");
     for (int ep : result.episodes) {
       sb.append(" E:");
       sb.append(ep);
     }
+    System.out.println(StrgUtils.padRight(sb.toString().trim(), 40) + name);
     return sb.toString().trim();
   }
 

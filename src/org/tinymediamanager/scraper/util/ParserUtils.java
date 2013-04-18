@@ -98,6 +98,43 @@ public class ParserUtils {
   }
 
   /**
+   * returns cleaned tvepisode name
+   * 
+   * @param filename
+   * @return the cleaned one
+   */
+  public static String cleanTvEpisodeName(String filename) {
+    String[] stopwords = { "720", "1080", "x264", "h264", "webdl", "hdtv", "dubbed", "xvid", "bdrip", "webrip", "hdrip" };
+
+    if (filename == null || filename.isEmpty()) {
+      LOGGER.warn("Filename empty?!");
+      return "";
+    }
+
+    // remove extension (if found) and split
+    String fname = filename.replaceFirst("\\.\\w{2,4}$", "");
+    String[] s = fname.split("[()_ -.]");
+
+    // iterate over all splitted items and remove stopwords
+    String ret = "";
+    for (int i = 0; i < s.length; i++) {
+      if (s[i] != null && !s[i].isEmpty()) {
+        boolean stopword_found = false;
+        for (String stop : stopwords) {
+          if (s[i].toLowerCase().startsWith(stop)) {
+            // we found a stopword - ignore
+            stopword_found = true;
+          }
+        }
+        if (!stopword_found) {
+          ret = ret + s[i] + " ";
+        }
+      }
+    }
+    return ret.trim();
+  }
+
+  /**
    * return a 2 element array. 0 = title; 1=date
    * 
    * parses the title in the format Title YEAR or Title (YEAR)

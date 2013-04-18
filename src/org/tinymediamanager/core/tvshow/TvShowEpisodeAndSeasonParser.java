@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 package org.tinymediamanager.core.tvshow;
-import java.io.File;
+
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +31,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
  * The Class TvShowEpisodeAndSeasonParser.
@@ -45,11 +49,11 @@ public class TvShowEpisodeAndSeasonParser {
   /** The pattern2. */
   private static Pattern      pattern2 = Pattern.compile("[\\._ -]()[Ee][Pp]_?([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // foo.yyyy.mm.dd.*
-  /** The pattern3. */
-  private static Pattern      pattern3 = Pattern.compile("([0-9]{4})[\\.-]([0-9]{2})[\\.-]([0-9]{2})", Pattern.CASE_INSENSITIVE);
+  /** The date1. */
+  private static Pattern      date1    = Pattern.compile("([0-9]{4})[\\.-]([0-9]{2})[\\.-]([0-9]{2})", Pattern.CASE_INSENSITIVE);
   // foo.mm.dd.yyyy.*
-  /** The pattern4. */
-  private static Pattern      pattern4 = Pattern.compile("([0-9]{2})[\\.-]([0-9]{2})[\\.-]([0-9]{4})", Pattern.CASE_INSENSITIVE);
+  /** The date2. */
+  private static Pattern      date2    = Pattern.compile("([0-9]{2})[\\.-]([0-9]{2})[\\.-]([0-9]{4})", Pattern.CASE_INSENSITIVE);
   // foo.1x09* or just /1x09*
   /** The pattern5. */
   private static Pattern      pattern5 = Pattern.compile("[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
@@ -74,6 +78,9 @@ public class TvShowEpisodeAndSeasonParser {
 
     /** The name. */
     public String        name     = "";
+
+    /** the date */
+    public Date          date     = null;
 
     /*
      * (non-Javadoc)
@@ -102,6 +109,132 @@ public class TvShowEpisodeAndSeasonParser {
     Collections.sort(result.episodes);
 
     LOGGER.debug("returning result " + result);
+    return result;
+  }
+
+  /**
+   * old-style ;)
+   * 
+   * @param filename
+   * @return
+   */
+  public static EpisodeMatchingResult detectEpisodeFromFilenameAlternative(File file, String showname) {
+    EpisodeMatchingResult result = new EpisodeMatchingResult();
+
+    // remove problematic strings from name
+    String filename = ParserUtils.cleanTvEpisodeName(file.getName());
+    if (showname != null && !showname.isEmpty()) {
+      // remove string like tvshow name (440, 24, ...)
+      filename = filename.replaceAll("(?i)^" + showname + "", "");
+      filename = filename.replaceAll("(?i) " + showname + " ", "");
+    }
+    filename = FilenameUtils.getBaseName(filename); // w/o extension
+
+    // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
+    Pattern regex = Pattern.compile("(?i)[epx_-]+(\\d{2})"); // episode fixed to 2 chars
+    Matcher m = regex.matcher(filename);
+    while (m.find()) {
+      int ep = 0;
+      try {
+        ep = Integer.parseInt(m.group(1));
+      }
+      catch (NumberFormatException nfe) {
+        // can not happen from regex since we only come here with max 2 numeric chars
+      }
+      if (ep > 0 && !result.episodes.contains(ep)) {
+        result.episodes.add(ep);
+      }
+    }
+
+    // parse Roman
+    regex = Pattern.compile("(?i)(part|pt)[\\._\\s]+([MDCLXVI]+)");
+    m = regex.matcher(filename);
+    while (m.find()) {
+      int ep = 0;
+      ep = decodeRoman(m.group(2));
+      if (ep > 0 && !result.episodes.contains(ep)) {
+        result.episodes.add(ep);
+      }
+    }
+
+    // season detection
+    if (result.season == -1) {
+      regex = Pattern.compile("(?i)(s|staffel|season)[\\s]*(\\d{1,4})");
+      m = regex.matcher(filename);
+      if (m.find()) {
+        int s = result.season;
+        try {
+          s = Integer.parseInt(m.group(2));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        result.season = s;
+      }
+    }
+
+    if (result.season == -1) {
+      // Date1 pattern yyyy-mm-dd
+      m = date1.matcher(filename);
+      if (m.find()) {
+        int s = result.season;
+        try {
+          s = Integer.parseInt(m.group(1));
+          result.date = new SimpleDateFormat("yyyy-MM-dd").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        catch (ParseException e) {
+          // can not happen from regex since we only come here with correct pattern
+        }
+        result.season = s;
+      }
+    }
+
+    if (result.season == -1) {
+      // Date2 pattern dd-mm-yyyy
+      m = date2.matcher(filename);
+      if (m.find()) {
+        int s = result.season;
+        try {
+          s = Integer.parseInt(m.group(3));
+          result.date = new SimpleDateFormat("dd-MM-yyyy").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        catch (ParseException e) {
+          // can not happen from regex since we only come here with correct pattern
+        }
+        result.season = s;
+      }
+    }
+
+    // parse XYY
+    if (result.episodes.isEmpty() || result.season == -1) {
+      regex = Pattern.compile("[^\\d](\\d)+[x_-]?(\\d{2})[^\\d]");
+      m = regex.matcher(filename);
+      if (m.find()) {
+        int ep = -1;
+        int s = -1;
+        try {
+          s = Integer.parseInt(m.group(1));
+          ep = Integer.parseInt(m.group(2));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+        }
+        if (s >= 0) {
+          result.season = s;
+        }
+      }
+    }
+
+    Collections.sort(result.episodes);
     return result;
   }
 
@@ -154,10 +287,10 @@ public class TvShowEpisodeAndSeasonParser {
     resultFromParser = parse(stringToParse, pattern2);
     result = combineResults(result, resultFromParser);
 
-    resultFromParser = parse(stringToParse, pattern3);
+    resultFromParser = parse(stringToParse, date1);
     result = combineResults(result, resultFromParser);
 
-    resultFromParser = parse(stringToParse, pattern4);
+    resultFromParser = parse(stringToParse, date2);
     result = combineResults(result, resultFromParser);
 
     resultFromParser = parse(stringToParse, pattern5);

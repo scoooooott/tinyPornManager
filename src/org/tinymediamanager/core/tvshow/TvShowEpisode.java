@@ -18,8 +18,13 @@ package org.tinymediamanager.core.tvshow;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -54,6 +59,9 @@ public class TvShowEpisode extends MediaEntity {
   /** The season. */
   private int             season               = -1;
 
+  /** the first aired date */
+  private Date            firstAired           = null;
+
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<MediaFile> mediaFiles           = new ArrayList<MediaFile>();
@@ -61,6 +69,59 @@ public class TvShowEpisode extends MediaEntity {
   /** The media files observable. */
   @Transient
   private List<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+
+  /**
+   * first aired date
+   * 
+   * @return the date
+   */
+  public Date getFirstAired() {
+    return firstAired;
+  }
+
+  /**
+   * sets the first aired date
+   */
+  public void setFirstAired(Date aired) {
+    this.firstAired = aired;
+  }
+
+  /**
+   * first aired date as yyyy-mm-dd<br>
+   * https://xkcd.com/1179/ :P
+   * 
+   * @return the date or empty string
+   */
+  public String getFirstAiredFormatted() {
+    if (this.firstAired == null) {
+      return "";
+    }
+    return new SimpleDateFormat("yyyy-MM-dd").format(this.firstAired);
+  }
+
+  /**
+   * convenient method to set the first aired date (parsed from string)
+   * 
+   * @throws ParseException
+   *           if string cannot be parsed!
+   */
+  public void setFirstAired(String aired) throws ParseException {
+    Pattern date = Pattern.compile("([0-9]{2})[_\\.-]([0-9]{2})[_\\.-]([0-9]{4})");
+    Matcher m = date.matcher(aired);
+    if (m.find()) {
+      this.firstAired = new SimpleDateFormat("dd-MM-yyyy").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+    }
+    else {
+      date = Pattern.compile("([0-9]{4})[_\\.-]([0-9]{2})[_\\.-]([0-9]{2})");
+      m = date.matcher(aired);
+      if (m.find()) {
+        this.firstAired = new SimpleDateFormat("yyyy-MM-dd").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+      }
+      else {
+        throw new ParseException("could not parse date from: " + aired, 0);
+      }
+    }
+  }
 
   /*
    * (non-Javadoc)

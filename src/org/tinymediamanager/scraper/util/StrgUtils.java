@@ -27,6 +27,14 @@ import java.util.regex.Pattern;
  */
 public class StrgUtils {
 
+  public static String padRight(String s, int n) {
+    return String.format("%1$-" + n + "s", s);
+  }
+
+  public static String padLeft(String s, int n) {
+    return String.format("%1$" + n + "s", s);
+  }
+
   /**
    * Removes the html.
    * 
