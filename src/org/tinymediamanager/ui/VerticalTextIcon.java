@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.lang.reflect.Method;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -75,18 +76,18 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
   /*
    * (non-Javadoc)
    * 
-   * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int,
-   * int)
+   * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
    */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public void paintIcon(Component c, Graphics g, int x, int y) {
     Graphics2D g2 = (Graphics2D) g;
     Color oldColor = g.getColor();
     AffineTransform oldTransform = g2.getTransform();
 
     Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-
+    // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     g.setColor(Color.black);
     if (clockwize) {
       g2.translate(x + getIconWidth(), y);
@@ -97,7 +98,18 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
       g2.rotate(-Math.PI / 2);
     }
 
-    g.drawString(text, 0, fm.getLeading() + fm.getAscent());
+    // try to paint the text via Swingutilities
+    try {
+      Class swingUtilities2Class = Class.forName("sun.swing.SwingUtilities2");
+      Class classParams[] = { JComponent.class, Graphics.class, String.class, Integer.TYPE, Integer.TYPE };
+      Method m = swingUtilities2Class.getMethod("drawString", classParams);
+      Object methodParams[] = { c, g, text, new Integer(0), new Integer(fm.getLeading() + fm.getAscent()) };
+      m.invoke(null, methodParams);
+    }
+    catch (Exception ex) {
+      g.drawString(text, 0, fm.getLeading() + fm.getAscent());
+    }
+    // g.drawString(text, 0, fm.getLeading() + fm.getAscent());
 
     g.setColor(oldColor);
     g2.setTransform(oldTransform);
