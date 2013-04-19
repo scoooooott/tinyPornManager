@@ -124,6 +124,20 @@ public class MediaFile extends AbstractModelObject {
 
   /**
    * Instantiates a new media file.
+   */
+  public MediaFile(File f) {
+    this.path = f.getPath();
+    this.filename = f.getName();
+    this.type = parseType();
+    this.file = f;
+    if (file.exists()) {
+      setFilesize(FileUtils.sizeOf(file));
+    }
+
+  }
+
+  /**
+   * Instantiates a new media file.
    * 
    * @param path
    *          the path
@@ -156,6 +170,52 @@ public class MediaFile extends AbstractModelObject {
     if (file.exists()) {
       setFilesize(FileUtils.sizeOf(file));
     }
+  }
+
+  /**
+   * tries to get the MediaFileType out of filename
+   * 
+   * @return the MediaFileType
+   */
+  public MediaFileType parseType() {
+    String ext = getExtension();
+
+    if (this.filename.contains("sample") || this.filename.contains("trailer")) {
+      return MediaFileType.TRAILER;
+    }
+
+    if (ext.equals("nfo")) {
+      return MediaFileType.NFO;
+    }
+
+    if (ext.equals("jpg") || ext.equals("png") || ext.equals("tbn")) {
+      return MediaFileType.GRAPHIC;
+    }
+
+    if (Globals.settings.getSubtitleFileType().contains("." + ext)) {
+      return MediaFileType.SUBTITLE;
+    }
+
+    if (Globals.settings.getVideoFileType().contains("." + ext)) {
+      return MediaFileType.VIDEO;
+    }
+
+    if (this.filename.contains("subs") || this.filename.contains("subtitle")) {
+      return MediaFileType.SUBTITLE;
+    }
+
+    return MediaFileType.UNKNOWN;
+  }
+
+  /**
+   * is this a "packed" file? (zip, rar, whatsoever)
+   * 
+   * @return true/false
+   */
+  public boolean isPacked() {
+    String ext = getExtension();
+    return (ext.equals("zip") || ext.equals("rar") || ext.equals("7z") || ext.matches("r\\d+"));
+
   }
 
   /**
@@ -216,6 +276,15 @@ public class MediaFile extends AbstractModelObject {
     String oldValue = this.filename;
     this.filename = newValue;
     firePropertyChange(FILENAME, oldValue, newValue);
+  }
+
+  /**
+   * Gets the extension.
+   * 
+   * @return the extension
+   */
+  public String getExtension() {
+    return FilenameUtils.getExtension(filename);
   }
 
   /**
