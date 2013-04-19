@@ -48,7 +48,7 @@ import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -63,28 +63,28 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieTrailerPanel extends JPanel {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle   BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
+  private static final ResourceBundle          BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long             serialVersionUID    = 1L;
+  private static final long                    serialVersionUID    = 1L;
 
   /** The logger. */
-  private static final Logger           LOGGER              = LoggerFactory.getLogger(MovieTrailerPanel.class);
+  private static final Logger                  LOGGER              = LoggerFactory.getLogger(MovieTrailerPanel.class);
 
   /** The movie selection model. */
-  private MovieSelectionModel           movieSelectionModel;
+  private MovieSelectionModel                  movieSelectionModel;
 
   /** The table. */
-  private JTable                        table;
+  private JTable                               table;
 
   /** The table column adjuster. */
-  private TableColumnAdjuster           tableColumnAdjuster = null;
+  private TableColumnAdjuster                  tableColumnAdjuster = null;
 
   /** The trailer event list. */
-  private EventList<MediaTrailer>       trailerEventList    = GlazedLists.threadSafeList(new BasicEventList<MediaTrailer>());
+  private EventList<MediaTrailer>              trailerEventList    = GlazedLists.threadSafeList(new BasicEventList<MediaTrailer>());
 
   /** The trailer table model. */
-  private EventTableModel<MediaTrailer> trailerTableModel   = null;
+  private DefaultEventTableModel<MediaTrailer> trailerTableModel   = null;
 
   /**
    * Instantiates a new movie details panel.
@@ -97,7 +97,7 @@ public class MovieTrailerPanel extends JPanel {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
-    trailerTableModel = new EventTableModel<MediaTrailer>(trailerEventList, new TrailerTableFormat());
+    trailerTableModel = new DefaultEventTableModel<MediaTrailer>(trailerEventList, new TrailerTableFormat());
     table = new MyTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setSelectionModel(new NullSelectionModel());
@@ -221,6 +221,7 @@ public class MovieTrailerPanel extends JPanel {
      * 
      * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public Class getColumnClass(int column) {
       switch (column) {
@@ -242,9 +243,9 @@ public class MovieTrailerPanel extends JPanel {
      * 
      * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public Comparator getColumnComparator(int arg0) {
-      // TODO Auto-generated method stub
       return null;
     }
   }

@@ -204,7 +204,7 @@ public class Movie extends MediaEntity {
    */
   public void setSortTitleFromMovieSet() {
     if (movieSet != null) {
-      setSortTitle(movieSet.getName() + (movieSet.getMovieIndex(this) + 1));
+      setSortTitle(movieSet.getTitle() + (movieSet.getMovieIndex(this) + 1));
     }
   }
 
@@ -841,7 +841,11 @@ public class Movie extends MediaEntity {
    * @return the imdb id
    */
   public String getImdbId() {
-    return String.valueOf(ids.get("imdbId"));
+    Object obj = ids.get("imdbId");
+    if (obj == null) {
+      return "";
+    }
+    return obj.toString();
   }
 
   /**

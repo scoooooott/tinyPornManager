@@ -139,6 +139,7 @@ public class MovieToMpNfoConnector {
   /**
    * Instantiates a new movie to mp nfo connector.
    */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public MovieToMpNfoConnector() {
     actors = new ArrayList();
     genres = new ArrayList<String>();
@@ -209,7 +210,7 @@ public class MovieToMpNfoConnector {
     // movie set
     if (movie.getMovieSet() != null) {
       MovieSet movieSet = movie.getMovieSet();
-      MovieSets set = new MovieSets(movieSet.getName(), movieSet.getMovieIndex(movie) + 1);
+      MovieSets set = new MovieSets(movieSet.getTitle(), movieSet.getMovieIndex(movie) + 1);
       mp.addSet(set);
     }
 

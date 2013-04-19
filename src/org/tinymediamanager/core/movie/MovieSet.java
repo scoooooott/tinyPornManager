@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.movie;
 
+import static org.tinymediamanager.core.Constants.*;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,8 +37,8 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
@@ -45,24 +47,10 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  * @author Manuel Laggner
  */
 @Entity
-public class MovieSet extends AbstractModelObject {
+public class MovieSet extends MediaEntity {
+
   /** The static LOGGER. */
   private static final Logger LOGGER           = LoggerFactory.getLogger(MovieSet.class);
-
-  /** The name. */
-  private String              name             = "";
-
-  /** The overview. */
-  private String              overview         = "";
-
-  /** The poster url. */
-  private String              posterUrl        = "";
-
-  /** The fanart url. */
-  private String              fanartUrl        = "";
-
-  /** The tmdb id. */
-  private int                 tmdbId           = 0;
 
   /** The movies. */
   private List<Movie>         movies           = new ArrayList<Movie>();
@@ -80,13 +68,11 @@ public class MovieSet extends AbstractModelObject {
   /**
    * Instantiates a new movie set.
    * 
-   * @param name
-   *          the new value
+   * @param title
+   *          the title
    */
-  public MovieSet(String name) {
-    String oldValue = this.name;
-    this.name = name;
-    firePropertyChange("name", oldValue, name);
+  public MovieSet(String title) {
+    setTitle(title);
   }
 
   /**
@@ -97,21 +83,19 @@ public class MovieSet extends AbstractModelObject {
   }
 
   /**
-   * Gets the name.
-   * 
-   * @return the name
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
    * Gets the tmdb id.
    * 
    * @return the tmdb id
    */
   public int getTmdbId() {
-    return tmdbId;
+    int id = 0;
+    try {
+      id = (Integer) ids.get("tmdbId");
+    }
+    catch (Exception e) {
+      return 0;
+    }
+    return id;
   }
 
   /**
@@ -121,39 +105,9 @@ public class MovieSet extends AbstractModelObject {
    *          the new tmdb id
    */
   public void setTmdbId(int newValue) {
-    int oldValue = this.tmdbId;
-    this.tmdbId = newValue;
-    firePropertyChange("tmdbId", oldValue, newValue);
-  }
-
-  /**
-   * Gets the overview.
-   * 
-   * @return the overview
-   */
-  public String getOverview() {
-    return overview;
-  }
-
-  /**
-   * Sets the overview.
-   * 
-   * @param newValue
-   *          the new overview
-   */
-  public void setOverview(String newValue) {
-    String oldValue = this.overview;
-    this.overview = newValue;
-    firePropertyChange("overview", oldValue, newValue);
-  }
-
-  /**
-   * Gets the poster url.
-   * 
-   * @return the posterUrl
-   */
-  public String getPosterUrl() {
-    return posterUrl;
+    int oldValue = getTmdbId();
+    ids.put("tmdbId", newValue);
+    firePropertyChange(TMDBID, oldValue, newValue);
   }
 
   /**
@@ -163,28 +117,19 @@ public class MovieSet extends AbstractModelObject {
    *          the new poster url
    */
   public void setPosterUrl(String newValue) {
-    String oldValue = this.posterUrl;
-    this.posterUrl = newValue;
+    super.setPosterUrl(newValue);
+    String posterFilename = "movieset-poster.jpg";
 
     // write new poster
-    writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", fanartUrl);
+    writeImageToMovieFolder(moviesObservable, posterFilename, posterUrl);
+
     // write to artwork folder
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(true, false);
     }
 
-    firePropertyChange("posterUrl", oldValue, newValue);
-    firePropertyChange("poster", oldValue, newValue);
-  }
-
-  /**
-   * Gets the fanart url.
-   * 
-   * @return the fanart url
-   */
-  public String getFanartUrl() {
-    return fanartUrl;
+    setPoster(posterFilename);
   }
 
   /**
@@ -194,11 +139,11 @@ public class MovieSet extends AbstractModelObject {
    *          the new fanart url
    */
   public void setFanartUrl(String newValue) {
-    String oldValue = this.fanartUrl;
-    this.fanartUrl = newValue;
+    super.setFanartUrl(newValue);
+    String fanartFilename = "movieset-fanart.jpg";
 
     // write new fanart
-    writeImageToMovieFolder(moviesObservable, "movieset-fanart.jpg", fanartUrl);
+    writeImageToMovieFolder(moviesObservable, fanartFilename, fanartUrl);
 
     // write to artwork folder
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
@@ -206,8 +151,7 @@ public class MovieSet extends AbstractModelObject {
       writeImagesToArtworkFolder(false, true);
     }
 
-    firePropertyChange("fanartUrl", oldValue, newValue);
-    firePropertyChange("fanart", oldValue, newValue);
+    setFanart(fanartFilename);
   }
 
   /**
@@ -272,18 +216,6 @@ public class MovieSet extends AbstractModelObject {
     }
 
     return poster;
-  }
-
-  /**
-   * Sets the name.
-   * 
-   * @param newValue
-   *          the new name
-   */
-  public void setName(String newValue) {
-    String oldValue = this.name;
-    this.name = newValue;
-    firePropertyChange("name", oldValue, newValue);
   }
 
   /**
@@ -397,9 +329,7 @@ public class MovieSet extends AbstractModelObject {
    */
   @Override
   public String toString() {
-    return this.name;
-    // return ToStringBuilder.reflectionToString(this,
-    // ToStringStyle.SHORT_PREFIX_STYLE);
+    return getTitle();
   }
 
   /**
@@ -476,7 +406,7 @@ public class MovieSet extends AbstractModelObject {
       // poster
       if (poster && StringUtils.isNotBlank(posterUrl)) {
         String providedFiletype = FilenameUtils.getExtension(posterUrl);
-        writeImage(posterUrl, artworkFolder.getPath() + File.separator + name + "-folder." + providedFiletype);
+        writeImage(posterUrl, artworkFolder.getPath() + File.separator + getTitle() + "-folder." + providedFiletype);
       }
     }
     catch (IOException e) {
@@ -487,7 +417,7 @@ public class MovieSet extends AbstractModelObject {
       // fanart
       if (fanart && StringUtils.isNotBlank(fanartUrl)) {
         String providedFiletype = FilenameUtils.getExtension(fanartUrl);
-        writeImage(fanartUrl, artworkFolder.getPath() + File.separator + name + "-fanart." + providedFiletype);
+        writeImage(fanartUrl, artworkFolder.getPath() + File.separator + getTitle() + "-fanart." + providedFiletype);
       }
     }
     catch (IOException e) {
@@ -615,5 +545,48 @@ public class MovieSet extends AbstractModelObject {
       // return o1.getSortTitle().compareTo(o2.getSortTitle());
     }
 
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#getBanner()
+   */
+  @Override
+  public String getBanner() {
+    return null;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setPoster(java.lang.String)
+   */
+  @Override
+  public void setPoster(String newValue) {
+    String oldValue = this.poster;
+    this.poster = newValue;
+    firePropertyChange(POSTER, oldValue, newValue);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setBanner(java.lang.String)
+   */
+  @Override
+  public void setBanner(String banner) {
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setFanart(java.lang.String)
+   */
+  @Override
+  public void setFanart(String newValue) {
+    String oldValue = this.fanart;
+    this.fanart = newValue;
+    firePropertyChange(FANART, oldValue, newValue);
   }
 }

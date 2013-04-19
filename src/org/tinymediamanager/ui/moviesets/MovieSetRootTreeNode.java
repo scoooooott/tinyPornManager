@@ -51,7 +51,7 @@ public class MovieSetRootTreeNode extends DefaultMutableTreeNode {
           MovieSet movieSet1 = (MovieSet) node1.getUserObject();
           MovieSetTreeNode node2 = (MovieSetTreeNode) o2;
           MovieSet movieSet2 = (MovieSet) node2.getUserObject();
-          return movieSet1.getName().compareTo(movieSet2.getName());
+          return movieSet1.getTitle().compareTo(movieSet2.getTitle());
         }
         return o1.toString().compareToIgnoreCase(o2.toString());
       }
@@ -68,7 +68,7 @@ public class MovieSetRootTreeNode extends DefaultMutableTreeNode {
     // return movieSet name
     if (getUserObject() instanceof MovieSet) {
       MovieSet movieSet = (MovieSet) getUserObject();
-      return movieSet.getName();
+      return movieSet.getTitle();
     }
 
     // fallback: call super
@@ -78,6 +78,7 @@ public class MovieSetRootTreeNode extends DefaultMutableTreeNode {
   /**
    * Sort.
    */
+  @SuppressWarnings("unchecked")
   public void sort() {
     if (this.children != null) {
       Collections.sort(this.children, nodeComparator);

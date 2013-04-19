@@ -32,36 +32,61 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 
+/**
+ * The Class MovieTableModel.
+ * 
+ * @author Manuel Laggner
+ */
 public class MovieTableModel extends AbstractTableModel {
 
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID = -1850397154387184169L;
+
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE    = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
   /** The Constant checkIcon. */
-  private final static ImageIcon      checkIcon = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
+  private final static ImageIcon      checkIcon        = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
 
   /** The Constant crossIcon. */
-  private final static ImageIcon      crossIcon = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
+  private final static ImageIcon      crossIcon        = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
 
-  private MovieList                   movieList = MovieList.getInstance();
+  /** The movie list. */
+  private MovieList                   movieList        = MovieList.getInstance();
 
+  /** The movies. */
   private final List<Movie>           movies;
 
+  /** The filtered movies. */
   private final List<Movie>           filteredMovies;
 
+  /** The comparator. */
   private Comparator<Movie>           comparator;
 
+  /**
+   * Instantiates a new movie table model.
+   */
   public MovieTableModel() {
     movies = movieList.getMovies();
     filteredMovies = new ArrayList<Movie>(movies);
     comparator = new MovieExtendedComparator(SortColumn.TITLE, true);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.table.TableModel#getColumnCount()
+   */
   @Override
   public int getColumnCount() {
     return 6;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.table.TableModel#getRowCount()
+   */
   @Override
   public int getRowCount() {
     return filteredMovies.size();
@@ -97,6 +122,11 @@ public class MovieTableModel extends AbstractTableModel {
     throw new IllegalStateException();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.table.TableModel#getValueAt(int, int)
+   */
   @Override
   public Object getValueAt(int rowIndex, int column) {
     Movie movie = filteredMovies.get(rowIndex);
@@ -140,7 +170,7 @@ public class MovieTableModel extends AbstractTableModel {
    * 
    * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
    */
-  @SuppressWarnings("rawtypes")
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public Class getColumnClass(int column) {
     switch (column) {
@@ -172,10 +202,18 @@ public class MovieTableModel extends AbstractTableModel {
     fireTableChanged(new TableModelEvent(this));
   }
 
+  /**
+   * Sort.
+   */
   private void sort() {
     Collections.sort(filteredMovies, comparator);
   }
 
+  /**
+   * Gets the filtered movies.
+   * 
+   * @return the filtered movies
+   */
   public List<Movie> getFilteredMovies() {
     return this.filteredMovies;
   }

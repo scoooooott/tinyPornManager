@@ -338,7 +338,7 @@ public class ImageChooserDialog extends JDialog {
       }
     }
 
-    task = new DownloadTask(ids, artworkProviders);
+    task = new DownloadTask(ids, this.artworkProviders);
     task.execute();
   }
 

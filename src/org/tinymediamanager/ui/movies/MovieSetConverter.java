@@ -35,7 +35,7 @@ public class MovieSetConverter extends Converter<MovieSet, String> {
     if (arg0 == null) {
       return "";
     }
-    return arg0.getName();
+    return arg0.getTitle();
   }
 
   /*
@@ -45,7 +45,6 @@ public class MovieSetConverter extends Converter<MovieSet, String> {
    */
   @Override
   public MovieSet convertReverse(String arg0) {
-    // TODO Auto-generated method stub
     return null;
   }
 

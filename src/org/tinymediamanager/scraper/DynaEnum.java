@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.scraper;
-import java.io.IOException;
+
+import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamException;
@@ -22,7 +23,6 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 
 /**
  * The Class DynaEnum.
@@ -149,7 +149,7 @@ public class DynaEnum<E extends DynaEnum<E>> {
    * 
    * @return the declaring class
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public final Class<E> getDeclaringClass() {
     Class clazz = getClass();
     Class zuper = clazz.getSuperclass();
@@ -182,7 +182,6 @@ public class DynaEnum<E extends DynaEnum<E>> {
    * @throws ClassNotFoundException
    *           the class not found exception
    */
-  @SuppressWarnings("unused")
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     throw new InvalidObjectException("can't deserialize enum");
   }

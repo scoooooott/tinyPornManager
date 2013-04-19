@@ -43,8 +43,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -52,6 +50,8 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
@@ -276,7 +276,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     tableMovies.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
     {
-      tfMovieSetName.setText(movieSet.getName());
+      tfMovieSetName.setText(movieSet.getTitle());
       searchMovie();
     }
 
@@ -398,7 +398,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
       int row = tableMovieSets.getSelectedRow();
       if (row >= 0) {
         MovieSetChooserModel model = movieSetsFound.get(row);
-        movieSetToEdit.setName(model.getName());
+        movieSetToEdit.setTitle(model.getName());
         movieSetToEdit.setPosterUrl(model.getPosterUrl());
         movieSetToEdit.setFanartUrl(model.getFanartUrl());
         movieSetToEdit.setTmdbId(model.getTmdbId());
@@ -422,7 +422,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
             }
 
             movie.setMovieSet(movieSetToEdit);
-            movie.setSortTitle(movieSetToEdit.getName() + (i + 1));
+            movie.setSortTitle(movieSetToEdit.getTitle() + (i + 1));
             movie.saveToDb();
             movieSetToEdit.addMovie(movie);
 

@@ -31,7 +31,6 @@ import javax.swing.text.PlainDocument;
  * 
  * @author Manuel Laggner
  */
-@SuppressWarnings("rawtypes")
 public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySelectionManager {
 
   /** The Constant serialVersionUID. */
@@ -56,8 +55,7 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
     /*
      * (non-Javadoc)
      * 
-     * @see javax.swing.text.PlainDocument#insertString(int, java.lang.String,
-     * javax.swing.text.AttributeSet)
+     * @see javax.swing.text.PlainDocument#insertString(int, java.lang.String, javax.swing.text.AttributeSet)
      */
     @Override
     public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
@@ -75,7 +73,6 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
    * @param items
    *          the items
    */
-  @SuppressWarnings("unchecked")
   public AutocompleteComboBox(Object[] items) {
     super(items);
     lap = new java.util.Date().getTime();
@@ -110,8 +107,7 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
   /*
    * (non-Javadoc)
    * 
-   * @see javax.swing.JComboBox.KeySelectionManager#selectionForKey(char,
-   * javax.swing.ComboBoxModel)
+   * @see javax.swing.JComboBox.KeySelectionManager#selectionForKey(char, javax.swing.ComboBoxModel)
    */
   @Override
   public int selectionForKey(char aKey, ComboBoxModel aModel) {

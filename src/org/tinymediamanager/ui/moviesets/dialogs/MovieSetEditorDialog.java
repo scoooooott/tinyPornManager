@@ -21,6 +21,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -43,18 +44,22 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.moviesets.dialogs.MovieSetImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -67,6 +72,9 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSetEditorDialog extends JDialog {
+
+  /** The Constant LOGGER. */
+  private static final Logger         LOGGER              = LoggerFactory.getLogger(MovieSetEditorDialog.class);
 
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
@@ -119,6 +127,9 @@ public class MovieSetEditorDialog extends JDialog {
   /** The action search tmdb id. */
   private final Action                actionSearchTmdbId  = new SwingAction();
 
+  /** The artwork providers. */
+  private List<IMediaArtworkProvider> artworkProviders    = new ArrayList<IMediaArtworkProvider>();
+
   /**
    * Instantiates a new movie set editor.
    * 
@@ -134,6 +145,12 @@ public class MovieSetEditorDialog extends JDialog {
     TmmWindowSaver.loadSettings(this);
 
     movieSetToEdit = movieSet;
+    try {
+      artworkProviders.add(new TmdbMetadataProvider());
+    }
+    catch (Exception e2) {
+      LOGGER.warn("error getting IMediaArtworkProvider " + e2.getMessage());
+    }
 
     getContentPane().setLayout(new BorderLayout());
 
@@ -164,7 +181,10 @@ public class MovieSetEditorDialog extends JDialog {
         }
         catch (Exception e1) {
         }
-        MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.POSTER, lblPoster);
+        HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
+        ids.put("tmdbId", tmdbId);
+        // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.POSTER, lblPoster);
+        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.POSTER, artworkProviders, lblPoster, null, null);
         dialog.setVisible(true);
       }
     });
@@ -217,7 +237,10 @@ public class MovieSetEditorDialog extends JDialog {
         }
         catch (Exception e1) {
         }
-        MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.FANART, lblFanart);
+        HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
+        ids.put("tmdbId", tmdbId);
+        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.FANART, artworkProviders, lblFanart, null, null);
+        // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.FANART, lblFanart);
         dialog.setVisible(true);
       }
     });
@@ -250,9 +273,9 @@ public class MovieSetEditorDialog extends JDialog {
     }
 
     {
-      tfName.setText(movieSetToEdit.getName());
+      tfName.setText(movieSetToEdit.getTitle());
       tfTmdbId.setText(String.valueOf(movieSetToEdit.getTmdbId()));
-      tpOverview.setText(movieSetToEdit.getOverview());
+      tpOverview.setText(movieSetToEdit.getPlot());
       lblPoster.setImageUrl(movieSetToEdit.getPosterUrl());
       moviesInSet.addAll(movieSetToEdit.getMovies());
       lblPoster.setImageUrl(movieSetToEdit.getPosterUrl());
@@ -392,8 +415,8 @@ public class MovieSetEditorDialog extends JDialog {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      movieSetToEdit.setName(tfName.getText());
-      movieSetToEdit.setOverview(tpOverview.getText());
+      movieSetToEdit.setTitle(tfName.getText());
+      movieSetToEdit.setPlot(tpOverview.getText());
 
       // image changes
       if (StringUtils.isNotEmpty(lblPoster.getImageUrl()) && !lblPoster.getImageUrl().equals(movieSetToEdit.getPosterUrl())) {
@@ -416,7 +439,7 @@ public class MovieSetEditorDialog extends JDialog {
       // sort movies in the right order
       for (int i = 0; i < moviesInSet.size(); i++) {
         Movie movie = moviesInSet.get(i);
-        movie.setSortTitle(movieSetToEdit.getName() + (i + 1));
+        movie.setSortTitle(movieSetToEdit.getTitle() + (i + 1));
       }
 
       // remove removed movies
@@ -483,13 +506,16 @@ public class MovieSetEditorDialog extends JDialog {
   protected void initDataBindings() {
     JTableBinding<Movie, List<Movie>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, moviesInSet, tableMovies);
     //
-    BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("name");
+    BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("title");
+    // FIXME move column title - WBP crash
     jTableBinding.addColumnBinding(movieBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false); //$NON-NLS-1$
     //
     BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
+    // FIXME move column title - WBP crash
     jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
     //
     BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("watched");
+    // FIXME move column title - WBP crash
     jTableBinding.addColumnBinding(movieBeanProperty_2)
         .setColumnName(BUNDLE.getString("metatag.watched")).setEditable(false).setColumnClass(Boolean.class); //$NON-NLS-1$
     //

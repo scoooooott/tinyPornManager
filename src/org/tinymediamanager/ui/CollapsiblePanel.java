@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.ui;
-import java.awt.BorderLayout;
+
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -39,7 +40,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-
 
 /**
  * The user-triggered collapsible panel containing the component (trigger) in the titled border.
@@ -324,6 +324,7 @@ public class CollapsiblePanel extends JPanel {
      * @param component
      *          the component
      */
+    @SuppressWarnings("unused")
     public CollapsibleTitledBorder(JComponent component) {
       this(null, component, LEFT, TOP);
     }
@@ -334,6 +335,7 @@ public class CollapsiblePanel extends JPanel {
      * @param border
      *          the border
      */
+    @SuppressWarnings("unused")
     public CollapsibleTitledBorder(Border border) {
       this(border, null, LEFT, TOP);
     }

@@ -99,6 +99,9 @@ public class MediaEntityImageFetcher implements Runnable {
             oldFilename = entity.getBanner();
             entity.setBanner("");
             break;
+
+          default:
+            return;
         }
       }
 
@@ -131,6 +134,9 @@ public class MediaEntityImageFetcher implements Runnable {
             entity.setBanner(FilenameUtils.getName(filename));
             entity.saveToDb();
             break;
+
+          default:
+            return;
         }
       }
 
@@ -154,6 +160,9 @@ public class MediaEntityImageFetcher implements Runnable {
             entity.setBanner(oldFilename);
             entity.saveToDb();
             break;
+
+          default:
+            return;
         }
       }
     }

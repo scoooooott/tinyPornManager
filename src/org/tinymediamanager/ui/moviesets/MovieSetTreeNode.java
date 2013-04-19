@@ -71,14 +71,20 @@ public class MovieSetTreeNode extends DefaultMutableTreeNode {
     // return movieSet name
     if (getUserObject() instanceof MovieSet) {
       MovieSet movieSet = (MovieSet) getUserObject();
-      return movieSet.getName();
+      return movieSet.getTitle();
     }
 
     // fallback: call super
     return super.toString();
   }
 
+  /**
+   * Sort the nodes
+   */
+  @SuppressWarnings("unchecked")
   public void sort() {
-    Collections.sort(this.children, nodeComparator);
+    if (this.children != null) {
+      Collections.sort(this.children, nodeComparator);
+    }
   }
 }

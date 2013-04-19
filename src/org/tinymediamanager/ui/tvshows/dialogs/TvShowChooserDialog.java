@@ -110,7 +110,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   private JTextField                  textFieldSearchString;
 
   /** The cb scraper. */
-  @SuppressWarnings("rawtypes")
   private JComboBox                   cbScraper;
 
   /** The table. */
@@ -157,7 +156,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
    * @param inQueue
    *          the in queue
    */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
   public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
     setTitle(BUNDLE.getString("moviechooser.search")); //$NON-NLS-1$
     setName("tvShowChooser");
@@ -662,6 +660,9 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
    * @author Manuel Laggner
    */
   private class ChangeScraperAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -3537728352474538431L;
 
     /**
      * Instantiates a new sort action.

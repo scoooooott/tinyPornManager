@@ -73,12 +73,12 @@ public class MyTable extends JTable {
   }
 
   /**
-   * Inits the.
+   * Inits the table.
    */
   private void init() {
     // setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-    // setTableHeader(createTableHeader());
+    setTableHeader(createTableHeader());
     getTableHeader().setReorderingAllowed(false);
     setOpaque(false);
     setRowHeight(16);
@@ -326,7 +326,7 @@ public class MyTable extends JTable {
     scrollPane.setViewport(new StripedViewport(table));
     scrollPane.getViewport().setView(table);
     // scrollPane.setBorder(BorderFactory.createEmptyBorder());
-    // scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, createCornerComponent(table));
+    scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, createCornerComponent(table));
     // scrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     return scrollPane;
   }

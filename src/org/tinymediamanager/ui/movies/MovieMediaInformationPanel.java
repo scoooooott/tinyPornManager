@@ -32,12 +32,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.ui.LinkLabel;
@@ -49,7 +49,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -64,55 +64,55 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieMediaInformationPanel extends JPanel {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID    = 1L;
+  private static final long                 serialVersionUID    = 1L;
 
   /** The logger. */
-  private final static Logger         LOGGER              = LoggerFactory.getLogger(MovieMediaInformationPanel.class);
+  private final static Logger               LOGGER              = LoggerFactory.getLogger(MovieMediaInformationPanel.class);
 
   /** The movie selection model. */
-  private MovieSelectionModel         movieSelectionModel;
+  private MovieSelectionModel               movieSelectionModel;
 
   /** The lbl files t. */
-  private JLabel                      lblFilesT;
+  private JLabel                            lblFilesT;
 
   /** The scroll pane files. */
-  private JScrollPane                 scrollPaneFiles;
+  private JScrollPane                       scrollPaneFiles;
 
   /** The table files. */
-  private JTable                      tableFiles;
+  private JTable                            tableFiles;
 
   /** The lbl movie path. */
-  private LinkLabel                   lblMoviePath;
+  private LinkLabel                         lblMoviePath;
 
   /** The lbl date added t. */
-  private JLabel                      lblDateAddedT;
+  private JLabel                            lblDateAddedT;
 
   /** The lbl date added. */
-  private JLabel                      lblDateAdded;
+  private JLabel                            lblDateAdded;
 
   /** The cb watched. */
-  private JCheckBox                   cbWatched;
+  private JCheckBox                         cbWatched;
 
   /** The lbl watched t. */
-  private JLabel                      lblWatchedT;
+  private JLabel                            lblWatchedT;
 
   /** The lbl movie path t. */
-  private JLabel                      lblMoviePathT;
+  private JLabel                            lblMoviePathT;
 
   /** The btn play. */
-  private JButton                     btnPlay;
+  private JButton                           btnPlay;
 
   /** The table column adjuster. */
-  private TableColumnAdjuster         tableColumnAdjuster = null;
+  private TableColumnAdjuster               tableColumnAdjuster = null;
 
   /** The media file event list. */
-  private EventList<MediaFile>        mediaFileEventList;
+  private EventList<MediaFile>              mediaFileEventList;
 
   /** The media file table model. */
-  private EventTableModel<MediaFile>  mediaFileTableModel = null;
+  private DefaultEventTableModel<MediaFile> mediaFileTableModel = null;
 
   /**
    * Instantiates a new movie media information panel.
@@ -241,7 +241,7 @@ public class MovieMediaInformationPanel extends JPanel {
     scrollPaneFiles = new JScrollPane();
     add(scrollPaneFiles, "4, 6, 5, 1, fill, fill");
 
-    mediaFileTableModel = new EventTableModel<MediaFile>(mediaFileEventList, new MediaTableFormat());
+    mediaFileTableModel = new DefaultEventTableModel<MediaFile>(mediaFileEventList, new MediaTableFormat());
     tableFiles = new JTable(mediaFileTableModel);
     tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -438,6 +438,7 @@ public class MovieMediaInformationPanel extends JPanel {
      * 
      * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public Class getColumnClass(int column) {
       switch (column) {
@@ -460,9 +461,9 @@ public class MovieMediaInformationPanel extends JPanel {
      * 
      * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public Comparator getColumnComparator(int arg0) {
-      // TODO Auto-generated method stub
       return null;
     }
 

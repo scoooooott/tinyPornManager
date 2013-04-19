@@ -26,10 +26,10 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.ui.DefaultEventSelectionModel;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 
 /**

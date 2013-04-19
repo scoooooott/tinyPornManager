@@ -680,6 +680,9 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
    */
   private class ChangeScraperAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -4365761222995534769L;
+
     /**
      * Instantiates a new sort action.
      */

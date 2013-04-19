@@ -200,6 +200,7 @@ public class MovieToXbmcNfoConnector {
   /**
    * Instantiates a new movie to xbmc nfo connector.
    */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public MovieToXbmcNfoConnector() {
     actors = new ArrayList();
     genres = new ArrayList<String>();
@@ -343,7 +344,7 @@ public class MovieToXbmcNfoConnector {
     // movie set
     if (movie.getMovieSet() != null) {
       MovieSet movieSet = movie.getMovieSet();
-      xbmc.setSet(movieSet.getName());
+      xbmc.setSet(movieSet.getTitle());
       // xbmc.setSorttitle(movieSet.getName() + (movieSet.getMovieIndex(movie) +
       // 1));
     }

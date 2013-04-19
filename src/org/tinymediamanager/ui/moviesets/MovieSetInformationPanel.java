@@ -45,7 +45,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.EventTableModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -60,52 +60,52 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieSetInformationPanel extends JPanel {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = -8166784589262658147L;
+  private static final long             serialVersionUID = -8166784589262658147L;
 
   /** The selection model. */
-  private MovieSetSelectionModel      selectionModel;
+  private MovieSetSelectionModel        selectionModel;
 
   /** The lbl movie set name. */
-  private JLabel                      lblMovieSetName;
+  private JLabel                        lblMovieSetName;
 
   /** The table assigned movies. */
-  private JTable                      tableAssignedMovies;
+  private JTable                        tableAssignedMovies;
 
   /** The lbl movie set poster. */
-  private ImageLabel                  lblMovieSetPoster;
+  private ImageLabel                    lblMovieSetPoster;
 
   /** The panel. */
-  private JPanel                      panel;
+  private JPanel                        panel;
 
   /** The layered pane. */
-  private JLayeredPane                layeredPane;
+  private JLayeredPane                  layeredPane;
 
   /** The lbl movie set fanart. */
-  private ImageLabel                  lblMovieSetFanart;
+  private ImageLabel                    lblMovieSetFanart;
 
   /** The panel south. */
-  private JSplitPane                  panelSouth;
+  private JSplitPane                    panelSouth;
 
   /** The scroll pane overview. */
-  private JScrollPane                 scrollPaneOverview;
+  private JScrollPane                   scrollPaneOverview;
 
   /** The tp overview. */
-  private JTextPane                   tpOverview;
+  private JTextPane                     tpOverview;
 
   /** The panel overview. */
-  private JPanel                      panelOverview;
+  private JPanel                        panelOverview;
 
   /** The lbl overview. */
-  private JLabel                      lblOverview;
+  private JLabel                        lblOverview;
 
   /** The media file event list. */
-  private EventList<Movie>            movieEventList;
+  private EventList<Movie>              movieEventList;
 
   /** The media file table model. */
-  private EventTableModel<Movie>      movieTableModel  = null;
+  private DefaultEventTableModel<Movie> movieTableModel  = null;
 
   /**
    * Instantiates a new movie set information panel.
@@ -170,7 +170,7 @@ public class MovieSetInformationPanel extends JPanel {
     JScrollPane scrollPaneMovies = new JScrollPane();
     panelMovies.add(scrollPaneMovies, "1, 2, fill, fill");
 
-    movieTableModel = new EventTableModel<Movie>(movieEventList, new MovieInMovieSetTableFormat());
+    movieTableModel = new DefaultEventTableModel<Movie>(movieEventList, new MovieInMovieSetTableFormat());
     tableAssignedMovies = new JTable(movieTableModel);
     tableAssignedMovies.setPreferredScrollableViewportSize(new Dimension(450, 200));
     scrollPaneMovies.setViewportView(tableAssignedMovies);
@@ -268,6 +268,7 @@ public class MovieSetInformationPanel extends JPanel {
      * 
      * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public Class getColumnClass(int column) {
       switch (column) {
@@ -286,6 +287,7 @@ public class MovieSetInformationPanel extends JPanel {
      * 
      * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public Comparator getColumnComparator(int arg0) {
       return null;
@@ -297,13 +299,13 @@ public class MovieSetInformationPanel extends JPanel {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty = BeanProperty.create("selectedMovieSet.name");
+    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty = BeanProperty.create("selectedMovieSet.title");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSetSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         movieSetSelectionModelBeanProperty, lblMovieSetName, jLabelBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovieSet.overview");
+    BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_4 = BeanProperty.create("selectedMovieSet.plot");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSetSelectionModel, String, JTextPane, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         movieSetSelectionModelBeanProperty_4, tpOverview, jTextPaneBeanProperty);

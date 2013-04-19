@@ -84,8 +84,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
   /*
    * (non-Javadoc)
    * 
-   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getArtwork(org.
-   * tinymediamanager.scraper.MediaScrapeOptions)
+   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getArtwork(org. tinymediamanager.scraper.MediaScrapeOptions)
    */
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
@@ -137,6 +136,9 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
           case MOVIEBACKGROUND:
             ma.addImageSize(1920, 1080, ftvaw.getUrl());
             break;
+
+          default:
+            continue;
         }
 
         artwork.add(ma);
@@ -175,8 +177,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
      * 
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      * 
-     * sort artwork: primary by language: preferred lang (ie de), en, others;
-     * then: score
+     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
      */
     @Override
     public int compare(FanartTvArtwork arg0, FanartTvArtwork arg1) {

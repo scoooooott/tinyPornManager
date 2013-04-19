@@ -77,6 +77,7 @@ public class MovieSetTreeModel implements TreeModel {
           removeMovie(movieSet, movie);
         }
         if ("removedAllMovies".equals(evt.getPropertyName())) {
+          @SuppressWarnings("unchecked")
           List<Movie> removedMovies = (List<Movie>) evt.getOldValue();
           MovieSet movieSet = (MovieSet) evt.getSource();
           for (Movie movie : removedMovies) {

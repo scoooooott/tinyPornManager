@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package org.tinymediamanager.ui;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -31,7 +32,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-
 
 /*
  *  Class to manage the widths of colunmns in a table.
@@ -485,11 +485,14 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
    */
   class ColumnAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4335096290312475645L;
+
     /** The is selected column. */
-    private boolean isSelectedColumn;
+    private boolean           isSelectedColumn;
 
     /** The is adjust. */
-    private boolean isAdjust;
+    private boolean           isAdjust;
 
     /**
      * Instantiates a new column action.
@@ -532,21 +535,21 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
     }
   }
 
-  /*
-   * Toggle properties of the TableColumnAdjuster so the user can customize the functionality to their preferences
-   */
   /**
-   * The Class ToggleAction.
+   * The Class ToggleAction. Toggle properties of the TableColumnAdjuster so the user can customize the functionality to their preferences
    * 
    * @author Manuel Laggner
    */
   class ToggleAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -5839222625890141048L;
+
     /** The is toggle dynamic. */
-    private boolean isToggleDynamic;
+    private boolean           isToggleDynamic;
 
     /** The is toggle larger. */
-    private boolean isToggleLarger;
+    private boolean           isToggleLarger;
 
     /**
      * Instantiates a new toggle action.

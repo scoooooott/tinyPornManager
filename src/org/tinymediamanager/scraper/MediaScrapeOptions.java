@@ -35,12 +35,6 @@ public class MediaScrapeOptions {
   /** The metadata. */
   private MediaMetadata           metadata;
 
-  /** The imdb id. */
-  private String                  imdbId      = "";
-
-  /** The tmdb id. */
-  private int                     tmdbId      = 0;
-
   /** The ids. */
   private HashMap<String, String> ids         = new HashMap<String, String>();
 
@@ -105,7 +99,11 @@ public class MediaScrapeOptions {
    * @return the imdb id
    */
   public String getImdbId() {
-    return imdbId;
+    Object obj = ids.get("imdbId");
+    if (obj == null) {
+      return "";
+    }
+    return obj.toString();
   }
 
   /**
@@ -114,7 +112,14 @@ public class MediaScrapeOptions {
    * @return the tmdb id
    */
   public int getTmdbId() {
-    return tmdbId;
+    int id = 0;
+    try {
+      id = Integer.parseInt(ids.get("tmdbId"));
+    }
+    catch (Exception e) {
+      return 0;
+    }
+    return id;
   }
 
   /**
@@ -124,7 +129,7 @@ public class MediaScrapeOptions {
    *          the new imdb id
    */
   public void setImdbId(String imdbId) {
-    this.imdbId = imdbId;
+    ids.put("imdbId", imdbId);
   }
 
   /**
@@ -134,7 +139,7 @@ public class MediaScrapeOptions {
    *          the new tmdb id
    */
   public void setTmdbId(int tmdbId) {
-    this.tmdbId = tmdbId;
+    ids.put("tmdbId", String.valueOf(tmdbId));
   }
 
   /**

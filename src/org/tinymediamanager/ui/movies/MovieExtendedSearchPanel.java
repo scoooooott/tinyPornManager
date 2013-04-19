@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -141,8 +140,6 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
   public MovieExtendedSearchPanel(MovieSelectionModel model) {
     super(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
 
-    Font font = new Font("Dialog", Font.PLAIN, 10);
-
     this.movieSelectionModel = model;
 
     // JPanel panel = new JPanel();
@@ -254,6 +251,9 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
    */
   private class SortAction extends AbstractAction {
 
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -4057379119252539003L;
+
     /**
      * Instantiates a new sort action.
      */
@@ -281,6 +281,9 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
    * @author Manuel Laggner
    */
   private class FilterAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 7488733475791640009L;
 
     /**
      * Instantiates a new filter action.

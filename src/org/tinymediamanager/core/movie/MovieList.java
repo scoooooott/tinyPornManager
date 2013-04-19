@@ -27,9 +27,9 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
@@ -747,14 +747,14 @@ public class MovieList extends AbstractModelObject {
   /**
    * Find movie set.
    * 
-   * @param name
+   * @param title
    *          the name
    * @return the movie set
    */
-  public MovieSet findMovieSet(String name) {
+  public MovieSet findMovieSet(String title) {
     // search for the movieset by name
     for (MovieSet movieSet : movieSetList) {
-      if (movieSet.getName().equals(name)) {
+      if (movieSet.getTitle().equals(title)) {
         return movieSet;
       }
     }

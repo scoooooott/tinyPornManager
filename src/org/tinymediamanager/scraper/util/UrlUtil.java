@@ -152,6 +152,7 @@ public class UrlUtil {
    *          the data
    * @return the string
    */
+  @SuppressWarnings("deprecation")
   public static String encode(String data) {
     if (data == null)
       return "";
