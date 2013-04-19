@@ -23,7 +23,7 @@ package org.tinymediamanager.core;
  */
 public enum MediaFileType {
 
-  NFO, MAIN_MOVIE, TV_SHOW, TRAILER, SUBTITLE, POSTER, BANNER,
+  NFO, MAIN_MOVIE, TV_SHOW, TRAILER, SUBTITLE, POSTER, BANNER, FANART,
 
   // generic ones
   VIDEO, AUDIO, GRAPHIC, UNKNOWN

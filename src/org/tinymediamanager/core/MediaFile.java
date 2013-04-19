@@ -178,9 +178,10 @@ public class MediaFile extends AbstractModelObject {
    * @return the MediaFileType
    */
   public MediaFileType parseType() {
-    String ext = getExtension();
+    String ext = getExtension().toLowerCase();
+    String name = getFilename().toLowerCase();
 
-    if (this.filename.contains("sample") || this.filename.contains("trailer")) {
+    if (name.contains("sample") || name.contains("trailer")) {
       return MediaFileType.TRAILER;
     }
 
@@ -189,6 +190,15 @@ public class MediaFile extends AbstractModelObject {
     }
 
     if (ext.equals("jpg") || ext.equals("png") || ext.equals("tbn")) {
+      if (name.contains("poster") || name.contains("cover") || name.startsWith("movie")) {
+        return MediaFileType.POSTER;
+      }
+      if (name.contains("banner")) {
+        return MediaFileType.BANNER;
+      }
+      if (name.contains("fanart")) {
+        return MediaFileType.FANART;
+      }
       return MediaFileType.GRAPHIC;
     }
 
@@ -200,7 +210,7 @@ public class MediaFile extends AbstractModelObject {
       return MediaFileType.VIDEO;
     }
 
-    if (this.filename.contains("subs") || this.filename.contains("subtitle")) {
+    if (name.contains("subs") || name.contains("subtitle")) {
       return MediaFileType.SUBTITLE;
     }
 
