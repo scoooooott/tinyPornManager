@@ -414,9 +414,9 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_16, lblWriter, jLabelBeanProperty);
     autoBinding_17.bind();
     //
-    BeanProperty<MovieSelectionModel, List<MovieActor>> movieSelectionModelBeanProperty_17 = BeanProperty.create("selectedMovie.cast");
-    JTableBinding<MovieActor, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_17, tableCast);
+    BeanProperty<MovieSelectionModel, List<MovieActor>> movieSelectionModelBeanProperty_17 = BeanProperty.create("selectedMovie.actors");
+    JTableBinding<MovieActor, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_17, tableCast);
     //
     BeanProperty<MovieActor, String> movieCastBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName("Name").setEditable(false);

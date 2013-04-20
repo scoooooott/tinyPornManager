@@ -23,6 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -50,6 +52,12 @@ public class TvShowInformationPanel extends JPanel {
 
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  /** The split pane vertical. */
+  private JSplitPane                  splitPaneVertical;
+
+  /** The tabbed pane tv show details. */
+  private JTabbedPane                 tabbedPaneTvShowDetails;
 
   /** The panel top. */
   private JPanel                      panelTop;
@@ -93,21 +101,6 @@ public class TvShowInformationPanel extends JPanel {
   /** The tv show selection model. */
   private TvShowSelectionModel        tvShowSelectionModel;
 
-  /** The panel details. */
-  private JPanel                      panelDetails;
-
-  /** The lbl ttvdbid t. */
-  private JLabel                      lblTtvdbidT;
-
-  /** The lbl imdbid t. */
-  private JLabel                      lblImdbidT;
-
-  /** The lbl ttvdb id. */
-  private JLabel                      lblTtvdbId;
-
-  /** The lbl imdb id. */
-  private JLabel                      lblImdbId;
-
   /**
    * Instantiates a new tv show information panel.
    * 
@@ -116,12 +109,20 @@ public class TvShowInformationPanel extends JPanel {
    */
   public TvShowInformationPanel(TvShowSelectionModel tvShowSelectionModel) {
     this.tvShowSelectionModel = tvShowSelectionModel;
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("336px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("265px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("650px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+
+    splitPaneVertical = new JSplitPane();
+    splitPaneVertical.setBorder(null);
+    splitPaneVertical.setResizeWeight(0.9);
+    splitPaneVertical.setContinuousLayout(true);
+    splitPaneVertical.setOneTouchExpandable(true);
+    splitPaneVertical.setOrientation(JSplitPane.VERTICAL_SPLIT);
+    add(splitPaneVertical, "1, 1, fill, fill");
 
     panelTop = new JPanel();
     panelTop.setBorder(null);
-    add(panelTop, "1, 2, fill, fill");
+    // add(panelTop, "1, 2, fill, fill");
+    splitPaneVertical.setTopComponent(panelTop);
     panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"),
         RowSpec.decode("top:pref:grow"), }));
@@ -185,35 +186,33 @@ public class TvShowInformationPanel extends JPanel {
     layeredPaneImages.add(lblTvShowBanner, "4, 1, 1, 2, fill, fill");
 
     panelBottom = new JPanel();
-    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("150px:grow"), }));
-    add(panelBottom, "1, 4, fill, bottom");
+    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+        RowSpec.decode("fill:default:grow"), }));
+    // add(panelBottom, "1, 4, fill, bottom");
+    splitPaneVertical.setBottomComponent(panelBottom);
+
+    tabbedPaneTvShowDetails = new JTabbedPane(JTabbedPane.TOP);
+    panelBottom.add(tabbedPaneTvShowDetails, "1, 2, fill, fill");
+
+    JPanel panelDetails = new TvShowDetailsPanel(tvShowSelectionModel);
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.details"), null, panelDetails, null); //$NON-NLS-1$
+
+    JPanel panelOverview = new JPanel();
+    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+        RowSpec.decode("fill:default:grow"), }));
+
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.overview"), null, panelOverview, null); //$NON-NLS-1$
 
     JScrollPane scrollPaneOverview = new JScrollPane();
-    panelBottom.add(scrollPaneOverview, "1, 2, fill, fill");
+    panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
+    // panelBottom.add(scrollPaneOverview, "1, 2, fill, fill");
 
     tpOverview = new JTextPane();
     tpOverview.setEditable(false);
     scrollPaneOverview.setViewportView(tpOverview);
 
-    panelDetails = new JPanel();
-    panelBottom.add(panelDetails, "3, 2, fill, fill");
-    panelDetails.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(30dlu;default)"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(30dlu;default)"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("top:max(50dlu;default)"), }));
-
-    lblTtvdbidT = new JLabel("ttvdbId");
-    panelDetails.add(lblTtvdbidT, "2, 2");
-
-    lblTtvdbId = new JLabel("");
-    panelDetails.add(lblTtvdbId, "4, 2");
-
-    lblImdbidT = new JLabel("imdbId");
-    panelDetails.add(lblImdbidT, "6, 2");
-
-    lblImdbId = new JLabel("");
-    panelDetails.add(lblImdbId, "8, 2");
+    JPanel panelCast = new TvShowCastPanel(tvShowSelectionModel);
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.cast"), null, panelCast, null); //$NON-NLS-1$
 
     // beansbinding init
     initDataBindings();
@@ -242,11 +241,6 @@ public class TvShowInformationPanel extends JPanel {
         tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_4 = BeanProperty.create("selectedTvShow.imdbId");
-    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
-        tvShowSelectionModelBeanProperty_4, lblImdbId, jLabelBeanProperty);
-    autoBinding_5.bind();
-    //
     BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.fanart");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imagePath");
     AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
@@ -262,10 +256,5 @@ public class TvShowInformationPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowSelectionModel, tvShowSelectionModelBeanProperty_7, lblTvShowBanner, imageLabelBeanProperty);
     autoBinding_8.bind();
-    //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.tvdbId");
-    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
-        tvShowSelectionModelBeanProperty_3, lblTtvdbId, jLabelBeanProperty);
-    autoBinding_4.bind();
   }
 }

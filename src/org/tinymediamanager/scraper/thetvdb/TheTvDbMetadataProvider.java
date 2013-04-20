@@ -43,6 +43,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 
 import com.omertron.thetvdbapi.TheTVDBApi;
+import com.omertron.thetvdbapi.model.Actor;
 import com.omertron.thetvdbapi.model.Banner;
 import com.omertron.thetvdbapi.model.Banners;
 import com.omertron.thetvdbapi.model.Episode;
@@ -244,9 +245,16 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     md.setPosterUrl(show.getPoster());
 
     // actors
-    for (String actor : show.getActors()) {
+    List<Actor> actors = new ArrayList<Actor>();
+    synchronized (tvdb) {
+      actors.addAll(tvdb.getActors(id));
+    }
+
+    for (Actor actor : actors) {
       MediaCastMember member = new MediaCastMember(CastType.ACTOR);
-      member.setName(actor);
+      member.setName(actor.getName());
+      member.setCharacter(actor.getRole());
+      member.setImageUrl(actor.getImage());
 
       md.addCastMember(member);
     }

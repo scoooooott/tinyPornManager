@@ -30,8 +30,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +41,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.TvShowActor;
 import org.tinymediamanager.scraper.MediaGenres;
 
 /**
@@ -47,6 +50,7 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
+@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "id", "genres", "actors" })
 public class TvShowToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -70,6 +74,10 @@ public class TvShowToXbmcNfoConnector {
   /** The plot. */
   private String              plot;
 
+  /** The actors. */
+  @XmlAnyElement(lax = true)
+  private List<Object>        actors;
+
   /** The genres. */
   @XmlElement(name = "genre")
   private List<String>        genres;
@@ -79,6 +87,7 @@ public class TvShowToXbmcNfoConnector {
    */
   public TvShowToXbmcNfoConnector() {
     genres = new ArrayList<String>();
+    actors = new ArrayList<Object>();
   }
 
   /**
@@ -98,7 +107,7 @@ public class TvShowToXbmcNfoConnector {
     if (nfoFile.exists()) {
       try {
         synchronized (JAXBContext.class) {
-          context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class);
+          context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class);
         }
         Unmarshaller um = context.createUnmarshaller();
         Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
@@ -127,11 +136,16 @@ public class TvShowToXbmcNfoConnector {
       xbmc.addGenre(genre.toString());
     }
 
+    xbmc.actors.clear();
+    for (TvShowActor actor : tvShow.getActors()) {
+      xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
+    }
+
     // and marshall it
     try {
 
       synchronized (JAXBContext.class) {
-        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class);
+        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class);
       }
       Marshaller m = context.createMarshaller();
       m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
@@ -165,7 +179,7 @@ public class TvShowToXbmcNfoConnector {
     TvShow tvShow = null;
     try {
       synchronized (JAXBContext.class) {
-        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class);
+        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class);
       }
       Unmarshaller um = context.createUnmarshaller();
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
@@ -188,6 +202,12 @@ public class TvShowToXbmcNfoConnector {
             tvShow.addGenre(genreFound);
           }
         }
+      }
+
+      for (Actor actor : xbmc.getActors()) {
+        TvShowActor tvShowActor = new TvShowActor(actor.getName(), actor.getRole());
+        tvShowActor.setThumb(actor.getThumb());
+        tvShow.addActor(tvShowActor);
       }
     }
     catch (FileNotFoundException e) {
@@ -344,5 +364,140 @@ public class TvShowToXbmcNfoConnector {
    */
   public void setId(String id) {
     this.id = id;
+  }
+
+  /**
+   * Adds the actor.
+   * 
+   * @param name
+   *          the name
+   * @param role
+   *          the role
+   * @param thumb
+   *          the thumb
+   */
+  public void addActor(String name, String role, String thumb) {
+    Actor actor = new Actor(name, role, thumb);
+    actors.add(actor);
+  }
+
+  /**
+   * Gets the actors.
+   * 
+   * @return the actors
+   */
+  public List<Actor> getActors() {
+    // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
+    // filter Actors out
+    List<Actor> pureActors = new ArrayList<Actor>();
+    for (Object obj : actors) {
+      if (obj instanceof Actor) {
+        Actor actor = (Actor) obj;
+        pureActors.add(actor);
+      }
+    }
+    return pureActors;
+  }
+
+  // inner class actor to represent actors
+  /**
+   * The Class Actor.
+   * 
+   * @author Manuel Laggner
+   */
+  @XmlRootElement(name = "actor")
+  public static class Actor {
+
+    /** The name. */
+    private String name;
+
+    /** The role. */
+    private String role;
+
+    /** The thumb. */
+    private String thumb;
+
+    /**
+     * Instantiates a new actor.
+     */
+    public Actor() {
+    }
+
+    /**
+     * Instantiates a new actor.
+     * 
+     * @param name
+     *          the name
+     * @param role
+     *          the role
+     * @param thumb
+     *          the thumb
+     */
+    public Actor(String name, String role, String thumb) {
+      this.name = name;
+      this.role = role;
+      this.thumb = thumb;
+    }
+
+    /**
+     * Gets the name.
+     * 
+     * @return the name
+     */
+    @XmlElement(name = "name")
+    public String getName() {
+      return name;
+    }
+
+    /**
+     * Sets the name.
+     * 
+     * @param name
+     *          the new name
+     */
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    /**
+     * Gets the role.
+     * 
+     * @return the role
+     */
+    @XmlElement(name = "role")
+    public String getRole() {
+      return role;
+    }
+
+    /**
+     * Sets the role.
+     * 
+     * @param role
+     *          the new role
+     */
+    public void setRole(String role) {
+      this.role = role;
+    }
+
+    /**
+     * Gets the thumb.
+     * 
+     * @return the thumb
+     */
+    @XmlElement(name = "thumb")
+    public String getThumb() {
+      return thumb;
+    }
+
+    /**
+     * Sets the thumb.
+     * 
+     * @param thumb
+     *          the new thumb
+     */
+    public void setThumb(String thumb) {
+      this.thumb = thumb;
+    }
+
   }
 }

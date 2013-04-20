@@ -547,12 +547,12 @@ public class MovieToXbmcNfoConnector {
       movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
     }
     catch (FileNotFoundException e) {
-      LOGGER.error("setData", e);
+      LOGGER.error("getData", e);
       return null;
     }
 
     catch (Exception e) {
-      LOGGER.error("setData", e);
+      LOGGER.error("getData", e);
       return null;
     }
 
