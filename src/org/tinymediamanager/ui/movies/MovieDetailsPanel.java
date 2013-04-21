@@ -33,8 +33,8 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.MovieSet;
-import org.tinymediamanager.ui.LinkLabel;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.LinkLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;

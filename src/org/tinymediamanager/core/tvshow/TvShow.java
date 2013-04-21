@@ -447,7 +447,7 @@ public class TvShow extends MediaEntity {
     setTitle(metadata.getTitle());
     setRating((float) metadata.getRating());
     setPlot(metadata.getPlot());
-
+    setCertification(metadata.getCertifications().get(0));
     setGenres(metadata.getGenres());
 
     // cast

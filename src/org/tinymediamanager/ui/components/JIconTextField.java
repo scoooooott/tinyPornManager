@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.components;
 
 import java.awt.Graphics;
 import java.awt.Insets;

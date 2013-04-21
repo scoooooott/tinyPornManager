@@ -16,6 +16,9 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.CardLayout;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,7 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -48,6 +52,7 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEpisodeEditorDialog;
@@ -99,6 +104,8 @@ public class TvShowPanel extends JPanel {
 
   /** The action edit. */
   private final Action                actionEdit              = new EditAction(false);
+
+  private int                         width                   = 0;
 
   /**
    * Instantiates a new tv show panel.
@@ -162,9 +169,28 @@ public class TvShowPanel extends JPanel {
     toolBar.add(buttonScrape);
     toolBar.add(actionEdit);
 
-    tree = new JTree(treeModel);
+    // TODO move to a correcter place
+    tree = new ZebraJTree(treeModel) {
+      public void paintComponent(Graphics g) {
+        width = this.getWidth();
+        super.paintComponent(g);
+      }
+    };
+
+    // TODO move to a correcter place
+    BasicTreeUI ui = new BasicTreeUI() {
+      protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
+          boolean hasBeenExpanded, boolean isLeaf) {
+        bounds.width = width - bounds.x;
+        super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
+      }
+    };
+    tree.setUI(ui);
+
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
+    tree.setLargeModel(true);
+    tree.setCellRenderer(new TvShowTreeCellRenderer());
     scrollPane.setViewportView(tree);
 
     panelRight = new JPanel();

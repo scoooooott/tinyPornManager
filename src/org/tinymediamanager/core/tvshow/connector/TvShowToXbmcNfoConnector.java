@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowActor;
+import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 
 /**
@@ -50,7 +51,7 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "id", "genres", "actors" })
+@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "actors" })
 public class TvShowToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -73,6 +74,9 @@ public class TvShowToXbmcNfoConnector {
 
   /** The plot. */
   private String              plot;
+
+  /** The mpaa. */
+  private String              mpaa;
 
   /** The actors. */
   @XmlAnyElement(lax = true)
@@ -130,6 +134,7 @@ public class TvShowToXbmcNfoConnector {
     xbmc.setVotes(tvShow.getVotes());
     xbmc.setPlot(tvShow.getPlot());
     xbmc.setYear(tvShow.getYear());
+    xbmc.setMpaa(tvShow.getCertification().getName());
 
     xbmc.genres.clear();
     for (MediaGenres genre : tvShow.getGenres()) {
@@ -193,6 +198,7 @@ public class TvShowToXbmcNfoConnector {
       tvShow.setVotes(xbmc.getVotes());
       tvShow.setYear(xbmc.getYear());
       tvShow.setPlot(xbmc.getPlot());
+      tvShow.setCertification(Certification.findCertification(xbmc.getMpaa()));
 
       for (String genre : xbmc.getGenres()) {
         String[] genres = genre.split("/");
@@ -364,6 +370,26 @@ public class TvShowToXbmcNfoConnector {
    */
   public void setId(String id) {
     this.id = id;
+  }
+
+  /**
+   * Gets the mpaa.
+   * 
+   * @return the mpaa
+   */
+  @XmlElement(name = "mpaa")
+  public String getMpaa() {
+    return this.mpaa;
+  }
+
+  /**
+   * Sets the mpaa.
+   * 
+   * @param mpaa
+   *          the new mpaa
+   */
+  public void setMpaa(String mpaa) {
+    this.mpaa = mpaa;
   }
 
   /**

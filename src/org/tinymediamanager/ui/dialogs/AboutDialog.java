@@ -35,8 +35,8 @@ import javax.swing.border.EmptyBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
-import org.tinymediamanager.ui.LinkLabel;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.LinkLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;

@@ -40,9 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ZebraJTable;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -98,11 +98,11 @@ public class MovieTrailerPanel extends JPanel {
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     trailerTableModel = new DefaultEventTableModel<MediaTrailer>(trailerEventList, new TrailerTableFormat());
-    table = new MyTable(trailerTableModel);
+    table = new ZebraJTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setSelectionModel(new NullSelectionModel());
 
-    JScrollPane scrollPane = MyTable.createStripedJScrollPane(table);
+    JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(table);
     add(scrollPane, "2, 2, fill, fill");
     scrollPane.setViewportView(table);
 

@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -244,6 +245,13 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     }
     md.setPosterUrl(show.getPoster());
 
+    try {
+      md.setRating(Double.parseDouble(show.getRating()));
+    }
+    catch (NumberFormatException e) {
+      md.setRating(0);
+    }
+
     // actors
     List<Actor> actors = new ArrayList<Actor>();
     synchronized (tvdb) {
@@ -259,17 +267,12 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       md.addCastMember(member);
     }
 
+    md.addCertification(Certification.findCertification(show.getContentRating()));
+
     // genres
     for (String genreAsString : show.getGenres()) {
       MediaGenres genre = MediaGenres.getGenre(genreAsString);
       md.addGenre(genre);
-    }
-
-    try {
-      md.setRating(Double.parseDouble(show.getRating()));
-    }
-    catch (NumberFormatException e) {
-      md.setRating(0);
     }
 
     return md;

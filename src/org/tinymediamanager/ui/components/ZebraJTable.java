@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.components;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -38,7 +38,7 @@ import javax.swing.table.TableModel;
  * 
  * @author Manuel Laggner
  */
-public class MyTable extends JTable {
+public class ZebraJTable extends JTable {
 
   /** The Constant serialVersionUID. */
   private static final long             serialVersionUID = 1L;
@@ -55,7 +55,7 @@ public class MyTable extends JTable {
   /**
    * Instantiates a new my table.
    */
-  public MyTable() {
+  public ZebraJTable() {
     super();
     init();
   }
@@ -66,7 +66,7 @@ public class MyTable extends JTable {
    * @param dm
    *          the dm
    */
-  public MyTable(TableModel dm) {
+  public ZebraJTable(TableModel dm) {
     // super(dm);
     setModel(dm);
     init();
@@ -251,18 +251,6 @@ public class MyTable extends JTable {
       }
 
       g.translate(0, viewPosition.y);
-
-      // // create a counter variable to hold the current row. if there are no
-      // // rows in the table, start the counter at 0.
-      // int currentRow = rowAtPoint < 0 ? 0 : rowAtPoint;
-      // while (topY < g.getClipBounds().y + g.getClipBounds().height) {
-      // int bottomY = topY + fTable.getRowHeight();
-      // g.setColor(getRowColor(currentRow));
-      // g.fillRect(g.getClipBounds().x, topY, g.getClipBounds().width,
-      // bottomY);
-      // topY = bottomY;
-      // currentRow++;
-      // }
     }
 
     /*

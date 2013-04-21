@@ -63,11 +63,11 @@ import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.ui.BorderCellRenderer;
 import org.tinymediamanager.ui.IconRenderer;
-import org.tinymediamanager.ui.JSearchTextField;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.MyTable;
 import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.JSearchTextField;
+import org.tinymediamanager.ui.components.ZebraJTable;
 import org.tinymediamanager.ui.movies.dialogs.MovieBatchEditorDialog;
 import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
 import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
@@ -296,7 +296,7 @@ public class MoviePanel extends JPanel {
     textFilteredMovies = new FilterList<Movie>(extendedFilteredMovies, textMatcherEditor);
     movieSelectionModel = new MovieSelectionModel(sortedMovies, textFilteredMovies, movieMatcherEditor);
     movieTableModel = new DefaultEventTableModel<Movie>(textFilteredMovies, new MovieTableFormat());
-    table = new MyTable(movieTableModel);
+    table = new ZebraJTable(movieTableModel);
 
     movieTableModel.addTableModelListener(new TableModelListener() {
       @Override
@@ -318,7 +318,7 @@ public class MoviePanel extends JPanel {
     // scrollPane.setViewportView(table);
 
     // JScrollPane scrollPane = new JScrollPane(table);
-    JScrollPane scrollPane = MyTable.createStripedJScrollPane(table);
+    JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(table);
     panelMovieList.add(scrollPane, "2, 3, 2, 1, fill, fill");
 
     panelExtendedSearch = new MovieExtendedSearchPanel(movieSelectionModel);

@@ -39,6 +39,11 @@ public enum Certification {
   /** The U s_ n c17. */
   US_NC17(CountryCode.US, "NC-17", new String[] { "NC-17", "Rated NC-17" }),
 
+  /** US TV certifications */
+  US_TV_Y(CountryCode.US, "TV-Y", new String[] { "TV-Y" }), US_TV_Y7(CountryCode.US, "TV-Y7", new String[] { "TV-Y7" }), US_TV_G(CountryCode.US,
+      "TV-G", new String[] { "TV-G" }), US_TV_PG(CountryCode.US, "TV-PG", new String[] { "TV-PG" }), US_TV_14(CountryCode.US, "TV-14",
+      new String[] { "TV-14" }), US_TV_MA(CountryCode.US, "TV-MA", new String[] { "TV-MA" }),
+
   /** DE certifications. */
   DE_FSK0(CountryCode.DE, "FSK 0", new String[] { "FSK 0", "FSK0", "0" }),
   /** The D e_ fs k6. */
@@ -505,8 +510,7 @@ public enum Certification {
   }
 
   /**
-   * generates a certification string for country alpha2 (including all
-   * different variants); so skins parsing with substr will find them :)<br>
+   * generates a certification string for country alpha2 (including all different variants); so skins parsing with substr will find them :)<br>
    * eg: "DE:FSK 16 / DE:FSK16 / DE:16 / DE:ab 16".
    * 
    * @param cert
@@ -528,13 +532,11 @@ public enum Certification {
   }
 
   /**
-   * Parses a given certification string for the localized country setup in
-   * setting.
+   * Parses a given certification string for the localized country setup in setting.
    * 
    * @param name
    *          certification string like "USA:R / UK:15 / Sweden:15"
-   * @return the localized certification if found, else *ANY* language cert
-   *         found
+   * @return the localized certification if found, else *ANY* language cert found
    */
   // <certification>USA:R / UK:15 / Sweden:15 / Spain:18 / South Korea:15 /
   // Singapore:NC-16 / Portugal:M/16 / Philippines:R-18 / Norway:15 / New

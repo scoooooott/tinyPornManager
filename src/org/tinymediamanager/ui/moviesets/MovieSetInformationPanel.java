@@ -37,8 +37,8 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
-import org.tinymediamanager.ui.ImageLabel;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ImageLabel;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;

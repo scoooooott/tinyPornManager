@@ -40,9 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.ui.LinkLabel;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.LinkLabel;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;

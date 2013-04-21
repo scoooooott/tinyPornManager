@@ -29,7 +29,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.tvshow.TvShowActor;
-import org.tinymediamanager.ui.ImageLabel;
+import org.tinymediamanager.ui.components.ImageLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;

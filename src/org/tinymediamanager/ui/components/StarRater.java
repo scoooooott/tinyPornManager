@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.components;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+
+import org.tinymediamanager.ui.MainWindow;
 
 /**
  * The star rater panel.

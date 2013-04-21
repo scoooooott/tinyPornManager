@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ui.components.JNativeFileChooser;
 
 import chrriis.dj.nativeswing.swtimpl.components.JDirectoryDialog;
 import chrriis.dj.nativeswing.swtimpl.components.JFileDialog;
