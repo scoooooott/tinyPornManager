@@ -46,7 +46,6 @@ import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.zelluloid.ZelluloidMetadataProvider;
-import org.tinymediamanager.ui.moviesets.MovieSetTreeModel;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -76,9 +75,6 @@ public class MovieList extends AbstractModelObject {
 
   /** The tags observable. */
   private List<String>                 tagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
-
-  /** The movie set tree model. */
-  private MovieSetTreeModel            movieSetTreeModel;
 
   /**
    * Instantiates a new movie list.
@@ -693,7 +689,7 @@ public class MovieList extends AbstractModelObject {
   public void addMovieSet(MovieSet movieSet) {
     int oldValue = movieSetList.size();
     this.movieSetList.add(movieSet);
-    firePropertyChange("movieSets", null, movieSetList);
+    firePropertyChange("addedMovieSet", null, movieSet);
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
   }
 
@@ -709,39 +705,8 @@ public class MovieList extends AbstractModelObject {
     Globals.entityManager.getTransaction().begin();
     Globals.entityManager.remove(movieSet);
     Globals.entityManager.getTransaction().commit();
-    firePropertyChange("movieSets", null, movieSetList);
+    firePropertyChange("removedMovieSet", null, movieSet);
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
-  }
-
-  /**
-   * Remove all movieSets.
-   * 
-   */
-  public void removeMovieSets() {
-    for (int i = movieSetList.size() - 1; i >= 0; i--) {
-      MovieSet movieSet = movieSetList.get(i);
-      // remove it via the tree model to ensure the tree is redrawn right
-      movieSetTreeModel.removeMovieSet(movieSet);
-    }
-  }
-
-  /**
-   * Gets the movie set tree model.
-   * 
-   * @return the movie set tree model
-   */
-  public MovieSetTreeModel getMovieSetTreeModel() {
-    return movieSetTreeModel;
-  }
-
-  /**
-   * Sets the movie set tree model.
-   * 
-   * @param movieSetTreeModel
-   *          the new movie set tree model
-   */
-  public void setMovieSetTreeModel(MovieSetTreeModel movieSetTreeModel) {
-    this.movieSetTreeModel = movieSetTreeModel;
   }
 
   /**
@@ -770,6 +735,6 @@ public class MovieList extends AbstractModelObject {
    */
   public void sortMoviesInMovieSet(MovieSet movieSet) {
     movieSet.sortMovies();
-    movieSetTreeModel.sortMoviesInMovieSet(movieSet);
+    firePropertyChange("sortedMovieSets", null, movieSetList);
   }
 }

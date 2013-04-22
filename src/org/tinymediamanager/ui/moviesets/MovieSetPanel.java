@@ -228,7 +228,6 @@ public class MovieSetPanel extends JPanel {
         MovieSet movieSet = new MovieSet(name);
         movieSet.saveToDb();
         movieList.addMovieSet(movieSet);
-        treeModel.addMovieSet(movieSet);
       }
     }
   }
@@ -259,10 +258,17 @@ public class MovieSetPanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
       tree.clearSelection();
+
+      // filter out all movie sets from the selection
       if (paths != null) {
         for (TreePath path : paths) {
           if (path.getPathCount() > 1) {
-            treeModel.remove(path);
+
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+            if (node.getUserObject() instanceof MovieSet) {
+              MovieSet movieSet = (MovieSet) node.getUserObject();
+              movieList.removeMovieSet(movieSet);
+            }
           }
         }
       }

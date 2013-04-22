@@ -495,7 +495,6 @@ public class MovieToXbmcNfoConnector {
           movieSet = new MovieSet(xbmc.getSet());
           movieSet.saveToDb();
           movieList.addMovieSet(movieSet);
-          movieList.getMovieSetTreeModel().addMovieSet(movieSet);
         }
 
         // add movie to movieset

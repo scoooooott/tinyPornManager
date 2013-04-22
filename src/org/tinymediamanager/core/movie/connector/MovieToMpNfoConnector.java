@@ -312,7 +312,6 @@ public class MovieToMpNfoConnector {
             movieSet = new MovieSet(sets.getName());
             movieSet.saveToDb();
             movieList.addMovieSet(movieSet);
-            movieList.getMovieSetTreeModel().addMovieSet(movieSet);
           }
 
           // add movie to movieset

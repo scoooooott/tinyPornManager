@@ -84,6 +84,14 @@ public class MovieSetTreeModel implements TreeModel {
             removeMovie(movieSet, movie);
           }
         }
+        if ("addedMovieSet".equals(evt.getPropertyName())) {
+          MovieSet movieSet = (MovieSet) evt.getNewValue();
+          addMovieSet(movieSet);
+        }
+        if ("removedMovieSet".equals(evt.getPropertyName())) {
+          MovieSet movieSet = (MovieSet) evt.getNewValue();
+          removeMovieSet(movieSet);
+        }
       }
     };
 
@@ -102,9 +110,9 @@ public class MovieSetTreeModel implements TreeModel {
       movieSet.addPropertyChangeListener(propertyChangeListener);
     }
 
-    root.sort();
+    movieList.addPropertyChangeListener(propertyChangeListener);
 
-    movieList.setMovieSetTreeModel(this);
+    root.sort();
   }
 
   /*
