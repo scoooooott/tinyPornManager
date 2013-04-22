@@ -242,7 +242,7 @@ public class ZebraJTable extends JTable {
       // rows in the table, start the counter at 0.
       int currentRow = rowAtPoint < 0 ? 0 : rowAtPoint;
       while (topY < g.getClipBounds().y + g.getClipBounds().height) {
-        int bottomY = topY + fTable.getRowHeight();
+        int bottomY = topY + fTable.getRowHeight(currentRow);// fTable.getRowHeight();
         // g.setColor(currentRow % 2 == 0 ? one : two);
         g.setColor(getRowColor(currentRow));
         g.fillRect(g.getClipBounds().x, topY, g.getClipBounds().width, bottomY);

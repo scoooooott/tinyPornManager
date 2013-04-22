@@ -646,6 +646,18 @@ public class TvShow extends MediaEntity {
   }
 
   /**
+   * Gets the checks for images.
+   * 
+   * @return the checks for images
+   */
+  public Boolean getHasImages() {
+    if (!StringUtils.isEmpty(poster) && !StringUtils.isEmpty(fanart)) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Gets the imdb id.
    * 
    * @return the imdb id
