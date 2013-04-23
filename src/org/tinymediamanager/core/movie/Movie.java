@@ -420,7 +420,7 @@ public class Movie extends MediaEntity {
   public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
     try {
       // get trailer filename from first mediafile
-      String tfile = FilenameUtils.getBaseName(this.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename()) + "-trailer.";
+      String tfile = FilenameUtils.getBaseName(this.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()) + "-trailer.";
       String ext = UrlUtil.getFileExtension(trailerToDownload.getUrl());
       if (ext.isEmpty()) {
         ext = "unknown";
@@ -532,33 +532,14 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Adds a media file.
-   * 
-   * @param path
-   *          the path of the media file (needs no to be the same as movie path)
-   * @param newFile
-   *          the new file
-   */
-  public void addToFiles(String path, String newFile, MediaFileType type) {
-    MediaFile mediaFile = new MediaFile(path, newFile, type);
-    mediaFile.setStacking(Utils.getStackingNumber(newFile));
-    // mediaFile.gatherMediaInformation(); // will be executed afterwards
-    addToMediaFiles(mediaFile);
-  }
-
-  /**
    * Adds the list of media files.
    * 
    * @param videoFiles
    *          the video files
    */
-  public void addToFiles(File[] videoFiles, MediaFileType type) {
+  public void addToFiles(File[] videoFiles) {
     for (File file : videoFiles) {
-      // check if that file exists for that movie
-      if (!hasFile(file.getName())) {
-        // create new movie file
-        addToFiles(file.getParent(), file.getName(), type);
-      }
+      addToMediaFiles(new MediaFile(file));
     }
   }
 
@@ -645,7 +626,7 @@ public class Movie extends MediaEntity {
     File[] subtitles = new File(path).listFiles(filter);
     for (File sub : subtitles) {
       this.subtitles = true;
-      addToFiles(sub.getPath(), sub.getName(), MediaFileType.SUBTITLE);
+      addToMediaFiles(new MediaFile(sub));
     }
   }
 
@@ -655,7 +636,7 @@ public class Movie extends MediaEntity {
       return true; // local ones found
     }
 
-    for (MediaFile mf : getMediaFiles(MediaFileType.MAIN_MOVIE)) {
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
       if (mf.hasSubtitles()) {
         return true;
       }
@@ -1024,7 +1005,7 @@ public class Movie extends MediaEntity {
 
       if (movie != null) {
         movie.setPath(path);
-        movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
+        movie.addToFiles(videoFiles);
         movie.findImages();
         movie.addLocalTrailers();
         movie.addLocalSubtitles();
@@ -1611,7 +1592,7 @@ public class Movie extends MediaEntity {
    */
   public String getPosterFilename(MoviePosterNaming poster) {
     String filename = path + File.separator;
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename());
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
 
     switch (poster) {
       case MOVIENAME_POSTER_PNG:
@@ -1684,7 +1665,7 @@ public class Movie extends MediaEntity {
    */
   public String getFanartFilename(MovieFanartNaming fanart) {
     String filename = path + File.separator;
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename());
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
 
     switch (fanart) {
       case FANART_PNG:
@@ -1730,7 +1711,7 @@ public class Movie extends MediaEntity {
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
     String filename = path + File.separator;
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename());
+    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
 
     switch (nfo) {
       case FILENAME_NFO:

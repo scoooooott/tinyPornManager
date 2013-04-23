@@ -193,8 +193,8 @@ public class MovieToMpNfoConnector {
     }
 
     // filename and path
-    if (movie.getMediaFiles(MediaFileType.MAIN_MOVIE).size() > 0) {
-      mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename());
+    if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
+      mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
     }
 
     mp.setDirector(movie.getDirector());

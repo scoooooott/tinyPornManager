@@ -352,7 +352,7 @@ public class MovieToXbmcNfoConnector {
     xbmc.setSorttitle(movie.getSortTitle());
 
     // fileinfo
-    for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.MAIN_MOVIE)) {
+    for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
       if (StringUtils.isEmpty(mediaFile.getVideoCodec())) {
         break;
       }

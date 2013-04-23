@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
@@ -250,7 +249,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               }
               episode.setTitle(result.name);
               episode.setFirstAired(result.date);
-              episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
+              episode.addToMediaFiles(new MediaFile(file));
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -264,7 +263,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             episode.setTitle(FilenameUtils.getBaseName(file.getName()));
             episode.setTvShow(tvShow);
             episode.setFirstAired(result.date);
-            episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
+            episode.addToMediaFiles(new MediaFile(file));
             episode.saveToDb();
             tvShow.addEpisode(episode);
           }
@@ -337,7 +336,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setTitle(result.name);
               episode.setFirstAired(result.date);
               episode.setDisc(true);
-              episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
+              episode.addToMediaFiles(new MediaFile(file));
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -352,7 +351,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             episode.setTvShow(tvShow);
             episode.setFirstAired(result.date);
             episode.setDisc(true);
-            episode.addToMediaFiles(new MediaFile(file.getPath(), MediaFileType.TV_SHOW));
+            episode.addToMediaFiles(new MediaFile(file));
             episode.saveToDb();
             tvShow.addEpisode(episode);
           }

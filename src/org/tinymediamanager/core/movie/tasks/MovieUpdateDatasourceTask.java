@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.core.movie.tasks;
-import java.io.File;
+
+import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,12 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.util.ParserUtils;
-
 
 /**
  * The Class UpdateDataSourcesTask.
@@ -156,6 +158,99 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   }
 
   /**
+   * searches for file type VIDEO and tries to detect the root movie directory
+   * 
+   * @param directory
+   *          start dir
+   * @param level
+   *          the level how deep we are (start with 0)
+   * @return arraylist of abolute movie dirs
+   */
+  public ArrayList<File> getRootMovieDirs(File directory, int level) {
+    ArrayList<File> ar = new ArrayList<File>();
+
+    // separate files & dirs
+    ArrayList<File> files = new ArrayList<File>();
+    ArrayList<File> dirs = new ArrayList<File>();
+    File[] list = directory.listFiles();
+    for (File file : list) {
+      if (file.isFile()) {
+        files.add(file);
+      }
+      else {
+        dirs.add(file);
+      }
+    }
+    list = null;
+
+    for (File f : files) {
+      boolean disc = false;
+      MediaFile mf = new MediaFile(f);
+
+      if (mf.getType().equals(MediaFileType.VIDEO)) {
+
+        // get current folder
+        File moviedir = f.getParentFile();
+
+        // walk reverse till disc root (if found)
+        while (moviedir.getPath().toUpperCase().contains("BDMV") || moviedir.getPath().toUpperCase().contains("VIDEO_TS")) {
+          disc = true;
+          moviedir = moviedir.getParentFile();
+        }
+        if (disc) {
+          ar.add(moviedir);
+          continue; // proceed with next file
+        }
+
+        // ok, regular structure
+        if (dirs.isEmpty() && level > 1
+            && (!Utils.getStackingMarker(f.getName()).isEmpty() || !Utils.getStackingMarker(moviedir.getName()).isEmpty())) {
+          // no more dirs in that directory
+          // and at least 2 levels deep
+          // stacking found (either on file or parent dir)
+          // -> assume parent as movie dir"
+          moviedir = moviedir.getParentFile();
+          ar.add(moviedir);
+
+        }
+        else {
+          // -> assume current dir as movie dir"
+          ar.add(moviedir);
+        }
+      }
+    }
+
+    for (File dir : dirs) {
+      ar.addAll(getRootMovieDirs(dir, level + 1));
+    }
+
+    return ar;
+  }
+
+  /**
+   * recursively gets all MediaFiles from a moviedir
+   * 
+   * @param dir
+   *          the movie root dir
+   * @return list of files
+   */
+  public ArrayList<MediaFile> getAllMediaFilesRecursive(File dir) {
+    ArrayList<MediaFile> mv = new ArrayList<MediaFile>();
+
+    File[] list = dir.listFiles();
+    for (File file : list) {
+      if (file.isFile()) {
+        mv.add(new MediaFile(file));
+      }
+      else {
+        mv.addAll(getAllMediaFilesRecursive(file));
+      }
+    }
+
+    return mv;
+  }
+
+  /**
    * Special handling for "Disc" folders.<br>
    * create meta files in parent directory.
    * 
@@ -219,7 +314,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie = new Movie();
             movie.setTitle(ParserUtils.detectCleanMoviename(FilenameUtils.getBaseName(parentDir)));
             movie.setPath(parentDir);
-            movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
+            movie.addToFiles(videoFiles);
             movie.findImages();
             movie.addLocalTrailers();
             movie.addLocalSubtitles();
@@ -308,7 +403,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie = new Movie();
             movie.setTitle(ParserUtils.detectCleanMoviename(dir.getName()));
             movie.setPath(dir.getPath());
-            movie.addToFiles(videoFiles, MediaFileType.MAIN_MOVIE);
+            movie.addToFiles(videoFiles);
             movie.findImages();
             movie.addLocalTrailers();
             movie.addLocalSubtitles();

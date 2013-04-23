@@ -126,50 +126,15 @@ public class MediaFile extends AbstractModelObject {
    * Instantiates a new media file.
    */
   public MediaFile(File f) {
-    this.path = f.getPath();
+    this.path = f.getParent(); // just path w/o filename
     this.filename = f.getName();
     this.type = parseType();
+    this.stacking = Utils.getStackingNumber(f.getName());
     this.file = f;
     if (file.exists()) {
       setFilesize(FileUtils.sizeOf(file));
     }
 
-  }
-
-  /**
-   * Instantiates a new media file.
-   * 
-   * @param path
-   *          the path
-   * @param filename
-   *          the filename
-   */
-  public MediaFile(String path, String filename, MediaFileType type) {
-    this.path = path;
-    this.filename = filename;
-    this.type = type;
-
-    file = new File(this.path, this.filename);
-    if (file.exists()) {
-      setFilesize(FileUtils.sizeOf(file));
-    }
-  }
-
-  /**
-   * Instantiates a new media file.
-   * 
-   * @param pathAndFilename
-   *          the path and filename
-   */
-  public MediaFile(String pathAndFilename, MediaFileType type) {
-    this.path = FilenameUtils.getFullPath(pathAndFilename);
-    this.filename = FilenameUtils.getName(pathAndFilename);
-    this.type = type;
-
-    file = new File(this.path, this.filename);
-    if (file.exists()) {
-      setFilesize(FileUtils.sizeOf(file));
-    }
   }
 
   /**
@@ -190,7 +155,7 @@ public class MediaFile extends AbstractModelObject {
     }
 
     if (ext.equals("jpg") || ext.equals("png") || ext.equals("tbn")) {
-      if (name.contains("poster") || name.contains("cover") || name.startsWith("movie")) {
+      if (name.contains("poster") || name.contains("cover") || name.startsWith("movie") || name.startsWith("folder")) {
         return MediaFileType.POSTER;
       }
       if (name.contains("banner")) {
@@ -210,9 +175,9 @@ public class MediaFile extends AbstractModelObject {
       return MediaFileType.VIDEO;
     }
 
-    if (name.contains("subs") || name.contains("subtitle")) {
-      return MediaFileType.SUBTITLE;
-    }
+    // if (name.contains("subs") || name.contains("subtitle")) {
+    // return MediaFileType.SUBTITLE;
+    // }
 
     return MediaFileType.UNKNOWN;
   }
@@ -223,8 +188,19 @@ public class MediaFile extends AbstractModelObject {
    * @return true/false
    */
   public boolean isPacked() {
-    String ext = getExtension();
+    String ext = getExtension().toLowerCase();
     return (ext.equals("zip") || ext.equals("rar") || ext.equals("7z") || ext.matches("r\\d+"));
+
+  }
+
+  /**
+   * is this a graphic file
+   * 
+   * @return true/false
+   */
+  public boolean isGraphic() {
+    return (type.equals(MediaFileType.GRAPHIC) || type.equals(MediaFileType.BANNER) || type.equals(MediaFileType.FANART) || type
+        .equals(MediaFileType.POSTER));
 
   }
 

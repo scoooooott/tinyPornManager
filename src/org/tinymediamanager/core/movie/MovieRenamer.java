@@ -229,7 +229,7 @@ public class MovieRenamer {
 
       if (stack == 0) {
         // fine, so match to first movie file
-        MediaFile mf = m.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0);
+        MediaFile mf = m.getMediaFiles(MediaFileType.VIDEO).get(0);
         newSubName = FilenameUtils.getBaseName(mf.getFilename());
         if (!lang.isEmpty()) {
           newSubName += "." + lang;
@@ -237,7 +237,7 @@ public class MovieRenamer {
       }
       else {
         // with stacking info; try to match
-        for (MediaFile mf : m.getMediaFiles(MediaFileType.MAIN_MOVIE)) {
+        for (MediaFile mf : m.getMediaFiles(MediaFileType.VIDEO)) {
           if (mf.getStacking() == stack) {
             newSubName = FilenameUtils.getBaseName(mf.getFilename());
             if (!lang.isEmpty()) {
@@ -320,7 +320,7 @@ public class MovieRenamer {
       if (!movie.isDisc()) {
 
         // move movie files first
-        for (MediaFile file : movie.getMediaFiles(MediaFileType.MAIN_MOVIE)) {
+        for (MediaFile file : movie.getMediaFiles(MediaFileType.VIDEO)) {
           String newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
 
           // get the filetype
@@ -432,7 +432,7 @@ public class MovieRenamer {
 
     // rename local trailers
     if (movie.getHasTrailer()) {
-      String newTName = FilenameUtils.getBaseName(movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0).getFilename()) + "-trailer.";
+      String newTName = FilenameUtils.getBaseName(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()) + "-trailer.";
       for (MediaTrailer mt : movie.getTrailers()) {
         if (mt.getProvider().equals("downloaded")) {
           String ext = FilenameUtils.getExtension(mt.getName());
@@ -562,8 +562,8 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll("\\$E", movie.getSortTitle());
     }
 
-    if (movie.getMediaFiles(MediaFileType.MAIN_MOVIE).size() > 0) {
-      MediaFile mf = movie.getMediaFiles(MediaFileType.MAIN_MOVIE).get(0);
+    if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
+      MediaFile mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
       // replace token resolution ($R)
       if (newDestination.contains("$R")) {
         newDestination = newDestination.replaceAll("\\$R", mf.getVideoResolution());
