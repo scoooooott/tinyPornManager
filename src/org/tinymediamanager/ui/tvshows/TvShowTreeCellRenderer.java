@@ -17,9 +17,11 @@ package org.tinymediamanager.ui.tvshows;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
@@ -29,6 +31,12 @@ import javax.swing.tree.TreeCellRenderer;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.ui.MainWindow;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * The Class TvShowTreeCellRenderer.
@@ -37,47 +45,73 @@ import org.tinymediamanager.core.tvshow.TvShowSeason;
  */
 public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
+  private final static ImageIcon  checkIcon               = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
+
+  /** The Constant crossIcon. */
+  private final static ImageIcon  crossIcon               = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
+
   /** The tv show title. */
-  private JLabel                  tvShowTitle        = new JLabel();
+  private JLabel                  tvShowTitle             = new JLabel();
 
   /** The tv show info. */
-  private JLabel                  tvShowInfo         = new JLabel();
+  private JLabel                  tvShowInfo              = new JLabel();
 
-  private JLabel                  tvShowSeasonTitle  = new JLabel();
+  private JLabel                  tvShowSeasonTitle       = new JLabel();
 
-  private JLabel                  tvShowEpisodeTitle = new JLabel();
+  private JLabel                  tvShowEpisodeTitle      = new JLabel();
 
-  private JPanel                  tvShowPanel        = new JPanel();
+  private JPanel                  tvShowPanel             = new JPanel();
 
-  private JPanel                  tvShowSeasonPanel  = new JPanel();
+  private JPanel                  tvShowSeasonPanel       = new JPanel();
 
-  private JPanel                  tvShowEpisodePanel = new JPanel();
+  private JPanel                  tvShowEpisodePanel      = new JPanel();
+
+  private JLabel                  tvShowNfoLabel          = new JLabel();
+  private JLabel                  tvShowImageLabel        = new JLabel();
+
+  private JLabel                  tvShowEpisodeNfoLabel   = new JLabel();
+  private JLabel                  tvShowEpisodeImageLabel = new JLabel();
 
   /** The default renderer. */
-  private DefaultTreeCellRenderer defaultRenderer    = new DefaultTreeCellRenderer();
+  private DefaultTreeCellRenderer defaultRenderer         = new DefaultTreeCellRenderer();
 
   /** The Constant EVEN_ROW_COLOR. */
-  private static final Color      EVEN_ROW_COLOR     = new Color(241, 245, 250);
+  private static final Color      EVEN_ROW_COLOR          = new Color(241, 245, 250);
 
   /**
    * Instantiates a new tv show tree cell renderer.
    */
   public TvShowTreeCellRenderer() {
-    tvShowPanel.setLayout(new BoxLayout(tvShowPanel, BoxLayout.Y_AXIS));
+    // tvShowPanel.setLayout(new BoxLayout(tvShowPanel, BoxLayout.Y_AXIS));
+    tvShowPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+        ColumnSpec.decode("20px"), ColumnSpec.decode("20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     tvShowTitle.setFont(new Font("Dialog", Font.BOLD, 12));
     tvShowTitle.setHorizontalAlignment(JLabel.LEFT);
-    tvShowPanel.add(tvShowTitle);
+    tvShowTitle.setMinimumSize(new Dimension(0, 0));
+    tvShowPanel.add(tvShowTitle, "1, 1");
+    // tvShowPanel.add(tvShowTitle);
+
+    tvShowPanel.add(tvShowNfoLabel, "3, 1, 1, 2");
+    tvShowPanel.add(tvShowImageLabel, "4, 1, 1, 2");
 
     tvShowInfo.setFont(new Font("Dialog", Font.PLAIN, 10));
     tvShowInfo.setHorizontalAlignment(JLabel.LEFT);
-    tvShowPanel.add(tvShowInfo);
+    tvShowInfo.setMinimumSize(new Dimension(0, 0));
+    tvShowPanel.add(tvShowInfo, "1, 2");
+    // tvShowPanel.add(tvShowInfo);
 
     tvShowSeasonPanel.setLayout(new BoxLayout(tvShowSeasonPanel, BoxLayout.Y_AXIS));
     tvShowSeasonPanel.add(tvShowSeasonTitle);
 
-    tvShowEpisodePanel.setLayout(new BoxLayout(tvShowEpisodePanel, BoxLayout.Y_AXIS));
-    tvShowEpisodePanel.add(tvShowEpisodeTitle);
+    // tvShowEpisodePanel.setLayout(new BoxLayout(tvShowEpisodePanel, BoxLayout.Y_AXIS));
+    tvShowEpisodePanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+        ColumnSpec.decode("20px"), ColumnSpec.decode("20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
+    // tvShowEpisodePanel.add(tvShowEpisodeTitle);
+    tvShowEpisodeTitle.setMinimumSize(new Dimension(0, 0));
+    tvShowEpisodePanel.add(tvShowEpisodeTitle, "1, 1");
+    tvShowEpisodePanel.add(tvShowEpisodeNfoLabel, "3, 1");
+    tvShowEpisodePanel.add(tvShowEpisodeImageLabel, "4, 1");
   }
 
   /*
@@ -96,9 +130,10 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
         tvShowTitle.setText(tvShow.getTitle());
         tvShowInfo.setText(tvShow.getSeasons().size() + " Seasons - " + tvShow.getEpisodes().size() + " Episodes");
+        tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? checkIcon : crossIcon);
+        tvShowImageLabel.setIcon(tvShow.getHasImages() ? checkIcon : crossIcon);
 
         tvShowPanel.setEnabled(tree.isEnabled());
-        tvShowPanel.invalidate();
         returnValue = tvShowPanel;
       }
     }
@@ -110,7 +145,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         TvShowSeason season = (TvShowSeason) userObject;
         tvShowSeasonTitle.setText("Season " + season.getSeason());
         tvShowSeasonPanel.setEnabled(tree.isEnabled());
-        tvShowSeasonPanel.invalidate();
+
         returnValue = tvShowSeasonPanel;
       }
     }
@@ -122,7 +157,9 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         TvShowEpisode episode = (TvShowEpisode) userObject;
         tvShowEpisodeTitle.setText(episode.getEpisode() + ". " + episode.getTitle());
         tvShowEpisodePanel.setEnabled(tree.isEnabled());
-        tvShowEpisodePanel.invalidate();
+
+        tvShowEpisodeNfoLabel.setIcon(crossIcon);
+        tvShowEpisodeImageLabel.setIcon(checkIcon);
         returnValue = tvShowEpisodePanel;
       }
     }

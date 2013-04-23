@@ -16,6 +16,9 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.CardLayout;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -46,9 +51,9 @@ import org.tinymediamanager.core.tvshow.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;
+import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.TreeTable;
-import org.tinymediamanager.ui.components.ZebraJTable;
+import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEpisodeEditorDialog;
@@ -87,8 +92,8 @@ public class TvShowPanel extends JPanel {
   private TvShowList                  tvShowList              = TvShowList.getInstance();
 
   /** The tree. */
-  // private JTree tree;
-  private TreeTable                   tree;
+  private JTree                       tree;
+  // private TreeTable tree;
 
   /** The panel right. */
   private JPanel                      panelRight;
@@ -127,9 +132,10 @@ public class TvShowPanel extends JPanel {
     panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), }, new RowSpec[] {
         FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), }));
 
-    tree = new TreeTable(treeModel);
-    JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(tree);
-    // JScrollPane scrollPane = new JScrollPane();
+    // tree = new TreeTable(treeModel);
+    // JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(tree);
+    JScrollPane scrollPane = new JScrollPane();
+    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     panelTvShowTree.add(scrollPane, "2, 4, fill, fill");
 
     JToolBar toolBar = new JToolBar();
@@ -169,27 +175,28 @@ public class TvShowPanel extends JPanel {
     toolBar.add(actionEdit);
 
     // TODO move to a correcter place
-    // tree = new ZebraJTree(treeModel) {
-    // public void paintComponent(Graphics g) {
-    // width = this.getWidth();
-    // super.paintComponent(g);
-    // }
-    // };
-    //
-    // // TODO move to a correcter place
-    // BasicTreeUI ui = new BasicTreeUI() {
-    // protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
-    // boolean hasBeenExpanded, boolean isLeaf) {
-    // bounds.width = width - bounds.x;
-    // super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
-    // }
-    // };
-    // tree.setUI(ui);
+    tree = new ZebraJTree(treeModel) {
+      public void paintComponent(Graphics g) {
+        width = this.getWidth();
+        super.paintComponent(g);
+      }
+    };
 
-    tree.getTree().setRootVisible(false);
-    tree.getTree().setShowsRootHandles(true);
+    // // TODO move to a correcter place
+    TreeUI ui = new TreeUI() {
+      protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
+          boolean hasBeenExpanded, boolean isLeaf) {
+        bounds.width = width - bounds.x;
+        super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
+      }
+
+    };
+    tree.setUI(ui);
+
+    tree.setRootVisible(false);
+    tree.setShowsRootHandles(true);
     // tree.getTree().setLargeModel(true);
-    tree.getTree().setCellRenderer(new TvShowTreeCellRenderer());
+    tree.setCellRenderer(new TvShowTreeCellRenderer());
     scrollPane.setViewportView(tree);
 
     panelRight = new JPanel();
@@ -202,10 +209,10 @@ public class TvShowPanel extends JPanel {
     JPanel panelTvShowEpisode = new TvShowEpisodeInformationPanel(tvShowEpisodeSelectionModel);
     panelRight.add(panelTvShowEpisode, "tvShowEpisode");
 
-    tree.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+    tree.addTreeSelectionListener(new TreeSelectionListener() {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getTree().getLastSelectedPathComponent();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (node != null) {
           // click on a tv show
           if (node.getUserObject() instanceof TvShow) {
@@ -249,7 +256,7 @@ public class TvShowPanel extends JPanel {
   private List<TvShow> getSelectedTvShows() {
     List<TvShow> selectedTvShows = new ArrayList<TvShow>();
 
-    TreePath[] paths = tree.getTree().getSelectionPaths();
+    TreePath[] paths = tree.getSelectionPaths();
 
     // filter out all tv shows from the selection
     if (paths != null) {
@@ -270,7 +277,7 @@ public class TvShowPanel extends JPanel {
   private List<Object> getSelectedObjects() {
     List<Object> selectedObjects = new ArrayList<Object>();
 
-    TreePath[] paths = tree.getTree().getSelectionPaths();
+    TreePath[] paths = tree.getSelectionPaths();
 
     // filter out all objects from the selection
     if (paths != null) {
@@ -424,4 +431,5 @@ public class TvShowPanel extends JPanel {
       }
     }
   }
+
 }
