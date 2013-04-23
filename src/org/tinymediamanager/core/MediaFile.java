@@ -194,7 +194,7 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
-   * is this a graphic file
+   * Is this a graphic file?
    * 
    * @return true/false
    */
@@ -731,13 +731,13 @@ public class MediaFile extends AbstractModelObject {
       return;
     }
 
+    LOGGER.debug("start MediaInfo for " + this.filename);
+
     // parse inline subtitles
     int cnt = getMediaInfo().streamCount(StreamKind.Text);
     for (int i = 0; i < cnt; i++) {
       subtitles.add(getMediaInfo(StreamKind.Text, i, "Language", "", ""));
     }
-
-    LOGGER.debug("start MediaInfo for " + this.filename);
 
     // video codec
     // e.g. XviD, x264, DivX 5, MPEG-4 Visual, AVC, etc.
@@ -896,7 +896,7 @@ public class MediaFile extends AbstractModelObject {
    * @return true, if is valid mediainfo format
    */
   private boolean isValidMediainfoFormat() {
-    String extension = FilenameUtils.getExtension(filename);
+    String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
     // check unsupported extensions
     if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "iso".equals(extension) || "img".equals(extension)
@@ -904,7 +904,13 @@ public class MediaFile extends AbstractModelObject {
       return false;
     }
 
-    return true;
+    // parse only audio, video and graphic files
+    if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.AUDIO) || isGraphic()) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
 }
