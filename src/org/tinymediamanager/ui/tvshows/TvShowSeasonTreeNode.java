@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
@@ -73,13 +74,27 @@ public class TvShowSeasonTreeNode extends DefaultMutableTreeNode {
     return super.toString();
   }
 
-  /**
-   * Sort.
-   */
+  // /**
+  // * Sort.
+  // */
+  // @SuppressWarnings("unchecked")
+  // public void sort() {
+  // if (this.children != null) {
+  // Collections.sort(this.children, nodeComparator);
+  // }
+  // }
+
   @SuppressWarnings("unchecked")
-  public void sort() {
+  @Override
+  public void insert(MutableTreeNode newChild, int childIndex) {
     if (this.children != null) {
-      Collections.sort(this.children, nodeComparator);
+      int index = Collections.binarySearch(this.children, newChild, nodeComparator);
+      if (index < 0) {
+        super.insert(newChild, -index - 1);
+      }
+    }
+    else {
+      super.insert(newChild, childIndex);
     }
   }
 }

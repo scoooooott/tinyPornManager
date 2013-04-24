@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import org.tinymediamanager.core.tvshow.TvShow;
@@ -67,21 +68,35 @@ public class TvShowTreeNode extends DefaultMutableTreeNode {
     return super.toString();
   }
 
-  /**
-   * Sort.
-   */
-  @SuppressWarnings("unchecked")
-  public void sort() {
-    if (this.children != null) {
-      Collections.sort(this.children, nodeComparator);
+  // /**
+  // * Sort.
+  // */
+  // @SuppressWarnings("unchecked")
+  // public void sort() {
+  // if (this.children != null) {
+  // Collections.sort(this.children, nodeComparator);
+  //
+  // // sort all children
+  // for (Object node : this.children) {
+  // if (node instanceof TvShowSeasonTreeNode) {
+  // TvShowSeasonTreeNode seasonNode = (TvShowSeasonTreeNode) node;
+  // seasonNode.sort();
+  // }
+  // }
+  // }
+  // }
 
-      // sort all children
-      for (Object node : this.children) {
-        if (node instanceof TvShowSeasonTreeNode) {
-          TvShowSeasonTreeNode seasonNode = (TvShowSeasonTreeNode) node;
-          seasonNode.sort();
-        }
+  @SuppressWarnings("unchecked")
+  @Override
+  public void insert(MutableTreeNode newChild, int childIndex) {
+    if (this.children != null) {
+      int index = Collections.binarySearch(this.children, newChild, nodeComparator);
+      if (index < 0) {
+        super.insert(newChild, -index - 1);
       }
+    }
+    else {
+      super.insert(newChild, childIndex);
     }
   }
 }

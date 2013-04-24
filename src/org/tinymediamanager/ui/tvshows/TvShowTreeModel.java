@@ -178,7 +178,6 @@ public class TvShowTreeModel implements TreeModel {
       for (TreeModelListener listener : listeners) {
         listener.treeNodesChanged(event);
       }
-
     }
   }
 
@@ -203,6 +202,13 @@ public class TvShowTreeModel implements TreeModel {
       TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
       for (TreeModelListener listener : listeners) {
         listener.treeNodesInserted(event);
+      }
+
+      // inform listeners (root - to update the sum)
+      index = root.getIndex(parent.getParent());
+      event = new TreeModelEvent(this, root.getPath(), new int[] { index }, new Object[] { parent.getParent() });
+      for (TreeModelListener listener : listeners) {
+        listener.treeNodesChanged(event);
       }
     }
 

@@ -77,23 +77,23 @@ public class TvShowRootTreeNode extends DefaultMutableTreeNode {
     return super.toString();
   }
 
-  /**
-   * Sort.
-   */
-  @SuppressWarnings("unchecked")
-  public void sort() {
-    if (this.children != null) {
-      Collections.sort(this.children, nodeComparator);
-
-      // sort all children
-      for (Object node : this.children) {
-        if (node instanceof TvShowTreeNode) {
-          TvShowTreeNode showNode = (TvShowTreeNode) node;
-          showNode.sort();
-        }
-      }
-    }
-  }
+  // /**
+  // * Sort.
+  // */
+  // @SuppressWarnings("unchecked")
+  // public void sort() {
+  // if (this.children != null) {
+  // Collections.sort(this.children, nodeComparator);
+  //
+  // // sort all children
+  // for (Object node : this.children) {
+  // if (node instanceof TvShowTreeNode) {
+  // TvShowTreeNode showNode = (TvShowTreeNode) node;
+  // showNode.sort();
+  // }
+  // }
+  // }
+  // }
 
   @SuppressWarnings("unchecked")
   @Override
