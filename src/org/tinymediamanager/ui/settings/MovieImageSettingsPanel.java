@@ -223,22 +223,18 @@ public class MovieImageSettingsPanel extends JPanel {
 
     cbMoviePosterFilename7 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".jpg"); //$NON-NLS-1$
     panelMovieImages.add(cbMoviePosterFilename7, "4, 11");
-    cbMoviePosterFilename7.addItemListener(listener);
 
     cbMoviePosterFilename4 = new JCheckBox("poster.jpg");
     panelMovieImages.add(cbMoviePosterFilename4, "6, 11");
 
     cbMoviePosterFilename8 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-poster.jpg"); //$NON-NLS-1$
     panelMovieImages.add(cbMoviePosterFilename8, "4, 12");
-    cbMoviePosterFilename8.addItemListener(listener);
 
     cbMoviePosterFilename6 = new JCheckBox("folder.jpg");
     panelMovieImages.add(cbMoviePosterFilename6, "6, 12");
-    cbMoviePosterFilename6.addItemListener(listener);
 
     cbMoviePosterFilename2 = new JCheckBox("movie.jpg");
     panelMovieImages.add(cbMoviePosterFilename2, "4, 13");
-    cbMoviePosterFilename2.addItemListener(listener);
 
     JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming")); //$NON-NLS-1$
     panelMovieImages.add(lblFanartFileNaming, "2, 15");
@@ -328,20 +324,11 @@ public class MovieImageSettingsPanel extends JPanel {
 
     // poster filenames
     List<MoviePosterNaming> moviePosterFilenames = settings.getMovieSettings().getMoviePosterFilenames();
-    if (moviePosterFilenames.contains(MoviePosterNaming.FILENAME_TBN)) {
-      cbMoviePosterFilename1.setSelected(true);
-    }
     if (moviePosterFilenames.contains(MoviePosterNaming.MOVIE_JPG)) {
       cbMoviePosterFilename2.setSelected(true);
     }
-    if (moviePosterFilenames.contains(MoviePosterNaming.MOVIE_TBN)) {
-      cbMoviePosterFilename3.setSelected(true);
-    }
     if (moviePosterFilenames.contains(MoviePosterNaming.POSTER_JPG)) {
       cbMoviePosterFilename4.setSelected(true);
-    }
-    if (moviePosterFilenames.contains(MoviePosterNaming.POSTER_TBN)) {
-      cbMoviePosterFilename5.setSelected(true);
     }
     if (moviePosterFilenames.contains(MoviePosterNaming.FOLDER_JPG)) {
       cbMoviePosterFilename6.setSelected(true);
@@ -365,9 +352,14 @@ public class MovieImageSettingsPanel extends JPanel {
     // listen to changes of the checkboxes
     ItemListener listener = new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
+        checkChanges();
       }
     };
+    cbMoviePosterFilename2.addItemListener(listener);
     cbMoviePosterFilename4.addItemListener(listener);
+    cbMoviePosterFilename6.addItemListener(listener);
+    cbMoviePosterFilename7.addItemListener(listener);
+    cbMoviePosterFilename8.addItemListener(listener);
 
     cbMovieFanartFilename1.addItemListener(listener);
     cbMovieFanartFilename2.addItemListener(listener);
@@ -463,5 +455,45 @@ public class MovieImageSettingsPanel extends JPanel {
     AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, chckbxEnableExtrathumbs,
         jCheckBoxBeanProperty, spExtrathumbWidth, jSpinnerBeanProperty);
     autoBinding_9.bind();
+  }
+
+  /**
+   * Check changes.
+   */
+  public void checkChanges() {
+    // set poster filenames
+    settings.getMovieSettings().clearMoviePosterFilenames();
+
+    if (cbMoviePosterFilename2.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.MOVIE_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.MOVIE_PNG);
+    }
+    if (cbMoviePosterFilename4.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
+    }
+    if (cbMoviePosterFilename6.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FOLDER_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FOLDER_PNG);
+    }
+    if (cbMoviePosterFilename7.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_PNG);
+    }
+    if (cbMoviePosterFilename8.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_PNG);
+    }
+
+    // set fanart filenames
+    settings.getMovieSettings().clearMovieFanartFilenames();
+    if (cbMovieFanartFilename1.isSelected()) {
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_PNG);
+    }
+    if (cbMovieFanartFilename2.isSelected()) {
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
+    }
   }
 }
