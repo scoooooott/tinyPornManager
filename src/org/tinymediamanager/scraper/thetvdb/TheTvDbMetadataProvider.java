@@ -251,6 +251,8 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     catch (NumberFormatException e) {
       md.setRating(0);
     }
+    md.setFirstAired(show.getFirstAired());
+    md.setStudio(show.getNetwork());
 
     // actors
     List<Actor> actors = new ArrayList<Actor>();
@@ -349,6 +351,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     catch (NumberFormatException e) {
       md.setRating(0);
     }
+    md.setFirstAired(episode.getFirstAired());
 
     // Banner
     MediaArtwork ma = new MediaArtwork();

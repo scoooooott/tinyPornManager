@@ -177,4 +177,10 @@ public final class Constants {
 
   /** The Constant TVDBID. */
   public final static String TVDBID               = "tvdbId";
+
+  /** The Constant FIRST_AIRED. */
+  public final static String FIRST_AIRED          = "firstAired";
+
+  /** The Constant STUDIO. */
+  public final static String STUDIO               = "studio";
 }

@@ -35,6 +35,8 @@ import javax.persistence.Transient;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcher;
@@ -52,31 +54,34 @@ import org.tinymediamanager.scraper.MediaMetadata;
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShowEpisode extends MediaEntity {
 
+  /** The Constant LOGGER. */
+  private static final Logger LOGGER               = LoggerFactory.getLogger(TvShowEpisode.class);
+
   /** The tv show. */
-  private TvShow          tvShow               = null;
+  private TvShow              tvShow               = null;
 
   /** The episode. */
-  private int             episode              = 0;
+  private int                 episode              = 0;
 
   /** The season. */
-  private int             season               = -1;
+  private int                 season               = -1;
 
   /** the first aired date */
-  private Date            firstAired           = null;
+  private Date                firstAired           = null;
 
   /** is this episode in a disc folder structure? */
-  private boolean         disc                 = false;
+  private boolean             disc                 = false;
 
   /** The nfo filename. */
-  private String          nfoFilename          = "";
+  private String              nfoFilename          = "";
 
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaFile> mediaFiles           = new ArrayList<MediaFile>();
+  private List<MediaFile>     mediaFiles           = new ArrayList<MediaFile>();
 
   /** The media files observable. */
   @Transient
-  private List<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+  private List<MediaFile>     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
   /**
    * first aired date
@@ -90,8 +95,10 @@ public class TvShowEpisode extends MediaEntity {
   /**
    * sets the first aired date
    */
-  public void setFirstAired(Date aired) {
-    this.firstAired = aired;
+  public void setFirstAired(Date newValue) {
+    Date oldValue = this.firstAired;
+    this.firstAired = newValue;
+    firePropertyChange(FIRST_AIRED, oldValue, newValue);
   }
 
   /**
@@ -375,6 +382,13 @@ public class TvShowEpisode extends MediaEntity {
 
     setTitle(metadata.getTitle());
     setPlot(metadata.getPlot());
+
+    try {
+      setFirstAired(metadata.getFirstAired());
+    }
+    catch (ParseException e) {
+      LOGGER.warn(e.getMessage());
+    }
 
     for (MediaArtwork ma : metadata.getFanart()) {
       if (ma.getType() == MediaArtworkType.BACKGROUND) {

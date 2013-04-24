@@ -74,6 +74,12 @@ public class MediaMetadata {
   /** The poster url. */
   private String                  posterUrl         = "";
 
+  /** The first aired. */
+  private String                  firstAired        = "";
+
+  /** The studio. */
+  private String                  studio            = "";
+
   /** The cast members. */
   private List<MediaCastMember>   castMembers       = new ArrayList<MediaCastMember>();
 
@@ -166,6 +172,44 @@ public class MediaMetadata {
    */
   public String getTitle() {
     return title;
+  }
+
+  /**
+   * Gets the studio.
+   * 
+   * @return the studio
+   */
+  public String getStudio() {
+    return studio;
+  }
+
+  /**
+   * Sets the studio.
+   * 
+   * @param studio
+   *          the new studio
+   */
+  public void setStudio(String studio) {
+    this.studio = studio;
+  }
+
+  /**
+   * Gets the first aired.
+   * 
+   * @return the first aired
+   */
+  public String getFirstAired() {
+    return firstAired;
+  }
+
+  /**
+   * Sets the first aired.
+   * 
+   * @param firstAired
+   *          the new first aired
+   */
+  public void setFirstAired(String firstAired) {
+    this.firstAired = firstAired;
   }
 
   /**

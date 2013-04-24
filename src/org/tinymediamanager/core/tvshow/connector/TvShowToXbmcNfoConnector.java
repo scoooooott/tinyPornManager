@@ -51,7 +51,7 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "actors" })
+@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "studio", "actors" })
 public class TvShowToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -77,6 +77,12 @@ public class TvShowToXbmcNfoConnector {
 
   /** The mpaa. */
   private String              mpaa;
+
+  /** The premiered. */
+  private String              premiered;
+
+  /** The studio. */
+  private String              studio;
 
   /** The actors. */
   @XmlAnyElement(lax = true)
@@ -135,6 +141,8 @@ public class TvShowToXbmcNfoConnector {
     xbmc.setPlot(tvShow.getPlot());
     xbmc.setYear(tvShow.getYear());
     xbmc.setMpaa(tvShow.getCertification().getName());
+    xbmc.setPremiered(tvShow.getFirstAiredFormatted());
+    xbmc.setStudio(tvShow.getStudio());
 
     xbmc.genres.clear();
     for (MediaGenres genre : tvShow.getGenres()) {
@@ -178,6 +186,13 @@ public class TvShowToXbmcNfoConnector {
     return nfoFilename;
   }
 
+  /**
+   * Gets the data.
+   * 
+   * @param nfoFilename
+   *          the nfo filename
+   * @return the data
+   */
   public static TvShow getData(String nfoFilename) {
     // try to parse XML
     JAXBContext context;
@@ -199,6 +214,8 @@ public class TvShowToXbmcNfoConnector {
       tvShow.setYear(xbmc.getYear());
       tvShow.setPlot(xbmc.getPlot());
       tvShow.setCertification(Certification.findCertification(xbmc.getMpaa()));
+      tvShow.setFirstAired(xbmc.getPremiered());
+      tvShow.setStudio(xbmc.getStudio());
 
       for (String genre : xbmc.getGenres()) {
         String[] genres = genre.split("/");
@@ -324,6 +341,26 @@ public class TvShowToXbmcNfoConnector {
   }
 
   /**
+   * Gets the premiered.
+   * 
+   * @return the premiered
+   */
+  @XmlElement(name = "premiered")
+  public String getPremiered() {
+    return premiered;
+  }
+
+  /**
+   * Sets the premiered.
+   * 
+   * @param premiered
+   *          the new premiered
+   */
+  public void setPremiered(String premiered) {
+    this.premiered = premiered;
+  }
+
+  /**
    * Sets the plot.
    * 
    * @param plot
@@ -390,6 +427,26 @@ public class TvShowToXbmcNfoConnector {
    */
   public void setMpaa(String mpaa) {
     this.mpaa = mpaa;
+  }
+
+  /**
+   * Gets the studio.
+   * 
+   * @return the studio
+   */
+  @XmlElement(name = "studio")
+  public String getStudio() {
+    return studio;
+  }
+
+  /**
+   * Sets the studio.
+   * 
+   * @param studio
+   *          the new studio
+   */
+  public void setStudio(String studio) {
+    this.studio = studio;
   }
 
   /**
