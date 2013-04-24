@@ -44,7 +44,7 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 
 /**
- * The Class TvEpisode.
+ * The Class TvShowEpisode.
  * 
  * @author Manuel Laggner
  */
@@ -66,6 +66,9 @@ public class TvShowEpisode extends MediaEntity {
 
   /** is this episode in a disc folder structure? */
   private boolean         disc                 = false;
+
+  /** The nfo filename. */
+  private String          nfoFilename          = "";
 
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
@@ -387,5 +390,29 @@ public class TvShowEpisode extends MediaEntity {
 
     // update DB
     saveToDb();
+  }
+
+  /**
+   * Gets the checks for nfo file.
+   * 
+   * @return the checks for nfo file
+   */
+  public Boolean getHasNfoFile() {
+    if (!StringUtils.isEmpty(nfoFilename)) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Gets the checks for images.
+   * 
+   * @return the checks for images
+   */
+  public Boolean getHasImages() {
+    if (!StringUtils.isEmpty(poster) && !StringUtils.isEmpty(fanart)) {
+      return true;
+    }
+    return false;
   }
 }

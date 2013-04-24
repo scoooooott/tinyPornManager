@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -34,43 +34,27 @@ import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.components.AbstractTreeTableModel;
-import org.tinymediamanager.ui.components.TreeTableModel;
 
 /**
  * The Class TvShowTreeModel.
  * 
  * @author Manuel Laggner
  */
-public class TvShowTreeModel extends AbstractTreeTableModel {
-
-  /** The column names. */
-  static protected String[]         columnNames = { "TV shows", "NFO", "Images" };
-
-  /** The column types. */
-  static protected Class<?>[]       columnTypes = { TreeTableModel.class, ImageIcon.class, ImageIcon.class };
-
-  /** The Constant checkIcon. */
-  private final static ImageIcon    checkIcon   = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
-
-  /** The Constant crossIcon. */
-  private final static ImageIcon    crossIcon   = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
-
+public class TvShowTreeModel implements TreeModel {
   /** The root. */
-  private TvShowRootTreeNode        root        = new TvShowRootTreeNode();
+  private TvShowRootTreeNode        root       = new TvShowRootTreeNode();
 
   /** The listeners. */
-  private List<TreeModelListener>   listeners   = new ArrayList<TreeModelListener>();
+  private List<TreeModelListener>   listeners  = new ArrayList<TreeModelListener>();
 
   /** The node map to store the node for Objects. */
-  private HashMap<Object, TreeNode> nodeMap     = new HashMap<Object, TreeNode>();
+  private HashMap<Object, TreeNode> nodeMap    = new HashMap<Object, TreeNode>();
 
   /** The property change listener. */
   private PropertyChangeListener    propertyChangeListener;
 
   /** The movie list. */
-  private TvShowList                tvShowList  = TvShowList.getInstance();
+  private TvShowList                tvShowList = TvShowList.getInstance();
 
   /**
    * Instantiates a new tv show tree model.
@@ -83,21 +67,36 @@ public class TvShowTreeModel extends AbstractTreeTableModel {
     propertyChangeListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-        // react on changes of tv shows
+        // added a tv show
         if (ADDED_TV_SHOW.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TvShow) {
           // new tv Show added
           TvShow tvShow = (TvShow) evt.getNewValue();
           addTvShow(tvShow);
         }
 
+        // added a season
         if (ADDED_SEASON.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TvShowSeason) {
           TvShowSeason season = (TvShowSeason) evt.getNewValue();
           addTvShowSeason(season, season.getTvShow());
         }
 
+        // added an episode
         if (ADDED_EPISODE.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TvShowEpisode) {
           TvShowEpisode episode = (TvShowEpisode) evt.getNewValue();
           addTvShowEpisode(episode, episode.getTvShow().getSeasonForEpisode(episode));
+        }
+
+        // update on changes of tv show or episode
+        if (evt.getSource() instanceof TvShow || evt.getSource() instanceof TvShowEpisode) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodeMap.get(evt.getSource());
+          if (node != null) {
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
+            int index = parent.getIndex(node);
+            TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { node });
+            for (TreeModelListener listener : listeners) {
+              listener.treeNodesChanged(event);
+            }
+          }
         }
       }
     };
@@ -111,7 +110,7 @@ public class TvShowTreeModel extends AbstractTreeTableModel {
     }
 
     // sort the root and all children
-    root.sort();
+    // root.sort();
   }
 
   /**
@@ -206,6 +205,8 @@ public class TvShowTreeModel extends AbstractTreeTableModel {
         listener.treeNodesInserted(event);
       }
     }
+
+    episode.addPropertyChangeListener(propertyChangeListener);
   }
 
   /*
@@ -364,116 +365,4 @@ public class TvShowTreeModel extends AbstractTreeTableModel {
   public void valueForPathChanged(TreePath arg0, Object arg1) {
     // TODO Auto-generated method stub
   }
-
-  /**
-   * Gets the column count.
-   * 
-   * @return the column count
-   */
-  public int getColumnCount() {
-    return columnNames.length;
-  }
-
-  /**
-   * Gets the column name.
-   * 
-   * @param column
-   *          the column
-   * @return the column name
-   */
-  public String getColumnName(int column) {
-    return columnNames[column];
-  }
-
-  /**
-   * Gets the column class.
-   * 
-   * @param column
-   *          the column
-   * @return the column class
-   */
-  public Class<?> getColumnClass(int column) {
-    return columnTypes[column];
-  }
-
-  /**
-   * Gets the value at.
-   * 
-   * @param node
-   *          the node
-   * @param column
-   *          the column
-   * @return the value at
-   */
-  public Object getValueAt(Object node, int column) {
-    if (node instanceof TvShowTreeNode) {
-      TvShowTreeNode treeNode = (TvShowTreeNode) node;
-      TvShow tvShow = (TvShow) treeNode.getUserObject();
-      switch (column) {
-        case 0:
-          return tvShow.getTitle();
-        case 1:
-          return tvShow.getHasNfoFile() ? checkIcon : crossIcon;
-        case 2:
-          return tvShow.getHasImages() ? checkIcon : crossIcon;
-        default:
-          break;
-      }
-    }
-
-    if (node instanceof TvShowSeasonTreeNode) {
-      switch (column) {
-        case 0:
-          return "";
-        case 1:
-          return crossIcon;
-        case 2:
-          return crossIcon;
-        default:
-          break;
-      }
-    }
-
-    if (node instanceof TvShowEpisodeTreeNode) {
-      switch (column) {
-        case 0:
-          return "";
-        case 1:
-          return crossIcon;
-        case 2:
-          return crossIcon;
-        default:
-          break;
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * Checks if is cell editable.
-   * 
-   * @param node
-   *          the node
-   * @param column
-   *          the column
-   * @return true, if is cell editable
-   */
-  public boolean isCellEditable(Object node, int column) {
-    return true; // Important to activate TreeExpandListener
-  }
-
-  /**
-   * Sets the value at.
-   * 
-   * @param aValue
-   *          the a value
-   * @param node
-   *          the node
-   * @param column
-   *          the column
-   */
-  public void setValueAt(Object aValue, Object node, int column) {
-  }
-
 }

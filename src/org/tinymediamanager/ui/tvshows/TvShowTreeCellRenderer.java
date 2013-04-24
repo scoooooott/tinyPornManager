@@ -158,8 +158,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         tvShowEpisodeTitle.setText(episode.getEpisode() + ". " + episode.getTitle());
         tvShowEpisodePanel.setEnabled(tree.isEnabled());
 
-        tvShowEpisodeNfoLabel.setIcon(crossIcon);
-        tvShowEpisodeImageLabel.setIcon(checkIcon);
+        tvShowEpisodeNfoLabel.setIcon(episode.getHasNfoFile() ? checkIcon : crossIcon);
+        tvShowEpisodeImageLabel.setIcon(episode.getHasImages() ? checkIcon : crossIcon);
         returnValue = tvShowEpisodePanel;
       }
     }

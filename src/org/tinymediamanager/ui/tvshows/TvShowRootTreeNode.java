@@ -15,14 +15,15 @@
  */
 
 package org.tinymediamanager.ui.tvshows;
+
 import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import org.tinymediamanager.core.tvshow.TvShow;
-
 
 /**
  * The Class TvShowRootTreeNode.
@@ -91,6 +92,20 @@ public class TvShowRootTreeNode extends DefaultMutableTreeNode {
           showNode.sort();
         }
       }
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public void insert(MutableTreeNode newChild, int childIndex) {
+    if (this.children != null) {
+      int index = Collections.binarySearch(this.children, newChild, nodeComparator);
+      if (index < 0) {
+        super.insert(newChild, -index - 1);
+      }
+    }
+    else {
+      super.insert(newChild, childIndex);
     }
   }
 }
