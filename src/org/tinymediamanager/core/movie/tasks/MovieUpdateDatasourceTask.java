@@ -218,9 +218,14 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               movie.addToMediaFiles(mf);
             }
           }
-          else if (mf.getType().equals(MediaFileType.POSTER) || mf.getType().equals(MediaFileType.FANART)
-              || mf.getType().equals(MediaFileType.BANNER)) {
-            LOGGER.debug("parsing known graphic " + mf.getFilename());
+          else if (mf.getType().equals(MediaFileType.POSTER)) {
+            LOGGER.debug("parsing poster " + mf.getFilename());
+            movie.setPoster(mf.getFilename());
+            movie.addToMediaFiles(mf);
+          }
+          else if (mf.getType().equals(MediaFileType.FANART)) {
+            LOGGER.debug("parsing fanart " + mf.getFilename());
+            movie.setFanart(mf.getFilename());
             movie.addToMediaFiles(mf);
           }
         }
@@ -235,16 +240,19 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               if (vfilename.equals(FilenameUtils.getBaseName(mf.getFilename()))) {
                 // ok, basename matches - must be poster
                 mf.setType(MediaFileType.POSTER);
+                movie.setPoster(mf.getFilename());
                 movie.addToMediaFiles(mf);
               }
               else if (Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename()))) {
                 // ok, basename matches without stacking information - must be poster
                 mf.setType(MediaFileType.POSTER);
+                movie.setPoster(mf.getFilename());
                 movie.addToMediaFiles(mf);
               }
               else if (movie.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) {
                 // ok, basename matches movietitle - must be poster as well
                 mf.setType(MediaFileType.POSTER);
+                movie.setPoster(mf.getFilename());
                 movie.addToMediaFiles(mf);
               }
             }
