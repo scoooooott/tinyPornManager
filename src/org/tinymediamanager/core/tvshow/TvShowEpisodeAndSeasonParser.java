@@ -47,7 +47,7 @@ public class TvShowEpisodeAndSeasonParser {
   private static Pattern      pattern1 = Pattern.compile("[Ss]([0-9]+)[\\]\\[ ._-]*[Ee]([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // foo.ep01, foo.EP_01
   /** The pattern2. */
-  private static Pattern      pattern2 = Pattern.compile("[\\._ -]()[Ee][Pp]_?([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+  private static Pattern      pattern2 = Pattern.compile("[\\._ -]()[Ee][Pp]?_?([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // foo.yyyy.mm.dd.*
   /** The date1. */
   private static Pattern      date1    = Pattern.compile("([0-9]{4})[\\.-]([0-9]{2})[\\.-]([0-9]{2})", Pattern.CASE_INSENSITIVE);
@@ -320,7 +320,11 @@ public class TvShowEpisodeAndSeasonParser {
     }
 
     if (result.episodes.size() == 0 && resultFromParser.episodes.size() > 0) {
-      result.episodes.addAll(resultFromParser.episodes);
+      for (int episode : resultFromParser.episodes) {
+        if (!result.episodes.contains(episode)) {
+          result.episodes.add(episode);
+        }
+      }
     }
 
     if (StringUtils.isBlank(result.name) && StringUtils.isNotBlank(resultFromParser.name)) {
@@ -374,7 +378,7 @@ public class TvShowEpisodeAndSeasonParser {
 
       // if episode found take the 3 matcher group again to the matcher
       if (StringUtils.isBlank(result.name)) {
-        EpisodeMatchingResult newResult = parseString(m.group(3));
+        EpisodeMatchingResult newResult = parseString(" " + m.group(3));
         if (newResult.episodes.size() > 0) {
           // we found episodes again
           result.episodes.addAll(newResult.episodes);
