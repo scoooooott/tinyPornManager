@@ -211,7 +211,8 @@ public class TvShowInformationPanel extends JPanel {
     tpOverview.setEditable(false);
     scrollPaneOverview.setViewportView(tpOverview);
 
-    JPanel panelCast = new TvShowCastPanel(tvShowSelectionModel);
+    TvShowCastPanel panelCast = new TvShowCastPanel(tvShowSelectionModel);
+    panelCast.init();
     tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.cast"), null, panelCast, null); //$NON-NLS-1$
 
     // beansbinding init

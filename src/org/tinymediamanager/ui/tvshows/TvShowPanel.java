@@ -28,6 +28,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -198,6 +199,23 @@ public class TvShowPanel extends JPanel {
     // tree.getTree().setLargeModel(true);
     tree.setCellRenderer(new TvShowTreeCellRenderer());
     scrollPane.setViewportView(tree);
+
+    JPanel panelHeader = new JPanel();
+    scrollPane.setColumnHeaderView(panelHeader);
+    panelHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+
+    JLabel lblTvShowsColumn = new JLabel("Tv shows");
+    panelHeader.add(lblTvShowsColumn, "2, 1");
+
+    JLabel lblNfoColumn = new JLabel("");
+    lblNfoColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    panelHeader.add(lblNfoColumn, "4, 1");
+
+    JLabel lblImageColumn = new JLabel("");
+    lblImageColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Image.png")));
+    panelHeader.add(lblImageColumn, "5, 1");
 
     panelRight = new JPanel();
     splitPane.setRightComponent(panelRight);

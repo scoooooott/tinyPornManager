@@ -336,7 +336,7 @@ public class MovieInformationPanel extends JPanel {
   /**
    * Inits the panel (steps which has to be done after binding in calling class).
    */
-  public void init() {
+  void init() {
     if (tableCast.getModel().getRowCount() > 0) {
       tableCast.getSelectionModel().setSelectionInterval(0, 0);
     }
@@ -426,21 +426,6 @@ public class MovieInformationPanel extends JPanel {
     //
     jTableBinding.setEditable(false);
     jTableBinding.bind();
-    //
-    BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_19 = BeanProperty.create("selectedMovie.hasRating");
-    BeanProperty<StarRater, Boolean> starRaterBeanProperty_1 = BeanProperty.create("visible");
-    AutoBinding<MovieSelectionModel, Boolean, StarRater, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_19, panelRatingStars, starRaterBeanProperty_1);
-    autoBinding_21.bind();
-    //
-    BeanProperty<JLabel, Boolean> jLabelBeanProperty_1 = BeanProperty.create("visible");
-    AutoBinding<MovieSelectionModel, Boolean, JLabel, Boolean> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_19, lblRating, jLabelBeanProperty_1);
-    autoBinding_22.bind();
-    //
-    AutoBinding<MovieSelectionModel, Boolean, JLabel, Boolean> autoBinding_23 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_19, lblVoteCount, jLabelBeanProperty_1);
-    autoBinding_23.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.votes");
     AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,

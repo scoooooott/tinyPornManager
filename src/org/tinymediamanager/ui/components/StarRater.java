@@ -71,8 +71,7 @@ public class StarRater extends JPanel {
   private int                stars;
 
   /**
-   * The factor which the ratin will divided (i.e. rating 0 - 10 displayed with
-   * 5 stars)
+   * The factor which the ratin will divided (i.e. rating 0 - 10 displayed with 5 stars)
    */
   private int                factor;
 
@@ -272,7 +271,7 @@ public class StarRater extends JPanel {
    */
   @Override
   protected void paintComponent(Graphics g) {
-    if (rating > 0) {
+    if (rating >= 0) {
       // draw stars
       int w = STAR_BACKGROUND_IMAGE.getWidth(null);
       int h = STAR_BACKGROUND_IMAGE.getHeight(null);

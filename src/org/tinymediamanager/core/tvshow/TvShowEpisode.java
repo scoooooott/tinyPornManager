@@ -41,6 +41,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcher;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -398,12 +400,26 @@ public class TvShowEpisode extends MediaEntity {
       }
     }
 
-    // TODO
     // write NFO
-    // writeNFO();
+    writeNFO();
 
     // update DB
     saveToDb();
+  }
+
+  /**
+   * Write nfo.
+   */
+  public void writeNFO() {
+    List<TvShowEpisode> episodesInNfo = new ArrayList<TvShowEpisode>(1);
+
+    // worst case: multi episode in multiple files
+    // e.g. warehouse13.s01e01e02.Part1.avi/warehouse13.s01e01e02.Part2.avi
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      episodesInNfo.addAll(TvShowList.getInstance().getTvEpisodesByFile(mf.getFile()));
+    }
+
+    TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
   }
 
   /**
@@ -428,5 +444,20 @@ public class TvShowEpisode extends MediaEntity {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Gets the media files of a specific MediaFile type
+   * 
+   * @return the media files
+   */
+  public List<MediaFile> getMediaFiles(MediaFileType type) {
+    List<MediaFile> mf = new ArrayList<MediaFile>();
+    for (MediaFile mediaFile : this.mediaFilesObservable) {
+      if (mediaFile.getType().equals(type)) {
+        mf.add(mediaFile);
+      }
+    }
+    return mf;
   }
 }

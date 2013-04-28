@@ -45,6 +45,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
+  /** The Constant checkIcon. */
   private final static ImageIcon  checkIcon               = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
 
   /** The Constant crossIcon. */
@@ -56,20 +57,31 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
   /** The tv show info. */
   private JLabel                  tvShowInfo              = new JLabel();
 
+  /** The tv show season title. */
   private JLabel                  tvShowSeasonTitle       = new JLabel();
 
+  /** The tv show episode title. */
   private JLabel                  tvShowEpisodeTitle      = new JLabel();
 
+  /** The tv show panel. */
   private JPanel                  tvShowPanel             = new JPanel();
 
+  /** The tv show season panel. */
   private JPanel                  tvShowSeasonPanel       = new JPanel();
 
+  /** The tv show episode panel. */
   private JPanel                  tvShowEpisodePanel      = new JPanel();
 
+  /** The tv show nfo label. */
   private JLabel                  tvShowNfoLabel          = new JLabel();
+
+  /** The tv show image label. */
   private JLabel                  tvShowImageLabel        = new JLabel();
 
+  /** The tv show episode nfo label. */
   private JLabel                  tvShowEpisodeNfoLabel   = new JLabel();
+
+  /** The tv show episode image label. */
   private JLabel                  tvShowEpisodeImageLabel = new JLabel();
 
   /** The default renderer. */
@@ -84,7 +96,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
   public TvShowTreeCellRenderer() {
     // tvShowPanel.setLayout(new BoxLayout(tvShowPanel, BoxLayout.Y_AXIS));
     tvShowPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("20px"), ColumnSpec.decode("20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     tvShowTitle.setFont(new Font("Dialog", Font.BOLD, 12));
     tvShowTitle.setHorizontalAlignment(JLabel.LEFT);
@@ -106,7 +119,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
     // tvShowEpisodePanel.setLayout(new BoxLayout(tvShowEpisodePanel, BoxLayout.Y_AXIS));
     tvShowEpisodePanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("20px"), ColumnSpec.decode("20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
+        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
     // tvShowEpisodePanel.add(tvShowEpisodeTitle);
     tvShowEpisodeTitle.setMinimumSize(new Dimension(0, 0));
     tvShowEpisodePanel.add(tvShowEpisodeTitle, "1, 1");

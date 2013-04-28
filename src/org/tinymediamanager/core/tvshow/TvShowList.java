@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.core.tvshow;
-import static org.tinymediamanager.core.Constants.*;
+
+import static org.tinymediamanager.core.Constants.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -39,7 +40,6 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
-
 
 /**
  * The Class TvShowList.
@@ -383,5 +383,35 @@ public class TvShowList extends AbstractModelObject {
       }
     }
     return null;
+  }
+
+  /**
+   * Gets the tv episodes by file.
+   * 
+   * @param file
+   *          the file
+   * @return the tv episodes by file
+   */
+  public synchronized List<TvShowEpisode> getTvEpisodesByFile(File file) {
+    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
+    // validy check
+    if (file == null || !file.exists()) {
+      return episodes;
+    }
+
+    // check if that file is in any tv show/episode (iterating thread safe)
+    for (int i = 0; i < getTvShows().size(); i++) {
+      TvShow show = getTvShows().get(i);
+      for (int j = 0; j < show.getEpisodes().size(); j++) {
+        TvShowEpisode episode = show.getEpisodes().get(j);
+        for (int k = 0; k < episode.getMediaFiles().size(); k++) {
+          MediaFile mediaFile = episode.getMediaFiles().get(k);
+          if (file.getPath().equals(mediaFile.getFile().getPath())) {
+            episodes.add(episode);
+          }
+        }
+      }
+    }
+    return episodes;
   }
 }
