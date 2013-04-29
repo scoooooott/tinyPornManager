@@ -119,6 +119,7 @@ public class MediaEntityImageFetcher implements Runnable {
       // set the new image if its the first image
       if (firstImage) {
         LOGGER.debug("set " + type + " " + FilenameUtils.getName(filename));
+        ImageCache.invalidateCachedImage(filename);
         switch (type) {
           case POSTER:
             entity.setPoster(FilenameUtils.getName(filename));

@@ -131,4 +131,17 @@ public class ImageCache {
 
     return new ByteArrayInputStream(baos.toByteArray());
   }
+
+  /**
+   * Invalidate cached image.
+   * 
+   * @param path
+   *          the path
+   */
+  public static void invalidateCachedImage(String path) {
+    File cachedFile = new File(ImageCache.getCacheDir(), ImageCache.getCachedFileName(path) + ".jpg");
+    if (cachedFile.exists()) {
+      cachedFile.delete();
+    }
+  }
 }

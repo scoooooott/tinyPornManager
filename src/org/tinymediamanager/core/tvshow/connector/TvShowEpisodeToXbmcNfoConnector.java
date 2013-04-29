@@ -50,7 +50,7 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "episodedetails")
-@XmlType(propOrder = { "title", "showtitle", "rating", "season", "episode", "plot", "actors" })
+@XmlType(propOrder = { "title", "showtitle", "rating", "season", "episode", "plot", "thumb", "actors" })
 public class TvShowEpisodeToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -77,6 +77,11 @@ public class TvShowEpisodeToXbmcNfoConnector {
   /** The actors. */
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
+
+  /** not supported tags, but used to retrain in NFO. */
+
+  @XmlElement
+  String                      thumb;
 
   /**
    * Instantiates a new tv show episode to xbmc nfo connector.
@@ -188,6 +193,11 @@ public class TvShowEpisodeToXbmcNfoConnector {
         m.marshal(xbmc, w);
         StringBuilder sb = new StringBuilder(w.toString());
         w.close();
+
+        // strip out <?xml..> on all xmls except the first
+        if (i > 0) {
+          sb = new StringBuilder(sb.toString().replaceAll("<\\?xml.*\\?>", ""));
+        }
 
         // on windows make windows conform linebreaks
         if (SystemUtils.IS_OS_WINDOWS) {

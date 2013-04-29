@@ -25,18 +25,24 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -50,37 +56,37 @@ import com.bric.image.pixel.Scaling;
 public class ImageLabel extends JLabel {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
+  private static final long                serialVersionUID = 1L;
 
   /** The Constant logger. */
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageLabel.class);
+  private static final Logger              LOGGER           = LoggerFactory.getLogger(ImageLabel.class);
 
   /** The Constant CACHE_DIR. */
-  private static final String         CACHE_DIR        = "cache/image";
+  private static final String              CACHE_DIR        = "cache/image";
 
   /** The original image. */
-  private BufferedImage               originalImage;
+  private BufferedImage                    originalImage;
 
   /** The image url. */
-  private String                      imageUrl;
+  private String                           imageUrl;
 
   /** The image path. */
-  private String                      imagePath;
+  private String                           imagePath;
 
   /** The draw border. */
-  private boolean                     drawBorder;
+  private boolean                          drawBorder;
 
   /** The draw full width. */
-  private boolean                     drawFullWidth;
+  private boolean                          drawFullWidth;
 
   /** The url cache dir. */
-  private File                        imageCacheDir    = null;
+  private File                             imageCacheDir    = null;
 
   /** The worker. */
-  private ImageFetcher                worker;
+  private SwingWorker<BufferedImage, Void> worker           = null;
 
   /**
    * Instantiates a new image label.
@@ -135,40 +141,21 @@ public class ImageLabel extends JLabel {
   public void setImagePath(String newValue) {
     String oldValue = this.imagePath;
 
-    if (!StringUtils.isEmpty(oldValue) && oldValue.equals(newValue)) {
+    if (StringUtils.isNotEmpty(oldValue) && oldValue.equals(newValue)) {
       return;
     }
 
-    if (newValue == null) {
-      originalImage = null;
-    }
-    else {
-      this.imagePath = newValue;
-      firePropertyChange("imagePath", oldValue, newValue);
+    this.imagePath = newValue;
+    firePropertyChange("imagePath", oldValue, newValue);
 
-      if (StringUtils.isEmpty(newValue)) {
-        originalImage = null;
-        this.repaint();
-        return;
-      }
-
-      // File file = new File(imagePath);
-      File file = getCachedFile(imagePath);
-      if (file.exists()) {
-        try {
-          this.originalImage = com.bric.image.ImageLoader.createImage(file);// ImageIO.read(file);
-        }
-        catch (Exception e) {
-          // LOGGER.error("setImagePath", e);
-          originalImage = null;
-        }
-      }
-      else {
-        originalImage = null;
-      }
+    // stop previous worker
+    if (worker != null && !worker.isDone()) {
+      worker.cancel(true);
     }
 
-    this.repaint();
+    // load image in separate worker -> performance
+    worker = new ImageLoader(this.imagePath);
+    worker.execute();
   }
 
   /**
@@ -318,28 +305,28 @@ public class ImageLabel extends JLabel {
     return size;
   }
 
-  /**
-   * Gets the cached file name.
-   * 
-   * @param path
-   *          the url
-   * @return the cached file name
-   */
-  private String getCachedFileName(String path) {
-    try {
-      if (path == null)
-        return null;
-      // now uses a simple md5 hash, which should have a fairly low collision
-      // rate, especially for our
-      // limited use
-      byte[] key = DigestUtils.md5(path);
-      return new String(Hex.encodeHex(key));
-    }
-    catch (Exception e) {
-      LOGGER.error("Failed to create cached filename for image: " + path, e);
-      throw new RuntimeException(e);
-    }
-  }
+  // /**
+  // * Gets the cached file name.
+  // *
+  // * @param path
+  // * the url
+  // * @return the cached file name
+  // */
+  // private String getCachedFileName(String path) {
+  // try {
+  // if (path == null)
+  // return null;
+  // // now uses a simple md5 hash, which should have a fairly low collision
+  // // rate, especially for our
+  // // limited use
+  // byte[] key = DigestUtils.md5(path);
+  // return new String(Hex.encodeHex(key));
+  // }
+  // catch (Exception e) {
+  // LOGGER.error("Failed to create cached filename for image: " + path, e);
+  // throw new RuntimeException(e);
+  // }
+  // }
 
   /**
    * Gets the cache dir.
@@ -362,47 +349,46 @@ public class ImageLabel extends JLabel {
    *          the path
    * @return the cached file
    */
-  private File getCachedFile(String path) {
-    // try {
-    // File originalFile = new File(path);
-    // String cacheFilename = getCachedFileName(path);
-    // File cachedFile = new File(getCacheDir(), cacheFilename + ".tbn");
-    // if (!cachedFile.exists()) {
-    // // rescale & cache
-    // BufferedImage originalImage =
-    // com.bric.image.ImageLoader.createImage(originalFile);
-    // Point size = calculateSize((int) (originalImage.getWidth() / 1.5), (int)
-    // (originalImage.getHeight() / 1.5), originalImage.getWidth(),
-    // originalImage.getHeight(), true);
-    // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
-    //
-    // // convert to rgb
-    // BufferedImage rgb = new BufferedImage(scaledImage.getWidth(),
-    // scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-    //
-    // ColorConvertOp xformOp = new ColorConvertOp(null);
-    // xformOp.filter(scaledImage, rgb);
-    //
-    // ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
-    // ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
-    // jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-    // jpgWrtPrm.setCompressionQuality(0.7f);
-    //
-    // FileImageOutputStream output = new FileImageOutputStream(cachedFile);
-    // imgWrtr.setOutput(output);
-    // IIOImage image = new IIOImage(rgb, null, null);
-    // imgWrtr.write(null, image, jpgWrtPrm);
-    // imgWrtr.dispose();
-    //
-    // // ImageIO.write(rgb, "jpg", cachedFile);
-    // }
-    // return cachedFile;
-    // }
-    // catch (Exception e) {
-    // LOGGER.error("cache", e);
-    // }
+  private synchronized File getCachedFile(String path) {
+    if (StringUtils.isEmpty(path)) {
+      return null;
+    }
 
-    // fallback - openjdk does not store jpg :(
+    try {
+      File originalFile = new File(path);
+      String cacheFilename = ImageCache.getCachedFileName(path);
+      File cachedFile = new File(getCacheDir(), cacheFilename + ".jpg");
+      if (!cachedFile.exists()) {
+        // rescale & cache
+        BufferedImage originalImage = com.bric.image.ImageLoader.createImage(originalFile);
+        Point size = calculateSize((int) (originalImage.getWidth() / 1.5), (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
+            originalImage.getHeight(), true);
+        BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
+
+        // convert to rgb
+        BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+        ColorConvertOp xformOp = new ColorConvertOp(null);
+        xformOp.filter(scaledImage, rgb);
+
+        ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+        ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
+        jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+        jpgWrtPrm.setCompressionQuality(0.7f);
+
+        FileImageOutputStream output = new FileImageOutputStream(cachedFile);
+        imgWrtr.setOutput(output);
+        IIOImage image = new IIOImage(rgb, null, null);
+        imgWrtr.write(null, image, jpgWrtPrm);
+        imgWrtr.dispose();
+      }
+      return cachedFile;
+    }
+    catch (Exception e) {
+      LOGGER.warn("problem caching file: " + e.getMessage());
+    }
+
+    // fallback
     return new File(path);
   }
 
@@ -427,6 +413,63 @@ public class ImageLabel extends JLabel {
 
       }
       catch (IOException e) {
+        return null;
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#done()
+     */
+    @Override
+    protected void done() {
+      try {
+        // get fetched image
+        originalImage = get();
+      }
+      catch (Exception e) {
+        originalImage = null;
+      }
+      repaint();
+    }
+  }
+
+  /**
+   * The Class ImageLoader.
+   */
+  private class ImageLoader extends SwingWorker<BufferedImage, Void> {
+
+    /** The image path. */
+    private String imagePath;
+
+    /**
+     * Instantiates a new image loader.
+     * 
+     * @param imagePath
+     *          the image path
+     */
+    public ImageLoader(String imagePath) {
+      this.imagePath = imagePath;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.SwingWorker#doInBackground()
+     */
+    @Override
+    protected BufferedImage doInBackground() throws Exception {
+      File file = getCachedFile(imagePath);
+      if (file != null && file.exists()) {
+        try {
+          return com.bric.image.ImageLoader.createImage(file);
+        }
+        catch (Exception e) {
+          return null;
+        }
+      }
+      else {
         return null;
       }
     }

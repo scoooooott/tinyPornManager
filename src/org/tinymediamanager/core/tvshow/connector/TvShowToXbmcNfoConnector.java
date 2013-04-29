@@ -31,9 +31,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +53,7 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "studio", "actors" })
+@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "studio", "thumb", "actors" })
 public class TvShowToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -91,6 +93,11 @@ public class TvShowToXbmcNfoConnector {
   /** The genres. */
   @XmlElement(name = "genre")
   private List<String>        genres;
+
+  /** not supported tags, but used to retrain in NFO. */
+
+  @XmlElement
+  private List<Thumb>         thumb;
 
   /**
    * Instantiates a new tv show to xbmc nfo connector.
@@ -158,7 +165,7 @@ public class TvShowToXbmcNfoConnector {
     try {
 
       synchronized (JAXBContext.class) {
-        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class);
+        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class, Thumb.class);
       }
       Marshaller m = context.createMarshaller();
       m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
@@ -199,7 +206,7 @@ public class TvShowToXbmcNfoConnector {
     TvShow tvShow = null;
     try {
       synchronized (JAXBContext.class) {
-        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class);
+        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class, Thumb.class);
       }
       Unmarshaller um = context.createUnmarshaller();
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
@@ -581,6 +588,23 @@ public class TvShowToXbmcNfoConnector {
     public void setThumb(String thumb) {
       this.thumb = thumb;
     }
+  }
 
+  /**
+   * The Class Thumb.
+   */
+  public static class Thumb {
+
+    /** The type. */
+    @XmlAttribute
+    String type;
+
+    /** The season. */
+    @XmlAttribute
+    String season;
+
+    /** The thumb. */
+    @XmlValue
+    String thumb;
   }
 }

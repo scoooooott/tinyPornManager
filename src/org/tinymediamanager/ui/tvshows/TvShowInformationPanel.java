@@ -187,7 +187,7 @@ public class TvShowInformationPanel extends JPanel {
 
     panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("fill:default:grow"), }));
+        RowSpec.decode("min:grow"), }));
     // add(panelBottom, "1, 4, fill, bottom");
     splitPaneVertical.setBottomComponent(panelBottom);
 

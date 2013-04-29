@@ -266,7 +266,7 @@ public class MovieInformationPanel extends JPanel {
 
     JPanel panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-        RowSpec.decode("fill:default:grow"), }));
+        RowSpec.decode("fill:min:grow"), }));
 
     tabbedPaneMovieDetails = new JTabbedPane(JTabbedPane.TOP);
     panelBottom.add(tabbedPaneMovieDetails, "1, 2, fill, fill");
