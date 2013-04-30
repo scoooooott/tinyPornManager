@@ -224,36 +224,31 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.addToMediaFiles(mf);
           }
           else if (mf.getType().equals(MediaFileType.FANART)) {
+            if (mf.getPath().toLowerCase().contains("extrafanart")) {
+              // TODO: do not add additional fanarts, TBD
+              continue;
+            }
             LOGGER.debug("parsing fanart " + mf.getFilename());
             movie.setFanart(mf.getFilename());
             movie.addToMediaFiles(mf);
           }
         }
 
-        // third round - try to match unknown graphics like title.ext or filenmae.ext
-        for (MediaFile mf : mfs) {
-          if (mf.getType().equals(MediaFileType.GRAPHIC)) {
-            LOGGER.debug("parsing unknown graphic " + mf.getFilename());
-            List<MediaFile> vid = movie.getMediaFiles(MediaFileType.VIDEO);
-            if (vid != null && !vid.isEmpty()) {
-              String vfilename = FilenameUtils.getBaseName(vid.get(0).getFilename());
-              if (vfilename.equals(FilenameUtils.getBaseName(mf.getFilename()))) {
-                // ok, basename matches - must be poster
-                mf.setType(MediaFileType.POSTER);
-                movie.setPoster(mf.getFilename());
-                movie.addToMediaFiles(mf);
-              }
-              else if (Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename()))) {
-                // ok, basename matches without stacking information - must be poster
-                mf.setType(MediaFileType.POSTER);
-                movie.setPoster(mf.getFilename());
-                movie.addToMediaFiles(mf);
-              }
-              else if (movie.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) {
-                // ok, basename matches movietitle - must be poster as well
-                mf.setType(MediaFileType.POSTER);
-                movie.setPoster(mf.getFilename());
-                movie.addToMediaFiles(mf);
+        // third round - try to match unknown graphics like title.ext or filename.ext as poster
+        if (movie.getPoster().isEmpty()) {
+          for (MediaFile mf : mfs) {
+            if (mf.getType().equals(MediaFileType.GRAPHIC)) {
+              LOGGER.debug("parsing unknown graphic " + mf.getFilename());
+              List<MediaFile> vid = movie.getMediaFiles(MediaFileType.VIDEO);
+              if (vid != null && !vid.isEmpty()) {
+                String vfilename = FilenameUtils.getBaseName(vid.get(0).getFilename());
+                if (vfilename.equals(FilenameUtils.getBaseName(mf.getFilename())) // basename match
+                    || Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename w/o stacking
+                    || movie.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) { // title match
+                  mf.setType(MediaFileType.POSTER);
+                  movie.setPoster(mf.getFilename());
+                  movie.addToMediaFiles(mf);
+                }
               }
             }
           }
