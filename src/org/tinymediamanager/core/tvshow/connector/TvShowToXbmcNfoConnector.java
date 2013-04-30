@@ -53,7 +53,7 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "studio", "thumb", "actors" })
+@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "status", "studio", "thumb", "actors" })
 public class TvShowToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -97,7 +97,10 @@ public class TvShowToXbmcNfoConnector {
   /** not supported tags, but used to retrain in NFO. */
 
   @XmlElement
-  private List<Thumb>         thumb;
+  List<Thumb>                 thumb;
+
+  @XmlElement
+  String                      status;
 
   /**
    * Instantiates a new tv show to xbmc nfo connector.

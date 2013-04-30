@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,8 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "episodedetails")
-@XmlType(propOrder = { "title", "showtitle", "rating", "season", "episode", "plot", "thumb", "actors" })
+@XmlType(propOrder = { "title", "showtitle", "rating", "season", "episode", "plot", "thumb", "playcount", "lastplayed", "credits", "director",
+    "aired", "actors" })
 public class TvShowEpisodeToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -78,10 +80,29 @@ public class TvShowEpisodeToXbmcNfoConnector {
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
 
+  /** the credits. */
+  @XmlElement(name = "credits")
+  private List<String>        credits;
+
+  /** The director. */
+  @XmlElement(name = "director")
+  private List<String>        director;
+
+  /** The aired. */
+  private String              aired;
+
   /** not supported tags, but used to retrain in NFO. */
 
   @XmlElement
   String                      thumb;
+
+  /** The playcount. */
+  @XmlElement
+  String                      playcount;
+
+  /** The lastplayed. */
+  @XmlElement
+  String                      lastplayed;
 
   /**
    * Instantiates a new tv show episode to xbmc nfo connector.
@@ -93,8 +114,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
   /**
    * Sets the data.
    * 
-   * @param tvShowEpisode
-   *          the tv show
+   * @param tvShowEpisodes
+   *          the tv show episodes
    * @return the string
    */
   public static String setData(List<TvShowEpisode> tvShowEpisodes) {
@@ -171,12 +192,33 @@ public class TvShowEpisodeToXbmcNfoConnector {
       xbmc.setEpisode(String.valueOf(episode.getEpisode()));
       xbmc.setPlot(episode.getPlot());
       xbmc.actors.clear();
-      // TODO actors for tv shows? guests?
-      // for (TvShowActor actor : episode.getActors()) {
-      // xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
-      // }
+
+      // actors for tv show episode (guests?)
+      for (TvShowActor actor : episode.getActors()) {
+        xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
+      }
+
+      // actors for tv show
       for (TvShowActor actor : episode.getTvShow().getActors()) {
         xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
+      }
+
+      // support of frodo director tags
+      xbmc.director.clear();
+      if (StringUtils.isNotEmpty(episode.getDirector())) {
+        String directors[] = episode.getDirector().split(", ");
+        for (String director : directors) {
+          xbmc.addDirector(director);
+        }
+      }
+
+      // support of frodo credits tags
+      xbmc.credits.clear();
+      if (StringUtils.isNotEmpty(episode.getWriter())) {
+        String writers[] = episode.getWriter().split(", ");
+        for (String writer : writers) {
+          xbmc.addCredits(writer);
+        }
       }
 
       // and marshall it
@@ -425,6 +467,26 @@ public class TvShowEpisodeToXbmcNfoConnector {
   }
 
   /**
+   * Gets the aired.
+   * 
+   * @return the aired
+   */
+  @XmlElement(name = "aired")
+  public String getAired() {
+    return aired;
+  }
+
+  /**
+   * Sets the aired.
+   * 
+   * @param aired
+   *          the new aired
+   */
+  public void setAired(String aired) {
+    this.aired = aired;
+  }
+
+  /**
    * Gets the plot.
    * 
    * @return the plot
@@ -485,6 +547,44 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
     }
     return pureActors;
+  }
+
+  /**
+   * Gets the director.
+   * 
+   * @return the director
+   */
+  public List<String> getDirector() {
+    return director;
+  }
+
+  /**
+   * Sets the director.
+   * 
+   * @param director
+   *          the new director
+   */
+  public void addDirector(String director) {
+    this.director.add(director);
+  }
+
+  /**
+   * Gets the credits.
+   * 
+   * @return the credits
+   */
+  public List<String> getCredits() {
+    return credits;
+  }
+
+  /**
+   * Sets the credits.
+   * 
+   * @param credits
+   *          the new credits
+   */
+  public void addCredits(String credits) {
+    this.credits.add(credits);
   }
 
   // inner class actor to represent actors

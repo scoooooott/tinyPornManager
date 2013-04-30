@@ -45,6 +45,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaMetadata;
 
 /**
@@ -68,14 +69,28 @@ public class TvShowEpisode extends MediaEntity {
   /** The season. */
   private int                 season               = -1;
 
-  /** the first aired date */
+  /** the first aired date. */
   private Date                firstAired           = null;
 
-  /** is this episode in a disc folder structure? */
+  /** The director. */
+  private String              director             = "";
+
+  /** The writer. */
+  private String              writer               = "";
+
+  /** is this episode in a disc folder structure?. */
   private boolean             disc                 = false;
 
   /** The nfo filename. */
   private String              nfoFilename          = "";
+
+  /** The actors. */
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<TvShowActor>   actors               = new ArrayList<TvShowActor>();
+
+  /** The actors observables. */
+  @Transient
+  private List<TvShowActor>   actorsObservables    = ObservableCollections.observableList(actors);
 
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
@@ -86,7 +101,7 @@ public class TvShowEpisode extends MediaEntity {
   private List<MediaFile>     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
   /**
-   * first aired date
+   * first aired date.
    * 
    * @return the date
    */
@@ -95,7 +110,10 @@ public class TvShowEpisode extends MediaEntity {
   }
 
   /**
-   * sets the first aired date
+   * sets the first aired date.
+   * 
+   * @param newValue
+   *          the new first aired
    */
   public void setFirstAired(Date newValue) {
     Date oldValue = this.firstAired;
@@ -104,7 +122,7 @@ public class TvShowEpisode extends MediaEntity {
   }
 
   /**
-   * Is this episode in a disc folder structure?
+   * Is this episode in a disc folder structure?.
    * 
    * @return true/false
    */
@@ -113,7 +131,7 @@ public class TvShowEpisode extends MediaEntity {
   }
 
   /**
-   * This episode is in a disc folder structure
+   * This episode is in a disc folder structure.
    * 
    * @param disc
    *          true/false
@@ -136,8 +154,10 @@ public class TvShowEpisode extends MediaEntity {
   }
 
   /**
-   * convenient method to set the first aired date (parsed from string)
+   * convenient method to set the first aired date (parsed from string).
    * 
+   * @param aired
+   *          the new first aired
    * @throws ParseException
    *           if string cannot be parsed!
    */
@@ -320,6 +340,7 @@ public class TvShowEpisode extends MediaEntity {
    */
   public void initializeAfterLoading() {
     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+    actorsObservables = ObservableCollections.observableList(actors);
   }
 
   /**
@@ -380,6 +401,12 @@ public class TvShowEpisode extends MediaEntity {
     }
   }
 
+  /**
+   * Sets the metadata.
+   * 
+   * @param metadata
+   *          the new metadata
+   */
   public void setMetadata(MediaMetadata metadata) {
 
     setTitle(metadata.getTitle());
@@ -391,6 +418,41 @@ public class TvShowEpisode extends MediaEntity {
     catch (ParseException e) {
       LOGGER.warn(e.getMessage());
     }
+
+    List<TvShowActor> actors = new ArrayList<TvShowActor>();
+    String director = "";
+    String writer = "";
+    for (MediaCastMember member : metadata.getCastMembers()) {
+      switch (member.getType()) {
+        case ACTOR:
+          TvShowActor actor = new TvShowActor();
+          actor.setName(member.getName());
+          actor.setCharacter(member.getCharacter());
+          actor.setThumb(member.getImageUrl());
+          actors.add(actor);
+          break;
+
+        case DIRECTOR:
+          if (!StringUtils.isEmpty(director)) {
+            director += ", ";
+          }
+          director += member.getName();
+          break;
+
+        case WRITER:
+          if (!StringUtils.isEmpty(writer)) {
+            writer += ", ";
+          }
+          writer += member.getName();
+          break;
+
+        default:
+          break;
+      }
+    }
+    setActors(actors);
+    setDirector(director);
+    setWriter(writer);
 
     for (MediaArtwork ma : metadata.getFanart()) {
       if (ma.getType() == MediaArtworkType.BACKGROUND) {
@@ -447,8 +509,110 @@ public class TvShowEpisode extends MediaEntity {
   }
 
   /**
-   * Gets the media files of a specific MediaFile type
+   * Gets the writer.
    * 
+   * @return the writer
+   */
+  public String getWriter() {
+    return writer;
+  }
+
+  /**
+   * Sets the director.
+   * 
+   * @param newValue
+   *          the new director
+   */
+  public void setDirector(String newValue) {
+    String oldValue = this.director;
+    this.director = newValue;
+    firePropertyChange(DIRECTOR, oldValue, newValue);
+  }
+
+  /**
+   * Sets the writer.
+   * 
+   * @param newValue
+   *          the new writer
+   */
+  public void setWriter(String newValue) {
+    String oldValue = this.writer;
+    this.writer = newValue;
+    firePropertyChange(WRITER, oldValue, newValue);
+  }
+
+  /**
+   * Gets the director.
+   * 
+   * @return the director
+   */
+  public String getDirector() {
+    return director;
+  }
+
+  /**
+   * Adds the actor.
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void addActor(TvShowActor obj) {
+    actorsObservables.add(obj);
+    firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * Gets the actors.
+   * 
+   * @return the actors
+   */
+  public List<TvShowActor> getActors() {
+    return this.actorsObservables;
+  }
+
+  /**
+   * Removes the actor.
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void removeActor(TvShowActor obj) {
+    actorsObservables.remove(obj);
+    firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * Sets the actors.
+   * 
+   * @param newActors
+   *          the new actors
+   */
+  public void setActors(List<TvShowActor> newActors) {
+    // two way sync of actors
+
+    // first add the new ones
+    for (TvShowActor actor : newActors) {
+      if (!actorsObservables.contains(actor)) {
+        actorsObservables.add(actor);
+      }
+    }
+
+    // second remove unused
+    for (int i = actorsObservables.size() - 1; i >= 0; i--) {
+      TvShowActor actor = actorsObservables.get(i);
+      if (!newActors.contains(actor)) {
+        actorsObservables.remove(actor);
+      }
+    }
+
+    firePropertyChange(ACTORS, null, this.getActors());
+  }
+
+  /**
+   * Gets the media files of a specific MediaFile type.
+   * 
+   * @param type
+   *          the type
    * @return the media files
    */
   public List<MediaFile> getMediaFiles(MediaFileType type) {

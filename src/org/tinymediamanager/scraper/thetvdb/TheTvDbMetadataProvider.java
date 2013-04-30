@@ -353,6 +353,27 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     }
     md.setFirstAired(episode.getFirstAired());
 
+    // directors
+    for (String director : episode.getDirectors()) {
+      MediaCastMember cm = new MediaCastMember(CastType.DIRECTOR);
+      cm.setName(director);
+      md.addCastMember(cm);
+    }
+
+    // writers
+    for (String writer : episode.getWriters()) {
+      MediaCastMember cm = new MediaCastMember(CastType.WRITER);
+      cm.setName(writer);
+      md.addCastMember(cm);
+    }
+
+    // actors (guests?)
+    for (String guest : episode.getGuestStars()) {
+      MediaCastMember cm = new MediaCastMember(CastType.ACTOR);
+      cm.setName(guest);
+      md.addCastMember(cm);
+    }
+
     // Banner
     MediaArtwork ma = new MediaArtwork();
     ma.setType(MediaArtworkType.BACKGROUND);
