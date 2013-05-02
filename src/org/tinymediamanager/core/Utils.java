@@ -72,6 +72,58 @@ public class Utils {
   private static final Logger      LOGGER          = LoggerFactory.getLogger(Utils.class);
 
   /**
+   * returns the relative path of 2 absolute file paths
+   * 
+   * @param parent
+   *          the directory
+   * @param child
+   *          the subdirectory
+   * @return relative path
+   */
+  public static String relPath(String parent, String child) {
+    return relPath(new File(parent), new File(child));
+  }
+
+  /**
+   * returns the relative path of 2 absolute file paths
+   * 
+   * @param parent
+   *          the directory
+   * @param child
+   *          the subdirectory
+   * @return relative path
+   */
+  public static String relPath(File parent, String child) {
+    return relPath(parent, new File(child));
+  }
+
+  /**
+   * returns the relative path of 2 absolute file paths
+   * 
+   * @param parent
+   *          the directory
+   * @param child
+   *          the subdirectory
+   * @return relative path
+   */
+  public static String relPath(String parent, File child) {
+    return relPath(new File(parent), child);
+  }
+
+  /**
+   * returns the relative path of 2 absolute file paths
+   * 
+   * @param parent
+   *          the directory
+   * @param child
+   *          the subdirectory
+   * @return relative path
+   */
+  public static String relPath(File parent, File child) {
+    return parent.toURI().relativize(child.toURI()).getPath();
+  }
+
+  /**
    * Returns the sortable variant of title/originaltitle<br>
    * eg "The Bourne Legacy" -> "Bourne Legacy, The".
    * 
