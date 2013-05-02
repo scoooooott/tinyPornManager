@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.components;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -41,12 +40,12 @@ public class StarRater extends JPanel {
   private static final long  serialVersionUID      = 1L;
 
   /** The Constant STAR_BACKGROUND_IMAGE. */
-  private static final Image STAR_BACKGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(
-                                                       MainWindow.class.getResource("/org/tinymediamanager/ui/images/24.png"));
+  private static final Image STAR_BACKGROUND_IMAGE = com.bric.image.ImageLoader.createImage(MainWindow.class
+                                                       .getResource("/org/tinymediamanager/ui/images/24.png"));
 
   /** The Constant STAR_FOREGROUND_IMAGE. */
-  private static final Image STAR_FOREGROUND_IMAGE = Toolkit.getDefaultToolkit().createImage(
-                                                       MainWindow.class.getResource("/org/tinymediamanager/ui/images/mark24.png"));
+  private static final Image STAR_FOREGROUND_IMAGE = com.bric.image.ImageLoader.createImage(MainWindow.class
+                                                       .getResource("/org/tinymediamanager/ui/images/mark24.png"));
 
   /**
    * The listener.
@@ -177,7 +176,7 @@ public class StarRater extends JPanel {
         if (isEnabled()) {
           rollover = 0;
           done = true;
-          StarRater.this.selection = 1 + (event.getX() / STAR_BACKGROUND_IMAGE.getWidth(null));
+          StarRater.this.selection = 1 + (event.getX() / STAR_FOREGROUND_IMAGE.getWidth(null));
           for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).handleSelection(StarRater.this.selection);
           }
