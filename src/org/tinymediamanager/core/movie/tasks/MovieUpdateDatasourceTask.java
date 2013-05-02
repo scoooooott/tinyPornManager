@@ -229,7 +229,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               continue;
             }
             LOGGER.debug("parsing fanart " + mf.getFilename());
-            movie.setFanart(mf.getFilename());
+            if (movie.getFanart().isEmpty()) {
+              movie.setFanart(mf.getFilename());
+            }
             movie.addToMediaFiles(mf);
           }
         }

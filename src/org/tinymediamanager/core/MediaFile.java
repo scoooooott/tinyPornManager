@@ -145,6 +145,7 @@ public class MediaFile extends AbstractModelObject {
   public MediaFileType parseType() {
     String ext = getExtension().toLowerCase();
     String name = getFilename().toLowerCase();
+    String base = FilenameUtils.getBaseName(name);
 
     if (name.contains("sample") || name.contains("trailer")) {
       return MediaFileType.TRAILER;
@@ -155,7 +156,7 @@ public class MediaFile extends AbstractModelObject {
     }
 
     if (ext.equals("jpg") || ext.equals("png") || ext.equals("tbn")) {
-      if (name.contains("poster") || name.contains("cover") || name.startsWith("movie") || name.startsWith("folder")) {
+      if (name.contains("poster") || name.contains("cover") || base.equals("movie") || name.startsWith("folder")) {
         return MediaFileType.POSTER;
       }
       if (name.contains("banner")) {
