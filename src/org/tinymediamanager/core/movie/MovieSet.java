@@ -589,4 +589,16 @@ public class MovieSet extends MediaEntity {
     this.fanart = newValue;
     firePropertyChange(FANART, oldValue, newValue);
   }
+
+  /**
+   * Gets the checks for images.
+   * 
+   * @return the checks for images
+   */
+  public Boolean getHasImages() {
+    if (!StringUtils.isEmpty(poster) && !StringUtils.isEmpty(fanart)) {
+      return true;
+    }
+    return false;
+  }
 }

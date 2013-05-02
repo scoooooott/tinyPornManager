@@ -108,6 +108,7 @@ public class TvShowPanel extends JPanel {
   /** The action edit. */
   private final Action                actionEdit              = new EditAction(false);
 
+  /** The width. */
   private int                         width                   = 0;
 
   /**
@@ -177,6 +178,8 @@ public class TvShowPanel extends JPanel {
 
     // TODO move to a correcter place
     tree = new ZebraJTree(treeModel) {
+      private static final long serialVersionUID = 1L;
+
       public void paintComponent(Graphics g) {
         width = this.getWidth();
         super.paintComponent(g);

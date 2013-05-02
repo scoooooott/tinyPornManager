@@ -50,6 +50,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -122,8 +123,8 @@ public class MovieMediaInformationPanel extends JPanel {
    */
   public MovieMediaInformationPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
-        GlazedLists.beanConnector(MediaFile.class));
+    mediaFileEventList = GlazedListsSwing.swingThreadProxyList(new ObservableElementList<MediaFile>(GlazedLists
+        .threadSafeList(new BasicEventList<MediaFile>()), GlazedLists.beanConnector(MediaFile.class)));
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,

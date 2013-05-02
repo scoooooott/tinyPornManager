@@ -16,6 +16,9 @@
 package org.tinymediamanager.ui.moviesets;
 
 import java.awt.CardLayout;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
@@ -43,9 +46,12 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.movies.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
+import org.tinymediamanager.ui.movies.MovieSetTreeCellRenderer;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetEditorDialog;
 
@@ -100,6 +106,9 @@ public class MovieSetPanel extends JPanel {
   /** The action edit movie set. */
   private final Action                actionEditMovieSet   = new EditMovieSetAction();
 
+  /** The width. */
+  private int                         width                = 0;
+
   /**
    * Instantiates a new movie set panel.
    */
@@ -149,9 +158,30 @@ public class MovieSetPanel extends JPanel {
     JScrollPane scrollPane = new JScrollPane();
     panelMovieSetList.add(scrollPane, "2, 4, fill, fill");
 
-    tree = new JTree(treeModel);
+    // tree = new JTree(treeModel);
+    tree = new ZebraJTree(treeModel) {
+      private static final long serialVersionUID = 1L;
+
+      public void paintComponent(Graphics g) {
+        width = this.getWidth();
+        super.paintComponent(g);
+      }
+    };
+
+    // // TODO move to a correcter place
+    TreeUI ui = new TreeUI() {
+      protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
+          boolean hasBeenExpanded, boolean isLeaf) {
+        bounds.width = width - bounds.x;
+        super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
+      }
+
+    };
+    tree.setUI(ui);
+
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
+    tree.setCellRenderer(new MovieSetTreeCellRenderer());
     scrollPane.setViewportView(tree);
 
     final JPanel panelRight = new JPanel();

@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
@@ -31,7 +30,7 @@ import javax.swing.tree.TreeCellRenderer;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
-import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.ImageIconConverter;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -44,12 +43,6 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowTreeCellRenderer implements TreeCellRenderer {
-
-  /** The Constant checkIcon. */
-  private final static ImageIcon  checkIcon               = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
-
-  /** The Constant crossIcon. */
-  private final static ImageIcon  crossIcon               = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
 
   /** The tv show title. */
   private JLabel                  tvShowTitle             = new JLabel();
@@ -143,8 +136,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
         tvShowTitle.setText(tvShow.getTitle());
         tvShowInfo.setText(tvShow.getSeasons().size() + " Seasons - " + tvShow.getEpisodes().size() + " Episodes");
-        tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? checkIcon : crossIcon);
-        tvShowImageLabel.setIcon(tvShow.getHasImages() ? checkIcon : crossIcon);
+        tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
+        tvShowImageLabel.setIcon(tvShow.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
 
         tvShowPanel.setEnabled(tree.isEnabled());
         returnValue = tvShowPanel;
@@ -171,8 +164,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         tvShowEpisodeTitle.setText(episode.getEpisode() + ". " + episode.getTitle());
         tvShowEpisodePanel.setEnabled(tree.isEnabled());
 
-        tvShowEpisodeNfoLabel.setIcon(episode.getHasNfoFile() ? checkIcon : crossIcon);
-        tvShowEpisodeImageLabel.setIcon(episode.getHasImages() ? checkIcon : crossIcon);
+        tvShowEpisodeNfoLabel.setIcon(episode.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
+        tvShowEpisodeImageLabel.setIcon(episode.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
         returnValue = tvShowEpisodePanel;
       }
     }

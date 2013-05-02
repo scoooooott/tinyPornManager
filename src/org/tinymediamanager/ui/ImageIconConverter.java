@@ -28,10 +28,10 @@ import org.tinymediamanager.ui.movies.MoviePanel;
 public class ImageIconConverter extends Converter<Object, Object> {
 
   /** The Constant checkIcon. */
-  public final static ImageIcon checkIcon = new ImageIcon(MoviePanel.class.getResource("images/Checkmark.png"));
+  public final static ImageIcon checkIcon = new ImageIcon(MoviePanel.class.getResource("/org/tinymediamanager/ui/images/Checkmark.png"));
 
   /** The Constant crossIcon. */
-  public final static ImageIcon crossIcon = new ImageIcon(MoviePanel.class.getResource("images/Cross.png"));
+  public final static ImageIcon crossIcon = new ImageIcon(MoviePanel.class.getResource("/org/tinymediamanager/ui/images/Cross.png"));
 
   /*
    * (non-Javadoc)

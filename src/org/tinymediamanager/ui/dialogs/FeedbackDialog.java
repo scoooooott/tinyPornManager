@@ -41,6 +41,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -143,11 +144,28 @@ public class FeedbackDialog extends JDialog {
         try {
           List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 
-          String message = new String("Feedback from " + tfName.getText() + "\nEmail: " + tfEmail.getText() + "\nUUID: "
-              + System.getProperty("tmm.uuid") + "\n\n");
-          message += textArea.getText();
+          // String message = new String("Feedback from " + tfName.getText() + "\nEmail: " + tfEmail.getText() + "\nUUID: "
+          // + System.getProperty("tmm.uuid") + "\n\n");
+          // message += textArea.getText();
 
-          nameValuePairs.add(new BasicNameValuePair("message", message));
+          StringBuilder message = new StringBuilder("Feedback from ");
+          message.append(tfName.getText());
+          message.append("\nEmail:");
+          message.append(tfEmail.getText());
+          message.append("\n\nVersion: ");
+          message.append(ReleaseInfo.getVersion());
+          message.append("\nBuild: ");
+          message.append(ReleaseInfo.getBuild());
+          message.append("\nOS: ");
+          message.append(System.getProperty("os.name"));
+          message.append(" ");
+          message.append(System.getProperty("os.version"));
+          message.append("\nUUID: ");
+          message.append(System.getProperty("tmm.uuid"));
+          message.append("\n\n");
+          message.append(textArea.getText());
+
+          nameValuePairs.add(new BasicNameValuePair("message", message.toString()));
           post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 
           HttpResponse response = client.execute(post);
