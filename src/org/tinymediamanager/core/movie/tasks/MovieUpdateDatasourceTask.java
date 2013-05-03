@@ -16,12 +16,14 @@
 package org.tinymediamanager.core.movie.tasks;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,6 +40,7 @@ import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.ParserUtils;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class UpdateDataSourcesTask.
@@ -79,15 +82,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   public Void doInBackground() {
     try {
       startProgressBar("prepare scan...");
-      for (String path : dataSources) {
-        ArrayList<File> mov = getRootMovieDirs(new File(path), 0);
-        // remove dupe dirs
-        HashSet<File> h = new HashSet<File>(mov);
-        mov.clear();
-        mov.addAll(h);
-
-        for (File movieDir : mov) {
-          submitTask(new FindMovieTask(movieDir, path));
+      for (String ds : dataSources) {
+        File[] dirs = new File(ds).listFiles();
+        for (File file : dirs) {
+          if (file.isDirectory()) {
+            submitTask(new FindMovieTask(file, ds));
+          }
         }
       }
 
@@ -142,7 +142,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
     @Override
     public String call() throws Exception {
-      parseMovieDirectory(subdir, datasource);
+      // find all possible movie folders recursive
+      ArrayList<File> mov = getRootMovieDirs(subdir, 1);
+      // remove dupe movie dirs
+      HashSet<File> h = new HashSet<File>(mov);
+      mov.clear();
+      mov.addAll(h);
+      for (File movieDir : mov) {
+        parseMovieDirectory(movieDir, datasource);
+      }
+      // return first level folder name... uhm. yeah
       return subdir.getName();
     }
   }
@@ -155,7 +164,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    */
   private void parseMovieDirectory(File movieDir, String dataSource) {
     try {
-      Movie movie = movieList.getMovieByPath(movieDir.getName());
+      Movie movie = movieList.getMovieByPath(movieDir.getPath());
       if (movie == null) {
         LOGGER.info("parsing movie " + movieDir);
         movie = new Movie();
@@ -179,6 +188,20 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             if (nfo != null) {
               movie = nfo;
             }
+            else {
+              // is NFO, but parsing exception. try to find at least imdb id within
+              try {
+                String imdb = FileUtils.readFileToString(mf.getFile());
+                imdb = StrgUtils.substr(imdb, ".*(tt\\d{7}).*");
+                if (!imdb.isEmpty()) {
+                  LOGGER.debug("Found IMDB id: " + imdb);
+                  movie.setImdbId(imdb);
+                }
+              }
+              catch (IOException e) {
+                LOGGER.warn("couldn't read NFO " + mf.getFilename());
+              }
+            } // end NFO null
           }
         }
 
@@ -285,7 +308,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    * @param directory
    *          start dir
    * @param level
-   *          the level how deep we are (start with 0)
+   *          the level how deep we are (level 0 = datasource root)
    * @return arraylist of abolute movie dirs
    */
   public ArrayList<File> getRootMovieDirs(File directory, int level) {
