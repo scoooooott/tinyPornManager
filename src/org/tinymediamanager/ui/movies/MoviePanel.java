@@ -564,6 +564,7 @@ public class MoviePanel extends JPanel {
       List<Movie> unscrapedMovies = movieList.getUnscrapedMovies();
       if (unscrapedMovies.size() > 0) {
         MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$
+        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -618,6 +619,7 @@ public class MoviePanel extends JPanel {
       if (selectedMovies.size() > 0) {
         // scrapeTask = new ScrapeTask(selectedMovies);
         MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.selected.force")); //$NON-NLS-1$
+        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -665,6 +667,7 @@ public class MoviePanel extends JPanel {
 
       if (selectedMovies.size() > 0) {
         MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.metadata")); //$NON-NLS-1$
+        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
         // get options from dialog
         MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
@@ -838,6 +841,7 @@ public class MoviePanel extends JPanel {
       // export selected movies
       if (movies.size() > 0) {
         MovieExporterDialog dialog = new MovieExporterDialog(movies);
+        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
       }
     }
@@ -1072,6 +1076,7 @@ public class MoviePanel extends JPanel {
       // get data of all files within all selected movies
       if (selectedMovies.size() > 0) {
         MovieBatchEditorDialog editor = new MovieBatchEditorDialog(selectedMovies);
+        editor.setLocationRelativeTo(MainWindow.getActiveInstance());
         editor.setVisible(true);
       }
 

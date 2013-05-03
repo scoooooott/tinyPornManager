@@ -126,6 +126,9 @@ public class TmmWindowSaver implements AWTEventListener {
           frame.setBounds(rect);
           // frame.validate();
         }
+        else {
+          frame.setLocationRelativeTo(null);
+        }
       }
 
       // sliders

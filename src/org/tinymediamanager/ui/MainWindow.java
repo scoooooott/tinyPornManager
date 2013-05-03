@@ -335,7 +335,15 @@ public class MainWindow extends JFrame {
         }
       }
     });
+  }
 
+  /**
+   * Gets the active instance.
+   * 
+   * @return the active instance
+   */
+  public static MainWindow getActiveInstance() {
+    return instance;
   }
 
   // status bar thread
@@ -458,6 +466,7 @@ public class MainWindow extends JFrame {
      */
     public void actionPerformed(ActionEvent e) {
       Dialog aboutDialog = new AboutDialog();
+      aboutDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
       aboutDialog.setVisible(true);
     }
   }
@@ -507,6 +516,7 @@ public class MainWindow extends JFrame {
     public void actionPerformed(ActionEvent e) {
       JDialog dialog = new FeedbackDialog();
       dialog.pack();
+      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
       dialog.setVisible(true);
     }
   }
@@ -544,6 +554,7 @@ public class MainWindow extends JFrame {
     public void actionPerformed(ActionEvent e) {
       JDialog dialog = new BugReportDialog();
       dialog.pack();
+      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
       dialog.setVisible(true);
     }
   }

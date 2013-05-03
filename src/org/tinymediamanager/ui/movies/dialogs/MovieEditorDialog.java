@@ -67,13 +67,14 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
-import org.tinymediamanager.ui.TableColumnAdjuster;
-import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -322,6 +323,7 @@ public class MovieEditorDialog extends JDialog {
         public void mouseClicked(MouseEvent e) {
           ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.POSTER, movieList.getArtworkProviders(), lblPoster,
               null, null);
+          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
           dialog.setVisible(true);
         }
       });
@@ -483,6 +485,7 @@ public class MovieEditorDialog extends JDialog {
         public void mouseClicked(MouseEvent e) {
           ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.FANART, movieList.getArtworkProviders(), lblFanart,
               extrathumbs, extrafanarts);
+          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
           dialog.setVisible(true);
         }
       });
@@ -1183,6 +1186,7 @@ public class MovieEditorDialog extends JDialog {
    * @return true, if successful
    */
   public boolean showDialog() {
+    setLocationRelativeTo(MainWindow.getActiveInstance());
     setVisible(true);
     return continueQueue;
   }

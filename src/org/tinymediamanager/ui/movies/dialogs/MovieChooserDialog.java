@@ -67,6 +67,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -415,6 +416,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
               {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(movieToScrape.getIds(), ImageType.POSTER, artworkProviders, lblImage, null, null);
+                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
                 movieToScrape.setPosterUrl(lblImage.getImageUrl());
                 movieToScrape.writeImages(true, false);
@@ -669,6 +671,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
    */
   public boolean showDialog() {
     pack();
+    setLocationRelativeTo(MainWindow.getActiveInstance());
     setVisible(true);
     return continueQueue;
   }

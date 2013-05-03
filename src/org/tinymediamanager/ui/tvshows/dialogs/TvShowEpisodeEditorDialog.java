@@ -47,6 +47,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -229,6 +230,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
    */
   public boolean showDialog() {
     setVisible(true);
+    setLocationRelativeTo(MainWindow.getActiveInstance());
     return continueQueue;
   }
 
