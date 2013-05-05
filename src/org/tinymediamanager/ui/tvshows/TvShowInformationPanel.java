@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.util.ResourceBundle;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -31,6 +32,8 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.ui.CertificationImageConverter;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.StarRater;
@@ -77,9 +80,6 @@ public class TvShowInformationPanel extends JPanel {
   /** The lbl vote count. */
   private JLabel                      lblVoteCount;
 
-  /** The lbl tagline. */
-  private JLabel                      lblTagline;
-
   /** The lbl certification image. */
   private JLabel                      lblCertificationImage;
 
@@ -100,6 +100,7 @@ public class TvShowInformationPanel extends JPanel {
 
   /** The tv show selection model. */
   private TvShowSelectionModel        tvShowSelectionModel;
+  private JPanel                      panelMediaInformation;
 
   /**
    * Instantiates a new tv show information panel.
@@ -127,23 +128,24 @@ public class TvShowInformationPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"),
         RowSpec.decode("top:pref:grow"), }));
 
-    JPanel panelMovieHeader = new JPanel();
-    panelTop.add(panelMovieHeader, "2, 1, 3, 1, fill, top");
-    panelMovieHeader.setBorder(null);
-    panelMovieHeader.setLayout(new BorderLayout(0, 0));
+    JPanel panelTvShowHeader = new JPanel();
+    panelTop.add(panelTvShowHeader, "2, 1, 3, 1, fill, top");
+    panelTvShowHeader.setBorder(null);
+    panelTvShowHeader.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JPanel panelMovieTitle = new JPanel();
-    panelMovieHeader.add(panelMovieTitle, BorderLayout.NORTH);
-    panelMovieTitle.setLayout(new BorderLayout(0, 0));
+    JPanel panelTvShowTitle = new JPanel();
+    panelTvShowHeader.add(panelTvShowTitle, "1, 1, fill, top");
+    panelTvShowTitle.setLayout(new BorderLayout(0, 0));
     lblTvShowName = new JLabel("");
     // panelMovieHeader.add(lblMovieName, BorderLayout.NORTH);
-    panelMovieTitle.add(lblTvShowName);
+    panelTvShowTitle.add(lblTvShowName);
     lblTvShowName.setFont(new Font("Dialog", Font.BOLD, 16));
 
     JPanel panelRatingTagline = new JPanel();
-    panelMovieHeader.add(panelRatingTagline, BorderLayout.CENTER);
+    panelTvShowHeader.add(panelRatingTagline, "1, 2, fill, top");
     panelRatingTagline.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("24px"), FormFactory.DEFAULT_ROWSPEC, }));
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("24px"), }));
 
     lblRating = new JLabel("");
     panelRatingTagline.add(lblRating, "2, 2, left, center");
@@ -155,11 +157,8 @@ public class TvShowInformationPanel extends JPanel {
     panelRatingTagline.add(panelRatingStars, "1, 2, left, top");
     panelRatingStars.setEnabled(false);
 
-    lblTagline = new JLabel();
-    panelRatingTagline.add(lblTagline, "1, 3, 3, 1, default, center");
-
     panelTvShowLogos = new JPanel();
-    panelMovieHeader.add(panelTvShowLogos, BorderLayout.EAST);
+    panelTvShowHeader.add(panelTvShowLogos, "2, 1, 1, 2, fill, fill");
 
     lblCertificationImage = new JLabel();
     panelTvShowLogos.add(lblCertificationImage);
@@ -188,7 +187,6 @@ public class TvShowInformationPanel extends JPanel {
     panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("min:grow"), }));
-    // add(panelBottom, "1, 4, fill, bottom");
     splitPaneVertical.setBottomComponent(panelBottom);
 
     tabbedPaneTvShowDetails = new JTabbedPane(JTabbedPane.TOP);
@@ -205,7 +203,6 @@ public class TvShowInformationPanel extends JPanel {
 
     JScrollPane scrollPaneOverview = new JScrollPane();
     panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
-    // panelBottom.add(scrollPaneOverview, "1, 2, fill, fill");
 
     tpOverview = new JTextPane();
     tpOverview.setEditable(false);
@@ -214,6 +211,9 @@ public class TvShowInformationPanel extends JPanel {
     TvShowCastPanel panelCast = new TvShowCastPanel(tvShowSelectionModel);
     panelCast.init();
     tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.cast"), null, panelCast, null); //$NON-NLS-1$
+
+    panelMediaInformation = new TvShowMediaInformationPanel(tvShowSelectionModel);
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.mediainformation"), null, panelMediaInformation, null);
 
     // beansbinding init
     initDataBindings();
@@ -257,5 +257,12 @@ public class TvShowInformationPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowSelectionModel, tvShowSelectionModelBeanProperty_7, lblTvShowBanner, imageLabelBeanProperty);
     autoBinding_8.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Certification> tvShowSelectionModelBeanProperty_8 = BeanProperty.create("selectedTvShow.certification");
+    BeanProperty<JLabel, Icon> jLabelBeanProperty_2 = BeanProperty.create("icon");
+    AutoBinding<TvShowSelectionModel, Certification, JLabel, Icon> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowSelectionModel, tvShowSelectionModelBeanProperty_8, lblCertificationImage, jLabelBeanProperty_2);
+    autoBinding_9.setConverter(new CertificationImageConverter());
+    autoBinding_9.bind();
   }
 }

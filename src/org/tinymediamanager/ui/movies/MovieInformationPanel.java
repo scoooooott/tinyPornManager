@@ -52,6 +52,7 @@ import org.tinymediamanager.ui.WatchedIconConverter;
 import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.StarRater;
+import org.tinymediamanager.ui.components.ZebraJTable;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -313,11 +314,12 @@ public class MovieInformationPanel extends JPanel {
     lblActors = new JLabel(BUNDLE.getString("movieinformation.actors")); //$NON-NLS-1$
     panelMovieCast.add(lblActors, "2, 6, default, top");
 
-    JScrollPane scrollPaneMovieCast = new JScrollPane();
+    // tableCast = new JTable();
+    tableCast = new ZebraJTable();
+    // JScrollPane scrollPaneMovieCast = new JScrollPane();
+    JScrollPane scrollPaneMovieCast = ZebraJTable.createStripedJScrollPane(tableCast);
     lblActors.setLabelFor(scrollPaneMovieCast);
     panelMovieCast.add(scrollPaneMovieCast, "4, 6, 1, 2");
-
-    tableCast = new JTable();
     scrollPaneMovieCast.setViewportView(tableCast);
 
     lblActorThumb = new ActorImageLabel();

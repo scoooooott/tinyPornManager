@@ -40,9 +40,9 @@ public enum Certification {
   US_NC17(CountryCode.US, "NC-17", new String[] { "NC-17", "Rated NC-17" }),
 
   /** US TV certifications */
-  US_TV_Y(CountryCode.US, "TV-Y", new String[] { "TV-Y" }), US_TV_Y7(CountryCode.US, "TV-Y7", new String[] { "TV-Y7" }), US_TV_G(CountryCode.US,
-      "TV-G", new String[] { "TV-G" }), US_TV_PG(CountryCode.US, "TV-PG", new String[] { "TV-PG" }), US_TV_14(CountryCode.US, "TV-14",
-      new String[] { "TV-14" }), US_TV_MA(CountryCode.US, "TV-MA", new String[] { "TV-MA" }),
+  US_TVY(CountryCode.US, "TV-Y", new String[] { "TV-Y" }), US_TVY7(CountryCode.US, "TV-Y7", new String[] { "TV-Y7" }), US_TVG(CountryCode.US, "TV-G",
+      new String[] { "TV-G" }), US_TVPG(CountryCode.US, "TV-PG", new String[] { "TV-PG" }),
+  US_TV14(CountryCode.US, "TV-14", new String[] { "TV-14" }), US_TVMA(CountryCode.US, "TV-MA", new String[] { "TV-MA" }),
 
   /** DE certifications. */
   DE_FSK0(CountryCode.DE, "FSK 0", new String[] { "FSK 0", "FSK0", "0" }),

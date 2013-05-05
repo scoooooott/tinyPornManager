@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.tvshows;
 
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,7 +38,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
@@ -59,23 +58,23 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class MovieMediaInformationPanel.
+ * The Class TvShowMediaInformationPanel.
  * 
  * @author Manuel Laggner
  */
-public class MovieMediaInformationPanel extends JPanel {
-
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
+public class TvShowMediaInformationPanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long                 serialVersionUID    = 1L;
+  private static final long                 serialVersionUID    = 1610264727610254912L;
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());   //$NON-NLS-1$
 
   /** The logger. */
-  private final static Logger               LOGGER              = LoggerFactory.getLogger(MovieMediaInformationPanel.class);
+  private final static Logger               LOGGER              = LoggerFactory.getLogger(TvShowMediaInformationPanel.class);
 
-  /** The movie selection model. */
-  private MovieSelectionModel               movieSelectionModel;
+  /** The selection model. */
+  private TvShowSelectionModel              selectionModel;
 
   /** The lbl files t. */
   private JLabel                            lblFilesT;
@@ -86,8 +85,8 @@ public class MovieMediaInformationPanel extends JPanel {
   /** The table files. */
   private JTable                            tableFiles;
 
-  /** The lbl movie path. */
-  private LinkLabel                         lblMoviePath;
+  /** The lbl path. */
+  private LinkLabel                         lblTvShowPath;
 
   /** The lbl date added t. */
   private JLabel                            lblDateAddedT;
@@ -101,11 +100,11 @@ public class MovieMediaInformationPanel extends JPanel {
   /** The lbl watched t. */
   private JLabel                            lblWatchedT;
 
-  /** The lbl movie path t. */
-  private JLabel                            lblMoviePathT;
+  /** The lbl path t. */
+  private JLabel                            lblTvShowPathT;
 
-  /** The btn play. */
-  private JButton                           btnPlay;
+  // /** The btn play. */
+  // private JButton btnPlay;
 
   /** The table column adjuster. */
   private TableColumnAdjuster               tableColumnAdjuster = null;
@@ -117,13 +116,13 @@ public class MovieMediaInformationPanel extends JPanel {
   private DefaultEventTableModel<MediaFile> mediaFileTableModel = null;
 
   /**
-   * Instantiates a new movie media information panel.
+   * Instantiates a new tv show media information panel.
    * 
    * @param model
    *          the model
    */
-  public MovieMediaInformationPanel(MovieSelectionModel model) {
-    this.movieSelectionModel = model;
+  public TvShowMediaInformationPanel(TvShowSelectionModel model) {
+    this.selectionModel = model;
     mediaFileEventList = GlazedListsSwing.swingThreadProxyList(new ObservableElementList<MediaFile>(GlazedLists
         .threadSafeList(new BasicEventList<MediaFile>()), GlazedLists.beanConnector(MediaFile.class)));
 
@@ -154,7 +153,7 @@ public class MovieMediaInformationPanel extends JPanel {
     // StringBuilder movieFile = new
     // StringBuilder(lblMoviePath.getNormalText());
     // movieFile.append(File.separator);
-    // movieFile.append(movieSelectionModel.getSelectedMovie().getMediaFiles().get(0).getFilename());
+    // movieFile.append(movieSelectionModel.getselectedTvShowEpisode().getMediaFiles().get(0).getFilename());
     // File f = new File(movieFile.toString());
     //
     // try {
@@ -212,16 +211,16 @@ public class MovieMediaInformationPanel extends JPanel {
     // });
     // add(btnPlay, "10, 2");
 
-    lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    add(lblMoviePathT, "2, 4");
+    lblTvShowPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+    add(lblTvShowPathT, "2, 4");
 
-    lblMoviePath = new LinkLabel("");
-    lblMoviePath.addActionListener(new ActionListener() {
+    lblTvShowPath = new LinkLabel("");
+    lblTvShowPath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+        if (!StringUtils.isEmpty(lblTvShowPath.getNormalText())) {
           try {
             // get the location from the label
-            File path = new File(lblMoviePath.getNormalText());
+            File path = new File(lblTvShowPath.getNormalText());
             // check whether this location exists
             if (path.exists()) {
               Desktop.getDesktop().open(path);
@@ -233,9 +232,9 @@ public class MovieMediaInformationPanel extends JPanel {
         }
       }
     });
-    lblMoviePathT.setLabelFor(lblMoviePath);
-    lblMoviePathT.setLabelFor(lblMoviePath);
-    add(lblMoviePath, "4, 4, 5, 1");
+    lblTvShowPathT.setLabelFor(lblTvShowPath);
+    lblTvShowPathT.setLabelFor(lblTvShowPath);
+    add(lblTvShowPath, "4, 4, 5, 1");
 
     lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
     add(lblFilesT, "2, 6, default, top");
@@ -266,85 +265,50 @@ public class MovieMediaInformationPanel extends JPanel {
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of media files
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && "mediaFiles".equals(property))) {
+        // react on selection of a tv show and change of media files
+        if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
+            || (source.getClass() == TvShowEpisode.class && "mediaFiles".equals(property))) {
           mediaFileEventList.clear();
-          mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
+          mediaFileEventList.addAll(selectionModel.getSelectedTvShow().getMediaFiles());
           tableColumnAdjuster.adjustColumns();
         }
 
       }
     };
 
-    movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
+    selectionModel.addPropertyChangeListener(propertyChangeListener);
   }
 
   /**
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.dateAdded.date");
+    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty = BeanProperty.create("selectedTvShow.dateAdded.date");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty, lblDateAdded, jLabelBeanProperty);
+    AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty, lblDateAdded, jLabelBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.watched");
+    BeanProperty<TvShowSelectionModel, Boolean> tvShowSelectionModelBeanProperty_1 = BeanProperty.create("selectedTvShow.watched");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<MovieSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
+    AutoBinding<TvShowSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.dateAdded.day");
-    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_2, lblDateAdded, jLabelBeanProperty);
+    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.dateAdded.day");
+    AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_2, lblDateAdded, jLabelBeanProperty);
     autoBinding_2.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_3 = BeanProperty.create("selectedMovie.dateAddedAsString");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_3, lblDateAdded, jLabelBeanProperty);
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.dateAddedAsString");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_3, lblDateAdded, jLabelBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_13 = BeanProperty.create("selectedMovie.path");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_13, lblMoviePath, jLabelBeanProperty);
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_13 = BeanProperty.create("selectedTvShow.path");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_13, lblTvShowPath, jLabelBeanProperty);
     autoBinding_19.bind();
-    // //
-    // BeanProperty<MovieSelectionModel, List<MediaFile>>
-    // movieSelectionModelBeanProperty_18 =
-    // BeanProperty.create("selectedMovie.mediaFiles");
-    // JTableBinding<MediaFile, MovieSelectionModel, JTable> jTableBinding =
-    // SwingBindings.createJTableBinding(UpdateStrategy.READ,
-    // movieSelectionModel,
-    // movieSelectionModelBeanProperty_18, tableFiles);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty =
-    // BeanProperty.create("filename");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_1 =
-    // BeanProperty.create("filesizeInMegabytes");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_1).setColumnName("Size").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_2 =
-    // BeanProperty.create("videoCodec");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_2).setColumnName("Video codec").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_3 =
-    // BeanProperty.create("videoResolution");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_3).setColumnName("Resolution").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_4 =
-    // BeanProperty.create("audioCodec");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_4).setColumnName("Audio Codec").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_5 =
-    // BeanProperty.create("audioChannels");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_5).setColumnName("Audio channels").setEditable(false);
-    // //
-    // jTableBinding.setEditable(false);
-    // jTableBinding.bind();
   }
 
   /**

@@ -39,6 +39,7 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ZebraJTable;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -167,11 +168,13 @@ public class MovieSetInformationPanel extends JPanel {
     panelMovies.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("453px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("203px:grow"), }));
 
-    JScrollPane scrollPaneMovies = new JScrollPane();
+    movieTableModel = new DefaultEventTableModel<Movie>(movieEventList, new MovieInMovieSetTableFormat());
+    // tableAssignedMovies = new JTable(movieTableModel);
+    tableAssignedMovies = new ZebraJTable(movieTableModel);
+    // JScrollPane scrollPaneMovies = new JScrollPane();
+    JScrollPane scrollPaneMovies = ZebraJTable.createStripedJScrollPane(tableAssignedMovies);
     panelMovies.add(scrollPaneMovies, "1, 2, fill, fill");
 
-    movieTableModel = new DefaultEventTableModel<Movie>(movieEventList, new MovieInMovieSetTableFormat());
-    tableAssignedMovies = new JTable(movieTableModel);
     tableAssignedMovies.setPreferredScrollableViewportSize(new Dimension(450, 200));
     scrollPaneMovies.setViewportView(tableAssignedMovies);
 

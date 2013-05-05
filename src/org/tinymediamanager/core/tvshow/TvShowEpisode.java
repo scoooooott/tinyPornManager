@@ -18,11 +18,13 @@ package org.tinymediamanager.core.tvshow;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -119,6 +121,7 @@ public class TvShowEpisode extends MediaEntity {
     Date oldValue = this.firstAired;
     this.firstAired = newValue;
     firePropertyChange(FIRST_AIRED, oldValue, newValue);
+    firePropertyChange(FIRST_AIRED_AS_STRING, oldValue, newValue);
   }
 
   /**
@@ -151,6 +154,18 @@ public class TvShowEpisode extends MediaEntity {
       return "";
     }
     return new SimpleDateFormat("yyyy-MM-dd").format(this.firstAired);
+  }
+
+  /**
+   * Gets the first aired as a string, formatted in the system locale.
+   * 
+   * @return the first aired as string
+   */
+  public String getFirstAiredAsString() {
+    if (this.firstAired == null) {
+      return "";
+    }
+    return SimpleDateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(firstAired);
   }
 
   /**
@@ -411,6 +426,7 @@ public class TvShowEpisode extends MediaEntity {
 
     setTitle(metadata.getTitle());
     setPlot(metadata.getPlot());
+    setIds(metadata.getIds());
 
     try {
       setFirstAired(metadata.getFirstAired());
@@ -418,6 +434,8 @@ public class TvShowEpisode extends MediaEntity {
     catch (ParseException e) {
       LOGGER.warn(e.getMessage());
     }
+
+    setRating((float) metadata.getRating());
 
     List<TvShowActor> actors = new ArrayList<TvShowActor>();
     String director = "";

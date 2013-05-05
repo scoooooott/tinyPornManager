@@ -352,6 +352,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       md.setRating(0);
     }
     md.setFirstAired(episode.getFirstAired());
+    md.setId(providerInfo.getId(), episode.getId());
 
     // directors
     for (String director : episode.getDirectors()) {

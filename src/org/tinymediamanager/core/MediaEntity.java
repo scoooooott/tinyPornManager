@@ -17,9 +17,11 @@ package org.tinymediamanager.core;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -358,8 +360,8 @@ public abstract class MediaEntity extends AbstractModelObject {
     if (dateAdded == null) {
       return "";
     }
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-    return sdf.format(dateAdded);
+
+    return SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault()).format(dateAdded);
   }
 
   /**

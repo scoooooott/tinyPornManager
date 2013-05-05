@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -51,8 +52,8 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "episodedetails")
-@XmlType(propOrder = { "title", "showtitle", "rating", "season", "episode", "plot", "thumb", "playcount", "lastplayed", "credits", "director",
-    "aired", "actors" })
+@XmlType(propOrder = { "title", "showtitle", "rating", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "playcount", "lastplayed",
+    "credits", "director", "aired", "premiered", "studio", "actors" })
 public class TvShowEpisodeToXbmcNfoConnector {
 
   /** The Constant logger. */
@@ -63,6 +64,9 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
   /** The episode. */
   private String              episode;
+
+  /** The uniqueid. */
+  private String              uniqueid;
 
   /** The title. */
   private String              title;
@@ -75,6 +79,12 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
   /** The plot. */
   private String              plot;
+
+  /** The studio. */
+  private String              studio;
+
+  /** The mpaa. */
+  private String              mpaa;
 
   /** The actors. */
   @XmlAnyElement(lax = true)
@@ -90,6 +100,9 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
   /** The aired. */
   private String              aired;
+
+  /** The premiered. */
+  private String              premiered;
 
   /** not supported tags, but used to retrain in NFO. */
 
@@ -109,6 +122,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
    */
   public TvShowEpisodeToXbmcNfoConnector() {
     actors = new ArrayList<Object>();
+    director = new ArrayList<String>();
+    credits = new ArrayList<String>();
   }
 
   /**
@@ -119,52 +134,14 @@ public class TvShowEpisodeToXbmcNfoConnector {
    * @return the string
    */
   public static String setData(List<TvShowEpisode> tvShowEpisodes) {
-    List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = new ArrayList<TvShowEpisodeToXbmcNfoConnector>();
     JAXBContext context = null;
 
-    // tv show episode NFO is a bit weird. There can be stored multiple
-    // episodes inside one XML (in a non valid manner); so we have
-    // to read the NFO, split it into some smaller NFOs and parse them
     TvShowEpisode episode = tvShowEpisodes.get(0);
     String nfoFilename = FilenameUtils.getBaseName(episode.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()) + ".nfo";
     File nfoFile = new File(episode.getPath(), nfoFilename);
 
-    if (nfoFile.exists()) {
-      String completeNFO;
-      try {
-        completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8");
-        Pattern pattern = Pattern.compile("<\\?xml.*\\?>");
-        Matcher matcher = pattern.matcher(completeNFO);
-        String xmlHeader = "";
-        if (matcher.find()) {
-          xmlHeader = matcher.group();
-        }
-
-        pattern = Pattern.compile("<episodedetails>.+?<\\/episodedetails>", Pattern.DOTALL);
-        matcher = pattern.matcher(completeNFO);
-        while (matcher.find()) {
-          StringBuilder sb = new StringBuilder(xmlHeader);
-          sb.append(matcher.group());
-
-          // read out each episode
-          try {
-            synchronized (JAXBContext.class) {
-              context = JAXBContext.newInstance(TvShowEpisodeToXbmcNfoConnector.class, Actor.class);
-            }
-            Unmarshaller um = context.createUnmarshaller();
-            Reader in = new StringReader(sb.toString());
-            TvShowEpisodeToXbmcNfoConnector xbmc = (TvShowEpisodeToXbmcNfoConnector) um.unmarshal(in);
-            xbmcConnectors.add(xbmc);
-          }
-          catch (Exception e) {
-            LOGGER.error("failed to parse " + nfoFilename, e);
-          }
-
-        }
-      }
-      catch (IOException e) {
-      }
-    }
+    // parse out all episodes from the nfo
+    List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = parseNfo(nfoFile);
 
     // process all episodes
     StringBuilder outputXml = new StringBuilder();
@@ -191,8 +168,15 @@ public class TvShowEpisodeToXbmcNfoConnector {
       xbmc.setSeason(String.valueOf(episode.getSeason()));
       xbmc.setEpisode(String.valueOf(episode.getEpisode()));
       xbmc.setPlot(episode.getPlot());
-      xbmc.actors.clear();
+      xbmc.setAired(episode.getFirstAiredFormatted());
+      xbmc.setPremiered(episode.getFirstAiredFormatted());
+      xbmc.setStudio(episode.getTvShow().getStudio());
+      if (episode.getId("tvdb") != null) {
+        xbmc.setUniqueid(episode.getId("tvdb").toString());
+      }
+      xbmc.setMpaa(episode.getTvShow().getCertification().getName());
 
+      xbmc.actors.clear();
       // actors for tv show episode (guests?)
       for (TvShowActor actor : episode.getActors()) {
         xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
@@ -264,67 +248,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
       LOGGER.error("setData", e);
     }
 
-    // // load existing NFO if possible
-    // if (nfoFile.exists()) {
-    // try {
-    // synchronized (JAXBContext.class) {
-    // context = JAXBContext.newInstance(tvShowEpisodeEpisodeToXbmcNfoConnector.class, Actor.class);
-    // }
-    // Unmarshaller um = context.createUnmarshaller();
-    // Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
-    // xbmc = (tvShowEpisodeEpisodeToXbmcNfoConnector) um.unmarshal(in);
-    // }
-    // catch (Exception e) {
-    // LOGGER.error("failed to parse " + nfoFilename, e);
-    // }
-    // }
-    //
-    // // create new
-    // if (xbmc == null) {
-    // xbmc = new tvShowEpisodeEpisodeToXbmcNfoConnector();
-    // }
-    //
-    // // set data
-    // xbmc.setTitle(tvShowEpisode.getTitle());
-    // xbmc.setRating(tvShowEpisode.getRating());
-    // xbmc.setVotes(tvShowEpisode.getVotes());
-    // xbmc.setPlot(tvShowEpisode.getPlot());
-    //
-    // xbmc.actors.clear();
-    // for (tvShowEpisodeActor actor : tvShowEpisode.getActors()) {
-    // xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
-    // }
-    //
-    // // and marshall it
-    // try {
-    //
-    // synchronized (JAXBContext.class) {
-    // context = JAXBContext.newInstance(tvShowEpisodeEpisodeToXbmcNfoConnector.class, Actor.class);
-    // }
-    // Marshaller m = context.createMarshaller();
-    // m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-    // m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-    //
-    // Writer w = new StringWriter();
-    // m.marshal(xbmc, w);
-    // StringBuilder sb = new StringBuilder(w.toString());
-    // w.close();
-    //
-    // // on windows make windows conform linebreaks
-    // if (SystemUtils.IS_OS_WINDOWS) {
-    // sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
-    // }
-    // FileUtils.write(nfoFile, sb, "UTF-8");
-    // }
-    // catch (JAXBException e) {
-    // LOGGER.error("setData", e);
-    // }
-    // catch (IOException e) {
-    // LOGGER.error("setData", e);
-    // }
-    //
-    // // return only the name w/o path
-    // return nfoFilename;
     return nfoFilename;
   }
 
@@ -335,45 +258,67 @@ public class TvShowEpisodeToXbmcNfoConnector {
    *          the nfo filename
    * @return the data
    */
-  public static TvShowEpisode getData(String nfoFilename) {
-    // // try to parse XML
-    // JAXBContext context;
-    TvShowEpisode tvShowEpisode = null;
-    // try {
-    // synchronized (JAXBContext.class) {
-    // context = JAXBContext.newInstance(tvShowEpisodeEpisodeToXbmcNfoConnector.class, Actor.class);
-    // }
-    // Unmarshaller um = context.createUnmarshaller();
-    // Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
-    // tvShowEpisodeEpisodeToXbmcNfoConnector xbmc = (tvShowEpisodeEpisodeToXbmcNfoConnector) um.unmarshal(in);
-    // tvShowEpisode = new tvShowEpisode();
-    //
-    // tvShowEpisode.setTitle(xbmc.getTitle());
-    // tvShowEpisode.setRating(xbmc.getRating());
-    // tvShowEpisode.setVotes(xbmc.getVotes());
-    // tvShowEpisode.setPlot(xbmc.getPlot());
-    //
-    // for (Actor actor : xbmc.getActors()) {
-    // tvShowEpisodeActor tvShowEpisodeActor = new tvShowEpisodeActor(actor.getName(), actor.getRole());
-    // tvShowEpisodeActor.setThumb(actor.getThumb());
-    // tvShowEpisode.addActor(tvShowEpisodeActor);
-    // }
-    // }
-    // catch (FileNotFoundException e) {
-    // LOGGER.error("setData", e);
-    // return null;
-    // }
-    //
-    // catch (Exception e) {
-    // LOGGER.error("setData", e);
-    // return null;
-    // }
-    //
-    // // only return if a movie name has been found
-    // if (StringUtils.isEmpty(tvShowEpisode.getTitle())) {
-    // return null;
-    // }
-    return tvShowEpisode;
+  public static List<TvShowEpisode> getData(String nfoFilename) {
+    // try to parse XML
+    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
+
+    // parse out all episodes from the nfo
+    File nfoFile = new File(nfoFilename);
+    List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = parseNfo(nfoFile);
+
+    for (TvShowEpisodeToXbmcNfoConnector xbmc : xbmcConnectors) {
+      // only continue, if there is a title in the nfo
+      if (StringUtils.isEmpty(xbmc.getTitle())) {
+        continue;
+      }
+
+      TvShowEpisode episode = new TvShowEpisode();
+      episode.setTitle(xbmc.getTitle());
+      episode.setPlot(xbmc.getPlot());
+      episode.setRating(xbmc.getRating());
+
+      // TODO votes
+      // episode.setVoteCount(xbmc.getVotes());
+
+      // convert director to internal format
+      String director = "";
+      for (String dir : xbmc.getDirector()) {
+        if (!StringUtils.isEmpty(director)) {
+          director += ", ";
+        }
+        director += dir;
+      }
+      episode.setDirector(director);
+
+      // convert writer to internal format
+      String writer = "";
+      for (String wri : xbmc.getCredits()) {
+        if (StringUtils.isNotEmpty(writer)) {
+          writer += ", ";
+        }
+        writer += wri;
+      }
+      episode.setWriter(writer);
+
+      try {
+        episode.setFirstAired(xbmc.getAired());
+      }
+      catch (ParseException e) {
+      }
+
+      // now there is the complicated part: tv show actors should be on the tv show level
+      // episode "guests" should be on the episode level
+      // BUT: at this moment there is no information about the tv show, so we parse them all into the episode
+      for (Actor actor : xbmc.getActors()) {
+        TvShowActor cast = new TvShowActor(actor.getName(), actor.getRole());
+        cast.setThumb(actor.getThumb());
+        episode.addActor(cast);
+      }
+
+      episodes.add(episode);
+    }
+
+    return episodes;
   }
 
   /**
@@ -384,6 +329,26 @@ public class TvShowEpisodeToXbmcNfoConnector {
   @XmlElement(name = "title")
   public String getTitle() {
     return title;
+  }
+
+  /**
+   * Gets the uniqueid.
+   * 
+   * @return the uniqueid
+   */
+  @XmlElement(name = "uniqueid")
+  public String getUniqueid() {
+    return uniqueid;
+  }
+
+  /**
+   * Sets the uniqueid.
+   * 
+   * @param uniqueid
+   *          the new uniqueid
+   */
+  public void setUniqueid(String uniqueid) {
+    this.uniqueid = uniqueid;
   }
 
   /**
@@ -447,6 +412,26 @@ public class TvShowEpisodeToXbmcNfoConnector {
   }
 
   /**
+   * Gets the mpaa.
+   * 
+   * @return the mpaa
+   */
+  @XmlElement(name = "mpaa")
+  public String getMpaa() {
+    return this.mpaa;
+  }
+
+  /**
+   * Sets the mpaa.
+   * 
+   * @param mpaa
+   *          the new mpaa
+   */
+  public void setMpaa(String mpaa) {
+    this.mpaa = mpaa;
+  }
+
+  /**
    * Sets the showtitle.
    * 
    * @param showtitle
@@ -477,6 +462,26 @@ public class TvShowEpisodeToXbmcNfoConnector {
   }
 
   /**
+   * Gets the studio.
+   * 
+   * @return the studio
+   */
+  @XmlElement(name = "studio")
+  public String getStudio() {
+    return studio;
+  }
+
+  /**
+   * Sets the studio.
+   * 
+   * @param studio
+   *          the new studio
+   */
+  public void setStudio(String studio) {
+    this.studio = studio;
+  }
+
+  /**
    * Sets the aired.
    * 
    * @param aired
@@ -484,6 +489,26 @@ public class TvShowEpisodeToXbmcNfoConnector {
    */
   public void setAired(String aired) {
     this.aired = aired;
+  }
+
+  /**
+   * Gets the premiered.
+   * 
+   * @return the premiered
+   */
+  @XmlElement(name = "premiered")
+  public String getPremiered() {
+    return premiered;
+  }
+
+  /**
+   * Sets the premiered.
+   * 
+   * @param premiered
+   *          the new premiered
+   */
+  public void setPremiered(String premiered) {
+    this.premiered = premiered;
   }
 
   /**
@@ -686,6 +711,52 @@ public class TvShowEpisodeToXbmcNfoConnector {
     public void setThumb(String thumb) {
       this.thumb = thumb;
     }
+  }
 
+  private static List<TvShowEpisodeToXbmcNfoConnector> parseNfo(File nfoFile) {
+    JAXBContext context = null;
+    List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = new ArrayList<TvShowEpisodeToXbmcNfoConnector>(1);
+
+    // tv show episode NFO is a bit weird. There can be stored multiple
+    // episodes inside one XML (in a non valid manner); so we have
+    // to read the NFO, split it into some smaller NFOs and parse them
+    if (nfoFile.exists()) {
+      String completeNFO;
+      try {
+        completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8");
+        Pattern pattern = Pattern.compile("<\\?xml.*\\?>");
+        Matcher matcher = pattern.matcher(completeNFO);
+        String xmlHeader = "";
+        if (matcher.find()) {
+          xmlHeader = matcher.group();
+        }
+
+        pattern = Pattern.compile("<episodedetails>.+?<\\/episodedetails>", Pattern.DOTALL);
+        matcher = pattern.matcher(completeNFO);
+        while (matcher.find()) {
+          StringBuilder sb = new StringBuilder(xmlHeader);
+          sb.append(matcher.group());
+
+          // read out each episode
+          try {
+            synchronized (JAXBContext.class) {
+              context = JAXBContext.newInstance(TvShowEpisodeToXbmcNfoConnector.class, Actor.class);
+            }
+            Unmarshaller um = context.createUnmarshaller();
+            Reader in = new StringReader(sb.toString());
+            TvShowEpisodeToXbmcNfoConnector xbmc = (TvShowEpisodeToXbmcNfoConnector) um.unmarshal(in);
+            xbmcConnectors.add(xbmc);
+          }
+          catch (Exception e) {
+            LOGGER.error("failed to parse " + nfoFile.getName(), e);
+          }
+
+        }
+      }
+      catch (IOException e) {
+      }
+    }
+
+    return xbmcConnectors;
   }
 }

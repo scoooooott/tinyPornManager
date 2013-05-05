@@ -55,11 +55,14 @@ import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.MovieSetTreeCellRenderer;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetEditorDialog;
+import org.tinymediamanager.ui.tvshows.TvShowPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.jtattoo.plaf.AbstractLookAndFeel;
+import com.jtattoo.plaf.JTattooUtilities;
 
 /**
  * The Class MovieSetTreePanel.
@@ -169,7 +172,6 @@ public class MovieSetPanel extends JPanel {
       }
     };
 
-    // // TODO move to a correcter place
     TreeUI ui = new TreeUI() {
       protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
           boolean hasBeenExpanded, boolean isLeaf) {
@@ -184,6 +186,32 @@ public class MovieSetPanel extends JPanel {
     tree.setShowsRootHandles(true);
     tree.setCellRenderer(new MovieSetTreeCellRenderer());
     scrollPane.setViewportView(tree);
+
+    JPanel panelHeader = new JPanel() {
+      @Override
+      public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getColHeaderColors(), 0, 0, getWidth(), getHeight());
+      }
+    };
+    scrollPane.setColumnHeaderView(panelHeader);
+    panelHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
+
+    JLabel lblMovieSetColumn = new JLabel("Movie set");
+    lblMovieSetColumn.setHorizontalAlignment(JLabel.CENTER);
+    panelHeader.add(lblMovieSetColumn, "2, 1");
+
+    JLabel lblNfoColumn = new JLabel("");
+    lblNfoColumn.setHorizontalAlignment(JLabel.CENTER);
+    lblNfoColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    panelHeader.add(lblNfoColumn, "4, 1");
+
+    JLabel lblImageColumn = new JLabel("");
+    lblImageColumn.setHorizontalAlignment(JLabel.CENTER);
+    lblImageColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Image.png")));
+    panelHeader.add(lblImageColumn, "5, 1");
 
     final JPanel panelRight = new JPanel();
     splitPaneHorizontal.setRightComponent(panelRight);

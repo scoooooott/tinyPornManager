@@ -19,11 +19,13 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcher;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.scraper.Certification;
@@ -760,6 +763,7 @@ public class TvShow extends MediaEntity {
     Date oldValue = this.firstAired;
     this.firstAired = newValue;
     firePropertyChange(FIRST_AIRED, oldValue, newValue);
+    firePropertyChange(FIRST_AIRED_AS_STRING, oldValue, newValue);
   }
 
   /**
@@ -773,6 +777,18 @@ public class TvShow extends MediaEntity {
       return "";
     }
     return new SimpleDateFormat("yyyy-MM-dd").format(this.firstAired);
+  }
+
+  /**
+   * Gets the first aired as a string, formatted in the system locale.
+   * 
+   * @return the first aired as string
+   */
+  public String getFirstAiredAsString() {
+    if (this.firstAired == null) {
+      return "";
+    }
+    return SimpleDateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(firstAired);
   }
 
   /**
@@ -1301,5 +1317,23 @@ public class TvShow extends MediaEntity {
     // scrape episodes in a task
     TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
     Globals.executor.execute(task);
+  }
+
+  /**
+   * Gets the media files of the tv show and all episodes.
+   * 
+   * @return the media files
+   */
+  public List<MediaFile> getMediaFiles() {
+    List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
+    for (TvShowEpisode episode : episodes) {
+      for (MediaFile mf : episode.getMediaFiles()) {
+        // FIXME add a comparator to mediafile when myron finished his work on it
+        if (!mediaFiles.contains(mf)) {
+          mediaFiles.add(mf);
+        }
+      }
+    }
+    return mediaFiles;
   }
 }

@@ -39,6 +39,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,15 @@ import com.bric.image.pixel.Scaling;
  * @author Manuel Laggner
  */
 public class ImageLabel extends JLabel {
+
+  /**
+   * The Enum Position.
+   * 
+   * @author Manuel Laggner
+   */
+  public enum Position {
+    TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+  }
 
   /** The Constant BUNDLE. */
   private static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -75,6 +85,12 @@ public class ImageLabel extends JLabel {
 
   /** The image path. */
   private String                           imagePath;
+
+  /** The position. */
+  private Position                         position         = Position.TOP_LEFT;
+
+  /** The alternative text. */
+  private String                           alternativeText  = null;
 
   /** The draw border. */
   private boolean                          drawBorder;
@@ -210,17 +226,29 @@ public class ImageLabel extends JLabel {
       int newWidth = 0;
       int newHeight = 0;
 
+      int offsetX = 0;
+      int offsetY = 0;
+
       if (drawBorder && !drawFullWidth) {
         Point size = calculateSize(this.getWidth() - 8, this.getHeight() - 8, originalWidth, originalHeight, true);
+
+        // calculate offsets
+        if (position == Position.TOP_RIGHT || position == Position.BOTTOM_RIGHT) {
+          offsetX = this.getWidth() - size.x - 8;
+        }
+
+        if (position == Position.BOTTOM_LEFT || position == Position.BOTTOM_RIGHT) {
+          offsetY = this.getHeight() - size.y - 8;
+        }
 
         newWidth = size.x;
         newHeight = size.y;
 
         g.setColor(Color.BLACK);
-        g.drawRect(0, 0, size.x + 7, size.y + 7);
+        g.drawRect(offsetX, offsetY, size.x + 7, size.y + 7);
         g.setColor(Color.WHITE);
-        g.fillRect(1, 1, size.x + 6, size.y + 6);
-        g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 4, 4, newWidth, newHeight, this);
+        g.fillRect(offsetX + 1, offsetY + 1, size.x + 6, size.y + 6);
+        g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
       }
       else {
         Point size = null;
@@ -231,9 +259,18 @@ public class ImageLabel extends JLabel {
           size = calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
         }
 
+        // calculate offsets
+        if (position == Position.TOP_RIGHT || position == Position.BOTTOM_RIGHT) {
+          offsetX = this.getWidth() - size.x;
+        }
+
+        if (position == Position.BOTTOM_LEFT || position == Position.BOTTOM_RIGHT) {
+          offsetY = this.getHeight() - size.y;
+        }
+
         newWidth = size.x;
         newHeight = size.y;
-        g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), 0, 0, newWidth, newHeight, this);
+        g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
       }
 
     }
@@ -248,7 +285,13 @@ public class ImageLabel extends JLabel {
       int diagonalSize = (int) Math.sqrt(this.getWidth() * this.getWidth() + this.getHeight() * this.getHeight());
 
       // draw text
-      String text = BUNDLE.getString("image.nonefound"); //$NON-NLS-1$
+      String text = "";
+      if (alternativeText != null) {
+        text = alternativeText;
+      }
+      else {
+        text = BUNDLE.getString("image.nonefound"); //$NON-NLS-1$
+      }
       Graphics2D g2 = (Graphics2D) g;
       AffineTransform orig = g2.getTransform();
       AffineTransform at = new AffineTransform(orig);
@@ -303,6 +346,26 @@ public class ImageLabel extends JLabel {
       size.y = maxHeight;
     }
     return size;
+  }
+
+  /**
+   * Sets the position.
+   * 
+   * @param position
+   *          the new position
+   */
+  public void setPosition(Position position) {
+    this.position = position;
+  }
+
+  /**
+   * Sets the alternative text.
+   * 
+   * @param text
+   *          the new alternative text
+   */
+  public void setAlternativeText(String text) {
+    this.alternativeText = text;
   }
 
   // /**
@@ -361,26 +424,33 @@ public class ImageLabel extends JLabel {
       if (!cachedFile.exists()) {
         // rescale & cache
         BufferedImage originalImage = com.bric.image.ImageLoader.createImage(originalFile);
-        Point size = calculateSize((int) (originalImage.getWidth() / 1.5), (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
-            originalImage.getHeight(), true);
-        BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
 
-        // convert to rgb
-        BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+        // rescale and reencode only, if its bigger than 1000x500
+        if (originalImage.getWidth() > 1000 || originalImage.getHeight() > 500) {
+          Point size = calculateSize((int) (originalImage.getWidth() / 1.5), (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
+              originalImage.getHeight(), true);
+          BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
 
-        ColorConvertOp xformOp = new ColorConvertOp(null);
-        xformOp.filter(scaledImage, rgb);
+          // convert to rgb
+          BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-        ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
-        ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
-        jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-        jpgWrtPrm.setCompressionQuality(0.7f);
+          ColorConvertOp xformOp = new ColorConvertOp(null);
+          xformOp.filter(scaledImage, rgb);
 
-        FileImageOutputStream output = new FileImageOutputStream(cachedFile);
-        imgWrtr.setOutput(output);
-        IIOImage image = new IIOImage(rgb, null, null);
-        imgWrtr.write(null, image, jpgWrtPrm);
-        imgWrtr.dispose();
+          ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+          ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
+          jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+          jpgWrtPrm.setCompressionQuality(0.80f);
+
+          FileImageOutputStream output = new FileImageOutputStream(cachedFile);
+          imgWrtr.setOutput(output);
+          IIOImage image = new IIOImage(rgb, null, null);
+          imgWrtr.write(null, image, jpgWrtPrm);
+          imgWrtr.dispose();
+        }
+        else {
+          FileUtils.copyFile(originalFile, cachedFile);
+        }
       }
       return cachedFile;
     }

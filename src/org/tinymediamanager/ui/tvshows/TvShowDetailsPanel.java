@@ -69,6 +69,12 @@ public class TvShowDetailsPanel extends JPanel {
   /** The lbl path. */
   private LinkLabel                  lblPath;
 
+  /** The lbl premiered. */
+  private JLabel                     lblPremiered;
+
+  /** The lbl studio. */
+  private JLabel                     lblStudio;
+
   /**
    * Instantiates a new tv show details panel.
    * 
@@ -81,7 +87,9 @@ public class TvShowDetailsPanel extends JPanel {
         FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblGenresT = new JLabel("Genres");
     add(lblGenresT, "2, 2");
@@ -97,8 +105,26 @@ public class TvShowDetailsPanel extends JPanel {
     lblCertificationT.setLabelFor(lblCertification);
     add(lblCertification, "4, 4");
 
+    JLabel lblStudioT = new JLabel("Studio");
+    add(lblStudioT, "2, 6");
+
+    lblStudio = new JLabel("");
+    add(lblStudio, "4, 6, 5, 1");
+
+    JLabel lblPremieredT = new JLabel("Premiered");
+    add(lblPremieredT, "2, 8");
+
+    lblPremiered = new JLabel("");
+    add(lblPremiered, "4, 8");
+
+    JLabel lblStatusT = new JLabel("Status");
+    add(lblStatusT, "2, 10");
+
+    JLabel lblStatus = new JLabel("");
+    add(lblStatus, "4, 10, 5, 1");
+
     JLabel lblThetvdbIdT = new JLabel("TheTVDB Id");
-    add(lblThetvdbIdT, "2, 6");
+    add(lblThetvdbIdT, "2, 12");
 
     lblThetvdbId = new LinkLabel("");
     lblThetvdbIdT.setLabelFor(lblThetvdbId);
@@ -112,10 +138,10 @@ public class TvShowDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblThetvdbId, "4, 6");
+    add(lblThetvdbId, "4, 12");
 
     JLabel lblImdbIdT = new JLabel("IMDB Id");
-    add(lblImdbIdT, "6, 6");
+    add(lblImdbIdT, "6, 12");
 
     lblImdbId = new LinkLabel("");
     lblImdbIdT.setLabelFor(lblImdbId);
@@ -129,10 +155,10 @@ public class TvShowDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblImdbId, "8, 6");
+    add(lblImdbId, "8, 12");
 
     JLabel lblPathT = new JLabel("Path");
-    add(lblPathT, "2, 8");
+    add(lblPathT, "2, 14");
 
     lblPath = new LinkLabel("");
     lblPathT.setLabelFor(lblPath);
@@ -153,13 +179,10 @@ public class TvShowDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblPath, "4, 8");
+    add(lblPath, "4, 14");
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.tvdbId");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
@@ -186,5 +209,15 @@ public class TvShowDetailsPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_1, lblGenres, jLabelBeanProperty);
     autoBinding_1.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShow.studio");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_6, lblStudio, jLabelBeanProperty);
+    autoBinding_6.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_7 = BeanProperty.create("selectedTvShow.firstAiredAsString");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_7, lblPremiered, jLabelBeanProperty);
+    autoBinding_7.bind();
   }
 }
