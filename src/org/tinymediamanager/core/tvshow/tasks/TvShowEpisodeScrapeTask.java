@@ -29,17 +29,27 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 
 /**
- * @author Manuel Laggner
+ * The Class TvShowEpisodeScrapeTask.
  * 
+ * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask implements Runnable {
 
+  /** The Constant LOGGER. */
   private static final Logger          LOGGER           = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
+  /** The episodes. */
   private final List<TvShowEpisode>    episodes;
 
+  /** The metadata provider. */
   private final IMediaMetadataProvider metadataProvider = TvShowList.getInstance().getMetadataProvider();
 
+  /**
+   * Instantiates a new tv show episode scrape task.
+   * 
+   * @param episodes
+   *          the episodes
+   */
   public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes) {
     this.episodes = episodes;
   }

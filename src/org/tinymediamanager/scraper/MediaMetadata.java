@@ -77,6 +77,9 @@ public class MediaMetadata {
   /** The first aired. */
   private String                  firstAired        = "";
 
+  /** The status. */
+  private String                  status            = "";
+
   /** The studio. */
   private String                  studio            = "";
 
@@ -210,6 +213,25 @@ public class MediaMetadata {
    */
   public void setFirstAired(String firstAired) {
     this.firstAired = firstAired;
+  }
+
+  /**
+   * Gets the status.
+   * 
+   * @return the status
+   */
+  public String getStatus() {
+    return status;
+  }
+
+  /**
+   * Sets the status.
+   * 
+   * @param status
+   *          the new status
+   */
+  public void setStatus(String status) {
+    this.status = status;
   }
 
   /**

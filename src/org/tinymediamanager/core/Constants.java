@@ -186,4 +186,7 @@ public final class Constants {
 
   /** The Constant STUDIO. */
   public final static String STUDIO                = "studio";
+
+  /** The Constant STATUS. */
+  public final static String STATUS                = "status";
 }

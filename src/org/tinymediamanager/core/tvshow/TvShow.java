@@ -135,6 +135,9 @@ public class TvShow extends MediaEntity {
   /** the first aired date */
   private Date                firstAired         = null;
 
+  /** The status. */
+  private String              status             = "";
+
   /** The studio. */
   private String              studio             = "";
 
@@ -440,10 +443,20 @@ public class TvShow extends MediaEntity {
   /**
    * Sets the metadata.
    * 
+   * @param md
+   *          the new metadata
+   */
+  public void setMetadata(MediaMetadata md) {
+    setMetadata(md, Globals.settings.getTvShowScraperMetadataConfig());
+  }
+
+  /**
+   * Sets the metadata.
+   * 
    * @param metadata
    *          the new metadata
    */
-  public void setMetadata(MediaMetadata metadata) {
+  public void setMetadata(MediaMetadata metadata, TvShowScraperMetadataConfig config) {
     // check if metadata has at least a name
     if (StringUtils.isEmpty(metadata.getTitle())) {
       LOGGER.warn("wanted to save empty metadata for " + getTitle());
@@ -456,57 +469,85 @@ public class TvShow extends MediaEntity {
     }
 
     setImdbId(metadata.getImdbId());
-    setTitle(metadata.getTitle());
-    setRating((float) metadata.getRating());
-    setPlot(metadata.getPlot());
-    try {
-      setFirstAired(metadata.getFirstAired());
+
+    if (config.isTitle()) {
+      setTitle(metadata.getTitle());
     }
-    catch (ParseException e) {
-      LOGGER.warn(e.getMessage());
+
+    if (config.isPlot()) {
+      setPlot(metadata.getPlot());
     }
-    setStudio(metadata.getStudio());
-    setCertification(metadata.getCertifications().get(0));
-    setGenres(metadata.getGenres());
 
-    // cast
-    List<TvShowActor> actors = new ArrayList<TvShowActor>();
-    String director = "";
-    String writer = "";
+    if (config.isYear()) {
+      setYear(metadata.getYear());
+    }
 
-    for (MediaCastMember member : metadata.getCastMembers()) {
-      switch (member.getType()) {
-        case ACTOR:
-          TvShowActor actor = new TvShowActor();
-          actor.setName(member.getName());
-          actor.setCharacter(member.getCharacter());
-          actor.setThumb(member.getImageUrl());
-          actors.add(actor);
-          break;
+    if (config.isRating()) {
+      setRating((float) metadata.getRating());
+      setVotes(metadata.getVoteCount());
+    }
 
-        case DIRECTOR:
-          if (!StringUtils.isEmpty(director)) {
-            director += ", ";
-          }
-          director += member.getName();
-          break;
-
-        case WRITER:
-          if (!StringUtils.isEmpty(writer)) {
-            writer += ", ";
-          }
-          writer += member.getName();
-          break;
-
-        default:
-          break;
+    if (config.isAired()) {
+      try {
+        setFirstAired(metadata.getFirstAired());
+      }
+      catch (ParseException e) {
+        LOGGER.warn(e.getMessage());
       }
     }
-    setActors(actors);
-    setDirector(director);
-    setWriter(writer);
-    // TODO write actor images for tv shows
-    // writeActorImages();
+
+    if (config.isStatus()) {
+      setStatus(metadata.getStatus());
+    }
+
+    if (config.isCast()) {
+      setStudio(metadata.getStudio());
+      List<TvShowActor> actors = new ArrayList<TvShowActor>();
+      String director = "";
+      String writer = "";
+
+      for (MediaCastMember member : metadata.getCastMembers()) {
+        switch (member.getType()) {
+          case ACTOR:
+            TvShowActor actor = new TvShowActor();
+            actor.setName(member.getName());
+            actor.setCharacter(member.getCharacter());
+            actor.setThumb(member.getImageUrl());
+            actors.add(actor);
+            break;
+
+          case DIRECTOR:
+            if (!StringUtils.isEmpty(director)) {
+              director += ", ";
+            }
+            director += member.getName();
+            break;
+
+          case WRITER:
+            if (!StringUtils.isEmpty(writer)) {
+              writer += ", ";
+            }
+            writer += member.getName();
+            break;
+
+          default:
+            break;
+        }
+      }
+      setActors(actors);
+      setDirector(director);
+      setWriter(writer);
+      // TODO write actor images for tv shows
+      // writeActorImages();
+    }
+
+    if (config.isCertification()) {
+      setCertification(metadata.getCertifications().get(0));
+    }
+
+    if (config.isGenres()) {
+      setGenres(metadata.getGenres());
+    }
 
     // set scraped
     setScraped(true);
@@ -813,6 +854,27 @@ public class TvShow extends MediaEntity {
         throw new ParseException("could not parse date from: " + aired, 0);
       }
     }
+  }
+
+  /**
+   * Gets the status.
+   * 
+   * @return the status
+   */
+  public String getStatus() {
+    return status;
+  }
+
+  /**
+   * Sets the status.
+   * 
+   * @param newValue
+   *          the new status
+   */
+  public void setStatus(String newValue) {
+    String oldValue = this.status;
+    this.status = newValue;
+    firePropertyChange(STATUS, oldValue, newValue);
   }
 
   /**

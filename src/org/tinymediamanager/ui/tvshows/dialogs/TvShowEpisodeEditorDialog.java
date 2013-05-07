@@ -40,6 +40,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -176,7 +177,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
           FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
 
-      JComboBox cbScraper = new JComboBox();
+      JComboBox cbScraper = new JComboBox(TvShowScrapers.values());
+      cbScraper.setSelectedItem(Globals.settings.getTvShowSettings().getTvShowScraper());
       bottomPanel.add(cbScraper, "2, 2, fill, default");
 
       JButton btnScrape = new JButton(BUNDLE.getString("Button.scrape")); //$NON-NLS-1$

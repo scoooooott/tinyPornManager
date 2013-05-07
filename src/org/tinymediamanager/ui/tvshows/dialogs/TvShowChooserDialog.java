@@ -55,8 +55,6 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
@@ -172,17 +170,16 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     // trailerProviders = tvShowList.getTrailerProviders();
 
     scraperMetadataConfig.setTitle(settings.isTitle());
-    scraperMetadataConfig.setOriginalTitle(settings.isOriginalTitle());
-    scraperMetadataConfig.setTagline(settings.isTagline());
     scraperMetadataConfig.setPlot(settings.isPlot());
     scraperMetadataConfig.setRating(settings.isRating());
     scraperMetadataConfig.setRuntime(settings.isRuntime());
     scraperMetadataConfig.setYear(settings.isYear());
+    scraperMetadataConfig.setAired(settings.isAired());
+    scraperMetadataConfig.setStatus(settings.isStatus());
     scraperMetadataConfig.setCertification(settings.isCertification());
     scraperMetadataConfig.setCast(settings.isCast());
     scraperMetadataConfig.setGenres(settings.isGenres());
     scraperMetadataConfig.setArtwork(settings.isArtwork());
-    scraperMetadataConfig.setTrailer(settings.isTrailer());
 
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -203,8 +200,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       }
       {
         cbScraper = new JComboBox(TvShowScrapers.values());
-        TvShowScrapers defaultScraper = Globals.settings.getTvShowSettings().getTvShowScraper();
-        cbScraper.setSelectedItem(defaultScraper);
+        cbScraper.setSelectedItem(Globals.settings.getTvShowSettings().getTvShowScraper());
         cbScraper.setAction(new ChangeScraperAction());
         panelSearchField.add(cbScraper, "4, 1, fill, default");
       }
@@ -389,7 +385,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           MediaMetadata md = model.getMetadata();
 
           // did the user want to choose the images?
-          if (!Globals.settings.getMovieSettings().isScrapeBestImage()) {
+          if (!Globals.settings.getTvShowSettings().isScrapeBestImage()) {
             md.clearMediaArt();
           }
 
@@ -401,7 +397,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           // get images?
           if (scraperMetadataConfig.isArtwork()) {
             // let the user choose the images
-            if (!Globals.settings.getMovieSettings().isScrapeBestImage()) {
+            if (!Globals.settings.getTvShowSettings().isScrapeBestImage()) {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();
@@ -621,8 +617,8 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     JTableBinding<TvShowChooserModel, List<TvShowChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
         tvShowsFound, table);
     //
-    BeanProperty<TvShowChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
-    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false);
+    BeanProperty<TvShowChooserModel, String> tvShowChooserModelBeanProperty = BeanProperty.create("combinedName");
+    jTableBinding.addColumnBinding(tvShowChooserModelBeanProperty).setEditable(false);
     //
     jTableBinding.bind();
     //
@@ -679,8 +675,8 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      MovieScrapers selectedScraper = (MovieScrapers) cbScraper.getSelectedItem();
-      metadataProvider = MovieList.getInstance().getMetadataProvider(selectedScraper);
+      TvShowScrapers selectedScraper = (TvShowScrapers) cbScraper.getSelectedItem();
+      metadataProvider = TvShowList.getInstance().getMetadataProvider(selectedScraper);
       searchTvShow(textFieldSearchString.getText());
     }
   }

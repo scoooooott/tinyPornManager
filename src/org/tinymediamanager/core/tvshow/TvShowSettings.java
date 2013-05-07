@@ -42,6 +42,9 @@ public class TvShowSettings extends AbstractModelObject {
   /** The Constant PATH. */
   private final static String PATH                = "path";
 
+  /** The Constant SCRAPE_BEST_IMAGE. */
+  private final static String SCRAPE_BEST_IMAGE   = "scrapeBestImage";
+
   /** The movie data sources. */
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -49,6 +52,9 @@ public class TvShowSettings extends AbstractModelObject {
 
   /** The tv show scraper. */
   private TvShowScrapers      tvShowScraper       = TvShowScrapers.TVDB;
+
+  /** The scrape best image. */
+  private boolean             scrapeBestImage     = true;
 
   /**
    * Instantiates a new tv show settings.
@@ -108,5 +114,26 @@ public class TvShowSettings extends AbstractModelObject {
     TvShowScrapers oldValue = this.tvShowScraper;
     this.tvShowScraper = newValue;
     firePropertyChange(TV_SHOW_SCRAPER, oldValue, newValue);
+  }
+
+  /**
+   * Checks if is scrape best image.
+   * 
+   * @return true, if is scrape best image
+   */
+  public boolean isScrapeBestImage() {
+    return scrapeBestImage;
+  }
+
+  /**
+   * Sets the scrape best image.
+   * 
+   * @param newValue
+   *          the new scrape best image
+   */
+  public void setScrapeBestImage(boolean newValue) {
+    boolean oldValue = this.scrapeBestImage;
+    this.scrapeBestImage = newValue;
+    firePropertyChange(SCRAPE_BEST_IMAGE, oldValue, newValue);
   }
 }

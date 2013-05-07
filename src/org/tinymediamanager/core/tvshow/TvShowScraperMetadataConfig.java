@@ -30,12 +30,6 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
   /** The title. */
   private boolean title         = true;
 
-  /** The original title. */
-  private boolean originalTitle = true;
-
-  /** The tagline. */
-  private boolean tagline       = true;
-
   /** The plot. */
   private boolean plot          = true;
 
@@ -47,6 +41,12 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
 
   /** The year. */
   private boolean year          = true;
+
+  /** The aired. */
+  private boolean aired         = true;
+
+  /** The status. */
+  private boolean status        = true;
 
   /** The certification. */
   private boolean certification = true;
@@ -60,9 +60,6 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
   /** The artwork. */
   private boolean artwork       = true;
 
-  /** The trailer. */
-  private boolean trailer       = true;
-
   /** The episodes. */
   private boolean episodes      = true;
 
@@ -70,7 +67,6 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
    * Instantiates a new scraper metadata config.
    */
   public TvShowScraperMetadataConfig() {
-
   }
 
   /**
@@ -80,24 +76,6 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
    */
   public boolean isTitle() {
     return title;
-  }
-
-  /**
-   * Checks if is original title.
-   * 
-   * @return true, if is original title
-   */
-  public boolean isOriginalTitle() {
-    return originalTitle;
-  }
-
-  /**
-   * Checks if is tagline.
-   * 
-   * @return true, if is tagline
-   */
-  public boolean isTagline() {
-    return tagline;
   }
 
   /**
@@ -173,15 +151,6 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
   }
 
   /**
-   * Checks if is trailer.
-   * 
-   * @return true, if is trailer
-   */
-  public boolean isTrailer() {
-    return trailer;
-  }
-
-  /**
    * Sets the title.
    * 
    * @param newValue
@@ -191,30 +160,6 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
     boolean oldValue = this.title;
     this.title = newValue;
     firePropertyChange("title", oldValue, newValue);
-  }
-
-  /**
-   * Sets the original title.
-   * 
-   * @param newValue
-   *          the new original title
-   */
-  public void setOriginalTitle(boolean newValue) {
-    boolean oldValue = this.originalTitle;
-    this.originalTitle = newValue;
-    firePropertyChange("originalTitle", oldValue, newValue);
-  }
-
-  /**
-   * Sets the tagline.
-   * 
-   * @param newValue
-   *          the new tagline
-   */
-  public void setTagline(boolean newValue) {
-    boolean oldValue = this.tagline;
-    this.tagline = newValue;
-    firePropertyChange("tagline", oldValue, newValue);
   }
 
   /**
@@ -312,18 +257,6 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
   }
 
   /**
-   * Sets the trailer.
-   * 
-   * @param newValue
-   *          the new trailer
-   */
-  public void setTrailer(boolean newValue) {
-    boolean oldValue = this.trailer;
-    this.trailer = newValue;
-    firePropertyChange("trailer", oldValue, newValue);
-  }
-
-  /**
    * Checks if is episodes.
    * 
    * @return true, if is episodes
@@ -342,6 +275,48 @@ public class TvShowScraperMetadataConfig extends AbstractModelObject {
     boolean oldValue = this.episodes;
     this.episodes = newValue;
     firePropertyChange("episodes", oldValue, newValue);
+  }
+
+  /**
+   * Checks if is aired.
+   * 
+   * @return true, if is aired
+   */
+  public boolean isAired() {
+    return aired;
+  }
+
+  /**
+   * Sets the aired.
+   * 
+   * @param newValue
+   *          the new aired
+   */
+  public void setAired(boolean newValue) {
+    boolean oldValue = this.aired;
+    this.aired = newValue;
+    firePropertyChange("aired", oldValue, newValue);
+  }
+
+  /**
+   * Checks if is status.
+   * 
+   * @return true, if is status
+   */
+  public boolean isStatus() {
+    return status;
+  }
+
+  /**
+   * Sets the status.
+   * 
+   * @param newValue
+   *          the new status
+   */
+  public void setStatus(boolean newValue) {
+    boolean oldValue = this.status;
+    this.status = newValue;
+    firePropertyChange("status", oldValue, newValue);
   }
 
 }

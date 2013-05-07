@@ -96,8 +96,10 @@ public class TvShowEditorDialog extends JDialog {
   /** The details2 panel. */
   private final JPanel                details2Panel     = new JPanel();
 
+  /** The tv show to edit. */
   private TvShow                      tvShowToEdit;
 
+  /** The tv show list. */
   private TvShowList                  tvShowList        = TvShowList.getInstance();
 
   /** The tf title. */
@@ -124,8 +126,10 @@ public class TvShowEditorDialog extends JDialog {
   /** The lbl fanart. */
   private ImageLabel                  lblFanart;
 
+  /** The lbl banner. */
   private ImageLabel                  lblBanner;
 
+  /** The actors. */
   private List<TvShowActor>           actors            = ObservableCollections.observableList(new ArrayList<TvShowActor>());
 
   /** The genres. */
@@ -218,6 +222,14 @@ public class TvShowEditorDialog extends JDialog {
   /** The abort action. */
   private final Action                abortAction       = new SwingAction_10();
 
+  /**
+   * Instantiates a new tv show editor dialog.
+   * 
+   * @param tvShow
+   *          the tv show
+   * @param inQueue
+   *          the in queue
+   */
   public TvShowEditorDialog(TvShow tvShow, boolean inQueue) {
     setModal(true);
     setIconImage(Globals.logo);

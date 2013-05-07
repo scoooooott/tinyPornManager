@@ -26,6 +26,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
@@ -69,7 +70,11 @@ public class SettingsPanel extends JPanel {
   /** The panel image movie settings. */
   private MovieImageSettingsPanel     panelImageMovieSettings;
 
+  /** The panel tv show settings. */
   private TvShowSettingsPanel         panelTvShowSettings;
+
+  /** The panel tv show scraper settings. */
+  private TvShowScraperSettingsPanel  panelTvShowScraperSettings;
 
   /**
    * Create the panel.
@@ -91,6 +96,8 @@ public class SettingsPanel extends JPanel {
     addButton(BUNDLE.getString("Settings.images"), "/org/tinymediamanager/ui/images/show_reel.png", panelImageMovieSettings, toolbar, group); //$NON-NLS-1$
     panelTvShowSettings = new TvShowSettingsPanel();
     addButton(BUNDLE.getString("Settings.tvshow"), "/org/tinymediamanager/ui/images/tv_show.png", panelTvShowSettings, toolbar, group); //$NON-NLS-1$
+    panelTvShowScraperSettings = new TvShowScraperSettingsPanel();
+    addButton(BUNDLE.getString("Settings.tvshowscraper"), "/org/tinymediamanager/ui/images/tv_show.png", panelTvShowScraperSettings, toolbar, group); //$NON-NLS-1$
     panelGeneralSettings = new GeneralSettingsPanel();
     addButton(BUNDLE.getString("Settings.general"), "/org/tinymediamanager/ui/images/Action-configure-icon.png", panelGeneralSettings, toolbar, group); //$NON-NLS-1$
 
@@ -141,6 +148,7 @@ public class SettingsPanel extends JPanel {
     };
 
     JToggleButton button = new JToggleButton(action);
+    button.setHorizontalTextPosition(JButton.CENTER);
     bar.add(button);
 
     group.add(button);
