@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
@@ -62,7 +63,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
   public FanartTvMetadataProvider() throws Exception {
     if (ftv == null) {
       try {
-        ftv = new FanartTvApi("9314fc8f4c7d4a8b80079da114794891 ");
+        ftv = new FanartTvApi("9314fc8f4c7d4a8b80079da114794891");
       }
       catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
@@ -131,10 +132,12 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
           case HDCLEARART:
           case MOVIETHUMB:
             ma.addImageSize(1000, 562, ftvaw.getUrl());
+            ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
             break;
 
           case MOVIEBACKGROUND:
             ma.addImageSize(1920, 1080, ftvaw.getUrl());
+            ma.setSizeOrder(FanartSizes.LARGE.getOrder());
             break;
 
           default:

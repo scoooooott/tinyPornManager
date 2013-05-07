@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 /**
  * The Class MovieSettings.
@@ -44,11 +44,11 @@ public class MovieSettings extends AbstractModelObject {
   /** The Constant MOVIE_DATA_SOURCE. */
   private final static String           MOVIE_DATA_SOURCE              = "movieDataSource";
 
-  /** The Constant IMAGE_TMDB_POSTER. */
-  private final static String           IMAGE_TMDB_POSTER              = "imageTmdbPosterSize";
+  /** The Constant IMAGE_POSTER_SIZE. */
+  private final static String           IMAGE_POSTER_SIZE              = "imagePosterSize";
 
-  /** The Constant IMAGE_TMDB_FANART. */
-  private final static String           IMAGE_TMDB_FANART              = "imageTmdbFanartSize";
+  /** The Constant IMAGE_FANART_SIZE. */
+  private final static String           IMAGE_FANART_SIZE              = "imageFanartSize";
 
   /** The Constant IMAGE_EXTRATHUMBS. */
   private final static String           IMAGE_EXTRATHUMBS              = "imageExtraThumbs";
@@ -158,7 +158,7 @@ public class MovieSettings extends AbstractModelObject {
   private MovieScrapers                 movieScraper                   = MovieScrapers.TMDB;
 
   /** The image tmdb poster size. */
-  private PosterSizes                   imageTmdbPosterSize            = PosterSizes.w342;
+  private PosterSizes                   imagePosterSize                = PosterSizes.BIG;
 
   /** The image tmdb scraper. */
   private boolean                       imageScraperTmdb               = true;
@@ -167,7 +167,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       imageScraperFanartTv           = true;
 
   /** The image tmdb fanart size. */
-  private FanartSizes                   imageTmdbFanartSize            = FanartSizes.original;
+  private FanartSizes                   imageFanartSize                = FanartSizes.LARGE;
 
   /** The image extra thumbs. */
   private boolean                       imageExtraThumbs               = false;
@@ -380,47 +380,47 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   /**
-   * Gets the image tmdb poster size.
+   * Gets the image poster size.
    * 
-   * @return the image tmdb poster size
+   * @return the image poster size
    */
-  @XmlElement(name = IMAGE_TMDB_POSTER)
-  public PosterSizes getImageTmdbPosterSize() {
-    return imageTmdbPosterSize;
+  @XmlElement(name = IMAGE_POSTER_SIZE)
+  public PosterSizes getImagePosterSize() {
+    return imagePosterSize;
   }
 
   /**
-   * Sets the image tmdb poster size.
+   * Sets the image poster size.
    * 
    * @param newValue
-   *          the new image tmdb poster size
+   *          the new image poster size
    */
-  public void setImageTmdbPosterSize(PosterSizes newValue) {
-    PosterSizes oldValue = this.imageTmdbPosterSize;
-    this.imageTmdbPosterSize = newValue;
-    firePropertyChange(IMAGE_TMDB_POSTER, oldValue, newValue);
+  public void setImagePosterSize(PosterSizes newValue) {
+    PosterSizes oldValue = this.imagePosterSize;
+    this.imagePosterSize = newValue;
+    firePropertyChange(IMAGE_POSTER_SIZE, oldValue, newValue);
   }
 
   /**
-   * Gets the image tmdb fanart size.
+   * Gets the image fanart size.
    * 
-   * @return the image tmdb fanart size
+   * @return the image fanart size
    */
-  @XmlElement(name = IMAGE_TMDB_FANART)
-  public FanartSizes getImageTmdbFanartSize() {
-    return imageTmdbFanartSize;
+  @XmlElement(name = IMAGE_FANART_SIZE)
+  public FanartSizes getImageFanartSize() {
+    return imageFanartSize;
   }
 
   /**
-   * Sets the image tmdb fanart size.
+   * Sets the image fanart size.
    * 
    * @param newValue
-   *          the new image tmdb fanart size
+   *          the new image fanart size
    */
-  public void setImageTmdbFanartSize(FanartSizes newValue) {
-    FanartSizes oldValue = this.imageTmdbFanartSize;
-    this.imageTmdbFanartSize = newValue;
-    firePropertyChange(IMAGE_TMDB_FANART, oldValue, newValue);
+  public void setImageFanartSize(FanartSizes newValue) {
+    FanartSizes oldValue = this.imageFanartSize;
+    this.imageFanartSize = newValue;
+    firePropertyChange(IMAGE_FANART_SIZE, oldValue, newValue);
   }
 
   /**

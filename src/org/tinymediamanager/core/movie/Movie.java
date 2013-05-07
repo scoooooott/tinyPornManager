@@ -1417,7 +1417,8 @@ public class Movie extends MediaEntity {
     if (config.isArtwork()) {
       // poster
       for (MediaArtwork art : artwork) {
-        if (art.getType() == MediaArtworkType.POSTER) {
+        // only get artwork in desired resolution
+        if (art.getType() == MediaArtworkType.POSTER && art.getSizeOrder() == Globals.settings.getMovieSettings().getImagePosterSize().getOrder()) {
           setPosterUrl(art.getDefaultUrl());
 
           LOGGER.debug(art.getSmallestArtwork().toString());
@@ -1433,7 +1434,8 @@ public class Movie extends MediaEntity {
 
       // fanart
       for (MediaArtwork art : artwork) {
-        if (art.getType() == MediaArtworkType.BACKGROUND) {
+        // only get artwork in desired resolution
+        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
           setFanartUrl(art.getDefaultUrl());
 
           LOGGER.debug(art.getSmallestArtwork().toString());
@@ -1451,7 +1453,9 @@ public class Movie extends MediaEntity {
       List<String> extrathumbs = new ArrayList<String>();
       if (Globals.settings.getMovieSettings().isImageExtraThumbs() && Globals.settings.getMovieSettings().getImageExtraThumbsCount() > 0) {
         for (MediaArtwork art : artwork) {
-          if (art.getType() == MediaArtworkType.BACKGROUND) {
+          // only get artwork in desired resolution
+          if (art.getType() == MediaArtworkType.BACKGROUND
+              && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
             extrathumbs.add(art.getDefaultUrl());
             if (extrathumbs.size() >= Globals.settings.getMovieSettings().getImageExtraThumbsCount()) {
               break;
@@ -1465,7 +1469,9 @@ public class Movie extends MediaEntity {
       List<String> extrafanarts = new ArrayList<String>();
       if (Globals.settings.getMovieSettings().isImageExtraFanart() && Globals.settings.getMovieSettings().getImageExtraFanartCount() > 0) {
         for (MediaArtwork art : artwork) {
-          if (art.getType() == MediaArtworkType.BACKGROUND) {
+          // only get artwork in desired resolution
+          if (art.getType() == MediaArtworkType.BACKGROUND
+              && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
             extrafanarts.add(art.getDefaultUrl());
             if (extrafanarts.size() >= Globals.settings.getMovieSettings().getImageExtraFanartCount()) {
               break;

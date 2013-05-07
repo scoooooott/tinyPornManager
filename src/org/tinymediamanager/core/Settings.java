@@ -54,9 +54,9 @@ import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
+import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
 
 import ch.qos.logback.classic.Level;
 
@@ -485,8 +485,8 @@ public class Settings extends AbstractModelObject {
     setScraperLanguage(Languages.en);
     setCertificationCountry(CountryCode.US);
 
-    movieSettings.setImageTmdbPosterSize(PosterSizes.w342);
-    movieSettings.setImageTmdbFanartSize(FanartSizes.original);
+    movieSettings.setImagePosterSize(PosterSizes.BIG);
+    movieSettings.setImageFanartSize(FanartSizes.LARGE);
     movieSettings.setMovieConnector(MovieConnectors.XBMC);
     movieSettings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
     movieSettings.addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);

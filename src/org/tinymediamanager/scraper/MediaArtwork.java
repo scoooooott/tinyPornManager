@@ -52,6 +52,106 @@ public class MediaArtwork {
     ALL;
   }
 
+  /**
+   * The Enum PosterSizes.
+   */
+  public enum PosterSizes {
+    /** The large. */
+    LARGE("Large" + ": ~1000x1500px", 8),
+    /** The big. */
+    BIG("Big" + ": ~500x750px", 4),
+    /** The medium. */
+    MEDIUM("Medium" + ": ~342x513px", 2),
+    /** The small. */
+    SMALL("Small" + ": ~185x277px", 1);
+
+    /** The text. */
+    private String text;
+
+    /** The order. */
+    private int    order;
+
+    /**
+     * Instantiates a new poster sizes.
+     * 
+     * @param text
+     *          the text
+     * @param order
+     *          the order
+     */
+    private PosterSizes(String text, int order) {
+      this.text = text;
+      this.order = order;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Enum#toString()
+     */
+    public String toString() {
+      return this.text;
+    }
+
+    /**
+     * Gets the order.
+     * 
+     * @return the order
+     */
+    public int getOrder() {
+      return this.order;
+    }
+  }
+
+  /**
+   * The Enum FanartSizes.
+   */
+  public enum FanartSizes {
+    /** The large. */
+    LARGE("Large" + ": ~1920x1080px", 8),
+    /** The medium. */
+    MEDIUM("Medium" + ": ~1280x720px", 2),
+    /** The small. */
+    SMALL("Small" + ": ~300x168px", 1);
+
+    /** The text. */
+    private String text;
+
+    /** The order. */
+    private int    order;
+
+    /**
+     * Instantiates a new fanart sizes.
+     * 
+     * @param text
+     *          the text
+     * @param order
+     *          the order
+     */
+    private FanartSizes(String text, int order) {
+      this.text = text;
+      this.order = order;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Enum#toString()
+     */
+    public String toString() {
+      return this.text;
+    }
+
+    /**
+     * Gets the order.
+     * 
+     * @return the order
+     */
+    public int getOrder() {
+      return order;
+    }
+  }
+
   /** The Constant logger. */
   private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaArtwork.class);
 
@@ -75,6 +175,9 @@ public class MediaArtwork {
 
   /** The type. */
   private MediaArtworkType      type;
+
+  /** The size order. */
+  private int                   sizeOrder  = 0;
 
   /** The image sizes. */
   private List<ImageSizeAndUrl> imageSizes = new ArrayList<ImageSizeAndUrl>();
@@ -282,6 +385,25 @@ public class MediaArtwork {
       }
     }
     return null;
+  }
+
+  /**
+   * Gets the size order.
+   * 
+   * @return the size order
+   */
+  public int getSizeOrder() {
+    return sizeOrder;
+  }
+
+  /**
+   * Sets the size order.
+   * 
+   * @param sizeOrder
+   *          the new size order
+   */
+  public void setSizeOrder(int sizeOrder) {
+    this.sizeOrder = sizeOrder;
   }
 
   /**

@@ -44,8 +44,8 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.FanartSizes;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.PosterSizes;
+import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -71,10 +71,10 @@ public class MovieImageSettingsPanel extends JPanel {
   private Settings                    settings         = Settings.getInstance();
 
   /** The cb image tmdb poster size. */
-  private JComboBox                   cbImageTmdbPosterSize;
+  private JComboBox                   cbImagePosterSize;
 
   /** The cb image tmdb fanart size. */
-  private JComboBox                   cbImageTmdbFanartSize;
+  private JComboBox                   cbImageFanartSize;
 
   /** The cb movie poster filename2. */
   private JCheckBox                   cbMoviePosterFilename2;
@@ -159,6 +159,7 @@ public class MovieImageSettingsPanel extends JPanel {
 
   /** The btn select folder. */
   private JButton                     btnSelectFolder;
+  private JSeparator                  separator_2;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -175,7 +176,8 @@ public class MovieImageSettingsPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC,
@@ -199,87 +201,83 @@ public class MovieImageSettingsPanel extends JPanel {
     separator = new JSeparator();
     panelMovieImages.add(separator, "1, 7, 6, 1");
 
-    JPanel panelMovieImagesTmdb = new JPanel();
-    panelMovieImagesTmdb.setBorder(new TitledBorder(null, "The Movie Database", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-    panelMovieImages.add(panelMovieImagesTmdb, "2, 9, 3, 1, fill, fill");
-    panelMovieImagesTmdb.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size"));
+    panelMovieImages.add(lblImageTmdbPosterSize, "2, 9");
 
-    JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size")); //$NON-NLS-1$
-    panelMovieImagesTmdb.add(lblImageTmdbPosterSize, "2, 2, right, default");
+    cbImagePosterSize = new JComboBox(PosterSizes.values());
+    panelMovieImages.add(cbImagePosterSize, "4, 9");
 
-    cbImageTmdbPosterSize = new JComboBox(PosterSizes.values());
-    panelMovieImagesTmdb.add(cbImageTmdbPosterSize, "4, 2, fill, default");
+    JLabel lblImageTmdbFanartSize = new JLabel(BUNDLE.getString("image.fanart.size"));
+    panelMovieImages.add(lblImageTmdbFanartSize, "2, 11");
 
-    JLabel lblImageTmdbFanartSize = new JLabel(BUNDLE.getString("image.fanart.size")); //$NON-NLS-1$
-    panelMovieImagesTmdb.add(lblImageTmdbFanartSize, "2, 4, right, default");
+    cbImageFanartSize = new JComboBox(FanartSizes.values());
+    panelMovieImages.add(cbImageFanartSize, "4, 11");
 
-    cbImageTmdbFanartSize = new JComboBox(FanartSizes.values());
-    panelMovieImagesTmdb.add(cbImageTmdbFanartSize, "4, 4, fill, default");
+    separator_2 = new JSeparator();
+    panelMovieImages.add(separator_2, "1, 13, 6, 1");
 
     JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming")); //$NON-NLS-1$
-    panelMovieImages.add(lblPosterFilename, "2, 11");
+    panelMovieImages.add(lblPosterFilename, "2, 15");
 
     cbMoviePosterFilename7 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".jpg"); //$NON-NLS-1$
-    panelMovieImages.add(cbMoviePosterFilename7, "4, 11");
+    panelMovieImages.add(cbMoviePosterFilename7, "4, 15");
 
     cbMoviePosterFilename4 = new JCheckBox("poster.jpg");
-    panelMovieImages.add(cbMoviePosterFilename4, "6, 11");
+    panelMovieImages.add(cbMoviePosterFilename4, "6, 15");
 
     cbMoviePosterFilename8 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-poster.jpg"); //$NON-NLS-1$
-    panelMovieImages.add(cbMoviePosterFilename8, "4, 12");
+    panelMovieImages.add(cbMoviePosterFilename8, "4, 16");
 
     cbMoviePosterFilename6 = new JCheckBox("folder.jpg");
-    panelMovieImages.add(cbMoviePosterFilename6, "6, 12");
+    panelMovieImages.add(cbMoviePosterFilename6, "6, 16");
 
     cbMoviePosterFilename2 = new JCheckBox("movie.jpg");
-    panelMovieImages.add(cbMoviePosterFilename2, "4, 13");
+    panelMovieImages.add(cbMoviePosterFilename2, "4, 17");
 
     JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming")); //$NON-NLS-1$
-    panelMovieImages.add(lblFanartFileNaming, "2, 15");
+    panelMovieImages.add(lblFanartFileNaming, "2, 19");
 
     cbMovieFanartFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-fanart.jpg"); //$NON-NLS-1$
-    panelMovieImages.add(cbMovieFanartFilename1, "4, 15");
+    panelMovieImages.add(cbMovieFanartFilename1, "4, 19");
 
     cbMovieFanartFilename2 = new JCheckBox("fanart.jpg");
-    panelMovieImages.add(cbMovieFanartFilename2, "4, 16");
+    panelMovieImages.add(cbMovieFanartFilename2, "4, 20");
 
     tpFileNamingHint = new JTextPane();
     tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
     tpFileNamingHint.setBackground(UIManager.getColor("Panel.background"));
     tpFileNamingHint.setFont(new Font("Dialog", Font.PLAIN, 10));
-    panelMovieImages.add(tpFileNamingHint, "2, 18, 5, 1, fill, fill");
+    panelMovieImages.add(tpFileNamingHint, "2, 22, 5, 1, fill, fill");
 
     separator_1 = new JSeparator();
-    panelMovieImages.add(separator_1, "1, 20, 6, 1");
+    panelMovieImages.add(separator_1, "1, 24, 6, 1");
 
     chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs")); //$NON-NLS-1$
-    panelMovieImages.add(chckbxEnableExtrathumbs, "2, 22");
+    panelMovieImages.add(chckbxEnableExtrathumbs, "2, 26");
 
     chckbxResizeExtrathumbsTo = new JCheckBox(BUNDLE.getString("Settings.resize.extrathumbs")); //$NON-NLS-1$
-    panelMovieImages.add(chckbxResizeExtrathumbsTo, "4, 22");
+    panelMovieImages.add(chckbxResizeExtrathumbsTo, "4, 26");
 
     spExtrathumbWidth = new JSpinner();
     spExtrathumbWidth.setPreferredSize(new Dimension(49, 20));
-    panelMovieImages.add(spExtrathumbWidth, "6, 22, left, default");
+    panelMovieImages.add(spExtrathumbWidth, "6, 26, left, default");
 
     lblDownload = new JLabel(BUNDLE.getString("Settings.amount.autodownload")); //$NON-NLS-1$
-    panelMovieImages.add(lblDownload, "2, 23, 3, 1, right, default");
+    panelMovieImages.add(lblDownload, "2, 27, 3, 1, right, default");
 
     spDownloadCountExtrathumbs = new JSpinner();
     spDownloadCountExtrathumbs.setPreferredSize(new Dimension(49, 20));
-    panelMovieImages.add(spDownloadCountExtrathumbs, "6, 23, left, default");
+    panelMovieImages.add(spDownloadCountExtrathumbs, "6, 27, left, default");
 
     chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart")); //$NON-NLS-1$
-    panelMovieImages.add(chckbxEnableExtrafanart, "2, 25");
+    panelMovieImages.add(chckbxEnableExtrafanart, "2, 29");
 
     lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload")); //$NON-NLS-1$
-    panelMovieImages.add(lblDownloadCount, "2, 26, 3, 1, right, default");
+    panelMovieImages.add(lblDownloadCount, "2, 30, 3, 1, right, default");
 
     spDownloadCountExtrafanart = new JSpinner();
     spDownloadCountExtrafanart.setPreferredSize(new Dimension(49, 20));
-    panelMovieImages.add(spDownloadCountExtrafanart, "6, 26, left, default");
+    panelMovieImages.add(spDownloadCountExtrafanart, "6, 30, left, default");
 
     panelActorThumbs = new JPanel();
     panelActorThumbs.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.actor"), TitledBorder.LEADING,
@@ -369,15 +367,15 @@ public class MovieImageSettingsPanel extends JPanel {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    BeanProperty<Settings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("movieSettings.imageTmdbPosterSize");
+    BeanProperty<Settings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("movieSettings.imagePosterSize");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
     AutoBinding<Settings, PosterSizes, JComboBox, Object> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_5, cbImageTmdbPosterSize, jComboBoxBeanProperty);
+        settingsBeanProperty_5, cbImagePosterSize, jComboBoxBeanProperty);
     autoBinding_4.bind();
     //
-    BeanProperty<Settings, FanartSizes> settingsBeanProperty_6 = BeanProperty.create("movieSettings.imageTmdbFanartSize");
+    BeanProperty<Settings, FanartSizes> settingsBeanProperty_6 = BeanProperty.create("movieSettings.imageFanartSize");
     AutoBinding<Settings, FanartSizes, JComboBox, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_6, cbImageTmdbFanartSize, jComboBoxBeanProperty);
+        settingsBeanProperty_6, cbImageFanartSize, jComboBoxBeanProperty);
     autoBinding_5.bind();
     //
     BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("movieSettings.imageScraperTmdb");

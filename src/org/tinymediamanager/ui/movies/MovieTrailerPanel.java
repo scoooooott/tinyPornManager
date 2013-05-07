@@ -49,6 +49,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -63,7 +64,7 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieTrailerPanel extends JPanel {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle          BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());       //$NON-NLS-1$
+  private static final ResourceBundle          BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
   private static final long                    serialVersionUID    = 1L;
@@ -81,7 +82,8 @@ public class MovieTrailerPanel extends JPanel {
   private TableColumnAdjuster                  tableColumnAdjuster = null;
 
   /** The trailer event list. */
-  private EventList<MediaTrailer>              trailerEventList    = GlazedLists.threadSafeList(new BasicEventList<MediaTrailer>());
+  private EventList<MediaTrailer>              trailerEventList    = GlazedListsSwing.swingThreadProxyList(GlazedLists
+                                                                       .threadSafeList(new BasicEventList<MediaTrailer>()));
 
   /** The trailer table model. */
   private DefaultEventTableModel<MediaTrailer> trailerTableModel   = null;

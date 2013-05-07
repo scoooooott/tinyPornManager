@@ -30,7 +30,10 @@ import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
+import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -112,42 +115,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     public String toString() {
       return this.title;
     }
-  }
-
-  /**
-   * The Enum PosterSizes.
-   * 
-   * @author Manuel Laggner
-   */
-  public enum PosterSizes {
-    /** The original. */
-    original,
-    /** The w500. */
-    w500,
-    /** The w342. */
-    w342,
-    /** The w185. */
-    w185,
-    /** The w154. */
-    w154,
-    /** The w92. */
-    w92
-  }
-
-  /**
-   * The Enum FanartSizes.
-   * 
-   * @author Manuel Laggner
-   */
-  public enum FanartSizes {
-    /** The original. */
-    original,
-    /** The w1280. */
-    w1280,
-    /** The w780. */
-    w780,
-    /** The w300. */
-    w300
   }
 
   /**
@@ -892,8 +859,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     for (Artwork image : tmdbArtwork) {
       if (image.getArtworkType() == ArtworkType.POSTER && (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL)) {
         MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(baseUrl + Globals.settings.getMovieSettings().getImageTmdbPosterSize() + image.getFilePath());
-        ma.setPreviewUrl(baseUrl + PosterSizes.w185 + image.getFilePath());
+        ma.setPreviewUrl(baseUrl + "w185" + image.getFilePath());
         ma.setProviderId(getProviderInfo().getId());
         ma.setType(MediaArtworkType.POSTER);
         ma.setLanguage(image.getLanguage());
@@ -901,27 +867,29 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
         // add different sizes
         // original
-        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + PosterSizes.original + image.getFilePath());
+        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + "original" + image.getFilePath());
         // w500
         if (500 < image.getWidth()) {
-          ma.addImageSize(500, image.getHeight() * 500 / image.getWidth(), baseUrl + PosterSizes.w500 + image.getFilePath());
+          ma.addImageSize(500, image.getHeight() * 500 / image.getWidth(), baseUrl + "w500" + image.getFilePath());
         }
         // w342
         if (342 < image.getWidth()) {
-          ma.addImageSize(342, image.getHeight() * 342 / image.getWidth(), baseUrl + PosterSizes.w342 + image.getFilePath());
+          ma.addImageSize(342, image.getHeight() * 342 / image.getWidth(), baseUrl + "w342" + image.getFilePath());
         }
         // w185
         if (185 < image.getWidth()) {
-          ma.addImageSize(185, image.getHeight() * 185 / image.getWidth(), baseUrl + PosterSizes.w185 + image.getFilePath());
+          ma.addImageSize(185, image.getHeight() * 185 / image.getWidth(), baseUrl + "w185" + image.getFilePath());
         }
+
+        // categorize image size and write default url
+        prepareDefaultPoster(ma);
 
         artwork.add(ma);
       }
 
       if (image.getArtworkType() == ArtworkType.BACKDROP && (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL)) {
         MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(baseUrl + Globals.settings.getMovieSettings().getImageTmdbFanartSize() + image.getFilePath());
-        ma.setPreviewUrl(baseUrl + FanartSizes.w300 + image.getFilePath());
+        ma.setPreviewUrl(baseUrl + "w300" + image.getFilePath());
         ma.setProviderId(getProviderInfo().getId());
         ma.setType(MediaArtworkType.BACKGROUND);
         ma.setLanguage(image.getLanguage());
@@ -929,21 +897,109 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
         // add different sizes
         // original (most of the time 1920x1080)
-        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + FanartSizes.original + image.getFilePath());
+        ma.addImageSize(image.getWidth(), image.getHeight(), baseUrl + "original" + image.getFilePath());
         // 1280x720
         if (1280 < image.getWidth()) {
-          ma.addImageSize(1280, image.getHeight() * 1280 / image.getWidth(), baseUrl + FanartSizes.w1280 + image.getFilePath());
+          ma.addImageSize(1280, image.getHeight() * 1280 / image.getWidth(), baseUrl + "w1280" + image.getFilePath());
         }
         // w300
         if (300 < image.getWidth()) {
-          ma.addImageSize(300, image.getHeight() * 300 / image.getWidth(), baseUrl + FanartSizes.w300 + image.getFilePath());
+          ma.addImageSize(300, image.getHeight() * 300 / image.getWidth(), baseUrl + "w300" + image.getFilePath());
         }
+
+        // categorize image size and write default url
+        prepareDefaultFanart(ma);
 
         artwork.add(ma);
       }
     }
 
     return artwork;
+  }
+
+  /**
+   * Prepare default poster.
+   * 
+   * @param ma
+   *          the ma
+   */
+  private void prepareDefaultPoster(MediaArtwork ma) {
+    for (ImageSizeAndUrl image : ma.getImageSizes()) {
+      // LARGE
+      if (image.getWidth() >= 1000) {
+        if (Globals.settings.getMovieSettings().getImagePosterSize() == PosterSizes.LARGE) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(PosterSizes.LARGE.getOrder());
+          break;
+        }
+        continue;
+      }
+      // BIG
+      if (image.getWidth() >= 500) {
+        if (Globals.settings.getMovieSettings().getImagePosterSize() == PosterSizes.BIG) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(PosterSizes.BIG.getOrder());
+          break;
+        }
+        continue;
+      }
+      // MEDIUM
+      if (image.getWidth() >= 342) {
+        if (Globals.settings.getMovieSettings().getImagePosterSize() == PosterSizes.MEDIUM) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(PosterSizes.MEDIUM.getOrder());
+          break;
+        }
+        continue;
+      }
+      // SMALL
+      if (image.getWidth() >= 185) {
+        if (Globals.settings.getMovieSettings().getImagePosterSize() == PosterSizes.SMALL) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(PosterSizes.SMALL.getOrder());
+          break;
+        }
+        continue;
+      }
+    }
+  }
+
+  /**
+   * Prepare default fanart.
+   * 
+   * @param ma
+   *          the ma
+   */
+  private void prepareDefaultFanart(MediaArtwork ma) {
+    for (ImageSizeAndUrl image : ma.getImageSizes()) {
+      // LARGE
+      if (image.getWidth() >= 1920) {
+        if (Globals.settings.getMovieSettings().getImageFanartSize() == FanartSizes.LARGE) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(FanartSizes.LARGE.getOrder());
+          break;
+        }
+        continue;
+      }
+      // MEDIUM
+      if (image.getWidth() >= 1280) {
+        if (Globals.settings.getMovieSettings().getImageFanartSize() == FanartSizes.MEDIUM) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
+          break;
+        }
+        continue;
+      }
+      // SMALL
+      if (image.getWidth() >= 300) {
+        if (Globals.settings.getMovieSettings().getImageFanartSize() == FanartSizes.SMALL) {
+          ma.setDefaultUrl(image.getUrl());
+          ma.setSizeOrder(FanartSizes.SMALL.getOrder());
+          break;
+        }
+        continue;
+      }
+    }
   }
 
   /**

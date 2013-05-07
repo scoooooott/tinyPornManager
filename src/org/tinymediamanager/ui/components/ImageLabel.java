@@ -447,6 +447,7 @@ public class ImageLabel extends JLabel {
           IIOImage image = new IIOImage(rgb, null, null);
           imgWrtr.write(null, image, jpgWrtPrm);
           imgWrtr.dispose();
+          output.close();
         }
         else {
           FileUtils.copyFile(originalFile, cachedFile);
