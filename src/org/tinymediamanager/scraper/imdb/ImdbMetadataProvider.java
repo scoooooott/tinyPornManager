@@ -26,12 +26,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -429,13 +429,14 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           Elements a = element.getElementsByTag("a");
           for (Element anchor : a) {
             // certification for the right country
-            if (anchor.attr("href").matches("(?i)/search/title\\?certificates=" + Globals.settings.getCertificationCountry().getAlpha2() + ".*")) {
+            if (anchor.attr("href").matches(
+                "(?i)/search/title\\?certificates=" + Globals.settings.getMovieSettings().getCertificationCountry().getAlpha2() + ".*")) {
               Pattern certificationPattern = Pattern.compile(".*:(.*)");
               Matcher matcher = certificationPattern.matcher(anchor.ownText());
               Certification certification = null;
               while (matcher.find()) {
                 if (matcher.group(1) != null) {
-                  certification = Certification.getCertification(Globals.settings.getCertificationCountry(), matcher.group(1));
+                  certification = Certification.getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), matcher.group(1));
                 }
               }
 

@@ -478,10 +478,10 @@ public class MovieToXbmcNfoConnector {
 
       movie.setProductionCompany(xbmc.getStudio());
       if (!StringUtils.isEmpty(xbmc.getCertifications())) {
-        movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getCertifications()));
+        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.getCertifications()));
       }
       if (!StringUtils.isEmpty(xbmc.getMpaa()) && movie.getCertification() == Certification.NOT_RATED) {
-        movie.setCertification(Certification.parseCertificationStringForSetupCountry(xbmc.getMpaa()));
+        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.getMpaa()));
       }
       movie.setWatched(xbmc.isWatched());
 

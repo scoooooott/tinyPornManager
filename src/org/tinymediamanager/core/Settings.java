@@ -47,16 +47,9 @@ import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
-import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.MovieSettings;
-import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
-import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
-import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
-import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 
 import ch.qos.logback.classic.Level;
 
@@ -75,9 +68,6 @@ public class Settings extends AbstractModelObject {
 
   /** The Constant CONFIG_FILE. */
   private final static String         CONFIG_FILE                 = "config.xml";
-
-  /** The Constant SCRAPER_TMDB_LANGU. */
-  private final static String         SCRAPER_LANGU               = "scraperTmdbLanguage";
 
   /** The Constant TITLE_PREFIX. */
   private final static String         TITLE_PREFIX                = "titlePrefix";
@@ -105,9 +95,6 @@ public class Settings extends AbstractModelObject {
 
   /** The Constant PROXY_PASSWORD. */
   private final static String         PROXY_PASSWORD              = "proxyPassword";
-
-  /** The Constant CERTIFICATION_COUNTRY. */
-  private final static String         CERTIFICATION_COUNTRY       = "certificationCountry";
 
   /** The Constant CLEAR_CACHE_SHUTDOWN. */
   private final static String         CLEAR_CACHE_SHUTDOWN        = "clearCacheShutdown";
@@ -144,12 +131,6 @@ public class Settings extends AbstractModelObject {
 
   /** The log level. */
   private int                         logLevel                    = Level.DEBUG_INT;
-
-  /** The scraper tmdb language. */
-  private Languages                   scraperLanguage             = Languages.en;
-
-  /** The country for certification. */
-  private CountryCode                 certificationCountry        = CountryCode.US;
 
   /** The dirty flag. */
   private boolean                     dirty                       = false;
@@ -482,21 +463,11 @@ public class Settings extends AbstractModelObject {
     addTitlePrefix("Ein");
     addTitlePrefix("Eine");
 
-    setScraperLanguage(Languages.en);
-    setCertificationCountry(CountryCode.US);
-
-    movieSettings.setImagePosterSize(PosterSizes.BIG);
-    movieSettings.setImageFanartSize(FanartSizes.LARGE);
-    movieSettings.setMovieConnector(MovieConnectors.XBMC);
     movieSettings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
     movieSettings.addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
     movieSettings.addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
-    movieSettings.setMovieScraper(MovieScrapers.TMDB);
-    movieSettings.setImdbScrapeForeignLanguage(false);
-
-    tvShowSettings.setTvShowScraper(TvShowScrapers.TVDB);
 
     saveSettings();
   }
@@ -649,50 +620,6 @@ public class Settings extends AbstractModelObject {
     tl.setLevel(Level.toLevel(logLevel));
 
     firePropertyChange(LOG_LEVEL, oldValue, newValue);
-  }
-
-  /**
-   * Gets the scraper language.
-   * 
-   * @return the scraper language
-   */
-  @XmlElement(name = SCRAPER_LANGU)
-  public Languages getScraperLanguage() {
-    return scraperLanguage;
-  }
-
-  /**
-   * Sets the scraper language.
-   * 
-   * @param newValue
-   *          the new scraper language
-   */
-  public void setScraperLanguage(Languages newValue) {
-    Languages oldValue = this.scraperLanguage;
-    this.scraperLanguage = newValue;
-    firePropertyChange(SCRAPER_LANGU, oldValue, newValue);
-  }
-
-  /**
-   * Gets the certification country.
-   * 
-   * @return the certification country
-   */
-  @XmlElement(name = CERTIFICATION_COUNTRY)
-  public CountryCode getCertificationCountry() {
-    return certificationCountry;
-  }
-
-  /**
-   * Sets the certification country.
-   * 
-   * @param newValue
-   *          the new certification country
-   */
-  public void setCertificationCountry(CountryCode newValue) {
-    CountryCode oldValue = this.certificationCountry;
-    certificationCountry = newValue;
-    firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
 
   /**

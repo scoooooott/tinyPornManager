@@ -83,41 +83,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
                                                               "Scraper for themoviedb.org which is able to scrape movie metadata, artwork and trailers");
 
   /**
-   * The Enum Languages.
-   * 
-   * @author Manuel Laggner
-   */
-  public enum Languages {
-
-    /** The de. */
-    de("Deutsch"),
-    /** The en. */
-    en("English");
-
-    /** The title. */
-    private String title;
-
-    /**
-     * Instantiates a new languages.
-     * 
-     * @param title
-     *          the title
-     */
-    private Languages(String title) {
-      this.title = title;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
-     */
-    public String toString() {
-      return this.title;
-    }
-  }
-
-  /**
    * Instantiates a new tmdb metadata provider.
    * 
    * @throws Exception
@@ -195,7 +160,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // begin search
     LOGGER.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
-    tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getScraperLanguage().name());
+    tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
     URL url = tmdbSearchMovie.buildUrl();
     LOGGER.debug(url.toString().replace("&api_key=6247670ec93f4495a36297ff88f7cd15", "&<API_KEY>"));
 
@@ -206,7 +171,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       // Globals.settings.getScraperLanguage().name(), false);
       // new api
       trackConnections();
-      moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getScraperLanguage().name(), false, 0);
+      moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getMovieSettings().getScraperLanguage().name(), false, 0);
       baseUrl = tmdb.getConfiguration().getBaseUrl();
     }
 
@@ -292,7 +257,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     String baseUrl = null;
     synchronized (tmdb) {
       trackConnections();
-      movie = tmdb.getMovieInfo(tmdbId, Globals.settings.getScraperLanguage().name());
+      movie = tmdb.getMovieInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name());
       baseUrl = tmdb.getConfiguration().getBaseUrl();
     }
 
@@ -344,7 +309,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     List<ReleaseInfo> releaseInfo = null;
     synchronized (tmdb) {
       trackConnections();
-      releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getScraperLanguage().name());
+      releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name());
     }
 
     for (ReleaseInfo info : releaseInfo) {
@@ -355,8 +320,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
       // only use the certification of the desired country (if any country has
       // been chosen)
-      if (Globals.settings.getCertificationCountry() == null
-          || Globals.settings.getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
+      if (Globals.settings.getMovieSettings().getCertificationCountry() == null
+          || Globals.settings.getMovieSettings().getCertificationCountry().getAlpha2().compareToIgnoreCase(info.getCountry()) == 0) {
 
         // Certification certification = new Certification(info.getCountry(),
         // info.getCertification());
@@ -484,7 +449,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       synchronized (tmdb) {
         trackConnections();
         // get trailers from tmdb (with specified langu and without)
-        List<Trailer> tmdbTrailers = tmdb.getMovieTrailers(tmdbId, Globals.settings.getScraperLanguage().name());
+        List<Trailer> tmdbTrailers = tmdb.getMovieTrailers(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name());
         List<Trailer> tmdbTrailersWoLang = tmdb.getMovieTrailers(tmdbId, "");
         tmdbTrailers.addAll(tmdbTrailersWoLang);
 
@@ -543,7 +508,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     MovieDb movieInfo = null;
     synchronized (tmdb) {
       trackConnections();
-      movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getScraperLanguage().name());
+      movieInfo = tmdb.getMovieInfoImdb(imdbId, Globals.settings.getMovieSettings().getScraperLanguage().name());
     }
 
     if (movieInfo != null) {
@@ -567,7 +532,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
      */
     @Override
     public int compare(Artwork arg0, Artwork arg1) {
-      String preferredLangu = Globals.settings.getScraperLanguage().name();
+      String preferredLangu = Globals.settings.getMovieSettings().getScraperLanguage().name();
 
       // check if first image is preferred langu
       if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
@@ -766,7 +731,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     synchronized (tmdb) {
       trackConnections();
       try {
-        movieSetsFound = tmdb.searchCollection(setName, Globals.settings.getScraperLanguage().name(), 0);
+        movieSetsFound = tmdb.searchCollection(setName, Globals.settings.getMovieSettings().getScraperLanguage().name(), 0);
         String baseUrl = tmdb.getConfiguration().getBaseUrl();
         for (Collection collection : movieSetsFound) {
           collection.setPosterPath(baseUrl + "w342" + collection.getPosterPath());
@@ -806,7 +771,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       return info;
     }
 
-    info = tmdb.getCollectionInfo(tmdbId, Globals.settings.getScraperLanguage().name());
+    info = tmdb.getCollectionInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name());
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
     info.setPosterPath(baseUrl + "w342" + info.getPosterPath());

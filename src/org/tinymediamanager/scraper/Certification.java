@@ -543,7 +543,7 @@ public enum Certification {
   // Zealand:M / Netherlands:16 / Malaysia:U / Malaysia:18PL / Ireland:18 /
   // Iceland:16 / Hungary:18 / Germany:16 / Finland:K-15 / Canada:18A /
   // Canada:18+ / Brazil:16 / Australia:M / Argentina:16</certification>
-  public static Certification parseCertificationStringForSetupCountry(String name) {
+  public static Certification parseCertificationStringForMovieSetupCountry(String name) {
     Certification cert = NOT_RATED;
     name = name.trim();
     if (name.contains("/")) {
@@ -554,13 +554,13 @@ public enum Certification {
         c = c.trim();
         if (c.contains(":")) {
           String[] cs = c.split(":");
-          cert = getCertification(Globals.settings.getCertificationCountry(), cs[1]);
+          cert = getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), cs[1]);
           if (cert != NOT_RATED) {
             return cert;
           }
         }
         else {
-          cert = getCertification(Globals.settings.getCertificationCountry(), c);
+          cert = getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), c);
           if (cert != NOT_RATED) {
             return cert;
           }
@@ -589,11 +589,11 @@ public enum Certification {
       // no slash, so only one country
       if (name.contains(":")) {
         String[] cs = name.split(":");
-        cert = getCertification(Globals.settings.getCertificationCountry(), cs[1]);
+        cert = getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), cs[1]);
       }
       else {
         // no country? try to find only by name
-        cert = getCertification(Globals.settings.getCertificationCountry(), name);
+        cert = getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), name);
       }
     }
     // still not found localized cert? parse the name to find *ANY* certificate

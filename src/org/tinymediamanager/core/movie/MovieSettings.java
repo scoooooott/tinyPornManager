@@ -25,8 +25,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
 
 /**
@@ -122,6 +124,12 @@ public class MovieSettings extends AbstractModelObject {
   /** The Constant IMDB_SITE. */
   private final static String           IMDB_SITE                      = "imdbSite";
 
+  /** The Constant SCRAPER_LANGU. */
+  private final static String           SCRAPER_LANGU                  = "scraperLanguage";
+
+  /** The Constant CERTIFICATION_COUNTRY. */
+  private final static String           CERTIFICATION_COUNTRY          = "certificationCountry";
+
   /** The movie data sources. */
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -210,6 +218,12 @@ public class MovieSettings extends AbstractModelObject {
 
   /** The write actor images. */
   private boolean                       writeActorImages               = false;
+
+  /** The scraper language. */
+  private MediaLanguages                scraperLanguage                = MediaLanguages.en;
+
+  /** The country for certification. */
+  private CountryCode                   certificationCountry           = CountryCode.US;
 
   /**
    * Instantiates a new movie settings.
@@ -868,5 +882,49 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.writeActorImages;
     this.writeActorImages = newValue;
     firePropertyChange(WRITE_ACTOR_IMAGES, oldValue, newValue);
+  }
+
+  /**
+   * Gets the scraper language.
+   * 
+   * @return the scraper language
+   */
+  @XmlElement(name = SCRAPER_LANGU)
+  public MediaLanguages getScraperLanguage() {
+    return scraperLanguage;
+  }
+
+  /**
+   * Sets the scraper language.
+   * 
+   * @param newValue
+   *          the new scraper language
+   */
+  public void setScraperLanguage(MediaLanguages newValue) {
+    MediaLanguages oldValue = this.scraperLanguage;
+    this.scraperLanguage = newValue;
+    firePropertyChange(SCRAPER_LANGU, oldValue, newValue);
+  }
+
+  /**
+   * Gets the certification country.
+   * 
+   * @return the certification country
+   */
+  @XmlElement(name = CERTIFICATION_COUNTRY)
+  public CountryCode getCertificationCountry() {
+    return certificationCountry;
+  }
+
+  /**
+   * Sets the certification country.
+   * 
+   * @param newValue
+   *          the new certification country
+   */
+  public void setCertificationCountry(CountryCode newValue) {
+    CountryCode oldValue = this.certificationCountry;
+    certificationCountry = newValue;
+    firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
 }

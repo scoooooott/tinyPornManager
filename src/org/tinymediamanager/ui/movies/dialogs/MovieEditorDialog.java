@@ -392,7 +392,7 @@ public class MovieEditorDialog extends JDialog {
     }
     {
       cbCertification = new JComboBox();
-      for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getCertificationCountry())) {
+      for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getMovieSettings().getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
       details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");

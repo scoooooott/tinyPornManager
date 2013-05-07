@@ -36,9 +36,8 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
@@ -67,10 +66,10 @@ public class MovieScraperSettingsPanel extends JPanel {
   private ButtonGroup                 buttonGroupScraper;
 
   /** The cb scraper tmdb language. */
-  private JComboBox                   cbScraperTmdbLanguage;
+  private JComboBox                   cbScraperLanguage;
 
   /** The cb country. */
-  private JComboBox                   cbCountry;
+  private JComboBox                   cbCertificationCountry;
 
   /** The cb imdb translateable content. */
   private JCheckBox                   cbImdbTranslateableContent;
@@ -162,14 +161,14 @@ public class MovieScraperSettingsPanel extends JPanel {
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
     panelMovieScrapers.add(lblScraperLanguage, "1, 13, right, default");
 
-    cbScraperTmdbLanguage = new JComboBox(TmdbMetadataProvider.Languages.values());
-    panelMovieScrapers.add(cbScraperTmdbLanguage, "3, 13");
+    cbScraperLanguage = new JComboBox(MediaLanguages.values());
+    panelMovieScrapers.add(cbScraperLanguage, "3, 13");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
     panelMovieScrapers.add(lblCountry, "1, 15, right, default");
 
-    cbCountry = new JComboBox(CountryCode.values());
-    panelMovieScrapers.add(cbCountry, "3, 15, fill, default");
+    cbCertificationCountry = new JComboBox(CountryCode.values());
+    panelMovieScrapers.add(cbCertificationCountry, "3, 15, fill, default");
 
     panelScraperMetadataContainer = new JPanel();
     panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE
@@ -268,15 +267,15 @@ public class MovieScraperSettingsPanel extends JPanel {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    BeanProperty<Settings, Languages> settingsBeanProperty_8 = BeanProperty.create("scraperLanguage");
+    BeanProperty<Settings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("movieSettings.scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<Settings, Languages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_8, cbScraperTmdbLanguage, jComboBoxBeanProperty);
+    AutoBinding<Settings, MediaLanguages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_8, cbScraperLanguage, jComboBoxBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<Settings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("certificationCountry");
+    BeanProperty<Settings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("movieSettings.certificationCountry");
     AutoBinding<Settings, CountryCode, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_9, cbCountry, jComboBoxBeanProperty);
+        settingsBeanProperty_9, cbCertificationCountry, jComboBoxBeanProperty);
     autoBinding_8.bind();
     //
     BeanProperty<Settings, Boolean> settingsBeanProperty_13 = BeanProperty.create("movieSettings.imdbScrapeForeignLanguage");

@@ -150,7 +150,7 @@ public class ImdbMetadataProviderTest {
 
     md = null;
     try {
-      Globals.settings.setCertificationCountry(CountryCode.US);
+      Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.US);
       md = mp.getMetadata(options);
     }
     catch (Exception e) {
@@ -212,7 +212,7 @@ public class ImdbMetadataProviderTest {
 
     md = null;
     try {
-      Globals.settings.setCertificationCountry(CountryCode.DE);
+      Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.DE);
       md = mp.getMetadata(options);
     }
     catch (Exception e) {
@@ -271,7 +271,7 @@ public class ImdbMetadataProviderTest {
 
     md = null;
     try {
-      Globals.settings.setCertificationCountry(CountryCode.GB);
+      Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.GB);
       md = mp.getMetadata(options);
     }
     catch (Exception e) {
@@ -333,7 +333,7 @@ public class ImdbMetadataProviderTest {
 
     md = null;
     try {
-      Globals.settings.setCertificationCountry(CountryCode.US);
+      Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.US);
       md = mp.getMetadata(options);
     }
     catch (Exception e) {
@@ -426,8 +426,8 @@ public class ImdbMetadataProviderTest {
     }
     assertEquals("writer", writer, sb.toString());
     // certification
-    assertEquals("certification", Certification.getCertification(Globals.settings.getCertificationCountry(), certification), md.getCertifications()
-        .get(0));
+    assertEquals("certification", Certification.getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), certification), md
+        .getCertifications().get(0));
   }
 
   private void checkMoviePoster(String url, MediaMetadata md) {

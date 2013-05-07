@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.scraper.CountryCode;
+import org.tinymediamanager.scraper.MediaLanguages;
 
 /**
  * The Class TvShowSettings.
@@ -34,27 +36,39 @@ import org.tinymediamanager.core.AbstractModelObject;
 public class TvShowSettings extends AbstractModelObject {
 
   /** The Constant TV_SHOW_DATA_SOURCE. */
-  private final static String TV_SHOW_DATA_SOURCE = "tvShowDataSource";
+  private final static String TV_SHOW_DATA_SOURCE   = "tvShowDataSource";
 
   /** The Constant TV_SHOW_SCRAPER. */
-  private final static String TV_SHOW_SCRAPER     = "tvShowScraper";
+  private final static String TV_SHOW_SCRAPER       = "tvShowScraper";
 
   /** The Constant PATH. */
-  private final static String PATH                = "path";
+  private final static String PATH                  = "path";
 
   /** The Constant SCRAPE_BEST_IMAGE. */
-  private final static String SCRAPE_BEST_IMAGE   = "scrapeBestImage";
+  private final static String SCRAPE_BEST_IMAGE     = "scrapeBestImage";
+
+  /** The Constant SCRAPER_LANGU. */
+  private final static String SCRAPER_LANGU         = "scraperLanguage";
+
+  /** The Constant CERTIFICATION_COUNTRY. */
+  private final static String CERTIFICATION_COUNTRY = "certificationCountry";
 
   /** The movie data sources. */
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>  tvShowDataSources   = ObservableCollections.observableList(new ArrayList<String>());
+  private final List<String>  tvShowDataSources     = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The tv show scraper. */
-  private TvShowScrapers      tvShowScraper       = TvShowScrapers.TVDB;
+  private TvShowScrapers      tvShowScraper         = TvShowScrapers.TVDB;
 
   /** The scrape best image. */
-  private boolean             scrapeBestImage     = true;
+  private boolean             scrapeBestImage       = true;
+
+  /** The scraper language. */
+  private MediaLanguages      scraperLanguage       = MediaLanguages.en;
+
+  /** The country for certification. */
+  private CountryCode         certificationCountry  = CountryCode.US;
 
   /**
    * Instantiates a new tv show settings.
@@ -135,5 +149,49 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.scrapeBestImage;
     this.scrapeBestImage = newValue;
     firePropertyChange(SCRAPE_BEST_IMAGE, oldValue, newValue);
+  }
+
+  /**
+   * Gets the scraper language.
+   * 
+   * @return the scraper language
+   */
+  @XmlElement(name = SCRAPER_LANGU)
+  public MediaLanguages getScraperLanguage() {
+    return scraperLanguage;
+  }
+
+  /**
+   * Sets the scraper language.
+   * 
+   * @param newValue
+   *          the new scraper language
+   */
+  public void setScraperLanguage(MediaLanguages newValue) {
+    MediaLanguages oldValue = this.scraperLanguage;
+    this.scraperLanguage = newValue;
+    firePropertyChange(SCRAPER_LANGU, oldValue, newValue);
+  }
+
+  /**
+   * Gets the certification country.
+   * 
+   * @return the certification country
+   */
+  @XmlElement(name = CERTIFICATION_COUNTRY)
+  public CountryCode getCertificationCountry() {
+    return certificationCountry;
+  }
+
+  /**
+   * Sets the certification country.
+   * 
+   * @param newValue
+   *          the new certification country
+   */
+  public void setCertificationCountry(CountryCode newValue) {
+    CountryCode oldValue = this.certificationCountry;
+    certificationCountry = newValue;
+    firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
 }

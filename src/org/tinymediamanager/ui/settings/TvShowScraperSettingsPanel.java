@@ -37,8 +37,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.scraper.CountryCode;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
-import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider.Languages;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
@@ -115,7 +114,7 @@ public class TvShowScraperSettingsPanel extends JPanel {
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
     panelMovieScrapers.add(lblScraperLanguage, "1, 6, right, default");
 
-    cbScraperTmdbLanguage = new JComboBox(TmdbMetadataProvider.Languages.values());
+    cbScraperTmdbLanguage = new JComboBox(MediaLanguages.values());
     panelMovieScrapers.add(cbScraperTmdbLanguage, "3, 6");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
@@ -167,13 +166,13 @@ public class TvShowScraperSettingsPanel extends JPanel {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    BeanProperty<Settings, Languages> settingsBeanProperty_8 = BeanProperty.create("scraperLanguage");
+    BeanProperty<Settings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("tvShowSettings.scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
-    AutoBinding<Settings, Languages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+    AutoBinding<Settings, MediaLanguages, JComboBox, Object> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_8, cbScraperTmdbLanguage, jComboBoxBeanProperty);
     autoBinding_7.bind();
     //
-    BeanProperty<Settings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("certificationCountry");
+    BeanProperty<Settings, CountryCode> settingsBeanProperty_9 = BeanProperty.create("tvShowSettings.certificationCountry");
     AutoBinding<Settings, CountryCode, JComboBox, Object> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, cbCountry, jComboBoxBeanProperty);
     autoBinding_8.bind();

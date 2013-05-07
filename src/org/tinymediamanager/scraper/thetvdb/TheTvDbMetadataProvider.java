@@ -139,13 +139,14 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     // search via the api
     List<Series> series = null;
     synchronized (tvdb) {
-      series = tvdb.searchSeries(searchString, Globals.settings.getScraperLanguage().name());
+      series = tvdb.searchSeries(searchString, Globals.settings.getTvShowSettings().getScraperLanguage().name());
     }
 
     // first add all tv shows in the preferred langu
     HashMap<String, MediaSearchResult> storedResults = new HashMap<String, MediaSearchResult>();
     for (Series show : series) {
-      if (show.getLanguage().equalsIgnoreCase(Globals.settings.getScraperLanguage().name()) && !storedResults.containsKey(show.getId())) {
+      if (show.getLanguage().equalsIgnoreCase(Globals.settings.getTvShowSettings().getScraperLanguage().name())
+          && !storedResults.containsKey(show.getId())) {
         MediaSearchResult sr = createSearchResult(show, options, searchString);
         results.add(sr);
 
@@ -229,7 +230,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
 
     Series show = null;
     synchronized (tvdb) {
-      show = tvdb.getSeries(id, Globals.settings.getScraperLanguage().name());
+      show = tvdb.getSeries(id, Globals.settings.getTvShowSettings().getScraperLanguage().name());
     }
 
     // populate metadata
@@ -327,7 +328,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     synchronized (tvdb) {
       // switched to getAllEpisodes for performance - only 1 request needed for scraping multiple episodes of one tv show
       // episode = tvdb.getEpisode(id, seasonNr, episodeNr, Globals.settings.getScraperLanguage().name());
-      episodes.addAll(tvdb.getAllEpisodes(id, Globals.settings.getScraperLanguage().name()));
+      episodes.addAll(tvdb.getAllEpisodes(id, Globals.settings.getTvShowSettings().getScraperLanguage().name()));
     }
 
     Episode episode = null;
@@ -515,7 +516,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
      */
     @Override
     public int compare(Banner arg0, Banner arg1) {
-      String preferredLangu = Globals.settings.getScraperLanguage().name();
+      String preferredLangu = Globals.settings.getTvShowSettings().getScraperLanguage().name();
 
       // check if first image is preferred langu
       if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {

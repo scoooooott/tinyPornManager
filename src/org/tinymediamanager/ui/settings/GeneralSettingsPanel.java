@@ -15,22 +15,32 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.swingbinding.JListBinding;
+import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.UTF8Control;
@@ -81,19 +91,146 @@ public class GeneralSettingsPanel extends JPanel {
 
   /** The combo box. */
   private JComboBox                   comboBox;
+  private JPanel                      panelCache;
+  private JPanel                      panelLogger;
+  private JPanel                      panelVideoFiletypes;
+
+  private JTextField                  tfVideoFiletype;
+
+  private JList                       listVideoFiletypes;
+  private JPanel                      panelSubtitleFiletypes;
+  private JTextField                  tfSubtitleFiletype;
+
+  private JList                       listSubtitleFiletypes;
 
   /**
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(75px;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(150px;default)"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default)"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), }));
+
+    panelVideoFiletypes = new JPanel();
+    panelVideoFiletypes.setBorder(new TitledBorder(
+        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.filetypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    panelVideoFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    JScrollPane scrollPaneVideoFiletypes = new JScrollPane();
+    panelVideoFiletypes.add(scrollPaneVideoFiletypes, "2, 2, fill, fill");
+
+    listVideoFiletypes = new JList();
+    scrollPaneVideoFiletypes.setViewportView(listVideoFiletypes);
+
+    JButton btnRemoveVideoFiletype = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+    btnRemoveVideoFiletype.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        int row = listVideoFiletypes.getSelectedIndex();
+        if (row != -1) {
+          String prefix = Globals.settings.getVideoFileType().get(row);
+          Globals.settings.removeVideoFileType(prefix);
+        }
+      }
+    });
+    panelVideoFiletypes.add(btnRemoveVideoFiletype, "4, 2, default, bottom");
+
+    tfVideoFiletype = new JTextField();
+    panelVideoFiletypes.add(tfVideoFiletype, "2, 4, fill, default");
+    tfVideoFiletype.setColumns(10);
+
+    JButton btnAddVideoFiletype = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    btnAddVideoFiletype.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (StringUtils.isNotEmpty(tfVideoFiletype.getText())) {
+          Globals.settings.addVideoFileTypes(tfVideoFiletype.getText());
+          tfVideoFiletype.setText("");
+        }
+      }
+    });
+    panelVideoFiletypes.add(btnAddVideoFiletype, "4, 4");
+    add(panelVideoFiletypes, "2, 2, fill, fill");
+
+    panelSubtitleFiletypes = new JPanel();
+    add(panelSubtitleFiletypes, "4, 2, fill, fill");
+    panelSubtitleFiletypes.setBorder(new TitledBorder(
+        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.filetypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    panelSubtitleFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    JScrollPane scrollPaneSubtitleFiletypes = new JScrollPane();
+    panelSubtitleFiletypes.add(scrollPaneSubtitleFiletypes, "2, 2, fill, fill");
+
+    listSubtitleFiletypes = new JList();
+    scrollPaneSubtitleFiletypes.setViewportView(listSubtitleFiletypes);
+
+    JButton btnRemoveSubtitleFiletype = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+    btnRemoveSubtitleFiletype.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        int row = listSubtitleFiletypes.getSelectedIndex();
+        if (row != -1) {
+          String prefix = Globals.settings.getSubtitleFileType().get(row);
+          Globals.settings.removeSubtitleFileType(prefix);
+        }
+      }
+    });
+    panelSubtitleFiletypes.add(btnRemoveSubtitleFiletype, "4, 2, default, bottom");
+
+    tfSubtitleFiletype = new JTextField();
+    panelSubtitleFiletypes.add(tfSubtitleFiletype, "2, 4, fill, default");
+    tfSubtitleFiletype.setColumns(10);
+
+    JButton btnAddSubtitleFiletype = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    btnAddSubtitleFiletype.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (StringUtils.isNotEmpty(tfSubtitleFiletype.getText())) {
+          Globals.settings.addSubtitleFileTypes(tfSubtitleFiletype.getText());
+          tfSubtitleFiletype.setText("");
+        }
+      }
+    });
+    panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "4, 4");
+
+    panelCache = new JPanel();
+    add(panelCache, "2, 4, fill, fill");
+    panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearCache"));
+    panelCache.add(chckbxClearCacheShutdown, "2, 2");
+
+    panelLogger = new JPanel();
+    add(panelLogger, "2, 6, fill, fill");
+    panelLogger.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
+
+    lblLoglevel = new JLabel("Loglevel");
+    panelLogger.add(lblLoglevel, "2, 2");
+    // listen to changes of the combo box
+    ItemListener listener = new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    };
+
+    Level[] levels = new Level[] { Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
+    Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
+    comboBox = new JComboBox(levels);
+    panelLogger.add(comboBox, "4, 2");
+    comboBox.addItemListener(listener);
+    comboBox.setSelectedItem(actualLevel);
 
     panelProxySettings = new JPanel();
     panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelProxySettings, "2, 2, 3, 1, fill, top");
+    add(panelProxySettings, "2, 8, fill, top");
     panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -129,26 +266,6 @@ public class GeneralSettingsPanel extends JPanel {
     tfProxyPassword = new JPasswordField();
     lblProxyPassword.setLabelFor(tfProxyPassword);
     panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
-
-    chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearCache")); //$NON-NLS-1$
-    add(chckbxClearCacheShutdown, "2, 4, 3, 1");
-
-    lblLoglevel = new JLabel("Loglevel");
-    add(lblLoglevel, "2, 6, right, default");
-
-    // listen to changes of the combo box
-    ItemListener listener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    };
-
-    Level[] levels = new Level[] { Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
-    comboBox = new JComboBox(levels);
-    comboBox.addItemListener(listener);
-    Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
-    comboBox.setSelectedItem(actualLevel);
-    add(comboBox, "4, 6, fill, default");
 
     initDataBindings();
   }
@@ -194,5 +311,15 @@ public class GeneralSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, chckbxClearCacheShutdown, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<Settings, List<String>> settingsBeanProperty_5 = BeanProperty.create("videoFileType");
+    JListBinding<String, Settings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, listVideoFiletypes);
+    jListBinding_1.bind();
+    //
+    BeanProperty<Settings, List<String>> settingsBeanProperty_6 = BeanProperty.create("subtitleFileType");
+    JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_6, listSubtitleFiletypes);
+    jListBinding_2.bind();
   }
 }

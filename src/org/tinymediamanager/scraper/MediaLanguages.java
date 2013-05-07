@@ -16,56 +16,37 @@
 package org.tinymediamanager.scraper;
 
 /**
- * The Class MediaLanguages.
+ * The Enum MediaLanguages.
  * 
  * @author Manuel Laggner
  */
-public class MediaLanguages {
+public enum MediaLanguages {
 
-  /** The id. */
-  private String id;
+  /** The de. */
+  de("Deutsch"),
+  /** The en. */
+  en("English");
 
-  /** The description. */
-  private String description;
-
-  /**
-   * Instantiates a new media languages.
-   * 
-   * @param id
-   *          the id
-   * @param description
-   *          the description
-   */
-  public MediaLanguages(String id, String description) {
-    this.id = id;
-    this.description = description;
-  }
+  /** The title. */
+  private String title;
 
   /**
-   * Gets the id.
+   * Instantiates a new languages.
    * 
-   * @return the id
+   * @param title
+   *          the title
    */
-  public String getId() {
-    return this.id;
-  }
-
-  /**
-   * Gets the description.
-   * 
-   * @return the description
-   */
-  public String getDescription() {
-    return this.description;
+  private MediaLanguages(String title) {
+    this.title = title;
   }
 
   /*
    * (non-Javadoc)
    * 
-   * @see java.lang.Object#toString()
+   * @see java.lang.Enum#toString()
    */
   public String toString() {
-    return this.description;
+    return this.title;
   }
 
 }
