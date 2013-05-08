@@ -195,17 +195,20 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         layout.setMinWidth(100);
         buttonPane.setLayout(layout);
         JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+        okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
         buttonPane.add(okButton, "1, 1, fill, top");
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
 
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+        cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
         buttonPane.add(cancelButton, "3, 1, fill, top");
         cancelButton.setActionCommand("Cancel");
         cancelButton.addActionListener(this);
 
         if (inQueue) {
           JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+          abortButton.setToolTipText(BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
           buttonPane.add(abortButton, "5, 1, fill, top");
           abortButton.setActionCommand("Abort");
           abortButton.addActionListener(this);

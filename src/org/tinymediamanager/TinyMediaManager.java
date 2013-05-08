@@ -294,6 +294,7 @@ public class TinyMediaManager {
         props.setProperty("menuColorDark", "237 237 237");
         props.setProperty("toolbarColorLight", "237 237 237");
         props.setProperty("toolbarColorDark", "237 237 237");
+        // props.setProperty("tooltipBackgroundColor", "237 237 237");
         props.put("windowDecoration", "system");
         props.put("logoString", "");
 

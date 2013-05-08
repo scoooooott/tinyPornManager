@@ -25,7 +25,13 @@ public enum MediaLanguages {
   /** The de. */
   de("Deutsch"),
   /** The en. */
-  en("English");
+  en("English"),
+  /** The fr. */
+  fr("Française"),
+  /** The it. */
+  it("Italiano"),
+  /** The sp. */
+  sp("Español");
 
   /** The title. */
   private String title;

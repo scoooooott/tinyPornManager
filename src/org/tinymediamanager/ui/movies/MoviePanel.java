@@ -469,7 +469,7 @@ public class MoviePanel extends JPanel {
      */
     public UpdateDataSourcesAction(boolean withTitle) {
       if (withTitle) {
-        putValue(NAME, BUNDLE.getString("movie.update.datasource")); //$NON-NLS-1$
+        putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
         putValue(LARGE_ICON_KEY, "");
       }
       else {

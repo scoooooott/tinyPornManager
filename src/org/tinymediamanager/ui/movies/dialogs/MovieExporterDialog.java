@@ -33,14 +33,14 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ExportTemplate;
 import org.tinymediamanager.core.movie.Movie;
@@ -141,7 +141,7 @@ public class MovieExporterDialog extends JDialog {
     chckbxTemplateWithDetail.setEnabled(false);
     panelExporterDetails.add(chckbxTemplateWithDetail, "2, 6");
 
-    JLabel lblDetails = new JLabel(BUNDLE.getString("movie.export.detail")); //$NON-NLS-1$
+    JLabel lblDetails = new JLabel(BUNDLE.getString("export.detail")); //$NON-NLS-1$
     panelExporterDetails.add(lblDetails, "4, 6");
 
     JScrollPane scrollPaneDescription = new JScrollPane();
@@ -155,10 +155,10 @@ public class MovieExporterDialog extends JDialog {
     getContentPane().add(tfExportDir, "2, 4, fill, default");
     tfExportDir.setColumns(10);
 
-    JButton btnSetDestination = new JButton(BUNDLE.getString("movie.export.setdestination")); //$NON-NLS-1$
+    JButton btnSetDestination = new JButton(BUNDLE.getString("export.setdestination")); //$NON-NLS-1$
     btnSetDestination.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("movie.export.selectdirectory")); //$NON-NLS-1$
+        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory")); //$NON-NLS-1$
         if (file != null) {
           tfExportDir.setText(file.getAbsolutePath());
         }

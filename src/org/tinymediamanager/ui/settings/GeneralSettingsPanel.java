@@ -203,7 +203,7 @@ public class GeneralSettingsPanel extends JPanel {
     panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearCache"));
+    chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearhttpcache"));
     panelCache.add(chckbxClearCacheShutdown, "2, 2");
 
     panelLogger = new JPanel();
