@@ -335,13 +335,26 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Adds the to media files.
+   * Adds a single MediaFile to movie
    * 
    * @param obj
    *          the obj
    */
   public void addToMediaFiles(MediaFile obj) {
     mediaFilesObservable.add(obj);
+    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+  }
+
+  /**
+   * Adds a MediaFile list to movie
+   * 
+   * @param obj
+   *          the obj
+   */
+  public void addToMediaFiles(ArrayList<MediaFile> obj) {
+    for (MediaFile mf : obj) {
+      mediaFilesObservable.add(mf);
+    }
     firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
   }
 
@@ -378,6 +391,35 @@ public class Movie extends MediaEntity {
   public void removeFromMediaFiles(MediaFile obj) {
     mediaFilesObservable.remove(obj);
     firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+  }
+
+  /**
+   * Removes specific type the from media files.
+   * 
+   * @param type
+   *          the MediaFileType
+   */
+  public void removeAllMediaFilesExceptType(MediaFileType type) {
+    for (int i = mediaFilesObservable.size() - 1; i >= 0; i--)
+
+      if (!mediaFilesObservable.get(i).getType().equals(type)) {
+        mediaFilesObservable.remove(i);
+      }
+    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+  }
+
+  /**
+   * updates all the MediaFiles to their new absolute path
+   * 
+   * @param oldMoviePath
+   *          the old movie path
+   * @param newMoviePath
+   *          the new movie path
+   */
+  public void updateMediaFilePath(File oldMoviePath, File newMoviePath) {
+    for (MediaFile mf : getMediaFiles()) {
+      mf.fixPathForRenamedFolder(oldMoviePath, newMoviePath);
+    }
   }
 
   /**
@@ -431,8 +473,9 @@ public class Movie extends MediaEntity {
       LOGGER.info("Trailer download successfully");
       // TODO: maybe check if there are other trailerfiles (with other
       // extension) and remove
-      FileUtils.deleteQuietly(new File(tfile + ext));
-      MovieRenamer.moveFile(tfile + ext + ".tmp", tfile + ext);
+      File trailer = new File(tfile + ext);
+      FileUtils.deleteQuietly(trailer);
+      MovieRenamer.moveFile(new File(tfile + ext + ".tmp"), trailer);
     }
     catch (IOException e) {
       LOGGER.error("Error downloading trailer", e);

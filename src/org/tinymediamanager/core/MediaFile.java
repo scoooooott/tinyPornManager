@@ -41,7 +41,7 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
  * @author Manuel Laggner
  */
 @Embeddable
-public class MediaFile extends AbstractModelObject {
+public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
 
   /** The Constant LOGGER. */
   private static final Logger LOGGER           = LoggerFactory.getLogger(MediaFile.class);
@@ -224,6 +224,15 @@ public class MediaFile extends AbstractModelObject {
   }
 
   /**
+   * if name/path changes, invalidate the file handle (if not null)
+   */
+  private void invalidateFileHandle() {
+    if (file != null) {
+      file = null;
+    }
+  }
+
+  /**
    * Gets the path.
    * 
    * @return the path
@@ -241,7 +250,27 @@ public class MediaFile extends AbstractModelObject {
   public void setPath(String newValue) {
     String oldValue = this.path;
     this.path = newValue;
+    invalidateFileHandle();
     firePropertyChange(PATH, oldValue, newValue);
+  }
+
+  /**
+   * (re)sets the path (when renaming MediaEntity folder).<br>
+   * calculates relative path from old and exchanges new path (should be on same level)
+   * 
+   * @param oldPath
+   *          the old path
+   * @param newPath
+   *          the new path
+   */
+  public void fixPathForRenamedFolder(File oldPath, File newPath) {
+    String rel = Utils.relPath(oldPath, this.path); // relative from old
+    String oldValue = this.path;
+    this.path = newPath.getPath();
+    if (!rel.isEmpty()) {
+      this.path += File.separator + rel;
+    }
+    firePropertyChange(PATH, oldValue, this.path);
   }
 
   /**
@@ -262,6 +291,7 @@ public class MediaFile extends AbstractModelObject {
   public void setFilename(String newValue) {
     String oldValue = this.filename;
     this.filename = newValue;
+    invalidateFileHandle();
     firePropertyChange(FILENAME, oldValue, newValue);
   }
 
@@ -272,6 +302,15 @@ public class MediaFile extends AbstractModelObject {
    */
   public String getExtension() {
     return FilenameUtils.getExtension(filename);
+  }
+
+  /**
+   * Gets the "basename" (filename without extension)
+   * 
+   * @return the basename
+   */
+  public String getBasename() {
+    return FilenameUtils.getBaseName(filename);
   }
 
   /**
@@ -358,7 +397,7 @@ public class MediaFile extends AbstractModelObject {
     if (mediaInfo == null) {
       mediaInfo = new MediaInfo();
       if (!mediaInfo.open(this.getFile())) {
-        LOGGER.error("Mediainfo could not open file: " + this.getFilename());
+        LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename());
       }
     }
     return mediaInfo;
@@ -914,4 +953,26 @@ public class MediaFile extends AbstractModelObject {
     }
   }
 
+  /**
+   * Tests this abstract pathname for equality with the given MediaFile. Returns <code>true</code> if and only if the argument is not
+   * <code>null</code> and is an abstract pathname that denotes the same file or directory as this abstract pathname. Whether or not two abstract
+   * pathnames are equal depends upon the underlying system. On UNIX systems, alphabetic case is significant in comparing pathnames; on Microsoft
+   * Windows systems it is not.
+   * 
+   * @param mf2
+   *          The MediaFile to be compared with this abstract pathname
+   * 
+   * @return <code>true</code> if and only if the objects are the same; <code>false</code> otherwise
+   */
+  public boolean equals(MediaFile mf2) {
+    if ((mf2 != null) && (mf2 instanceof MediaFile)) {
+      return compareTo(mf2) == 0;
+    }
+    return false;
+  }
+
+  @Override
+  public int compareTo(MediaFile mf2) {
+    return this.getFile().getAbsolutePath().compareTo(mf2.getFile().getAbsolutePath());
+  }
 }
