@@ -473,9 +473,8 @@ public class Movie extends MediaEntity {
       LOGGER.info("Trailer download successfully");
       // TODO: maybe check if there are other trailerfiles (with other
       // extension) and remove
-      File trailer = new File(tfile + ext);
-      FileUtils.deleteQuietly(trailer);
-      MovieRenamer.moveFile(new File(tfile + ext + ".tmp"), trailer);
+      FileUtils.deleteQuietly(new File(tfile + ext));
+      MovieRenamer.moveFile(tfile + ext + ".tmp", tfile + ext);
     }
     catch (IOException e) {
       LOGGER.error("Error downloading trailer", e);
