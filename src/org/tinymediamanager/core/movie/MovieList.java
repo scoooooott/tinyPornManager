@@ -165,6 +165,13 @@ public class MovieList extends AbstractModelObject {
   public void removeMovie(Movie movie) {
     int oldValue = movieList.size();
     movieList.remove(movie);
+
+    // remove movie also from moviesets
+    if (movie.getMovieSet() != null) {
+      movie.getMovieSet().removeMovie(movie);
+      movie.setMovieSet(null);
+    }
+
     Globals.entityManager.getTransaction().begin();
     Globals.entityManager.remove(movie);
     Globals.entityManager.getTransaction().commit();
