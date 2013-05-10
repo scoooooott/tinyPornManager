@@ -146,8 +146,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String ext = getExtension().toLowerCase();
     String name = getFilename().toLowerCase();
     String base = FilenameUtils.getBaseName(name);
+    String foldername = FilenameUtils.getBaseName(FilenameUtils.getPathNoEndSeparator(getFile().getPath())).toLowerCase();
 
-    if (name.contains("sample") || name.contains("trailer")) {
+    if (name.contains("sample") || name.contains("trailer") || foldername.contains("sample")) {
       return MediaFileType.TRAILER;
     }
 
@@ -176,7 +177,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.VIDEO;
     }
 
-    // if (name.contains("subs") || name.contains("subtitle")) {
+    // if (name.contains("subs") || name.contains("subtitle") || foldername.contains("subs")) {
     // return MediaFileType.SUBTITLE;
     // }
 

@@ -212,7 +212,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           movie.setPath(movieDir.getPath());
         }
 
-        // second round - now add all the other knwon files
+        // second round - now add all the other known files
         for (MediaFile mf : mfs) {
 
           if (mf.getPath().toUpperCase().contains("BDMV") || mf.getPath().toUpperCase().contains("VIDEO_TS")) {

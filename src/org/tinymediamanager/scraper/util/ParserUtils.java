@@ -46,13 +46,13 @@ public class ParserUtils {
   public static String detectCleanMoviename(String filename) {
     LOGGER.debug("Parse filename for movie title: \"" + filename + "\"");
 
-    String[] stopwords = { "ac3", "dts", "custom", "docu", "dc", "dtv", "divx", "divx5", "dsr", "dsrip", "dutch", "dvd", "dvdrip", "dvdscr",
+    String[] stopwords = { "ac3", "dts", "custom", "docu", "dc", "dl", "dtv", "divx", "divx5", "dsr", "dsrip", "dutch", "dvd", "dvdrip", "dvdscr",
         "dvdscreener", "screener", "dvdivx", "cam", "fragment", "fs", "german", "hdtv", "hdrip", "hdtvrip", "internal", "limited", "multisubs",
         "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "repack", "rerip", "retail", "r3", "r5", "bd5", "se", "svcd", "swedish", "german", "read.nfo",
         "nfofix", "unrated", "ws", "telesync", "ts", "telecine", "tc", "brrip", "bdrip", "480p", "480i", "576p", "576i", "720p", "720i", "1080p",
-        "1080i", "hrhd", "hrhdtv", "hddvd", "bluray", "blueray", "x264", "h264", "xvid", "xvidvd", "xxx", "www.www", "cd1", "cd2", "cd3", "cd4",
-        "cd5", "cd6", "cd7", "cd8", "cd9", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8", "dvd9", "disc1", "disc2", "disc3",
-        "disc4", "disc5", "disc6", "disc7", "disc8", "disc9", "workprint" };
+        "1080i", "hrhd", "hrhdtv", "hddvd", "bluray", "blueray", "x264", "h264", "xvid", "xvidvd", "xxx", "www", "cd1", "cd2", "cd3", "cd4", "cd5",
+        "cd6", "cd7", "cd8", "cd9", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8", "dvd9", "disc1", "disc2", "disc3", "disc4",
+        "disc5", "disc6", "disc7", "disc8", "disc9", "workprint" };
 
     if (filename == null || filename.isEmpty()) {
       LOGGER.warn("Filename empty?!");
@@ -72,7 +72,7 @@ public class ParserUtils {
           if (s[i].equalsIgnoreCase(stop)) {
             s[i] = ""; // delete stopword
             // remember lowest position, but not lower than 3!!!
-            if (i < firstFoundStopwordPosition && i > 3) {
+            if (i < firstFoundStopwordPosition && i >= 3) {
               firstFoundStopwordPosition = i;
             }
           }
