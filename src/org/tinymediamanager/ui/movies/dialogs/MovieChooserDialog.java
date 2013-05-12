@@ -110,7 +110,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   private JTextField                  textFieldSearchString;
 
   /** The cb scraper. */
-  private JComboBox                   cbScraper;
+  private JComboBox<MovieScrapers>    cbScraper;
 
   /** The table. */
   private JTable                      table;
@@ -204,7 +204,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         panelSearchField.add(lblScraper, "2, 1, right, default");
       }
       {
-        cbScraper = new JComboBox(MovieScrapers.values());
+        cbScraper = new JComboBox<MovieScrapers>(MovieScrapers.values());
         MovieScrapers defaultScraper = Globals.settings.getMovieSettings().getMovieScraper();
         cbScraper.setSelectedItem(defaultScraper);
         cbScraper.setAction(new ChangeScraperAction());
@@ -316,7 +316,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       }
     }
     {
-      JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("moviechooser.scrape")); //$NON-NLS-1$
+      JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
       contentPanel.add(lblScrapeFollowingItems, "1, 6");
     }
     {
@@ -346,18 +346,18 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           layout.setMinWidth(100);
           buttonPane.setLayout(layout);
           JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-          buttonPane.add(okButton, "1, 1, fill, top");
+          buttonPane.add(okButton);
           okButton.setActionCommand("OK");
           okButton.addActionListener(this);
 
           JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-          buttonPane.add(cancelButton, "3, 1, fill, top");
+          buttonPane.add(cancelButton);
           cancelButton.setActionCommand("Cancel");
           cancelButton.addActionListener(this);
 
           if (inQueue) {
             JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-            buttonPane.add(abortButton, "5, 1, fill, top");
+            buttonPane.add(abortButton);
             abortButton.setActionCommand("Abort");
             abortButton.addActionListener(this);
           }
@@ -370,6 +370,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       progressBar.setVisible(false);
       initDataBindings();
 
+      // adjust column name
+      table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
       textFieldSearchString.setText(movieToScrape.getTitle());
       searchMovie(textFieldSearchString.getText(), movieToScrape.getImdbId());
 
@@ -550,7 +552,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("moviechooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
       List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId, metadataProvider);
       moviesFound.clear();
       if (searchResult.size() == 0) {
@@ -607,7 +609,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("moviechooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
       model.scrapeMetaData();
 
       return null;
@@ -635,7 +637,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         moviesFound, table);
     //
     BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
-    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setColumnName(BUNDLE.getString("moviechooser.searchresult")).setEditable(false); //$NON-NLS-1$
+    jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false); //$NON-NLS-1$
     //
     jTableBinding.bind();
     //

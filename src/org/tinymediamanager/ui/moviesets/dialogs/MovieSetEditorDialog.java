@@ -55,6 +55,7 @@ import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -122,6 +123,9 @@ public class MovieSetEditorDialog extends JDialog {
   /** The action cancel. */
   private final Action                actionCancel        = new CancelAction();
 
+  /** The action abort. */
+  private final Action                actionAbort         = new AbortAction();
+
   /** The tf tmdb id. */
   private JTextField                  tfTmdbId;
 
@@ -131,13 +135,18 @@ public class MovieSetEditorDialog extends JDialog {
   /** The artwork providers. */
   private List<IMediaArtworkProvider> artworkProviders    = new ArrayList<IMediaArtworkProvider>();
 
+  /** The continue queue. */
+  private boolean                     continueQueue       = true;
+
   /**
    * Instantiates a new movie set editor.
    * 
    * @param movieSet
    *          the movie set
+   * @param inQueue
+   *          the in queue
    */
-  public MovieSetEditorDialog(MovieSet movieSet) {
+  public MovieSetEditorDialog(MovieSet movieSet, boolean inQueue) {
     setModal(true);
     setIconImage(Globals.logo);
     setTitle(BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
@@ -203,7 +212,7 @@ public class MovieSetEditorDialog extends JDialog {
     btnSearchTmdbId.setAction(actionSearchTmdbId);
     panelContent.add(btnSearchTmdbId, "6, 4, left, default");
 
-    JLabel lblOverview = new JLabel(BUNDLE.getString("movieinformation.overview")); //$NON-NLS-1$
+    JLabel lblOverview = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
     panelContent.add(lblOverview, "2, 6, right, top");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
@@ -259,20 +268,26 @@ public class MovieSetEditorDialog extends JDialog {
     {
       JPanel buttonPane = new JPanel();
       getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), ColumnSpec.decode("100px"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"), ColumnSpec.decode("2dlu"), }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      EqualsLayout layout = new EqualsLayout(5);
+      layout.setMinWidth(100);
+      buttonPane.setLayout(layout);
       {
         JButton btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
         btnOk.setAction(actionOk);
-        buttonPane.add(btnOk, "2, 2, fill, top");
+        buttonPane.add(btnOk);
         getRootPane().setDefaultButton(btnOk);
-      }
-      {
+
         JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         btnCancel.setAction(actionCancel);
-        buttonPane.add(btnCancel, "4, 2, fill, top");
+        buttonPane.add(btnCancel);
+
+        if (inQueue) {
+          JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+          buttonPane.add(abortButton);
+          abortButton.setAction(actionAbort);
+        }
       }
+
     }
 
     {
@@ -288,15 +303,20 @@ public class MovieSetEditorDialog extends JDialog {
     initDataBindings();
 
     // adjust table columns
+    // name column
+    tableMovies.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name"));
+
     // year column
     tableMovies.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
     tableMovies.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
     tableMovies.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
+    tableMovies.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.year"));
 
     // watched column
     tableMovies.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(70);
     tableMovies.getTableHeader().getColumnModel().getColumn(2).setMinWidth(70);
     tableMovies.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(85);
+    tableMovies.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.watched"));
   }
 
   /**
@@ -504,23 +524,49 @@ public class MovieSetEditorDialog extends JDialog {
   }
 
   /**
+   * The Class AbortAction.
+   * 
+   * @author Manuel Laggner
+   */
+  private class AbortAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new cancel action.
+     */
+    public AbortAction() {
+      putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      continueQueue = false;
+      setVisible(false);
+      dispose();
+    }
+  }
+
+  /**
    * Inits the data bindings.
    */
   protected void initDataBindings() {
     JTableBinding<Movie, List<Movie>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ_WRITE, moviesInSet, tableMovies);
     //
     BeanProperty<Movie, String> movieBeanProperty = BeanProperty.create("title");
-    // FIXME move column title - WBP crash
-    jTableBinding.addColumnBinding(movieBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false); //$NON-NLS-1$
+    jTableBinding.addColumnBinding(movieBeanProperty).setEditable(false); //$NON-NLS-1$
     //
     BeanProperty<Movie, String> movieBeanProperty_1 = BeanProperty.create("year");
-    // FIXME move column title - WBP crash
-    jTableBinding.addColumnBinding(movieBeanProperty_1).setColumnName(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+    jTableBinding.addColumnBinding(movieBeanProperty_1).setEditable(false); //$NON-NLS-1$
     //
     BeanProperty<Movie, Boolean> movieBeanProperty_2 = BeanProperty.create("watched");
-    // FIXME move column title - WBP crash
-    jTableBinding.addColumnBinding(movieBeanProperty_2)
-        .setColumnName(BUNDLE.getString("metatag.watched")).setEditable(false).setColumnClass(Boolean.class); //$NON-NLS-1$
+    jTableBinding.addColumnBinding(movieBeanProperty_2).setEditable(false).setColumnClass(Boolean.class); //$NON-NLS-1$
     //
     jTableBinding.setEditable(false);
     jTableBinding.bind();
@@ -571,5 +617,16 @@ public class MovieSetEditorDialog extends JDialog {
       }
 
     }
+  }
+
+  /**
+   * Shows the dialog and returns whether the work on the queue should be continued.
+   * 
+   * @return true, if successful
+   */
+  public boolean showDialog() {
+    setLocationRelativeTo(MainWindow.getActiveInstance());
+    setVisible(true);
+    return continueQueue;
   }
 }

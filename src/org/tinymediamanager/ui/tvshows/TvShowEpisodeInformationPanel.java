@@ -202,7 +202,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelBottom.add(tabbedPaneTvShowEpisodeDetails, "1, 2, fill, fill");
 
     panelDetails = new TvShowEpisodeDetailsPanel(tvShowEpisodeSelectionModel);
-    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("movieinformation.details"), null, panelDetails, null);
+    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.details"), null, panelDetails, null);
 
     JScrollPane scrollPaneOverview = new JScrollPane();
     tpOverview = new JTextPane();
@@ -212,22 +212,19 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:default:grow"), }));
 
-    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("movieinformation.overview"), null, panelOverview, null); //$NON-NLS-1$
+    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.plot"), null, panelOverview, null); //$NON-NLS-1$
     panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
 
     panelActors = new TvShowEpisodeCastPanel(tvShowEpisodeSelectionModel);
-    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("movieinformation.cast"), null, panelActors, null);
+    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelActors, null);
 
     panelMediaInformation = new TvShowEpisodeMediaInformationPanel(tvShowEpisodeSelectionModel);
-    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("movieinformation.mediainformation"), null, panelMediaInformation, null);
+    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null);
 
     // beansbinding init
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty = BeanProperty
         .create("selectedTvShowEpisode.tvShow.title");
@@ -253,6 +250,15 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, String, JTextPane, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_3, tpOverview, jTextPaneBeanProperty);
     autoBinding_3.bind();
-
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, Float> tvShowEpisodeSelectionModelBeanProperty_4 = BeanProperty.create("selectedTvShowEpisode.rating");
+    BeanProperty<StarRater, Float> starRaterBeanProperty = BeanProperty.create("rating");
+    AutoBinding<TvShowEpisodeSelectionModel, Float, StarRater, Float> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_4, panelRatingStars, starRaterBeanProperty);
+    autoBinding_4.bind();
+    //
+    AutoBinding<TvShowEpisodeSelectionModel, Float, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_4, lblRating, jLabelBeanProperty);
+    autoBinding_5.bind();
   }
 }

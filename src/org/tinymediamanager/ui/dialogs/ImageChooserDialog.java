@@ -64,6 +64,7 @@ import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.ToggleButtonUI;
@@ -216,17 +217,16 @@ public class ImageChooserDialog extends JDialog {
       }
     }
     {
-      JPanel buttonPane = new JPanel();
-      getContentPane().add(buttonPane, BorderLayout.SOUTH);
-      buttonPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
+      JPanel bottomPane = new JPanel();
+      getContentPane().add(bottomPane, BorderLayout.SOUTH);
+      bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), }));
       {
         if (type == ImageType.FANART) {
           JPanel panelExtraButtons = new JPanel();
-          buttonPane.add(panelExtraButtons, "2, 2, fill, bottom");
+          bottomPane.add(panelExtraButtons, "2, 2, fill, bottom");
           panelExtraButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
           {
             if (Globals.settings.getMovieSettings().isImageExtraThumbs()) {
@@ -312,29 +312,32 @@ public class ImageChooserDialog extends JDialog {
 
       {
         progressBar = new JProgressBar();
-        buttonPane.add(progressBar, "2, 4");
+        bottomPane.add(progressBar, "2, 4");
       }
       {
         lblProgressAction = new JLabel("");
-        buttonPane.add(lblProgressAction, "4, 4");
+        bottomPane.add(lblProgressAction, "4, 4");
       }
       {
+        JPanel buttonPane = new JPanel();
+        EqualsLayout layout = new EqualsLayout(5);
+        buttonPane.setLayout(layout);
+        layout.setMinWidth(100);
+        bottomPane.add(buttonPane, "6, 4, fill, top");
         JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
         okButton.setAction(actionOK);
         okButton.setActionCommand("OK");
-        buttonPane.add(okButton, "6, 4, fill, top");
+        buttonPane.add(okButton);
         getRootPane().setDefaultButton(okButton);
-      }
-      {
+
         JButton btnAddFile = new JButton(BUNDLE.getString("Button.addfile")); //$NON-NLS-1$
         btnAddFile.setAction(action);
-        buttonPane.add(btnAddFile, "8, 4, fill, top");
-      }
-      {
+        buttonPane.add(btnAddFile);
+
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         cancelButton.setAction(actionCancel);
         cancelButton.setActionCommand("Cancel");
-        buttonPane.add(cancelButton, "10, 4, fill, top");
+        buttonPane.add(cancelButton);
       }
     }
 

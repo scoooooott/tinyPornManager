@@ -274,10 +274,10 @@ public class MovieInformationPanel extends JPanel {
     splitPaneVertical.setBottomComponent(panelBottom);
 
     panelDetails = new MovieDetailsPanel(movieSelectionModel);
-    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.details"), null, panelDetails, null); //$NON-NLS-1$
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.details"), null, panelDetails, null); //$NON-NLS-1$
 
     panelOverview = new JPanel();
-    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.overview"), null, panelOverview, null); //$NON-NLS-1$
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.plot"), null, panelOverview, null); //$NON-NLS-1$
     panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:default:grow"), }));
     // panelMovieDetails.add(tabbedPaneMovieDetails, "2, 3, fill, fill");
@@ -295,23 +295,23 @@ public class MovieInformationPanel extends JPanel {
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("80px"),
         RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
-    lblDirectorT = new JLabel(BUNDLE.getString("movieinformation.director")); //$NON-NLS-1$
+    lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
     panelMovieCast.add(lblDirectorT, "2, 2");
 
     lblDirector = new JLabel("");
     lblDirectorT.setLabelFor(lblDirector);
     panelMovieCast.add(lblDirector, "4, 2, 3, 1");
 
-    lblWriterT = new JLabel(BUNDLE.getString("movieinformation.writer")); //$NON-NLS-1$
+    lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
     panelMovieCast.add(lblWriterT, "2, 4");
 
     lblWriter = new JLabel("");
     lblWriterT.setLabelFor(lblWriter);
     panelMovieCast.add(lblWriter, "4, 4, 3, 1");
 
-    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.cast"), null, panelMovieCast, null); //$NON-NLS-1$
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelMovieCast, null); //$NON-NLS-1$
 
-    lblActors = new JLabel(BUNDLE.getString("movieinformation.actors")); //$NON-NLS-1$
+    lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
     panelMovieCast.add(lblActors, "2, 6, default, top");
 
     // tableCast = new JTable();
@@ -326,10 +326,10 @@ public class MovieInformationPanel extends JPanel {
     panelMovieCast.add(lblActorThumb, "6, 2, 1, 6, fill, fill");
 
     panelMediaInformation = new MovieMediaInformationPanel(movieSelectionModel);
-    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
 
     panelMovieTrailer = new MovieTrailerPanel(movieSelectionModel);
-    tabbedPaneMovieDetails.addTab(BUNDLE.getString("movieinformation.trailer"), null, panelMovieTrailer, null); //$NON-NLS-1$
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.trailer"), null, panelMovieTrailer, null); //$NON-NLS-1$
 
     // beansbinding init
     initDataBindings();

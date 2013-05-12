@@ -74,6 +74,7 @@ public class TvShowDetailsPanel extends JPanel {
 
   /** The lbl studio. */
   private JLabel                     lblStudio;
+  private JLabel                     lblStatus;
 
   /**
    * Instantiates a new tv show details panel.
@@ -120,7 +121,7 @@ public class TvShowDetailsPanel extends JPanel {
     JLabel lblStatusT = new JLabel("Status");
     add(lblStatusT, "2, 10");
 
-    JLabel lblStatus = new JLabel("");
+    lblStatus = new JLabel("");
     add(lblStatus, "4, 10, 5, 1");
 
     JLabel lblThetvdbIdT = new JLabel("TheTVDB Id");
@@ -219,5 +220,10 @@ public class TvShowDetailsPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_7, lblPremiered, jLabelBeanProperty);
     autoBinding_7.bind();
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.status");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_5, lblStatus, jLabelBeanProperty);
+    autoBinding_5.bind();
   }
 }

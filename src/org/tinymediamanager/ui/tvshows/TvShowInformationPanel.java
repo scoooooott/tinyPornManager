@@ -193,13 +193,13 @@ public class TvShowInformationPanel extends JPanel {
     panelBottom.add(tabbedPaneTvShowDetails, "1, 2, fill, fill");
 
     JPanel panelDetails = new TvShowDetailsPanel(tvShowSelectionModel);
-    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.details"), null, panelDetails, null); //$NON-NLS-1$
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.details"), null, panelDetails, null); //$NON-NLS-1$
 
     JPanel panelOverview = new JPanel();
     panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:default:grow"), }));
 
-    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.overview"), null, panelOverview, null); //$NON-NLS-1$
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.plot"), null, panelOverview, null); //$NON-NLS-1$
 
     JScrollPane scrollPaneOverview = new JScrollPane();
     panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
@@ -210,10 +210,10 @@ public class TvShowInformationPanel extends JPanel {
 
     TvShowCastPanel panelCast = new TvShowCastPanel(tvShowSelectionModel);
     panelCast.init();
-    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.cast"), null, panelCast, null); //$NON-NLS-1$
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelCast, null); //$NON-NLS-1$
 
     panelMediaInformation = new TvShowMediaInformationPanel(tvShowSelectionModel);
-    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("movieinformation.mediainformation"), null, panelMediaInformation, null);
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null);
 
     // beansbinding init
     initDataBindings();

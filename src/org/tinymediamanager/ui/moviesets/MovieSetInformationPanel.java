@@ -154,7 +154,7 @@ public class MovieSetInformationPanel extends JPanel {
     panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("250px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("24px:grow"), }));
 
-    lblOverview = new JLabel(BUNDLE.getString("movieinformation.overview")); //$NON-NLS-1$
+    lblOverview = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
     panelOverview.add(lblOverview, "1, 2");
 
     scrollPaneOverview = new JScrollPane();

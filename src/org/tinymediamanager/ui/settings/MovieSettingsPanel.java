@@ -116,7 +116,7 @@ public class MovieSettingsPanel extends JPanel {
     JPanel panelMovieDataSources = new JPanel();
 
     panelMovieDataSources.setBorder(new TitledBorder(null,
-        BUNDLE.getString("Settings.datasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+        BUNDLE.getString("Settings.movie.datasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelMovieDataSources, "2, 2, fill, fill");
     panelMovieDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(72dlu;default)"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(66dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
@@ -154,7 +154,7 @@ public class MovieSettingsPanel extends JPanel {
         if (row != -1) { // nothing selected
           String path = Globals.settings.getMovieSettings().getMovieDataSource().get(row);
           String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
-          int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.datasource.remove.info"), path),
+          int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.movie.datasource.remove.info"), path),
               BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
               BUNDLE.getString("Button.abort")); //$NON-NLS-1$
           if (decision == 0) {
@@ -295,7 +295,7 @@ public class MovieSettingsPanel extends JPanel {
     JTextPane txtpntTitle = new JTextPane();
     txtpntTitle.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
-    txtpntTitle.setText(BUNDLE.getString("Settings.renamer.info")); //$NON-NLS-1$
+    txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
     panelRenamer.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
 
@@ -309,7 +309,7 @@ public class MovieSettingsPanel extends JPanel {
 
     JTextPane txtrChooseAFolder = new JTextPane();
     txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
-    txtrChooseAFolder.setText(BUNDLE.getString("Settings.renamer.example")); //$NON-NLS-1$
+    txtrChooseAFolder.setText(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtrChooseAFolder, "2, 6, 3, 1, fill, fill");
 

@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.components;
 import java.awt.Color;
 
 import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
  * The Class ZebraTree.
@@ -27,13 +28,16 @@ import javax.swing.JTree;
 public class ZebraJTree extends JTree {
 
   /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -8401898893090686850L;
+  private static final long       serialVersionUID = -8401898893090686850L;
 
   /** The row colors. */
-  public java.awt.Color     rowColors[]      = new java.awt.Color[2];
+  public java.awt.Color           rowColors[]      = new java.awt.Color[2];
 
   /** The draw stripes. */
-  private boolean           drawStripes      = false;
+  private boolean                 drawStripes      = false;
+
+  /** The default renderer. */
+  private DefaultTreeCellRenderer defaultRenderer  = new DefaultTreeCellRenderer();
 
   /**
    * Instantiates a new zebra j tree.
@@ -125,25 +129,28 @@ public class ZebraJTree extends JTree {
     int nRows = 0;
     int startRow = 0;
     int rowHeight = getRowHeight();
-    if (rowHeight > 0)
+    if (rowHeight > 0) {
       nRows = h / rowHeight;
+    }
     else {
       // Paint non-uniform height rows first
       final int nItems = getRowCount();
       rowHeight = 17; // A default for empty trees
       for (int i = 0; i < nItems; i++, y += rowHeight) {
         rowHeight = getRowBounds(i).height;
-        g.setColor(rowColors[i & 1]);
+        g.setColor(getSelectionModel().isRowSelected(i) ? defaultRenderer.getBackgroundSelectionColor() : rowColors[i & 1]);
         g.fillRect(x, y, w, rowHeight);
       }
       // Use last row height for remainder of tree area
       nRows = nItems + (insets.top + h - y) / rowHeight;
       startRow = nItems;
     }
+
     for (int i = startRow; i < nRows; i++, y += rowHeight) {
-      g.setColor(rowColors[i & 1]);
+      g.setColor(getSelectionModel().isRowSelected(i) ? defaultRenderer.getBackgroundSelectionColor() : rowColors[i & 1]);
       g.fillRect(x, y, w, rowHeight);
     }
+
     final int remainder = insets.top + h - y;
     if (remainder > 0) {
       g.setColor(rowColors[nRows & 1]);

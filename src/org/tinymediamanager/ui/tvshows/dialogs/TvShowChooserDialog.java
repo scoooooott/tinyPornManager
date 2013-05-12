@@ -109,7 +109,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   private JTextField                  textFieldSearchString;
 
   /** The cb scraper. */
-  private JComboBox                   cbScraper;
+  private JComboBox<TvShowScrapers>   cbScraper;
 
   /** The table. */
   private JTable                      table;
@@ -199,7 +199,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
         panelSearchField.add(lblScraper, "2, 1, right, default");
       }
       {
-        cbScraper = new JComboBox(TvShowScrapers.values());
+        cbScraper = new JComboBox<TvShowScrapers>(TvShowScrapers.values());
         cbScraper.setSelectedItem(Globals.settings.getTvShowSettings().getTvShowScraper());
         cbScraper.setAction(new ChangeScraperAction());
         panelSearchField.add(cbScraper, "4, 1, fill, default");
@@ -302,7 +302,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       }
     }
     {
-      JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("moviechooser.scrape")); //$NON-NLS-1$
+      JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
       contentPanel.add(lblScrapeFollowingItems, "1, 6");
     }
     {
@@ -332,18 +332,18 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           layout.setMinWidth(100);
           buttonPane.setLayout(layout);
           JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-          buttonPane.add(okButton, "1, 1, fill, top");
+          buttonPane.add(okButton);
           okButton.setActionCommand("OK");
           okButton.addActionListener(this);
 
           JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-          buttonPane.add(cancelButton, "3, 1, fill, top");
+          buttonPane.add(cancelButton);
           cancelButton.setActionCommand("Cancel");
           cancelButton.addActionListener(this);
 
           if (inQueue) {
             JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-            buttonPane.add(abortButton, "5, 1, fill, top");
+            buttonPane.add(abortButton);
             abortButton.setActionCommand("Abort");
             abortButton.addActionListener(this);
           }
@@ -357,7 +357,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       initDataBindings();
 
       // set column name - windowbuilder pro crashes otherwise
-      table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("moviechooser.searchresult")); //$NON-NLS-1$
+      table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult")); //$NON-NLS-1$
 
       textFieldSearchString.setText(tvShowToScrape.getTitle());
       searchTvShow(textFieldSearchString.getText());
@@ -533,7 +533,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("moviechooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
       List<MediaSearchResult> searchResult = tvShowList.searchTvShow(searchTerm, metadataProvider);
       tvShowsFound.clear();
       if (searchResult.size() == 0) {
@@ -590,7 +590,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("moviechooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
       model.scrapeMetaData();
 
       return null;

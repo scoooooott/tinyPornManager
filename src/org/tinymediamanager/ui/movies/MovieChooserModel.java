@@ -119,7 +119,7 @@ public class MovieChooserModel extends AbstractModelObject {
    * create the empty search result.
    */
   private MovieChooserModel() {
-    setName(BUNDLE.getString("moviechooser.nothingfound")); //$NON-NLS-1$
+    setName(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
     combinedName = name;
   }
 

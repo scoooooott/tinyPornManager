@@ -86,6 +86,9 @@ public class TvShowEpisode extends MediaEntity {
   /** The nfo filename. */
   private String              nfoFilename          = "";
 
+  /** The watched. */
+  private boolean             watched              = false;
+
   /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<TvShowActor>   actors               = new ArrayList<TvShowActor>();
@@ -641,5 +644,26 @@ public class TvShowEpisode extends MediaEntity {
       }
     }
     return mf;
+  }
+
+  /**
+   * Checks if is watched.
+   * 
+   * @return true, if is watched
+   */
+  public boolean isWatched() {
+    return watched;
+  }
+
+  /**
+   * Sets the watched.
+   * 
+   * @param newValue
+   *          the new watched
+   */
+  public void setWatched(boolean newValue) {
+    boolean oldValue = this.watched;
+    this.watched = newValue;
+    firePropertyChange(WATCHED, oldValue, newValue);
   }
 }

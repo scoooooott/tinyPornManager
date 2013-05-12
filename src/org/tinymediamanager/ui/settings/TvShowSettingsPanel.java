@@ -159,7 +159,7 @@ public class TvShowSettingsPanel extends JPanel {
     JTextPane txtpntTitle = new JTextPane();
     txtpntTitle.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
-    txtpntTitle.setText(BUNDLE.getString("Settings.renamer.info")); //$NON-NLS-1$
+    txtpntTitle.setText(BUNDLE.getString("Settings.tvshow.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
     panelRenamer.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
 
@@ -173,7 +173,7 @@ public class TvShowSettingsPanel extends JPanel {
 
     JTextPane txtrChooseAFolder = new JTextPane();
     txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
-    txtrChooseAFolder.setText(BUNDLE.getString("Settings.renamer.example")); //$NON-NLS-1$
+    txtrChooseAFolder.setText(BUNDLE.getString("Settings.tvshow.renamer.example")); //$NON-NLS-1$
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtrChooseAFolder, "2, 6, 3, 1, fill, fill");
 

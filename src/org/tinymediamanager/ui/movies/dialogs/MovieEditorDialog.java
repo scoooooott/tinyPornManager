@@ -287,7 +287,7 @@ public class MovieEditorDialog extends JDialog {
     }
 
     JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.NORTH);
-    tabbedPane.addTab(BUNDLE.getString("movieinformation.details"), details1Panel); //$NON-NLS-1$
+    tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
     getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
     details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -468,7 +468,7 @@ public class MovieEditorDialog extends JDialog {
       }
     }
     {
-      JLabel lblDirector = new JLabel(BUNDLE.getString("movieinformation.director")); //$NON-NLS-1$
+      JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
       details1Panel.add(lblDirector, "2, 28, right, default");
     }
     {
@@ -493,7 +493,7 @@ public class MovieEditorDialog extends JDialog {
     }
     lblFanart.setImagePath(movie.getFanart());
     {
-      JLabel lblWriter = new JLabel(BUNDLE.getString("movieinformation.writer")); //$NON-NLS-1$
+      JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
       details1Panel.add(lblWriter, "2, 30, right, default");
     }
     {
@@ -515,7 +515,7 @@ public class MovieEditorDialog extends JDialog {
     /**
      * DetailsPanel 2
      */
-    tabbedPane.addTab(BUNDLE.getString("movieinformation.details2"), details2Panel); //$NON-NLS-1$
+    tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
     details2Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
     details2Panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
@@ -527,7 +527,7 @@ public class MovieEditorDialog extends JDialog {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"), }));
     {
-      JLabel lblActors = new JLabel(BUNDLE.getString("movieinformation.actors")); //$NON-NLS-1$
+      JLabel lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
       details2Panel.add(lblActors, "2, 2, right, default");
     }
     {
@@ -587,7 +587,7 @@ public class MovieEditorDialog extends JDialog {
     }
 
     {
-      JLabel lblTrailer = new JLabel(BUNDLE.getString("movieinformation.trailer")); //$NON-NLS-1$
+      JLabel lblTrailer = new JLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
       details2Panel.add(lblTrailer, "2, 10, right, default");
     }
     {

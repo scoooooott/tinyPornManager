@@ -111,14 +111,11 @@ public class TvShowEditorDialog extends JDialog {
   /** The tp plot. */
   private JTextPane                   tpPlot;
 
-  /** The tf director. */
-  private JTextField                  tfDirector;
-
   /** The table. */
   private JTable                      tableActors;
 
-  /** The lbl movie path. */
-  private JLabel                      lblMoviePath;
+  /** The lvl tv show path. */
+  private JLabel                      lvlTvShowPath;
 
   /** The lbl poster. */
   private ImageLabel                  lblPoster;
@@ -153,14 +150,11 @@ public class TvShowEditorDialog extends JDialog {
   /** The action remove actor. */
   private final Action                actionRemoveActor = new SwingAction_5();
 
-  /** The tf writer. */
-  private JTextField                  tfWriter;
-
   /** The sp runtime. */
   private JSpinner                    spRuntime;
 
   /** The tf production companies. */
-  private JTextPane                   tfProductionCompanies;
+  private JTextField                  tfProductionCompanies;
 
   /** The list genres. */
   private JList                       listGenres;
@@ -178,7 +172,7 @@ public class TvShowEditorDialog extends JDialog {
   private JSpinner                    spRating;
 
   /** The cb certification. */
-  private JComboBox                   cbCertification;
+  private JComboBox<Certification>    cbCertification;
 
   /** The tf imdb id. */
   private JTextField                  tfImdbId;
@@ -202,10 +196,10 @@ public class TvShowEditorDialog extends JDialog {
   private final Action                action_1          = new SwingAction_7();
 
   /** The cb tags. */
-  private JComboBox                   cbTags;
+  private JComboBox<String>           cbTags;
 
   /** The list tags. */
-  private JList                       listTags;
+  private JList<String>               listTags;
 
   /** The action_2. */
   private final Action                action_2          = new SwingAction_8();
@@ -247,30 +241,31 @@ public class TvShowEditorDialog extends JDialog {
           FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
           RowSpec.decode("15px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
-      JLabel lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-      panelPath.add(lblMoviePathT, "2, 2, left, top");
+      JLabel lblTvShowPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      panelPath.add(lblTvShowPathT, "2, 2, left, top");
 
-      lblMoviePath = new JLabel("");
-      lblMoviePath.setFont(new Font("Dialog", Font.BOLD, 14));
-      panelPath.add(lblMoviePath, "5, 2, left, top");
+      lvlTvShowPath = new JLabel("");
+      lvlTvShowPath.setFont(new Font("Dialog", Font.BOLD, 14));
+      panelPath.add(lvlTvShowPath, "5, 2, left, top");
     }
 
     JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.NORTH);
-    tabbedPane.addTab(BUNDLE.getString("movieinformation.details"), details1Panel); //$NON-NLS-1$
+    tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
     getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
     details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-    details1Panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"), FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(75px;default)"),
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("75px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("50px"),
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow(2)"), }));
+    details1Panel
+        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"), FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(75px;default)"),
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("75px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            RowSpec.decode("fill:30px:grow(2)"), }));
 
     {
       JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -293,7 +288,7 @@ public class TvShowEditorDialog extends JDialog {
         }
       });
       lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      details1Panel.add(lblPoster, "14, 2, 3, 11, fill, fill");
+      details1Panel.add(lblPoster, "14, 2, 3, 13, fill, fill");
     }
     {
       JLabel lblYear = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
@@ -328,7 +323,7 @@ public class TvShowEditorDialog extends JDialog {
       details1Panel.add(lblCertification, "8, 6, right, default");
     }
     {
-      cbCertification = new JComboBox();
+      cbCertification = new JComboBox<Certification>();
       for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getTvShowSettings().getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
@@ -376,68 +371,19 @@ public class TvShowEditorDialog extends JDialog {
       }
     }
     {
-      JLabel lblDirector = new JLabel(BUNDLE.getString("movieinformation.director")); //$NON-NLS-1$
-      details1Panel.add(lblDirector, "2, 16, right, default");
+      JLabel lblStudio = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
+      details1Panel.add(lblStudio, "2, 16, right, top");
     }
     {
-      tfDirector = new JTextField();
-      details1Panel.add(tfDirector, "4, 16, 9, 1, fill, top");
-      tfDirector.setColumns(10);
-    }
-    {
-      // JLabel lblFanart = new JLabel("");
-      lblFanart = new ImageLabel();
-      lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      lblFanart.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          ImageChooserDialog dialog = new ImageChooserDialog(tvShowToEdit.getIds(), ImageType.FANART, tvShowList.getArtworkProviders(), lblFanart,
-              null, null);
-          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-          dialog.setVisible(true);
-        }
-      });
-      details1Panel.add(lblFanart, "14, 14, 3, 7, fill, fill");
-    }
-
-    {
-      JLabel lblWriter = new JLabel(BUNDLE.getString("movieinformation.writer")); //$NON-NLS-1$
-      details1Panel.add(lblWriter, "2, 18, right, default");
-    }
-    {
-      tfWriter = new JTextField();
-      details1Panel.add(tfWriter, "4, 18, 9, 1, fill, top");
-      tfWriter.setColumns(10);
-    }
-    {
-      JLabel lblCompany = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
-      details1Panel.add(lblCompany, "2, 20, right, top");
-    }
-    {
-      JScrollPane scrollPaneProduction = new JScrollPane();
-      details1Panel.add(scrollPaneProduction, "4, 20, 9, 1, fill, fill");
-      tfProductionCompanies = new JTextPane();
-      scrollPaneProduction.setViewportView(tfProductionCompanies);
-    }
-    {
-      lblBanner = new ImageLabel();
-      lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      lblBanner.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          ImageChooserDialog dialog = new ImageChooserDialog(tvShowToEdit.getIds(), ImageType.BANNER, tvShowList.getArtworkProviders(), lblBanner,
-              null, null);
-          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-          dialog.setVisible(true);
-        }
-      });
-      details1Panel.add(lblBanner, "14, 22, 3, 1");
+      tfProductionCompanies = new JTextField();
+      details1Panel.add(tfProductionCompanies, "4, 16, 9, 1");
+      tfProductionCompanies.setText(tvShow.getProductionCompany());
     }
 
     /**
      * DetailsPanel 2
      */
-    tabbedPane.addTab(BUNDLE.getString("movieinformation.details2"), details2Panel); //$NON-NLS-1$
+    tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
     details2Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
     details2Panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
@@ -449,7 +395,7 @@ public class TvShowEditorDialog extends JDialog {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"), }));
     {
-      JLabel lblActors = new JLabel(BUNDLE.getString("movieinformation.actors")); //$NON-NLS-1$
+      JLabel lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
       details2Panel.add(lblActors, "2, 2, right, default");
     }
     {
@@ -509,7 +455,7 @@ public class TvShowEditorDialog extends JDialog {
     }
 
     {
-      JLabel lblTrailer = new JLabel(BUNDLE.getString("movieinformation.trailer")); //$NON-NLS-1$
+      JLabel lblTrailer = new JLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
       details2Panel.add(lblTrailer, "2, 10, right, default");
     }
     {
@@ -539,7 +485,7 @@ public class TvShowEditorDialog extends JDialog {
     {
       JScrollPane scrollPaneTags = new JScrollPane();
       details2Panel.add(scrollPaneTags, "4, 16, 1, 5");
-      listTags = new JList();
+      listTags = new JList<String>();
       scrollPaneTags.setViewportView(listTags);
     }
     {
@@ -579,21 +525,21 @@ public class TvShowEditorDialog extends JDialog {
       buttonPane.setLayout(layout);
       {
         JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-        buttonPane.add(okButton, "2, 1, fill, top");
+        buttonPane.add(okButton);
         okButton.setAction(actionOK);
         okButton.setActionCommand("OK");
         getRootPane().setDefaultButton(okButton);
       }
       {
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-        buttonPane.add(cancelButton, "4, 1, fill, top");
+        buttonPane.add(cancelButton);
         cancelButton.setAction(actionCancel);
         cancelButton.setActionCommand("Cancel");
       }
       if (inQueue) {
         JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
         btnAbort.setAction(abortAction);
-        buttonPane.add(btnAbort, "6, 1, fill, top");
+        buttonPane.add(btnAbort);
       }
 
     }
@@ -601,17 +547,12 @@ public class TvShowEditorDialog extends JDialog {
     initDataBindings();
 
     {
-      lblMoviePath.setText(tvShow.getPath());
+      lvlTvShowPath.setText(tvShow.getPath());
       tfTitle.setText(tvShow.getTitle());
       tfImdbId.setText(tvShow.getImdbId());
       tfTvdbId.setText(String.valueOf(tvShow.getId("tvdb")));
       tpPlot.setText(tvShow.getPlot());
-      tfDirector.setText(tvShow.getDirector());
-      tfWriter.setText(tvShow.getWriter());
       lblPoster.setImagePath(tvShow.getPoster());
-      lblFanart.setImagePath(tvShow.getFanart());
-      lblBanner.setImagePath(tvShow.getBanner());
-      tfProductionCompanies.setText(tvShow.getProductionCompany());
       spRuntime.setValue(Integer.valueOf(tvShow.getRuntime()));
 
       int year = 0;
@@ -648,6 +589,35 @@ public class TvShowEditorDialog extends JDialog {
       cbCertification.setSelectedItem(tvShow.getCertification());
 
     }
+    lblBanner = new ImageLabel();
+    lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    lblBanner.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        ImageChooserDialog dialog = new ImageChooserDialog(tvShowToEdit.getIds(), ImageType.BANNER, tvShowList.getArtworkProviders(), lblBanner,
+            null, null);
+        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        dialog.setVisible(true);
+      }
+    });
+    details1Panel.add(lblBanner, "4, 18, 9, 3, fill, fill");
+    lblBanner.setImagePath(tvShow.getBanner());
+    {
+      // JLabel lblFanart = new JLabel("");
+      lblFanart = new ImageLabel();
+      lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      lblFanart.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          ImageChooserDialog dialog = new ImageChooserDialog(tvShowToEdit.getIds(), ImageType.FANART, tvShowList.getArtworkProviders(), lblFanart,
+              null, null);
+          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+          dialog.setVisible(true);
+        }
+      });
+      details1Panel.add(lblFanart, "14, 16, 3, 5, fill, fill");
+    }
+    lblFanart.setImagePath(tvShow.getFanart());
 
     // adjust table columns
     TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(tableTrailer);
@@ -701,7 +671,7 @@ public class TvShowEditorDialog extends JDialog {
      */
     public SwingAction() {
       putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.change")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.change")); //$NON-NLS-1$
     }
 
     /*
@@ -742,8 +712,6 @@ public class TvShowEditorDialog extends JDialog {
         tvShowToEdit.writeBannerImage();
       }
 
-      tvShowToEdit.setDirector(tfDirector.getText());
-      tvShowToEdit.setWriter(tfWriter.getText());
       tvShowToEdit.setProductionCompany(tfProductionCompanies.getText());
       tvShowToEdit.setActors(actors);
       tvShowToEdit.setGenres(genres);
@@ -1001,11 +969,11 @@ public class TvShowEditorDialog extends JDialog {
   protected void initDataBindings() {
     JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, actors, tableActors);
     //
-    BeanProperty<TvShowActor, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty);
+    BeanProperty<TvShowActor, String> castBeanProperty = BeanProperty.create("name");
+    jTableBinding.addColumnBinding(castBeanProperty);
     //
-    BeanProperty<TvShowActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1);
+    BeanProperty<TvShowActor, String> castBeanProperty_1 = BeanProperty.create("character");
+    jTableBinding.addColumnBinding(castBeanProperty_1);
     //
     jTableBinding.bind();
     //
@@ -1032,9 +1000,9 @@ public class TvShowEditorDialog extends JDialog {
     //
     jTableBinding_1.bind();
     //
-    BeanProperty<TvShowList, List<String>> movieListBeanProperty = BeanProperty.create("tagsInTvShows");
+    BeanProperty<TvShowList, List<String>> tvShowListBeanProperty = BeanProperty.create("tagsInTvShows");
     JComboBoxBinding<String, TvShowList, JComboBox> jComboBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, tvShowList,
-        movieListBeanProperty, cbTags);
+        tvShowListBeanProperty, cbTags);
     jComboBinding.bind();
     //
     JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);

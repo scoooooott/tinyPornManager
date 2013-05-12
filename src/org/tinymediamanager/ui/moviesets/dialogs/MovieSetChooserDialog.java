@@ -56,6 +56,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -117,13 +119,16 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
   /** The cb assign movies. */
   private JCheckBox                   cbAssignMovies;
 
+  /** The continue queue. */
+  private boolean                     continueQueue    = true;
+
   /**
    * Instantiates a new movie set chooser panel.
    * 
    * @param movieSet
    *          the movie set
    */
-  public MovieSetChooserDialog(MovieSet movieSet) {
+  public MovieSetChooserDialog(MovieSet movieSet, boolean inQueue) {
     setTitle(BUNDLE.getString("movieset.search")); //$NON-NLS-1$
     setName("movieSetChooser");
     setBounds(5, 5, 865, 578);
@@ -238,34 +243,46 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     }
 
     {
-      JPanel buttonPane = new JPanel();
-      getContentPane().add(buttonPane, BorderLayout.SOUTH);
+      JPanel bottomPane = new JPanel();
+      getContentPane().add(bottomPane, BorderLayout.SOUTH);
       {
-        buttonPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("2dlu"), ColumnSpec.decode("185px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("18px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("100px"),
+        bottomPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("2dlu"), ColumnSpec.decode("185px"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("18px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
             ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
         {
           progressBar = new JProgressBar();
-          buttonPane.add(progressBar, "2, 2, fill, center");
+          bottomPane.add(progressBar, "2, 2, fill, center");
         }
         {
           lblProgressAction = new JLabel("");
-          buttonPane.add(lblProgressAction, "4, 2, fill, center");
+          bottomPane.add(lblProgressAction, "4, 2, fill, center");
         }
         {
-          JButton btnSave = new JButton(BUNDLE.getString("Button.save")); //$NON-NLS-1$
-          btnSave.setActionCommand("Save");
-          btnSave.setToolTipText(BUNDLE.getString("movieset.save.desc")); //$NON-NLS-1$
-          btnSave.addActionListener(this);
-          buttonPane.add(btnSave, "8, 2, fill, top");
-        }
-        {
+          JPanel buttonPane = new JPanel();
+          bottomPane.add(buttonPane, "6, 2, fill, fill");
+          EqualsLayout layout = new EqualsLayout(5);
+          layout.setMinWidth(100);
+          buttonPane.setLayout(layout);
+
+          JButton btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+          btnOk.setActionCommand("Save");
+          btnOk.setToolTipText(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+          btnOk.addActionListener(this);
+          buttonPane.add(btnOk);
+
           JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           btnCancel.setActionCommand("Cancel");
           btnCancel.setToolTipText(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           btnCancel.addActionListener(this);
-          buttonPane.add(btnCancel, "10, 2, fill, top");
+          buttonPane.add(btnCancel);
+
+          if (inQueue) {
+            JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+            btnAbort.setActionCommand("Abort");
+            btnAbort.setToolTipText(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+            btnCancel.addActionListener(this);
+            buttonPane.add(btnAbort, "6, 1, fill, top");
+          }
         }
       }
     }
@@ -275,6 +292,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     tableMovies.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     tableMovies.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
+    tableMovieSets.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
     {
       tfMovieSetName.setText(movieSet.getTitle());
       searchMovie();
@@ -318,7 +336,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("moviechooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
       TmdbMetadataProvider mp;
       try {
         mp = new TmdbMetadataProvider();
@@ -437,6 +455,13 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
       setVisible(false);
       dispose();
     }
+
+    // Abort queue
+    if ("Abort".equals(arg0.getActionCommand())) {
+      continueQueue = false;
+      this.setVisible(false);
+      dispose();
+    }
   }
 
   /**
@@ -466,7 +491,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
      */
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("moviechooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
       model.scrapeMetadata();
 
       return null;
@@ -515,7 +540,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
         movieSetsFound, tableMovieSets);
     //
     BeanProperty<MovieSetChooserModel, String> movieSetChooserModelBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false); //$NON-NLS-1$
+    jTableBinding.addColumnBinding(movieSetChooserModelBeanProperty).setEditable(false); //$NON-NLS-1$
     //
     jTableBinding.bind();
     //
@@ -542,5 +567,17 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     AutoBinding<JTable, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tableMovieSets,
         jTableBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty);
     autoBinding_1.bind();
+  }
+
+  /**
+   * Shows the dialog and returns whether the work on the queue should be continued.
+   * 
+   * @return true, if successful
+   */
+  public boolean showDialog() {
+    // pack();
+    setLocationRelativeTo(MainWindow.getActiveInstance());
+    setVisible(true);
+    return continueQueue;
   }
 }

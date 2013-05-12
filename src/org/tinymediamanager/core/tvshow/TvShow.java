@@ -141,6 +141,9 @@ public class TvShow extends MediaEntity {
   /** The studio. */
   private String              studio             = "";
 
+  /** The watched. */
+  private boolean             watched            = false;
+
   /*
    * (non-Javadoc)
    * 
@@ -1397,5 +1400,26 @@ public class TvShow extends MediaEntity {
       }
     }
     return mediaFiles;
+  }
+
+  /**
+   * Checks if is watched.
+   * 
+   * @return true, if is watched
+   */
+  public boolean isWatched() {
+    return watched;
+  }
+
+  /**
+   * Sets the watched.
+   * 
+   * @param newValue
+   *          the new watched
+   */
+  public void setWatched(boolean newValue) {
+    boolean oldValue = this.watched;
+    this.watched = newValue;
+    firePropertyChange(WATCHED, oldValue, newValue);
   }
 }

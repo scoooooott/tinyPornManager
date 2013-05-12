@@ -46,7 +46,6 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTree;
@@ -371,9 +370,10 @@ public class MovieSetPanel extends JPanel {
               MovieSet movieSet = (MovieSet) node.getUserObject();
 
               // display movie set chooser
-              MovieSetChooserDialog chooser = new MovieSetChooserDialog(movieSet);
-              chooser.setLocationRelativeTo(MainWindow.getActiveInstance());
-              chooser.setVisible(true);
+              MovieSetChooserDialog chooser = new MovieSetChooserDialog(movieSet, paths.length > 1 ? true : false);
+              if (!chooser.showDialog()) {
+                break;
+              }
             }
           }
         }
@@ -429,8 +429,10 @@ public class MovieSetPanel extends JPanel {
               MovieSet movieSet = (MovieSet) node.getUserObject();
 
               // display movie set chooser
-              MovieSetEditorDialog editor = new MovieSetEditorDialog(movieSet);
-              editor.setVisible(true);
+              MovieSetEditorDialog editor = new MovieSetEditorDialog(movieSet, paths.length > 1 ? true : false);
+              if (!editor.showDialog()) {
+                break;
+              }
             }
           }
         }

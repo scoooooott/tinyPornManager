@@ -17,27 +17,45 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.swingbinding.JTableBinding;
+import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.tvshow.TvShowActor;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
@@ -69,13 +87,16 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   private static final long           serialVersionUID = 7702248909791283043L;
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
 
   /** The static LOGGER. */
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
 
-  /** The episode to scrape. */
-  private TvShowEpisode               episodeToScrape;
+  /** The cast. */
+  private List<TvShowActor>           cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
+
+  /** The episode to edit. */
+  private TvShowEpisode               episodeToEdit;
 
   /** The continue queue. */
   private boolean                     continueQueue    = true;
@@ -92,20 +113,38 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   /** The sp season. */
   private JSpinner                    spSeason;
 
+  /** The sp rating. */
+  private JSpinner                    spRating;
+
+  /** The sp first aired. */
+  private JSpinner                    spFirstAired;
+
+  /** The sp date added. */
+  private JSpinner                    spDateAdded;
+
+  /** The chckbx watched. */
+  private JCheckBox                   chckbxWatched;
+
   /** The lbl fanart. */
   private ImageLabel                  lblFanart;
 
   /** The ta plot. */
   private JTextArea                   taPlot;
 
-  /** The tv show list. */
-  private TvShowList                  tvShowList;
+  /** The tf director. */
+  private JTextField                  tfDirector;
+
+  /** The tf writer. */
+  private JTextField                  tfWriter;
+
+  /** The table guests. */
+  private JTable                      tableGuests;
 
   /**
    * Instantiates a new tv show episode scrape dialog.
    * 
-   * @param episodeToScrape
-   *          the episode to scrape
+   * @param episode
+   *          the episode
    * @param inQueue
    *          the in queue
    */
@@ -113,51 +152,80 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     setTitle(BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
     setName("tvShowEpisodeScraper");
     TmmWindowSaver.loadSettings(this);
-    setBounds(5, 5, 800, 400);
+    setBounds(5, 5, 800, 500);
     setIconImage(Globals.logo);
     setModal(true);
 
-    tvShowList = TvShowList.getInstance();
-    this.episodeToScrape = episode;
+    this.episodeToEdit = episode;
     getContentPane().setLayout(new BorderLayout());
     {
       JPanel contentPanel = new JPanel();
       getContentPane().add(contentPanel, BorderLayout.CENTER);
       contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("75px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"),
-          FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"),
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+
+      JLabel lblFilenameT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      contentPanel.add(lblFilenameT, "2, 2, right, default");
 
       lblFilename = new JLabel("");
-      contentPanel.add(lblFilename, "2, 2, 3, 1, left, bottom");
+      contentPanel.add(lblFilename, "4, 2, 9, 1, left, bottom");
 
-      JLabel lblTitle = new JLabel("Title");
+      JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
       contentPanel.add(lblTitle, "2, 4, right, default");
 
       tfTitle = new JTextField();
-      contentPanel.add(tfTitle, "4, 4, 7, 1");
+      contentPanel.add(tfTitle, "4, 4, 9, 1");
       tfTitle.setColumns(10);
 
-      JLabel lblSeason = new JLabel("Season");
+      JLabel lblSeason = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
       contentPanel.add(lblSeason, "2, 6, right, default");
 
       spSeason = new JSpinner();
       contentPanel.add(spSeason, "4, 6");
 
-      JLabel lblEpisode = new JLabel("Episode");
-      contentPanel.add(lblEpisode, "2, 8, right, default");
+      JLabel lblEpisode = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+      contentPanel.add(lblEpisode, "8, 6, right, default");
 
       spEpisode = new JSpinner();
-      contentPanel.add(spEpisode, "4, 8");
+      contentPanel.add(spEpisode, "10, 6");
 
-      JLabel lblPlot = new JLabel("Plot");
-      contentPanel.add(lblPlot, "2, 10, right, top");
+      JLabel lblRating = new JLabel("rating");
+      contentPanel.add(lblRating, "2, 8, right, default");
+
+      spRating = new JSpinner();
+      contentPanel.add(spRating, "4, 8");
+
+      JLabel lblFirstAired = new JLabel("first aired");
+      contentPanel.add(lblFirstAired, "8, 8, right, default");
+
+      spFirstAired = new JSpinner(new SpinnerDateModel());
+      contentPanel.add(spFirstAired, "10, 8");
+
+      JLabel lblWatched = new JLabel("Watched");
+      contentPanel.add(lblWatched, "2, 10, right, default");
+
+      chckbxWatched = new JCheckBox("");
+      contentPanel.add(chckbxWatched, "4, 10");
+
+      JLabel lblDateAdded = new JLabel("date added");
+      contentPanel.add(lblDateAdded, "8, 10, right, default");
+
+      spDateAdded = new JSpinner(new SpinnerDateModel());
+      contentPanel.add(spDateAdded, "10, 10");
+
+      JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+      contentPanel.add(lblPlot, "2, 12, right, top");
 
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "4, 10, 5, 1, fill, fill");
+      contentPanel.add(scrollPane, "4, 12, 7, 1, fill, fill");
 
       taPlot = new JTextArea();
       taPlot.setLineWrap(true);
@@ -165,7 +233,42 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       scrollPane.setViewportView(taPlot);
 
       lblFanart = new ImageLabel();
-      contentPanel.add(lblFanart, "10, 6, 1, 5");
+      contentPanel.add(lblFanart, "12, 6, 1, 11");
+
+      JLabel lblDirector = new JLabel("Director");
+      contentPanel.add(lblDirector, "2, 14, right, default");
+
+      tfDirector = new JTextField();
+      tfDirector.setText((String) null);
+      tfDirector.setColumns(10);
+      contentPanel.add(tfDirector, "4, 14, 7, 1, fill, default");
+
+      JLabel lblWriter = new JLabel("Writer");
+      contentPanel.add(lblWriter, "2, 16, right, default");
+
+      tfWriter = new JTextField();
+      tfWriter.setText((String) null);
+      tfWriter.setColumns(10);
+      contentPanel.add(tfWriter, "4, 16, 7, 1, fill, default");
+
+      JLabel lblGuests = new JLabel("Guests");
+      contentPanel.add(lblGuests, "2, 18, right, top");
+
+      JScrollPane scrollPaneGuests = new JScrollPane();
+      contentPanel.add(scrollPaneGuests, "4, 18, 7, 5, fill, fill");
+
+      tableGuests = new JTable();
+      scrollPaneGuests.setViewportView(tableGuests);
+
+      JButton btnAddActor = new JButton("");
+      btnAddActor.setIcon(new ImageIcon(TvShowEpisodeEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddActor.setMargin(new Insets(2, 2, 2, 2));
+      contentPanel.add(btnAddActor, "2, 20, right, top");
+
+      JButton btnRemoveActor = new JButton("");
+      btnRemoveActor.setIcon(new ImageIcon(TvShowEpisodeEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
+      contentPanel.add(btnRemoveActor, "2, 22, right, top");
 
     }
 
@@ -196,35 +299,68 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         buttonPane.setLayout(layout);
         JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
         okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
-        buttonPane.add(okButton, "1, 1, fill, top");
+        buttonPane.add(okButton);
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
 
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
-        buttonPane.add(cancelButton, "3, 1, fill, top");
+        buttonPane.add(cancelButton);
         cancelButton.setActionCommand("Cancel");
         cancelButton.addActionListener(this);
 
         if (inQueue) {
           JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
           abortButton.setToolTipText(BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
-          buttonPane.add(abortButton, "5, 1, fill, top");
+          buttonPane.add(abortButton);
           abortButton.setActionCommand("Abort");
           abortButton.addActionListener(this);
         }
       }
     }
 
+    initDataBindings();
+
     // fill data
     {
-      MediaFile mediaFile = episodeToScrape.getMediaFiles().get(0);
-      lblFilename.setText(mediaFile.getPath());
-      tfTitle.setText(episodeToScrape.getTitle());
-      spSeason.setValue(episodeToScrape.getSeason());
-      spEpisode.setValue(episodeToScrape.getEpisode());
-      lblFanart.setImagePath(episodeToScrape.getFanart());
+      MediaFile mediaFile = episodeToEdit.getMediaFiles().get(0);
+      lblFilename.setText(mediaFile.getPath() + File.separator + mediaFile.getFilename());
+      tfTitle.setText(episodeToEdit.getTitle());
+
+      spSeason.setModel(new SpinnerNumberModel(episodeToEdit.getSeason(), 0, 999, 1));
+      spEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getEpisode(), 0, 999, 1));
+
+      SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
+      spDateAdded.setEditor(new JSpinner.DateEditor(spDateAdded, dateFormat.toPattern()));
+      spFirstAired.setEditor(new JSpinner.DateEditor(spFirstAired, dateFormat.toPattern()));
+
+      spDateAdded.setValue(episodeToEdit.getDateAdded());
+      if (episodeToEdit.getFirstAired() != null) {
+        spFirstAired.setValue(episodeToEdit.getFirstAired());
+      }
+      else {
+        spFirstAired.setValue(new Date(0));
+      }
+      lblFanart.setImagePath(episodeToEdit.getFanart());
+      spRating.setModel(new SpinnerNumberModel(episodeToEdit.getRating(), 0.0, 10.0, 0.1));
+      chckbxWatched.setSelected(episodeToEdit.isWatched());
+      taPlot.setText(episodeToEdit.getPlot());
+      taPlot.setCaretPosition(0);
+      tfDirector.setText(episodeToEdit.getDirector());
+      tfWriter.setText(episodeToEdit.getWriter());
+
+      for (TvShowActor origCast : episodeToEdit.getActors()) {
+        TvShowActor actor = new TvShowActor();
+        actor.setName(origCast.getName());
+        actor.setCharacter(origCast.getCharacter());
+        actor.setThumb(origCast.getThumb());
+        cast.add(actor);
+      }
     }
+
+    // adjust table columns
+    tableGuests.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
+    tableGuests.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
 
   }
 
@@ -234,8 +370,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
    * @return true, if successful
    */
   public boolean showDialog() {
-    setVisible(true);
     setLocationRelativeTo(MainWindow.getActiveInstance());
+    setVisible(true);
     return continueQueue;
   }
 
@@ -253,17 +389,31 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   public void actionPerformed(ActionEvent e) {
     // assign scraped data
     if ("OK".equals(e.getActionCommand())) {
-      episodeToScrape.setTitle(tfTitle.getText());
-      episodeToScrape.setSeason((Integer) spSeason.getValue());
-      episodeToScrape.setEpisode((Integer) spEpisode.getValue());
-      episodeToScrape.setPlot(taPlot.getText());
+      episodeToEdit.setTitle(tfTitle.getText());
+      episodeToEdit.setSeason((Integer) spSeason.getValue());
+      episodeToEdit.setEpisode((Integer) spEpisode.getValue());
+      episodeToEdit.setPlot(taPlot.getText());
 
-      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(episodeToScrape.getFanartUrl())) {
-        episodeToScrape.setFanartUrl(lblFanart.getImageUrl());
-        episodeToScrape.writeFanartImage();
+      double tempRating = (Double) spRating.getValue();
+      float rating = (float) tempRating;
+      if (episodeToEdit.getRating() != rating) {
+        episodeToEdit.setRating(rating);
+        // episodeToEdit.setVotes(1);
       }
 
-      episodeToScrape.saveToDb();
+      episodeToEdit.setDateAdded((Date) spDateAdded.getValue());
+      episodeToEdit.setFirstAired((Date) spFirstAired.getValue());
+      episodeToEdit.setWatched(chckbxWatched.isSelected());
+      episodeToEdit.setDirector(tfDirector.getText());
+      episodeToEdit.setWriter(tfWriter.getText());
+      episodeToEdit.setActors(cast);
+
+      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(episodeToEdit.getFanartUrl())) {
+        episodeToEdit.setFanartUrl(lblFanart.getImageUrl());
+        episodeToEdit.writeFanartImage();
+      }
+
+      episodeToEdit.saveToDb();
 
       this.setVisible(false);
       dispose();
@@ -317,7 +467,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     @Override
     protected Void doInBackground() throws Exception {
       MediaScrapeOptions options = new MediaScrapeOptions();
-      for (Entry<String, Object> entry : episodeToScrape.getTvShow().getIds().entrySet()) {
+      for (Entry<String, Object> entry : episodeToEdit.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }
 
@@ -345,5 +495,17 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       return null;
     }
 
+  }
+
+  protected void initDataBindings() {
+    JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableGuests);
+    //
+    BeanProperty<TvShowActor, String> movieCastBeanProperty = BeanProperty.create("name");
+    jTableBinding.addColumnBinding(movieCastBeanProperty);
+    //
+    BeanProperty<TvShowActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
+    jTableBinding.addColumnBinding(movieCastBeanProperty_1);
+    //
+    jTableBinding.bind();
   }
 }
