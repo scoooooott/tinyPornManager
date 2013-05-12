@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import javax.persistence.GeneratedValue;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -36,6 +37,10 @@ import org.tinymediamanager.Globals;
 @MappedSuperclass
 // @Entity
 public abstract class MediaEntity extends AbstractModelObject {
+
+  /** The id for the database */
+  @GeneratedValue
+  protected int                     id;
 
   /** The ids to store the ID from several metadataproviders. */
   protected HashMap<String, Object> ids               = new HashMap<String, Object>();

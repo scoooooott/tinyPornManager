@@ -2075,7 +2075,6 @@ public class Movie extends MediaEntity {
       movieSet.removeMovie(this);
     }
     setMovieSet(null);
-    setSortTitle("");
   }
 
   /**

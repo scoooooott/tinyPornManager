@@ -288,15 +288,15 @@ public class MovieSetTreeModel implements TreeModel {
     MovieSetTreeNode node = (MovieSetTreeNode) nodeMap.get(movieSet);
     int index = root.getIndex(node);
 
-    for (Movie movie : movieSet.getMovies()) {
-      movie.setMovieSet(null);
-      movie.saveToDb();
-      movie.writeNFO();
-      nodeMap.remove(movie);
-    }
-    movieSet.removeAllMovies();
+    // for (Movie movie : movieSet.getMovies()) {
+    // movie.setMovieSet(null);
+    // movie.saveToDb();
+    // movie.writeNFO();
+    // nodeMap.remove(movie);
+    // }
+    // movieSet.removeAllMovies();
     movieSet.removePropertyChangeListener(propertyChangeListener);
-    movieList.removeMovieSet(movieSet);
+    // movieList.removeMovieSet(movieSet);
     nodeMap.remove(movieSet);
 
     node.removeAllChildren();

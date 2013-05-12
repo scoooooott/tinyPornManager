@@ -708,6 +708,8 @@ public class MovieList extends AbstractModelObject {
    */
   public void removeMovieSet(MovieSet movieSet) {
     int oldValue = movieSetList.size();
+    movieSet.removeAllMovies();
+
     movieSetList.remove(movieSet);
     Globals.entityManager.getTransaction().begin();
     Globals.entityManager.remove(movieSet);

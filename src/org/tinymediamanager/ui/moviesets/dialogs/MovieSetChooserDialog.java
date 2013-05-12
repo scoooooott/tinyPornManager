@@ -237,6 +237,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
         }
         {
           cbAssignMovies = new JCheckBox(BUNDLE.getString("movieset.movie.assign")); //$NON-NLS-1$
+          cbAssignMovies.setSelected(true);
           panelSearchDetail.add(cbAssignMovies, "2, 7, 3, 1");
         }
       }
