@@ -47,6 +47,7 @@ import org.tinymediamanager.ui.components.ZebraJTable;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
@@ -82,8 +83,7 @@ public class MovieTrailerPanel extends JPanel {
   private TableColumnAdjuster                  tableColumnAdjuster = null;
 
   /** The trailer event list. */
-  private EventList<MediaTrailer>              trailerEventList    = GlazedListsSwing.swingThreadProxyList(GlazedLists
-                                                                       .threadSafeList(new BasicEventList<MediaTrailer>()));
+  private EventList<MediaTrailer>              trailerEventList    = null;
 
   /** The trailer table model. */
   private DefaultEventTableModel<MediaTrailer> trailerTableModel   = null;
@@ -99,7 +99,9 @@ public class MovieTrailerPanel extends JPanel {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
-    trailerTableModel = new DefaultEventTableModel<MediaTrailer>(trailerEventList, new TrailerTableFormat());
+    trailerEventList = GlazedLists.threadSafeList(new ObservableElementList<MediaTrailer>(new BasicEventList<MediaTrailer>(), GlazedLists
+        .beanConnector(MediaTrailer.class)));
+    trailerTableModel = new DefaultEventTableModel<MediaTrailer>(GlazedListsSwing.swingThreadProxyList(trailerEventList), new TrailerTableFormat());
     table = new ZebraJTable(trailerTableModel);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setSelectionModel(new NullSelectionModel());

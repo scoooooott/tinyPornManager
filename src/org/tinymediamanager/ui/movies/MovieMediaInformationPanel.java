@@ -124,8 +124,8 @@ public class MovieMediaInformationPanel extends JPanel {
    */
   public MovieMediaInformationPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    mediaFileEventList = GlazedListsSwing.swingThreadProxyList(new ObservableElementList<MediaFile>(GlazedLists
-        .threadSafeList(new BasicEventList<MediaFile>()), GlazedLists.beanConnector(MediaFile.class)));
+    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
+        GlazedLists.beanConnector(MediaFile.class));
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
@@ -240,7 +240,7 @@ public class MovieMediaInformationPanel extends JPanel {
     lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
     add(lblFilesT, "2, 6, default, top");
 
-    mediaFileTableModel = new DefaultEventTableModel<MediaFile>(mediaFileEventList, new MediaTableFormat());
+    mediaFileTableModel = new DefaultEventTableModel<MediaFile>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
     // tableFiles = new JTable(mediaFileTableModel);
     tableFiles = new ZebraJTable(mediaFileTableModel);
     tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -269,9 +269,11 @@ public class MovieMediaInformationPanel extends JPanel {
         // react on selection of a movie and change of media files
         if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
             || (source.getClass() == Movie.class && "mediaFiles".equals(property))) {
+
           mediaFileEventList.clear();
           mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
           tableColumnAdjuster.adjustColumns();
+
         }
 
       }
