@@ -60,11 +60,16 @@ public class MovieRenamer {
 
     for (MediaFile sub : m.getMediaFiles(MediaFileType.SUBTITLE)) {
       String lang = "";
+      String forced = "";
       for (String l : langArray) {
         if (sub.getBasename().toLowerCase().endsWith("." + l.toLowerCase())) { // make dot mandatory
           lang = l;
           break;
         }
+      }
+      if (sub.getFilename().toLowerCase().contains("forced")) {
+        // add "forced" prior language
+        forced = ".forced";
       }
 
       String newSubName = "";
@@ -72,7 +77,7 @@ public class MovieRenamer {
       if (sub.getStacking() == 0) {
         // fine, so match to first movie file
         MediaFile mf = m.getMediaFiles(MediaFileType.VIDEO).get(0);
-        newSubName = mf.getBasename();
+        newSubName = mf.getBasename() + forced;
         if (!lang.isEmpty()) {
           newSubName += "." + lang;
         }
@@ -81,7 +86,7 @@ public class MovieRenamer {
         // with stacking info; try to match
         for (MediaFile mf : m.getMediaFiles(MediaFileType.VIDEO)) {
           if (mf.getStacking() == sub.getStacking()) {
-            newSubName = mf.getBasename();
+            newSubName = mf.getBasename() + forced;
             if (!lang.isEmpty()) {
               newSubName += "." + lang;
             }
@@ -240,6 +245,10 @@ public class MovieRenamer {
         cleanup.add(mf); // mark old file for cleanup
         for (MoviePosterNaming name : Globals.settings.getMovieSettings().getMoviePosterFilenames()) {
           newFilename = movie.getPosterFilename(name);
+          if (!mf.getExtension().equals(FilenameUtils.getExtension(newFilename))) {
+            // match extension to not rename PNG to JPG and vice versa
+            continue;
+          }
           File newFile = new File(newPath, newFilename);
           try {
             boolean ok = copyFile(mf.getFile(), newFile);
@@ -260,6 +269,10 @@ public class MovieRenamer {
         cleanup.add(mf); // mark old file for cleanup
         for (MovieFanartNaming name : Globals.settings.getMovieSettings().getMovieFanartFilenames()) {
           newFilename = movie.getFanartFilename(name);
+          if (!mf.getExtension().equals(FilenameUtils.getExtension(newFilename))) {
+            // match extension to not rename PNG to JPG and vice versa
+            continue;
+          }
           File newFile = new File(newPath, newFilename);
           try {
             boolean ok = copyFile(mf.getFile(), newFile);

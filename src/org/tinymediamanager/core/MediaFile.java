@@ -779,9 +779,36 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       subtitles.add(getMediaInfo(StreamKind.Text, i, "Language", "", ""));
     }
 
+    String height = "";
+    String scanType = "";
+    String width = "";
+    String videoCodec = "";
+
+    switch (type) {
+      case VIDEO:
+      case TRAILER:
+        height = getMediaInfo(StreamKind.Video, 0, "Height");
+        scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
+        width = getMediaInfo(StreamKind.Video, 0, "Width");
+        videoCodec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
+        break;
+
+      case POSTER:
+      case BANNER:
+      case FANART:
+      case GRAPHIC:
+        height = getMediaInfo(StreamKind.Image, 0, "Height");
+        scanType = getMediaInfo(StreamKind.Image, 0, "ScanType");
+        width = getMediaInfo(StreamKind.Image, 0, "Width");
+        videoCodec = getMediaInfo(StreamKind.Image, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
+        break;
+
+      default:
+        break;
+    }
+
     // video codec
     // e.g. XviD, x264, DivX 5, MPEG-4 Visual, AVC, etc.
-    String videoCodec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
     // get first token (e.g. DivX 5 => DivX)
     setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
 
@@ -825,10 +852,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // }
     // }
 
-    // exact video format
-    String height = getMediaInfo(StreamKind.Video, 0, "Height");
-    String scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
-
     if (height.isEmpty() || scanType.isEmpty()) {
       setExactVideoFormat("");
     }
@@ -837,7 +860,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // video dimension
-    String width = getMediaInfo(StreamKind.Video, 0, "Width");
     if (!width.isEmpty()) {
       try {
         setVideoWidth(Integer.parseInt(width));

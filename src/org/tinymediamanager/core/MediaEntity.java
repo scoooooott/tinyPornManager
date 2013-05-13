@@ -223,7 +223,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public void setTitle(String newValue) {
     String oldValue = title;
-    title = newValue;
+    title = newValue.trim();
     firePropertyChange(TITLE, oldValue, newValue);
   }
 
@@ -235,7 +235,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public void setOriginalTitle(String newValue) {
     String oldValue = originalTitle;
-    originalTitle = newValue;
+    originalTitle = newValue.trim();
     firePropertyChange(ORIGINAL_TITLE, oldValue, newValue);
   }
 
@@ -247,7 +247,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public void setPlot(String newValue) {
     String oldValue = plot;
-    plot = newValue;
+    plot = newValue.trim();
     firePropertyChange(PLOT, oldValue, newValue);
   }
 
@@ -283,7 +283,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public void setYear(String newValue) {
     String oldValue = year;
-    year = newValue;
+    year = newValue.trim();
     firePropertyChange(YEAR, oldValue, newValue);
   }
 

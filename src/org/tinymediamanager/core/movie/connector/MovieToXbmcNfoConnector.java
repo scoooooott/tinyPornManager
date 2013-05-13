@@ -222,7 +222,7 @@ public class MovieToXbmcNfoConnector {
 
     // load existing NFO if possible
     for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
-      File file = new File(movie.getNfoFilename(name));
+      File file = new File(movie.getPath(), movie.getNfoFilename(name));
       if (file.exists()) {
         synchronized (JAXBContext.class) {
           try {

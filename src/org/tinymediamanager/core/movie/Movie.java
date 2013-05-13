@@ -710,7 +710,7 @@ public class Movie extends MediaEntity {
    * @return true/false if found (and set)
    */
   private boolean findAndSetPoster(String name) {
-    File p = new File(name);
+    File p = new File(path, name);
     if (p.exists()) {
       setPoster(p.getName());
       LOGGER.debug("found poster " + p.getPath());
@@ -768,7 +768,7 @@ public class Movie extends MediaEntity {
    * @return true/false if found (and set)
    */
   private boolean findAndSetFanart(String name) {
-    File p = new File(name);
+    File p = new File(path, name);
     if (p.exists()) {
       setFanart(p.getName());
       LOGGER.debug("found fanart " + p.getPath());
@@ -1642,14 +1642,14 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * all XBMC supported poster names.
+   * all XBMC supported poster names. (without path!)
    * 
    * @param poster
    *          the poster
    * @return the poster filename
    */
   public String getPosterFilename(MoviePosterNaming poster) {
-    String filename = path + File.separator;
+    String filename = "";
     String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
 
     switch (poster) {
@@ -1715,14 +1715,14 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * all XBMC supported fanart names.
+   * all XBMC supported fanart names. (without path!)
    * 
    * @param fanart
    *          the fanart
    * @return the fanart filename
    */
   public String getFanartFilename(MovieFanartNaming fanart) {
-    String filename = path + File.separator;
+    String filename = "";
     String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
 
     switch (fanart) {
@@ -1761,14 +1761,14 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * all XBMC supported NFO names.
+   * all XBMC supported NFO names. (without path!)
    * 
    * @param nfo
    *          the nfo
    * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
-    String filename = path + File.separator;
+    String filename = "";
     String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
 
     switch (nfo) {
