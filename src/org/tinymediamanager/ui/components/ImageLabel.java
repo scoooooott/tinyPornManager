@@ -449,7 +449,7 @@ public class ImageLabel extends JLabel {
       return cachedFile;
     }
     catch (Exception e) {
-      LOGGER.warn("problem caching file: " + e.getMessage());
+      LOGGER.warn("problem caching file: ", e);
     }
 
     // fallback

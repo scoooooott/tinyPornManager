@@ -423,6 +423,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
         bannerList.addAll(banners.getSeriesList());
         bannerList.addAll(banners.getPosterList());
         bannerList.addAll(banners.getFanartList());
+        bannerList.addAll(banners.getSeasonList());
         break;
 
       case POSTER:
@@ -431,6 +432,10 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
 
       case BACKGROUND:
         bannerList = banners.getFanartList();
+        break;
+
+      case SEASON:
+        bannerList = banners.getSeasonList();
         break;
 
       case BANNER:

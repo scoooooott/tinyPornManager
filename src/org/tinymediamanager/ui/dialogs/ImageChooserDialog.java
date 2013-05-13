@@ -106,7 +106,9 @@ public class ImageChooserDialog extends JDialog {
     /** The fanart. */
     FANART,
     /** The banner. */
-    BANNER;
+    BANNER,
+    /** The season. */
+    SEASON;
   }
 
   /** The content panel. */
@@ -194,6 +196,10 @@ public class ImageChooserDialog extends JDialog {
 
       case BANNER:
         setTitle(BUNDLE.getString("image.choose.banner")); //$NON-NLS-1$
+        break;
+
+      case SEASON:
+        setTitle(BUNDLE.getString("image.choose.season")); //$NON-NLS-1$
         break;
     }
 
@@ -698,6 +704,10 @@ public class ImageChooserDialog extends JDialog {
 
             case BANNER:
               options.setArtworkType(MediaArtworkType.BANNER);
+              break;
+
+            case SEASON:
+              options.setArtworkType(MediaArtworkType.SEASON);
               break;
 
           }

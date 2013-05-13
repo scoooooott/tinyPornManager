@@ -17,6 +17,8 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -352,20 +354,49 @@ public class MoviePanel extends JPanel {
     // beansbinding init
     initDataBindings();
 
+    addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentHidden(ComponentEvent e) {
+        menu.setVisible(false);
+        super.componentHidden(e);
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see java.awt.event.ComponentAdapter#componentShown(java.awt.event.ComponentEvent)
+       */
+      @Override
+      public void componentShown(ComponentEvent e) {
+        menu.setVisible(true);
+        super.componentHidden(e);
+      }
+    });
+
+    // further initializations
+    init();
+  }
+
+  private void buildMenu() {
     // menu items
     menu.add(actionUpdateDataSources2);
+
+    JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape"));
+    menuScrape.add(actionScrape2);
+    menuScrape.add(actionScrapeSelected);
+    menuScrape.add(actionScrapeUnscraped);
+    menuScrape.add(actionScrapeMetadataSelected);
+    menu.add(menuScrape);
+
+    JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit"));
+    menuEdit.add(actionEditMovie2);
+    menuEdit.add(actionBatchEdit);
+    menuEdit.add(actionRename2);
+
+    menu.add(menuEdit);
     menu.addSeparator();
-    menu.add(actionScrape2);
-    menu.add(actionScrapeSelected);
-    menu.add(actionScrapeUnscraped);
-    menu.add(actionScrapeMetadataSelected);
-    menu.addSeparator();
-    menu.add(actionEditMovie2);
-    menu.add(actionBatchEdit);
-    menu.add(actionRename2);
     menu.add(actionMediaInformation2);
     menu.add(actionExport);
-    menu.addSeparator();
     menu.add(actionRemove2);
 
     // popup menu
@@ -384,15 +415,15 @@ public class MoviePanel extends JPanel {
 
     MouseListener popupListener = new PopupListener(popupMenu);
     table.addMouseListener(popupListener);
-
-    // further initializations
-    init();
   }
 
   /**
    * further initializations.
    */
   private void init() {
+    // build menu
+    buildMenu();
+
     // moviename column
     table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
 
@@ -513,7 +544,7 @@ public class MoviePanel extends JPanel {
       }
       else {
         putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected.desc")); //$NON-NLS-1$
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
       }
     }
 
@@ -775,21 +806,9 @@ public class MoviePanel extends JPanel {
      */
     @Override
     public void actionPerformed(ActionEvent arg0) {
-      // List<Movie> movies = new ArrayList<Movie>();
-
-      // // get seletected movies
-      // for (int row : table.getSelectedRows()) {
-      // row = table.convertRowIndexToModel(row);
-      // Movie movie = movieList.getMovies().get(row);
-      // movies.add(movie);
-      // }
-
-      List<Movie> selectedMovies = new ArrayList<Movie>();
       // save all selected movies in an extra list (maybe scraping of one movie
       // changes the whole list)
-      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        selectedMovies.add(movie);
-      }
+      List<Movie> selectedMovies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
 
       // remove selected movies
       if (selectedMovies.size() > 0) {
