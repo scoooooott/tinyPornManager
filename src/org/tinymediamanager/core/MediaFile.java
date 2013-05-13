@@ -128,9 +128,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public MediaFile(File f) {
     this.path = f.getParent(); // just path w/o filename
     this.filename = f.getName();
+    this.file = f;
     this.type = parseType();
     this.stacking = Utils.getStackingNumber(f.getName());
-    this.file = f;
     if (file.exists()) {
       setFilesize(FileUtils.sizeOf(file));
     }
@@ -146,7 +146,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String ext = getExtension().toLowerCase();
     String name = getFilename().toLowerCase();
     String base = FilenameUtils.getBaseName(name);
-    String foldername = FilenameUtils.getBaseName(FilenameUtils.getPathNoEndSeparator(getFile().getPath())).toLowerCase();
+    String foldername = FilenameUtils.getBaseName(FilenameUtils.getPathNoEndSeparator(getPath())).toLowerCase();
 
     if (name.contains("sample") || name.contains("trailer") || foldername.contains("sample")) {
       return MediaFileType.TRAILER;
@@ -214,12 +214,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public File getFile() {
     if (file == null) {
       File f = new File(this.path, this.filename);
-      if (f.exists()) {
-        file = f;
-      }
-      else {
-        return null;
-      }
+      // if (f.exists()) {
+      file = f;
+      // }
+      // else {
+      // return null;
+      // }
     }
     return file;
   }
@@ -266,12 +266,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public void fixPathForRenamedFolder(File oldPath, File newPath) {
     String rel = Utils.relPath(oldPath, this.path); // relative from old
-    String oldValue = this.path;
-    this.path = newPath.getPath();
+    String newPathS = newPath.getPath();
     if (!rel.isEmpty()) {
-      this.path += File.separator + rel;
+      newPathS += File.separator + rel;
     }
-    firePropertyChange(PATH, oldValue, this.path);
+    setPath(newPathS);
   }
 
   /**

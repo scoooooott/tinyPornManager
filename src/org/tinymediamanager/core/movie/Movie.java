@@ -383,6 +383,14 @@ public class Movie extends MediaEntity {
   }
 
   /**
+   * Clears all the media files.
+   */
+  public void removeAllMediaFiles() {
+    mediaFilesObservable.clear();
+    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+  }
+
+  /**
    * Removes the from media files.
    * 
    * @param obj
@@ -417,9 +425,10 @@ public class Movie extends MediaEntity {
    *          the new movie path
    */
   public void updateMediaFilePath(File oldMoviePath, File newMoviePath) {
-    for (MediaFile mf : getMediaFiles()) {
+    for (MediaFile mf : mediaFilesObservable) {
       mf.fixPathForRenamedFolder(oldMoviePath, newMoviePath);
     }
+    // firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
   }
 
   /**
@@ -462,7 +471,7 @@ public class Movie extends MediaEntity {
   public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
     try {
       // get trailer filename from first mediafile
-      String tfile = FilenameUtils.getBaseName(this.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()) + "-trailer.";
+      String tfile = MovieRenamer.createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), this) + "-trailer.";
       String ext = UrlUtil.getFileExtension(trailerToDownload.getUrl());
       if (ext.isEmpty()) {
         ext = "unknown";
@@ -473,8 +482,9 @@ public class Movie extends MediaEntity {
       LOGGER.info("Trailer download successfully");
       // TODO: maybe check if there are other trailerfiles (with other
       // extension) and remove
-      FileUtils.deleteQuietly(new File(tfile + ext));
-      MovieRenamer.moveFile(tfile + ext + ".tmp", tfile + ext);
+      File trailer = new File(tfile + ext);
+      FileUtils.deleteQuietly(trailer);
+      MovieRenamer.moveFile(new File(tfile + ext + ".tmp"), trailer);
     }
     catch (IOException e) {
       LOGGER.error("Error downloading trailer", e);

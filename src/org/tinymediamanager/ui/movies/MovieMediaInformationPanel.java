@@ -269,11 +269,11 @@ public class MovieMediaInformationPanel extends JPanel {
         // react on selection of a movie and change of media files
         if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
             || (source.getClass() == Movie.class && "mediaFiles".equals(property))) {
-
-          mediaFileEventList.clear();
+          if (!mediaFileEventList.isEmpty()) {
+            mediaFileEventList.clear();
+          }
           mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
           tableColumnAdjuster.adjustColumns();
-
         }
 
       }
