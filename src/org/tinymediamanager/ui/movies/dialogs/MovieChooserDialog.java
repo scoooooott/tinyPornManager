@@ -110,7 +110,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   private JTextField                  textFieldSearchString;
 
   /** The cb scraper. */
-  private JComboBox<MovieScrapers>    cbScraper;
+  private JComboBox                   cbScraper;
 
   /** The table. */
   private JTable                      table;
@@ -204,7 +204,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         panelSearchField.add(lblScraper, "2, 1, right, default");
       }
       {
-        cbScraper = new JComboBox<MovieScrapers>(MovieScrapers.values());
+        cbScraper = new JComboBox(MovieScrapers.values());
         MovieScrapers defaultScraper = Globals.settings.getMovieSettings().getMovieScraper();
         cbScraper.setSelectedItem(defaultScraper);
         cbScraper.setAction(new ChangeScraperAction());

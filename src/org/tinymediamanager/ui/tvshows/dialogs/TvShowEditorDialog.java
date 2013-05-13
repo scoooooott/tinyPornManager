@@ -172,7 +172,7 @@ public class TvShowEditorDialog extends JDialog {
   private JSpinner                    spRating;
 
   /** The cb certification. */
-  private JComboBox<Certification>    cbCertification;
+  private JComboBox                   cbCertification;
 
   /** The tf imdb id. */
   private JTextField                  tfImdbId;
@@ -196,10 +196,10 @@ public class TvShowEditorDialog extends JDialog {
   private final Action                action_1          = new SwingAction_7();
 
   /** The cb tags. */
-  private JComboBox<String>           cbTags;
+  private JComboBox                   cbTags;
 
   /** The list tags. */
-  private JList<String>               listTags;
+  private JList                       listTags;
 
   /** The action_2. */
   private final Action                action_2          = new SwingAction_8();
@@ -323,7 +323,7 @@ public class TvShowEditorDialog extends JDialog {
       details1Panel.add(lblCertification, "8, 6, right, default");
     }
     {
-      cbCertification = new JComboBox<Certification>();
+      cbCertification = new JComboBox();
       for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getTvShowSettings().getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
@@ -485,7 +485,7 @@ public class TvShowEditorDialog extends JDialog {
     {
       JScrollPane scrollPaneTags = new JScrollPane();
       details2Panel.add(scrollPaneTags, "4, 16, 1, 5");
-      listTags = new JList<String>();
+      listTags = new JList();
       scrollPaneTags.setViewportView(listTags);
     }
     {

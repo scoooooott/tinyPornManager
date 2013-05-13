@@ -109,7 +109,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   private JTextField                  textFieldSearchString;
 
   /** The cb scraper. */
-  private JComboBox<TvShowScrapers>   cbScraper;
+  private JComboBox                   cbScraper;
 
   /** The table. */
   private JTable                      table;
@@ -199,7 +199,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
         panelSearchField.add(lblScraper, "2, 1, right, default");
       }
       {
-        cbScraper = new JComboBox<TvShowScrapers>(TvShowScrapers.values());
+        cbScraper = new JComboBox(TvShowScrapers.values());
         cbScraper.setSelectedItem(Globals.settings.getTvShowSettings().getTvShowScraper());
         cbScraper.setAction(new ChangeScraperAction());
         panelSearchField.add(cbScraper, "4, 1, fill, default");
