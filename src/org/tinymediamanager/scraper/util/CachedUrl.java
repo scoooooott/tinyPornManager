@@ -44,7 +44,7 @@ public class CachedUrl extends Url {
   private static final Logger  LOGGER        = LoggerFactory.getLogger(CachedUrl.class);
 
   /** The Constant CACHE_DIR. */
-  private static final String  CACHE_DIR     = "cache/url";
+  public static final String   CACHE_DIR     = "cache/url";
 
   /** The Constant CACHE_EXPIRY. */
   private static final int     CACHE_EXPIRY  = 3600;

@@ -50,6 +50,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.AboutDialog;
 import org.tinymediamanager.ui.dialogs.BugReportDialog;
@@ -189,12 +191,28 @@ public class MainWindow extends JFrame {
         System.exit(0);
       }
     });
-    JMenuItem clearCache = new JMenuItem(BUNDLE.getString("tmm.clearcache")); //$NON-NLS-1$
-    debug.add(clearCache);
-    clearCache.addActionListener(new ActionListener() {
+    JMenuItem clearUrlCache = new JMenuItem(BUNDLE.getString("tmm.clearurlcache")); //$NON-NLS-1$
+    debug.add(clearUrlCache);
+    clearUrlCache.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        File cache = new File("cache");
+        File cache = new File(CachedUrl.CACHE_DIR);
+        if (cache.exists()) {
+          try {
+            FileUtils.deleteDirectory(cache);
+          }
+          catch (Exception e) {
+            LOGGER.warn(e.getMessage());
+          }
+        }
+      }
+    });
+    JMenuItem clearImageCache = new JMenuItem(BUNDLE.getString("tmm.clearimagecache")); //$NON-NLS-1$
+    debug.add(clearImageCache);
+    clearImageCache.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        File cache = new File(ImageCache.CACHE_DIR);
         if (cache.exists()) {
           try {
             FileUtils.deleteDirectory(cache);

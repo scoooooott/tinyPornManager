@@ -74,9 +74,6 @@ public class ImageLabel extends JLabel {
   /** The Constant logger. */
   private static final Logger              LOGGER           = LoggerFactory.getLogger(ImageLabel.class);
 
-  /** The Constant CACHE_DIR. */
-  private static final String              CACHE_DIR        = "cache/image";
-
   /** The original image. */
   private BufferedImage                    originalImage;
 
@@ -97,9 +94,6 @@ public class ImageLabel extends JLabel {
 
   /** The draw full width. */
   private boolean                          drawFullWidth;
-
-  /** The url cache dir. */
-  private File                             imageCacheDir    = null;
 
   /** The worker. */
   private SwingWorker<BufferedImage, Void> worker           = null;
@@ -392,20 +386,6 @@ public class ImageLabel extends JLabel {
   // }
 
   /**
-   * Gets the cache dir.
-   * 
-   * @return the cache dir
-   */
-  private File getCacheDir() {
-    if (imageCacheDir == null) {
-      imageCacheDir = new File(CACHE_DIR);
-      if (!imageCacheDir.exists())
-        imageCacheDir.mkdirs();
-    }
-    return imageCacheDir;
-  }
-
-  /**
    * Gets the cached file.
    * 
    * @param path
@@ -420,7 +400,7 @@ public class ImageLabel extends JLabel {
     try {
       File originalFile = new File(path);
       String cacheFilename = ImageCache.getCachedFileName(path);
-      File cachedFile = new File(getCacheDir(), cacheFilename + ".jpg");
+      File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
       if (!cachedFile.exists()) {
         // recreate cache dir if needed
         // rescale & cache

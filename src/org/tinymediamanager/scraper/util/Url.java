@@ -189,6 +189,7 @@ public class Url {
   public byte[] getBytes() throws IOException {
     InputStream is = getInputStream();
     byte[] bytes = IOUtils.toByteArray(is);
+    is.close();
     return bytes;
   }
 
