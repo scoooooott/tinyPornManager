@@ -153,7 +153,8 @@ public class Url {
 
     ByteArrayInputStream is = null;
 
-    LOGGER.debug("getting " + url);
+    // replace our API keys for logging...
+    LOGGER.debug("getting " + url.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>"));
     HttpGet httpget = new HttpGet(url);
 
     // set custom headers

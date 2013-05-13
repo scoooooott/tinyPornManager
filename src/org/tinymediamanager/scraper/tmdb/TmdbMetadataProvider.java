@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.tmdb;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -161,8 +160,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     LOGGER.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
     tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
-    URL url = tmdbSearchMovie.buildUrl();
-    LOGGER.debug(url.toString().replace("&api_key=6247670ec93f4495a36297ff88f7cd15", "&<API_KEY>"));
 
     List<MovieDb> moviesFound = null;
     synchronized (tmdb) {
