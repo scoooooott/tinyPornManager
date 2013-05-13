@@ -173,13 +173,18 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       trackConnections();
       moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getMovieSettings().getScraperLanguage().name(), false, 0);
       baseUrl = tmdb.getConfiguration().getBaseUrl();
-    }
-
-    if (moviesFound == null) {
-      return resultList;
+      if (searchString.matches(".*\\s\\d{4}$") && (moviesFound == null || moviesFound.size() == 0)) {
+        // nada found & last part seems to be date; strip off and try again
+        searchString = searchString.replaceFirst("\\s\\d{4}$", "");
+        moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getMovieSettings().getScraperLanguage().name(), false, 0);
+      }
     }
 
     LOGGER.debug("found " + moviesFound.size() + " results");
+
+    if (moviesFound == null || moviesFound.size() == 0) {
+      return resultList;
+    }
 
     for (MovieDb movie : moviesFound) {
       MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());

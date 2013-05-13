@@ -32,6 +32,7 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.scraper.util.ParserUtils;
 
 /**
  * The Class TvShowUpdateDataSourcesTask.
@@ -180,7 +181,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // create new one
         tvShow = new TvShow();
         tvShow.setPath(dir.getPath());
-        tvShow.setTitle(dir.getName());
+        tvShow.setTitle(ParserUtils.detectCleanMoviename(dir.getName()));
       }
       if (tvShow != null) {
         tvShow.saveToDb();
