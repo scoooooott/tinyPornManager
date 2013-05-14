@@ -227,12 +227,7 @@ public class Movie extends MediaEntity {
    * @return the nfo filename
    */
   public String getNfoFilename() {
-    if (!StringUtils.isEmpty(nfoFilename)) {
-      return path + File.separator + nfoFilename;
-    }
-    else {
-      return nfoFilename;
-    }
+    return nfoFilename;
   }
 
   /**

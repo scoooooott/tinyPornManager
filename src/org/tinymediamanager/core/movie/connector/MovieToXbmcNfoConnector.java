@@ -395,7 +395,7 @@ public class MovieToXbmcNfoConnector {
         if (SystemUtils.IS_OS_WINDOWS) {
           sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
         }
-        FileUtils.write(new File(nfoFilename), sb, "UTF-8");
+        FileUtils.write(new File(movie.getPath(), nfoFilename), sb, "UTF-8");
       }
       catch (JAXBException e) {
         LOGGER.error("setData", e);

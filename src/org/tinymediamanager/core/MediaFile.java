@@ -131,6 +131,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.file = f;
     this.type = parseType();
     this.stacking = Utils.getStackingNumber(f.getName());
+    if (this.stacking == 0) {
+      // try to parse from parent directory
+      this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
+    }
     if (file.exists()) {
       setFilesize(FileUtils.sizeOf(file));
     }
@@ -146,7 +150,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String ext = getExtension().toLowerCase();
     String name = getFilename().toLowerCase();
     String base = FilenameUtils.getBaseName(name);
-    String foldername = FilenameUtils.getBaseName(FilenameUtils.getPathNoEndSeparator(getPath())).toLowerCase();
+    String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase();
 
     if (name.contains("sample") || name.contains("trailer") || foldername.contains("sample")) {
       return MediaFileType.TRAILER;
