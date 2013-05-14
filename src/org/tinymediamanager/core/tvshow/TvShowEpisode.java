@@ -128,6 +128,25 @@ public class TvShowEpisode extends MediaEntity {
   }
 
   /**
+   * Gets the tv show season.
+   * 
+   * @return the tv show season
+   */
+  public TvShowSeason getTvShowSeason() {
+    if (tvShow == null) {
+      return null;
+    }
+    return tvShow.getSeasonForEpisode(this);
+  }
+
+  /**
+   * Sets the tv show season.
+   */
+  public void setTvShowSeason() {
+    // dummy for beansbinding
+  }
+
+  /**
    * Is this episode in a disc folder structure?.
    * 
    * @return true/false

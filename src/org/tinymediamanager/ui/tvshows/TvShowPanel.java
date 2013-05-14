@@ -628,7 +628,8 @@ public class TvShowPanel extends JPanel {
           dialog.setVisible(true);
 
           if (StringUtils.isNotBlank(imageLabel.getImageUrl())) {
-            // FIXME set season poster
+            season.setPosterUrl(imageLabel.getImageUrl());
+            season.getTvShow().writeSeasonPoster(season.getSeason());
           }
         }
       }

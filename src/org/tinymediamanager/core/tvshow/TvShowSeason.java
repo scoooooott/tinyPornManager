@@ -29,7 +29,6 @@ import org.tinymediamanager.core.AbstractModelObject;
  * @author Manuel Laggner
  */
 public class TvShowSeason extends AbstractModelObject {
-
   /** The season. */
   private int                 season   = -1;
 
@@ -90,4 +89,45 @@ public class TvShowSeason extends AbstractModelObject {
     return episodes;
   }
 
+  /**
+   * Sets the poster.
+   * 
+   * @param newValue
+   *          the new poster
+   */
+  public void setPoster(String newValue) {
+    String oldValue = tvShow.getSeasonPoster(season);
+    tvShow.setSeasonPoster(season, newValue);
+    firePropertyChange(POSTER, oldValue, newValue);
+  }
+
+  /**
+   * Gets the poster.
+   * 
+   * @return the poster
+   */
+  public String getPoster() {
+    return tvShow.getSeasonPoster(season);
+  }
+
+  /**
+   * Sets the poster url.
+   * 
+   * @param newValue
+   *          the new poster url
+   */
+  public void setPosterUrl(String newValue) {
+    String oldValue = tvShow.getSeasonPosterUrl(season);
+    tvShow.setSeasonPosterUrl(season, newValue);
+    firePropertyChange(POSTER_URL, oldValue, newValue);
+  }
+
+  /**
+   * Gets the poster url.
+   * 
+   * @return the poster url
+   */
+  public String getPosterUrl() {
+    return tvShow.getSeasonPosterUrl(season);
+  }
 }

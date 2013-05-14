@@ -186,6 +186,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelImages.add(panelLogos, "3, 2, 3, 1, right, fill");
 
     lblTvShowPoster = new ImageLabel();
+    lblTvShowPoster.setPosition(Position.BOTTOM_LEFT);
     panelImages.add(lblTvShowPoster, "1, 2, 1, 3, fill, fill");
 
     lblTvShowBackground = new ImageLabel(false, false);
@@ -260,5 +261,11 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, Float, JLabel, String> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_4, lblRating, jLabelBeanProperty);
     autoBinding_5.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_5 = BeanProperty
+        .create("selectedTvShowEpisode.tvShowSeason.poster");
+    AutoBinding<TvShowEpisodeSelectionModel, String, ImageLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_5, lblTvShowPoster, imageLabelBeanProperty);
+    autoBinding_6.bind();
   }
 }
