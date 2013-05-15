@@ -455,7 +455,7 @@ public class Utils {
                 + "&je=1"
                 + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country") 
                 + "&vp=" + Globals.settings.getWindowConfig().getInteger("mainWindowW") + "x" + Globals.settings.getWindowConfig().getInteger("mainWindowH")
-                + "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth() + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().getHeight() 
+                + "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height 
                 + "&cd1=" + getEncProp("os.name") 
                 + "&cd2=" + getEncProp("os.arch") 
                 + "&cd3=" + getEncProp("java.version") 
