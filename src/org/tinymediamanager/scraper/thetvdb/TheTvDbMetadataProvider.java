@@ -477,6 +477,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
 
         case season:
           ma.setType(MediaArtworkType.SEASON);
+          ma.setSeason(banner.getSeason());
           break;
 
         case fanart:

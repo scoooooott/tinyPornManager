@@ -161,6 +161,9 @@ public class MediaArtwork {
   /** The tmdb id. */
   private int                   tmdbId;
 
+  /** The season. */
+  private int                   season     = -1;
+
   /** The download url. */
   private String                previewUrl;
 
@@ -404,6 +407,25 @@ public class MediaArtwork {
    */
   public void setSizeOrder(int sizeOrder) {
     this.sizeOrder = sizeOrder;
+  }
+
+  /**
+   * Gets the season.
+   * 
+   * @return the season
+   */
+  public int getSeason() {
+    return season;
+  }
+
+  /**
+   * Sets the season.
+   * 
+   * @param season
+   *          the new season
+   */
+  public void setSeason(int season) {
+    this.season = season;
   }
 
   /**

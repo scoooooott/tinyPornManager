@@ -107,7 +107,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       startProgressBar("getting Mediainfo...");
       initThreadPool(1, "mediainfo");
       for (TvShow tvShow : tvShowList.getTvShows()) {
-        // TODO
+        // FIXME
         // submitTask(new MediaFileInformationFetcherTask(tvShow));
       }
       waitForCompletionOrCancel();

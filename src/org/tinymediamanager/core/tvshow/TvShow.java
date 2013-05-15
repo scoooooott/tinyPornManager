@@ -630,6 +630,20 @@ public class TvShow extends MediaEntity {
         }
       }
 
+      // season poster
+      HashMap<Integer, String> seasonPosters = new HashMap<Integer, String>();
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.SEASON && art.getSeason() >= 0) {
+          // check if there is already an artwork for this season
+          String url = seasonPosters.get(art.getSeason());
+          if (StringUtils.isBlank(url)) {
+            setSeasonPosterUrl(art.getSeason(), art.getDefaultUrl());
+            writeSeasonPoster(art.getSeason());
+            seasonPosters.put(art.getSeason(), art.getDefaultUrl());
+          }
+        }
+      }
+
       // update DB
       saveToDb();
     }
@@ -1265,6 +1279,9 @@ public class TvShow extends MediaEntity {
 
     // banner - banner.jpg/png
     findBanner();
+
+    // season posters - seasonXX-poster.jpg/png
+    findSeasonPosters();
   }
 
   /**
@@ -1411,6 +1428,24 @@ public class TvShow extends MediaEntity {
     }
   }
 
+  private void findSeasonPosters() {
+    Pattern pattern = Pattern.compile("(?i)season([0-9]{1,2})-poster\\..{2,4}");
+    File[] files = new File(path).listFiles();
+    for (File file : files) {
+      Matcher matcher = pattern.matcher(file.getName());
+      if (matcher.matches()) {
+        // setBanner(FilenameUtils.getName(file.getName()));
+        LOGGER.debug("found season poster " + file.getPath());
+        try {
+          int season = Integer.parseInt(matcher.group(1));
+          setSeasonPoster(season, FilenameUtils.getName(file.getName()));
+        }
+        catch (Exception e) {
+        }
+      }
+    }
+  }
+
   /**
    * Scrape all episodes.
    */
@@ -1501,11 +1536,11 @@ public class TvShow extends MediaEntity {
    * @return the season poster
    */
   String getSeasonPoster(int season) {
-    String path = seasonPosterMap.get(season);
-    if (StringUtils.isBlank(path)) {
+    String poster = seasonPosterMap.get(season);
+    if (StringUtils.isBlank(poster)) {
       return "";
     }
-    return path;
+    return path + File.separator + poster;
   }
 
   /**
@@ -1559,7 +1594,7 @@ public class TvShow extends MediaEntity {
 
         ImageCache.invalidateCachedImage(filename);
         if (tvShowSeason != null) {
-          tvShowSeason.setPoster(filename);
+          tvShowSeason.setPoster(FilenameUtils.getName(filename));
         }
       }
       catch (IOException e) {
