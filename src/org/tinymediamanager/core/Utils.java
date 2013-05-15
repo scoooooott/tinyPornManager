@@ -416,7 +416,8 @@ public class Utils {
   }
 
   /**
-   * Starts a thread and does a "ping" on our tracking server, sending the event (and the random UUID + some env vars).
+   * Starts a thread and does a "ping" on our tracking server, sending the event
+   * (and the random UUID + some env vars).
    * 
    * @param event
    *          The event for the GET request
@@ -442,11 +443,24 @@ public class Utils {
             // Url url = new Url("http://tracker.tinymediamanager.org/track.php?uuid=" + uuid + "&event=" + event + nfo);
 
             // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-            String ga = "v=1&tid=UA-35564534-5&cid=" + uuid + "&an=tinyMediaManager&av=" + ReleaseInfo.getBuild() + "&t=event&ec=" + event + "&ea="
-                + event + "&je=1&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country") + "&vp="
-                + Globals.settings.getWindowConfig().getInteger("mainWindowW") + "x" + Globals.settings.getWindowConfig().getInteger("mainWindowH")
-                + "&cd1=" + getEncProp("os.name") + "&cd2=" + getEncProp("os.arch") + "&cd3=" + getEncProp("java.version") + "&z="
-                + System.currentTimeMillis();
+            // @formatter:off
+            String ga = "v=1"
+                + "&tid=UA-35564534-5"
+                + "&cid=" + uuid 
+                + "&an=tinyMediaManager" 
+                + "&av=" + ReleaseInfo.getBuild() 
+                + "&t=event"
+                + "&ec=" + event
+                + "&ea=" + event 
+                + "&je=1"
+                + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country") 
+                + "&vp=" + Globals.settings.getWindowConfig().getInteger("mainWindowW") + "x" + Globals.settings.getWindowConfig().getInteger("mainWindowH")
+                + "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth() + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().getHeight() 
+                + "&cd1=" + getEncProp("os.name") 
+                + "&cd2=" + getEncProp("os.arch") 
+                + "&cd3=" + getEncProp("java.version") 
+                + "&z=" + System.currentTimeMillis();
+            // @formatter:on
             Url url = new Url("http://www.google-analytics.com/collect?" + ga);
 
             InputStream in = url.getInputStream();
