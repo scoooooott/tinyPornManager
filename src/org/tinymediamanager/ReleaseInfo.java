@@ -53,6 +53,7 @@ public class ReleaseInfo {
     }
     catch (IOException e) {
       version = "";
+      build = "svn";
     }
     finally {
       try {

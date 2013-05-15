@@ -433,21 +433,22 @@ public class Utils {
           }
 
           if (uuidFile.exists()) {
-            // 2013-01-29 10:20:43 | event=startup | os=Windows 7 | arch=amd64 |
-            // Java=1.6.0_26 | country=DE
-            String nfo = "&os=" + getEncProp("os.name") + "&arch=" + getEncProp("os.arch") + "&java=" + getEncProp("java.version") + "&lang="
-                + getEncProp("user.language") + "_" + getEncProp("user.country");
             String uuid = FileUtils.readFileToString(uuidFile);
             System.setProperty("tmm.uuid", uuid);
 
-            // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-            String ga = "v=1&tid=UA-XXXX-Y&cid=" + uuid + "&an=TMM&av=" + ReleaseInfo.getBuild() + "%t=appview&ec=startup&je=1&ul="
-                + getEncProp("user.language") + "-" + getEncProp("user.country") + "&vp="
-                + Globals.settings.getWindowConfig().getInteger("mainWindowW") + "x" + Globals.settings.getWindowConfig().getInteger("mainWindowH")
-                + "&cm1=" + getEncProp("os.name") + "&cm2=" + getEncProp("os.arch") + "&cm3=" + getEncProp("java.version");
-            // http://www.google-analytics.com/collect?ga
+            // 2013-01-29 10:20:43 | event=startup | os=Windows 7 | arch=amd64 | Java=1.6.0_26 | country=DE
+            // String nfo = "&os=" + getEncProp("os.name") + "&arch=" + getEncProp("os.arch") + "&java=" + getEncProp("java.version") + "&lang="
+            // + getEncProp("user.language") + "_" + getEncProp("user.country");
+            // Url url = new Url("http://tracker.tinymediamanager.org/track.php?uuid=" + uuid + "&event=" + event + nfo);
 
-            Url url = new Url("http://tracker.tinymediamanager.org/track.php?uuid=" + uuid + "&event=" + event + nfo);
+            // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
+            String ga = "v=1&tid=UA-35564534-5&cid=" + uuid + "&an=tinyMediaManager&av=" + ReleaseInfo.getBuild() + "&t=event&ec=" + event + "&ea="
+                + event + "&je=1&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country") + "&vp="
+                + Globals.settings.getWindowConfig().getInteger("mainWindowW") + "x" + Globals.settings.getWindowConfig().getInteger("mainWindowH")
+                + "&cd1=" + getEncProp("os.name") + "&cd2=" + getEncProp("os.arch") + "&cd3=" + getEncProp("java.version") + "&z="
+                + System.currentTimeMillis();
+            Url url = new Url("http://www.google-analytics.com/collect?" + ga);
+
             InputStream in = url.getInputStream();
             in.close();
           }
