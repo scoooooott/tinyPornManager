@@ -277,6 +277,12 @@ public class TvShowEpisodeToXbmcNfoConnector {
       episode.setPlot(xbmc.getPlot());
       episode.setRating(xbmc.getRating());
 
+      try {
+        episode.setEpisode(Integer.valueOf(xbmc.getEpisode()));
+        episode.setSeason(Integer.valueOf(xbmc.getSeason()));
+      }
+      catch (NumberFormatException e) {
+      }
       // TODO votes
       // episode.setVoteCount(xbmc.getVotes());
 

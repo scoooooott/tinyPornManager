@@ -685,4 +685,20 @@ public class TvShowEpisode extends MediaEntity {
     this.watched = newValue;
     firePropertyChange(WATCHED, oldValue, newValue);
   }
+
+  /**
+   * Parses the nfo.
+   * 
+   * @param episodeFile
+   *          the episode file
+   * @return the list
+   */
+  public static List<TvShowEpisode> parseNFO(File episodeFile) {
+    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
+
+    String filename = episodeFile.getParent() + File.separator + FilenameUtils.getBaseName(episodeFile.getName()) + ".nfo";
+    episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(filename));
+
+    return episodes;
+  }
 }
