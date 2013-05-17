@@ -189,4 +189,7 @@ public final class Constants {
 
   /** The Constant STATUS. */
   public final static String STATUS                = "status";
+
+  /** The Constant EPISODE_COUNT. */
+  public final static String EPISODE_COUNT         = "episodeCount";
 }

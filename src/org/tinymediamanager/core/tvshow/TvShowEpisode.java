@@ -701,4 +701,8 @@ public class TvShowEpisode extends MediaEntity {
 
     return episodes;
   }
+
+  private void detectThumb() {
+
+  }
 }

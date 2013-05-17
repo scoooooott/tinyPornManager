@@ -53,6 +53,10 @@ import javax.swing.tree.TreePath;
 import org.apache.commons.lang3.StringUtils;
 import org.gpl.JSplitButton.JSplitButton;
 import org.gpl.JSplitButton.action.SplitButtonActionListener;
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.tvshow.TvShow;
@@ -140,6 +144,8 @@ public class TvShowPanel extends JPanel {
 
   /** The menu. */
   private JMenu                       menu;
+  private JLabel                      lblTvShows;
+  private JLabel                      lblEpisodes;
 
   /**
    * Instantiates a new tv show panel.
@@ -168,7 +174,8 @@ public class TvShowPanel extends JPanel {
     JPanel panelTvShowTree = new JPanel();
     splitPane.setLeftComponent(panelTvShowTree);
     panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), }, new RowSpec[] {
-        FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), }));
+        FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     // tree = new TreeTable(treeModel);
     // JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(tree);
@@ -265,6 +272,29 @@ public class TvShowPanel extends JPanel {
     lblImageColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Image.png")));
     panelHeader.add(lblImageColumn, "5, 1");
 
+    JPanel panel = new JPanel();
+    panelTvShowTree.add(panel, "2, 6, fill, fill");
+    panel
+        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
+
+    JLabel lblTvShowsT = new JLabel("TV shows:");
+    panel.add(lblTvShowsT, "1, 2, fill, fill");
+
+    lblTvShows = new JLabel("");
+    panel.add(lblTvShows, "3, 2");
+
+    JLabel labelSlash = new JLabel("/");
+    panel.add(labelSlash, "5, 2");
+
+    JLabel lblEpisodesT = new JLabel("Episodes:");
+    panel.add(lblEpisodesT, "7, 2");
+
+    lblEpisodes = new JLabel("");
+    panel.add(lblEpisodes, "9, 2");
+
     panelRight = new JPanel();
     splitPane.setRightComponent(panelRight);
     panelRight.setLayout(new CardLayout(0, 0));
@@ -334,6 +364,7 @@ public class TvShowPanel extends JPanel {
 
     // further initializations
     init();
+    initDataBindings();
   }
 
   /**
@@ -716,4 +747,16 @@ public class TvShowPanel extends JPanel {
     }
   }
 
+  protected void initDataBindings() {
+    BeanProperty<TvShowList, Integer> tvShowListBeanProperty = BeanProperty.create("tvShowCount");
+    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList,
+        tvShowListBeanProperty, lblTvShows, jLabelBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<TvShowList, Integer> tvShowListBeanProperty_1 = BeanProperty.create("episodeCount");
+    AutoBinding<TvShowList, Integer, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList,
+        tvShowListBeanProperty_1, lblEpisodes, jLabelBeanProperty);
+    autoBinding_1.bind();
+  }
 }

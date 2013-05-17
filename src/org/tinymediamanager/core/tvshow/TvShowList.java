@@ -76,6 +76,9 @@ public class TvShowList extends AbstractModelObject {
           TvShow tvShow = (TvShow) evt.getSource();
           updateTags(tvShow);
         }
+        if (EPISODE_COUNT.equals(evt.getPropertyName())) {
+          firePropertyChange(EPISODE_COUNT, 0, 1);
+        }
       }
     };
   }
@@ -109,10 +112,13 @@ public class TvShowList extends AbstractModelObject {
    *          the new value
    */
   public void addTvShow(TvShow newValue) {
+    int oldValue = tvShowList.size();
+
     tvShowList.add(newValue);
     newValue.addPropertyChangeListener(tagListener);
     firePropertyChange(TV_SHOWS, null, tvShowList);
     firePropertyChange(ADDED_TV_SHOW, null, newValue);
+    firePropertyChange(TV_SHOW_COUNT, oldValue, tvShowList.size());
   }
 
   /**
@@ -149,6 +155,30 @@ public class TvShowList extends AbstractModelObject {
     Globals.entityManager.getTransaction().commit();
     firePropertyChange(TV_SHOWS, null, tvShowList);
     firePropertyChange(TV_SHOW_COUNT, oldValue, tvShowList.size());
+  }
+
+  /**
+   * Gets the tv show count.
+   * 
+   * @return the tv show count
+   */
+  public int getTvShowCount() {
+    return tvShowList.size();
+  }
+
+  /**
+   * Gets the episode count.
+   * 
+   * @return the episode count
+   */
+  public int getEpisodeCount() {
+    int count = 0;
+    for (int i = 0; i < tvShowList.size(); i++) {
+      TvShow tvShow = tvShowList.get(i);
+      count += tvShow.getEpisodeCount();
+    }
+
+    return count;
   }
 
   /**

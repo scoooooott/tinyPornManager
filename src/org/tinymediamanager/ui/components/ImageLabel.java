@@ -401,7 +401,7 @@ public class ImageLabel extends JLabel {
       File originalFile = new File(path);
       String cacheFilename = ImageCache.getCachedFileName(path);
       File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
-      if (!cachedFile.exists()) {
+      if (!cachedFile.exists() && originalFile.exists()) {
         // recreate cache dir if needed
         // rescale & cache
         BufferedImage originalImage = com.bric.image.ImageLoader.createImage(originalFile);

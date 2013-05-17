@@ -257,10 +257,21 @@ public class TvShow extends MediaEntity {
    *          the episode
    */
   public void addEpisode(TvShowEpisode episode) {
+    int oldValue = episodesObservable.size();
     episodesObservable.add(episode);
     addToSeason(episode);
 
     firePropertyChange(ADDED_EPISODE, null, episode);
+    firePropertyChange(EPISODE_COUNT, oldValue, episodesObservable.size());
+  }
+
+  /**
+   * Gets the episode count.
+   * 
+   * @return the episode count
+   */
+  public int getEpisodeCount() {
+    return episodesObservable.size();
   }
 
   /**
@@ -347,6 +358,7 @@ public class TvShow extends MediaEntity {
    * remove all episodes from this tv show.
    */
   public void removeAllEpisodes() {
+    int oldValue = episodesObservable.size();
     if (episodesObservable.size() > 0) {
       Globals.entityManager.getTransaction().begin();
       for (int i = episodesObservable.size() - 1; i >= 0; i--) {
@@ -356,6 +368,8 @@ public class TvShow extends MediaEntity {
       }
       Globals.entityManager.getTransaction().commit();
     }
+
+    firePropertyChange(EPISODE_COUNT, oldValue, episodesObservable.size());
   }
 
   /**
