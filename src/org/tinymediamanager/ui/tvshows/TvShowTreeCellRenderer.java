@@ -134,7 +134,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
       if (userObject instanceof TvShow) {
         TvShow tvShow = (TvShow) userObject;
 
-        tvShowTitle.setText(tvShow.getTitle());
+        tvShowTitle.setText(tvShow.getTitle() + " (" + tvShow.getYear() + ")");
         tvShowInfo.setText(tvShow.getSeasons().size() + " Seasons - " + tvShow.getEpisodes().size() + " Episodes");
         tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
         tvShowImageLabel.setIcon(tvShow.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);

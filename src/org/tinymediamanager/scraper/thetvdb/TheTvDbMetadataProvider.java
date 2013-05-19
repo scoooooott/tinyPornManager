@@ -15,9 +15,11 @@
  */
 package org.tinymediamanager.scraper.thetvdb;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -238,6 +240,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     md.setTitle(show.getSeriesName());
     md.setImdbId(show.getImdbId());
     md.setPlot(show.getOverview());
+
     try {
       md.setRuntime(Integer.valueOf(show.getRuntime()));
     }
@@ -253,6 +256,14 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       md.setRating(0);
     }
     md.setFirstAired(show.getFirstAired());
+
+    try {
+      Date date = org.tinymediamanager.scraper.util.StrgUtils.parseDate(show.getFirstAired());
+      md.setYear(new SimpleDateFormat("yyyy").format(date));
+    }
+    catch (Exception e) {
+    }
+
     md.setStatus(show.getStatus());
     md.setStudio(show.getNetwork());
 

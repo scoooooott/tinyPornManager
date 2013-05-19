@@ -173,7 +173,7 @@ public class Movie extends MediaEntity {
   private boolean             subtitles            = false;
 
   /**
-   * Instantiates a new movie. Needed for JAXB
+   * Instantiates a new movie. To initialize the propertychangesupport after loading
    */
   public Movie() {
   }

@@ -155,13 +155,13 @@ public class MovieInformationPanel extends JPanel {
   /** The movie selection model. */
   private MovieSelectionModel         movieSelectionModel;
 
-  /** The lbl new label. */
+  /** The lbl media logo resolution. */
   private JLabel                      lblMediaLogoResolution;
 
-  /** The lbl new label_1. */
+  /** The lbl media logo video codec. */
   private JLabel                      lblMediaLogoVideoCodec;
 
-  /** The lbl new label_2. */
+  /** The lbl media logo audio. */
   private JLabel                      lblMediaLogoAudio;
 
   /**

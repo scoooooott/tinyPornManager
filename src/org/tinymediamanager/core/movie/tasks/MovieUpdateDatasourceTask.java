@@ -109,7 +109,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       startProgressBar("getting Mediainfo...");
       initThreadPool(1, "mediainfo");
       for (Movie m : movieList.getMovies()) {
-        submitTask(new MediaFileInformationFetcherTask(m));
+        submitTask(new MediaFileInformationFetcherTask(m.getMediaFiles(), m));
       }
       waitForCompletionOrCancel();
       if (cancel) {

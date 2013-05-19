@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
@@ -31,11 +32,13 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
   /** The Constant LOGGER. */
   private final static Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
-  /** The movie. */
-  private Movie               m;
+  private List<MediaFile>     mediaFiles;
 
-  public MediaFileInformationFetcherTask(Movie movie) {
-    this.m = movie;
+  private MediaEntity         mediaEntity;
+
+  public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles, MediaEntity mediaEntity) {
+    this.mediaFiles = mediaFiles;
+    this.mediaEntity = mediaEntity;
   }
 
   /*
@@ -47,17 +50,22 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
   public String call() {
     // try/catch block in the root of the thread to log crashes
     try {
-      for (MediaFile mediaFile : m.getMediaFiles()) {
+      for (MediaFile mediaFile : mediaFiles) {
         mediaFile.gatherMediaInformation();
-        if (mediaFile.hasSubtitles()) {
-          m.setSubtitles(true);
+        if (mediaEntity != null && mediaEntity instanceof Movie && mediaFile.hasSubtitles()) {
+          Movie movie = (Movie) mediaEntity;
+          movie.setSubtitles(true);
         }
       }
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed: ", e);
     }
-    m.saveToDb();
-    return "getting MediaInfo from " + m.getTitle();
+
+    if (mediaEntity != null) {
+      mediaEntity.saveToDb();
+    }
+
+    return "getting MediaInfo from " + mediaEntity.getTitle();
   }
 }

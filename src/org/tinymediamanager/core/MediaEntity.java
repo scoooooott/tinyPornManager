@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map.Entry;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.MappedSuperclass;
@@ -212,7 +213,11 @@ public abstract class MediaEntity extends AbstractModelObject {
    *          the new id
    */
   public void setIds(HashMap<String, Object> ids) {
-    this.ids = ids;
+    // this.ids = ids;
+    for (Entry<String, Object> entry : ids.entrySet()) {
+      setId((String) entry.getKey(), entry.getValue().toString());
+      firePropertyChange(entry.getKey(), null, entry.getValue());
+    }
   }
 
   /**

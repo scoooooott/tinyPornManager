@@ -60,7 +60,7 @@ public class MovieSet extends MediaEntity {
   private List<Movie>         moviesObservable = ObservableCollections.observableList(movies);
 
   /**
-   * Instantiates a new movie set. Needed for JAXB
+   * Instantiates a new movieset. To initialize the propertychangesupport after loading
    */
   public MovieSet() {
   }

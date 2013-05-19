@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
@@ -107,8 +108,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       startProgressBar("getting Mediainfo...");
       initThreadPool(1, "mediainfo");
       for (TvShow tvShow : tvShowList.getTvShows()) {
-        // FIXME
-        // submitTask(new MediaFileInformationFetcherTask(tvShow));
+        submitTask(new MediaFileInformationFetcherTask(tvShow.getMediaFiles(), tvShow));
       }
       waitForCompletionOrCancel();
       if (cancel) {

@@ -144,7 +144,11 @@ public class TvShowPanel extends JPanel {
 
   /** The menu. */
   private JMenu                       menu;
+
+  /** The lbl tv shows. */
   private JLabel                      lblTvShows;
+
+  /** The lbl episodes. */
   private JLabel                      lblEpisodes;
 
   /**

@@ -416,8 +416,7 @@ public class Utils {
   }
 
   /**
-   * Starts a thread and does a "ping" on our tracking server, sending the event
-   * (and the random UUID + some env vars).
+   * Starts a thread and does a "ping" on our tracking server, sending the event (and the random UUID + some env vars).
    * 
    * @param event
    *          The event for the GET request

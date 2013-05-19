@@ -106,6 +106,12 @@ public class TvShowEpisode extends MediaEntity {
   private List<MediaFile>     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
   /**
+   * Instantiates a new tv show episode. To initialize the propertychangesupport after loading
+   */
+  public TvShowEpisode() {
+  }
+
+  /**
    * first aired date.
    * 
    * @return the date
@@ -542,7 +548,7 @@ public class TvShowEpisode extends MediaEntity {
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!StringUtils.isEmpty(poster) && !StringUtils.isEmpty(fanart)) {
+    if (StringUtils.isNotEmpty(fanart)) {
       return true;
     }
     return false;
@@ -703,6 +709,48 @@ public class TvShowEpisode extends MediaEntity {
   }
 
   private void detectThumb() {
+    // TODO
+  }
 
+  /**
+   * Gets the media info video format (i.e. 720p).
+   * 
+   * @return the media info video format
+   */
+  public String getMediaInfoVideoFormat() {
+    if (mediaFiles.size() > 0) {
+      MediaFile mediaFile = mediaFiles.get(0);
+      return mediaFile.getVideoFormat();
+    }
+
+    return "";
+  }
+
+  /**
+   * Gets the media info video codec (i.e. divx)
+   * 
+   * @return the media info video codec
+   */
+  public String getMediaInfoVideoCodec() {
+    if (mediaFiles.size() > 0) {
+      MediaFile mediaFile = mediaFiles.get(0);
+      return mediaFile.getVideoCodec();
+    }
+
+    return "";
+  }
+
+  /**
+   * Gets the media info audio codec (i.e mp3) and channels (i.e. 6 at 5.1 sound)
+   * 
+   * @return the media info audio codec
+   */
+  public String getMediaInfoAudioCodecAndChannels() {
+    if (mediaFiles.size() > 0) {
+      MediaFile mediaFile = mediaFiles.get(0);
+      return mediaFile.getAudioCodec() + "_" + mediaFile.getAudioChannels();
+    }
+
+    return "";
   }
 }

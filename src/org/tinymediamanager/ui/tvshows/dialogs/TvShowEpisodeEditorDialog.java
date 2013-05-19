@@ -331,7 +331,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       spEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getEpisode(), 0, 999, 1));
 
       SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
-      spDateAdded.setEditor(new JSpinner.DateEditor(spDateAdded, dateFormat.toPattern()));
+      // spDateAdded.setEditor(new JSpinner.DateEditor(spDateAdded, dateFormat.toPattern()));
       spFirstAired.setEditor(new JSpinner.DateEditor(spFirstAired, dateFormat.toPattern()));
 
       spDateAdded.setValue(episodeToEdit.getDateAdded());

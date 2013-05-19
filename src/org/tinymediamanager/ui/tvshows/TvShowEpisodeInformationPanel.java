@@ -16,9 +16,11 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.ResourceBundle;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,6 +32,9 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.ui.MediaInfoAudioCodecConverter;
+import org.tinymediamanager.ui.MediaInfoVideoCodecConverter;
+import org.tinymediamanager.ui.MediaInfoVideoFormatConverter;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
@@ -113,6 +118,15 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   /** The panel media information. */
   private JPanel                      panelMediaInformation;
 
+  /** The lbl media logo resolution. */
+  private JLabel                      lblMediaLogoResolution;
+
+  /** The lbl media logo video codec. */
+  private JLabel                      lblMediaLogoVideoCodec;
+
+  /** The lbl media logo audio. */
+  private JLabel                      lblMediaLogoAudio;
+
   /**
    * Instantiates a new tv show information panel.
    * 
@@ -178,23 +192,34 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
     panelImages = new JPanel();
     panelTop.add(panelImages, "1, 2, 4, 1, fill, fill");
-    panelImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("400px"),
+    panelImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px"), ColumnSpec.decode("25px"), ColumnSpec.decode("400px"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("32px"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:261px"), }));
+        RowSpec.decode("36px"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:261px"), }));
 
     panelLogos = new JPanel();
-    panelImages.add(panelLogos, "3, 2, 3, 1, right, fill");
+    panelImages.add(panelLogos, "3, 2, 3, 1, right, top");
+    panelLogos.setOpaque(false);
+    panelLogos.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+    lblMediaLogoResolution = new JLabel("");
+    panelLogos.add(lblMediaLogoResolution);
+
+    lblMediaLogoVideoCodec = new JLabel("");
+    panelLogos.add(lblMediaLogoVideoCodec);
+
+    lblMediaLogoAudio = new JLabel("");
+    panelLogos.add(lblMediaLogoAudio);
 
     lblTvShowPoster = new ImageLabel();
     lblTvShowPoster.setPosition(Position.BOTTOM_LEFT);
     panelImages.add(lblTvShowPoster, "1, 2, 1, 3, fill, fill");
 
-    lblTvShowBackground = new ImageLabel(false, false);
+    lblTvShowBackground = new ImageLabel();
     lblTvShowBackground.setPosition(Position.BOTTOM_LEFT);
     panelImages.add(lblTvShowBackground, "3, 4, fill, fill");
 
     panelBottom = new JPanel();
-    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), FormFactory.RELATED_GAP_COLSPEC,
         FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
     // add(panelBottom, "1, 4, fill, bottom");
     splitPaneVertical.setBottomComponent(panelBottom);
@@ -267,5 +292,27 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, String, ImageLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_5, lblTvShowPoster, imageLabelBeanProperty);
     autoBinding_6.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_6 = BeanProperty
+        .create("selectedTvShowEpisode.mediaInfoVideoFormat");
+    BeanProperty<JLabel, Icon> jLabelBeanProperty_1 = BeanProperty.create("icon");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, Icon> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_6, lblMediaLogoResolution, jLabelBeanProperty_1);
+    autoBinding_7.setConverter(new MediaInfoVideoFormatConverter());
+    autoBinding_7.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_7 = BeanProperty
+        .create("selectedTvShowEpisode.mediaInfoVideoCodec");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, Icon> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_7, lblMediaLogoVideoCodec, jLabelBeanProperty_1);
+    autoBinding_8.setConverter(new MediaInfoVideoCodecConverter());
+    autoBinding_8.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_8 = BeanProperty
+        .create("selectedTvShowEpisode.mediaInfoAudioCodecAndChannels");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, Icon> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_8, lblMediaLogoAudio, jLabelBeanProperty_1);
+    autoBinding_9.setConverter(new MediaInfoAudioCodecConverter());
+    autoBinding_9.bind();
   }
 }

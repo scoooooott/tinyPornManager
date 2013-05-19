@@ -193,7 +193,7 @@ public class TvShowInformationPanel extends JPanel {
     panelBottom.add(tabbedPaneTvShowDetails, "1, 2, fill, fill");
 
     JPanel panelDetails = new TvShowDetailsPanel(tvShowSelectionModel);
-    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.details"), null, panelDetails, null); //$NON-NLS-1$
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.details"), null, panelDetails, null);
 
     JPanel panelOverview = new JPanel();
     panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,

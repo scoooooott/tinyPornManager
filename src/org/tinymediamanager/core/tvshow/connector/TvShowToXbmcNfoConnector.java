@@ -86,6 +86,9 @@ public class TvShowToXbmcNfoConnector {
   /** The studio. */
   private String              studio;
 
+  /** The status. */
+  private String              status;
+
   /** The actors. */
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
@@ -98,9 +101,6 @@ public class TvShowToXbmcNfoConnector {
 
   @XmlElement
   List<Thumb>                 thumb;
-
-  @XmlElement
-  String                      status;
 
   /**
    * Instantiates a new tv show to xbmc nfo connector.
@@ -153,6 +153,7 @@ public class TvShowToXbmcNfoConnector {
     xbmc.setMpaa(tvShow.getCertification().getName());
     xbmc.setPremiered(tvShow.getFirstAiredFormatted());
     xbmc.setStudio(tvShow.getStudio());
+    xbmc.setStatus(tvShow.getStatus());
 
     xbmc.genres.clear();
     for (MediaGenres genre : tvShow.getGenres()) {
@@ -226,6 +227,7 @@ public class TvShowToXbmcNfoConnector {
       tvShow.setCertification(Certification.findCertification(xbmc.getMpaa()));
       tvShow.setFirstAired(xbmc.getPremiered());
       tvShow.setStudio(xbmc.getStudio());
+      tvShow.setStatus(xbmc.getStatus());
 
       for (String genre : xbmc.getGenres()) {
         String[] genres = genre.split("/");
@@ -457,6 +459,26 @@ public class TvShowToXbmcNfoConnector {
    */
   public void setStudio(String studio) {
     this.studio = studio;
+  }
+
+  /**
+   * Gets the status.
+   * 
+   * @return the status
+   */
+  @XmlElement(name = "status")
+  public String getStatus() {
+    return status;
+  }
+
+  /**
+   * Sets the status.
+   * 
+   * @param status
+   *          the new status
+   */
+  public void setStatus(String status) {
+    this.status = status;
   }
 
   /**

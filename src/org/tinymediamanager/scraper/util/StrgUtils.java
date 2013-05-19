@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -121,5 +124,37 @@ public class StrgUtils {
     else {
       return "";
     }
+  }
+
+  /**
+   * Parses the date.
+   * 
+   * @param dateAsString
+   *          the date as string
+   * @return the date
+   * @throws ParseException
+   *           the parse exception
+   */
+  public static Date parseDate(String dateAsString) throws ParseException {
+    Date date = null;
+
+    Pattern datePattern = Pattern.compile("([0-9]{2})[_\\.-]([0-9]{2})[_\\.-]([0-9]{4})");
+    Matcher m = datePattern.matcher(dateAsString);
+    if (m.find()) {
+      date = new SimpleDateFormat("dd-MM-yyyy").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+    }
+    else {
+      datePattern = Pattern.compile("([0-9]{4})[_\\.-]([0-9]{2})[_\\.-]([0-9]{2})");
+      m = datePattern.matcher(dateAsString);
+      if (m.find()) {
+        date = new SimpleDateFormat("yyyy-MM-dd").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+      }
+    }
+
+    if (date == null) {
+      throw new ParseException("could not parse date from: " + dateAsString, 0);
+    }
+
+    return date;
   }
 }
