@@ -235,9 +235,9 @@ public class MovieInformationPanel extends JPanel {
 
     JLayeredPane layeredPaneImages = new JLayeredPane();
     panelTop.add(layeredPaneImages, "1, 2, 4, 1, fill, fill");
-    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px"),
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px"),
-        RowSpec.decode("fill:default:grow"), }));
+    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px:grow"),
+        ColumnSpec.decode("default:grow(10)"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"), RowSpec.decode("top:180px:grow"),
+        RowSpec.decode("fill:80px:grow(3)"), }));
 
     lblMovieBackground = new ImageLabel(false, true);
     layeredPaneImages.add(lblMovieBackground, "1, 1, 3, 3, fill, fill");

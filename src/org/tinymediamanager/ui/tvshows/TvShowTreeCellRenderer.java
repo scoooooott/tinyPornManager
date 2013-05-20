@@ -27,6 +27,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
@@ -134,7 +135,12 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
       if (userObject instanceof TvShow) {
         TvShow tvShow = (TvShow) userObject;
 
-        tvShowTitle.setText(tvShow.getTitle() + " (" + tvShow.getYear() + ")");
+        if (StringUtils.isBlank(tvShow.getYear()) || "0".equals(tvShow.getYear())) {
+          tvShowTitle.setText(tvShow.getTitle());
+        }
+        else {
+          tvShowTitle.setText(tvShow.getTitle() + " (" + tvShow.getYear() + ")");
+        }
         tvShowInfo.setText(tvShow.getSeasons().size() + " Seasons - " + tvShow.getEpisodes().size() + " Episodes");
         tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
         tvShowImageLabel.setIcon(tvShow.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);

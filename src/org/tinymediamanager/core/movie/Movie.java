@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -337,6 +338,7 @@ public class Movie extends MediaEntity {
    */
   public void addToMediaFiles(MediaFile obj) {
     mediaFilesObservable.add(obj);
+    Collections.sort(mediaFilesObservable);
     firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
   }
 
@@ -2183,6 +2185,26 @@ public class Movie extends MediaEntity {
   @Override
   public void setBanner(String banner) {
     // TODO implement banners for movies
+  }
+
+  /**
+   * Gets the images to cache.
+   * 
+   * @return the images to cache
+   */
+  public List<File> getImagesToCache() {
+    // get files to cache
+    List<File> filesToCache = new ArrayList<File>();
+
+    if (StringUtils.isNotBlank(getPoster())) {
+      filesToCache.add(new File(getPoster()));
+    }
+
+    if (StringUtils.isNotBlank(getFanart())) {
+      filesToCache.add(new File(getFanart()));
+    }
+
+    return filesToCache;
   }
 
 }

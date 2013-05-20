@@ -398,7 +398,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       float rating = (float) tempRating;
       if (episodeToEdit.getRating() != rating) {
         episodeToEdit.setRating(rating);
-        // episodeToEdit.setVotes(1);
+        episodeToEdit.setVotes(1);
       }
 
       episodeToEdit.setDateAdded((Date) spDateAdded.getValue());

@@ -25,25 +25,16 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -393,64 +384,65 @@ public class ImageLabel extends JLabel {
    * @return the cached file
    */
   private synchronized File getCachedFile(String path) {
-    if (StringUtils.isEmpty(path)) {
-      return null;
-    }
-
-    try {
-      File originalFile = new File(path);
-      String cacheFilename = ImageCache.getCachedFileName(path);
-      File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
-      if (!cachedFile.exists() && originalFile.exists()) {
-        // recreate cache dir if needed
-        // rescale & cache
-        BufferedImage originalImage = com.bric.image.ImageLoader.createImage(originalFile);
-
-        // rescale and reencode only, if its bigger than 1000x500
-        if (originalImage.getWidth() > 1000 || originalImage.getHeight() > 500) {
-          Point size = calculateSize((int) (originalImage.getWidth() / 1.5), (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
-              originalImage.getHeight(), true);
-          BufferedImage scaledImage = null;
-
-          // FIXME add option
-          if (true) {
-            // scale fast
-            scaledImage = Scaling.scale(originalImage, size.x, size.y);
-          }
-          else {
-            // scale with good quality
-            scaledImage = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
-            scaledImage.getGraphics().drawImage(originalImage.getScaledInstance(size.x, size.y, Image.SCALE_SMOOTH), 0, 0, null);
-          }
-
-          // convert to rgb
-          // BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-          BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
-
-          ColorConvertOp xformOp = new ColorConvertOp(null);
-          xformOp.filter(scaledImage, rgb);
-
-          ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
-          ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
-          jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-          jpgWrtPrm.setCompressionQuality(0.80f);
-
-          FileImageOutputStream output = new FileImageOutputStream(cachedFile);
-          imgWrtr.setOutput(output);
-          IIOImage image = new IIOImage(rgb, null, null);
-          imgWrtr.write(null, image, jpgWrtPrm);
-          imgWrtr.dispose();
-          output.close();
-        }
-        else {
-          FileUtils.copyFile(originalFile, cachedFile);
-        }
-      }
-      return cachedFile;
-    }
-    catch (Exception e) {
-      LOGGER.warn("problem caching file: ", e);
-    }
+    // if (StringUtils.isEmpty(path)) {
+    // return null;
+    // }
+    //
+    // try {
+    // File originalFile = new File(path);
+    // return ImageCache.cacheImage(originalFile);
+    //
+    // // String cacheFilename = ImageCache.getCachedFileName(path);
+    // // File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
+    // // if (!cachedFile.exists() && originalFile.exists()) {
+    // // // recreate cache dir if needed
+    // // // rescale & cache
+    // // BufferedImage originalImage = com.bric.image.ImageLoader.createImage(originalFile);
+    // //
+    // // // rescale and reencode only, if its bigger than 1000x500
+    // // if (originalImage.getWidth() > 1000 || originalImage.getHeight() > 500) {
+    // // Point size = calculateSize((int) (originalImage.getWidth() / 1.5), (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
+    // // originalImage.getHeight(), true);
+    // // BufferedImage scaledImage = null;
+    // //
+    // // if (Globals.settings.getImageCacheType() == CacheType.FAST) {
+    // // // scale fast
+    // // scaledImage = Scaling.scale(originalImage, size.x, size.y);
+    // // }
+    // // else {
+    // // // scale with good quality
+    // // scaledImage = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+    // // scaledImage.getGraphics().drawImage(originalImage.getScaledInstance(size.x, size.y, Image.SCALE_SMOOTH), 0, 0, null);
+    // // }
+    // //
+    // // // convert to rgb
+    // // // BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+    // // BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+    // //
+    // // ColorConvertOp xformOp = new ColorConvertOp(null);
+    // // xformOp.filter(scaledImage, rgb);
+    // //
+    // // ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+    // // ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
+    // // jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+    // // jpgWrtPrm.setCompressionQuality(0.80f);
+    // //
+    // // FileImageOutputStream output = new FileImageOutputStream(cachedFile);
+    // // imgWrtr.setOutput(output);
+    // // IIOImage image = new IIOImage(rgb, null, null);
+    // // imgWrtr.write(null, image, jpgWrtPrm);
+    // // imgWrtr.dispose();
+    // // output.close();
+    // // }
+    // // else {
+    // // FileUtils.copyFile(originalFile, cachedFile);
+    // // }
+    // // }
+    // // return cachedFile;
+    // }
+    // catch (Exception e) {
+    // LOGGER.warn("problem caching file: ", e);
+    // }
 
     // fallback
     return new File(path);

@@ -165,9 +165,9 @@ public class TvShowInformationPanel extends JPanel {
 
     JLayeredPane layeredPaneImages = new JLayeredPane();
     panelTop.add(layeredPaneImages, "1, 2, 4, 1, fill, fill");
-    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px"),
-        ColumnSpec.decode("default:grow"), ColumnSpec.decode("400px"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"),
-        RowSpec.decode("top:100px"), RowSpec.decode("80px"), RowSpec.decode("fill:default:grow"), }));
+    layeredPaneImages.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("max(10px;default)"), ColumnSpec.decode("left:120px:grow"),
+        ColumnSpec.decode("default:grow(8)"), ColumnSpec.decode("400px"), }, new RowSpec[] { RowSpec.decode("max(10px;default)"),
+        RowSpec.decode("top:100px"), RowSpec.decode("80px:grow"), RowSpec.decode("fill:80px:grow(3)"), }));
 
     lblTvShowBackground = new ImageLabel(false, true);
     layeredPaneImages.add(lblTvShowBackground, "1, 1, 4, 4, fill, fill");

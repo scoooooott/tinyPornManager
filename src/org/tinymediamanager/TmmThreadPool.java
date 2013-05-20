@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
+ * The Class TmmThreadPool.
+ * 
  * @author Myron Boyle
  * @version $Id$
  */
@@ -38,15 +40,27 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
 
   /** The Constant LOGGER. */
   private static final Logger       LOGGER    = LoggerFactory.getLogger(TmmThreadPool.class);
+
+  /** The pool. */
   private ThreadPoolExecutor        pool      = null;
+
+  /** The service. */
   private CompletionService<Object> service   = null;
+
+  /** The cancel. */
   protected boolean                 cancel    = false;
+
+  /** The taskcount. */
   private int                       taskcount = 0;
+
+  /** The taskdone. */
   private int                       taskdone  = 0;
+
+  /** The poolname. */
   private String                    poolname  = "";
 
   /**
-   * create new ThreadPool
+   * create new ThreadPool.
    * 
    * @param threads
    *          amount of threads
@@ -68,7 +82,7 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
   }
 
   /**
-   * submits a new callable to thread pool
+   * submits a new callable to thread pool.
    * 
    * @param task
    *          the callable
@@ -81,7 +95,7 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
   }
 
   /**
-   * submits a new runnable to thread pool
+   * submits a new runnable to thread pool.
    * 
    * @param task
    *          the runnable
@@ -93,6 +107,9 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
     }
   }
 
+  /**
+   * Wait for completion or cancel.
+   */
   public void waitForCompletionOrCancel() {
     pool.shutdown();
     while (!cancel && !pool.isTerminated()) {
@@ -122,7 +139,7 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
   }
 
   /**
-   * callback for result
+   * callback for result.
    * 
    * @param obj
    *          the result of the finished thread.
@@ -130,41 +147,61 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
   public abstract void callback(Object obj);
 
   /**
-   * returns the amount of submitted tasks
+   * returns the amount of submitted tasks.
+   * 
+   * @return the taskcount
    */
   public int getTaskcount() {
     return taskcount;
   }
 
   /**
-   * returns the amount of executed tasks
+   * returns the amount of executed tasks.
+   * 
+   * @return the taskdone
    */
   public int getTaskdone() {
     return taskdone;
   }
 
   /**
-   * cancel the pool
+   * cancel the pool.
    */
   public void cancelThreadPool() {
     this.cancel = true;
   }
 
   /**
-   * a copy of the default thread factory, just to set the pool name
+   * a copy of the default thread factory, just to set the pool name.
    */
   static class TmmThreadFactory implements ThreadFactory {
     // static final AtomicInteger poolNumber = new AtomicInteger(1);
+    /** The group. */
     final ThreadGroup   group;
+
+    /** The thread number. */
     final AtomicInteger threadNumber = new AtomicInteger(1);
+
+    /** The name prefix. */
     final String        namePrefix;
 
+    /**
+     * Instantiates a new tmm thread factory.
+     * 
+     * @param poolname
+     *          the poolname
+     */
     TmmThreadFactory(String poolname) {
       SecurityManager s = System.getSecurityManager();
       group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
       namePrefix = "pool-" + poolname + "-thread-";
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.concurrent.ThreadFactory#newThread(java.lang.Runnable)
+     */
     public Thread newThread(Runnable r) {
       Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
       if (t.isDaemon()) {

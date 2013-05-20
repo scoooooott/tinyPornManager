@@ -43,6 +43,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
@@ -102,6 +103,12 @@ public class Settings extends AbstractModelObject {
   /** The Constant LOG_LEVEL. */
   private final static String         LOG_LEVEL                   = "logLevel";
 
+  /** The Constant IMAGE_CACHE_TYPE. */
+  private final static String         IMAGE_CACHE_TYPE            = "imageCacheType";
+
+  /** The Constant IMAGE_CACHE_BACKGROUND. */
+  private final static String         IMAGE_CACHE_BACKGROUND      = "imageCacheBackground";
+
   /** The video file types. */
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -131,6 +138,12 @@ public class Settings extends AbstractModelObject {
 
   /** The log level. */
   private int                         logLevel                    = Level.DEBUG_INT;
+
+  /** The image cache type. */
+  private CacheType                   imageCacheType              = CacheType.SMOOTH;
+
+  /** The image cache background. */
+  private boolean                     imageCacheBackground        = false;
 
   /** The dirty flag. */
   private boolean                     dirty                       = false;
@@ -741,5 +754,47 @@ public class Settings extends AbstractModelObject {
   public void setWindowConfig(WindowConfig windowConfig) {
     this.windowConfig = windowConfig;
     this.windowConfig.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  /**
+   * Gets the image cache type.
+   * 
+   * @return the image cache type
+   */
+  public CacheType getImageCacheType() {
+    return imageCacheType;
+  }
+
+  /**
+   * Checks if is image cache background.
+   * 
+   * @return true, if is image cache background
+   */
+  public boolean isImageCacheBackground() {
+    return imageCacheBackground;
+  }
+
+  /**
+   * Sets the image cache type.
+   * 
+   * @param newValue
+   *          the new image cache type
+   */
+  public void setImageCacheType(CacheType newValue) {
+    CacheType oldValue = this.imageCacheType;
+    this.imageCacheType = newValue;
+    firePropertyChange(IMAGE_CACHE_TYPE, oldValue, newValue);
+  }
+
+  /**
+   * Sets the image cache background.
+   * 
+   * @param newValue
+   *          the new image cache background
+   */
+  public void setImageCacheBackground(boolean newValue) {
+    boolean oldValue = this.imageCacheBackground;
+    this.imageCacheBackground = newValue;
+    firePropertyChange(IMAGE_CACHE_BACKGROUND, oldValue, newValue);
   }
 }

@@ -377,8 +377,6 @@ public class MovieTrailerPanel extends JPanel {
      */
     @Override
     public void mouseDragged(MouseEvent arg0) {
-      // TODO Auto-generated method stub
-
     }
 
   }

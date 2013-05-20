@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.zelluloid.ZelluloidMetadataProvider;
 
 public class ZelluloidMetadataProviderTest {
 
@@ -31,7 +30,6 @@ public class ZelluloidMetadataProviderTest {
 
     }
     catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 

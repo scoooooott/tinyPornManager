@@ -52,7 +52,7 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "episodedetails")
-@XmlType(propOrder = { "title", "showtitle", "rating", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "playcount", "lastplayed",
+@XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "playcount", "lastplayed",
     "credits", "director", "aired", "premiered", "studio", "actors" })
 public class TvShowEpisodeToXbmcNfoConnector {
 
@@ -76,6 +76,9 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
   /** The rating. */
   private float               rating;
+
+  /** The votes. */
+  private int                 votes;
 
   /** The plot. */
   private String              plot;
@@ -283,8 +286,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
       catch (NumberFormatException e) {
       }
-      // TODO votes
-      // episode.setVoteCount(xbmc.getVotes());
+
+      episode.setVotes(xbmc.getVotes());
 
       // convert director to internal format
       String director = "";
@@ -320,6 +323,9 @@ public class TvShowEpisodeToXbmcNfoConnector {
         cast.setThumb(actor.getThumb());
         episode.addActor(cast);
       }
+
+      // set only the name w/o path
+      episode.setNfoFilename(FilenameUtils.getName(nfoFilename));
 
       episodes.add(episode);
     }
@@ -455,6 +461,26 @@ public class TvShowEpisodeToXbmcNfoConnector {
   @XmlElement(name = "rating")
   public float getRating() {
     return rating;
+  }
+
+  /**
+   * Gets the votes.
+   * 
+   * @return the votes
+   */
+  @XmlElement(name = "votes")
+  public int getVotes() {
+    return votes;
+  }
+
+  /**
+   * Sets the votes.
+   * 
+   * @param votes
+   *          the new votes
+   */
+  public void setVotes(int votes) {
+    this.votes = votes;
   }
 
   /**

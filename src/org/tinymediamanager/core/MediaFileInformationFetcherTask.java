@@ -32,10 +32,20 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
   /** The Constant LOGGER. */
   private final static Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
+  /** The media files. */
   private List<MediaFile>     mediaFiles;
 
+  /** The media entity. */
   private MediaEntity         mediaEntity;
 
+  /**
+   * Instantiates a new media file information fetcher task.
+   * 
+   * @param mediaFiles
+   *          the media files
+   * @param mediaEntity
+   *          the media entity
+   */
   public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles, MediaEntity mediaEntity) {
     this.mediaFiles = mediaFiles;
     this.mediaEntity = mediaEntity;

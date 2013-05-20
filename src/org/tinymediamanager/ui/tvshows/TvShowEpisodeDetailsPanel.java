@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -55,8 +56,14 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
 
   /** The lbl path. */
   private LinkLabel                         lblPath;
+
+  /** The lbl season. */
   private JLabel                            lblSeason;
+
+  /** The lbl episode. */
   private JLabel                            lblEpisode;
+
+  /** The lbl aired. */
   private JLabel                            lblAired;
 
   /**
@@ -68,27 +75,32 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
   public TvShowEpisodeDetailsPanel(TvShowEpisodeSelectionModel selectionModel) {
     this.selectionModel = selectionModel;
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSeasonT = new JLabel("Season");
+    lblSeasonT.setFont(new Font("Dialog", Font.PLAIN, 14));
     add(lblSeasonT, "2, 2");
 
     lblSeason = new JLabel("");
-    add(lblSeason, "4, 2");
+    lblSeason.setFont(new Font("Dialog", Font.PLAIN, 14));
+    add(lblSeason, "6, 2");
 
     JLabel lblEpisodeT = new JLabel("Episode");
+    lblEpisodeT.setFont(new Font("Dialog", Font.PLAIN, 14));
     add(lblEpisodeT, "2, 4");
 
     lblEpisode = new JLabel("");
-    add(lblEpisode, "4, 4");
+    lblEpisode.setFont(new Font("Dialog", Font.PLAIN, 14));
+    add(lblEpisode, "6, 4");
 
     JLabel lblAiredT = new JLabel("Aired");
     add(lblAiredT, "2, 6");
 
     lblAired = new JLabel("");
-    add(lblAired, "4, 6");
+    add(lblAired, "6, 6");
 
     JLabel lblPathT = new JLabel("Path");
     add(lblPathT, "2, 8");
@@ -112,7 +124,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblPath, "4, 8");
+    add(lblPath, "6, 8");
     initDataBindings();
   }
 

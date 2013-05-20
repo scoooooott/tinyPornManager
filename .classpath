@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="lib/objectdb.jar"/>
 	<classpathentry kind="lib" path="lib/Scaling-bin.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/beansbinding.jar" sourcepath="buildsupport/beansbinding-1.2.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3.jar"/>
@@ -44,5 +43,8 @@
 	<classpathentry kind="lib" path="lib/logback-core.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-over-slf4j.jar"/>
+	<classpathentry kind="lib" path="lib/betterbeansbinding-core.jar"/>
+	<classpathentry kind="lib" path="lib/betterbeansbinding-swingbinding.jar"/>
+	<classpathentry kind="lib" path="lib/betterbeansbinding-el.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

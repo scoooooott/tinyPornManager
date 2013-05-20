@@ -25,6 +25,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +53,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageCacheTask;
+import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.AboutDialog;
@@ -191,8 +198,12 @@ public class MainWindow extends JFrame {
         System.exit(0);
       }
     });
+
+    JMenu cache = new JMenu(BUNDLE.getString("tmm.cache")); //$NON-NLS-1$
+    debug.add(cache);
+
     JMenuItem clearUrlCache = new JMenuItem(BUNDLE.getString("tmm.clearurlcache")); //$NON-NLS-1$
-    debug.add(clearUrlCache);
+    cache.add(clearUrlCache);
     clearUrlCache.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -207,8 +218,9 @@ public class MainWindow extends JFrame {
         }
       }
     });
+    cache.addSeparator();
     JMenuItem clearImageCache = new JMenuItem(BUNDLE.getString("tmm.clearimagecache")); //$NON-NLS-1$
-    debug.add(clearImageCache);
+    cache.add(clearImageCache);
     clearImageCache.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -221,6 +233,31 @@ public class MainWindow extends JFrame {
             LOGGER.warn(e.getMessage());
           }
         }
+      }
+    });
+    JMenuItem rebuildImageCache = new JMenuItem(BUNDLE.getString("tmm.rebuildimagecache")); //$NON-NLS-1$
+    cache.add(rebuildImageCache);
+    rebuildImageCache.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        List<File> imageFiles = new ArrayList<File>();
+        // movie list
+        List<Movie> movies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
+        for (Movie movie : movies) {
+          imageFiles.addAll(movie.getImagesToCache());
+        }
+
+        // moviesets
+        // TODO
+
+        // tv dhows
+        List<TvShow> tvShows = new ArrayList<TvShow>(TvShowList.getInstance().getTvShows());
+        for (TvShow tvShow : tvShows) {
+          imageFiles.addAll(tvShow.getImagesToCache());
+        }
+
+        ImageCacheTask task = new ImageCacheTask(imageFiles);
+        Globals.executor.execute(task);
       }
     });
 

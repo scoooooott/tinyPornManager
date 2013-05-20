@@ -31,13 +31,17 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.ui.components.ImageLabel;
 
 import com.bric.image.pixel.Scaling;
 
@@ -52,6 +56,15 @@ public class ImageCache {
 
   /** The Constant CACHE_DIR. */
   public static final String  CACHE_DIR = "cache/image";
+
+  /**
+   * The Enum CacheType.
+   * 
+   * @author Manuel Laggner
+   */
+  public enum CacheType {
+    FAST, SMOOTH
+  }
 
   /**
    * Gets the cache dir.
@@ -129,7 +142,82 @@ public class ImageCache {
     imgWrtr.write(null, outputImage, jpgWrtPrm);
     imgWrtr.dispose();
 
-    return new ByteArrayInputStream(baos.toByteArray());
+    byte[] bytes = baos.toByteArray();
+
+    output.close();
+    baos.close();
+
+    return new ByteArrayInputStream(bytes);
+  }
+
+  /**
+   * Cache image.
+   * 
+   * @param originalFile
+   *          the original file
+   * @return the file
+   * @throws Exception
+   *           the exception
+   */
+  public static File cacheImage(File originalFile) throws Exception {
+    String cacheFilename = ImageCache.getCachedFileName(originalFile.getPath());
+    File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
+    if (!cachedFile.exists()) {
+      // check if the original file exists
+      if (!originalFile.exists()) {
+        throw new Exception("unable to cache file: " + originalFile.getName() + "; file does not exist");
+      }
+
+      // recreate cache dir if needed
+      // rescale & cache
+      BufferedImage originalImage = com.bric.image.ImageLoader.createImage(originalFile);
+      // BufferedImage originalImage = ImageIO.read(originalFile);
+
+      // rescale and reencode only, if its bigger than 1000x500
+      if (originalImage.getWidth() > 1000 || originalImage.getHeight() > 500) {
+        Point size = ImageLabel.calculateSize((int) (originalImage.getWidth() / 1.5), (int) (originalImage.getHeight() / 1.5),
+            originalImage.getWidth(), originalImage.getHeight(), true);
+        BufferedImage scaledImage = null;
+
+        if (Globals.settings.getImageCacheType() == CacheType.FAST) {
+          // scale fast
+          scaledImage = Scaling.scale(originalImage, size.x, size.y);
+        }
+        else {
+          // scale with good quality
+          scaledImage = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+          scaledImage.getGraphics().drawImage(originalImage.getScaledInstance(size.x, size.y, Image.SCALE_SMOOTH), 0, 0, null);
+        }
+
+        // convert to rgb
+        // BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+
+        ColorConvertOp xformOp = new ColorConvertOp(null);
+        xformOp.filter(scaledImage, rgb);
+
+        ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+        ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
+        jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+        jpgWrtPrm.setCompressionQuality(0.80f);
+
+        FileImageOutputStream output = new FileImageOutputStream(cachedFile);
+        imgWrtr.setOutput(output);
+        IIOImage image = new IIOImage(rgb, null, null);
+        imgWrtr.write(null, image, jpgWrtPrm);
+        imgWrtr.dispose();
+        output.close();
+      }
+      else {
+        FileUtils.copyFile(originalFile, cachedFile);
+      }
+    }
+
+    if (!cachedFile.exists()) {
+      throw new Exception("unable to cache file: " + originalFile.getName());
+    }
+
+    return cachedFile;
   }
 
   /**
@@ -144,4 +232,5 @@ public class ImageCache {
       cachedFile.delete();
     }
   }
+
 }

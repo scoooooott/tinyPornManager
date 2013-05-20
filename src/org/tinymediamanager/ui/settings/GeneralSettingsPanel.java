@@ -42,6 +42,8 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -91,17 +93,39 @@ public class GeneralSettingsPanel extends JPanel {
 
   /** The combo box. */
   private JComboBox                   comboBox;
+
+  /** The panel cache. */
   private JPanel                      panelCache;
+
+  /** The panel logger. */
   private JPanel                      panelLogger;
+
+  /** The panel video filetypes. */
   private JPanel                      panelVideoFiletypes;
 
+  /** The tf video filetype. */
   private JTextField                  tfVideoFiletype;
 
+  /** The list video filetypes. */
   private JList                       listVideoFiletypes;
+
+  /** The panel subtitle filetypes. */
   private JPanel                      panelSubtitleFiletypes;
+
+  /** The tf subtitle filetype. */
   private JTextField                  tfSubtitleFiletype;
 
+  /** The list subtitle filetypes. */
   private JList                       listSubtitleFiletypes;
+
+  /** The lbl image cache quality. */
+  private JLabel                      lblImageCacheQuality;
+
+  /** The cb image cache quality. */
+  private JComboBox                   cbImageCacheQuality;
+
+  /** The chckbx build image cache. */
+  private JCheckBox                   chckbxBuildImageCache;
 
   /**
    * Instantiates a new general settings panel.
@@ -199,12 +223,25 @@ public class GeneralSettingsPanel extends JPanel {
     panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "4, 4");
 
     panelCache = new JPanel();
+    panelCache.setBorder(new TitledBorder(null, "Cache", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelCache, "2, 4, fill, fill");
-    panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearhttpcache"));
-    panelCache.add(chckbxClearCacheShutdown, "2, 2");
+    panelCache.add(chckbxClearCacheShutdown, "2, 2, 3, 1");
+
+    lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));
+    panelCache.add(lblImageCacheQuality, "2, 4, right, default");
+
+    cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
+    panelCache.add(cbImageCacheQuality, "4, 4, fill, default");
+
+    chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecachebackground"));
+    chckbxBuildImageCache.setVisible(false);
+    panelCache.add(chckbxBuildImageCache, "2, 6, 3, 1");
 
     panelLogger = new JPanel();
     add(panelLogger, "2, 6, fill, fill");
@@ -270,6 +307,9 @@ public class GeneralSettingsPanel extends JPanel {
     initDataBindings();
   }
 
+  /**
+   * Check changes.
+   */
   private void checkChanges() {
     Level level = (Level) comboBox.getSelectedItem();
     int actualLevel = Globals.settings.getLogLevel();
@@ -278,9 +318,6 @@ public class GeneralSettingsPanel extends JPanel {
     }
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<Settings, String> settingsBeanProperty = BeanProperty.create("proxyHost");
     BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
@@ -321,5 +358,16 @@ public class GeneralSettingsPanel extends JPanel {
     JListBinding<String, Settings, JList> jListBinding_2 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, listSubtitleFiletypes);
     jListBinding_2.bind();
+    //
+    BeanProperty<Settings, CacheType> settingsBeanProperty_7 = BeanProperty.create("imageCacheType");
+    BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
+    AutoBinding<Settings, CacheType, JComboBox, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_7, cbImageCacheQuality, jComboBoxBeanProperty);
+    autoBinding_5.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_8 = BeanProperty.create("imageCacheBackground");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_8, chckbxBuildImageCache, jCheckBoxBeanProperty);
+    autoBinding_6.bind();
   }
 }

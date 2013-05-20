@@ -369,6 +369,5 @@ public class TvShowTreeModel implements TreeModel {
    */
   @Override
   public void valueForPathChanged(TreePath arg0, Object arg1) {
-    // TODO Auto-generated method stub
   }
 }

@@ -49,9 +49,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   /** The data sources. */
   private List<String>        dataSources;
 
-  /** The file types. */
-  private List<String>        fileTypes;
-
   /** The tv show list. */
   private TvShowList          tvShowList;
 
@@ -62,7 +59,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   public TvShowUpdateDatasourceTask() {
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
-    fileTypes = new ArrayList<String>(Globals.settings.getVideoFileType());
     initThreadPool(3, "update");
   }
 

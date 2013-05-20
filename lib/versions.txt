@@ -1,5 +1,7 @@
 asm-3.3.1.jar
-beansbinding-1.2.1.jar
+betterbeansbinding-core-1.3.0.jar
+betterbeansbinding-el-1.3.0.jar
+betterbeansbinding-swingbinding-1.3.0.jar
 commons-codec-1.6.jar
 commons-io-2.1.jar
 commons-lang3-3.1.jar

@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -57,7 +58,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
  */
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
-public class TvShowEpisode extends MediaEntity {
+public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
 
   /** The Constant LOGGER. */
   private static final Logger LOGGER               = LoggerFactory.getLogger(TvShowEpisode.class);
@@ -88,6 +89,9 @@ public class TvShowEpisode extends MediaEntity {
 
   /** The watched. */
   private boolean             watched              = false;
+
+  /** The votes. */
+  private int                 votes                = 0;
 
   /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
@@ -394,6 +398,7 @@ public class TvShowEpisode extends MediaEntity {
    */
   public void addToMediaFiles(MediaFile obj) {
     mediaFilesObservable.add(obj);
+    Collections.sort(mediaFilesObservable);
     firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
   }
 
@@ -527,7 +532,11 @@ public class TvShowEpisode extends MediaEntity {
       episodesInNfo.addAll(TvShowList.getInstance().getTvEpisodesByFile(mf.getFile()));
     }
 
-    TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
+    String nfoFilename = TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
+    for (TvShowEpisode episode : episodesInNfo) {
+      episode.setNfoFilename(nfoFilename);
+      episode.saveToDb();
+    }
   }
 
   /**
@@ -540,6 +549,19 @@ public class TvShowEpisode extends MediaEntity {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Sets the nfo filename.
+   * 
+   * @param newValue
+   *          the new nfo filename
+   */
+  public void setNfoFilename(String newValue) {
+    String oldValue = this.nfoFilename;
+    this.nfoFilename = newValue;
+    firePropertyChange(NFO_FILENAME, oldValue, newValue);
+    firePropertyChange(HAS_NFO_FILE, false, true);
   }
 
   /**
@@ -613,7 +635,12 @@ public class TvShowEpisode extends MediaEntity {
    * @return the actors
    */
   public List<TvShowActor> getActors() {
-    return this.actorsObservables;
+    List<TvShowActor> allActors = new ArrayList<TvShowActor>();
+    if (tvShow != null) {
+      allActors.addAll(tvShow.getActors());
+    }
+    allActors.addAll(actorsObservables);
+    return allActors;
   }
 
   /**
@@ -752,5 +779,60 @@ public class TvShowEpisode extends MediaEntity {
     }
 
     return "";
+  }
+
+  /**
+   * Gets the vote count.
+   * 
+   * @return the vote count
+   */
+  public int getVoteCount() {
+    return votes;
+  }
+
+  /**
+   * Sets the votes.
+   * 
+   * @param newValue
+   *          the new votes
+   */
+  public void setVotes(int newValue) {
+    int oldValue = this.votes;
+    this.votes = newValue;
+    firePropertyChange(VOTES, oldValue, newValue);
+  }
+
+  /**
+   * Gets the images to cache.
+   * 
+   * @return the images to cache
+   */
+  public List<File> getImagesToCache() {
+    // get files to cache
+    List<File> filesToCache = new ArrayList<File>();
+
+    if (StringUtils.isNotBlank(getFanart())) {
+      filesToCache.add(new File(getFanart()));
+    }
+
+    return filesToCache;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  @Override
+  public int compareTo(TvShowEpisode otherTvShowEpisode) {
+    if (getTvShow() != otherTvShowEpisode.getTvShow()) {
+      return getTvShow().getTitle().compareTo(otherTvShowEpisode.getTvShow().getTitle());
+    }
+
+    if (getSeason() != otherTvShowEpisode.getSeason()) {
+      return getSeason() - otherTvShowEpisode.getSeason();
+    }
+
+    return getEpisode() - otherTvShowEpisode.getEpisode();
   }
 }

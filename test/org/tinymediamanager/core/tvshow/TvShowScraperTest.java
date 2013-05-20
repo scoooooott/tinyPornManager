@@ -44,7 +44,6 @@ public class TvShowScraperTest {
       }
     }
     catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
@@ -62,7 +61,6 @@ public class TvShowScraperTest {
       System.out.println(md);
     }
     catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
