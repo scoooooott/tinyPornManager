@@ -979,28 +979,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
   }
 
-  /**
-   * Tests this abstract pathname for equality with the given MediaFile. Returns <code>true</code> if and only if the argument is not
-   * <code>null</code> and is an abstract pathname that denotes the same file or directory as this abstract pathname. Whether or not two abstract
-   * pathnames are equal depends upon the underlying system. On UNIX systems, alphabetic case is significant in comparing pathnames; on Microsoft
-   * Windows systems it is not.
-   * 
-   * @param mf2
-   *          The MediaFile to be compared with this abstract pathname
-   * 
-   * @return <code>true</code> if and only if the objects are the same; <code>false</code> otherwise
-   */
-  public boolean equals(MediaFile mf2) {
+  @Override
+  public boolean equals(Object mf2) {
     if ((mf2 != null) && (mf2 instanceof MediaFile)) {
-      return compareTo(mf2) == 0;
+      return compareTo((MediaFile) mf2) == 0;
     }
     return false;
   }
 
   @Override
   public int compareTo(MediaFile mf2) {
-    if (getType().ordinal() != mf2.getType().ordinal()) {
-      return getType().ordinal() - mf2.getType().ordinal();
+    MediaFile m = (MediaFile) mf2;
+    if (getType().ordinal() != m.getType().ordinal()) {
+      return getType().ordinal() - m.getType().ordinal();
     }
 
     return this.getFile().getAbsolutePath().compareTo(mf2.getFile().getAbsolutePath());
