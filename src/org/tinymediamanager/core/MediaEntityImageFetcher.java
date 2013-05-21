@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -110,7 +111,7 @@ public class MediaEntityImageFetcher implements Runnable {
 
       // fetch and store images
       CachedUrl cachedUrl = new CachedUrl(url);
-      FileOutputStream outputStream = new FileOutputStream(filename);
+      FileOutputStream outputStream = new FileOutputStream(new File(entity.getPath(), filename));
       InputStream is = cachedUrl.getInputStream();
       IOUtils.copy(is, outputStream);
       outputStream.close();
