@@ -331,6 +331,20 @@ public class TinyMediaManager {
         if (file.exists()) {
           FileUtils.deleteQuietly(file);
         }
+
+        // self updater
+        file = new File("getdown-new.jar");
+        if (file.exists() && file.length() > 100000) {
+          File cur = new File("getdown.jar");
+          if (file.length() != cur.length() || !cur.exists()) {
+            try {
+              FileUtils.copyFile(file, cur);
+            }
+            catch (IOException e) {
+              LOGGER.error("Could not update the updater!");
+            }
+          }
+        }
       }
 
       /**
