@@ -735,8 +735,65 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     return episodes;
   }
 
-  private void detectThumb() {
-    // TODO
+  /**
+   * Find images.
+   */
+  public void findImages() {
+    // find thumb
+    findThumb();
+  }
+
+  /**
+   * Find thumb.
+   */
+  private void findThumb() {
+    boolean found = false;
+    // there are 2 possible filenames for thumbs
+
+    // a) episodename-thumb.jpg/png (as described in the xbmc wiki http://wiki.xbmc.org/index.php?title=Frodo_FAQ#Local_images)
+    Pattern pattern = Pattern.compile("(?i)" + getTitle() + "-thumb\\..{2,4}");
+    File[] files = new File(path).listFiles();
+    for (File file : files) {
+      Matcher matcher = pattern.matcher(file.getName());
+      if (matcher.matches()) {
+        setFanart(FilenameUtils.getName(file.getName()));
+        LOGGER.debug("found thumb " + file.getPath());
+        found = true;
+        break;
+      }
+    }
+
+    // b) filename-thumb/fanart.jpg/png
+    if (!found) {
+      String mediafile = "";
+      try {
+        mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+      }
+      catch (Exception e) {
+        System.out.println(path);
+      }
+      pattern = Pattern.compile("(?i)" + mediafile + "-(thumb|fanart)\\..{2,4}");
+      for (File file : files) {
+        Matcher matcher = pattern.matcher(file.getName());
+        if (matcher.matches()) {
+          setFanart(FilenameUtils.getName(file.getName()));
+          LOGGER.debug("found thumb " + file.getPath());
+          found = true;
+          break;
+        }
+      }
+    }
+
+    // if we did not find anything, try to download it
+    if (!found && StringUtils.isNotEmpty(fanartUrl)) {
+      writeFanartImage();
+      found = true;
+      LOGGER.debug("got thumb url: " + fanartUrl + " ; try to download this");
+    }
+
+    if (!found) {
+      LOGGER.debug("Sorry, could not find a thumb.");
+    }
   }
 
   /**

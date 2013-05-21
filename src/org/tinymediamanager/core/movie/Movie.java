@@ -729,6 +729,9 @@ public class Movie extends MediaEntity {
       if (!found) {
         found = findAndSetPoster(getPosterFilename(variant));
       }
+      else {
+        break;
+      }
     }
 
     // still not found anything? try *-poster.*
@@ -741,6 +744,7 @@ public class Movie extends MediaEntity {
           setPoster(FilenameUtils.getName(file.getName()));
           LOGGER.debug("found poster " + file.getPath());
           found = true;
+          break;
         }
       }
     }
@@ -787,6 +791,9 @@ public class Movie extends MediaEntity {
       if (!found) {
         found = findAndSetFanart(getFanartFilename(variant));
       }
+      else {
+        break;
+      }
     }
 
     // still not found anything? try *-fanart.*
@@ -799,11 +806,12 @@ public class Movie extends MediaEntity {
           setFanart(FilenameUtils.getName(file.getName()));
           LOGGER.debug("found fanart " + file.getPath());
           found = true;
+          break;
         }
       }
     }
 
-    // we did not find a poster, try to get it if an url exists
+    // we did not find a fanart, try to get it if an url exists
     if (!found && StringUtils.isNotEmpty(fanartUrl)) {
       writeImages(false, true);
       found = true;

@@ -134,7 +134,7 @@ public class TvShowToXbmcNfoConnector {
         xbmc = (TvShowToXbmcNfoConnector) um.unmarshal(in);
       }
       catch (Exception e) {
-        LOGGER.error("failed to parse " + nfoFilename, e);
+        LOGGER.error("failed to parse " + nfoFilename + "; " + e.getMessage());
       }
     }
 
@@ -187,10 +187,10 @@ public class TvShowToXbmcNfoConnector {
       FileUtils.write(nfoFile, sb, "UTF-8");
     }
     catch (JAXBException e) {
-      LOGGER.error("setData", e);
+      LOGGER.error(nfoFilename + " " + e.getMessage());
     }
     catch (IOException e) {
-      LOGGER.error("setData", e);
+      LOGGER.error(nfoFilename + " " + e.getMessage());
     }
 
     // return only the name w/o path
@@ -246,12 +246,12 @@ public class TvShowToXbmcNfoConnector {
       }
     }
     catch (FileNotFoundException e) {
-      LOGGER.error("setData", e);
+      LOGGER.error(nfoFilename + " " + e.getMessage());
       return null;
     }
 
     catch (Exception e) {
-      LOGGER.error("setData", e);
+      LOGGER.error(nfoFilename + " " + e.getMessage());
       return null;
     }
 

@@ -262,6 +262,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setPath(dir.getPath());
               episode.setTvShow(tvShow);
               episode.addToMediaFiles(new MediaFile(file));
+              episode.findImages();
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -271,6 +272,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               e.setPath(dir.getPath());
               e.setTvShow(tvShow);
               e.addToMediaFiles(new MediaFile(file));
+              e.findImages();
               e.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -284,6 +286,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 e.setPath(dir.getPath());
                 e.setTvShow(tvShow);
                 e.addToMediaFiles(new MediaFile(file));
+                e.findImages();
                 e.saveToDb();
                 tvShow.addEpisode(episode);
               }
@@ -298,13 +301,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setTvShow(tvShow);
               episode.setFirstAired(result.date);
               episode.addToMediaFiles(new MediaFile(file));
+              episode.findImages();
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
           }
         }
       }
-      if (file.isDirectory()) {
+      if (file.isDirectory() && !"sample".equalsIgnoreCase(file.getName())) {
         // dig deeper
         if (file.getName().equals("VIDEO_TS")) {
           findTvEpisodesAsDisc(tvShow, file);

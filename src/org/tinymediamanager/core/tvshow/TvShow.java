@@ -1338,6 +1338,7 @@ public class TvShow extends MediaEntity {
           setPoster(FilenameUtils.getName(file.getName()));
           LOGGER.debug("found poster " + file.getPath());
           found = true;
+          break;
         }
       }
     }
@@ -1386,6 +1387,7 @@ public class TvShow extends MediaEntity {
           setFanart(FilenameUtils.getName(file.getName()));
           LOGGER.debug("found fanart " + file.getPath());
           found = true;
+          break;
         }
       }
     }
@@ -1434,6 +1436,7 @@ public class TvShow extends MediaEntity {
           setBanner(FilenameUtils.getName(file.getName()));
           LOGGER.debug("found banner " + file.getPath());
           found = true;
+          break;
         }
       }
     }
