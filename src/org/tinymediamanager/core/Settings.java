@@ -103,6 +103,9 @@ public class Settings extends AbstractModelObject {
   /** The Constant LOG_LEVEL. */
   private final static String         LOG_LEVEL                   = "logLevel";
 
+  /** The Constant IMAGE_CACHE. */
+  private final static String         IMAGE_CACHE                 = "imageCache";
+
   /** The Constant IMAGE_CACHE_TYPE. */
   private final static String         IMAGE_CACHE_TYPE            = "imageCacheType";
 
@@ -138,6 +141,9 @@ public class Settings extends AbstractModelObject {
 
   /** The log level. */
   private int                         logLevel                    = Level.DEBUG_INT;
+
+  /** The image cache. */
+  private boolean                     imageCache                  = true;
 
   /** The image cache type. */
   private CacheType                   imageCacheType              = CacheType.SMOOTH;
@@ -754,6 +760,27 @@ public class Settings extends AbstractModelObject {
   public void setWindowConfig(WindowConfig windowConfig) {
     this.windowConfig = windowConfig;
     this.windowConfig.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  /**
+   * Checks if is image cache.
+   * 
+   * @return true, if is image cache
+   */
+  public boolean isImageCache() {
+    return imageCache;
+  }
+
+  /**
+   * Sets the image cache.
+   * 
+   * @param newValue
+   *          the new image cache
+   */
+  public void setImageCache(boolean newValue) {
+    boolean oldValue = this.imageCache;
+    this.imageCache = newValue;
+    firePropertyChange(IMAGE_CACHE, oldValue, newValue);
   }
 
   /**

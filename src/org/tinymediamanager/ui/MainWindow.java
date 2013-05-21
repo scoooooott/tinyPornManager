@@ -56,6 +56,7 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.util.CachedUrl;
@@ -235,11 +236,17 @@ public class MainWindow extends JFrame {
         }
       }
     });
+
     JMenuItem rebuildImageCache = new JMenuItem(BUNDLE.getString("tmm.rebuildimagecache")); //$NON-NLS-1$
     cache.add(rebuildImageCache);
     rebuildImageCache.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        if (!Globals.settings.isImageCache()) {
+          JOptionPane.showMessageDialog(null, "Image cache is not activated!");
+          return;
+        }
+
         List<File> imageFiles = new ArrayList<File>();
         // movie list
         List<Movie> movies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
@@ -248,7 +255,10 @@ public class MainWindow extends JFrame {
         }
 
         // moviesets
-        // TODO
+        List<MovieSet> movieSets = new ArrayList<MovieSet>(MovieList.getInstance().getMovieSetList());
+        for (MovieSet movieSet : movieSets) {
+          imageFiles.addAll(movieSet.getImagesToCache());
+        }
 
         // tv dhows
         List<TvShow> tvShows = new ArrayList<TvShow>(TvShowList.getInstance().getTvShows());
@@ -258,6 +268,25 @@ public class MainWindow extends JFrame {
 
         ImageCacheTask task = new ImageCacheTask(imageFiles);
         Globals.executor.execute(task);
+      }
+    });
+
+    JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir")); //$NON-NLS-1$
+    debug.add(tmmFolder);
+    tmmFolder.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        try {
+          // get the location from the label
+          File path = new File(System.getProperty("user.dir"));
+          // check whether this location exists
+          if (path.exists()) {
+            Desktop.getDesktop().open(path);
+          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+        }
       }
     });
 

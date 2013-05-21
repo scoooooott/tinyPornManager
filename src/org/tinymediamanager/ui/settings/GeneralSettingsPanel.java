@@ -127,6 +127,9 @@ public class GeneralSettingsPanel extends JPanel {
   /** The chckbx build image cache. */
   private JCheckBox                   chckbxBuildImageCache;
 
+  /** The chckbx image cache. */
+  private JCheckBox                   chckbxImageCache;
+
   /**
    * Instantiates a new general settings panel.
    */
@@ -228,20 +231,23 @@ public class GeneralSettingsPanel extends JPanel {
     panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearhttpcache"));
     panelCache.add(chckbxClearCacheShutdown, "2, 2, 3, 1");
 
+    chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));
+    panelCache.add(chckbxImageCache, "2, 4, 3, 1");
+
     lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));
-    panelCache.add(lblImageCacheQuality, "2, 4, right, default");
+    panelCache.add(lblImageCacheQuality, "2, 6, right, default");
 
     cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
-    panelCache.add(cbImageCacheQuality, "4, 4, fill, default");
+    panelCache.add(cbImageCacheQuality, "4, 6, fill, default");
 
     chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecachebackground"));
     chckbxBuildImageCache.setVisible(false);
-    panelCache.add(chckbxBuildImageCache, "2, 6, 3, 1");
+    panelCache.add(chckbxBuildImageCache, "2, 8, 3, 1");
 
     panelLogger = new JPanel();
     add(panelLogger, "2, 6, fill, fill");
@@ -369,5 +375,10 @@ public class GeneralSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_8, chckbxBuildImageCache, jCheckBoxBeanProperty);
     autoBinding_6.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_9 = BeanProperty.create("imageCache");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_9, chckbxImageCache, jCheckBoxBeanProperty);
+    autoBinding_7.bind();
   }
 }

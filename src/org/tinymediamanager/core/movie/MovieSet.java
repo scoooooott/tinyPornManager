@@ -162,6 +162,15 @@ public class MovieSet extends MediaEntity {
   public String getFanart() {
     String fanart = "";
 
+    // try to get from the artwork folder if enabled
+    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()) {
+      String filename = Globals.settings.getMovieSettings().getMovieSetArtworkFolder() + File.separator + getTitle() + "-fanart.jpg";
+      File fanartFile = new File(filename);
+      if (fanartFile.exists()) {
+        return filename;
+      }
+    }
+
     // try to get a fanart from one movie
     for (Movie movie : moviesObservable) {
       String filename = movie.getPath() + File.separator + "movieset-fanart.jpg";
@@ -193,6 +202,15 @@ public class MovieSet extends MediaEntity {
    */
   public String getPoster() {
     String poster = "";
+
+    // try to get from the artwork folder if enabled
+    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()) {
+      String filename = Globals.settings.getMovieSettings().getMovieSetArtworkFolder() + File.separator + getTitle() + "-poster.jpg";
+      File fanartFile = new File(filename);
+      if (fanartFile.exists()) {
+        return filename;
+      }
+    }
 
     // try to get a fanart from one movie
     for (Movie movie : moviesObservable) {
@@ -600,5 +618,25 @@ public class MovieSet extends MediaEntity {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Gets the images to cache.
+   * 
+   * @return the images to cache
+   */
+  public List<File> getImagesToCache() {
+    // get files to cache
+    List<File> filesToCache = new ArrayList<File>();
+
+    if (StringUtils.isNotBlank(getPoster())) {
+      filesToCache.add(new File(getPoster()));
+    }
+
+    if (StringUtils.isNotBlank(getFanart())) {
+      filesToCache.add(new File(getFanart()));
+    }
+
+    return filesToCache;
   }
 }
