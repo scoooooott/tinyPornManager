@@ -290,7 +290,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         movieList.addMovie(movie);
       }
       else {
-        LOGGER.info("Movie already in DB - do nothing");
+        LOGGER.info("Movie '" + movie.getTitle() + "' already in DB - do nothing");
       }
     }
     catch (Exception e) {

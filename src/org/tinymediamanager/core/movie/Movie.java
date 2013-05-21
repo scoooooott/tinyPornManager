@@ -1766,10 +1766,10 @@ public class Movie extends MediaEntity {
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
     String filename = "";
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
 
     switch (nfo) {
       case FILENAME_NFO:
+        String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
         filename += mediafile + ".nfo";
         break;
       case MOVIE_NFO:
