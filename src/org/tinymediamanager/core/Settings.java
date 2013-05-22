@@ -26,12 +26,14 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -63,6 +65,12 @@ import ch.qos.logback.classic.Level;
 public class Settings extends AbstractModelObject {
   /** The Constant logger. */
   private static final Logger         LOGGER                      = LoggerFactory.getLogger(Settings.class);
+
+  /**
+   * the current settings file version<br>
+   * change this when new (default) settings need to be written or on structural changes
+   */
+  private static final String         SETTINGS_VERSION            = "2.0";
 
   /** The instance. */
   private static Settings             instance;
@@ -126,6 +134,9 @@ public class Settings extends AbstractModelObject {
   @XmlElementWrapper(name = SUBTITLE_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>          subtitleFileTypes           = ObservableCollections.observableList(new ArrayList<String>());
+
+  @XmlAttribute
+  private String                      version                     = "";
 
   /** The proxy host. */
   private String                      proxyHost;
@@ -238,6 +249,13 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
+   * Gets the settings file version
+   */
+  public boolean isCurrentVersion() {
+    return SETTINGS_VERSION.equals(version);
+  }
+
+  /**
    * Sets the dirty.
    */
   private void setDirty() {
@@ -258,8 +276,10 @@ public class Settings extends AbstractModelObject {
    *          the prefix
    */
   public void addTitlePrefix(String prfx) {
-    titlePrefix.add(prfx);
-    firePropertyChange(TITLE_PREFIX, null, titlePrefix);
+    if (!titlePrefix.contains(prfx)) {
+      titlePrefix.add(prfx);
+      firePropertyChange(TITLE_PREFIX, null, titlePrefix);
+    }
   }
 
   /**
@@ -289,8 +309,10 @@ public class Settings extends AbstractModelObject {
    *          the type
    */
   public void addVideoFileTypes(String type) {
-    videoFileTypes.add(type);
-    firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
+    if (!videoFileTypes.contains(type)) {
+      videoFileTypes.add(type);
+      firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
+    }
   }
 
   /**
@@ -320,8 +342,10 @@ public class Settings extends AbstractModelObject {
    *          the type
    */
   public void addSubtitleFileTypes(String type) {
-    subtitleFileTypes.add(type);
-    firePropertyChange(SUBTITLE_FILE_TYPE, null, subtitleFileTypes);
+    if (!subtitleFileTypes.contains(type)) {
+      subtitleFileTypes.add(type);
+      firePropertyChange(SUBTITLE_FILE_TYPE, null, subtitleFileTypes);
+    }
   }
 
   /**
@@ -401,7 +425,9 @@ public class Settings extends AbstractModelObject {
   /**
    * Write default settings.
    */
-  private void writeDefaultSettings() {
+  public void writeDefaultSettings() {
+    version = SETTINGS_VERSION;
+
     // default video file types derived from
     // http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E
     addVideoFileTypes(".3gp");
@@ -448,6 +474,7 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".vp3");
     addVideoFileTypes(".wmv");
     addVideoFileTypes(".xvid");
+    Collections.sort(videoFileTypes);
 
     // default subtitle files
     addSubtitleFileTypes(".aqt");
@@ -470,9 +497,9 @@ public class Settings extends AbstractModelObject {
     addSubtitleFileTypes(".ass");
     addSubtitleFileTypes(".pgs");
     addSubtitleFileTypes(".vobsub");
+    Collections.sort(subtitleFileTypes);
 
     // default title prefix
-    titlePrefix.clear();
     addTitlePrefix("A");
     addTitlePrefix("An");
     addTitlePrefix("The");
@@ -481,8 +508,9 @@ public class Settings extends AbstractModelObject {
     addTitlePrefix("Das");
     addTitlePrefix("Ein");
     addTitlePrefix("Eine");
+    Collections.sort(titlePrefix);
 
-    movieSettings.addMovieNfoFilename(MovieNfoNaming.FILENAME_NFO);
+    movieSettings.addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
     movieSettings.addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
     movieSettings.addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);

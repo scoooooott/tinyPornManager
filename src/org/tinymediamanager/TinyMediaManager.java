@@ -79,8 +79,12 @@ public class TinyMediaManager {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
-          // after 5 secs of beeing idle, the threads are removed till 0; see
-          // Globals
+          if (!Globals.settings.isCurrentVersion()) {
+            Globals.settings.writeDefaultSettings();
+            JOptionPane.showMessageDialog(null, "The config.xml format changed in this update.\nPlease check your settings!");
+          }
+
+          // after 5 secs of beeing idle, the threads are removed till 0; see Globals
           Globals.executor.allowCoreThreadTimeOut(true);
 
           Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
