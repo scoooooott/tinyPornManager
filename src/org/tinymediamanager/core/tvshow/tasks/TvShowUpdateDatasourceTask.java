@@ -156,7 +156,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     @Override
     public String call() throws Exception {
       // get the TV show from this subdir
-      createTvShowFromDirectory(subdir);
+      createTvShowFromDirectory(subdir, datasource);
       return subdir.getName();
     }
   }
@@ -167,7 +167,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * @param dir
    *          the dir
    */
-  private void createTvShowFromDirectory(File dir) {
+  private void createTvShowFromDirectory(File dir, String datasource) {
     // search for this tvshow folder in database
     TvShow tvShow = tvShowList.getTvShowByPath(dir.getPath());
     if (tvShow == null) {
@@ -180,6 +180,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         tvShow.setTitle(ParserUtils.detectCleanMoviename(dir.getName()));
       }
       if (tvShow != null) {
+        tvShow.setDataSource(datasource);
         tvShow.saveToDb();
         tvShowList.addTvShow(tvShow);
       }

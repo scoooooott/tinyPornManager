@@ -69,9 +69,14 @@ public class TvShowTreeModel implements TreeModel {
       public void propertyChange(PropertyChangeEvent evt) {
         // added a tv show
         if (ADDED_TV_SHOW.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TvShow) {
-          // new tv Show added
           TvShow tvShow = (TvShow) evt.getNewValue();
           addTvShow(tvShow);
+        }
+
+        // removed a tv show
+        if (REMOVED_TV_SHOW.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TvShow) {
+          TvShow tvShow = (TvShow) evt.getNewValue();
+          removeTvShow(tvShow);
         }
 
         // added a season
@@ -84,6 +89,12 @@ public class TvShowTreeModel implements TreeModel {
         if (ADDED_EPISODE.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TvShowEpisode) {
           TvShowEpisode episode = (TvShowEpisode) evt.getNewValue();
           addTvShowEpisode(episode, episode.getTvShow().getSeasonForEpisode(episode));
+        }
+
+        // removed an episode
+        if (REMOVED_EPISODE.equals(evt.getPropertyName()) && evt.getNewValue() instanceof TvShowEpisode) {
+          TvShowEpisode episode = (TvShowEpisode) evt.getNewValue();
+          removeTvShowEpisode(episode, episode.getTvShow().getSeasonForEpisode(episode));
         }
 
         // update on changes of tv show or episode
@@ -146,6 +157,37 @@ public class TvShowTreeModel implements TreeModel {
     }
 
     tvShow.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  /**
+   * Removes the tv show.
+   * 
+   * @param tvShow
+   *          the tv show
+   */
+  private synchronized void removeTvShow(TvShow tvShow) {
+    TvShowTreeNode child = (TvShowTreeNode) nodeMap.get(tvShow);
+    DefaultMutableTreeNode parent = root;
+    if (parent != null && child != null) {
+      int index = parent.getIndex(child);
+
+      nodeMap.remove(tvShow);
+      for (TvShowEpisode episode : tvShow.getEpisodes()) {
+        nodeMap.remove(episode);
+        episode.removePropertyChangeListener(propertyChangeListener);
+      }
+
+      tvShow.removePropertyChangeListener(propertyChangeListener);
+
+      child.removeAllChildren();
+      child.removeFromParent();
+
+      // inform listeners
+      TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
+      for (TreeModelListener listener : listeners) {
+        listener.treeNodesRemoved(event);
+      }
+    }
   }
 
   /**
@@ -213,6 +255,32 @@ public class TvShowTreeModel implements TreeModel {
     }
 
     episode.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  /**
+   * Removes the tv show episode.
+   * 
+   * @param episode
+   *          the episode
+   * @param season
+   *          the season
+   */
+  private synchronized void removeTvShowEpisode(TvShowEpisode episode, TvShowSeason season) {
+    // get the tv show season node
+    TvShowSeasonTreeNode parent = (TvShowSeasonTreeNode) nodeMap.get(season);
+    TvShowEpisodeTreeNode child = (TvShowEpisodeTreeNode) nodeMap.get(episode);
+    if (parent != null && child != null) {
+      int index = parent.getIndex(child);
+      parent.remove(child);
+      nodeMap.remove(episode);
+      episode.removePropertyChangeListener(propertyChangeListener);
+
+      // inform listeners
+      TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
+      for (TreeModelListener listener : listeners) {
+        listener.treeNodesRemoved(event);
+      }
+    }
   }
 
   /*

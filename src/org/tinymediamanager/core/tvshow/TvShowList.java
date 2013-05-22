@@ -154,6 +154,7 @@ public class TvShowList extends AbstractModelObject {
     Globals.entityManager.remove(tvShow);
     Globals.entityManager.getTransaction().commit();
     firePropertyChange(TV_SHOWS, null, tvShowList);
+    firePropertyChange(REMOVED_TV_SHOW, null, tvShow);
     firePropertyChange(TV_SHOW_COUNT, oldValue, tvShowList.size());
   }
 

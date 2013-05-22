@@ -442,7 +442,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       boolean firstImage = true;
       // create correct filename
       MediaFile mf = getMediaFiles().get(0);
-      String filename = path + File.separator + FilenameUtils.getBaseName(mf.getFilename()) + "-fanart." + FilenameUtils.getExtension(getFanartUrl());
+      String filename = FilenameUtils.getBaseName(mf.getFilename()) + "-fanart." + FilenameUtils.getExtension(getFanartUrl());
       // get image in thread
       MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
       Globals.executor.execute(task);

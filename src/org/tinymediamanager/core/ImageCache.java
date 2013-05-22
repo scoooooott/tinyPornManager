@@ -23,6 +23,7 @@ import java.awt.image.ColorConvertOp;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -165,7 +166,7 @@ public class ImageCache {
     if (!cachedFile.exists()) {
       // check if the original file exists
       if (!originalFile.exists()) {
-        throw new Exception("unable to cache file: " + originalFile.getName() + "; file does not exist");
+        throw new FileNotFoundException("unable to cache file: " + originalFile.getName() + "; file does not exist");
       }
 
       // recreate cache dir if needed

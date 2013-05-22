@@ -391,6 +391,28 @@ public class TvShow extends MediaEntity {
   }
 
   /**
+   * Removes the episode.
+   * 
+   * @param episode
+   *          the episode
+   */
+  public void removeEpisode(TvShowEpisode episode) {
+    if (episodesObservable.contains(episode)) {
+      int oldValue = episodesObservable.size();
+
+      synchronized (Globals.entityManager) {
+        Globals.entityManager.getTransaction().begin();
+        episodesObservable.remove(episode);
+        Globals.entityManager.persist(this);
+        Globals.entityManager.getTransaction().commit();
+      }
+
+      firePropertyChange(REMOVED_EPISODE, null, episode);
+      firePropertyChange(EPISODE_COUNT, oldValue, episodesObservable.size());
+    }
+  }
+
+  /**
    * Gets the seasons.
    * 
    * @return the seasons
@@ -692,7 +714,7 @@ public class TvShow extends MediaEntity {
     if (StringUtils.isNotEmpty(getPosterUrl())) {
       boolean firstImage = true;
       // create correct filename
-      String filename = path + File.separator + "poster." + FilenameUtils.getExtension(getPosterUrl());
+      String filename = "poster." + FilenameUtils.getExtension(getPosterUrl());
       // get image in thread
       MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
       Globals.executor.execute(task);
@@ -706,7 +728,7 @@ public class TvShow extends MediaEntity {
     if (StringUtils.isNotEmpty(getFanartUrl())) {
       boolean firstImage = true;
       // create correct filename
-      String filename = path + File.separator + "fanart." + FilenameUtils.getExtension(getFanartUrl());
+      String filename = "fanart." + FilenameUtils.getExtension(getFanartUrl());
       // get image in thread
       MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
       Globals.executor.execute(task);
@@ -720,7 +742,7 @@ public class TvShow extends MediaEntity {
     if (StringUtils.isNotEmpty(getBannerUrl())) {
       boolean firstImage = true;
       // create correct filename
-      String filename = path + File.separator + "banner." + FilenameUtils.getExtension(getBannerUrl());
+      String filename = "banner." + FilenameUtils.getExtension(getBannerUrl());
       // get image in thread
       MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getBannerUrl(), MediaArtworkType.BANNER, filename, firstImage);
       Globals.executor.execute(task);

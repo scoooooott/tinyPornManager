@@ -298,6 +298,10 @@ public class MovieSetTreeModel implements TreeModel {
     movieSet.removePropertyChangeListener(propertyChangeListener);
     // movieList.removeMovieSet(movieSet);
     nodeMap.remove(movieSet);
+    for (Movie movie : movieSet.getMovies()) {
+      nodeMap.remove(movie);
+      movie.removePropertyChangeListener(propertyChangeListener);
+    }
 
     node.removeAllChildren();
     node.removeFromParent();

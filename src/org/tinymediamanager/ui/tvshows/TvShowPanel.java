@@ -131,10 +131,13 @@ public class TvShowPanel extends JPanel {
   private final Action                actionScrape2             = new SingleScrapeAction(true);
 
   /** The action edit. */
-  private final Action                actionEdit                = new EditAction(false);
+  private final Action                actionEdit                = new RemoveAction(false);
 
   /** The action edit2. */
-  private final Action                actionEdit2               = new EditAction(true);
+  private final Action                actionEdit2               = new RemoveAction(true);
+
+  /** The action remove2. */
+  private final Action                actionRemove2             = new RemoveAction(true);
 
   /** The action change season poster. */
   private final Action                actionChangeSeasonPoster2 = new ChangeSeasonPosterAction(true);
@@ -406,8 +409,8 @@ public class TvShowPanel extends JPanel {
     // menu.add(actionRename2);
     // menu.add(actionMediaInformation2);
     // menu.add(actionExport);
-    // menu.addSeparator();
-    // menu.add(actionRemove2);
+    menu.addSeparator();
+    menu.add(actionRemove2);
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
@@ -421,8 +424,8 @@ public class TvShowPanel extends JPanel {
     // popupMenu.add(actionRename2);
     // popupMenu.add(actionMediaInformation2);
     // popupMenu.add(actionExport);
-    // popupMenu.addSeparator();
-    // popupMenu.add(actionRemove2);
+    popupMenu.addSeparator();
+    popupMenu.add(actionRemove2);
 
     MouseListener popupListener = new PopupListener(popupMenu);
     tree.addMouseListener(popupListener);
@@ -612,6 +615,41 @@ public class TvShowPanel extends JPanel {
           if (!editor.showDialog()) {
             break;
           }
+        }
+      }
+    }
+  }
+
+  private class RemoveAction extends AbstractAction {
+    public RemoveAction(boolean withTitle) {
+      if (withTitle) {
+        putValue(NAME, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
+        putValue(LARGE_ICON_KEY, "");
+      }
+      else {
+        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      List<Object> selectedObjects = getSelectedObjects();
+
+      for (Object obj : selectedObjects) {
+        // display tv show editor
+        if (obj instanceof TvShow) {
+          TvShow tvShow = (TvShow) obj;
+          TvShowList.getInstance().removeTvShow(tvShow);
+        }
+        // display tv episode editor
+        if (obj instanceof TvShowEpisode) {
+          TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
+          tvShowEpisode.getTvShow().removeEpisode(tvShowEpisode);
         }
       }
     }

@@ -26,6 +26,7 @@ import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
@@ -399,6 +400,9 @@ public class ImageLabel extends JLabel {
       File originalFile = new File(path);
       return ImageCache.cacheImage(originalFile);
 
+    }
+    catch (FileNotFoundException e) {
+      LOGGER.warn(e.getMessage());
     }
     catch (Exception e) {
       LOGGER.warn("problem caching file: ", e);
