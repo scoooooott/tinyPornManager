@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -27,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -67,8 +64,6 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
-import org.tinymediamanager.scraper.util.ParserUtils;
-import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
@@ -581,18 +576,6 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Adds the list of media files.
-   * 
-   * @param videoFiles
-   *          the video files
-   */
-  public void addToFiles(File[] videoFiles) {
-    for (File file : videoFiles) {
-      addToMediaFiles(new MediaFile(file));
-    }
-  }
-
-  /**
    * Gets the data source.
    * 
    * @return the data source
@@ -611,72 +594,6 @@ public class Movie extends MediaEntity {
     String oldValue = this.dataSource;
     this.dataSource = newValue;
     firePropertyChange(DATA_SOURCE, oldValue, newValue);
-  }
-
-  /**
-   * Find images.
-   */
-  public void findImages() {
-    // try to find images in movie path
-
-    // find poster
-    findPoster();
-
-    // fanart - fanart.jpg
-    findFanart();
-
-    // actor images
-    if (Globals.settings.getMovieSettings().isWriteActorImages()) {
-      findActorImages();
-    }
-  }
-
-  /**
-   * Find local trailers.
-   */
-  public void addLocalTrailers() {
-    LOGGER.debug("try to find local/downloaded trailers");
-
-    FilenameFilter filter = new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        return name.matches("(?i)^sample\\..{2,4}") || name.matches("(?i).*-trailer\\..{2,4}");
-      }
-    };
-
-    File[] trailerFiles = new File(path).listFiles(filter);
-    for (File file : trailerFiles) {
-      MediaTrailer mt = new MediaTrailer();
-      mt.setName(file.getName());
-      mt.setProvider("downloaded");
-      mt.setQuality("unknown");
-      mt.setInNfo(false);
-      mt.setUrl(file.toURI().toString());
-      addTrailer(mt);
-    }
-  }
-
-  /**
-   * Find local subtitles.
-   */
-  public void addLocalSubtitles() {
-    LOGGER.debug("try to find local/downloaded subtitles");
-
-    FilenameFilter filter = new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        for (String type : Globals.settings.getSubtitleFileType()) {
-          if (name.toLowerCase().endsWith(type)) {
-            return true;
-          }
-        }
-        return false;
-      }
-    };
-
-    File[] subtitles = new File(path).listFiles(filter);
-    for (File sub : subtitles) {
-      this.subtitles = true;
-      addToMediaFiles(new MediaFile(sub));
-    }
   }
 
   /** has movie local (or any mediafile inline) subtitles? */
@@ -700,142 +617,19 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * checks movie folder for poster and sets it.
-   * 
-   * @param name
-   *          the filename within movie folder
-   * @return true/false if found (and set)
-   */
-  private boolean findAndSetPoster(String name) {
-    File p = new File(path, name);
-    if (p.exists()) {
-      setPoster(p.getName());
-      LOGGER.debug("found poster " + p.getPath());
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-
-  /**
-   * Find poster.
-   */
-  private void findPoster() {
-    boolean found = false;
-
-    MoviePosterNaming[] all = MoviePosterNaming.values();
-    for (MoviePosterNaming variant : all) {
-      if (!found) {
-        found = findAndSetPoster(getPosterFilename(variant));
-      }
-      else {
-        break;
-      }
-    }
-
-    // still not found anything? try *-poster.*
-    if (!found) {
-      Pattern pattern = Pattern.compile("(?i).*-poster\\..{2,4}");
-      File[] files = new File(path).listFiles();
-      for (File file : files) {
-        Matcher matcher = pattern.matcher(file.getName());
-        if (matcher.matches()) {
-          setPoster(FilenameUtils.getName(file.getName()));
-          LOGGER.debug("found poster " + file.getPath());
-          found = true;
-          break;
-        }
-      }
-    }
-
-    // we did not find a poster, try to get it if an url exists
-    if (!found && StringUtils.isNotEmpty(posterUrl)) {
-      writeImages(true, false);
-      found = true;
-      LOGGER.debug("got poster url: " + posterUrl + " ; try to download this");
-    }
-
-    if (!found) {
-      LOGGER.debug("Sorry, could not find poster.");
-    }
-  }
-
-  /**
-   * checks movie folder for fanart and sets it.
-   * 
-   * @param name
-   *          the filename within movie folder
-   * @return true/false if found (and set)
-   */
-  private boolean findAndSetFanart(String name) {
-    File p = new File(path, name);
-    if (p.exists()) {
-      setFanart(p.getName());
-      LOGGER.debug("found fanart " + p.getPath());
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-
-  /**
-   * Find fanart.
-   */
-  private void findFanart() {
-    boolean found = false;
-
-    MovieFanartNaming[] all = MovieFanartNaming.values();
-    for (MovieFanartNaming variant : all) {
-      if (!found) {
-        found = findAndSetFanart(getFanartFilename(variant));
-      }
-      else {
-        break;
-      }
-    }
-
-    // still not found anything? try *-fanart.*
-    if (!found) {
-      Pattern pattern = Pattern.compile("(?i).*-fanart\\..{2,4}");
-      File[] files = new File(path).listFiles();
-      for (File file : files) {
-        Matcher matcher = pattern.matcher(file.getName());
-        if (matcher.matches()) {
-          setFanart(FilenameUtils.getName(file.getName()));
-          LOGGER.debug("found fanart " + file.getPath());
-          found = true;
-          break;
-        }
-      }
-    }
-
-    // we did not find a fanart, try to get it if an url exists
-    if (!found && StringUtils.isNotEmpty(fanartUrl)) {
-      writeImages(false, true);
-      found = true;
-      LOGGER.debug("got fanart url: " + fanartUrl + " ; try to download this");
-    }
-
-    if (!found) {
-      LOGGER.debug("Sorry, could not find fanart.");
-    }
-  }
-
-  /**
    * Find actor images.
    */
-  private void findActorImages() {
-    String actorsDirPath = getPath() + File.separator + MovieActor.ACTOR_DIR;
-
-    // second download missing images
-    for (MovieActor actor : getActors()) {
-      String actorName = actor.getName().replace(" ", "_");
-      File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
-      // set path if it is empty and an image exists
-      if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
-        actor.setThumbPath(MovieActor.ACTOR_DIR + File.separator + actorName + ".tbn");
+  public void findActorImages() {
+    if (Globals.settings.getMovieSettings().isWriteActorImages()) {
+      String actorsDirPath = getPath() + File.separator + MovieActor.ACTOR_DIR;
+      // second download missing images
+      for (MovieActor actor : getActors()) {
+        String actorName = actor.getName().replace(" ", "_");
+        File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
+        // set path if it is empty and an image exists
+        if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
+          actor.setThumbPath(MovieActor.ACTOR_DIR + File.separator + actorName + ".tbn");
+        }
       }
     }
   }
@@ -865,6 +659,7 @@ public class Movie extends MediaEntity {
    */
   @Override
   public String getFanart() {
+    // getMediaFiles(MediaFileType.FANART).get(0);
     if (!StringUtils.isEmpty(fanart)) {
       return path + File.separator + fanart;
     }
@@ -921,6 +716,7 @@ public class Movie extends MediaEntity {
    */
   @Override
   public String getPoster() {
+    // getMediaFiles(MediaFileType.POSTER).get(0);
     if (!StringUtils.isEmpty(poster)) {
       return path + File.separator + poster;
     }
@@ -996,83 +792,6 @@ public class Movie extends MediaEntity {
     }
 
     return false;
-  }
-
-  /**
-   * Parses the nfo.
-   * 
-   * @param path
-   *          the path
-   * @param videoFiles
-   *          the video files
-   * @return the movie
-   */
-  public static Movie parseNFO(String path, File[] videoFiles) {
-    LOGGER.debug("try to find a nfo for " + path);
-    // check if there are any NFOs in that directory
-    FilenameFilter filter = new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        // do not start with .
-        if (name.toLowerCase().startsWith("."))
-          return false;
-
-        // check if filetype is in our settings
-        if (name.toLowerCase().endsWith("nfo")) {
-          return true;
-        }
-
-        return false;
-      }
-    };
-
-    Movie movie = null;
-
-    File directory = new File(path);
-    File[] nfoFiles = directory.listFiles(filter);
-    for (File file : nfoFiles) {
-      LOGGER.debug("parsing nfo" + file.getPath());
-      switch (Globals.settings.getMovieSettings().getMovieConnector()) {
-        case XBMC:
-          movie = MovieToXbmcNfoConnector.getData(file.getPath());
-          break;
-
-        case MP:
-          movie = MovieToMpNfoConnector.getData(file.getPath());
-          break;
-      }
-
-      // no known NFO format? try to find a imdb number in it... (if <100kb ;)
-      if (movie == null) {
-        if (FileUtils.sizeOf(file) < 100000) {
-          try {
-            String imdb = FileUtils.readFileToString(file);
-            imdb = StrgUtils.substr(imdb, ".*(tt\\d{7}).*");
-            if (!imdb.isEmpty()) {
-              LOGGER.debug("Found IMDB id: " + imdb);
-              movie = new Movie();
-              movie.setImdbId(imdb);
-              movie.setTitle(ParserUtils.detectCleanMoviename(directory.getName()));
-            }
-          }
-          catch (IOException e) {
-            LOGGER.warn("couldn't read NFO " + file.getName());
-          }
-        }
-      }
-
-      if (movie != null) {
-        movie.setPath(path);
-        movie.addToFiles(videoFiles);
-        movie.findImages();
-        movie.addLocalTrailers();
-        movie.addLocalSubtitles();
-        break;
-      }
-
-      LOGGER.debug("did not find movie informations in nfo");
-    }
-
-    return movie;
   }
 
   /**

@@ -277,6 +277,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
         movie.setDataSource(dataSource);
         movie.setDateAdded(new Date());
+        movie.findActorImages();
         LOGGER.debug("store movie into DB " + movieDir.getName());
         movie.saveToDb();
         if (movie.getMovieSet() != null) {
