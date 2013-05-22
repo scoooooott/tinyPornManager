@@ -72,6 +72,7 @@ import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowBatchEditorDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEpisodeEditorDialog;
@@ -131,16 +132,19 @@ public class TvShowPanel extends JPanel {
   private final Action                actionScrape2             = new SingleScrapeAction(true);
 
   /** The action edit. */
-  private final Action                actionEdit                = new RemoveAction(false);
+  private final Action                actionEdit                = new EditAction(false);
 
   /** The action edit2. */
-  private final Action                actionEdit2               = new RemoveAction(true);
+  private final Action                actionEdit2               = new EditAction(true);
 
   /** The action remove2. */
   private final Action                actionRemove2             = new RemoveAction(true);
 
   /** The action change season poster. */
   private final Action                actionChangeSeasonPoster2 = new ChangeSeasonPosterAction(true);
+
+  /** The action batch edit. */
+  private final Action                actionBatchEdit           = new BatchEditAction();
 
   /** The width. */
   private int                         width                     = 0;
@@ -398,6 +402,7 @@ public class TvShowPanel extends JPanel {
     JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit"));
     menuEdit.add(actionEdit2);
     menuEdit.add(actionChangeSeasonPoster2);
+    menu.add(actionBatchEdit);
     menu.add(menuEdit);
 
     // menu.add(actionScrapeSelected);
@@ -405,7 +410,7 @@ public class TvShowPanel extends JPanel {
     // menu.add(actionScrapeMetadataSelected);
     // menu.addSeparator();
     // menu.add(actionEditMovie2);
-    // menu.add(actionBatchEdit);
+
     // menu.add(actionRename2);
     // menu.add(actionMediaInformation2);
     // menu.add(actionExport);
@@ -420,6 +425,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionEdit2);
     popupMenu.add(actionChangeSeasonPoster2);
+    popupMenu.add(actionBatchEdit);
     // popupMenu.add(actionBatchEdit);
     // popupMenu.add(actionRename2);
     // popupMenu.add(actionMediaInformation2);
@@ -706,6 +712,41 @@ public class TvShowPanel extends JPanel {
           }
         }
       }
+    }
+  }
+
+  private class BatchEditAction extends AbstractAction {
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1193886444149690516L;
+
+    /**
+     * Instantiates a new batch edit action.
+     */
+    public BatchEditAction() {
+      putValue(NAME, BUNDLE.getString("tvshow.bulkedit")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.bulkedit.desc")); //$NON-NLS-1$
+    }
+
+    public void actionPerformed(ActionEvent arg0) {
+      List<Object> selectedObjects = getSelectedObjects();
+      List<TvShow> selectedTvShows = new ArrayList<TvShow>();
+      List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+
+      for (Object obj : selectedObjects) {
+        // display tv show editor
+        if (obj instanceof TvShow) {
+          TvShow tvShow = (TvShow) obj;
+          selectedTvShows.add(tvShow);
+        }
+        // display tv episode editor
+        if (obj instanceof TvShowEpisode) {
+          TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
+          selectedEpisodes.add(tvShowEpisode);
+        }
+      }
+
+      TvShowBatchEditorDialog dialog = new TvShowBatchEditorDialog(selectedTvShows, selectedEpisodes);
+      dialog.setVisible(true);
     }
   }
 

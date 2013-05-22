@@ -127,13 +127,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private class FindTvShowTask implements Callable<Object> {
 
     /** The subdir. */
-    private File       subdir     = null;
+    private File   subdir     = null;
 
     /** The datasource. */
-    private String     datasource = "";
-
-    /** The tv show list. */
-    private TvShowList tvShowList = TvShowList.getInstance();
+    private String datasource = "";
 
     /**
      * Instantiates a new find tv show task.

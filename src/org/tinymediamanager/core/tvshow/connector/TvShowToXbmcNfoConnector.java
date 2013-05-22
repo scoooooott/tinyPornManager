@@ -144,13 +144,17 @@ public class TvShowToXbmcNfoConnector {
     }
 
     // set data
-    xbmc.setId(tvShow.getId("tvdb").toString());
+    if (tvShow.getId("tvdb") != null) {
+      xbmc.setId(tvShow.getId("tvdb").toString());
+    }
     xbmc.setTitle(tvShow.getTitle());
     xbmc.setRating(tvShow.getRating());
     xbmc.setVotes(tvShow.getVotes());
     xbmc.setPlot(tvShow.getPlot());
     xbmc.setYear(tvShow.getYear());
-    xbmc.setMpaa(tvShow.getCertification().getName());
+    if (tvShow.getCertification() != null) {
+      xbmc.setMpaa(tvShow.getCertification().getName());
+    }
     xbmc.setPremiered(tvShow.getFirstAiredFormatted());
     xbmc.setStudio(tvShow.getStudio());
     xbmc.setStatus(tvShow.getStatus());
