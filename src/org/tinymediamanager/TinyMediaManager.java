@@ -79,36 +79,26 @@ public class TinyMediaManager {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
-          if (!Globals.settings.isCurrentVersion()) {
-            Globals.settings.writeDefaultSettings();
-            JOptionPane.showMessageDialog(null, "The config.xml format changed in this update.\nPlease check your settings!");
-          }
+          Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
+          Thread.currentThread().setName("main");
+
+          Toolkit tk = Toolkit.getDefaultToolkit();
+          tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
+          setLookAndFeel();
+          doStartupTasks();
 
           // after 5 secs of beeing idle, the threads are removed till 0; see Globals
           Globals.executor.allowCoreThreadTimeOut(true);
 
-          Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
-          Thread.currentThread().setName("main");
-
           // suppress logging messages from betterbeansbinding
           org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(Level.SEVERE);
 
-          Toolkit tk = Toolkit.getDefaultToolkit();
-          tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
-
-          // set look and feel
-          setLookAndFeel();
-
-          // check old version
-          File file = new File("lib/beansbinding-1.2.1.jar");
-          if (file.exists()) {
-            JOptionPane.showMessageDialog(null, "Update from Alpha is not supported. Please download the actual version");
-            return;
+          // upgrade check
+          if (!Globals.settings.isCurrentVersion()) {
+            JOptionPane.showMessageDialog(null, "The configuration format changed in this update.\nPlease check your settings!");
+            doUpgradeTasks(Globals.settings.getVersion()); // do the upgrade tasks for the old version
+            Globals.settings.writeDefaultSettings(); // write current default
           }
-
-          doStartupTasks();
-
-          doUpgradeTasks();
 
           // init splash
           SplashScreen splash = SplashScreen.getSplashScreen();
@@ -126,7 +116,6 @@ public class TinyMediaManager {
           else {
             LOGGER.debug("no splash found");
           }
-          long timeStart = System.currentTimeMillis();
 
           // update check //////////////////////////////////////////////
           if (g2 != null) {
@@ -226,15 +215,6 @@ public class TinyMediaManager {
             updateProgress(g2, "loading ui", 90);
             splash.update();
           }
-          long timeEnd = System.currentTimeMillis();
-          if ((timeEnd - timeStart) > 3000) {
-            try {
-              Thread.sleep(3000 - (timeEnd - timeStart));
-            }
-            catch (Exception e) {
-              LOGGER.warn(e.getMessage());
-            }
-          }
           MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
 
           // finished ////////////////////////////////////////////////////
@@ -318,26 +298,31 @@ public class TinyMediaManager {
       /**
        * does upgrade tasks, such as deleting old libs
        */
-      private void doUpgradeTasks() {
-        File file = new File("lib/jackson-core-lgpl.jar");
-        if (file.exists()) {
-          FileUtils.deleteQuietly(file);
+      private void doUpgradeTasks(String version) {
+
+        if (version.isEmpty()) {
+          // upgrade from alpha/beta to "TV Show" 2.0 format
+          // happens only once
+          JOptionPane
+              .showMessageDialog(null,
+                  "And since you are upgrading to a complete new version, we need to cleanup/delete the complete database this time.\nWe're sorry for that.");
+          FileUtils.deleteQuietly(new File("tmm.odb"));
+
+          // upgrade from alpha - delete unneeded files
+          FileUtils.deleteQuietly(new File("lib/jackson-core-lgpl.jar"));
+          FileUtils.deleteQuietly(new File("lib/jackson-core-lgpl.jarv"));
+          FileUtils.deleteQuietly(new File("lib/jackson-mapper-lgpl.jar"));
+          FileUtils.deleteQuietly(new File("lib/jackson-mapper-lgpl.jarv"));
+
+          // check really old alpha version
+          FileUtils.deleteQuietly(new File("lib/beansbinding-1.2.1.jar"));
         }
-        file = new File("lib/jackson-core-lgpl.jarv");
-        if (file.exists()) {
-          FileUtils.deleteQuietly(file);
-        }
-        file = new File("lib/jackson-mapper-lgpl.jar");
-        if (file.exists()) {
-          FileUtils.deleteQuietly(file);
-        }
-        file = new File("lib/jackson-mapper-lgpl.jarv");
-        if (file.exists()) {
-          FileUtils.deleteQuietly(file);
+        else if (version.equals("2.0")) {
+          // do something to upgrade to 2.1/3.0
         }
 
         // self updater
-        file = new File("getdown-new.jar");
+        File file = new File("getdown-new.jar");
         if (file.exists() && file.length() > 100000) {
           File cur = new File("getdown.jar");
           if (file.length() != cur.length() || !cur.exists()) {
