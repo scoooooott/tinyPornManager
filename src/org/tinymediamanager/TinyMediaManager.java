@@ -82,13 +82,13 @@ public class TinyMediaManager {
           Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
           Thread.currentThread().setName("main");
 
+          // after 5 secs of beeing idle, the threads are removed till 0; see Globals
+          Globals.executor.allowCoreThreadTimeOut(true);
+
           Toolkit tk = Toolkit.getDefaultToolkit();
           tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
           setLookAndFeel();
           doStartupTasks();
-
-          // after 5 secs of beeing idle, the threads are removed till 0; see Globals
-          Globals.executor.allowCoreThreadTimeOut(true);
 
           // suppress logging messages from betterbeansbinding
           org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(Level.SEVERE);
