@@ -320,7 +320,12 @@ public class TinyMediaManager {
         else if (version.equals("2.0")) {
           // do something to upgrade to 2.1/3.0
         }
+      }
 
+      /**
+       * Does some tasks at startup
+       */
+      private void doStartupTasks() {
         // self updater
         File file = new File("getdown-new.jar");
         if (file.exists() && file.length() > 100000) {
@@ -334,12 +339,7 @@ public class TinyMediaManager {
             }
           }
         }
-      }
 
-      /**
-       * Does some tasks at startup
-       */
-      private void doStartupTasks() {
         // check if a .desktop file exists
         if (Platform.isLinux()) {
           File desktop = new File("tinyMediaManager.desktop");
