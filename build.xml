@@ -168,6 +168,7 @@
         </copy>
         <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.exe" />
         <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
+        <copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
 
         <!-- finally create checksums -->
         <taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" 

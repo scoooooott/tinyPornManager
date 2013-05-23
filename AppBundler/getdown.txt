@@ -14,8 +14,11 @@ ui.status_text = FFFFFF
 
 # Application jar files, on classpath
 code = tmm.jar
+code = getdown-new.jar
 code = lib/asm.jar
-code = lib/beansbinding.jar
+code = lib/betterbeansbinding-core.jar
+code = lib/betterbeansbinding-el.jar
+code = lib/betterbeansbinding-swingbinding.jar
 code = lib/commons-codec.jar
 code = lib/commons-io.jar
 code = lib/commons-lang3.jar
