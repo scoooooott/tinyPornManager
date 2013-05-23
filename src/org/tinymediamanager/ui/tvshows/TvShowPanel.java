@@ -37,6 +37,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -62,7 +63,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;
@@ -76,6 +79,7 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowBatchEditorDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEpisodeEditorDialog;
+import org.tinymediamanager.ui.tvshows.dialogs.TvShowScrapeMetadataDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -130,6 +134,9 @@ public class TvShowPanel extends JPanel {
 
   /** The action scrape2. */
   private final Action                actionScrape2             = new SingleScrapeAction(true);
+
+  /** The action scrape selected movies. */
+  private final Action                actionScrapeSelected      = new SelectedScrapeAction();
 
   /** The action edit. */
   private final Action                actionEdit                = new EditAction(false);
@@ -219,14 +226,14 @@ public class TvShowPanel extends JPanel {
     });
 
     // TODO create dropdown for split button
-    // JPopupMenu popup = new JPopupMenu("popup");
-    // JMenuItem item = new JMenuItem(actionScrape2);
-    // popup.add(item);
+    JPopupMenu popup = new JPopupMenu("popup");
+    JMenuItem item = new JMenuItem(actionScrape2);
+    popup.add(item);
     // item = new JMenuItem(actionScrapeUnscraped);
     // popup.add(item);
-    // item = new JMenuItem(actionScrapeSelected);
-    // popup.add(item);
-    // buttonScrape.setPopupMenu(popup);
+    item = new JMenuItem(actionScrapeSelected);
+    popup.add(item);
+    buttonScrape.setPopupMenu(popup);
     toolBar.add(buttonScrape);
     toolBar.add(actionEdit);
 
@@ -397,6 +404,7 @@ public class TvShowPanel extends JPanel {
 
     JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape"));
     menuScrape.add(actionScrape2);
+    menuScrape.add(actionScrapeSelected);
     menu.add(menuScrape);
 
     JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit"));
@@ -405,7 +413,6 @@ public class TvShowPanel extends JPanel {
     menu.add(actionBatchEdit);
     menu.add(menuEdit);
 
-    // menu.add(actionScrapeSelected);
     // menu.add(actionScrapeUnscraped);
     // menu.add(actionScrapeMetadataSelected);
     // menu.addSeparator();
@@ -420,7 +427,7 @@ public class TvShowPanel extends JPanel {
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
     popupMenu.add(actionScrape2);
-    // popupMenu.add(actionScrapeSelected);
+    popupMenu.add(actionScrapeSelected);
     // popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.addSeparator();
     popupMenu.add(actionEdit2);
@@ -746,7 +753,49 @@ public class TvShowPanel extends JPanel {
       }
 
       TvShowBatchEditorDialog dialog = new TvShowBatchEditorDialog(selectedTvShows, selectedEpisodes);
+      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
       dialog.setVisible(true);
+    }
+  }
+
+  private class SelectedScrapeAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 699165862194137592L;
+
+    /**
+     * Instantiates a new UnscrapedScrapeAction.
+     */
+    public SelectedScrapeAction() {
+      putValue(NAME, BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected.force.desc")); //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      List<TvShow> selectedTvShows = getSelectedTvShows();
+
+      if (selectedTvShows.size() > 0) {
+        // scrapeTask = new ScrapeTask(selectedMovies);
+        TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
+        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        dialog.setVisible(true);
+        // get options from dialog
+        TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeConfig();
+        // do we want to scrape?
+        if (dialog.shouldStartScrape()) {
+          // scrape
+          TmmSwingWorker scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
+          if (!MainWindow.executeMainTask(scrapeTask)) {
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
+          }
+        }
+        dialog.dispose();
+      }
     }
   }
 

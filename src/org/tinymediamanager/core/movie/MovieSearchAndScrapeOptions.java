@@ -21,7 +21,7 @@ import java.util.List;
 import org.tinymediamanager.Globals;
 
 /**
- * The Class MovieSearchAndScrapeConfig.
+ * The Class MovieSearchAndScrapeOptions.
  * 
  * @author Manuel Laggner
  */

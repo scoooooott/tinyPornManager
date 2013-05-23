@@ -30,8 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieArtworkScrapers;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -49,7 +47,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class MovieScrapeMetadata.
+ * The Class MovieScrapeMetadataDialog.
  * 
  * @author Manuel Laggner
  */
@@ -60,9 +58,6 @@ public class MovieScrapeMetadataDialog extends JDialog {
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID           = 3826984454317979241L;
-
-  /** The Constant LOGGER. */
-  private static final Logger         LOGGER                     = LoggerFactory.getLogger(MovieScrapeMetadataDialog.class);
 
   /** The movie search and scrape config. */
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();

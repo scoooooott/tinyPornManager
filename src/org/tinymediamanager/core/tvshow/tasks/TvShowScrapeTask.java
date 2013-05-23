@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie.tasks;
+package org.tinymediamanager.core.tvshow.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,58 +23,57 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
-import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
-import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
- * The Class MovieScrapeTask.
+ * The Class TvShowScrapeTask.
  * 
  * @author Manuel Laggner
  */
-public class MovieScrapeTask extends TmmSwingWorker {
+public class TvShowScrapeTask extends TmmSwingWorker {
 
   /** The Constant LOGGER. */
-  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
+  private final static Logger          LOGGER = LoggerFactory.getLogger(TvShowScrapeTask.class);
 
-  /** The movies to scrape. */
-  private List<Movie>                 moviesToScrape;
+  /** The tv shows to scrape. */
+  private List<TvShow>                 tvShowsToScrape;
 
   /** The do search. */
-  private boolean                     doSearch;
+  private boolean                      doSearch;
 
   /** The options. */
-  private MovieSearchAndScrapeOptions options;
+  private TvShowSearchAndScrapeOptions options;
 
-  /** The movie count. */
-  private int                         movieCount;
+  /** The tv show count. */
+  private int                          tvShowCount;
 
   /**
-   * Instantiates a new movie scrape task.
+   * Instantiates a new tv show scrape task.
    * 
-   * @param moviesToScrape
-   *          the movies to scrape
+   * @param tvShowsToScrape
+   *          the tv shows to scrape
    * @param doSearch
    *          the do search
    * @param options
    *          the options
    */
-  public MovieScrapeTask(List<Movie> moviesToScrape, boolean doSearch, MovieSearchAndScrapeOptions options) {
-    this.moviesToScrape = moviesToScrape;
+  public TvShowScrapeTask(List<TvShow> tvShowsToScrape, boolean doSearch, TvShowSearchAndScrapeOptions options) {
+    this.tvShowsToScrape = tvShowsToScrape;
     this.doSearch = doSearch;
     this.options = options;
-    this.movieCount = moviesToScrape.size();
+    this.tvShowCount = tvShowsToScrape.size();
   }
 
   /*
@@ -84,18 +83,18 @@ public class MovieScrapeTask extends TmmSwingWorker {
    */
   @Override
   protected Void doInBackground() throws Exception {
-    startProgressBar("scraping movies", 0);
+    startProgressBar("scraping tv shows", 0);
 
     ExecutorService executor = Executors.newFixedThreadPool(3);
 
     // start 3 threads
     executor.execute(new Worker(this));
     // start second thread, if there are more than one movies to scrape
-    if (movieCount > 1) {
+    if (tvShowCount > 1) {
       executor.execute(new Worker(this));
     }
     // start third thread, if there are more than two movies to scrape
-    if (movieCount > 2) {
+    if (tvShowCount > 2) {
       executor.execute(new Worker(this));
     }
 
@@ -113,17 +112,17 @@ public class MovieScrapeTask extends TmmSwingWorker {
   }
 
   /**
-   * Gets the next movie.
+   * Gets the next tv show.
    * 
-   * @return the next movie
+   * @return the next tv show
    */
-  private synchronized Movie getNextMovie() {
+  private synchronized TvShow getNextTvShow() {
     // get next movie to scrape
-    if (moviesToScrape.size() > 0) {
-      Movie movie = moviesToScrape.get(0);
-      moviesToScrape.remove(movie);
-      startProgressBar("scraping movies", 100 * (movieCount - moviesToScrape.size()) / movieCount);
-      return movie;
+    if (tvShowsToScrape.size() > 0) {
+      TvShow tvShow = tvShowsToScrape.get(0);
+      tvShowsToScrape.remove(tvShow);
+      startProgressBar("scraping tv shows", 100 * (tvShowCount - tvShowsToScrape.size()) / tvShowCount);
+      return tvShow;
     }
 
     return null;
@@ -134,7 +133,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
    */
   public void cancel() {
     cancel(false);
-    moviesToScrape.clear();
+    tvShowsToScrape.clear();
   }
 
   /*
@@ -179,11 +178,11 @@ public class MovieScrapeTask extends TmmSwingWorker {
    */
   private class Worker implements Runnable {
 
-    /** The movie list. */
-    private MovieList       movieList;
+    /** The tv show list. */
+    private TvShowList       tvShowList;
 
     /** The scrape task. */
-    private MovieScrapeTask scrapeTask;
+    private TvShowScrapeTask scrapeTask;
 
     /**
      * Instantiates a new worker.
@@ -191,7 +190,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
      * @param scrapeTask
      *          the scrape task
      */
-    public Worker(MovieScrapeTask scrapeTask) {
+    public Worker(TvShowScrapeTask scrapeTask) {
       this.scrapeTask = scrapeTask;
     }
 
@@ -203,26 +202,26 @@ public class MovieScrapeTask extends TmmSwingWorker {
     @Override
     public void run() {
       try {
-        movieList = MovieList.getInstance();
+        tvShowList = TvShowList.getInstance();
         // set up scrapers
-        MovieScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
-        IMediaMetadataProvider mediaMetadataProvider = movieList.getMetadataProvider(options.getMetadataScraper());
-        List<IMediaArtworkProvider> artworkProviders = movieList.getArtworkProviders(options.getArtworkScrapers());
-        List<IMediaTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
+        TvShowScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
+        IMediaMetadataProvider mediaMetadataProvider = tvShowList.getMetadataProvider(options.getMetadataScraper());
+        List<IMediaArtworkProvider> artworkProviders = tvShowList.getArtworkProviders(options.getArtworkScrapers());
+        // List<IMediaTrailerProvider> trailerProviders = tvShowList.getTrailerProviders(options.getTrailerScrapers());
 
         // do work
         while (true) {
-          Movie movie = scrapeTask.getNextMovie();
-          if (movie == null) {
+          TvShow tvShow = scrapeTask.getNextTvShow();
+          if (tvShow == null) {
             break;
           }
 
-          // scrape movie
+          // scrape tv show
 
-          // search movie
+          // search for tv show
           MediaSearchResult result1 = null;
           if (doSearch) {
-            List<MediaSearchResult> results = movieList.searchMovie(movie.getTitle(), movie.getImdbId(), mediaMetadataProvider);
+            List<MediaSearchResult> results = tvShowList.searchTvShow(tvShow.getTitle(), mediaMetadataProvider);
             if (results != null && !results.isEmpty()) {
               result1 = results.get(0);
               // check if there is an other result with 100% score
@@ -236,16 +235,17 @@ public class MovieScrapeTask extends TmmSwingWorker {
             }
           }
 
-          // get metadata, artwork and trailers
+          // get metadata and artwork
           if ((doSearch && result1 != null) || !doSearch) {
             try {
               MediaScrapeOptions options = new MediaScrapeOptions();
+              options.setType(MediaType.TV_SHOW);
               options.setResult(result1);
 
               // we didn't do a search - pass imdbid and tmdbid from movie
               // object
               if (!doSearch) {
-                for (Entry<String, Object> entry : movie.getIds().entrySet()) {
+                for (Entry<String, Object> entry : tvShow.getIds().entrySet()) {
                   options.setId(entry.getKey(), entry.getValue().toString());
                 }
               }
@@ -254,26 +254,31 @@ public class MovieScrapeTask extends TmmSwingWorker {
               MediaMetadata md = null;
 
               if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
-                  || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
-                  || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
+                  || scraperMetadataConfig.isAired() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
+                  || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isStatus() || scraperMetadataConfig.isTitle()
                   || scraperMetadataConfig.isYear()) {
                 md = mediaMetadataProvider.getMetadata(options);
-                movie.setMetadata(md);
+                tvShow.setMetadata(md);
+              }
+
+              // scrape episodes
+              if (scraperMetadataConfig.isEpisodes()) {
+                tvShow.scrapeAllEpisodes();
               }
 
               // scrape artwork if wanted
               if (scraperMetadataConfig.isArtwork()) {
-                movie.setArtwork(getArtwork(movie, md, artworkProviders));
+                tvShow.setArtwork(getArtwork(tvShow, md, artworkProviders));
               }
 
-              // scrape trailer if wanted
-              if (scraperMetadataConfig.isTrailer()) {
-                movie.setTrailers(getTrailers(movie, md, trailerProviders));
-              }
-              movie.writeNFO();
+              // // scrape trailer if wanted
+              // if (scraperMetadataConfig.isTrailer()) {
+              // tvShow.setTrailers(getTrailers(tvShow, md, trailerProviders));
+              // }
+              tvShow.writeNFO();
             }
             catch (Exception e) {
-              LOGGER.error("movie.setMetadata", e);
+              LOGGER.error("tvShow.setMetadata", e);
             }
           }
         }
@@ -286,22 +291,19 @@ public class MovieScrapeTask extends TmmSwingWorker {
     /**
      * Gets the artwork.
      * 
-     * @param movie
-     *          the movie
      * @param metadata
      *          the metadata
-     * @param artworkProviders
-     *          the artwork providers
      * @return the artwork
      */
-    public List<MediaArtwork> getArtwork(Movie movie, MediaMetadata metadata, List<IMediaArtworkProvider> artworkProviders) {
+    public List<MediaArtwork> getArtwork(TvShow tvShow, MediaMetadata metadata, List<IMediaArtworkProvider> artworkProviders) {
       List<MediaArtwork> artwork = null;
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
-      options.setImdbId(movie.getImdbId());
-      options.setTmdbId(movie.getTmdbId());
+      for (Entry<String, Object> entry : tvShow.getIds().entrySet()) {
+        options.setId(entry.getKey(), entry.getValue().toString());
+      }
 
       // scrape providers till one artwork has been found
       for (IMediaArtworkProvider artworkProvider : artworkProviders) {
@@ -326,37 +328,33 @@ public class MovieScrapeTask extends TmmSwingWorker {
       return artwork;
     }
 
-    /**
-     * Gets the trailers.
-     * 
-     * @param movie
-     *          the movie
-     * @param metadata
-     *          the metadata
-     * @param trailerProviders
-     *          the trailer providers
-     * @return the trailers
-     */
-    private List<MediaTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<IMediaTrailerProvider> trailerProviders) {
-      List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
-
-      MediaScrapeOptions options = new MediaScrapeOptions();
-      options.setMetadata(metadata);
-      options.setImdbId(movie.getImdbId());
-      options.setTmdbId(movie.getTmdbId());
-
-      // scrape trailers
-      for (IMediaTrailerProvider trailerProvider : trailerProviders) {
-        try {
-          List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
-          trailers.addAll(foundTrailers);
-        }
-        catch (Exception e) {
-          LOGGER.error("getTrailers", e);
-        }
-      }
-
-      return trailers;
-    }
+    // /**
+    // * Gets the trailers.
+    // *
+    // * @param metadata
+    // * the metadata
+    // * @return the trailers
+    // */
+    // private List<MediaTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<IMediaTrailerProvider> trailerProviders) {
+    // List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+    //
+    // MediaScrapeOptions options = new MediaScrapeOptions();
+    // options.setMetadata(metadata);
+    // options.setImdbId(movie.getImdbId());
+    // options.setTmdbId(movie.getTmdbId());
+    //
+    // // scrape trailers
+    // for (IMediaTrailerProvider trailerProvider : trailerProviders) {
+    // try {
+    // List<MediaTrailer> foundTrailers = trailerProvider.getTrailers(options);
+    // trailers.addAll(foundTrailers);
+    // }
+    // catch (Exception e) {
+    // LOGGER.error("getTrailers", e);
+    // }
+    // }
+    //
+    // return trailers;
+    // }
   }
 }
