@@ -45,7 +45,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 /**
  * The Class UpdateDataSourcesTask.
  * 
- * @author Manuel Laggner
+ * @author Myron Boyle
  */
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
@@ -153,7 +153,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   }
 
   /**
-   * parses the complete movie directory, andd adds a movie with all found MediaFiles
+   * parses the complete movie directory, and adds a movie with all found MediaFiles
    * 
    * @param movieDir
    * @param dataSource
@@ -277,7 +277,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
         movie.setDataSource(dataSource);
         movie.setDateAdded(new Date());
-        movie.findActorImages();
+        movie.findActorImages(); // TODO: find as MediaFIles
         LOGGER.debug("store movie into DB " + movieDir.getName());
         movie.saveToDb();
         if (movie.getMovieSet() != null) {
@@ -353,7 +353,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           // -> assume parent as movie dir"
           moviedir = moviedir.getParentFile();
           ar.add(moviedir);
-
         }
         else {
           // -> assume current dir as movie dir"

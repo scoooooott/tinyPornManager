@@ -249,10 +249,17 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Gets the settings file version
+   * is our settings file up2date?
    */
   public boolean isCurrentVersion() {
     return SETTINGS_VERSION.equals(version);
+  }
+
+  /**
+   * gets the version of out settings file
+   */
+  public String getVersion() {
+    return version;
   }
 
   /**
