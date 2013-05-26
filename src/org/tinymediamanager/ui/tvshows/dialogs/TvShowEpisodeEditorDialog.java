@@ -125,8 +125,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   /** The chckbx watched. */
   private JCheckBox                   chckbxWatched;
 
-  /** The lbl fanart. */
-  private ImageLabel                  lblFanart;
+  /** The lbl thumb. */
+  private ImageLabel                  lblThumb;
 
   /** The ta plot. */
   private JTextArea                   taPlot;
@@ -232,8 +232,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       taPlot.setWrapStyleWord(true);
       scrollPane.setViewportView(taPlot);
 
-      lblFanart = new ImageLabel();
-      contentPanel.add(lblFanart, "12, 6, 1, 11");
+      lblThumb = new ImageLabel();
+      contentPanel.add(lblThumb, "12, 6, 1, 11");
 
       JLabel lblDirector = new JLabel("Director");
       contentPanel.add(lblDirector, "2, 14, right, default");
@@ -341,7 +341,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       else {
         spFirstAired.setValue(new Date(0));
       }
-      lblFanart.setImagePath(episodeToEdit.getFanart());
+      lblThumb.setImagePath(episodeToEdit.getThumb());
       spRating.setModel(new SpinnerNumberModel(episodeToEdit.getRating(), 0.0, 10.0, 0.1));
       chckbxWatched.setSelected(episodeToEdit.isWatched());
       taPlot.setText(episodeToEdit.getPlot());
@@ -408,9 +408,9 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       episodeToEdit.setWriter(tfWriter.getText());
       episodeToEdit.setActors(cast);
 
-      if (!StringUtils.isEmpty(lblFanart.getImageUrl()) && !lblFanart.getImageUrl().equals(episodeToEdit.getFanartUrl())) {
-        episodeToEdit.setFanartUrl(lblFanart.getImageUrl());
-        episodeToEdit.writeFanartImage();
+      if (StringUtils.isNotEmpty(lblThumb.getImageUrl()) && !lblThumb.getImageUrl().equals(episodeToEdit.getThumbUrl())) {
+        episodeToEdit.setThumbUrl(lblThumb.getImageUrl());
+        episodeToEdit.writeThumbImage();
       }
 
       episodeToEdit.saveToDb();
@@ -481,8 +481,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
           tfTitle.setText(metadata.getTitle());
           taPlot.setText(metadata.getPlot());
           for (MediaArtwork ma : metadata.getFanart()) {
-            if (ma.getType() == MediaArtworkType.BACKGROUND) {
-              lblFanart.setImageUrl(ma.getDefaultUrl());
+            if (ma.getType() == MediaArtworkType.THUMB) {
+              lblThumb.setImageUrl(ma.getDefaultUrl());
               break;
             }
           }

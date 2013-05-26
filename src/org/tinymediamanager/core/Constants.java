@@ -118,6 +118,12 @@ public final class Constants {
   /** The Constant BANNER. */
   public final static String BANNER                = "banner";
 
+  /** The Constant THUMB_URL. */
+  public final static String THUMB_URL             = "thumbUrl";
+
+  /** The Constant THUMB. */
+  public final static String THUMB                 = "thumb";
+
   /** The Constant HAS_IMAGES. */
   public final static String HAS_IMAGES            = "hasImages";
 

@@ -28,14 +28,14 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
- * The Class MediaEntityImageFetcher.
+ * The Class MediaEntityImageFetcherTask.
  * 
  * @author Manuel Laggner
  */
-public class MediaEntityImageFetcher implements Runnable {
+public class MediaEntityImageFetcherTask implements Runnable {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityImageFetcher.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityImageFetcherTask.class);
 
   /** The entity. */
   private MediaEntity         entity;
@@ -66,7 +66,7 @@ public class MediaEntityImageFetcher implements Runnable {
    * @param firstImage
    *          the first image
    */
-  public MediaEntityImageFetcher(MediaEntity entity, String url, MediaArtworkType type, String filename, boolean firstImage) {
+  public MediaEntityImageFetcherTask(MediaEntity entity, String url, MediaArtworkType type, String filename, boolean firstImage) {
     this.entity = entity;
     this.url = url;
     this.type = type;
@@ -88,17 +88,22 @@ public class MediaEntityImageFetcher implements Runnable {
         switch (type) {
           case POSTER:
             oldFilename = entity.getPoster();
-            entity.setPoster("");
+            entity.clearPoster();
             break;
 
           case BACKGROUND:
             oldFilename = entity.getFanart();
-            entity.setFanart("");
+            entity.clearFanart();
             break;
 
           case BANNER:
             oldFilename = entity.getBanner();
-            entity.setBanner("");
+            entity.clearBanner();
+            break;
+
+          case THUMB:
+            oldFilename = entity.getThumb();
+            entity.clearThumb();
             break;
 
           default:
@@ -120,20 +125,25 @@ public class MediaEntityImageFetcher implements Runnable {
       // set the new image if its the first image
       if (firstImage) {
         LOGGER.debug("set " + type + " " + FilenameUtils.getName(filename));
-        ImageCache.invalidateCachedImage(filename);
+        ImageCache.invalidateCachedImage(entity.getPath() + File.separator + filename);
         switch (type) {
           case POSTER:
-            entity.setPoster(FilenameUtils.getName(filename));
+            entity.setPoster(new File(entity.getPath(), filename));
             entity.saveToDb();
             break;
 
           case BACKGROUND:
-            entity.setFanart(FilenameUtils.getName(filename));
+            entity.setFanart(new File(entity.getPath(), filename));
             entity.saveToDb();
             break;
 
           case BANNER:
-            entity.setBanner(FilenameUtils.getName(filename));
+            entity.setBanner(new File(entity.getPath(), filename));
+            entity.saveToDb();
+            break;
+
+          case THUMB:
+            entity.setThumb(new File(entity.getPath(), filename));
             entity.saveToDb();
             break;
 
@@ -149,17 +159,22 @@ public class MediaEntityImageFetcher implements Runnable {
       if (firstImage) {
         switch (type) {
           case POSTER:
-            entity.setPoster(oldFilename);
+            entity.setPoster(new File(oldFilename));
             entity.saveToDb();
             break;
 
           case BACKGROUND:
-            entity.setFanart(oldFilename);
+            entity.setFanart(new File(oldFilename));
             entity.saveToDb();
             break;
 
           case BANNER:
-            entity.setBanner(oldFilename);
+            entity.setBanner(new File(oldFilename));
+            entity.saveToDb();
+            break;
+
+          case THUMB:
+            entity.setThumb(new File(oldFilename));
             entity.saveToDb();
             break;
 

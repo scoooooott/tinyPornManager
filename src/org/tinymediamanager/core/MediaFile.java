@@ -19,6 +19,8 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
@@ -58,14 +60,26 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /** The Constant FILESIZE_IN_MB. */
   private static final String FILESIZE_IN_MB   = "filesizeInMegabytes";
 
+  /** The poster pattern. It's thread safe, so we make it static */
+  private static Pattern      posterPattern    = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
+
+  /** The fanart pattern. It's thread safe, so we make it static */
+  private static Pattern      fanartPattern    = Pattern.compile("(?i)(.*-fanart|fanart)[0-9]{0,2}\\..{2,4}");
+
+  /** The banner pattern. It's thread safe, so we make it static */
+  private static Pattern      bannerPattern    = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
+
+  /** The thumb pattern. It's thread safe, so we make it static */
+  private static Pattern      thumbPattern     = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
+
   /** The path. */
-  private String              path;
+  private String              path             = "";
 
   /** The filename. */
-  private String              filename;
+  private String              filename         = "";
 
   /** The filesize. */
-  private long                filesize;
+  private long                filesize         = 0;
 
   /** The video codec. */
   private String              videoCodec       = "";
@@ -97,13 +111,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /** duration, runtime in sec. */
   private int                 duration         = 0;
 
-  /** stacking information */
+  /** stacking information. */
   private int                 stacking         = 0;
 
   /** the MediaFile type. */
   private MediaFileType       type             = MediaFileType.UNKNOWN;
 
-  /** inline subtitles of mediafile */
+  /** inline subtitles of mediafile. */
   private ArrayList<String>   subtitles        = new ArrayList<String>();
 
   /** the mediainfo object. */
@@ -124,6 +138,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   /**
    * Instantiates a new media file.
+   * 
+   * @param f
+   *          the f
    */
   public MediaFile(File f) {
     this.path = f.getParent(); // just path w/o filename
@@ -138,18 +155,39 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (file.exists()) {
       setFilesize(FileUtils.sizeOf(file));
     }
-
   }
 
   /**
-   * tries to get the MediaFileType out of filename
+   * Instantiates a new media file.
+   * 
+   * @param f
+   *          the f
+   * @param type
+   *          the type
+   */
+  public MediaFile(File f, MediaFileType type) {
+    this.path = f.getParent(); // just path w/o filename
+    this.filename = f.getName();
+    this.file = f;
+    this.type = type;
+    this.stacking = Utils.getStackingNumber(f.getName());
+    if (this.stacking == 0) {
+      // try to parse from parent directory
+      this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
+    }
+    if (file.exists()) {
+      setFilesize(FileUtils.sizeOf(file));
+    }
+  }
+
+  /**
+   * tries to get the MediaFileType out of filename.
    * 
    * @return the MediaFileType
    */
   public MediaFileType parseType() {
     String ext = getExtension().toLowerCase();
     String name = getFilename().toLowerCase();
-    String base = FilenameUtils.getBaseName(name);
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase();
 
     if (name.contains("sample") || name.contains("trailer") || foldername.contains("sample")) {
@@ -161,16 +199,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (ext.equals("jpg") || ext.equals("png") || ext.equals("tbn")) {
-      if (name.contains("poster") || name.contains("cover") || base.equals("movie") || name.startsWith("folder")) {
-        return MediaFileType.POSTER;
-      }
-      if (name.contains("banner")) {
-        return MediaFileType.BANNER;
-      }
-      if (name.contains("fanart")) {
-        return MediaFileType.FANART;
-      }
-      return MediaFileType.GRAPHIC;
+      return parseImageType();
     }
 
     if (Globals.settings.getSubtitleFileType().contains("." + ext)) {
@@ -189,18 +218,56 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * is this a "packed" file? (zip, rar, whatsoever)
+   * Parses the image type.
+   * 
+   * @return the media file type
+   */
+  private MediaFileType parseImageType() {
+    String name = getFilename();
+
+    // *-poster.* or poster.* or folder.* or movie.*
+    Matcher matcher = posterPattern.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.POSTER;
+    }
+
+    // *-fanart.* or fanart.* or *-fanartXX.* or fanartXX.*
+    matcher = fanartPattern.matcher(name);
+    if (matcher.matches()) {
+      // decide between fanart and extrafanart
+      if (getPath().endsWith("extrafanart")) {
+        return MediaFileType.EXTRAFANART;
+      }
+      return MediaFileType.FANART;
+    }
+
+    // *-banner.* or banner.*
+    matcher = bannerPattern.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.BANNER;
+    }
+
+    // *-thumb.* or thumb.* or *-thumbXX.* or thumbXX.*
+    matcher = thumbPattern.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.THUMB;
+    }
+
+    return MediaFileType.GRAPHIC;
+  }
+
+  /**
+   * is this a "packed" file? (zip, rar, whatsoever).
    * 
    * @return true/false
    */
   public boolean isPacked() {
     String ext = getExtension().toLowerCase();
     return (ext.equals("zip") || ext.equals("rar") || ext.equals("7z") || ext.matches("r\\d+"));
-
   }
 
   /**
-   * Is this a graphic file?
+   * Is this a graphic file?.
    * 
    * @return true/false
    */
@@ -229,7 +296,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * if name/path changes, invalidate the file handle (if not null)
+   * Sets the file.
+   * 
+   * @param file
+   *          the new file
+   */
+  public void setFile(File file) {
+    this.file = file;
+    setFilename(file.getName());
+    setPath(file.getParent());
+  }
+
+  /**
+   * if name/path changes, invalidate the file handle (if not null).
    */
   private void invalidateFileHandle() {
     if (file != null) {
@@ -309,7 +388,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * Gets the "basename" (filename without extension)
+   * Gets the "basename" (filename without extension).
    * 
    * @return the basename
    */
@@ -349,32 +428,58 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return df.format(filesize / (1024.0 * 1024.0)) + " M";
   }
 
-  /** gets the MediaFile type */
+  /**
+   * gets the MediaFile type.
+   * 
+   * @return the type
+   */
   public MediaFileType getType() {
     return type;
   }
 
-  /** sets the MediaFile type */
+  /**
+   * sets the MediaFile type.
+   * 
+   * @param type
+   *          the new type
+   */
   public void setType(MediaFileType type) {
     this.type = type;
   }
 
-  /** gets the stacking information */
+  /**
+   * gets the stacking information.
+   * 
+   * @return the stacking
+   */
   public int getStacking() {
     return stacking;
   }
 
-  /** gets the stacking information */
+  /**
+   * gets the stacking information.
+   * 
+   * @param stacking
+   *          the new stacking
+   */
   public void setStacking(int stacking) {
     this.stacking = stacking;
   }
 
-  /** get parsed subtitles */
+  /**
+   * get parsed subtitles.
+   * 
+   * @return the subtitles
+   */
   public ArrayList<String> getSubtitles() {
     return subtitles;
   }
 
-  /** dies his mediafile has subtitles */
+  /**
+   * dies his mediafile has subtitles.
+   * 
+   * @return true, if successful
+   */
   public boolean hasSubtitles() {
     return (subtitles != null && subtitles.size() > 0);
   }
@@ -408,7 +513,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * Closes the connection to the mediainfo lib
+   * Closes the connection to the mediainfo lib.
    */
   private synchronized void closeMediaInfo() {
     if (mediaInfo != null) {
@@ -800,6 +905,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case POSTER:
       case BANNER:
       case FANART:
+      case THUMB:
+      case EXTRAFANART:
       case GRAPHIC:
         height = getMediaInfo(StreamKind.Image, 0, "Height");
         scanType = getMediaInfo(StreamKind.Image, 0, "ScanType");
@@ -979,6 +1086,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object mf2) {
     if ((mf2 != null) && (mf2 instanceof MediaFile)) {
@@ -987,6 +1099,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return false;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
   @Override
   public int compareTo(MediaFile mf2) {
     if (getType().ordinal() != mf2.getType().ordinal()) {

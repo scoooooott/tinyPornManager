@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
-import org.tinymediamanager.core.MediaEntityImageFetcher;
+import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
@@ -77,184 +77,92 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 public class TvShow extends MediaEntity {
 
   /** The Constant LOGGER. */
-  private static final Logger      LOGGER               = LoggerFactory.getLogger(TvShow.class);
+  private static final Logger      LOGGER             = LoggerFactory.getLogger(TvShow.class);
 
   /** The episodes. */
-  private List<TvShowEpisode>      episodes             = new ArrayList<TvShowEpisode>();
+  private List<TvShowEpisode>      episodes           = new ArrayList<TvShowEpisode>();
 
   /** The episodes observable. */
   @Transient
-  private List<TvShowEpisode>      episodesObservable   = ObservableCollections.observableList(episodes);
+  private List<TvShowEpisode>      episodesObservable = ObservableCollections.observableList(episodes);
 
   /** The seasons. */
   @Transient
-  private List<TvShowSeason>       seasons              = ObservableCollections.observableList(new ArrayList<TvShowSeason>());
+  private List<TvShowSeason>       seasons            = ObservableCollections.observableList(new ArrayList<TvShowSeason>());
 
   /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>        actors               = new ArrayList<TvShowActor>();
+  private List<TvShowActor>        actors             = new ArrayList<TvShowActor>();
 
   /** The actors observables. */
   @Transient
-  private List<TvShowActor>        actorsObservables    = ObservableCollections.observableList(actors);
+  private List<TvShowActor>        actorsObservables  = ObservableCollections.observableList(actors);
 
   /** The new genres based on an enum like class. */
-  private List<String>             genres               = new ArrayList<String>();
+  private List<String>             genres             = new ArrayList<String>();
 
   /** The genres2 for access. */
   @Transient
-  private List<MediaGenres>        genresForAccess      = new ArrayList<MediaGenres>();
+  private List<MediaGenres>        genresForAccess    = new ArrayList<MediaGenres>();
 
   /** The tags. */
-  private List<String>             tags                 = new ArrayList<String>();
+  private List<String>             tags               = new ArrayList<String>();
 
   /** The tags observable. */
   @Transient
-  private List<String>             tagsObservable       = ObservableCollections.observableList(tags);
+  private List<String>             tagsObservable     = ObservableCollections.observableList(tags);
 
   /** The trailer. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>       trailer              = new ArrayList<MediaTrailer>();
+  private List<MediaTrailer>       trailer            = new ArrayList<MediaTrailer>();
 
   /** The trailer observable. */
   @Transient
-  private List<MediaTrailer>       trailerObservable    = ObservableCollections.observableList(trailer);
-
-  /** The media files. */
-  @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaFile>          mediaFiles           = new ArrayList<MediaFile>();
-
-  /** The media files observable. */
-  @Transient
-  private List<MediaFile>          mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+  private List<MediaTrailer>       trailerObservable  = ObservableCollections.observableList(trailer);
 
   /** The certification. */
-  private Certification            certification        = Certification.NOT_RATED;
+  private Certification            certification      = Certification.NOT_RATED;
 
   /** The data source. */
-  private String                   dataSource           = "";
+  private String                   dataSource         = "";
 
   /** The nfo filename. */
-  private String                   nfoFilename          = "";
+  private String                   nfoFilename        = "";
 
   /** The director. */
-  private String                   director             = "";
+  private String                   director           = "";
 
   /** The writer. */
-  private String                   writer               = "";
+  private String                   writer             = "";
 
   /** The runtime. */
-  private int                      runtime              = 0;
+  private int                      runtime            = 0;
 
   /** The votes. */
-  private int                      votes                = 0;
+  private int                      votes              = 0;
 
   /** the first aired date. */
-  private Date                     firstAired           = null;
+  private Date                     firstAired         = null;
 
   /** The status. */
-  private String                   status               = "";
+  private String                   status             = "";
 
   /** The studio. */
-  private String                   studio               = "";
+  private String                   studio             = "";
 
   /** The watched. */
-  private boolean                  watched              = false;
+  private boolean                  watched            = false;
 
   /** The season poster url map. */
-  private HashMap<Integer, String> seasonPosterUrlMap   = new HashMap<Integer, String>();
+  private HashMap<Integer, String> seasonPosterUrlMap = new HashMap<Integer, String>();
 
   /** The season poster map. */
-  private HashMap<Integer, String> seasonPosterMap      = new HashMap<Integer, String>();
+  private HashMap<Integer, String> seasonPosterMap    = new HashMap<Integer, String>();
 
   /**
    * Instantiates a tv show. To initialize the propertychangesupport after loading
    */
   public TvShow() {
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#getFanart()
-   */
-  @Override
-  public String getFanart() {
-    if (!StringUtils.isEmpty(fanart)) {
-      return path + File.separator + fanart;
-    }
-    else {
-      return fanart;
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#getPoster()
-   */
-  @Override
-  public String getPoster() {
-    if (!StringUtils.isEmpty(poster)) {
-      return path + File.separator + poster;
-    }
-    else {
-      return poster;
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setPoster(java.lang.String)
-   */
-  @Override
-  public void setPoster(String newValue) {
-    String oldValue = this.poster;
-    this.poster = newValue;
-    firePropertyChange(POSTER, oldValue, newValue);
-    firePropertyChange(HAS_IMAGES, false, true);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setFanart(java.lang.String)
-   */
-  @Override
-  public void setFanart(String newValue) {
-    String oldValue = this.fanart;
-    this.fanart = newValue;
-    firePropertyChange(FANART, oldValue, newValue);
-    firePropertyChange(HAS_IMAGES, false, true);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#getBanner()
-   */
-  @Override
-  public String getBanner() {
-    if (!StringUtils.isEmpty(banner)) {
-      return path + File.separator + banner;
-    }
-    else {
-      return banner;
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setBanner(java.lang.String)
-   */
-  @Override
-  public void setBanner(String newValue) {
-    String oldValue = this.banner;
-    this.banner = newValue;
-    firePropertyChange(BANNER, oldValue, newValue);
-    firePropertyChange(HAS_IMAGES, false, true);
   }
 
   /**
@@ -335,6 +243,8 @@ public class TvShow extends MediaEntity {
    * Initialize after loading.
    */
   public void initializeAfterLoading() {
+    super.initializeAfterLoading();
+
     actorsObservables = ObservableCollections.observableList(actors);
     episodesObservable = ObservableCollections.observableList(episodes);
     tagsObservable = ObservableCollections.observableList(tags);
@@ -716,7 +626,7 @@ public class TvShow extends MediaEntity {
       // create correct filename
       String filename = "poster." + FilenameUtils.getExtension(getPosterUrl());
       // get image in thread
-      MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
+      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
       Globals.executor.execute(task);
     }
   }
@@ -730,7 +640,7 @@ public class TvShow extends MediaEntity {
       // create correct filename
       String filename = "fanart." + FilenameUtils.getExtension(getFanartUrl());
       // get image in thread
-      MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
+      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
       Globals.executor.execute(task);
     }
   }
@@ -744,7 +654,7 @@ public class TvShow extends MediaEntity {
       // create correct filename
       String filename = "banner." + FilenameUtils.getExtension(getBannerUrl());
       // get image in thread
-      MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getBannerUrl(), MediaArtworkType.BANNER, filename, firstImage);
+      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getBannerUrl(), MediaArtworkType.BANNER, filename, firstImage);
       Globals.executor.execute(task);
     }
   }
@@ -824,7 +734,7 @@ public class TvShow extends MediaEntity {
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!StringUtils.isEmpty(poster) && !StringUtils.isEmpty(fanart)) {
+    if (!StringUtils.isEmpty(getPoster()) && !StringUtils.isEmpty(getFanart())) {
       return true;
     }
     return false;
@@ -1299,7 +1209,7 @@ public class TvShow extends MediaEntity {
       tvShow = TvShowToXbmcNfoConnector.getData(file.getPath());
       if (tvShow != null) {
         tvShow.setPath(tvShowDirectory.getPath());
-        tvShow.findImages();
+        tvShow.addToMediaFiles(new MediaFile(file, MediaFileType.NFO));
         break;
       }
 
@@ -1336,7 +1246,7 @@ public class TvShow extends MediaEntity {
 
     File posterFile = new File(path, "poster.jpg");
     if (posterFile.exists()) {
-      setPoster(posterFile.getName());
+      setPoster(posterFile);
       found = true;
       LOGGER.debug("found poster " + posterFile.getPath());
     }
@@ -1344,7 +1254,7 @@ public class TvShow extends MediaEntity {
     if (!found) {
       posterFile = new File(path, "poster.png");
       if (posterFile.exists()) {
-        setPoster(posterFile.getName());
+        setPoster(posterFile);
         found = true;
         LOGGER.debug("found poster " + posterFile.getPath());
       }
@@ -1357,7 +1267,7 @@ public class TvShow extends MediaEntity {
       for (File file : files) {
         Matcher matcher = pattern.matcher(file.getName());
         if (matcher.matches()) {
-          setPoster(FilenameUtils.getName(file.getName()));
+          setPoster(file);
           LOGGER.debug("found poster " + file.getPath());
           found = true;
           break;
@@ -1385,7 +1295,7 @@ public class TvShow extends MediaEntity {
 
     File fanartFile = new File(path, "fanart.jpg");
     if (fanartFile.exists()) {
-      setFanart(fanartFile.getName());
+      setFanart(fanartFile);
       found = true;
       LOGGER.debug("found fanart " + fanartFile.getPath());
     }
@@ -1393,7 +1303,7 @@ public class TvShow extends MediaEntity {
     if (!found) {
       fanartFile = new File(path, "fanart.png");
       if (fanartFile.exists()) {
-        setFanart(fanartFile.getName());
+        setFanart(fanartFile);
         found = true;
         LOGGER.debug("found fanart " + fanartFile.getPath());
       }
@@ -1406,7 +1316,7 @@ public class TvShow extends MediaEntity {
       for (File file : files) {
         Matcher matcher = pattern.matcher(file.getName());
         if (matcher.matches()) {
-          setFanart(FilenameUtils.getName(file.getName()));
+          setFanart(file);
           LOGGER.debug("found fanart " + file.getPath());
           found = true;
           break;
@@ -1434,7 +1344,7 @@ public class TvShow extends MediaEntity {
 
     File bannerFile = new File(path, "banner.jpg");
     if (bannerFile.exists()) {
-      setBanner(bannerFile.getName());
+      setBanner(bannerFile);
       found = true;
       LOGGER.debug("found banner " + bannerFile.getPath());
     }
@@ -1442,7 +1352,7 @@ public class TvShow extends MediaEntity {
     if (!found) {
       bannerFile = new File(path, "banner.png");
       if (bannerFile.exists()) {
-        setBanner(bannerFile.getName());
+        setBanner(bannerFile);
         found = true;
         LOGGER.debug("found banner " + bannerFile.getPath());
       }
@@ -1455,7 +1365,7 @@ public class TvShow extends MediaEntity {
       for (File file : files) {
         Matcher matcher = pattern.matcher(file.getName());
         if (matcher.matches()) {
-          setBanner(FilenameUtils.getName(file.getName()));
+          setBanner(file);
           LOGGER.debug("found banner " + file.getPath());
           found = true;
           break;
@@ -1584,123 +1494,46 @@ public class TvShow extends MediaEntity {
     seasonPosterMap.put(season, path);
   }
 
-  /**
-   * Gets the media files of the tv show and all episodes.
-   * 
-   * @return the media files
-   */
-  public List<MediaFile> getMediaFiles() {
-    List<MediaFile> mediaFiles = new ArrayList<MediaFile>(mediaFilesObservable);
-    for (TvShowEpisode episode : episodes) {
-      for (MediaFile mf : episode.getMediaFiles()) {
-
-        if (!mediaFiles.contains(mf)) {
-          mediaFiles.add(mf);
-        }
-      }
-    }
-    return mediaFiles;
-  }
-
-  /**
-   * Adds a single MediaFile to movie
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void addToMediaFiles(MediaFile obj) {
-    mediaFilesObservable.add(obj);
-    Collections.sort(mediaFilesObservable);
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
-  }
-
-  /**
-   * Adds a MediaFile list to movie
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void addToMediaFiles(List<MediaFile> obj) {
-    mediaFilesObservable.addAll(obj);
-    Collections.sort(mediaFilesObservable);
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
-  }
-
-  /**
-   * Gets the media files of a specific MediaFile type
-   * 
-   * @return the media files
-   */
-  public List<MediaFile> getMediaFiles(MediaFileType type) {
-    List<MediaFile> mfs = new ArrayList<MediaFile>();
-
-    // mediafiles from tv show
-    for (MediaFile mediaFile : this.mediaFilesObservable) {
-      if (mediaFile.getType().equals(type)) {
-        mfs.add(mediaFile);
-      }
-    }
-
-    // mediafiles from each episode
-    for (TvShowEpisode episode : episodes) {
-      for (MediaFile mf : episode.getMediaFiles(type)) {
-
-        if (!mfs.contains(mf)) {
-          mfs.add(mf);
-        }
-      }
-    }
-
-    return mfs;
-  }
-
-  /**
-   * Clears all the media files.
-   */
-  public void removeAllMediaFiles() {
-    mediaFilesObservable.clear();
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
-  }
-
-  /**
-   * Removes the from media files.
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void removeFromMediaFiles(MediaFile obj) {
-    mediaFilesObservable.remove(obj);
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
-  }
-
-  /**
-   * Removes specific type the from media files.
-   * 
-   * @param type
-   *          the MediaFileType
-   */
-  public void removeAllMediaFilesExceptType(MediaFileType type) {
-    for (int i = mediaFilesObservable.size() - 1; i >= 0; i--)
-
-      if (!mediaFilesObservable.get(i).getType().equals(type)) {
-        mediaFilesObservable.remove(i);
-      }
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
-  }
-
-  /**
-   * updates all the MediaFiles to their new absolute path
-   * 
-   * @param oldMoviePath
-   *          the old movie path
-   * @param newMoviePath
-   *          the new movie path
-   */
-  public void updateMediaFilePath(File oldMoviePath, File newMoviePath) {
-    for (MediaFile mf : mediaFilesObservable) {
-      mf.fixPathForRenamedFolder(oldMoviePath, newMoviePath);
-    }
-  }
+  // /**
+  // * Gets the media files of the tv show and all episodes.
+  // *
+  // * @return the media files
+  // */
+  // public List<MediaFile> getMediaFiles() {
+  // List<MediaFile> mediaFiles = new ArrayList<MediaFile>(super.getMediaFiles());
+  // for (TvShowEpisode episode : episodes) {
+  // for (MediaFile mf : episode.getMediaFiles()) {
+  //
+  // if (!mediaFiles.contains(mf)) {
+  // mediaFiles.add(mf);
+  // }
+  // }
+  // }
+  // return mediaFiles;
+  // }
+  //
+  // /**
+  // * Gets the media files of a specific MediaFile type
+  // *
+  // * @return the media files
+  // */
+  // public List<MediaFile> getMediaFiles(MediaFileType type) {
+  // List<MediaFile> mfs = new ArrayList<MediaFile>();
+  //
+  // // mediafiles from tv show
+  // mfs.addAll(super.getMediaFiles(type));
+  //
+  // // mediafiles from each episode
+  // for (TvShowEpisode episode : episodes) {
+  // for (MediaFile mf : episode.getMediaFiles(type)) {
+  // if (!mfs.contains(mf)) {
+  // mfs.add(mf);
+  // }
+  // }
+  // }
+  //
+  // return mfs;
+  // }
 
   /**
    * Gets the images to cache.

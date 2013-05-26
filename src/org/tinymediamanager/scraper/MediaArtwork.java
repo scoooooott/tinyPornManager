@@ -48,12 +48,16 @@ public class MediaArtwork {
     ACTOR,
     /** The season. */
     SEASON,
+    /** The thumb. */
+    THUMB,
     /** All. */
     ALL;
   }
 
   /**
    * The Enum PosterSizes.
+   * 
+   * @author Manuel Laggner
    */
   public enum PosterSizes {
     /** The large. */
@@ -105,6 +109,8 @@ public class MediaArtwork {
 
   /**
    * The Enum FanartSizes.
+   * 
+   * @author Manuel Laggner
    */
   public enum FanartSizes {
     /** The large. */

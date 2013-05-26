@@ -123,8 +123,8 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
    */
   public TvShowEpisodeMediaInformationPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
-    mediaFileEventList = GlazedListsSwing.swingThreadProxyList(new ObservableElementList<MediaFile>(GlazedLists
-        .threadSafeList(new BasicEventList<MediaFile>()), GlazedLists.beanConnector(MediaFile.class)));
+    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
+        GlazedLists.beanConnector(MediaFile.class));
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
@@ -239,7 +239,7 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
     lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
     add(lblFilesT, "2, 6, default, top");
 
-    mediaFileTableModel = new DefaultEventTableModel<MediaFile>(mediaFileEventList, new MediaTableFormat());
+    mediaFileTableModel = new DefaultEventTableModel<MediaFile>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
     // tableFiles = new JTable(mediaFileTableModel);
     tableFiles = new ZebraJTable(mediaFileTableModel);
     tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

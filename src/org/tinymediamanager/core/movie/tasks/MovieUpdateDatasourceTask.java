@@ -183,6 +183,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
             if (nfo != null) {
               movie = nfo;
+              movie.addToMediaFiles(mf);
             }
             else {
               // is NFO, but parsing exception. try to find at least imdb id within
@@ -215,44 +216,64 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.setDisc(true);
           }
 
-          if (mf.getType().equals(MediaFileType.VIDEO)) {
-            LOGGER.debug("parsing video file " + mf.getFilename());
-            movie.addToMediaFiles(mf);
-          }
-          else if (mf.getType().equals(MediaFileType.TRAILER)) {
-            LOGGER.debug("parsing trailer " + mf.getFilename());
-            MediaTrailer mt = new MediaTrailer();
-            mt.setName(mf.getFilename());
-            mt.setProvider("downloaded");
-            mt.setQuality("unknown");
-            mt.setInNfo(false);
-            mt.setUrl(new File(mf.getPath()).toURI().toString());
-            movie.addTrailer(mt);
-            movie.addToMediaFiles(mf);
-          }
-          else if (mf.getType().equals(MediaFileType.SUBTITLE)) {
-            LOGGER.debug("parsing subtitle " + mf.getFilename());
-            if (!mf.isPacked()) {
-              movie.setSubtitles(true);
+          switch (mf.getType()) {
+            case VIDEO:
+              LOGGER.debug("parsing video file " + mf.getFilename());
               movie.addToMediaFiles(mf);
-            }
+              break;
+
+            case TRAILER:
+              LOGGER.debug("parsing trailer " + mf.getFilename());
+              MediaTrailer mt = new MediaTrailer();
+              mt.setName(mf.getFilename());
+              mt.setProvider("downloaded");
+              mt.setQuality("unknown");
+              mt.setInNfo(false);
+              mt.setUrl(new File(mf.getPath()).toURI().toString());
+              movie.addTrailer(mt);
+              movie.addToMediaFiles(mf);
+              break;
+
+            case SUBTITLE:
+              LOGGER.debug("parsing subtitle " + mf.getFilename());
+              if (!mf.isPacked()) {
+                movie.setSubtitles(true);
+                movie.addToMediaFiles(mf);
+              }
+              break;
+
+            case POSTER:
+              LOGGER.debug("parsing poster " + mf.getFilename());
+              movie.addToMediaFiles(mf);
+              break;
+
+            case FANART:
+              if (mf.getPath().toLowerCase().contains("extrafanart")) {
+                // there shouldn't be any files here
+                LOGGER.warn("problem: detected media file type FANART in extrafanart folder: " + mf.getPath());
+                continue;
+              }
+              LOGGER.debug("parsing fanart " + mf.getFilename());
+              movie.addToMediaFiles(mf);
+              break;
+
+            case EXTRAFANART:
+              LOGGER.debug("parsing extrafanart " + mf.getFilename());
+              movie.addToMediaFiles(mf);
+              break;
+
+            case AUDIO:
+              LOGGER.debug("parsing audio stream " + mf.getFilename());
+              movie.addToMediaFiles(mf);
+              break;
+
+            case GRAPHIC:
+            case UNKNOWN:
+              LOGGER.debug("adding unknown media file type: " + mf.getFilename());
+              movie.addToMediaFiles(mf);
+              break;
           }
-          else if (mf.getType().equals(MediaFileType.POSTER)) {
-            LOGGER.debug("parsing poster " + mf.getFilename());
-            movie.setPoster(mf.getFilename());
-            movie.addToMediaFiles(mf);
-          }
-          else if (mf.getType().equals(MediaFileType.FANART)) {
-            if (mf.getPath().toLowerCase().contains("extrafanart")) {
-              // TODO: do not add additional fanarts, TBD
-              continue;
-            }
-            LOGGER.debug("parsing fanart " + mf.getFilename());
-            if (movie.getFanart().isEmpty()) {
-              movie.setFanart(mf.getFilename());
-            }
-            movie.addToMediaFiles(mf);
-          }
+
         }
 
         // third round - try to match unknown graphics like title.ext or filename.ext as poster
@@ -267,7 +288,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
                     || Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename w/o stacking
                     || movie.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) { // title match
                   mf.setType(MediaFileType.POSTER);
-                  movie.setPoster(mf.getFilename());
+                  // movie.setPoster(mf.getFilename());
                   movie.addToMediaFiles(mf);
                 }
               }

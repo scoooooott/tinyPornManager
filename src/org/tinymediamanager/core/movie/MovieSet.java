@@ -128,8 +128,6 @@ public class MovieSet extends MediaEntity {
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(true, false);
     }
-
-    setPoster(posterFilename);
   }
 
   /**
@@ -150,8 +148,6 @@ public class MovieSet extends MediaEntity {
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(false, true);
     }
-
-    setFanart(fanartFilename);
   }
 
   /**
@@ -565,56 +561,13 @@ public class MovieSet extends MediaEntity {
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#getBanner()
-   */
-  @Override
-  public String getBanner() {
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setPoster(java.lang.String)
-   */
-  @Override
-  public void setPoster(String newValue) {
-    String oldValue = this.poster;
-    this.poster = newValue;
-    firePropertyChange(POSTER, oldValue, newValue);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setBanner(java.lang.String)
-   */
-  @Override
-  public void setBanner(String banner) {
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setFanart(java.lang.String)
-   */
-  @Override
-  public void setFanart(String newValue) {
-    String oldValue = this.fanart;
-    this.fanart = newValue;
-    firePropertyChange(FANART, oldValue, newValue);
-  }
-
   /**
    * Gets the checks for images.
    * 
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!StringUtils.isEmpty(poster) && !StringUtils.isEmpty(fanart)) {
+    if (!StringUtils.isEmpty(getPoster()) && !StringUtils.isEmpty(getFanart())) {
       return true;
     }
     return false;

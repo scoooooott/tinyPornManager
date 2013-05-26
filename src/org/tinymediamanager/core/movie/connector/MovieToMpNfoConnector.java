@@ -69,37 +69,37 @@ import org.tinymediamanager.scraper.MediaGenres;
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
+  private static final Logger LOGGER          = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
 
   /** The title. */
-  private String              title;
+  private String              title           = "";
 
   /** The originaltitle. */
-  private String              originaltitle;
+  private String              originaltitle   = "";
 
   /** The rating. */
-  private float               rating;
+  private float               rating          = 0;
 
   /** The votes. */
-  private int                 votes;
+  private int                 votes           = 0;
 
   /** The year. */
-  private String              year;
+  private String              year            = "";
 
   /** The outline. */
-  private String              outline;
+  private String              outline         = "";
 
   /** The plot. */
-  private String              plot;
+  private String              plot            = "";
 
   /** The tagline. */
-  private String              tagline;
+  private String              tagline         = "";
 
   /** The runtime. */
-  private String              runtime;
+  private String              runtime         = "";
 
   /** The thumb. */
-  private String              thumb;
+  private String              thumb           = "";
 
   /** The fanarts. */
   @XmlElementWrapper(name = "fanart")
@@ -107,16 +107,16 @@ public class MovieToMpNfoConnector {
   private List<String>        fanart;
 
   /** The id. */
-  private String              id;
+  private String              id              = "";
 
   /** The filenameandpath. */
-  private String              filenameandpath;
+  private String              filenameandpath = "";
 
   /** The director. */
-  private String              director;
+  private String              director        = "";
 
   /** The sudio. */
-  private String              studio;
+  private String              studio          = "";
 
   /** The actors. */
   @XmlAnyElement(lax = true)
@@ -128,10 +128,10 @@ public class MovieToMpNfoConnector {
   private List<String>        genres;
 
   /** The mpaa certification. */
-  private String              mpaa;
+  private String              mpaa            = "";
 
   /** the credits. */
-  private String              credits;
+  private String              credits         = "";
 
   /** The sets. */
   private List<MovieSets>     sets;
@@ -285,13 +285,13 @@ public class MovieToMpNfoConnector {
         catch (Exception e) {
           LOGGER.warn("could not parse runtime: " + mp.getRuntime());
         }
-        if (mp.getThumb() != null) {
-          movie.setPoster(mp.getThumb());
-        }
+        // if (mp.getThumb() != null) {
+        // movie.setPoster(mp.getThumb());
+        // }
 
-        if (mp.getFanart() != null && mp.getFanart().size() > 0) {
-          movie.setFanart(mp.getFanart().get(0));
-        }
+        // if (mp.getFanart() != null && mp.getFanart().size() > 0) {
+        // movie.setFanart(mp.getFanart().get(0));
+        // }
 
         movie.setImdbId(mp.getId());
         movie.setDirector(mp.getDirector());

@@ -68,43 +68,43 @@ import org.tinymediamanager.scraper.MediaTrailer;
 public class MovieToXbmcNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
+  private static final Logger LOGGER         = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
 
   /** The title. */
-  private String              title;
+  private String              title          = "";
 
   /** The originaltitle. */
-  private String              originaltitle;
+  private String              originaltitle  = "";
 
   /** The rating. */
-  private float               rating;
+  private float               rating         = 0;
 
   /** The votes. */
-  private int                 votes;
+  private int                 votes          = 0;
 
   /** The year. */
-  private String              year;
+  private String              year           = "";
 
   /** The outline. */
-  private String              outline;
+  private String              outline        = "";
 
   /** The plot. */
-  private String              plot;
+  private String              plot           = "";
 
   /** The tagline. */
-  private String              tagline;
+  private String              tagline        = "";
 
   /** The runtime. */
-  private String              runtime;
+  private String              runtime        = "";
 
   /** The thumb. */
-  private String              thumb;
+  private String              thumb          = "";
 
   /** The id. */
-  private String              id;
+  private String              id             = "";
 
   /** The tmdbid. */
-  private int                 tmdbId;
+  private int                 tmdbId         = 0;
 
   // /** The filenameandpath. */
   // private String filenameandpath;
@@ -114,7 +114,7 @@ public class MovieToXbmcNfoConnector {
   private List<String>        director;
 
   /** The sudio. */
-  private String              studio;
+  private String              studio         = "";
 
   /** The actors. */
   @XmlAnyElement(lax = true)
@@ -125,33 +125,33 @@ public class MovieToXbmcNfoConnector {
   private List<String>        genres;
 
   /** The mpaa certification. */
-  private String              mpaa;
+  private String              mpaa           = "";
 
   /** The certifications. */
-  private String              certifications;
+  private String              certifications = "";
 
   /** the credits. */
   @XmlElement(name = "credits")
   private List<String>        credits;
 
   /** The watched. */
-  private boolean             watched;
+  private boolean             watched        = false;
 
   /** The playcount. */
-  private int                 playcount;
+  private int                 playcount      = 0;
 
   /** The trailer. */
-  private String              trailer;
+  private String              trailer        = "";
 
   /** The tags. */
   @XmlElement(name = "tag")
   private List<String>        tags;
 
   /** The set. */
-  private String              set;
+  private String              set            = "";
 
   /** The sorttitle. */
-  private String              sorttitle;
+  private String              sorttitle      = "";
 
   /** The fileinfo. */
   private Fileinfo            fileinfo;
@@ -448,9 +448,9 @@ public class MovieToXbmcNfoConnector {
         if (xbmc.getThumb().contains("http://")) {
           movie.setPosterUrl(xbmc.getThumb());
         }
-        else {
-          movie.setPoster(xbmc.getThumb());
-        }
+        // else {
+        // movie.setPoster(xbmc.getThumb());
+        // }
       }
 
       movie.setImdbId(xbmc.getId());

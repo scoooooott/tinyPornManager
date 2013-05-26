@@ -257,9 +257,8 @@ public class MovieRenamer {
           try {
             boolean ok = copyFile(mf.getFile(), newFile);
             if (ok) {
-              movie.setPoster(newFilename); // TODO remove when work completely with MediaFiles
               cleanup.add(mf); // mark old file for cleanup
-              needed.add(new MediaFile(newFile)); // add new variant
+              needed.add(new MediaFile(newFile, MediaFileType.POSTER)); // add new variant
             }
           }
           catch (Exception e) {
@@ -283,8 +282,7 @@ public class MovieRenamer {
             boolean ok = copyFile(mf.getFile(), newFile);
             if (ok) {
               cleanup.add(mf); // mark old file for cleanup
-              movie.setFanart(newFilename); // TODO remove when work completely with MediaFiles
-              needed.add(new MediaFile(newFile)); // add new variant
+              needed.add(new MediaFile(newFile, MediaFileType.FANART)); // add new variant
             }
           }
           catch (Exception e) {

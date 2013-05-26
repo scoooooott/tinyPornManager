@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -47,7 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
-import org.tinymediamanager.core.MediaEntityImageFetcher;
+import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -76,97 +75,89 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 public class Movie extends MediaEntity {
   /** The Constant logger. */
   @XmlTransient
-  private static final Logger LOGGER               = LoggerFactory.getLogger(Movie.class);
+  private static final Logger LOGGER            = LoggerFactory.getLogger(Movie.class);
 
   /** The title sortable. */
   @Transient
-  private String              titleSortable        = "";
+  private String              titleSortable     = "";
 
   /** The sorttitle. */
-  private String              sortTitle            = "";
+  private String              sortTitle         = "";
 
   /** The tagline. */
-  private String              tagline              = "";
+  private String              tagline           = "";
 
   /** The votes. */
-  private int                 votes                = 0;
+  private int                 votes             = 0;
 
   /** The runtime. */
-  private int                 runtime              = 0;
+  private int                 runtime           = 0;
 
   /** The nfo filename. */
-  private String              nfoFilename          = "";
+  private String              nfoFilename       = "";
 
   /** The director. */
-  private String              director             = "";
+  private String              director          = "";
 
   /** The writer. */
-  private String              writer               = "";
+  private String              writer            = "";
 
   /** The certification. */
-  private Certification       certification        = Certification.NOT_RATED;
+  private Certification       certification     = Certification.NOT_RATED;
 
   /** The data source. */
-  private String              dataSource           = "";
+  private String              dataSource        = "";
 
   /** The watched. */
-  private boolean             watched              = false;
+  private boolean             watched           = false;
 
   /** The new genres based on an enum like class. */
-  private List<String>        genres               = new ArrayList<String>();
+  private List<String>        genres            = new ArrayList<String>();
 
   /** The genres for access. */
   @Transient
-  private List<MediaGenres>   genresForAccess      = new ArrayList<MediaGenres>();
+  private List<MediaGenres>   genresForAccess   = new ArrayList<MediaGenres>();
 
   /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieActor>    actors               = new ArrayList<MovieActor>();
+  private List<MovieActor>    actors            = new ArrayList<MovieActor>();
 
   /** The actors observables. */
   @Transient
-  private List<MovieActor>    actorsObservables    = ObservableCollections.observableList(actors);
-
-  /** The media files. */
-  @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaFile>     mediaFiles           = new ArrayList<MediaFile>();
-
-  /** The media files observable. */
-  @Transient
-  private List<MediaFile>     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+  private List<MovieActor>    actorsObservables = ObservableCollections.observableList(actors);
 
   /** The trailer. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>  trailer              = new ArrayList<MediaTrailer>();
+  private List<MediaTrailer>  trailer           = new ArrayList<MediaTrailer>();
 
   /** The trailer observable. */
   @Transient
-  private List<MediaTrailer>  trailerObservable    = ObservableCollections.observableList(trailer);
+  private List<MediaTrailer>  trailerObservable = ObservableCollections.observableList(trailer);
 
   /** The tags. */
-  private List<String>        tags                 = new ArrayList<String>();
+  private List<String>        tags              = new ArrayList<String>();
 
   /** The tags observable. */
   @Transient
-  private List<String>        tagsObservable       = ObservableCollections.observableList(tags);
+  private List<String>        tagsObservable    = ObservableCollections.observableList(tags);
 
   /** The extra thumbs. */
-  private List<String>        extraThumbs          = new ArrayList<String>();
+  private List<String>        extraThumbs       = new ArrayList<String>();
 
   /** The extra fanarts. */
-  private List<String>        extraFanarts         = new ArrayList<String>();
+  private List<String>        extraFanarts      = new ArrayList<String>();
 
   /** The movie set. */
   private MovieSet            movieSet;
 
   /** is this a disc movie folder (video_ts / bdmv)?. */
-  private boolean             isDisc               = false;
+  private boolean             isDisc            = false;
 
   /** The spoken languages. */
-  private String              spokenLanguages      = "";
+  private String              spokenLanguages   = "";
 
   /** Subtitles of movie (either from local or from mediafiles) */
-  private boolean             subtitles            = false;
+  private boolean             subtitles         = false;
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -244,7 +235,7 @@ public class Movie extends MediaEntity {
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (!StringUtils.isEmpty(poster) && !StringUtils.isEmpty(fanart)) {
+    if (!StringUtils.isEmpty(getPoster()) && !StringUtils.isEmpty(getFanart())) {
       return true;
     }
     return false;
@@ -295,7 +286,6 @@ public class Movie extends MediaEntity {
    */
   private void setObservables() {
     actorsObservables = ObservableCollections.observableList(actors);
-    mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
     trailerObservable = ObservableCollections.observableList(trailer);
     tagsObservable = ObservableCollections.observableList(tags);
   }
@@ -304,6 +294,7 @@ public class Movie extends MediaEntity {
    * Initialize after loading.
    */
   public void initializeAfterLoading() {
+    super.initializeAfterLoading();
     // set observables
     setObservables();
 
@@ -323,104 +314,6 @@ public class Movie extends MediaEntity {
     actorsObservables.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
 
-  }
-
-  /**
-   * Adds a single MediaFile to movie
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void addToMediaFiles(MediaFile obj) {
-    mediaFilesObservable.add(obj);
-    Collections.sort(mediaFilesObservable);
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
-  }
-
-  /**
-   * Adds a MediaFile list to movie
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void addToMediaFiles(ArrayList<MediaFile> obj) {
-    for (MediaFile mf : obj) {
-      mediaFilesObservable.add(mf);
-    }
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
-  }
-
-  /**
-   * Gets the media files.
-   * 
-   * @return the media files
-   */
-  public List<MediaFile> getMediaFiles() {
-    return this.mediaFilesObservable;
-  }
-
-  /**
-   * Gets the media files of a specific MediaFile type
-   * 
-   * @return the media files
-   */
-  public List<MediaFile> getMediaFiles(MediaFileType type) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
-    for (MediaFile mediaFile : this.mediaFilesObservable) {
-      if (mediaFile.getType().equals(type)) {
-        mf.add(mediaFile);
-      }
-    }
-    return mf;
-  }
-
-  /**
-   * Clears all the media files.
-   */
-  public void removeAllMediaFiles() {
-    mediaFilesObservable.clear();
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
-  }
-
-  /**
-   * Removes the from media files.
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void removeFromMediaFiles(MediaFile obj) {
-    mediaFilesObservable.remove(obj);
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
-  }
-
-  /**
-   * Removes specific type the from media files.
-   * 
-   * @param type
-   *          the MediaFileType
-   */
-  public void removeAllMediaFilesExceptType(MediaFileType type) {
-    for (int i = mediaFilesObservable.size() - 1; i >= 0; i--)
-
-      if (!mediaFilesObservable.get(i).getType().equals(type)) {
-        mediaFilesObservable.remove(i);
-      }
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
-  }
-
-  /**
-   * updates all the MediaFiles to their new absolute path
-   * 
-   * @param oldMoviePath
-   *          the old movie path
-   * @param newMoviePath
-   *          the new movie path
-   */
-  public void updateMediaFilePath(File oldMoviePath, File newMoviePath) {
-    for (MediaFile mf : mediaFilesObservable) {
-      mf.fixPathForRenamedFolder(oldMoviePath, newMoviePath);
-    }
-    // firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
   }
 
   /**
@@ -653,22 +546,6 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Gets the fanart.
-   * 
-   * @return the fanart
-   */
-  @Override
-  public String getFanart() {
-    // getMediaFiles(MediaFileType.FANART).get(0);
-    if (!StringUtils.isEmpty(fanart)) {
-      return path + File.separator + fanart;
-    }
-    else {
-      return fanart;
-    }
-  }
-
-  /**
    * Gets the imdb id.
    * 
    * @return the imdb id
@@ -707,22 +584,6 @@ public class Movie extends MediaEntity {
     int oldValue = getTmdbId();
     ids.put("tmdbId", newValue);
     firePropertyChange(TMDBID, oldValue, newValue);
-  }
-
-  /**
-   * Gets the poster.
-   * 
-   * @return the poster
-   */
-  @Override
-  public String getPoster() {
-    // getMediaFiles(MediaFileType.POSTER).get(0);
-    if (!StringUtils.isEmpty(poster)) {
-      return path + File.separator + poster;
-    }
-    else {
-      return poster;
-    }
   }
 
   /**
@@ -803,19 +664,6 @@ public class Movie extends MediaEntity {
   public void removeActor(MovieActor obj) {
     actorsObservables.remove(obj);
     firePropertyChange(ACTORS, null, this.getActors());
-  }
-
-  /**
-   * Sets the fanart.
-   * 
-   * @param newValue
-   *          the new fanart
-   */
-  public void setFanart(String newValue) {
-    String oldValue = this.fanart;
-    this.fanart = newValue;
-    firePropertyChange(FANART, oldValue, newValue);
-    firePropertyChange(HAS_IMAGES, false, true);
   }
 
   /**
@@ -1314,20 +1162,6 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Sets the poster.
-   * 
-   * @param newValue
-   *          the new poster
-   */
-  @Override
-  public void setPoster(String newValue) {
-    String oldValue = this.poster;
-    this.poster = newValue;
-    firePropertyChange("poster", oldValue, newValue);
-    firePropertyChange("hasImages", false, true);
-  }
-
-  /**
    * Sets the runtime.
    * 
    * @param newValue
@@ -1540,7 +1374,7 @@ public class Movie extends MediaEntity {
         }
 
         // get image in thread
-        MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
+        MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
         Globals.executor.execute(task);
       }
     }
@@ -1564,7 +1398,7 @@ public class Movie extends MediaEntity {
         }
 
         // get image in thread
-        MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
+        MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
         Globals.executor.execute(task);
       }
     }
@@ -1891,27 +1725,6 @@ public class Movie extends MediaEntity {
    */
   public String getSpokenLanguages() {
     return this.spokenLanguages;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#getBanner()
-   */
-  @Override
-  public String getBanner() {
-    // TODO implement banners for movies
-    return "";
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setBanner(java.lang.String)
-   */
-  @Override
-  public void setBanner(String banner) {
-    // TODO implement banners for movies
   }
 
   /**

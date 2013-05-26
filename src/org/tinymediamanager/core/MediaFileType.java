@@ -24,8 +24,18 @@ package org.tinymediamanager.core;
 public enum MediaFileType {
 
   // NOTE: do not change the sort order here unless you want an other sort order
-  VIDEO, NFO, POSTER, FANART, BANNER, TRAILER, SUBTITLE,
-
-  // generic ones
-  AUDIO, GRAPHIC, UNKNOWN
+  // @formatter:off
+  VIDEO, 
+  AUDIO, 
+  SUBTITLE, 
+  NFO, 
+  POSTER, 
+  FANART, 
+  BANNER, 
+  THUMB, 
+  TRAILER, 
+  EXTRAFANART, 
+  GRAPHIC, 
+  UNKNOWN;
+  // @formatter:on
 }

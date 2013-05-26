@@ -22,7 +22,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntity;
-import org.tinymediamanager.core.MediaEntityImageFetcher;
+import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
@@ -61,53 +60,45 @@ import org.tinymediamanager.scraper.MediaMetadata;
 public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER               = LoggerFactory.getLogger(TvShowEpisode.class);
+  private static final Logger LOGGER            = LoggerFactory.getLogger(TvShowEpisode.class);
 
   /** The tv show. */
-  private TvShow              tvShow               = null;
+  private TvShow              tvShow            = null;
 
   /** The episode. */
-  private int                 episode              = 0;
+  private int                 episode           = 0;
 
   /** The season. */
-  private int                 season               = -1;
+  private int                 season            = -1;
 
   /** the first aired date. */
-  private Date                firstAired           = null;
+  private Date                firstAired        = null;
 
   /** The director. */
-  private String              director             = "";
+  private String              director          = "";
 
   /** The writer. */
-  private String              writer               = "";
+  private String              writer            = "";
 
   /** is this episode in a disc folder structure?. */
-  private boolean             disc                 = false;
+  private boolean             disc              = false;
 
   /** The nfo filename. */
-  private String              nfoFilename          = "";
+  private String              nfoFilename       = "";
 
   /** The watched. */
-  private boolean             watched              = false;
+  private boolean             watched           = false;
 
   /** The votes. */
-  private int                 votes                = 0;
+  private int                 votes             = 0;
 
   /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>   actors               = new ArrayList<TvShowActor>();
+  private List<TvShowActor>   actors            = new ArrayList<TvShowActor>();
 
   /** The actors observables. */
   @Transient
-  private List<TvShowActor>   actorsObservables    = ObservableCollections.observableList(actors);
-
-  /** The media files. */
-  @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaFile>     mediaFiles           = new ArrayList<MediaFile>();
-
-  /** The media files observable. */
-  @Transient
-  private List<MediaFile>     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+  private List<TvShowActor>   actorsObservables = ObservableCollections.observableList(actors);
 
   /**
    * Instantiates a new tv show episode. To initialize the propertychangesupport after loading
@@ -226,72 +217,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#getFanart()
-   */
-  @Override
-  public String getFanart() {
-    if (!StringUtils.isEmpty(fanart)) {
-      return path + File.separator + fanart;
-    }
-    else {
-      return fanart;
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#getPoster()
-   */
-  @Override
-  public String getPoster() {
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setPoster(java.lang.String)
-   */
-  @Override
-  public void setPoster(String poster) {
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setFanart(java.lang.String)
-   */
-  @Override
-  public void setFanart(String newValue) {
-    String oldValue = this.fanart;
-    this.fanart = newValue;
-    firePropertyChange(FANART, oldValue, newValue);
-    firePropertyChange(HAS_IMAGES, false, true);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#getBanner()
-   */
-  @Override
-  public String getBanner() {
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.core.MediaEntity#setBanner(java.lang.String)
-   */
-  @Override
-  public void setBanner(String banner) {
-  }
-
   /**
    * Gets the tv show.
    * 
@@ -386,65 +311,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * Initialize after loading.
    */
   public void initializeAfterLoading() {
-    mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+    super.initializeAfterLoading();
+
     actorsObservables = ObservableCollections.observableList(actors);
   }
 
   /**
-   * Adds the to media files.
-   * 
-   * @param obj
-   *          the obj
+   * Write thumb image.
    */
-  public void addToMediaFiles(MediaFile obj) {
-    mediaFilesObservable.add(obj);
-    Collections.sort(mediaFilesObservable);
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
-  }
-
-  /**
-   * Gets the media files.
-   * 
-   * @return the media files
-   */
-  public List<MediaFile> getMediaFiles() {
-    return mediaFilesObservable;
-  }
-
-  /**
-   * Removes the from media files.
-   * 
-   * @param obj
-   *          the obj
-   */
-  public void removeFromMediaFiles(MediaFile obj) {
-    mediaFilesObservable.remove(obj);
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
-  }
-
-  /**
-   * Save to db.
-   */
-  public synchronized void saveToDb() {
-    // update DB
-    synchronized (Globals.entityManager) {
-      Globals.entityManager.getTransaction().begin();
-      Globals.entityManager.persist(this);
-      Globals.entityManager.getTransaction().commit();
-    }
-  }
-
-  /**
-   * Write fanart image.
-   */
-  public void writeFanartImage() {
-    if (StringUtils.isNotEmpty(getFanartUrl())) {
+  public void writeThumbImage() {
+    if (StringUtils.isNotEmpty(getThumbUrl())) {
       boolean firstImage = true;
       // create correct filename
       MediaFile mf = getMediaFiles().get(0);
-      String filename = FilenameUtils.getBaseName(mf.getFilename()) + "-fanart." + FilenameUtils.getExtension(getFanartUrl());
+      String filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(getThumbUrl());
       // get image in thread
-      MediaEntityImageFetcher task = new MediaEntityImageFetcher(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
+      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getThumbUrl(), MediaArtworkType.THUMB, filename, firstImage);
       Globals.executor.execute(task);
     }
   }
@@ -506,9 +388,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setWriter(writer);
 
     for (MediaArtwork ma : metadata.getFanart()) {
-      if (ma.getType() == MediaArtworkType.BACKGROUND) {
-        setFanartUrl(ma.getDefaultUrl());
-        writeFanartImage();
+      if (ma.getType() == MediaArtworkType.THUMB) {
+        setThumbUrl(ma.getDefaultUrl());
+        writeThumbImage();
         break;
       }
     }
@@ -570,7 +452,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (StringUtils.isNotEmpty(fanart)) {
+    if (StringUtils.isNotEmpty(getFanart())) {
       return true;
     }
     return false;
@@ -682,23 +564,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
-   * Gets the media files of a specific MediaFile type.
-   * 
-   * @param type
-   *          the type
-   * @return the media files
-   */
-  public List<MediaFile> getMediaFiles(MediaFileType type) {
-    List<MediaFile> mf = new ArrayList<MediaFile>();
-    for (MediaFile mediaFile : this.mediaFilesObservable) {
-      if (mediaFile.getType().equals(type)) {
-        mf.add(mediaFile);
-      }
-    }
-    return mf;
-  }
-
-  /**
    * Checks if is watched.
    * 
    * @return true, if is watched
@@ -756,7 +621,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     for (File file : files) {
       Matcher matcher = pattern.matcher(file.getName());
       if (matcher.matches()) {
-        setFanart(FilenameUtils.getName(file.getName()));
+        setFanart(file);
         LOGGER.debug("found thumb " + file.getPath());
         found = true;
         break;
@@ -776,7 +641,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       for (File file : files) {
         Matcher matcher = pattern.matcher(file.getName());
         if (matcher.matches()) {
-          setFanart(FilenameUtils.getName(file.getName()));
+          setFanart(file);
           LOGGER.debug("found thumb " + file.getPath());
           found = true;
           break;
@@ -785,10 +650,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     // if we did not find anything, try to download it
-    if (!found && StringUtils.isNotEmpty(fanartUrl)) {
-      writeFanartImage();
+    if (!found && StringUtils.isNotEmpty(thumbUrl)) {
+      writeThumbImage();
       found = true;
-      LOGGER.debug("got thumb url: " + fanartUrl + " ; try to download this");
+      LOGGER.debug("got thumb url: " + thumbUrl + " ; try to download this");
     }
 
     if (!found) {

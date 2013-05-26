@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -178,6 +180,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
       if (tvShow != null) {
         tvShow.setDataSource(datasource);
+        findAdditionalTvShowFiles(tvShow, dir);
         tvShow.saveToDb();
         tvShowList.addTvShow(tvShow);
       }
@@ -191,6 +194,19 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   }
 
   /**
+   * Find additional tv show files.
+   * 
+   * @param tvShow
+   *          the tv show
+   * @param directory
+   *          the directory
+   */
+  private void findAdditionalTvShowFiles(TvShow tvShow, File directory) {
+    // find tv show images for this TV show; NOTE: the NFO has been found in TvShow.parseNFO()
+    tvShow.findImages();
+  }
+
+  /**
    * Find tv episodes.
    * 
    * @param tvShow
@@ -200,15 +216,16 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    */
   private void findTvEpisodes(TvShow tvShow, File dir) {
     LOGGER.debug("parsing " + dir.getPath());
-    // crawl this folder and try to find every episode in it
+    // crawl this folder and try to find every episode and its corresponding files in it
     File[] content = dir.listFiles();
     for (File file : content) {
       if (file.isFile()) {
-        // check filetype
+        // check filetype - we only proceed here if it's a video file
         if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()))) {
           continue;
         }
 
+        // is this file already assigned to another episode?
         TvShowEpisode episode = tvShowList.getTvEpisodeByFile(file);
         if (episode == null) {
           // try to check what episode//season
@@ -260,7 +277,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setPath(dir.getPath());
               episode.setTvShow(tvShow);
               episode.addToMediaFiles(new MediaFile(file));
-              episode.findImages();
+              // episode.findImages();
+              findAdditionalEpisodeFiles(episode, file, content);
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -270,7 +288,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               e.setPath(dir.getPath());
               e.setTvShow(tvShow);
               e.addToMediaFiles(new MediaFile(file));
-              e.findImages();
+              // e.findImages();
+              findAdditionalEpisodeFiles(e, file, content);
               e.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -284,7 +303,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 e.setPath(dir.getPath());
                 e.setTvShow(tvShow);
                 e.addToMediaFiles(new MediaFile(file));
-                e.findImages();
+                // e.findImages();
+                findAdditionalEpisodeFiles(e, file, content);
                 e.saveToDb();
                 tvShow.addEpisode(episode);
               }
@@ -299,7 +319,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setTvShow(tvShow);
               episode.setFirstAired(result.date);
               episode.addToMediaFiles(new MediaFile(file));
-              episode.findImages();
+              // episode.findImages();
+              findAdditionalEpisodeFiles(episode, file, content);
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -392,6 +413,44 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             episode.saveToDb();
             tvShow.addEpisode(episode);
           }
+        }
+      }
+    }
+  }
+
+  /**
+   * Find additional episode files.
+   * 
+   * @param episode
+   *          the episode
+   * @param videoFile
+   *          the video file
+   * @param directoryContents
+   *          the directory contents
+   */
+  private void findAdditionalEpisodeFiles(TvShowEpisode episode, File videoFile, File[] directoryContents) {
+    // there are much different ways the files could be stored; we only will try to find the files with the corresponding names (and sample)
+    // 1st find all files/directories with videofilename*
+    Pattern pattern = Pattern.compile("(?i)" + FilenameUtils.getBaseName(videoFile.getName()) + ".*");
+
+    for (File file : directoryContents) {
+      if (file == videoFile) {
+        continue;
+      }
+
+      Matcher matcher = pattern.matcher(file.getName());
+      if (matcher.matches()) {
+        // add this file to the episode
+        episode.addToMediaFiles(new MediaFile(file));
+        continue;
+      }
+
+      // and last but not least we add a directory called sample/subs/subtitle
+      if (file.isDirectory()
+          && ("sample".equalsIgnoreCase(file.getName()) || "subs".equalsIgnoreCase(file.getName()) || "subtitle".equalsIgnoreCase(file.getName()))) {
+        File[] subDirContent = file.listFiles();
+        for (File subDirFile : subDirContent) {
+          episode.addToMediaFiles(new MediaFile(subDirFile));
         }
       }
     }

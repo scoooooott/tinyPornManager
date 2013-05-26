@@ -192,20 +192,20 @@ public class TvShowPanel extends JPanel {
     JPanel panelTvShowTree = new JPanel();
     splitPane.setLeftComponent(panelTvShowTree);
     panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), }, new RowSpec[] {
-        FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     // tree = new TreeTable(treeModel);
     // JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(tree);
     JScrollPane scrollPane = new JScrollPane();
     scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    panelTvShowTree.add(scrollPane, "2, 4, fill, fill");
+    panelTvShowTree.add(scrollPane, "2, 3, fill, fill");
 
     JToolBar toolBar = new JToolBar();
     toolBar.setRollover(true);
     toolBar.setFloatable(false);
     toolBar.setOpaque(false);
-    panelTvShowTree.add(toolBar, "2, 2");
+    panelTvShowTree.add(toolBar, "2, 1");
 
     toolBar.add(actionUpdateDatasources);
     JSplitButton buttonScrape = new JSplitButton(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
@@ -291,7 +291,7 @@ public class TvShowPanel extends JPanel {
     panelHeader.add(lblImageColumn, "5, 1");
 
     JPanel panel = new JPanel();
-    panelTvShowTree.add(panel, "2, 6, fill, fill");
+    panelTvShowTree.add(panel, "2, 5, fill, fill");
     panel
         .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
             FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,

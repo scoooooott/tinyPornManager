@@ -388,9 +388,9 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       md.addCastMember(cm);
     }
 
-    // Banner
+    // Thumb
     MediaArtwork ma = new MediaArtwork();
-    ma.setType(MediaArtworkType.BACKGROUND);
+    ma.setType(MediaArtworkType.THUMB);
     ma.setDefaultUrl(episode.getFilename());
     md.addMediaArt(ma);
 
