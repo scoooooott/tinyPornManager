@@ -136,10 +136,10 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         TvShow tvShow = (TvShow) userObject;
 
         if (StringUtils.isBlank(tvShow.getYear()) || "0".equals(tvShow.getYear())) {
-          tvShowTitle.setText(tvShow.getTitle());
+          tvShowTitle.setText(tvShow.getTitleSortable());
         }
         else {
-          tvShowTitle.setText(tvShow.getTitle() + " (" + tvShow.getYear() + ")");
+          tvShowTitle.setText(tvShow.getTitleSortable() + " (" + tvShow.getYear() + ")");
         }
         tvShowInfo.setText(tvShow.getSeasons().size() + " Seasons - " + tvShow.getEpisodes().size() + " Episodes");
         tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);

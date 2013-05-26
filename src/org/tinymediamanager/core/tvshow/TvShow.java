@@ -56,6 +56,7 @@ import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.scraper.Certification;
@@ -123,6 +124,10 @@ public class TvShow extends MediaEntity {
   /** The certification. */
   private Certification            certification      = Certification.NOT_RATED;
 
+  /** The title sortable. */
+  @Transient
+  private String                   titleSortable      = "";
+
   /** The data source. */
   private String                   dataSource         = "";
 
@@ -163,6 +168,19 @@ public class TvShow extends MediaEntity {
    * Instantiates a tv show. To initialize the propertychangesupport after loading
    */
   public TvShow() {
+  }
+
+  /**
+   * Returns the sortable variant of title<br>
+   * eg "The Big Bang Theory" -> "Big Bang Theory, The".
+   * 
+   * @return the title in its sortable format
+   */
+  public String getTitleSortable() {
+    if (StringUtils.isEmpty(titleSortable)) {
+      titleSortable = Utils.getSortableName(this.getTitle());
+    }
+    return titleSortable;
   }
 
   /**

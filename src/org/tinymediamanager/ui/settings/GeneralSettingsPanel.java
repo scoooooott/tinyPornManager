@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -31,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
@@ -130,19 +132,25 @@ public class GeneralSettingsPanel extends JPanel {
   /** The chckbx image cache. */
   private JCheckBox                   chckbxImageCache;
 
+  /** The list sort prefixes. */
+  private JList                       listSortPrefixes;
+
+  /** The tf sort prefix. */
+  private JTextField                  tfSortPrefix;
+
   /**
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default)"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default)"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     panelVideoFiletypes = new JPanel();
     panelVideoFiletypes.setBorder(new TitledBorder(
-        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.filetypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.videofiletypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     panelVideoFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -186,7 +194,7 @@ public class GeneralSettingsPanel extends JPanel {
     panelSubtitleFiletypes = new JPanel();
     add(panelSubtitleFiletypes, "4, 2, fill, fill");
     panelSubtitleFiletypes.setBorder(new TitledBorder(
-        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.filetypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.extrafiletypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     panelSubtitleFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -224,6 +232,56 @@ public class GeneralSettingsPanel extends JPanel {
       }
     });
     panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "4, 4");
+
+    JPanel panelSortOptions = new JPanel();
+    panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
+        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    add(panelSortOptions, "6, 2, fill, fill");
+    panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
+
+    JScrollPane scrollPaneSortPrefixes = new JScrollPane();
+    panelSortOptions.add(scrollPaneSortPrefixes, "2, 2, fill, fill");
+
+    listSortPrefixes = new JList();
+    scrollPaneSortPrefixes.setViewportView(listSortPrefixes);
+
+    JButton btnRemoveSortPrefix = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+    btnRemoveSortPrefix.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        int row = listSortPrefixes.getSelectedIndex();
+        if (row != -1) {
+          String prefix = Globals.settings.getTitlePrefix().get(row);
+          Globals.settings.removeTitlePrefix(prefix);
+        }
+      }
+    });
+    panelSortOptions.add(btnRemoveSortPrefix, "4, 2, default, bottom");
+
+    tfSortPrefix = new JTextField();
+    panelSortOptions.add(tfSortPrefix, "2, 4, fill, default");
+    tfSortPrefix.setColumns(10);
+
+    JButton btnAddSortPrefix = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    btnAddSortPrefix.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (StringUtils.isNotEmpty(tfSortPrefix.getText())) {
+          Globals.settings.addTitlePrefix(tfSortPrefix.getText());
+          tfSortPrefix.setText("");
+        }
+      }
+    });
+    panelSortOptions.add(btnAddSortPrefix, "4, 4");
+
+    JTextPane tpSortingHints = new JTextPane();
+    tpSortingHints.setFont(new Font("Dialog", Font.PLAIN, 10));
+    tpSortingHints.setText(BUNDLE.getString("Settings.sorting.info")); //$NON-NLS-1$
+    tpSortingHints.setBackground(UIManager.getColor("Panel.background"));
+    panelSortOptions.add(tpSortingHints, "2, 6, 3, 1, fill, fill");
 
     panelCache = new JPanel();
     panelCache.setBorder(new TitledBorder(null, "Cache", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -380,5 +438,10 @@ public class GeneralSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_7.bind();
+    //
+    BeanProperty<Settings, List<String>> settingsBeanProperty_10 = BeanProperty.create("titlePrefix");
+    JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_10, listSortPrefixes);
+    jListBinding.bind();
   }
 }

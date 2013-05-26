@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
@@ -59,10 +60,27 @@ public class MovieSet extends MediaEntity {
   @Transient
   private List<Movie>         moviesObservable = ObservableCollections.observableList(movies);
 
+  /** The title sortable. */
+  @Transient
+  private String              titleSortable    = "";
+
   /**
    * Instantiates a new movieset. To initialize the propertychangesupport after loading
    */
   public MovieSet() {
+  }
+
+  /**
+   * Returns the sortable variant of title<br>
+   * eg "The Terminator Collection" -> "Terminator Collection, The".
+   * 
+   * @return the title in its sortable format
+   */
+  public String getTitleSortable() {
+    if (StringUtils.isEmpty(titleSortable)) {
+      titleSortable = Utils.getSortableName(this.getTitle());
+    }
+    return titleSortable;
   }
 
   /**

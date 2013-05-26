@@ -52,7 +52,7 @@ public class TvShowRootTreeNode extends DefaultMutableTreeNode {
           TvShow tvShow1 = (TvShow) node1.getUserObject();
           TvShowTreeNode node2 = (TvShowTreeNode) o2;
           TvShow tvShow2 = (TvShow) node2.getUserObject();
-          return tvShow1.getTitle().compareTo(tvShow2.getTitle());
+          return tvShow1.getTitleSortable().compareToIgnoreCase(tvShow2.getTitleSortable());
         }
         return o1.toString().compareToIgnoreCase(o2.toString());
       }

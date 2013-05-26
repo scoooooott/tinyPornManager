@@ -28,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,13 +37,11 @@ import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.beansbinding.ObjectProperty;
-import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
@@ -93,11 +90,11 @@ public class MovieSettingsPanel extends JPanel {
   /** The tf movie filename. */
   private JTextField                  tfMovieFilename;
 
-  /** The tf sort prefix. */
-  private JTextField                  tfSortPrefix;
+  // /** The tf sort prefix. */
+  // private JTextField tfSortPrefix;
 
-  /** The list sort prefixes. */
-  private JList                       listSortPrefixes;
+  // /** The list sort prefixes. */
+  // private JList listSortPrefixes;
 
   // /** The tf filetype. */
   // private JTextField tfFiletype;
@@ -180,101 +177,58 @@ public class MovieSettingsPanel extends JPanel {
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
     panelMovieDataSources.add(cbMovieNfoFilename2, "4, 7");
 
-    // JPanel panelFiletypes = new JPanel();
-    // panelFiletypes.setBorder(new TitledBorder(
-    //        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.filetypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    // add(panelFiletypes, "4, 2, fill, fill");
-    // panelFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+    // JPanel panelSortOptions = new JPanel();
+    // panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
+    //        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    // add(panelSortOptions, "4, 2, fill, fill");
+    // panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
     // FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-    // RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    // FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+    // FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     //
-    // JScrollPane scrollPane_1 = new JScrollPane();
-    // panelFiletypes.add(scrollPane_1, "2, 2, fill, fill");
+    //    JLabel lblSortingPrefixes = new JLabel(BUNDLE.getString("Settings.titlePrefix")); //$NON-NLS-1$
+    // panelSortOptions.add(lblSortingPrefixes, "2, 2");
     //
-    // listFiletypes = new JList();
-    // scrollPane_1.setViewportView(listFiletypes);
+    // JScrollPane scrollPaneSortPrefixes = new JScrollPane();
+    // panelSortOptions.add(scrollPaneSortPrefixes, "2, 4, fill, fill");
     //
-    //    JButton btnRemoveFiletype = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    // btnRemoveFiletype.addActionListener(new ActionListener() {
+    // listSortPrefixes = new JList();
+    // scrollPaneSortPrefixes.setViewportView(listSortPrefixes);
+    //
+    //    JButton btnRemoveSortPrefix = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+    // btnRemoveSortPrefix.addActionListener(new ActionListener() {
     // @Override
     // public void actionPerformed(ActionEvent arg0) {
-    // int row = listFiletypes.getSelectedIndex();
+    // int row = listSortPrefixes.getSelectedIndex();
     // if (row != -1) {
-    // String prefix = Globals.settings.getVideoFileType().get(row);
-    // Globals.settings.removeVideoFileType(prefix);
+    // String prefix = Globals.settings.getTitlePrefix().get(row);
+    // Globals.settings.removeTitlePrefix(prefix);
     // }
     // }
     // });
-    // panelFiletypes.add(btnRemoveFiletype, "4, 2, default, bottom");
+    // panelSortOptions.add(btnRemoveSortPrefix, "4, 4, default, bottom");
     //
-    // tfFiletype = new JTextField();
-    // panelFiletypes.add(tfFiletype, "2, 4, fill, default");
-    // tfFiletype.setColumns(10);
+    // tfSortPrefix = new JTextField();
+    // panelSortOptions.add(tfSortPrefix, "2, 6, fill, default");
+    // tfSortPrefix.setColumns(10);
     //
-    //    JButton btnAddFiletype = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    // btnAddFiletype.addActionListener(new ActionListener() {
+    //    JButton btnAddSortPrefix = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    // btnAddSortPrefix.addActionListener(new ActionListener() {
     // @Override
     // public void actionPerformed(ActionEvent e) {
-    // if (StringUtils.isNotEmpty(tfFiletype.getText())) {
-    // Globals.settings.addVideoFileTypes(tfFiletype.getText());
-    // tfFiletype.setText("");
+    // if (StringUtils.isNotEmpty(tfSortPrefix.getText())) {
+    // Globals.settings.addTitlePrefix(tfSortPrefix.getText());
+    // tfSortPrefix.setText("");
     // }
     // }
     // });
-    // panelFiletypes.add(btnAddFiletype, "4, 4");
-
-    JPanel panelSortOptions = new JPanel();
-    panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
-        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelSortOptions, "4, 2, fill, fill");
-    panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-
-    JLabel lblSortingPrefixes = new JLabel(BUNDLE.getString("Settings.titlePrefix")); //$NON-NLS-1$
-    panelSortOptions.add(lblSortingPrefixes, "2, 2");
-
-    JScrollPane scrollPaneSortPrefixes = new JScrollPane();
-    panelSortOptions.add(scrollPaneSortPrefixes, "2, 4, fill, fill");
-
-    listSortPrefixes = new JList();
-    scrollPaneSortPrefixes.setViewportView(listSortPrefixes);
-
-    JButton btnRemoveSortPrefix = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    btnRemoveSortPrefix.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        int row = listSortPrefixes.getSelectedIndex();
-        if (row != -1) {
-          String prefix = Globals.settings.getTitlePrefix().get(row);
-          Globals.settings.removeTitlePrefix(prefix);
-        }
-      }
-    });
-    panelSortOptions.add(btnRemoveSortPrefix, "4, 4, default, bottom");
-
-    tfSortPrefix = new JTextField();
-    panelSortOptions.add(tfSortPrefix, "2, 6, fill, default");
-    tfSortPrefix.setColumns(10);
-
-    JButton btnAddSortPrefix = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    btnAddSortPrefix.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (StringUtils.isNotEmpty(tfSortPrefix.getText())) {
-          Globals.settings.addTitlePrefix(tfSortPrefix.getText());
-          tfSortPrefix.setText("");
-        }
-      }
-    });
-    panelSortOptions.add(btnAddSortPrefix, "4, 6");
-
-    JTextPane tpSortingHints = new JTextPane();
-    tpSortingHints.setFont(new Font("Dialog", Font.PLAIN, 10));
-    tpSortingHints.setText(BUNDLE.getString("Settings.sorting.info")); //$NON-NLS-1$
-    tpSortingHints.setBackground(UIManager.getColor("Panel.background"));
-    panelSortOptions.add(tpSortingHints, "2, 8, 3, 1, fill, fill");
+    // panelSortOptions.add(btnAddSortPrefix, "4, 6");
+    //
+    // JTextPane tpSortingHints = new JTextPane();
+    // tpSortingHints.setFont(new Font("Dialog", Font.PLAIN, 10));
+    //    tpSortingHints.setText(BUNDLE.getString("Settings.sorting.info")); //$NON-NLS-1$
+    // tpSortingHints.setBackground(UIManager.getColor("Panel.background"));
+    // panelSortOptions.add(tpSortingHints, "2, 8, 3, 1, fill, fill");
 
     // the panel renamer
     JPanel panelRenamer = new JPanel();
@@ -382,10 +336,11 @@ public class MovieSettingsPanel extends JPanel {
         settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
     autoBinding_11.bind();
     //
-    BeanProperty<Settings, List<String>> settingsBeanProperty = BeanProperty.create("titlePrefix");
-    JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings, settingsBeanProperty,
-        listSortPrefixes);
-    jListBinding.bind();
+    // BeanProperty<Settings, List<String>> settingsBeanProperty = BeanProperty.create("titlePrefix");
+    // JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+    // settingsBeanProperty,
+    // listSortPrefixes);
+    // jListBinding.bind();
     // //
     // BeanProperty<Settings, List<String>> settingsBeanProperty_1 = BeanProperty.create("videoFileType");
     // JListBinding<String, Settings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
