@@ -122,6 +122,9 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
   /** The continue queue. */
   private boolean                     continueQueue    = true;
 
+  /** The btn ok. */
+  private JButton                     btnOk;
+
   /**
    * Instantiates a new movie set chooser panel.
    * 
@@ -265,7 +268,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
           layout.setMinWidth(100);
           buttonPane.setLayout(layout);
 
-          JButton btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+          btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
           btnOk.setActionCommand("Save");
           btnOk.setToolTipText(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
           btnOk.addActionListener(this);
@@ -493,7 +496,11 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
+
+      // disable ok button as long as its scraping
+      btnOk.setEnabled(false);
       model.scrapeMetadata();
+      btnOk.setEnabled(true);
 
       return null;
     }
