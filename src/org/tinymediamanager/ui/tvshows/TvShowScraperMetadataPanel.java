@@ -113,10 +113,10 @@ public class TvShowScraperMetadataPanel extends JPanel {
     chckbxYear = new JCheckBox(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
     add(chckbxYear, "2, 4");
 
-    chckbxAired = new JCheckBox("Aired");
+    chckbxAired = new JCheckBox(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
     add(chckbxAired, "4, 4");
 
-    chckbxStatus = new JCheckBox("Status");
+    chckbxStatus = new JCheckBox(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
     add(chckbxStatus, "6, 4");
 
     chckbxCertification = new JCheckBox(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
@@ -131,7 +131,7 @@ public class TvShowScraperMetadataPanel extends JPanel {
     chckbxArtwork = new JCheckBox(BUNDLE.getString("metatag.artwork")); //$NON-NLS-1$
     add(chckbxArtwork, "6, 6");
 
-    chckbxScrapeEpisodes = new JCheckBox("Scrape episodes with valid episode/season number too");
+    chckbxScrapeEpisodes = new JCheckBox(BUNDLE.getString("tvshow.scrapeepisodeseasondata")); //$NON-NLS-1$
     add(chckbxScrapeEpisodes, "2, 8, 7, 1");
 
     initDataBindings();

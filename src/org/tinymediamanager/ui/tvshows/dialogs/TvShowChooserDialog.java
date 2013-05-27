@@ -428,8 +428,8 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
                 ImageLabel lblImage = new ImageLabel();
                 ImageChooserDialog dialog = new ImageChooserDialog(tvShowToScrape.getIds(), ImageType.BANNER, artworkProviders, lblImage, null, null);
                 dialog.setVisible(true);
-                tvShowToScrape.setFanartUrl(lblImage.getImageUrl());
-                tvShowToScrape.writeFanartImage();
+                tvShowToScrape.setBannerUrl(lblImage.getImageUrl());
+                tvShowToScrape.writeBannerImage();
               }
             }
             else {

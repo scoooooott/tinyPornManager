@@ -57,37 +57,37 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
 public class TvShowEpisodeToXbmcNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
+  private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
 
   /** The season. */
-  private String              season;
+  private String              season    = "";
 
   /** The episode. */
-  private String              episode;
+  private String              episode   = "";
 
   /** The uniqueid. */
-  private String              uniqueid;
+  private String              uniqueid  = "";
 
   /** The title. */
-  private String              title;
+  private String              title     = "";
 
   /** The showtitle. */
-  private String              showtitle;
+  private String              showtitle = "";
 
   /** The rating. */
-  private float               rating;
+  private float               rating    = 0;
 
   /** The votes. */
-  private int                 votes;
+  private int                 votes     = 0;
 
   /** The plot. */
-  private String              plot;
+  private String              plot      = "";
 
   /** The studio. */
-  private String              studio;
+  private String              studio    = "";
 
   /** The mpaa. */
-  private String              mpaa;
+  private String              mpaa      = "";
 
   /** The actors. */
   @XmlAnyElement(lax = true)
@@ -102,10 +102,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
   private List<String>        director;
 
   /** The aired. */
-  private String              aired;
+  private String              aired     = "";
 
   /** The premiered. */
-  private String              premiered;
+  private String              premiered = "";
 
   /** not supported tags, but used to retrain in NFO. */
 

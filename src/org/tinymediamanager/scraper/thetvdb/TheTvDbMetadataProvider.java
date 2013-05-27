@@ -44,6 +44,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.omertron.thetvdbapi.TheTVDBApi;
 import com.omertron.thetvdbapi.model.Actor;
@@ -137,6 +138,14 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
       searchString = options.get(MediaSearchOptions.SearchParam.TITLE);
     }
+
+    // return an empty search result if no query provided
+    if (StringUtils.isEmpty(searchString)) {
+      return results;
+    }
+
+    // trim out extra spaces
+    searchString = StrgUtils.removeDuplicateWhitespace(searchString);
 
     // search via the api
     List<Series> series = null;

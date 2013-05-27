@@ -57,37 +57,37 @@ import org.tinymediamanager.scraper.MediaGenres;
 public class TvShowToXbmcNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
+  private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
 
   /** The id. */
-  private String              id;
+  private String              id        = "";
 
   /** The title. */
-  private String              title;
+  private String              title     = "";
 
   /** The rating. */
-  private float               rating;
+  private float               rating    = 0;
 
   /** The votes. */
-  private int                 votes;
+  private int                 votes     = 0;
 
   /** The year. */
-  private String              year;
+  private String              year      = "";
 
   /** The plot. */
-  private String              plot;
+  private String              plot      = "";
 
   /** The mpaa. */
-  private String              mpaa;
+  private String              mpaa      = "";
 
   /** The premiered. */
-  private String              premiered;
+  private String              premiered = "";
 
   /** The studio. */
-  private String              studio;
+  private String              studio    = "";
 
   /** The status. */
-  private String              status;
+  private String              status    = "";
 
   /** The actors. */
   @XmlAnyElement(lax = true)

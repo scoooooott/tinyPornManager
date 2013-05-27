@@ -157,4 +157,27 @@ public class StrgUtils {
 
     return date;
   }
+
+  /**
+   * Remove all duplicate whitespace characters and line terminators are replaced with a single space.
+   * 
+   * @param s
+   *          a not null String
+   * @return a string with unique whitespace.
+   * @since 1.5.7
+   */
+  public static String removeDuplicateWhitespace(String s) {
+    StringBuffer result = new StringBuffer();
+    int length = s.length();
+    boolean isPreviousWhiteSpace = false;
+    for (int i = 0; i < length; i++) {
+      char c = s.charAt(i);
+      boolean thisCharWhiteSpace = Character.isWhitespace(c);
+      if (!(isPreviousWhiteSpace && thisCharWhiteSpace)) {
+        result.append(c);
+      }
+      isPreviousWhiteSpace = thisCharWhiteSpace;
+    }
+    return result.toString();
+  }
 }
