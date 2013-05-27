@@ -14,7 +14,6 @@ ui.status_text = FFFFFF
 
 # Application jar files, on classpath
 code = tmm.jar
-code = getdown-new.jar
 code = lib/asm.jar
 code = lib/betterbeansbinding-core.jar
 code = lib/betterbeansbinding-el.jar
@@ -64,6 +63,7 @@ delete = lib/log4j.jar
 
 #resource = [windows] tinyMediaManager.exe #not yet - need more testing
 resource = [!windows] tinyMediaManager.sh
+resource = getdown-new.jar
 resource = version
 resource = splashscreen.png
 resource = objectdb.conf
