@@ -452,7 +452,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the checks for images
    */
   public Boolean getHasImages() {
-    if (StringUtils.isNotEmpty(getFanart())) {
+    if (StringUtils.isNotEmpty(getThumb())) {
       return true;
     }
     return false;
@@ -616,7 +616,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // there are 2 possible filenames for thumbs
 
     // a) episodename-thumb.jpg/png (as described in the xbmc wiki http://wiki.xbmc.org/index.php?title=Frodo_FAQ#Local_images)
-    Pattern pattern = Pattern.compile("(?i)" + getTitle() + "-thumb\\..{2,4}");
+    Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(getTitle()) + "-thumb\\..{2,4}");
     File[] files = new File(path).listFiles();
     for (File file : files) {
       Matcher matcher = pattern.matcher(file.getName());
@@ -637,7 +637,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       catch (Exception e) {
         System.out.println(path);
       }
-      pattern = Pattern.compile("(?i)" + mediafile + "-(thumb|fanart)\\..{2,4}");
+      pattern = Pattern.compile("(?i)" + Pattern.quote(mediafile) + "-(thumb|fanart)\\..{2,4}");
       for (File file : files) {
         Matcher matcher = pattern.matcher(file.getName());
         if (matcher.matches()) {

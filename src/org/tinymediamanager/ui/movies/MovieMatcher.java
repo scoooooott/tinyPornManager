@@ -105,7 +105,7 @@ public class MovieMatcher {
     if (searchOptions.containsKey(SearchOptions.CAST)) {
       String castSearch = (String) searchOptions.get(SearchOptions.CAST);
       if (StringUtils.isNotEmpty(castSearch)) {
-        Pattern pattern = Pattern.compile("(?i)" + castSearch);
+        Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(castSearch));
         java.util.regex.Matcher matcher = null;
 
         // director

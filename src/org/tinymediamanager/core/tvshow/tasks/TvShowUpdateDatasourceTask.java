@@ -431,7 +431,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private void findAdditionalEpisodeFiles(TvShowEpisode episode, File videoFile, File[] directoryContents) {
     // there are much different ways the files could be stored; we only will try to find the files with the corresponding names (and sample)
     // 1st find all files/directories with videofilename*
-    Pattern pattern = Pattern.compile("(?i)" + FilenameUtils.getBaseName(videoFile.getName()) + ".*");
+    Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(FilenameUtils.getBaseName(videoFile.getName())) + ".*");
 
     for (File file : directoryContents) {
       if (file == videoFile) {
