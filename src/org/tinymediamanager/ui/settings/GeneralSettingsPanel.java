@@ -284,26 +284,26 @@ public class GeneralSettingsPanel extends JPanel {
     panelSortOptions.add(tpSortingHints, "2, 6, 3, 1, fill, fill");
 
     panelCache = new JPanel();
-    panelCache.setBorder(new TitledBorder(null, "Cache", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelCache.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.cache"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
     add(panelCache, "2, 4, fill, fill");
     panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearhttpcache"));
+    chckbxClearCacheShutdown = new JCheckBox(BUNDLE.getString("Settings.clearhttpcache"));//$NON-NLS-1$
     panelCache.add(chckbxClearCacheShutdown, "2, 2, 3, 1");
 
-    chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));
+    chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));//$NON-NLS-1$
     panelCache.add(chckbxImageCache, "2, 4, 3, 1");
 
-    lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));
+    lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));//$NON-NLS-1$
     panelCache.add(lblImageCacheQuality, "2, 6, right, default");
 
     cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
     panelCache.add(cbImageCacheQuality, "4, 6, fill, default");
 
-    chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecachebackground"));
+    chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecachebackground"));//$NON-NLS-1$
     chckbxBuildImageCache.setVisible(false);
     panelCache.add(chckbxBuildImageCache, "2, 8, 3, 1");
 
@@ -313,7 +313,7 @@ public class GeneralSettingsPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
-    lblLoglevel = new JLabel("Loglevel");
+    lblLoglevel = new JLabel(BUNDLE.getString("Settings.loglevel"));//$NON-NLS-1$
     panelLogger.add(lblLoglevel, "2, 2");
     // listen to changes of the combo box
     ItemListener listener = new ItemListener() {

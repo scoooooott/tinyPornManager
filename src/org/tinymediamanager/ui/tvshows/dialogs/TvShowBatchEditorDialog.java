@@ -60,7 +60,7 @@ import com.jgoodies.forms.layout.RowSpec;
 public class TvShowBatchEditorDialog extends JDialog {
 
   /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
+  private static final long           serialVersionUID = 3527478264068979388L;
 
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -113,7 +113,7 @@ public class TvShowBatchEditorDialog extends JDialog {
     tvShowEpisodesToEdit = episodes;
 
     JPanel panelTvShows = new JPanel();
-    panelTvShows.setBorder(new TitledBorder(null, "TV show", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelTvShows.setBorder(new TitledBorder(null, BUNDLE.getString("metatag.tvshow"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     getContentPane().add(panelTvShows, BorderLayout.NORTH);
     panelTvShows.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
@@ -121,10 +121,9 @@ public class TvShowBatchEditorDialog extends JDialog {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, }));
 
-    JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre"));
+    JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre"));//$NON-NLS-1$
     panelTvShows.add(lblGenres, "2, 2, right, default");
 
-    // cbGenres = new JComboBox(MediaGenres2.values());
     cbGenres = new AutocompleteComboBox(MediaGenres.values());
     panelTvShows.add(cbGenres, "4, 2");
     cbGenres.setEditable(true);
@@ -220,7 +219,7 @@ public class TvShowBatchEditorDialog extends JDialog {
 
     {
       JPanel panelTvShowEpisodes = new JPanel();
-      panelTvShowEpisodes.setBorder(new TitledBorder(null, "TV episode", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+      panelTvShowEpisodes.setBorder(new TitledBorder(null, BUNDLE.getString("metatag.episode"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
       getContentPane().add(panelTvShowEpisodes, BorderLayout.CENTER);
       panelTvShowEpisodes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
@@ -249,7 +248,7 @@ public class TvShowBatchEditorDialog extends JDialog {
       });
       panelTvShowEpisodes.add(btnWatched, "6, 2");
 
-      JLabel lblSeason = new JLabel("Season");
+      JLabel lblSeason = new JLabel(BUNDLE.getString("metatag.season"));//$NON-NLS-1$
       panelTvShowEpisodes.add(lblSeason, "2, 4, right, default");
 
       spSeason = new JSpinner();
@@ -311,8 +310,7 @@ public class TvShowBatchEditorDialog extends JDialog {
       });
       panelButtons.add(btnClose);
 
-      // add window listener to write changes (if the window close button "X" is
-      // pressed)
+      // add window listener to write changes (if the window close button "X" is pressed)
       addWindowListener(new WindowAdapter() {
         @Override
         public void windowClosing(WindowEvent e) {

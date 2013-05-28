@@ -118,7 +118,6 @@ public class TvShowPanel extends JPanel {
 
   /** The tree. */
   private JTree                       tree;
-  // private TreeTable tree;
 
   /** The panel right. */
   private JPanel                      panelRight;
@@ -195,8 +194,6 @@ public class TvShowPanel extends JPanel {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
-    // tree = new TreeTable(treeModel);
-    // JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(tree);
     JScrollPane scrollPane = new JScrollPane();
     scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     panelTvShowTree.add(scrollPane, "2, 3, fill, fill");
@@ -212,7 +209,6 @@ public class TvShowPanel extends JPanel {
     // temp fix for size of the button
     buttonScrape.setText("   ");
     buttonScrape.setHorizontalAlignment(JButton.LEFT);
-    // buttonScrape.setMargin(new Insets(2, 2, 2, 24));
     buttonScrape.setSplitWidth(18);
 
     // register for listener
@@ -225,7 +221,6 @@ public class TvShowPanel extends JPanel {
       }
     });
 
-    // TODO create dropdown for split button
     JPopupMenu popup = new JPopupMenu("popup");
     JMenuItem item = new JMenuItem(actionScrape2);
     popup.add(item);
@@ -237,7 +232,7 @@ public class TvShowPanel extends JPanel {
     toolBar.add(buttonScrape);
     toolBar.add(actionEdit);
 
-    // TODO move to a correcter place
+    // install drawing of full with
     tree = new ZebraJTree(treeModel) {
       private static final long serialVersionUID = 1L;
 
@@ -247,24 +242,23 @@ public class TvShowPanel extends JPanel {
       }
     };
 
-    // // TODO move to a correcter place
     TreeUI ui = new TreeUI() {
       protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
           boolean hasBeenExpanded, boolean isLeaf) {
         bounds.width = width - bounds.x;
         super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
       }
-
     };
     tree.setUI(ui);
 
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
-    // tree.getTree().setLargeModel(true);
     tree.setCellRenderer(new TvShowTreeCellRenderer());
     scrollPane.setViewportView(tree);
 
     JPanel panelHeader = new JPanel() {
+      private static final long serialVersionUID = -6914183798172482157L;
+
       @Override
       public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -276,7 +270,7 @@ public class TvShowPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblTvShowsColumn = new JLabel("Tv show");
+    JLabel lblTvShowsColumn = new JLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
     lblTvShowsColumn.setHorizontalAlignment(JLabel.CENTER);
     panelHeader.add(lblTvShowsColumn, "2, 1");
 
@@ -298,7 +292,7 @@ public class TvShowPanel extends JPanel {
             FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblTvShowsT = new JLabel("TV shows:");
+    JLabel lblTvShowsT = new JLabel(BUNDLE.getString("metatag.tvshows") + ":"); //$NON-NLS-1$
     panel.add(lblTvShowsT, "1, 2, fill, fill");
 
     lblTvShows = new JLabel("");
@@ -307,7 +301,7 @@ public class TvShowPanel extends JPanel {
     JLabel labelSlash = new JLabel("/");
     panel.add(labelSlash, "5, 2");
 
-    JLabel lblEpisodesT = new JLabel("Episodes:");
+    JLabel lblEpisodesT = new JLabel(BUNDLE.getString("metatag.episodes") + ":"); //$NON-NLS-1$
     panel.add(lblEpisodesT, "7, 2");
 
     lblEpisodes = new JLabel("");
@@ -402,12 +396,12 @@ public class TvShowPanel extends JPanel {
     menu.add(actionUpdateDatasources2);
     menu.addSeparator();
 
-    JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape"));
+    JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape")); //$NON-NLS-1$
     menuScrape.add(actionScrape2);
     menuScrape.add(actionScrapeSelected);
     menu.add(menuScrape);
 
-    JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit"));
+    JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
     menuEdit.add(actionEdit2);
     menuEdit.add(actionChangeSeasonPoster2);
     menu.add(actionBatchEdit);

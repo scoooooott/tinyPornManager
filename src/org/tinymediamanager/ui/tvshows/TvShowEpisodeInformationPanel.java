@@ -130,8 +130,14 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
   /** The lbl media logo audio. */
   private JLabel                      lblMediaLogoAudio;
+
+  /** The panel watched. */
   private JPanel                      panelWatched;
+
+  /** The lbl watched. */
   private JLabel                      lblWatched;
+
+  /** The separator. */
   private JSeparator                  separator;
 
   /**
@@ -154,7 +160,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
     panelTop = new JPanel();
     panelTop.setBorder(null);
-    // add(panelTop, "1, 2, fill, fill");
     splitPaneVertical.setTopComponent(panelTop);
     panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"),
@@ -169,7 +174,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelTvShowHeader.add(panelMovieTitle, BorderLayout.NORTH);
     panelMovieTitle.setLayout(new BorderLayout(0, 0));
     lblTvShowName = new JLabel("");
-    // panelMovieHeader.add(lblMovieName, BorderLayout.NORTH);
     panelMovieTitle.add(lblTvShowName);
     lblTvShowName.setFont(new Font("Dialog", Font.BOLD, 16));
 
@@ -237,7 +241,6 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), FormFactory.RELATED_GAP_COLSPEC,
         FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
-    // add(panelBottom, "1, 4, fill, bottom");
     splitPaneVertical.setBottomComponent(panelBottom);
 
     tabbedPaneTvShowEpisodeDetails = new JTabbedPane(JTabbedPane.TOP);
@@ -258,10 +261,10 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
 
     panelActors = new TvShowEpisodeCastPanel(tvShowEpisodeSelectionModel);
-    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelActors, null);
+    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelActors, null); //$NON-NLS-1$
 
     panelMediaInformation = new TvShowEpisodeMediaInformationPanel(tvShowEpisodeSelectionModel);
-    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null);
+    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
 
     // beansbinding init
     initDataBindings();

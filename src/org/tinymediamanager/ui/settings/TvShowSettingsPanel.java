@@ -60,11 +60,11 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowSettingsPanel extends JPanel {
 
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID = -675729644848101096L;
+
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
 
   /** The settings. */
   private Settings                    settings         = Settings.getInstance();

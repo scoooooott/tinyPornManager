@@ -64,11 +64,11 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowEpisodeMediaInformationPanel extends JPanel {
 
+  /** The Constant serialVersionUID. */
+  private static final long                 serialVersionUID    = 6409916197348303643L;
+
   /** The Constant BUNDLE. */
   private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long                 serialVersionUID    = 1L;
 
   /** The logger. */
   private final static Logger               LOGGER              = LoggerFactory.getLogger(TvShowEpisodeMediaInformationPanel.class);

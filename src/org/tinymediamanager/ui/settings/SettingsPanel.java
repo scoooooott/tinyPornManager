@@ -43,11 +43,11 @@ import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
  */
 public class SettingsPanel extends JPanel {
 
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID = -3509434882626534578L;
+
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
 
   /** The settings. */
   private Settings                    settings         = Settings.getInstance();

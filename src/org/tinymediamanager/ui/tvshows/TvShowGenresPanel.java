@@ -30,11 +30,13 @@ import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.scraper.MediaGenres;
 
 /**
+ * The Class TvShowGenresPanel.
  * 
  * @author Manuel Laggner
  */
 public class TvShowGenresPanel extends JPanel {
 
+  /** The Constant serialVersionUID. */
   private static final long    serialVersionUID = -7111036144770559630L;
 
   /** The Constant LOGGER. */
@@ -43,6 +45,12 @@ public class TvShowGenresPanel extends JPanel {
   /** The model. */
   private TvShowSelectionModel tvShowSelectionModel;
 
+  /**
+   * Instantiates a new tv show genres panel.
+   * 
+   * @param model
+   *          the model
+   */
   public TvShowGenresPanel(TvShowSelectionModel model) {
     this.tvShowSelectionModel = model;
     setOpaque(false);
@@ -98,5 +106,4 @@ public class TvShowGenresPanel extends JPanel {
       }
     }
   }
-
 }

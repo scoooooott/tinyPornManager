@@ -543,7 +543,7 @@ public class MovieEditorDialog extends JDialog {
       details2Panel.add(lblGenres, "6, 2");
     }
     {
-      JButton btnAddActor = new JButton("Add Actor");
+      JButton btnAddActor = new JButton(BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(actionAddActor);
       btnAddActor.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));

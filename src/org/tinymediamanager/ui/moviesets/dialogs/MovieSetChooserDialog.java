@@ -218,7 +218,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
           panelSearchDetail.add(lblMovieSetName, "2, 1, 3, 1, fill, top");
         }
         {
-          lblMovieSetPoster = new ImageLabel();// new JLabel("");
+          lblMovieSetPoster = new ImageLabel();
           panelSearchDetail.add(lblMovieSetPoster, "2, 3, fill, fill");
         }
         {

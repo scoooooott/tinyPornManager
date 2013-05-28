@@ -197,25 +197,25 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       spEpisode = new JSpinner();
       contentPanel.add(spEpisode, "10, 6");
 
-      JLabel lblRating = new JLabel("rating");
+      JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
       contentPanel.add(lblRating, "2, 8, right, default");
 
       spRating = new JSpinner();
       contentPanel.add(spRating, "4, 8");
 
-      JLabel lblFirstAired = new JLabel("first aired");
+      JLabel lblFirstAired = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
       contentPanel.add(lblFirstAired, "8, 8, right, default");
 
       spFirstAired = new JSpinner(new SpinnerDateModel());
       contentPanel.add(spFirstAired, "10, 8");
 
-      JLabel lblWatched = new JLabel("Watched");
+      JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       contentPanel.add(lblWatched, "2, 10, right, default");
 
       chckbxWatched = new JCheckBox("");
       contentPanel.add(chckbxWatched, "4, 10");
 
-      JLabel lblDateAdded = new JLabel("date added");
+      JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
       contentPanel.add(lblDateAdded, "8, 10, right, default");
 
       spDateAdded = new JSpinner(new SpinnerDateModel());
@@ -235,7 +235,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       lblThumb = new ImageLabel();
       contentPanel.add(lblThumb, "12, 6, 1, 11");
 
-      JLabel lblDirector = new JLabel("Director");
+      JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
       contentPanel.add(lblDirector, "2, 14, right, default");
 
       tfDirector = new JTextField();
@@ -243,7 +243,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       tfDirector.setColumns(10);
       contentPanel.add(tfDirector, "4, 14, 7, 1, fill, default");
 
-      JLabel lblWriter = new JLabel("Writer");
+      JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
       contentPanel.add(lblWriter, "2, 16, right, default");
 
       tfWriter = new JTextField();
@@ -251,7 +251,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       tfWriter.setColumns(10);
       contentPanel.add(tfWriter, "4, 16, 7, 1, fill, default");
 
-      JLabel lblGuests = new JLabel("Guests");
+      JLabel lblGuests = new JLabel(BUNDLE.getString("metatag.guests")); //$NON-NLS-1$
       contentPanel.add(lblGuests, "2, 18, right, top");
 
       JScrollPane scrollPaneGuests = new JScrollPane();

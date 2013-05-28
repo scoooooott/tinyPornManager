@@ -22,15 +22,19 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 
 /**
+ * The Class TvShowEpisodeSelectionModel.
  * 
  * @author Manuel Laggner
  */
 public class TvShowEpisodeSelectionModel extends AbstractModelObject {
 
+  /** The Constant SELECTED_TV_SHOW_EPISODE. */
   private static final String    SELECTED_TV_SHOW_EPISODE = "selectedTvShowEpisode";
 
+  /** The selected tv show episode. */
   private TvShowEpisode          selectedTvShowEpisode;
 
+  /** The inital tv show episode. */
   private TvShowEpisode          initalTvShowEpisode      = new TvShowEpisode();
 
   /** The property change listener. */
@@ -53,7 +57,7 @@ public class TvShowEpisodeSelectionModel extends AbstractModelObject {
   /**
    * Sets the selected tv show episode.
    * 
-   * @param tvShow
+   * @param tvShowEpisode
    *          the new selected tv show episode
    */
   public void setSelectedTvShowEpisode(TvShowEpisode tvShowEpisode) {

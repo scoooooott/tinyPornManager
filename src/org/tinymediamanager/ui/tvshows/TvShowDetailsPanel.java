@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URI;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +32,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -46,39 +48,46 @@ import com.jgoodies.forms.layout.RowSpec;
 public class TvShowDetailsPanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long          serialVersionUID = -1569492065407109019L;
+  private static final long           serialVersionUID = -1569492065407109019L;
 
   /** The Constant LOGGER. */
-  private final static Logger        LOGGER           = LoggerFactory.getLogger(TvShowDetailsPanel.class);
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowDetailsPanel.class);
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The selection model. */
-  private final TvShowSelectionModel selectionModel;
+  private final TvShowSelectionModel  selectionModel;
 
   /** The lbl genres. */
-  private JLabel                     lblGenres;
+  private JLabel                      lblGenres;
 
   /** The lbl certification. */
-  private JLabel                     lblCertification;
+  private JLabel                      lblCertification;
 
   /** The lbl thetvdb id. */
-  private LinkLabel                  lblThetvdbId;
+  private LinkLabel                   lblThetvdbId;
 
   /** The lbl imdb id. */
-  private LinkLabel                  lblImdbId;
+  private LinkLabel                   lblImdbId;
 
   /** The lbl path. */
-  private LinkLabel                  lblPath;
+  private LinkLabel                   lblPath;
 
   /** The lbl premiered. */
-  private JLabel                     lblPremiered;
+  private JLabel                      lblPremiered;
 
   /** The lbl studio. */
-  private JLabel                     lblStudio;
+  private JLabel                      lblStudio;
 
   /** The lbl status. */
-  private JLabel                     lblStatus;
-  private JLabel                     lblYearT;
-  private JLabel                     lblYear;
+  private JLabel                      lblStatus;
+
+  /** The lbl year t. */
+  private JLabel                      lblYearT;
+
+  /** The lbl year. */
+  private JLabel                      lblYear;
 
   /**
    * Instantiates a new tv show details panel.
@@ -96,39 +105,39 @@ public class TvShowDetailsPanel extends JPanel {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblGenresT = new JLabel("Genres");
+    JLabel lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     add(lblGenresT, "2, 2");
 
     lblGenres = new JLabel("");
     lblGenresT.setLabelFor(lblGenres);
     add(lblGenres, "6, 2, 5, 1");
 
-    JLabel lblCertificationT = new JLabel("Certification");
+    JLabel lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
     add(lblCertificationT, "2, 4");
 
     lblCertification = new JLabel("");
     lblCertificationT.setLabelFor(lblCertification);
     add(lblCertification, "6, 4");
 
-    JLabel lblStudioT = new JLabel("Studio");
+    JLabel lblStudioT = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
     add(lblStudioT, "2, 6");
 
     lblStudio = new JLabel("");
     add(lblStudio, "6, 6, 5, 1");
 
-    JLabel lblPremieredT = new JLabel("Premiered");
+    JLabel lblPremieredT = new JLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
     add(lblPremieredT, "2, 8");
 
     lblPremiered = new JLabel("");
     add(lblPremiered, "6, 8");
 
-    lblYearT = new JLabel("Year");
+    lblYearT = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
     add(lblYearT, "8, 8");
 
     lblYear = new JLabel("");
     add(lblYear, "10, 8");
 
-    JLabel lblStatusT = new JLabel("Status");
+    JLabel lblStatusT = new JLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
     add(lblStatusT, "2, 10");
 
     lblStatus = new JLabel("");
@@ -168,7 +177,7 @@ public class TvShowDetailsPanel extends JPanel {
     });
     add(lblImdbId, "10, 12");
 
-    JLabel lblPathT = new JLabel("Path");
+    JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     add(lblPathT, "2, 14");
 
     lblPath = new LinkLabel("");

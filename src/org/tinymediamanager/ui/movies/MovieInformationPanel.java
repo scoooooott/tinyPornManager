@@ -421,10 +421,10 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModel, movieSelectionModelBeanProperty_17, tableCast);
     //
     BeanProperty<MovieActor, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName("Name").setEditable(false);
+    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false);//$NON-NLS-1$
     //
     BeanProperty<MovieActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName("Character").setEditable(false);
+    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName(BUNDLE.getString("metatag.role")).setEditable(false);//$NON-NLS-1$
     //
     jTableBinding.setEditable(false);
     jTableBinding.bind();

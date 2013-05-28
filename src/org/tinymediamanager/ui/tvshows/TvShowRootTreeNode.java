@@ -77,24 +77,11 @@ public class TvShowRootTreeNode extends DefaultMutableTreeNode {
     return super.toString();
   }
 
-  // /**
-  // * Sort.
-  // */
-  // @SuppressWarnings("unchecked")
-  // public void sort() {
-  // if (this.children != null) {
-  // Collections.sort(this.children, nodeComparator);
-  //
-  // // sort all children
-  // for (Object node : this.children) {
-  // if (node instanceof TvShowTreeNode) {
-  // TvShowTreeNode showNode = (TvShowTreeNode) node;
-  // showNode.sort();
-  // }
-  // }
-  // }
-  // }
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.tree.DefaultMutableTreeNode#insert(javax.swing.tree.MutableTreeNode, int)
+   */
   @SuppressWarnings("unchecked")
   @Override
   public void insert(MutableTreeNode newChild, int childIndex) {

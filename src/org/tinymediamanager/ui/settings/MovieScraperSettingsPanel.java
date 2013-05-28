@@ -53,11 +53,11 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieScraperSettingsPanel extends JPanel {
 
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID = -299825914193235308L;
+
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
 
   /** The settings. */
   private Settings                    settings         = Settings.getInstance();

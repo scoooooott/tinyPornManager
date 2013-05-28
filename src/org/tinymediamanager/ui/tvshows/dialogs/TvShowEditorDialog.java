@@ -472,7 +472,6 @@ public class TvShowEditorDialog extends JDialog {
       details2Panel.add(btnRemoveGenre, "6, 6, right, top");
     }
     {
-      // cbGenres = new JComboBox(MediaGenres2.values());
       cbGenres = new AutocompleteComboBox(MediaGenres.values());
       cbGenres.setEditable(true);
       details2Panel.add(cbGenres, "8,8");

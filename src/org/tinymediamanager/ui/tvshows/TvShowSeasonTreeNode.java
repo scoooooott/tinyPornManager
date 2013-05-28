@@ -38,6 +38,12 @@ public class TvShowSeasonTreeNode extends DefaultMutableTreeNode {
   /** The node comparator. */
   private Comparator<TreeNode> nodeComparator;
 
+  /**
+   * Instantiates a new tv show season tree node.
+   * 
+   * @param userObject
+   *          the user object
+   */
   public TvShowSeasonTreeNode(Object userObject) {
     super(userObject);
     nodeComparator = new Comparator<TreeNode>() {
@@ -74,16 +80,11 @@ public class TvShowSeasonTreeNode extends DefaultMutableTreeNode {
     return super.toString();
   }
 
-  // /**
-  // * Sort.
-  // */
-  // @SuppressWarnings("unchecked")
-  // public void sort() {
-  // if (this.children != null) {
-  // Collections.sort(this.children, nodeComparator);
-  // }
-  // }
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.tree.DefaultMutableTreeNode#insert(javax.swing.tree.MutableTreeNode, int)
+   */
   @SuppressWarnings("unchecked")
   @Override
   public void insert(MutableTreeNode newChild, int childIndex) {

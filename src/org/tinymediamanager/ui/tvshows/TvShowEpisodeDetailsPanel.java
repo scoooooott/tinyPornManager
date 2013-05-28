@@ -20,6 +20,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +32,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -46,10 +48,13 @@ import com.jgoodies.forms.layout.RowSpec;
 public class TvShowEpisodeDetailsPanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long                 serialVersionUID = 1L;
+  private static final long                 serialVersionUID = -5598009673335010850L;
 
   /** The Constant LOGGER. */
   private final static Logger               LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The selection model. */
   private final TvShowEpisodeSelectionModel selectionModel;
@@ -80,7 +85,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblSeasonT = new JLabel("Season");
+    JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
     lblSeasonT.setFont(new Font("Dialog", Font.PLAIN, 14));
     add(lblSeasonT, "2, 2");
 
@@ -88,7 +93,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     lblSeason.setFont(new Font("Dialog", Font.PLAIN, 14));
     add(lblSeason, "6, 2");
 
-    JLabel lblEpisodeT = new JLabel("Episode");
+    JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
     lblEpisodeT.setFont(new Font("Dialog", Font.PLAIN, 14));
     add(lblEpisodeT, "2, 4");
 
@@ -96,13 +101,13 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     lblEpisode.setFont(new Font("Dialog", Font.PLAIN, 14));
     add(lblEpisode, "6, 4");
 
-    JLabel lblAiredT = new JLabel("Aired");
+    JLabel lblAiredT = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
     add(lblAiredT, "2, 6");
 
     lblAired = new JLabel("");
     add(lblAired, "6, 6");
 
-    JLabel lblPathT = new JLabel("Path");
+    JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     add(lblPathT, "2, 8");
 
     lblPath = new LinkLabel("");
@@ -128,6 +133,9 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     initDataBindings();
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty = BeanProperty.create("selectedTvShowEpisode.path");
     BeanProperty<LinkLabel, String> linkLabelBeanProperty = BeanProperty.create("text");

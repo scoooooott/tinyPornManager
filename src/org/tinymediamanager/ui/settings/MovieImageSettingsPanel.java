@@ -61,11 +61,11 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieImageSettingsPanel extends JPanel {
 
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID = 7312645402037806284L;
+
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
 
   /** The settings. */
   private Settings                    settings         = Settings.getInstance();
@@ -159,6 +159,8 @@ public class MovieImageSettingsPanel extends JPanel {
 
   /** The btn select folder. */
   private JButton                     btnSelectFolder;
+
+  /** The separator_2. */
   private JSeparator                  separator_2;
 
   /**

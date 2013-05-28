@@ -100,6 +100,8 @@ public class TvShowInformationPanel extends JPanel {
 
   /** The tv show selection model. */
   private TvShowSelectionModel        tvShowSelectionModel;
+
+  /** The panel media information. */
   private JPanel                      panelMediaInformation;
 
   /**
@@ -122,7 +124,6 @@ public class TvShowInformationPanel extends JPanel {
 
     panelTop = new JPanel();
     panelTop.setBorder(null);
-    // add(panelTop, "1, 2, fill, fill");
     splitPaneVertical.setTopComponent(panelTop);
     panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"),
@@ -138,7 +139,6 @@ public class TvShowInformationPanel extends JPanel {
     panelTvShowHeader.add(panelTvShowTitle, "1, 1, fill, top");
     panelTvShowTitle.setLayout(new BorderLayout(0, 0));
     lblTvShowName = new JLabel("");
-    // panelMovieHeader.add(lblMovieName, BorderLayout.NORTH);
     panelTvShowTitle.add(lblTvShowName);
     lblTvShowName.setFont(new Font("Dialog", Font.BOLD, 16));
 
@@ -193,7 +193,7 @@ public class TvShowInformationPanel extends JPanel {
     panelBottom.add(tabbedPaneTvShowDetails, "1, 2, fill, fill");
 
     JPanel panelDetails = new TvShowDetailsPanel(tvShowSelectionModel);
-    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.details"), null, panelDetails, null);
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.details"), null, panelDetails, null); //$NON-NLS-1$
 
     JPanel panelOverview = new JPanel();
     panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
@@ -213,7 +213,7 @@ public class TvShowInformationPanel extends JPanel {
     tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelCast, null); //$NON-NLS-1$
 
     panelMediaInformation = new TvShowMediaInformationPanel(tvShowSelectionModel);
-    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null);
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
 
     // beansbinding init
     initDataBindings();

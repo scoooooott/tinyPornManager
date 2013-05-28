@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +32,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.tvshow.TvShowActor;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -46,16 +48,19 @@ import com.jgoodies.forms.layout.RowSpec;
 public class TvShowCastPanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long          serialVersionUID = 2374973082749248956L;
+  private static final long           serialVersionUID = 2374973082749248956L;
+
+  /** The Constant BUNDLE. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The selection model. */
-  private final TvShowSelectionModel selectionModel;
+  private final TvShowSelectionModel  selectionModel;
 
   /** The table actors. */
-  private JTable                     tableActors;
+  private JTable                      tableActors;
 
   /** The lbl actor image. */
-  private ImageLabel                 lblActorImage;
+  private ImageLabel                  lblActorImage;
 
   /**
    * Instantiates a new tv show cast panel.
@@ -72,7 +77,7 @@ public class TvShowCastPanel extends JPanel {
     lblActorImage = new ImageLabel();
     add(lblActorImage, "6, 2");
 
-    JLabel lblActorsT = new JLabel("Actors");
+    JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors"));//$NON-NLS-1$
     add(lblActorsT, "2, 2, left, top");
 
     JScrollPane scrollPaneActors = new JScrollPane();
@@ -81,6 +86,7 @@ public class TvShowCastPanel extends JPanel {
     tableActors = new JTable();
     scrollPaneActors.setViewportView(tableActors);
     initDataBindings();
+
   }
 
   protected void initDataBindings() {
@@ -89,10 +95,10 @@ public class TvShowCastPanel extends JPanel {
         tvShowSelectionModelBeanProperty_2, tableActors);
     //
     BeanProperty<TvShowActor, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName("Name").setEditable(false);
+    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false);//$NON-NLS-1$
     //
     BeanProperty<TvShowActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName("Character").setEditable(false);
+    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName(BUNDLE.getString("metatag.role")).setEditable(false);//$NON-NLS-1$
     //
     jTableBinding.setEditable(false);
     jTableBinding.bind();

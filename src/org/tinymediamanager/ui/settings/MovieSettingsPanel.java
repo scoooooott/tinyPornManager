@@ -63,11 +63,11 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSettingsPanel extends JPanel {
 
+  /** The Constant serialVersionUID. */
+  private static final long           serialVersionUID = -7580437046944123496L;
+
   /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
 
   /** The settings. */
   private Settings                    settings         = Settings.getInstance();
@@ -308,6 +308,9 @@ public class MovieSettingsPanel extends JPanel {
     }
   }
 
+  /**
+   * Inits the data bindings.
+   */
   protected void initDataBindings() {
     BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieSettings.movieDataSource");
     JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,

@@ -26,15 +26,24 @@ import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
 
 /**
- * @author Manuel Laggner
+ * The Class TvShowTreeNode.
  * 
+ * @author Manuel Laggner
  */
 public class TvShowTreeNode extends DefaultMutableTreeNode {
+
+  /** The Constant serialVersionUID. */
   private static final long    serialVersionUID = -1316609340104597133L;
 
   /** The node comparator. */
   private Comparator<TreeNode> nodeComparator;
 
+  /**
+   * Instantiates a new tv show tree node.
+   * 
+   * @param userObject
+   *          the user object
+   */
   public TvShowTreeNode(Object userObject) {
     super(userObject);
 
@@ -54,7 +63,9 @@ public class TvShowTreeNode extends DefaultMutableTreeNode {
   }
 
   /**
-   * provides the right name of the node for display
+   * provides the right name of the node for display.
+   * 
+   * @return the string
    */
   @Override
   public String toString() {
@@ -68,24 +79,11 @@ public class TvShowTreeNode extends DefaultMutableTreeNode {
     return super.toString();
   }
 
-  // /**
-  // * Sort.
-  // */
-  // @SuppressWarnings("unchecked")
-  // public void sort() {
-  // if (this.children != null) {
-  // Collections.sort(this.children, nodeComparator);
-  //
-  // // sort all children
-  // for (Object node : this.children) {
-  // if (node instanceof TvShowSeasonTreeNode) {
-  // TvShowSeasonTreeNode seasonNode = (TvShowSeasonTreeNode) node;
-  // seasonNode.sort();
-  // }
-  // }
-  // }
-  // }
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javax.swing.tree.DefaultMutableTreeNode#insert(javax.swing.tree.MutableTreeNode, int)
+   */
   @SuppressWarnings("unchecked")
   @Override
   public void insert(MutableTreeNode newChild, int childIndex) {
