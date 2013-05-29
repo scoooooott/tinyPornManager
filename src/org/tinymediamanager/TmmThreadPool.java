@@ -112,7 +112,7 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
    */
   public void waitForCompletionOrCancel() {
     pool.shutdown();
-    while (!cancel && !pool.isTerminated()) {
+    while (!cancel && !pool.isTerminated() && taskdone < taskcount) {
       try {
         final Future<Object> future = service.take();
         taskdone++;
