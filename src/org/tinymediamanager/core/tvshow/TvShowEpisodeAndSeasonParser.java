@@ -120,16 +120,34 @@ public class TvShowEpisodeAndSeasonParser {
    * @return
    */
   public static EpisodeMatchingResult detectEpisodeFromFilenameAlternative(String name, String showname) {
+    LOGGER.debug("parsing '" + name + "' with alternate method...");
     EpisodeMatchingResult result = new EpisodeMatchingResult();
 
     // remove problematic strings from name
-    String filename = ParserUtils.cleanTvEpisodeName(name);
+    String filename = ParserUtils.removeStopwordsFromTvEpisodeName(name);
     if (showname != null && !showname.isEmpty()) {
       // remove string like tvshow name (440, 24, ...)
       filename = filename.replaceAll("(?i)^" + showname + "", "");
       filename = filename.replaceAll("(?i) " + showname + " ", "");
     }
     filename = FilenameUtils.getBaseName(filename); // w/o extension
+
+    // try to parse YXX numbers first, and exit
+    String numbers = filename.replaceAll("[^0-9]", "");
+    if (numbers.length() == 3) {
+      if (filename.matches(".*[0-9]{3}.*")) {
+        // Filename contains only 3 subsequent numbers; parse this as SEE
+        int s = Integer.parseInt(numbers.substring(0, 1));
+        int ep = Integer.parseInt(numbers.substring(1));
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.debug("add found EP " + ep);
+        }
+        LOGGER.debug("add found season " + s);
+        result.season = s;
+        return result;
+      }
+    }
 
     // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
     Pattern regex = Pattern.compile("(?i)[epx_-]+(\\d{2})"); // episode fixed to 2 chars
@@ -144,6 +162,26 @@ public class TvShowEpisodeAndSeasonParser {
       }
       if (ep > 0 && !result.episodes.contains(ep)) {
         result.episodes.add(ep);
+        LOGGER.debug("add found EP " + ep);
+      }
+    }
+
+    if (result.episodes.isEmpty()) {
+      // alternative episode style; didn't get it working in above regex
+      regex = Pattern.compile("(?i)episode[\\. _-]*(\\d{2})"); // episode fixed to 2 chars
+      m = regex.matcher(filename);
+      while (m.find()) {
+        int ep = 0;
+        try {
+          ep = Integer.parseInt(m.group(1));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.debug("add found EP " + ep);
+        }
       }
     }
 
@@ -155,6 +193,7 @@ public class TvShowEpisodeAndSeasonParser {
       ep = decodeRoman(m.group(2));
       if (ep > 0 && !result.episodes.contains(ep)) {
         result.episodes.add(ep);
+        LOGGER.debug("add found EP " + ep);
       }
     }
 
@@ -171,6 +210,7 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with max 2 numeric chars
         }
         result.season = s;
+        LOGGER.debug("add found season " + s);
       }
     }
 
@@ -190,6 +230,7 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with correct pattern
         }
         result.season = s;
+        LOGGER.debug("add found year as season " + s);
       }
     }
 
@@ -209,6 +250,7 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with correct pattern
         }
         result.season = s;
+        LOGGER.debug("add found year as season " + s);
       }
     }
 
@@ -228,9 +270,11 @@ public class TvShowEpisodeAndSeasonParser {
         }
         if (ep > 0 && !result.episodes.contains(ep)) {
           result.episodes.add(ep);
+          LOGGER.debug("add found EP " + ep);
         }
         if (s >= 0) {
           result.season = s;
+          LOGGER.debug("add found season " + s);
         }
       }
     }

@@ -99,13 +99,27 @@ public class ParserUtils {
   }
 
   /**
+   * removes some weird number-stopwords like 1080, 720 etc.. to ease the regex parsing for season/episode
+   * 
+   * @param filename
+   * @return the cleaned one
+   */
+  public static String removeStopwordsFromTvEpisodeName(String filename) {
+    String[] stopwords = { "720p", "1080", "x264", "h264", "webdl", "hdtv", "dubbed", "xvid", "bdrip", "webrip", "hdrip" };
+    for (String s : stopwords) {
+      filename = filename.replaceAll(s, "");
+    }
+    return filename;
+  }
+
+  /**
    * returns cleaned tvepisode name
    * 
    * @param filename
    * @return the cleaned one
    */
   public static String cleanTvEpisodeName(String filename) {
-    String[] stopwords = { "720", "1080", "x264", "h264", "webdl", "hdtv", "dubbed", "xvid", "bdrip", "webrip", "hdrip" };
+    String[] stopwords = { "720p", "1080", "x264", "h264", "webdl", "hdtv", "dubbed", "xvid", "bdrip", "webrip", "hdrip" };
 
     if (filename == null || filename.isEmpty()) {
       LOGGER.warn("Filename empty?!");
