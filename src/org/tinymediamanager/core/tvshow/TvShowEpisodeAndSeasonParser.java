@@ -57,9 +57,10 @@ public class TvShowEpisodeAndSeasonParser {
   // foo.1x09* or just /1x09*
   /** The pattern5. */
   private static Pattern      pattern5 = Pattern.compile("[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)([^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
-  // foo.103*, 103 foo
-  /** The pattern6. */
-  private static Pattern      pattern6 = Pattern.compile("[\\\\/\\._ -]([0-9]+)([0-9][0-9])([\\._ -][^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
+
+  // foo.103*, 103 foo - DEACTIVATE, it produces too much false positives on years
+  // /** The pattern6. */
+  // private static Pattern pattern6 = Pattern.compile("[\\\\/\\._ -]([0-9]+)([0-9][0-9])([\\._ -][^\\\\/]*)$", Pattern.CASE_INSENSITIVE);
   // Part I, Pt.VI
   /** The pattern7. */
   private static Pattern      pattern7 = Pattern.compile("[\\/._ -]p(?:ar)?t[_. -]()([ivx]+)([._ -][^\\/]*)$", Pattern.CASE_INSENSITIVE);
@@ -296,8 +297,9 @@ public class TvShowEpisodeAndSeasonParser {
     resultFromParser = parse(stringToParse, pattern5);
     result = combineResults(result, resultFromParser);
 
-    resultFromParser = parse(stringToParse, pattern6);
-    result = combineResults(result, resultFromParser);
+    // DEACTIVATE, it produces too much false positives on years
+    // resultFromParser = parse(stringToParse, pattern6);
+    // result = combineResults(result, resultFromParser);
 
     resultFromParser = parse(stringToParse, pattern7);
     result = combineResults(result, resultFromParser);
@@ -361,6 +363,7 @@ public class TvShowEpisodeAndSeasonParser {
       }
 
       if (ep > 0 && !result.episodes.contains(ep)) {
+        LOGGER.debug("found episode " + ep + " for " + searchString + " with " + pattern.toString());
         result.episodes.add(ep);
       }
 
