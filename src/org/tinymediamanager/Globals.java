@@ -77,4 +77,55 @@ public class Globals {
 
   /** The logo. */
   public final static Image logo = Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
+
+  /**
+   * Look for a text in name of running threads to check if some threads have not shut down yet
+   * 
+   * @param contains
+   *          the String to look for in thread name
+   * @return true if a running thread's name contains given String
+   */
+  public static boolean checkForThreadAlive(String contains) {
+    for (Thread t : getAllThreads()) {
+      if (t.isAlive() && getThreadName(t).contains(contains)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Get all threads of our own threadgroup (threads started by our webapplication).
+   * 
+   * @return all threads
+   */
+  private static Thread[] getAllThreads() {
+    ThreadGroup root = Thread.currentThread().getThreadGroup();
+
+    int nAlloc = root.activeCount();
+    int n = 0;
+    Thread[] threads;
+    do {
+      nAlloc *= 2;
+      threads = new Thread[nAlloc];
+      n = root.enumerate(threads, true);
+    } while (n == nAlloc);
+
+    return java.util.Arrays.copyOf(threads, n);
+  }
+
+  /**
+   * Get thread's name in lowercase.
+   * 
+   * @param t
+   *          the thread
+   * @return the thread name
+   */
+  private static String getThreadName(Thread t) {
+    return (t != null && !isEmpty(t.getName())) ? t.getName().toLowerCase() : "";
+  }
+
+  private static boolean isEmpty(CharSequence cs) {
+    return cs == null || cs.length() == 0;
+  }
 }

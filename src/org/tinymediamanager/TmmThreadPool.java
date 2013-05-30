@@ -194,7 +194,7 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
     TmmThreadFactory(String poolname) {
       SecurityManager s = System.getSecurityManager();
       group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-      namePrefix = "pool-" + poolname + "-thread-";
+      namePrefix = "tmmpool-" + poolname + "-thread-";
     }
 
     /*

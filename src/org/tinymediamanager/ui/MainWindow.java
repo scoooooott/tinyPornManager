@@ -381,7 +381,7 @@ public class MainWindow extends JFrame {
       public void windowClosing(WindowEvent e) {
         int confirm = 0;
         // if there are some threads running, display exit confirmation
-        if (Globals.executor.getActiveCount() > 0) {
+        if (Globals.executor.getActiveCount() > 0 || Globals.checkForThreadAlive("tmmpool")) {
           confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),
               JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
         }
