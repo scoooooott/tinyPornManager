@@ -113,7 +113,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private MediaFileType              type             = MediaFileType.UNKNOWN;
 
   /** inline subtitles of mediafile. */
-  private List<String>               subtitles        = new ArrayList<String>();
+  private List<MediaFileSubtitle>    subtitles        = new ArrayList<MediaFileSubtitle>();
 
   /** the mediainfo object. */
   @Transient
@@ -471,7 +471,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * 
    * @return the subtitles
    */
-  public List<String> getSubtitles() {
+  public List<MediaFileSubtitle> getSubtitles() {
     return subtitles;
   }
 
@@ -901,12 +901,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     LOGGER.debug("start MediaInfo for " + this.filename);
 
-    // parse inline subtitles
-    int cnt = getMediaInfo().streamCount(StreamKind.Text);
-    for (int i = 0; i < cnt; i++) {
-      subtitles.add(getMediaInfo(StreamKind.Text, i, "Language", "", ""));
-    }
-
     String height = "";
     String scanType = "";
     String width = "";
@@ -919,6 +913,48 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
         width = getMediaInfo(StreamKind.Video, 0, "Width");
         videoCodec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
+
+        // get audio streams
+        int streams = getMediaInfo().streamCount(StreamKind.Audio);
+        audioStreams.clear();
+        for (int i = 0; i < streams; i++) {
+          MediaFileAudioStream stream = new MediaFileAudioStream();
+
+          String audioCodec = getMediaInfo(StreamKind.Audio, i, "CodecID/Hint", "Format");
+          stream.setCodec(audioCodec.replaceAll("\\p{Punct}", ""));
+
+          String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)");
+          stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
+
+          try {
+            String br = getMediaInfo(StreamKind.Audio, i, "BitRate");
+            stream.setBitrate(Integer.valueOf(br) / 1024);
+          }
+          catch (Exception e) {
+          }
+
+          String language = getMediaInfo(StreamKind.Audio, i, "Language");
+          stream.setLanguage(language);
+
+          audioStreams.add(stream);
+        }
+
+        // get subtitle streams
+        streams = getMediaInfo().streamCount(StreamKind.Text);
+        subtitles.clear();
+        for (int i = 0; i < streams; i++) {
+          MediaFileSubtitle stream = new MediaFileSubtitle();
+
+          String codec = getMediaInfo(StreamKind.Text, i, "CodecID/Hint", "Format");
+          stream.setCodec(codec.replaceAll("\\p{Punct}", ""));
+          stream.setLanguage(getMediaInfo(StreamKind.Text, i, "Language/String"));
+
+          String forced = getMediaInfo(StreamKind.Text, i, "Forced");
+          boolean b = forced.equalsIgnoreCase("true") || forced.equalsIgnoreCase("yes");
+          stream.setForced(b);
+
+          subtitles.add(stream);
+        }
         break;
 
       case POSTER:
@@ -941,41 +977,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // e.g. XviD, x264, DivX 5, MPEG-4 Visual, AVC, etc.
     // get first token (e.g. DivX 5 => DivX)
     setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
-
-    // get audio streams
-    try {
-      int streams = Integer.parseInt(getMediaInfo(StreamKind.General, 0, "AudioCount"));
-
-      audioStreams.clear();
-      for (int i = 0; i < streams; i++) {
-        MediaFileAudioStream stream = new MediaFileAudioStream();
-
-        // e.g. AC-3, DTS, AAC, Vorbis, MP3, etc.
-        String audioCodec = getMediaInfo(StreamKind.Audio, i, "CodecID/Hint", "Format");
-        // remove punctuation (e.g. AC-3 => AC3)
-        stream.setCodec(audioCodec.replaceAll("\\p{Punct}", ""));
-
-        // audio channels
-        String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)");
-        stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
-
-        // audio bitrate
-        try {
-          String br = getMediaInfo(StreamKind.Audio, i, "BitRate");
-          stream.setBitrate(Integer.valueOf(br) / 1024);
-        }
-        catch (Exception e) {
-        }
-
-        // language
-        String language = getMediaInfo(StreamKind.Audio, i, "Language");
-        stream.setLanguage(language);
-
-        audioStreams.add(stream);
-      }
-    }
-    catch (Exception e) {
-    }
 
     // container format
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
@@ -1097,17 +1098,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // parse audio, video and graphic files
-    if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.AUDIO) || isGraphic()) {
+    if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.SUBTITLE)
+        || type.equals(MediaFileType.AUDIO) || isGraphic()) {
       return true;
     }
 
-    // parse well known subtitle formats
-    if (type.equals(MediaFileType.SUBTITLE) && ("srt".equals(extension) || "sub".equals(extension))) {
-      return true;
-    }
-    else {
-      return false;
-    }
+    return false;
   }
 
   /*

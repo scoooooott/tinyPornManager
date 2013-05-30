@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileAudioStream;
+import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -209,11 +210,12 @@ public class MovieMediaInformationPanel extends JPanel {
 
     for (MediaFile mediaFile : mediaFiles) {
       for (int i = 0; i < mediaFile.getSubtitles().size(); i++) {
-        String subtitle = mediaFile.getSubtitles().get(i);
+        MediaFileSubtitle subtitle = mediaFile.getSubtitles().get(i);
 
         if (mediaFile.getType() == MediaFileType.VIDEO) {
           panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.subtitle") + " " + (i + 1))); //$NON-NLS-1$
-          panelSubtitleDetails.add(new JLabel(subtitle));
+          String info = subtitle.getLanguage() + (subtitle.isForced() ? " forced" : "") + " (" + subtitle.getCodec() + ")";
+          panelSubtitleDetails.add(new JLabel(info));
         }
         else {
           panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.externalfile"))); //$NON-NLS-1$
