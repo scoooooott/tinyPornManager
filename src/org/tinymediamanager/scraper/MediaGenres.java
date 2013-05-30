@@ -46,7 +46,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   /** The erotic. */
   public final static MediaGenres EROTIC          = new MediaGenres("EROTIC", 11, "Erotic", new String[] { "Erotik", "Sex", "Adult" });
   /** The family. */
-  public final static MediaGenres FAMILY          = new MediaGenres("FAMILY", 12, "Family", new String[] { "Kinder-/Familienfilm", "Familie" });
+  public final static MediaGenres FAMILY          = new MediaGenres("FAMILY", 12, "Family", new String[] { "Kinder-/Familienfilm", "Familie",
+      "Familienfilm"                             });
   /** The fan film. */
   public final static MediaGenres FAN_FILM        = new MediaGenres("FAN_FILM", 13, "Fan Film", new String[] { "Fan-Film" });
   /** The fantasy. */
@@ -81,8 +82,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   /** The road movie. */
   public final static MediaGenres ROAD_MOVIE      = new MediaGenres("ROAD_MOVIE", 28, "Road Movie", new String[] {});
   /** The romance. */
-  public final static MediaGenres ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance",
-                                                      new String[] { "Liebe/Romantik", "Romanze", "Lovestory" });
+  public final static MediaGenres ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance", new String[] { "Liebe/Romantik", "Romanze",
+      "Lovestory", "Liebe", "Romantik"           });
   /** The science fiction. */
   public final static MediaGenres SCIENCE_FICTION = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction", new String[] { "Sci-Fi",
       "Science-Fiction"                          });
@@ -103,7 +104,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   /** The talk show. */
   public final static MediaGenres TALK_SHOW       = new MediaGenres("TALK_SHOW", 38, "Talk show", new String[] { "Talk-Show" });
   /** The tv movie. */
-  public final static MediaGenres TV_MOVIE        = new MediaGenres("TV_MOVIE", 39, "TV Movie", new String[] { "TV-Film", "TV-Pilotfilm" });
+  public final static MediaGenres TV_MOVIE        = new MediaGenres("TV_MOVIE", 39, "TV Movie", new String[] { "TV-Film", "TV-Pilotfilm",
+      "Heimatfilm"                               });
   /** The thriller. */
   public final static MediaGenres THRILLER        = new MediaGenres("THRILLER", 40, "Thriller", new String[] {});
   /** The war. */
