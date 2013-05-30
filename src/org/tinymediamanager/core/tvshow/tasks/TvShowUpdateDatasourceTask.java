@@ -106,7 +106,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       startProgressBar("getting Mediainfo...");
       initThreadPool(1, "mediainfo");
       for (TvShow tvShow : tvShowList.getTvShows()) {
-        submitTask(new MediaFileInformationFetcherTask(tvShow.getMediaFiles(), tvShow));
+        List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          mediaFiles.addAll(episode.getMediaFiles());
+        }
+        submitTask(new MediaFileInformationFetcherTask(mediaFiles, tvShow));
       }
       waitForCompletionOrCancel();
       if (cancel) {
@@ -291,7 +295,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               // e.findImages();
               findAdditionalEpisodeFiles(e, file, content);
               e.saveToDb();
-              tvShow.addEpisode(episode);
+              tvShow.addEpisode(e);
             }
           }
           else {
@@ -306,7 +310,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                 // e.findImages();
                 findAdditionalEpisodeFiles(e, file, content);
                 e.saveToDb();
-                tvShow.addEpisode(episode);
+                tvShow.addEpisode(e);
               }
             }
             else {

@@ -757,4 +757,44 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     return getEpisode() - otherTvShowEpisode.getEpisode();
   }
+
+  public List<MediaFile> getMediaFilesContainingAudioStreams() {
+    List<MediaFile> mediaFilesWithAudioStreams = new ArrayList<MediaFile>(1);
+
+    // get the audio streams from the first video file
+    List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
+    if (videoFiles.size() > 0) {
+      MediaFile videoFile = videoFiles.get(0);
+      mediaFilesWithAudioStreams.add(videoFile);
+    }
+
+    // get all extra audio streams
+    for (MediaFile audioFile : getMediaFiles(MediaFileType.AUDIO)) {
+      mediaFilesWithAudioStreams.add(audioFile);
+    }
+
+    return mediaFilesWithAudioStreams;
+  }
+
+  public List<MediaFile> getMediaFilesContainingSubtitles() {
+    List<MediaFile> mediaFilesWithSubtitles = new ArrayList<MediaFile>(1);
+
+    // look in the first media file if it has subtitles
+    List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
+    if (videoFiles.size() > 0) {
+      MediaFile videoFile = videoFiles.get(0);
+      if (videoFile.hasSubtitles()) {
+        mediaFilesWithSubtitles.add(videoFile);
+      }
+    }
+
+    // look for all other types
+    for (MediaFile mediaFile : getMediaFiles(MediaFileType.SUBTITLE)) {
+      if (mediaFile.hasSubtitles()) {
+        mediaFilesWithSubtitles.add(mediaFile);
+      }
+    }
+
+    return mediaFilesWithSubtitles;
+  }
 }

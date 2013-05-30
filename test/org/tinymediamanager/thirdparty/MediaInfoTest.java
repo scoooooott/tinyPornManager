@@ -28,7 +28,10 @@ public class MediaInfoTest {
     }
     path += System.getProperty("os.arch");
     System.setProperty("jna.library.path", path);
+    System.setProperty("jna.nosys", "true");
     System.out.println("Try to load mediainfo from: " + path);
+
+    System.out.println(MediaInfo.version());
 
     mi = new MediaInfo();
   }

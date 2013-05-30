@@ -204,4 +204,6 @@ public final class Constants {
 
   /** The Constant EPISODE_COUNT. */
   public final static String EPISODE_COUNT         = "episodeCount";
+
+  public final static String MEDIA_INFORMATION     = "mediaInformation";
 }

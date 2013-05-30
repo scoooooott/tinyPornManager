@@ -18,6 +18,7 @@ package org.tinymediamanager.core;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,87 +47,83 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER           = LoggerFactory.getLogger(MediaFile.class);
+  private static final Logger        LOGGER           = LoggerFactory.getLogger(MediaFile.class);
 
   /** The Constant PATH. */
-  private static final String PATH             = "path";
+  private static final String        PATH             = "path";
 
   /** The Constant FILENAME. */
-  private static final String FILENAME         = "filename";
+  private static final String        FILENAME         = "filename";
 
   /** The Constant FILESIZE. */
-  private static final String FILESIZE         = "filesize";
+  private static final String        FILESIZE         = "filesize";
 
   /** The Constant FILESIZE_IN_MB. */
-  private static final String FILESIZE_IN_MB   = "filesizeInMegabytes";
+  private static final String        FILESIZE_IN_MB   = "filesizeInMegabytes";
 
   /** The poster pattern. It's thread safe, so we make it static */
-  private static Pattern      posterPattern    = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
+  private static Pattern             posterPattern    = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
 
   /** The fanart pattern. It's thread safe, so we make it static */
-  private static Pattern      fanartPattern    = Pattern.compile("(?i)(.*-fanart|fanart)[0-9]{0,2}\\..{2,4}");
+  private static Pattern             fanartPattern    = Pattern.compile("(?i)(.*-fanart|fanart)[0-9]{0,2}\\..{2,4}");
 
   /** The banner pattern. It's thread safe, so we make it static */
-  private static Pattern      bannerPattern    = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
+  private static Pattern             bannerPattern    = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
 
   /** The thumb pattern. It's thread safe, so we make it static */
-  private static Pattern      thumbPattern     = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
+  private static Pattern             thumbPattern     = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
 
   /** The path. */
-  private String              path             = "";
+  private String                     path             = "";
 
   /** The filename. */
-  private String              filename         = "";
+  private String                     filename         = "";
 
   /** The filesize. */
-  private long                filesize         = 0;
+  private long                       filesize         = 0;
 
   /** The video codec. */
-  private String              videoCodec       = "";
-
-  /** The audio codec. */
-  private String              audioCodec       = "";
-
-  /** The audio channels. */
-  private String              audioChannels    = "";
+  private String                     videoCodec       = "";
 
   /** The container format. */
-  private String              containerFormat  = "";
+  private String                     containerFormat  = "";
 
   /** The video format. */
-  private String              videoFormat      = "";
+  private String                     videoFormat      = "";
 
   /** The exact video format. */
-  private String              exactVideoFormat = "";
+  private String                     exactVideoFormat = "";
 
   /** The video width. */
-  private int                 videoWidth       = 0;
+  private int                        videoWidth       = 0;
 
   /** The video height. */
-  private int                 videoHeight      = 0;
+  private int                        videoHeight      = 0;
 
   /** The overallBitRate in kbps. */
-  private int                 overallBitRate   = 0;
+  private int                        overallBitRate   = 0;
 
   /** duration, runtime in sec. */
-  private int                 duration         = 0;
+  private int                        duration         = 0;
 
   /** stacking information. */
-  private int                 stacking         = 0;
+  private int                        stacking         = 0;
 
   /** the MediaFile type. */
-  private MediaFileType       type             = MediaFileType.UNKNOWN;
+  private MediaFileType              type             = MediaFileType.UNKNOWN;
 
   /** inline subtitles of mediafile. */
-  private ArrayList<String>   subtitles        = new ArrayList<String>();
+  private List<String>               subtitles        = new ArrayList<String>();
 
   /** the mediainfo object. */
   @Transient
-  private MediaInfo           mediaInfo;
+  private MediaInfo                  mediaInfo;
 
   /** The file. */
   @Transient
-  private File                file             = null;
+  private File                       file             = null;
+
+  private List<MediaFileAudioStream> audioStreams     = new ArrayList<MediaFileAudioStream>();
 
   /**
    * Instantiates a new media file.
@@ -202,6 +199,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return parseImageType();
     }
 
+    if (ext.equals("ac3") || ext.equals("dts") || ext.equals("mp3") || ext.equals("ogg")) {
+      return MediaFileType.AUDIO;
+    }
+
     if (Globals.settings.getSubtitleFileType().contains("." + ext)) {
       return MediaFileType.SUBTITLE;
     }
@@ -272,9 +273,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isGraphic() {
-    return (type.equals(MediaFileType.GRAPHIC) || type.equals(MediaFileType.BANNER) || type.equals(MediaFileType.FANART) || type
-        .equals(MediaFileType.POSTER));
-
+    return (type.equals(MediaFileType.GRAPHIC) || type.equals(MediaFileType.BANNER) || type.equals(MediaFileType.FANART)
+        || type.equals(MediaFileType.POSTER) || type.equals(MediaFileType.THUMB) || type.equals(MediaFileType.EXTRAFANART));
   }
 
   /**
@@ -471,7 +471,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * 
    * @return the subtitles
    */
-  public ArrayList<String> getSubtitles() {
+  public List<String> getSubtitles() {
     return subtitles;
   }
 
@@ -584,20 +584,24 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the audio codec
    */
   public String getAudioCodec() {
-    return audioCodec;
+    if (audioStreams.size() > 0) {
+      return audioStreams.get(0).getCodec();
+    }
+
+    return "";
   }
 
-  /**
-   * Sets the audio codec.
-   * 
-   * @param newValue
-   *          the new audio codec
-   */
-  public void setAudioCodec(String newValue) {
-    String oldValue = this.audioCodec;
-    this.audioCodec = newValue;
-    firePropertyChange("audioCodec", oldValue, newValue);
-  }
+  // /**
+  // * Sets the audio codec.
+  // *
+  // * @param newValue
+  // * the new audio codec
+  // */
+  // public void setAudioCodec(String newValue) {
+  // String oldValue = this.audioCodec;
+  // this.audioCodec = newValue;
+  // firePropertyChange("audioCodec", oldValue, newValue);
+  // }
 
   /**
    * returns the container format extensions (e.g. avi, mkv mka mks, OGG, etc.)
@@ -669,20 +673,24 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the amount of audio channels (eg. 6ch)
    */
   public String getAudioChannels() {
-    return this.audioChannels;
+    if (audioStreams.size() > 0) {
+      return audioStreams.get(0).getChannels();
+    }
+
+    return "";
   }
 
-  /**
-   * Sets the audio channels.
-   * 
-   * @param newValue
-   *          the new audio channels
-   */
-  public void setAudioChannels(String newValue) {
-    String oldValue = this.audioChannels;
-    this.audioChannels = newValue;
-    firePropertyChange("audioChannels", oldValue, newValue);
-  }
+  // /**
+  // * Sets the audio channels.
+  // *
+  // * @param newValue
+  // * the new audio channels
+  // */
+  // public void setAudioChannels(String newValue) {
+  // String oldValue = this.audioChannels;
+  // this.audioChannels = newValue;
+  // firePropertyChange("audioChannels", oldValue, newValue);
+  // }
 
   /**
    * returns the exact video resolution.
@@ -821,7 +829,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the duration
    */
   public String getDurationHM() {
-    // int seconds = (int) this.duration % 60;
+    if (this.duration == 0) {
+      return "";
+    }
+
     int minutes = (int) (this.duration / 60) % 60;
     int hours = (int) (this.duration / (60 * 60)) % 24;
     return hours + "h " + String.format("%02d", minutes) + "m";
@@ -834,6 +845,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the duration
    */
   public String getDurationHHMMSS() {
+    if (this.duration == 0) {
+      return "";
+    }
+
     int seconds = (int) this.duration % 60;
     int minutes = (int) (this.duration / 60) % 60;
     int hours = (int) (this.duration / (60 * 60)) % 24;
@@ -852,6 +867,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     firePropertyChange("duration", oldValue, newValue);
     firePropertyChange("durationHM", oldValue, newValue);
     firePropertyChange("durationHHMMSS", oldValue, newValue);
+  }
+
+  public List<MediaFileAudioStream> getAudioStreams() {
+    return audioStreams;
   }
 
   /**
@@ -923,45 +942,45 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // get first token (e.g. DivX 5 => DivX)
     setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
 
-    // audio codec
-    // e.g. AC-3, DTS, AAC, Vorbis, MP3, etc.
-    String audioCodec = getMediaInfo(StreamKind.Audio, 0, "CodecID/Hint", "Format");
-    // remove punctuation (e.g. AC-3 => AC3)
-    setAudioCodec(audioCodec.replaceAll("\\p{Punct}", ""));
+    // get audio streams
+    try {
+      int streams = Integer.parseInt(getMediaInfo(StreamKind.General, 0, "AudioCount"));
 
-    // audio channels
-    String channels = getMediaInfo(StreamKind.Audio, 0, "Channel(s)");
-    setAudioChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
+      audioStreams.clear();
+      for (int i = 0; i < streams; i++) {
+        MediaFileAudioStream stream = new MediaFileAudioStream();
+
+        // e.g. AC-3, DTS, AAC, Vorbis, MP3, etc.
+        String audioCodec = getMediaInfo(StreamKind.Audio, i, "CodecID/Hint", "Format");
+        // remove punctuation (e.g. AC-3 => AC3)
+        stream.setCodec(audioCodec.replaceAll("\\p{Punct}", ""));
+
+        // audio channels
+        String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)");
+        stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
+
+        // audio bitrate
+        try {
+          String br = getMediaInfo(StreamKind.Audio, i, "BitRate");
+          stream.setBitrate(Integer.valueOf(br) / 1024);
+        }
+        catch (Exception e) {
+        }
+
+        // language
+        String language = getMediaInfo(StreamKind.Audio, i, "Language");
+        stream.setLanguage(language);
+
+        audioStreams.add(stream);
+      }
+    }
+    catch (Exception e) {
+    }
 
     // container format
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
     // get first extension
     setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
-
-    // String v = getMediaInfo(StreamKind.Video, 0, "Height");
-    // if (!v.isEmpty()) {
-    // int height;
-    // try {
-    // height = Integer.parseInt(v);
-    // int ns = 0;
-    // int[] hs = new int[] { 1080, 720, 576, 540, 480, 360, 240, 120 };
-    // for (int i = 0; i < hs.length - 1; i++) {
-    // if (height > hs[i + 1]) {
-    // ns = hs[i];
-    // break;
-    // }
-    // }
-    //
-    // if (ns > 0) {
-    // // e.g. 720p, nobody actually wants files to be tagged as interlaced,
-    // // e.g. 720i
-    // setVideoFormat(String.format("%dp", ns));
-    // }
-    // }
-    // catch (NumberFormatException e) {
-    // setVideoFormat("");
-    // }
-    // }
 
     if (height.isEmpty() || scanType.isEmpty()) {
       setExactVideoFormat("");
@@ -1077,8 +1096,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return false;
     }
 
-    // parse only audio, video and graphic files
+    // parse audio, video and graphic files
     if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.AUDIO) || isGraphic()) {
+      return true;
+    }
+
+    // parse well known subtitle formats
+    if (type.equals(MediaFileType.SUBTITLE) && ("srt".equals(extension) || "sub".equals(extension))) {
       return true;
     }
     else {

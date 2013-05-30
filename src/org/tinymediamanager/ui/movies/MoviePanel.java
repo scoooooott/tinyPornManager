@@ -56,7 +56,6 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
@@ -1054,9 +1053,7 @@ public class MoviePanel extends JPanel {
       // get data of all files within all selected movies
       if (selectedMovies.size() > 0) {
         for (Movie movie : selectedMovies) {
-          for (MediaFile file : movie.getMediaFiles()) {
-            file.gatherMediaInformation(true);
-          }
+          movie.gatherMediaFileInformation(true);
           movie.saveToDb();
         }
       }

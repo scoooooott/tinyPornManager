@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core;
 
+import static org.tinymediamanager.core.Constants.*;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -73,6 +75,7 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     }
 
     if (mediaEntity != null) {
+      mediaEntity.firePropertyChange(MEDIA_INFORMATION, false, true);
       mediaEntity.saveToDb();
     }
 

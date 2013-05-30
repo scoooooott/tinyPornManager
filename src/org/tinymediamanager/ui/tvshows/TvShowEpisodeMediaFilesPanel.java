@@ -51,29 +51,29 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class TvShowMediaInformationPanel.
+ * The Class TvShowEpisodeMediaInformationPanel.
  * 
  * @author Manuel Laggner
  */
-public class TvShowMediaInformationPanel extends JPanel {
+public class TvShowEpisodeMediaFilesPanel extends JPanel {
 
   /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1610264727610254912L;
+  private static final long           serialVersionUID = 6409916197348303643L;
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());   //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
 
   /** The logger. */
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowMediaInformationPanel.class);
+  private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeMediaFilesPanel.class);
 
   /** The selection model. */
-  private TvShowSelectionModel        selectionModel;
+  private TvShowEpisodeSelectionModel selectionModel;
 
   /** The lbl files t. */
   private JLabel                      lblFilesT;
 
   /** The lbl path. */
-  private LinkLabel                   lblTvShowPath;
+  private LinkLabel                   lblEpisodePath;
 
   /** The lbl date added t. */
   private JLabel                      lblDateAddedT;
@@ -88,7 +88,7 @@ public class TvShowMediaInformationPanel extends JPanel {
   private JLabel                      lblWatchedT;
 
   /** The lbl path t. */
-  private JLabel                      lblTvShowPathT;
+  private JLabel                      lblEpisodePathT;
 
   // /** The btn play. */
   // private JButton btnPlay;
@@ -103,7 +103,7 @@ public class TvShowMediaInformationPanel extends JPanel {
    * @param model
    *          the model
    */
-  public TvShowMediaInformationPanel(TvShowSelectionModel model) {
+  public TvShowEpisodeMediaFilesPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
     mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
         GlazedLists.beanConnector(MediaFile.class));
@@ -193,16 +193,16 @@ public class TvShowMediaInformationPanel extends JPanel {
     // });
     // add(btnPlay, "10, 2");
 
-    lblTvShowPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    add(lblTvShowPathT, "2, 4");
+    lblEpisodePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+    add(lblEpisodePathT, "2, 4");
 
-    lblTvShowPath = new LinkLabel("");
-    lblTvShowPath.addActionListener(new ActionListener() {
+    lblEpisodePath = new LinkLabel("");
+    lblEpisodePath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblTvShowPath.getNormalText())) {
+        if (!StringUtils.isEmpty(lblEpisodePath.getNormalText())) {
           try {
             // get the location from the label
-            File path = new File(lblTvShowPath.getNormalText());
+            File path = new File(lblEpisodePath.getNormalText());
             // check whether this location exists
             if (path.exists()) {
               Desktop.getDesktop().open(path);
@@ -214,15 +214,15 @@ public class TvShowMediaInformationPanel extends JPanel {
         }
       }
     });
-    lblTvShowPathT.setLabelFor(lblTvShowPath);
-    lblTvShowPathT.setLabelFor(lblTvShowPath);
-    add(lblTvShowPath, "4, 4, 5, 1");
+    lblEpisodePathT.setLabelFor(lblEpisodePath);
+    lblEpisodePathT.setLabelFor(lblEpisodePath);
+    add(lblEpisodePath, "4, 4, 5, 1");
 
     lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
     add(lblFilesT, "2, 6, default, top");
 
     panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
-    add(panelMediaFiles, "4, 6, 7, 1, fill, fill");
+    add(panelMediaFiles, "4, 6, 5, 1, fill, fill");
 
     initDataBindings();
 
@@ -231,11 +231,11 @@ public class TvShowMediaInformationPanel extends JPanel {
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
-        // react on selection of a tv show and change of media files
-        if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
+        // react on selection of a movie and change of media files
+        if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
             || (source.getClass() == TvShowEpisode.class && "mediaFiles".equals(property))) {
           mediaFileEventList.clear();
-          mediaFileEventList.addAll(selectionModel.getSelectedTvShow().getMediaFiles());
+          mediaFileEventList.addAll(selectionModel.getSelectedTvShowEpisode().getMediaFiles());
           panelMediaFiles.adjustColumns();
         }
 
@@ -249,31 +249,35 @@ public class TvShowMediaInformationPanel extends JPanel {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty = BeanProperty.create("selectedTvShow.dateAdded.date");
+    BeanProperty<TvShowEpisodeSelectionModel, Integer> tvShowEpisodeSelectionModelBeanProperty = BeanProperty
+        .create("selectedTvShowEpisode.dateAdded.date");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        tvShowSelectionModelBeanProperty, lblDateAdded, jLabelBeanProperty);
+    AutoBinding<TvShowEpisodeSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowEpisodeSelectionModelBeanProperty, lblDateAdded, jLabelBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<TvShowSelectionModel, Boolean> tvShowSelectionModelBeanProperty_1 = BeanProperty.create("selectedTvShow.watched");
+    BeanProperty<TvShowEpisodeSelectionModel, Boolean> tvShowEpisodeSelectionModelBeanProperty_1 = BeanProperty
+        .create("selectedTvShowEpisode.watched");
     BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<TvShowSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        tvShowSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
+    AutoBinding<TvShowEpisodeSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        selectionModel, tvShowEpisodeSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
     autoBinding_1.bind();
     //
-    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShow.dateAdded.day");
-    AutoBinding<TvShowSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        tvShowSelectionModelBeanProperty_2, lblDateAdded, jLabelBeanProperty);
+    BeanProperty<TvShowEpisodeSelectionModel, Integer> tvShowEpisodeSelectionModelBeanProperty_2 = BeanProperty
+        .create("selectedTvShowEpisode.dateAdded.day");
+    AutoBinding<TvShowEpisodeSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowEpisodeSelectionModelBeanProperty_2, lblDateAdded, jLabelBeanProperty);
     autoBinding_2.bind();
     //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShow.dateAddedAsString");
-    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        tvShowSelectionModelBeanProperty_3, lblDateAdded, jLabelBeanProperty);
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_3 = BeanProperty
+        .create("selectedTvShowEpisode.dateAddedAsString");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowEpisodeSelectionModelBeanProperty_3, lblDateAdded, jLabelBeanProperty);
     autoBinding_3.bind();
     //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_13 = BeanProperty.create("selectedTvShow.path");
-    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        tvShowSelectionModelBeanProperty_13, lblTvShowPath, jLabelBeanProperty);
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_13 = BeanProperty.create("selectedTvShowEpisode.path");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowEpisodeSelectionModelBeanProperty_13, lblEpisodePath, jLabelBeanProperty);
     autoBinding_19.bind();
   }
 }

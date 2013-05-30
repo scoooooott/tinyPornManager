@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 import org.tinymediamanager.Globals;
 
 /**
@@ -47,61 +48,61 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   /** The id for the database. */
   @GeneratedValue
-  protected int                     id;
+  protected int                       id;
 
   /** The ids to store the ID from several metadataproviders. */
-  protected HashMap<String, Object> ids                  = new HashMap<String, Object>();
+  protected HashMap<String, Object>   ids                  = new HashMap<String, Object>();
 
   /** The title. */
-  protected String                  title                = "";
+  protected String                    title                = "";
 
   /** The original title. */
-  protected String                  originalTitle        = "";
+  protected String                    originalTitle        = "";
 
   /** The year. */
-  protected String                  year                 = "";
+  protected String                    year                 = "";
 
   /** The overview. */
-  protected String                  plot                 = "";
+  protected String                    plot                 = "";
 
   /** The rating. */
-  protected float                   rating               = 0f;
+  protected float                     rating               = 0f;
 
   /** The path. */
-  protected String                  path                 = "";
+  protected String                    path                 = "";
 
   /** The fanart url. */
-  protected String                  fanartUrl            = "";
+  protected String                    fanartUrl            = "";
 
   /** The poster url. */
-  protected String                  posterUrl            = "";
+  protected String                    posterUrl            = "";
 
   /** The banner url. */
-  protected String                  bannerUrl            = "";
+  protected String                    bannerUrl            = "";
 
   /** The thumb url. */
-  protected String                  thumbUrl             = "";
+  protected String                    thumbUrl             = "";
 
   /** The date added. */
-  protected Date                    dateAdded            = new Date();
+  protected Date                      dateAdded            = new Date();
 
   /** The production company. */
-  protected String                  productionCompany    = "";
+  protected String                    productionCompany    = "";
 
   /** The scraped. */
-  protected boolean                 scraped              = false;
+  protected boolean                   scraped              = false;
 
   /** The duplicate flag. */
   @Transient
-  protected boolean                 duplicate            = false;
+  protected boolean                   duplicate            = false;
 
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
-  protected List<MediaFile>         mediaFiles           = new ArrayList<MediaFile>();
+  protected List<MediaFile>           mediaFiles           = new ArrayList<MediaFile>();
 
   /** The media files observable. */
   @Transient
-  protected List<MediaFile>         mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+  protected ObservableList<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
   /**
    * Initialize after loading from database.
@@ -484,6 +485,8 @@ public abstract class MediaEntity extends AbstractModelObject {
       mediaFile.gatherMediaInformation();
       addToMediaFiles(mediaFile);
     }
+
+    firePropertyChange(MEDIA_INFORMATION, false, true);
   }
 
   /**
@@ -819,6 +822,14 @@ public abstract class MediaEntity extends AbstractModelObject {
         mf.fixPathForRenamedFolder(oldPath, newPath);
       }
     }
+  }
+
+  public void gatherMediaFileInformation(boolean force) {
+    for (MediaFile mediaFile : mediaFiles) {
+      mediaFile.gatherMediaInformation(force);
+    }
+
+    firePropertyChange(MEDIA_INFORMATION, false, true);
   }
 
   /**

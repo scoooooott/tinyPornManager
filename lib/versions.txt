@@ -15,7 +15,7 @@ jmte-unbundled-3.1.jar
 JSplitButton_1.2.jar
 objectdb-2.5.0_05.jar
 Scaling-bin.jar
-themoviedbapi-3.4-20130101.073052-10.jar
+themoviedbapi-3.5.jar
 thetvdbapi-1.5.jar
 JTattoo-1.6.5.jar 
 htmlparser.jar

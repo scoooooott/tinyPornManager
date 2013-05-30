@@ -146,6 +146,9 @@ public class MovieInformationPanel extends JPanel {
   /** The panel media information. */
   private JPanel                      panelMediaInformation;
 
+  /** The panel media files. */
+  private JPanel                      panelMediaFiles;
+
   /** The lbl actor thumb. */
   private ActorImageLabel             lblActorThumb;
 
@@ -327,6 +330,9 @@ public class MovieInformationPanel extends JPanel {
 
     panelMediaInformation = new MovieMediaInformationPanel(movieSelectionModel);
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
+
+    panelMediaFiles = new MovieMediaFilesPanel(movieSelectionModel);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.mediafiles"), null, panelMediaFiles, null); //$NON-NLS-1$
 
     panelMovieTrailer = new MovieTrailerPanel(movieSelectionModel);
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.trailer"), null, panelMovieTrailer, null); //$NON-NLS-1$

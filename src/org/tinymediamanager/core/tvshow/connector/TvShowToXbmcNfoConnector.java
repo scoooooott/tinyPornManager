@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -248,6 +249,8 @@ public class TvShowToXbmcNfoConnector {
         tvShowActor.setThumb(actor.getThumb());
         tvShow.addActor(tvShowActor);
       }
+
+      tvShow.setNfoFilename(FilenameUtils.getName(nfoFilename));
     }
     catch (FileNotFoundException e) {
       LOGGER.error(nfoFilename + " " + e.getMessage());

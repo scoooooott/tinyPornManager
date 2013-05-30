@@ -59,7 +59,6 @@ import com.omertron.themoviedbapi.model.PersonType;
 import com.omertron.themoviedbapi.model.ProductionCompany;
 import com.omertron.themoviedbapi.model.ReleaseInfo;
 import com.omertron.themoviedbapi.model.Trailer;
-import com.omertron.themoviedbapi.tools.ApiUrl;
 
 /**
  * The Class TmdbMetadataProvider.
@@ -158,8 +157,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     // begin search
     LOGGER.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
-    ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
-    tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
+    // ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
+    // tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
 
     List<MovieDb> moviesFound = null;
     synchronized (tmdb) {

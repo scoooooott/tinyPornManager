@@ -15,43 +15,22 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.awt.Desktop;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import static org.tinymediamanager.core.Constants.*;
+
+import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.core.MediaFileAudioStream;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.LinkLabel;
-import org.tinymediamanager.ui.components.ZebraJTable;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.ObservableElementList;
-import ca.odell.glazedlists.gui.AdvancedTableFormat;
-import ca.odell.glazedlists.swing.DefaultEventTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -59,62 +38,24 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class MovieMediaInformationPanel.
- * 
  * @author Manuel Laggner
+ * 
  */
 public class MovieMediaInformationPanel extends JPanel {
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = 2513029074142934502L;
 
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long                 serialVersionUID    = 1L;
-
-  /** The logger. */
-  private final static Logger               LOGGER              = LoggerFactory.getLogger(MovieMediaInformationPanel.class);
-
-  /** The movie selection model. */
-  private MovieSelectionModel               movieSelectionModel;
-
-  /** The lbl files t. */
-  private JLabel                            lblFilesT;
-
-  /** The scroll pane files. */
-  private JScrollPane                       scrollPaneFiles;
-
-  /** The table files. */
-  private JTable                            tableFiles;
-
-  /** The lbl movie path. */
-  private LinkLabel                         lblMoviePath;
-
-  /** The lbl date added t. */
-  private JLabel                            lblDateAddedT;
-
-  /** The lbl date added. */
-  private JLabel                            lblDateAdded;
-
-  /** The cb watched. */
-  private JCheckBox                         cbWatched;
-
-  /** The lbl watched t. */
-  private JLabel                            lblWatchedT;
-
-  /** The lbl movie path t. */
-  private JLabel                            lblMoviePathT;
-
-  /** The btn play. */
-  private JButton                           btnPlay;
-
-  /** The table column adjuster. */
-  private TableColumnAdjuster               tableColumnAdjuster = null;
-
-  /** The media file event list. */
-  private EventList<MediaFile>              mediaFileEventList;
-
-  /** The media file table model. */
-  private DefaultEventTableModel<MediaFile> mediaFileTableModel = null;
+  private MovieSelectionModel         movieSelectionModel;
+  private JLabel                      lblRuntime;
+  private JCheckBox                   chckbxWatched;
+  private JPanel                      panelVideoStreamDetails;
+  private JLabel                      lblVideoCodec;
+  private JLabel                      lblVideoResolution;
+  private JLabel                      lblVideoBitrate;
+  private JPanel                      panelAudioStreamT;
+  private JPanel                      panelAudioStreamDetails;
+  private JPanel                      panelSubtitleT;
+  private JPanel                      panelSubtitleDetails;
 
   /**
    * Instantiates a new movie media information panel.
@@ -124,142 +65,69 @@ public class MovieMediaInformationPanel extends JPanel {
    */
   public MovieMediaInformationPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
-    mediaFileEventList = new ObservableElementList<MediaFile>(GlazedLists.threadSafeList(new BasicEventList<MediaFile>()),
-        GlazedLists.beanConnector(MediaFile.class));
-
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("200px"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    lblDateAddedT = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-    add(lblDateAddedT, "2, 2");
+    JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+    add(lblRuntimeT, "2, 2");
 
-    lblDateAdded = new JLabel("");
-    add(lblDateAdded, "4, 2");
+    lblRuntime = new JLabel("");
+    add(lblRuntime, "6, 2");
 
-    lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-    add(lblWatchedT, "6, 2");
+    JLabel lblWatchedT = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+    add(lblWatchedT, "10, 2");
 
-    cbWatched = new JCheckBox("");
-    cbWatched.setEnabled(false);
-    add(cbWatched, "8, 2");
+    chckbxWatched = new JCheckBox("");
+    add(chckbxWatched, "14, 2");
 
-    // btnPlay = new JButton("Play");
-    // btnPlay.addActionListener(new ActionListener() {
-    // public void actionPerformed(ActionEvent arg0) {
-    // if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
-    // // get the location from the label
-    // StringBuilder movieFile = new
-    // StringBuilder(lblMoviePath.getNormalText());
-    // movieFile.append(File.separator);
-    // movieFile.append(movieSelectionModel.getSelectedMovie().getMediaFiles().get(0).getFilename());
-    // File f = new File(movieFile.toString());
-    //
-    // try {
-    // if (f.exists()) {
-    //
-    // String vlcF = f.getAbsolutePath();
-    // // FIXME: german umlauts do not decode correctly; Bug in
-    // // libDvdNav? so workaround;
-    // if (vlcF.matches(".*[äöüÄÖÜ].*")) {
-    // LOGGER.debug("VLC: workaround: german umlauts found - use system player");
-    // Desktop.getDesktop().open(f);
-    // }
-    // else {
-    // try {
-    //
-    // if (!vlcF.startsWith("/")) {
-    // // add the missing 3rd / if not start with one (eg windows)
-    // vlcF = "/" + vlcF;
-    // }
-    // String mrl = new FileMrl().file(vlcF).value();
-    //
-    // final EmbeddedMediaPlayerComponent mediaPlayerComponent = new
-    // EmbeddedMediaPlayerComponent();
-    // JFrame frame = new JFrame("player");
-    // frame.setLocation(100, 100);
-    // frame.setSize(1050, 600);
-    // frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
-    // frame.setVisible(true);
-    // frame.setContentPane(mediaPlayerComponent);
-    // // mrl = mrl.replace("file://", ""); // does not work either
-    //
-    // LOGGER.debug("VLC: playing " + mrl);
-    // Boolean ok = mediaPlayerComponent.getMediaPlayer().playMedia(mrl);
-    // if (!ok) {
-    // LOGGER.error("VLC: couldn't create player window!");
-    // }
-    // }
-    // catch (RuntimeException e) {
-    // LOGGER.warn("VLC: has not been initialized on startup - use system player");
-    // Desktop.getDesktop().open(f);
-    // }
-    // catch (NoClassDefFoundError e) {
-    // LOGGER.warn("VLC: has not been initialized on startup - use system player");
-    // Desktop.getDesktop().open(f);
-    // }
-    //
-    // } // end else
-    // } // end exists
-    // } // end try
-    // catch (IOException e) {
-    // LOGGER.error("Error opening file", e);
-    // }
-    // } // end isEmpty
-    // }
-    // });
-    // add(btnPlay, "10, 2");
+    JLabel lblVideoT = new JLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
+    add(lblVideoT, "2, 4");
 
-    lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    add(lblMoviePathT, "2, 4");
+    JLabel lblMovie = new JLabel(BUNDLE.getString("metatag.movie")); //$NON-NLS-1$
+    add(lblMovie, "6, 4");
 
-    lblMoviePath = new LinkLabel("");
-    lblMoviePath.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
-          try {
-            // get the location from the label
-            File path = new File(lblMoviePath.getNormalText());
-            // check whether this location exists
-            if (path.exists()) {
-              Desktop.getDesktop().open(path);
-            }
-          }
-          catch (Exception ex) {
-            LOGGER.error("open filemanager", ex);
-          }
-        }
-      }
-    });
-    lblMoviePathT.setLabelFor(lblMoviePath);
-    lblMoviePathT.setLabelFor(lblMoviePath);
-    add(lblMoviePath, "4, 4, 5, 1");
+    panelVideoStreamDetails = new JPanel();
+    panelVideoStreamDetails.setLayout(new GridLayout(1, 4, 0, 25));
+    add(panelVideoStreamDetails, "10, 4, 7, 1, fill, top");
 
-    lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
-    add(lblFilesT, "2, 6, default, top");
+    lblVideoCodec = new JLabel("");
+    panelVideoStreamDetails.add(lblVideoCodec);
 
-    mediaFileTableModel = new DefaultEventTableModel<MediaFile>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
-    // tableFiles = new JTable(mediaFileTableModel);
-    tableFiles = new ZebraJTable(mediaFileTableModel);
-    tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    lblVideoResolution = new JLabel("");
+    panelVideoStreamDetails.add(lblVideoResolution);
 
-    // scrollPaneFiles = new JScrollPane();
-    scrollPaneFiles = ZebraJTable.createStripedJScrollPane(tableFiles);
-    add(scrollPaneFiles, "4, 6, 5, 1, fill, fill");
+    lblVideoBitrate = new JLabel("");
+    panelVideoStreamDetails.add(lblVideoBitrate);
 
-    lblFilesT.setLabelFor(tableFiles);
-    scrollPaneFiles.setViewportView(tableFiles);
+    // to create the same spacing as in audio
+    panelVideoStreamDetails.add(new JLabel(""));
 
-    initDataBindings();
+    JLabel lblAudioT = new JLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
+    add(lblAudioT, "2, 6, default, top");
 
-    // adjust table
-    tableColumnAdjuster = new TableColumnAdjuster(tableFiles);
-    tableColumnAdjuster.setColumnDataIncluded(true);
-    tableColumnAdjuster.setColumnHeaderIncluded(true);
-    tableColumnAdjuster.setOnlyAdjustLarger(false);
-    // tableColumnAdjuster.setDynamicAdjustment(true);
+    panelAudioStreamT = new JPanel();
+    panelAudioStreamT.setLayout(new GridLayout(0, 1));
+    add(panelAudioStreamT, "6, 6, left, top");
+
+    panelAudioStreamDetails = new JPanel();
+    panelAudioStreamDetails.setLayout(new GridLayout(0, 4));
+    add(panelAudioStreamDetails, "10, 6, 7, 1, fill, top");
+
+    JLabel lblSubtitle = new JLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
+    add(lblSubtitle, "2, 8, default, top");
+
+    panelSubtitleT = new JPanel();
+    panelSubtitleT.setLayout(new GridLayout(0, 1));
+    add(panelSubtitleT, "6, 8, left, top");
+
+    panelSubtitleDetails = new JPanel();
+    panelSubtitleDetails.setLayout(new GridLayout(0, 1));
+    add(panelSubtitleDetails, "10, 8, 5, 1, left, top");
 
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
@@ -267,211 +135,91 @@ public class MovieMediaInformationPanel extends JPanel {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
         // react on selection of a movie and change of media files
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && "mediaFiles".equals(property))) {
-          if (!mediaFileEventList.isEmpty()) {
-            mediaFileEventList.clear();
-          }
-          mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
-          tableColumnAdjuster.adjustColumns();
+        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || MEDIA_INFORMATION.equals(property)) {
+          fillVideoStreamDetails();
+          buildAudioStreamDetails();
+          buildSubtitleStreamDetails();
         }
-
       }
     };
 
     movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
   }
 
-  /**
-   * Inits the data bindings.
-   */
-  protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.dateAdded.date");
-    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty, lblDateAdded, jLabelBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.watched");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<MovieSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_1, cbWatched, jCheckBoxBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.dateAdded.day");
-    AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_2, lblDateAdded, jLabelBeanProperty);
-    autoBinding_2.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_3 = BeanProperty.create("selectedMovie.dateAddedAsString");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_3, lblDateAdded, jLabelBeanProperty);
-    autoBinding_3.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_13 = BeanProperty.create("selectedMovie.path");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_13, lblMoviePath, jLabelBeanProperty);
-    autoBinding_19.bind();
-    // //
-    // BeanProperty<MovieSelectionModel, List<MediaFile>>
-    // movieSelectionModelBeanProperty_18 =
-    // BeanProperty.create("selectedMovie.mediaFiles");
-    // JTableBinding<MediaFile, MovieSelectionModel, JTable> jTableBinding =
-    // SwingBindings.createJTableBinding(UpdateStrategy.READ,
-    // movieSelectionModel,
-    // movieSelectionModelBeanProperty_18, tableFiles);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty =
-    // BeanProperty.create("filename");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty).setColumnName("Filename").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_1 =
-    // BeanProperty.create("filesizeInMegabytes");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_1).setColumnName("Size").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_2 =
-    // BeanProperty.create("videoCodec");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_2).setColumnName("Video codec").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_3 =
-    // BeanProperty.create("videoResolution");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_3).setColumnName("Resolution").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_4 =
-    // BeanProperty.create("audioCodec");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_4).setColumnName("Audio Codec").setEditable(false);
-    // //
-    // BeanProperty<MediaFile, String> mediaFileBeanProperty_5 =
-    // BeanProperty.create("audioChannels");
-    // jTableBinding.addColumnBinding(mediaFileBeanProperty_5).setColumnName("Audio channels").setEditable(false);
-    // //
-    // jTableBinding.setEditable(false);
-    // jTableBinding.bind();
+  private void fillVideoStreamDetails() {
+    List<MediaFile> mediaFiles = movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO);
+
+    if (mediaFiles.size() == 0) {
+      return;
+    }
+
+    MediaFile mediaFile = mediaFiles.get(0);
+
+    int runtime = 0;
+    for (MediaFile mf : mediaFiles) {
+      runtime += mf.getDuration();
+    }
+
+    if (runtime == 0) {
+      lblRuntime.setText("");
+    }
+    else {
+      int minutes = (int) (runtime / 60) % 60;
+      int hours = (int) (runtime / (60 * 60)) % 24;
+      lblRuntime.setText(hours + "h " + String.format("%02d", minutes) + "m");
+    }
+
+    chckbxWatched.setSelected(movieSelectionModel.getSelectedMovie().isWatched());
+
+    lblVideoCodec.setText(mediaFile.getVideoCodec());
+    lblVideoResolution.setText(mediaFile.getVideoResolution());
+    lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
   }
 
-  /**
-   * The Class MediaTableFormat.
-   * 
-   * @author Manuel Laggner
-   */
-  private static class MediaTableFormat implements AdvancedTableFormat<MediaFile> {
+  private void buildAudioStreamDetails() {
+    panelAudioStreamT.removeAll();
+    panelAudioStreamDetails.removeAll();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.TableFormat#getColumnCount()
-     */
-    @Override
-    public int getColumnCount() {
-      return 8;
-    }
+    List<MediaFile> mediaFiles = movieSelectionModel.getSelectedMovie().getMediaFilesContainingAudioStreams();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.TableFormat#getColumnName(int)
-     */
-    @Override
-    public String getColumnName(int column) {
-      switch (column) {
-        case 0:
-          return BUNDLE.getString("metatag.filename"); //$NON-NLS-1$
+    for (MediaFile mediaFile : mediaFiles) {
+      for (int i = 0; i < mediaFile.getAudioStreams().size(); i++) {
+        MediaFileAudioStream audioStream = mediaFile.getAudioStreams().get(i);
 
-        case 1:
-          return BUNDLE.getString("metatag.size"); //$NON-NLS-1$
+        if (mediaFile.getType() == MediaFileType.VIDEO) {
+          panelAudioStreamT.add(new JLabel(BUNDLE.getString("metatag.stream") + " " + (i + 1))); //$NON-NLS-1$
+        }
+        else {
+          panelAudioStreamT.add(new JLabel(BUNDLE.getString("metatag.externalfile"))); //$NON-NLS-1$
+        }
 
-        case 2:
-          return BUNDLE.getString("metatag.runtime"); //$NON-NLS-1$
-
-        case 3:
-          return BUNDLE.getString("metatag.videocodec"); //$NON-NLS-1$
-
-        case 4:
-          return BUNDLE.getString("metatag.resolution"); //$NON-NLS-1$
-
-        case 5:
-          return BUNDLE.getString("metatag.videobitrate"); //$NON-NLS-1$
-
-        case 6:
-          return BUNDLE.getString("metatag.audiocodec"); //$NON-NLS-1$
-
-        case 7:
-          return BUNDLE.getString("metatag.audiochannels"); //$NON-NLS-1$
-
+        panelAudioStreamDetails.add(new JLabel(audioStream.getCodec()));
+        panelAudioStreamDetails.add(new JLabel(audioStream.getChannels()));
+        panelAudioStreamDetails.add(new JLabel(audioStream.getBitrateInKbps()));
+        panelAudioStreamDetails.add(new JLabel(audioStream.getLanguage()));
       }
-
-      throw new IllegalStateException();
     }
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object, int)
-     */
-    @Override
-    public Object getColumnValue(MediaFile mediaFile, int column) {
-      switch (column) {
-        case 0:
-          return mediaFile.getFilename();
+  private void buildSubtitleStreamDetails() {
+    panelSubtitleT.removeAll();
+    panelSubtitleDetails.removeAll();
 
-        case 1:
-          return mediaFile.getFilesizeInMegabytes();
+    List<MediaFile> mediaFiles = movieSelectionModel.getSelectedMovie().getMediaFilesContainingSubtitles();
 
-        case 2:
-          return mediaFile.getDurationHM();
+    for (MediaFile mediaFile : mediaFiles) {
+      for (int i = 0; i < mediaFile.getSubtitles().size(); i++) {
+        String subtitle = mediaFile.getSubtitles().get(i);
 
-        case 3:
-          return mediaFile.getVideoCodec();
-
-        case 4:
-          return mediaFile.getVideoResolution();
-
-        case 5:
-          return mediaFile.getBiteRateInKbps();
-
-        case 6:
-          return mediaFile.getAudioCodec();
-
-        case 7:
-          return mediaFile.getAudioChannels();
+        if (mediaFile.getType() == MediaFileType.VIDEO) {
+          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.subtitle") + " " + (i + 1))); //$NON-NLS-1$
+          panelSubtitleDetails.add(new JLabel(subtitle));
+        }
+        else {
+          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.externalfile"))); //$NON-NLS-1$
+          panelSubtitleDetails.add(new JLabel(mediaFile.getFilename()));
+        }
       }
-
-      throw new IllegalStateException();
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
-     */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Class getColumnClass(int column) {
-      switch (column) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-          return String.class;
-      }
-
-      throw new IllegalStateException();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
-     */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Comparator getColumnComparator(int arg0) {
-      return null;
-    }
-
   }
 }

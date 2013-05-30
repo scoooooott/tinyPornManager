@@ -327,19 +327,13 @@ public class MovieRenamer {
     needed.clear();
     needed.addAll(newMFs);
 
-    // add mediainfo
-    for (MediaFile mf : needed) {
-      mf.gatherMediaInformation();
-    }
-
     movie.removeAllMediaFiles();
-    // remove all MediaFiles (except movie!)
-    // movie.removeAllMediaFilesExceptType(MediaFileType.VIDEO);
     movie.addToMediaFiles(needed);
 
     // cleanup & rename subtitle files
     renameSubtitles(movie);
 
+    movie.gatherMediaFileInformation(true);
     movie.saveToDb();
 
     // ######################################################################

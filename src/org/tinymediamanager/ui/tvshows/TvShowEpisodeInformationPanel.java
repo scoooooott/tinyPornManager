@@ -121,6 +121,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
   /** The panel media information. */
   private JPanel                      panelMediaInformation;
+  private JPanel                      panelMediaFiles;
 
   /** The lbl media logo resolution. */
   private JLabel                      lblMediaLogoResolution;
@@ -265,6 +266,9 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
     panelMediaInformation = new TvShowEpisodeMediaInformationPanel(tvShowEpisodeSelectionModel);
     tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
+
+    panelMediaFiles = new TvShowEpisodeMediaFilesPanel(tvShowEpisodeSelectionModel);
+    tabbedPaneTvShowEpisodeDetails.addTab(BUNDLE.getString("metatag.mediafiles"), null, panelMediaFiles, null); //$NON-NLS-1$
 
     // beansbinding init
     initDataBindings();
