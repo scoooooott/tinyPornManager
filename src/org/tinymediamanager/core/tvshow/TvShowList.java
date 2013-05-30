@@ -192,7 +192,7 @@ public class TvShowList extends AbstractModelObject {
       TypedQuery<TvShow> query = Globals.entityManager.createQuery("SELECT tvShow FROM TvShow tvShow", TvShow.class);
       tvShows = query.getResultList();
       if (tvShows != null) {
-        LOGGER.debug("found " + tvShows.size() + " tv shows in database");
+        LOGGER.info("found " + tvShows.size() + " tv shows in database");
         for (Object obj : tvShows) {
           if (obj instanceof TvShow) {
             TvShow tvShow = (TvShow) obj;

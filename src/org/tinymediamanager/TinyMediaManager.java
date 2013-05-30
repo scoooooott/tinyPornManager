@@ -154,8 +154,8 @@ public class TinyMediaManager {
             splash.update();
           }
 
-          LOGGER.debug("starting tinyMediaManager");
-          LOGGER.debug("default encoding " + System.getProperty("file.encoding"));
+          LOGGER.info("starting tinyMediaManager");
+          LOGGER.info("default encoding " + System.getProperty("file.encoding"));
 
           // initialize database //////////////////////////////////////////////
           if (g2 != null) {
@@ -163,13 +163,13 @@ public class TinyMediaManager {
             splash.update();
           }
 
-          LOGGER.debug("initialize database");
+          LOGGER.info("initialize database");
           Globals.startDatabase();
           LOGGER.debug("database opened");
 
           // proxy settings
           if (Globals.settings.useProxy()) {
-            LOGGER.debug("setting proxy");
+            LOGGER.info("setting proxy");
             Globals.settings.setProxy();
           }
 

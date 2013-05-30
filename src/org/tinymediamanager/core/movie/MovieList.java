@@ -213,7 +213,7 @@ public class MovieList extends AbstractModelObject {
       TypedQuery<Movie> query = Globals.entityManager.createQuery("SELECT movie FROM Movie movie", Movie.class);
       movies = query.getResultList();
       if (movies != null) {
-        LOGGER.debug("found " + movies.size() + " movies in database");
+        LOGGER.info("found " + movies.size() + " movies in database");
         movieList = new ObservableElementList<Movie>(GlazedLists.threadSafeList(new BasicEventList<Movie>(movies.size())),
             GlazedLists.beanConnector(Movie.class));
 
@@ -243,7 +243,7 @@ public class MovieList extends AbstractModelObject {
       TypedQuery<MovieSet> querySets = Globals.entityManager.createQuery("SELECT movieSet FROM MovieSet movieSet", MovieSet.class);
       movieSets = querySets.getResultList();
       if (movieSets != null) {
-        LOGGER.debug("found " + movieSets.size() + " movieSets in database");
+        LOGGER.info("found " + movieSets.size() + " movieSets in database");
         movieSetList = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<MovieSet>(movieSets.size())));
 
         // load movie sets
