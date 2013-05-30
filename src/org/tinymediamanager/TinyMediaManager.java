@@ -25,9 +25,14 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -74,6 +79,32 @@ public class TinyMediaManager {
     if (TmmUIHelper.swt != null) {
       NativeInterface.open();
     }
+
+    // START character encoding debug
+    debugCharacterEncoding();
+    System.setProperty("file.encoding", "UTF-8");
+    Field charset;
+    try {
+      // we cannot (re)set the properties while running inside JVM
+      // so we trick it to reread it by setting them to null ;)
+      charset = Charset.class.getDeclaredField("defaultCharset");
+      charset.setAccessible(true);
+      charset.set(null, null);
+    }
+    catch (NoSuchFieldException e1) {
+      LOGGER.warn("Error resetting to UTF-8");
+    }
+    catch (SecurityException e1) {
+      LOGGER.warn("Error resetting to UTF-8");
+    }
+    catch (IllegalArgumentException e) {
+      LOGGER.warn("Error resetting to UTF-8");
+    }
+    catch (IllegalAccessException e) {
+      LOGGER.warn("Error resetting to UTF-8");
+    }
+    debugCharacterEncoding();
+    // END character encoding debug
 
     // start EDT
     EventQueue.invokeLater(new Runnable() {
@@ -377,5 +408,18 @@ public class TinyMediaManager {
     if (TmmUIHelper.swt != null) {
       NativeInterface.runEventPump();
     }
+  }
+
+  /**
+   * debug various JVM character settings
+   */
+  private static void debugCharacterEncoding() {
+    String defaultCharacterEncoding = System.getProperty("file.encoding");
+    LOGGER.debug("defaultCharacterEncoding by property: " + defaultCharacterEncoding);
+    byte[] bArray = { 'w' };
+    InputStream is = new ByteArrayInputStream(bArray);
+    InputStreamReader reader = new InputStreamReader(is);
+    LOGGER.debug("defaultCharacterEncoding by code: " + reader.getEncoding());
+    LOGGER.debug("defaultCharacterEncoding by charSet: " + Charset.defaultCharset());
   }
 }
