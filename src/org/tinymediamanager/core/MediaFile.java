@@ -957,6 +957,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
         break;
 
+      case SUBTITLE:
+        subtitles.add(new MediaFileSubtitle()); // just add
+        break;
+
       case POSTER:
       case BANNER:
       case FANART:
