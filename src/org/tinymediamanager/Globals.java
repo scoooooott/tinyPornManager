@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.tinymediamanager.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.MainWindow;
 
@@ -50,8 +51,8 @@ public class Globals {
   /** The Constant executor. */
   public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, // max threads
                                                       2, TimeUnit.SECONDS, // time to wait before closing idle workers
-                                                      new LinkedBlockingQueue<Runnable>() // our queue
-                                                  );
+                                                      new LinkedBlockingQueue<Runnable>(), // our queue
+                                                      new TmmThreadFactory("global"));
 
   /**
    * Start database.
@@ -77,6 +78,16 @@ public class Globals {
 
   /** The logo. */
   public final static Image logo = Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
+
+  /**
+   * is a TMM thread pool running?!
+   */
+  public static boolean poolRunning() {
+    if (checkForThreadAlive("tmmpool")) {
+      return true;
+    }
+    return false;
+  }
 
   /**
    * Look for a text in name of running threads to check if some threads have not shut down yet
