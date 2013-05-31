@@ -88,70 +88,29 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieChooserDialog extends JDialog implements ActionListener {
 
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID      = -3104541519073924724L;
   private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                 //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID      = 1L;
-
-  /** The static LOGGER. */
   private static final Logger         LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  /** The content panel. */
-  private final JPanel                contentPanel          = new JPanel();
-
-  /** The movie list. */
   private MovieList                   movieList             = MovieList.getInstance();
-
-  /** The movie to scrape. */
   private Movie                       movieToScrape;
-
-  /** The text field search string. */
-  private JTextField                  textFieldSearchString;
-
-  /** The cb scraper. */
-  private JComboBox                   cbScraper;
-
-  /** The table. */
-  private JTable                      table;
-
-  /** The lbl movie name. */
-  private JTextArea                   lblMovieName;
-
-  /** The tp movie description. */
-  private JTextPane                   tpMovieDescription;
-
-  /** The lbl movie poster. */
-  private ImageLabel                  lblMoviePoster;
-
-  /** The lbl progress action. */
-  private JLabel                      lblProgressAction;
-
-  /** The progress bar. */
-  private JProgressBar                progressBar;
-
-  /** The movies found. */
   private List<MovieChooserModel>     moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
-
-  /** The lbl tagline. */
-  private JTextArea                   lblTagline;
-
-  /** The scraper metadata config. */
   private MovieScraperMetadataConfig  scraperMetadataConfig = new MovieScraperMetadataConfig();
-
-  /** The metadata provider. */
   private IMediaMetadataProvider      metadataProvider;
-
-  /** The artwork providers. */
   private List<IMediaArtworkProvider> artworkProviders;
-
-  /** The trailer providers. */
   private List<IMediaTrailerProvider> trailerProviders;
-
-  /** The continue queue. */
   private boolean                     continueQueue         = true;
 
-  /** The ok button. */
+  private final JPanel                contentPanel          = new JPanel();
+  private JTextField                  textFieldSearchString;
+  private JComboBox                   cbScraper;
+  private JTable                      table;
+  private JTextArea                   lblMovieName;
+  private JTextPane                   tpMovieDescription;
+  private ImageLabel                  lblMoviePoster;
+  private JLabel                      lblProgressAction;
+  private JProgressBar                progressBar;
+  private JTextArea                   lblTagline;
   private JButton                     okButton;
 
   /**
@@ -377,9 +336,6 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
       textFieldSearchString.setText(movieToScrape.getTitle());
       searchMovie(textFieldSearchString.getText(), movieToScrape.getImdbId());
-
-      // // initial search only by name
-      // searchMovie(textFieldSearchString.getText(), "");
     }
 
   }
@@ -444,9 +400,6 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
                 if (extrafanarts.size() > 0 || extrathumbs.size() > 0) {
                   movieToScrape.writeExtraImages(true, true);
                 }
-
-                // movieToScrape.downloadExtraThumbs(extrathumbs);
-                // movieToScrape.downloadExtraFanarts(extrafanarts);
               }
             }
             else {

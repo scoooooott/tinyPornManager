@@ -197,6 +197,18 @@ public class MovieToXbmcNfoConnector {
   @XmlElement
   String                      dateadded;
 
+  private static JAXBContext  context        = initContext();
+
+  private static JAXBContext initContext() {
+    try {
+      return JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
+    }
+    catch (JAXBException e) {
+      LOGGER.error(e.getMessage());
+    }
+    return null;
+  }
+
   /**
    * Instantiates a new movie to xbmc nfo connector.
    */
@@ -217,23 +229,23 @@ public class MovieToXbmcNfoConnector {
    * @return the string
    */
   public static String setData(Movie movie) {
-    JAXBContext context;
+    if (context == null) {
+      return "";
+    }
+
     MovieToXbmcNfoConnector xbmc = null;
 
     // load existing NFO if possible
     for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
       File file = new File(movie.getPath(), movie.getNfoFilename(name));
       if (file.exists()) {
-        synchronized (JAXBContext.class) {
-          try {
-            context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
-            Unmarshaller um = context.createUnmarshaller();
-            Reader in = new InputStreamReader(new FileInputStream(file), "UTF-8");
-            xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
-          }
-          catch (Exception e) {
-            LOGGER.error("failed to parse " + movie.getNfoFilename(name), e);
-          }
+        try {
+          Unmarshaller um = context.createUnmarshaller();
+          Reader in = new InputStreamReader(new FileInputStream(file), "UTF-8");
+          xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+        }
+        catch (Exception e) {
+          LOGGER.error("failed to parse " + movie.getNfoFilename(name), e);
         }
       }
       if (xbmc != null) {
@@ -377,11 +389,10 @@ public class MovieToXbmcNfoConnector {
     // and marshall it
     String nfoFilename = "";
     for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
+
       try {
         nfoFilename = movie.getNfoFilename(name);
-        synchronized (JAXBContext.class) {
-          context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
-        }
+
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -418,14 +429,15 @@ public class MovieToXbmcNfoConnector {
    * @return the data
    */
   public static Movie getData(String nfoFilename) {
+    if (context == null) {
+      return null;
+    }
+
     // try to parse XML
-    JAXBContext context;
     Movie movie = null;
     try {
-      synchronized (JAXBContext.class) {
-        context = JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
-      }
       Unmarshaller um = context.createUnmarshaller();
+
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
       MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
       movie = new Movie();

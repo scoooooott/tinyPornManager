@@ -120,6 +120,18 @@ public class TvShowEpisodeToXbmcNfoConnector {
   @XmlElement
   String                      lastplayed;
 
+  private static JAXBContext  context   = initContext();
+
+  private static JAXBContext initContext() {
+    try {
+      return JAXBContext.newInstance(TvShowEpisodeToXbmcNfoConnector.class, Actor.class);
+    }
+    catch (JAXBException e) {
+      LOGGER.error(e.getMessage());
+    }
+    return null;
+  }
+
   /**
    * Instantiates a new tv show episode to xbmc nfo connector.
    */
@@ -137,7 +149,9 @@ public class TvShowEpisodeToXbmcNfoConnector {
    * @return the string
    */
   public static String setData(List<TvShowEpisode> tvShowEpisodes) {
-    JAXBContext context = null;
+    if (context == null) {
+      return "";
+    }
 
     TvShowEpisode episode = tvShowEpisodes.get(0);
     String nfoFilename = FilenameUtils.getBaseName(episode.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()) + ".nfo";
@@ -210,10 +224,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
       // and marshall it
       try {
-
-        synchronized (JAXBContext.class) {
-          context = JAXBContext.newInstance(TvShowEpisodeToXbmcNfoConnector.class, Actor.class);
-        }
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -264,6 +274,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
   public static List<TvShowEpisode> getData(String nfoFilename) {
     // try to parse XML
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
+
+    if (context == null) {
+      return episodes;
+    }
 
     // parse out all episodes from the nfo
     File nfoFile = new File(nfoFilename);
@@ -746,7 +760,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
   }
 
   private static List<TvShowEpisodeToXbmcNfoConnector> parseNfo(File nfoFile) {
-    JAXBContext context = null;
     List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = new ArrayList<TvShowEpisodeToXbmcNfoConnector>(1);
 
     // tv show episode NFO is a bit weird. There can be stored multiple
@@ -771,9 +784,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
           // read out each episode
           try {
-            synchronized (JAXBContext.class) {
-              context = JAXBContext.newInstance(TvShowEpisodeToXbmcNfoConnector.class, Actor.class);
-            }
             Unmarshaller um = context.createUnmarshaller();
             Reader in = new StringReader(sb.toString());
             TvShowEpisodeToXbmcNfoConnector xbmc = (TvShowEpisodeToXbmcNfoConnector) um.unmarshal(in);

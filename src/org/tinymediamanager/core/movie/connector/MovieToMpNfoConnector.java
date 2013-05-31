@@ -136,6 +136,18 @@ public class MovieToMpNfoConnector {
   /** The sets. */
   private List<MovieSets>     sets;
 
+  private static JAXBContext  context         = initContext();
+
+  private static JAXBContext initContext() {
+    try {
+      return JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
+    }
+    catch (JAXBException e) {
+      LOGGER.error(e.getMessage());
+    }
+    return null;
+  }
+
   /**
    * Instantiates a new movie to mp nfo connector.
    */
@@ -155,6 +167,10 @@ public class MovieToMpNfoConnector {
    * @return the string
    */
   public static String setData(Movie movie) {
+    if (context == null) {
+      return "";
+    }
+
     MovieToMpNfoConnector mp = new MovieToMpNfoConnector();
     // set data
     mp.setTitle(movie.getTitle());
@@ -217,12 +233,10 @@ public class MovieToMpNfoConnector {
     // and marshall it
     String nfoFilename = "";
     for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
-      JAXBContext context;
+
       try {
         nfoFilename = movie.getNfoFilename(name);
-        synchronized (JAXBContext.class) {
-          context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
-        }
+
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -259,91 +273,89 @@ public class MovieToMpNfoConnector {
    * @return the data
    */
   public static Movie getData(String nfoFilename) {
+    if (context == null) {
+      return null;
+    }
+
     // try to parse XML
-    JAXBContext context;
     Movie movie = null;
     try {
-      synchronized (JAXBContext.class) {
-        context = JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
-      }
       Unmarshaller um = context.createUnmarshaller();
+      Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
+      MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(in);
+      movie = new Movie();
+      movie.setTitle(mp.getTitle());
+      movie.setOriginalTitle(mp.getOriginaltitle());
+      movie.setRating(mp.getRating());
+      movie.setVotes(mp.getVotes());
+      movie.setYear(mp.getYear());
+      movie.setPlot(mp.getPlot());
+      movie.setTagline(mp.getTagline());
       try {
-        Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
-        MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(in);
-        movie = new Movie();
-        movie.setTitle(mp.getTitle());
-        movie.setOriginalTitle(mp.getOriginaltitle());
-        movie.setRating(mp.getRating());
-        movie.setVotes(mp.getVotes());
-        movie.setYear(mp.getYear());
-        movie.setPlot(mp.getPlot());
-        movie.setTagline(mp.getTagline());
-        try {
-          String rt = mp.getRuntime().replaceAll("[^0-9]", "");
-          movie.setRuntime(Integer.parseInt(rt));
-        }
-        catch (Exception e) {
-          LOGGER.warn("could not parse runtime: " + mp.getRuntime());
-        }
-        // if (mp.getThumb() != null) {
-        // movie.setPoster(mp.getThumb());
-        // }
-
-        // if (mp.getFanart() != null && mp.getFanart().size() > 0) {
-        // movie.setFanart(mp.getFanart().get(0));
-        // }
-
-        movie.setImdbId(mp.getId());
-        movie.setDirector(mp.getDirector());
-        movie.setWriter(mp.getCredits());
-        movie.setProductionCompany(mp.getStudio());
-        if (!StringUtils.isEmpty(mp.getMpaa())) {
-          movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(mp.getMpaa()));
-        }
-
-        // movieset
-        if (mp.getSets() != null && mp.getSets().size() > 0) {
-          MovieSets sets = mp.getSets().get(0);
-          // search for that movieset
-          MovieList movieList = MovieList.getInstance();
-          MovieSet movieSet = movieList.findMovieSet(sets.getName());
-          // no one found - create it
-          if (movieSet == null) {
-            movieSet = new MovieSet(sets.getName());
-            movieSet.saveToDb();
-            movieList.addMovieSet(movieSet);
-          }
-
-          // add movie to movieset
-          if (movieSet != null) {
-            movie.setMovieSet(movieSet);
-          }
-        }
-
-        for (Actor actor : mp.getActors()) {
-          MovieActor cast = new MovieActor(actor.getName(), actor.getRole());
-          cast.setThumb(actor.getThumb());
-          movie.addActor(cast);
-        }
-
-        for (String genre : mp.getGenres()) {
-          String[] genres = genre.split("/");
-          for (String g : genres) {
-            MediaGenres genreFound = MediaGenres.getGenre(g.trim());
-            if (genreFound != null) {
-              movie.addGenre(genreFound);
-            }
-          }
-        }
-
-        // set only the name w/o path
-        movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
-
+        String rt = mp.getRuntime().replaceAll("[^0-9]", "");
+        movie.setRuntime(Integer.parseInt(rt));
       }
-      catch (FileNotFoundException e) {
-        LOGGER.error("setData", e);
-        return null;
+      catch (Exception e) {
+        LOGGER.warn("could not parse runtime: " + mp.getRuntime());
       }
+      // if (mp.getThumb() != null) {
+      // movie.setPoster(mp.getThumb());
+      // }
+
+      // if (mp.getFanart() != null && mp.getFanart().size() > 0) {
+      // movie.setFanart(mp.getFanart().get(0));
+      // }
+
+      movie.setImdbId(mp.getId());
+      movie.setDirector(mp.getDirector());
+      movie.setWriter(mp.getCredits());
+      movie.setProductionCompany(mp.getStudio());
+      if (!StringUtils.isEmpty(mp.getMpaa())) {
+        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(mp.getMpaa()));
+      }
+
+      // movieset
+      if (mp.getSets() != null && mp.getSets().size() > 0) {
+        MovieSets sets = mp.getSets().get(0);
+        // search for that movieset
+        MovieList movieList = MovieList.getInstance();
+        MovieSet movieSet = movieList.findMovieSet(sets.getName());
+        // no one found - create it
+        if (movieSet == null) {
+          movieSet = new MovieSet(sets.getName());
+          movieSet.saveToDb();
+          movieList.addMovieSet(movieSet);
+        }
+
+        // add movie to movieset
+        if (movieSet != null) {
+          movie.setMovieSet(movieSet);
+        }
+      }
+
+      for (Actor actor : mp.getActors()) {
+        MovieActor cast = new MovieActor(actor.getName(), actor.getRole());
+        cast.setThumb(actor.getThumb());
+        movie.addActor(cast);
+      }
+
+      for (String genre : mp.getGenres()) {
+        String[] genres = genre.split("/");
+        for (String g : genres) {
+          MediaGenres genreFound = MediaGenres.getGenre(g.trim());
+          if (genreFound != null) {
+            movie.addGenre(genreFound);
+          }
+        }
+      }
+
+      // set only the name w/o path
+      movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
+
+    }
+    catch (FileNotFoundException e) {
+      LOGGER.error("setData", e);
+      return null;
     }
     catch (Exception e) {
       LOGGER.error("setData", e);

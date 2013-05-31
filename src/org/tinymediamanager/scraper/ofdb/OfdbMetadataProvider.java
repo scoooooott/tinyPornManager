@@ -26,12 +26,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -93,14 +93,10 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
   }
 
   /*
-   * <meta property="og:title" content="Bourne Vermaächtnis, Das (2012)" />
-   * <meta property="og:type" content="movie" /> <meta property="og:url"
-   * content="http://www.ofdb.de/film/226745,Das-Bourne-Vermächtnis" /> <meta
-   * property="og:image" content="http://img.ofdb.de/film/226/226745.jpg" />
-   * <meta property="og:site_name" content="OFDb" /> <meta property="fb:app_id"
-   * content="198140443538429" /> <script
-   * src="http://www.ofdb.de/jscripts/vn/immer_oben.js"
-   * type="text/javascript"></script>
+   * <meta property="og:title" content="Bourne Vermaächtnis, Das (2012)" /> <meta property="og:type" content="movie" /> <meta property="og:url"
+   * content="http://www.ofdb.de/film/226745,Das-Bourne-Vermächtnis" /> <meta property="og:image" content="http://img.ofdb.de/film/226/226745.jpg" />
+   * <meta property="og:site_name" content="OFDb" /> <meta property="fb:app_id" content="198140443538429" /> <script
+   * src="http://www.ofdb.de/jscripts/vn/immer_oben.js" type="text/javascript"></script>
    */
 
   @Override
@@ -253,8 +249,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
   }
 
   /**
-   * Removes all weird characters from search as well some "stopwords" as
-   * der|die|das|the|a
+   * Removes all weird characters from search as well some "stopwords" as der|die|das|the|a
    * 
    * @param q
    *          the query string to clean
@@ -277,10 +272,8 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     String imdb = "";
 
     /*
-     * Kat = All | Titel | Person | DTitel | OTitel | Regie | Darsteller | Song
-     * | Rolle | EAN| IMDb | Google
-     * http://www.ofdb.de//view.php?page=suchergebnis
-     * &Kat=xxxxxxxxx&SText=yyyyyyyyyyy
+     * Kat = All | Titel | Person | DTitel | OTitel | Regie | Darsteller | Song | Rolle | EAN| IMDb | Google
+     * http://www.ofdb.de//view.php?page=suchergebnis &Kat=xxxxxxxxx&SText=yyyyyyyyyyy
      */
     // detect the search preference (1. imdb, 2. title, 3. all)
     if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.IMDBID))) {
@@ -290,11 +283,13 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     }
     else if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
       String title = options.get(MediaSearchOptions.SearchParam.TITLE);
+      title = MetadataUtil.removeNonSearchCharacters(title);
       searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=Titel&SText=" + URLEncoder.encode(cleanSearch(title), "UTF-8");
       LOGGER.debug("search with title: " + title);
     }
     else if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
       String query = options.get(MediaSearchOptions.SearchParam.QUERY);
+      query = MetadataUtil.removeNonSearchCharacters(query);
       searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=All&SText=" + URLEncoder.encode(cleanSearch(query), "UTF-8");
       LOGGER.debug("search for everything: " + query);
     }
@@ -353,81 +348,39 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       return trailers;
     }
     /*
-     * function getTrailerData(ci) { switch (ci) { case
-     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_1.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 1</b><br><i>(small)</i><br><br>&raquo;
-     * 160px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_1.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_2.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 1</b><br><i>(medium)</i><br><br>&raquo;
-     * 240px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_2.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_3.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 1</b><br><i>(large)</i><br><br>&raquo;
-     * 320px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_3.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_3.mp4?log_var=72|491100001-1|-"
-     * >mp4</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_3.webm?log_var=72|491100001-1|-"
-     * >webm</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_4.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 1</b><br><i>(xlarge)</i><br><br>&raquo;
-     * 400px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_4.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_4.mp4?log_var=72|491100001-1|-"
-     * >mp4</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_4.webm?log_var=72|491100001-1|-"
-     * >webm</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_5.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 1</b><br><i>(xxlarge)</i><br><br>&raquo;
-     * 640px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.mp4?log_var=72|491100001-1|-"
-     * >mp4</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.webm?log_var=72|491100001-1|-"
-     * >webm</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_1.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 2</b><br><i>(small)</i><br><br>&raquo;
-     * 160px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_1.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_2.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 2</b><br><i>(medium)</i><br><br>&raquo;
-     * 240px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_2.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_3.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 2</b><br><i>(large)</i><br><br>&raquo;
-     * 320px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_3.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_3.mp4?log_var=72|491100001-1|-"
-     * >mp4</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_3.webm?log_var=72|491100001-1|-"
-     * >webm</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_4.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 2</b><br><i>(xlarge)</i><br><br>&raquo;
-     * 400px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_4.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_4.mp4?log_var=72|491100001-1|-"
-     * >mp4</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_4.webm?log_var=72|491100001-1|-"
-     * >webm</a><br>'; case
-     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_5.flv?log_var=72|491100001-1|-'
-     * : return '<b>Trailer 2</b><br><i>(xxlarge)</i><br><br>&raquo;
-     * 640px<br><br>Download:<br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_5.wmv?log_var=72|491100001-1|-"
-     * >wmv</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_5.mp4?log_var=72|491100001-1|-"
-     * >mp4</a><br>&raquo; <a href=
-     * "http://de.clip-1.filmtrailer.com/9507_39003_a_5.webm?log_var=72|491100001-1|-"
-     * >webm</a><br>'; } }
+     * function getTrailerData(ci) { switch (ci) { case 'http://de.clip-1.filmtrailer.com/9507_31566_a_1.flv?log_var=72|491100001-1|-' : return
+     * '<b>Trailer 1</b><br><i>(small)</i><br><br>&raquo; 160px<br><br>Download:<br>&raquo; <a href=
+     * "http://de.clip-1.filmtrailer.com/9507_31566_a_1.wmv?log_var=72|491100001-1|-" >wmv</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_2.flv?log_var=72|491100001-1|-' : return '<b>Trailer 1</b><br><i>(medium)</i><br><br>&raquo;
+     * 240px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_31566_a_2.wmv?log_var=72|491100001-1|-" >wmv</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_3.flv?log_var=72|491100001-1|-' : return '<b>Trailer 1</b><br><i>(large)</i><br><br>&raquo;
+     * 320px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_31566_a_3.wmv?log_var=72|491100001-1|-" >wmv</a><br>&raquo;
+     * <a href= "http://de.clip-1.filmtrailer.com/9507_31566_a_3.mp4?log_var=72|491100001-1|-" >mp4</a><br>&raquo; <a href=
+     * "http://de.clip-1.filmtrailer.com/9507_31566_a_3.webm?log_var=72|491100001-1|-" >webm</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_4.flv?log_var=72|491100001-1|-' : return '<b>Trailer 1</b><br><i>(xlarge)</i><br><br>&raquo;
+     * 400px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_31566_a_4.wmv?log_var=72|491100001-1|-" >wmv</a><br>&raquo;
+     * <a href= "http://de.clip-1.filmtrailer.com/9507_31566_a_4.mp4?log_var=72|491100001-1|-" >mp4</a><br>&raquo; <a href=
+     * "http://de.clip-1.filmtrailer.com/9507_31566_a_4.webm?log_var=72|491100001-1|-" >webm</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_31566_a_5.flv?log_var=72|491100001-1|-' : return '<b>Trailer 1</b><br><i>(xxlarge)</i><br><br>&raquo;
+     * 640px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_31566_a_5.wmv?log_var=72|491100001-1|-" >wmv</a><br>&raquo;
+     * <a href= "http://de.clip-1.filmtrailer.com/9507_31566_a_5.mp4?log_var=72|491100001-1|-" >mp4</a><br>&raquo; <a href=
+     * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.webm?log_var=72|491100001-1|-" >webm</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_1.flv?log_var=72|491100001-1|-' : return '<b>Trailer 2</b><br><i>(small)</i><br><br>&raquo;
+     * 160px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_1.wmv?log_var=72|491100001-1|-" >wmv</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_2.flv?log_var=72|491100001-1|-' : return '<b>Trailer 2</b><br><i>(medium)</i><br><br>&raquo;
+     * 240px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_2.wmv?log_var=72|491100001-1|-" >wmv</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_3.flv?log_var=72|491100001-1|-' : return '<b>Trailer 2</b><br><i>(large)</i><br><br>&raquo;
+     * 320px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_3.wmv?log_var=72|491100001-1|-" >wmv</a><br>&raquo;
+     * <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_3.mp4?log_var=72|491100001-1|-" >mp4</a><br>&raquo; <a href=
+     * "http://de.clip-1.filmtrailer.com/9507_39003_a_3.webm?log_var=72|491100001-1|-" >webm</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_4.flv?log_var=72|491100001-1|-' : return '<b>Trailer 2</b><br><i>(xlarge)</i><br><br>&raquo;
+     * 400px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_4.wmv?log_var=72|491100001-1|-" >wmv</a><br>&raquo;
+     * <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_4.mp4?log_var=72|491100001-1|-" >mp4</a><br>&raquo; <a href=
+     * "http://de.clip-1.filmtrailer.com/9507_39003_a_4.webm?log_var=72|491100001-1|-" >webm</a><br>'; case
+     * 'http://de.clip-1.filmtrailer.com/9507_39003_a_5.flv?log_var=72|491100001-1|-' : return '<b>Trailer 2</b><br><i>(xxlarge)</i><br><br>&raquo;
+     * 640px<br><br>Download:<br>&raquo; <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_5.wmv?log_var=72|491100001-1|-" >wmv</a><br>&raquo;
+     * <a href= "http://de.clip-1.filmtrailer.com/9507_39003_a_5.mp4?log_var=72|491100001-1|-" >mp4</a><br>&raquo; <a href=
+     * "http://de.clip-1.filmtrailer.com/9507_39003_a_5.webm?log_var=72|491100001-1|-" >webm</a><br>'; } }
      */
     Url url = null;
     try {
@@ -455,14 +408,10 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       while (m.find()) {
         String s = m.group(1);
         /*
-         * <b>Trailer 1</b><br><i>(xxlarge)</i><br><br>&raquo;
-         * 640px<br><br>Download:<br>&raquo; <a href=
-         * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.wmv?log_var=72|491100001-1|-"
-         * >wmv</a><br>&raquo; <a href=
-         * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.mp4?log_var=72|491100001-1|-"
-         * >mp4</a><br>&raquo; <a href=
-         * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.webm?log_var=72|491100001-1|-"
-         * >webm</a><br>
+         * <b>Trailer 1</b><br><i>(xxlarge)</i><br><br>&raquo; 640px<br><br>Download:<br>&raquo; <a href=
+         * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.wmv?log_var=72|491100001-1|-" >wmv</a><br>&raquo; <a href=
+         * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.mp4?log_var=72|491100001-1|-" >mp4</a><br>&raquo; <a href=
+         * "http://de.clip-1.filmtrailer.com/9507_31566_a_5.webm?log_var=72|491100001-1|-" >webm</a><br>
          */
         String tname = StrgUtils.substr(s, "<b>(.*?)</b>");
         String tpix = StrgUtils.substr(s, "raquo; (.*?)x<br>");

@@ -103,6 +103,18 @@ public class TvShowToXbmcNfoConnector {
   @XmlElement
   List<Thumb>                 thumb;
 
+  private static JAXBContext  context   = initContext();
+
+  private static JAXBContext initContext() {
+    try {
+      return JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class);
+    }
+    catch (JAXBException e) {
+      LOGGER.error(e.getMessage());
+    }
+    return null;
+  }
+
   /**
    * Instantiates a new tv show to xbmc nfo connector.
    */
@@ -119,17 +131,17 @@ public class TvShowToXbmcNfoConnector {
    * @return the string
    */
   public static String setData(TvShow tvShow) {
+    if (context == null) {
+      return "";
+    }
+
     TvShowToXbmcNfoConnector xbmc = null;
-    JAXBContext context = null;
     String nfoFilename = "tvshow.nfo";
     File nfoFile = new File(tvShow.getPath(), nfoFilename);
 
     // load existing NFO if possible
     if (nfoFile.exists()) {
       try {
-        synchronized (JAXBContext.class) {
-          context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class);
-        }
         Unmarshaller um = context.createUnmarshaller();
         Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
         xbmc = (TvShowToXbmcNfoConnector) um.unmarshal(in);
@@ -172,10 +184,6 @@ public class TvShowToXbmcNfoConnector {
 
     // and marshall it
     try {
-
-      synchronized (JAXBContext.class) {
-        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class, Thumb.class);
-      }
       Marshaller m = context.createMarshaller();
       m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -210,13 +218,13 @@ public class TvShowToXbmcNfoConnector {
    * @return the data
    */
   public static TvShow getData(String nfoFilename) {
+    if (context == null) {
+      return null;
+    }
+
     // try to parse XML
-    JAXBContext context;
     TvShow tvShow = null;
     try {
-      synchronized (JAXBContext.class) {
-        context = JAXBContext.newInstance(TvShowToXbmcNfoConnector.class, Actor.class, Thumb.class);
-      }
       Unmarshaller um = context.createUnmarshaller();
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
       TvShowToXbmcNfoConnector xbmc = (TvShowToXbmcNfoConnector) um.unmarshal(in);

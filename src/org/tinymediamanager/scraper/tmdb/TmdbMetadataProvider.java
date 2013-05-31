@@ -155,6 +155,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       return resultList;
     }
 
+    searchString = MetadataUtil.removeNonSearchCharacters(searchString);
+
     // begin search
     LOGGER.debug("========= BEGIN TMDB Scraper Search for: " + searchString);
     // ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");

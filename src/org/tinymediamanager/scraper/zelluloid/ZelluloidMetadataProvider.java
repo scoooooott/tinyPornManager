@@ -370,6 +370,8 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       return resultList;
     }
 
+    searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
+
     Url url = new CachedUrl(searchUrl);
     InputStream in = url.getInputStream();
     Document doc = Jsoup.parse(in, PAGE_ENCODING, "");

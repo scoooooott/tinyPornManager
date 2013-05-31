@@ -636,18 +636,12 @@ public class MoviePanel extends JPanel {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      // List<Movie> selectedMovies = new ArrayList<Movie>();
-      // for (int row : table.getSelectedRows()) {
-      // row = table.convertRowIndexToModel(row);
-      // selectedMovies.add(movieList.getMovies().get(row));
-      // }
       List<Movie> selectedMovies = new ArrayList<Movie>();
       for (Movie movie : movieSelectionModel.getSelectedMovies()) {
         selectedMovies.add(movie);
       }
 
       if (selectedMovies.size() > 0) {
-        // scrapeTask = new ScrapeTask(selectedMovies);
         MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.selected.force")); //$NON-NLS-1$
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);

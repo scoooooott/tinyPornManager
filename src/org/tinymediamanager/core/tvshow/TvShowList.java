@@ -38,7 +38,6 @@ import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
 
 /**
@@ -304,7 +303,7 @@ public class TvShowList extends AbstractModelObject {
    */
   public List<MediaSearchResult> searchTvShow(String searchTerm, IMediaMetadataProvider metadataProvider) {
     // format searchstring
-    searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
+    // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
     List<MediaSearchResult> searchResult = null;
     try {

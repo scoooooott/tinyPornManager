@@ -39,7 +39,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.fanarttv.FanartTvMetadataProvider;
 import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
@@ -323,7 +322,7 @@ public class MovieList extends AbstractModelObject {
    */
   private List<MediaSearchResult> searchMovie(String searchTerm, IMediaMetadataProvider metadataProvider) {
     // format searchstring
-    searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
+    // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
     List<MediaSearchResult> searchResult = null;
     try {

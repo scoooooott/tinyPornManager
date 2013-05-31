@@ -646,6 +646,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       return result;
     }
 
+    searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
+
     StringBuilder sb = new StringBuilder(imdbSite.getSite());
     sb.append("find?q=");
     try {

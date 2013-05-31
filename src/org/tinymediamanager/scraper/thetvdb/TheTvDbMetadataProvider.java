@@ -60,13 +60,8 @@ import com.omertron.thetvdbapi.model.Series;
  */
 public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaArtworkProvider {
 
-  /** The Constant LOGGER. */
   private static final Logger      LOGGER       = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
-
-  /** The Constant instance. */
   private static TheTVDBApi        tvdb;
-
-  /** The provider info. */
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("tvdb", "thetvdb.com",
                                                     "Scraper for thetvdb.com which is able to scrape tv series metadata and artwork");
 
@@ -145,6 +140,7 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
     }
 
     // trim out extra spaces
+    searchString = MetadataUtil.removeNonSearchCharacters(searchString);
     searchString = StrgUtils.removeDuplicateWhitespace(searchString);
 
     // search via the api
