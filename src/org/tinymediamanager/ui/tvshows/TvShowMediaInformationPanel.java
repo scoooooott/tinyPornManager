@@ -234,11 +234,18 @@ public class TvShowMediaInformationPanel extends JPanel {
         // react on selection of a tv show and change of media files
         if ((source.getClass() == TvShowSelectionModel.class && "selectedTvShow".equals(property))
             || (source.getClass() == TvShowEpisode.class && "mediaFiles".equals(property))) {
-          mediaFileEventList.clear();
-          mediaFileEventList.addAll(selectionModel.getSelectedTvShow().getMediaFiles());
-          panelMediaFiles.adjustColumns();
+          try {
+            mediaFileEventList.getReadWriteLock().writeLock().lock();
+            mediaFileEventList.clear();
+            mediaFileEventList.addAll(selectionModel.getSelectedTvShow().getMediaFiles());
+            panelMediaFiles.adjustColumns();
+          }
+          catch (Exception e) {
+          }
+          finally {
+            mediaFileEventList.getReadWriteLock().writeLock().unlock();
+          }
         }
-
       }
     };
 

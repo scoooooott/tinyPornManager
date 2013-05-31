@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import static org.tinymediamanager.core.Constants.*;
+
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -219,14 +221,20 @@ public class MovieMediaFilesPanel extends JPanel {
         Object source = propertyChangeEvent.getSource();
         // react on selection of a movie and change of media files
         if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && "mediaFiles".equals(property))) {
-          if (!mediaFileEventList.isEmpty()) {
+            || (source.getClass() == Movie.class && MEDIA_FILES.equals(property))) {
+          // this does sometimes not work. simply wrap it
+          try {
+            mediaFileEventList.getReadWriteLock().writeLock().lock();
             mediaFileEventList.clear();
+            mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
+            panelMediaFiles.adjustColumns();
           }
-          mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
-          panelMediaFiles.adjustColumns();
+          catch (Exception e) {
+          }
+          finally {
+            mediaFileEventList.getReadWriteLock().writeLock().unlock();
+          }
         }
-
       }
     };
 

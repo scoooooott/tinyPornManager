@@ -193,7 +193,8 @@ public class MediaMetadata {
    *          the new studio
    */
   public void setStudio(String studio) {
-    this.studio = studio;
+    if (studio != null)
+      this.studio = studio;
   }
 
   /**
@@ -212,7 +213,8 @@ public class MediaMetadata {
    *          the new first aired
    */
   public void setFirstAired(String firstAired) {
-    this.firstAired = firstAired;
+    if (firstAired != null)
+      this.firstAired = firstAired;
   }
 
   /**
@@ -231,7 +233,8 @@ public class MediaMetadata {
    *          the new status
    */
   public void setStatus(String status) {
-    this.status = status;
+    if (status != null)
+      this.status = status;
   }
 
   /**
@@ -306,7 +309,8 @@ public class MediaMetadata {
    *          the new plot
    */
   public void setPlot(String plot) {
-    this.plot = plot;
+    if (plot != null)
+      this.plot = plot;
   }
 
   /**
@@ -316,7 +320,8 @@ public class MediaMetadata {
    *          the new title
    */
   public void setTitle(String title) {
-    this.title = title;
+    if (title != null)
+      this.title = title;
   }
 
   /**
@@ -326,7 +331,8 @@ public class MediaMetadata {
    *          the new original title
    */
   public void setOriginalTitle(String originalTitle) {
-    this.originalTitle = originalTitle;
+    if (originalTitle != null)
+      this.originalTitle = originalTitle;
   }
 
   /**
@@ -375,7 +381,8 @@ public class MediaMetadata {
    *          the new tagline
    */
   public void setTagline(String tagline) {
-    this.tagline = tagline;
+    if (tagline != null)
+      this.tagline = tagline;
   }
 
   /**
@@ -403,7 +410,8 @@ public class MediaMetadata {
    *          the new year
    */
   public void setYear(String year) {
-    this.year = year;
+    if (year != null)
+      this.year = year;
   }
 
   /**
@@ -413,7 +421,8 @@ public class MediaMetadata {
    *          the new release date
    */
   public void setReleaseDate(String releaseDate) {
-    this.releaseDate = releaseDate;
+    if (releaseDate != null)
+      this.releaseDate = releaseDate;
   }
 
   /**
@@ -483,7 +492,8 @@ public class MediaMetadata {
    *          the new production company
    */
   public void setProductionCompany(String productionCompany) {
-    this.productionCompany = productionCompany;
+    if (productionCompany != null)
+      this.productionCompany = productionCompany;
   }
 
   /**
@@ -493,7 +503,8 @@ public class MediaMetadata {
    *          the new spoken languages
    */
   public void setSpokenLanguages(String spokenLanguages) {
-    this.spokenLanguages = spokenLanguages;
+    if (spokenLanguages != null)
+      this.spokenLanguages = spokenLanguages;
   }
 
   /**
@@ -680,7 +691,8 @@ public class MediaMetadata {
    *          the new poster url
    */
   public void setPosterUrl(String posterUrl) {
-    this.posterUrl = posterUrl;
+    if (posterUrl != null)
+      this.posterUrl = posterUrl;
   }
 
   /**

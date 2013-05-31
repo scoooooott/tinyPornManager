@@ -61,7 +61,7 @@ public class TvShowEpisodeMediaFilesPanel extends JPanel {
   private static final long           serialVersionUID = 6409916197348303643L;
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());    //$NON-NLS-1$
 
   /** The logger. */
   private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeMediaFilesPanel.class);
@@ -234,11 +234,18 @@ public class TvShowEpisodeMediaFilesPanel extends JPanel {
         // react on selection of a movie and change of media files
         if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
             || (source.getClass() == TvShowEpisode.class && "mediaFiles".equals(property))) {
-          mediaFileEventList.clear();
-          mediaFileEventList.addAll(selectionModel.getSelectedTvShowEpisode().getMediaFiles());
-          panelMediaFiles.adjustColumns();
+          try {
+            mediaFileEventList.getReadWriteLock().writeLock().lock();
+            mediaFileEventList.clear();
+            mediaFileEventList.addAll(selectionModel.getSelectedTvShowEpisode().getMediaFiles());
+            panelMediaFiles.adjustColumns();
+          }
+          catch (Exception e) {
+          }
+          finally {
+            mediaFileEventList.getReadWriteLock().writeLock().unlock();
+          }
         }
-
       }
     };
 

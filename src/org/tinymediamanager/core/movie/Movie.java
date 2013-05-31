@@ -740,6 +740,9 @@ public class Movie extends MediaEntity {
     catch (IOException e) {
       LOGGER.warn("download extrathumbs", e);
     }
+    catch (Exception e) {
+      LOGGER.error(e.getMessage());
+    }
   }
 
   /**

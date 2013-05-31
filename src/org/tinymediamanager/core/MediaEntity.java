@@ -623,7 +623,7 @@ public abstract class MediaEntity extends AbstractModelObject {
       Collections.sort(mediaFilesObservable);
     }
 
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
     fireAddedEventForMediaFile(mediaFile);
   }
 
@@ -639,12 +639,12 @@ public abstract class MediaEntity extends AbstractModelObject {
       Collections.sort(mediaFilesObservable);
     }
 
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
-
     // fire the right events
     for (MediaFile mediaFile : mediaFiles) {
       fireAddedEventForMediaFile(mediaFile);
     }
+
+    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
   }
 
   /**
@@ -719,7 +719,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @return the media files
    */
   public List<MediaFile> getMediaFiles() {
-    return this.mediaFilesObservable;
+    return mediaFilesObservable;
   }
 
   /**
@@ -745,14 +745,16 @@ public abstract class MediaEntity extends AbstractModelObject {
    * Clears all the media files.
    */
   public void removeAllMediaFiles() {
+    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>(mediaFilesObservable);
     synchronized (mediaFilesObservable) {
       for (int i = mediaFilesObservable.size() - 1; i >= 0; i--) {
-        MediaFile mediaFile = mediaFilesObservable.get(i);
         mediaFilesObservable.remove(i);
-        fireRemoveEventForMediaFile(mediaFile);
       }
     }
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+    for (MediaFile mediaFile : changedMediafiles) {
+      fireRemoveEventForMediaFile(mediaFile);
+    }
+    // firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
   }
 
   /**
@@ -766,7 +768,7 @@ public abstract class MediaEntity extends AbstractModelObject {
       mediaFilesObservable.remove(mediaFile);
     }
 
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
     fireRemoveEventForMediaFile(mediaFile);
   }
 
@@ -777,16 +779,20 @@ public abstract class MediaEntity extends AbstractModelObject {
    *          the MediaFileType
    */
   public void removeAllMediaFilesExceptType(MediaFileType type) {
+    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
     synchronized (mediaFilesObservable) {
       for (int i = mediaFilesObservable.size() - 1; i >= 0; i--) {
         MediaFile mediaFile = mediaFilesObservable.get(i);
         if (!mediaFile.getType().equals(type)) {
           mediaFilesObservable.remove(i);
-          fireRemoveEventForMediaFile(mediaFile);
+          changedMediafiles.add(mediaFile);
         }
       }
     }
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+    for (MediaFile mediaFile : changedMediafiles) {
+      fireRemoveEventForMediaFile(mediaFile);
+    }
+    // firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
   }
 
   /**
@@ -796,16 +802,20 @@ public abstract class MediaEntity extends AbstractModelObject {
    *          the type
    */
   public void removeAllMediaFiles(MediaFileType type) {
+    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
     synchronized (mediaFilesObservable) {
       for (int i = mediaFilesObservable.size() - 1; i >= 0; i--) {
         MediaFile mediaFile = mediaFilesObservable.get(i);
         if (mediaFile.getType().equals(type)) {
           mediaFilesObservable.remove(i);
-          fireRemoveEventForMediaFile(mediaFile);
+          changedMediafiles.add(mediaFile);
         }
       }
     }
-    firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+    for (MediaFile mediaFile : changedMediafiles) {
+      fireRemoveEventForMediaFile(mediaFile);
+    }
+    // firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
   }
 
   /**
@@ -825,8 +835,10 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void gatherMediaFileInformation(boolean force) {
-    for (MediaFile mediaFile : mediaFiles) {
-      mediaFile.gatherMediaInformation(force);
+    synchronized (mediaFilesObservable) {
+      for (MediaFile mediaFile : mediaFilesObservable) {
+        mediaFile.gatherMediaInformation(force);
+      }
     }
 
     firePropertyChange(MEDIA_INFORMATION, false, true);
