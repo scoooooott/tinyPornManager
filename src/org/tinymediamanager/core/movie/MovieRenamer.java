@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Set;
 
 import org.apache.commons.io.FileExistsException;
@@ -32,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 
@@ -47,29 +49,62 @@ public class MovieRenamer {
 
   private static void renameSubtitles(Movie m) {
     // build language lists
-    String[] lang2 = Locale.getISOLanguages();
     List<String> langArray = new ArrayList<String>();
     Locale intl = new Locale("en");
-    for (String l : lang2) {
-      Locale locale = new Locale(l);
-      langArray.add(locale.getDisplayName(intl)); // english names
-      langArray.add(locale.getDisplayName()); // local names
-      langArray.add(locale.getISO3Language()); // 3 char
-      langArray.add(l); // 2 char
+
+    Locale locales[] = Locale.getAvailableLocales();
+    // longer names precedence, so use this weird style and do not sort array
+    for (Locale locale : locales) {
+      langArray.add(locale.getDisplayLanguage(intl));
+      langArray.add(locale.getDisplayLanguage());
     }
+    for (Locale locale : locales) {
+      langArray.add(locale.getISO3Language());
+    }
+    for (Locale locale : locales) {
+      try {
+        String c = locale.getISO3Country();
+        langArray.add(c);
+      }
+      catch (MissingResourceException e) {
+        // tjo... not found
+      }
+    }
+    for (String l : Locale.getISOLanguages()) {
+      if (!l.isEmpty()) {
+        langArray.add(l);
+      }
+    }
+    for (String l : Locale.getISOCountries()) {
+      if (!l.isEmpty()) {
+        langArray.add(l);
+      }
+    }
+    Set<String> cleanloc = new LinkedHashSet<String>(langArray);
+    cleanloc.remove(""); // remove empty
+    langArray.clear();
+    langArray.addAll(cleanloc);
+
+    // the filename of movie, to remove from subtitle, to ease parsing
+    String vname = Utils.cleanStackingMarkers(m.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename()).toLowerCase();
 
     for (MediaFile sub : m.getMediaFiles(MediaFileType.SUBTITLE)) {
       String lang = "";
       String forced = "";
-      for (String l : langArray) {
-        if (sub.getBasename().toLowerCase().endsWith("." + l.toLowerCase())) { // make dot mandatory
-          lang = l;
-          break;
-        }
-      }
+      String shortname = sub.getBasename().toLowerCase().replace(vname, "");
       if (sub.getFilename().toLowerCase().contains("forced")) {
         // add "forced" prior language
         forced = ".forced";
+        shortname = shortname.replaceAll("forced", "");
+      }
+      shortname = shortname.replaceAll("\\p{Punct}", "").trim();
+
+      for (String l : langArray) {
+        if (shortname.endsWith(l.toLowerCase())) {
+          LOGGER.debug("found language '" + l + "' in subtitle");
+          lang = l;
+          break;
+        }
       }
 
       String newSubName = "";
@@ -99,13 +134,23 @@ public class MovieRenamer {
       try {
         moveFile(sub.getFile(), newFile);
         m.removeFromMediaFiles(sub);
-        m.addToMediaFiles(new MediaFile(newFile));
+        MediaFile mf = new MediaFile(newFile);
+        MediaFileSubtitle mfs = new MediaFileSubtitle();
+        if (!lang.isEmpty()) {
+          mfs.setLanguage(lang);
+        }
+        if (!forced.isEmpty()) {
+          mfs.setForced(true);
+        }
+        mfs.setCodec(sub.getExtension());
+        mf.setContainerFormat(sub.getExtension()); // set containerformat, so mediainfo deos not overwrite our new array
+        mf.addSubtitle(mfs);
+        m.addToMediaFiles(mf);
       }
       catch (Exception e) {
         LOGGER.error("error moving subtitles", e);
       }
-
-    }
+    } // end MF loop
   }
 
   /**
@@ -329,6 +374,7 @@ public class MovieRenamer {
 
     movie.removeAllMediaFiles();
     movie.addToMediaFiles(needed);
+    movie.saveToDb();
 
     // cleanup & rename subtitle files
     renameSubtitles(movie);

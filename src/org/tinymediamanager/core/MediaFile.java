@@ -431,6 +431,31 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * sets the subtitle object
+   * 
+   * @param subtitles
+   */
+  public void setSubtitles(List<MediaFileSubtitle> subtitles) {
+    this.subtitles = subtitles;
+  }
+
+  /**
+   * sets ONE subtitle
+   * 
+   * @param subtitle
+   */
+  public void addSubtitle(MediaFileSubtitle subtitle) {
+    this.subtitles.add(subtitle);
+  }
+
+  /**
+   * clears all subtitles
+   */
+  public void clearAllSubtitles() {
+    this.subtitles.clear();
+  }
+
+  /**
    * dies his mediafile has subtitles.
    * 
    * @return true, if successful
