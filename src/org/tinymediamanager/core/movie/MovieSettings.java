@@ -157,7 +157,7 @@ public class MovieSettings extends AbstractModelObject {
   private String                        movieRenamerPathname           = "$T ($Y)";
 
   /** The movie renamer filename. */
-  private String                        movieRenamerFilename           = "$T ($Y)";
+  private String                        movieRenamerFilename           = "$T ($Y) $V $A";
 
   /** The imdb scrape foreign language. */
   private boolean                       imdbScrapeForeignLanguage      = false;
