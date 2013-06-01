@@ -1043,6 +1043,7 @@ public class Movie extends MediaEntity {
   public void setArtwork(List<MediaArtwork> artwork, MovieScraperMetadataConfig config) {
     if (config.isArtwork()) {
       // poster
+      boolean posterFound = false;
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
         if (art.getType() == MediaArtworkType.POSTER && art.getSizeOrder() == Globals.settings.getMovieSettings().getImagePosterSize().getOrder()) {
@@ -1055,11 +1056,30 @@ public class Movie extends MediaEntity {
           if (getTmdbId() == 0 && art.getTmdbId() > 0) {
             setTmdbId(art.getTmdbId());
           }
+          posterFound = true;
           break;
+        }
+      }
+      // if there has nothing been found, do a fallback
+      if (!posterFound) {
+        for (MediaArtwork art : artwork) {
+          if (art.getType() == MediaArtworkType.POSTER) {
+            setPosterUrl(art.getDefaultUrl());
+
+            LOGGER.debug(art.getSmallestArtwork().toString());
+            LOGGER.debug(art.getBiggestArtwork().toString());
+
+            // did we get the tmdbid from artwork?
+            if (getTmdbId() == 0 && art.getTmdbId() > 0) {
+              setTmdbId(art.getTmdbId());
+            }
+            break;
+          }
         }
       }
 
       // fanart
+      boolean fanartFound = false;
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
         if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
@@ -1072,7 +1092,27 @@ public class Movie extends MediaEntity {
           if (getTmdbId() == 0 && art.getTmdbId() > 0) {
             setTmdbId(art.getTmdbId());
           }
+          fanartFound = true;
           break;
+        }
+      }
+
+      // no fanart has been found - do a fallback
+      if (!fanartFound) {
+        for (MediaArtwork art : artwork) {
+          // only get artwork in desired resolution
+          if (art.getType() == MediaArtworkType.BACKGROUND) {
+            setFanartUrl(art.getDefaultUrl());
+
+            LOGGER.debug(art.getSmallestArtwork().toString());
+            LOGGER.debug(art.getBiggestArtwork().toString());
+
+            // did we get the tmdbid from artwork?
+            if (getTmdbId() == 0 && art.getTmdbId() > 0) {
+              setTmdbId(art.getTmdbId());
+            }
+            break;
+          }
         }
       }
 

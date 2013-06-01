@@ -257,7 +257,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           panelSearchDetail.add(lblTagline, "2, 2, 3, 1");
         }
         {
-          lblMoviePoster = new ImageLabel();// new JLabel("");
+          lblMoviePoster = new ImageLabel();
+          lblMoviePoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
           panelSearchDetail.add(lblMoviePoster, "2, 4, fill, fill");
         }
         {

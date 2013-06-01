@@ -45,19 +45,11 @@ import org.tinymediamanager.ui.TmmSwingWorker;
  */
 public class MovieScrapeTask extends TmmSwingWorker {
 
-  /** The Constant LOGGER. */
   private final static Logger         LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
 
-  /** The movies to scrape. */
   private List<Movie>                 moviesToScrape;
-
-  /** The do search. */
   private boolean                     doSearch;
-
-  /** The options. */
   private MovieSearchAndScrapeOptions options;
-
-  /** The movie count. */
   private int                         movieCount;
 
   /**

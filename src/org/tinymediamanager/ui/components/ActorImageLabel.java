@@ -16,10 +16,12 @@
 package org.tinymediamanager.ui.components;
 
 import java.io.File;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class ActorImageLabel.
@@ -28,17 +30,16 @@ import org.tinymediamanager.core.movie.MovieActor;
  */
 public class ActorImageLabel extends ImageLabel {
 
-  /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -1768796209645569296L;
-
-  /** The movie. */
-  private Movie             movie;
+  private static final long           serialVersionUID = -1768796209645569296L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private Movie                       movie;
 
   /**
    * Instantiates a new actor image label.
    */
   public ActorImageLabel() {
     super();
+    setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
   }
 
   /**

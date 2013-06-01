@@ -170,9 +170,11 @@ public class TvShowInformationPanel extends JPanel {
         RowSpec.decode("top:100px"), RowSpec.decode("80px:grow"), RowSpec.decode("fill:80px:grow(3)"), }));
 
     lblTvShowBackground = new ImageLabel(false, true);
+    lblTvShowBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
     layeredPaneImages.add(lblTvShowBackground, "1, 1, 4, 4, fill, fill");
 
     lblTvShowPoster = new ImageLabel();
+    lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     layeredPaneImages.setLayer(lblTvShowPoster, 1);
     layeredPaneImages.add(lblTvShowPoster, "2, 2, 1, 2, fill, fill");
 
@@ -181,6 +183,7 @@ public class TvShowInformationPanel extends JPanel {
     layeredPaneImages.add(panelGenres, "2, 3, 3, 2, right, bottom");
 
     lblTvShowBanner = new ImageLabel();
+    lblTvShowBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
     layeredPaneImages.setLayer(lblTvShowBanner, 2);
     layeredPaneImages.add(lblTvShowBanner, "4, 1, 1, 2, fill, fill");
 

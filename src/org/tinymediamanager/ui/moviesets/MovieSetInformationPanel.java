@@ -138,10 +138,12 @@ public class MovieSetInformationPanel extends JPanel {
             RowSpec.decode("10px"), RowSpec.decode("180px"), RowSpec.decode("default:grow"), }));
 
     lblMovieSetPoster = new ImageLabel();
+    lblMovieSetPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     layeredPane.setLayer(lblMovieSetPoster, 1);
     layeredPane.add(lblMovieSetPoster, "2, 2, fill, fill");
 
     lblMovieSetFanart = new ImageLabel(false, true);
+    lblMovieSetFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
     layeredPane.add(lblMovieSetFanart, "1, 1, 3, 3, fill, fill");
 
     panelSouth = new JSplitPane();

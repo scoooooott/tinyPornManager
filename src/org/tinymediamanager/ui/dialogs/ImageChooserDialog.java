@@ -85,20 +85,10 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class ImageChooserDialog extends JDialog {
 
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = 8193355920006275933L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
-
-  /** The Constant logger. */
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
 
-  /**
-   * The Enum ImageType.
-   * 
-   * @author Manuel Laggner
-   */
   public enum ImageType {
 
     /** The poster. */
@@ -230,7 +220,7 @@ public class ImageChooserDialog extends JDialog {
           FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), }));
       {
-        if (type == ImageType.FANART) {
+        if (type == ImageType.FANART && extraFanarts != null && extraThumbs != null) {
           JPanel panelExtraButtons = new JPanel();
           bottomPane.add(panelExtraButtons, "2, 2, fill, bottom");
           panelExtraButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
@@ -413,12 +403,12 @@ public class ImageChooserDialog extends JDialog {
       }
 
       // extrathumbs
-      if (type == ImageType.FANART && Globals.settings.getMovieSettings().isImageExtraThumbs()) {
+      if (type == ImageType.FANART && extraThumbs != null && Globals.settings.getMovieSettings().isImageExtraThumbs()) {
         processExtraThumbs();
       }
 
       // extrafanart
-      if (type == ImageType.FANART && Globals.settings.getMovieSettings().isImageExtraFanart()) {
+      if (type == ImageType.FANART && extraThumbs != null && Globals.settings.getMovieSettings().isImageExtraFanart()) {
         processExtraFanart();
       }
 

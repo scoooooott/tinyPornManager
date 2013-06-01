@@ -360,11 +360,6 @@ public class MoviePanel extends JPanel {
         super.componentHidden(e);
       }
 
-      /*
-       * (non-Javadoc)
-       * 
-       * @see java.awt.event.ComponentAdapter#componentShown(java.awt.event.ComponentEvent)
-       */
       @Override
       public void componentShown(ComponentEvent e) {
         menu.setVisible(true);

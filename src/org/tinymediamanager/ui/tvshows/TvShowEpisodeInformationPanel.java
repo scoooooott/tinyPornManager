@@ -232,10 +232,12 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelLogos.add(lblMediaLogoAudio);
 
     lblTvShowPoster = new ImageLabel();
+    lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblTvShowPoster.setPosition(Position.BOTTOM_LEFT);
     panelImages.add(lblTvShowPoster, "3, 2, 1, 3, fill, fill");
 
     lblTvShowBackground = new ImageLabel();
+    lblTvShowBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
     lblTvShowBackground.setPosition(Position.BOTTOM_LEFT);
     panelImages.add(lblTvShowBackground, "5, 4, fill, fill");
 

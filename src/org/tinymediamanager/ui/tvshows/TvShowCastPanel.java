@@ -75,6 +75,7 @@ public class TvShowCastPanel extends JPanel {
         ColumnSpec.decode("125px"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:max(125px;default):grow"), }));
 
     lblActorImage = new ImageLabel();
+    lblActorImage.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
     add(lblActorImage, "6, 2");
 
     JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors"));//$NON-NLS-1$

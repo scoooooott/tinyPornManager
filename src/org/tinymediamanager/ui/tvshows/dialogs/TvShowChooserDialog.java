@@ -285,6 +285,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
         }
         {
           lblTvShowPoster = new ImageLabel();
+          lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
           panelSearchDetail.add(lblTvShowPoster, "2, 4, fill, fill");
         }
         {

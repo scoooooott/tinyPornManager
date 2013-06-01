@@ -286,6 +286,7 @@ public class TvShowEditorDialog extends JDialog {
     }
     {
       lblPoster = new ImageLabel();
+      lblPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
       lblPoster.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -624,6 +625,7 @@ public class TvShowEditorDialog extends JDialog {
 
     }
     lblBanner = new ImageLabel();
+    lblBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
     lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     lblBanner.addMouseListener(new MouseAdapter() {
       @Override
@@ -639,6 +641,7 @@ public class TvShowEditorDialog extends JDialog {
     {
       // JLabel lblFanart = new JLabel("");
       lblFanart = new ImageLabel();
+      lblFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
       lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       lblFanart.addMouseListener(new MouseAdapter() {
         @Override

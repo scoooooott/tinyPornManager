@@ -356,29 +356,6 @@ public class ImageLabel extends JLabel {
     this.alternativeText = text;
   }
 
-  // /**
-  // * Gets the cached file name.
-  // *
-  // * @param path
-  // * the url
-  // * @return the cached file name
-  // */
-  // private String getCachedFileName(String path) {
-  // try {
-  // if (path == null)
-  // return null;
-  // // now uses a simple md5 hash, which should have a fairly low collision
-  // // rate, especially for our
-  // // limited use
-  // byte[] key = DigestUtils.md5(path);
-  // return new String(Hex.encodeHex(key));
-  // }
-  // catch (Exception e) {
-  // LOGGER.error("Failed to create cached filename for image: " + path, e);
-  // throw new RuntimeException(e);
-  // }
-  // }
-
   /**
    * Gets the cached file.
    * 

@@ -50,13 +50,9 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
-  /** The Constant LOGGER. */
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
 
-  /** The data sources. */
   private List<String>        dataSources;
-
-  /** The movie list. */
   private MovieList           movieList;
 
   /**
@@ -288,8 +284,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
                     || Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename w/o stacking
                     || movie.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) { // title match
                   mf.setType(MediaFileType.POSTER);
-                  // movie.setPoster(mf.getFilename());
-                  movie.addToMediaFiles(mf);
                 }
               }
             }

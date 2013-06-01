@@ -95,6 +95,7 @@ public class TvShowEpisodeCastPanel extends JPanel {
     add(lblWriter, "4, 4");
 
     lblActorImage = new ImageLabel();
+    lblActorImage.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
     add(lblActorImage, "6, 2, 1, 5");
 
     JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$

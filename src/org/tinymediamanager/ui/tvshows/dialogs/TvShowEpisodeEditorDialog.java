@@ -233,6 +233,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       scrollPane.setViewportView(taPlot);
 
       lblThumb = new ImageLabel();
+      lblThumb.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
       contentPanel.add(lblThumb, "12, 6, 1, 11");
 
       JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$

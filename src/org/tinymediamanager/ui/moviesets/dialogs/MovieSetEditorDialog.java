@@ -182,6 +182,7 @@ public class MovieSetEditorDialog extends JDialog {
     tfName.setColumns(10);
 
     lblPoster = new ImageLabel();
+    lblPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblPoster.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -239,6 +240,7 @@ public class MovieSetEditorDialog extends JDialog {
     panelContent.add(btnMoveMovieUp, "2, 12, right, top");
 
     lblFanart = new ImageLabel();
+    lblFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
     lblFanart.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {

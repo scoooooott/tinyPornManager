@@ -318,6 +318,7 @@ public class MovieEditorDialog extends JDialog {
     {
       // JLabel lblPoster = new JLabel("");
       lblPoster = new ImageLabel();
+      lblPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
       lblPoster.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -477,8 +478,8 @@ public class MovieEditorDialog extends JDialog {
       tfDirector.setColumns(10);
     }
     {
-      // JLabel lblFanart = new JLabel("");
       lblFanart = new ImageLabel();
+      lblFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
       lblFanart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       lblFanart.addMouseListener(new MouseAdapter() {
         @Override

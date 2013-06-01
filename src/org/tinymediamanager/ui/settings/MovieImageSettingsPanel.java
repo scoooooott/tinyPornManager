@@ -221,28 +221,28 @@ public class MovieImageSettingsPanel extends JPanel {
     JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming")); //$NON-NLS-1$
     panelMovieImages.add(lblPosterFilename, "2, 15");
 
-    cbMoviePosterFilename7 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".jpg"); //$NON-NLS-1$
+    cbMoviePosterFilename7 = new JCheckBox("<dynamic>.ext"); //$NON-NLS-1$
     panelMovieImages.add(cbMoviePosterFilename7, "4, 15");
 
-    cbMoviePosterFilename4 = new JCheckBox("poster.jpg");
+    cbMoviePosterFilename4 = new JCheckBox("poster.ext");
     panelMovieImages.add(cbMoviePosterFilename4, "6, 15");
 
-    cbMoviePosterFilename8 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-poster.jpg"); //$NON-NLS-1$
+    cbMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext"); //$NON-NLS-1$
     panelMovieImages.add(cbMoviePosterFilename8, "4, 16");
 
-    cbMoviePosterFilename6 = new JCheckBox("folder.jpg");
+    cbMoviePosterFilename6 = new JCheckBox("folder.ext");
     panelMovieImages.add(cbMoviePosterFilename6, "6, 16");
 
-    cbMoviePosterFilename2 = new JCheckBox("movie.jpg");
+    cbMoviePosterFilename2 = new JCheckBox("movie.ext");
     panelMovieImages.add(cbMoviePosterFilename2, "4, 17");
 
     JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming")); //$NON-NLS-1$
     panelMovieImages.add(lblFanartFileNaming, "2, 19");
 
-    cbMovieFanartFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + "-fanart.jpg"); //$NON-NLS-1$
+    cbMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext"); //$NON-NLS-1$
     panelMovieImages.add(cbMovieFanartFilename1, "4, 19");
 
-    cbMovieFanartFilename2 = new JCheckBox("fanart.jpg");
+    cbMovieFanartFilename2 = new JCheckBox("fanart.ext");
     panelMovieImages.add(cbMovieFanartFilename2, "4, 20");
 
     tpFileNamingHint = new JTextPane();

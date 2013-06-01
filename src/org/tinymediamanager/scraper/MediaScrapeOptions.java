@@ -15,10 +15,10 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
@@ -29,19 +29,10 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
  */
 public class MediaScrapeOptions {
 
-  /** The result. */
   private MediaSearchResult       result;
-
-  /** The metadata. */
   private MediaMetadata           metadata;
-
-  /** The ids. */
   private HashMap<String, String> ids         = new HashMap<String, String>();
-
-  /** The type. */
   private MediaType               type;
-
-  /** The artwork type. */
   private MediaArtworkType        artworkType = MediaArtworkType.ALL;
 
   /**
@@ -209,6 +200,10 @@ public class MediaScrapeOptions {
    */
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
+      protected boolean accept(Field f) {
+        return super.accept(f) && !f.getName().equals("metadata");
+      }
+    }).toString();
   }
 }
