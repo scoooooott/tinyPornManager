@@ -238,12 +238,16 @@ public class TvShowEpisodeMediaFilesPanel extends JPanel {
             mediaFileEventList.getReadWriteLock().writeLock().lock();
             mediaFileEventList.clear();
             mediaFileEventList.addAll(selectionModel.getSelectedTvShowEpisode().getMediaFiles());
-            panelMediaFiles.adjustColumns();
           }
           catch (Exception e) {
           }
           finally {
             mediaFileEventList.getReadWriteLock().writeLock().unlock();
+          }
+          try {
+            panelMediaFiles.adjustColumns();
+          }
+          catch (Exception e) {
           }
         }
       }

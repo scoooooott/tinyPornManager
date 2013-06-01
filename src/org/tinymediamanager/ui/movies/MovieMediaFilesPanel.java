@@ -227,12 +227,16 @@ public class MovieMediaFilesPanel extends JPanel {
             mediaFileEventList.getReadWriteLock().writeLock().lock();
             mediaFileEventList.clear();
             mediaFileEventList.addAll(movieSelectionModel.getSelectedMovie().getMediaFiles());
-            panelMediaFiles.adjustColumns();
           }
           catch (Exception e) {
           }
           finally {
             mediaFileEventList.getReadWriteLock().writeLock().unlock();
+          }
+          try {
+            panelMediaFiles.adjustColumns();
+          }
+          catch (Exception e) {
           }
         }
       }
