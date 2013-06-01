@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -47,8 +49,13 @@ public class MovieRenamer {
   /** The Constant LOGGER. */
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamer.class);
 
-  private static void renameSubtitles(Movie m) {
-    // build language lists
+  /**
+   * Generates a List of language/country names and abbreviations<br>
+   * sorted from the longest to shortest
+   * 
+   * @return List of language/country names
+   */
+  public static List<String> generateSubtitleLanguageArray() {
     List<String> langArray = new ArrayList<String>();
     Locale intl = new Locale("en");
 
@@ -57,11 +64,7 @@ public class MovieRenamer {
     for (Locale locale : locales) {
       langArray.add(locale.getDisplayLanguage(intl));
       langArray.add(locale.getDisplayLanguage());
-    }
-    for (Locale locale : locales) {
       langArray.add(locale.getISO3Language());
-    }
-    for (Locale locale : locales) {
       try {
         String c = locale.getISO3Country();
         langArray.add(c);
@@ -71,19 +74,27 @@ public class MovieRenamer {
       }
     }
     for (String l : Locale.getISOLanguages()) {
-      if (!l.isEmpty()) {
-        langArray.add(l);
-      }
+      langArray.add(l);
     }
     for (String l : Locale.getISOCountries()) {
-      if (!l.isEmpty()) {
-        langArray.add(l);
-      }
+      langArray.add(l);
     }
     Set<String> cleanloc = new LinkedHashSet<String>(langArray);
     cleanloc.remove(""); // remove empty
     langArray.clear();
     langArray.addAll(cleanloc);
+    // sort length wise, to reduce false positives
+    Collections.sort(langArray, new Comparator<String>() {
+      public int compare(String a1, String a2) {
+        return a2.length() - a1.length();
+      }
+    });
+    return langArray;
+  }
+
+  private static void renameSubtitles(Movie m) {
+    // build language lists
+    List<String> langArray = generateSubtitleLanguageArray();
 
     // the filename of movie, to remove from subtitle, to ease parsing
     String vname = Utils.cleanStackingMarkers(m.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename()).toLowerCase();
@@ -151,6 +162,7 @@ public class MovieRenamer {
         LOGGER.error("error moving subtitles", e);
       }
     } // end MF loop
+    m.saveToDb();
   }
 
   /**

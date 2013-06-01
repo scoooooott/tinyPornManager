@@ -35,6 +35,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
@@ -949,13 +950,23 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         break;
 
       case SUBTITLE:
-        subtitles.clear();
-        MediaFileSubtitle sub = new MediaFileSubtitle();
-        if (getFilename().toLowerCase().contains("forced")) {
-          sub.setForced(true);
+        if (subtitles == null || subtitles.size() == 0) {
+          MediaFileSubtitle sub = new MediaFileSubtitle();
+          if (getFilename().toLowerCase().contains("forced")) {
+            sub.setForced(true);
+          }
+          List<String> langArray = MovieRenamer.generateSubtitleLanguageArray();
+          for (String l : langArray) {
+            if (getBasename().matches("(?i)[\\.-_ ]+" + l + "$")) {// ends with lang + delimiter prefix
+              LOGGER.debug("found language '" + l + "' in subtitle");
+              sub.setLanguage(l);
+              break;
+            }
+          }
+          sub.setCodec(getExtension());
+          setContainerFormat(getExtension());
+          subtitles.add(sub);
         }
-        // TODO complete language detection; remove from renamer
-        subtitles.add(sub);
         break;
 
       case POSTER:
