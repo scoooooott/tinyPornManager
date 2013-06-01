@@ -379,7 +379,7 @@ public class MovieRenamer {
     if (destDir == null) {
       throw new NullPointerException("Destination must not be null");
     }
-    LOGGER.debug("try to move folder " + srcDir.getName() + " to " + destDir.getName());
+    LOGGER.debug("try to move folder " + srcDir.getPath() + " to " + destDir.getPath());
     if (!srcDir.exists()) {
       throw new FileNotFoundException("Source '" + srcDir + "' does not exist");
     }
@@ -388,6 +388,10 @@ public class MovieRenamer {
     }
     if (destDir.exists()) {
       throw new FileExistsException("Destination '" + destDir + "' already exists");
+    }
+    if (!destDir.getParentFile().exists()) {
+      // create parent folder structure, else renameTo does not work
+      destDir.getParentFile().mkdirs();
     }
 
     // rename folder; try 5 times and wait a sec
@@ -411,12 +415,12 @@ public class MovieRenamer {
     // NOOO - we don't like to have some files copied and some not.
 
     if (!rename) {
-      LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getName());
+      LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getPath());
       LOGGER.error("Movie renaming aborted.");
       return false;
     }
     else {
-      LOGGER.info("Successfully moved folder " + srcDir.getName() + " to " + destDir.getName());
+      LOGGER.info("Successfully moved folder " + srcDir.getPath() + " to " + destDir.getPath());
       return true;
     }
   }
