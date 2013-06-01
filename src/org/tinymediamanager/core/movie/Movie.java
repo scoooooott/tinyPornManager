@@ -1324,7 +1324,7 @@ public class Movie extends MediaEntity {
    */
   public String getFanartFilename(MovieFanartNaming fanart) {
     String filename = "";
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+    String mediafile = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
 
     switch (fanart) {
       case FANART_PNG:
@@ -1374,7 +1374,7 @@ public class Movie extends MediaEntity {
     switch (nfo) {
       case FILENAME_NFO:
         String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
-        filename += mediafile + ".nfo";
+        filename += Utils.cleanStackingMarkers(mediafile) + ".nfo"; // w/o stacking information
         break;
       case MOVIE_NFO:
         filename += "movie.nfo";

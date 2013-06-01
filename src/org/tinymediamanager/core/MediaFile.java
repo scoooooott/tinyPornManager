@@ -958,7 +958,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         break;
 
       case SUBTITLE:
-        subtitles.add(new MediaFileSubtitle()); // just add
+        subtitles.clear();
+        MediaFileSubtitle sub = new MediaFileSubtitle();
+        if (getFilename().toLowerCase().contains("forced")) {
+          sub.setForced(true);
+        }
+        // TODO complete language detection; remove from renamer
+        subtitles.add(sub);
         break;
 
       case POSTER:
