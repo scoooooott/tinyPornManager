@@ -24,6 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
 import org.apache.commons.io.FileUtils;
@@ -71,6 +73,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private int                        overallBitRate   = 0;
   private int                        durationInSecs   = 0;
   private int                        stacking         = 0;
+
+  @Enumerated(EnumType.STRING)
   private MediaFileType              type             = MediaFileType.UNKNOWN;
 
   private List<MediaFileAudioStream> audioStreams     = new ArrayList<MediaFileAudioStream>();
