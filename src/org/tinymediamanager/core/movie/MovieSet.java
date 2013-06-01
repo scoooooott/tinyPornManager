@@ -50,17 +50,11 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 @Entity
 public class MovieSet extends MediaEntity {
 
-  /** The static LOGGER. */
   private static final Logger LOGGER           = LoggerFactory.getLogger(MovieSet.class);
 
-  /** The movies. */
   private List<Movie>         movies           = new ArrayList<Movie>();
-
-  /** The movies observable. */
   @Transient
   private List<Movie>         moviesObservable = ObservableCollections.observableList(movies);
-
-  /** The title sortable. */
   @Transient
   private String              titleSortable    = "";
 
@@ -146,6 +140,8 @@ public class MovieSet extends MediaEntity {
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(true, false);
     }
+
+    firePropertyChange(POSTER, false, true);
   }
 
   /**
@@ -166,6 +162,8 @@ public class MovieSet extends MediaEntity {
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(false, true);
     }
+
+    firePropertyChange(FANART, false, true);
   }
 
   /**

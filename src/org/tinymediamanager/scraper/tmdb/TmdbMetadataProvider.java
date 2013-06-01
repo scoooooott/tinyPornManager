@@ -895,7 +895,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     for (ImageSizeAndUrl image : ma.getImageSizes()) {
       // LARGE
       if (image.getWidth() >= 1000) {
-        if (Globals.settings.getMovieSettings().getImagePosterSize() == PosterSizes.LARGE) {
+        if (Globals.settings.getMovieSettings().getImagePosterSize().getOrder() >= PosterSizes.LARGE.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(PosterSizes.LARGE.getOrder());
           break;
@@ -904,7 +904,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // BIG
       if (image.getWidth() >= 500) {
-        if (Globals.settings.getMovieSettings().getImagePosterSize() == PosterSizes.BIG) {
+        if (Globals.settings.getMovieSettings().getImagePosterSize().getOrder() >= PosterSizes.BIG.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(PosterSizes.BIG.getOrder());
           break;
@@ -913,7 +913,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // MEDIUM
       if (image.getWidth() >= 342) {
-        if (Globals.settings.getMovieSettings().getImagePosterSize() == PosterSizes.MEDIUM) {
+        if (Globals.settings.getMovieSettings().getImagePosterSize().getOrder() >= PosterSizes.MEDIUM.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(PosterSizes.MEDIUM.getOrder());
           break;
@@ -942,7 +942,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     for (ImageSizeAndUrl image : ma.getImageSizes()) {
       // LARGE
       if (image.getWidth() >= 1920) {
-        if (Globals.settings.getMovieSettings().getImageFanartSize() == FanartSizes.LARGE) {
+        if (Globals.settings.getMovieSettings().getImageFanartSize().getOrder() >= FanartSizes.LARGE.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
@@ -951,7 +951,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // MEDIUM
       if (image.getWidth() >= 1280) {
-        if (Globals.settings.getMovieSettings().getImageFanartSize() == FanartSizes.MEDIUM) {
+        if (Globals.settings.getMovieSettings().getImageFanartSize().getOrder() >= FanartSizes.MEDIUM.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
           break;
@@ -960,7 +960,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // SMALL
       if (image.getWidth() >= 300) {
-        if (Globals.settings.getMovieSettings().getImageFanartSize() == FanartSizes.SMALL) {
+        if (Globals.settings.getMovieSettings().getImageFanartSize().getOrder() >= FanartSizes.SMALL.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(FanartSizes.SMALL.getOrder());
           break;

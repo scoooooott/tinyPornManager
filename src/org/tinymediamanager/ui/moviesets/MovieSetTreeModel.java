@@ -92,6 +92,19 @@ public class MovieSetTreeModel implements TreeModel {
           MovieSet movieSet = (MovieSet) evt.getNewValue();
           removeMovieSet(movieSet);
         }
+
+        // update on changes of tv show or episode
+        if (evt.getSource() instanceof MovieSet || evt.getSource() instanceof Movie) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodeMap.get(evt.getSource());
+          if (node != null) {
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
+            int index = parent.getIndex(node);
+            TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { node });
+            for (TreeModelListener listener : listeners) {
+              listener.treeNodesChanged(event);
+            }
+          }
+        }
       }
     };
 

@@ -254,6 +254,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
     JScrollPane scrollPaneOverview = new JScrollPane();
     tpOverview = new JTextPane();
+    tpOverview.setEditable(false);
     scrollPaneOverview.setViewportView(tpOverview);
 
     JPanel panelOverview = new JPanel();
