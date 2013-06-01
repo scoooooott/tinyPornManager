@@ -464,7 +464,14 @@ public class TvShow extends MediaEntity {
     }
 
     // populate ids
-    setIds(metadata.getIds());
+    for (Entry<String, Object> entry : metadata.getIds().entrySet()) {
+      if ("tvdb".equals(entry.getKey()) && entry.getValue() != null) {
+        setTvdbId(entry.getValue().toString());
+      }
+      else {
+        setId((String) entry.getKey(), entry.getValue().toString());
+      }
+    }
 
     if (config.isTitle()) {
       setTitle(metadata.getTitle());
@@ -803,7 +810,7 @@ public class TvShow extends MediaEntity {
    *          the new tvdb id
    */
   public void setTvdbId(String newValue) {
-    String oldValue = getImdbId();
+    String oldValue = getTvdbId();
     ids.put("tvdb", newValue);
     firePropertyChange(TVDBID, oldValue, newValue);
   }

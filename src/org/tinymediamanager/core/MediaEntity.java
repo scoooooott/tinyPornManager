@@ -598,6 +598,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public void setId(String key, Object value) {
     ids.put(key, value);
+    firePropertyChange(key, null, value);
   }
 
   /**

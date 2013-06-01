@@ -722,7 +722,7 @@ public class TvShowEditorDialog extends JDialog {
 
       if (StringUtils.isNotBlank(tfTvdbId.getText())) {
         try {
-          tvShowToEdit.setId("tvdb", Integer.parseInt(tfTvdbId.getText()));
+          tvShowToEdit.setTvdbId(tfTvdbId.getText());
         }
         catch (NumberFormatException ex) {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("tmdb.wrongformat")); //$NON-NLS-1$
