@@ -46,84 +46,39 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 @Embeddable
 public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
 
-  /** The Constant LOGGER. */
   private static final Logger        LOGGER           = LoggerFactory.getLogger(MediaFile.class);
 
-  /** The Constant PATH. */
   private static final String        PATH             = "path";
-
-  /** The Constant FILENAME. */
   private static final String        FILENAME         = "filename";
-
-  /** The Constant FILESIZE. */
   private static final String        FILESIZE         = "filesize";
-
-  /** The Constant FILESIZE_IN_MB. */
   private static final String        FILESIZE_IN_MB   = "filesizeInMegabytes";
 
-  /** The poster pattern. It's thread safe, so we make it static */
   private static Pattern             posterPattern    = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
-
-  /** The fanart pattern. It's thread safe, so we make it static */
   private static Pattern             fanartPattern    = Pattern.compile("(?i)(.*-fanart|fanart)[0-9]{0,2}\\..{2,4}");
-
-  /** The banner pattern. It's thread safe, so we make it static */
   private static Pattern             bannerPattern    = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
-
-  /** The thumb pattern. It's thread safe, so we make it static */
   private static Pattern             thumbPattern     = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
 
-  /** The path. */
   private String                     path             = "";
-
-  /** The filename. */
   private String                     filename         = "";
-
-  /** The filesize. */
   private long                       filesize         = 0;
-
-  /** The video codec. */
   private String                     videoCodec       = "";
-
-  /** The container format. */
   private String                     containerFormat  = "";
-
-  /** The video format. */
   private String                     videoFormat      = "";
-
-  /** The exact video format. */
   private String                     exactVideoFormat = "";
-
-  /** The video width. */
   private int                        videoWidth       = 0;
-
-  /** The video height. */
   private int                        videoHeight      = 0;
-
-  /** The overallBitRate in kbps. */
   private int                        overallBitRate   = 0;
-
-  /** duration, runtime in sec. */
-  private int                        duration         = 0;
-
-  /** stacking information. */
+  private int                        durationInSecs   = 0;
   private int                        stacking         = 0;
-
-  /** the MediaFile type. */
   private MediaFileType              type             = MediaFileType.UNKNOWN;
 
-  /** inline subtitles of mediafile. */
+  private List<MediaFileAudioStream> audioStreams     = new ArrayList<MediaFileAudioStream>();
   private List<MediaFileSubtitle>    subtitles        = new ArrayList<MediaFileSubtitle>();
 
-  /** the mediainfo object. */
   @Transient
   private MediaInfo                  mediaInfo;
-
-  /** The file. */
   @Transient
   private File                       file             = null;
-
-  private List<MediaFileAudioStream> audioStreams     = new ArrayList<MediaFileAudioStream>();
 
   /**
    * Instantiates a new media file.
@@ -819,7 +774,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the duration
    */
   public int getDuration() {
-    return duration;
+    return durationInSecs;
   }
 
   /**
@@ -829,12 +784,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the duration
    */
   public String getDurationHM() {
-    if (this.duration == 0) {
+    if (this.durationInSecs == 0) {
       return "";
     }
 
-    int minutes = (int) (this.duration / 60) % 60;
-    int hours = (int) (this.duration / (60 * 60)) % 24;
+    int minutes = (int) (this.durationInSecs / 60) % 60;
+    int hours = (int) (this.durationInSecs / (60 * 60)) % 24;
     return hours + "h " + String.format("%02d", minutes) + "m";
   }
 
@@ -845,13 +800,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the duration
    */
   public String getDurationHHMMSS() {
-    if (this.duration == 0) {
+    if (this.durationInSecs == 0) {
       return "";
     }
 
-    int seconds = (int) this.duration % 60;
-    int minutes = (int) (this.duration / 60) % 60;
-    int hours = (int) (this.duration / (60 * 60)) % 24;
+    int seconds = (int) this.durationInSecs % 60;
+    int minutes = (int) (this.durationInSecs / 60) % 60;
+    int hours = (int) (this.durationInSecs / (60 * 60)) % 24;
     return String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
   }
 
@@ -862,8 +817,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    *          the new duration
    */
   public void setDuration(int newValue) {
-    int oldValue = this.duration;
-    this.duration = newValue;
+    int oldValue = this.durationInSecs;
+    this.durationInSecs = newValue;
     firePropertyChange("duration", oldValue, newValue);
     firePropertyChange("durationHM", oldValue, newValue);
     firePropertyChange("durationHHMMSS", oldValue, newValue);
@@ -871,6 +826,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public List<MediaFileAudioStream> getAudioStreams() {
     return audioStreams;
+  }
+
+  public String getCombinedCodecs() {
+    StringBuilder sb = new StringBuilder(videoCodec);
+
+    for (MediaFileAudioStream audioStream : audioStreams) {
+      sb.append("/");
+      sb.append(audioStream.getCodec());
+    }
+
+    return sb.toString();
   }
 
   /**

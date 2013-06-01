@@ -43,25 +43,14 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MediaFilesPanel extends JPanel {
 
-  /** The Constant serialVersionUID. */
   private static final long                 serialVersionUID    = -4929581173434859034L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The scroll pane files. */
   private JScrollPane                       scrollPaneFiles;
-
-  /** The table files. */
   private JTable                            tableFiles;
 
-  /** The table column adjuster. */
   private TableColumnAdjuster               tableColumnAdjuster = null;
-
-  /** The media file event list. */
   private EventList<MediaFile>              mediaFileEventList;
-
-  /** The media file table model. */
   private DefaultEventTableModel<MediaFile> mediaFileTableModel = null;
 
   public MediaFilesPanel(EventList<MediaFile> mediaFiles) {
@@ -69,11 +58,9 @@ public class MediaFilesPanel extends JPanel {
     setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { RowSpec.decode("default:grow"), }));
 
     mediaFileTableModel = new DefaultEventTableModel<MediaFile>(GlazedListsSwing.swingThreadProxyList(mediaFileEventList), new MediaTableFormat());
-    // tableFiles = new JTable(mediaFileTableModel);
     tableFiles = new ZebraJTable(mediaFileTableModel);
     tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-    // scrollPaneFiles = new JScrollPane();
     scrollPaneFiles = ZebraJTable.createStripedJScrollPane(tableFiles);
     add(scrollPaneFiles, "1, 1, fill, fill");
 
@@ -84,7 +71,6 @@ public class MediaFilesPanel extends JPanel {
     tableColumnAdjuster.setColumnDataIncluded(true);
     tableColumnAdjuster.setColumnHeaderIncluded(true);
     tableColumnAdjuster.setOnlyAdjustLarger(false);
-    // tableColumnAdjuster.setDynamicAdjustment(true);
   }
 
   /**
@@ -160,7 +146,7 @@ public class MediaFilesPanel extends JPanel {
           return getMediaFileTypeLocalized(mediaFile.getType());
 
         case 3:
-          return mediaFile.getVideoCodec();
+          return mediaFile.getCombinedCodecs();
 
         case 4:
           return mediaFile.getVideoResolution();

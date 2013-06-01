@@ -184,10 +184,10 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
         MediaFileAudioStream audioStream = mediaFile.getAudioStreams().get(i);
 
         if (mediaFile.getType() == MediaFileType.VIDEO) {
-          panelAudioStreamT.add(new JLabel(BUNDLE.getString("metatag.stream") + " " + (i + 1))); //$NON-NLS-1$
+          panelAudioStreamT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
         }
         else {
-          panelAudioStreamT.add(new JLabel(BUNDLE.getString("metatag.externalfile"))); //$NON-NLS-1$
+          panelAudioStreamT.add(new JLabel(BUNDLE.getString("metatag.external"))); //$NON-NLS-1$
         }
 
         panelAudioStreamDetails.add(new JLabel(audioStream.getCodec()));
@@ -209,12 +209,12 @@ public class TvShowEpisodeMediaInformationPanel extends JPanel {
         MediaFileSubtitle subtitle = mediaFile.getSubtitles().get(i);
 
         if (mediaFile.getType() == MediaFileType.VIDEO) {
-          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.subtitle") + " " + (i + 1))); //$NON-NLS-1$
+          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.internal"))); //$NON-NLS-1$
           String info = subtitle.getLanguage() + (subtitle.isForced() ? " forced" : "") + " (" + subtitle.getCodec() + ")";
           panelSubtitleDetails.add(new JLabel(info));
         }
         else {
-          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.externalfile"))); //$NON-NLS-1$
+          panelSubtitleT.add(new JLabel(BUNDLE.getString("metatag.external"))); //$NON-NLS-1$
           panelSubtitleDetails.add(new JLabel(mediaFile.getFilename()));
         }
       }
