@@ -1251,7 +1251,7 @@ public class Movie extends MediaEntity {
    */
   public String getPosterFilename(MoviePosterNaming poster) {
     String filename = "";
-    String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+    String mediafile = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
 
     switch (poster) {
       case MOVIENAME_POSTER_PNG:
