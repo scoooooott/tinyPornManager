@@ -366,8 +366,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
 
         // ok, regular structure
-        if (dirs.isEmpty() && level > 1
-            && (!Utils.getStackingMarker(f.getName()).isEmpty() || !Utils.getStackingMarker(moviedir.getName()).isEmpty())) {
+        if (dirs.isEmpty() && level > 1 && !Utils.getStackingMarker(moviedir.getName()).isEmpty()) {
           // no more dirs in that directory
           // and at least 2 levels deep
           // stacking found (either on file or parent dir)
