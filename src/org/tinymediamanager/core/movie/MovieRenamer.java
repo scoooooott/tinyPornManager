@@ -60,17 +60,18 @@ public class MovieRenamer {
     Locale intl = new Locale("en");
 
     Locale locales[] = Locale.getAvailableLocales();
-    // longer names precedence, so use this weird style and do not sort array
+    // all possible variants of language/country/prefixes/non-iso style
     for (Locale locale : locales) {
       langArray.add(locale.getDisplayLanguage(intl));
       langArray.add(locale.getDisplayLanguage());
+      langArray.add(locale.getDisplayLanguage(intl).substring(0, 3)); // eg German -> Ger, where iso3=deu
       langArray.add(locale.getISO3Language());
       try {
         String c = locale.getISO3Country();
         langArray.add(c);
       }
       catch (MissingResourceException e) {
-        // tjo... not found
+        // tjo... not available, see javadoc
       }
     }
     for (String l : Locale.getISOLanguages()) {

@@ -971,11 +971,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           String shortname = getBasename().toLowerCase();
           if (shortname.contains("forced")) {
             sub.setForced(true);
-            shortname.replaceAll("forced", "");
+            shortname = shortname.replaceAll("\\p{Punct}*forced", "");
           }
           List<String> langArray = MovieRenamer.generateSubtitleLanguageArray();
           for (String l : langArray) {
-            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i)[_ -\\.]+" + l + "$")) {// ends with lang + delimiter prefix
+            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[_ .-]+" + l + "$")) {// ends with lang + delimiter prefix
               LOGGER.debug("found language '" + l + "' in subtitle");
               sub.setLanguage(l);
               break;
