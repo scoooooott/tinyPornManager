@@ -94,7 +94,7 @@ public class MediaFilesPanel extends JPanel {
      */
     @Override
     public int getColumnCount() {
-      return 6;
+      return 7;
     }
 
     /*
@@ -122,6 +122,9 @@ public class MediaFilesPanel extends JPanel {
 
         case 5:
           return BUNDLE.getString("metatag.runtime"); //$NON-NLS-1$
+
+        case 6:
+          return BUNDLE.getString("metatag.subtitle"); //$NON-NLS-1$
 
       }
 
@@ -153,6 +156,9 @@ public class MediaFilesPanel extends JPanel {
 
         case 5:
           return mediaFile.getDurationHM();
+
+        case 6:
+          return mediaFile.getSubtitlesAsString();
       }
 
       throw new IllegalStateException();
@@ -173,6 +179,7 @@ public class MediaFilesPanel extends JPanel {
         case 3:
         case 4:
         case 5:
+        case 6:
           return String.class;
       }
 

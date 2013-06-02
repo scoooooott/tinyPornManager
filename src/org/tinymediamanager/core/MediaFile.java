@@ -435,6 +435,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return subtitles;
   }
 
+  public String getSubtitlesAsString() {
+    StringBuilder sb = new StringBuilder();
+    for (MediaFileSubtitle sub : subtitles) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append(sub.getLanguage());
+    }
+
+    return sb.toString();
+  }
+
   /**
    * sets the subtitle object
    * 

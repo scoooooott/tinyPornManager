@@ -463,7 +463,7 @@ public class MainWindow extends JFrame {
       Thread.currentThread().setName("statusBar thread");
       try {
         while (!Thread.interrupted()) {
-          if (this.ex.getActiveCount() > 0) {
+          if (Globals.poolRunning() || (activeTask != null && !activeTask.isDone())) {
             if (lblLoadingImg.getIcon() != loading) {
               lblLoadingImg.setIcon(loading);
             }
