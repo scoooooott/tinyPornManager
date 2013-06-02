@@ -270,6 +270,11 @@ public class CachedUrl extends Url {
     else {
       LOGGER.debug("Cached File exists: " + f.getAbsolutePath() + " so we'll just use it.");
     }
+    // check if its still empty (maybe broken download)
+    if (!f.exists() || f.length() == 0) {
+      // return URI without caching
+      return new URL(url);
+    }
     return f.toURI().toURL();
   }
 

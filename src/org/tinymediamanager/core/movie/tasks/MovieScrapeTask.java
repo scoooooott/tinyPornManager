@@ -225,6 +225,11 @@ public class MovieScrapeTask extends TmmSwingWorker {
                   continue;
                 }
               }
+
+              // create a treshold of 0.75 - to minimize false positives
+              if (result1.getScore() < 0.75) {
+                continue;
+              }
             }
           }
 
