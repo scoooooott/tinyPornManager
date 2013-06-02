@@ -225,7 +225,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               mt.setProvider("downloaded");
               mt.setQuality("unknown");
               mt.setInNfo(false);
-              mt.setUrl(new File(mf.getPath()).toURI().toString());
+              mt.setUrl(mf.getFile().toURI().toString());
               movie.addTrailer(mt);
               movie.addToMediaFiles(mf);
               break;
