@@ -874,7 +874,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     StringBuilder sb = new StringBuilder(videoCodec);
 
     for (MediaFileAudioStream audioStream : audioStreams) {
-      sb.append("/");
+      sb.append(" / ");
       sb.append(audioStream.getCodec());
     }
 
