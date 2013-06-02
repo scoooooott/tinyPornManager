@@ -37,6 +37,8 @@ import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -122,6 +124,7 @@ public class TvShow extends MediaEntity {
   private List<MediaTrailer>       trailerObservable  = ObservableCollections.observableList(trailer);
 
   /** The certification. */
+  @Enumerated(EnumType.STRING)
   private Certification            certification      = Certification.NOT_RATED;
 
   /** The title sortable. */
