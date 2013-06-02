@@ -299,13 +299,13 @@ public class MovieList extends AbstractModelObject {
    *          the metadata provider
    * @return the list
    */
-  public List<MediaSearchResult> searchMovie(String searchTerm, String ImdbId, IMediaMetadataProvider metadataProvider) {
+  public List<MediaSearchResult> searchMovie(String searchTerm, String year, String ImdbId, IMediaMetadataProvider metadataProvider) {
     List<MediaSearchResult> sr = null;
     if (ImdbId != null && !ImdbId.isEmpty()) {
       sr = searchMovieByImdbId(ImdbId, metadataProvider);
     }
     if (sr == null || sr.size() == 0) {
-      sr = searchMovie(searchTerm, metadataProvider);
+      sr = searchMovie(searchTerm, year, metadataProvider);
     }
 
     return sr;
@@ -320,7 +320,7 @@ public class MovieList extends AbstractModelObject {
    *          the metadata provider
    * @return the list
    */
-  private List<MediaSearchResult> searchMovie(String searchTerm, IMediaMetadataProvider metadataProvider) {
+  private List<MediaSearchResult> searchMovie(String searchTerm, String year, IMediaMetadataProvider metadataProvider) {
     // format searchstring
     // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
@@ -331,7 +331,9 @@ public class MovieList extends AbstractModelObject {
       if (provider == null) {
         provider = getMetadataProvider();
       }
-      searchResult = provider.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, searchTerm));
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, searchTerm);
+      options.set(MediaSearchOptions.SearchParam.YEAR, year);
+      searchResult = provider.search(options);
     }
     catch (Exception e) {
       LOGGER.error("searchMovie", e);

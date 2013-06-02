@@ -214,7 +214,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
           // search movie
           MediaSearchResult result1 = null;
           if (doSearch) {
-            List<MediaSearchResult> results = movieList.searchMovie(movie.getTitle(), movie.getImdbId(), mediaMetadataProvider);
+            List<MediaSearchResult> results = movieList.searchMovie(movie.getTitle(), movie.getYear(), movie.getImdbId(), mediaMetadataProvider);
             if (results != null && !results.isEmpty()) {
               result1 = results.get(0);
               // check if there is an other result with 100% score

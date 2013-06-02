@@ -510,7 +510,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, imdbId, metadataProvider);
+      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, "0", imdbId, metadataProvider);
       moviesFound.clear();
       if (searchResult.size() == 0) {
         // display empty result

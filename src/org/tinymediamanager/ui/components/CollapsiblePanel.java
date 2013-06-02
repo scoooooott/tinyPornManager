@@ -241,11 +241,11 @@ public class CollapsiblePanel extends JPanel {
   private ImageIcon[] createExpandAndCollapseIcon() {
     ImageIcon[] iconArrow = new ImageIcon[2];
     URL iconURL;
-    iconURL = CollapsiblePanel.class.getResource("/org/tinymediamanager/ui/images/arrow_expanded.gif");
+    iconURL = CollapsiblePanel.class.getResource("/org/tinymediamanager/ui/images/arrow_collapsed.gif");
     if (iconURL != null) {
       iconArrow[COLLAPSED] = new ImageIcon(iconURL);
     }
-    iconURL = CollapsiblePanel.class.getResource("/org/tinymediamanager/ui/images/arrow_collapsed.gif");
+    iconURL = CollapsiblePanel.class.getResource("/org/tinymediamanager/ui/images/arrow_expanded.gif");
     if (iconURL != null) {
       iconArrow[EXPANDED] = new ImageIcon(iconURL);
     }
