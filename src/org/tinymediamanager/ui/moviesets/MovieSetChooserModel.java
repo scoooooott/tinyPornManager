@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.moviesets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -29,6 +30,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.omertron.themoviedbapi.model.Collection;
 import com.omertron.themoviedbapi.model.CollectionInfo;
@@ -38,35 +40,40 @@ import com.omertron.themoviedbapi.model.CollectionInfo;
  */
 public class MovieSetChooserModel extends AbstractModelObject {
 
+  private static final ResourceBundle      BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
+
   /** The static LOGGER. */
-  private static final Logger  LOGGER    = LoggerFactory.getLogger(MovieSetChooserModel.class);
+  private static final Logger              LOGGER      = LoggerFactory.getLogger(MovieSetChooserModel.class);
+
+  /** The Constant emptyResult. */
+  public static final MovieSetChooserModel emptyResult = new MovieSetChooserModel();
 
   /** The name. */
-  private String               name      = "";
+  private String                           name        = "";
 
   /** The poster url. */
-  private String               posterUrl = "";
+  private String                           posterUrl   = "";
 
   /** The fanart url. */
-  private String               fanartUrl = "";
+  private String                           fanartUrl   = "";
 
   /** The tmdb id. */
-  private int                  tmdbId    = 0;
+  private int                              tmdbId      = 0;
 
   /** The collection. */
-  private Collection           collection;
+  private Collection                       collection;
 
   /** The info. */
-  private CollectionInfo       info;
+  private CollectionInfo                   info;
 
   /** The movies. */
-  private List<MovieInSet>     movies    = ObservableCollections.observableList(new ArrayList<MovieInSet>());
+  private List<MovieInSet>                 movies      = ObservableCollections.observableList(new ArrayList<MovieInSet>());
 
   /** The mp. */
-  private TmdbMetadataProvider mp;
+  private TmdbMetadataProvider             mp;
 
   /** The scraped. */
-  private boolean              scraped;
+  private boolean                          scraped;
 
   /**
    * Instantiates a new movie set chooser model.
@@ -88,6 +95,13 @@ public class MovieSetChooserModel extends AbstractModelObject {
     catch (Exception e) {
       mp = null;
     }
+  }
+
+  /**
+   * create the empty search result.
+   */
+  private MovieSetChooserModel() {
+    setName(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
   }
 
   /**

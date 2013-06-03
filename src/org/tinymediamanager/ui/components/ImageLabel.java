@@ -373,6 +373,11 @@ public class ImageLabel extends JLabel {
       return new File(path);
     }
 
+    // is the path in the cache dir?
+    if (path.startsWith(ImageCache.CACHE_DIR)) {
+      return new File(path);
+    }
+
     try {
       File originalFile = new File(path);
       return ImageCache.cacheImage(originalFile);

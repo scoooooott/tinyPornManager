@@ -160,7 +160,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
                 selectedRow = tableMovieSets.convertRowIndexToModel(selectedRow);
                 try {
                   MovieSetChooserModel model = movieSetsFound.get(selectedRow);
-                  if (!model.isScraped()) {
+                  if (model != MovieSetChooserModel.emptyResult && !model.isScraped()) {
                     ScrapeTask task = new ScrapeTask(model);
                     task.execute();
 
@@ -319,12 +319,15 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
         mp = new TmdbMetadataProvider();
         List<Collection> movieSets = mp.searchMovieSets(searchTerm);
         movieSetsFound.clear();
-
-        for (Collection collection : movieSets) {
-          MovieSetChooserModel model = new MovieSetChooserModel(collection);
-          movieSetsFound.add(model);
+        if (movieSets.size() == 0) {
+          movieSetsFound.add(MovieSetChooserModel.emptyResult);
         }
-
+        else {
+          for (Collection collection : movieSets) {
+            MovieSetChooserModel model = new MovieSetChooserModel(collection);
+            movieSetsFound.add(model);
+          }
+        }
       }
       catch (Exception e1) {
         LOGGER.warn("SearchTask", e1);
@@ -393,51 +396,53 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
       int row = tableMovieSets.getSelectedRow();
       if (row >= 0) {
         MovieSetChooserModel model = movieSetsFound.get(row);
-        movieSetToScrape.setTitle(model.getName());
+        if (model != MovieSetChooserModel.emptyResult) {
+          movieSetToScrape.setTitle(model.getName());
 
-        if (StringUtils.isNotBlank(model.getInfo().getOverview())) {
-          movieSetToScrape.setPlot(model.getInfo().getOverview());
-        }
-        else {
-          movieSetToScrape.setPlot("");
-        }
-        movieSetToScrape.setPosterUrl(model.getPosterUrl());
-        movieSetToScrape.setFanartUrl(model.getFanartUrl());
-        movieSetToScrape.setTmdbId(model.getTmdbId());
-        movieSetToScrape.saveToDb();
+          if (StringUtils.isNotBlank(model.getInfo().getOverview())) {
+            movieSetToScrape.setPlot(model.getInfo().getOverview());
+          }
+          else {
+            movieSetToScrape.setPlot("");
+          }
+          movieSetToScrape.setPosterUrl(model.getPosterUrl());
+          movieSetToScrape.setFanartUrl(model.getFanartUrl());
+          movieSetToScrape.setTmdbId(model.getTmdbId());
+          movieSetToScrape.saveToDb();
 
-        // assign movies
-        if (cbAssignMovies.isSelected()) {
-          movieSetToScrape.removeAllMovies();
-          for (int i = 0; i < model.getMovies().size(); i++) {
-            MovieInSet movieInSet = model.getMovies().get(i);
-            Movie movie = movieInSet.getMovie();
-            if (movie == null) {
-              continue;
+          // assign movies
+          if (cbAssignMovies.isSelected()) {
+            movieSetToScrape.removeAllMovies();
+            for (int i = 0; i < model.getMovies().size(); i++) {
+              MovieInSet movieInSet = model.getMovies().get(i);
+              Movie movie = movieInSet.getMovie();
+              if (movie == null) {
+                continue;
+              }
+
+              // check if the found movie contains a matching set
+              if (movie.getMovieSet() != null) {
+                // unassign movie from set
+                MovieSet mSet = movie.getMovieSet();
+                mSet.removeMovie(movie);
+              }
+
+              movie.setMovieSet(movieSetToScrape);
+              movie.setSortTitle(movieSetToScrape.getTitle() + (i + 1));
+              movie.saveToDb();
+              movieSetToScrape.addMovie(movie);
+
+              movie.writeNFO();
             }
 
-            // check if the found movie contains a matching set
-            if (movie.getMovieSet() != null) {
-              // unassign movie from set
-              MovieSet mSet = movie.getMovieSet();
-              mSet.removeMovie(movie);
-            }
-
-            movie.setMovieSet(movieSetToScrape);
-            movie.setSortTitle(movieSetToScrape.getTitle() + (i + 1));
-            movie.saveToDb();
-            movieSetToScrape.addMovie(movie);
-
-            movie.writeNFO();
+            // and finally save assignments
+            movieSetToScrape.saveToDb();
           }
 
-          // and finally save assignments
-          movieSetToScrape.saveToDb();
         }
-
+        setVisible(false);
+        dispose();
       }
-      setVisible(false);
-      dispose();
     }
 
     // Abort queue

@@ -130,6 +130,7 @@ public class MovieSet extends MediaEntity {
    */
   public void setPosterUrl(String newValue) {
     super.setPosterUrl(newValue);
+    boolean written = false;
     String posterFilename = "movieset-poster.jpg";
 
     // write new poster
@@ -139,9 +140,20 @@ public class MovieSet extends MediaEntity {
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(true, false);
+      written = true;
     }
 
-    firePropertyChange(POSTER, false, true);
+    if (written) {
+      firePropertyChange(POSTER, false, true);
+    }
+    else {
+      // at least cache it
+      if (StringUtils.isNotEmpty(posterUrl) && moviesObservable.size() == 0) {
+        ImageFetcher task = new ImageFetcher("poster", posterUrl);
+        Globals.executor.execute(task);
+      }
+    }
+
   }
 
   /**
@@ -152,6 +164,7 @@ public class MovieSet extends MediaEntity {
    */
   public void setFanartUrl(String newValue) {
     super.setFanartUrl(newValue);
+    boolean written = false;
     String fanartFilename = "movieset-fanart.jpg";
 
     // write new fanart
@@ -161,9 +174,19 @@ public class MovieSet extends MediaEntity {
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(false, true);
+      written = true;
     }
 
-    firePropertyChange(FANART, false, true);
+    if (written) {
+      firePropertyChange(FANART, false, true);
+    }
+    else {
+      // at least cache it
+      if (StringUtils.isNotEmpty(fanartUrl) && moviesObservable.size() == 0) {
+        ImageFetcher task = new ImageFetcher("fanart", fanartUrl);
+        Globals.executor.execute(task);
+      }
+    }
   }
 
   /**
@@ -196,12 +219,6 @@ public class MovieSet extends MediaEntity {
     File cachedFile = new File(ImageCache.getCacheDir() + File.separator + ImageCache.getCachedFileName(fanartUrl) + ".jpg");
     if (cachedFile.exists()) {
       return cachedFile.getPath();
-    }
-
-    // no cached file found - cache it via thread
-    if (StringUtils.isNotEmpty(fanartUrl)) {
-      ImageFetcher task = new ImageFetcher("fanart", fanartUrl);
-      Globals.executor.execute(task);
     }
 
     return fanart;
@@ -237,12 +254,6 @@ public class MovieSet extends MediaEntity {
     File cachedFile = new File(ImageCache.getCacheDir() + File.separator + ImageCache.getCachedFileName(posterUrl) + ".jpg");
     if (cachedFile.exists()) {
       return cachedFile.getPath();
-    }
-
-    // no cached file found - cache it via thread
-    if (StringUtils.isNotEmpty(posterUrl)) {
-      ImageFetcher task = new ImageFetcher("poster", posterUrl);
-      Globals.executor.execute(task);
     }
 
     return poster;
