@@ -34,20 +34,11 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
  * @author Manuel Laggner
  */
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
-
-  /** The Constant checkIcon. */
   private final static ImageIcon       checkIcon        = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
-
-  /** The Constant crossIcon. */
   private final static ImageIcon       crossIcon        = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
-
-  /** The string comparator. */
+  private static Comparator<Movie>     movieComparator  = new MovieComparator();
   private static Comparator<String>    stringComparator = new StringComparator();
-
-  /** The image comparator. */
   private static Comparator<ImageIcon> imageComparator  = new ImageComparator();
 
   /*
@@ -99,7 +90,8 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   public Object getColumnValue(Movie movie, int column) {
     switch (column) {
       case 0:
-        return movie.getTitleSortable();
+        // return movie.getTitleSortable();
+        return movie;
 
       case 1:
         return movie.getYear();
@@ -142,6 +134,8 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   public Class getColumnClass(int column) {
     switch (column) {
       case 0:
+        return Movie.class;
+
       case 1:
         return String.class;
 
@@ -165,6 +159,8 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   public Comparator getColumnComparator(int column) {
     switch (column) {
       case 0:
+        return movieComparator;
+
       case 1:
         return stringComparator;
 
