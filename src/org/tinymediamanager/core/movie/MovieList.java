@@ -112,7 +112,9 @@ public class MovieList extends AbstractModelObject {
    */
   public void addMovie(Movie movie) {
     int oldValue = movieList.size();
-    movieList.add(movie);
+    if (!movieList.contains(movie)) {
+      movieList.add(movie);
+    }
     updateTags(movie);
     movie.addPropertyChangeListener(tagListener);
     firePropertyChange("movies", null, movieList);
