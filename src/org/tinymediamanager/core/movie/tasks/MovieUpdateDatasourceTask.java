@@ -95,7 +95,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
         else {
           // check and delete all not found MediaFiles
-          for (MediaFile mf : movie.getMediaFiles()) {
+          List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
+          for (MediaFile mf : mediaFiles) {
             if (!mf.getFile().exists()) {
               movie.removeFromMediaFiles(mf);
             }
