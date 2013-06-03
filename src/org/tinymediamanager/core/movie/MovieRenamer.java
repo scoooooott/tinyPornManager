@@ -47,7 +47,8 @@ import org.tinymediamanager.core.Utils;
 public class MovieRenamer {
 
   /** The Constant LOGGER. */
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamer.class);
+  private final static Logger       LOGGER                = LoggerFactory.getLogger(MovieRenamer.class);
+  private final static List<String> subtitleLanguageArray = generateSubtitleLanguageArray();
 
   /**
    * Generates a List of language/country names and abbreviations<br>
@@ -55,7 +56,7 @@ public class MovieRenamer {
    * 
    * @return List of language/country names
    */
-  public static List<String> generateSubtitleLanguageArray() {
+  private static List<String> generateSubtitleLanguageArray() {
     List<String> langArray = new ArrayList<String>();
     Locale intl = new Locale("en");
 
@@ -93,9 +94,19 @@ public class MovieRenamer {
     return langArray;
   }
 
+  /**
+   * Get a List of language/country names and abbreviations<br>
+   * sorted from the longest to shortest
+   * 
+   * @return List of language/country names
+   */
+  public static List<String> getSubtitleLanguageArray() {
+    return subtitleLanguageArray;
+  }
+
   private static void renameSubtitles(Movie m) {
     // build language lists
-    List<String> langArray = generateSubtitleLanguageArray();
+    List<String> langArray = getSubtitleLanguageArray();
 
     // the filename of movie, to remove from subtitle, to ease parsing
     String vname = Utils.cleanStackingMarkers(m.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename()).toLowerCase();

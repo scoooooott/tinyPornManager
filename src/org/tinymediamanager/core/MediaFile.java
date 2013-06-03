@@ -973,7 +973,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             sub.setForced(true);
             shortname = shortname.replaceAll("\\p{Punct}*forced", "");
           }
-          List<String> langArray = MovieRenamer.generateSubtitleLanguageArray();
+          List<String> langArray = MovieRenamer.getSubtitleLanguageArray();
           for (String l : langArray) {
             if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[_ .-]+" + l + "$")) {// ends with lang + delimiter prefix
               LOGGER.debug("found language '" + l + "' in subtitle");
