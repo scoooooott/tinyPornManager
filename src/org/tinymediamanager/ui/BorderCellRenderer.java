@@ -54,7 +54,7 @@ public class BorderCellRenderer extends DefaultTableCellRenderer {
     }
 
     // left margin
-    Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    Component comp = super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
     Border defaultBorder = ((JComponent) comp).getBorder();
     defaultBorder = BorderFactory.createEmptyBorder(0, 2, 0, 0);
     this.setBorder(defaultBorder);
@@ -63,7 +63,7 @@ public class BorderCellRenderer extends DefaultTableCellRenderer {
       Movie movie = (Movie) value;
       setValue(movie.getTitleSortable());
       if (movie.isNewlyAdded()) {
-        setForeground(new Color(76, 143, 72));
+        setBackground(new Color(76, 143, 72));
       }
     }
     else {

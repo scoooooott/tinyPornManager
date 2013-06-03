@@ -216,14 +216,17 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         movie.setDateAdded(new Date());
         movie.setNewlyAdded(true);
 
+        movie.findActorImages(); // TODO: find as MediaFIles
+        movie.saveToDb(); // savepoint
+
         if (movie.getMovieSet() != null) {
           LOGGER.debug("movie is part of a movieset");
           movie.getMovieSet().addMovie(movie);
           movieList.sortMoviesInMovieSet(movie.getMovieSet());
           movie.getMovieSet().saveToDb();
+          movie.saveToDb();
         }
-        movie.findActorImages(); // TODO: find as MediaFIles
-        movie.saveToDb(); // savepoint
+
       } // end movie is null
 
       List<MediaFile> current = movie.getMediaFiles();
@@ -321,6 +324,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       movie.saveToDb();
       LOGGER.info("add movie to GUI");
       movieList.addMovie(movie);
+    }
+    catch (NullPointerException e) {
+      LOGGER.error("NPE:", e);
     }
     catch (Exception e) {
       LOGGER.error(e.getMessage());
