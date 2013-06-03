@@ -318,7 +318,17 @@ public class MovieRenamer {
         // ######################################################################
         for (MoviePosterNaming name : Globals.settings.getMovieSettings().getMoviePosterFilenames()) {
           newFilename = movie.getPosterFilename(name);
-          if (!mf.getExtension().equals(FilenameUtils.getExtension(newFilename))) {
+          String curExt = mf.getExtension();
+          if (curExt.equalsIgnoreCase("tbn")) {
+            String cont = mf.getContainerFormat();
+            if (cont.equalsIgnoreCase("PNG")) {
+              curExt = "png";
+            }
+            else if (cont.equalsIgnoreCase("JPEG")) {
+              curExt = "jpg";
+            }
+          }
+          if (!curExt.equals(FilenameUtils.getExtension(newFilename))) {
             // match extension to not rename PNG to JPG and vice versa
             continue;
           }
@@ -342,6 +352,16 @@ public class MovieRenamer {
         // ######################################################################
         for (MovieFanartNaming name : Globals.settings.getMovieSettings().getMovieFanartFilenames()) {
           newFilename = movie.getFanartFilename(name);
+          String curExt = mf.getExtension();
+          if (curExt.equalsIgnoreCase("tbn")) {
+            String cont = mf.getContainerFormat();
+            if (cont.equalsIgnoreCase("PNG")) {
+              curExt = "png";
+            }
+            else if (cont.equalsIgnoreCase("JPEG")) {
+              curExt = "jpg";
+            }
+          }
           if (!mf.getExtension().equals(FilenameUtils.getExtension(newFilename))) {
             // match extension to not rename PNG to JPG and vice versa
             continue;
