@@ -211,11 +211,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         if (movie.getTitle().isEmpty()) {
           movie.setTitle(ParserUtils.detectCleanMoviename(movieDir.getName()));
         }
-        if (movie.getPath().isEmpty()) {
-          movie.setPath(movieDir.getPath());
-        }
+        movie.setPath(movieDir.getPath());
         movie.setDataSource(dataSource);
         movie.setDateAdded(new Date());
+        movie.setNewlyAdded(true);
+
         if (movie.getMovieSet() != null) {
           LOGGER.debug("movie is part of a movieset");
           movie.getMovieSet().addMovie(movie);

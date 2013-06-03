@@ -156,6 +156,10 @@ public class Movie extends MediaEntity {
   /** is this a disc movie folder (video_ts / bdmv)?. */
   private boolean             isDisc            = false;
 
+  /** is this movie new in our list? */
+  @Transient
+  private boolean             newlyAdded        = false;
+
   /** The spoken languages. */
   private String              spokenLanguages   = "";
 
@@ -1708,6 +1712,25 @@ public class Movie extends MediaEntity {
    */
   public void setDisc(boolean isDisc) {
     this.isDisc = isDisc;
+  }
+
+  /**
+   * has this movie been newlay added in our list?!
+   * 
+   * @return true/false
+   */
+  public boolean isNewlyAdded() {
+    return this.newlyAdded;
+  }
+
+  /**
+   * has this movie been newlay added in our list?!
+   * 
+   * @param newlyAdded
+   *          true/false
+   */
+  public void setNewlyAdded(boolean newlyAdded) {
+    this.newlyAdded = newlyAdded;
   }
 
   /**
