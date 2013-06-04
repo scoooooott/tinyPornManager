@@ -268,32 +268,6 @@ public class Utils {
   }
 
   /**
-   * Replace acutes html.
-   * 
-   * @param str
-   *          the str
-   * @return the string
-   */
-  @Deprecated
-  public static String replaceAcutesHTML(String str) {
-    // TODO: use StringEscapeUtils
-    str = str.replaceAll("&aacute;", "�");
-    str = str.replaceAll("&eacute;", "�");
-    str = str.replaceAll("&iacute;", "�");
-    str = str.replaceAll("&oacute;", "�");
-    str = str.replaceAll("&uacute;", "�");
-    str = str.replaceAll("&Aacute;", "�");
-    str = str.replaceAll("&Eacute;", "�");
-    str = str.replaceAll("&Iacute;", "�");
-    str = str.replaceAll("&Oacute;", "�");
-    str = str.replaceAll("&Uacute;", "�");
-    str = str.replaceAll("&ntilde;", "�");
-    str = str.replaceAll("&Ntilde;", "�");
-
-    return str;
-  }
-
-  /**
    * Unquote.
    * 
    * @param str
@@ -428,11 +402,12 @@ public class Utils {
         try {
           Thread.currentThread().setName("trackEventThread");
           File uuidFile = new File("tmm.uuid");
+          File disable = new File("tmm.uuid.disable");
           if (!uuidFile.exists()) {
             FileUtils.write(uuidFile, UUID.randomUUID().toString());
           }
 
-          if (uuidFile.exists()) {
+          if (uuidFile.exists() && !disable.exists()) {
             String uuid = FileUtils.readFileToString(uuidFile);
             System.setProperty("tmm.uuid", uuid);
 
