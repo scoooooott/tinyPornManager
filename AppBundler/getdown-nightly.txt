@@ -11,6 +11,7 @@ ui.progress = 20, 300, 460, 25
 ui.progress_text = FFFFFF
 ui.status = 40, 260, 440, 30
 ui.status_text = FFFFFF
+ui.mac_dock_icon = ../tmm.icns
 
 # Application jar files, on classpath
 code = tmm.jar
