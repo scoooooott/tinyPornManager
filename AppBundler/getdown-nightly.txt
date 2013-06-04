@@ -116,7 +116,6 @@ jvmarg = -Xmx512m
 jvmarg = -Xss512k
 jvmarg = -splash:splashscreen.png
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
-jvmarg = [mac os x] -Dxdock:icon=tmm.png
 #jvmarg = [linux] -Djava.ext.dirs=/usr/share/java:lib
 #jvmarg = [windows] -Djava.ext.dirs=lib
 #jvmarg = [mac os x] -Djava.ext.dirs=lib
