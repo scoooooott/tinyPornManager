@@ -23,7 +23,7 @@ import javax.persistence.Embeddable;
  * @author Manuel Laggner
  */
 @Embeddable
-public class MediaFileSubtitle extends AbstractModelObject {
+public class MediaFileSubtitle extends AbstractModelObject implements Comparable<MediaFileSubtitle> {
 
   private String  codec    = "";
   private String  language = "";
@@ -54,5 +54,38 @@ public class MediaFileSubtitle extends AbstractModelObject {
 
   public void setForced(boolean forced) {
     this.forced = forced;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object mf2) {
+    if ((mf2 != null) && (mf2 instanceof MediaFileSubtitle)) {
+      return compareTo((MediaFileSubtitle) mf2) == 0;
+    }
+    return false;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  @Override
+  public int compareTo(MediaFileSubtitle mf2) {
+    return this.getLanguage().compareTo(mf2.getLanguage());
+  }
+
+  @Override
+  public int hashCode() {
+    return this.language.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return this.getLanguage();
   }
 }

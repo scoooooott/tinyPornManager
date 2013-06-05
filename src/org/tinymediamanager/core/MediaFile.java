@@ -18,8 +18,10 @@ package org.tinymediamanager.core;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -437,7 +439,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
   public String getSubtitlesAsString() {
     StringBuilder sb = new StringBuilder();
-    for (MediaFileSubtitle sub : subtitles) {
+    Set<MediaFileSubtitle> cleansub = new LinkedHashSet<MediaFileSubtitle>(subtitles);
+
+    for (MediaFileSubtitle sub : cleansub) {
       if (sb.length() > 0) {
         sb.append(", ");
       }
