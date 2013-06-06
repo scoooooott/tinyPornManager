@@ -217,6 +217,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         movie.setNewlyAdded(true);
 
         movie.findActorImages(); // TODO: find as MediaFIles
+        LOGGER.debug("store movie into DB " + movieDir.getName());
         movie.saveToDb(); // savepoint
 
         if (movie.getMovieSet() != null) {
@@ -320,9 +321,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
 
-      LOGGER.debug("store movie into DB " + movieDir.getName());
       movie.saveToDb();
-      LOGGER.info("add movie to GUI");
       movieList.addMovie(movie);
     }
     catch (NullPointerException e) {
