@@ -1226,6 +1226,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return getType().ordinal() - mf2.getType().ordinal();
     }
 
-    return this.getFile().getAbsolutePath().compareTo(mf2.getFile().getAbsolutePath());
+    return this.getFile().compareTo(mf2.getFile());
   }
 }

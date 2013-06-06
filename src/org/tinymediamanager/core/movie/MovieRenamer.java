@@ -143,10 +143,10 @@ public class MovieRenamer {
     if (!newPathname.isEmpty()) {
       newPathname = movie.getDataSource() + File.separator + newPathname;
 
+      File srcDir = new File(oldPathname);
+      File destDir = new File(newPathname);
       // move directory if needed
-      if (!StringUtils.equals(oldPathname, newPathname)) {
-        File srcDir = new File(oldPathname);
-        File destDir = new File(newPathname);
+      if (!srcDir.equals(destDir)) {
         boolean ok = false;
         try {
           // FileUtils.moveDirectory(srcDir, destDir);
@@ -375,11 +375,14 @@ public class MovieRenamer {
       // cleanup files which are not needed
       if (!needed.contains(cleanup.get(i))) {
         MediaFile mf = cleanup.get(i);
-        LOGGER.debug("Deleting " + mf.getFilename());
-        FileUtils.deleteQuietly(mf.getFile()); // delete cleanup file
+        if (mf.getFile().exists()) { // unneded, but for not diplaying wrong deletes in logger...
+          LOGGER.debug("Deleting " + mf.getFilename());
+          FileUtils.deleteQuietly(mf.getFile()); // delete cleanup file
+        }
         File[] list = mf.getFile().getParentFile().listFiles();
         if (list != null && list.length == 0) {
           // if directory is empty, delete it as well
+          LOGGER.debug("Deleting empty Directory" + mf.getFile().getParentFile().getAbsolutePath());
           FileUtils.deleteQuietly(mf.getFile().getParentFile());
         }
       }
@@ -401,7 +404,7 @@ public class MovieRenamer {
    *           if an IO error occurs moving the file
    * @author Myron Boyle
    */
-  private static boolean moveDirectorySafe(File srcDir, File destDir) throws IOException {
+  public static boolean moveDirectorySafe(File srcDir, File destDir) throws IOException {
     // rip-off from
     // http://svn.apache.org/repos/asf/commons/proper/io/trunk/src/main/java/org/apache/commons/io/FileUtils.java
     if (srcDir == null) {
