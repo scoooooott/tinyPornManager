@@ -39,7 +39,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
@@ -977,11 +976,12 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             sub.setForced(true);
             shortname = shortname.replaceAll("\\p{Punct}*forced", "");
           }
-          List<String> langArray = MovieRenamer.getSubtitleLanguageArray();
+          Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
           for (String l : langArray) {
             if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[_ .-]+" + l + "$")) {// ends with lang + delimiter prefix
-              LOGGER.debug("found language '" + l + "' in subtitle");
-              sub.setLanguage(l);
+              String lang = Utils.getDisplayLanguage(l);
+              LOGGER.debug("found language '" + l + "' in subtitle; displaying it as '" + lang + "'");
+              sub.setLanguage(lang);
               break;
             }
           }

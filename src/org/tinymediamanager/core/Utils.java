@@ -25,6 +25,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.UUID;
 
 import javax.net.ssl.SSLException;
@@ -65,12 +74,84 @@ import org.tinymediamanager.scraper.util.Url;
 public class Utils {
 
   /** The client. */
-  private static DefaultHttpClient client;
+  private static DefaultHttpClient                  client;
   /** The Constant HTTP_USER_AGENT. */
-  protected static final String    HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:19.0) Gecko/20100101 Firefox/19.0";
+  protected static final String                     HTTP_USER_AGENT   = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:19.0) Gecko/20100101 Firefox/19.0";
 
   /** The Constant LOGGER. */
-  private static final Logger      LOGGER          = LoggerFactory.getLogger(Utils.class);
+  private static final Logger                       LOGGER            = LoggerFactory.getLogger(Utils.class);
+
+  /**
+   * Map of all known language/country/abbreviations, key is LOWERCASE
+   */
+  public static final LinkedHashMap<String, Locale> KEY_TO_LOCALE_MAP = generateSubtitleLanguageArray();
+
+  private static LinkedHashMap<String, Locale> generateSubtitleLanguageArray() {
+    Map<String, Locale> langArray = new HashMap<String, Locale>();
+
+    Locale intl = new Locale("en");
+    Locale locales[] = Locale.getAvailableLocales();
+    // all possible variants of language/country/prefixes/non-iso style
+    for (Locale locale : locales) {
+      langArray.put(locale.getDisplayLanguage(intl), locale);
+      langArray.put(locale.getDisplayLanguage(), locale);
+      langArray.put(locale.getDisplayLanguage(intl).substring(0, 3), locale); // eg German -> Ger, where iso3=deu
+      langArray.put(locale.getISO3Language(), locale);
+      langArray.put(locale.getCountry(), locale);
+      try {
+        String c = locale.getISO3Country();
+        langArray.put(c, locale);
+      }
+      catch (MissingResourceException e) {
+        // tjo... not available, see javadoc
+      }
+    }
+    for (String l : Locale.getISOLanguages()) {
+      langArray.put(l, new Locale(l));
+    }
+
+    // sort
+    List<String> keys = new LinkedList<String>(langArray.keySet());
+    Collections.sort(keys, new Comparator<String>() {
+      @Override
+      public int compare(String s1, String s2) {
+        return s2.length() - s1.length();
+      }
+    });
+    LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<String, Locale>();
+    for (String key : keys) {
+      sortedMap.put(key.toLowerCase(), langArray.get(key));
+    }
+
+    return sortedMap;
+  }
+
+  /**
+   * gets a locale from specific string
+   * 
+   * @param text
+   * @return Locale or NULL
+   */
+  public static Locale getLocaleFromCountry(String text) {
+    return KEY_TO_LOCALE_MAP.get(text);
+  }
+
+  /**
+   * gets the DisplayLanguage in English, derived from specific string
+   * 
+   * @param text
+   * @return the displayLanguage or empty string
+   */
+  public static String getDisplayLanguage(String text) {
+    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    if (l == null) {
+      return "";
+    }
+    else {
+      // return l.getDisplayLanguage(new Locale("en")); // name in english
+      return l.getDisplayLanguage(); // local name
+    }
+  }
 
   /**
    * returns the relative path of 2 absolute file paths

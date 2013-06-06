@@ -19,12 +19,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.Set;
 
 import org.apache.commons.io.FileExistsException;
@@ -47,66 +42,11 @@ import org.tinymediamanager.core.Utils;
 public class MovieRenamer {
 
   /** The Constant LOGGER. */
-  private final static Logger       LOGGER                = LoggerFactory.getLogger(MovieRenamer.class);
-  private final static List<String> subtitleLanguageArray = generateSubtitleLanguageArray();
-
-  /**
-   * Generates a List of language/country names and abbreviations<br>
-   * sorted from the longest to shortest
-   * 
-   * @return List of language/country names
-   */
-  private static List<String> generateSubtitleLanguageArray() {
-    List<String> langArray = new ArrayList<String>();
-    Locale intl = new Locale("en");
-
-    Locale locales[] = Locale.getAvailableLocales();
-    // all possible variants of language/country/prefixes/non-iso style
-    for (Locale locale : locales) {
-      langArray.add(locale.getDisplayLanguage(intl));
-      langArray.add(locale.getDisplayLanguage());
-      langArray.add(locale.getDisplayLanguage(intl).substring(0, 3)); // eg German -> Ger, where iso3=deu
-      langArray.add(locale.getISO3Language());
-      try {
-        String c = locale.getISO3Country();
-        langArray.add(c);
-      }
-      catch (MissingResourceException e) {
-        // tjo... not available, see javadoc
-      }
-    }
-    for (String l : Locale.getISOLanguages()) {
-      langArray.add(l);
-    }
-    for (String l : Locale.getISOCountries()) {
-      langArray.add(l);
-    }
-    Set<String> cleanloc = new LinkedHashSet<String>(langArray);
-    cleanloc.remove(""); // remove empty
-    langArray.clear();
-    langArray.addAll(cleanloc);
-    // sort length wise, to reduce false positives
-    Collections.sort(langArray, new Comparator<String>() {
-      public int compare(String a1, String a2) {
-        return a2.length() - a1.length();
-      }
-    });
-    return langArray;
-  }
-
-  /**
-   * Get a List of language/country names and abbreviations<br>
-   * sorted from the longest to shortest
-   * 
-   * @return List of language/country names
-   */
-  public static List<String> getSubtitleLanguageArray() {
-    return subtitleLanguageArray;
-  }
+  private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamer.class);
 
   private static void renameSubtitles(Movie m) {
     // build language lists
-    List<String> langArray = getSubtitleLanguageArray();
+    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
 
     // the filename of movie, to remove from subtitle, to ease parsing
     String vname = Utils.cleanStackingMarkers(m.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename()).toLowerCase();
@@ -124,8 +64,8 @@ public class MovieRenamer {
 
       for (String l : langArray) {
         if (shortname.endsWith(l.toLowerCase())) {
-          LOGGER.debug("found language '" + l + "' in subtitle");
-          lang = l;
+          lang = Utils.getDisplayLanguage(l);
+          LOGGER.debug("found language '" + l + "' in subtitle; displaying it as '" + lang + "'");
           break;
         }
       }
