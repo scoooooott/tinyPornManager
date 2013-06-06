@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
 
 /**
  * The Class MediaFileInformationFetcherTask.
@@ -67,6 +68,10 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
         if (mediaEntity != null && mediaEntity instanceof Movie && mediaFile.hasSubtitles()) {
           Movie movie = (Movie) mediaEntity;
           movie.setSubtitles(true);
+        }
+        if (mediaEntity != null && mediaEntity instanceof TvShowEpisode && mediaFile.hasSubtitles()) {
+          TvShowEpisode episode = (TvShowEpisode) mediaEntity;
+          episode.setSubtitles(true);
         }
       }
     }

@@ -92,6 +92,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   /** The votes. */
   private int                 votes             = 0;
 
+  private boolean             subtitles         = false;
+
   /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<TvShowActor>   actors            = new ArrayList<TvShowActor>();
@@ -796,5 +798,23 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     }
 
     return mediaFilesWithSubtitles;
+  }
+
+  public boolean hasSubtitles() {
+    if (this.subtitles) {
+      return true; // local ones found
+    }
+
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      if (mf.hasSubtitles()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public void setSubtitles(boolean sub) {
+    this.subtitles = sub;
   }
 }

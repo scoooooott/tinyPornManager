@@ -47,47 +47,25 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE                  = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Color          EVEN_ROW_COLOR             = new Color(241, 245, 250);
 
-  /** The tv show title. */
-  private JLabel                      tvShowTitle             = new JLabel();
+  private JPanel                      tvShowPanel                = new JPanel();
+  private JLabel                      tvShowTitle                = new JLabel();
+  private JLabel                      tvShowInfo                 = new JLabel();
+  private JLabel                      tvShowNfoLabel             = new JLabel();
+  private JLabel                      tvShowImageLabel           = new JLabel();
 
-  /** The tv show info. */
-  private JLabel                      tvShowInfo              = new JLabel();
+  private JPanel                      tvShowSeasonPanel          = new JPanel();
+  private JLabel                      tvShowSeasonTitle          = new JLabel();
 
-  /** The tv show season title. */
-  private JLabel                      tvShowSeasonTitle       = new JLabel();
+  private JPanel                      tvShowEpisodePanel         = new JPanel();
+  private JLabel                      tvShowEpisodeTitle         = new JLabel();
+  private JLabel                      tvShowEpisodeNfoLabel      = new JLabel();
+  private JLabel                      tvShowEpisodeImageLabel    = new JLabel();
+  private JLabel                      tvShowEpisodeSubtitleLabel = new JLabel();
 
-  /** The tv show episode title. */
-  private JLabel                      tvShowEpisodeTitle      = new JLabel();
-
-  /** The tv show panel. */
-  private JPanel                      tvShowPanel             = new JPanel();
-
-  /** The tv show season panel. */
-  private JPanel                      tvShowSeasonPanel       = new JPanel();
-
-  /** The tv show episode panel. */
-  private JPanel                      tvShowEpisodePanel      = new JPanel();
-
-  /** The tv show nfo label. */
-  private JLabel                      tvShowNfoLabel          = new JLabel();
-
-  /** The tv show image label. */
-  private JLabel                      tvShowImageLabel        = new JLabel();
-
-  /** The tv show episode nfo label. */
-  private JLabel                      tvShowEpisodeNfoLabel   = new JLabel();
-
-  /** The tv show episode image label. */
-  private JLabel                      tvShowEpisodeImageLabel = new JLabel();
-
-  /** The default renderer. */
-  private DefaultTreeCellRenderer     defaultRenderer         = new DefaultTreeCellRenderer();
-
-  /** The Constant EVEN_ROW_COLOR. */
-  private static final Color          EVEN_ROW_COLOR          = new Color(241, 245, 250);
+  private DefaultTreeCellRenderer     defaultRenderer            = new DefaultTreeCellRenderer();
 
   /**
    * Instantiates a new tv show tree cell renderer.
@@ -95,8 +73,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
   public TvShowTreeCellRenderer() {
     // tvShowPanel.setLayout(new BoxLayout(tvShowPanel, BoxLayout.Y_AXIS));
     tvShowPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] {
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     tvShowTitle.setFont(new Font("Dialog", Font.BOLD, 12));
     tvShowTitle.setHorizontalAlignment(JLabel.LEFT);
@@ -115,11 +93,13 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
     tvShowSeasonPanel.add(tvShowSeasonTitle);
 
     tvShowEpisodePanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
+        ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC }));
     tvShowEpisodeTitle.setMinimumSize(new Dimension(0, 0));
     tvShowEpisodePanel.add(tvShowEpisodeTitle, "1, 1");
     tvShowEpisodePanel.add(tvShowEpisodeNfoLabel, "3, 1");
     tvShowEpisodePanel.add(tvShowEpisodeImageLabel, "4, 1");
+    tvShowEpisodePanel.add(tvShowEpisodeSubtitleLabel, "5, 1");
   }
 
   /*
@@ -179,6 +159,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
         tvShowEpisodeNfoLabel.setIcon(episode.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
         tvShowEpisodeImageLabel.setIcon(episode.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
+        tvShowEpisodeSubtitleLabel.setIcon(episode.hasSubtitles() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
         returnValue = tvShowEpisodePanel;
       }
     }

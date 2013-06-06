@@ -95,74 +95,33 @@ import com.jtattoo.plaf.JTattooUtilities;
  */
 public class TvShowPanel extends JPanel {
 
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE                    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID          = -1923811385292825136L;
-
-  /** The logger. */
+  private static final ResourceBundle BUNDLE                    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER                    = LoggerFactory.getLogger(TvShowPanel.class);
 
-  /** The tree model. */
   private TvShowTreeModel             treeModel;
-
-  /** The tv show selection model. */
   private TvShowSelectionModel        tvShowSelectionModel;
-
-  /** The tv show episode selection model. */
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
-
-  /** The tv show list. */
   private TvShowList                  tvShowList                = TvShowList.getInstance();
 
-  /** The tree. */
   private JTree                       tree;
-
-  /** The panel right. */
   private JPanel                      panelRight;
+  private JMenu                       menu;
+  private JLabel                      lblTvShows;
+  private JLabel                      lblEpisodes;
 
-  /** The action update datasources. */
   private final Action                actionUpdateDatasources   = new UpdateDatasourcesAction(false);
-
-  /** The action update datasources2. */
   private final Action                actionUpdateDatasources2  = new UpdateDatasourcesAction(true);
-
-  /** The action scrape. */
   private final Action                actionScrape              = new SingleScrapeAction(false);
-
-  /** The action scrape2. */
   private final Action                actionScrape2             = new SingleScrapeAction(true);
-
-  /** The action scrape selected movies. */
   private final Action                actionScrapeSelected      = new SelectedScrapeAction();
-
-  /** The action edit. */
   private final Action                actionEdit                = new EditAction(false);
-
-  /** The action edit2. */
   private final Action                actionEdit2               = new EditAction(true);
-
-  /** The action remove2. */
   private final Action                actionRemove2             = new RemoveAction(true);
-
-  /** The action change season poster. */
   private final Action                actionChangeSeasonPoster2 = new ChangeSeasonPosterAction(true);
-
-  /** The action batch edit. */
   private final Action                actionBatchEdit           = new BatchEditAction();
 
-  /** The width. */
   private int                         width                     = 0;
-
-  /** The menu. */
-  private JMenu                       menu;
-
-  /** The lbl tv shows. */
-  private JLabel                      lblTvShows;
-
-  /** The lbl episodes. */
-  private JLabel                      lblEpisodes;
 
   /**
    * Instantiates a new tv show panel.
@@ -267,7 +226,7 @@ public class TvShowPanel extends JPanel {
     };
     scrollPane.setColumnHeaderView(panelHeader);
     panelHeader.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), },
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblTvShowsColumn = new JLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
@@ -277,12 +236,20 @@ public class TvShowPanel extends JPanel {
     JLabel lblNfoColumn = new JLabel("");
     lblNfoColumn.setHorizontalAlignment(JLabel.CENTER);
     lblNfoColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    lblNfoColumn.setToolTipText(BUNDLE.getString("metatag.nfo"));//$NON-NLS-1$
     panelHeader.add(lblNfoColumn, "4, 1");
 
     JLabel lblImageColumn = new JLabel("");
     lblImageColumn.setHorizontalAlignment(JLabel.CENTER);
     lblImageColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Image.png")));
+    lblImageColumn.setToolTipText(BUNDLE.getString("metatag.images"));//$NON-NLS-1$
     panelHeader.add(lblImageColumn, "5, 1");
+
+    JLabel lblSubtitleColumn = new JLabel("");
+    lblSubtitleColumn.setHorizontalAlignment(JLabel.CENTER);
+    lblSubtitleColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/subtitle.png")));
+    lblSubtitleColumn.setToolTipText(BUNDLE.getString("metatag.subtitles"));//$NON-NLS-1$
+    panelHeader.add(lblSubtitleColumn, "6, 1");
 
     JPanel panel = new JPanel();
     panelTvShowTree.add(panel, "2, 5, fill, fill");
