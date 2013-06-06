@@ -492,6 +492,7 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".divx");
     addVideoFileTypes(".dv");
     addVideoFileTypes(".dvr-ms");
+    addVideoFileTypes(".disc"); // video stubs
     addVideoFileTypes(".fli");
     addVideoFileTypes(".flv");
     addVideoFileTypes(".h264");
