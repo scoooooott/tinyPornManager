@@ -63,90 +63,47 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class GeneralSettingsPanel extends JPanel {
 
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = 500841588272296493L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
-
-  /** The settings. */
   private Settings                    settings         = Settings.getInstance();
 
-  /** The panel proxy settings. */
   private JPanel                      panelProxySettings;
-
-  /** The tf proxy host. */
   private JTextField                  tfProxyHost;
-
-  /** The tf proxy port. */
   private JTextField                  tfProxyPort;
-
-  /** The tf proxy username. */
   private JTextField                  tfProxyUsername;
-
-  /** The tf proxy password. */
   private JPasswordField              tfProxyPassword;
-
-  /** The chckbx clear cache shutdown. */
   private JCheckBox                   chckbxClearCacheShutdown;
-
-  /** The lbl loglevel. */
   private JLabel                      lblLoglevel;
-
-  /** The combo box. */
   private JComboBox                   comboBox;
-
-  /** The panel cache. */
   private JPanel                      panelCache;
-
-  /** The panel logger. */
   private JPanel                      panelLogger;
-
-  /** The panel video filetypes. */
   private JPanel                      panelVideoFiletypes;
-
-  /** The tf video filetype. */
   private JTextField                  tfVideoFiletype;
-
-  /** The list video filetypes. */
   private JList                       listVideoFiletypes;
-
-  /** The panel subtitle filetypes. */
   private JPanel                      panelSubtitleFiletypes;
-
-  /** The tf subtitle filetype. */
   private JTextField                  tfSubtitleFiletype;
-
-  /** The list subtitle filetypes. */
   private JList                       listSubtitleFiletypes;
-
-  /** The lbl image cache quality. */
   private JLabel                      lblImageCacheQuality;
-
-  /** The cb image cache quality. */
   private JComboBox                   cbImageCacheQuality;
-
-  /** The chckbx build image cache. */
   private JCheckBox                   chckbxBuildImageCache;
-
-  /** The chckbx image cache. */
   private JCheckBox                   chckbxImageCache;
-
-  /** The list sort prefixes. */
   private JList                       listSortPrefixes;
-
-  /** The tf sort prefix. */
   private JTextField                  tfSortPrefix;
+  private JPanel                      panelAudioFiletypes;
+  private JList                       listAudioFiletypes;
+  private JTextField                  tfAudioFiletype;
 
   /**
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default)"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     panelVideoFiletypes = new JPanel();
     panelVideoFiletypes.setBorder(new TitledBorder(
@@ -233,10 +190,52 @@ public class GeneralSettingsPanel extends JPanel {
     });
     panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "4, 4");
 
+    panelAudioFiletypes = new JPanel();
+    add(panelAudioFiletypes, "6, 2, fill, fill");
+    panelAudioFiletypes.setBorder(new TitledBorder(
+        UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.audiofiletypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+    panelAudioFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    JScrollPane scrollPaneAudioFiletypes = new JScrollPane();
+    panelAudioFiletypes.add(scrollPaneAudioFiletypes, "2, 2, fill, fill");
+
+    listAudioFiletypes = new JList();
+    scrollPaneAudioFiletypes.setViewportView(listAudioFiletypes);
+
+    JButton btnRemoveAudioFiletype = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+    btnRemoveAudioFiletype.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        int row = listAudioFiletypes.getSelectedIndex();
+        if (row != -1) {
+          String prefix = Globals.settings.getAudioFileType().get(row);
+          Globals.settings.removeAudioFileType(prefix);
+        }
+      }
+    });
+    panelAudioFiletypes.add(btnRemoveAudioFiletype, "4, 2, default, bottom");
+
+    tfAudioFiletype = new JTextField();
+    panelAudioFiletypes.add(tfAudioFiletype, "2, 4, fill, default");
+    tfAudioFiletype.setColumns(10);
+
+    JButton btnAddAudioFiletype = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    btnAddAudioFiletype.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (StringUtils.isNotEmpty(tfAudioFiletype.getText())) {
+          Globals.settings.addAudioFileTypes(tfAudioFiletype.getText());
+          tfAudioFiletype.setText("");
+        }
+      }
+    });
+    panelAudioFiletypes.add(btnAddAudioFiletype, "4, 4");
+
     JPanel panelSortOptions = new JPanel();
     panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelSortOptions, "6, 2, fill, fill");
+    add(panelSortOptions, "8, 2, fill, fill");
     panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -443,5 +442,10 @@ public class GeneralSettingsPanel extends JPanel {
     JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, listSortPrefixes);
     jListBinding.bind();
+    //
+    BeanProperty<Settings, List<String>> settingsBeanProperty_11 = BeanProperty.create("audioFileType");
+    JListBinding<String, Settings, JList> jListBinding_3 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_11, listAudioFiletypes);
+    jListBinding_3.bind();
   }
 }
