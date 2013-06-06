@@ -160,7 +160,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return parseImageType();
     }
 
-    if (ext.equals("ac3") || ext.equals("dts") || ext.equals("mp3") || ext.equals("ogg")) {
+    if (Globals.settings.getAudioFileType().contains("." + ext)) {
       return MediaFileType.AUDIO;
     }
 
@@ -877,7 +877,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     StringBuilder sb = new StringBuilder(videoCodec);
 
     for (MediaFileAudioStream audioStream : audioStreams) {
-      sb.append(" / ");
+      if (sb.length() > 0) {
+        sb.append(" / ");
+      }
       sb.append(audioStream.getCodec());
     }
 
@@ -930,23 +932,42 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         audioStreams.clear();
         for (int i = 0; i < streams; i++) {
           MediaFileAudioStream stream = new MediaFileAudioStream();
-
           String audioCodec = getMediaInfo(StreamKind.Audio, i, "CodecID/Hint", "Format");
           stream.setCodec(audioCodec.replaceAll("\\p{Punct}", ""));
-
           String channels = getMediaInfo(StreamKind.Audio, i, "Channel(s)");
           stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
-
           try {
             String br = getMediaInfo(StreamKind.Audio, i, "BitRate");
             stream.setBitrate(Integer.valueOf(br) / 1024);
           }
           catch (Exception e) {
           }
-
           String language = getMediaInfo(StreamKind.Audio, i, "Language");
-          stream.setLanguage(language);
-
+          if (language.isEmpty()) {
+            // try to parse from filename
+            String shortname = getBasename().toLowerCase();
+            Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+            for (String l : langArray) {
+              if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[_ .-]+" + l + "$")) {// ends with lang + delimiter prefix
+                String lang = Utils.getDisplayLanguage(l);
+                LOGGER.debug("found language '" + l + "' in audiofile; displaying it as '" + lang + "'");
+                stream.setLanguage(lang);
+                break;
+              }
+            }
+          }
+          else {
+            // map locale
+            String l = Utils.getDisplayLanguage(language);
+            if (l.isEmpty()) {
+              // could not map locale, use detected
+              stream.setLanguage(language);
+            }
+            else {
+              // set our localized name
+              stream.setLanguage(l);
+            }
+          }
           audioStreams.add(stream);
         }
 
@@ -989,6 +1010,47 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           setContainerFormat(getExtension());
           subtitles.add(sub);
         }
+        break;
+
+      case AUDIO:
+        MediaFileAudioStream stream = new MediaFileAudioStream();
+        String audioCodec = getMediaInfo(StreamKind.Audio, 0, "CodecID/Hint", "Format");
+        stream.setCodec(audioCodec.replaceAll("\\p{Punct}", ""));
+        String channels = getMediaInfo(StreamKind.Audio, 0, "Channel(s)");
+        stream.setChannels(StringUtils.isEmpty(channels) ? "" : channels + "ch");
+        try {
+          String br = getMediaInfo(StreamKind.Audio, 0, "BitRate");
+          stream.setBitrate(Integer.valueOf(br) / 1024);
+        }
+        catch (Exception e) {
+        }
+        String language = getMediaInfo(StreamKind.Audio, 0, "Language");
+        if (language.isEmpty()) {
+          // try to parse from filename
+          String shortname = getBasename().toLowerCase();
+          Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+          for (String l : langArray) {
+            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[_ .-]+" + l + "$")) {// ends with lang + delimiter prefix
+              String lang = Utils.getDisplayLanguage(l);
+              LOGGER.debug("found language '" + l + "' in audiofile; displaying it as '" + lang + "'");
+              stream.setLanguage(lang);
+              break;
+            }
+          }
+        }
+        else {
+          // map locale
+          String l = Utils.getDisplayLanguage(language);
+          if (l.isEmpty()) {
+            // could not map locale, use detected
+            stream.setLanguage(language);
+          }
+          else {
+            // set our localized name
+            stream.setLanguage(l);
+          }
+        }
+        audioStreams.add(stream);
         break;
 
       case POSTER:

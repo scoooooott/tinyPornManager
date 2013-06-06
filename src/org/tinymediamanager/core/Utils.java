@@ -133,7 +133,8 @@ public class Utils {
    * @return Locale or NULL
    */
   public static Locale getLocaleFromCountry(String text) {
-    return KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    String lang = text.toLowerCase().split("[-_.]")[0];
+    return KEY_TO_LOCALE_MAP.get(lang);
   }
 
   /**

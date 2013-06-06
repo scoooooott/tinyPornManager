@@ -68,9 +68,11 @@ public class Settings extends AbstractModelObject {
 
   /**
    * the current settings file version<br>
-   * change this when new (default) settings need to be written or on structural changes
+   * change this when new (default) settings need to be written or on structural changes<br>
+   * 2.0 - initial TV show settings <br>
+   * 2.1 - added audioFileTypes for MediaFile detection
    */
-  private static final String         SETTINGS_VERSION            = "2.0";
+  private static final String         SETTINGS_VERSION            = "2.1";
 
   /** The instance. */
   private static Settings             instance;
@@ -86,6 +88,9 @@ public class Settings extends AbstractModelObject {
 
   /** The Constant VIDEO_FILE_TYPE. */
   private final static String         VIDEO_FILE_TYPE             = "videoFileTypes";
+
+  /** The Constant AUDIO_FILE_TYPE. */
+  private final static String         AUDIO_FILE_TYPE             = "audioFileTypes";
 
   /** The Constant VIDEO_FILE_TYPE. */
   private final static String         SUBTITLE_FILE_TYPE          = "subtitleFileTypes";
@@ -129,6 +134,11 @@ public class Settings extends AbstractModelObject {
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>          videoFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
+
+  /** The audio file types. */
+  @XmlElementWrapper(name = AUDIO_FILE_TYPE)
+  @XmlElement(name = FILETYPE)
+  private final List<String>          audioFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
 
   /** The video file types. */
   @XmlElementWrapper(name = SUBTITLE_FILE_TYPE)
@@ -290,7 +300,7 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Removes the video file type.
+   * Removes the title prefix.
    * 
    * @param prfx
    *          the prfx
@@ -301,9 +311,9 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Gets the video file type.
+   * Gets the title prefix.
    * 
-   * @return the video file type
+   * @return the title prefix
    */
   public List<String> getTitlePrefix() {
     return titlePrefix;
@@ -340,6 +350,39 @@ public class Settings extends AbstractModelObject {
    */
   public List<String> getVideoFileType() {
     return videoFileTypes;
+  }
+
+  /**
+   * Adds the audio file types.
+   * 
+   * @param type
+   *          the type
+   */
+  public void addAudioFileTypes(String type) {
+    if (!audioFileTypes.contains(type)) {
+      audioFileTypes.add(type);
+      firePropertyChange(AUDIO_FILE_TYPE, null, audioFileTypes);
+    }
+  }
+
+  /**
+   * Removes the audio file type.
+   * 
+   * @param type
+   *          the type
+   */
+  public void removeAudioFileType(String type) {
+    audioFileTypes.remove(type);
+    firePropertyChange(AUDIO_FILE_TYPE, null, audioFileTypes);
+  }
+
+  /**
+   * Gets the audio file type.
+   * 
+   * @return the audio file type
+   */
+  public List<String> getAudioFileType() {
+    return audioFileTypes;
   }
 
   /**
@@ -482,6 +525,41 @@ public class Settings extends AbstractModelObject {
     addVideoFileTypes(".wmv");
     addVideoFileTypes(".xvid");
     Collections.sort(videoFileTypes);
+
+    addAudioFileTypes(".a52");
+    addAudioFileTypes(".aa3");
+    addAudioFileTypes(".aac");
+    addAudioFileTypes(".ac3");
+    addAudioFileTypes(".adt");
+    addAudioFileTypes(".adts");
+    addAudioFileTypes(".aif");
+    addAudioFileTypes(".aiff");
+    addAudioFileTypes(".alac");
+    addAudioFileTypes(".ape");
+    addAudioFileTypes(".at3");
+    addAudioFileTypes(".atrac");
+    addAudioFileTypes(".au");
+    addAudioFileTypes(".dts");
+    addAudioFileTypes(".flac");
+    addAudioFileTypes(".m4a");
+    addAudioFileTypes(".m4b");
+    addAudioFileTypes(".m4p");
+    addAudioFileTypes(".mid");
+    addAudioFileTypes(".midi");
+    addAudioFileTypes(".mka");
+    addAudioFileTypes(".mp3");
+    addAudioFileTypes(".mpa");
+    addAudioFileTypes(".oga");
+    addAudioFileTypes(".ogg");
+    addAudioFileTypes(".pcm");
+    addAudioFileTypes(".ra");
+    addAudioFileTypes(".ram");
+    addAudioFileTypes(".rm");
+    addAudioFileTypes(".tta");
+    addAudioFileTypes(".wav");
+    addAudioFileTypes(".wave");
+    addAudioFileTypes(".wma");
+    Collections.sort(audioFileTypes);
 
     // default subtitle files
     addSubtitleFileTypes(".aqt");
