@@ -239,10 +239,10 @@ public class MovieRenamer {
           newFilename = movie.getNfoFilename(name);
           File newFile = new File(newPath, newFilename);
           try {
+            cleanup.add(mf); // mark old file for cleanup
             boolean ok = copyFile(mf.getFile(), newFile);
             if (ok) {
               movie.setNfoFilename(newFilename); // TODO remove when work completely with MediaFiles
-              cleanup.add(mf); // mark old file for cleanup
               needed.add(new MediaFile(newFile)); // add new variant
             }
           }
@@ -274,11 +274,11 @@ public class MovieRenamer {
           }
           File newFile = new File(newPath, newFilename);
           try {
+            cleanup.add(mf); // mark old file for cleanup
             boolean ok = copyFile(mf.getFile(), newFile);
             if (ok) {
-              cleanup.add(mf); // mark old file for cleanup
               needed.add(new MediaFile(newFile, MediaFileType.POSTER)); // add new variant
-            }
+            } // if not ok, file already exists and will be in MF loop anyway
           }
           catch (Exception e) {
             LOGGER.error("error renaming poster", e);
@@ -308,11 +308,11 @@ public class MovieRenamer {
           }
           File newFile = new File(newPath, newFilename);
           try {
+            cleanup.add(mf); // mark old file for cleanup
             boolean ok = copyFile(mf.getFile(), newFile);
             if (ok) {
-              cleanup.add(mf); // mark old file for cleanup
               needed.add(new MediaFile(newFile, MediaFileType.FANART)); // add new variant
-            }
+            } // if not ok, file already exists and will be in MF loop anyway
           }
           catch (Exception e) {
             LOGGER.error("error renaming fanart", e);
@@ -370,11 +370,12 @@ public class MovieRenamer {
     // ## CLEANUP
     // ######################################################################
 
-    LOGGER.debug("Cleanup...");
+    LOGGER.info("Cleanup...");
     for (int i = cleanup.size() - 1; i >= 0; i--) {
       // cleanup files which are not needed
       if (!needed.contains(cleanup.get(i))) {
         MediaFile mf = cleanup.get(i);
+        LOGGER.debug("Deleting " + mf.getFilename());
         FileUtils.deleteQuietly(mf.getFile()); // delete cleanup file
         File[] list = mf.getFile().getParentFile().listFiles();
         if (list != null && list.length == 0) {
