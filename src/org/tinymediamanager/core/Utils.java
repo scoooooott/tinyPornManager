@@ -133,17 +133,17 @@ public class Utils {
    * @return Locale or NULL
    */
   public static Locale getLocaleFromCountry(String text) {
-    return KEY_TO_LOCALE_MAP.get(text);
+    return KEY_TO_LOCALE_MAP.get(text.toLowerCase());
   }
 
   /**
-   * gets the DisplayLanguage in English, derived from specific string
+   * gets the localized DisplayLanguage , derived from specific string
    * 
    * @param text
    * @return the displayLanguage or empty string
    */
   public static String getDisplayLanguage(String text) {
-    Locale l = KEY_TO_LOCALE_MAP.get(text.toLowerCase());
+    Locale l = getLocaleFromCountry(text);
     if (l == null) {
       return "";
     }
