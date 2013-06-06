@@ -347,6 +347,7 @@ public class TinyMediaManager {
 
           // check really old alpha version
           FileUtils.deleteQuietly(new File("lib/beansbinding-1.2.1.jar"));
+          FileUtils.deleteQuietly(new File("lib/beansbinding.jar"));
         }
         else if (version.equals("2.0")) {
           // do something to upgrade to 2.1/3.0
