@@ -29,6 +29,7 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -281,6 +282,10 @@ public class MovieToMpNfoConnector {
     Movie movie = null;
     try {
       Unmarshaller um = context.createUnmarshaller();
+      if (um == null) {
+        return null;
+      }
+
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
       MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(in);
       movie = new Movie();
@@ -353,12 +358,16 @@ public class MovieToMpNfoConnector {
       movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
 
     }
+    catch (UnmarshalException e) {
+      LOGGER.error("getData " + e.getMessage());
+      return null;
+    }
     catch (FileNotFoundException e) {
-      LOGGER.error("setData", e);
+      LOGGER.error("getData", e);
       return null;
     }
     catch (Exception e) {
-      LOGGER.error("setData", e);
+      LOGGER.error("getData", e);
       return null;
     }
 

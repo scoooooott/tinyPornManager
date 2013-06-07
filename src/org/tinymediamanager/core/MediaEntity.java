@@ -48,61 +48,61 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   /** The id for the database. */
   @GeneratedValue
-  protected int                       id;
+  protected int                                id;
 
   /** The ids to store the ID from several metadataproviders. */
-  protected HashMap<String, Object>   ids                  = new HashMap<String, Object>();
+  protected HashMap<String, Object>            ids                  = new HashMap<String, Object>();
 
   /** The title. */
-  protected String                    title                = "";
+  protected String                             title                = "";
 
   /** The original title. */
-  protected String                    originalTitle        = "";
+  protected String                             originalTitle        = "";
 
   /** The year. */
-  protected String                    year                 = "";
+  protected String                             year                 = "";
 
   /** The overview. */
-  protected String                    plot                 = "";
+  protected String                             plot                 = "";
 
   /** The rating. */
-  protected float                     rating               = 0f;
+  protected float                              rating               = 0f;
 
   /** The path. */
-  protected String                    path                 = "";
+  protected String                             path                 = "";
 
   /** The fanart url. */
-  protected String                    fanartUrl            = "";
+  protected String                             fanartUrl            = "";
 
   /** The poster url. */
-  protected String                    posterUrl            = "";
+  protected String                             posterUrl            = "";
 
   /** The banner url. */
-  protected String                    bannerUrl            = "";
+  protected String                             bannerUrl            = "";
 
   /** The thumb url. */
-  protected String                    thumbUrl             = "";
+  protected String                             thumbUrl             = "";
 
   /** The date added. */
-  protected Date                      dateAdded            = new Date();
+  protected Date                               dateAdded            = new Date();
 
   /** The production company. */
-  protected String                    productionCompany    = "";
+  protected String                             productionCompany    = "";
 
   /** The scraped. */
-  protected boolean                   scraped              = false;
+  protected boolean                            scraped              = false;
 
   /** The duplicate flag. */
   @Transient
-  protected boolean                   duplicate            = false;
+  protected boolean                            duplicate            = false;
 
   /** The media files. */
   @OneToMany(cascade = CascadeType.ALL)
-  protected List<MediaFile>           mediaFiles           = new ArrayList<MediaFile>();
+  protected List<MediaFile>                    mediaFiles           = new ArrayList<MediaFile>();
 
   /** The media files observable. */
   @Transient
-  protected ObservableList<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+  protected volatile ObservableList<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
   /**
    * Initialize after loading from database.
@@ -732,12 +732,12 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public List<MediaFile> getMediaFiles(MediaFileType type) {
     List<MediaFile> mf = new ArrayList<MediaFile>();
-    synchronized (mediaFilesObservable) {
-      for (MediaFile mediaFile : this.mediaFilesObservable) {
-        if (mediaFile.getType().equals(type)) {
-          mf.add(mediaFile);
-        }
+    // synchronized (mediaFilesObservable) {
+    for (MediaFile mediaFile : this.mediaFilesObservable) {
+      if (mediaFile.getType().equals(type)) {
+        mf.add(mediaFile);
       }
+      // }
     }
     return mf;
   }
@@ -828,18 +828,20 @@ public abstract class MediaEntity extends AbstractModelObject {
    *          the new path
    */
   public void updateMediaFilePath(File oldPath, File newPath) {
-    synchronized (mediaFilesObservable) {
-      for (MediaFile mf : mediaFilesObservable) {
-        mf.fixPathForRenamedFolder(oldPath, newPath);
-      }
+    // synchronized (mediaFilesObservable) {
+    for (MediaFile mf : mediaFilesObservable) {
+      mf.fixPathForRenamedFolder(oldPath, newPath);
     }
+    // }
   }
 
   public void gatherMediaFileInformation(boolean force) {
-    synchronized (mediaFilesObservable) {
-      for (MediaFile mediaFile : mediaFilesObservable) {
-        mediaFile.gatherMediaInformation(force);
-      }
+    // synchronized (mediaFilesObservable) {
+    List<MediaFile> mediaFiles = new ArrayList<MediaFile>(mediaFilesObservable);
+    // for (MediaFile mediaFile : mediaFilesObservable) {
+    for (MediaFile mediaFile : mediaFiles) {
+      mediaFile.gatherMediaInformation(force);
+      // }
     }
 
     firePropertyChange(MEDIA_INFORMATION, false, true);

@@ -29,6 +29,7 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
@@ -437,6 +438,9 @@ public class MovieToXbmcNfoConnector {
     Movie movie = null;
     try {
       Unmarshaller um = context.createUnmarshaller();
+      if (um == null) {
+        return null;
+      }
 
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
       MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
@@ -556,6 +560,10 @@ public class MovieToXbmcNfoConnector {
 
       // set only the name w/o path
       movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
+    }
+    catch (UnmarshalException e) {
+      LOGGER.error("getData " + e.getMessage());
+      return null;
     }
     catch (FileNotFoundException e) {
       LOGGER.error("getData", e);

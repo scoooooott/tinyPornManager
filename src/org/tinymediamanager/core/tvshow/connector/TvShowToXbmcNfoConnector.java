@@ -29,6 +29,7 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -226,6 +227,10 @@ public class TvShowToXbmcNfoConnector {
     TvShow tvShow = null;
     try {
       Unmarshaller um = context.createUnmarshaller();
+      if (um == null) {
+        return null;
+      }
+
       Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
       TvShowToXbmcNfoConnector xbmc = (TvShowToXbmcNfoConnector) um.unmarshal(in);
       tvShow = new TvShow();
@@ -259,6 +264,10 @@ public class TvShowToXbmcNfoConnector {
       }
 
       tvShow.setNfoFilename(FilenameUtils.getName(nfoFilename));
+    }
+    catch (UnmarshalException e) {
+      LOGGER.error("failed to parse " + nfoFilename + " " + e.getMessage());
+      return null;
     }
     catch (FileNotFoundException e) {
       LOGGER.error(nfoFilename + " " + e.getMessage());

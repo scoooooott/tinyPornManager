@@ -130,7 +130,11 @@ public class MovieTrailerPanel extends JPanel {
             || (source.getClass() == Movie.class && "trailer".equals(property))) {
           trailerEventList.clear();
           trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailers());
-          tableColumnAdjuster.adjustColumns();
+          try {
+            tableColumnAdjuster.adjustColumns();
+          }
+          catch (Exception e) {
+          }
         }
       }
     };

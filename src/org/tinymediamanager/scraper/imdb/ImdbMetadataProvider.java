@@ -57,14 +57,10 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  */
 public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
-  /** The Constant LOGGER. */
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo("imdb", "imdb.com", "Scraper for imdb which is able to scrape movie metadata");
   private static final Logger      LOGGER       = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 
-  /** The imdb site. */
   private ImdbSiteDefinition       imdbSite;
-
-  /** The provider info. */
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("imdb", "imdb.com", "Scraper for imdb which is able to scrape movie metadata");
 
   /**
    * Instantiates a new imdb metadata provider.
@@ -706,6 +702,23 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         sr.setIMDBId(movieId);
         sr.setYear(md.getYear());
         sr.setMetadata(md);
+        sr.setScore(1);
+
+        // and parse out the poster
+        String posterUrl = "";
+        Element td = doc.getElementById("img_primary");
+        if (td != null) {
+          Elements imgs = td.getElementsByTag("img");
+          for (Element img : imgs) {
+            posterUrl = img.attr("src");
+            posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SY195_");
+            posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
+          }
+        }
+        if (StringUtils.isNotBlank(posterUrl)) {
+          sr.setPosterUrl(posterUrl);
+        }
+
         result.add(sr);
         return result;
       }

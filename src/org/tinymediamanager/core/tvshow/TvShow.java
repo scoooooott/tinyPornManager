@@ -726,8 +726,22 @@ public class TvShow extends MediaEntity {
   public void setNfoFilename(String newValue) {
     String oldValue = this.nfoFilename;
     this.nfoFilename = newValue;
+    setNFO(new File(path, nfoFilename));
     firePropertyChange(NFO_FILENAME, oldValue, newValue);
     firePropertyChange(HAS_NFO_FILE, false, true);
+  }
+
+  private void setNFO(File file) {
+    List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
+    MediaFile mediaFile = null;
+    if (nfos.size() > 0) {
+      mediaFile = nfos.get(0);
+      mediaFile.setFile(file);
+    }
+    else {
+      mediaFile = new MediaFile(file, MediaFileType.NFO);
+      addToMediaFiles(mediaFile);
+    }
   }
 
   /**

@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
@@ -785,9 +786,17 @@ public class TvShowEpisodeToXbmcNfoConnector {
           // read out each episode
           try {
             Unmarshaller um = context.createUnmarshaller();
+            if (um == null) {
+              continue;
+            }
+
             Reader in = new StringReader(sb.toString());
             TvShowEpisodeToXbmcNfoConnector xbmc = (TvShowEpisodeToXbmcNfoConnector) um.unmarshal(in);
             xbmcConnectors.add(xbmc);
+          }
+          catch (UnmarshalException e) {
+            LOGGER.error("failed to parse " + nfoFile.getName());
+            return null;
           }
           catch (Exception e) {
             LOGGER.error("failed to parse " + nfoFile.getName(), e);
