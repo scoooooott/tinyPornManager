@@ -96,7 +96,7 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblTinymediamanager, "4, 2, 3, 1, center, default");
     }
     {
-      JLabel lblByManuel = new JLabel("©2012 - 2013 by Manuel Laggner");
+      JLabel lblByManuel = new JLabel("\u00A9 2012 - 2013 by Manuel Laggner");
       contentPanel.add(lblByManuel, "4, 4, 3, 1, center, default");
     }
     {
