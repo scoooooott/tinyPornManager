@@ -16,30 +16,27 @@
 package org.tinymediamanager.core.movie.tasks;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieRenamer;
-import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
  * The Class MovieRenameTask.
  * 
  * @author Manuel Laggner
  */
-public class MovieRenameTask extends TmmSwingWorker {
+public class MovieRenameTask extends TmmThreadPool {
 
   /** The Constant LOGGER. */
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenameTask.class);
 
   /** The movies to rename. */
   private List<Movie>         moviesToRename;
-
-  /** The movie count. */
-  private int                 movieCount;
-
-  private boolean             cancel = false;
 
   /**
    * Instantiates a new movie rename task.
@@ -55,7 +52,7 @@ public class MovieRenameTask extends TmmSwingWorker {
    */
   public MovieRenameTask(List<Movie> moviesToRename) {
     this.moviesToRename = moviesToRename;
-    this.movieCount = moviesToRename.size();
+    initThreadPool(1, "rename");
   }
 
   /*
@@ -65,30 +62,46 @@ public class MovieRenameTask extends TmmSwingWorker {
    */
   @Override
   protected Void doInBackground() throws Exception {
-    // rename movies
-    for (int i = 0; i < moviesToRename.size(); i++) {
-      if (cancel) {
-        break;
+    try {
+      startProgressBar("renaming movies...");
+      // rename movies
+      for (int i = 0; i < moviesToRename.size(); i++) {
+        Movie movie = moviesToRename.get(i);
+        submitTask(new RenameMovieTask(movie));
       }
-
-      Movie movie = moviesToRename.get(i);
-      startProgressBar("renaming movies", 100 * i / movieCount);
-      MovieRenamer.renameMovie(movie);
+      waitForCompletionOrCancel();
+      if (cancel) {
+        cancel(false);// swing cancel
+      }
+      LOGGER.info("Done renaming movies)");
     }
-
+    catch (Exception e) {
+      LOGGER.error("Thread crashed", e);
+    }
     return null;
   }
 
   /**
-   * Cancel.
+   * ThreadpoolWorker to work off ONE possible movie from root datasource directory
+   * 
+   * @author Myron Boyle
+   * @version 1.0
    */
-  public void cancel() {
-    cancel = true;
+  private class RenameMovieTask implements Callable<Object> {
+
+    private Movie movie = null;
+
+    public RenameMovieTask(Movie movie) {
+      this.movie = movie;
+    }
+
+    @Override
+    public String call() throws Exception {
+      MovieRenamer.renameMovie(movie);
+      return movie.getTitle();
+    }
   }
 
-  /*
-   * Executed in event dispatching thread
-   */
   /*
    * (non-Javadoc)
    * 
@@ -104,13 +117,30 @@ public class MovieRenameTask extends TmmSwingWorker {
    * 
    * @param description
    *          the description
-   * @param value
-   *          the value
    */
-  private void startProgressBar(String description, int value) {
-    lblProgressAction.setText(description);
+  private void startProgressBar(String description, int max, int progress) {
+    if (!StringUtils.isEmpty(description)) {
+      lblProgressAction.setText(description);
+    }
     progressBar.setVisible(true);
-    progressBar.setValue(value);
+    progressBar.setIndeterminate(false);
+    progressBar.setMaximum(max);
+    progressBar.setValue(progress);
+    btnCancelTask.setVisible(true);
+  }
+
+  /**
+   * Start progress bar.
+   * 
+   * @param description
+   *          the description
+   */
+  private void startProgressBar(String description) {
+    if (!StringUtils.isEmpty(description)) {
+      lblProgressAction.setText(description);
+    }
+    progressBar.setVisible(true);
+    progressBar.setIndeterminate(true);
     btnCancelTask.setVisible(true);
   }
 
@@ -119,7 +149,24 @@ public class MovieRenameTask extends TmmSwingWorker {
    */
   private void stopProgressBar() {
     lblProgressAction.setText("");
+    progressBar.setIndeterminate(false);
     progressBar.setVisible(false);
     btnCancelTask.setVisible(false);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.ui.TmmSwingWorker#cancel()
+   */
+  @Override
+  public void cancel() {
+    cancel = true;
+    // cancel(false);
+  }
+
+  @Override
+  public void callback(Object obj) {
+    startProgressBar((String) obj, getTaskcount(), getTaskdone());
   }
 }
