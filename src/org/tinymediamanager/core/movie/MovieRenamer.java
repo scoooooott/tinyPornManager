@@ -533,7 +533,7 @@ public class MovieRenamer {
 
     // replace illegal characters
     // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
-    newDestination = newDestination.replaceAll("([:<>|?*])", "");
+    newDestination = newDestination.replaceAll("([\"\\:<>|/?*])", "");
     // replace empty brackets
     newDestination = newDestination.replaceAll("\\(\\)", "");
 
