@@ -112,6 +112,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   private JProgressBar                progressBar;
   private JTextArea                   lblTagline;
   private JButton                     okButton;
+  private JLabel                      lblPath;
 
   /**
    * Create the dialog.
@@ -152,11 +153,16 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     contentPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:403px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    {
+      lblPath = new JLabel("");
+      contentPanel.add(lblPath, "1, 2");
+    }
     {
       JPanel panelSearchField = new JPanel();
-      contentPanel.add(panelSearchField, "1, 2, fill, fill");
+      contentPanel.add(panelSearchField, "1, 4, fill, fill");
       panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
           ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
@@ -192,7 +198,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     {
       JSplitPane splitPane = new JSplitPane();
       splitPane.setContinuousLayout(true);
-      contentPanel.add(splitPane, "1, 4, fill, fill");
+      contentPanel.add(splitPane, "1, 6, fill, fill");
       {
         JPanel panelSearchResults = new JPanel();
         splitPane.setLeftComponent(panelSearchResults);
@@ -280,16 +286,16 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     }
     {
       JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
-      contentPanel.add(lblScrapeFollowingItems, "1, 6");
+      contentPanel.add(lblScrapeFollowingItems, "1, 8");
     }
     {
       JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "1, 7, fill, fill");
+      contentPanel.add(panelScraperMetadataSetting, "1, 9, fill, fill");
     }
 
     {
       JPanel bottomPane = new JPanel();
-      contentPanel.add(bottomPane, "1, 9");
+      contentPanel.add(bottomPane, "1, 11");
       {
         bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
@@ -337,6 +343,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
       textFieldSearchString.setText(movieToScrape.getTitle());
       searchMovie(textFieldSearchString.getText(), movieToScrape.getImdbId());
+      lblPath.setText(movieToScrape.getPath());
     }
 
   }

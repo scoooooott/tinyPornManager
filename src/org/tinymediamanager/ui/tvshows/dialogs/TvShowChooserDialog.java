@@ -150,6 +150,8 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   /** The ok button. */
   private JButton                     okButton;
 
+  private JLabel                      lblPath;
+
   /**
    * Instantiates a new tv show chooser dialog.
    * 
@@ -159,7 +161,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
    *          the in queue
    */
   public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
-    setTitle(BUNDLE.getString("moviechooser.search")); //$NON-NLS-1$
+    setTitle(BUNDLE.getString("tvshowchooser.search")); //$NON-NLS-1$
     setName("tvShowChooser");
     setBounds(5, 5, 1111, 643);
     TmmWindowSaver.loadSettings(this);
@@ -188,11 +190,16 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     contentPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:403px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    {
+      lblPath = new JLabel("");
+      contentPanel.add(lblPath, "1, 2");
+    }
     {
       JPanel panelSearchField = new JPanel();
-      contentPanel.add(panelSearchField, "1, 2, fill, fill");
+      contentPanel.add(panelSearchField, "1, 4, fill, fill");
       panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
           ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
@@ -227,7 +234,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     {
       JSplitPane splitPane = new JSplitPane();
       splitPane.setContinuousLayout(true);
-      contentPanel.add(splitPane, "1, 4, fill, fill");
+      contentPanel.add(splitPane, "1, 6, fill, fill");
       {
         JPanel panelSearchResults = new JPanel();
         splitPane.setLeftComponent(panelSearchResults);
@@ -307,16 +314,16 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     }
     {
       JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
-      contentPanel.add(lblScrapeFollowingItems, "1, 6");
+      contentPanel.add(lblScrapeFollowingItems, "1, 8");
     }
     {
       JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "1, 7, fill, fill");
+      contentPanel.add(panelScraperMetadataSetting, "1, 9, fill, fill");
     }
 
     {
       JPanel bottomPane = new JPanel();
-      contentPanel.add(bottomPane, "1, 9");
+      contentPanel.add(bottomPane, "1, 11");
       {
         bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
@@ -365,6 +372,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
 
       textFieldSearchString.setText(tvShowToScrape.getTitle());
       searchTvShow(textFieldSearchString.getText());
+      lblPath.setText(tvShowToScrape.getPath());
     }
 
   }

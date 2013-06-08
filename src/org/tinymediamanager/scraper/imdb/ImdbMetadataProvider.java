@@ -811,8 +811,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
       result.add(sr);
 
-      // only get 20 results
-      if (result.size() >= 20) {
+      // only get 40 results
+      if (result.size() >= 40) {
         break;
       }
     }

@@ -222,14 +222,19 @@ public class MovieScrapeTask extends TmmSwingWorker {
                 MediaSearchResult result2 = results.get(1);
                 // if both results have 100% score - do not take any result
                 if (result1.getScore() == 1 && result2.getScore() == 1) {
+                  LOGGER.info("two 100% results, can't decide whitch to take - ignore result");
                   continue;
                 }
               }
 
               // create a treshold of 0.75 - to minimize false positives
               if (result1.getScore() < 0.75) {
+                LOGGER.info("score is lower than 0.75 (" + result1.getScore() + ") - ignore result");
                 continue;
               }
+            }
+            else {
+              LOGGER.info("no result found for " + movie.getTitle());
             }
           }
 
