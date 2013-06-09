@@ -835,6 +835,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     // }
   }
 
+  /**
+   * Execute MediaInformation on all media files
+   * 
+   * @param force
+   *          forces execution (usually it is skipped when ContainerFormat is not empty)
+   */
   public void gatherMediaFileInformation(boolean force) {
     // synchronized (mediaFilesObservable) {
     List<MediaFile> mediaFiles = new ArrayList<MediaFile>(mediaFilesObservable);

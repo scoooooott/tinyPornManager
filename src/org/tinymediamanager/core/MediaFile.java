@@ -87,6 +87,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private File                       file             = null;
 
   /**
+   * "clones" a new media file.
+   */
+  public MediaFile(MediaFile clone) {
+    this.path = clone.path;
+    this.filename = clone.filename;
+    this.filesize = clone.filesize;
+    this.videoCodec = clone.videoCodec;
+    this.containerFormat = clone.containerFormat;
+    this.videoFormat = clone.videoFormat;
+    this.exactVideoFormat = clone.exactVideoFormat;
+    this.videoHeight = clone.videoHeight;
+    this.videoWidth = clone.videoWidth;
+    this.overallBitRate = clone.overallBitRate;
+    this.durationInSecs = clone.durationInSecs;
+    this.stacking = clone.stacking;
+    this.type = clone.type;
+    this.audioStreams = clone.audioStreams;
+    this.subtitles = clone.subtitles;
+  }
+
+  /**
    * Instantiates a new media file.
    */
   public MediaFile() {
@@ -1189,7 +1210,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // check unsupported extensions
     if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "iso".equals(extension) || "img".equals(extension)
-        || "nrg".equals(extension)) {
+        || "nrg".equals(extension) || "sub".equals(extension) || "idx".equals(extension)) {
       return false;
     }
 
@@ -1227,5 +1248,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     return this.getFile().compareTo(mf2.getFile());
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getFile().hashCode();
   }
 }
