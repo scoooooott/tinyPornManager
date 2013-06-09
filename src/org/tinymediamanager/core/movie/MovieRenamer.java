@@ -179,10 +179,63 @@ public class MovieRenamer {
     boolean renameFiles = !Globals.settings.getMovieSettings().getMovieRenamerFilename().isEmpty();
 
     // ######################################################################
+    // ## rename VIDEO
+    // ######################################################################
+    for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      LOGGER.info("rename file " + vid.getFile().getAbsolutePath());
+
+      String newFilename = vid.getFilename();
+      String newPath = movie.getPath() + File.separator;
+      String fileExtension = FilenameUtils.getExtension(vid.getFilename());
+
+      if (!movie.isDisc()) {
+        cleanup.add(new MediaFile(vid)); // mark old file for cleanup (clone current)
+        if (renameFiles) {
+          // create new filename according to template
+          newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
+          // is there any stacking information in the filename?
+          // use vid.getStacking() != 0 for custom stacking format?
+          String stacking = Utils.getStackingMarker(vid.getFilename());
+          if (!stacking.isEmpty()) {
+            newFilename += " " + stacking;
+          }
+          else if (vid.getStacking() != 0) {
+            newFilename += " CD" + vid.getStacking();
+          }
+          newFilename += "." + fileExtension;
+        }
+
+        MediaFile newMF = new MediaFile(vid);
+        File newFile = new File(newPath, newFilename);
+        try {
+          moveFile(vid.getFile(), newFile);
+          newMF.setPath(newPath);
+          newMF.setFilename(newFilename);
+        }
+        catch (FileNotFoundException e) {
+          LOGGER.error("error moving video file - file not found", e);
+        }
+        catch (Exception e) {
+          LOGGER.error("error moving video file", e);
+        }
+        needed.add(newMF);
+      }
+      else {
+        LOGGER.info("Movie is a DVD/BluRay disc folder - NOT renaming file");
+        needed.add(vid); // but keep it
+      }
+    }
+
+    // ######################################################################
     // ## rename NFO
     // ######################################################################
     MediaFile mf = movie.getMediaFiles(MediaFileType.NFO).get(0);
     if (mf != null) {
+      for (MovieNfoNaming s : MovieNfoNaming.values()) {
+        // mark all known variants for cleanup
+        MediaFile del = new MediaFile(new File(movie.getPath(), movie.getNfoFilename(s)));
+        cleanup.add(del);
+      }
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
       String newPath = movie.getPath() + File.separator;
@@ -211,6 +264,11 @@ public class MovieRenamer {
     // ######################################################################
     mf = movie.getMediaFiles(MediaFileType.POSTER).get(0);
     if (mf != null) {
+      for (MoviePosterNaming s : MoviePosterNaming.values()) {
+        // mark all known variants for cleanup
+        MediaFile del = new MediaFile(new File(movie.getPath(), movie.getPosterFilename(s)));
+        cleanup.add(del);
+      }
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
       String newPath = movie.getPath() + File.separator;
@@ -252,6 +310,11 @@ public class MovieRenamer {
     // ######################################################################
     mf = movie.getMediaFiles(MediaFileType.FANART).get(0);
     if (mf != null) {
+      for (MovieFanartNaming s : MovieFanartNaming.values()) {
+        // mark all known variants for cleanup
+        MediaFile del = new MediaFile(new File(movie.getPath(), movie.getFanartFilename(s)));
+        cleanup.add(del);
+      }
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
       String newPath = movie.getPath() + File.separator;
@@ -323,54 +386,6 @@ public class MovieRenamer {
     // ######################################################################
     for (MediaFile unk : movie.getMediaFiles(MediaFileType.UNKNOWN)) {
       needed.add(unk); // keep all unknown
-    }
-
-    // ######################################################################
-    // ## rename VIDEO
-    // ######################################################################
-    for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
-      LOGGER.info("rename file " + vid.getFile().getAbsolutePath());
-
-      String newFilename = vid.getFilename();
-      String newPath = movie.getPath() + File.separator;
-      String fileExtension = FilenameUtils.getExtension(vid.getFilename());
-
-      if (!movie.isDisc()) {
-        cleanup.add(new MediaFile(vid)); // mark old file for cleanup (clone current)
-        if (renameFiles) {
-          // create new filename according to template
-          newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
-          // is there any stacking information in the filename?
-          // use vid.getStacking() != 0 for custom stacking format?
-          String stacking = Utils.getStackingMarker(vid.getFilename());
-          if (!stacking.isEmpty()) {
-            newFilename += " " + stacking;
-          }
-          else if (vid.getStacking() != 0) {
-            newFilename += " CD" + vid.getStacking();
-          }
-          newFilename += "." + fileExtension;
-        }
-
-        MediaFile newMF = new MediaFile(vid);
-        File newFile = new File(newPath, newFilename);
-        try {
-          moveFile(vid.getFile(), newFile);
-          newMF.setPath(newPath);
-          newMF.setFilename(newFilename);
-        }
-        catch (FileNotFoundException e) {
-          LOGGER.error("error moving video file - file not found", e);
-        }
-        catch (Exception e) {
-          LOGGER.error("error moving video file", e);
-        }
-        needed.add(newMF);
-      }
-      else {
-        LOGGER.info("Movie is a DVD/BluRay disc folder - NOT renaming file");
-        needed.add(vid); // but keep it
-      }
     }
 
     // remove duplicate MediaFiles
