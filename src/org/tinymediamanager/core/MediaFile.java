@@ -1028,9 +1028,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             }
           }
           sub.setCodec(getExtension());
-          setContainerFormat(getExtension());
           subtitles.add(sub);
         }
+        setContainerFormat(getExtension());
         break;
 
       case AUDIO:
@@ -1210,7 +1210,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // check unsupported extensions
     if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "iso".equals(extension) || "img".equals(extension)
-        || "nrg".equals(extension) || "sub".equals(extension) || "idx".equals(extension)) {
+        || "nrg".equals(extension)) {
       return false;
     }
 
