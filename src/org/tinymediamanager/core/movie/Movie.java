@@ -320,7 +320,7 @@ public class Movie extends MediaEntity {
     setObservables();
 
     // load genres
-    for (String genre : genres) {
+    for (String genre : new ArrayList<String>(genres)) {
       addGenre(MediaGenres.getGenre(genre));
     }
   }

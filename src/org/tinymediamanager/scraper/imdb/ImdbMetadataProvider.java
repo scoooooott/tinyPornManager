@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
@@ -662,6 +663,25 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     Document doc;
     try {
       CachedUrl url = new CachedUrl(sb.toString());
+
+      // build a http header for the preferred language
+      StringBuilder languages = new StringBuilder();
+
+      Locale jreLocale = Locale.getDefault();
+
+      languages.append(jreLocale.getLanguage());
+      languages.append("-");
+      languages.append(jreLocale.getCountry());
+      languages.append(",");
+
+      languages.append(jreLocale.getLanguage());
+      languages.append(";q=0.8");
+
+      if (!"en".equalsIgnoreCase(jreLocale.getLanguage())) {
+        languages.append(",en;q=0.5");
+      }
+
+      url.addHeader("Accept-Language", languages.toString());
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "");
     }
     catch (Exception e) {
@@ -745,10 +765,17 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         }
 
         // filter out unwanted results
-        Pattern unwanted = Pattern.compile(".*\\(TV Episode\\).*|.*\\(Video\\).*|.*\\(Short\\).*");
+        Pattern unwanted = Pattern.compile(".*\\(TV Episode\\).*|.*\\(Short\\).*"); // stripped out .*\\(Video\\).*|
         Matcher matcher = unwanted.matcher(element.text());
         if (matcher.find()) {
           continue;
+        }
+
+        // is there a localized name? (aka)
+        String localizedName = "";
+        Elements italics = element.getElementsByTag("i");
+        if (italics.size() > 0) {
+          localizedName = italics.text().replace("\"", "");
         }
 
         // get the name inside the link
@@ -756,7 +783,12 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         for (Element a : anchors) {
           if (StringUtils.isNotEmpty(a.text())) {
             // movie name
-            movieName = a.text();
+            if (StringUtils.isNotBlank(localizedName)) {
+              movieName = localizedName;
+            }
+            else {
+              movieName = a.text();
+            }
 
             // parse id
             String href = a.attr("href");
