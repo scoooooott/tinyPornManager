@@ -132,6 +132,10 @@ public class MovieRenamer {
       return;
     }
 
+    // all the good & needed mediafiles
+    ArrayList<MediaFile> needed = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> cleanup = new ArrayList<MediaFile>();
+
     LOGGER.info("Renaming movie: " + movie.getTitle());
     LOGGER.debug("movie year: " + movie.getYear());
     LOGGER.debug("movie path: " + movie.getPath());
@@ -172,12 +176,25 @@ public class MovieRenamer {
       LOGGER.info("Folder rename settings were empty - NOT renaming folder");
     }
 
-    // all the good & needed mediafiles
-    ArrayList<MediaFile> needed = new ArrayList<MediaFile>();
-    ArrayList<MediaFile> cleanup = new ArrayList<MediaFile>();
-
     // if empty, do not rename file, but DO move them to movie root
     boolean renameFiles = !Globals.settings.getMovieSettings().getMovieRenamerFilename().isEmpty();
+
+    // cleanup with old movie name
+    for (MovieNfoNaming s : MovieNfoNaming.values()) {
+      // mark all known variants for cleanup
+      MediaFile del = new MediaFile(new File(movie.getPath(), movie.getNfoFilename(s)));
+      cleanup.add(del);
+    }
+    for (MoviePosterNaming s : MoviePosterNaming.values()) {
+      // mark all known variants for cleanup
+      MediaFile del = new MediaFile(new File(movie.getPath(), movie.getPosterFilename(s)));
+      cleanup.add(del);
+    }
+    for (MovieFanartNaming s : MovieFanartNaming.values()) {
+      // mark all known variants for cleanup
+      MediaFile del = new MediaFile(new File(movie.getPath(), movie.getFanartFilename(s)));
+      cleanup.add(del);
+    }
 
     // ######################################################################
     // ## rename VIDEO
@@ -235,11 +252,6 @@ public class MovieRenamer {
     List<MediaFile> mfl = movie.getMediaFiles(MediaFileType.NFO);
     if (mfl != null && mfl.size() > 0) {
       mf = mfl.get(0);
-      for (MovieNfoNaming s : MovieNfoNaming.values()) {
-        // mark all known variants for cleanup
-        MediaFile del = new MediaFile(new File(movie.getPath(), movie.getNfoFilename(s)));
-        cleanup.add(del);
-      }
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
       String newPath = movie.getPath() + File.separator;
@@ -269,11 +281,6 @@ public class MovieRenamer {
     mfl = movie.getMediaFiles(MediaFileType.POSTER);
     if (mfl != null && mfl.size() > 0) {
       mf = mfl.get(0);
-      for (MoviePosterNaming s : MoviePosterNaming.values()) {
-        // mark all known variants for cleanup
-        MediaFile del = new MediaFile(new File(movie.getPath(), movie.getPosterFilename(s)));
-        cleanup.add(del);
-      }
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
       String newPath = movie.getPath() + File.separator;
@@ -316,11 +323,6 @@ public class MovieRenamer {
     mfl = movie.getMediaFiles(MediaFileType.FANART);
     if (mfl != null && mfl.size() > 0) {
       mf = mfl.get(0);
-      for (MovieFanartNaming s : MovieFanartNaming.values()) {
-        // mark all known variants for cleanup
-        MediaFile del = new MediaFile(new File(movie.getPath(), movie.getFanartFilename(s)));
-        cleanup.add(del);
-      }
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
       String newPath = movie.getPath() + File.separator;
