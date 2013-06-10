@@ -379,48 +379,52 @@ public class MainWindow extends JFrame {
     addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
-        int confirm = 0;
-        // if there are some threads running, display exit confirmation
-        if (Globals.poolRunning()) {
-          confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),
-              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
-        }
-        if (confirm == JOptionPane.YES_OPTION) {
-          LOGGER.info("bye bye");
-          try {
-            // send shutdown signal
-            Globals.executor.shutdown();
-            // cancel our status task (send interrupt())
-            statusTask.cancel(true);
-            // save unsaved settings
-            Globals.settings.saveSettings();
-            // close database connection
-            Globals.shutdownDatabase();
-            // clear cache directory
-            if (Globals.settings.isClearCacheShutdown()) {
-              File cache = new File("cache");
-              if (cache.exists()) {
-                FileUtils.deleteDirectory(cache);
-              }
-            }
-          }
-          catch (Exception ex) {
-            LOGGER.warn(ex.getMessage());
-          }
-          dispose();
-          try {
-            // wait a bit for threads to finish (if any)
-            Globals.executor.awaitTermination(2, TimeUnit.SECONDS);
-            // hard kill
-            Globals.executor.shutdownNow();
-          }
-          catch (InterruptedException e1) {
-            LOGGER.debug("Global thread shutdown");
-          }
-          System.exit(0); // calling the method is a must
-        }
+        closeTmm();
       }
     });
+  }
+
+  private void closeTmm() {
+    int confirm = 0;
+    // if there are some threads running, display exit confirmation
+    if (Globals.poolRunning()) {
+      confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),
+          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
+    }
+    if (confirm == JOptionPane.YES_OPTION) {
+      LOGGER.info("bye bye");
+      try {
+        // send shutdown signal
+        Globals.executor.shutdown();
+        // cancel our status task (send interrupt())
+        statusTask.cancel(true);
+        // save unsaved settings
+        Globals.settings.saveSettings();
+        // close database connection
+        Globals.shutdownDatabase();
+        // clear cache directory
+        if (Globals.settings.isClearCacheShutdown()) {
+          File cache = new File("cache");
+          if (cache.exists()) {
+            FileUtils.deleteDirectory(cache);
+          }
+        }
+      }
+      catch (Exception ex) {
+        LOGGER.warn(ex.getMessage());
+      }
+      dispose();
+      try {
+        // wait a bit for threads to finish (if any)
+        Globals.executor.awaitTermination(2, TimeUnit.SECONDS);
+        // hard kill
+        Globals.executor.shutdownNow();
+      }
+      catch (InterruptedException e1) {
+        LOGGER.debug("Global thread shutdown");
+      }
+      System.exit(0); // calling the method is a must
+    }
   }
 
   /**
@@ -513,8 +517,7 @@ public class MainWindow extends JFrame {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      instance.setVisible(false);
-      instance.dispose();
+      closeTmm();
     }
   }
 
