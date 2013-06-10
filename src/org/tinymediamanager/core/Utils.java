@@ -556,7 +556,7 @@ public class Utils {
         System.getProperty("os.version", ""),
         System.getProperty("os.arch", "amd64"),
         System.getProperty("user.language", "en"),
-        System.getProperty("user.country"), "EN");
+        System.getProperty("user.country", "EN"));
     // @formatter:on
     return ua;
   }
