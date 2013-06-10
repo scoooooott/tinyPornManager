@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
@@ -171,8 +172,11 @@ public class Url {
         is = new ByteArrayInputStream(EntityUtils.toByteArray(entity));
       }
     }
+    catch (UnknownHostException e) {
+      LOGGER.error("proxy or host not found/reachable", e);
+    }
     catch (Exception e) {
-      LOGGER.warn("fetch data - " + e.getMessage());
+      LOGGER.error("Exception getting url", e);
     }
     finally {
       EntityUtils.consume(entity);
