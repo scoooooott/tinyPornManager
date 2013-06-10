@@ -76,7 +76,8 @@ public class Utils {
   /** The client. */
   private static DefaultHttpClient                  client;
   /** The Constant HTTP_USER_AGENT. */
-  protected static final String                     HTTP_USER_AGENT   = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:19.0) Gecko/20100101 Firefox/19.0";
+  // protected static final String HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:19.0) Gecko/20100101 Firefox/19.0";
+  protected static final String                     HTTP_USER_AGENT   = generateUA();
 
   /** The Constant LOGGER. */
   private static final Logger                       LOGGER            = LoggerFactory.getLogger(Utils.class);
@@ -545,5 +546,18 @@ public class Utils {
     catch (UnsupportedEncodingException e) {
       return URLEncoder.encode(System.getProperty(prop));
     }
+  }
+
+  private static String generateUA() {
+    // http://en.wikipedia.org/wiki/Useragent
+    // @formatter:off
+    String ua = String.format("Mozilla/5.0 (%1$s/%2$s; U; %3$s; %4$s-%5$s) Gecko/20100101 Firefox/19.0", 
+        System.getProperty("os.name", "Linux"),
+        System.getProperty("os.version", ""),
+        System.getProperty("os.arch", "amd64"),
+        System.getProperty("user.language", "en"),
+        System.getProperty("user.country"), "EN");
+    // @formatter:on
+    return ua;
   }
 }
