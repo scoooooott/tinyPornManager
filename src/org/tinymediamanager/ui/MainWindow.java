@@ -517,6 +517,7 @@ public class MainWindow extends JFrame {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
+      TmmWindowSaver.getInstance().saveSettings(MainWindow.this);
       closeTmm();
     }
   }
