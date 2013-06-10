@@ -4,7 +4,7 @@ appbase = https://myron0815.ci.cloudbees.com/job/tinymediamanager/ws/tinyMediaMa
 #version = %SVNREV%
 
 # UI Configuration
-ui.name = tinyMediaManager updater
+ui.name = tinyMediaManager
 ui.background_image = splashscreen.png
 ui.icon = tmm.png
 ui.progress = 20, 300, 460, 25
