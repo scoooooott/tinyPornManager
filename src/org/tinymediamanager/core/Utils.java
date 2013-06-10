@@ -561,7 +561,7 @@ public class Utils {
       hardcodeOS = "Macintosh";
     }
     else if (Platform.isLinux()) {
-      hardcodeOS = "Linux";
+      hardcodeOS = "X11";
     }
     else {
       hardcodeOS = System.getProperty("os.name");
