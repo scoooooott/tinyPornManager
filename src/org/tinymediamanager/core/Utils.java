@@ -66,6 +66,8 @@ import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
 
+import com.sun.jna.Platform;
+
 /**
  * The Class Utils.
  * 
@@ -549,15 +551,32 @@ public class Utils {
   }
 
   private static String generateUA() {
-    // http://en.wikipedia.org/wiki/Useragent
+
+    // this is due to the fact, that the OS is not correctly recognized (eg Mobile FirefoxOS, where it isn't)
+    String hardcodeOS = "";
+    if (Platform.isWindows()) {
+      hardcodeOS = "Windows; Windows NT " + System.getProperty("os.version");
+    }
+    else if (Platform.isMac()) {
+      hardcodeOS = "Macintosh";
+    }
+    else if (Platform.isLinux()) {
+      hardcodeOS = "Linux";
+    }
+    else {
+      hardcodeOS = System.getProperty("os.name");
+    }
+
     // @formatter:off
-    String ua = String.format("Mozilla/5.0 (%1$s/%2$s; U; %3$s; %4$s-%5$s) Gecko/20100101 Firefox/19.0", 
-        System.getProperty("os.name", "Linux"),
+    String ua = String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:19.0) Gecko/20100101 Firefox/19.0", 
+        hardcodeOS,
+        System.getProperty("os.name", ""),
         System.getProperty("os.version", ""),
-        System.getProperty("os.arch", "amd64"),
+        System.getProperty("os.arch", ""),
         System.getProperty("user.language", "en"),
         System.getProperty("user.country", "EN"));
     // @formatter:on
+
     return ua;
   }
 }
