@@ -63,14 +63,23 @@ public class TvShowTest {
   @Test
   public void testRenamerParams() {
     // setup dummy
-    TvShowEpisode ep = new TvShowEpisode();
-    ep.setTitle("title of tv episode");
-    ep.setSeason(1);
-    ep.setEpisode(2);
-    ep.addToMediaFiles(new MediaFile());
+    MediaFile dmf = new MediaFile();
 
     TvShow show = new TvShow();
-    show.setTitle("My TvShow");
+    show.setTitle("showname");
+
+    TvShowEpisode ep = new TvShowEpisode();
+    ep.setTitle("episodetitle1");
+    ep.setSeason(1);
+    ep.setEpisode(2);
+    ep.addToMediaFiles(dmf);
+    show.addEpisode(ep);
+
+    ep = new TvShowEpisode();
+    ep.setTitle("episodetitle2");
+    ep.setSeason(1);
+    ep.setEpisode(2);
+    ep.addToMediaFiles(dmf);
     show.addEpisode(ep);
 
     TvShowList.getInstance().addTvShow(show);
@@ -83,9 +92,9 @@ public class TvShowTest {
     Globals.settings.getTvShowSettings().setRenamerFormat(TvShowEpisodeNaming.WITH_SE);
     Globals.settings.getTvShowSettings().setRenamerSeparator("_");
 
-    // diplay renamed EP name :)
+    // display renamed EP name :)
     MediaFile mf = show.getSeasons().get(0).getMediaFiles().get(0);
-    System.out.println(TvShowRenamer.generateFilename(show.getSeasons().get(0), mf));
+    System.out.println(TvShowRenamer.generateFilename(show.getSeasons().get(0), mf) + ".ext");
   }
 
   /**
