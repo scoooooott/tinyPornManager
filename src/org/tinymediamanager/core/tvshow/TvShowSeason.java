@@ -18,10 +18,14 @@ package org.tinymediamanager.core.tvshow;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 
 /**
  * The Class TvShowSeason.
@@ -129,5 +133,35 @@ public class TvShowSeason extends AbstractModelObject {
    */
   public String getPosterUrl() {
     return tvShow.getSeasonPosterUrl(season);
+  }
+
+  /**
+   * return ALL MediaFiles for Season
+   * 
+   * @return list of MediaFiles (w/o dupes)
+   */
+  public List<MediaFile> getMediaFiles() {
+    ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
+    Set<MediaFile> unique = new LinkedHashSet<MediaFile>(mfs);
+    for (int i = 0; i < episodes.size(); i++) {
+      unique.addAll(episodes.get(i).getMediaFiles());
+    }
+    mfs.addAll(unique);
+    return mfs;
+  }
+
+  /**
+   * return ALL MediaFiles for Season, for specific type
+   * 
+   * @return List of MediaFiles (w/o dupes)
+   */
+  public List<MediaFile> getMediaFiles(MediaFileType type) {
+    ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
+    Set<MediaFile> unique = new LinkedHashSet<MediaFile>(mfs);
+    for (int i = 0; i < episodes.size(); i++) {
+      unique.addAll(episodes.get(i).getMediaFiles(type));
+    }
+    mfs.addAll(unique);
+    return mfs;
   }
 }

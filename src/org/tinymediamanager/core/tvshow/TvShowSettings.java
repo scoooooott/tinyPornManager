@@ -18,6 +18,8 @@ package org.tinymediamanager.core.tvshow;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -53,6 +55,21 @@ public class TvShowSettings extends AbstractModelObject {
   /** The Constant CERTIFICATION_COUNTRY. */
   private final static String CERTIFICATION_COUNTRY = "certificationCountry";
 
+  /** add TV show name to filename? */
+  private final static String RENAMER_ADD_SHOW      = "renamerAddShow";
+
+  /** add season number to filename? */
+  private final static String RENAMER_ADD_SEASON    = "renamerAddSeason";
+
+  /** add title (if 1 EP) to filename? */
+  private final static String RENAMER_ADD_TITLE     = "renamerAddTitle";
+
+  /** TvShowRenamer.Format enum */
+  private final static String RENAMER_FORMAT        = "renamerFormat";
+
+  /** Renamer separator character */
+  private final static String RENAMER_SEPARATOR     = "renamerSeparator";
+
   /** The movie data sources. */
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -69,6 +86,21 @@ public class TvShowSettings extends AbstractModelObject {
 
   /** The country for certification. */
   private CountryCode         certificationCountry  = CountryCode.US;
+
+  /** add TV show name to filename? */
+  private boolean             renamerAddShow        = true;
+
+  /** add season number to filename? */
+  private boolean             renamerAddSeason      = true;
+
+  /** add title (if 1 EP) to filename? */
+  private boolean             renamerAddTitle       = true;
+
+  @Enumerated(EnumType.STRING)
+  private TvShowEpisodeNaming renamerFormat         = TvShowEpisodeNaming.WITH_SE;
+
+  /** Separator char */
+  private String              renamerSeparator      = "_";
 
   /**
    * Instantiates a new tv show settings.
@@ -194,4 +226,114 @@ public class TvShowSettings extends AbstractModelObject {
     certificationCountry = newValue;
     firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
   }
+
+  /** add TV show name to filename? */
+  /** add season number to filename? */
+  /** add title (if 1 EP) to filename? */
+
+  /**
+   * Should we add TV show name to filename?
+   * 
+   * @return true/false
+   */
+  public boolean getRenamerAddShow() {
+    return renamerAddShow;
+  }
+
+  /**
+   * Should we add TV show name to filename?
+   * 
+   * @param newValue
+   *          true/false
+   */
+  public void setRenamerAddShow(boolean newValue) {
+    boolean oldValue = this.renamerAddShow;
+    this.renamerAddShow = newValue;
+    firePropertyChange(RENAMER_ADD_SHOW, oldValue, newValue);
+  }
+
+  /**
+   * Should we add season name to filename?
+   * 
+   * @return true/false
+   */
+  public boolean getRenamerAddSeason() {
+    return renamerAddSeason;
+  }
+
+  /**
+   * Should we add season name to filename?
+   * 
+   * @param newValue
+   *          true/false
+   */
+  public void setRenamerAddSeason(boolean newValue) {
+    boolean oldValue = this.renamerAddSeason;
+    this.renamerAddSeason = newValue;
+    firePropertyChange(RENAMER_ADD_SEASON, oldValue, newValue);
+  }
+
+  /**
+   * Should we add title to filename?
+   * 
+   * @return true/false
+   */
+  public boolean getRenamerAddTitle() {
+    return renamerAddTitle;
+  }
+
+  /**
+   * Should we add title to filename?
+   * 
+   * @param newValue
+   *          true/false
+   */
+  public void setRenamerAddTitle(boolean newValue) {
+    boolean oldValue = this.renamerAddTitle;
+    this.renamerAddTitle = newValue;
+    firePropertyChange(RENAMER_ADD_TITLE, oldValue, newValue);
+  }
+
+  /**
+   * gets the renamer format
+   * 
+   * @return TvShowRenamer.Format enum
+   */
+  public TvShowEpisodeNaming getRenamerFormat() {
+    return renamerFormat;
+  }
+
+  /**
+   * sets the renamer format
+   * 
+   * @param newValue
+   *          TvShowRenamer.Format enum
+   */
+  public void setRenamerFormat(TvShowEpisodeNaming newValue) {
+    TvShowEpisodeNaming oldValue = this.renamerFormat;
+    this.renamerFormat = newValue;
+    firePropertyChange(RENAMER_FORMAT, oldValue, newValue);
+  }
+
+  /**
+   * gets the renamer separator char
+   * 
+   * @return separator
+   */
+  public String getRenamerSeparator() {
+    return renamerSeparator;
+  }
+
+  /**
+   * the renamer separator char to set
+   * 
+   * @param newValue
+   *          a char (or string ;)
+   */
+  public void setRenamerSeparator(String newValue) {
+    String oldValue = this.renamerSeparator;
+    this.renamerSeparator = newValue;
+    firePropertyChange(RENAMER_SEPARATOR, oldValue, newValue);
+  }
+
 }
