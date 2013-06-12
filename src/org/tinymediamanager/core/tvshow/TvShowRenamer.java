@@ -32,7 +32,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 
 /**
- * The Class MovieRenamer.
+ * The TvShow renamer
  * 
  * @author Myron Boyle
  */
@@ -44,23 +44,12 @@ public class TvShowRenamer {
   /**
    * add leadingZero if only 1 char
    * 
-   * @param text
-   *          the text
-   * @return the string with a leading 0
-   */
-  private static String lz(String text) {
-    return text.length() == 1 ? "0" + text : text;
-  }
-
-  /**
-   * add leadingZero if only 1 char
-   * 
    * @param num
    *          the number
    * @return the string with a leading 0
    */
   private static String lz(int num) {
-    return lz(String.valueOf(num));
+    return String.format("%02d", num);
   }
 
   /**
@@ -75,7 +64,7 @@ public class TvShowRenamer {
   }
 
   /**
-   * generates the filename of a MediaFile according to settings
+   * generates the filename of a TvShow MediaFile according to settings
    * 
    * @param mf
    *          MediaFile
@@ -125,8 +114,20 @@ public class TvShowRenamer {
       filename = filename + e;
 
       if (Globals.settings.getTvShowSettings().getRenamerAddTitle()) {
-        filename = filename + separator + cleanForFilename(ep.getTitle());
+        String epTitle = cleanForFilename(ep.getTitle());
+        if (epTitle.matches("[0-9]+.*") && separator.equals(".")) {
+          // EP title starts with a number, so "S01E01.1 Day in..." could be misleading parsed
+          // as sub-episode E01.1 - override separator for that hardcoded!
+          filename = filename + '_';
+        }
+        else {
+          filename = filename + separator;
+        }
+        filename = filename + epTitle;
       }
+    }
+    if (filename.startsWith(separator)) {
+      filename = filename.substring(separator.length());
     }
 
     return filename;
