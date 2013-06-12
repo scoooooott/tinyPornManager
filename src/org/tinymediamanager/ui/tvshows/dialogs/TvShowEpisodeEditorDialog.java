@@ -328,8 +328,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       lblFilename.setText(mediaFile.getPath() + File.separator + mediaFile.getFilename());
       tfTitle.setText(episodeToEdit.getTitle());
 
-      spSeason.setModel(new SpinnerNumberModel(episodeToEdit.getSeason(), 0, Integer.MAX_VALUE, 1));
-      spEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getEpisode(), 0, Integer.MAX_VALUE, 1));
+      spSeason.setModel(new SpinnerNumberModel(episodeToEdit.getSeason(), Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
+      spEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getEpisode(), Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
 
       SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
       // spDateAdded.setEditor(new JSpinner.DateEditor(spDateAdded, dateFormat.toPattern()));
