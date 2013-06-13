@@ -16,10 +16,13 @@
 package org.tinymediamanager.ui.tvshows.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -67,6 +70,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -83,61 +87,26 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener {
 
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 7702248909791283043L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-
-  /** The static LOGGER. */
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
 
-  /** The cast. */
-  private List<TvShowActor>           cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-
-  /** The episode to edit. */
   private TvShowEpisode               episodeToEdit;
-
-  /** The continue queue. */
+  private List<TvShowActor>           cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
   private boolean                     continueQueue    = true;
 
-  /** The tf title. */
   private JTextField                  tfTitle;
-
-  /** The lbl filename. */
   private JLabel                      lblFilename;
-
-  /** The sp episode. */
   private JSpinner                    spEpisode;
-
-  /** The sp season. */
   private JSpinner                    spSeason;
-
-  /** The sp rating. */
   private JSpinner                    spRating;
-
-  /** The sp first aired. */
   private JSpinner                    spFirstAired;
-
-  /** The sp date added. */
   private JSpinner                    spDateAdded;
-
-  /** The chckbx watched. */
   private JCheckBox                   chckbxWatched;
-
-  /** The lbl thumb. */
   private ImageLabel                  lblThumb;
-
-  /** The ta plot. */
   private JTextArea                   taPlot;
-
-  /** The tf director. */
   private JTextField                  tfDirector;
-
-  /** The tf writer. */
   private JTextField                  tfWriter;
-
-  /** The table guests. */
   private JTable                      tableGuests;
 
   /**
@@ -234,6 +203,17 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
 
       lblThumb = new ImageLabel();
       lblThumb.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
+      lblThumb.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          File file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
+          if (file != null && file.exists() && file.isFile()) {
+            String fileName = file.getPath();
+            lblThumb.setImageUrl("file:/" + fileName);
+          }
+        }
+      });
+      lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       contentPanel.add(lblThumb, "12, 6, 1, 11");
 
       JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
