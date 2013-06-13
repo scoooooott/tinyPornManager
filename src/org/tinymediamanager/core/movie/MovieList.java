@@ -616,6 +616,10 @@ public class MovieList extends AbstractModelObject {
    *          the new tag
    */
   private void addTag(String newTag) {
+    if (StringUtils.isBlank(newTag)) {
+      return;
+    }
+
     for (String tag : tagsObservable) {
       if (tag.equals(newTag)) {
         return;

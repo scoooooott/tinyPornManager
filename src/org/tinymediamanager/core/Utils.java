@@ -551,7 +551,6 @@ public class Utils {
   }
 
   private static String generateUA() {
-
     // this is due to the fact, that the OS is not correctly recognized (eg Mobile FirefoxOS, where it isn't)
     String hardcodeOS = "";
     if (Platform.isWindows()) {
@@ -578,5 +577,10 @@ public class Utils {
     // @formatter:on
 
     return ua;
+  }
+
+  public static void removeEmptyStringsFromList(List<String> list) {
+    list.removeAll(Collections.singleton(null));
+    list.removeAll(Collections.singleton(""));
   }
 }

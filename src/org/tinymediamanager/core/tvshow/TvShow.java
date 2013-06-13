@@ -266,6 +266,10 @@ public class TvShow extends MediaEntity {
   public void initializeAfterLoading() {
     super.initializeAfterLoading();
 
+    // remove empty tag and null values
+    Utils.removeEmptyStringsFromList(tags);
+    Utils.removeEmptyStringsFromList(genres);
+
     actorsObservables = ObservableCollections.observableList(actors);
     episodesObservable = ObservableCollections.observableList(episodes);
     tagsObservable = ObservableCollections.observableList(tags);
@@ -940,6 +944,10 @@ public class TvShow extends MediaEntity {
    *          the new tag
    */
   public void addToTags(String newTag) {
+    if (StringUtils.isBlank(newTag)) {
+      return;
+    }
+
     for (String tag : tagsObservable) {
       if (tag.equals(newTag)) {
         return;

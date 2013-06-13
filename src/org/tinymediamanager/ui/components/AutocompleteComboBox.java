@@ -90,7 +90,12 @@ public class AutocompleteComboBox extends JComboBox implements JComboBox.KeySele
             ComboBoxModel aModel = getModel();
             String current;
             for (int i = 0; i < aModel.getSize(); i++) {
-              current = aModel.getElementAt(i).toString();
+              if (aModel.getElementAt(i) != null) {
+                current = aModel.getElementAt(i).toString();
+              }
+              else {
+                current = "";
+              }
               if (current.toLowerCase().startsWith(text.toLowerCase())) {
                 tf.setText(current);
                 tf.setSelectionStart(text.length());
