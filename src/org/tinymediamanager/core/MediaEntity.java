@@ -112,6 +112,15 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
+   * get the INTERNAL ID of this object. Do not confuse it with the IDs from the metadata provider!
+   * 
+   * @return internal id
+   */
+  public int getId() {
+    return id;
+  }
+
+  /**
    * Gets the id.
    * 
    * @return the id

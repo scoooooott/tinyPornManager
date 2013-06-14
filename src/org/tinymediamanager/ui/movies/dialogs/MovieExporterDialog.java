@@ -62,37 +62,18 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieExporterDialog extends JDialog {
 
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = 4085262825778794266L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
-
-  /** The static LOGGER. */
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieExporterDialog.class);
 
-  /** The movies. */
   private List<Movie>                 movies;
-
-  /** The templates found. */
   private List<ExportTemplate>        templatesFound;
 
-  /** The tf export dir. */
   private JTextField                  tfExportDir;
-
-  /** The list. */
   private JList                       list;
-
-  /** The lbl template name. */
   private JLabel                      lblTemplateName;
-
-  /** The lbl url. */
   private JLabel                      lblUrl;
-
-  /** The tp description. */
   private JTextPane                   tpDescription;
-
-  /** The chckbx template with detail. */
   private JCheckBox                   chckbxTemplateWithDetail;
 
   /**
