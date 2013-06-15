@@ -52,7 +52,7 @@ public class ParserUtils {
         "nfofix", "unrated", "ws", "telesync", "ts", "telecine", "tc", "brrip", "bdrip", "480p", "480i", "576p", "576i", "720p", "720i", "1080p",
         "1080i", "hrhd", "hrhdtv", "hddvd", "bluray", "blueray", "x264", "h264", "xvid", "xvidvd", "xxx", "www", "cd1", "cd2", "cd3", "cd4", "cd5",
         "cd6", "cd7", "cd8", "cd9", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8", "dvd9", "disc1", "disc2", "disc3", "disc4",
-        "disc5", "disc6", "disc7", "disc8", "disc9", "workprint" };
+        "disc5", "disc6", "disc7", "disc8", "disc9", "workprint", "uncut", "extended" };
 
     if (filename == null || filename.isEmpty()) {
       LOGGER.warn("Filename empty?!");

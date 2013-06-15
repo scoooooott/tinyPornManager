@@ -98,6 +98,9 @@ public class MediaMetadata {
   /** The trailers. */
   private List<MediaTrailer>      trailers          = new ArrayList<MediaTrailer>();
 
+  /** the collection name (eg MovieSet) */
+  private String                  collectionName    = "";
+
   /**
    * Instantiates a new media metadata.
    * 
@@ -693,6 +696,14 @@ public class MediaMetadata {
   public void setPosterUrl(String posterUrl) {
     if (posterUrl != null)
       this.posterUrl = posterUrl;
+  }
+
+  public String getCollectionName() {
+    return this.collectionName;
+  }
+
+  public void setCollectionName(String collectionName) {
+    this.collectionName = collectionName;
   }
 
   /**

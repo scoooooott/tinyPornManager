@@ -978,11 +978,25 @@ public class Movie extends MediaEntity {
     // set scraped
     setScraped(true);
 
+    // update DB
+    saveToDb();
+
+    // create MovieSet
+    if (config.isCollection()) {
+      int col = metadata.getTmdbIdSet();
+      if (col != 0) {
+        MovieSet ms = new MovieSet();
+        ms.setTitle(metadata.getCollectionName());
+        ms.setTmdbId(col);
+        ms.addMovie(this);
+        saveToDb();
+        MovieList.getInstance().addMovieSet(ms);
+      }
+    }
+
     // write NFO
     writeNFO();
 
-    // update DB
-    saveToDb();
   }
 
   /**

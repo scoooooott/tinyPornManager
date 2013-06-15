@@ -76,6 +76,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       startProgressBar("prepare scan...");
       for (String ds : dataSources) {
         File[] dirs = new File(ds).listFiles();
+        if (dirs == null) {
+          continue;
+        }
         for (File file : dirs) {
           if (file.isDirectory()) {
             submitTask(new FindMovieTask(file, ds));
@@ -88,6 +91,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       LOGGER.info("removing orphaned movies/files...");
       startProgressBar("cleanup...");
       for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
+        if (cancel) {
+          break;
+        }
         Movie movie = movieList.getMovies().get(i);
         File movieDir = new File(movie.getPath());
         if (!movieDir.exists()) {
@@ -106,19 +112,20 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       LOGGER.info("Done updating datasource :)");
 
-      LOGGER.info("get MediaInfo...");
-      // update MediaInfo
-      startProgressBar("getting Mediainfo...");
-      initThreadPool(1, "mediainfo");
-      for (Movie m : movieList.getMovies()) {
-        submitTask(new MediaFileInformationFetcherTask(m.getMediaFiles(), m));
+      if (!cancel) {
+        LOGGER.info("get MediaInfo...");
+        // update MediaInfo
+        startProgressBar("getting Mediainfo...");
+        initThreadPool(1, "mediainfo");
+        for (Movie m : movieList.getMovies()) {
+          submitTask(new MediaFileInformationFetcherTask(m.getMediaFiles(), m));
+        }
+        waitForCompletionOrCancel();
+        LOGGER.info("Done getting MediaInfo)");
       }
-      waitForCompletionOrCancel();
       if (cancel) {
         cancel(false);// swing cancel
       }
-      LOGGER.info("Done getting MediaInfo)");
-
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);

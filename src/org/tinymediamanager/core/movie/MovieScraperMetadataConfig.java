@@ -63,6 +63,9 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
   /** The trailer. */
   private boolean trailer       = true;
 
+  /** Scrape collections (movieset)? */
+  private boolean collection    = true;
+
   /**
    * Instantiates a new scraper metadata config.
    */
@@ -176,6 +179,15 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
    */
   public boolean isTrailer() {
     return trailer;
+  }
+
+  /**
+   * Checks if is collection.
+   * 
+   * @return true, if is collection
+   */
+  public boolean isCollection() {
+    return collection;
   }
 
   /**
@@ -318,6 +330,18 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
     boolean oldValue = this.trailer;
     this.trailer = newValue;
     firePropertyChange("trailer", oldValue, newValue);
+  }
+
+  /**
+   * Sets the collection (movie set).
+   * 
+   * @param newValue
+   *          the new collection (movie set)
+   */
+  public void setCollection(boolean newValue) {
+    boolean oldValue = this.trailer;
+    this.collection = newValue;
+    firePropertyChange("collection", oldValue, newValue);
   }
 
 }

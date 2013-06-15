@@ -267,6 +267,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     md.setTmdbId(movie.getId());
     if (movie.getBelongsToCollection() != null) {
       md.setTmdbIdSet(movie.getBelongsToCollection().getId());
+      CollectionInfo info = tmdb.getCollectionInfo(md.getTmdbIdSet(), Globals.settings.getMovieSettings().getScraperLanguage().name());
+      if (info != null) {
+        md.setCollectionName(info.getName());
+      }
     }
     md.setPlot(movie.getOverview());
     md.setTitle(movie.getTitle());
