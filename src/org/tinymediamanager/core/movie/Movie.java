@@ -988,9 +988,11 @@ public class Movie extends MediaEntity {
         MovieSet ms = new MovieSet();
         ms.setTitle(metadata.getCollectionName());
         ms.setTmdbId(col);
-        ms.addMovie(this);
-        saveToDb();
+        ms.saveToDb();
         MovieList.getInstance().addMovieSet(ms);
+        ms.addMovie(this);
+        setMovieSet(ms);
+        saveToDb();
       }
     }
 
