@@ -640,6 +640,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
 
     if (StringUtils.isEmpty(searchTerm)) {
+      searchTerm = query.get(SearchParam.TITLE);
+    }
+
+    if (StringUtils.isEmpty(searchTerm)) {
       return result;
     }
 
@@ -663,25 +667,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     Document doc;
     try {
       CachedUrl url = new CachedUrl(sb.toString());
-
-      // build a http header for the preferred language
-      StringBuilder languages = new StringBuilder();
-
-      Locale jreLocale = Locale.getDefault();
-
-      languages.append(jreLocale.getLanguage());
-      languages.append("-");
-      languages.append(jreLocale.getCountry());
-      languages.append(",");
-
-      languages.append(jreLocale.getLanguage());
-      languages.append(";q=0.8");
-
-      if (!"en".equalsIgnoreCase(jreLocale.getLanguage())) {
-        languages.append(",en;q=0.5");
-      }
-
-      url.addHeader("Accept-Language", languages.toString());
+      url.addHeader("Accept-Language", getAcceptLanguage());
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "");
     }
     catch (Exception e) {
@@ -839,7 +825,14 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       // populate extra args
       MetadataUtil.copySearchQueryToSearchResult(query, sr);
 
-      sr.setScore(MetadataUtil.calculateScore(searchTerm, movieName));
+      if (movieId.equals(query.get(SearchParam.IMDBID))) {
+        // perfect match
+        sr.setScore(1);
+      }
+      else {
+        // compare score based on names
+        sr.setScore(MetadataUtil.calculateScore(searchTerm, movieName));
+      }
 
       result.add(sr);
 
@@ -850,6 +843,32 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
 
     return result;
+  }
+
+  /**
+   * generates the accept-language http header for imdb
+   * 
+   * @return the header to set
+   */
+  private String getAcceptLanguage() {
+    // build a http header for the preferred language
+    StringBuilder languages = new StringBuilder();
+
+    Locale jreLocale = Locale.getDefault();
+
+    languages.append(jreLocale.getLanguage());
+    languages.append("-");
+    languages.append(jreLocale.getCountry());
+    languages.append(",");
+
+    languages.append(jreLocale.getLanguage());
+    languages.append(";q=0.8");
+
+    if (!"en".equalsIgnoreCase(jreLocale.getLanguage())) {
+      languages.append(",en;q=0.5");
+    }
+
+    return languages.toString();
   }
 
   /**
@@ -922,6 +941,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       doc = null;
       try {
         CachedUrl cachedUrl = new CachedUrl(url);
+        cachedUrl.addHeader("Accept-Language", getAcceptLanguage());
         doc = Jsoup.parse(cachedUrl.getInputStream(), imdbSite.getCharset().displayName(), "");
       }
       catch (Exception e) {

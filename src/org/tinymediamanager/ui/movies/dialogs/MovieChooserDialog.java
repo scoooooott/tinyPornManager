@@ -148,6 +148,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     scraperMetadataConfig.setGenres(settings.isGenres());
     scraperMetadataConfig.setArtwork(settings.isArtwork());
     scraperMetadataConfig.setTrailer(settings.isTrailer());
+    scraperMetadataConfig.setCollection(settings.isCollection());
 
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -189,7 +190,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         panelSearchField.add(btnSearch, "7, 3");
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
-            searchMovie(textFieldSearchString.getText(), "");
+            searchMovie(textFieldSearchString.getText(), null);
           }
         });
         getRootPane().setDefaultButton(btnSearch);
@@ -342,7 +343,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       // adjust column name
       table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
       textFieldSearchString.setText(movieToScrape.getTitle());
-      searchMovie(textFieldSearchString.getText(), movieToScrape.getImdbId());
+      searchMovie(textFieldSearchString.getText(), movieToScrape);
       lblPath.setText(movieToScrape.getPath());
     }
 
@@ -454,11 +455,11 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
    * 
    * @param searchTerm
    *          the search term
-   * @param imdbId
-   *          the imdb id
+   * @param Movie
+   *          the movie
    */
-  private void searchMovie(String searchTerm, String imdbId) {
-    SearchTask task = new SearchTask(searchTerm, imdbId);
+  private void searchMovie(String searchTerm, Movie movie) {
+    SearchTask task = new SearchTask(searchTerm, movie);
     task.execute();
   }
 
@@ -493,20 +494,20 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     /** The search term. */
     private String searchTerm;
 
-    /** The imdb id. */
-    private String imdbId;
+    /** The movie. */
+    private Movie  movie;
 
     /**
      * Instantiates a new search task.
      * 
      * @param searchTerm
      *          the search term
-     * @param imdbId
-     *          the imdb id
+     * @param Movie
+     *          the movie
      */
-    public SearchTask(String searchTerm, String imdbId) {
+    public SearchTask(String searchTerm, Movie movie) {
       this.searchTerm = searchTerm;
-      this.imdbId = imdbId;
+      this.movie = movie;
     }
 
     /*
@@ -517,7 +518,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, "0", imdbId, metadataProvider);
+      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, movie, metadataProvider);
       moviesFound.clear();
       if (searchResult.size() == 0) {
         // display empty result
@@ -669,7 +670,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
       MovieScrapers selectedScraper = (MovieScrapers) cbScraper.getSelectedItem();
       metadataProvider = MovieList.getInstance().getMetadataProvider(selectedScraper);
-      searchMovie(textFieldSearchString.getText(), "");
+      searchMovie(textFieldSearchString.getText(), null);
     }
   }
 }

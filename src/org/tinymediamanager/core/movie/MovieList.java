@@ -301,6 +301,66 @@ public class MovieList extends AbstractModelObject {
    *          the metadata provider
    * @return the list
    */
+  public List<MediaSearchResult> searchMovie(String searchTerm, Movie movie, IMediaMetadataProvider metadataProvider) {
+    List<MediaSearchResult> sr = null;
+
+    try {
+      IMediaMetadataProvider provider = metadataProvider;
+      // get a new metadataprovider if nothing is set
+      if (provider == null) {
+        provider = getMetadataProvider();
+      }
+      boolean idFound = false;
+      // set what we have, so the provider could chose from all :)
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
+      if (movie != null) {
+        if (!movie.getImdbId().isEmpty()) {
+          options.set(SearchParam.IMDBID, movie.getImdbId());
+          idFound = true;
+        }
+        if (movie.getTmdbId() != 0) {
+          options.set(SearchParam.TMDBID, String.valueOf(movie.getTmdbId()));
+          idFound = true;
+        }
+        options.set(SearchParam.TITLE, movie.getTitle());
+        if (!movie.getYear().isEmpty()) {
+          options.set(SearchParam.YEAR, movie.getYear());
+        }
+      }
+      if (!searchTerm.isEmpty()) {
+        if (idFound) {
+          // id found, so search for it
+          // except when searchTerm differs from movie title (we entered something to search for)
+          if (!searchTerm.equals(movie.getTitle())) {
+            options.set(SearchParam.QUERY, searchTerm);
+          }
+        }
+        else {
+          options.set(SearchParam.QUERY, searchTerm);
+        }
+      }
+
+      sr = provider.search(options);
+    }
+    catch (Exception e) {
+      LOGGER.error("searchMovie", e);
+    }
+
+    return sr;
+  }
+
+  /**
+   * Search movie.
+   * 
+   * @param searchTerm
+   *          the search term
+   * @param ImdbId
+   *          the imdb id
+   * @param metadataProvider
+   *          the metadata provider
+   * @return the list
+   */
+  @Deprecated
   public List<MediaSearchResult> searchMovie(String searchTerm, String year, String ImdbId, IMediaMetadataProvider metadataProvider) {
     List<MediaSearchResult> sr = null;
     if (ImdbId != null && !ImdbId.isEmpty()) {
@@ -322,6 +382,7 @@ public class MovieList extends AbstractModelObject {
    *          the metadata provider
    * @return the list
    */
+  @Deprecated
   private List<MediaSearchResult> searchMovie(String searchTerm, String year, IMediaMetadataProvider metadataProvider) {
     // format searchstring
     // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
@@ -353,6 +414,7 @@ public class MovieList extends AbstractModelObject {
    *          the metadata provider
    * @return the list
    */
+  @Deprecated
   private List<MediaSearchResult> searchMovieByImdbId(String imdbId, IMediaMetadataProvider metadataProvider) {
 
     List<MediaSearchResult> searchResult = null;

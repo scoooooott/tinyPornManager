@@ -41,6 +41,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
@@ -270,42 +271,61 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = "";
     String imdb = "";
+    Elements filme = null;
 
     /*
      * Kat = All | Titel | Person | DTitel | OTitel | Regie | Darsteller | Song | Rolle | EAN| IMDb | Google
      * http://www.ofdb.de//view.php?page=suchergebnis &Kat=xxxxxxxxx&SText=yyyyyyyyyyy
      */
-    // detect the search preference (1. imdb, 2. title, 3. all)
-    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.IMDBID))) {
+    // 1. search with imdbId
+    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.IMDBID)) && (filme == null || filme.isEmpty())) {
       imdb = options.get(MediaSearchOptions.SearchParam.IMDBID);
       searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + imdb;
       LOGGER.debug("search with imdbId: " + imdb);
+
+      Url url = new CachedUrl(searchString);
+      InputStream in = url.getInputStream();
+      Document doc = Jsoup.parse(in, "UTF-8", "");
+      in.close();
+      // only look for movie links
+      filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
+      LOGGER.debug("found " + filme.size() + " search results");
     }
-    else if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE))) {
-      String title = options.get(MediaSearchOptions.SearchParam.TITLE);
-      title = MetadataUtil.removeNonSearchCharacters(title);
-      searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=Titel&SText=" + URLEncoder.encode(cleanSearch(title), "UTF-8");
-      LOGGER.debug("search with title: " + title);
-    }
-    else if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY))) {
+
+    // 2. search for search string
+    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY)) && (filme == null || filme.isEmpty())) {
       String query = options.get(MediaSearchOptions.SearchParam.QUERY);
       query = MetadataUtil.removeNonSearchCharacters(query);
       searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=All&SText=" + URLEncoder.encode(cleanSearch(query), "UTF-8");
       LOGGER.debug("search for everything: " + query);
-    }
-    else {
-      LOGGER.debug("empty searchString");
-      return resultList;
+
+      Url url = new CachedUrl(searchString);
+      InputStream in = url.getInputStream();
+      Document doc = Jsoup.parse(in, "UTF-8", "");
+      in.close();
+      // only look for movie links
+      filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
+      LOGGER.debug("found " + filme.size() + " search results");
     }
 
-    Url url = new CachedUrl(searchString);
-    InputStream in = url.getInputStream();
-    Document doc = Jsoup.parse(in, "UTF-8", "");
-    in.close();
-    // only look for movie links
-    Elements filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-    LOGGER.debug("found " + filme.size() + " search results");
+    // 3. search for title
+    if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE)) && (filme == null || filme.isEmpty())) {
+      String title = options.get(MediaSearchOptions.SearchParam.TITLE);
+      title = MetadataUtil.removeNonSearchCharacters(title);
+      searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=Titel&SText=" + URLEncoder.encode(cleanSearch(title), "UTF-8");
+      LOGGER.debug("search with title: " + title);
+
+      Url url = new CachedUrl(searchString);
+      InputStream in = url.getInputStream();
+      Document doc = Jsoup.parse(in, "UTF-8", "");
+      in.close();
+      // only look for movie links
+      filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
+      LOGGER.debug("found " + filme.size() + " search results");
+    }
+
     if (filme == null || filme.isEmpty()) {
+      LOGGER.debug("nothing found :(");
       return resultList;
     }
 
@@ -329,6 +349,15 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(), "images(.*?)\\&quot"));
         // populate extra args
         MetadataUtil.copySearchQueryToSearchResult(options, sr);
+
+        if (sr.getIMDBId().equals(options.get(SearchParam.IMDBID))) {
+          // perfect match
+          sr.setScore(1);
+        }
+        else {
+          // compare score based on names
+          sr.setScore(MetadataUtil.calculateScore(searchString, sr.getTitle()));
+        }
         resultList.add(sr);
       }
       catch (Exception e) {

@@ -39,6 +39,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
@@ -132,8 +133,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       throw new Exception("wrong media type for this scraper");
     }
 
-    // detect the string to search
-    if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
+    if (StringUtils.isEmpty(searchString) && StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.QUERY))) {
       searchString = query.get(MediaSearchOptions.SearchParam.QUERY);
     }
 
@@ -162,20 +162,44 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
     // tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
 
-    List<MovieDb> moviesFound = null;
+    List<MovieDb> moviesFound = new ArrayList<MovieDb>();
+
     synchronized (tmdb) {
-      // old api
-      // moviesFound = tmdb.searchMovie(searchString,
-      // Globals.settings.getScraperLanguage().name(), false);
-      // new api
-      trackConnections();
-      moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getMovieSettings().getScraperLanguage().name(), false, 0);
-      baseUrl = tmdb.getConfiguration().getBaseUrl();
+      // 1. try with TMDBid
+      if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.TMDBID))) {
+        trackConnections();
+        // if we have already an ID, get this result and do not search
+        int tmdbId = Integer.valueOf(query.get(MediaSearchOptions.SearchParam.TMDBID));
+        moviesFound.add(tmdb.getMovieInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name()));
+      }
+
+      // 2. try with IMDBid
+      if (moviesFound.size() == 0) {
+        if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.IMDBID))) {
+          trackConnections();
+          int tmdbId = getTmdbIdFromImdbId(query.get(MediaSearchOptions.SearchParam.IMDBID));
+          if (tmdbId != 0) {
+            // yay, we could successfully convert the imdbId to an tmdbID - use it :)
+            moviesFound.add(tmdb.getMovieInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name()));
+          }
+        }
+      }
+
+      // 3. try with search string and year
+      if (moviesFound.size() == 0) {
+        // new api
+        trackConnections();
+        moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getMovieSettings().getScraperLanguage().name(), false, 0);
+        baseUrl = tmdb.getConfiguration().getBaseUrl();
+      }
+
+      // 4. if the last token in search string seems to be a year, try without :)
       if (searchString.matches(".*\\s\\d{4}$") && (moviesFound == null || moviesFound.size() == 0)) {
         // nada found & last part seems to be date; strip off and try again
         searchString = searchString.replaceFirst("\\s\\d{4}$", "");
-        moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getMovieSettings().getScraperLanguage().name(), false, 0);
+        moviesFound = tmdb.searchMovie(searchString, 0, Globals.settings.getMovieSettings().getScraperLanguage().name(), false, 0);
       }
+
     }
 
     LOGGER.debug("found " + moviesFound.size() + " results");
@@ -201,7 +225,14 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       // populate extra args
       MetadataUtil.copySearchQueryToSearchResult(query, sr);
 
-      sr.setScore(MetadataUtil.calculateScore(searchString, movie.getTitle()));
+      if (sr.getIMDBId().equals(query.get(SearchParam.IMDBID)) || sr.getId().equals(query.get(SearchParam.TMDBID))) {
+        // perfect match
+        sr.setScore(1);
+      }
+      else {
+        // compare score based on names
+        sr.setScore(MetadataUtil.calculateScore(searchString, movie.getTitle()));
+      }
       resultList.add(sr);
     }
     Collections.sort(resultList);
