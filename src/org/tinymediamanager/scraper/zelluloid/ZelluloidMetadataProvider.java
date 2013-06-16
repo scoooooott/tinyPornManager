@@ -43,7 +43,6 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
@@ -445,7 +444,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
         // sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(),
         // "images(.*?)\\&quot"));
 
-        if (sr.getIMDBId().equals(options.get(SearchParam.IMDBID))) {
+        if (imdb.equals(sr.getIMDBId())) {
           // perfect match
           sr.setScore(1);
         }

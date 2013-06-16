@@ -39,7 +39,6 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
-import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
@@ -164,12 +163,14 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     List<MovieDb> moviesFound = new ArrayList<MovieDb>();
 
+    String imdbId = "";
+    int tmdbId = 0;
     synchronized (tmdb) {
       // 1. try with TMDBid
       if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.TMDBID))) {
         trackConnections();
         // if we have already an ID, get this result and do not search
-        int tmdbId = Integer.valueOf(query.get(MediaSearchOptions.SearchParam.TMDBID));
+        tmdbId = Integer.valueOf(query.get(MediaSearchOptions.SearchParam.TMDBID));
         moviesFound.add(tmdb.getMovieInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name()));
       }
 
@@ -177,7 +178,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       if (moviesFound.size() == 0) {
         if (StringUtils.isNotEmpty(query.get(MediaSearchOptions.SearchParam.IMDBID))) {
           trackConnections();
-          int tmdbId = getTmdbIdFromImdbId(query.get(MediaSearchOptions.SearchParam.IMDBID));
+          imdbId = query.get(MediaSearchOptions.SearchParam.IMDBID);
+          tmdbId = getTmdbIdFromImdbId(query.get(MediaSearchOptions.SearchParam.IMDBID));
           if (tmdbId != 0) {
             // yay, we could successfully convert the imdbId to an tmdbID - use it :)
             moviesFound.add(tmdb.getMovieInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name()));
@@ -225,7 +227,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       // populate extra args
       MetadataUtil.copySearchQueryToSearchResult(query, sr);
 
-      if (sr.getIMDBId().equals(query.get(SearchParam.IMDBID)) || sr.getId().equals(query.get(SearchParam.TMDBID))) {
+      if (imdbId.equals(sr.getIMDBId()) || String.valueOf(tmdbId).equals(sr.getId())) {
         // perfect match
         sr.setScore(1);
       }
