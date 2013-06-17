@@ -15,7 +15,7 @@ ${foreach movies movie}
     <!-- change style wether is an even or odd row -->
     <tr class="${if odd_movie}odd${end}${if even_movie}even${end}">
       <!-- print the movie name and link to the detail page -->
-      <td><a href="movies/${movie;filename}.html">${movie.name}</a></td>
+      <td><a href="movies/${movie;filename}.html">${movie.title}</a></td>
       <!-- print the movie year -->
       <td>${movie.year}</td>
       <!-- print the date when the movie has been added to tmm -->

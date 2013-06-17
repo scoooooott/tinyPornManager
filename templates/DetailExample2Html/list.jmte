@@ -17,7 +17,7 @@
 ${foreach movies movie}
       <li>
         <!-- and print their name including a link to the detail page -->
-        <a href="movies/${movie;filename}.html" target="detail">${movie.name}</a>
+        <a href="movies/${movie;filename}.html" target="detail">${movie.title}</a>
       </li>
 ${end}
     </ul>
