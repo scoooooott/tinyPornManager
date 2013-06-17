@@ -57,14 +57,14 @@ import org.tinymediamanager.core.tvshow.TvShowSettings;
 import ch.qos.logback.classic.Level;
 
 /**
- * The Class Settings.
+ * The Class Settings - holding all settings for tmm.
  * 
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tinyMediaManager")
 public class Settings extends AbstractModelObject {
-  /** The Constant logger. */
   private static final Logger         LOGGER                      = LoggerFactory.getLogger(Settings.class);
+  private static Settings             instance;
 
   /**
    * the current settings file version<br>
@@ -74,73 +74,38 @@ public class Settings extends AbstractModelObject {
    */
   private static final String         SETTINGS_VERSION            = "2.1";
 
-  /** The instance. */
-  private static Settings             instance;
-
-  /** The Constant CONFIG_FILE. */
+  /**
+   * Constants mainly for events
+   */
   private final static String         CONFIG_FILE                 = "config.xml";
-
-  /** The Constant TITLE_PREFIX. */
   private final static String         TITLE_PREFIX                = "titlePrefix";
-
-  /** The Constant TITLE_PREFIX. */
   private final static String         PREFIX                      = "prefix";
-
-  /** The Constant VIDEO_FILE_TYPE. */
   private final static String         VIDEO_FILE_TYPE             = "videoFileTypes";
-
-  /** The Constant AUDIO_FILE_TYPE. */
   private final static String         AUDIO_FILE_TYPE             = "audioFileTypes";
-
-  /** The Constant VIDEO_FILE_TYPE. */
   private final static String         SUBTITLE_FILE_TYPE          = "subtitleFileTypes";
-
-  /** The Constant FILETYPE. */
   private final static String         FILETYPE                    = "filetype";
-
-  /** The Constant PROXY_HOST. */
   private final static String         PROXY_HOST                  = "proxyHost";
-
-  /** The Constant PROXY_PORT. */
   private final static String         PROXY_PORT                  = "proxyPort";
-
-  /** The Constant PROXY_USERNAME. */
   private final static String         PROXY_USERNAME              = "proxyUsername";
-
-  /** The Constant PROXY_PASSWORD. */
   private final static String         PROXY_PASSWORD              = "proxyPassword";
-
-  /** The Constant CLEAR_CACHE_SHUTDOWN. */
   private final static String         CLEAR_CACHE_SHUTDOWN        = "clearCacheShutdown";
-
-  /** The Constant LOG_LEVEL. */
   private final static String         LOG_LEVEL                   = "logLevel";
-
-  /** The Constant IMAGE_CACHE. */
   private final static String         IMAGE_CACHE                 = "imageCache";
-
-  /** The Constant IMAGE_CACHE_TYPE. */
   private final static String         IMAGE_CACHE_TYPE            = "imageCacheType";
-
-  /** The Constant IMAGE_CACHE_BACKGROUND. */
   private final static String         IMAGE_CACHE_BACKGROUND      = "imageCacheBackground";
 
-  /** The video file types. */
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
   private final List<String>          titlePrefix                 = ObservableCollections.observableList(new ArrayList<String>());
 
-  /** The video file types. */
   @XmlElementWrapper(name = VIDEO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>          videoFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
 
-  /** The audio file types. */
   @XmlElementWrapper(name = AUDIO_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>          audioFileTypes              = ObservableCollections.observableList(new ArrayList<String>());
 
-  /** The video file types. */
   @XmlElementWrapper(name = SUBTITLE_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>          subtitleFileTypes           = ObservableCollections.observableList(new ArrayList<String>());
@@ -148,52 +113,22 @@ public class Settings extends AbstractModelObject {
   @XmlAttribute
   private String                      version                     = "";
 
-  /** The proxy host. */
   private String                      proxyHost;
-
-  /** The proxy port. */
   private String                      proxyPort;
-
-  /** The proxy username. */
   private String                      proxyUsername;
-
-  /** The proxy password. */
   private String                      proxyPassword;
-
-  /** The log level. */
   private int                         logLevel                    = Level.DEBUG_INT;
-
-  /** The image cache. */
   private boolean                     imageCache                  = true;
-
-  /** The image cache type. */
   private CacheType                   imageCacheType              = CacheType.SMOOTH;
-
-  /** The image cache background. */
   private boolean                     imageCacheBackground        = false;
-
-  /** The dirty flag. */
   private boolean                     dirty                       = false;
-
-  /** The clear cache on shutdown. */
   private boolean                     clearCacheShutdown          = false;
-
-  /** The movie settings. */
   private MovieSettings               movieSettings               = null;
-
-  /** The tv show settings. */
   private TvShowSettings              tvShowSettings              = null;
-
-  /** The movieScraperMetadata configuration. */
   private MovieScraperMetadataConfig  movieScraperMetadataConfig  = null;
-
-  /** The tvShowScraperMetadata configuration. */
   private TvShowScraperMetadataConfig tvShowScraperMetadataConfig = null;
-
-  /** The window config. */
   private WindowConfig                windowConfig                = null;
 
-  /** The property change listener. */
   private PropertyChangeListener      propertyChangeListener;
 
   /**

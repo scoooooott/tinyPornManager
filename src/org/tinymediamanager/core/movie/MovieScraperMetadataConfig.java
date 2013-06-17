@@ -27,50 +27,24 @@ import org.tinymediamanager.core.AbstractModelObject;
 @XmlRootElement(name = "MovieScraperMetadata")
 public class MovieScraperMetadataConfig extends AbstractModelObject {
 
-  /** The title. */
+  /**
+   * these booleans indicate which metadata should be scraped
+   */
   private boolean title         = true;
-
-  /** The original title. */
   private boolean originalTitle = true;
-
-  /** The tagline. */
   private boolean tagline       = true;
-
-  /** The plot. */
   private boolean plot          = true;
-
-  /** The rating. */
   private boolean rating        = true;
-
-  /** The runtime. */
   private boolean runtime       = true;
-
-  /** The year. */
   private boolean year          = true;
-
-  /** The certification. */
   private boolean certification = true;
-
-  /** The cast. */
   private boolean cast          = true;
-
-  /** The genres. */
   private boolean genres        = true;
-
-  /** The artwork. */
   private boolean artwork       = true;
-
-  /** The trailer. */
   private boolean trailer       = true;
-
-  /** Scrape collections (movieset)? */
   private boolean collection    = true;
 
-  /**
-   * Instantiates a new scraper metadata config.
-   */
   public MovieScraperMetadataConfig() {
-
   }
 
   /**

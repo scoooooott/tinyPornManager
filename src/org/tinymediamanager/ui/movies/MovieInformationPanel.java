@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.movies;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
@@ -28,19 +27,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextPane;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.CertificationImageConverter;
 import org.tinymediamanager.ui.MediaInfoAudioCodecConverter;
@@ -49,10 +41,8 @@ import org.tinymediamanager.ui.MediaInfoVideoFormatConverter;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.VoteCountConverter;
 import org.tinymediamanager.ui.WatchedIconConverter;
-import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.StarRater;
-import org.tinymediamanager.ui.components.ZebraJTable;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -110,8 +100,8 @@ public class MovieInformationPanel extends JPanel {
   /** The lbl movie poster. */
   private ImageLabel                  lblMoviePoster;
 
-  /** The table cast. */
-  private JTable                      tableCast;
+  // /** The table cast. */
+  // private JTable tableCast;
 
   /** The tabbed pane movie details. */
   private JTabbedPane                 tabbedPaneMovieDetails;
@@ -120,25 +110,25 @@ public class MovieInformationPanel extends JPanel {
   private JPanel                      panelOverview;
 
   /** The panel movie cast. */
-  private JPanel                      panelMovieCast;
+  private MovieCastPanel              panelMovieCast;
 
   /** The panel details. */
   private JPanel                      panelDetails;
-
-  /** The lbl director t. */
-  private JLabel                      lblDirectorT;
-
-  /** The lbl director. */
-  private JLabel                      lblDirector;
-
-  /** The lbl writer t. */
-  private JLabel                      lblWriterT;
-
-  /** The lbl writer. */
-  private JLabel                      lblWriter;
-
-  /** The lbl actors. */
-  private JLabel                      lblActors;
+  //
+  // /** The lbl director t. */
+  // private JLabel lblDirectorT;
+  //
+  // /** The lbl director. */
+  // private JLabel lblDirector;
+  //
+  // /** The lbl writer t. */
+  // private JLabel lblWriterT;
+  //
+  // /** The lbl writer. */
+  // private JLabel lblWriter;
+  //
+  // /** The lbl actors. */
+  // private JLabel lblActors;
 
   /** The text pane. */
   private JTextPane                   tpOverview;
@@ -149,8 +139,8 @@ public class MovieInformationPanel extends JPanel {
   /** The panel media files. */
   private JPanel                      panelMediaFiles;
 
-  /** The lbl actor thumb. */
-  private ActorImageLabel             lblActorThumb;
+  // /** The lbl actor thumb. */
+  // private ActorImageLabel lblActorThumb;
 
   /** The panel movie trailer. */
   private MovieTrailerPanel           panelMovieTrailer;
@@ -294,42 +284,44 @@ public class MovieInformationPanel extends JPanel {
     tpOverview.setEditable(false);
     scrollPaneOverview.setViewportView(tpOverview);
 
-    panelMovieCast = new JPanel();
-    panelMovieCast.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(39dlu;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("125px"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("80px"),
-        RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
-
-    lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-    panelMovieCast.add(lblDirectorT, "2, 2");
-
-    lblDirector = new JLabel("");
-    lblDirectorT.setLabelFor(lblDirector);
-    panelMovieCast.add(lblDirector, "4, 2, 3, 1");
-
-    lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-    panelMovieCast.add(lblWriterT, "2, 4");
-
-    lblWriter = new JLabel("");
-    lblWriterT.setLabelFor(lblWriter);
-    panelMovieCast.add(lblWriter, "4, 4, 3, 1");
-
+    panelMovieCast = new MovieCastPanel(movieSelectionModel);
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelMovieCast, null); //$NON-NLS-1$
-
-    lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
-    panelMovieCast.add(lblActors, "2, 6, default, top");
-
-    // tableCast = new JTable();
-    tableCast = new ZebraJTable();
-    // JScrollPane scrollPaneMovieCast = new JScrollPane();
-    JScrollPane scrollPaneMovieCast = ZebraJTable.createStripedJScrollPane(tableCast);
-    lblActors.setLabelFor(scrollPaneMovieCast);
-    panelMovieCast.add(scrollPaneMovieCast, "4, 6, 1, 2");
-    scrollPaneMovieCast.setViewportView(tableCast);
-
-    lblActorThumb = new ActorImageLabel();
-    panelMovieCast.add(lblActorThumb, "6, 2, 1, 6, fill, fill");
+    // new JPanel();
+    // panelMovieCast.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(39dlu;default)"),
+    // FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("125px"),
+    // FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+    // FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("80px"),
+    // RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    //
+    //    lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
+    // panelMovieCast.add(lblDirectorT, "2, 2");
+    //
+    // lblDirector = new JLabel("");
+    // lblDirectorT.setLabelFor(lblDirector);
+    // panelMovieCast.add(lblDirector, "4, 2, 3, 1");
+    //
+    //    lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
+    // panelMovieCast.add(lblWriterT, "2, 4");
+    //
+    // lblWriter = new JLabel("");
+    // lblWriterT.setLabelFor(lblWriter);
+    // panelMovieCast.add(lblWriter, "4, 4, 3, 1");
+    //
+    //    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelMovieCast, null); //$NON-NLS-1$
+    //
+    //    lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+    // panelMovieCast.add(lblActors, "2, 6, default, top");
+    //
+    // // tableCast = new JTable();
+    // tableCast = new ZebraJTable();
+    // // JScrollPane scrollPaneMovieCast = new JScrollPane();
+    // JScrollPane scrollPaneMovieCast = ZebraJTable.createStripedJScrollPane(tableCast);
+    // lblActors.setLabelFor(scrollPaneMovieCast);
+    // panelMovieCast.add(scrollPaneMovieCast, "4, 6, 1, 2");
+    // scrollPaneMovieCast.setViewportView(tableCast);
+    //
+    // lblActorThumb = new ActorImageLabel();
+    // panelMovieCast.add(lblActorThumb, "6, 2, 1, 6, fill, fill");
 
     panelMediaInformation = new MovieMediaInformationPanel(movieSelectionModel);
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
@@ -342,31 +334,6 @@ public class MovieInformationPanel extends JPanel {
 
     // beansbinding init
     initDataBindings();
-  }
-
-  /**
-   * Inits the panel (steps which has to be done after binding in calling class).
-   */
-  void init() {
-    if (tableCast.getModel().getRowCount() > 0) {
-      tableCast.getSelectionModel().setSelectionInterval(0, 0);
-    }
-    else {
-      lblActorThumb.setImageUrl("");
-    }
-
-    // changes upon movie selection
-    tableCast.getModel().addTableModelListener(new TableModelListener() {
-      public void tableChanged(TableModelEvent e) {
-        // change to the first actor on movie change
-        if (tableCast.getModel().getRowCount() > 0) {
-          tableCast.getSelectionModel().setSelectionInterval(0, 0);
-        }
-        else {
-          lblActorThumb.setImageUrl("");
-        }
-      }
-    });
   }
 
   /**
@@ -414,29 +381,29 @@ public class MovieInformationPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JTextPane, String> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_14, tpOverview, jTextPaneBeanProperty);
     autoBinding_15.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_15 = BeanProperty.create("selectedMovie.director");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_16 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_15, lblDirector, jLabelBeanProperty);
-    autoBinding_16.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_16 = BeanProperty.create("selectedMovie.writer");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_16, lblWriter, jLabelBeanProperty);
-    autoBinding_17.bind();
-    //
-    BeanProperty<MovieSelectionModel, List<MovieActor>> movieSelectionModelBeanProperty_17 = BeanProperty.create("selectedMovie.actors");
-    JTableBinding<MovieActor, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_17, tableCast);
-    //
-    BeanProperty<MovieActor, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false);//$NON-NLS-1$
-    //
-    BeanProperty<MovieActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName(BUNDLE.getString("metatag.role")).setEditable(false);//$NON-NLS-1$
-    //
-    jTableBinding.setEditable(false);
-    jTableBinding.bind();
+    // //
+    // BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_15 = BeanProperty.create("selectedMovie.director");
+    // AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_16 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+    // movieSelectionModelBeanProperty_15, lblDirector, jLabelBeanProperty);
+    // autoBinding_16.bind();
+    // //
+    // BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_16 = BeanProperty.create("selectedMovie.writer");
+    // AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+    // movieSelectionModelBeanProperty_16, lblWriter, jLabelBeanProperty);
+    // autoBinding_17.bind();
+    // //
+    // BeanProperty<MovieSelectionModel, List<MovieActor>> movieSelectionModelBeanProperty_17 = BeanProperty.create("selectedMovie.actors");
+    // JTableBinding<MovieActor, MovieSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
+    // movieSelectionModel, movieSelectionModelBeanProperty_17, tableCast);
+    // //
+    // BeanProperty<MovieActor, String> movieCastBeanProperty = BeanProperty.create("name");
+    //    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false);//$NON-NLS-1$
+    // //
+    // BeanProperty<MovieActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
+    //    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName(BUNDLE.getString("metatag.role")).setEditable(false);//$NON-NLS-1$
+    // //
+    // jTableBinding.setEditable(false);
+    // jTableBinding.bind();
     //
     BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.votes");
     AutoBinding<MovieSelectionModel, Integer, JLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
@@ -461,18 +428,18 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_7, lblWatchedImage, jLabelBeanProperty_2);
     autoBinding_8.setConverter(new WatchedIconConverter());
     autoBinding_8.bind();
-    //
-    BeanProperty<MovieSelectionModel, Movie> movieSelectionModelBeanProperty_8 = BeanProperty.create("selectedMovie");
-    BeanProperty<ActorImageLabel, Movie> actorImageLabelBeanProperty = BeanProperty.create("movie");
-    AutoBinding<MovieSelectionModel, Movie, ActorImageLabel, Movie> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_8, lblActorThumb, actorImageLabelBeanProperty);
-    autoBinding_9.bind();
-    //
-    BeanProperty<JTable, MovieActor> jTableBeanProperty = BeanProperty.create("selectedElement");
-    BeanProperty<ActorImageLabel, MovieActor> actorImageLabelBeanProperty_1 = BeanProperty.create("actor");
-    AutoBinding<JTable, MovieActor, ActorImageLabel, MovieActor> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast,
-        jTableBeanProperty, lblActorThumb, actorImageLabelBeanProperty_1);
-    autoBinding_10.bind();
+    // //
+    // BeanProperty<MovieSelectionModel, Movie> movieSelectionModelBeanProperty_8 = BeanProperty.create("selectedMovie");
+    // BeanProperty<ActorImageLabel, Movie> actorImageLabelBeanProperty = BeanProperty.create("movie");
+    // AutoBinding<MovieSelectionModel, Movie, ActorImageLabel, Movie> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ,
+    // movieSelectionModel, movieSelectionModelBeanProperty_8, lblActorThumb, actorImageLabelBeanProperty);
+    // autoBinding_9.bind();
+    // //
+    // BeanProperty<JTable, MovieActor> jTableBeanProperty = BeanProperty.create("selectedElement");
+    // BeanProperty<ActorImageLabel, MovieActor> actorImageLabelBeanProperty_1 = BeanProperty.create("actor");
+    // AutoBinding<JTable, MovieActor, ActorImageLabel, MovieActor> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ, tableCast,
+    // jTableBeanProperty, lblActorThumb, actorImageLabelBeanProperty_1);
+    // autoBinding_10.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_9 = BeanProperty.create("selectedMovie.mediaInfoVideoFormat");
     AutoBinding<MovieSelectionModel, String, JLabel, Icon> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,

@@ -38,53 +38,26 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieScraperMetadataPanel extends JPanel {
-
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = 1053348917399322570L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
-
-  /** The config. */
   private MovieScraperMetadataConfig  config;
 
-  /** The chckbx title. */
+  /**
+   * UI Elements
+   */
   private JCheckBox                   chckbxTitle;
-
-  /** The chckbx original title. */
   private JCheckBox                   chckbxOriginalTitle;
-
-  /** The chckbx tagline. */
   private JCheckBox                   chckbxTagline;
-
-  /** The chckbx plot. */
   private JCheckBox                   chckbxPlot;
-
-  /** The chckbx rating. */
   private JCheckBox                   chckbxRating;
-
-  /** The chckbx runtime. */
   private JCheckBox                   chckbxRuntime;
-
-  /** The chckbx year. */
   private JCheckBox                   chckbxYear;
-
-  /** The chckbx certification. */
   private JCheckBox                   chckbxCertification;
-
-  /** The chckbx cast. */
   private JCheckBox                   chckbxCast;
-
-  /** The chckbx genres. */
   private JCheckBox                   chckbxGenres;
-
-  /** The chckbx artwork. */
   private JCheckBox                   chckbxArtwork;
-
-  /** The chckbx trailer. */
   private JCheckBox                   chckbxTrailer;
-
-  /** The chckbx Collection. */
   private JCheckBox                   chckbxCollection;
 
   /**

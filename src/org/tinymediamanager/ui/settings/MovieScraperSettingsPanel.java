@@ -52,66 +52,30 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieScraperSettingsPanel extends JPanel {
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = -299825914193235308L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The settings. */
   private Settings                    settings         = Settings.getInstance();
 
-  /** The button group scraper. */
+  /**
+   * UI Elements
+   */
   private ButtonGroup                 buttonGroupScraper;
-
-  /** The cb scraper tmdb language. */
   private JComboBox                   cbScraperLanguage;
-
-  /** The cb country. */
   private JComboBox                   cbCertificationCountry;
-
-  /** The cb imdb translateable content. */
   private JCheckBox                   cbImdbTranslateableContent;
-
-  /** The cb scraper imdb. */
   private JCheckBox                   cbScraperImdb;
-
-  /** The chckbx automatically scrape images. */
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
-
-  /** The cb imdb site. */
   private JComboBox                   cbImdbSite;
-
-  /** The panel scraper metadata. */
   private JPanel                      panelScraperMetadata;
-
-  /** The panel scraper metadata container. */
   private JPanel                      panelScraperMetadataContainer;
-
-  /** The cb scraper ofdbde. */
   private JCheckBox                   cbScraperOfdbde;
-
-  /** The cb scraper tmdb. */
   private JCheckBox                   cbScraperTmdb;
-
-  /** The panel. */
   private JPanel                      panel;
-
-  /** The cb the movie database. */
   private JCheckBox                   cbTheMovieDatabase;
-
-  /** The cb hdtrailersnet. */
   private JCheckBox                   cbHdtrailersnet;
-
-  /** The cb ofdbde. */
   private JCheckBox                   cbOfdbde;
-
-  /** The cb scraper zelluloidde. */
   private JCheckBox                   cbScraperZelluloidde;
-
-  /** The separator. */
-  private JSeparator                  separator;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -155,7 +119,7 @@ public class MovieScraperSettingsPanel extends JPanel {
     buttonGroupScraper.add(cbScraperZelluloidde);
     panelMovieScrapers.add(cbScraperZelluloidde, "1, 9");
 
-    separator = new JSeparator();
+    JSeparator separator = new JSeparator();
     panelMovieScrapers.add(separator, "1, 11, 3, 1");
 
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
