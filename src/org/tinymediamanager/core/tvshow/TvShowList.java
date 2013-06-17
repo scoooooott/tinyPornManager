@@ -406,7 +406,7 @@ public class TvShowList extends AbstractModelObject {
         TvShowEpisode episode = show.getEpisodes().get(j);
         for (int k = 0; k < episode.getMediaFiles().size(); k++) {
           MediaFile mediaFile = episode.getMediaFiles().get(k);
-          if (file.getPath().equals(mediaFile.getFile().getPath())) {
+          if (file.equals(mediaFile.getFile())) {
             return episode;
           }
         }
@@ -436,7 +436,7 @@ public class TvShowList extends AbstractModelObject {
         TvShowEpisode episode = show.getEpisodes().get(j);
         for (int k = 0; k < episode.getMediaFiles().size(); k++) {
           MediaFile mediaFile = episode.getMediaFiles().get(k);
-          if (file.getPath().equals(mediaFile.getFile().getPath())) {
+          if (file.equals(mediaFile.getFile())) {
             episodes.add(episode);
           }
         }
