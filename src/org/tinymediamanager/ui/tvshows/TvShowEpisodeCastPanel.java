@@ -15,25 +15,37 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.util.List;
+import static org.tinymediamanager.core.Constants.*;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.tvshow.TvShowActor;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ZebraJTable;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.ObservableElementList;
+import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -46,27 +58,20 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeCastPanel extends JPanel {
+  private static final long                   serialVersionUID = 4712144916016763491L;
+  private static final ResourceBundle         BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long                 serialVersionUID = 4712144916016763491L;
+  private final TvShowEpisodeSelectionModel   selectionModel;
+  private EventList<TvShowActor>              actorEventList   = null;
+  private DefaultEventTableModel<TvShowActor> actorTableModel  = null;
 
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The selection model. */
-  private final TvShowEpisodeSelectionModel selectionModel;
-
-  /** The table actors. */
-  private JTable                            tableActors;
-
-  /** The lbl actor image. */
-  private ImageLabel                        lblActorImage;
-
-  /** The lbl director. */
-  private JLabel                            lblDirector;
-
-  /** The lbl writer. */
-  private JLabel                            lblWriter;
+  /**
+   * UI elements
+   */
+  private JTable                              tableActors;
+  private ImageLabel                          lblActorImage;
+  private JLabel                              lblDirector;
+  private JLabel                              lblWriter;
 
   /**
    * Instantiates a new tv show episode cast panel.
@@ -74,8 +79,12 @@ public class TvShowEpisodeCastPanel extends JPanel {
    * @param selectionModel
    *          the selection model
    */
-  public TvShowEpisodeCastPanel(TvShowEpisodeSelectionModel selectionModel) {
-    this.selectionModel = selectionModel;
+  public TvShowEpisodeCastPanel(TvShowEpisodeSelectionModel model) {
+    this.selectionModel = model;
+    actorEventList = GlazedLists.threadSafeList(new ObservableElementList<TvShowActor>(new BasicEventList<TvShowActor>(), GlazedLists
+        .beanConnector(TvShowActor.class)));
+    actorTableModel = new DefaultEventTableModel<TvShowActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
+
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
         ColumnSpec.decode("125px"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -101,34 +110,45 @@ public class TvShowEpisodeCastPanel extends JPanel {
     JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
     add(lblActorsT, "2, 6, left, top");
 
-    JScrollPane scrollPaneActors = new JScrollPane();
+    tableActors = new JTable(actorTableModel);
+    JScrollPane scrollPaneActors = ZebraJTable.createStripedJScrollPane(tableActors);
+    scrollPaneActors.setViewportView(tableActors);
     add(scrollPaneActors, "4, 6, fill, fill");
 
-    tableActors = new JTable();
-    scrollPaneActors.setViewportView(tableActors);
     initDataBindings();
-  }
 
-  /**
-   * further initializations.
-   */
-  void init() {
-    if (tableActors.getModel().getRowCount() > 0) {
-      tableActors.getSelectionModel().setSelectionInterval(0, 0);
-    }
-    else {
-      lblActorImage.setImageUrl("");
-    }
-
-    // changes upon movie selection
-    tableActors.getModel().addTableModelListener(new TableModelListener() {
-      public void tableChanged(TableModelEvent e) {
-        // change to the first actor on movie change
-        if (tableActors.getModel().getRowCount() > 0) {
-          tableActors.getSelectionModel().setSelectionInterval(0, 0);
+    // install the propertychangelistener
+    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        String property = propertyChangeEvent.getPropertyName();
+        Object source = propertyChangeEvent.getSource();
+        // react on selection of a movie and change of an episode
+        if ((source.getClass() == TvShowEpisodeSelectionModel.class && "selectedTvShowEpisode".equals(property))
+            || (source.getClass() == TvShowEpisode.class && ACTORS.equals(property))) {
+          actorEventList.clear();
+          actorEventList.addAll(selectionModel.getSelectedTvShowEpisode().getActors());
+          if (actorEventList.size() > 0) {
+            tableActors.getSelectionModel().setSelectionInterval(0, 0);
+          }
+          else {
+            lblActorImage.setImageUrl("");
+          }
         }
-        else {
-          lblActorImage.setImageUrl("");
+      }
+    };
+
+    selectionModel.addPropertyChangeListener(propertyChangeListener);
+
+    // selectionlistener for the selected actor
+    tableActors.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent arg0) {
+        if (!arg0.getValueIsAdjusting()) {
+          int selectedRow = tableActors.convertRowIndexToModel(tableActors.getSelectedRow());
+          if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
+            TvShowActor actor = actorEventList.get(selectedRow);
+            lblActorImage.setImageUrl(actor.getThumb());
+          }
         }
       }
     });
@@ -138,26 +158,6 @@ public class TvShowEpisodeCastPanel extends JPanel {
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    BeanProperty<TvShowEpisodeSelectionModel, List<TvShowActor>> tvShowSelectionModelBeanProperty_2 = BeanProperty
-        .create("selectedTvShowEpisode.actors");
-    JTableBinding<TvShowActor, TvShowEpisodeSelectionModel, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        selectionModel, tvShowSelectionModelBeanProperty_2, tableActors);
-    //
-    BeanProperty<TvShowActor, String> movieCastBeanProperty = BeanProperty.create("name");
-    jTableBinding.addColumnBinding(movieCastBeanProperty).setColumnName(BUNDLE.getString("metatag.name")).setEditable(false);//$NON-NLS-1$
-    //
-    BeanProperty<TvShowActor, String> movieCastBeanProperty_1 = BeanProperty.create("character");
-    jTableBinding.addColumnBinding(movieCastBeanProperty_1).setColumnName(BUNDLE.getString("metatag.role")).setEditable(false); //$NON-NLS-1$
-    //
-    jTableBinding.setEditable(false);
-    jTableBinding.bind();
-    //
-    BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.thumb");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, tableActors, jTableBeanProperty,
-        lblActorImage, imageLabelBeanProperty);
-    autoBinding_2.bind();
-    //
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty = BeanProperty.create("selectedTvShowEpisode.director");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
     AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
@@ -168,5 +168,53 @@ public class TvShowEpisodeCastPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowEpisodeSelectionModelBeanProperty_1, lblWriter, jLabelBeanProperty);
     autoBinding_1.bind();
+  }
+
+  private static class ActorTableFormat implements AdvancedTableFormat<TvShowActor> {
+    @Override
+    public int getColumnCount() {
+      return 2;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+      switch (column) {
+        case 0:
+          return BUNDLE.getString("metatag.name");//$NON-NLS-1$
+
+        case 1:
+          return BUNDLE.getString("metatag.role");//$NON-NLS-1$
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public Object getColumnValue(TvShowActor actor, int column) {
+      switch (column) {
+        case 0:
+          return actor.getName();
+
+        case 1:
+          return actor.getCharacter();
+      }
+      throw new IllegalStateException();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Class getColumnClass(int column) {
+      switch (column) {
+        case 0:
+        case 1:
+          return String.class;
+      }
+      throw new IllegalStateException();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Comparator getColumnComparator(int column) {
+      return null;
+    }
   }
 }

@@ -121,7 +121,7 @@ public class MovieCastPanel extends JPanel {
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
-        // react on selection of a movie and change of a trailer
+        // react on selection of a movie and change of a movei
         if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
             || (source.getClass() == Movie.class && ACTORS.equals(property))) {
           actorEventList.clear();
@@ -144,6 +144,9 @@ public class MovieCastPanel extends JPanel {
           if (selectedRow >= 0 && selectedRow < actorEventList.size()) {
             MovieActor actor = actorEventList.get(selectedRow);
             lblActorThumb.setActor(actor);
+          }
+          else {
+            lblActorThumb.setImageUrl("");
           }
         }
       }

@@ -49,47 +49,22 @@ import com.bric.image.pixel.Scaling;
  * @author Manuel Laggner
  */
 public class ImageLabel extends JLabel {
-
-  /**
-   * The Enum Position.
-   * 
-   * @author Manuel Laggner
-   */
   public enum Position {
     TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
   }
 
-  /** The Constant BUNDLE. */
+  private static final long                serialVersionUID = -2524445544386464158L;
   private static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long                serialVersionUID = 1L;
-
-  /** The Constant logger. */
   private static final Logger              LOGGER           = LoggerFactory.getLogger(ImageLabel.class);
 
-  /** The original image. */
   private BufferedImage                    originalImage;
-
-  /** The image url. */
   private String                           imageUrl;
-
-  /** The image path. */
   private String                           imagePath;
-
-  /** The position. */
   private Position                         position         = Position.TOP_LEFT;
-
-  /** The alternative text. */
   private String                           alternativeText  = null;
-
-  /** The draw border. */
   private boolean                          drawBorder;
-
-  /** The draw full width. */
   private boolean                          drawFullWidth;
 
-  /** The worker. */
   private SwingWorker<BufferedImage, Void> worker           = null;
 
   /**
