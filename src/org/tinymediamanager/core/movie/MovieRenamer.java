@@ -513,54 +513,54 @@ public class MovieRenamer {
    *          the movie
    * @return the string
    */
-  protected static String createDestination(String template, Movie movie) {
+  public static String createDestination(String template, Movie movie) {
     String newDestination = template;
 
     // replace token title ($T)
     if (newDestination.contains("$T")) {
-      newDestination = newDestination.replaceAll("\\$T", movie.getTitle());
+      newDestination = replaceToken(newDestination, "$T", movie.getTitle());
     }
 
     // replace token first letter of title ($1)
     if (newDestination.contains("$1")) {
-      newDestination = newDestination.replaceAll("\\$1", movie.getTitle().substring(0, 1));
+      newDestination = replaceToken(newDestination, "$1", StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1) : "");
     }
 
     // replace token year ($Y)
     if (newDestination.contains("$Y")) {
-      newDestination = newDestination.replaceAll("\\$Y", movie.getYear());
+      newDestination = replaceToken(newDestination, "$Y", movie.getYear());
     }
 
     // replace token orignal title ($O)
     if (newDestination.contains("$O")) {
-      newDestination = newDestination.replaceAll("\\$O", movie.getOriginalTitle());
+      newDestination = replaceToken(newDestination, "$O", movie.getOriginalTitle());
     }
 
     // replace token IMDBid ($I)
     if (newDestination.contains("$I")) {
-      newDestination = newDestination.replaceAll("\\$I", movie.getImdbId());
+      newDestination = replaceToken(newDestination, "$I", movie.getImdbId());
     }
 
     // replace token sort title ($E)
     if (newDestination.contains("$E")) {
-      newDestination = newDestination.replaceAll("\\$E", movie.getSortTitle());
+      newDestination = replaceToken(newDestination, "$E", movie.getSortTitle());
     }
 
     if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
       MediaFile mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
       // replace token resolution ($R)
       if (newDestination.contains("$R")) {
-        newDestination = newDestination.replaceAll("\\$R", mf.getVideoResolution());
+        newDestination = replaceToken(newDestination, "$R", mf.getVideoResolution());
       }
 
       // replace token audio codec + channels ($A)
       if (newDestination.contains("$A")) {
-        newDestination = newDestination.replaceAll("\\$A", mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels());
+        newDestination = replaceToken(newDestination, "$A", mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels());
       }
 
       // replace token video codec + channels ($V)
       if (newDestination.contains("$V")) {
-        newDestination = newDestination.replaceAll("\\$V", mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat());
+        newDestination = replaceToken(newDestination, "$V", mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat());
       }
     }
     else {
@@ -576,13 +576,20 @@ public class MovieRenamer {
     // movie.getMediaSource());
     // }
 
-    // replace illegal characters
-    // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
-    newDestination = newDestination.replaceAll("([\"\\:<>|/?*])", "");
     // replace empty brackets
     newDestination = newDestination.replaceAll("\\(\\)", "");
 
     return newDestination.trim();
+  }
+
+  private static String replaceToken(String destination, String token, String replacement) {
+    String replacingCleaned = "";
+    if (StringUtils.isNotBlank(replacement)) {
+      // replace illegal characters
+      // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
+      replacingCleaned = replacement.replaceAll("([\"\\:<>|/?*])", "");
+    }
+    return destination.replaceAll("\\" + token, replacingCleaned);
   }
 
   /**

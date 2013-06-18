@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -36,7 +37,11 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -45,8 +50,12 @@ import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -62,45 +71,21 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSettingsPanel extends JPanel {
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = -7580437046944123496L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The settings. */
   private Settings                    settings         = Settings.getInstance();
 
-  /** The table movie sources. */
+  /**
+   * UI elements
+   */
   private JTable                      tableMovieSources;
-
-  /** The cb nfo format. */
   private JComboBox                   cbNfoFormat;
-
-  /** The cb movie nfo filename1. */
   private JCheckBox                   cbMovieNfoFilename1;
-
-  /** The cb movie nfo filename2. */
   private JCheckBox                   cbMovieNfoFilename2;
-
-  /** The tf movie path. */
   private JTextField                  tfMoviePath;
-
-  /** The tf movie filename. */
   private JTextField                  tfMovieFilename;
-
-  // /** The tf sort prefix. */
-  // private JTextField tfSortPrefix;
-
-  // /** The list sort prefixes. */
-  // private JList listSortPrefixes;
-
-  // /** The tf filetype. */
-  // private JTextField tfFiletype;
-  //
-  // /** The list filetypes. */
-  // private JList listFiletypes;
+  private JLabel                      lblExample;
 
   /**
    * Instantiates a new movie settings panel.
@@ -177,59 +162,6 @@ public class MovieSettingsPanel extends JPanel {
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
     panelMovieDataSources.add(cbMovieNfoFilename2, "4, 7");
 
-    // JPanel panelSortOptions = new JPanel();
-    // panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
-    //        TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    // add(panelSortOptions, "4, 2, fill, fill");
-    // panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-    // FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-    // FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-    // FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-    //
-    //    JLabel lblSortingPrefixes = new JLabel(BUNDLE.getString("Settings.titlePrefix")); //$NON-NLS-1$
-    // panelSortOptions.add(lblSortingPrefixes, "2, 2");
-    //
-    // JScrollPane scrollPaneSortPrefixes = new JScrollPane();
-    // panelSortOptions.add(scrollPaneSortPrefixes, "2, 4, fill, fill");
-    //
-    // listSortPrefixes = new JList();
-    // scrollPaneSortPrefixes.setViewportView(listSortPrefixes);
-    //
-    //    JButton btnRemoveSortPrefix = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    // btnRemoveSortPrefix.addActionListener(new ActionListener() {
-    // @Override
-    // public void actionPerformed(ActionEvent arg0) {
-    // int row = listSortPrefixes.getSelectedIndex();
-    // if (row != -1) {
-    // String prefix = Globals.settings.getTitlePrefix().get(row);
-    // Globals.settings.removeTitlePrefix(prefix);
-    // }
-    // }
-    // });
-    // panelSortOptions.add(btnRemoveSortPrefix, "4, 4, default, bottom");
-    //
-    // tfSortPrefix = new JTextField();
-    // panelSortOptions.add(tfSortPrefix, "2, 6, fill, default");
-    // tfSortPrefix.setColumns(10);
-    //
-    //    JButton btnAddSortPrefix = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    // btnAddSortPrefix.addActionListener(new ActionListener() {
-    // @Override
-    // public void actionPerformed(ActionEvent e) {
-    // if (StringUtils.isNotEmpty(tfSortPrefix.getText())) {
-    // Globals.settings.addTitlePrefix(tfSortPrefix.getText());
-    // tfSortPrefix.setText("");
-    // }
-    // }
-    // });
-    // panelSortOptions.add(btnAddSortPrefix, "4, 6");
-    //
-    // JTextPane tpSortingHints = new JTextPane();
-    // tpSortingHints.setFont(new Font("Dialog", Font.PLAIN, 10));
-    //    tpSortingHints.setText(BUNDLE.getString("Settings.sorting.info")); //$NON-NLS-1$
-    // tpSortingHints.setBackground(UIManager.getColor("Panel.background"));
-    // panelSortOptions.add(tpSortingHints, "2, 8, 3, 1, fill, fill");
-
     // the panel renamer
     JPanel panelRenamer = new JPanel();
     panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -237,12 +169,29 @@ public class MovieSettingsPanel extends JPanel {
     panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
     panelRenamer.add(lblMoviePath, "2, 2, right, default");
 
     tfMoviePath = new JTextField();
+    tfMoviePath.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void removeUpdate(DocumentEvent arg0) {
+        createRenamerExample();
+      }
+
+      @Override
+      public void insertUpdate(DocumentEvent arg0) {
+        createRenamerExample();
+      }
+
+      @Override
+      public void changedUpdate(DocumentEvent arg0) {
+        createRenamerExample();
+      }
+    });
     panelRenamer.add(tfMoviePath, "4, 2, fill, default");
     tfMoviePath.setColumns(10);
 
@@ -251,12 +200,28 @@ public class MovieSettingsPanel extends JPanel {
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
     txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
-    panelRenamer.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
+    panelRenamer.add(txtpntTitle, "6, 2, 1, 7, fill, fill");
 
     JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
     panelRenamer.add(lblMovieFilename, "2, 4, right, fill");
 
     tfMovieFilename = new JTextField();
+    tfMovieFilename.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void removeUpdate(DocumentEvent arg0) {
+        createRenamerExample();
+      }
+
+      @Override
+      public void insertUpdate(DocumentEvent arg0) {
+        createRenamerExample();
+      }
+
+      @Override
+      public void changedUpdate(DocumentEvent arg0) {
+        createRenamerExample();
+      }
+    });
     lblMovieFilename.setLabelFor(tfMovieFilename);
     panelRenamer.add(tfMovieFilename, "4, 4, fill, default");
     tfMovieFilename.setColumns(10);
@@ -266,6 +231,12 @@ public class MovieSettingsPanel extends JPanel {
     txtrChooseAFolder.setText(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtrChooseAFolder, "2, 6, 3, 1, fill, fill");
+
+    JLabel lblExampleT = new JLabel("Example");
+    panelRenamer.add(lblExampleT, "2, 8");
+
+    lblExample = new JLabel("");
+    panelRenamer.add(lblExample, "2, 10, 5, 1");
 
     initDataBindings();
 
@@ -290,12 +261,44 @@ public class MovieSettingsPanel extends JPanel {
         checkChanges();
       }
     });
-
   }
 
-  // check changes of checkboxes
+  private void createRenamerExample() {
+    Movie movie = null;
+    List<Movie> movies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
+    if (movies.size() > 0) {
+      for (Movie m : movies) {
+        // search the first scraped movie
+        if (m.isScraped()) {
+          movie = m;
+          break;
+        }
+      }
+
+      // if no movie has been scraped, get one containing at least some fields
+      if (movie == null) {
+        for (Movie m : movies) {
+          if (StringUtils.isNotBlank(m.getTitle()) && StringUtils.isNotBlank(m.getOriginalTitle()) && StringUtils.isNotBlank(m.getYear())) {
+            movie = m;
+            break;
+          }
+        }
+      }
+    }
+
+    if (movie != null) {
+      String path = MovieRenamer.createDestination(tfMoviePath.getText(), movie);
+      String filename = MovieRenamer.createDestination(tfMovieFilename.getText(), movie);
+      String extension = FilenameUtils.getExtension(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+      lblExample.setText(movie.getDataSource() + File.separator + path + File.separator + filename + "." + extension);
+    }
+    else {
+      lblExample.setText("need at least one movie for an example");
+    }
+  }
+
   /**
-   * Check changes.
+   * check changes of checkboxes
    */
   private void checkChanges() {
     // set NFO filenames
@@ -308,9 +311,7 @@ public class MovieSettingsPanel extends JPanel {
     }
   }
 
-  /**
-   * Inits the data bindings.
-   */
+  @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
     BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieSettings.movieDataSource");
     JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,
@@ -338,16 +339,5 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<Settings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
     autoBinding_11.bind();
-    //
-    // BeanProperty<Settings, List<String>> settingsBeanProperty = BeanProperty.create("titlePrefix");
-    // JListBinding<String, Settings, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
-    // settingsBeanProperty,
-    // listSortPrefixes);
-    // jListBinding.bind();
-    // //
-    // BeanProperty<Settings, List<String>> settingsBeanProperty_1 = BeanProperty.create("videoFileType");
-    // JListBinding<String, Settings, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
-    // settingsBeanProperty_1, listFiletypes);
-    // jListBinding_1.bind();
   }
 }
