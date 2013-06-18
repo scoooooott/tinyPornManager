@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.tasks.MovieReloadMediaInformationTask;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
@@ -1039,9 +1040,9 @@ public class MoviePanel extends JPanel {
 
       // get data of all files within all selected movies
       if (selectedMovies.size() > 0) {
-        for (Movie movie : selectedMovies) {
-          movie.gatherMediaFileInformation(true);
-          movie.saveToDb();
+        TmmSwingWorker task = new MovieReloadMediaInformationTask(selectedMovies);
+        if (!MainWindow.executeMainTask(task)) {
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
         }
       }
     }
