@@ -61,34 +61,20 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class FeedbackDialog.
+ * The Class BugReportDialog, to send bug reports directly from inside tmm.
  * 
  * @author Manuel Laggner
  */
 public class BugReportDialog extends JDialog {
-
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = 1992385114573899815L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
-
-  /** The Constant LOGGER. */
   private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
 
-  /** The text field. */
-  private JTextField                  textField;
-
-  /** The text area. */
+  private JTextField                  tfName;
   private JTextArea                   textArea;
-
-  /** The chckbx logs. */
+  private JTextField                  tfEmail;
   private JCheckBox                   chckbxLogs;
-
-  /** The chckbx configxml. */
   private JCheckBox                   chckbxConfigxml;
-
-  /** The chckbx database. */
   private JCheckBox                   chckbxDatabase;
 
   /**
@@ -113,21 +99,31 @@ public class BugReportDialog extends JDialog {
     getContentPane().add(panelContent, "2, 2, fill, fill");
     panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");
 
-    textField = new JTextField();
-    panelContent.add(textField, "4, 2, fill, default");
-    textField.setColumns(10);
+    tfName = new JTextField();
+    panelContent.add(tfName, "4, 2, fill, default");
+    tfName.setColumns(10);
+
+    JLabel lblEmail = new JLabel(BUNDLE.getString("BugReport.email")); //$NON-NLS-1$
+    panelContent.add(lblEmail, "2, 4, right, default");
+
+    tfEmail = new JTextField();
+    panelContent.add(tfEmail, "4, 4, fill, default");
+
+    JLabel lblEmaildesc = new JLabel(BUNDLE.getString("BugReport.email.description")); //$NON-NLS-1$
+    panelContent.add(lblEmaildesc, "2, 5, 3, 1");
 
     JLabel lblFeedback = new JLabel(BUNDLE.getString("BugReport.description")); //$NON-NLS-1$
-    panelContent.add(lblFeedback, "2, 4, right, top");
+    panelContent.add(lblFeedback, "2, 7, right, top");
 
     JScrollPane scrollPane = new JScrollPane();
-    panelContent.add(scrollPane, "4, 4, fill, fill");
+    panelContent.add(scrollPane, "4, 7, fill, fill");
 
     textArea = new JTextArea();
     scrollPane.setViewportView(textArea);
@@ -135,14 +131,14 @@ public class BugReportDialog extends JDialog {
     textArea.setWrapStyleWord(true);
 
     JLabel lblAttachments = new JLabel(BUNDLE.getString("BugReport.attachments")); //$NON-NLS-1$
-    panelContent.add(lblAttachments, "2, 6");
+    panelContent.add(lblAttachments, "2, 9");
 
     chckbxLogs = new JCheckBox(BUNDLE.getString("BugReport.logs")); //$NON-NLS-1$
     chckbxLogs.setSelected(true);
-    panelContent.add(chckbxLogs, "4, 6");
+    panelContent.add(chckbxLogs, "4, 9");
 
     chckbxConfigxml = new JCheckBox("config.xml");
-    panelContent.add(chckbxConfigxml, "4, 7");
+    panelContent.add(chckbxConfigxml, "4, 10");
 
     // chckbxDatabase = new JCheckBox("Database");
     // panelContent.add(chckbxDatabase, "4, 8");
@@ -166,7 +162,9 @@ public class BugReportDialog extends JDialog {
         HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbzrhTmZiHJb1bdCqyeiVOqLup8zK4Dbx6kAtHYsgzBVqHTaNJqj/exec");
         try {
           StringBuilder message = new StringBuilder("Bug report from ");
-          message.append(textField.getText());
+          message.append(tfName.getText());
+          message.append("\nEmail:");
+          message.append(tfEmail.getText());
           message.append("\n\nVersion: ");
           message.append(ReleaseInfo.getVersion());
           message.append("\nBuild: ");
@@ -189,11 +187,7 @@ public class BugReportDialog extends JDialog {
 
           // attach files
           if (chckbxLogs.isSelected() || chckbxConfigxml.isSelected() /*
-                                                                       * ||
-                                                                       * chckbxDatabase
-                                                                       * .
-                                                                       * isSelected
-                                                                       * ()
+                                                                       * || chckbxDatabase . isSelected ()
                                                                        */) {
             try {
               // byte[] buffer = new byte[1024];
