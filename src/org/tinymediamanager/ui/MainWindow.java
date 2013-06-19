@@ -39,6 +39,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -61,6 +62,7 @@ import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.ui.components.NotificationMessage;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.AboutDialog;
 import org.tinymediamanager.ui.dialogs.BugReportDialog;
@@ -131,6 +133,8 @@ public class MainWindow extends JFrame {
 
   /** The status task. */
   private StatusbarThread             statusTask       = new StatusbarThread();
+
+  private JPanel                      messagePanel;
 
   /**
    * Create the application.
@@ -324,9 +328,26 @@ public class MainWindow extends JFrame {
             FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(500px;default):grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, }));
 
+    JLayeredPane content = new JLayeredPane();
+    content.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec
+        .decode("fill:max(500px;default):grow") }));
+    getContentPane().add(content, "1, 2, fill, fill");
+
+    JPanel mainPanel = new JPanel();
+    mainPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec
+        .decode("fill:max(500px;default):grow") }));
+    content.add(mainPanel, "1, 1, fill, fill");
+    content.setLayer(mainPanel, 1);
+
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
     tabbedPane.setTabPlacement(JTabbedPane.LEFT);
-    getContentPane().add(tabbedPane, "1, 2, fill, fill");
+    mainPanel.add(tabbedPane, "1, 1, fill, fill");
+    // getContentPane().add(tabbedPane, "1, 2, fill, fill");
+
+    messagePanel = new JPanel();
+    messagePanel.setOpaque(false);
+    content.add(messagePanel, "1, 1, right, bottom");
+    content.setLayer(messagePanel, 2);
 
     panelStatusBar = new JPanel();
     getContentPane().add(panelStatusBar, "1, 4");
@@ -680,5 +701,10 @@ public class MainWindow extends JFrame {
         LOGGER.error("Donate", e1);
       }
     }
+  }
+
+  public void addMessage(String message) {
+    JPanel msg = new NotificationMessage(message);
+    messagePanel.add(msg);
   }
 }

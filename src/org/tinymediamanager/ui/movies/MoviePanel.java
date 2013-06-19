@@ -1045,6 +1045,8 @@ public class MoviePanel extends JPanel {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
         }
       }
+
+      MainWindow.getActiveInstance().addMessage("Click");
     }
   }
 
