@@ -170,7 +170,7 @@ public class MovieSettingsPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
     panelRenamer.add(lblMoviePath, "2, 2, right, default");
@@ -200,7 +200,7 @@ public class MovieSettingsPanel extends JPanel {
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
     txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
-    panelRenamer.add(txtpntTitle, "6, 2, 1, 7, fill, fill");
+    panelRenamer.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
 
     JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
     panelRenamer.add(lblMovieFilename, "2, 4, right, fill");
@@ -236,6 +236,7 @@ public class MovieSettingsPanel extends JPanel {
     panelRenamer.add(lblExampleT, "2, 8");
 
     lblExample = new JLabel("");
+    lblExample.setFont(lblExample.getFont().deriveFont(11f));
     panelRenamer.add(lblExample, "2, 10, 5, 1");
 
     initDataBindings();
@@ -287,13 +288,27 @@ public class MovieSettingsPanel extends JPanel {
     }
 
     if (movie != null) {
-      String path = MovieRenamer.createDestination(tfMoviePath.getText(), movie);
-      String filename = MovieRenamer.createDestination(tfMovieFilename.getText(), movie);
-      String extension = FilenameUtils.getExtension(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
-      lblExample.setText(movie.getDataSource() + File.separator + path + File.separator + filename + "." + extension);
+      String path = "";
+      String filename = "";
+      if (StringUtils.isNotBlank(tfMoviePath.getText())) {
+        path = MovieRenamer.createDestination(tfMoviePath.getText(), movie);
+      }
+      else {
+        path = movie.getPath();
+      }
+
+      if (StringUtils.isNotBlank(tfMovieFilename.getText())) {
+        String extension = FilenameUtils.getExtension(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+        filename = MovieRenamer.createDestination(tfMovieFilename.getText(), movie) + "." + extension;
+      }
+      else {
+        filename = movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename();
+      }
+
+      lblExample.setText(movie.getDataSource() + File.separator + path + File.separator + filename);
     }
     else {
-      lblExample.setText("need at least one movie for an example");
+      lblExample.setText(BUNDLE.getString("Settings.movie.renamer.nomovie")); //$NON-NLS-1$
     }
   }
 
