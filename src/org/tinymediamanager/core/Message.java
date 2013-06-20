@@ -25,8 +25,14 @@ public class Message {
 
   private MessageLevel messageLevel;
   private String       messageId;
+  private Object       messageSender;
 
-  public Message(MessageLevel level, String id) {
+  public Message(Object sender, String id) {
+    this(sender, MessageLevel.DEBUG, id);
+  }
+
+  public Message(Object sender, MessageLevel level, String id) {
+    messageSender = sender;
     messageLevel = level;
     messageId = id;
   }
@@ -37,5 +43,9 @@ public class Message {
 
   public MessageLevel getMessageLevel() {
     return messageLevel;
+  }
+
+  public Object getMessageSender() {
+    return messageSender;
   }
 }

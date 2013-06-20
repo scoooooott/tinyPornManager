@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 
@@ -45,19 +46,29 @@ public class NotificationMessage extends JPanel implements ActionListener {
   private Timer             fadeTimer;
   private Timer             disposeTimer;
 
-  public NotificationMessage(String text) {
+  public NotificationMessage(String title, String text) {
     super();
     setOpaque(false);
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("200px"),
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:min(75px;default)"),
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        RowSpec.decode("fill:min(75px;default)"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
-    JTextArea tpMessage = new JTextArea();
-    tpMessage.setLineWrap(true);
-    tpMessage.setWrapStyleWord(true);
-    tpMessage.setOpaque(false);
-    tpMessage.setText(text);
-    add(tpMessage, "2, 2, fill, fill");
+    JTextArea taTitle = new JTextArea(title);
+    taTitle.setOpaque(false);
+    taTitle.setLineWrap(true);
+    taTitle.setWrapStyleWord(true);
+    add(taTitle, "2, 2, fill, fill");
+
+    JSeparator separator = new JSeparator();
+    add(separator, "2, 4");
+
+    JTextArea taMessage = new JTextArea();
+    taMessage.setLineWrap(true);
+    taMessage.setWrapStyleWord(true);
+    taMessage.setOpaque(false);
+    taMessage.setText(text);
+    add(taMessage, "2, 6, fill, fill");
     beginFade();
   }
 

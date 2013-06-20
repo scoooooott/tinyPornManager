@@ -15,10 +15,15 @@
  */
 package org.tinymediamanager.ui;
 
+import java.util.ResourceBundle;
+
 import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.IMessageListener;
+import org.tinymediamanager.core.MediaEntity;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
 
 /**
  * Class UIMessageListener used to push the messaged to the EDT
@@ -26,6 +31,7 @@ import org.tinymediamanager.core.Message;
  * @author Manuel Laggner
  */
 public class UIMessageListener implements IMessageListener {
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /*
    * (non-Javadoc)
@@ -34,10 +40,42 @@ public class UIMessageListener implements IMessageListener {
    */
   @Override
   public void pushMessage(final Message message) {
+    // only display errors in UI
+    if (message.getMessageLevel() != MessageLevel.ERROR) {
+      return;
+    }
+
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        MainWindow.getActiveInstance().addMessage(message.getMessageId());
+        String msg = "";
+        String title = "";
+
+        // get title
+        if (message.getMessageSender() instanceof MediaEntity) {
+          // mediaEntity title: eg. Movie title
+          MediaEntity me = (MediaEntity) message.getMessageSender();
+          title = me.getTitle();
+        }
+        else if (message.getMessageSender() instanceof MediaFile) {
+          // mediaFile: filename
+          MediaFile mf = (MediaFile) message.getMessageSender();
+          title = mf.getFilename();
+        }
+        else {
+          title = message.getMessageSender().toString();
+        }
+
+        // get message
+        try {
+          // try to get a localized version
+          msg = BUNDLE.getString(message.getMessageId());
+        }
+        catch (Exception e) {
+          // simply take the id
+          msg = message.getMessageId();
+        }
+        MainWindow.getActiveInstance().addMessage(title, msg);
       }
     });
   }

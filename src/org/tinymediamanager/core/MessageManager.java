@@ -36,18 +36,33 @@ public class MessageManager {
     listeners = new ArrayList<IMessageListener>();
   }
 
+  /**
+   * Add a new listener
+   * 
+   * @param newListener
+   */
   public void addListener(IMessageListener newListener) {
     synchronized (listeners) {
       listeners.add(newListener);
     }
   }
 
+  /**
+   * Remove a listener
+   * 
+   * @param listener
+   */
   public void removeListener(IMessageListener listener) {
     synchronized (listeners) {
       listeners.remove(listener);
     }
   }
 
+  /**
+   * Push a message to all listeners
+   * 
+   * @param message
+   */
   public void pushMessage(Message message) {
     for (IMessageListener listener : listeners) {
       listener.pushMessage(message);

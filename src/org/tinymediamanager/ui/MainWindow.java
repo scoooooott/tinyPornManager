@@ -709,8 +709,8 @@ public class MainWindow extends JFrame {
     }
   }
 
-  public void addMessage(String message) {
-    JPanel msg = new NotificationMessage(message);
+  public void addMessage(String title, String message) {
+    JPanel msg = new NotificationMessage(title, message);
     messagePanel.add(msg);
   }
 

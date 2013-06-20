@@ -33,6 +33,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 
 /**
@@ -496,6 +498,7 @@ public class MovieRenamer {
     if (!rename) {
       LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getPath());
       LOGGER.error("Movie renaming aborted.");
+      MessageManager.instance.pushMessage(new Message(srcDir.toString(), "failed to rename"));
       return false;
     }
     else {
