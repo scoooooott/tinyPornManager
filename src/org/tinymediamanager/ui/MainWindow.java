@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCacheTask;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
@@ -407,6 +408,7 @@ public class MainWindow extends JFrame {
         closeTmm();
       }
     });
+    MessageManager.instance.addListener(new UIMessageListener());
   }
 
   private void closeTmm() {

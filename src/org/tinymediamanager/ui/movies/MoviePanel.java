@@ -1036,8 +1036,6 @@ public class MoviePanel extends JPanel {
       List<Movie> selectedMovies = new ArrayList<Movie>();
       for (Movie movie : movieSelectionModel.getSelectedMovies()) {
         selectedMovies.add(movie);
-
-        MainWindow.getActiveInstance().addMessage(movie.getTitle());
       }
 
       // get data of all files within all selected movies
