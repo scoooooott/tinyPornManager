@@ -19,6 +19,7 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -329,14 +331,14 @@ public class MainWindow extends JFrame {
             FormFactory.DEFAULT_ROWSPEC, }));
 
     JLayeredPane content = new JLayeredPane();
-    content.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec
-        .decode("fill:max(500px;default):grow") }));
+    content.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("right:220px"), }, new RowSpec[] { RowSpec.decode("fill:max(500px;default):grow"), }));
     getContentPane().add(content, "1, 2, fill, fill");
 
     JPanel mainPanel = new JPanel();
     mainPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow") }, new RowSpec[] { RowSpec
         .decode("fill:max(500px;default):grow") }));
-    content.add(mainPanel, "1, 1, fill, fill");
+    content.add(mainPanel, "1, 1, 3, 1, fill, fill");
     content.setLayer(mainPanel, 1);
 
     JTabbedPane tabbedPane = VerticalTextIcon.createTabbedPane(JTabbedPane.LEFT);
@@ -346,7 +348,9 @@ public class MainWindow extends JFrame {
 
     messagePanel = new JPanel();
     messagePanel.setOpaque(false);
-    content.add(messagePanel, "1, 1, right, bottom");
+    messagePanel.setLayout(new FlowLayout());
+
+    content.add(messagePanel, "3, 1, right, fill");
     content.setLayer(messagePanel, 2);
 
     panelStatusBar = new JPanel();
@@ -706,5 +710,10 @@ public class MainWindow extends JFrame {
   public void addMessage(String message) {
     JPanel msg = new NotificationMessage(message);
     messagePanel.add(msg);
+  }
+
+  public void removeMessage(JComponent comp) {
+    messagePanel.remove(comp);
+    messagePanel.revalidate();
   }
 }
