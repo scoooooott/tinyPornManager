@@ -70,6 +70,7 @@ import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.AboutDialog;
 import org.tinymediamanager.ui.dialogs.BugReportDialog;
 import org.tinymediamanager.ui.dialogs.FeedbackDialog;
+import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.settings.SettingsPanel;
@@ -296,6 +297,16 @@ public class MainWindow extends JFrame {
         catch (Exception ex) {
           LOGGER.error("open filemanager", ex);
         }
+      }
+    });
+
+    JMenuItem tmmLogs = new JMenuItem("show logs");
+    debug.add(tmmLogs);
+    tmmLogs.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        JDialog logDialog = new LogDialog();
+        logDialog.setVisible(true);
       }
     });
 

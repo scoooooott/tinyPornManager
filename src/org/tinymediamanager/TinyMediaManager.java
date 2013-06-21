@@ -51,6 +51,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.TmmWindowSaver;
 
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
@@ -123,6 +124,9 @@ public class TinyMediaManager {
 
           // suppress logging messages from betterbeansbinding
           org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(Level.SEVERE);
+
+          // init ui logger
+          TmmUILogCollector.init();
 
           // upgrade check
           if (!Globals.settings.isCurrentVersion()) {

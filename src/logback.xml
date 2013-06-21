@@ -20,7 +20,7 @@
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
-
+    
     <logger name="com.moviejukebox.themoviedb" level="ERROR" />
     <logger name="org.tinymediamanager" level="DEBUG" />
     <logger name="org.tinymediamanager.scraper.util.CachedUrl" level="WARN" />
