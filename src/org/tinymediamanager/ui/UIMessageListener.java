@@ -49,21 +49,21 @@ public class UIMessageListener implements IMessageListener {
       @Override
       public void run() {
         String msg = "";
-        String title = "";
+        String object = "";
 
         // get title
         if (message.getMessageSender() instanceof MediaEntity) {
           // mediaEntity title: eg. Movie title
           MediaEntity me = (MediaEntity) message.getMessageSender();
-          title = me.getTitle();
+          object = me.getTitle();
         }
         else if (message.getMessageSender() instanceof MediaFile) {
           // mediaFile: filename
           MediaFile mf = (MediaFile) message.getMessageSender();
-          title = mf.getFilename();
+          object = mf.getFilename();
         }
         else {
-          title = message.getMessageSender().toString();
+          object = message.getMessageSender().toString();
         }
 
         // get message
@@ -75,7 +75,7 @@ public class UIMessageListener implements IMessageListener {
           // simply take the id
           msg = message.getMessageId();
         }
-        MainWindow.getActiveInstance().addMessage(title, msg);
+        MainWindow.getActiveInstance().addMessage(msg, object);
       }
     });
   }

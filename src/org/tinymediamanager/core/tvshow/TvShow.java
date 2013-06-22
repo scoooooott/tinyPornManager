@@ -338,6 +338,7 @@ public class TvShow extends MediaEntity {
       synchronized (Globals.entityManager) {
         Globals.entityManager.getTransaction().begin();
         episodesObservable.remove(episode);
+        Globals.entityManager.remove(episode);
         Globals.entityManager.persist(this);
         Globals.entityManager.getTransaction().commit();
       }

@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -58,8 +57,10 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowActor;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -67,6 +68,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.TableSpinnerEditor;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -85,144 +87,49 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEditorDialog extends JDialog {
+  private static final long                  serialVersionUID = 3270218410302989845L;
+  private final static ResourceBundle        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                            //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID  = 3270218410302989845L;
+  private TvShow                             tvShowToEdit;
+  private TvShowList                         tvShowList       = TvShowList.getInstance();
+  private List<TvShowActor>                  actors           = ObservableCollections.observableList(new ArrayList<TvShowActor>());
+  private List<MediaGenres>                  genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
+  private List<MediaTrailer>                 trailers         = ObservableCollections.observableList(new ArrayList<MediaTrailer>());
+  private List<String>                       tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<TvShowEpisodeEditorContainer> episodes         = ObservableCollections.observableList(new ArrayList<TvShowEpisodeEditorContainer>());
+  private boolean                            continueQueue    = true;
 
-  /** The Constant BUNDLE. */
-  private final static ResourceBundle BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
-
-  /** The details1 panel. */
-  private final JPanel                details1Panel     = new JPanel();
-
-  /** The details2 panel. */
-  private final JPanel                details2Panel     = new JPanel();
-
-  /** The tv show to edit. */
-  private TvShow                      tvShowToEdit;
-
-  /** The tv show list. */
-  private TvShowList                  tvShowList        = TvShowList.getInstance();
-
-  /** The tf title. */
-  private JTextField                  tfTitle;
-
-  /** The tf year. */
-  private JSpinner                    spYear;
-
-  /** The tp plot. */
-  private JTextPane                   tpPlot;
-
-  /** The table. */
-  private JTable                      tableActors;
-
-  /** The lvl tv show path. */
-  private JLabel                      lvlTvShowPath;
-
-  /** The lbl poster. */
-  private ImageLabel                  lblPoster;
-
-  /** The lbl fanart. */
-  private ImageLabel                  lblFanart;
-
-  /** The lbl banner. */
-  private ImageLabel                  lblBanner;
-
-  /** The actors. */
-  private List<TvShowActor>           actors            = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-
-  /** The genres. */
-  private List<MediaGenres>           genres            = ObservableCollections.observableList(new ArrayList<MediaGenres>());
-
-  /** The trailers. */
-  private List<MediaTrailer>          trailers          = ObservableCollections.observableList(new ArrayList<MediaTrailer>());
-
-  /** The tags. */
-  private List<String>                tags              = ObservableCollections.observableList(new ArrayList<String>());
-
-  /** The action ok. */
-  private final Action                actionOK          = new SwingAction();
-
-  /** The action cancel. */
-  private final Action                actionCancel      = new SwingAction_1();
-
-  /** The action add actor. */
-  private final Action                actionAddActor    = new SwingAction_4();
-
-  /** The action remove actor. */
-  private final Action                actionRemoveActor = new SwingAction_5();
-
-  /** The sp runtime. */
-  private JSpinner                    spRuntime;
-
-  /** The tf studio. */
-  private JTextField                  tfStudio;
-
-  /** The list genres. */
-  private JList                       listGenres;
-
-  /** The action add genre. */
-  private final Action                actionAddGenre    = new SwingAction_2();
-
-  /** The action remove genre. */
-  private final Action                actionRemoveGenre = new SwingAction_3();
-
-  /** The cb genres. */
-  private JComboBox                   cbGenres;
-
-  /** The sp rating. */
-  private JSpinner                    spRating;
-
-  /** The cb certification. */
-  private JComboBox                   cbCertification;
-
-  /** The cb status. */
-  private JComboBox                   cbStatus;
-
-  /** The tf imdb id. */
-  private JTextField                  tfImdbId;
-
-  /** The tf tmdb id. */
-  private JTextField                  tfTvdbId;
-
-  /** The lbl imdb id. */
-  private JLabel                      lblImdbId;
-
-  /** The lbl tmdb id. */
-  private JLabel                      lblTvdbId;
-
-  /** The table trailer. */
-  private JTable                      tableTrailer;
-
-  /** The action. */
-  private final Action                action            = new SwingAction_6();
-
-  /** The action_1. */
-  private final Action                action_1          = new SwingAction_7();
-
-  /** The cb tags. */
-  private JComboBox                   cbTags;
-
-  /** The list tags. */
-  private JList                       listTags;
-
-  /** The action_2. */
-  private final Action                action_2          = new SwingAction_8();
-
-  /** The action_3. */
-  private final Action                action_3          = new SwingAction_9();
-
-  /** The sp date added. */
-  private JSpinner                    spDateAdded;
-
-  /** The sp premiered. */
-  private JSpinner                    spPremiered;
-
-  /** The continue queue. */
-  private boolean                     continueQueue     = true;
-
-  /** The abort action. */
-  private final Action                abortAction       = new SwingAction_10();
+  /**
+   * UI elements
+   */
+  private final JPanel                       details1Panel    = new JPanel();
+  private final JPanel                       details2Panel    = new JPanel();
+  private final JPanel                       episodesPanel    = new JPanel();
+  private JTextField                         tfTitle;
+  private JSpinner                           spYear;
+  private JTextPane                          tpPlot;
+  private JTable                             tableActors;
+  private JLabel                             lvlTvShowPath;
+  private ImageLabel                         lblPoster;
+  private ImageLabel                         lblFanart;
+  private ImageLabel                         lblBanner;
+  private JSpinner                           spRuntime;
+  private JTextField                         tfStudio;
+  private JList                              listGenres;
+  private JComboBox                          cbGenres;
+  private JSpinner                           spRating;
+  private JComboBox                          cbCertification;
+  private JComboBox                          cbStatus;
+  private JTextField                         tfImdbId;
+  private JTextField                         tfTvdbId;
+  private JLabel                             lblImdbId;
+  private JLabel                             lblTvdbId;
+  private JTable                             tableTrailer;
+  private JComboBox                          cbTags;
+  private JList                              listTags;
+  private JSpinner                           spDateAdded;
+  private JSpinner                           spPremiered;
+  private JTable                             tableEpisodes;
 
   /**
    * Instantiates a new tv show editor dialog.
@@ -438,7 +345,7 @@ public class TvShowEditorDialog extends JDialog {
     {
       JButton btnAddActor = new JButton("Add Actor");
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
-      btnAddActor.setAction(actionAddActor);
+      btnAddActor.setAction(new AddActorAction());
       btnAddActor.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       details2Panel.add(btnAddActor, "2, 4, right, top");
     }
@@ -452,7 +359,7 @@ public class TvShowEditorDialog extends JDialog {
     }
     {
       JButton btnAddGenre = new JButton("");
-      btnAddGenre.setAction(actionAddGenre);
+      btnAddGenre.setAction(new AddGenreAction());
       btnAddGenre.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddGenre, "6, 4, right, top");
@@ -460,14 +367,14 @@ public class TvShowEditorDialog extends JDialog {
     {
       JButton btnRemoveActor = new JButton(BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveActor.setAction(actionRemoveActor);
+      btnRemoveActor.setAction(new RemoveActorAction());
       btnRemoveActor.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       details2Panel.add(btnRemoveActor, "2,6, right, top");
     }
 
     {
       JButton btnRemoveGenre = new JButton("");
-      btnRemoveGenre.setAction(actionRemoveGenre);
+      btnRemoveGenre.setAction(new RemoveGenreAction());
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveGenre.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       details2Panel.add(btnRemoveGenre, "6, 6, right, top");
@@ -490,14 +397,14 @@ public class TvShowEditorDialog extends JDialog {
     }
     {
       JButton btnAddTrailer = new JButton("");
-      btnAddTrailer.setAction(action);
+      btnAddTrailer.setAction(new AddTrailerAction());
       btnAddTrailer.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTrailer, "2, 12, right, top");
     }
     {
       JButton btnRemoveTrailer = new JButton("");
-      btnRemoveTrailer.setAction(action_1);
+      btnRemoveTrailer.setAction(new RemoveTrailerAction());
       btnRemoveTrailer.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTrailer, "2, 14, right, top");
@@ -514,14 +421,14 @@ public class TvShowEditorDialog extends JDialog {
     }
     {
       JButton btnAddTag = new JButton("");
-      btnAddTag.setAction(action_2);
+      btnAddTag.setAction(new AddTagAction());
       btnAddTag.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTag, "2, 18, right, top");
     }
     {
       JButton btnRemoveTag = new JButton("");
-      btnRemoveTag.setAction(action_3);
+      btnRemoveTag.setAction(new RemoveTagAction());
       btnRemoveTag.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTag, "2, 20, right, top");
@@ -530,6 +437,34 @@ public class TvShowEditorDialog extends JDialog {
       cbTags = new AutocompleteComboBox(tvShowList.getTagsInTvShows().toArray());
       cbTags.setEditable(true);
       details2Panel.add(cbTags, "4, 22");
+    }
+
+    /**
+     * EpisodePanel
+     */
+    tabbedPane.addTab(BUNDLE.getString("metatag.episodes"), episodesPanel); //$NON-NLS-1$
+    episodesPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    {
+      JButton btnCloneEpisode = new JButton("");
+      btnCloneEpisode.setAction(new CloneEpisodeAction());
+      btnCloneEpisode.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Clone.png")));
+      episodesPanel.add(btnCloneEpisode, "2, 2");
+    }
+    {
+      JScrollPane scrollPaneEpisodes = new JScrollPane();
+      episodesPanel.add(scrollPaneEpisodes, "4, 2, 1, 3, fill, fill");
+      {
+        tableEpisodes = new JTable();
+        scrollPaneEpisodes.setViewportView(tableEpisodes);
+      }
+    }
+    {
+      JButton btnRemoveEpisode = new JButton("");
+      btnRemoveEpisode.setAction(new RemoveEpisodeAction());
+      btnRemoveEpisode.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      episodesPanel.add(btnRemoveEpisode, "2, 4, default, top");
     }
 
     /**
@@ -550,19 +485,19 @@ public class TvShowEditorDialog extends JDialog {
       {
         JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
         buttonPane.add(okButton);
-        okButton.setAction(actionOK);
+        okButton.setAction(new OKAction());
         okButton.setActionCommand("OK");
         getRootPane().setDefaultButton(okButton);
       }
       {
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         buttonPane.add(cancelButton);
-        cancelButton.setAction(actionCancel);
+        cancelButton.setAction(new CancelAction());
         cancelButton.setActionCommand("Cancel");
       }
       if (inQueue) {
         JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-        btnAbort.setAction(abortAction);
+        btnAbort.setAction(new AbortAction());
         buttonPane.add(btnAbort);
       }
 
@@ -621,6 +556,14 @@ public class TvShowEditorDialog extends JDialog {
         tags.add(tag);
       }
 
+      for (TvShowEpisode episode : tvShowToEdit.getEpisodes()) {
+        TvShowEpisodeEditorContainer container = new TvShowEpisodeEditorContainer();
+        container.tvShowEpisode = episode;
+        container.season = episode.getSeason();
+        container.episode = episode.getEpisode();
+        episodes.add(container);
+      }
+
       cbCertification.setSelectedItem(tvShow.getCertification());
 
     }
@@ -672,6 +615,15 @@ public class TvShowEditorDialog extends JDialog {
     tableTrailer.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.quality")); //$NON-NLS-1$
     tableTrailer.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.url")); //$NON-NLS-1$
 
+    tableEpisodes.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
+    tableEpisodes.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
+    tableEpisodes.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+    tableEpisodes.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+    tableEpisodes.getColumnModel().getColumn(2).setMaxWidth(150);
+    tableEpisodes.getColumnModel().getColumn(3).setMaxWidth(150);
+    tableEpisodes.getColumnModel().getColumn(2).setCellEditor(new TableSpinnerEditor());
+    tableEpisodes.getColumnModel().getColumn(3).setCellEditor(new TableSpinnerEditor());
+
     // // implement listener to simulate button group
     // tableTrailer.getModel().addTableModelListener(new TableModelListener() {
     // @Override
@@ -693,29 +645,15 @@ public class TvShowEditorDialog extends JDialog {
     // });
   }
 
-  /**
-   * The Class SwingAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction extends AbstractAction {
+  private class OKAction extends AbstractAction {
+    private static final long serialVersionUID = 6699599213348390696L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new swing action.
-     */
-    public SwingAction() {
+    public OKAction() {
       putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.change")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       tvShowToEdit.setTitle(tfTitle.getText());
       tvShowToEdit.setYear(String.valueOf(spYear.getValue()));
@@ -774,6 +712,54 @@ public class TvShowEditorDialog extends JDialog {
         tvShowToEdit.setVotes(1);
       }
 
+      // adapt episodes according to the episode table (in a 2 way sync)
+      // remove episodes
+      for (int i = tvShowToEdit.getEpisodeCount() - 1; i >= 0; i--) {
+        boolean found = false;
+        TvShowEpisode episode = tvShowToEdit.getEpisodes().get(i);
+        for (TvShowEpisodeEditorContainer container : episodes) {
+          if (container.tvShowEpisode == episode) {
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          tvShowToEdit.removeEpisode(episode);
+        }
+      }
+
+      // add episodes
+      for (TvShowEpisodeEditorContainer container : episodes) {
+        boolean found = false;
+        boolean shouldStore = false;
+
+        if (container.episode != container.tvShowEpisode.getEpisode()) {
+          container.tvShowEpisode.setEpisode(container.episode);
+          shouldStore = true;
+        }
+
+        if (container.season != container.tvShowEpisode.getSeason()) {
+          container.tvShowEpisode.setSeason(container.season);
+          shouldStore = true;
+        }
+
+        for (TvShowEpisode episode : tvShowToEdit.getEpisodes()) {
+          if (container.tvShowEpisode == episode) {
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          container.tvShowEpisode.saveToDb();
+          tvShowToEdit.addEpisode(container.tvShowEpisode);
+        }
+        else if (shouldStore) {
+          container.tvShowEpisode.saveToDb();
+        }
+      }
+
       tvShowToEdit.saveToDb();
       tvShowToEdit.writeNFO();
       setVisible(false);
@@ -781,115 +767,60 @@ public class TvShowEditorDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class SwingAction_1.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_1 extends AbstractAction {
+  private class CancelAction extends AbstractAction {
+    private static final long serialVersionUID = -4617793684152607277L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new swing action_1.
-     */
-    public SwingAction_1() {
+    public CancelAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
       dispose();
     }
   }
 
-  /**
-   * The Class SwingAction_4.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_4 extends AbstractAction {
+  private class AddActorAction extends AbstractAction {
+    private static final long serialVersionUID = -5879601617842300526L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new swing action_4.
-     */
-    public SwingAction_4() {
+    public AddActorAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       TvShowActor actor = new TvShowActor(BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
       actors.add(0, actor);
     }
   }
 
-  /**
-   * The Class SwingAction_5.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_5 extends AbstractAction {
+  private class RemoveActorAction extends AbstractAction {
+    private static final long serialVersionUID = 6970920169867315771L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new swing action_5.
-     */
-    public SwingAction_5() {
+    public RemoveActorAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       int row = tableActors.getSelectedRow();
-      row = tableActors.convertRowIndexToModel(row);
-      actors.remove(row);
+      if (row > -1) {
+        row = tableActors.convertRowIndexToModel(row);
+        actors.remove(row);
+      }
     }
   }
 
-  /**
-   * The Class SwingAction_2.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_2 extends AbstractAction {
+  private class AddGenreAction extends AbstractAction {
+    private static final long serialVersionUID = 6666302391216952247L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new swing action_2.
-     */
-    public SwingAction_2() {
-      // putValue(NAME, "SwingAction_2");
+    public AddGenreAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("genre.add")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       MediaGenres newGenre = null;
       Object item = cbGenres.getSelectedItem();
@@ -911,29 +842,14 @@ public class TvShowEditorDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class SwingAction_3.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_3 extends AbstractAction {
+  private class RemoveGenreAction extends AbstractAction {
+    private static final long serialVersionUID = -5459615776560234688L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new swing action_3.
-     */
-    public SwingAction_3() {
-      // putValue(NAME, "SwingAction_3");
+    public RemoveGenreAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("genre.remove")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       MediaGenres newGenre = (MediaGenres) listGenres.getSelectedValue();
       // remove genre
@@ -943,29 +859,14 @@ public class TvShowEditorDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class SwingAction_6.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_6 extends AbstractAction {
+  private class AddTrailerAction extends AbstractAction {
+    private static final long serialVersionUID = 5448745104881472479L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new swing action_6.
-     */
-    public SwingAction_6() {
-      // putValue(NAME, "SwingAction_6");
+    public AddTrailerAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.add")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       MediaTrailer trailer = new MediaTrailer();
       trailer.setName("unknown");
@@ -976,39 +877,120 @@ public class TvShowEditorDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class SwingAction_7.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_7 extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
+  private class RemoveTrailerAction extends AbstractAction {
     private static final long serialVersionUID = -6956921050689930101L;
 
-    /**
-     * Instantiates a new swing action_7.
-     */
-    public SwingAction_7() {
-      // putValue(NAME, "SwingAction_7");
+    public RemoveTrailerAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.remove")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       int row = tableTrailer.getSelectedRow();
-      row = tableTrailer.convertRowIndexToModel(row);
-      trailers.remove(row);
+      if (row > -1) {
+        row = tableTrailer.convertRowIndexToModel(row);
+        trailers.remove(row);
+      }
     }
   }
 
   /**
-   * Inits the data bindings.
+   * Shows the dialog and returns whether the work on the queue should be continued.
+   * 
+   * @return true, if successful
    */
+  public boolean showDialog() {
+    setVisible(true);
+    return continueQueue;
+  }
+
+  private class AddTagAction extends AbstractAction {
+    private static final long serialVersionUID = 9160043031922897785L;
+
+    public AddTagAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.add")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      String newTag = (String) cbTags.getSelectedItem();
+      boolean tagFound = false;
+
+      // search if this tag already has been added
+      for (String tag : tags) {
+        if (tag.equals(newTag)) {
+          tagFound = true;
+          break;
+        }
+      }
+
+      // add tag
+      if (!tagFound) {
+        tags.add(newTag);
+      }
+    }
+  }
+
+  private class RemoveTagAction extends AbstractAction {
+    private static final long serialVersionUID = -1580945350962234235L;
+
+    public RemoveTagAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.remove")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      String tag = (String) listTags.getSelectedValue();
+      tags.remove(tag);
+    }
+  }
+
+  private class AbortAction extends AbstractAction {
+    private static final long serialVersionUID = -7652218354710642510L;
+
+    public AbortAction() {
+      putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      continueQueue = false;
+      setVisible(false);
+      dispose();
+    }
+  }
+
+  public class TvShowEpisodeEditorContainer {
+    TvShowEpisode tvShowEpisode;
+    int           season;
+    int           episode;
+
+    public String getEpisodeTitle() {
+      return tvShowEpisode.getTitle();
+    }
+
+    public String getMediaFilename() {
+      return tvShowEpisode.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename();
+    }
+
+    public int getEpisode() {
+      return episode;
+    }
+
+    public void setEpisode(int episode) {
+      this.episode = episode;
+    }
+
+    public int getSeason() {
+      return season;
+    }
+
+    public void setSeason(int season) {
+      this.season = season;
+    }
+  }
+
   protected void initDataBindings() {
     JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, actors, tableActors);
     //
@@ -1050,116 +1032,62 @@ public class TvShowEditorDialog extends JDialog {
     //
     JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
     jListBinding_1.bind();
+    //
+    JTableBinding<TvShowEpisodeEditorContainer, List<TvShowEpisodeEditorContainer>, JTable> jTableBinding_2 = SwingBindings.createJTableBinding(
+        UpdateStrategy.READ, episodes, tableEpisodes);
+    //
+    BeanProperty<TvShowEpisodeEditorContainer, String> tvShowEpisodeEditorContainerBeanProperty = BeanProperty.create("episodeTitle");
+    jTableBinding_2.addColumnBinding(tvShowEpisodeEditorContainerBeanProperty);
+    //
+    BeanProperty<TvShowEpisodeEditorContainer, String> tvShowEpisodeEditorContainerBeanProperty_1 = BeanProperty.create("mediaFilename");
+    jTableBinding_2.addColumnBinding(tvShowEpisodeEditorContainerBeanProperty_1);
+    //
+    BeanProperty<TvShowEpisodeEditorContainer, Integer> tvShowEpisodeEditorContainerBeanProperty_2 = BeanProperty.create("season");
+    jTableBinding_2.addColumnBinding(tvShowEpisodeEditorContainerBeanProperty_2);
+    //
+    BeanProperty<TvShowEpisodeEditorContainer, Integer> tvShowEpisodeEditorContainerBeanProperty_3 = BeanProperty.create("episode");
+    jTableBinding_2.addColumnBinding(tvShowEpisodeEditorContainerBeanProperty_3);
+    //
+    jTableBinding_2.bind();
   }
 
-  /**
-   * Shows the dialog and returns whether the work on the queue should be continued.
-   * 
-   * @return true, if successful
-   */
-  public boolean showDialog() {
-    setVisible(true);
-    return continueQueue;
-  }
+  private class CloneEpisodeAction extends AbstractAction {
+    private static final long serialVersionUID = -3255090541823134232L;
 
-  /**
-   * The Class SwingAction_8.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_8 extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 9160043031922897785L;
-
-    /**
-     * Instantiates a new swing action_8.
-     */
-    public SwingAction_8() {
-      // putValue(NAME, "SwingAction_8");
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.add")); //$NON-NLS-1$
+    public CloneEpisodeAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshowepisode.clone")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      String newTag = (String) cbTags.getSelectedItem();
-      boolean tagFound = false;
-
-      // search if this tag already has been added
-      for (String tag : tags) {
-        if (tag.equals(newTag)) {
-          tagFound = true;
-          break;
-        }
-      }
-
-      // add tag
-      if (!tagFound) {
-        tags.add(newTag);
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+      int row = tableEpisodes.getSelectedRow();
+      if (row > -1) {
+        row = tableEpisodes.convertRowIndexToModel(row);
+        TvShowEpisodeEditorContainer origContainer = episodes.get(row);
+        TvShowEpisodeEditorContainer newContainer = new TvShowEpisodeEditorContainer();
+        newContainer.tvShowEpisode = new TvShowEpisode(origContainer.tvShowEpisode);
+        newContainer.tvShowEpisode.setTitle(origContainer.tvShowEpisode.getTitle() + " (clone)");
+        newContainer.episode = -1;
+        newContainer.season = newContainer.tvShowEpisode.getSeason();
+        episodes.add(row + 1, newContainer);
       }
     }
   }
 
-  /**
-   * The Class SwingAction_9.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_9 extends AbstractAction {
+  private class RemoveEpisodeAction extends AbstractAction {
+    private static final long serialVersionUID = -8233854057648972649L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -1580945350962234235L;
-
-    /**
-     * Instantiates a new swing action_9.
-     */
-    public SwingAction_9() {
-      // putValue(NAME, "SwingAction_9");
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.remove")); //$NON-NLS-1$
+    public RemoveEpisodeAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshowepisode.remove")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
-      String tag = (String) listTags.getSelectedValue();
-      tags.remove(tag);
-    }
-  }
-
-  /**
-   * The Class SwingAction_10.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_10 extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -7652218354710642510L;
-
-    /**
-     * Instantiates a new swing action_10.
-     */
-    public SwingAction_10() {
-      putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      continueQueue = false;
-      setVisible(false);
-      dispose();
+      int row = tableEpisodes.getSelectedRow();
+      if (row > -1) {
+        row = tableEpisodes.convertRowIndexToModel(row);
+        episodes.remove(row);
+      }
     }
   }
 }

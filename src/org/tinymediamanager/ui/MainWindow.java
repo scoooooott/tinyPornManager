@@ -344,7 +344,7 @@ public class MainWindow extends JFrame {
 
     JLayeredPane content = new JLayeredPane();
     content.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("right:220px"), }, new RowSpec[] { RowSpec.decode("fill:max(500px;default):grow"), }));
+        ColumnSpec.decode("right:270px"), }, new RowSpec[] { RowSpec.decode("fill:max(500px;default):grow"), }));
     getContentPane().add(content, "1, 2, fill, fill");
 
     JPanel mainPanel = new JPanel();

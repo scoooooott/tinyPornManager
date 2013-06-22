@@ -643,7 +643,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * @param mediaFiles
    *          the media files
    */
-  public void addToMediaFiles(ArrayList<MediaFile> mediaFiles) {
+  public void addToMediaFiles(List<MediaFile> mediaFiles) {
     synchronized (mediaFilesObservable) {
       mediaFilesObservable.addAll(mediaFiles);
       Collections.sort(mediaFilesObservable);

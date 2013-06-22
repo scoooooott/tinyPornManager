@@ -109,6 +109,44 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
+   * create a deep copy of this episode
+   * 
+   * @param source
+   */
+  public TvShowEpisode(TvShowEpisode source) {
+    // the reference to the tv show and the media files are the only things we don't copy
+    tvShow = source.tvShow;
+    mediaFilesObservable.addAll(source.mediaFilesObservable);
+
+    // clone the rest
+    path = new String(source.path);
+    title = new String(source.title);
+    originalTitle = new String(source.originalTitle);
+    year = new String(source.year);
+    plot = new String(source.plot);
+    rating = source.rating;
+    posterUrl = new String(source.posterUrl);
+    fanartUrl = new String(source.fanartUrl);
+    bannerUrl = new String(source.bannerUrl);
+    thumbUrl = new String(source.thumbUrl);
+    dateAdded = new Date(source.dateAdded.getTime());
+    scraped = source.scraped;
+    ids.putAll(source.ids);
+
+    episode = source.episode;
+    season = source.season;
+    firstAired = new Date(source.firstAired.getTime());
+    director = new String(source.director);
+    writer = new String(source.writer);
+    disc = source.disc;
+    nfoFilename = new String(source.nfoFilename);
+    watched = source.watched;
+    votes = source.votes;
+    subtitles = source.subtitles;
+    actorsObservables.addAll(source.actorsObservables);
+  }
+
+  /**
    * first aired date.
    * 
    * @return the date

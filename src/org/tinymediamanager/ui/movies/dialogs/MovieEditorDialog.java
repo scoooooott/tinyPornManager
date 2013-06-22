@@ -991,8 +991,10 @@ public class MovieEditorDialog extends JDialog {
      */
     public void actionPerformed(ActionEvent e) {
       int row = tableActors.getSelectedRow();
-      row = tableActors.convertRowIndexToModel(row);
-      cast.remove(row);
+      if (row > -1) {
+        row = tableActors.convertRowIndexToModel(row);
+        cast.remove(row);
+      }
     }
   }
 
@@ -1130,8 +1132,10 @@ public class MovieEditorDialog extends JDialog {
      */
     public void actionPerformed(ActionEvent e) {
       int row = tableTrailer.getSelectedRow();
-      row = tableTrailer.convertRowIndexToModel(row);
-      trailers.remove(row);
+      if (row > -1) {
+        row = tableTrailer.convertRowIndexToModel(row);
+        trailers.remove(row);
+      }
     }
   }
 

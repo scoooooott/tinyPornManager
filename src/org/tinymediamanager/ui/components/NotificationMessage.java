@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -11,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 
@@ -49,7 +49,7 @@ public class NotificationMessage extends JPanel implements ActionListener {
   public NotificationMessage(String title, String text) {
     super();
     setOpaque(false);
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("200px"),
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("250px"),
         FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:min(75px;default)"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
@@ -58,16 +58,21 @@ public class NotificationMessage extends JPanel implements ActionListener {
     taTitle.setOpaque(false);
     taTitle.setLineWrap(true);
     taTitle.setWrapStyleWord(true);
+    taTitle.setForeground(getBackground());
+    taTitle.setFont(taTitle.getFont().deriveFont(Font.BOLD));
     add(taTitle, "2, 2, fill, fill");
 
-    JSeparator separator = new JSeparator();
-    add(separator, "2, 4");
+    // JSeparator separator = new JSeparator();
+    // separator.setBackground(getForeground());
+    // separator.setOpaque(false);
+    // add(separator, "2, 4");
 
     JTextArea taMessage = new JTextArea();
     taMessage.setLineWrap(true);
     taMessage.setWrapStyleWord(true);
     taMessage.setOpaque(false);
     taMessage.setText(text);
+    taMessage.setForeground(getBackground());
     add(taMessage, "2, 6, fill, fill");
     beginFade();
   }
@@ -132,7 +137,8 @@ public class NotificationMessage extends JPanel implements ActionListener {
     }
 
     // Draws the rounded opaque panel with borders.
-    graphics.setColor(getBackground());
+    // graphics.setColor(getBackground());
+    graphics.setColor(getForeground());
     graphics.fillRoundRect(0, 0, width - shadowGap, height - shadowGap, arcs.width, arcs.height);
     graphics.setColor(getForeground());
     graphics.setStroke(new BasicStroke(strokeSize));

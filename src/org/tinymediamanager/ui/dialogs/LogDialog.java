@@ -37,7 +37,7 @@ public class LogDialog extends JDialog implements ActionListener {
   public LogDialog() {
     setIconImage(Globals.logo);
     setTitle(BUNDLE.getString("logwindow.title")); //$NON-NLS-1$
-    setBounds(5, 5, 600, 250);
+    setBounds(25, 25, 600, 250);
 
     timerRefresh = new Timer(REFRESH_PERIOD, this);
     timerRefresh.setInitialDelay(0);

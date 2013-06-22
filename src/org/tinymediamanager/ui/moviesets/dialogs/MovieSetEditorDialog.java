@@ -346,9 +346,11 @@ public class MovieSetEditorDialog extends JDialog {
      */
     public void actionPerformed(ActionEvent e) {
       int row = tableMovies.getSelectedRow();
-      Movie movie = moviesInSet.get(row);
-      moviesInSet.remove(row);
-      removedMovies.add(movie);
+      if (row > -1) {
+        Movie movie = moviesInSet.get(row);
+        moviesInSet.remove(row);
+        removedMovies.add(movie);
+      }
     }
   }
 
