@@ -17,6 +17,8 @@ package org.tinymediamanager.core;
 
 /**
  * The Class Message, used to transport messages inside tmm.
+ * 
+ * @author Manuel Laggner
  */
 public class Message {
   public enum MessageLevel {
@@ -25,16 +27,32 @@ public class Message {
 
   private MessageLevel messageLevel;
   private String       messageId;
+  private String[]     messageIdParams;
   private Object       messageSender;
+  private String[]     messageSenderParams;
 
   public Message(Object sender, String id) {
     this(MessageLevel.DEBUG, sender, id);
   }
 
   public Message(MessageLevel level, Object sender, String id) {
+    this(level, sender, new String[0], id, new String[0]);
+  }
+
+  public Message(MessageLevel level, Object sender, String[] senderParams, String id) {
+    this(level, sender, senderParams, id, new String[0]);
+  }
+
+  public Message(MessageLevel level, Object sender, String id, String[] idParams) {
+    this(level, sender, new String[0], id, idParams);
+  }
+
+  public Message(MessageLevel level, Object sender, String[] senderParams, String id, String[] idParams) {
     messageSender = sender;
     messageLevel = level;
     messageId = id;
+    messageIdParams = senderParams;
+    messageSenderParams = idParams;
   }
 
   public String getMessageId() {
@@ -47,5 +65,13 @@ public class Message {
 
   public Object getMessageSender() {
     return messageSender;
+  }
+
+  public String[] getSenderParams() {
+    return messageSenderParams;
+  }
+
+  public String[] getIdParams() {
+    return messageIdParams;
   }
 }
