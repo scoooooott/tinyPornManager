@@ -64,6 +64,7 @@ public class TableSpinnerEditor extends DefaultCellEditor {
 
       @Override
       public void focusLost(FocusEvent fe) {
+        stopCellEditing();
       }
     });
     textField.addActionListener(new ActionListener() {
