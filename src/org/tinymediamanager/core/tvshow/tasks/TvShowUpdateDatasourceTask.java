@@ -331,7 +331,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
       }
-      if (file.isDirectory() && !"sample".equalsIgnoreCase(file.getName())) {
+      if (file.isDirectory() && !"sample".equalsIgnoreCase(file.getName()) && !file.getName().startsWith(".")) {
         // dig deeper
         if (file.getName().equals("VIDEO_TS")) {
           findTvEpisodesAsDisc(tvShow, file);

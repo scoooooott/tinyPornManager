@@ -360,7 +360,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         files.add(file);
       }
       else {
-        dirs.add(file);
+        // ignore .folders
+        if (!file.getName().startsWith(".")) {
+          dirs.add(file);
+        }
       }
     }
     list = null;
@@ -423,7 +426,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         mv.add(new MediaFile(file));
       }
       else {
-        mv.addAll(getAllMediaFilesRecursive(file));
+        // ignore .folders
+        if (!file.getName().startsWith(".")) {
+          mv.addAll(getAllMediaFilesRecursive(file));
+        }
       }
     }
 
