@@ -48,34 +48,38 @@ public class UIMessageListener implements IMessageListener {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        String msg = "";
-        String object = "";
+        String msgid = "";
+        String sender = "";
+        MessageLevel level = message.getMessageLevel();
 
-        // get title
         if (message.getMessageSender() instanceof MediaEntity) {
           // mediaEntity title: eg. Movie title
           MediaEntity me = (MediaEntity) message.getMessageSender();
-          object = me.getTitle();
+          sender = me.getTitle();
         }
         else if (message.getMessageSender() instanceof MediaFile) {
           // mediaFile: filename
           MediaFile mf = (MediaFile) message.getMessageSender();
-          object = mf.getFilename();
+          sender = mf.getFilename();
         }
         else {
-          object = message.getMessageSender().toString();
+          try {
+            sender = BUNDLE.getString(message.getMessageSender().toString());
+          }
+          catch (Exception e) {
+            sender = message.getMessageSender().toString();
+          }
         }
 
-        // get message
         try {
           // try to get a localized version
-          msg = BUNDLE.getString(message.getMessageId());
+          msgid = BUNDLE.getString(message.getMessageId());
         }
         catch (Exception e) {
           // simply take the id
-          msg = message.getMessageId();
+          msgid = message.getMessageId();
         }
-        MainWindow.getActiveInstance().addMessage(msg, object);
+        MainWindow.getActiveInstance().addMessage(level, sender, msgid);
       }
     });
   }

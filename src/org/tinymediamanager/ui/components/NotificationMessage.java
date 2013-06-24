@@ -13,8 +13,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.Timer;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.ui.MainWindow;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -46,21 +50,44 @@ public class NotificationMessage extends JPanel implements ActionListener {
   private Timer             fadeTimer;
   private Timer             disposeTimer;
 
+  private Color             defaultBgColor   = Color.WHITE;
+
   public NotificationMessage(String title, String text) {
+    this(MessageLevel.DEBUG, title, text);
+  }
+
+  public NotificationMessage(MessageLevel level, String title, String text) {
     super();
     setOpaque(false);
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("250px"),
+    setBackground(defaultBgColor);
+
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("200px"),
         FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:min(75px;default)"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
-    JTextArea taTitle = new JTextArea(title);
-    taTitle.setOpaque(false);
-    taTitle.setLineWrap(true);
-    taTitle.setWrapStyleWord(true);
-    taTitle.setForeground(getBackground());
-    taTitle.setFont(taTitle.getFont().deriveFont(Font.BOLD));
-    add(taTitle, "2, 2, fill, fill");
+    JTextPane taPane = new JTextPane();
+    taPane.setText(title);
+    taPane.setFont(new Font("Dialog", Font.BOLD, 14));
+    taPane.setOpaque(false);
+    switch (level) {
+      case ERROR:
+        defaultBgColor = new Color(255, 128, 128);
+        taPane.setForeground(Color.WHITE);
+        break;
+
+      case DEBUG:
+        defaultBgColor = new Color(0, 153, 255);
+        taPane.setForeground(Color.WHITE);
+        break;
+
+      default:
+        break;
+    }
+    SimpleAttributeSet attribs = new SimpleAttributeSet();
+    StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_CENTER);
+    taPane.setParagraphAttributes(attribs, false);
+    add(taPane, "2, 2, fill, fill");
 
     // JSeparator separator = new JSeparator();
     // separator.setBackground(getForeground());
@@ -72,7 +99,6 @@ public class NotificationMessage extends JPanel implements ActionListener {
     taMessage.setWrapStyleWord(true);
     taMessage.setOpaque(false);
     taMessage.setText(text);
-    taMessage.setForeground(getBackground());
     add(taMessage, "2, 6, fill, fill");
     beginFade();
   }
@@ -137,8 +163,7 @@ public class NotificationMessage extends JPanel implements ActionListener {
     }
 
     // Draws the rounded opaque panel with borders.
-    // graphics.setColor(getBackground());
-    graphics.setColor(getForeground());
+    graphics.setColor(defaultBgColor);
     graphics.fillRoundRect(0, 0, width - shadowGap, height - shadowGap, arcs.width, arcs.height);
     graphics.setColor(getForeground());
     graphics.setStroke(new BasicStroke(strokeSize));

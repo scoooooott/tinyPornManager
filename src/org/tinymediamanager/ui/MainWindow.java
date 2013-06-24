@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCacheTask;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
@@ -722,6 +723,11 @@ public class MainWindow extends JFrame {
 
   public void addMessage(String title, String message) {
     JPanel msg = new NotificationMessage(title, message);
+    messagePanel.add(msg);
+  }
+
+  public void addMessage(MessageLevel level, String title, String message) {
+    JPanel msg = new NotificationMessage(level, title, message);
     messagePanel.add(msg);
   }
 

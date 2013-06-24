@@ -28,10 +28,10 @@ public class Message {
   private Object       messageSender;
 
   public Message(Object sender, String id) {
-    this(sender, MessageLevel.DEBUG, id);
+    this(MessageLevel.DEBUG, sender, id);
   }
 
-  public Message(Object sender, MessageLevel level, String id) {
+  public Message(MessageLevel level, Object sender, String id) {
     messageSender = sender;
     messageLevel = level;
     messageId = id;
