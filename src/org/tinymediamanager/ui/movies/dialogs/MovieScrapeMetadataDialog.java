@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
@@ -92,7 +93,8 @@ public class MovieScrapeMetadataDialog extends JDialog {
   public MovieScrapeMetadataDialog(String title) {
     setTitle(title);
     setName("updateMetadata");
-    setBounds(5, 5, 533, 257);
+    setBounds(5, 5, 550, 280);
+    setMinimumSize(new Dimension(getWidth(), getHeight()));
     TmmWindowSaver.loadSettings(this);
     setIconImage(Globals.logo);
     setModal(true);
@@ -157,8 +159,9 @@ public class MovieScrapeMetadataDialog extends JDialog {
     {
       JPanel panelCenter = new JPanel();
       panelContent.add(panelCenter, BorderLayout.CENTER);
-      panelCenter.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+      panelCenter.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+          FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(this.movieSearchAndScrapeConfig.getScraperMetadataConfig());
       panelScraperMetadataSetting.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), BUNDLE.getString("scraper.metadata.select"),
