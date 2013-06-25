@@ -24,6 +24,7 @@ import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.Utils;
 
 /**
  * Class UIMessageListener used to push the messaged to the EDT
@@ -64,7 +65,7 @@ public class UIMessageListener implements IMessageListener {
         }
         else {
           try {
-            sender = BUNDLE.getString(message.getMessageSender().toString());
+            sender = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageSender().toString()), message.getSenderParams());
           }
           catch (Exception e) {
             sender = message.getMessageSender().toString();
@@ -73,13 +74,13 @@ public class UIMessageListener implements IMessageListener {
 
         try {
           // try to get a localized version
-          msgid = BUNDLE.getString(message.getMessageId());
+          msgid = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageId()), message.getIdParams());
         }
         catch (Exception e) {
           // simply take the id
           msgid = message.getMessageId();
         }
-        MainWindow.getActiveInstance().addMessage(level, sender, msgid);
+        MainWindow.getActiveInstance().addMessage(level, msgid, sender);
       }
     });
   }

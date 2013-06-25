@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -264,11 +266,9 @@ public class MovieList extends AbstractModelObject {
       }
 
     }
-    catch (PersistenceException e) {
-      LOGGER.error("loadMoviesFromDatabase", e);
-    }
     catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "", "message.database.loadmovies"));
     }
   }
 
@@ -344,99 +344,103 @@ public class MovieList extends AbstractModelObject {
     }
     catch (Exception e) {
       LOGGER.error("searchMovie", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.movie.searcherror", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
 
     return sr;
   }
 
-  /**
-   * Search movie.
-   * 
-   * @param searchTerm
-   *          the search term
-   * @param ImdbId
-   *          the imdb id
-   * @param metadataProvider
-   *          the metadata provider
-   * @return the list
-   */
-  @Deprecated
-  public List<MediaSearchResult> searchMovie(String searchTerm, String year, String ImdbId, IMediaMetadataProvider metadataProvider) {
-    List<MediaSearchResult> sr = null;
-    if (ImdbId != null && !ImdbId.isEmpty()) {
-      sr = searchMovieByImdbId(ImdbId, metadataProvider);
-    }
-    if (sr == null || sr.size() == 0) {
-      sr = searchMovie(searchTerm, year, metadataProvider);
-    }
+  // /**
+  // * Search movie.
+  // *
+  // * @param searchTerm
+  // * the search term
+  // * @param ImdbId
+  // * the imdb id
+  // * @param metadataProvider
+  // * the metadata provider
+  // * @return the list
+  // */
+  // @Deprecated
+  // public List<MediaSearchResult> searchMovie(String searchTerm, String year, String ImdbId, IMediaMetadataProvider metadataProvider) {
+  // List<MediaSearchResult> sr = null;
+  // if (ImdbId != null && !ImdbId.isEmpty()) {
+  // sr = searchMovieByImdbId(ImdbId, metadataProvider);
+  // }
+  // if (sr == null || sr.size() == 0) {
+  // sr = searchMovie(searchTerm, year, metadataProvider);
+  // }
+  //
+  // return sr;
+  // }
 
-    return sr;
-  }
+  // /**
+  // * Search movie.
+  // *
+  // * @param searchTerm
+  // * the search term
+  // * @param metadataProvider
+  // * the metadata provider
+  // * @return the list
+  // */
+  // @Deprecated
+  // private List<MediaSearchResult> searchMovie(String searchTerm, String year, IMediaMetadataProvider metadataProvider) {
+  // // format searchstring
+  // // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
+  //
+  // List<MediaSearchResult> searchResult = null;
+  // try {
+  // IMediaMetadataProvider provider = metadataProvider;
+  // // get a new metadataprovider if nothing is set
+  // if (provider == null) {
+  // provider = getMetadataProvider();
+  // }
+  // MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, searchTerm);
+  // options.set(MediaSearchOptions.SearchParam.YEAR, year);
+  // searchResult = provider.search(options);
+  // }
+  // catch (Exception e) {
+  // LOGGER.error("searchMovie", e);
+  // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "", "message.movie.searcherror", new String[] { ":",
+  // e.getLocalizedMessage() }));
+  // }
+  //
+  // return searchResult;
+  // }
 
-  /**
-   * Search movie.
-   * 
-   * @param searchTerm
-   *          the search term
-   * @param metadataProvider
-   *          the metadata provider
-   * @return the list
-   */
-  @Deprecated
-  private List<MediaSearchResult> searchMovie(String searchTerm, String year, IMediaMetadataProvider metadataProvider) {
-    // format searchstring
-    // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
-
-    List<MediaSearchResult> searchResult = null;
-    try {
-      IMediaMetadataProvider provider = metadataProvider;
-      // get a new metadataprovider if nothing is set
-      if (provider == null) {
-        provider = getMetadataProvider();
-      }
-      MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, searchTerm);
-      options.set(MediaSearchOptions.SearchParam.YEAR, year);
-      searchResult = provider.search(options);
-    }
-    catch (Exception e) {
-      LOGGER.error("searchMovie", e);
-    }
-
-    return searchResult;
-  }
-
-  /**
-   * Search movie.
-   * 
-   * @param imdbId
-   *          the imdb id
-   * @param metadataProvider
-   *          the metadata provider
-   * @return the list
-   */
-  @Deprecated
-  private List<MediaSearchResult> searchMovieByImdbId(String imdbId, IMediaMetadataProvider metadataProvider) {
-
-    List<MediaSearchResult> searchResult = null;
-    MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
-    options.setMediaType(MediaType.MOVIE);
-    options.set(SearchParam.IMDBID, imdbId);
-
-    try {
-      IMediaMetadataProvider provider = metadataProvider;
-      // get a new metadataProvider if no one is set
-      if (provider == null) {
-        provider = getMetadataProvider();
-      }
-      searchResult = provider.search(options);
-    }
-    catch (Exception e) {
-      LOGGER.warn("failed to search movie with imdbid", e);
-      searchResult = new ArrayList<MediaSearchResult>();
-    }
-
-    return searchResult;
-  }
+  // /**
+  // * Search movie.
+  // *
+  // * @param imdbId
+  // * the imdb id
+  // * @param metadataProvider
+  // * the metadata provider
+  // * @return the list
+  // */
+  // @Deprecated
+  // private List<MediaSearchResult> searchMovieByImdbId(String imdbId, IMediaMetadataProvider metadataProvider) {
+  //
+  // List<MediaSearchResult> searchResult = null;
+  // MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
+  // options.setMediaType(MediaType.MOVIE);
+  // options.set(SearchParam.IMDBID, imdbId);
+  //
+  // try {
+  // IMediaMetadataProvider provider = metadataProvider;
+  // // get a new metadataProvider if no one is set
+  // if (provider == null) {
+  // provider = getMetadataProvider();
+  // }
+  // searchResult = provider.search(options);
+  // }
+  // catch (Exception e) {
+  // LOGGER.warn("failed to search movie with imdbid", e);
+  // searchResult = new ArrayList<MediaSearchResult>();
+  // }
+  //
+  // return searchResult;
+  // }
 
   /**
    * Gets the metadata provider.

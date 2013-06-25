@@ -31,28 +31,94 @@ public class Message {
   private Object       messageSender;
   private String[]     messageSenderParams;
 
+  /**
+   * Instantiates a new message.
+   * 
+   * @param sender
+   *          the object which is the source of this message. It can be any object. Some well known classes (like Movie.class, MediaFile.class) will
+   *          get an extra processing, as on other objects there is simple a .toString() used. If a string is passed here, also a lookup in the bundle
+   *          will happen
+   * @param id
+   *          the message id from the bundle (or a string which will not be localized)
+   */
   public Message(Object sender, String id) {
     this(MessageLevel.DEBUG, sender, id);
   }
 
+  /**
+   * Instantiates a new message.
+   * 
+   * @param level
+   *          the message level
+   * @param sender
+   *          the object which is the source of this message. It can be any object. Some well known classes (like Movie.class, MediaFile.class) will
+   *          get an extra processing, as on other objects there is simple a .toString() used. If a string is passed here, also a lookup in the bundle
+   *          will happen
+   * @param id
+   *          the message id from the bundle (or a string which will not be localized)
+   */
   public Message(MessageLevel level, Object sender, String id) {
     this(level, sender, new String[0], id, new String[0]);
   }
 
+  /**
+   * Instantiates a new message.
+   * 
+   * @param level
+   *          the message level
+   * @param sender
+   *          the object which is the source of this message. It can be any object. Some well known classes (like Movie.class, MediaFile.class) will
+   *          get an extra processing, as on other objects there is simple a .toString() used. If a string is passed here, also a lookup in the bundle
+   *          will happen
+   * @param senderParams
+   *          the sender params are an array of string to contain replacements for localizeable messages
+   * @param id
+   *          the message id from the bundle (or a string which will not be localized)
+   */
   public Message(MessageLevel level, Object sender, String[] senderParams, String id) {
     this(level, sender, senderParams, id, new String[0]);
   }
 
+  /**
+   * Instantiates a new message.
+   * 
+   * @param level
+   *          the message level
+   * @param sender
+   *          the object which is the source of this message. It can be any object. Some well known classes (like Movie.class, MediaFile.class) will
+   *          get an extra processing, as on other objects there is simple a .toString() used. If a string is passed here, also a lookup in the bundle
+   *          will happen
+   * @param id
+   *          the message id from the bundle (or a string which will not be localized)
+   * @param idParams
+   *          the id params are an array of string to contain replacements for localizeable messages
+   */
   public Message(MessageLevel level, Object sender, String id, String[] idParams) {
     this(level, sender, new String[0], id, idParams);
   }
 
+  /**
+   * Instantiates a new message.
+   * 
+   * @param level
+   *          the message level
+   * @param sender
+   *          the object which is the source of this message. It can be any object. Some well known classes (like Movie.class, MediaFile.class) will
+   *          get an extra processing, as on other objects there is simple a .toString() used. If a string is passed here, also a lookup in the bundle
+   *          will happen
+   * @param senderParams
+   *          the sender params are an array of string to contain replacements for localizeable messages
+   * @param id
+   *          the message id from the bundle (or a string which will not be localized)
+   * @param idParams
+   *          the id params are an array of string to contain replacements for localizeable messages
+   */
   public Message(MessageLevel level, Object sender, String[] senderParams, String id, String[] idParams) {
     messageSender = sender;
     messageLevel = level;
     messageId = id;
-    messageIdParams = senderParams;
-    messageSenderParams = idParams;
+    messageIdParams = idParams;
+    messageSenderParams = senderParams;
   }
 
   public String getMessageId() {

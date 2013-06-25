@@ -19,6 +19,9 @@ import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 
 /**
@@ -77,6 +80,7 @@ public class MovieExtraImageFetcher implements Runnable {
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed: ", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.extraimage.threadcrashed"));
     }
   }
 }

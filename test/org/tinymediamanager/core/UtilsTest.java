@@ -1,7 +1,6 @@
 package org.tinymediamanager.core;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 public class UtilsTest {
@@ -34,4 +33,11 @@ public class UtilsTest {
     Assert.assertEquals("German", Utils.getDisplayLanguage("ger"));
   }
 
+  @Test
+  public void testReplacement() {
+    Assert.assertEquals("Test done", Utils.replacePlaceholders("Test {}", new String[] { "done" }));
+    Assert.assertEquals("Test ", Utils.replacePlaceholders("Test {}", new String[] {}));
+    Assert.assertEquals("Test one two three", Utils.replacePlaceholders("Test {} {} {}", new String[] { "one", "two", "three" }));
+    Assert.assertEquals("Test with empty spaces", Utils.replacePlaceholders("Test {} with {}{}empty spaces", new String[] {}));
+  }
 }

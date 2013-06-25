@@ -23,6 +23,9 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -276,12 +279,14 @@ public class MovieScrapeTask extends TmmSwingWorker {
             }
             catch (Exception e) {
               LOGGER.error("movie.setMetadata", e);
+              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.metadatamoviefailed"));
             }
           }
         }
       }
       catch (Exception e) {
         LOGGER.error("Thread crashed", e);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MovieScraper", "message.scrape.threadcrashed"));
       }
     }
 
@@ -312,6 +317,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
         }
         catch (Exception e) {
           LOGGER.error("getArtwork", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.movieartworkfailed"));
           artwork = new ArrayList<MediaArtwork>();
         }
         // check if at least one artwork has been found
@@ -355,6 +361,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
         }
         catch (Exception e) {
           LOGGER.error("getTrailers", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.movietrailerfailed"));
         }
       }
 

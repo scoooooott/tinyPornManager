@@ -116,6 +116,8 @@ public class MovieRenamer {
       }
       catch (Exception e) {
         LOGGER.error("error moving subtitles", e);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, sub.getFilename(), "message.renamer.failedrename", new String[] { ":",
+            e.getLocalizedMessage() }));
       }
     } // end MF loop
     m.saveToDb();
@@ -167,6 +169,8 @@ public class MovieRenamer {
         }
         catch (Exception e) {
           LOGGER.error("error moving folder: ", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
         if (!ok) {
           // FIXME: when we were not able to rename folder, display error msg
@@ -235,9 +239,13 @@ public class MovieRenamer {
         }
         catch (FileNotFoundException e) {
           LOGGER.error("error moving video file - file not found", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
         catch (Exception e) {
           LOGGER.error("error moving video file", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
         needed.add(newMF);
       }
@@ -273,6 +281,8 @@ public class MovieRenamer {
         }
         catch (Exception e) {
           LOGGER.error("error renaming Nfo", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
         needed.add(newMF);
       }
@@ -315,6 +325,8 @@ public class MovieRenamer {
         }
         catch (Exception e) {
           LOGGER.error("error renaming poster", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
         needed.add(newMF);
       }
@@ -357,6 +369,8 @@ public class MovieRenamer {
         }
         catch (Exception e) {
           LOGGER.error("error renaming fanart", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
         needed.add(newMF);
       }
@@ -382,6 +396,8 @@ public class MovieRenamer {
       }
       catch (Exception e) {
         LOGGER.error("error renaming trailer", e);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+            e.getLocalizedMessage() }));
       }
       needed.add(newMF);
     }
@@ -499,7 +515,7 @@ public class MovieRenamer {
     if (!rename) {
       LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getPath());
       LOGGER.error("Movie renaming aborted.");
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "failed to rename", srcDir.toString()));
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename"));
       return false;
     }
     else {

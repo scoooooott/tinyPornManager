@@ -33,6 +33,9 @@ import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
@@ -129,6 +132,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "message.update.threadcrashed"));
     }
     return null;
   }
@@ -333,9 +337,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
     catch (NullPointerException e) {
       LOGGER.error("NPE:", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movieDir.getPath(), "message.update.errormoviedir"));
     }
     catch (Exception e) {
       LOGGER.error(e.getMessage());
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movieDir.getPath(), "message.update.errormoviedir", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
   }
 

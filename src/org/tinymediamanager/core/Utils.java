@@ -35,6 +35,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLException;
 
@@ -582,5 +584,45 @@ public class Utils {
   public static void removeEmptyStringsFromList(List<String> list) {
     list.removeAll(Collections.singleton(null));
     list.removeAll(Collections.singleton(""));
+  }
+
+  /**
+   * replaces a string with placeholder ({}) with the string from the replacement array the strings in the replacement array have to be in the same
+   * order as the placeholder in the source string
+   * 
+   * @param source
+   *          string
+   * @param replacement
+   *          array
+   * @return replaced string
+   */
+  public static String replacePlaceholders(String source, String[] replacements) {
+    String result = source;
+    int index = 0;
+
+    Pattern pattern = Pattern.compile("\\{\\}");
+    while (true) {
+      Matcher matcher = pattern.matcher(result);
+      if (matcher.find()) {
+        try {
+          // int index = Integer.parseInt(matcher.group(1));
+          if (replacements.length > index) {
+            result = result.replaceFirst(pattern.pattern(), replacements[index]);
+          }
+          else {
+            result = result.replaceFirst(pattern.pattern(), "");
+          }
+        }
+        catch (Exception e) {
+          result = result.replaceFirst(pattern.pattern(), "");
+        }
+        index++;
+      }
+      else {
+        break;
+      }
+    }
+
+    return StrgUtils.removeDuplicateWhitespace(result);
   }
 }

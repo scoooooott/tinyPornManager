@@ -17,8 +17,6 @@ package org.tinymediamanager.core.movie.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -46,6 +44,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.core.movie.MovieList;
@@ -231,6 +232,7 @@ public class MovieToXbmcNfoConnector {
    */
   public static String setData(Movie movie) {
     if (context == null) {
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", "Context is null" }));
       return "";
     }
 
@@ -409,11 +411,10 @@ public class MovieToXbmcNfoConnector {
         }
         FileUtils.write(new File(movie.getPath(), nfoFilename), sb, "UTF-8");
       }
-      catch (JAXBException e) {
-        LOGGER.error("setData", e);
-      }
-      catch (IOException e) {
-        LOGGER.error("setData", e);
+      catch (Exception e) {
+        LOGGER.error("setData", e.getMessage());
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":",
+            e.getLocalizedMessage() }));
       }
     }
 
@@ -431,6 +432,7 @@ public class MovieToXbmcNfoConnector {
    */
   public static Movie getData(String nfoFilename) {
     if (context == null) {
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
 
@@ -439,6 +441,7 @@ public class MovieToXbmcNfoConnector {
     try {
       Unmarshaller um = context.createUnmarshaller();
       if (um == null) {
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
         return null;
       }
 
@@ -563,15 +566,12 @@ public class MovieToXbmcNfoConnector {
     }
     catch (UnmarshalException e) {
       LOGGER.error("getData " + e.getMessage());
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
-    catch (FileNotFoundException e) {
-      LOGGER.error("getData", e);
-      return null;
-    }
-
     catch (Exception e) {
       LOGGER.error("getData", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
 
