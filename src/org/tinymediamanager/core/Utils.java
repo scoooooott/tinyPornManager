@@ -125,7 +125,9 @@ public class Utils {
     });
     LinkedHashMap<String, Locale> sortedMap = new LinkedHashMap<String, Locale>();
     for (String key : keys) {
-      sortedMap.put(key.toLowerCase(), langArray.get(key));
+      if (!key.isEmpty()) {
+        sortedMap.put(key.toLowerCase(), langArray.get(key));
+      }
     }
 
     return sortedMap;

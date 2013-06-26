@@ -99,20 +99,25 @@ public class MovieRenamer {
 
       File newFile = new File(m.getPath(), newSubName);
       try {
-        moveFile(sub.getFile(), newFile);
-        m.removeFromMediaFiles(sub);
-        MediaFile mf = new MediaFile(newFile);
-        MediaFileSubtitle mfs = new MediaFileSubtitle();
-        if (!lang.isEmpty()) {
-          mfs.setLanguage(lang);
+        boolean ok = moveFileSafe(sub.getFile(), newFile);
+        if (ok) {
+          m.removeFromMediaFiles(sub);
+          MediaFile mf = new MediaFile(newFile);
+          MediaFileSubtitle mfs = new MediaFileSubtitle();
+          if (!lang.isEmpty()) {
+            mfs.setLanguage(lang);
+          }
+          if (!forced.isEmpty()) {
+            mfs.setForced(true);
+          }
+          mfs.setCodec(sub.getExtension());
+          mf.setContainerFormat(sub.getExtension()); // set containerformat, so mediainfo deos not overwrite our new array
+          mf.addSubtitle(mfs);
+          m.addToMediaFiles(mf);
         }
-        if (!forced.isEmpty()) {
-          mfs.setForced(true);
+        else {
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, sub.getFilename(), "message.renamer.failedrename"));
         }
-        mfs.setCodec(sub.getExtension());
-        mf.setContainerFormat(sub.getExtension()); // set containerformat, so mediainfo deos not overwrite our new array
-        mf.addSubtitle(mfs);
-        m.addToMediaFiles(mf);
       }
       catch (Exception e) {
         LOGGER.error("error moving subtitles", e);
@@ -233,9 +238,11 @@ public class MovieRenamer {
         MediaFile newMF = new MediaFile(vid);
         File newFile = new File(newPath, newFilename);
         try {
-          moveFile(vid.getFile(), newFile);
-          newMF.setPath(newPath);
-          newMF.setFilename(newFilename);
+          boolean ok = moveFileSafe(vid.getFile(), newFile);
+          if (ok) {
+            newMF.setPath(newPath);
+            newMF.setFilename(newFilename);
+          }
         }
         catch (FileNotFoundException e) {
           LOGGER.error("error moving video file - file not found", e);
@@ -390,9 +397,11 @@ public class MovieRenamer {
       MediaFile newMF = new MediaFile(mf);
       File newFile = new File(newPath, newFilename);
       try {
-        moveFile(mf.getFile(), newFile);
-        newMF.setPath(newPath);
-        newMF.setFilename(newFilename);
+        boolean ok = moveFileSafe(mf.getFile(), newFile);
+        if (ok) {
+          newMF.setPath(newPath);
+          newMF.setFilename(newFilename);
+        }
       }
       catch (Exception e) {
         LOGGER.error("error renaming trailer", e);
@@ -525,6 +534,81 @@ public class MovieRenamer {
   }
 
   /**
+   * modified version of commons-io FileUtils.moveFile();<br>
+   * since renameTo() might not work in first place, retry it up to 5 times.<br>
+   * (better wait 5 sec for success, than always copying a 50gig directory ;)<br>
+   * <b>And NO, we're NOT doing a copy+delete as fallback!</b>
+   * 
+   * @param srcFile
+   *          the file to be moved
+   * @param destFile
+   *          the destination file
+   * @throws NullPointerException
+   *           if source or destination is {@code null}
+   * @throws FileExistsException
+   *           if the destination file exists
+   * @throws IOException
+   *           if source or destination is invalid
+   * @throws IOException
+   *           if an IO error occurs moving the file
+   * @since 1.4
+   */
+  public static boolean moveFileSafe(final File srcFile, final File destFile) throws IOException {
+    if (srcFile == null) {
+      throw new NullPointerException("Source must not be null");
+    }
+    if (destFile == null) {
+      throw new NullPointerException("Destination must not be null");
+    }
+    if (!srcFile.equals(destFile)) {
+      LOGGER.debug("try to move file " + srcFile.getPath() + " to " + destFile.getPath());
+      if (!srcFile.exists()) {
+        throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+      }
+      if (srcFile.isDirectory()) {
+        throw new IOException("Source '" + srcFile + "' is a directory");
+      }
+      if (destFile.exists()) {
+        throw new FileExistsException("Destination '" + destFile + "' already exists");
+      }
+      if (destFile.isDirectory()) {
+        throw new IOException("Destination '" + destFile + "' is a directory");
+      }
+
+      // rename folder; try 5 times and wait a sec
+      boolean rename = false;
+      for (int i = 0; i < 5; i++) {
+        rename = srcFile.renameTo(destFile);
+        if (rename) {
+          break; // ok it worked, step out
+        }
+        try {
+          LOGGER.debug("rename did not work - sleep a while and try again...");
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+          LOGGER.warn("I'm so excited - could not sleep");
+        }
+      }
+
+      // ok, we tried it 5 times - it still seems to be locked somehow. Continue
+      // with copying as fallback
+      // NOOO - we don't like to have some files copied and some not.
+
+      if (!rename) {
+        LOGGER.error("Failed to rename file '" + srcFile + " to " + destFile.getPath());
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile.getPath(), "message.renamer.failedrename"));
+        return false;
+      }
+      else {
+        LOGGER.info("Successfully moved folder " + srcFile.getPath() + " to " + destFile.getPath());
+        return true;
+      }
+    }
+    return true; // files are equal
+  }
+
+  /**
    * Creates the new file/folder name according to template string
    * 
    * @param template
@@ -610,34 +694,6 @@ public class MovieRenamer {
       replacingCleaned = replacement.replaceAll("([\"\\:<>|/?*])", "");
     }
     return destination.replaceAll("\\" + token, replacingCleaned);
-  }
-
-  /**
-   * Move file.
-   * 
-   * @param oldFilename
-   *          the old filename
-   * @param newFilename
-   *          the new filename
-   * @throws Exception
-   *           the exception
-   */
-  public static void moveFile(File oldFilename, File newFilename) throws Exception {
-    if (!oldFilename.equals(newFilename)) {
-      LOGGER.info("move file " + oldFilename + " to " + newFilename);
-      if (newFilename.exists()) {
-        // overwrite?
-        LOGGER.warn(newFilename + " exists - do nothing.");
-      }
-      else {
-        if (oldFilename.exists()) {
-          FileUtils.moveFile(oldFilename, newFilename);
-        }
-        else {
-          throw new FileNotFoundException(oldFilename.getAbsolutePath());
-        }
-      }
-    }
   }
 
   /**
