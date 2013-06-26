@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +32,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -213,11 +215,9 @@ public class TvShowList extends AbstractModelObject {
         LOGGER.debug("found no movies in database");
       }
     }
-    catch (PersistenceException e) {
-      LOGGER.error("loadTvShowsFromDatabase", e);
-    }
     catch (Exception e) {
       LOGGER.error("loadTvShowsFromDatabase", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "", "message.database.loadtvshows"));
     }
   }
 

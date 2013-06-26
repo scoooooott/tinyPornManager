@@ -3,6 +3,7 @@ package org.tinymediamanager.ui.components;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -11,12 +12,11 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.Timer;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.ui.MainWindow;
@@ -27,31 +27,28 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 public class NotificationMessage extends JPanel implements ActionListener {
-  private static final long serialVersionUID = -3575919232938540443L;
+  private static final long      serialVersionUID = -3575919232938540443L;
 
-  /** Stroke size. it is recommended to set it to 1 for better view */
-  protected int             strokeSize       = 1;
-  /** Color of shadow */
-  protected Color           shadowColor      = Color.black;
-  /** Sets if it drops shadow */
-  protected boolean         shady            = false;
-  /** Sets if it has an High Quality view */
-  protected boolean         highQuality      = true;
-  /** Double values for Horizontal and Vertical radius of corner arcs */
-  protected Dimension       arcs             = new Dimension(10, 10);
-  /** Distance between shadow border and opaque panel border */
-  protected int             shadowGap        = 4;
-  /** The offset of shadow. */
-  protected int             shadowOffset     = 4;
-  /** The transparency value of shadow. ( 0 - 255) */
-  protected int             shadowAlpha      = 100;
+  private static final ImageIcon ERROR            = new ImageIcon(NotificationMessage.class.getResource("/org/tinymediamanager/ui/images/Error.png"));
 
-  private float             opacity          = 0f;
-  private Timer             fadeTimer;
-  private Timer             disposeTimer;
+  protected int                  strokeSize       = 1;
+  protected Color                shadowColor      = Color.black;
+  protected boolean              shady            = false;
+  protected boolean              highQuality      = true;
+  protected Dimension            arcs             = new Dimension(10, 10);
+  protected int                  shadowGap        = 4;
+  protected int                  shadowOffset     = 4;
+  protected int                  shadowAlpha      = 100;
 
-  private Color             defaultBgColor   = Color.WHITE;
+  private float                  opacity          = 0f;
+  private Timer                  fadeTimer;
+  private Timer                  disposeTimer;
 
+  private Color                  defaultBgColor   = Color.GRAY;
+
+  /**
+   * @wbp.parser.constructor
+   */
   public NotificationMessage(String title, String text) {
     this(MessageLevel.DEBUG, title, text);
   }
@@ -61,33 +58,24 @@ public class NotificationMessage extends JPanel implements ActionListener {
     setOpaque(false);
     setBackground(defaultBgColor);
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("200px"),
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("fill:min(75px;default)"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.MIN_COLSPEC,
+        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("200px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, RowSpec.decode("fill:min(75px;default)"),
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
-    JTextPane taPane = new JTextPane();
+    JTextArea taPane = new JTextArea();
     taPane.setText(title);
     taPane.setFont(new Font("Dialog", Font.BOLD, 14));
+    taPane.setForeground(Color.white);
+    taPane.setLineWrap(true);
+    taPane.setWrapStyleWord(true);
     taPane.setOpaque(false);
-    switch (level) {
-      case ERROR:
-        defaultBgColor = new Color(255, 128, 128);
-        taPane.setForeground(Color.WHITE);
-        break;
 
-      case DEBUG:
-        defaultBgColor = new Color(0, 153, 255);
-        taPane.setForeground(Color.WHITE);
-        break;
-
-      default:
-        break;
-    }
-    SimpleAttributeSet attribs = new SimpleAttributeSet();
-    StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_CENTER);
-    taPane.setParagraphAttributes(attribs, false);
-    add(taPane, "2, 2, fill, fill");
+    JLabel lblIcon = new JLabel("");
+    lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+    lblIcon.setIconTextGap(0);
+    add(lblIcon, "2, 2, 1, 3, center, center");
+    add(taPane, "4, 2, fill, fill");
 
     // JSeparator separator = new JSeparator();
     // separator.setBackground(getForeground());
@@ -99,8 +87,18 @@ public class NotificationMessage extends JPanel implements ActionListener {
     taMessage.setWrapStyleWord(true);
     taMessage.setOpaque(false);
     taMessage.setText(text);
-    add(taMessage, "2, 6, fill, fill");
+    taMessage.setForeground(Color.white);
+    add(taMessage, "4, 4, fill, fill");
     beginFade();
+
+    switch (level) {
+      case ERROR:
+        lblIcon.setIcon(ERROR);
+        break;
+
+      default:
+        lblIcon.setVisible(false);
+    }
   }
 
   public void beginFade() {

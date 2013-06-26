@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 
 /**
@@ -234,7 +237,8 @@ public class TvShowRenamer {
 
     if (!rename) {
       LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getPath());
-      LOGGER.error("Movie renaming aborted.");
+      LOGGER.error("Tv show renaming aborted.");
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename"));
       return false;
     }
     else {

@@ -46,6 +46,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache.CacheType;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
@@ -185,6 +186,7 @@ public class Settings extends AbstractModelObject {
       }
       catch (JAXBException e) {
         LOGGER.error("getInstance", e);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "tmm.settings", "message.config.loadsettingserror"));
       }
 
       Settings.instance.clearDirty();
@@ -385,11 +387,9 @@ public class Settings extends AbstractModelObject {
       IOUtils.write(xml, w);
 
     }
-    catch (JAXBException e) {
+    catch (Exception e) {
       LOGGER.error("saveSettings", e);
-    }
-    catch (IOException e) {
-      LOGGER.error("saveSettings", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "tmm.settings", "message.config.savesettingserror"));
     }
     finally {
       try {
@@ -397,6 +397,7 @@ public class Settings extends AbstractModelObject {
       }
       catch (Exception e) {
         LOGGER.error("saveSettings", e);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "tmm.settings", "message.config.savesettingserror"));
       }
     }
 

@@ -24,6 +24,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
@@ -185,6 +186,8 @@ public class MediaEntityImageFetcherTask implements Runnable {
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "ArtworkDownload", "message.artwork.threadcrashed", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
   }
 }

@@ -301,7 +301,7 @@ public class MainWindow extends JFrame {
       }
     });
 
-    JMenuItem tmmLogs = new JMenuItem("show logs");
+    JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs")); //$NON-NLS-1$
     debug.add(tmmLogs);
     tmmLogs.addActionListener(new ActionListener() {
       @Override

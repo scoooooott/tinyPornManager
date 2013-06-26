@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 
@@ -77,6 +78,8 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed: ", e);
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MediaInformation", "message.mediainfo.threadcrashed", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
 
     if (mediaEntity != null) {

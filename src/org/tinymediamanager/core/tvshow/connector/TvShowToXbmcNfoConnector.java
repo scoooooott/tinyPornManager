@@ -17,8 +17,6 @@ package org.tinymediamanager.core.tvshow.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -44,6 +42,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowActor;
 import org.tinymediamanager.scraper.Certification;
@@ -133,6 +134,7 @@ public class TvShowToXbmcNfoConnector {
    */
   public static String setData(TvShow tvShow) {
     if (context == null) {
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":", "Context is null" }));
       return "";
     }
 
@@ -200,11 +202,10 @@ public class TvShowToXbmcNfoConnector {
       }
       FileUtils.write(nfoFile, sb, "UTF-8");
     }
-    catch (JAXBException e) {
+    catch (Exception e) {
       LOGGER.error(nfoFilename + " " + e.getMessage());
-    }
-    catch (IOException e) {
-      LOGGER.error(nfoFilename + " " + e.getMessage());
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":",
+          e.getLocalizedMessage() }));
     }
 
     // return only the name w/o path
@@ -267,15 +268,12 @@ public class TvShowToXbmcNfoConnector {
     }
     catch (UnmarshalException e) {
       LOGGER.error("failed to parse " + nfoFilename + " " + e.getMessage());
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
-    catch (FileNotFoundException e) {
-      LOGGER.error(nfoFilename + " " + e.getMessage());
-      return null;
-    }
-
     catch (Exception e) {
       LOGGER.error(nfoFilename + " " + e.getMessage());
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
 

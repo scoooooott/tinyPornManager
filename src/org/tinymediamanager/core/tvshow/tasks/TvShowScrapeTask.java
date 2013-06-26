@@ -23,6 +23,9 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
@@ -279,12 +282,14 @@ public class TvShowScrapeTask extends TmmSwingWorker {
             }
             catch (Exception e) {
               LOGGER.error("tvShow.setMetadata", e);
+              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.scrape.metadatatvshowfailed"));
             }
           }
         }
       }
       catch (Exception e) {
         LOGGER.error("Thread crashed", e);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "TvShowScraper", "message.scrape.threadcrashed"));
       }
     }
 
@@ -312,6 +317,7 @@ public class TvShowScrapeTask extends TmmSwingWorker {
         }
         catch (Exception e) {
           LOGGER.error("getArtwork", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.scrape.tvshowartworkfailed"));
           artwork = new ArrayList<MediaArtwork>();
         }
         // check if at least one artwork has been found
