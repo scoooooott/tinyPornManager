@@ -1393,6 +1393,12 @@ public class Movie extends MediaEntity {
       case FILENAME_FANART_JPG:
         filename += mediafile + "-fanart.jpg";
         break;
+      case FILENAME_FANART2_PNG:
+        filename += mediafile + ".fanart.png";
+        break;
+      case FILENAME_FANART2_JPG:
+        filename += mediafile + ".fanart.jpg";
+        break;
       case FILENAME_FANART_TBN:
         filename += mediafile + "-fanart.tbn";
         break;

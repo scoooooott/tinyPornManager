@@ -162,6 +162,7 @@ public class MovieImageSettingsPanel extends JPanel {
 
   /** The separator_2. */
   private JSeparator                  separator_2;
+  private JCheckBox                   cbMovieFanartFilename3;
 
   /**
    * Instantiates a new movie image settings panel.
@@ -241,6 +242,9 @@ public class MovieImageSettingsPanel extends JPanel {
 
     cbMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext"); //$NON-NLS-1$
     panelMovieImages.add(cbMovieFanartFilename1, "4, 19");
+
+    cbMovieFanartFilename3 = new JCheckBox("<dynamic>.fanart.ext");//$NON-NLS-1$
+    panelMovieImages.add(cbMovieFanartFilename3, "6, 19");
 
     cbMovieFanartFilename2 = new JCheckBox("fanart.ext");
     panelMovieImages.add(cbMovieFanartFilename2, "4, 20");
@@ -348,6 +352,9 @@ public class MovieImageSettingsPanel extends JPanel {
     if (movieFanartFilenames.contains(MovieFanartNaming.FANART_JPG)) {
       cbMovieFanartFilename2.setSelected(true);
     }
+    if (movieFanartFilenames.contains(MovieFanartNaming.FILENAME_FANART2_JPG)) {
+      cbMovieFanartFilename3.setSelected(true);
+    }
 
     // listen to changes of the checkboxes
     ItemListener listener = new ItemListener() {
@@ -363,6 +370,7 @@ public class MovieImageSettingsPanel extends JPanel {
 
     cbMovieFanartFilename1.addItemListener(listener);
     cbMovieFanartFilename2.addItemListener(listener);
+    cbMovieFanartFilename3.addItemListener(listener);
   }
 
   /**
@@ -494,6 +502,10 @@ public class MovieImageSettingsPanel extends JPanel {
     if (cbMovieFanartFilename2.isSelected()) {
       settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
       settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
+    }
+    if (cbMovieFanartFilename3.isSelected()) {
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_JPG);
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_PNG);
     }
   }
 }

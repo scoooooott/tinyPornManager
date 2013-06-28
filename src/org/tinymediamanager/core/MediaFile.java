@@ -58,7 +58,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final String        FILESIZE_IN_MB   = "filesizeInMegabytes";
 
   private static Pattern             posterPattern    = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
-  private static Pattern             fanartPattern    = Pattern.compile("(?i)(.*-fanart|fanart)[0-9]{0,2}\\..{2,4}");
+  private static Pattern             fanartPattern    = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
   private static Pattern             bannerPattern    = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
   private static Pattern             thumbPattern     = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
 

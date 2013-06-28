@@ -26,6 +26,10 @@ public enum MovieFanartNaming {
   FILENAME_FANART_PNG,
   /** [filename]-fanart.jpg */
   FILENAME_FANART_JPG,
+  /** [filename].fanart.png */
+  FILENAME_FANART2_PNG,
+  /** [filename].fanart.jpg */
+  FILENAME_FANART2_JPG,
   /** [filename]-fanart.tbn */
   @Deprecated
   FILENAME_FANART_TBN,
