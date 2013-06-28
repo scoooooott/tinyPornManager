@@ -15,24 +15,30 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.URI;
 import java.util.ResourceBundle;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 
@@ -129,6 +135,7 @@ public class MovieDetailsPanel extends JPanel {
 
   /** The lbl spoken languages. */
   private JLabel                      lblSpokenLanguages;
+  private JButton                     btnPlay;
 
   /**
    * Instantiates a new movie details panel.
@@ -141,20 +148,37 @@ public class MovieDetailsPanel extends JPanel {
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC,
         ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        new RowSpec(RowSpec.CENTER, Sizes.bounded(Sizes.MINIMUM, Sizes.constant("15px", false), Sizes.constant("50px", false)), 0),
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblOriginalTitleT = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
     add(lblOriginalTitleT, "2, 2");
 
     lblOriginalTitle = new JLabel("");
     add(lblOriginalTitle, "4, 2, 7, 1");
+
+    btnPlay = new JButton("");
+    btnPlay.setIcon(new ImageIcon(MovieDetailsPanel.class.getResource("/org/tinymediamanager/ui/images/Play.png")));
+    btnPlay.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        MediaFile mf = movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO).get(0);
+        try {
+          TmmUIHelper.openFile(mf.getFile());
+        }
+        catch (Exception e) {
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":",
+              e.getLocalizedMessage() }));
+        }
+      }
+    });
+    add(btnPlay, "12, 2, 1, 5");
 
     lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     add(lblGenresT, "2, 4");
@@ -185,25 +209,25 @@ public class MovieDetailsPanel extends JPanel {
     lblProductionT.setLabelFor(lblProduction);
 
     lblProduction = new JLabel();
-    add(lblProduction, "4, 10, 7, 1");
+    add(lblProduction, "4, 10, 9, 1");
 
     lblSpokenLanguagesT = new JLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
     add(lblSpokenLanguagesT, "2, 12");
 
     lblSpokenLanguages = new JLabel("");
-    add(lblSpokenLanguages, "4, 12, 7, 1");
+    add(lblSpokenLanguages, "4, 12, 9, 1");
 
     lblMoviesetT = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
     add(lblMoviesetT, "2, 14");
 
     lblMovieSet = new JLabel("");
-    add(lblMovieSet, "4, 14, 5, 1");
+    add(lblMovieSet, "4, 14, 9, 1");
 
     lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
     add(lblTagsT, "2, 16");
 
     lblTags = new JLabel("");
-    add(lblTags, "4, 16, 7, 1");
+    add(lblTags, "4, 16, 9, 1");
 
     lblImdbIdT = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
     add(lblImdbIdT, "2, 18");
@@ -211,11 +235,14 @@ public class MovieDetailsPanel extends JPanel {
     lblImdbId = new LinkLabel("");
     lblImdbId.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
+        String url = "http://www.imdb.com/title/" + lblImdbId.getNormalText();
         try {
-          Desktop.getDesktop().browse(new URI("http://www.imdb.com/title/" + lblImdbId.getNormalText()));
+          TmmUIHelper.browseUrl(url);
         }
         catch (Exception e) {
           LOGGER.error("browse to imdbid", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
       }
     });
@@ -229,15 +256,18 @@ public class MovieDetailsPanel extends JPanel {
     lblTmdbId = new LinkLabel("");
     lblTmdbId.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
+        String url = "http://www.themoviedb.org/movie/" + lblTmdbId.getNormalText();
         try {
-          Desktop.getDesktop().browse(new URI("http://www.themoviedb.org/movie/" + lblTmdbId.getNormalText()));
+          TmmUIHelper.browseUrl(url);
         }
         catch (Exception e) {
           LOGGER.error("browse to tmdbid", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
       }
     });
-    add(lblTmdbId, "10, 18, left, default");
+    add(lblTmdbId, "10, 18, 3, 1, left, default");
     lblTmdbIdT.setLabelFor(lblTmdbId);
 
     lblMoviePathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
@@ -247,23 +277,25 @@ public class MovieDetailsPanel extends JPanel {
     lblMoviePath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+          // get the location from the label
+          File path = new File(lblMoviePath.getNormalText());
           try {
-            // get the location from the label
-            File path = new File(lblMoviePath.getNormalText());
             // check whether this location exists
             if (path.exists()) {
-              Desktop.getDesktop().open(path);
+              TmmUIHelper.openFile(path);
             }
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
+                ex.getLocalizedMessage() }));
           }
         }
       }
     });
     lblMoviePathT.setLabelFor(lblMoviePath);
     lblMoviePathT.setLabelFor(lblMoviePath);
-    add(lblMoviePath, "4, 20, 7, 1");
+    add(lblMoviePath, "4, 20, 9, 1");
 
     initDataBindings();
   }

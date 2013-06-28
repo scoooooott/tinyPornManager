@@ -16,11 +16,9 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URI;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -35,6 +33,10 @@ import javax.swing.border.EmptyBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 
@@ -117,10 +119,12 @@ public class AboutDialog extends JDialog {
       lblHomepage.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent arg0) {
           try {
-            Desktop.getDesktop().browse(new URI(lblHomepage.getNormalText()));
+            TmmUIHelper.browseUrl(lblHomepage.getNormalText());
           }
           catch (Exception e) {
-            LOGGER.warn(e.getMessage());
+            LOGGER.error(e.getMessage());
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, lblHomepage.getNormalText(), "message.erroropenurl", new String[] {
+                ":", e.getLocalizedMessage() }));
           }
         }
       });

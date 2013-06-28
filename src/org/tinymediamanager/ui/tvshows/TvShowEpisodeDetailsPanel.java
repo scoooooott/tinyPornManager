@@ -15,13 +15,14 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ResourceBundle;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -32,6 +33,12 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 
@@ -70,20 +77,21 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
 
   /** The lbl aired. */
   private JLabel                            lblAired;
+  private JButton                           btnPlay;
 
   /**
    * Instantiates a new tv show episode details panel.
    * 
-   * @param selectionModel
+   * @param model
    *          the selection model
    */
-  public TvShowEpisodeDetailsPanel(TvShowEpisodeSelectionModel selectionModel) {
-    this.selectionModel = selectionModel;
+  public TvShowEpisodeDetailsPanel(TvShowEpisodeSelectionModel model) {
+    this.selectionModel = model;
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
     lblSeasonT.setFont(new Font("Dialog", Font.PLAIN, 14));
@@ -92,6 +100,24 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     lblSeason = new JLabel("");
     lblSeason.setFont(new Font("Dialog", Font.PLAIN, 14));
     add(lblSeason, "6, 2");
+
+    btnPlay = new JButton("");
+    btnPlay.setIcon(new ImageIcon(TvShowEpisodeDetailsPanel.class.getResource("/org/tinymediamanager/ui/images/Play.png")));
+    btnPlay.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        MediaFile mf = selectionModel.getSelectedTvShowEpisode().getMediaFiles(MediaFileType.VIDEO).get(0);
+        try {
+          TmmUIHelper.openFile(mf.getFile());
+        }
+        catch (Exception e) {
+          LOGGER.error("open file", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":",
+              e.getLocalizedMessage() }));
+        }
+      }
+    });
+    add(btnPlay, "8, 2, 1, 5");
 
     JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
     lblEpisodeT.setFont(new Font("Dialog", Font.PLAIN, 14));
@@ -115,21 +141,23 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     lblPath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblPath.getNormalText())) {
+          // get the location from the label
+          File path = new File(lblPath.getNormalText());
           try {
-            // get the location from the label
-            File path = new File(lblPath.getNormalText());
             // check whether this location exists
             if (path.exists()) {
-              Desktop.getDesktop().open(path);
+              TmmUIHelper.openFile(path);
             }
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
+                ex.getLocalizedMessage() }));
           }
         }
       }
     });
-    add(lblPath, "6, 8");
+    add(lblPath, "6, 8, 3, 1");
     initDataBindings();
   }
 

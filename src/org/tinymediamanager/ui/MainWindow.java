@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui;
 
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -26,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -58,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCacheTask;
+import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
@@ -196,15 +195,17 @@ public class MainWindow extends JFrame {
         catch (Exception e) {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.cleardatabase.error")); //$NON-NLS-1$
           // open the tmm folder
+          File path = new File(".");
           try {
-            File path = new File(".");
             // check whether this location exists
             if (path.exists()) {
-              Desktop.getDesktop().open(path);
+              TmmUIHelper.openFile(path);
             }
           }
           catch (Exception ex) {
             LOGGER.warn(ex.getMessage());
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
+                ex.getLocalizedMessage() }));
           }
         }
         System.exit(0);
@@ -287,16 +288,17 @@ public class MainWindow extends JFrame {
     tmmFolder.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        File path = new File(System.getProperty("user.dir"));
         try {
-          // get the location from the label
-          File path = new File(System.getProperty("user.dir"));
           // check whether this location exists
           if (path.exists()) {
-            Desktop.getDesktop().open(path);
+            TmmUIHelper.openFile(path);
           }
         }
         catch (Exception ex) {
           LOGGER.error("open filemanager", ex);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
+              ex.getLocalizedMessage() }));
         }
       }
     });
@@ -710,13 +712,15 @@ public class MainWindow extends JFrame {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
+      String url = StringEscapeUtils
+          .unescapeHtml4("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=manuel%2elaggner%40gmail%2ecom&amp;lc=GB&amp;item_name=tinyMediaManager&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted");
       try {
-        String url = StringEscapeUtils
-            .unescapeHtml4("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=manuel%2elaggner%40gmail%2ecom&amp;lc=GB&amp;item_name=tinyMediaManager&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted");
-        Desktop.getDesktop().browse(new URI(url));
+        TmmUIHelper.browseUrl(url);
       }
       catch (Exception e1) {
         LOGGER.error("Donate", e1);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl",
+            new String[] { ":", e1.getLocalizedMessage() }));
       }
     }
   }

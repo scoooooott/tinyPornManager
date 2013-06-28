@@ -17,14 +17,12 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URI;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -38,9 +36,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
 
@@ -302,11 +304,14 @@ public class MovieTrailerPanel extends JPanel {
 
       if (col == 4) {
         // try to open the browser
+        String url = (String) table.getModel().getValueAt(row, col);
         try {
-          Desktop.getDesktop().browse(new URI((String) table.getModel().getValueAt(row, col)));
+          TmmUIHelper.browseUrl(url);
         }
         catch (Exception ex) {
-          LOGGER.warn(ex.getMessage());
+          LOGGER.error(ex.getMessage());
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
+              ex.getLocalizedMessage() }));
         }
       }
     }

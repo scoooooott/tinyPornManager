@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -35,7 +34,11 @@ import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.MediaFilesPanel;
@@ -200,16 +203,18 @@ public class TvShowMediaInformationPanel extends JPanel {
     lblTvShowPath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblTvShowPath.getNormalText())) {
+          // get the location from the label
+          File path = new File(lblTvShowPath.getNormalText());
           try {
-            // get the location from the label
-            File path = new File(lblTvShowPath.getNormalText());
             // check whether this location exists
             if (path.exists()) {
-              Desktop.getDesktop().open(path);
+              TmmUIHelper.openFile(path);
             }
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
+                ex.getLocalizedMessage() }));
           }
         }
       }

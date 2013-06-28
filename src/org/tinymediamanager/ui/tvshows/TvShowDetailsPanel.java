@@ -15,11 +15,9 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.URI;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -32,6 +30,10 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 
@@ -150,11 +152,14 @@ public class TvShowDetailsPanel extends JPanel {
     lblThetvdbIdT.setLabelFor(lblThetvdbId);
     lblThetvdbId.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
+        String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getNormalText();
         try {
-          Desktop.getDesktop().browse(new URI("http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getNormalText()));
+          TmmUIHelper.browseUrl(url);
         }
         catch (Exception e) {
-          LOGGER.error("browse to tmdbid", e);
+          LOGGER.error("browse to thetvdb", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
       }
     });
@@ -167,11 +172,14 @@ public class TvShowDetailsPanel extends JPanel {
     lblImdbIdT.setLabelFor(lblImdbId);
     lblImdbId.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
+        String url = "http://www.imdb.com/title/" + lblImdbId.getNormalText();
         try {
-          Desktop.getDesktop().browse(new URI("http://www.imdb.com/title/" + lblImdbId.getNormalText()));
+          TmmUIHelper.browseUrl(url);
         }
         catch (Exception e) {
           LOGGER.error("browse to imdbid", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
       }
     });
@@ -185,16 +193,18 @@ public class TvShowDetailsPanel extends JPanel {
     lblPath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblPath.getNormalText())) {
+          // get the location from the label
+          File path = new File(lblPath.getNormalText());
           try {
-            // get the location from the label
-            File path = new File(lblPath.getNormalText());
             // check whether this location exists
             if (path.exists()) {
-              Desktop.getDesktop().open(path);
+              TmmUIHelper.openFile(path);
             }
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
+                ex.getLocalizedMessage() }));
           }
         }
       }

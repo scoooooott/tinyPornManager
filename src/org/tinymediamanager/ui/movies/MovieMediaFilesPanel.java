@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.movies;
 
 import static org.tinymediamanager.core.Constants.*;
 
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -25,7 +24,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ResourceBundle;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -37,7 +35,11 @@ import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.MediaFilesPanel;
@@ -58,36 +60,18 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieMediaFilesPanel extends JPanel {
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 3181909355114738346L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The logger. */
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieMediaFilesPanel.class);
 
-  /** The movie selection model. */
   private MovieSelectionModel         movieSelectionModel;
 
-  /** The lbl files t. */
   private JLabel                      lblFilesT;
-
-  /** The lbl movie path. */
   private LinkLabel                   lblMoviePath;
-
-  /** The lbl date added t. */
   private JLabel                      lblDateAddedT;
-
-  /** The lbl date added. */
   private JLabel                      lblDateAdded;
-
-  /** The lbl movie path t. */
   private JLabel                      lblMoviePathT;
-
-  /** The btn play. */
-  private JButton                     btnPlay;
+  // private JButton btnPlay;
 
   /** The media file event list. */
   private EventList<MediaFile>        mediaFileEventList;
@@ -118,6 +102,13 @@ public class MovieMediaFilesPanel extends JPanel {
     // btnPlay = new JButton("Play");
     // btnPlay.addActionListener(new ActionListener() {
     // public void actionPerformed(ActionEvent arg0) {
+    // try {
+    // Desktop.getDesktop().open(movieSelectionModel.getSelectedMovie().getMediaFiles(MediaFileType.VIDEO).get(0).getFile());
+    // }
+    // catch (Exception e) {
+    //
+    // }
+    // }
     // if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
     // // get the location from the label
     // StringBuilder movieFile = new
@@ -188,16 +179,18 @@ public class MovieMediaFilesPanel extends JPanel {
     lblMoviePath.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         if (!StringUtils.isEmpty(lblMoviePath.getNormalText())) {
+          File path = new File(lblMoviePath.getNormalText());
           try {
             // get the location from the label
-            File path = new File(lblMoviePath.getNormalText());
             // check whether this location exists
             if (path.exists()) {
-              Desktop.getDesktop().open(path);
+              TmmUIHelper.openFile(path);
             }
           }
           catch (Exception ex) {
             LOGGER.error("open filemanager", ex);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
+                ex.getLocalizedMessage() }));
           }
         }
       }

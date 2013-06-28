@@ -15,16 +15,25 @@
  */
 package org.tinymediamanager.ui.components;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
 import ca.odell.glazedlists.EventList;
@@ -42,9 +51,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MediaFilesPanel extends JPanel {
-
   private static final long                 serialVersionUID    = -4929581173434859034L;
-  private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger               LOGGER              = LoggerFactory.getLogger(MediaFilesPanel.class);
+  private static final ResourceBundle       BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
+  private static final ImageIcon            PLAY_ICON           = new ImageIcon(
+                                                                    MediaFilesPanel.class
+                                                                        .getResource("/org/tinymediamanager/ui/images/Play_small.png"));
 
   private JScrollPane                       scrollPaneFiles;
   private JTable                            tableFiles;
@@ -61,6 +73,44 @@ public class MediaFilesPanel extends JPanel {
     tableFiles = new ZebraJTable(mediaFileTableModel);
     tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
+    tableFiles.addMouseListener(new MouseListener() {
+      @Override
+      public void mouseReleased(MouseEvent arg0) {
+      }
+
+      @Override
+      public void mousePressed(MouseEvent arg0) {
+      }
+
+      @Override
+      public void mouseExited(MouseEvent arg0) {
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent arg0) {
+      }
+
+      @Override
+      public void mouseClicked(MouseEvent arg0) {
+        int col = tableFiles.columnAtPoint(arg0.getPoint());
+        if (col == 0) {
+          int row = tableFiles.rowAtPoint(arg0.getPoint());
+          row = tableFiles.convertRowIndexToModel(row);
+          MediaFile mf = mediaFileEventList.get(row);
+          if (mf.getType() == MediaFileType.VIDEO || mf.getType() == MediaFileType.TRAILER) {
+            try {
+              TmmUIHelper.openFile(mf.getFile());
+            }
+            catch (Exception e) {
+              LOGGER.error("open file", e);
+              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":",
+                  e.getLocalizedMessage() }));
+            }
+          }
+        }
+      }
+    });
+
     scrollPaneFiles = ZebraJTable.createStripedJScrollPane(tableFiles);
     add(scrollPaneFiles, "1, 1, fill, fill");
 
@@ -71,6 +121,7 @@ public class MediaFilesPanel extends JPanel {
     tableColumnAdjuster.setColumnDataIncluded(true);
     tableColumnAdjuster.setColumnHeaderIncluded(true);
     tableColumnAdjuster.setOnlyAdjustLarger(false);
+
   }
 
   /**
@@ -94,7 +145,7 @@ public class MediaFilesPanel extends JPanel {
      */
     @Override
     public int getColumnCount() {
-      return 7;
+      return 8;
     }
 
     /*
@@ -106,26 +157,28 @@ public class MediaFilesPanel extends JPanel {
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return BUNDLE.getString("metatag.filename"); //$NON-NLS-1$
+          return "";
 
         case 1:
-          return BUNDLE.getString("metatag.size"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.filename"); //$NON-NLS-1$
 
         case 2:
-          return BUNDLE.getString("metatag.mediafiletype"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.size"); //$NON-NLS-1$
 
         case 3:
-          return BUNDLE.getString("metatag.codec"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.mediafiletype"); //$NON-NLS-1$
 
         case 4:
-          return BUNDLE.getString("metatag.resolution"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.codec"); //$NON-NLS-1$
 
         case 5:
-          return BUNDLE.getString("metatag.runtime"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.resolution"); //$NON-NLS-1$
 
         case 6:
-          return BUNDLE.getString("metatag.subtitle"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.runtime"); //$NON-NLS-1$
 
+        case 7:
+          return BUNDLE.getString("metatag.subtitle"); //$NON-NLS-1$
       }
 
       throw new IllegalStateException();
@@ -140,24 +193,30 @@ public class MediaFilesPanel extends JPanel {
     public Object getColumnValue(MediaFile mediaFile, int column) {
       switch (column) {
         case 0:
-          return mediaFile.getFilename();
+          if (mediaFile.getType() == MediaFileType.VIDEO || mediaFile.getType() == MediaFileType.TRAILER) {
+            return MediaFilesPanel.PLAY_ICON;
+          }
+          return null;
 
         case 1:
-          return mediaFile.getFilesizeInMegabytes();
+          return mediaFile.getFilename();
 
         case 2:
-          return getMediaFileTypeLocalized(mediaFile.getType());
+          return mediaFile.getFilesizeInMegabytes();
 
         case 3:
-          return mediaFile.getCombinedCodecs();
+          return getMediaFileTypeLocalized(mediaFile.getType());
 
         case 4:
-          return mediaFile.getVideoResolution();
+          return mediaFile.getCombinedCodecs();
 
         case 5:
-          return mediaFile.getDurationHM();
+          return mediaFile.getVideoResolution();
 
         case 6:
+          return mediaFile.getDurationHM();
+
+        case 7:
           return mediaFile.getSubtitlesAsString();
       }
 
@@ -174,12 +233,15 @@ public class MediaFilesPanel extends JPanel {
     public Class getColumnClass(int column) {
       switch (column) {
         case 0:
+          return ImageIcon.class;
+
         case 1:
         case 2:
         case 3:
         case 4:
         case 5:
         case 6:
+        case 7:
           return String.class;
       }
 
@@ -201,6 +263,5 @@ public class MediaFilesPanel extends JPanel {
       String prop = "mediafiletype." + type.name().toLowerCase();
       return BUNDLE.getString(prop);
     }
-
   }
 }
