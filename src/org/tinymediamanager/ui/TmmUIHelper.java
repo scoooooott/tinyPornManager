@@ -289,11 +289,16 @@ public class TmmUIHelper {
    * @throws Exception
    */
   public static void openFile(File file) throws Exception {
-    if (Desktop.isDesktopSupported()) {
+    if (SystemUtils.IS_OS_WINDOWS) {
+      // use explorer directly - ship around access exceptions and the unresolved network bug
+      // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6780505
+      Runtime.getRuntime().exec(new String[] { "explorer", file.getAbsolutePath() });
+    }
+    else if (Desktop.isDesktopSupported()) {
       Desktop.getDesktop().open(file);
     }
     else if (SystemUtils.IS_OS_LINUX) {
-      Runtime.getRuntime().exec(new String[] { "xdg-open", file.getPath() });
+      Runtime.getRuntime().exec(new String[] { "xdg-open", file.getAbsolutePath() });
     }
     else {
       throw new NotSupportedException();
