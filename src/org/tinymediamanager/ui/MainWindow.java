@@ -71,6 +71,7 @@ import org.tinymediamanager.ui.dialogs.AboutDialog;
 import org.tinymediamanager.ui.dialogs.BugReportDialog;
 import org.tinymediamanager.ui.dialogs.FeedbackDialog;
 import org.tinymediamanager.ui.dialogs.LogDialog;
+import org.tinymediamanager.ui.dialogs.MessageSummaryDialog;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.settings.SettingsPanel;
@@ -137,6 +138,7 @@ public class MainWindow extends JFrame {
 
   /** The status task. */
   private StatusbarThread             statusTask       = new StatusbarThread();
+  private List<String>                messagesList;
 
   private JPanel                      messagePanel;
 
@@ -309,6 +311,7 @@ public class MainWindow extends JFrame {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         JDialog logDialog = new LogDialog();
+        logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         logDialog.setVisible(true);
       }
     });
@@ -513,17 +516,24 @@ public class MainWindow extends JFrame {
               lblLoadingImg.setIcon(loading);
             }
           }
-          else {
-            if (lblLoadingImg.getIcon() == loading) {
-              lblLoadingImg.setIcon(null);
-            }
+          else if (lblLoadingImg.getIcon() == loading) {
+            lblLoadingImg.setIcon(null);
           }
+
+          // if a main task is finished and a message collector is alive -> show it with the messages collected
+          if (messagesList != null && activeTask != null && (activeTask.isDone() || activeTask.isCancelled())) {
+            MessageSummaryDialog dialog = new MessageSummaryDialog(messagesList);
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+            messagesList = null;
+          }
+
           String text = String.format(
               "<html><body>" + BUNDLE.getString("status.activethreads") + " [%d/%d]<br>" + BUNDLE.getString("status.queuesize")
                   + " %d </body></html>", this.ex.getActiveCount(), this.ex.getMaximumPoolSize(), this.ex.getQueue().size()); //$NON-NLS-1$
           // LOGGER.debug(text);
           lblLoadingImg.setToolTipText(text);
-          Thread.sleep(2000);
+          Thread.sleep(1000);
         }
       }
       catch (InterruptedException e) {
@@ -614,6 +624,7 @@ public class MainWindow extends JFrame {
       return false;
     }
     if (instance.activeTask == null || instance.activeTask.isDone()) {
+      instance.messagesList = new ArrayList<String>();
       instance.activeTask = task;
       instance.activeTask.setUIElements(instance.lblProgressAction, instance.progressBar, instance.btnCancelTask);
       instance.activeTask.execute();
@@ -733,6 +744,10 @@ public class MainWindow extends JFrame {
   public void addMessage(MessageLevel level, String title, String message) {
     JPanel msg = new NotificationMessage(level, title, message);
     messagePanel.add(msg);
+
+    if (messagesList != null) {
+      messagesList.add(message + ": " + title);
+    }
   }
 
   public void removeMessage(JComponent comp) {
