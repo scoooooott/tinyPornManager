@@ -211,6 +211,22 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename VIDEO
     // ######################################################################
+    // @formatter:off
+    /* does not work reliably (yet)
+    for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      LOGGER.debug("testing file " + vid.getFile().getAbsolutePath());
+      File f = vid.getFile();
+      if (f.canRead() && f.canWrite()) {
+        // fine, it works :)
+      }
+      else {
+        LOGGER.warn("File " + vid.getFile().getAbsolutePath() + " is not accessible!");
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename"));
+        return;
+      }
+    }
+    */
+    // @formatter:on
     for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
       LOGGER.info("rename file " + vid.getFile().getAbsolutePath());
 
@@ -243,16 +259,21 @@ public class MovieRenamer {
             newMF.setPath(newPath);
             newMF.setFilename(newFilename);
           }
+          else {
+            return; // rename failed
+          }
         }
         catch (FileNotFoundException e) {
           LOGGER.error("error moving video file - file not found", e);
           MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename", new String[] { ":",
               e.getLocalizedMessage() }));
+          return; // rename failed
         }
         catch (Exception e) {
           LOGGER.error("error moving video file", e);
           MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename", new String[] { ":",
               e.getLocalizedMessage() }));
+          return; // rename failed
         }
         needed.add(newMF);
       }
