@@ -211,22 +211,15 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename VIDEO
     // ######################################################################
-    // @formatter:off
-    /* does not work reliably (yet)
     for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
       LOGGER.debug("testing file " + vid.getFile().getAbsolutePath());
       File f = vid.getFile();
-      if (f.canRead() && f.canWrite()) {
-        // fine, it works :)
-      }
-      else {
+      if (!f.renameTo(f)) { // haahaa, try to rename to itself :P
         LOGGER.warn("File " + vid.getFile().getAbsolutePath() + " is not accessible!");
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename"));
         return;
       }
     }
-    */
-    // @formatter:on
     for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
       LOGGER.info("rename file " + vid.getFile().getAbsolutePath());
 
