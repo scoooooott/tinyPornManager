@@ -468,6 +468,8 @@ public class Movie extends MediaEntity {
       }
     }
 
+    Utils.removeEmptyStringsFromList(tagsObservable);
+
     firePropertyChange(TAG, null, tagsObservable);
     firePropertyChange(TAGS_AS_STRING, null, tagsObservable);
   }
@@ -477,7 +479,7 @@ public class Movie extends MediaEntity {
    * 
    * @return the tag as string
    */
-  public String getTagAsString() {
+  public String getTagsAsString() {
     StringBuilder sb = new StringBuilder();
     for (String tag : tags) {
       if (!StringUtils.isEmpty(sb)) {

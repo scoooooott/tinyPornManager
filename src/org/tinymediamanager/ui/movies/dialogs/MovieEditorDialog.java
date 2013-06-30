@@ -59,6 +59,7 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.core.movie.MovieList;
@@ -724,7 +725,9 @@ public class MovieEditorDialog extends JDialog {
       }
 
       for (String tag : movieToEdit.getTags()) {
-        tags.add(tag);
+        if (StringUtils.isNotBlank(tag)) {
+          tags.add(tag);
+        }
       }
 
       extrathumbs.addAll(movieToEdit.getExtraThumbs());
@@ -1222,6 +1225,11 @@ public class MovieEditorDialog extends JDialog {
     public void actionPerformed(ActionEvent e) {
       String newTag = (String) cbTags.getSelectedItem();
       boolean tagFound = false;
+
+      // do not continue with empty tags
+      if (StringUtils.isBlank(newTag)) {
+        return;
+      }
 
       // search if this tag already has been added
       for (String tag : tags) {

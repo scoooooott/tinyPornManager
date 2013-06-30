@@ -522,9 +522,11 @@ public class MainWindow extends JFrame {
 
           // if a main task is finished and a message collector is alive -> show it with the messages collected
           if (messagesList != null && activeTask != null && (activeTask.isDone() || activeTask.isCancelled())) {
-            MessageSummaryDialog dialog = new MessageSummaryDialog(messagesList);
-            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-            dialog.setVisible(true);
+            if (messagesList.size() > 0) {
+              MessageSummaryDialog dialog = new MessageSummaryDialog(messagesList);
+              dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+              dialog.setVisible(true);
+            }
             messagesList = null;
           }
 
