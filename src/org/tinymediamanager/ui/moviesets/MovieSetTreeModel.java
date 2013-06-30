@@ -82,7 +82,7 @@ public class MovieSetTreeModel implements TreeModel {
           MovieSet movieSet = (MovieSet) evt.getNewValue();
           removeMovieSet(movieSet);
         }
-        if ("movies".equals(evt.getPropertyName())) {
+        if ("movies".equals(evt.getPropertyName()) && evt.getSource() instanceof MovieSet) {
           // sort order of movies inside the movieset changed
           MovieSet movieSet = (MovieSet) evt.getSource();
           sortMoviesInMovieSet(movieSet);
