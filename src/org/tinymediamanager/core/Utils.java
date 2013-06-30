@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
@@ -609,7 +610,7 @@ public class Utils {
         try {
           // int index = Integer.parseInt(matcher.group(1));
           if (replacements.length > index) {
-            result = result.replaceFirst(pattern.pattern(), replacements[index]);
+            result = result.replaceFirst(pattern.pattern(), StringEscapeUtils.escapeJava(replacements[index]));
           }
           else {
             result = result.replaceFirst(pattern.pattern(), "");
@@ -624,7 +625,6 @@ public class Utils {
         break;
       }
     }
-
     return StrgUtils.removeDuplicateWhitespace(result);
   }
 }
