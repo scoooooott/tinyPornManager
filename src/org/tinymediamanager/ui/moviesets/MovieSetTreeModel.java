@@ -38,20 +38,10 @@ import org.tinymediamanager.core.movie.MovieSet;
  * @author Manuel Laggner
  */
 public class MovieSetTreeModel implements TreeModel {
-
-  /** The root. */
   private MovieSetRootTreeNode      root      = new MovieSetRootTreeNode();
-
-  /** The listeners. */
   private List<TreeModelListener>   listeners = new ArrayList<TreeModelListener>();
-
-  /** The node map to store the node for Objects. */
   private HashMap<Object, TreeNode> nodeMap   = new HashMap<Object, TreeNode>();
-
-  /** The property change listener. */
   private PropertyChangeListener    propertyChangeListener;
-
-  /** The movie list. */
   private MovieList                 movieList = MovieList.getInstance();
 
   /**
@@ -92,8 +82,13 @@ public class MovieSetTreeModel implements TreeModel {
           MovieSet movieSet = (MovieSet) evt.getNewValue();
           removeMovieSet(movieSet);
         }
+        if ("movies".equals(evt.getPropertyName())) {
+          // sort order of movies inside the movieset changed
+          MovieSet movieSet = (MovieSet) evt.getSource();
+          sortMoviesInMovieSet(movieSet);
+        }
 
-        // update on changes of tv show or episode
+        // update on changes of a movie
         if (evt.getSource() instanceof MovieSet || evt.getSource() instanceof Movie) {
           DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodeMap.get(evt.getSource());
           if (node != null) {
@@ -212,7 +207,6 @@ public class MovieSetTreeModel implements TreeModel {
    */
   @Override
   public void valueForPathChanged(TreePath path, Object newValue) {
-    // TODO
   }
 
   /**
@@ -301,15 +295,8 @@ public class MovieSetTreeModel implements TreeModel {
     MovieSetTreeNode node = (MovieSetTreeNode) nodeMap.get(movieSet);
     int index = root.getIndex(node);
 
-    // for (Movie movie : movieSet.getMovies()) {
-    // movie.setMovieSet(null);
-    // movie.saveToDb();
-    // movie.writeNFO();
-    // nodeMap.remove(movie);
-    // }
-    // movieSet.removeAllMovies();
     movieSet.removePropertyChangeListener(propertyChangeListener);
-    // movieList.removeMovieSet(movieSet);
+
     nodeMap.remove(movieSet);
     for (Movie movie : movieSet.getMovies()) {
       nodeMap.remove(movie);

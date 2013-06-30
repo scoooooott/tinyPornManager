@@ -476,7 +476,6 @@ public class MovieSetEditorDialog extends JDialog {
       }
 
       MovieList.getInstance().sortMoviesInMovieSet(movieSetToEdit);
-      // movieSetToEdit.sortMovies();
 
       // and rewrite NFO
       for (Movie movie : moviesInSet) {
