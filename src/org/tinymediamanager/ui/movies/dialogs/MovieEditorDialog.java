@@ -59,7 +59,6 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.core.movie.MovieList;
@@ -69,7 +68,6 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TableColumnAdjuster;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -745,13 +743,6 @@ public class MovieEditorDialog extends JDialog {
 
       toggleSorttitle();
     }
-
-    // adjust table columns
-    TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(tableTrailer);
-    tableColumnAdjuster.setColumnDataIncluded(true);
-    tableColumnAdjuster.setColumnHeaderIncluded(true);
-    tableColumnAdjuster.adjustColumns();
-
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
     tableActors.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
@@ -761,6 +752,9 @@ public class MovieEditorDialog extends JDialog {
     tableTrailer.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
     tableTrailer.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.quality")); //$NON-NLS-1$
     tableTrailer.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.url")); //$NON-NLS-1$
+
+    // adjust table columns
+    tableTrailer.getColumnModel().getColumn(0).setMaxWidth(55);
 
     // implement listener to simulate button group
     tableTrailer.getModel().addTableModelListener(new TableModelListener() {
@@ -1163,7 +1157,7 @@ public class MovieEditorDialog extends JDialog {
         tableTrailer);
     //
     BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
+    jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class).setEditable(true);
     //
     BeanProperty<MediaTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
     jTableBinding_1.addColumnBinding(trailerBeanProperty_1);
