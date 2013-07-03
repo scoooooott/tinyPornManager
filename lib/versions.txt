@@ -33,3 +33,4 @@ jcl-over-slf4j-1.7.5.jar
 logback-classic-1.0.11.jar
 logback-core-1.0.11.jar
 slf4j-api-1.7.5.jar
+xmlrpc-client-1.1.1.jar (RedStone)

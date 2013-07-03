@@ -46,5 +46,6 @@
 	<classpathentry kind="lib" path="lib/betterbeansbinding-core.jar"/>
 	<classpathentry kind="lib" path="lib/betterbeansbinding-swingbinding.jar"/>
 	<classpathentry kind="lib" path="lib/betterbeansbinding-el.jar"/>
+	<classpathentry kind="lib" path="lib/xmlrpc-client.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
