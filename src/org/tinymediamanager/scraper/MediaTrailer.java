@@ -38,7 +38,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * @author Manuel Laggner
  */
 @Embeddable
-public class MediaTrailer extends AbstractModelObject {
+public class MediaTrailer extends AbstractModelObject implements Comparable<MediaTrailer> {
 
   /** The Constant LOGGER. */
   private static final Logger LOGGER   = LoggerFactory.getLogger(MediaTrailer.class);
@@ -219,8 +219,7 @@ public class MediaTrailer extends AbstractModelObject {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
@@ -251,6 +250,24 @@ public class MediaTrailer extends AbstractModelObject {
     IOUtils.copy(is, outputStream);
     outputStream.close();
     is.close();
+  }
+
+  @Override
+  public boolean equals(Object mt2) {
+    if ((mt2 != null) && (mt2 instanceof MediaTrailer)) {
+      return compareTo((MediaTrailer) mt2) == 0;
+    }
+    return false;
+  }
+
+  @Override
+  public int compareTo(MediaTrailer mt2) {
+    return this.getUrl().compareTo(mt2.getUrl());
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getUrl().hashCode();
   }
 
 }

@@ -491,15 +491,19 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         tmdbTrailers.addAll(tmdbTrailersWoLang);
 
         for (Trailer tmdbTrailer : tmdbTrailers) {
-          boolean addTrailer = true;
+          if (tmdbTrailer.getSource() == null) {
+            // no url somehow...?
+            continue;
+          }
+
+          MediaTrailer trailer = new MediaTrailer();
+          trailer.setName(tmdbTrailer.getName());
+          trailer.setQuality(tmdbTrailer.getSize());
+          trailer.setProvider(tmdbTrailer.getWebsite());
+          trailer.setUrl(tmdbTrailer.getSource());
 
           // youtube support
           if ("youtube".equalsIgnoreCase(tmdbTrailer.getWebsite())) {
-            MediaTrailer trailer = new MediaTrailer();
-            trailer.setName(tmdbTrailer.getName());
-            trailer.setQuality(tmdbTrailer.getSize());
-            trailer.setProvider(tmdbTrailer.getWebsite());
-
             // build url for youtube trailer
             StringBuilder sb = new StringBuilder();
             sb.append("http://www.youtube.com/watch?v=");
@@ -508,18 +512,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
               sb.append("&hd=1");
             }
             trailer.setUrl(sb.toString());
+          }
 
-            // check for duplicates
-            for (MediaTrailer addedTrailer : trailers) {
-              if (addedTrailer.getUrl().equals(trailer.getUrl())) {
-                addTrailer = false;
-                break;
-              }
-            }
-
-            if (addTrailer) {
-              trailers.add(trailer);
-            }
+          if (!trailers.contains(trailer)) {
+            trailers.add(trailer);
           }
         }
       }
