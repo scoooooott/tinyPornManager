@@ -18,6 +18,7 @@ package org.tinymediamanager.core.movie.tasks;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -427,14 +428,17 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   public ArrayList<MediaFile> getAllMediaFilesRecursive(File dir) {
     ArrayList<MediaFile> mv = new ArrayList<MediaFile>();
 
+    // skip well-known, but unneeded BD & DVD folders
+    final List<String> skip = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
+
     File[] list = dir.listFiles();
     for (File file : list) {
       if (file.isFile()) {
         mv.add(new MediaFile(file));
       }
       else {
-        // ignore .folders
-        if (!file.getName().startsWith(".")) {
+        // ignore .folders and others
+        if (!skip.contains(file.getName().toUpperCase()) && !file.getName().startsWith(".")) {
           mv.addAll(getAllMediaFilesRecursive(file));
         }
       }
