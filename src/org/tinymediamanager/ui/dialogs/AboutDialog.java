@@ -86,6 +86,7 @@ public class AboutDialog extends JDialog {
             FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("max(25px;min)"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     {
       JLabel lblLogo = new JLabel("");
@@ -147,12 +148,20 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblXzener, "6, 20");
     }
     {
+      JLabel lblXzener = new JLabel("xsintive for french translation");
+      contentPanel.add(lblXzener, "6, 22");
+    }
+    {
+      JLabel lblXzener = new JLabel("kriss1981 for dutch translation");
+      contentPanel.add(lblXzener, "6, 24");
+    }
+    {
       JLabel lblLibs = new JLabel("The creators of all libs I've used");
-      contentPanel.add(lblLibs, "6, 22");
+      contentPanel.add(lblLibs, "6, 26");
     }
     {
       JLabel lblTester = new JLabel("Everyone who tested and provided feedback");
-      contentPanel.add(lblTester, "6, 24");
+      contentPanel.add(lblTester, "6, 28");
     }
     {
       JPanel buttonPane = new JPanel();
