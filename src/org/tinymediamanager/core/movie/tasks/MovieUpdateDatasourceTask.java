@@ -77,56 +77,55 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   @Override
   public Void doInBackground() {
     try {
-      startProgressBar("prepare scan...");
       for (String ds : dataSources) {
+
+        startProgressBar("prepare scan '" + ds + "'");
         File[] dirs = new File(ds).listFiles();
         if (dirs == null) {
+          // error - continue with next datasource
           continue;
         }
         for (File file : dirs) {
-          if (file.isDirectory()) {
+          if (file.isDirectory() && !cancel) {
             submitTask(new FindMovieTask(file, ds));
           }
         }
-      }
+        waitForCompletionOrCancel();
 
-      waitForCompletionOrCancel();
-
-      LOGGER.info("removing orphaned movies/files...");
-      startProgressBar("cleanup...");
-      for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
-        if (cancel) {
-          break;
-        }
-        Movie movie = movieList.getMovies().get(i);
-        File movieDir = new File(movie.getPath());
-        if (!movieDir.exists()) {
-          movieList.removeMovie(movie);
-        }
-        else {
-          // check and delete all not found MediaFiles
-          List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
-          for (MediaFile mf : mediaFiles) {
-            if (!mf.getFile().exists()) {
-              movie.removeFromMediaFiles(mf);
-            }
+        startProgressBar("getting Mediainfo & cleanup...");
+        initThreadPool(1, "mediainfo");
+        LOGGER.info("removing orphaned movies/files...");
+        for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
+          if (cancel) {
+            break;
           }
-          movie.saveToDb();
-        }
-      }
+          Movie movie = movieList.getMovies().get(i);
+          if (!ds.equals(movie.getDataSource())) {
+            // check only movies matching datasource
+            continue;
+          }
+
+          File movieDir = new File(movie.getPath());
+          if (!movieDir.exists()) {
+            movieList.removeMovie(movie);
+          }
+          else {
+            // check and delete all not found MediaFiles
+            List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
+            for (MediaFile mf : mediaFiles) {
+              if (!mf.getFile().exists()) {
+                movie.removeFromMediaFiles(mf);
+              }
+            }
+            movie.saveToDb();
+            submitTask(new MediaFileInformationFetcherTask(movie.getMediaFiles(), movie));
+          }
+        } // end movie loop
+        waitForCompletionOrCancel();
+
+      } // END datasource loop
       LOGGER.info("Done updating datasource :)");
 
-      if (!cancel) {
-        LOGGER.info("get MediaInfo...");
-        // update MediaInfo
-        startProgressBar("getting Mediainfo...");
-        initThreadPool(1, "mediainfo");
-        for (Movie m : movieList.getMovies()) {
-          submitTask(new MediaFileInformationFetcherTask(m.getMediaFiles(), m));
-        }
-        waitForCompletionOrCancel();
-        LOGGER.info("Done getting MediaInfo)");
-      }
       if (cancel) {
         cancel(false);// swing cancel
       }
