@@ -83,6 +83,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         File[] dirs = new File(ds).listFiles();
         if (dirs == null) {
           // error - continue with next datasource
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
+              new String[] { ds }));
           continue;
         }
         for (File file : dirs) {
