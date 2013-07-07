@@ -238,8 +238,10 @@ public class MovieSettings extends AbstractModelObject {
    *          the path
    */
   public void addMovieDataSources(String path) {
-    movieDataSources.add(path);
-    firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
+    if (!movieDataSources.contains(path)) {
+      movieDataSources.add(path);
+      firePropertyChange(MOVIE_DATA_SOURCE, null, movieDataSources);
+    }
   }
 
   /**

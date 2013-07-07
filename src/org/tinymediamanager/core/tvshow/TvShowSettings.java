@@ -115,8 +115,10 @@ public class TvShowSettings extends AbstractModelObject {
    *          the path
    */
   public void addTvShowDataSources(String path) {
-    tvShowDataSources.add(path);
-    firePropertyChange(TV_SHOW_DATA_SOURCE, null, tvShowDataSources);
+    if (!tvShowDataSources.contains(path)) {
+      tvShowDataSources.add(path);
+      firePropertyChange(TV_SHOW_DATA_SOURCE, null, tvShowDataSources);
+    }
   }
 
   /**
