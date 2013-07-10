@@ -375,7 +375,7 @@ public class MovieRenamer {
             curExt = "jpg";
           }
         }
-        if (!mf.getExtension().equals(FilenameUtils.getExtension(newFilename))) {
+        if (!curExt.equals(FilenameUtils.getExtension(newFilename))) {
           // match extension to not rename PNG to JPG and vice versa
           continue;
         }
