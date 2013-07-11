@@ -27,6 +27,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileAudioStream;
 import org.tinymediamanager.core.MediaFileSubtitle;
@@ -84,6 +88,7 @@ public class MovieMediaInformationPanel extends JPanel {
     add(lblWatchedT, "10, 2");
 
     chckbxWatched = new JCheckBox("");
+    chckbxWatched.setEnabled(false);
     add(chckbxWatched, "14, 2");
 
     JLabel lblVideoT = new JLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
@@ -145,6 +150,7 @@ public class MovieMediaInformationPanel extends JPanel {
     };
 
     movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
+    initDataBindings();
   }
 
   private void fillVideoStreamDetails() {
@@ -223,5 +229,13 @@ public class MovieMediaInformationPanel extends JPanel {
         }
       }
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<MovieSelectionModel, Boolean> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.watched");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<MovieSelectionModel, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty, chckbxWatched, jCheckBoxBeanProperty);
+    autoBinding.bind();
   }
 }

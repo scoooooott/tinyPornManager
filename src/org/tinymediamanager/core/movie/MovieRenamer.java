@@ -27,6 +27,7 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -211,6 +212,7 @@ public class MovieRenamer {
     // ######################################################################
     // ## rename VIDEO
     // ######################################################################
+    String newMovieFilename = "";
     for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
       LOGGER.debug("testing file " + vid.getFile().getAbsolutePath());
       File f = vid.getFile();
@@ -242,6 +244,11 @@ public class MovieRenamer {
             newFilename += " CD" + vid.getStacking();
           }
           newFilename += "." + fileExtension;
+        }
+
+        // save new movie filename for further operations
+        if (StringUtils.isBlank(newMovieFilename)) {
+          newMovieFilename = newFilename;
         }
 
         MediaFile newMF = new MediaFile(vid);
@@ -290,7 +297,7 @@ public class MovieRenamer {
 
       for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
         MediaFile newMF = new MediaFile(mf);
-        newFilename = movie.getNfoFilename(name);
+        newFilename = movie.getNfoFilename(name, newMovieFilename);
         File newFile = new File(newPath, newFilename);
         try {
           boolean ok = copyFile(mf.getFile(), newFile);
@@ -320,7 +327,7 @@ public class MovieRenamer {
       String newPath = movie.getPath() + File.separator;
 
       for (MoviePosterNaming name : Globals.settings.getMovieSettings().getMoviePosterFilenames()) {
-        newFilename = movie.getPosterFilename(name);
+        newFilename = movie.getPosterFilename(name, newMovieFilename);
         String curExt = mf.getExtension();
         if (curExt.equalsIgnoreCase("tbn")) {
           String cont = mf.getContainerFormat();
@@ -364,7 +371,7 @@ public class MovieRenamer {
       String newPath = movie.getPath() + File.separator;
 
       for (MovieFanartNaming name : Globals.settings.getMovieSettings().getMovieFanartFilenames()) {
-        newFilename = movie.getFanartFilename(name);
+        newFilename = movie.getFanartFilename(name, newMovieFilename);
         String curExt = mf.getExtension();
         if (curExt.equalsIgnoreCase("tbn")) {
           String cont = mf.getContainerFormat();
@@ -654,6 +661,16 @@ public class MovieRenamer {
       newDestination = replaceToken(newDestination, "$O", movie.getOriginalTitle());
     }
 
+    // replace token Movie set title ($M)
+    if (newDestination.contains("$M")) {
+      if (movie.getMovieSet() != null) {
+        newDestination = replaceToken(newDestination, "$M", movie.getMovieSet().getTitleSortable());
+      }
+      else {
+        newDestination = newDestination.replace("$M", "");
+      }
+    }
+
     // replace token IMDBid ($I)
     if (newDestination.contains("$I")) {
       newDestination = replaceToken(newDestination, "$I", movie.getImdbId());
@@ -661,7 +678,7 @@ public class MovieRenamer {
 
     // replace token sort title ($E)
     if (newDestination.contains("$E")) {
-      newDestination = replaceToken(newDestination, "$E", movie.getSortTitle());
+      newDestination = replaceToken(newDestination, "$E", movie.getTitleSortable());
     }
 
     if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
@@ -696,6 +713,22 @@ public class MovieRenamer {
 
     // replace empty brackets
     newDestination = newDestination.replaceAll("\\(\\)", "");
+
+    // if there are multiple file separators in a row - strip them out
+    if (SystemUtils.IS_OS_WINDOWS) {
+      // we need to mask it in windows
+      newDestination = newDestination.replaceAll("\\\\{2,}", "\\\\");
+      newDestination = newDestination.replaceAll("^\\\\", "");
+    }
+    else {
+      newDestination = newDestination.replaceAll(File.separator + "{2,}", File.separator);
+      newDestination = newDestination.replaceAll("^" + File.separator, "");
+    }
+
+    // replace spaces with underscores if needed
+    if (Globals.settings.getMovieSettings().isMovieRenamerSpaceSubstitution()) {
+      newDestination = newDestination.replace(" ", "_");
+    }
 
     return newDestination.trim();
   }

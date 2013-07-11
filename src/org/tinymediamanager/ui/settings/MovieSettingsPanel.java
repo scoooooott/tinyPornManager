@@ -22,6 +22,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -86,6 +88,8 @@ public class MovieSettingsPanel extends JPanel {
   private JTextField                  tfMoviePath;
   private JTextField                  tfMovieFilename;
   private JLabel                      lblExample;
+  private JCheckBox                   chckbxSpaceSubstitution;
+  private JComboBox                   cbMovieForPreview;
 
   /**
    * Instantiates a new movie settings panel.
@@ -169,8 +173,8 @@ public class MovieSettingsPanel extends JPanel {
     panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
     panelRenamer.add(lblMoviePath, "2, 2, right, default");
@@ -200,7 +204,7 @@ public class MovieSettingsPanel extends JPanel {
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
     txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
-    panelRenamer.add(txtpntTitle, "6, 2, 1, 5, fill, fill");
+    panelRenamer.add(txtpntTitle, "6, 2, 1, 7, fill, fill");
 
     JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
     panelRenamer.add(lblMovieFilename, "2, 4, right, fill");
@@ -226,18 +230,36 @@ public class MovieSettingsPanel extends JPanel {
     panelRenamer.add(tfMovieFilename, "4, 4, fill, default");
     tfMovieFilename.setColumns(10);
 
+    chckbxSpaceSubstitution = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
+    chckbxSpaceSubstitution.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        createRenamerExample();
+      }
+    });
+    panelRenamer.add(chckbxSpaceSubstitution, "4, 6");
+
     JTextPane txtrChooseAFolder = new JTextPane();
     txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtrChooseAFolder.setText(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
-    panelRenamer.add(txtrChooseAFolder, "2, 6, 3, 1, fill, fill");
+    panelRenamer.add(txtrChooseAFolder, "2, 8, 3, 1, fill, bottom");
 
     JLabel lblExampleT = new JLabel("Example");
-    panelRenamer.add(lblExampleT, "2, 8");
+    panelRenamer.add(lblExampleT, "2, 10");
+
+    cbMovieForPreview = new JComboBox();
+    cbMovieForPreview.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        createRenamerExample();
+      }
+    });
+    panelRenamer.add(cbMovieForPreview, "4, 10, fill, default");
 
     lblExample = new JLabel("");
     lblExample.setFont(lblExample.getFont().deriveFont(11f));
-    panelRenamer.add(lblExample, "2, 10, 5, 1");
+    panelRenamer.add(lblExample, "2, 12, 5, 1");
 
     initDataBindings();
 
@@ -262,29 +284,15 @@ public class MovieSettingsPanel extends JPanel {
         checkChanges();
       }
     });
+
+    buildAndInstallMovieArray();
   }
 
   private void createRenamerExample() {
     Movie movie = null;
-    List<Movie> movies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
-    if (movies.size() > 0) {
-      for (Movie m : movies) {
-        // search the first scraped movie
-        if (m.isScraped()) {
-          movie = m;
-          break;
-        }
-      }
-
-      // if no movie has been scraped, get one containing at least some fields
-      if (movie == null) {
-        for (Movie m : movies) {
-          if (StringUtils.isNotBlank(m.getTitle()) && StringUtils.isNotBlank(m.getOriginalTitle()) && StringUtils.isNotBlank(m.getYear())) {
-            movie = m;
-            break;
-          }
-        }
-      }
+    if (cbMovieForPreview.getSelectedItem() instanceof MoviePreviewContainer) {
+      MoviePreviewContainer container = (MoviePreviewContainer) cbMovieForPreview.getSelectedItem();
+      movie = container.movie;
     }
 
     if (movie != null) {
@@ -326,7 +334,6 @@ public class MovieSettingsPanel extends JPanel {
     }
   }
 
-  @SuppressWarnings("rawtypes")
   protected void initDataBindings() {
     BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieSettings.movieDataSource");
     JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,
@@ -354,5 +361,38 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<Settings, String, JTextField, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_12, tfMovieFilename, jTextFieldBeanProperty_4);
     autoBinding_11.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("movieSettings.movieRenamerSpaceSubstitution");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty, chckbxSpaceSubstitution, jCheckBoxBeanProperty);
+    autoBinding.bind();
   }
+
+  private void buildAndInstallMovieArray() {
+    cbMovieForPreview.removeAllItems();
+    List<Movie> allMovies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
+    Collections.sort(allMovies, new MovieComparator());
+    for (Movie movie : allMovies) {
+      MoviePreviewContainer container = new MoviePreviewContainer();
+      container.movie = movie;
+      cbMovieForPreview.addItem(container);
+    }
+  }
+
+  private class MoviePreviewContainer {
+    Movie movie;
+
+    public String toString() {
+      return movie.getTitle();
+    }
+  }
+
+  private class MovieComparator implements Comparator<Movie> {
+    @Override
+    public int compare(Movie arg0, Movie arg1) {
+      return arg0.getTitle().compareTo(arg1.getTitle());
+    }
+  }
+
 }
