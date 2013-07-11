@@ -261,7 +261,7 @@ public class TvShowScrapeTask extends TmmSwingWorker {
                   || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isStatus() || scraperMetadataConfig.isTitle()
                   || scraperMetadataConfig.isYear()) {
                 md = mediaMetadataProvider.getMetadata(options);
-                tvShow.setMetadata(md);
+                tvShow.setMetadata(md, scraperMetadataConfig);
               }
 
               // scrape episodes

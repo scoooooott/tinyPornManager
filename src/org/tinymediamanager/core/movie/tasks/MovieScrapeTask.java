@@ -263,7 +263,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
                   || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
                   || scraperMetadataConfig.isYear()) {
                 md = mediaMetadataProvider.getMetadata(options);
-                movie.setMetadata(md);
+                movie.setMetadata(md, scraperMetadataConfig);
               }
 
               // scrape artwork if wanted
