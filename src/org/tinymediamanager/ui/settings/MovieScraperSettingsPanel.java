@@ -75,7 +75,8 @@ public class MovieScraperSettingsPanel extends JPanel {
   private JCheckBox                   cbTheMovieDatabase;
   private JCheckBox                   cbHdtrailersnet;
   private JCheckBox                   cbOfdbde;
-  private JCheckBox                   cbScraperZelluloidde;
+  private JCheckBox                   cbZelluloidde;
+  private JCheckBox                   cbMoviemeternl;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -93,7 +94,7 @@ public class MovieScraperSettingsPanel extends JPanel {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     cbScraperTmdb = new JCheckBox("The Movie Database");
     buttonGroupScraper = new ButtonGroup();
@@ -115,12 +116,16 @@ public class MovieScraperSettingsPanel extends JPanel {
     buttonGroupScraper.add(cbScraperOfdbde);
     panelMovieScrapers.add(cbScraperOfdbde, "1, 7");
 
-    cbScraperZelluloidde = new JCheckBox("Zelluloid.de");
-    buttonGroupScraper.add(cbScraperZelluloidde);
-    panelMovieScrapers.add(cbScraperZelluloidde, "1, 9");
+    cbZelluloidde = new JCheckBox("Zelluloid.de");
+    buttonGroupScraper.add(cbZelluloidde);
+    panelMovieScrapers.add(cbZelluloidde, "1, 9");
+
+    cbMoviemeternl = new JCheckBox("MovieMeter.nl");
+    buttonGroupScraper.add(cbMoviemeternl);
+    panelMovieScrapers.add(cbMoviemeternl, "1, 11");
 
     JSeparator separator = new JSeparator();
-    panelMovieScrapers.add(separator, "1, 11, 3, 1");
+    panelMovieScrapers.add(separator, "1, 12, 3, 1");
 
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
     panelMovieScrapers.add(lblScraperLanguage, "1, 13, right, default");
@@ -178,7 +183,11 @@ public class MovieScraperSettingsPanel extends JPanel {
         break;
 
       case ZELLULOID:
-        cbScraperZelluloidde.setSelected(true);
+        cbZelluloidde.setSelected(true);
+        break;
+
+      case MOVIEMETER:
+        cbMoviemeternl.setSelected(true);
         break;
 
       case TMDB:
@@ -201,7 +210,12 @@ public class MovieScraperSettingsPanel extends JPanel {
         checkChanges();
       }
     });
-    cbScraperZelluloidde.addItemListener(new ItemListener() {
+    cbZelluloidde.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    });
+    cbMoviemeternl.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
       }
@@ -222,8 +236,11 @@ public class MovieScraperSettingsPanel extends JPanel {
     if (cbScraperOfdbde.isSelected()) {
       settings.getMovieSettings().setMovieScraper(MovieScrapers.OFDB);
     }
-    if (cbScraperZelluloidde.isSelected()) {
+    if (cbZelluloidde.isSelected()) {
       settings.getMovieSettings().setMovieScraper(MovieScrapers.ZELLULOID);
+    }
+    if (cbMoviemeternl.isSelected()) {
+      settings.getMovieSettings().setMovieScraper(MovieScrapers.MOVIEMETER);
     }
   }
 

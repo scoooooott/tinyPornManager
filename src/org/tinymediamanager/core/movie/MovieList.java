@@ -44,6 +44,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.fanarttv.FanartTvMetadataProvider;
 import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
+import org.tinymediamanager.scraper.moviemeternl.MoviemeterMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.zelluloid.ZelluloidMetadataProvider;
@@ -470,6 +471,16 @@ public class MovieList extends AbstractModelObject {
       case ZELLULOID:
         LOGGER.debug("get instance of ZelluloidMetadataProvider");
         metadataProvider = new ZelluloidMetadataProvider();
+        break;
+
+      case MOVIEMETER:
+        LOGGER.debug("get instance of MoviemeterMetadataProvider");
+        try {
+          metadataProvider = new MoviemeterMetadataProvider();
+        }
+        catch (Exception e) {
+          LOGGER.warn("failed to get instance of MoviemeterMetadataProvider", e);
+        }
         break;
 
       case IMDB:

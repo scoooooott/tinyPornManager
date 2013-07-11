@@ -507,7 +507,7 @@ public class XmlRpcClient extends XmlRpcParser implements XmlRpcInvocationHandle
     {
       // BEGIN TMM PATCH
       String host = Globals.settings.getProxyHost();
-      if (!host.isEmpty()) {
+      if (host != null && !host.isEmpty()) {
         int port = 0;
         try {
           port = Integer.valueOf(Globals.settings.getProxyPort());

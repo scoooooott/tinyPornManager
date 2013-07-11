@@ -26,11 +26,12 @@ public enum MovieScrapers {
   TMDB("The Movie Database"),
   /** The imdb. */
   IMDB("IMDb"),
-
   /** The zelluloid scraper. */
   ZELLULOID("Zelluloid.de"),
   /** The OFDB. */
-  OFDB("OFDb.de Online-Filmdatenbank");
+  OFDB("OFDb.de Online-Filmdatenbank"),
+  /** Moviemeter. */
+  MOVIEMETER("MovieMeter.nl");
 
   /** The title. */
   private String title;
