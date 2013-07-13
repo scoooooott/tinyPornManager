@@ -45,7 +45,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -66,59 +65,48 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class })
-@XmlType(propOrder = { "title", "originaltitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb", "fanart",
-    "mpaa", "id", "filenameandpath", "genres", "studio", "credits", "director", "actors" })
+@XmlType(propOrder = { "title", "originaltitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "mpaa", "id", "genres",
+    "studio", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
-  private static final Logger LOGGER          = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
+  private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
 
   /** The title. */
-  private String              title           = "";
+  private String              title         = "";
 
   /** The originaltitle. */
-  private String              originaltitle   = "";
+  private String              originaltitle = "";
 
   /** The rating. */
-  private float               rating          = 0;
+  private float               rating        = 0;
 
   /** The votes. */
-  private int                 votes           = 0;
+  private int                 votes         = 0;
 
   /** The year. */
-  private String              year            = "";
+  private String              year          = "";
 
   /** The outline. */
-  private String              outline         = "";
+  private String              outline       = "";
 
   /** The plot. */
-  private String              plot            = "";
+  private String              plot          = "";
 
   /** The tagline. */
-  private String              tagline         = "";
+  private String              tagline       = "";
 
   /** The runtime. */
-  private String              runtime         = "";
-
-  /** The thumb. */
-  private String              thumb           = "";
-
-  /** The fanarts. */
-  @XmlElementWrapper(name = "fanart")
-  @XmlElement(name = "thumb")
-  private List<String>        fanart;
+  private String              runtime       = "";
 
   /** The id. */
-  private String              id              = "";
-
-  /** The filenameandpath. */
-  private String              filenameandpath = "";
+  private String              id            = "";
 
   /** The director. */
-  private String              director        = "";
+  private String              director      = "";
 
   /** The sudio. */
-  private String              studio          = "";
+  private String              studio        = "";
 
   /** The actors. */
   @XmlAnyElement(lax = true)
@@ -130,15 +118,15 @@ public class MovieToMpNfoConnector {
   private List<String>        genres;
 
   /** The mpaa certification. */
-  private String              mpaa            = "";
+  private String              mpaa          = "";
 
   /** the credits. */
-  private String              credits         = "";
+  private String              credits       = "";
 
   /** The sets. */
   private List<MovieSets>     sets;
 
-  private static JAXBContext  context         = initContext();
+  private static JAXBContext  context       = initContext();
 
   private static JAXBContext initContext() {
     try {
@@ -157,7 +145,7 @@ public class MovieToMpNfoConnector {
   public MovieToMpNfoConnector() {
     actors = new ArrayList();
     genres = new ArrayList<String>();
-    fanart = new ArrayList<String>();
+    // fanart = new ArrayList<String>();
     sets = new ArrayList<MovieSets>();
   }
 
@@ -201,8 +189,8 @@ public class MovieToMpNfoConnector {
 
     mp.setTagline(movie.getTagline());
     mp.setRuntime(String.valueOf(movie.getRuntime()));
-    mp.setThumb(movie.getPoster());
-    mp.addFanart(movie.getFanart());
+    // mp.setThumb(movie.getPoster());
+    // mp.addFanart(movie.getFanart());
     mp.setId(movie.getImdbId());
     mp.setStudio(movie.getProductionCompany());
 
@@ -211,10 +199,10 @@ public class MovieToMpNfoConnector {
       mp.setMpaa(Certification.generateCertificationStringWithAlternateNames(movie.getCertification()));
     }
 
-    // filename and path
-    if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
-      mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
-    }
+    // // filename and path
+    // if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
+    // mp.setFilenameandpath(movie.getPath() + File.separator + movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+    // }
 
     mp.setDirector(movie.getDirector());
     mp.setCredits(movie.getWriter());
@@ -306,13 +294,6 @@ public class MovieToMpNfoConnector {
       catch (Exception e) {
         LOGGER.warn("could not parse runtime: " + mp.getRuntime());
       }
-      // if (mp.getThumb() != null) {
-      // movie.setPoster(mp.getThumb());
-      // }
-
-      // if (mp.getFanart() != null && mp.getFanart().size() > 0) {
-      // movie.setFanart(mp.getFanart().get(0));
-      // }
 
       movie.setImdbId(mp.getId());
       movie.setDirector(mp.getDirector());
@@ -613,45 +594,6 @@ public class MovieToMpNfoConnector {
   }
 
   /**
-   * Gets the thumb.
-   * 
-   * @return the thumb
-   */
-  @XmlElement(name = "thumb")
-  public String getThumb() {
-    return thumb;
-  }
-
-  /**
-   * Sets the thumb.
-   * 
-   * @param thumb
-   *          the new thumb
-   */
-  public void setThumb(String thumb) {
-    this.thumb = thumb;
-  }
-
-  /**
-   * Gets the fanart.
-   * 
-   * @return the fanart
-   */
-  public List<String> getFanart() {
-    return fanart;
-  }
-
-  /**
-   * Adds the fanart.
-   * 
-   * @param fanart
-   *          the fanart
-   */
-  public void addFanart(String fanart) {
-    this.fanart.add(fanart);
-  }
-
-  /**
    * Gets the id.
    * 
    * @return the id
@@ -669,26 +611,6 @@ public class MovieToMpNfoConnector {
    */
   public void setId(String id) {
     this.id = id;
-  }
-
-  /**
-   * Gets the filenameandpath.
-   * 
-   * @return the filenameandpath
-   */
-  @XmlElement(name = "filenameandpath")
-  public String getFilenameandpath() {
-    return filenameandpath;
-  }
-
-  /**
-   * Sets the filenameandpath.
-   * 
-   * @param filenameandpath
-   *          the new filenameandpath
-   */
-  public void setFilenameandpath(String filenameandpath) {
-    this.filenameandpath = filenameandpath;
   }
 
   /**
