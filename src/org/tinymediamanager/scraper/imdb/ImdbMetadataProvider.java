@@ -497,8 +497,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
                 cm.setImageUrl("");
               }
               else {
-                thumbUrl = thumbUrl.replaceAll("SX[0-9]{2,4}_", "SX100_");
-                thumbUrl = thumbUrl.replaceAll("SY[0-9]{2,4}_", "SY125_");
+                thumbUrl = thumbUrl.replaceAll("SX[0-9]{2,4}_", "SX400_");
+                thumbUrl = thumbUrl.replaceAll("SY[0-9]{2,4}_", "");
                 cm.setImageUrl(thumbUrl);
               }
             }
