@@ -22,16 +22,27 @@ package org.tinymediamanager.scraper;
  */
 public enum MediaLanguages {
 
-  /** The de. */
+
+
+
+  //@formatter:off
+  cs("Český"),
   de("Deutsch"),
-  /** The en. */
+  da("Dansk"),
   en("English"),
-  /** The fr. */
+  es("Español"),
+  fi("Suomi"),
   fr("Française"),
-  /** The it. */
+  hu("Magyar"),
   it("Italiano"),
-  /** The sp. */
-  sp("Español");
+  nl("Nederlands"),
+  no("Norsk"),
+  pl("Język polski"),
+  ru("русский язык"),
+  sk("Slovenčina"),
+  sv("Svenska"),
+  tr("Türkçe");
+  //@formatter:on
 
   /** The title. */
   private String title;
