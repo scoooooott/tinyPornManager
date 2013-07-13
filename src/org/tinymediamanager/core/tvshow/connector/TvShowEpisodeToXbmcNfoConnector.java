@@ -802,18 +802,18 @@ public class TvShowEpisodeToXbmcNfoConnector {
           }
           catch (UnmarshalException e) {
             LOGGER.error("failed to parse " + nfoFile.getName());
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
+            // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
             return null;
           }
           catch (Exception e) {
             LOGGER.error("failed to parse " + nfoFile.getName(), e);
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
+            // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
           }
 
         }
       }
       catch (IOException e) {
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
+        // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile.getPath(), "message.nfo.readerror"));
       }
     }
 

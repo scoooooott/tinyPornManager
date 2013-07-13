@@ -268,12 +268,12 @@ public class TvShowToXbmcNfoConnector {
     }
     catch (UnmarshalException e) {
       LOGGER.error("failed to parse " + nfoFilename + " " + e.getMessage());
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
+      // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
     catch (Exception e) {
       LOGGER.error(nfoFilename + " " + e.getMessage());
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
+      // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
 
