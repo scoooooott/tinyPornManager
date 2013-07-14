@@ -27,7 +27,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -53,19 +52,19 @@ public class ImageLabel extends JLabel {
     TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
   }
 
-  private static final long                serialVersionUID = -2524445544386464158L;
-  private static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger              LOGGER           = LoggerFactory.getLogger(ImageLabel.class);
+  private static final long                  serialVersionUID = -2524445544386464158L;
+  protected static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger                LOGGER           = LoggerFactory.getLogger(ImageLabel.class);
 
-  private BufferedImage                    originalImage;
-  private String                           imageUrl;
-  private String                           imagePath;
-  private Position                         position         = Position.TOP_LEFT;
-  private String                           alternativeText  = null;
-  private boolean                          drawBorder;
-  private boolean                          drawFullWidth;
+  protected BufferedImage                    originalImage;
+  protected String                           imageUrl;
+  protected String                           imagePath;
+  protected Position                         position         = Position.TOP_LEFT;
+  protected String                           alternativeText  = null;
+  protected boolean                          drawBorder;
+  protected boolean                          drawFullWidth;
 
-  private SwingWorker<BufferedImage, Void> worker           = null;
+  protected SwingWorker<BufferedImage, Void> worker           = null;
 
   /**
    * Instantiates a new image label.
@@ -374,7 +373,7 @@ public class ImageLabel extends JLabel {
    * 
    * @author Manuel Laggner
    */
-  private class ImageFetcher extends SwingWorker<BufferedImage, Void> {
+  protected class ImageFetcher extends SwingWorker<BufferedImage, Void> {
 
     /*
      * (non-Javadoc)
@@ -389,7 +388,8 @@ public class ImageLabel extends JLabel {
         return com.bric.image.ImageLoader.createImage(image);
 
       }
-      catch (IOException e) {
+      catch (Exception e) {
+        imageUrl = "";
         return null;
       }
     }
@@ -415,7 +415,7 @@ public class ImageLabel extends JLabel {
   /**
    * The Class ImageLoader.
    */
-  private class ImageLoader extends SwingWorker<BufferedImage, Void> {
+  protected class ImageLoader extends SwingWorker<BufferedImage, Void> {
 
     /** The image path. */
     private String imagePath;

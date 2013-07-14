@@ -83,10 +83,10 @@ public class MovieCastPanel extends JPanel {
     actorTableModel = new DefaultEventTableModel<MovieActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(39dlu;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("125px"),
-        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("80px"),
-        RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.MIN_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("125px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("80px"), RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
     add(lblDirectorT, "2, 2");
@@ -108,11 +108,11 @@ public class MovieCastPanel extends JPanel {
     tableCast = new ZebraJTable(actorTableModel);
     JScrollPane scrollPaneMovieCast = ZebraJTable.createStripedJScrollPane(tableCast);
     lblActors.setLabelFor(scrollPaneMovieCast);
-    add(scrollPaneMovieCast, "4, 6, 1, 2");
+    add(scrollPaneMovieCast, "4, 6, 3, 2");
     scrollPaneMovieCast.setViewportView(tableCast);
 
     lblActorThumb = new ActorImageLabel();
-    add(lblActorThumb, "6, 2, 1, 6, fill, fill");
+    add(lblActorThumb, "8, 2, 1, 6, fill, fill");
 
     initDataBindings();
 

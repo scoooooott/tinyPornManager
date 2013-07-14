@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.components;
 
+import java.awt.Container;
+import java.awt.Graphics;
 import java.io.File;
 import java.util.ResourceBundle;
 
@@ -34,30 +36,15 @@ public class ActorImageLabel extends ImageLabel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private Movie                       movie;
 
-  /**
-   * Instantiates a new actor image label.
-   */
   public ActorImageLabel() {
     super();
     setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
   }
 
-  /**
-   * Sets the movie.
-   * 
-   * @param movie
-   *          the new movie
-   */
   public void setMovie(Movie movie) {
     this.movie = movie;
   }
 
-  /**
-   * Sets the actor.
-   * 
-   * @param actor
-   *          the new actor
-   */
   public void setActor(MovieActor actor) {
     if (actor != null) {
       if (movie != null && StringUtils.isNotEmpty(actor.getThumbPath())) {
@@ -72,4 +59,77 @@ public class ActorImageLabel extends ImageLabel {
     }
   }
 
+  @Override
+  public void setImagePath(String newValue) {
+    String oldValue = this.imagePath;
+
+    if (StringUtils.isNotEmpty(oldValue) && oldValue.equals(newValue)) {
+      return;
+    }
+
+    this.imagePath = newValue;
+    firePropertyChange("imagePath", oldValue, newValue);
+
+    // stop previous worker
+    if (worker != null && !worker.isDone()) {
+      worker.cancel(true);
+    }
+
+    // load image in separate worker -> performance
+    worker = new ImageLoader(this.imagePath);
+    worker.execute();
+  }
+
+  @Override
+  public void setImageUrl(String newValue) {
+    String oldValue = this.imageUrl;
+    this.imageUrl = newValue;
+    firePropertyChange("imageUrl", oldValue, newValue);
+
+    if (StringUtils.isEmpty(newValue)) {
+      originalImage = null;
+      this.repaint();
+      return;
+    }
+
+    // stop previous worker
+    if (worker != null && !worker.isDone()) {
+      worker.cancel(true);
+    }
+
+    // fetch image in separate worker -> performance
+    // only do http fetches, if the label is visible
+    if (amIVisible()) {
+      worker = new ImageFetcher();
+      worker.execute();
+    }
+    else {
+      originalImage = null;
+    }
+  }
+
+  @Override
+  protected void paintComponent(Graphics g) {
+    // refetch the image if its visible now
+    if (amIVisible() && originalImage == null && StringUtils.isNotBlank(imageUrl)) {
+      worker = new ImageFetcher();
+      worker.execute();
+      return;
+    }
+
+    super.paintComponent(g);
+  }
+
+  /*
+   * determine if the component is visible to the user
+   */
+  private boolean amIVisible() {
+    Container c = getParent();
+    while (c != null)
+      if (!c.isVisible())
+        return false;
+      else
+        c = c.getParent();
+    return true;
+  }
 }
