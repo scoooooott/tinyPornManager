@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.components;
 
-import java.awt.Container;
 import java.awt.Graphics;
 import java.io.File;
 import java.util.ResourceBundle;
@@ -99,7 +98,7 @@ public class ActorImageLabel extends ImageLabel {
 
     // fetch image in separate worker -> performance
     // only do http fetches, if the label is visible
-    if (amIVisible()) {
+    if (isShowing()) {
       worker = new ImageFetcher();
       worker.execute();
     }
@@ -111,25 +110,12 @@ public class ActorImageLabel extends ImageLabel {
   @Override
   protected void paintComponent(Graphics g) {
     // refetch the image if its visible now
-    if (amIVisible() && originalImage == null && StringUtils.isNotBlank(imageUrl)) {
+    if (isShowing() && originalImage == null && StringUtils.isNotBlank(imageUrl)) {
       worker = new ImageFetcher();
       worker.execute();
       return;
     }
 
     super.paintComponent(g);
-  }
-
-  /*
-   * determine if the component is visible to the user
-   */
-  private boolean amIVisible() {
-    Container c = getParent();
-    while (c != null)
-      if (!c.isVisible())
-        return false;
-      else
-        c = c.getParent();
-    return true;
   }
 }
