@@ -1,8 +1,6 @@
 # The URL from which the client is downloaded
 appbase = https://myron0815.ci.cloudbees.com/job/tinymediamanager/ws/tinyMediaManager/build/
 
-#version = %SVNREV%
-
 # UI Configuration
 ui.name = tinyMediaManager
 ui.background_image = splashscreen.png
