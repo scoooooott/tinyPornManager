@@ -66,7 +66,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   public MovieUpdateDatasourceTask() {
     movieList = MovieList.getInstance();
     dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
-    initThreadPool(3, "update");
   }
 
   /*
@@ -80,6 +79,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       for (String ds : dataSources) {
 
         startProgressBar("prepare scan '" + ds + "'");
+        initThreadPool(3, "update");
         File[] dirs = new File(ds).listFiles();
         if (dirs == null) {
           // error - continue with next datasource
