@@ -124,7 +124,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     LOGGER.debug("search() " + query.toString());
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = "";
-    String baseUrl = "";
+    String baseUrl = tmdb.getConfiguration().getBaseUrl();
     int year = 0;
 
     // check type
@@ -187,7 +187,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       if (moviesFound.size() == 0) {
         trackConnections();
         moviesFound = tmdb.searchMovie(searchString, year, Globals.settings.getMovieSettings().getScraperLanguage().name(), false, 0);
-        baseUrl = tmdb.getConfiguration().getBaseUrl();
         LOGGER.debug("found " + moviesFound.size() + " results with search string");
       }
 
