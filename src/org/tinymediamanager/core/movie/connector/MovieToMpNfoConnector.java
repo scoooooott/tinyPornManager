@@ -308,13 +308,13 @@ public class MovieToMpNfoConnector {
         MovieSets sets = mp.getSets().get(0);
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
-        MovieSet movieSet = movieList.findMovieSet(sets.getName());
-        // no one found - create it
-        if (movieSet == null) {
-          movieSet = new MovieSet(sets.getName());
-          movieSet.saveToDb();
-          movieList.addMovieSet(movieSet);
-        }
+        MovieSet movieSet = movieList.getMovieSet(sets.getName());
+        // // no one found - create it
+        // if (movieSet == null) {
+        // movieSet = new MovieSet(sets.getName());
+        // movieSet.saveToDb();
+        // movieList.addMovieSet(movieSet);
+        // }
 
         // add movie to movieset
         if (movieSet != null) {

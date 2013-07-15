@@ -242,7 +242,8 @@ public class MovieSet extends MediaEntity {
     }
 
     // try to get a fanart from one movie
-    for (Movie movie : moviesObservable) {
+    List<Movie> movies = new ArrayList<Movie>(moviesObservable);
+    for (Movie movie : movies) {
       String filename = movie.getPath() + File.separator + "movieset-poster.jpg";
       File posterFile = new File(filename);
       if (posterFile.exists()) {

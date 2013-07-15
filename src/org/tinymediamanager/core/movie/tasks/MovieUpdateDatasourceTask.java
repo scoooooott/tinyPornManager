@@ -40,7 +40,6 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaTrailer;
@@ -110,10 +109,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
           File movieDir = new File(movie.getPath());
           if (!movieDir.exists()) {
-            MovieSet ms = movie.getMovieSet();
-            if (ms != null) {
-              ms.removeMovie(movie);
-            }
             LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
             movieList.removeMovie(movie);
           }
@@ -348,7 +343,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movieDir.getPath(), "message.update.errormoviedir"));
     }
     catch (Exception e) {
-      LOGGER.error(e.getMessage());
+      LOGGER.error("error update Datasources", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movieDir.getPath(), "message.update.errormoviedir", new String[] { ":",
           e.getLocalizedMessage() }));
     }

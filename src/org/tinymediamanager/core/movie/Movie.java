@@ -987,14 +987,17 @@ public class Movie extends MediaEntity {
     if (config.isCollection()) {
       int col = metadata.getTmdbIdSet();
       if (col != 0) {
-        MovieSet movieSet = MovieList.getInstance().findMovieSet(metadata.getCollectionName());
-        // no one found - create it
-        if (movieSet == null) {
-          movieSet = new MovieSet(metadata.getCollectionName());
+        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getCollectionName());
+        if (movieSet.getTmdbId() == 0) {
           movieSet.setTmdbId(col);
-          movieSet.saveToDb();
-          MovieList.getInstance().addMovieSet(movieSet);
         }
+        // // no one found - create it
+        // if (movieSet == null) {
+        // movieSet = new MovieSet(metadata.getCollectionName());
+        // movieSet.setTmdbId(col);
+        // movieSet.saveToDb();
+        // MovieList.getInstance().addMovieSet(movieSet);
+        // }
         // add movie to movieset
         if (movieSet != null) {
           movieSet.addMovie(this);

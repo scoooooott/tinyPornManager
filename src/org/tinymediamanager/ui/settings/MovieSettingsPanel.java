@@ -52,6 +52,7 @@ import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.Movie;
@@ -306,8 +307,11 @@ public class MovieSettingsPanel extends JPanel {
       }
 
       if (StringUtils.isNotBlank(tfMovieFilename.getText())) {
-        String extension = FilenameUtils.getExtension(movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
-        filename = MovieRenamer.createDestination(tfMovieFilename.getText(), movie) + "." + extension;
+        List<MediaFile> mediaFiles = movie.getMediaFiles(MediaFileType.VIDEO);
+        if (mediaFiles.size() > 0) {
+          String extension = FilenameUtils.getExtension(mediaFiles.get(0).getFilename());
+          filename = MovieRenamer.createDestination(tfMovieFilename.getText(), movie) + "." + extension;
+        }
       }
       else {
         filename = movie.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename();

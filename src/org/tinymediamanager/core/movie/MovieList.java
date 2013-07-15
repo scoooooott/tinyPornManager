@@ -802,14 +802,7 @@ public class MovieList extends AbstractModelObject {
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
   }
 
-  /**
-   * Find movie set.
-   * 
-   * @param title
-   *          the name
-   * @return the movie set
-   */
-  public MovieSet findMovieSet(String title) {
+  private MovieSet findMovieSet(String title) {
     // search for the movieset by name
     for (MovieSet movieSet : movieSetList) {
       if (movieSet.getTitle().equals(title)) {
@@ -820,6 +813,18 @@ public class MovieList extends AbstractModelObject {
     return null;
   }
 
+  public synchronized MovieSet getMovieSet(String title) {
+    MovieSet movieSet = findMovieSet(title);
+
+    if (movieSet == null) {
+      movieSet = new MovieSet(title);
+      movieSet.saveToDb();
+      addMovieSet(movieSet);
+    }
+
+    return movieSet;
+  }
+
   /**
    * Sort movies in movie set.
    * 
@@ -827,7 +832,9 @@ public class MovieList extends AbstractModelObject {
    *          the movie set
    */
   public void sortMoviesInMovieSet(MovieSet movieSet) {
-    movieSet.sortMovies();
+    if (movieSet.getMovies().size() > 1) {
+      movieSet.sortMovies();
+    }
     firePropertyChange("sortedMovieSets", null, movieSetList);
   }
 }
