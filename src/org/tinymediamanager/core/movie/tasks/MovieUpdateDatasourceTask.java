@@ -114,6 +114,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             if (ms != null) {
               ms.removeMovie(movie);
             }
+            LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
             movieList.removeMovie(movie);
           }
           else {
