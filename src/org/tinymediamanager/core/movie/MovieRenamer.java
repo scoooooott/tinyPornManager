@@ -150,6 +150,9 @@ public class MovieRenamer {
     LOGGER.info("Renaming movie: " + movie.getTitle());
     LOGGER.debug("movie year: " + movie.getYear());
     LOGGER.debug("movie path: " + movie.getPath());
+    if (movie.getMovieSet() != null) {
+      LOGGER.debug("movieset: " + movie.getMovieSet().getTitle());
+    }
     LOGGER.debug("path expression: " + Globals.settings.getMovieSettings().getMovieRenamerPathname());
     LOGGER.debug("file expression: " + Globals.settings.getMovieSettings().getMovieRenamerFilename());
 
