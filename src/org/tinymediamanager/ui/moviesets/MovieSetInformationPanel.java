@@ -47,6 +47,7 @@ import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.ObservableElementList;
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -171,7 +172,7 @@ public class MovieSetInformationPanel extends JPanel {
     panelMovies.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("453px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("203px:grow"), }));
 
-    movieTableModel = new DefaultEventTableModel<Movie>(movieEventList, new MovieInMovieSetTableFormat());
+    movieTableModel = new DefaultEventTableModel<Movie>(GlazedListsSwing.swingThreadProxyList(movieEventList), new MovieInMovieSetTableFormat());
     // tableAssignedMovies = new JTable(movieTableModel);
     tableAssignedMovies = new ZebraJTable(movieTableModel);
     // JScrollPane scrollPaneMovies = new JScrollPane();

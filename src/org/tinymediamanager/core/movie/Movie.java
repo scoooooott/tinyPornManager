@@ -1306,69 +1306,6 @@ public class Movie extends MediaEntity {
    * @return the poster filename
    */
   public String getPosterFilename(MoviePosterNaming poster) {
-    // String filename = "";
-    // String mediafile = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
-    //
-    // switch (poster) {
-    // case MOVIENAME_POSTER_PNG:
-    // filename += getTitle() + ".png";
-    // break;
-    // case MOVIENAME_POSTER_JPG:
-    // filename += getTitle() + ".jpg";
-    // break;
-    // case MOVIENAME_POSTER_TBN:
-    // filename += getTitle() + ".tbn";
-    // break;
-    // case FILENAME_POSTER_PNG:
-    // filename += mediafile + "-poster.png";
-    // break;
-    // case FILENAME_POSTER_JPG:
-    // filename += mediafile + "-poster.jpg";
-    // break;
-    // case FILENAME_POSTER_TBN:
-    // filename += mediafile + "-poster.tbn";
-    // break;
-    // case FILENAME_PNG:
-    // filename += mediafile + ".png";
-    // break;
-    // case FILENAME_JPG:
-    // filename += mediafile + ".jpg";
-    // break;
-    // case FILENAME_TBN:
-    // filename += mediafile + ".tbn";
-    // break;
-    // case MOVIE_PNG:
-    // filename += "movie.png";
-    // break;
-    // case MOVIE_JPG:
-    // filename += "movie.jpg";
-    // break;
-    // case MOVIE_TBN:
-    // filename += "movie.tbn";
-    // break;
-    // case POSTER_PNG:
-    // filename += "poster.png";
-    // break;
-    // case POSTER_JPG:
-    // filename += "poster.jpg";
-    // break;
-    // case POSTER_TBN:
-    // filename += "poster.tbn";
-    // break;
-    // case FOLDER_PNG:
-    // filename += "folder.png";
-    // break;
-    // case FOLDER_JPG:
-    // filename += "folder.jpg";
-    // break;
-    // case FOLDER_TBN:
-    // filename += "folder.tbn";
-    // break;
-    // default:
-    // filename = "";
-    // break;
-    // }
-    // return filename;
     return getPosterFilename(poster, getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
   }
 
@@ -1446,48 +1383,6 @@ public class Movie extends MediaEntity {
    * @return the fanart filename
    */
   public String getFanartFilename(MovieFanartNaming fanart) {
-    // String filename = "";
-    // String mediafile = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()));
-    //
-    // switch (fanart) {
-    // case FANART_PNG:
-    // filename += "fanart.png";
-    // break;
-    // case FANART_JPG:
-    // filename += "fanart.jpg";
-    // break;
-    // case FANART_TBN:
-    // filename += "fanart.tbn";
-    // break;
-    // case FILENAME_FANART_PNG:
-    // filename += mediafile + "-fanart.png";
-    // break;
-    // case FILENAME_FANART_JPG:
-    // filename += mediafile + "-fanart.jpg";
-    // break;
-    // case FILENAME_FANART2_PNG:
-    // filename += mediafile + ".fanart.png";
-    // break;
-    // case FILENAME_FANART2_JPG:
-    // filename += mediafile + ".fanart.jpg";
-    // break;
-    // case FILENAME_FANART_TBN:
-    // filename += mediafile + "-fanart.tbn";
-    // break;
-    // case MOVIENAME_FANART_PNG:
-    // filename += getTitle() + "-fanart.png";
-    // break;
-    // case MOVIENAME_FANART_JPG:
-    // filename += getTitle() + "-fanart.jpg";
-    // break;
-    // case MOVIENAME_FANART_TBN:
-    // filename += getTitle() + "-fanart.tbn";
-    // break;
-    // default:
-    // filename = "";
-    // break;
-    // }
-    // return filename;
     return getFanartFilename(fanart, getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
   }
 
@@ -1544,20 +1439,6 @@ public class Movie extends MediaEntity {
    * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
-    // String filename = "";
-    // switch (nfo) {
-    // case FILENAME_NFO:
-    // String mediafile = FilenameUtils.getBaseName(getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
-    // filename += Utils.cleanStackingMarkers(mediafile) + ".nfo"; // w/o stacking information
-    // break;
-    // case MOVIE_NFO:
-    // filename += "movie.nfo";
-    // break;
-    // default:
-    // filename = "";
-    // break;
-    // }
-    // return filename;
     return getNfoFilename(nfo, getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
   }
 

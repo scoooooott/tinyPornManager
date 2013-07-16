@@ -224,14 +224,24 @@ public class MovieList extends AbstractModelObject {
         for (Object obj : movies) {
           if (obj instanceof Movie) {
             Movie movie = (Movie) obj;
-            // movie.setObservables();
-            movie.initializeAfterLoading();
+            try {
+              // movie.setObservables();
+              movie.initializeAfterLoading();
 
-            // for performance reasons we add movies directly
-            // addMovie(movie);
-            movieList.add(movie);
-            updateTags(movie);
-            movie.addPropertyChangeListener(tagListener);
+              // for performance reasons we add movies directly
+              // addMovie(movie);
+              movieList.add(movie);
+              updateTags(movie);
+              movie.addPropertyChangeListener(tagListener);
+            }
+            catch (Exception e) {
+              LOGGER.error("error loading movie/dropping it: " + e.getMessage());
+              try {
+                removeMovie(movie);
+              }
+              catch (Exception e1) {
+              }
+            }
           }
           else {
             LOGGER.error("retrieved no movie: " + obj);

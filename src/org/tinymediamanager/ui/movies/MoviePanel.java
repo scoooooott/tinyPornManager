@@ -297,7 +297,7 @@ public class MoviePanel extends JPanel {
     FilterList<Movie> extendedFilteredMovies = new FilterList<Movie>(sortedMovies, movieMatcherEditor);
     textFilteredMovies = new FilterList<Movie>(extendedFilteredMovies, textMatcherEditor);
     movieSelectionModel = new MovieSelectionModel(sortedMovies, textFilteredMovies, movieMatcherEditor);
-    movieTableModel = new DefaultEventTableModel<Movie>(textFilteredMovies, new MovieTableFormat());
+    movieTableModel = new DefaultEventTableModel<Movie>(GlazedListsSwing.swingThreadProxyList(textFilteredMovies), new MovieTableFormat());
     table = new ZebraJTable(movieTableModel);
 
     movieTableModel.addTableModelListener(new TableModelListener() {
