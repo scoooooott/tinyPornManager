@@ -215,7 +215,7 @@ public class MovieSetTreeModel implements TreeModel {
    * @param movieSet
    *          the movie set
    */
-  public void addMovieSet(MovieSet movieSet) {
+  public synchronized void addMovieSet(MovieSet movieSet) {
     MovieSetTreeNode child = new MovieSetTreeNode(movieSet);
     nodeMap.put(movieSet, child);
     // add the node
@@ -242,7 +242,7 @@ public class MovieSetTreeModel implements TreeModel {
    * @param movie
    *          the movie
    */
-  private void addMovie(MovieSet movieSet, Movie movie) {
+  private synchronized void addMovie(MovieSet movieSet, Movie movie) {
     // get the movie set node
     MovieSetTreeNode parent = (MovieSetTreeNode) nodeMap.get(movieSet);
     MovieTreeNode child = new MovieTreeNode(movie);
@@ -268,7 +268,7 @@ public class MovieSetTreeModel implements TreeModel {
    * @param movie
    *          the movie
    */
-  private void removeMovie(MovieSet movieSet, Movie movie) {
+  private synchronized void removeMovie(MovieSet movieSet, Movie movie) {
     // get the movie set node
     MovieSetTreeNode parent = (MovieSetTreeNode) nodeMap.get(movieSet);
     MovieTreeNode child = (MovieTreeNode) nodeMap.get(movie);
@@ -291,7 +291,7 @@ public class MovieSetTreeModel implements TreeModel {
    * @param movieSet
    *          the movie set
    */
-  public void removeMovieSet(MovieSet movieSet) {
+  public synchronized void removeMovieSet(MovieSet movieSet) {
     MovieSetTreeNode node = (MovieSetTreeNode) nodeMap.get(movieSet);
     int index = root.getIndex(node);
 
@@ -320,7 +320,7 @@ public class MovieSetTreeModel implements TreeModel {
    * @param path
    *          the path
    */
-  public void remove(TreePath path) {
+  public synchronized void remove(TreePath path) {
     DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
     DefaultMutableTreeNode parent = (DefaultMutableTreeNode) path.getParentPath().getLastPathComponent();
     int index = parent.getIndex(node);
@@ -375,7 +375,7 @@ public class MovieSetTreeModel implements TreeModel {
    * @param movieSet
    *          the movie set
    */
-  public void sortMoviesInMovieSet(MovieSet movieSet) {
+  public synchronized void sortMoviesInMovieSet(MovieSet movieSet) {
     MovieSetTreeNode node = (MovieSetTreeNode) nodeMap.get(movieSet);
     node.sort();
 
