@@ -19,6 +19,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import javax.swing.event.SwingPropertyChangeSupport;
+
 /**
  * The Class AbstractModelObject.
  * 
@@ -27,7 +29,8 @@ import java.beans.PropertyChangeSupport;
 public abstract class AbstractModelObject {
 
   /** The property change support. */
-  private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+  // private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+  private final PropertyChangeSupport propertyChangeSupport = new SwingPropertyChangeSupport(this, true);
 
   /**
    * Adds the property change listener.
