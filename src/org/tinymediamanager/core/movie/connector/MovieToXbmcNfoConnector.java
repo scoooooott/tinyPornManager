@@ -453,12 +453,6 @@ public class MovieToXbmcNfoConnector {
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
         MovieSet movieSet = movieList.getMovieSet(xbmc.getSet());
-        // // no one found - create it
-        // if (movieSet == null) {
-        // movieSet = new MovieSet(xbmc.getSet());
-        // movieSet.saveToDb();
-        // movieList.addMovieSet(movieSet);
-        // }
 
         // add movie to movieset
         if (movieSet != null) {

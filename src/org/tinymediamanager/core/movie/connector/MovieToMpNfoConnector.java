@@ -65,8 +65,8 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class })
-@XmlType(propOrder = { "title", "originaltitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "mpaa", "id", "genres",
-    "studio", "credits", "director", "actors" })
+@XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "mpaa",
+    "id", "genres", "studio", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
@@ -77,6 +77,8 @@ public class MovieToMpNfoConnector {
 
   /** The originaltitle. */
   private String              originaltitle = "";
+
+  private String              sorttitle     = "";
 
   /** The rating. */
   private float               rating        = 0;
@@ -166,6 +168,7 @@ public class MovieToMpNfoConnector {
     // set data
     mp.setTitle(movie.getTitle());
     mp.setOriginaltitle(movie.getOriginalTitle());
+    mp.setSorttitle(movie.getTitleSortable());
     mp.setRating(movie.getRating());
     mp.setVotes(movie.getVotes());
     mp.setYear(movie.getYear());
@@ -309,12 +312,6 @@ public class MovieToMpNfoConnector {
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
         MovieSet movieSet = movieList.getMovieSet(sets.getName());
-        // // no one found - create it
-        // if (movieSet == null) {
-        // movieSet = new MovieSet(sets.getName());
-        // movieSet.saveToDb();
-        // movieList.addMovieSet(movieSet);
-        // }
 
         // add movie to movieset
         if (movieSet != null) {
@@ -451,6 +448,15 @@ public class MovieToMpNfoConnector {
    */
   public void setOriginaltitle(String originaltitle) {
     this.originaltitle = originaltitle;
+  }
+
+  @XmlElement(name = "sorttitle")
+  public String getSorttitle() {
+    return sorttitle;
+  }
+
+  public void setSorttitle(String sorttitle) {
+    this.sorttitle = sorttitle;
   }
 
   /**
