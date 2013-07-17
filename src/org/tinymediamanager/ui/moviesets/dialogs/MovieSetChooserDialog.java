@@ -428,7 +428,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
               }
 
               movie.setMovieSet(movieSetToScrape);
-              movie.setSortTitle(movieSetToScrape.getTitle() + (i + 1));
+              movie.setSortTitle(movieSetToScrape.getTitle() + String.format("%02d", i + 1));
               movie.saveToDb();
               movieSetToScrape.addMovie(movie);
 

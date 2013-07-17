@@ -458,6 +458,7 @@ public class MovieSetEditorDialog extends JDialog {
         Movie movie = movieSetToEdit.getMovies().get(i);
         if (!moviesInSet.contains(movie)) {
           movie.setMovieSet(null);
+          movie.saveToDb();
           movieSetToEdit.removeMovie(movie);
           movie.writeNFO();
         }
@@ -466,12 +467,14 @@ public class MovieSetEditorDialog extends JDialog {
       // sort movies in the right order
       for (int i = 0; i < moviesInSet.size(); i++) {
         Movie movie = moviesInSet.get(i);
-        movie.setSortTitle(movieSetToEdit.getTitle() + (i + 1));
+        movie.setSortTitle(movieSetToEdit.getTitle() + String.format("%02d", i + 1));
+        movie.saveToDb();
       }
 
       // remove removed movies
       for (Movie movie : removedMovies) {
         movie.removeFromMovieSet();
+        movie.saveToDb();
         movieSetToEdit.removeMovie(movie);
       }
 

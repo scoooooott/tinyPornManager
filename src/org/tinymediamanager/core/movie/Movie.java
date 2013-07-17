@@ -198,7 +198,8 @@ public class Movie extends MediaEntity {
    */
   public void setSortTitleFromMovieSet() {
     if (movieSet != null) {
-      setSortTitle(movieSet.getTitle() + (movieSet.getMovieIndex(this) + 1));
+      int index = movieSet.getMovieIndex(this) + 1;
+      setSortTitle(movieSet.getTitle() + String.format("%02d", index));
     }
   }
 
