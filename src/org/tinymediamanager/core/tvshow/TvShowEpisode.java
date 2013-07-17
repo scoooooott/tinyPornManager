@@ -363,7 +363,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     if (StringUtils.isNotEmpty(getThumbUrl())) {
       boolean firstImage = true;
       // create correct filename
-      MediaFile mf = getMediaFiles().get(0);
+      MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
       String filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(getThumbUrl());
       // get image in thread
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getThumbUrl(), MediaArtworkType.THUMB, filename, firstImage);
