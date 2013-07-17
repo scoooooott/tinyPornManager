@@ -64,6 +64,15 @@ public class MovieSet extends MediaEntity {
   public MovieSet() {
   }
 
+  @Override
+  public void setTitle(String newValue) {
+    super.setTitle(newValue);
+
+    for (Movie movie : moviesObservable) {
+      movie.movieSetTitleChanged();
+    }
+  }
+
   /**
    * Returns the sortable variant of title<br>
    * eg "The Terminator Collection" -> "Terminator Collection, The".

@@ -1760,6 +1760,18 @@ public class Movie extends MediaEntity {
     }
 
     firePropertyChange(MOVIESET, oldValue, newValue);
+    firePropertyChange(MOVIESET_TITLE, oldValue, newValue);
+  }
+
+  public void movieSetTitleChanged() {
+    firePropertyChange(MOVIESET_TITLE, null, "");
+  }
+
+  public String getMovieSetTitle() {
+    if (movieSet != null) {
+      return movieSet.getTitle();
+    }
+    return "";
   }
 
   /**

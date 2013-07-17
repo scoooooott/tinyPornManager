@@ -351,10 +351,9 @@ public class MovieDetailsPanel extends JPanel {
         movieSelectionModelBeanProperty, lblMoviePath, linkLabelBeanProperty);
     autoBinding.bind();
     //
-    BeanProperty<MovieSelectionModel, MovieSet> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.movieSet");
+    BeanProperty<MovieSelectionModel, MovieSet> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.movieSetTitle");
     AutoBinding<MovieSelectionModel, MovieSet, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_1, lblMovieSet, jLabelBeanProperty);
-    autoBinding_1.setConverter(new MovieSetConverter());
     autoBinding_1.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovie.spokenLanguages");

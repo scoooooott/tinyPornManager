@@ -150,6 +150,7 @@ public final class Constants {
 
   /** The Constant MOVIESET. */
   public final static String MOVIESET              = "movieset";
+  public final static String MOVIESET_TITLE        = "movieSetTitle";
 
   /** The Constant TV_SHOW. */
   public final static String TV_SHOW               = "tvShow";
