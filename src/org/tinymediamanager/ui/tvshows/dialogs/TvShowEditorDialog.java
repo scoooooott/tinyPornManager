@@ -657,7 +657,7 @@ public class TvShowEditorDialog extends JDialog {
     public void actionPerformed(ActionEvent e) {
       tvShowToEdit.setTitle(tfTitle.getText());
       tvShowToEdit.setYear(String.valueOf(spYear.getValue()));
-
+      tvShowToEdit.setPlot(tpPlot.getText());
       tvShowToEdit.setRuntime((Integer) spRuntime.getValue());
       tvShowToEdit.setImdbId(tfImdbId.getText());
 

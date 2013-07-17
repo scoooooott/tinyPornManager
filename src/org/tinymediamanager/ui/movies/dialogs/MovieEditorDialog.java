@@ -817,6 +817,7 @@ public class MovieEditorDialog extends JDialog {
       movieToEdit.setTitle(tfTitle.getText());
       movieToEdit.setOriginalTitle(tfOriginalTitle.getText());
       movieToEdit.setTagline(tpTagline.getText());
+      movieToEdit.setPlot(tpPlot.getText());
       movieToEdit.setYear(String.valueOf(spYear.getValue()));
       movieToEdit.setRuntime((Integer) spRuntime.getValue());
       movieToEdit.setImdbId(tfImdbId.getText());
