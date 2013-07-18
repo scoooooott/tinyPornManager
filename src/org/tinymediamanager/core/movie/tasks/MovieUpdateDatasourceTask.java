@@ -68,6 +68,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
   }
 
+  public MovieUpdateDatasourceTask(String datasource) {
+    movieList = MovieList.getInstance();
+    dataSources = new ArrayList<String>(1);
+    dataSources.add(datasource);
+  }
+
   /*
    * (non-Javadoc)
    * 
