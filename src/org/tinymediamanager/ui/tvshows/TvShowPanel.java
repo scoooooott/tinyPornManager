@@ -60,6 +60,7 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -163,7 +164,37 @@ public class TvShowPanel extends JPanel {
     toolBar.setOpaque(false);
     panelTvShowTree.add(toolBar, "2, 1");
 
-    toolBar.add(actionUpdateDatasources);
+    // toolBar.add(actionUpdateDatasources);
+    final JSplitButton buttonUpdateDatasource = new JSplitButton(new ImageIcon(getClass().getResource(
+        "/org/tinymediamanager/ui/images/Folder-Sync.png")));
+    // temp fix for size of the button
+    buttonUpdateDatasource.setText("   ");
+    buttonUpdateDatasource.setHorizontalAlignment(JButton.LEFT);
+    // buttonScrape.setMargin(new Insets(2, 2, 2, 24));
+    buttonUpdateDatasource.setSplitWidth(18);
+    buttonUpdateDatasource.addSplitButtonActionListener(new SplitButtonActionListener() {
+      public void buttonClicked(ActionEvent e) {
+        actionUpdateDatasources.actionPerformed(e);
+      }
+
+      public void splitButtonClicked(ActionEvent e) {
+        // build the popupmenu on the fly
+        buttonUpdateDatasource.getPopupMenu().removeAll();
+        JMenuItem item = new JMenuItem(actionUpdateDatasources2);
+        buttonUpdateDatasource.getPopupMenu().add(item);
+        buttonUpdateDatasource.getPopupMenu().addSeparator();
+        for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
+          buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new UpdateSingleDatasourceAction(ds)));
+        }
+
+        buttonUpdateDatasource.getPopupMenu().pack();
+      }
+    });
+
+    JPopupMenu popup = new JPopupMenu("popup");
+    buttonUpdateDatasource.setPopupMenu(popup);
+    toolBar.add(buttonUpdateDatasource);
+
     JSplitButton buttonScrape = new JSplitButton(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
     // temp fix for size of the button
     buttonScrape.setText("   ");
@@ -180,7 +211,7 @@ public class TvShowPanel extends JPanel {
       }
     });
 
-    JPopupMenu popup = new JPopupMenu("popup");
+    popup = new JPopupMenu("popup");
     JMenuItem item = new JMenuItem(actionScrape2);
     popup.add(item);
     // item = new JMenuItem(actionScrapeUnscraped);
@@ -487,6 +518,31 @@ public class TvShowPanel extends JPanel {
      */
     public void actionPerformed(ActionEvent e) {
       TmmSwingWorker task = new TvShowUpdateDatasourceTask();
+      if (!MainWindow.executeMainTask(task)) {
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
+      }
+    }
+  }
+
+  private class UpdateSingleDatasourceAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5704371143505653741L;
+
+    private String            datasource;
+
+    public UpdateSingleDatasourceAction(String datasource) {
+      putValue(NAME, datasource);
+      this.datasource = datasource;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      TmmSwingWorker task = new TvShowUpdateDatasourceTask(datasource);
       if (!MainWindow.executeMainTask(task)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }

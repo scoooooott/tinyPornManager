@@ -67,6 +67,13 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     initThreadPool(3, "update");
   }
 
+  public TvShowUpdateDatasourceTask(String datasource) {
+    tvShowList = TvShowList.getInstance();
+    dataSources = new ArrayList<String>(1);
+    dataSources.add(datasource);
+    initThreadPool(3, "update");
+  }
+
   /*
    * (non-Javadoc)
    * 
