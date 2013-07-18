@@ -38,6 +38,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.movie.connector.MovieConnectors;
 
 /**
  * The Class MovieRenamer.
@@ -136,6 +137,8 @@ public class MovieRenamer {
    *          the movie
    */
   public static void renameMovie(Movie movie) {
+    boolean posterRenamed = false;
+    boolean fanartRenamed = false;
 
     // check if a datasource is set
     if (StringUtils.isEmpty(movie.getDataSource())) {
@@ -345,6 +348,8 @@ public class MovieRenamer {
           // match extension to not rename PNG to JPG and vice versa
           continue;
         }
+        posterRenamed = true;
+
         MediaFile newMF = new MediaFile(mf);
         File newFile = new File(newPath, newFilename);
         try {
@@ -389,6 +394,8 @@ public class MovieRenamer {
           // match extension to not rename PNG to JPG and vice versa
           continue;
         }
+        fanartRenamed = true;
+
         MediaFile newMF = new MediaFile(mf);
         File newFile = new File(newPath, newFilename);
         try {
@@ -463,6 +470,11 @@ public class MovieRenamer {
 
     movie.gatherMediaFileInformation(false);
     movie.saveToDb();
+
+    // rewrite NFO if it's a MP NFO and there was a change with poster/fanart
+    if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP && (posterRenamed || fanartRenamed)) {
+      movie.writeNFO();
+    }
 
     // ######################################################################
     // ## CLEANUP

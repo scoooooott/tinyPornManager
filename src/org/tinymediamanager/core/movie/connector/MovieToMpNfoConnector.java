@@ -65,8 +65,8 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class })
-@XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "mpaa",
-    "id", "genres", "studio", "credits", "director", "actors" })
+@XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
+    "fanart", "mpaa", "id", "genres", "studio", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
   /** The Constant logger. */
@@ -100,6 +100,14 @@ public class MovieToMpNfoConnector {
 
   /** The runtime. */
   private String              runtime       = "";
+
+  /** The thumb. */
+  private String              thumb         = "";
+  /** The fanarts. */
+
+  @XmlElementWrapper(name = "fanart")
+  @XmlElement(name = "thumb")
+  private List<String>        fanart;
 
   /** The id. */
   private String              id            = "";
@@ -147,7 +155,7 @@ public class MovieToMpNfoConnector {
   public MovieToMpNfoConnector() {
     actors = new ArrayList();
     genres = new ArrayList<String>();
-    // fanart = new ArrayList<String>();
+    fanart = new ArrayList<String>();
     sets = new ArrayList<MovieSets>();
   }
 
@@ -192,8 +200,8 @@ public class MovieToMpNfoConnector {
 
     mp.setTagline(movie.getTagline());
     mp.setRuntime(String.valueOf(movie.getRuntime()));
-    // mp.setThumb(movie.getPoster());
-    // mp.addFanart(movie.getFanart());
+    mp.setThumb(FilenameUtils.getName(movie.getPoster()));
+    mp.addFanart(FilenameUtils.getName(movie.getFanart()));
     mp.setId(movie.getImdbId());
     mp.setStudio(movie.getProductionCompany());
 
@@ -597,6 +605,23 @@ public class MovieToMpNfoConnector {
    */
   public void setRuntime(String runtime) {
     this.runtime = runtime;
+  }
+
+  @XmlElement(name = "thumb")
+  public String getThumb() {
+    return thumb;
+  }
+
+  public void setThumb(String thumb) {
+    this.thumb = thumb;
+  }
+
+  public List<String> getFanart() {
+    return fanart;
+  }
+
+  public void addFanart(String fanart) {
+    this.fanart.add(fanart);
   }
 
   /**
