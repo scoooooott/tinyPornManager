@@ -46,14 +46,16 @@ public class TmmUIHelper {
 
   /** The swt. */
   @SuppressWarnings("rawtypes")
-  public static Class         swt;
+  public static Class         swt    = null;
 
   /**
    * Inits the.
    */
   public static void init() {
     try {
-      swt = ClassLoader.getSystemClassLoader().loadClass("org.eclipse.swt.widgets.FileDialog");
+      if (SystemUtils.IS_OS_LINUX) {
+        swt = ClassLoader.getSystemClassLoader().loadClass("org.eclipse.swt.widgets.FileDialog");
+      }
     }
     catch (Exception e) {
       LOGGER.warn("cannot open init filedialog" + e.getMessage());
