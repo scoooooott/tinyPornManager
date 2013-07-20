@@ -50,6 +50,7 @@ code = lib/Scaling-bin.jar
 code = lib/slf4j-api.jar
 code = lib/themoviedbapi.jar
 code = lib/thetvdbapi.jar
+code = lib/xmlrpc-client.jar
 
 # strings added to classpath
 plugin = lib/swt.jar
