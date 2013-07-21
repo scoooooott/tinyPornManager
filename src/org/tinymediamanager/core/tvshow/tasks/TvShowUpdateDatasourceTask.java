@@ -62,7 +62,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   public TvShowUpdateDatasourceTask() {
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
-    initThreadPool(3, "update");
   }
 
   /**
@@ -74,7 +73,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<String>(1);
     dataSources.add(datasource);
-    initThreadPool(3, "update");
   }
 
   /**
@@ -86,7 +84,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<String>(0);
     this.tvShowFolders.addAll(tvShowFolders);
-    initThreadPool(3, "update");
   }
 
   /*
@@ -98,63 +95,135 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   public Void doInBackground() {
     try {
       startProgressBar("prepare scan...");
-      for (String path : dataSources) {
-        File filePath = new File(path);
+      // here we have 2 ways of updateing:
+      // - per datasource -> update ds / remove orphaned / update MFs
+      // - per TV show -> udpate TV show / update MFs
 
-        // check whether the path is accessible (eg disconnected shares)
-        if (filePath.listFiles() == null) {
-          return null;
-        }
-
-        for (File subdir : filePath.listFiles()) {
-          if (subdir.isDirectory()) {
-            submitTask(new FindTvShowTask(subdir, path));
-          }
-        }
+      if (tvShowFolders.size() == 0) {
+        // update ds
+        updateDatasource();
       }
-
-      for (File tvShowFolder : tvShowFolders) {
-        if (tvShowFolder.isDirectory()) {
-          submitTask(new FindTvShowTask(tvShowFolder, tvShowFolder.getParent()));
-        }
+      else {
+        // update TV show
+        updateTvShows();
       }
-
-      waitForCompletionOrCancel();
-
-      LOGGER.info("removing orphaned tv shows...");
-      startProgressBar("cleanup...");
-      for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
-        TvShow tvShow = tvShowList.getTvShows().get(i);
-        File movieDir = new File(tvShow.getPath());
-        if (!movieDir.exists()) {
-          tvShowList.removeTvShow(tvShow);
-        }
-      }
-      LOGGER.info("Done updating datasource :)");
-
-      LOGGER.info("get MediaInfo...");
-      // update MediaInfo
-      startProgressBar("getting Mediainfo...");
-      initThreadPool(1, "mediainfo");
-      for (TvShow tvShow : tvShowList.getTvShows()) {
-        List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
-        for (TvShowEpisode episode : tvShow.getEpisodes()) {
-          mediaFiles.addAll(episode.getMediaFiles());
-        }
-        submitTask(new MediaFileInformationFetcherTask(mediaFiles, tvShow));
-      }
-      waitForCompletionOrCancel();
-      if (cancel) {
-        cancel(false);// swing cancel
-      }
-      LOGGER.info("Done getting MediaInfo)");
-
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "message.update.threadcrashed"));
     }
     return null;
+  }
+
+  private void updateDatasource() {
+    for (String path : dataSources) {
+      File[] dirs = new File(path).listFiles();
+      // check whether the path is accessible (eg disconnected shares)
+      if (dirs == null) {
+        // error - continue with next datasource
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
+            new String[] { path }));
+        continue;
+      }
+
+      initThreadPool(3, "update");
+
+      for (File subdir : dirs) {
+        if (subdir.isDirectory()) {
+          submitTask(new FindTvShowTask(subdir, path));
+        }
+      }
+
+      waitForCompletionOrCancel();
+
+      // cleanup & mediainfo
+      startProgressBar("getting Mediainfo & cleanup...");
+      initThreadPool(1, "mediainfo");
+      LOGGER.info("removing orphaned tv shows/files...");
+      for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
+        if (cancel) {
+          break;
+        }
+        TvShow tvShow = tvShowList.getTvShows().get(i);
+        if (!path.equals(tvShow.getDataSource())) {
+          // check only Tv shows matching datasource
+          continue;
+        }
+
+        File tvShowDir = new File(tvShow.getPath());
+        if (!tvShowDir.exists()) {
+          tvShowList.removeTvShow(tvShow);
+        }
+        else {
+          // check and delete all not found MediaFiles
+          List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
+          for (MediaFile mf : mediaFiles) {
+            if (!mf.getFile().exists()) {
+              tvShow.removeFromMediaFiles(mf);
+            }
+          }
+          tvShow.saveToDb();
+          submitTask(new MediaFileInformationFetcherTask(tvShow.getMediaFiles(), tvShow));
+        }
+      }
+      waitForCompletionOrCancel();
+    }
+    LOGGER.info("Done updating datasource :)");
+
+    if (cancel) {
+      cancel(false);// swing cancel
+    }
+  }
+
+  private void updateTvShows() {
+    initThreadPool(3, "update");
+
+    for (File tvShowFolder : tvShowFolders) {
+      // check if the tv show dir is accessible
+      if (tvShowFolder.getParentFile().listFiles() == null) {
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
+            new String[] { tvShowFolder.getParent() }));
+        continue;
+      }
+
+      if (tvShowFolder.isDirectory()) {
+        submitTask(new FindTvShowTask(tvShowFolder, tvShowFolder.getParent()));
+      }
+    }
+
+    waitForCompletionOrCancel();
+
+    // cleanup & mediainfo
+    startProgressBar("getting Mediainfo & cleanup...");
+    initThreadPool(1, "mediainfo");
+    LOGGER.info("removing orphaned movies/files...");
+    for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
+      if (cancel) {
+        break;
+      }
+      TvShow tvShow = tvShowList.getTvShows().get(i);
+      if (!tvShowFolders.contains(tvShow.getPath())) {
+        // check only Tv shows matching datasource
+        continue;
+      }
+
+      // check and delete all not found MediaFiles
+      List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
+      for (MediaFile mf : mediaFiles) {
+        if (!mf.getFile().exists()) {
+          tvShow.removeFromMediaFiles(mf);
+        }
+      }
+      tvShow.saveToDb();
+      submitTask(new MediaFileInformationFetcherTask(tvShow.getMediaFiles(), tvShow));
+    }
+    waitForCompletionOrCancel();
+
+    LOGGER.info("Done updating datasource :)");
+
+    if (cancel) {
+      cancel(false);// swing cancel
+    }
   }
 
   /**
