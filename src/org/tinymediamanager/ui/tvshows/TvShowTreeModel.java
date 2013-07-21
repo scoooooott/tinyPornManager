@@ -20,8 +20,10 @@ import static org.tinymediamanager.core.Constants.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.event.TreeModelEvent;
@@ -43,19 +45,19 @@ import org.tinymediamanager.core.tvshow.TvShowSeason;
  */
 public class TvShowTreeModel implements TreeModel {
   /** The root. */
-  private TvShowRootTreeNode        root       = new TvShowRootTreeNode();
+  private TvShowRootTreeNode      root       = new TvShowRootTreeNode();
 
   /** The listeners. */
-  private List<TreeModelListener>   listeners  = new ArrayList<TreeModelListener>();
+  private List<TreeModelListener> listeners  = new ArrayList<TreeModelListener>();
 
   /** The node map to store the node for Objects. */
-  private HashMap<Object, TreeNode> nodeMap    = new HashMap<Object, TreeNode>();
+  private Map<Object, TreeNode>   nodeMap    = Collections.synchronizedMap(new HashMap<Object, TreeNode>());
 
   /** The property change listener. */
-  private PropertyChangeListener    propertyChangeListener;
+  private PropertyChangeListener  propertyChangeListener;
 
   /** The movie list. */
-  private TvShowList                tvShowList = TvShowList.getInstance();
+  private TvShowList              tvShowList = TvShowList.getInstance();
 
   /**
    * Instantiates a new tv show tree model.
@@ -111,6 +113,9 @@ public class TvShowTreeModel implements TreeModel {
           DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodeMap.get(evt.getSource());
           if (node != null) {
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
+            if (parent == null) {
+              int i = 0;
+            }
             int index = parent.getIndex(node);
             TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { node });
             for (TreeModelListener listener : listeners) {
@@ -141,8 +146,8 @@ public class TvShowTreeModel implements TreeModel {
    */
   private synchronized void addTvShow(TvShow tvShow) {
     DefaultMutableTreeNode tvShowNode = new TvShowTreeNode(tvShow);
-    nodeMap.put(tvShow, tvShowNode);
     root.add(tvShowNode);
+    nodeMap.put(tvShow, tvShowNode);
 
     for (TvShowSeason season : tvShow.getSeasons()) {
       // check if there is a node for its season
@@ -212,8 +217,8 @@ public class TvShowTreeModel implements TreeModel {
     TvShowTreeNode parent = (TvShowTreeNode) nodeMap.get(tvShow);
     TvShowSeasonTreeNode child = new TvShowSeasonTreeNode(season);
     if (parent != null) {
-      nodeMap.put(season, child);
       parent.add(child);
+      nodeMap.put(season, child);
 
       int index = parent.getIndex(child);
 
@@ -245,8 +250,9 @@ public class TvShowTreeModel implements TreeModel {
     TvShowSeasonTreeNode parent = (TvShowSeasonTreeNode) nodeMap.get(season);
     TvShowEpisodeTreeNode child = new TvShowEpisodeTreeNode(episode);
     if (parent != null) {
-      nodeMap.put(episode, child);
       parent.add(child);
+      nodeMap.put(episode, child);
+
       int index = parent.getIndex(child);
 
       // inform listeners

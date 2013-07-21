@@ -90,6 +90,9 @@ public class TvShowRootTreeNode extends DefaultMutableTreeNode {
       if (index < 0) {
         super.insert(newChild, -index - 1);
       }
+      else if (index >= 0) {
+        super.insert(newChild, index);
+      }
     }
     else {
       super.insert(newChild, childIndex);
