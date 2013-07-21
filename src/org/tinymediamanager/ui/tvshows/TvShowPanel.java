@@ -25,6 +25,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -113,6 +114,7 @@ public class TvShowPanel extends JPanel {
 
   private final Action                actionUpdateDatasources   = new UpdateDatasourcesAction(false);
   private final Action                actionUpdateDatasources2  = new UpdateDatasourcesAction(true);
+  private final Action                actionUpdateTvShow        = new UpdateTvShowAction();
   private final Action                actionScrape              = new SingleScrapeAction(false);
   private final Action                actionScrape2             = new SingleScrapeAction(true);
   private final Action                actionScrapeSelected      = new SelectedScrapeAction();
@@ -422,6 +424,8 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionScrapeSelected);
     // popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.addSeparator();
+    popupMenu.add(actionUpdateTvShow);
+    popupMenu.addSeparator();
     popupMenu.add(actionEdit2);
     popupMenu.add(actionChangeSeasonPoster2);
     popupMenu.add(actionBatchEdit);
@@ -525,10 +529,7 @@ public class TvShowPanel extends JPanel {
   }
 
   private class UpdateSingleDatasourceAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 5704371143505653741L;
-
+    private static final long serialVersionUID = 1520541175183435685L;
     private String            datasource;
 
     public UpdateSingleDatasourceAction(String datasource) {
@@ -543,6 +544,33 @@ public class TvShowPanel extends JPanel {
      */
     public void actionPerformed(ActionEvent e) {
       TmmSwingWorker task = new TvShowUpdateDatasourceTask(datasource);
+      if (!MainWindow.executeMainTask(task)) {
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
+      }
+    }
+  }
+
+  private class UpdateTvShowAction extends AbstractAction {
+    private static final long serialVersionUID = 7216738427209633666L;
+
+    public UpdateTvShowAction() {
+      putValue(NAME, BUNDLE.getString("tvshow.update")); //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      List<TvShow> selectedTvShows = getSelectedTvShows();
+      List<File> tvShowFolders = new ArrayList<File>();
+
+      for (TvShow tvShow : selectedTvShows) {
+        tvShowFolders.add(new File(tvShow.getPath()));
+      }
+
+      TmmSwingWorker task = new TvShowUpdateDatasourceTask(tvShowFolders);
       if (!MainWindow.executeMainTask(task)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }

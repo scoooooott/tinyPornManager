@@ -49,16 +49,14 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
+  private static final Logger LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
 
-  /** The data sources. */
   private List<String>        dataSources;
-
-  /** The tv show list. */
+  private List<File>          tvShowFolders = new ArrayList<File>();
   private TvShowList          tvShowList;
 
   /**
-   * Instantiates a new scrape task.
+   * Instantiates a new scrape task - to update all datasources
    * 
    */
   public TvShowUpdateDatasourceTask() {
@@ -67,10 +65,27 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     initThreadPool(3, "update");
   }
 
+  /**
+   * Instantiates a new scrape task - to update a single datasource
+   * 
+   * @param datasource
+   */
   public TvShowUpdateDatasourceTask(String datasource) {
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<String>(1);
     dataSources.add(datasource);
+    initThreadPool(3, "update");
+  }
+
+  /**
+   * Instantiates a new scrape task - to update given tv shows
+   * 
+   * @param tvShowFolders
+   */
+  public TvShowUpdateDatasourceTask(List<File> tvShowFolders) {
+    tvShowList = TvShowList.getInstance();
+    dataSources = new ArrayList<String>(0);
+    this.tvShowFolders.addAll(tvShowFolders);
     initThreadPool(3, "update");
   }
 
@@ -95,6 +110,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           if (subdir.isDirectory()) {
             submitTask(new FindTvShowTask(subdir, path));
           }
+        }
+      }
+
+      for (File tvShowFolder : tvShowFolders) {
+        if (tvShowFolder.isDirectory()) {
+          submitTask(new FindTvShowTask(tvShowFolder, tvShowFolder.getParent()));
         }
       }
 
