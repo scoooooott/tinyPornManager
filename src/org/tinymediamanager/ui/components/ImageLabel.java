@@ -126,6 +126,12 @@ public class ImageLabel extends JLabel {
     this.imagePath = newValue;
     firePropertyChange("imagePath", oldValue, newValue);
 
+    if (StringUtils.isBlank(newValue)) {
+      originalImage = null;
+      this.repaint();
+      return;
+    }
+
     // stop previous worker
     if (worker != null && !worker.isDone()) {
       worker.cancel(true);
@@ -134,6 +140,13 @@ public class ImageLabel extends JLabel {
     // load image in separate worker -> performance
     worker = new ImageLoader(this.imagePath);
     worker.execute();
+  }
+
+  public void clearImage() {
+    imagePath = "";
+    imageUrl = "";
+    originalImage = null;
+    this.repaint();
   }
 
   /**
@@ -180,6 +193,7 @@ public class ImageLabel extends JLabel {
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
+
     if (originalImage != null) {
       int originalWidth = originalImage.getWidth(null);
       int originalHeight = originalImage.getHeight(null);

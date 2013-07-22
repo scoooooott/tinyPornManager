@@ -31,6 +31,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
@@ -375,6 +376,7 @@ public class MovieRenamer {
     if (mfl != null && mfl.size() > 0) {
       mf = mfl.get(0);
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
+
       String newFilename = mf.getFilename();
       String newPath = movie.getPath() + File.separator;
 
@@ -454,6 +456,22 @@ public class MovieRenamer {
     // ######################################################################
     for (MediaFile unk : movie.getMediaFiles(MediaFileType.UNKNOWN)) {
       needed.add(unk); // keep all unknown
+    }
+
+    // ######################################################################
+    // ## invalidade image cache
+    // ######################################################################
+    for (MediaFile all : movie.getMediaFiles()) {
+      switch (all.getType()) {
+        case BANNER:
+        case FANART:
+        case EXTRAFANART:
+        case GRAPHIC:
+        case POSTER:
+        case THUMB:
+        case UNKNOWN:
+          ImageCache.invalidateCachedImage(all.getPath() + File.separator + all.getFilename());
+      }
     }
 
     // remove duplicate MediaFiles

@@ -699,22 +699,22 @@ public abstract class MediaEntity extends AbstractModelObject {
   private void fireRemoveEventForMediaFile(MediaFile mediaFile) {
     switch (mediaFile.getType()) {
       case FANART:
-        firePropertyChange(FANART, " ", "");
+        firePropertyChange(FANART, null, "");
         firePropertyChange(HAS_IMAGES, true, false);
         break;
 
       case POSTER:
-        firePropertyChange(POSTER, " ", "");
+        firePropertyChange(POSTER, null, "");
         firePropertyChange(HAS_IMAGES, true, false);
         break;
 
       case BANNER:
-        firePropertyChange(BANNER, " ", "");
+        firePropertyChange(BANNER, null, "");
         firePropertyChange(HAS_IMAGES, true, false);
         break;
 
       case THUMB:
-        firePropertyChange(THUMB, " ", "");
+        firePropertyChange(THUMB, null, "");
         firePropertyChange(HAS_IMAGES, true, false);
         break;
 

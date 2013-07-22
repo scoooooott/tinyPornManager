@@ -144,6 +144,9 @@ public class MovieSet extends MediaEntity {
 
     // write new poster
     writeImageToMovieFolder(moviesObservable, posterFilename, posterUrl);
+    if (moviesObservable.size() > 0) {
+      written = true;
+    }
 
     // write to artwork folder
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
@@ -178,6 +181,9 @@ public class MovieSet extends MediaEntity {
 
     // write new fanart
     writeImageToMovieFolder(moviesObservable, fanartFilename, fanartUrl);
+    if (moviesObservable.size() > 0) {
+      written = true;
+    }
 
     // write to artwork folder
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
@@ -493,6 +499,8 @@ public class MovieSet extends MediaEntity {
     IOUtils.copy(is, outputStream);
     outputStream.close();
     is.close();
+
+    ImageCache.invalidateCachedImage(pathAndFilename);
   }
 
   // /**
@@ -563,7 +571,8 @@ public class MovieSet extends MediaEntity {
         IOUtils.copy(is, outputStream);
         outputStream.close();
         is.close();
-        firePropertyChange(propertyName, "", filename);
+
+        firePropertyChange(propertyName, "", outputFile);
       }
       catch (IOException e) {
         LOGGER.warn("error in image fetcher", e);

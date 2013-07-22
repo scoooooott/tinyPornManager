@@ -15,9 +15,13 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import static org.tinymediamanager.core.Constants.*;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
@@ -33,6 +37,7 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.CertificationImageConverter;
 import org.tinymediamanager.ui.MediaInfoAudioCodecConverter;
@@ -275,6 +280,26 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
     // beansbinding init
     initDataBindings();
+
+    // manual coded binding
+    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        String property = propertyChangeEvent.getPropertyName();
+        Object source = propertyChangeEvent.getSource();
+        // react on selection of a movie and change of a movie
+        if (source instanceof TvShowEpisodeSelectionModel) {
+          TvShowEpisodeSelectionModel model = (TvShowEpisodeSelectionModel) source;
+          lblTvShowBackground.setImagePath(model.getSelectedTvShowEpisode().getThumb());
+        }
+        if ((source.getClass() == TvShowEpisode.class && THUMB.equals(property))) {
+          TvShowEpisode episode = (TvShowEpisode) source;
+          lblTvShowBackground.clearImage();
+          lblTvShowBackground.setImagePath(episode.getThumb());
+        }
+      }
+    };
+
+    this.tvShowEpisodeSelectionModel.addPropertyChangeListener(propertyChangeListener);
   }
 
   protected void initDataBindings() {
@@ -290,12 +315,13 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ,
         tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_1, lblEpisodeTitle, jLabelBeanProperty);
     autoBinding_1.bind();
-    //
-    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_2 = BeanProperty.create("selectedTvShowEpisode.thumb");
+    // //
+    // BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_2 =
+    // BeanProperty.create("selectedTvShowEpisode.thumb");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imagePath");
-    AutoBinding<TvShowEpisodeSelectionModel, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_2, lblTvShowBackground, imageLabelBeanProperty);
-    autoBinding_2.bind();
+    // AutoBinding<TvShowEpisodeSelectionModel, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ,
+    // tvShowEpisodeSelectionModel, tvShowEpisodeSelectionModelBeanProperty_2, lblTvShowBackground, imageLabelBeanProperty);
+    // autoBinding_2.bind();
     //
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_3 = BeanProperty.create("selectedTvShowEpisode.plot");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");

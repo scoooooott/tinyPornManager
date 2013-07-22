@@ -30,6 +30,7 @@ public abstract class AbstractModelObject {
 
   /** The property change support. */
   // private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
   private final PropertyChangeSupport propertyChangeSupport = new SwingPropertyChangeSupport(this, true);
 
   /**

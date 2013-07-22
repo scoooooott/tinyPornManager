@@ -15,8 +15,12 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import static org.tinymediamanager.core.Constants.*;
+
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
@@ -32,6 +36,7 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.CertificationImageConverter;
 import org.tinymediamanager.ui.UTF8Control;
@@ -219,6 +224,38 @@ public class TvShowInformationPanel extends JPanel {
 
     // beansbinding init
     initDataBindings();
+
+    // manual coded binding
+    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        String property = propertyChangeEvent.getPropertyName();
+        Object source = propertyChangeEvent.getSource();
+        // react on selection of a movie and change of a tv show
+        if (source instanceof TvShowSelectionModel) {
+          TvShowSelectionModel model = (TvShowSelectionModel) source;
+          lblTvShowBackground.setImagePath(model.getSelectedTvShow().getFanart());
+          lblTvShowPoster.setImagePath(model.getSelectedTvShow().getPoster());
+          lblTvShowBanner.setImagePath(model.getSelectedTvShow().getBanner());
+        }
+        if ((source.getClass() == TvShow.class && FANART.equals(property))) {
+          TvShow tvShow = (TvShow) source;
+          lblTvShowBackground.clearImage();
+          lblTvShowBackground.setImagePath(tvShow.getFanart());
+        }
+        if ((source.getClass() == TvShow.class && POSTER.equals(property))) {
+          TvShow tvShow = (TvShow) source;
+          lblTvShowPoster.clearImage();
+          lblTvShowPoster.setImagePath(tvShow.getPoster());
+        }
+        if ((source.getClass() == TvShow.class && BANNER.equals(property))) {
+          TvShow tvShow = (TvShow) source;
+          lblTvShowBanner.clearImage();
+          lblTvShowBanner.setImagePath(tvShow.getBanner());
+        }
+      }
+    };
+
+    tvShowSelectionModel.addPropertyChangeListener(propertyChangeListener);
   }
 
   protected void initDataBindings() {
@@ -243,22 +280,22 @@ public class TvShowInformationPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, Float, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
     autoBinding_3.bind();
-    //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.fanart");
-    BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imagePath");
-    AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowSelectionModel, tvShowSelectionModelBeanProperty_5, lblTvShowBackground, imageLabelBeanProperty);
-    autoBinding_6.bind();
-    //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShow.poster");
-    AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowSelectionModel, tvShowSelectionModelBeanProperty_6, lblTvShowPoster, imageLabelBeanProperty);
-    autoBinding_7.bind();
-    //
-    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_7 = BeanProperty.create("selectedTvShow.banner");
-    AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        tvShowSelectionModel, tvShowSelectionModelBeanProperty_7, lblTvShowBanner, imageLabelBeanProperty);
-    autoBinding_8.bind();
+    // //
+    // BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.fanart");
+    // BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imagePath");
+    // AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
+    // tvShowSelectionModel, tvShowSelectionModelBeanProperty_5, lblTvShowBackground, imageLabelBeanProperty);
+    // autoBinding_6.bind();
+    // //
+    // BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShow.poster");
+    // AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ,
+    // tvShowSelectionModel, tvShowSelectionModelBeanProperty_6, lblTvShowPoster, imageLabelBeanProperty);
+    // autoBinding_7.bind();
+    // //
+    // BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_7 = BeanProperty.create("selectedTvShow.banner");
+    // AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
+    // tvShowSelectionModel, tvShowSelectionModelBeanProperty_7, lblTvShowBanner, imageLabelBeanProperty);
+    // autoBinding_8.bind();
     //
     BeanProperty<TvShowSelectionModel, Certification> tvShowSelectionModelBeanProperty_8 = BeanProperty.create("selectedTvShow.certification");
     BeanProperty<JLabel, Icon> jLabelBeanProperty_2 = BeanProperty.create("icon");
