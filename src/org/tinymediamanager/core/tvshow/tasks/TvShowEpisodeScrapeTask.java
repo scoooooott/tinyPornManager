@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -63,6 +64,9 @@ public class TvShowEpisodeScrapeTask implements Runnable {
   public void run() {
     for (TvShowEpisode episode : episodes) {
       MediaScrapeOptions options = new MediaScrapeOptions();
+      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+
       for (Entry<String, Object> entry : episode.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }

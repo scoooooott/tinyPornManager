@@ -683,6 +683,8 @@ public class ImageChooserDialog extends JDialog {
         // get images from all artworkproviders
         for (IMediaArtworkProvider artworkProvider : artworkProviders) {
           MediaScrapeOptions options = new MediaScrapeOptions();
+          options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+          options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
           switch (type) {
             case POSTER:
               options.setArtworkType(MediaArtworkType.POSTER);

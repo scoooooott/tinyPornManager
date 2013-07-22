@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -246,6 +247,8 @@ public class MovieScrapeTask extends TmmSwingWorker {
             try {
               MediaScrapeOptions options = new MediaScrapeOptions();
               options.setResult(result1);
+              options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+              options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
               // we didn't do a search - pass imdbid and tmdbid from movie
               // object
@@ -309,6 +312,8 @@ public class MovieScrapeTask extends TmmSwingWorker {
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
+      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
       // scrape providers till one artwork has been found
       for (IMediaArtworkProvider artworkProvider : artworkProviders) {
@@ -352,6 +357,8 @@ public class MovieScrapeTask extends TmmSwingWorker {
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());
       options.setTmdbId(movie.getTmdbId());
+      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
       // scrape trailers
       for (IMediaTrailerProvider trailerProvider : trailerProviders) {

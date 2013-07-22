@@ -45,6 +45,8 @@ public class MediaSearchOptions {
     SEASON,
     /** The episode. */
     EPISODE,
+    /** The language. */
+    LANGUAGE
   };
 
   /** The searchoptions. */

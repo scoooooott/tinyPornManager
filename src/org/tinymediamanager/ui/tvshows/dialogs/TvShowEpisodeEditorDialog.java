@@ -448,6 +448,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     @Override
     protected Void doInBackground() throws Exception {
       MediaScrapeOptions options = new MediaScrapeOptions();
+      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
       for (Entry<String, Object> entry : episodeToEdit.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }

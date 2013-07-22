@@ -34,12 +34,13 @@ public class MediaScrapeOptions {
   private HashMap<String, String> ids         = new HashMap<String, String>();
   private MediaType               type;
   private MediaArtworkType        artworkType = MediaArtworkType.ALL;
+  private MediaLanguages          language    = MediaLanguages.en;
+  private CountryCode             country     = CountryCode.US;
 
   /**
    * Instantiates a new media scrape options.
    */
   public MediaScrapeOptions() {
-
   }
 
   /**
@@ -188,6 +189,22 @@ public class MediaScrapeOptions {
    */
   public void setType(MediaType type) {
     this.type = type;
+  }
+
+  public MediaLanguages getLanguage() {
+    return language;
+  }
+
+  public void setLanguage(MediaLanguages language) {
+    this.language = language;
+  }
+
+  public CountryCode getCountry() {
+    return country;
+  }
+
+  public void setCountry(CountryCode country) {
+    this.country = country;
   }
 
   /**

@@ -610,6 +610,8 @@ public class MovieSetEditorDialog extends JDialog {
           if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
             options.setTmdbId(movie.getTmdbId());
             options.setImdbId(movie.getImdbId());
+            options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+            options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
             MediaMetadata md = tmdb.getMetadata(options);
             if (md.getTmdbIdSet() > 0) {
               tfTmdbId.setText(String.valueOf(md.getTmdbIdSet()));

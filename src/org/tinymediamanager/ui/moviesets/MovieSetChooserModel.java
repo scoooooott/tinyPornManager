@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
@@ -215,6 +216,8 @@ public class MovieSetChooserModel extends AbstractModelObject {
           if (mp != null) {
             MediaScrapeOptions options = new MediaScrapeOptions();
             options.setTmdbId(mis.tmdbId);
+            options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+            options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
             try {
               MediaMetadata md = mp.getMetadata(options);
               mis.imdbId = md.getImdbId();
@@ -245,6 +248,8 @@ public class MovieSetChooserModel extends AbstractModelObject {
       if (mp != null) {
         MediaScrapeOptions options = new MediaScrapeOptions();
         options.setTmdbId(collection.getId());
+        options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+        options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
         CollectionInfo info = mp.getMovieSetMetadata(options);
         if (info != null) {

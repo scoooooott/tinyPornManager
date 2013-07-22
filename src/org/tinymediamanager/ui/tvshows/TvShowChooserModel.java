@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -234,6 +235,8 @@ public class TvShowChooserModel extends AbstractModelObject {
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setResult(result);
+      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
       options.setType(MediaType.TV_SHOW);
       metadata = metadataProvider.getMetadata(options);
       setOverview(metadata.getPlot());
@@ -266,6 +269,8 @@ public class TvShowChooserModel extends AbstractModelObject {
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
     options.setImdbId(metadata.getImdbId());
+    options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+    options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
     // scrape providers till one artwork has been found
     for (IMediaArtworkProvider artworkProvider : artworkProviders) {

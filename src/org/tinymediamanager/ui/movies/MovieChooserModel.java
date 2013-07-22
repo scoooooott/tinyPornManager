@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -238,6 +239,8 @@ public class MovieChooserModel extends AbstractModelObject {
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setResult(result);
+      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
       metadata = metadataProvider.getMetadata(options);
       setOverview(metadata.getPlot());
       setTagline(metadata.getTagline());
@@ -270,6 +273,8 @@ public class MovieChooserModel extends AbstractModelObject {
     options.setMetadata(metadata);
     options.setImdbId(metadata.getImdbId());
     options.setTmdbId(metadata.getTmdbId());
+    options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+    options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
     // scrape providers till one artwork has been found
     for (IMediaArtworkProvider artworkProvider : artworkProviders) {
@@ -305,6 +310,8 @@ public class MovieChooserModel extends AbstractModelObject {
     options.setMetadata(metadata);
     options.setImdbId(metadata.getImdbId());
     options.setTmdbId(metadata.getTmdbId());
+    options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+    options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
     // scrape trailers
     for (IMediaTrailerProvider trailerProvider : trailerProviders) {

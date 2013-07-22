@@ -324,6 +324,7 @@ public class MovieList extends AbstractModelObject {
       boolean idFound = false;
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
+      options.set(SearchParam.LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
       if (movie != null) {
         if (!movie.getImdbId().isEmpty()) {
           options.set(SearchParam.IMDBID, movie.getImdbId());

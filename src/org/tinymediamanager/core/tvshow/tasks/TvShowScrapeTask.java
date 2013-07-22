@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -244,6 +245,8 @@ public class TvShowScrapeTask extends TmmSwingWorker {
               MediaScrapeOptions options = new MediaScrapeOptions();
               options.setType(MediaType.TV_SHOW);
               options.setResult(result1);
+              options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+              options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
               // we didn't do a search - pass imdbid and tmdbid from movie
               // object
@@ -306,6 +309,8 @@ public class TvShowScrapeTask extends TmmSwingWorker {
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
+      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
       for (Entry<String, Object> entry : tvShow.getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }
