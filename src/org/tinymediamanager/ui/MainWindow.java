@@ -15,13 +15,17 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.AWTEvent;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -48,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
+import javax.swing.text.JTextComponent;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -66,6 +71,7 @@ import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.components.NotificationMessage;
+import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.AboutDialog;
 import org.tinymediamanager.ui.dialogs.BugReportDialog;
@@ -426,6 +432,20 @@ public class MainWindow extends JFrame {
       }
     });
     MessageManager.instance.addListener(new UIMessageListener());
+
+    // mouse event listener for context menu
+    Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+      @Override
+      public void eventDispatched(AWTEvent arg0) {
+        if (arg0 instanceof MouseEvent && MouseEvent.MOUSE_RELEASED == arg0.getID() && arg0.getSource() instanceof JTextComponent) {
+          MouseEvent me = (MouseEvent) arg0;
+          JTextComponent tc = (JTextComponent) arg0.getSource();
+          if (me.isPopupTrigger() && tc.getComponentPopupMenu() == null) {
+            TextFieldPopupMenu.buildCutCopyPaste().show(tc, me.getX(), me.getY());
+          }
+        }
+      }
+    }, AWTEvent.MOUSE_EVENT_MASK);
   }
 
   private void closeTmm() {
