@@ -869,4 +869,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void setSubtitles(boolean sub) {
     this.subtitles = sub;
   }
+
+  @Override
+  public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
+  }
 }

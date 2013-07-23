@@ -1949,4 +1949,11 @@ public class Movie extends MediaEntity {
 
     return mediaFilesWithSubtitles;
   }
+
+  @Override
+  public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
+    if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP) {
+      writeNFO();
+    }
+  }
 }

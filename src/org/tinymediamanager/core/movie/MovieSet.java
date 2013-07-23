@@ -40,6 +40,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.CachedUrl;
 
 /**
@@ -637,5 +638,9 @@ public class MovieSet extends MediaEntity {
     }
 
     return filesToCache;
+  }
+
+  @Override
+  public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
   }
 }

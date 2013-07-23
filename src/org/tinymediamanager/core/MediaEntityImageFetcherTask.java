@@ -151,6 +151,8 @@ public class MediaEntityImageFetcherTask implements Runnable {
           default:
             return;
         }
+
+        entity.callbackForWrittenArtwork(type);
       }
 
     }

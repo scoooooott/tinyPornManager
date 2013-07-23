@@ -37,6 +37,7 @@ import javax.persistence.Transient;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
 /**
  * The Class MediaEntity.
@@ -873,4 +874,6 @@ public abstract class MediaEntity extends AbstractModelObject {
       Globals.entityManager.getTransaction().commit();
     }
   }
+
+  abstract public void callbackForWrittenArtwork(MediaArtworkType type);
 }

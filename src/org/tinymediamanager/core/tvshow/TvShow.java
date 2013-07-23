@@ -1702,4 +1702,8 @@ public class TvShow extends MediaEntity {
       }
     }
   }
+
+  @Override
+  public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
+  }
 }
