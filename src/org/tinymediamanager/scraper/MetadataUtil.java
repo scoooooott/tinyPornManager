@@ -34,10 +34,8 @@ public class MetadataUtil {
   private static final Logger LOGGER = LoggerFactory.getLogger(MetadataUtil.class);
 
   /**
-   * Return the best score for a title when compared to the search string. It
-   * uses 2 passes to find the best match. the first pass uses the matchTitle as
-   * is, and the second pass uses the matchTitle will non search characters
-   * removed.
+   * Return the best score for a title when compared to the search string. It uses 2 passes to find the best match. the first pass uses the matchTitle
+   * as is, and the second pass uses the matchTitle will non search characters removed.
    * 
    * @param searchTitle
    *          the search title
@@ -94,8 +92,7 @@ public class MetadataUtil {
   }
 
   /**
-   * For the purposes of searching it will, keep only alpha numeric characters
-   * and '&.
+   * For the purposes of searching it will, keep only alpha numeric characters and '&.
    * 
    * @param s
    *          the s
@@ -105,7 +102,8 @@ public class MetadataUtil {
     if (s == null)
       return null;
     // return (s.replaceAll("[^A-Za-z0-9&']", " ")).replaceAll("[\\ ]+", " ");
-    return s.replaceAll("[\\\\[\\\\]-–_.:|]", " ");
+    // return s.replaceAll("[\\\\[\\\\]-–_.:|]", " ");
+    return s.replaceAll("[\\\\[\\\\]_.:|]", " ");
   }
 
   /**
