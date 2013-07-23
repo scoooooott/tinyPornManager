@@ -63,6 +63,12 @@ public class TvShowEpisodeScrapeTask implements Runnable {
   @Override
   public void run() {
     for (TvShowEpisode episode : episodes) {
+      // only scrape if at least one ID is available
+      if (episode.getTvShow().getIds().size() == 0) {
+        LOGGER.info("we cannot scrape (no ID): " + episode.getTvShow().getTitle() + " - " + episode.getTitle());
+        continue;
+      }
+
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());

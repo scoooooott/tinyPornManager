@@ -67,6 +67,7 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.MainWindow;
@@ -123,6 +124,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionRemove2             = new RemoveAction(true);
   private final Action                actionChangeSeasonPoster2 = new ChangeSeasonPosterAction(true);
   private final Action                actionBatchEdit           = new BatchEditAction();
+  private final Action                actionScrapeEpisodes      = new ScrapeEpisodesAction();
 
   private int                         width                     = 0;
 
@@ -422,6 +424,7 @@ public class TvShowPanel extends JPanel {
     JPopupMenu popupMenu = new JPopupMenu();
     popupMenu.add(actionScrape2);
     popupMenu.add(actionScrapeSelected);
+    popupMenu.add(actionScrapeEpisodes);
     // popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.addSeparator();
     popupMenu.add(actionUpdateTvShow);
@@ -464,6 +467,37 @@ public class TvShowPanel extends JPanel {
     }
 
     return selectedTvShows;
+  }
+
+  private List<TvShowEpisode> getSelectedEpisodes() {
+    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
+
+    for (Object obj : getSelectedObjects()) {
+      if (obj instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) obj;
+        if (!episodes.contains(episode)) {
+          episodes.add(episode);
+        }
+      }
+      else if (obj instanceof TvShowSeason) {
+        TvShowSeason season = (TvShowSeason) obj;
+        for (TvShowEpisode episode : season.getEpisodes()) {
+          if (!episodes.contains(episode)) {
+            episodes.add(episode);
+          }
+        }
+      }
+      else if (obj instanceof TvShow) {
+        TvShow tvShow = (TvShow) obj;
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          if (!episodes.contains(episode)) {
+            episodes.add(episode);
+          }
+        }
+      }
+    }
+
+    return episodes;
   }
 
   /**
@@ -619,6 +653,22 @@ public class TvShowPanel extends JPanel {
           break;
         }
       }
+    }
+  }
+
+  private class ScrapeEpisodesAction extends AbstractAction {
+    private static final long serialVersionUID = -75916665265142730L;
+
+    public ScrapeEpisodesAction() {
+      putValue(NAME, BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+      List<TvShowEpisode> episodes = getSelectedEpisodes();
+
+      TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
+      Globals.executor.execute(task);
     }
   }
 
