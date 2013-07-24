@@ -98,14 +98,14 @@ import com.jtattoo.plaf.JTattooUtilities;
  */
 public class TvShowPanel extends JPanel {
 
-  private static final long           serialVersionUID          = -1923811385292825136L;
-  private static final ResourceBundle BUNDLE                    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static Logger         LOGGER                    = LoggerFactory.getLogger(TvShowPanel.class);
+  private static final long           serialVersionUID              = -1923811385292825136L;
+  private static final ResourceBundle BUNDLE                        = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private final static Logger         LOGGER                        = LoggerFactory.getLogger(TvShowPanel.class);
 
   private TvShowTreeModel             treeModel;
   private TvShowSelectionModel        tvShowSelectionModel;
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
-  private TvShowList                  tvShowList                = TvShowList.getInstance();
+  private TvShowList                  tvShowList                    = TvShowList.getInstance();
 
   private JTree                       tree;
   private JPanel                      panelRight;
@@ -113,20 +113,22 @@ public class TvShowPanel extends JPanel {
   private JLabel                      lblTvShows;
   private JLabel                      lblEpisodes;
 
-  private final Action                actionUpdateDatasources   = new UpdateDatasourcesAction(false);
-  private final Action                actionUpdateDatasources2  = new UpdateDatasourcesAction(true);
-  private final Action                actionUpdateTvShow        = new UpdateTvShowAction();
-  private final Action                actionScrape              = new SingleScrapeAction(false);
-  private final Action                actionScrape2             = new SingleScrapeAction(true);
-  private final Action                actionScrapeSelected      = new SelectedScrapeAction();
-  private final Action                actionEdit                = new EditAction(false);
-  private final Action                actionEdit2               = new EditAction(true);
-  private final Action                actionRemove2             = new RemoveAction(true);
-  private final Action                actionChangeSeasonPoster2 = new ChangeSeasonPosterAction(true);
-  private final Action                actionBatchEdit           = new BatchEditAction();
-  private final Action                actionScrapeEpisodes      = new ScrapeEpisodesAction();
+  private final Action                actionUpdateDatasources       = new UpdateDatasourcesAction(false);
+  private final Action                actionUpdateDatasources2      = new UpdateDatasourcesAction(true);
+  private final Action                actionUpdateTvShow            = new UpdateTvShowAction();
+  private final Action                actionScrape                  = new SingleScrapeAction(false);
+  private final Action                actionScrape2                 = new SingleScrapeAction(true);
+  private final Action                actionScrapeSelected          = new SelectedScrapeAction();
+  private final Action                actionEdit                    = new EditAction(false);
+  private final Action                actionEdit2                   = new EditAction(true);
+  private final Action                actionRemove2                 = new RemoveAction(true);
+  private final Action                actionChangeSeasonPoster2     = new ChangeSeasonPosterAction(true);
+  private final Action                actionBatchEdit               = new BatchEditAction();
+  private final Action                actionScrapeEpisodes          = new ScrapeEpisodesAction();
+  private final Action                actionRewriteTvShowNfo        = new RewriteTvShowNfoAction();
+  private final Action                actionRewriteTvShowEpisodeNfo = new RewriteTvShowEpisodeNfoAction();
 
-  private int                         width                     = 0;
+  private int                         width                         = 0;
 
   /**
    * Instantiates a new tv show panel.
@@ -408,6 +410,8 @@ public class TvShowPanel extends JPanel {
     menuEdit.add(actionChangeSeasonPoster2);
     menu.add(actionBatchEdit);
     menu.add(menuEdit);
+    menu.add(actionRewriteTvShowNfo);
+    menu.add(actionRewriteTvShowEpisodeNfo);
 
     // menu.add(actionScrapeUnscraped);
     // menu.add(actionScrapeMetadataSelected);
@@ -432,6 +436,8 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionEdit2);
     popupMenu.add(actionChangeSeasonPoster2);
     popupMenu.add(actionBatchEdit);
+    popupMenu.add(actionRewriteTvShowNfo);
+    popupMenu.add(actionRewriteTvShowEpisodeNfo);
     // popupMenu.add(actionBatchEdit);
     // popupMenu.add(actionRename2);
     // popupMenu.add(actionMediaInformation2);
@@ -891,6 +897,52 @@ public class TvShowPanel extends JPanel {
         }
         dialog.dispose();
       }
+    }
+  }
+
+  private class RewriteTvShowNfoAction extends AbstractAction {
+    private static final long serialVersionUID = -6575156436788397648L;
+
+    public RewriteTvShowNfoAction() {
+      putValue(NAME, BUNDLE.getString("tvshow.rewritenfo")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      final List<TvShow> selectedTvShows = getSelectedTvShows();
+
+      // rewrite selected NFOs
+      Globals.executor.execute(new Runnable() {
+        @Override
+        public void run() {
+          for (TvShow tvShow : selectedTvShows) {
+            tvShow.writeNFO();
+          }
+        }
+      });
+    }
+  }
+
+  private class RewriteTvShowEpisodeNfoAction extends AbstractAction {
+    private static final long serialVersionUID = 5762347331284295996L;
+
+    public RewriteTvShowEpisodeNfoAction() {
+      putValue(NAME, BUNDLE.getString("tvshowepisode.rewritenfo")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      final List<TvShowEpisode> selectedEpisodes = getSelectedEpisodes();
+
+      // rewrite selected NFOs
+      Globals.executor.execute(new Runnable() {
+        @Override
+        public void run() {
+          for (TvShowEpisode episode : selectedEpisodes) {
+            episode.writeNFO();
+          }
+        }
+      });
     }
   }
 

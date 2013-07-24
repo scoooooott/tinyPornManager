@@ -154,6 +154,8 @@ public class MoviePanel extends JPanel {
   /** The action export. */
   private final Action                  actionExport                 = new ExportAction(true);
 
+  private final Action                  actionRewriteNfo             = new RewriteNfoAction();
+
   /** The panel movie count. */
   private JPanel                        panelMovieCount;
 
@@ -421,6 +423,7 @@ public class MoviePanel extends JPanel {
     menuEdit.add(actionRename2);
 
     menu.add(menuEdit);
+    menu.add(actionRewriteNfo);
     menu.addSeparator();
     menu.add(actionMediaInformation2);
     menu.add(actionExport);
@@ -434,6 +437,7 @@ public class MoviePanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionBatchEdit);
+    popupMenu.add(actionRewriteNfo);
     popupMenu.add(actionRename2);
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
@@ -956,6 +960,29 @@ public class MoviePanel extends JPanel {
       if (!MainWindow.executeMainTask(renameTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }
+    }
+  }
+
+  private class RewriteNfoAction extends AbstractAction {
+    private static final long serialVersionUID = 6473021281304077151L;
+
+    public RewriteNfoAction() {
+      putValue(NAME, BUNDLE.getString("movie.rewritenfo")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      final List<Movie> selectedMovies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
+
+      // rewrite selected NFOs
+      Globals.executor.execute(new Runnable() {
+        @Override
+        public void run() {
+          for (Movie movie : selectedMovies) {
+            movie.writeNFO();
+          }
+        }
+      });
     }
   }
 
