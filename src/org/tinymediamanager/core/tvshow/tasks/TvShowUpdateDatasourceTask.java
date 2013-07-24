@@ -326,7 +326,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     for (File file : content) {
       if (file.isFile()) {
         // check filetype - we only proceed here if it's a video file
-        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()))) {
+        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()).toLowerCase())) {
           continue;
         }
 
@@ -434,10 +434,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
       if (file.isDirectory() && !"sample".equalsIgnoreCase(file.getName()) && !file.getName().startsWith(".")) {
         // dig deeper
-        if (file.getName().equals("VIDEO_TS")) {
+        if (file.getName().toUpperCase().equals("VIDEO_TS")) {
           findTvEpisodesAsDisc(tvShow, file);
         }
-        else if (file.getName().equals("BDMV")) {
+        else if (file.getName().toUpperCase().equals("BDMV")) {
           findTvEpisodesAsDisc(tvShow, file);
         }
         else {
@@ -463,11 +463,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     for (File file : content) {
       if (file.isFile()) {
         // check filetype
-        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()))) {
+        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()).toLowerCase())) {
           continue;
         }
 
-        TvShowEpisode episode = tvShowList.getTvEpisodeByFile(file);
+        TvShowEpisode episode = tvShowList.getTvEpisodeByFile(dir);
         if (episode == null) {
           // try to parse out episodes/season from parent directory
           EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
