@@ -467,7 +467,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           continue;
         }
 
-        TvShowEpisode episode = tvShowList.getTvEpisodeByFile(dir);
+        TvShowEpisode episode = tvShowList.getTvEpisodeByFile(file);
         if (episode == null) {
           // try to parse out episodes/season from parent directory
           EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
@@ -500,6 +500,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               episode.setFirstAired(result.date);
               episode.setDisc(true);
               episode.addToMediaFiles(new MediaFile(file));
+              findAdditionalEpisodeFiles(episode, file, content);
               episode.saveToDb();
               tvShow.addEpisode(episode);
             }
@@ -515,6 +516,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             episode.setFirstAired(result.date);
             episode.setDisc(true);
             episode.addToMediaFiles(new MediaFile(file));
+            findAdditionalEpisodeFiles(episode, file, content);
             episode.saveToDb();
             tvShow.addEpisode(episode);
           }
@@ -537,6 +539,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     // there are much different ways the files could be stored; we only will try to find the files with the corresponding names (and sample)
     // 1st find all files/directories with videofilename*
     Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(FilenameUtils.getBaseName(videoFile.getName())) + ".*");
+    // 2nd find thumbs <episodename>-thumb.jpg/png
+    Pattern thumbPattern = Pattern.compile("(?i)" + Pattern.quote(episode.getTitle()) + "-thumb\\..{2,4}");
 
     for (File file : directoryContents) {
       if (file == videoFile) {
@@ -544,7 +548,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
 
       Matcher matcher = pattern.matcher(file.getName());
-      if (matcher.matches()) {
+      Matcher thumbMatcher = thumbPattern.matcher(file.getName());
+      if (matcher.matches() || thumbMatcher.matches()) {
         // add this file to the episode
         episode.addToMediaFiles(new MediaFile(file));
         continue;
