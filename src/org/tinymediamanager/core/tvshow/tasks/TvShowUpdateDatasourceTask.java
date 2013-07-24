@@ -471,6 +471,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (episode == null) {
           // try to parse out episodes/season from parent directory
           EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
+          List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(file);
 
           if (result.season == -1) {
             // did the search find a season?
@@ -488,16 +489,30 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           if (result.episodes.size() > 0) {
             // add it
             for (int ep : result.episodes) {
-              episode = new TvShowEpisode();
-              episode.setPath(dir.getPath());
-              episode.setEpisode(ep);
-              episode.setSeason(result.season);
-              episode.setTvShow(tvShow);
-              if (result.name.isEmpty()) {
-                result.name = FilenameUtils.getBaseName(file.getName());
+              episode = null;
+              // search in the NFO list if an episode has been found
+              for (int i = episodesInNfo.size() - 1; i >= 0; i--) {
+                TvShowEpisode e = episodesInNfo.get(i);
+                if (e.getSeason() == result.season && e.getEpisode() == ep) {
+                  episode = e;
+                  episodesInNfo.remove(i);
+                  break;
+                }
               }
-              episode.setTitle(result.name);
-              episode.setFirstAired(result.date);
+              if (episode == null) {
+                episode = new TvShowEpisode();
+                episode.setEpisode(ep);
+                episode.setSeason(result.season);
+                episode.setFirstAired(result.date);
+
+                if (result.name.isEmpty()) {
+                  result.name = FilenameUtils.getBaseName(file.getName());
+                }
+                episode.setTitle(result.name);
+              }
+
+              episode.setPath(dir.getPath());
+              episode.setTvShow(tvShow);
               episode.setDisc(true);
               episode.addToMediaFiles(new MediaFile(file));
               findAdditionalEpisodeFiles(episode, file, content);
@@ -507,18 +522,31 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
           else {
             // episode detection found nothing - simply add this file
-            episode = new TvShowEpisode();
-            episode.setPath(dir.getPath());
-            episode.setEpisode(-1);
-            episode.setSeason(-1);
-            episode.setTitle(FilenameUtils.getBaseName(file.getName()));
-            episode.setTvShow(tvShow);
-            episode.setFirstAired(result.date);
-            episode.setDisc(true);
-            episode.addToMediaFiles(new MediaFile(file));
-            findAdditionalEpisodeFiles(episode, file, content);
-            episode.saveToDb();
-            tvShow.addEpisode(episode);
+            if (episodesInNfo.size() > 0) {
+              for (TvShowEpisode e : episodesInNfo) {
+                e.setPath(dir.getPath());
+                e.setTvShow(tvShow);
+                e.addToMediaFiles(new MediaFile(file));
+                // e.findImages();
+                findAdditionalEpisodeFiles(e, file, content);
+                e.saveToDb();
+                tvShow.addEpisode(e);
+              }
+            }
+            else {
+              episode = new TvShowEpisode();
+              episode.setPath(dir.getPath());
+              episode.setEpisode(-1);
+              episode.setSeason(-1);
+              episode.setTitle(FilenameUtils.getBaseName(file.getName()));
+              episode.setTvShow(tvShow);
+              episode.setFirstAired(result.date);
+              episode.setDisc(true);
+              episode.addToMediaFiles(new MediaFile(file));
+              findAdditionalEpisodeFiles(episode, file, content);
+              episode.saveToDb();
+              tvShow.addEpisode(episode);
+            }
           }
         }
       }

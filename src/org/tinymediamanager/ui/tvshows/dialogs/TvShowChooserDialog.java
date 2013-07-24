@@ -440,6 +440,11 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
                 tvShowToScrape.setBannerUrl(lblImage.getImageUrl());
                 tvShowToScrape.writeBannerImage();
               }
+
+              // season posters
+              {
+                // FIXME
+              }
             }
             else {
               // get artwork directly from provider
