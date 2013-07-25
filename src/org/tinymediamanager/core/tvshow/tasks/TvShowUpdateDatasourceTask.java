@@ -459,6 +459,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     String parentDir = dir.getParent();
     LOGGER.debug("parsing disc structure in " + dir.getPath() + " parent: " + parentDir);
     // crawl this folder and try to find every episode in it
+
+    List<MediaFile> videoFiles = new ArrayList<MediaFile>();
+    File firstVideoFile = null;
+
     File[] content = dir.listFiles();
     for (File file : content) {
       if (file.isFile()) {
@@ -467,90 +471,90 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           continue;
         }
 
-        TvShowEpisode episode = tvShowList.getTvEpisodeByFile(file);
-        if (episode == null) {
-          // try to parse out episodes/season from parent directory
-          EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
-          List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(file);
-
-          if (result.season == -1) {
-            // did the search find a season?
-            // no -> search for it in the folder name (relative path between tv show root and the current dir)
-            result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath());
-          }
-
-          if (result.episodes.size() == 0) {
-            // if episode STILL empty, try Myron's way of parsing - lol
-            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(new File(tvShow.getPath()).toURI().relativize(file.toURI())
-                .getPath(), tvShow.getPath());
-            LOGGER.debug(file.getName() + " - " + result.toString());
-          }
-
-          if (result.episodes.size() > 0) {
-            // add it
-            for (int ep : result.episodes) {
-              episode = null;
-              // search in the NFO list if an episode has been found
-              for (int i = episodesInNfo.size() - 1; i >= 0; i--) {
-                TvShowEpisode e = episodesInNfo.get(i);
-                if (e.getSeason() == result.season && e.getEpisode() == ep) {
-                  episode = e;
-                  episodesInNfo.remove(i);
-                  break;
-                }
-              }
-              if (episode == null) {
-                episode = new TvShowEpisode();
-                episode.setEpisode(ep);
-                episode.setSeason(result.season);
-                episode.setFirstAired(result.date);
-
-                if (result.name.isEmpty()) {
-                  result.name = FilenameUtils.getBaseName(file.getName());
-                }
-                episode.setTitle(result.name);
-              }
-
-              episode.setPath(dir.getPath());
-              episode.setTvShow(tvShow);
-              episode.setDisc(true);
-              episode.addToMediaFiles(new MediaFile(file));
-              findAdditionalEpisodeFiles(episode, file, content);
-              episode.saveToDb();
-              tvShow.addEpisode(episode);
-            }
-          }
-          else {
-            // episode detection found nothing - simply add this file
-            if (episodesInNfo.size() > 0) {
-              for (TvShowEpisode e : episodesInNfo) {
-                e.setPath(dir.getPath());
-                e.setTvShow(tvShow);
-                e.addToMediaFiles(new MediaFile(file));
-                // e.findImages();
-                findAdditionalEpisodeFiles(e, file, content);
-                e.saveToDb();
-                tvShow.addEpisode(e);
-              }
-            }
-            else {
-              episode = new TvShowEpisode();
-              episode.setPath(dir.getPath());
-              episode.setEpisode(-1);
-              episode.setSeason(-1);
-              episode.setTitle(FilenameUtils.getBaseName(file.getName()));
-              episode.setTvShow(tvShow);
-              episode.setFirstAired(result.date);
-              episode.setDisc(true);
-              episode.addToMediaFiles(new MediaFile(file));
-              findAdditionalEpisodeFiles(episode, file, content);
-              episode.saveToDb();
-              tvShow.addEpisode(episode);
-            }
-          }
+        videoFiles.add(new MediaFile(file));
+        if (firstVideoFile == null) {
+          firstVideoFile = file;
         }
       }
     }
+
+    TvShowEpisode episode = tvShowList.getTvEpisodeByFile(firstVideoFile);
+    if (episode == null) {
+      // try to parse out episodes/season from parent directory
+      EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
+      List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(firstVideoFile);
+
+      if (result.season == -1) {
+        // did the search find a season?
+        // no -> search for it in the folder name (relative path between tv show root and the current dir)
+        result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath());
+      }
+
+      if (result.episodes.size() == 0) {
+        // if episode STILL empty, try Myron's way of parsing - lol
+        result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(
+            new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath(), tvShow.getPath());
+        LOGGER.debug(firstVideoFile.getName() + " - " + result.toString());
+      }
+
+      if (result.episodes.size() > 0) {
+        // add it
+        for (int ep : result.episodes) {
+          episode = null;
+          // search in the NFO list if an episode has been found
+          for (int i = episodesInNfo.size() - 1; i >= 0; i--) {
+            TvShowEpisode e = episodesInNfo.get(i);
+            if (e.getSeason() == result.season && e.getEpisode() == ep) {
+              episode = e;
+              episodesInNfo.remove(i);
+              break;
+            }
+          }
+          if (episode == null) {
+            episode = new TvShowEpisode();
+            episode.setEpisode(ep);
+            episode.setSeason(result.season);
+            episode.setFirstAired(result.date);
+          }
+
+          episode.setPath(dir.getPath());
+          episode.setTvShow(tvShow);
+          episode.setDisc(true);
+          episode.addToMediaFiles(videoFiles);
+          findAdditionalEpisodeFiles(episode, firstVideoFile, content);
+          episode.saveToDb();
+          tvShow.addEpisode(episode);
+        }
+      }
+      else {
+        // episode detection found nothing - simply add this file
+        if (episodesInNfo.size() > 0) {
+          for (TvShowEpisode e : episodesInNfo) {
+            e.setPath(dir.getPath());
+            e.setTvShow(tvShow);
+            e.addToMediaFiles(videoFiles);
+            // e.findImages();
+            findAdditionalEpisodeFiles(e, firstVideoFile, content);
+            e.saveToDb();
+            tvShow.addEpisode(e);
+          }
+        }
+        else {
+          episode = new TvShowEpisode();
+          episode.setPath(dir.getPath());
+          episode.setEpisode(-1);
+          episode.setSeason(-1);
+          episode.setTvShow(tvShow);
+          episode.setFirstAired(result.date);
+          episode.setDisc(true);
+          episode.addToMediaFiles(videoFiles);
+          findAdditionalEpisodeFiles(episode, firstVideoFile, content);
+          episode.saveToDb();
+          tvShow.addEpisode(episode);
+        }
+      }
+    }
+
   }
 
   /**
