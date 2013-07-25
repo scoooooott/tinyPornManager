@@ -227,6 +227,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
                 // if both results have 100% score - do not take any result
                 if (result1.getScore() == 1 && result2.getScore() == 1) {
                   LOGGER.info("two 100% results, can't decide whitch to take - ignore result");
+                  MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.nomatchfound"));
                   continue;
                 }
               }
@@ -234,11 +235,13 @@ public class MovieScrapeTask extends TmmSwingWorker {
               // create a treshold of 0.75 - to minimize false positives
               if (result1.getScore() < 0.75) {
                 LOGGER.info("score is lower than 0.75 (" + result1.getScore() + ") - ignore result");
+                MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.nomatchfound"));
                 continue;
               }
             }
             else {
               LOGGER.info("no result found for " + movie.getTitle());
+              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.nomatchfound"));
             }
           }
 
@@ -271,7 +274,7 @@ public class MovieScrapeTask extends TmmSwingWorker {
 
               // scrape artwork if wanted
               if (scraperMetadataConfig.isArtwork()) {
-                movie.setArtwork(getArtwork(movie, md, artworkProviders));
+                movie.setArtwork(getArtwork(movie, md, artworkProviders), scraperMetadataConfig);
               }
 
               // scrape trailer if wanted

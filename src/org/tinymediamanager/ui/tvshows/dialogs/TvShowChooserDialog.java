@@ -402,7 +402,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           }
 
           // set scraped metadata
-          tvShowToScrape.setMetadata(md);
+          tvShowToScrape.setMetadata(md, scraperMetadataConfig);
 
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -449,7 +449,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
             else {
               // get artwork directly from provider
               List<MediaArtwork> artwork = model.getArtwork();
-              tvShowToScrape.setArtwork(artwork);
+              tvShowToScrape.setArtwork(artwork, scraperMetadataConfig);
             }
           }
 

@@ -374,7 +374,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           }
 
           // set scraped metadata
-          movieToScrape.setMetadata(md);
+          movieToScrape.setMetadata(md, scraperMetadataConfig);
 
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -414,7 +414,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
             else {
               // get artwork directly from provider
               List<MediaArtwork> artwork = model.getArtwork();
-              movieToScrape.setArtwork(artwork);
+              movieToScrape.setArtwork(artwork, scraperMetadataConfig);
             }
           }
 
