@@ -17,6 +17,7 @@ package org.tinymediamanager.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +41,7 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLException;
 
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
 
@@ -627,4 +630,151 @@ public class Utils {
     }
     return StrgUtils.removeDuplicateWhitespace(result);
   }
+
+  /**
+   * modified version of commons-io FileUtils.moveDirectory();<br>
+   * since renameTo() might not work in first place, retry it up to 5 times.<br>
+   * (better wait 5 sec for success, than always copying a 50gig directory ;)<br>
+   * <b>And NO, we're NOT doing a copy+delete as fallback!</b>
+   * 
+   * @param srcDir
+   *          the directory to be moved
+   * @param destDir
+   *          the destination directory
+   * @return true, if successful
+   * @throws IOException
+   *           if an IO error occurs moving the file
+   * @author Myron Boyle
+   */
+  public static boolean moveDirectorySafe(File srcDir, File destDir) throws IOException {
+    // rip-off from
+    // http://svn.apache.org/repos/asf/commons/proper/io/trunk/src/main/java/org/apache/commons/io/FileUtils.java
+    if (srcDir == null) {
+      throw new NullPointerException("Source must not be null");
+    }
+    if (destDir == null) {
+      throw new NullPointerException("Destination must not be null");
+    }
+    LOGGER.debug("try to move folder " + srcDir.getPath() + " to " + destDir.getPath());
+    if (!srcDir.exists()) {
+      throw new FileNotFoundException("Source '" + srcDir + "' does not exist");
+    }
+    if (!srcDir.isDirectory()) {
+      throw new IOException("Source '" + srcDir + "' is not a directory");
+    }
+    if (destDir.exists()) {
+      throw new FileExistsException("Destination '" + destDir + "' already exists");
+    }
+    if (!destDir.getParentFile().exists()) {
+      // create parent folder structure, else renameTo does not work
+      destDir.getParentFile().mkdirs();
+    }
+
+    // rename folder; try 5 times and wait a sec
+    boolean rename = false;
+    for (int i = 0; i < 5; i++) {
+      rename = srcDir.renameTo(destDir);
+      if (rename) {
+        break; // ok it worked, step out
+      }
+      try {
+        LOGGER.debug("rename did not work - sleep a while and try again...");
+        Thread.sleep(1000);
+      }
+      catch (InterruptedException e) {
+        LOGGER.warn("I'm so excited - could not sleep");
+      }
+    }
+
+    // ok, we tried it 5 times - it still seems to be locked somehow. Continue
+    // with copying as fallback
+    // NOOO - we don't like to have some files copied and some not.
+
+    if (!rename) {
+      LOGGER.error("Failed to rename directory '" + srcDir + " to " + destDir.getPath());
+      LOGGER.error("Movie renaming aborted.");
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename"));
+      return false;
+    }
+    else {
+      LOGGER.info("Successfully moved folder " + srcDir.getPath() + " to " + destDir.getPath());
+      return true;
+    }
+  }
+
+  /**
+   * modified version of commons-io FileUtils.moveFile();<br>
+   * since renameTo() might not work in first place, retry it up to 5 times.<br>
+   * (better wait 5 sec for success, than always copying a 50gig directory ;)<br>
+   * <b>And NO, we're NOT doing a copy+delete as fallback!</b>
+   * 
+   * @param srcFile
+   *          the file to be moved
+   * @param destFile
+   *          the destination file
+   * @throws NullPointerException
+   *           if source or destination is {@code null}
+   * @throws FileExistsException
+   *           if the destination file exists
+   * @throws IOException
+   *           if source or destination is invalid
+   * @throws IOException
+   *           if an IO error occurs moving the file
+   * @since 1.4
+   */
+  public static boolean moveFileSafe(final File srcFile, final File destFile) throws IOException {
+    if (srcFile == null) {
+      throw new NullPointerException("Source must not be null");
+    }
+    if (destFile == null) {
+      throw new NullPointerException("Destination must not be null");
+    }
+    if (!srcFile.equals(destFile)) {
+      LOGGER.debug("try to move file " + srcFile.getPath() + " to " + destFile.getPath());
+      if (!srcFile.exists()) {
+        throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+      }
+      if (srcFile.isDirectory()) {
+        throw new IOException("Source '" + srcFile + "' is a directory");
+      }
+      if (destFile.exists()) {
+        throw new FileExistsException("Destination '" + destFile + "' already exists");
+      }
+      if (destFile.isDirectory()) {
+        throw new IOException("Destination '" + destFile + "' is a directory");
+      }
+
+      // rename folder; try 5 times and wait a sec
+      boolean rename = false;
+      for (int i = 0; i < 5; i++) {
+        rename = srcFile.renameTo(destFile);
+        if (rename) {
+          break; // ok it worked, step out
+        }
+        try {
+          LOGGER.debug("rename did not work - sleep a while and try again...");
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+          LOGGER.warn("I'm so excited - could not sleep");
+        }
+      }
+
+      // ok, we tried it 5 times - it still seems to be locked somehow. Continue
+      // with copying as fallback
+      // NOOO - we don't like to have some files copied and some not.
+
+      if (!rename) {
+        LOGGER.error("Failed to rename file '" + srcFile + " to " + destFile.getPath());
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcFile.getPath(), "message.renamer.failedrename"));
+        return false;
+      }
+      else {
+        LOGGER.info("Successfully moved folder " + srcFile.getPath() + " to " + destFile.getPath());
+        return true;
+      }
+    }
+    return true; // files are equal
+  }
+
 }
