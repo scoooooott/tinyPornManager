@@ -17,6 +17,7 @@ package org.tinymediamanager.core.tvshow.tasks;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -54,6 +55,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private List<String>        dataSources;
   private List<File>          tvShowFolders = new ArrayList<File>();
   private TvShowList          tvShowList;
+  // skip well-known, but unneeded BD & DVD folders
+  private final List<String>  skipFolders   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -129,7 +132,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       initThreadPool(3, "update");
 
       for (File subdir : dirs) {
-        if (subdir.isDirectory()) {
+        if (subdir.isDirectory() && !skipFolders.contains(subdir.getName().toUpperCase()) && !subdir.getName().startsWith(".")) {
           submitTask(new FindTvShowTask(subdir, path));
         }
       }
@@ -432,7 +435,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
       }
-      if (file.isDirectory() && !"sample".equalsIgnoreCase(file.getName()) && !file.getName().startsWith(".")) {
+      if (file.isDirectory() && !"sample".equalsIgnoreCase(file.getName()) && !file.getName().startsWith(".")
+          && !skipFolders.contains(file.getName().toUpperCase())) {
         // dig deeper
         if (file.getName().toUpperCase().equals("VIDEO_TS")) {
           findTvEpisodesAsDisc(tvShow, file);

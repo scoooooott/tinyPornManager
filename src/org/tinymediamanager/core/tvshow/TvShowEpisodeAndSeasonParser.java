@@ -102,7 +102,7 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   public static EpisodeMatchingResult detectEpisodeFromFilename(File file) {
-    LOGGER.info("Detect episodes/seasons from " + file.getName());
+    LOGGER.debug("Detect episodes/seasons from " + file.getName());
     EpisodeMatchingResult result = new EpisodeMatchingResult();
     String fileName = file.getName();
 
@@ -141,9 +141,9 @@ public class TvShowEpisodeAndSeasonParser {
         int ep = Integer.parseInt(numbers.substring(1));
         if (ep > 0 && !result.episodes.contains(ep)) {
           result.episodes.add(ep);
-          LOGGER.debug("add found EP " + ep);
+          LOGGER.trace("add found EP " + ep);
         }
-        LOGGER.debug("add found season " + s);
+        LOGGER.trace("add found season " + s);
         result.season = s;
         return result;
       }
@@ -162,7 +162,7 @@ public class TvShowEpisodeAndSeasonParser {
       }
       if (ep > 0 && !result.episodes.contains(ep)) {
         result.episodes.add(ep);
-        LOGGER.debug("add found EP " + ep);
+        LOGGER.trace("add found EP " + ep);
       }
     }
 
@@ -180,7 +180,7 @@ public class TvShowEpisodeAndSeasonParser {
         }
         if (ep > 0 && !result.episodes.contains(ep)) {
           result.episodes.add(ep);
-          LOGGER.debug("add found EP " + ep);
+          LOGGER.trace("add found EP " + ep);
         }
       }
     }
@@ -193,7 +193,7 @@ public class TvShowEpisodeAndSeasonParser {
       ep = decodeRoman(m.group(2));
       if (ep > 0 && !result.episodes.contains(ep)) {
         result.episodes.add(ep);
-        LOGGER.debug("add found EP " + ep);
+        LOGGER.trace("add found EP " + ep);
       }
     }
 
@@ -210,7 +210,7 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with max 2 numeric chars
         }
         result.season = s;
-        LOGGER.debug("add found season " + s);
+        LOGGER.trace("add found season " + s);
       }
     }
 
@@ -230,7 +230,7 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with correct pattern
         }
         result.season = s;
-        LOGGER.debug("add found year as season " + s);
+        LOGGER.trace("add found year as season " + s);
       }
     }
 
@@ -250,7 +250,7 @@ public class TvShowEpisodeAndSeasonParser {
           // can not happen from regex since we only come here with correct pattern
         }
         result.season = s;
-        LOGGER.debug("add found year as season " + s);
+        LOGGER.trace("add found year as season " + s);
       }
     }
 
@@ -270,16 +270,17 @@ public class TvShowEpisodeAndSeasonParser {
         }
         if (ep > 0 && !result.episodes.contains(ep)) {
           result.episodes.add(ep);
-          LOGGER.debug("add found EP " + ep);
+          LOGGER.trace("add found EP " + ep);
         }
         if (s >= 0) {
           result.season = s;
-          LOGGER.debug("add found season " + s);
+          LOGGER.trace("add found season " + s);
         }
       }
     }
 
     Collections.sort(result.episodes);
+    LOGGER.debug("returning result " + result);
     return result;
   }
 
@@ -293,7 +294,7 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   public static EpisodeMatchingResult detectEpisodeFromDirectory(File directory, String rootDirOfTvShow) {
-    LOGGER.info("Detect episodes/seasons from " + directory.getAbsolutePath());
+    LOGGER.debug("Detect episodes/seasons from " + directory.getAbsolutePath());
     EpisodeMatchingResult result = new EpisodeMatchingResult();
 
     // check if directory is the root of the tv show
@@ -311,6 +312,7 @@ public class TvShowEpisodeAndSeasonParser {
     }
 
     Collections.sort(result.episodes);
+    LOGGER.debug("returning result " + result);
     return result;
   }
 
@@ -322,7 +324,7 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   private static EpisodeMatchingResult parseString(String stringToParse) {
-    LOGGER.debug("parse String " + stringToParse);
+    LOGGER.trace("parse String " + stringToParse);
     EpisodeMatchingResult result = new EpisodeMatchingResult();
     EpisodeMatchingResult resultFromParser = new EpisodeMatchingResult();
 
@@ -390,7 +392,7 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   private static EpisodeMatchingResult parse(String searchString, Pattern pattern) {
-    LOGGER.debug("parsing " + searchString + " with " + pattern.toString());
+    LOGGER.trace("parsing " + searchString + " with " + pattern.toString());
     EpisodeMatchingResult result = new EpisodeMatchingResult();
     Matcher m = pattern.matcher(searchString);
 
@@ -407,7 +409,7 @@ public class TvShowEpisodeAndSeasonParser {
       }
 
       if (ep > 0 && !result.episodes.contains(ep)) {
-        LOGGER.debug("found episode " + ep + " for " + searchString + " with " + pattern.toString());
+        LOGGER.trace("found episode " + ep + " for " + searchString + " with " + pattern.toString());
         result.episodes.add(ep);
       }
 
@@ -437,7 +439,7 @@ public class TvShowEpisodeAndSeasonParser {
       }
     }
 
-    LOGGER.debug("matching result " + result);
+    LOGGER.trace("matching result " + result);
 
     return result;
   }
