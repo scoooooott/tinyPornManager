@@ -54,13 +54,13 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
+  private static final Logger       LOGGER = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
 
   // skip well-known, but unneeded BD & DVD folders
-  private final List<String>  skip   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
+  private static final List<String> skipFolders   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
 
-  private List<String>        dataSources;
-  private MovieList           movieList;
+  private List<String>              dataSources;
+  private MovieList                 movieList;
 
   /**
    * Instantiates a new scrape task.
@@ -380,7 +380,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // ignore .folders and others
-        if (!skip.contains(file.getName().toUpperCase()) && !file.getName().startsWith(".")) {
+        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().startsWith(".")) {
           dirs.add(file);
         }
       }
@@ -446,7 +446,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // ignore .folders and others
-        if (!skip.contains(file.getName().toUpperCase()) && !file.getName().startsWith(".")) {
+        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().startsWith(".")) {
           mv.addAll(getAllMediaFilesRecursive(file));
         }
       }

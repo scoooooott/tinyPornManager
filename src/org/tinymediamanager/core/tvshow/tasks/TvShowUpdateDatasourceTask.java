@@ -50,13 +50,13 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
+  private static final Logger       LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
 
-  private List<String>        dataSources;
-  private List<File>          tvShowFolders = new ArrayList<File>();
-  private TvShowList          tvShowList;
+  private List<String>              dataSources;
+  private List<File>                tvShowFolders = new ArrayList<File>();
+  private TvShowList                tvShowList;
   // skip well-known, but unneeded BD & DVD folders
-  private final List<String>  skipFolders   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
+  private static final List<String> skipFolders   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
 
   /**
    * Instantiates a new scrape task - to update all datasources
