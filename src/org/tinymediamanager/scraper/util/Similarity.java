@@ -115,21 +115,26 @@ public class Similarity {
       }
 
       float score = (float) (2.0 * intersection) / union;
-      if (Float.isNaN(score))
+      if (Float.isNaN(score)) {
         score = 0;
-      if (score == 1.0f) {
-        // exception case... for some reason, "Batman Begins" ==
-        // "Batman Begins 2"
-        // for the lack of a better test...
-        if (str1.equalsIgnoreCase(str2)) {
-          return score;
-        }
-        else {
-          LOGGER.warn("Adjusted the perfect score to " + 0.90 + " for " + str1 + " and " + str2 + " because they are not equal.");
-          // adjust the score, because only 2 strings should be equal.
-          score = 0.90f;
-        }
       }
+      // do not downgrade score, b/c we skip duplicate 100% matches in task
+      // and we had the bug, that 0.9 is lower then the second match, where it took the wrong movie
+      // and if the 2 results get 99% there's also a chance of takeing the wrong one
+      //
+      // if (score == 1.0f) {
+      // // exception case... for some reason, "Batman Begins" ==
+      // // "Batman Begins 2"
+      // // for the lack of a better test...
+      // if (str1.equalsIgnoreCase(str2)) {
+      // return score;
+      // }
+      // else {
+      // LOGGER.warn("Adjusted the perfect score to " + 0.90 + " for " + str1 + " and " + str2 + " because they are not equal.");
+      // // adjust the score, because only 2 strings should be equal.
+      // score = 0.90f;
+      // }
+      // }
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(String.format("Similarity Score: [%s][%s]=[%s]", str1, str2, score));
       }
