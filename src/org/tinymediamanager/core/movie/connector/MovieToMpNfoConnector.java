@@ -176,7 +176,13 @@ public class MovieToMpNfoConnector {
     // set data
     mp.setTitle(movie.getTitle());
     mp.setOriginaltitle(movie.getOriginalTitle());
-    mp.setSorttitle(movie.getTitleSortable());
+
+    mp.setSorttitle(movie.getSortTitle());
+    // if sort title is empty, insert the title sortable
+    if (StringUtils.isBlank(mp.getSorttitle())) {
+      mp.setSorttitle(movie.getTitleSortable());
+    }
+
     mp.setRating(movie.getRating());
     mp.setVotes(movie.getVotes());
     mp.setYear(movie.getYear());
@@ -292,6 +298,7 @@ public class MovieToMpNfoConnector {
       MovieToMpNfoConnector mp = (MovieToMpNfoConnector) um.unmarshal(in);
       movie = new Movie();
       movie.setTitle(mp.getTitle());
+      movie.setSortTitle(mp.getSorttitle());
       movie.setOriginalTitle(mp.getOriginaltitle());
       movie.setRating(mp.getRating());
       movie.setVotes(mp.getVotes());
@@ -324,6 +331,7 @@ public class MovieToMpNfoConnector {
         // add movie to movieset
         if (movieSet != null) {
           movie.setMovieSet(movieSet);
+          movie.setSortTitle(sets.getName() + String.format("%02d", sets.getOrder()));
         }
       }
 
