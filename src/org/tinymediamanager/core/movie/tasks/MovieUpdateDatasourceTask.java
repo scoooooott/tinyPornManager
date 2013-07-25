@@ -56,6 +56,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
 
+  // skip well-known, but unneeded BD & DVD folders
+  private final List<String>  skip   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
+
   private List<String>        dataSources;
   private MovieList           movieList;
 
@@ -376,8 +379,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         files.add(file);
       }
       else {
-        // ignore .folders
-        if (!file.getName().startsWith(".")) {
+        // ignore .folders and others
+        if (!skip.contains(file.getName().toUpperCase()) && !file.getName().startsWith(".")) {
           dirs.add(file);
         }
       }
@@ -435,9 +438,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    */
   public ArrayList<MediaFile> getAllMediaFilesRecursive(File dir) {
     ArrayList<MediaFile> mv = new ArrayList<MediaFile>();
-
-    // skip well-known, but unneeded BD & DVD folders
-    final List<String> skip = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
 
     File[] list = dir.listFiles();
     for (File file : list) {
