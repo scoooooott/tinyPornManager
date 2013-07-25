@@ -70,6 +70,9 @@ resource = objectdb.conf
 
 # translations
 resource = locale/messages_de.properties
+resource = locale/messages_fr.properties
+resource = locale/messages_nl.properties
+#resource = locale/messages_.properties
 
 # mediainfo native libs
 resource = [linux-amd64] native/linux-amd64/libmediainfo.so
