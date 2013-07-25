@@ -394,6 +394,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         episodeToEdit.writeThumbImage();
       }
 
+      episodeToEdit.writeNFO();
       episodeToEdit.saveToDb();
 
       this.setVisible(false);
