@@ -452,16 +452,6 @@ public class TvShow extends MediaEntity {
   /**
    * Sets the metadata.
    * 
-   * @param md
-   *          the new metadata
-   */
-  public void setMetadata(MediaMetadata md) {
-    setMetadata(md, Globals.settings.getTvShowScraperMetadataConfig());
-  }
-
-  /**
-   * Sets the metadata.
-   * 
    * @param metadata
    *          the new metadata
    * @param config
@@ -579,16 +569,6 @@ public class TvShow extends MediaEntity {
 
     // update DB
     saveToDb();
-  }
-
-  /**
-   * Sets the artwork.
-   * 
-   * @param artwork
-   *          the new artwork
-   */
-  public void setArtwork(List<MediaArtwork> artwork) {
-    setArtwork(artwork, Globals.settings.getTvShowScraperMetadataConfig());
   }
 
   /**

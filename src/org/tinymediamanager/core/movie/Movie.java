@@ -866,16 +866,6 @@ public class Movie extends MediaEntity {
   /**
    * Sets the metadata.
    * 
-   * @param md
-   *          the new metadata
-   */
-  public void setMetadata(MediaMetadata md) {
-    setMetadata(md, Globals.settings.getMovieScraperMetadataConfig());
-  }
-
-  /**
-   * Sets the metadata.
-   * 
    * @param metadata
    *          the new metadata
    * @param config
@@ -1061,32 +1051,12 @@ public class Movie extends MediaEntity {
    * Sets the artwork.
    * 
    * @param md
-   *          the new artwork
-   */
-  public void setArtwork(MediaMetadata md) {
-    setArtwork(md, Globals.settings.getMovieScraperMetadataConfig());
-  }
-
-  /**
-   * Sets the artwork.
-   * 
-   * @param md
    *          the md
    * @param config
    *          the config
    */
   public void setArtwork(MediaMetadata md, MovieScraperMetadataConfig config) {
     setArtwork(md.getMediaArt(MediaArtworkType.ALL), config);
-  }
-
-  /**
-   * Sets the artwork.
-   * 
-   * @param artwork
-   *          the new artwork
-   */
-  public void setArtwork(List<MediaArtwork> artwork) {
-    setArtwork(artwork, Globals.settings.getMovieScraperMetadataConfig());
   }
 
   /**

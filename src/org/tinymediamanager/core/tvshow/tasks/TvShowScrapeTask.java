@@ -274,7 +274,7 @@ public class TvShowScrapeTask extends TmmSwingWorker {
 
               // scrape artwork if wanted
               if (scraperMetadataConfig.isArtwork()) {
-                tvShow.setArtwork(getArtwork(tvShow, md, artworkProviders));
+                tvShow.setArtwork(getArtwork(tvShow, md, artworkProviders), scraperMetadataConfig);
               }
 
               // // scrape trailer if wanted
