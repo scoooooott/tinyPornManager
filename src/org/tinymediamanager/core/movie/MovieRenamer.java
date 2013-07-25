@@ -686,7 +686,12 @@ public class MovieRenamer {
 
     // replace token year ($Y)
     if (newDestination.contains("$Y")) {
-      newDestination = replaceToken(newDestination, "$Y", movie.getYear());
+      if (movie.getYear().equals("0")) {
+        newDestination = newDestination.replace("$Y", "");
+      }
+      else {
+        newDestination = replaceToken(newDestination, "$Y", movie.getYear());
+      }
     }
 
     // replace token orignal title ($O)
