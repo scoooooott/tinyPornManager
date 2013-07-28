@@ -364,10 +364,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       boolean firstImage = true;
       // create correct filename
 
-      // changed file name due to: http://wiki.xbmc.org/index.php?title=XBMC_v12_%28Frodo%29_FAQ
-      // MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
-      // String filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(getThumbUrl());
-      String filename = FilenameUtils.getBaseName(getTitle()) + "-thumb." + FilenameUtils.getExtension(getThumbUrl());
+      MediaFile mf = getMediaFiles(MediaFileType.VIDEO).get(0);
+      String filename = FilenameUtils.getBaseName(mf.getFilename()) + "-thumb." + FilenameUtils.getExtension(getThumbUrl());
+
       // get image in thread
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getThumbUrl(), MediaArtworkType.THUMB, filename, firstImage);
       Globals.executor.execute(task);

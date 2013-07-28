@@ -159,6 +159,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
       return "";
     }
 
+    if (tvShowEpisodes.size() == 0) {
+      return "";
+    }
+
     TvShowEpisode episode = tvShowEpisodes.get(0);
     String nfoFilename = FilenameUtils.getBaseName(episode.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()) + ".nfo";
     File nfoFile = new File(episode.getPath(), nfoFilename);
