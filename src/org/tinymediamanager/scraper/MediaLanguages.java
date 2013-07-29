@@ -25,6 +25,7 @@ public enum MediaLanguages {
 
 
 
+
   //@formatter:off
   cs("Český"),
   de("Deutsch"),
@@ -38,6 +39,7 @@ public enum MediaLanguages {
   nl("Nederlands"),
   no("Norsk"),
   pl("Język polski"),
+  pt("Portuguese"),
   ru("русский язык"),
   sk("Slovenčina"),
   sv("Svenska"),
