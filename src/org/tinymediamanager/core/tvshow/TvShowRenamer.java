@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 
 /**
  * The TvShow renamer Works on per MediaFile basis
@@ -71,10 +76,6 @@ public class TvShowRenamer {
       return;
     }
 
-    // all the good & needed mediafiles
-    ArrayList<MediaFile> needed = new ArrayList<MediaFile>();
-    ArrayList<MediaFile> cleanup = new ArrayList<MediaFile>();
-
     LOGGER.info("Renaming TvShow: " + show.getTitle());
     LOGGER.debug("TvShow year: " + show.getYear());
     LOGGER.debug("TvShow path: " + show.getPath());
@@ -100,39 +101,63 @@ public class TvShowRenamer {
       return;
     }
 
-    String s = "Season " + String.valueOf(season.getSeason());
-    File sdir = new File(show.getPath(), s);
-    if (!sdir.exists()) {
-      sdir.mkdir();
+    // all the good & needed mediafiles
+    ArrayList<MediaFile> needed = new ArrayList<MediaFile>();
+    ArrayList<MediaFile> cleanup = new ArrayList<MediaFile>();
+
+    String seasonName = "Season " + String.valueOf(season.getSeason());
+    File seasonDir = new File(show.getPath(), seasonName);
+    if (!seasonDir.exists()) {
+      seasonDir.mkdir();
     }
 
+    // TODO: handle MF types (video, thumbs, nfos)
     List<MediaFile> mfs = season.getMediaFiles();
     for (MediaFile mf : mfs) {
-      renameFile(season, mf);
-    }
+      TvShowEpisode ep = TvShowList.getInstance().getTvEpisodeByFile(mf.getFile()); // just get any one
+      if (ep.isDisc()) {
+        // handle disc folder
+      }
+      else {
+        cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
+        MediaFile newMF = new MediaFile(mf); // clone MF
+        String filename = generateFilename(season, mf);
+        File newFile = new File(seasonDir, filename);
+
+        try {
+          boolean ok = Utils.moveFileSafe(mf.getFile(), newFile);
+          if (ok) {
+            newMF.setPath(seasonDir.getAbsolutePath());
+            newMF.setFilename(newFile.getName());
+          }
+        }
+        catch (FileNotFoundException e) {
+          LOGGER.error("error moving video file - file not found", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
+        }
+        catch (Exception e) {
+          LOGGER.error("error moving video file", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
+        }
+        needed.add(newMF);
+      }
+    } // end MF loop
+
+    // cleanup
   }
 
   /**
-   * renames a MediaFile to its intended name/path
+   * generates the basename of a TvShow MediaFile according to settings <b>(without path)</b>
    * 
    * @param season
    *          the season
    * @param mf
-   *          the mediafile
-   */
-  private static void renameFile(TvShowSeason season, MediaFile mf) {
-    String filename = generateFilename(season, mf);
-    // TODO: rename file
-
-  }
-
-  /**
-   * generates the filename of a TvShow MediaFile according to settings
-   * 
-   * @param mf
-   *          MediaFile
+   *          the MediaFile
    */
   public static String generateFilename(TvShowSeason season, MediaFile mf) {
+    System.out.println(mf.toString());
     String filename = "";
     String s = "";
     String e = "";
@@ -192,6 +217,7 @@ public class TvShowRenamer {
     if (filename.startsWith(separator)) {
       filename = filename.substring(separator.length());
     }
+    filename = filename + "." + mf.getExtension(); // readd original extension
 
     return filename;
   }

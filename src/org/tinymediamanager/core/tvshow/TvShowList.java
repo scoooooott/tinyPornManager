@@ -395,7 +395,7 @@ public class TvShowList extends AbstractModelObject {
    */
   public synchronized TvShowEpisode getTvEpisodeByFile(File file) {
     // validy check
-    if (file == null || !file.exists()) {
+    if (file == null) {
       return null;
     }
 
@@ -425,7 +425,7 @@ public class TvShowList extends AbstractModelObject {
   public synchronized List<TvShowEpisode> getTvEpisodesByFile(File file) {
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
     // validy check
-    if (file == null || !file.exists()) {
+    if (file == null) {
       return episodes;
     }
 

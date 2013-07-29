@@ -68,6 +68,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
+import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.MainWindow;
@@ -127,6 +128,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionScrapeEpisodes          = new ScrapeEpisodesAction();
   private final Action                actionRewriteTvShowNfo        = new RewriteTvShowNfoAction();
   private final Action                actionRewriteTvShowEpisodeNfo = new RewriteTvShowEpisodeNfoAction();
+  private final Action                actionRename                  = new RenameAction();
 
   private int                         width                         = 0;
 
@@ -418,7 +420,7 @@ public class TvShowPanel extends JPanel {
     // menu.addSeparator();
     // menu.add(actionEditMovie2);
 
-    // menu.add(actionRename2);
+    // menu.add(actionRename);
     // menu.add(actionMediaInformation2);
     // menu.add(actionExport);
     menu.addSeparator();
@@ -439,7 +441,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionRewriteTvShowNfo);
     popupMenu.add(actionRewriteTvShowEpisodeNfo);
     // popupMenu.add(actionBatchEdit);
-    // popupMenu.add(actionRename2);
+    // popupMenu.add(actionRename);
     // popupMenu.add(actionMediaInformation2);
     // popupMenu.add(actionExport);
     popupMenu.addSeparator();
@@ -943,6 +945,45 @@ public class TvShowPanel extends JPanel {
           }
         }
       });
+    }
+  }
+
+  /**
+   * The Class RenameAction.
+   * 
+   * @author Manuel Laggner
+   */
+  private class RenameAction extends AbstractAction {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Instantiates a new rename action.
+     * 
+     * @param withTitle
+     *          the with title
+     */
+    public RenameAction() {
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
+      putValue(NAME, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+      List<TvShow> selectedTvShows = new ArrayList<TvShow>();
+      selectedTvShows.add(tvShowSelectionModel.getSelectedTvShow());
+
+      // rename
+      TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows);
+      if (!MainWindow.executeMainTask(renameTask)) {
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
+      }
     }
   }
 
