@@ -133,7 +133,9 @@ public class TinyMediaManager {
 
           // upgrade check
           if (!Globals.settings.isCurrentVersion()) {
-            JOptionPane.showMessageDialog(null, "The configuration format changed in this update.\nPlease check your settings!");
+            if (!GraphicsEnvironment.isHeadless()) {
+              JOptionPane.showMessageDialog(null, "The configuration format changed in this update.\nPlease check your settings!");
+            }
             doUpgradeTasks(Globals.settings.getVersion()); // do the upgrade tasks for the old version
             Globals.settings.writeDefaultSettings(); // write current default
           }
@@ -275,6 +277,8 @@ public class TinyMediaManager {
           else {
             // add command line parsing args4j whatsoever
             LOGGER.info("Headless mode - exiting");
+            Globals.shutdownDatabase();
+            LOGGER.info("bye bye");
           }
         }
         catch (javax.persistence.PersistenceException e) {
