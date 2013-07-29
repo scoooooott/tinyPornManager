@@ -218,8 +218,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     Element poster = doc.getElementById("primary-poster");
     if (poster != null) {
       String posterUrl = poster.attr("src");
-      posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX195_");
-      posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY195_");
+      posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX400_");
+      posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY400_");
       processMediaArt(md, MediaArtworkType.POSTER, "Poster", posterUrl);
     }
 
@@ -719,7 +719,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           Elements imgs = td.getElementsByTag("img");
           for (Element img : imgs) {
             posterUrl = img.attr("src");
-            posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SY400_");
+            posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX400_");
+            posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY400_");
             posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
           }
         }
@@ -808,7 +809,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         Elements imgs = element.getElementsByTag("img");
         for (Element img : imgs) {
           posterUrl = img.attr("src");
-          posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SY400_");
+          posterUrl = posterUrl.replaceAll("SX[0-9]{2,4}_", "SX400_");
+          posterUrl = posterUrl.replaceAll("SY[0-9]{2,4}_", "SY400_");
           posterUrl = posterUrl.replaceAll("CR[0-9]{1,3},[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}_", "");
         }
       }
@@ -870,7 +872,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       languages.append(",en;q=0.5");
     }
 
-    return languages.toString();
+    return languages.toString().toLowerCase();
   }
 
   /**
