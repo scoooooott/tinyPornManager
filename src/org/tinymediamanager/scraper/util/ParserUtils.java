@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Utils;
 
 /**
  * The Class ParserUtils.
@@ -76,6 +77,9 @@ public class ParserUtils {
               firstFoundStopwordPosition = i;
             }
           }
+        }
+        if (Utils.isValidImdbId(s[i])) {
+          s[i] = ""; // delete imdbId from name
         }
       }
     }
