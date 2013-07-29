@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
@@ -116,7 +117,9 @@ public class TinyMediaManager {
 
           Toolkit tk = Toolkit.getDefaultToolkit();
           tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
-          setLookAndFeel();
+          if (!GraphicsEnvironment.isHeadless()) {
+            setLookAndFeel();
+          }
           doStartupTasks();
 
           // after 5 secs of beeing idle, the threads are removed till 0; see Globals
@@ -136,7 +139,10 @@ public class TinyMediaManager {
           }
 
           // init splash
-          SplashScreen splash = SplashScreen.getSplashScreen();
+          SplashScreen splash = null;
+          if (!GraphicsEnvironment.isHeadless()) {
+            splash = SplashScreen.getSplashScreen();
+          }
           Graphics2D g2 = null;
           if (splash != null) {
             g2 = splash.createGraphics();
@@ -250,27 +256,37 @@ public class TinyMediaManager {
             updateProgress(g2, "loading ui", 90);
             splash.update();
           }
-          MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
+          if (!GraphicsEnvironment.isHeadless()) {
+            MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
 
-          // finished ////////////////////////////////////////////////////
-          if (g2 != null) {
-            updateProgress(g2, "finished starting", 100);
-            splash.update();
+            // finished ////////////////////////////////////////////////////
+            if (g2 != null) {
+              updateProgress(g2, "finished starting", 100);
+              splash.update();
+            }
+
+            // write a random number to file, to identify this instance (for
+            // updater, tracking, whatsoever)
+            Utils.trackEvent("startup");
+
+            TmmWindowSaver.loadSettings(window);
+            window.setVisible(true);
           }
-
-          // write a random number to file, to identify this instance (for
-          // updater, tracking, whatsoever)
-          Utils.trackEvent("startup");
-
-          TmmWindowSaver.loadSettings(window);
-          window.setVisible(true);
-
+          else {
+            // add command line parsing args4j whatsoever
+            LOGGER.info("Headless mode - exiting");
+          }
         }
         catch (javax.persistence.PersistenceException e) {
-          JOptionPane.showMessageDialog(null, e.getMessage());
+          if (!GraphicsEnvironment.isHeadless()) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+          }
+          LOGGER.error("PersistenceException", e);
         }
         catch (Exception e) {
-          JOptionPane.showMessageDialog(null, e.getMessage());
+          if (!GraphicsEnvironment.isHeadless()) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+          }
           LOGGER.error("start of tmm", e);
         }
       }

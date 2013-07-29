@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 package org.tinymediamanager;
-import javax.swing.JOptionPane;
+
+import java.awt.GraphicsEnvironment;
+
+import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * The Class Log4jBackstop.
@@ -37,11 +39,12 @@ class Log4jBackstop implements Thread.UncaughtExceptionHandler {
    */
   public void uncaughtException(Thread t, Throwable ex) {
     LOGGER.error("Uncaught exception in thread: " + t.getName(), ex);
-    JOptionPane
-        .showMessageDialog(
-            null,
-            "Whoops. Something unforeseen has happened.\nPlease restart TMM and try again.\nIf it happens again, we would kindly ask you to submit a bugreport.\n\n"
-                + ex.getCause() + ":" + ex.getMessage() + "\n" + ex.getStackTrace()[0].toString() + "\n" + ex.getStackTrace()[1].toString());
+    if (!GraphicsEnvironment.isHeadless()) {
+      JOptionPane
+          .showMessageDialog(
+              null,
+              "Whoops. Something unforeseen has happened.\nPlease restart TMM and try again.\nIf it happens again, we would kindly ask you to submit a bugreport.\n\n"
+                  + ex.getCause() + ":" + ex.getMessage() + "\n" + ex.getStackTrace()[0].toString() + "\n" + ex.getStackTrace()[1].toString());
+    }
   }
-
 }
