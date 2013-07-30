@@ -66,77 +66,42 @@ import org.tinymediamanager.scraper.MediaGenres;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "fanart", "mpaa", "id", "genres", "studio", "credits", "director", "actors" })
+    "fanart", "mpaa", "id", "genres", "studio", "country", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
-  /** The Constant logger. */
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
+  private static JAXBContext  context       = initContext();
 
-  /** The title. */
+  private String              id            = "";
   private String              title         = "";
-
-  /** The originaltitle. */
   private String              originaltitle = "";
-
   private String              sorttitle     = "";
-
-  /** The rating. */
   private float               rating        = 0;
-
-  /** The votes. */
   private int                 votes         = 0;
-
-  /** The year. */
   private String              year          = "";
-
-  /** The outline. */
   private String              outline       = "";
-
-  /** The plot. */
   private String              plot          = "";
-
-  /** The tagline. */
   private String              tagline       = "";
-
-  /** The runtime. */
   private String              runtime       = "";
-
-  /** The thumb. */
   private String              thumb         = "";
-  /** The fanarts. */
+  private String              director      = "";
+  private String              studio        = "";
+  private String              mpaa          = "";
+  private String              credits       = "";
+  private String              country       = "";
 
   @XmlElementWrapper(name = "fanart")
   @XmlElement(name = "thumb")
   private List<String>        fanart;
 
-  /** The id. */
-  private String              id            = "";
-
-  /** The director. */
-  private String              director      = "";
-
-  /** The sudio. */
-  private String              studio        = "";
-
-  /** The actors. */
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
 
-  /** The genres. */
   @XmlElementWrapper(name = "genres")
   @XmlElement(name = "genre")
   private List<String>        genres;
 
-  /** The mpaa certification. */
-  private String              mpaa          = "";
-
-  /** the credits. */
-  private String              credits       = "";
-
-  /** The sets. */
   private List<MovieSets>     sets;
-
-  private static JAXBContext  context       = initContext();
 
   private static JAXBContext initContext() {
     try {
@@ -210,6 +175,7 @@ public class MovieToMpNfoConnector {
     mp.addFanart(FilenameUtils.getName(movie.getFanart()));
     mp.setId(movie.getImdbId());
     mp.setStudio(movie.getProductionCompany());
+    mp.setCountry(movie.getCountry());
 
     // certification
     if (movie.getCertification() != null) {
@@ -317,6 +283,7 @@ public class MovieToMpNfoConnector {
       movie.setDirector(mp.getDirector());
       movie.setWriter(mp.getCredits());
       movie.setProductionCompany(mp.getStudio());
+      movie.setCountry(mp.getCountry());
       if (!StringUtils.isEmpty(mp.getMpaa())) {
         movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(mp.getMpaa()));
       }
@@ -690,6 +657,15 @@ public class MovieToMpNfoConnector {
    */
   public void setStudio(String studio) {
     this.studio = studio;
+  }
+
+  @XmlElement(name = "country")
+  public String getCountry() {
+    return country;
+  }
+
+  public void setCountry(String country) {
+    this.country = country;
   }
 
   /**

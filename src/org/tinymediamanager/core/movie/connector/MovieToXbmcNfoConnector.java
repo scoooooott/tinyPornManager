@@ -71,7 +71,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlSeeAlso(Actor.class)
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
     "runtime", "thumb", "mpaa", "certifications", "id", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired", "fileinfo",
-    "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "resume", "lastplayed", "dateadded" })
+    "watched", "playcount", "genres", "studio", "country", "credits", "director", "tags", "actors", "resume", "lastplayed", "dateadded" })
 public class MovieToXbmcNfoConnector {
   private static final Logger LOGGER         = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
   private static JAXBContext  context        = initContext();
@@ -89,6 +89,7 @@ public class MovieToXbmcNfoConnector {
   private String              id             = "";
   private int                 tmdbId         = 0;
   private String              studio         = "";
+  private String              country        = "";
   private String              mpaa           = "";
   private String              certifications = "";
   private boolean             watched        = false;
@@ -125,9 +126,6 @@ public class MovieToXbmcNfoConnector {
 
   @XmlElement
   String                      lastplayed;
-
-  @XmlElement
-  String                      country;
 
   @XmlElement
   String                      status;
@@ -242,6 +240,7 @@ public class MovieToXbmcNfoConnector {
       }
     }
 
+    xbmc.setCountry(movie.getCountry());
     xbmc.setWatched(movie.isWatched());
     if (xbmc.isWatched()) {
       xbmc.setPlaycount(1);
@@ -440,6 +439,7 @@ public class MovieToXbmcNfoConnector {
       movie.setWriter(writer);
 
       movie.setProductionCompany(xbmc.getStudio());
+      movie.setCountry(xbmc.getCountry());
       if (!StringUtils.isEmpty(xbmc.getCertifications())) {
         movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.getCertifications()));
       }
@@ -871,6 +871,22 @@ public class MovieToXbmcNfoConnector {
    */
   public void setStudio(String studio) {
     this.studio = studio;
+  }
+
+  /**
+   * @return the country
+   */
+  @XmlElement(name = "country")
+  public String getCountry() {
+    return country;
+  }
+
+  /**
+   * @param country
+   *          the country to set
+   */
+  public void setCountry(String country) {
+    this.country = country;
   }
 
   /**
