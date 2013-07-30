@@ -16,8 +16,6 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -80,84 +78,82 @@ public class TvShowRenamer {
     LOGGER.debug("TvShow year: " + show.getYear());
     LOGGER.debug("TvShow path: " + show.getPath());
 
-    for (TvShowSeason season : show.getSeasons()) {
-      renameSeason(season, show);
+    for (MediaFile mf : show.getMediaFiles()) {
+      renameMediaFile(mf, show);
     }
   }
 
   /**
-   * Rename all MediaFiles of a single season<br>
-   * create a "Season X" folder if non existent.
+   * Renames a MediaFiles<br>
+   * gets all episodes of it, creates season folder, updates MFs & DB
    * 
-   * @param season
-   *          the season
+   * @param mf
+   *          the MediaFile
    * @param show
    *          the tvshow (only needed for path)
    */
-  public static void renameSeason(TvShowSeason season, TvShow show) {
+  public static void renameMediaFile(MediaFile mf, TvShow show) {
+    // #######################################################
+    // Assumption: all multi-episodes share the same season!!!
+    // #######################################################
 
-    if (season.getSeason() < 0) {
-      LOGGER.warn("Season was -1 - skipping");
+    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(mf.getFile());
+    if (eps == null || eps.size() == 0) {
+      LOGGER.warn("No episodes found for file '" + mf.getFilename() + "' - skipping");
       return;
     }
 
-    // all the good & needed mediafiles
-    ArrayList<MediaFile> needed = new ArrayList<MediaFile>();
-    ArrayList<MediaFile> cleanup = new ArrayList<MediaFile>();
+    // get first, for isDisc and season
+    TvShowEpisode ep = eps.get(0);
 
-    String seasonName = "Season " + String.valueOf(season.getSeason());
+    // create SeasonDir
+    String seasonName = "Season " + String.valueOf(ep.getSeason());
     File seasonDir = new File(show.getPath(), seasonName);
     if (!seasonDir.exists()) {
       seasonDir.mkdir();
     }
 
-    // TODO: handle MF types (video, thumbs, nfos)
-    List<MediaFile> mfs = season.getMediaFiles();
-    for (MediaFile mf : mfs) {
-      TvShowEpisode ep = TvShowList.getInstance().getTvEpisodeByFile(mf.getFile()); // just get any one
-      if (ep.isDisc()) {
-        // handle disc folder
-      }
-      else {
-        cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
-        MediaFile newMF = new MediaFile(mf); // clone MF
-        String filename = generateFilename(season, mf);
-        File newFile = new File(seasonDir, filename);
+    if (ep.isDisc()) {
+      // TODO: handle disc folder
+      LOGGER.warn("Episode is a DVD/BD disc folder - not yet implemented!");
+    }
+    else {
+      MediaFile newMF = new MediaFile(mf); // clone MF
+      String filename = generateFilename(mf);
+      File newFile = new File(seasonDir, filename);
 
-        try {
+      try {
+        if (!mf.getFile().equals(newFile)) {
           boolean ok = Utils.moveFileSafe(mf.getFile(), newFile);
           if (ok) {
             newMF.setPath(seasonDir.getAbsolutePath());
-            newMF.setFilename(newFile.getName());
+            newMF.setFilename(filename);
+            // iterate over all EPs and delete old / set new MF
+            for (TvShowEpisode e : eps) {
+              e.removeFromMediaFiles(mf);
+              e.addToMediaFiles(newMF);
+            }
           }
         }
-        catch (FileNotFoundException e) {
-          LOGGER.error("error moving video file - file not found", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
+        else {
+          // old and new file are equal, keep MF
         }
-        catch (Exception e) {
-          LOGGER.error("error moving video file", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
-        }
-        needed.add(newMF);
       }
-    } // end MF loop
-
-    // cleanup
+      catch (Exception e) {
+        LOGGER.error("error moving video file", e);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+            e.getLocalizedMessage() }));
+      }
+    }
   }
 
   /**
-   * generates the basename of a TvShow MediaFile according to settings <b>(without path)</b>
+   * generates the filename of a TvShow MediaFile according to settings <b>(without path)</b>
    * 
-   * @param season
-   *          the season
    * @param mf
    *          the MediaFile
    */
-  public static String generateFilename(TvShowSeason season, MediaFile mf) {
-    System.out.println(mf.toString());
+  public static String generateFilename(MediaFile mf) {
     String filename = "";
     String s = "";
     String e = "";
@@ -166,30 +162,30 @@ public class TvShowRenamer {
     TvShowEpisodeNaming form = Globals.settings.getTvShowSettings().getRenamerFormat();
     String separator = Globals.settings.getTvShowSettings().getRenamerSeparator();
 
-    String show = cleanForFilename(season.getTvShow().getTitle());
+    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(mf.getFile());
+
+    String show = cleanForFilename(eps.get(0).getTvShow().getTitle());
     if (Globals.settings.getTvShowSettings().getRenamerAddShow()) {
       filename = filename + show;
     }
 
-    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(mf.getFile());
     // generate SEE-title string appended
     for (int i = 0; i < eps.size(); i++) {
       TvShowEpisode ep = eps.get(i);
 
       filename = filename + separator;
-      // TODO: handle upper/lower case and leadingZero or not
       switch (form) {
         case WITH_SE:
-          s = "S" + lz(season.getSeason());
+          s = "S" + lz(ep.getSeason());
           e = "E" + lz(ep.getEpisode());
           break;
         case WITH_X:
-          s = String.valueOf(season.getSeason());
+          s = String.valueOf(ep.getSeason());
           e = lz(ep.getEpisode());
           delim = "x";
           break;
         case NUMBER:
-          s = String.valueOf(season.getSeason());
+          s = String.valueOf(ep.getSeason());
           e = lz(ep.getEpisode());
           break;
         default:

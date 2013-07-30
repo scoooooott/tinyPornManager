@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.tvshow;
 
+import java.io.File;
+
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -63,16 +65,17 @@ public class TvShowTest {
   @Test
   public void testRenamerParams() {
     // setup dummy
-    MediaFile dmf = new MediaFile();
+    MediaFile dmf = new MediaFile(new File("/path/to", "video.avi"));
 
     TvShow show = new TvShow();
     show.setTitle("showname");
 
     TvShowEpisode ep = new TvShowEpisode();
-    ep.setTitle("episodetitle1");
+    ep.setTitle("episodetitle2");
     ep.setSeason(1);
     ep.setEpisode(2);
     ep.addToMediaFiles(dmf);
+    ep.setTvShow(show);
     show.addEpisode(ep);
 
     ep = new TvShowEpisode();
@@ -80,6 +83,7 @@ public class TvShowTest {
     ep.setSeason(1);
     ep.setEpisode(3);
     ep.addToMediaFiles(dmf);
+    ep.setTvShow(show);
     show.addEpisode(ep);
 
     TvShowList.getInstance().addTvShow(show);
@@ -93,14 +97,16 @@ public class TvShowTest {
     Globals.settings.getTvShowSettings().setRenamerSeparator(".");
 
     // display renamed EP name :)
-    MediaFile mf = show.getSeasons().get(0).getMediaFiles().get(0);
-    System.out.println(TvShowRenamer.generateFilename(show.getSeasons().get(0), mf) + ".ext");
+    System.out.println(TvShowRenamer.generateFilename(dmf));
+
     Globals.settings.getTvShowSettings().setRenamerAddTitle(false);
-    System.out.println(TvShowRenamer.generateFilename(show.getSeasons().get(0), mf) + ".ext");
+    System.out.println(TvShowRenamer.generateFilename(dmf));
+
     Globals.settings.getTvShowSettings().setRenamerAddShow(false);
-    System.out.println(TvShowRenamer.generateFilename(show.getSeasons().get(0), mf) + ".ext");
+    System.out.println(TvShowRenamer.generateFilename(dmf));
+
     Globals.settings.getTvShowSettings().setRenamerAddSeason(false);
-    System.out.println(TvShowRenamer.generateFilename(show.getSeasons().get(0), mf) + ".ext");
+    System.out.println(TvShowRenamer.generateFilename(dmf));
   }
 
   /**
