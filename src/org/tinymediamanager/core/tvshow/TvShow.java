@@ -1686,4 +1686,16 @@ public class TvShow extends MediaEntity {
   @Override
   public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
   }
+
+  public TvShowEpisode getEpisode(int season, int episode) {
+    TvShowEpisode ep = null;
+
+    for (TvShowEpisode e : new ArrayList<TvShowEpisode>(episodes)) {
+      if (e.getSeason() == season && e.getEpisode() == episode) {
+        ep = e;
+        break;
+      }
+    }
+    return ep;
+  }
 }
