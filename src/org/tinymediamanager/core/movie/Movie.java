@@ -75,96 +75,55 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class Movie extends MediaEntity {
-  /** The Constant logger. */
   @XmlTransient
   private static final Logger LOGGER            = LoggerFactory.getLogger(Movie.class);
 
-  /** The title sortable. */
-  @Transient
-  private String              titleSortable     = "";
-
-  /** The sorttitle. */
   private String              sortTitle         = "";
-
-  /** The tagline. */
   private String              tagline           = "";
-
-  /** The votes. */
   private int                 votes             = 0;
-
-  /** The runtime. */
   private int                 runtime           = 0;
-
-  /** The nfo filename. */
   private String              nfoFilename       = "";
-
-  /** The director. */
   private String              director          = "";
-
-  /** The writer. */
   private String              writer            = "";
+  private String              dataSource        = "";
+  private boolean             watched           = false;
+  private MovieSet            movieSet;
+  private boolean             isDisc            = false;
+  private String              spokenLanguages   = "";
+  private boolean             subtitles         = false;
+  private String              country           = "";
 
-  /** The certification. */
+  private List<String>        genres            = new ArrayList<String>();
+  private List<String>        tags              = new ArrayList<String>();
+  private List<String>        extraThumbs       = new ArrayList<String>();
+  private List<String>        extraFanarts      = new ArrayList<String>();
+
   @Enumerated(EnumType.STRING)
   private Certification       certification     = Certification.NOT_RATED;
 
-  /** The data source. */
-  private String              dataSource        = "";
-
-  /** The watched. */
-  private boolean             watched           = false;
-
-  /** The new genres based on an enum like class. */
-  private List<String>        genres            = new ArrayList<String>();
-
-  /** The genres for access. */
-  @Transient
-  private List<MediaGenres>   genresForAccess   = new ArrayList<MediaGenres>();
-
-  /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<MovieActor>    actors            = new ArrayList<MovieActor>();
 
-  /** The actors observables. */
-  @Transient
-  private List<MovieActor>    actorsObservables = ObservableCollections.observableList(actors);
-
-  /** The trailer. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<MediaTrailer>  trailer           = new ArrayList<MediaTrailer>();
 
-  /** The trailer observable. */
   @Transient
-  private List<MediaTrailer>  trailerObservable = ObservableCollections.observableList(trailer);
+  private String              titleSortable     = "";
 
-  /** The tags. */
-  private List<String>        tags              = new ArrayList<String>();
-
-  /** The tags observable. */
-  @Transient
-  private List<String>        tagsObservable    = ObservableCollections.observableList(tags);
-
-  /** The extra thumbs. */
-  private List<String>        extraThumbs       = new ArrayList<String>();
-
-  /** The extra fanarts. */
-  private List<String>        extraFanarts      = new ArrayList<String>();
-
-  /** The movie set. */
-  private MovieSet            movieSet;
-
-  /** is this a disc movie folder (video_ts / bdmv)?. */
-  private boolean             isDisc            = false;
-
-  /** is this movie new in our list? */
   @Transient
   private boolean             newlyAdded        = false;
 
-  /** The spoken languages. */
-  private String              spokenLanguages   = "";
+  @Transient
+  private List<MediaGenres>   genresForAccess   = new ArrayList<MediaGenres>();
 
-  /** Subtitles of movie (either from local or from mediafiles) */
-  private boolean             subtitles         = false;
+  @Transient
+  private List<MovieActor>    actorsObservables = ObservableCollections.observableList(actors);
+
+  @Transient
+  private List<MediaTrailer>  trailerObservable = ObservableCollections.observableList(trailer);
+
+  @Transient
+  private List<String>        tagsObservable    = ObservableCollections.observableList(tags);
 
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
@@ -915,6 +874,7 @@ public class Movie extends MediaEntity {
     }
 
     setSpokenLanguages(metadata.getSpokenLanguages());
+    setCountry(metadata.getCountry());
 
     // certifications
     if (config.isCertification()) {
@@ -1839,25 +1799,24 @@ public class Movie extends MediaEntity {
     return "";
   }
 
-  /**
-   * Sets the spoken languages.
-   * 
-   * @param newValue
-   *          the new spoken languages
-   */
   public void setSpokenLanguages(String newValue) {
     String oldValue = this.spokenLanguages;
     this.spokenLanguages = newValue;
     firePropertyChange(SPOKEN_LANGUAGES, oldValue, newValue);
   }
 
-  /**
-   * Gets the spoken languages.
-   * 
-   * @return the spoken languages
-   */
   public String getSpokenLanguages() {
     return this.spokenLanguages;
+  }
+
+  public String getCountry() {
+    return country;
+  }
+
+  public void setCountry(String newValue) {
+    String oldValue = this.country;
+    this.country = newValue;
+    firePropertyChange(COUNTRY, oldValue, newValue);
   }
 
   /**

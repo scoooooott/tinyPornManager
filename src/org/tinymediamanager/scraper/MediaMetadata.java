@@ -32,74 +32,32 @@ import org.tinymediamanager.scraper.MediaCastMember.CastType;
  */
 public class MediaMetadata {
 
-  /** The provider id. */
   private String                  providerId;
-
   /** a hashmap storing other ids. */
   private HashMap<String, Object> ids               = new HashMap<String, Object>();
-
-  /** The plot. */
   private String                  plot              = "";
-
-  /** The title. */
   private String                  title             = "";
-
-  /** The original title. */
   private String                  originalTitle     = "";
-
-  /** The rating. */
   private double                  rating            = 0.0;
-
-  /** The vote count. */
   private int                     voteCount         = 0;
-
-  /** The runtime. */
   private int                     runtime           = 0;
-
-  /** The tagline. */
   private String                  tagline           = "";
-
-  /** The production company. */
   private String                  productionCompany = "";
-
-  /** The year. */
   private String                  year              = "";
-
-  /** The release date. */
   private String                  releaseDate       = "";
-
-  /** The spoken languages. */
   private String                  spokenLanguages   = "";
-
-  /** The poster url. */
+  private String                  country           = "";
   private String                  posterUrl         = "";
-
-  /** The first aired. */
   private String                  firstAired        = "";
-
-  /** The status. */
   private String                  status            = "";
-
-  /** The studio. */
   private String                  studio            = "";
-
-  /** The cast members. */
-  private List<MediaCastMember>   castMembers       = new ArrayList<MediaCastMember>();
-
-  /** The fanart. */
-  private List<MediaArtwork>      fanart            = new ArrayList<MediaArtwork>();
-
-  /** The genres. */
-  private List<MediaGenres>       genres            = new ArrayList<MediaGenres>();
-
-  /** The certifications. */
-  private List<Certification>     certifications    = new ArrayList<Certification>();
-
-  /** The trailers. */
-  private List<MediaTrailer>      trailers          = new ArrayList<MediaTrailer>();
-
-  /** the collection name (eg MovieSet) */
   private String                  collectionName    = "";
+
+  private List<MediaCastMember>   castMembers       = new ArrayList<MediaCastMember>();
+  private List<MediaArtwork>      fanart            = new ArrayList<MediaArtwork>();
+  private List<MediaGenres>       genres            = new ArrayList<MediaGenres>();
+  private List<Certification>     certifications    = new ArrayList<Certification>();
+  private List<MediaTrailer>      trailers          = new ArrayList<MediaTrailer>();
 
   /**
    * Instantiates a new media metadata.
@@ -517,6 +475,21 @@ public class MediaMetadata {
    */
   public String getSpokenLanguages() {
     return this.spokenLanguages;
+  }
+
+  /**
+   * @return the country
+   */
+  public String getCountry() {
+    return country;
+  }
+
+  /**
+   * @param country
+   *          the country to set
+   */
+  public void setCountry(String country) {
+    this.country = country;
   }
 
   /**

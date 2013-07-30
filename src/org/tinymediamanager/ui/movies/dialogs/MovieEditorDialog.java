@@ -251,6 +251,7 @@ public class MovieEditorDialog extends JDialog {
 
   /** The abort action. */
   private final Action                abortAction          = new SwingAction_10();
+  private JTextField                  tfCountry;
 
   /**
    * Create the dialog.
@@ -452,8 +453,17 @@ public class MovieEditorDialog extends JDialog {
     }
     {
       tfSpokenLanguages = new JTextField();
-      details1Panel.add(tfSpokenLanguages, "4, 22, 9, 1, fill, default");
+      details1Panel.add(tfSpokenLanguages, "4, 22, 3, 1, fill, default");
       tfSpokenLanguages.setColumns(10);
+    }
+    {
+      JLabel lblCountry = new JLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
+      details1Panel.add(lblCountry, "8, 22, right, default");
+    }
+    {
+      tfCountry = new JTextField();
+      details1Panel.add(tfCountry, "10, 22, 3, 1, fill, default");
+      tfCountry.setColumns(10);
     }
     {
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
@@ -694,6 +704,7 @@ public class MovieEditorDialog extends JDialog {
       cbWatched.setSelected(movie.isWatched());
       spDateAdded.setValue(movie.getDateAdded());
       tfSpokenLanguages.setText(movie.getSpokenLanguages());
+      tfCountry.setText(movie.getCountry());
 
       int year = 0;
       try {
@@ -823,6 +834,7 @@ public class MovieEditorDialog extends JDialog {
       movieToEdit.setImdbId(tfImdbId.getText());
       movieToEdit.setWatched(cbWatched.isSelected());
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
+      movieToEdit.setCountry(tfCountry.getText());
       try {
         movieToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
       }

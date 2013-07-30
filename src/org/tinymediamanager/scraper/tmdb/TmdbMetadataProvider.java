@@ -58,6 +58,7 @@ import com.omertron.themoviedbapi.model.MovieDb;
 import com.omertron.themoviedbapi.model.Person;
 import com.omertron.themoviedbapi.model.PersonType;
 import com.omertron.themoviedbapi.model.ProductionCompany;
+import com.omertron.themoviedbapi.model.ProductionCountry;
 import com.omertron.themoviedbapi.model.ReleaseInfo;
 import com.omertron.themoviedbapi.model.Trailer;
 
@@ -336,6 +337,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       spokenLanguages += lang.getIsoCode();
     }
     md.setSpokenLanguages(spokenLanguages);
+
+    String countries = "";
+    for (ProductionCountry country : movie.getProductionCountries()) {
+      if (StringUtils.isNotBlank(countries)) {
+        countries += ", ";
+      }
+      countries += country.getIsoCode();
+    }
+    md.setCountry(countries);
 
     if (movie.getImdbID() != null && MetadataUtil.isValidImdbId(movie.getImdbID())) {
       md.setImdbId(movie.getImdbID());

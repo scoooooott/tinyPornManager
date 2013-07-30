@@ -374,6 +374,28 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         }
 
         /*
+         * <div class="info"><h5>Country:</h5><div class="info-content"><a href="/country/fr">France</a> | <a href="/country/es">Spain</a> | <a
+         * href="/country/it">Italy</a> | <a href="/country/hu">Hungary</a></div></div>
+         */
+        // country
+        if (h5Title.matches("(?i)Country.*")) {
+          Elements a = element.getElementsByTag("a");
+          String countries = "";
+          for (Element anchor : a) {
+            Pattern pattern = Pattern.compile("/country/(.*)");
+            Matcher matcher = pattern.matcher(anchor.attr("href"));
+            if (matcher.matches()) {
+              String country = matcher.group(1);
+              if (StringUtils.isNotEmpty(countries)) {
+                countries += ", ";
+              }
+              countries += country.toUpperCase();
+            }
+          }
+          md.setCountry(countries);
+        }
+
+        /*
          * <div class="info"><h5>Language:</h5><div class="info-content"><a href="/language/en">English</a> | <a href="/language/de">German</a> | <a
          * href="/language/fr">French</a> | <a href="/language/it">Italian</a></div>
          */
