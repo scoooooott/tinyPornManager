@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
+import java.awt.GraphicsEnvironment;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -55,7 +56,6 @@ public class TvShowRenameTask extends TmmThreadPool {
    */
   public TvShowRenameTask(List<TvShow> tvShowToRename) {
     this.tvShowToRename = tvShowToRename;
-    initThreadPool(1, "rename");
   }
 
   /*
@@ -66,6 +66,7 @@ public class TvShowRenameTask extends TmmThreadPool {
   @Override
   protected Void doInBackground() throws Exception {
     try {
+      initThreadPool(1, "rename");
       startProgressBar("renaming TV shows...");
       // rename movies
       for (int i = 0; i < tvShowToRename.size(); i++) {
@@ -123,14 +124,16 @@ public class TvShowRenameTask extends TmmThreadPool {
    *          the description
    */
   private void startProgressBar(String description, int max, int progress) {
-    if (!StringUtils.isEmpty(description)) {
-      lblProgressAction.setText(description);
+    if (!GraphicsEnvironment.isHeadless()) {
+      if (!StringUtils.isEmpty(description)) {
+        lblProgressAction.setText(description);
+      }
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(false);
+      progressBar.setMaximum(max);
+      progressBar.setValue(progress);
+      btnCancelTask.setVisible(true);
     }
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(false);
-    progressBar.setMaximum(max);
-    progressBar.setValue(progress);
-    btnCancelTask.setVisible(true);
   }
 
   /**
@@ -140,22 +143,26 @@ public class TvShowRenameTask extends TmmThreadPool {
    *          the description
    */
   private void startProgressBar(String description) {
-    if (!StringUtils.isEmpty(description)) {
-      lblProgressAction.setText(description);
+    if (!GraphicsEnvironment.isHeadless()) {
+      if (!StringUtils.isEmpty(description)) {
+        lblProgressAction.setText(description);
+      }
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(true);
+      btnCancelTask.setVisible(true);
     }
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(true);
-    btnCancelTask.setVisible(true);
   }
 
   /**
    * Stop progress bar.
    */
   private void stopProgressBar() {
-    lblProgressAction.setText("");
-    progressBar.setIndeterminate(false);
-    progressBar.setVisible(false);
-    btnCancelTask.setVisible(false);
+    if (!GraphicsEnvironment.isHeadless()) {
+      lblProgressAction.setText("");
+      progressBar.setIndeterminate(false);
+      progressBar.setVisible(false);
+      btnCancelTask.setVisible(false);
+    }
   }
 
   /*

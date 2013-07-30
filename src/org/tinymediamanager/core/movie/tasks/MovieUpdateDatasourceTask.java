@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,10 +55,10 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
-  private static final Logger       LOGGER = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
+  private static final Logger       LOGGER      = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
 
   // skip well-known, but unneeded BD & DVD folders
-  private static final List<String> skipFolders   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
+  private static final List<String> skipFolders = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
 
   private List<String>              dataSources;
   private MovieList                 movieList;
@@ -475,14 +476,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    *          the description
    */
   private void startProgressBar(String description, int max, int progress) {
-    if (!StringUtils.isEmpty(description)) {
-      lblProgressAction.setText(description);
+    if (!GraphicsEnvironment.isHeadless()) {
+      if (!StringUtils.isEmpty(description)) {
+        lblProgressAction.setText(description);
+      }
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(false);
+      progressBar.setMaximum(max);
+      progressBar.setValue(progress);
+      btnCancelTask.setVisible(true);
     }
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(false);
-    progressBar.setMaximum(max);
-    progressBar.setValue(progress);
-    btnCancelTask.setVisible(true);
   }
 
   /**
@@ -492,22 +495,26 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    *          the description
    */
   private void startProgressBar(String description) {
-    if (!StringUtils.isEmpty(description)) {
-      lblProgressAction.setText(description);
+    if (!GraphicsEnvironment.isHeadless()) {
+      if (!StringUtils.isEmpty(description)) {
+        lblProgressAction.setText(description);
+      }
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(true);
+      btnCancelTask.setVisible(true);
     }
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(true);
-    btnCancelTask.setVisible(true);
   }
 
   /**
    * Stop progress bar.
    */
   private void stopProgressBar() {
-    lblProgressAction.setText("");
-    progressBar.setIndeterminate(false);
-    progressBar.setVisible(false);
-    btnCancelTask.setVisible(false);
+    if (!GraphicsEnvironment.isHeadless()) {
+      lblProgressAction.setText("");
+      progressBar.setIndeterminate(false);
+      progressBar.setVisible(false);
+      btnCancelTask.setVisible(false);
+    }
   }
 
   /*

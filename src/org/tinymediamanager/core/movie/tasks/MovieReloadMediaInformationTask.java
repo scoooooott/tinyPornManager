@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,14 +92,16 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
    *          the description
    */
   private void startProgressBar(String description, int max, int progress) {
-    if (!StringUtils.isEmpty(description)) {
-      lblProgressAction.setText(description);
+    if (!GraphicsEnvironment.isHeadless()) {
+      if (!StringUtils.isEmpty(description)) {
+        lblProgressAction.setText(description);
+      }
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(false);
+      progressBar.setMaximum(max);
+      progressBar.setValue(progress);
+      btnCancelTask.setVisible(true);
     }
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(false);
-    progressBar.setMaximum(max);
-    progressBar.setValue(progress);
-    btnCancelTask.setVisible(true);
   }
 
   /**
@@ -108,21 +111,25 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
    *          the description
    */
   private void startProgressBar(String description) {
-    if (!StringUtils.isEmpty(description)) {
-      lblProgressAction.setText(description);
+    if (!GraphicsEnvironment.isHeadless()) {
+      if (!StringUtils.isEmpty(description)) {
+        lblProgressAction.setText(description);
+      }
+      progressBar.setVisible(true);
+      progressBar.setIndeterminate(true);
+      btnCancelTask.setVisible(true);
     }
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(true);
-    btnCancelTask.setVisible(true);
   }
 
   /**
    * Stop progress bar.
    */
   private void stopProgressBar() {
-    lblProgressAction.setText("");
-    progressBar.setIndeterminate(false);
-    progressBar.setVisible(false);
-    btnCancelTask.setVisible(false);
+    if (!GraphicsEnvironment.isHeadless()) {
+      lblProgressAction.setText("");
+      progressBar.setIndeterminate(false);
+      progressBar.setVisible(false);
+      btnCancelTask.setVisible(false);
+    }
   }
 }

@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -162,19 +163,23 @@ public class TvShowScrapeTask extends TmmSwingWorker {
    *          the value
    */
   private void startProgressBar(String description, int value) {
-    lblProgressAction.setText(description);
-    progressBar.setVisible(true);
-    progressBar.setValue(value);
-    btnCancelTask.setVisible(true);
+    if (!GraphicsEnvironment.isHeadless()) {
+      lblProgressAction.setText(description);
+      progressBar.setVisible(true);
+      progressBar.setValue(value);
+      btnCancelTask.setVisible(true);
+    }
   }
 
   /**
    * Stop progress bar.
    */
   private void stopProgressBar() {
-    lblProgressAction.setText("");
-    progressBar.setVisible(false);
-    btnCancelTask.setVisible(false);
+    if (!GraphicsEnvironment.isHeadless()) {
+      lblProgressAction.setText("");
+      progressBar.setVisible(false);
+      btnCancelTask.setVisible(false);
+    }
   }
 
   /**
