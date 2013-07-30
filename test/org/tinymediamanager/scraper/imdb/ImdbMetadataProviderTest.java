@@ -481,4 +481,8 @@ public class ImdbMetadataProviderTest {
     assertEquals("production company", company, md.getProductionCompany());
   }
 
+  @Test
+  public void testLanguageStrings() {
+    System.out.println(ImdbMetadataProvider.getAcceptLanguage("fr", "fr"));
+  }
 }

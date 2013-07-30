@@ -133,7 +133,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     sb.append("title/");
     sb.append(imdbId);
     sb.append("/combined");
-    Callable<Document> worker = new ImdbWorker(sb.toString());
+    Callable<Document> worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2());
     Future<Document> futureCombined = compSvcImdb.submit(worker);
 
     // worker for imdb request (/plotsummary) (from chosen site)
@@ -144,7 +144,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     sb.append(imdbId);
     sb.append("/plotsummary");
 
-    worker = new ImdbWorker(sb.toString());
+    worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2());
     futurePlotsummary = compSvcImdb.submit(worker);
     // }
 
@@ -647,6 +647,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       return result;
     }
 
+    // parse out language and coutry from the scraper options
+    String language = query.get(SearchParam.LANGUAGE);
+    String country = ""; // we do not have a country in the search params
+
     searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
     StringBuilder sb = new StringBuilder(imdbSite.getSite());
@@ -667,7 +671,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     Document doc;
     try {
       CachedUrl url = new CachedUrl(sb.toString());
-      url.addHeader("Accept-Language", getAcceptLanguage());
+      url.addHeader("Accept-Language", getAcceptLanguage(language, country));
       doc = Jsoup.parse(url.getInputStream(), "UTF-8", "");
     }
     catch (Exception e) {
@@ -854,22 +858,48 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
    * 
    * @return the header to set
    */
-  private String getAcceptLanguage() {
+  public static String getAcceptLanguage(String language, String country) {
+    List<String> languageString = new ArrayList<String>();
+
+    // first: take the preferred language from settings
+    if (StringUtils.isNotBlank(language) && StringUtils.isNotBlank(country)) {
+      String combined = language + "-" + country;
+      languageString.add(combined.toLowerCase());
+    }
+
+    if (StringUtils.isNotBlank(language)) {
+      languageString.add(language.toLowerCase());
+    }
+
+    // second: the JRE language
+    Locale jreLocale = Locale.getDefault();
+    String combined = (jreLocale.getLanguage() + "-" + jreLocale.getCountry()).toLowerCase();
+    if (!languageString.contains(combined)) {
+      languageString.add(combined);
+    }
+
+    if (!languageString.contains(jreLocale.getLanguage().toLowerCase())) {
+      languageString.add(jreLocale.getLanguage().toLowerCase());
+    }
+
+    // third: fallback to en
+    if (!languageString.contains("en")) {
+      languageString.add("en");
+    }
+
     // build a http header for the preferred language
     StringBuilder languages = new StringBuilder();
+    float qualifier = 1f;
 
-    Locale jreLocale = Locale.getDefault();
-
-    languages.append(jreLocale.getLanguage());
-    languages.append("-");
-    languages.append(jreLocale.getCountry());
-    languages.append(",");
-
-    languages.append(jreLocale.getLanguage());
-    languages.append(";q=0.8");
-
-    if (!"en".equalsIgnoreCase(jreLocale.getLanguage())) {
-      languages.append(",en;q=0.5");
+    for (String line : languageString) {
+      if (languages.length() > 0) {
+        languages.append(",");
+      }
+      languages.append(line);
+      if (qualifier < 1) {
+        languages.append(String.format(Locale.US, ";q=%1.1f", qualifier));
+      }
+      qualifier -= 0.1;
     }
 
     return languages.toString().toLowerCase();
@@ -919,10 +949,9 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
    */
   private class ImdbWorker implements Callable<Document> {
 
-    /** The url. */
     private String   url;
-
-    /** The doc. */
+    private String   language;
+    private String   country;
     private Document doc = null;
 
     /**
@@ -931,8 +960,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
      * @param url
      *          the url
      */
-    public ImdbWorker(String url) {
+    public ImdbWorker(String url, String language, String country) {
       this.url = url;
+      this.language = language;
+      this.country = country;
     }
 
     /*
@@ -945,7 +976,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       doc = null;
       try {
         CachedUrl cachedUrl = new CachedUrl(url);
-        cachedUrl.addHeader("Accept-Language", getAcceptLanguage());
+        cachedUrl.addHeader("Accept-Language", getAcceptLanguage(language, country));
         doc = Jsoup.parse(cachedUrl.getInputStream(), imdbSite.getCharset().displayName(), "");
       }
       catch (Exception e) {
