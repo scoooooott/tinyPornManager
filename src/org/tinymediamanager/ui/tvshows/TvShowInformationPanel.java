@@ -220,7 +220,7 @@ public class TvShowInformationPanel extends JPanel {
     tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelCast, null); //$NON-NLS-1$
 
     panelMediaInformation = new TvShowMediaInformationPanel(tvShowSelectionModel);
-    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.mediafiles"), null, panelMediaInformation, null); //$NON-NLS-1$
 
     // beansbinding init
     initDataBindings();
