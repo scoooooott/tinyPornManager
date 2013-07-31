@@ -327,6 +327,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     LOGGER.debug("parsing " + dir.getPath());
     // crawl this folder and try to find every episode and its corresponding files in it
     File[] content = dir.listFiles();
+    Arrays.sort(content);
     for (File file : content) {
       if (file.isFile()) {
         // check filetype - we only proceed here if it's a video file

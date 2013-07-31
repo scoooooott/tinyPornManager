@@ -65,10 +65,9 @@ public class TvShowEpisodeAndSeasonParser {
   /** The pattern7. */
   private static Pattern      pattern7              = Pattern.compile("[\\/._ -]p(?:ar)?t[_. -]()([ivx]+)([._ -][^\\/]*)$", Pattern.CASE_INSENSITIVE);
 
-  private static Pattern      stackingMarkerPattern = Pattern
-                                                        .compile(
-                                                            "((.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck]|d)[ _.-]*([0-9]|[a-d])+)|^[a-d]{1})(.*?)(\\.[^.]+)",
-                                                            Pattern.CASE_INSENSITIVE);
+  private static Pattern      stackingMarkerPattern = Pattern.compile(
+                                                        "((.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck]|d)[ _.-]*([0-9]|[a-d])+)|^[a-d]{1})(.*?)",
+                                                        Pattern.CASE_INSENSITIVE);
 
   /**
    * The Class EpisodeMatchingResult.
