@@ -47,10 +47,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -67,7 +70,13 @@ import com.sun.jna.Platform;
 public class TinyMediaManager {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(TinyMediaManager.class); ;
+  private static final Logger LOGGER       = LoggerFactory.getLogger(TinyMediaManager.class);
+
+  private static boolean      updateMovies = false;
+  private static boolean      updateTv     = false;
+  private static boolean      autoScrape   = false;
+  private static boolean      rename       = false;
+  private static boolean      closeGui     = false;
 
   /**
    * The main method.
@@ -76,6 +85,34 @@ public class TinyMediaManager {
    *          the arguments
    */
   public static void main(String[] args) {
+    // simple parse command line
+    if (args != null) {
+      for (String cmd : args) {
+        if (cmd.equalsIgnoreCase("-updateMovies")) {
+          updateMovies = true;
+        }
+        else if (cmd.equalsIgnoreCase("-updateTv")) {
+          updateTv = true;
+        }
+        else if (cmd.equalsIgnoreCase("-update")) {
+          updateMovies = true;
+          updateTv = true;
+        }
+        else if (cmd.equalsIgnoreCase("-autoScrape")) {
+          autoScrape = true;
+        }
+        else if (cmd.equalsIgnoreCase("-rename")) {
+          rename = true;
+        }
+        else if (cmd.equalsIgnoreCase("-noGui")) {
+          System.setProperty("java.awt.headless", "true");
+        }
+        else if (cmd.equalsIgnoreCase("-closeGui")) {
+          closeGui = true;
+        }
+      }
+    }
+
     // initialize SWT if needed
     TmmUIHelper.init();
     if (TmmUIHelper.swt != null) {
@@ -93,17 +130,8 @@ public class TinyMediaManager {
       charset.setAccessible(true);
       charset.set(null, null);
     }
-    catch (NoSuchFieldException e1) {
-      LOGGER.warn("Error resetting to UTF-8");
-    }
-    catch (SecurityException e1) {
-      LOGGER.warn("Error resetting to UTF-8");
-    }
-    catch (IllegalArgumentException e) {
-      LOGGER.warn("Error resetting to UTF-8");
-    }
-    catch (IllegalAccessException e) {
-      LOGGER.warn("Error resetting to UTF-8");
+    catch (Exception e) {
+      LOGGER.warn("Error resetting to UTF-8", e);
     }
     debugCharacterEncoding();
     // END character encoding debug
@@ -113,8 +141,12 @@ public class TinyMediaManager {
       public void run() {
         try {
           Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
-          Thread.currentThread().setName("main");
-
+          if (!GraphicsEnvironment.isHeadless()) {
+            Thread.currentThread().setName("main");
+          }
+          else {
+            Thread.currentThread().setName("headless");
+          }
           Toolkit tk = Toolkit.getDefaultToolkit();
           tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
           if (!GraphicsEnvironment.isHeadless()) {
@@ -273,10 +305,13 @@ public class TinyMediaManager {
 
             TmmWindowSaver.loadSettings(window);
             window.setVisible(true);
+
+            startCommandLineTasks();
           }
           else {
-            // add command line parsing args4j whatsoever
-            LOGGER.info("Headless mode - exiting");
+            startCommandLineTasks();
+
+            // TODO: better headless shutdown
             Globals.shutdownDatabase();
             LOGGER.info("bye bye");
           }
@@ -446,5 +481,38 @@ public class TinyMediaManager {
     InputStreamReader reader = new InputStreamReader(is);
     LOGGER.debug("defaultCharacterEncoding by code: " + reader.getEncoding());
     LOGGER.debug("defaultCharacterEncoding by charSet: " + Charset.defaultCharset());
+  }
+
+  /**
+   * executes all the command line tasks, one after another
+   */
+  private static void startCommandLineTasks() {
+    try {
+      if (updateMovies) {
+        TmmSwingWorker task = new MovieUpdateDatasourceTask();
+        if (!GraphicsEnvironment.isHeadless()) {
+          MainWindow.executeMainTask(task);
+          // wait for completion?!?
+        }
+        else {
+          task.execute();
+          task.get(); // blocking
+        }
+      }
+      if (updateTv) {
+        TmmSwingWorker task = new TvShowUpdateDatasourceTask();
+        if (!GraphicsEnvironment.isHeadless()) {
+          MainWindow.executeMainTask(task);
+          // wait for completion?!?
+        }
+        else {
+          task.execute();
+          task.get(); // blocking
+        }
+      }
+    }
+    catch (Exception e) {
+      LOGGER.error("Error executing command line task!", e);
+    }
   }
 }
