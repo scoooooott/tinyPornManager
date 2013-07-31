@@ -468,7 +468,7 @@ public class MainWindow extends JFrame {
         Globals.shutdownDatabase();
         // clear cache directory
         if (Globals.settings.isClearCacheShutdown()) {
-          File cache = new File("cache");
+          File cache = new File("cache" + File.separator + "url");
           if (cache.exists()) {
             FileUtils.deleteDirectory(cache);
           }
