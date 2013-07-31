@@ -848,4 +848,13 @@ public class MovieList extends AbstractModelObject {
     }
     firePropertyChange("sortedMovieSets", null, movieSetList);
   }
+
+  /**
+   * invalidate the title sortable upon changes to the sortable prefixes
+   */
+  public void invalidateTitleSortable() {
+    for (Movie movie : new ArrayList<Movie>(movieList)) {
+      movie.clearTitleSortable();
+    }
+  }
 }

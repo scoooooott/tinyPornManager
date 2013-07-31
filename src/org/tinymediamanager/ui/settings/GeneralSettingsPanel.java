@@ -47,6 +47,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.ui.UTF8Control;
 
 import ch.qos.logback.classic.Level;
@@ -255,6 +257,8 @@ public class GeneralSettingsPanel extends JPanel {
         if (row != -1) {
           String prefix = Globals.settings.getTitlePrefix().get(row);
           Globals.settings.removeTitlePrefix(prefix);
+          MovieList.getInstance().invalidateTitleSortable();
+          TvShowList.getInstance().invalidateTitleSortable();
         }
       }
     });
@@ -271,6 +275,8 @@ public class GeneralSettingsPanel extends JPanel {
         if (StringUtils.isNotEmpty(tfSortPrefix.getText())) {
           Globals.settings.addTitlePrefix(tfSortPrefix.getText());
           tfSortPrefix.setText("");
+          MovieList.getInstance().invalidateTitleSortable();
+          TvShowList.getInstance().invalidateTitleSortable();
         }
       }
     });

@@ -175,6 +175,10 @@ public class Movie extends MediaEntity {
     return titleSortable;
   }
 
+  public void clearTitleSortable() {
+    titleSortable = "";
+  }
+
   /**
    * Gets the nfo filename.
    * 

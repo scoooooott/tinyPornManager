@@ -444,4 +444,13 @@ public class TvShowList extends AbstractModelObject {
     }
     return episodes;
   }
+
+  /**
+   * invalidate the title sortable upon changes to the sortable prefixes
+   */
+  public void invalidateTitleSortable() {
+    for (TvShow tvShow : new ArrayList<TvShow>(tvShowList)) {
+      tvShow.clearTitleSortable();
+    }
+  }
 }

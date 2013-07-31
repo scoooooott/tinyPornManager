@@ -189,6 +189,10 @@ public class TvShow extends MediaEntity {
     return titleSortable;
   }
 
+  public void clearTitleSortable() {
+    titleSortable = "";
+  }
+
   /**
    * Gets the episodes.
    * 
