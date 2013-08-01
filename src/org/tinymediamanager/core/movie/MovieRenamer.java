@@ -450,6 +450,13 @@ public class MovieRenamer {
     }
 
     // ######################################################################
+    // ## rename EXTRAFANART
+    // ######################################################################
+    for (MediaFile extra : movie.getMediaFiles(MediaFileType.EXTRAFANART)) {
+      needed.add(extra); // keep all unknown
+    }
+
+    // ######################################################################
     // ## rename UNKNOWN
     // ######################################################################
     for (MediaFile unk : movie.getMediaFiles(MediaFileType.UNKNOWN)) {
