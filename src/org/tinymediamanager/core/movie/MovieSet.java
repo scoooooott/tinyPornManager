@@ -283,6 +283,9 @@ public class MovieSet extends MediaEntity {
    *          the movie
    */
   public void addMovie(Movie movie) {
+    if (moviesObservable.contains(movie)) {
+      return;
+    }
     moviesObservable.add(movie);
     saveToDb();
 

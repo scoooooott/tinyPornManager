@@ -312,13 +312,13 @@ public class MovieSetEditorDialog extends JDialog {
     tableMovies.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
     tableMovies.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
     tableMovies.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
-    tableMovies.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.year"));
+    tableMovies.getTableHeader().getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.year"));
 
     // watched column
     tableMovies.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(70);
     tableMovies.getTableHeader().getColumnModel().getColumn(2).setMinWidth(70);
     tableMovies.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(85);
-    tableMovies.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.watched"));
+    tableMovies.getTableHeader().getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.watched"));
   }
 
   /**
