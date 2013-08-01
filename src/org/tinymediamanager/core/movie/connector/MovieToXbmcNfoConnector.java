@@ -71,7 +71,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlSeeAlso(Actor.class)
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
     "runtime", "thumb", "mpaa", "certifications", "id", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired", "fileinfo",
-    "watched", "playcount", "genres", "studio", "country", "credits", "director", "tags", "actors", "resume", "lastplayed", "dateadded" })
+    "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "resume", "lastplayed", "dateadded" })
 public class MovieToXbmcNfoConnector {
   private static final Logger LOGGER         = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
   private static JAXBContext  context        = initContext();
@@ -150,7 +150,7 @@ public class MovieToXbmcNfoConnector {
       return JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
     }
     catch (JAXBException e) {
-      LOGGER.error(e.getMessage());
+      LOGGER.error("Error instantiating JaxB", e);
     }
     return null;
   }
@@ -352,7 +352,10 @@ public class MovieToXbmcNfoConnector {
         if (SystemUtils.IS_OS_WINDOWS) {
           sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
         }
-        FileUtils.write(new File(movie.getPath(), nfoFilename), sb, "UTF-8");
+        File f = new File(movie.getPath(), nfoFilename);
+        FileUtils.write(f, sb, "UTF-8");
+        MediaFile mf = new MediaFile(f);
+        movie.addToMediaFiles(mf);
       }
       catch (Exception e) {
         LOGGER.error("setData", e.getMessage());
@@ -373,7 +376,7 @@ public class MovieToXbmcNfoConnector {
    *          the nfo filename
    * @return the data
    */
-  public static Movie getData(String nfoFilename) {
+  public static Movie getData(File nfoFilename) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
@@ -501,8 +504,6 @@ public class MovieToXbmcNfoConnector {
         movie.addToTags(tag);
       }
 
-      // set only the name w/o path
-      movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
     }
     catch (UnmarshalException e) {
       LOGGER.error("getData " + e.getMessage());

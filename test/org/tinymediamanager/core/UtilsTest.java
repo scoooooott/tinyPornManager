@@ -1,5 +1,7 @@
 package org.tinymediamanager.core;
 
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,6 +33,12 @@ public class UtilsTest {
     Assert.assertEquals("German", Utils.getDisplayLanguage("AUT"));
     Assert.assertEquals("German", Utils.getDisplayLanguage("GER"));
     Assert.assertEquals("German", Utils.getDisplayLanguage("ger"));
+  }
+
+  @Test
+  public void locale() {
+    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+    System.out.println(langArray);
   }
 
   @Test

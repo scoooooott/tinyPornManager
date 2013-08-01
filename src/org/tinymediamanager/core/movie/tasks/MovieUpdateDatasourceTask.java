@@ -204,11 +204,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             Movie nfo = null;
             switch (Globals.settings.getMovieSettings().getMovieConnector()) {
               case XBMC:
-                nfo = MovieToXbmcNfoConnector.getData(mf.getPath() + File.separator + mf.getFilename());
+                nfo = MovieToXbmcNfoConnector.getData(mf.getFile());
                 break;
 
               case MP:
-                nfo = MovieToMpNfoConnector.getData(mf.getPath() + File.separator + mf.getFilename());
+                nfo = MovieToMpNfoConnector.getData(mf.getFile());
                 break;
             }
             if (nfo != null) {

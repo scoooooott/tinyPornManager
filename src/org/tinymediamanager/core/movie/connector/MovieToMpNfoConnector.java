@@ -45,6 +45,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -108,7 +109,7 @@ public class MovieToMpNfoConnector {
       return JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
     }
     catch (JAXBException e) {
-      LOGGER.error(e.getMessage());
+      LOGGER.error("Error instantiating JaxB", e);
     }
     return null;
   }
@@ -131,10 +132,10 @@ public class MovieToMpNfoConnector {
    *          the movie
    * @return the string
    */
-  public static String setData(Movie movie) {
+  public static void setData(Movie movie) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", "Context is null" }));
-      return "";
+      return;
     }
 
     MovieToMpNfoConnector mp = new MovieToMpNfoConnector();
@@ -224,7 +225,10 @@ public class MovieToMpNfoConnector {
         if (SystemUtils.IS_OS_WINDOWS) {
           sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
         }
-        FileUtils.write(new File(movie.getPath(), nfoFilename), sb, "UTF-8");
+        File f = new File(movie.getPath(), nfoFilename);
+        FileUtils.write(f, sb, "UTF-8");
+        MediaFile mf = new MediaFile(f);
+        movie.addToMediaFiles(mf);
       }
       catch (Exception e) {
         LOGGER.error("setData", e);
@@ -232,10 +236,6 @@ public class MovieToMpNfoConnector {
             .pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { e.getLocalizedMessage() }));
       }
     }
-
-    // return only the name w/o path
-    return FilenameUtils.getName(nfoFilename);
-
   }
 
   /**
@@ -245,7 +245,7 @@ public class MovieToMpNfoConnector {
    *          the nfo filename
    * @return the data
    */
-  public static Movie getData(String nfoFilename) {
+  public static Movie getData(File nfoFilename) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
@@ -317,9 +317,6 @@ public class MovieToMpNfoConnector {
           }
         }
       }
-
-      // set only the name w/o path
-      movie.setNfoFilename(FilenameUtils.getName(nfoFilename));
 
     }
     catch (UnmarshalException e) {

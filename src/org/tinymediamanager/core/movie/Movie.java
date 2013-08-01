@@ -82,7 +82,6 @@ public class Movie extends MediaEntity {
   private String              tagline           = "";
   private int                 votes             = 0;
   private int                 runtime           = 0;
-  private String              nfoFilename       = "";
   private String              director          = "";
   private String              writer            = "";
   private String              dataSource        = "";
@@ -198,23 +197,11 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Gets the nfo filename.
-   * 
-   * @return the nfo filename
-   */
-  public String getNfoFilename() {
-    return nfoFilename;
-  }
-
-  /**
    * Gets the checks for nfo file.
    * 
    * @return the checks for nfo file
    */
   public Boolean getHasNfoFile() {
-    if (!StringUtils.isEmpty(nfoFilename)) {
-      return true;
-    }
     List<MediaFile> mf = getMediaFiles(MediaFileType.NFO);
     if (mf != null && mf.size() > 0) {
       return true;
@@ -248,30 +235,15 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Sets the nfo filename.
+   * Sets the nfo as MediaFile(0).
    * 
    * @param newValue
    *          the new nfo filename
    */
-  public void setNfoFilename(String newValue) {
-    String oldValue = this.nfoFilename;
-    this.nfoFilename = newValue;
-    setNFO(new File(path, nfoFilename));
-    firePropertyChange(NFO_FILENAME, oldValue, newValue);
+  public void setNFO(File file) {
+    MediaFile mf = new MediaFile(file, MediaFileType.NFO);
+    addToMediaFiles(mf);
     firePropertyChange(HAS_NFO_FILE, false, true);
-  }
-
-  private void setNFO(File file) {
-    List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
-    MediaFile mediaFile = null;
-    if (nfos.size() > 0) {
-      mediaFile = nfos.get(0);
-      mediaFile.setFile(file);
-    }
-    else {
-      mediaFile = new MediaFile(file, MediaFileType.NFO);
-      addToMediaFiles(mediaFile);
-    }
   }
 
   /**
@@ -1504,10 +1476,10 @@ public class Movie extends MediaEntity {
    */
   public void writeNFO() {
     if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP) {
-      setNfoFilename(MovieToMpNfoConnector.setData(this));
+      MovieToMpNfoConnector.setData(this);
     }
     else {
-      setNfoFilename(MovieToXbmcNfoConnector.setData(this));
+      MovieToXbmcNfoConnector.setData(this);
     }
   }
 

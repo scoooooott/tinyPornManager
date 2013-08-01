@@ -623,15 +623,17 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   /**
-   * Adds a single MediaFile to this mediaentity.
+   * Adds a single MediaFile to this mediaentity (if not already there)
    * 
    * @param mediaFile
    *          the mediafile
    */
   public void addToMediaFiles(MediaFile mediaFile) {
     synchronized (mediaFilesObservable) {
-      mediaFilesObservable.add(mediaFile);
-      Collections.sort(mediaFilesObservable);
+      if (!mediaFilesObservable.contains(mediaFile)) {
+        mediaFilesObservable.add(mediaFile);
+        Collections.sort(mediaFilesObservable);
+      }
     }
 
     firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);

@@ -18,4 +18,10 @@ public class ParserUtilsTest {
     }
   }
 
+  @Test
+  public void testRenamedImdb() {
+    File f = new File("/media/Daten/Test_Filme/this is my [tt0123456] movie (2009)");
+    System.out.println(ParserUtils.detectCleanMoviename(f.getName()));
+  }
+
 }
