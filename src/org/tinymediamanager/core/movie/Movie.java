@@ -132,6 +132,24 @@ public class Movie extends MediaEntity {
   }
 
   /**
+   * checks if this movie has been scraped.<br>
+   * On a fresh DB, just reading local files, everything is again "unscraped". <br>
+   * detect minimum of filled values as "scraped"
+   * 
+   * @return isScraped
+   */
+  @Override
+  public boolean isScraped() {
+    if (!scraped) {
+      if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
+          && !(actors == null || actors.size() == 0)) {
+        setScraped(true);
+      }
+    }
+    return scraped;
+  }
+
+  /**
    * Gets the sort title.
    * 
    * @return the sort title
@@ -197,6 +215,11 @@ public class Movie extends MediaEntity {
     if (!StringUtils.isEmpty(nfoFilename)) {
       return true;
     }
+    List<MediaFile> mf = getMediaFiles(MediaFileType.NFO);
+    if (mf != null && mf.size() > 0) {
+      return true;
+    }
+
     return false;
   }
 
