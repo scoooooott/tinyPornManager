@@ -10,9 +10,9 @@ public class TrailerDownloadTest {
 
   @Test
   public void downloadTrailer() {
-    MediaFile mf = new MediaFile(new File("/path/to", "movie.nfo"));
+    MediaFile mf = new MediaFile(new File("/path/to", "movie.nfo"), MediaFileType.NFO);
     Movie m = new Movie();
-    m.setNFO(mf.getFile());
+    m.addToMediaFiles(mf);
 
     MediaTrailer t = new MediaTrailer();
     t.setUrl("http://de.clip-1.filmtrailer.com/9507_31566_a_1.wmv?log_var=72|491100001-1|-");

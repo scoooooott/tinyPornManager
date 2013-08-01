@@ -235,18 +235,6 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Sets the nfo as MediaFile(0).
-   * 
-   * @param newValue
-   *          the new nfo filename
-   */
-  public void setNFO(File file) {
-    MediaFile mf = new MediaFile(file, MediaFileType.NFO);
-    addToMediaFiles(mf);
-    firePropertyChange(HAS_NFO_FILE, false, true);
-  }
-
-  /**
    * Gets the title for ui.
    * 
    * @return the title for ui
@@ -1481,6 +1469,7 @@ public class Movie extends MediaEntity {
     else {
       MovieToXbmcNfoConnector.setData(this);
     }
+    firePropertyChange(HAS_NFO_FILE, false, true);
   }
 
   /**

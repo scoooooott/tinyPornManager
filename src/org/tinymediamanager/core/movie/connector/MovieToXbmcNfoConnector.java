@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -171,10 +170,10 @@ public class MovieToXbmcNfoConnector {
    *          the movie
    * @return the string
    */
-  public static String setData(Movie movie) {
+  public static void setData(Movie movie) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":", "Context is null" }));
-      return "";
+      return;
     }
 
     MovieToXbmcNfoConnector xbmc = null;
@@ -363,10 +362,6 @@ public class MovieToXbmcNfoConnector {
             e.getLocalizedMessage() }));
       }
     }
-
-    // return only the name w/o path
-    return FilenameUtils.getName(nfoFilename);
-
   }
 
   /**
