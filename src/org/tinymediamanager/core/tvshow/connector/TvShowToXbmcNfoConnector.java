@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -59,44 +60,23 @@ import org.tinymediamanager.scraper.MediaGenres;
 @XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "status", "studio", "thumb", "actors" })
 public class TvShowToXbmcNfoConnector {
 
-  /** The Constant logger. */
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
+  private static JAXBContext  context   = initContext();
 
-  /** The id. */
   private String              id        = "";
-
-  /** The title. */
   private String              title     = "";
-
-  /** The rating. */
   private float               rating    = 0;
-
-  /** The votes. */
   private int                 votes     = 0;
-
-  /** The year. */
   private String              year      = "";
-
-  /** The plot. */
   private String              plot      = "";
-
-  /** The mpaa. */
   private String              mpaa      = "";
-
-  /** The premiered. */
   private String              premiered = "";
-
-  /** The studio. */
   private String              studio    = "";
-
-  /** The status. */
   private String              status    = "";
 
-  /** The actors. */
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
 
-  /** The genres. */
   @XmlElement(name = "genre")
   private List<String>        genres;
 
@@ -104,8 +84,6 @@ public class TvShowToXbmcNfoConnector {
 
   @XmlElement
   List<Thumb>                 thumb;
-
-  private static JAXBContext  context   = initContext();
 
   private static JAXBContext initContext() {
     try {
@@ -227,13 +205,7 @@ public class TvShowToXbmcNfoConnector {
     // try to parse XML
     TvShow tvShow = null;
     try {
-      Unmarshaller um = context.createUnmarshaller();
-      if (um == null) {
-        return null;
-      }
-
-      Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
-      TvShowToXbmcNfoConnector xbmc = (TvShowToXbmcNfoConnector) um.unmarshal(in);
+      TvShowToXbmcNfoConnector xbmc = parseNFO(new File(nfoFilename));
       tvShow = new TvShow();
       if (StringUtils.isNotBlank(xbmc.getId())) {
         tvShow.setId("tvdb", xbmc.getId());
@@ -282,6 +254,27 @@ public class TvShowToXbmcNfoConnector {
       return null;
     }
     return tvShow;
+  }
+
+  private static TvShowToXbmcNfoConnector parseNFO(File nfoFile) throws Exception {
+    Unmarshaller um = context.createUnmarshaller();
+    if (um == null) {
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
+      throw new Exception("could not create unmarshaller");
+    }
+
+    try {
+      Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
+      return (TvShowToXbmcNfoConnector) um.unmarshal(in);
+    }
+    catch (UnmarshalException e) {
+      LOGGER.error("tried to unmarshal; now trying to clean xml stream");
+    }
+
+    // now trying to parse it via string
+    String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
+    Reader in = new StringReader(completeNFO);
+    return (TvShowToXbmcNfoConnector) um.unmarshal(in);
   }
 
   /**

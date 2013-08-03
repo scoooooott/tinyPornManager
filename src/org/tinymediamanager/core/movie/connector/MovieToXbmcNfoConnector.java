@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
@@ -183,9 +184,7 @@ public class MovieToXbmcNfoConnector {
       File file = new File(movie.getPath(), movie.getNfoFilename(name));
       if (file.exists()) {
         try {
-          Unmarshaller um = context.createUnmarshaller();
-          Reader in = new InputStreamReader(new FileInputStream(file), "UTF-8");
-          xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+          xbmc = parseNFO(file);
         }
         catch (Exception e) {
           LOGGER.error("failed to parse " + movie.getNfoFilename(name), e);
@@ -367,27 +366,20 @@ public class MovieToXbmcNfoConnector {
   /**
    * Gets the data.
    * 
-   * @param nfoFilename
+   * @param nfoFile
    *          the nfo filename
    * @return the data
    */
-  public static Movie getData(File nfoFilename) {
+  public static Movie getData(File nfoFile) {
     if (context == null) {
-      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
       return null;
     }
 
     // try to parse XML
     Movie movie = null;
     try {
-      Unmarshaller um = context.createUnmarshaller();
-      if (um == null) {
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
-        return null;
-      }
-
-      Reader in = new InputStreamReader(new FileInputStream(nfoFilename), "UTF-8");
-      MovieToXbmcNfoConnector xbmc = (MovieToXbmcNfoConnector) um.unmarshal(in);
+      MovieToXbmcNfoConnector xbmc = parseNFO(nfoFile);
       movie = new Movie();
       movie.setTitle(xbmc.getTitle());
       movie.setOriginalTitle(xbmc.getOriginaltitle());
@@ -517,6 +509,27 @@ public class MovieToXbmcNfoConnector {
     }
 
     return movie;
+  }
+
+  private static MovieToXbmcNfoConnector parseNFO(File nfoFile) throws Exception {
+    Unmarshaller um = context.createUnmarshaller();
+    if (um == null) {
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFile, "message.nfo.readerror"));
+      throw new Exception("could not create unmarshaller");
+    }
+
+    try {
+      Reader in = new InputStreamReader(new FileInputStream(nfoFile), "UTF-8");
+      return (MovieToXbmcNfoConnector) um.unmarshal(in);
+    }
+    catch (UnmarshalException e) {
+      LOGGER.error("tried to unmarshal; now trying to clean xml stream");
+    }
+
+    // now trying to parse it via string
+    String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
+    Reader in = new StringReader(completeNFO);
+    return (MovieToXbmcNfoConnector) um.unmarshal(in);
   }
 
   /**
