@@ -697,7 +697,13 @@ public class TvShow extends MediaEntity {
       }
     }
 
-    String filename = String.format(path + File.separator + "season%02d-poster." + FilenameUtils.getExtension(seasonPosterUrl), season);
+    String filename = "";
+    if (season > 0) {
+      filename = String.format(path + File.separator + "season%02d-poster." + FilenameUtils.getExtension(seasonPosterUrl), season);
+    }
+    else {
+      filename = path + File.separator + "season-specials-poster." + FilenameUtils.getExtension(seasonPosterUrl);
+    }
     SeasonPosterImageFetcher task = new SeasonPosterImageFetcher(filename, tvShowSeason, seasonPosterUrl);
     Globals.executor.execute(task);
   }
