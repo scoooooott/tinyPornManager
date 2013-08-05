@@ -17,7 +17,9 @@ package org.tinymediamanager.scraper.imdb;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
@@ -303,6 +305,33 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       if (h5.size() > 0) {
         Element firstH5 = h5.first();
         String h5Title = firstH5.text();
+
+        // release date
+        /*
+         * <div class="info"><h5>Release Date:</h5><div class="info-content">5 January 1996 (USA)<a class="tn15more inline"
+         * href="/title/tt0114746/releaseinfo"
+         * onclick="(new Image()).src='/rg/title-tease/releasedates/images/b.gif?link=/title/tt0114746/releaseinfo';"> See more</a>&nbsp;</div></div>
+         */
+        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getReleaseDate() + ".*")) {
+          Elements div = element.getElementsByClass("info-content");
+          if (div.size() > 0) {
+            Element releaseDateElement = div.first();
+            String releaseDate = cleanString(releaseDateElement.ownText().replaceAll("»", ""));
+            Pattern pattern = Pattern.compile("(.*)\\(.*\\)");
+            Matcher matcher = pattern.matcher(releaseDate);
+            if (matcher.find()) {
+              try {
+                SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy");
+                Date parsedDate = sdf.parse(matcher.group(1));
+                sdf = new SimpleDateFormat("dd-MM-yyyy");
+                md.setReleaseDate(sdf.format(parsedDate));
+              }
+              catch (Exception e) {
+                md.setReleaseDate("");
+              }
+            }
+          }
+        }
 
         /*
          * <div class="info"><h5>Tagline:</h5><div class="info-content"> (7) To Defend Us... <a class="tn15more inline"

@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "fanart", "mpaa", "id", "genres", "studio", "country", "credits", "director", "actors" })
+    "fanart", "mpaa", "id", "genres", "studio", "country", "premiered", "credits", "director", "actors" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
@@ -91,6 +92,9 @@ public class MovieToMpNfoConnector {
   private String              mpaa          = "";
   private String              credits       = "";
   private String              country       = "";
+
+  @XmlElement
+  private String              premiered     = "";
 
   @XmlElementWrapper(name = "fanart")
   @XmlElement(name = "thumb")
@@ -153,6 +157,7 @@ public class MovieToMpNfoConnector {
     mp.setRating(movie.getRating());
     mp.setVotes(movie.getVotes());
     mp.setYear(movie.getYear());
+    mp.premiered = movie.getReleaseDateFormatted();
     mp.setPlot(movie.getPlot());
 
     // outline is only the first 200 characters of the plot
@@ -263,6 +268,11 @@ public class MovieToMpNfoConnector {
       movie.setRating(mp.getRating());
       movie.setVotes(mp.getVotes());
       movie.setYear(mp.getYear());
+      try {
+        movie.setReleaseDate(mp.premiered);
+      }
+      catch (ParseException e) {
+      }
       movie.setPlot(mp.getPlot());
       movie.setTagline(mp.getTagline());
       try {

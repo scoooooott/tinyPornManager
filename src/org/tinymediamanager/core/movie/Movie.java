@@ -22,8 +22,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
@@ -91,6 +96,7 @@ public class Movie extends MediaEntity {
   private String              spokenLanguages   = "";
   private boolean             subtitles         = false;
   private String              country           = "";
+  private Date                releaseDate       = null;
 
   private List<String>        genres            = new ArrayList<String>();
   private List<String>        tags              = new ArrayList<String>();
@@ -849,6 +855,12 @@ public class Movie extends MediaEntity {
 
     if (config.isYear()) {
       setYear(metadata.getYear());
+      try {
+        setReleaseDate(metadata.getReleaseDate());
+      }
+      catch (ParseException e) {
+        LOGGER.warn(e.getMessage());
+      }
     }
 
     if (config.isRating()) {
@@ -1864,6 +1876,45 @@ public class Movie extends MediaEntity {
     }
 
     return mediaFilesWithSubtitles;
+  }
+
+  public Date getReleaseDate() {
+    return releaseDate;
+  }
+
+  public void setReleaseDate(Date newValue) {
+    Date oldValue = this.releaseDate;
+    this.releaseDate = newValue;
+    firePropertyChange(RELEASE_DATE, oldValue, newValue);
+    firePropertyChange(RELEASE_DATE_AS_STRING, oldValue, newValue);
+  }
+
+  /**
+   * release date as yyyy-mm-dd<br>
+   * https://xkcd.com/1179/ :P
+   */
+  public String getReleaseDateFormatted() {
+    if (this.releaseDate == null) {
+      return "";
+    }
+    return new SimpleDateFormat("yyyy-MM-dd").format(this.releaseDate);
+  }
+
+  /**
+   * Gets the first aired as a string, formatted in the system locale.
+   */
+  public String getReleaseDateAsString() {
+    if (this.releaseDate == null) {
+      return "";
+    }
+    return SimpleDateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(releaseDate);
+  }
+
+  /**
+   * convenient method to set the release date (parsed from string).
+   */
+  public void setReleaseDate(String dateAsString) throws ParseException {
+    setReleaseDate(org.tinymediamanager.scraper.util.StrgUtils.parseDate(dateAsString));
   }
 
   @Override

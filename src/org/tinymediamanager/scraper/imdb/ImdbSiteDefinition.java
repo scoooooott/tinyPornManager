@@ -28,10 +28,10 @@ import org.apache.commons.lang3.StringUtils;
 public enum ImdbSiteDefinition {
   // akas.imdb.com - international site
   /** The imdb com. */
-  IMDB_COM("http://akas.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification"),
+  IMDB_COM("http://akas.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification", "Release Date"),
   // www.imdb.de - german site
   /** The imdb de. */
-  IMDB_DE("http://www.imdb.de/", "iso-8859-1", "", "", "", "", "", "");
+  IMDB_DE("http://www.imdb.de/", "iso-8859-1", "", "", "", "", "", "", "");
 
   /**
    * Instantiates a new imdb site definition.
@@ -54,7 +54,7 @@ public enum ImdbSiteDefinition {
    *          the certification
    */
   private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies,
-      String writers, String certification) {
+      String writers, String certification, String releaseDate) {
     this.site = site;
     if (StringUtils.isBlank(charsetName)) {
       this.charset = Charset.defaultCharset();
@@ -68,102 +68,53 @@ public enum ImdbSiteDefinition {
     this.productionCompanies = productionCompanies;
     this.writer = writers;
     this.certification = certification;
+    this.releaseDate = releaseDate;
   }
 
-  /** The site. */
   private String  site;
-
-  /** The charset. */
   private Charset charset;
-
-  /** The tagline. */
   private String  tagline;
-
-  /** The genre. */
   private String  genre;
-
-  /** The runtime. */
   private String  runtime;
-
-  /** The production companies. */
   private String  productionCompanies;
-
-  /** The writer. */
   private String  writer;
-
-  /** The certification. */
   private String  certification;
+  private String  releaseDate;
 
-  /**
-   * Gets the site.
-   * 
-   * @return the site
-   */
   public String getSite() {
     return site;
   }
 
-  /**
-   * Gets the charset.
-   * 
-   * @return the charset
-   */
   public Charset getCharset() {
     return charset;
   }
 
-  /**
-   * Gets the tagline.
-   * 
-   * @return the tagline
-   */
   public String getTagline() {
     return tagline;
   }
 
-  /**
-   * Gets the genre.
-   * 
-   * @return the genre
-   */
   public String getGenre() {
     return genre;
   }
 
-  /**
-   * Gets the runtime.
-   * 
-   * @return the runtime
-   */
   public String getRuntime() {
     return runtime;
   }
 
-  /**
-   * Gets the production companies.
-   * 
-   * @return the production companies
-   */
   public String getProductionCompanies() {
     return productionCompanies;
   }
 
-  /**
-   * Gets the writer.
-   * 
-   * @return the writer
-   */
   public String getWriter() {
     return writer;
   }
 
-  /**
-   * Gets the certification.
-   * 
-   * @return the certification
-   */
   public String getCertification() {
     return certification;
+  }
+
+  public String getReleaseDate() {
+    return releaseDate;
   }
 
   /*

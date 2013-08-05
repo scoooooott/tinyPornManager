@@ -137,6 +137,8 @@ public class MovieDetailsPanel extends JPanel {
   private JButton                     btnPlay;
   private JLabel                      lblCountryT;
   private JLabel                      lblCountry;
+  private JLabel                      lblReleaseDateT;
+  private JLabel                      lblReleaseDate;
 
   /**
    * Instantiates a new movie details panel.
@@ -197,6 +199,12 @@ public class MovieDetailsPanel extends JPanel {
 
     lblMinutes = new JLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$
     add(lblMinutes, "6, 6");
+
+    lblReleaseDateT = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
+    add(lblReleaseDateT, "8, 6");
+
+    lblReleaseDate = new JLabel("");
+    add(lblReleaseDate, "10, 6");
 
     lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
     add(lblCertificationT, "2, 8");
@@ -369,5 +377,10 @@ public class MovieDetailsPanel extends JPanel {
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_3, lblCountry, jLabelBeanProperty);
     autoBinding_3.bind();
+    //
+    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_10 = BeanProperty.create("selectedMovie.releaseDateAsString");
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_10, lblReleaseDate, jLabelBeanProperty);
+    autoBinding_6.bind();
   }
 }

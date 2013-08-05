@@ -647,7 +647,9 @@ public class MovieSet extends MediaEntity {
       }
 
       // sort with release date if available
-      // TODO
+      if (o1.getReleaseDate() != null && o2.getReleaseDate() != null) {
+        return o1.getReleaseDate().compareTo(o2.getReleaseDate());
+      }
 
       // sort with year if available
       if (StringUtils.isNotBlank(o1.getYear()) && StringUtils.isNotBlank(o2.getYear())) {

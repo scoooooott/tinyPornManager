@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -99,6 +100,9 @@ public class MovieToXbmcNfoConnector {
   private String              sorttitle      = "";
   private Fileinfo            fileinfo;
 
+  @XmlElement
+  private String              premiered      = "";
+
   @XmlElement(name = "director")
   private List<String>        director;
 
@@ -135,9 +139,6 @@ public class MovieToXbmcNfoConnector {
 
   @XmlElement
   String                      aired;
-
-  @XmlElement
-  String                      premiered;
 
   @XmlElement
   Resume                      resume;
@@ -180,6 +181,7 @@ public class MovieToXbmcNfoConnector {
     MovieToXbmcNfoConnector xbmc = null;
 
     // load existing NFO if possible
+    // FIXME take NFO from mediafiles
     for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
       File file = new File(movie.getPath(), movie.getNfoFilename(name));
       if (file.exists()) {
@@ -206,6 +208,7 @@ public class MovieToXbmcNfoConnector {
     xbmc.setRating(movie.getRating());
     xbmc.setVotes(movie.getVotes());
     xbmc.setYear(movie.getYear());
+    xbmc.premiered = movie.getReleaseDateFormatted();
     xbmc.setPlot(movie.getPlot());
 
     // outline is only the first 200 characters of the plot
@@ -386,6 +389,11 @@ public class MovieToXbmcNfoConnector {
       movie.setRating(xbmc.getRating());
       movie.setVotes(xbmc.getVotes());
       movie.setYear(xbmc.getYear());
+      try {
+        movie.setReleaseDate(xbmc.premiered);
+      }
+      catch (ParseException e) {
+      }
       movie.setPlot(xbmc.getPlot());
       movie.setTagline(xbmc.getTagline());
       try {

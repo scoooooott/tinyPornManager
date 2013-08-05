@@ -500,7 +500,7 @@ public class TvShow extends MediaEntity {
         setFirstAired(metadata.getFirstAired());
       }
       catch (ParseException e) {
-        LOGGER.warn(e.getMessage());
+
       }
     }
 
