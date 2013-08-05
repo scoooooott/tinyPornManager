@@ -900,7 +900,8 @@ public class MovieEditorDialog extends JDialog {
         if (movieToEdit.getMovieSet() != movieSet) {
           movieToEdit.removeFromMovieSet();
           movieToEdit.setMovieSet(movieSet);
-          movieSet.addMovie(movieToEdit);
+          // movieSet.addMovie(movieToEdit);
+          movieSet.insertMovie(movieToEdit);
         }
 
         movieToEdit.setSortTitleFromMovieSet();

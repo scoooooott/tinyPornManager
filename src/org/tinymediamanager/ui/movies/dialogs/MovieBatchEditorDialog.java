@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package org.tinymediamanager.ui.movies.dialogs;
+
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
@@ -46,7 +47,6 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-
 
 /**
  * The Class MovieBatchEditor.
@@ -230,7 +230,8 @@ public class MovieBatchEditorDialog extends JDialog {
               if (movie.getMovieSet() != movieSet) {
                 movie.removeFromMovieSet();
                 movie.setMovieSet(movieSet);
-                movieSet.addMovie(movie);
+                // movieSet.addMovie(movie);
+                movieSet.insertMovie(movie);
               }
 
               movie.setSortTitleFromMovieSet();

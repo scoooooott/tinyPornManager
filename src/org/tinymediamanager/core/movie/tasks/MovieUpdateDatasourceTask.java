@@ -246,7 +246,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
         if (movie.getMovieSet() != null) {
           LOGGER.debug("movie is part of a movieset");
-          movie.getMovieSet().addMovie(movie);
+          // movie.getMovieSet().addMovie(movie);
+          movie.getMovieSet().insertMovie(movie);
           movieList.sortMoviesInMovieSet(movie.getMovieSet());
           movie.getMovieSet().saveToDb();
           movie.saveToDb();
