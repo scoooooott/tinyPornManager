@@ -1878,6 +1878,14 @@ public class Movie extends MediaEntity {
     return mediaFilesWithSubtitles;
   }
 
+  public int getRuntimeFromMediaFiles() {
+    int runtime = 0;
+    for (MediaFile mf : getMediaFiles(MediaFileType.VIDEO)) {
+      runtime += mf.getDuration();
+    }
+    return runtime;
+  }
+
   public Date getReleaseDate() {
     return releaseDate;
   }

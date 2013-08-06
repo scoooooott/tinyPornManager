@@ -72,32 +72,76 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlSeeAlso(Actor.class)
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
     "runtime", "thumb", "mpaa", "certifications", "id", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired", "fileinfo",
-    "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "resume", "lastplayed", "dateadded" })
+    "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "resume", "lastplayed", "dateadded", "keywords", "poster",
+    "url" })
 public class MovieToXbmcNfoConnector {
   private static final Logger LOGGER         = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
   private static JAXBContext  context        = initContext();
 
+  @XmlElement
   private String              title          = "";
+
+  @XmlElement
   private String              originaltitle  = "";
-  private float               rating         = 0;
-  private int                 votes          = 0;
+
+  @XmlElement
   private String              year           = "";
+
+  @XmlElement
   private String              outline        = "";
+
+  @XmlElement
   private String              plot           = "";
+
+  @XmlElement
   private String              tagline        = "";
+
+  @XmlElement
   private String              runtime        = "";
+
+  @XmlElement
   private String              thumb          = "";
+
+  @XmlElement
   private String              id             = "";
-  private int                 tmdbId         = 0;
+
+  @XmlElement
   private String              studio         = "";
+
+  @XmlElement
   private String              country        = "";
+
+  @XmlElement
   private String              mpaa           = "";
+
+  @XmlElement(name = "certification")
   private String              certifications = "";
-  private boolean             watched        = false;
-  private int                 playcount      = 0;
+
+  @XmlElement
   private String              trailer        = "";
+
+  @XmlElement
   private String              set            = "";
+
+  @XmlElement
   private String              sorttitle      = "";
+
+  @XmlElement
+  private boolean             watched        = false;
+
+  @XmlElement
+  private float               rating         = 0;
+
+  @XmlElement
+  private int                 votes          = 0;
+
+  @XmlElement
+  private int                 playcount      = 0;
+
+  @XmlElement
+  private int                 tmdbId         = 0;
+
+  @XmlElement
   private Fileinfo            fileinfo;
 
   @XmlElement
@@ -118,34 +162,46 @@ public class MovieToXbmcNfoConnector {
   @XmlElement(name = "tag")
   private List<String>        tags;
 
-  // /** The filenameandpath. */
-  // private String filenameandpath;
-
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
-  String                      epbookmark;
+  private String              epbookmark;
 
   @XmlElement
-  String                      top250;
+  private String              top250;
 
   @XmlElement
-  String                      lastplayed;
+  private String              lastplayed;
 
   @XmlElement
-  String                      status;
+  private String              status;
 
   @XmlElement
-  String                      code;
+  private String              code;
 
   @XmlElement
-  String                      aired;
+  private String              aired;
 
   @XmlElement
-  Resume                      resume;
+  private Object              resume;
 
   @XmlElement
-  String                      dateadded;
+  private String              dateadded;
 
+  @XmlElement
+  private Object              keywords;
+
+  @XmlElement
+  private Object              poster;
+
+  @XmlElement
+  private Object              url;
+
+  // @XmlElement(name = "rotten-tomatoes")
+  // private Object rottentomatoes;
+
+  /*
+   * inits the context for faster marshalling/unmarshalling
+   */
   private static JAXBContext initContext() {
     try {
       return JAXBContext.newInstance(MovieToXbmcNfoConnector.class, Actor.class);
@@ -181,15 +237,14 @@ public class MovieToXbmcNfoConnector {
     MovieToXbmcNfoConnector xbmc = null;
 
     // load existing NFO if possible
-    // FIXME take NFO from mediafiles
-    for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
-      File file = new File(movie.getPath(), movie.getNfoFilename(name));
+    for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
+      File file = mf.getFile();
       if (file.exists()) {
         try {
           xbmc = parseNFO(file);
         }
         catch (Exception e) {
-          LOGGER.error("failed to parse " + movie.getNfoFilename(name), e);
+          LOGGER.error("failed to parse " + mf.getFilename(), e);
         }
       }
       if (xbmc != null) {
@@ -203,54 +258,54 @@ public class MovieToXbmcNfoConnector {
     }
 
     // set data
-    xbmc.setTitle(movie.getTitle());
-    xbmc.setOriginaltitle(movie.getOriginalTitle());
-    xbmc.setRating(movie.getRating());
-    xbmc.setVotes(movie.getVotes());
-    xbmc.setYear(movie.getYear());
+    xbmc.title = movie.getTitle();
+    xbmc.originaltitle = movie.getOriginalTitle();
+    xbmc.rating = movie.getRating();
+    xbmc.votes = movie.getVotes();
+    xbmc.year = movie.getYear();
     xbmc.premiered = movie.getReleaseDateFormatted();
-    xbmc.setPlot(movie.getPlot());
+    xbmc.plot = movie.getPlot();
 
     // outline is only the first 200 characters of the plot
     int spaceIndex = 0;
-    if (!StringUtils.isEmpty(xbmc.getPlot()) && xbmc.getPlot().length() > 200) {
-      spaceIndex = xbmc.getPlot().indexOf(" ", 200);
+    if (!StringUtils.isEmpty(xbmc.plot) && xbmc.plot.length() > 200) {
+      spaceIndex = xbmc.plot.indexOf(" ", 200);
       if (spaceIndex > 0) {
-        xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
+        xbmc.outline = xbmc.plot.substring(0, spaceIndex);
       }
       else {
-        xbmc.setOutline(xbmc.getPlot());
+        xbmc.outline = xbmc.plot;
       }
     }
-    else if (!StringUtils.isEmpty(xbmc.getPlot())) {
-      spaceIndex = xbmc.getPlot().length();
-      xbmc.setOutline(xbmc.getPlot().substring(0, spaceIndex));
+    else if (!StringUtils.isEmpty(xbmc.plot)) {
+      spaceIndex = xbmc.plot.length();
+      xbmc.outline = xbmc.plot.substring(0, spaceIndex);
     }
 
-    xbmc.setTagline(movie.getTagline());
-    xbmc.setRuntime(String.valueOf(movie.getRuntime()));
+    xbmc.tagline = movie.getTagline();
+    xbmc.runtime = String.valueOf(movie.getRuntime());
     // xbmc.setThumb(movie.getPoster());
-    xbmc.setId(movie.getImdbId());
-    xbmc.setTmdbId(movie.getTmdbId());
+    xbmc.id = movie.getImdbId();
+    xbmc.tmdbId = movie.getTmdbId();
 
     // only write first studio
     if (StringUtils.isNotEmpty(movie.getProductionCompany())) {
       String[] studio = movie.getProductionCompany().split(", ");
       if (studio.length > 0) {
-        xbmc.setStudio(studio[0]);
+        xbmc.studio = studio[0];
       }
     }
 
-    xbmc.setCountry(movie.getCountry());
-    xbmc.setWatched(movie.isWatched());
-    if (xbmc.isWatched()) {
-      xbmc.setPlaycount(1);
+    xbmc.country = movie.getCountry();
+    xbmc.watched = movie.isWatched();
+    if (xbmc.watched) {
+      xbmc.playcount = 1;
     }
 
     // certifications
     if (movie.getCertification() != null) {
-      xbmc.setMpaa(Certification.generateCertificationStringWithAlternateNames(movie.getCertification()));
-      xbmc.setCertifications(Certification.generateCertificationStringWithAlternateNames(movie.getCertification()));
+      xbmc.mpaa = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
+      xbmc.certifications = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
     }
 
     // // filename and path
@@ -264,7 +319,7 @@ public class MovieToXbmcNfoConnector {
     if (StringUtils.isNotEmpty(movie.getDirector())) {
       String directors[] = movie.getDirector().split(", ");
       for (String director : directors) {
-        xbmc.addDirector(director);
+        xbmc.director.add(director);
       }
     }
 
@@ -273,7 +328,7 @@ public class MovieToXbmcNfoConnector {
     if (StringUtils.isNotEmpty(movie.getWriter())) {
       String writers[] = movie.getWriter().split(", ");
       for (String writer : writers) {
-        xbmc.addCredits(writer);
+        xbmc.credits.add(writer);
       }
     }
 
@@ -284,31 +339,29 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.genres.clear();
     for (MediaGenres genre : movie.getGenres()) {
-      xbmc.addGenre(genre.toString());
+      xbmc.genres.add(genre.toString());
     }
 
     for (MediaTrailer trailer : movie.getTrailers()) {
       if (trailer.getInNfo()) {
         // parse trailer url for nfo
-        xbmc.setTrailer(prepareTrailerForXbmc(trailer));
+        xbmc.trailer = prepareTrailerForXbmc(trailer);
         break;
       }
     }
 
     xbmc.tags.clear();
     for (String tag : movie.getTags()) {
-      xbmc.addTag(tag);
+      xbmc.tags.add(tag);
     }
 
     // movie set
     if (movie.getMovieSet() != null) {
       MovieSet movieSet = movie.getMovieSet();
-      xbmc.setSet(movieSet.getTitle());
-      // xbmc.setSorttitle(movieSet.getName() + (movieSet.getMovieIndex(movie) +
-      // 1));
+      xbmc.set = movieSet.getTitle();
     }
 
-    xbmc.setSorttitle(movie.getSortTitle());
+    xbmc.sorttitle = movie.getSortTitle();
 
     // fileinfo
     for (MediaFile mediaFile : movie.getMediaFiles(MediaFileType.VIDEO)) {
@@ -316,20 +369,20 @@ public class MovieToXbmcNfoConnector {
         break;
       }
 
-      if (xbmc.getFileinfo() == null) {
+      if (xbmc.fileinfo == null) {
         Fileinfo info = new Fileinfo();
         info.streamdetails.video.codec = mediaFile.getVideoCodec();
         info.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
         info.streamdetails.video.width = mediaFile.getVideoWidth();
         info.streamdetails.video.height = mediaFile.getVideoHeight();
-        info.streamdetails.video.durationinseconds = mediaFile.getDuration();
+        info.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
 
         Audio audio = new Audio();
         audio.codec = mediaFile.getAudioCodec();
         audio.language = "";
         audio.channels = mediaFile.getAudioChannels();
         info.streamdetails.audio.add(audio);
-        xbmc.setFileinfo(info);
+        xbmc.fileinfo = info;
       }
     }
 
@@ -384,41 +437,38 @@ public class MovieToXbmcNfoConnector {
     try {
       MovieToXbmcNfoConnector xbmc = parseNFO(nfoFile);
       movie = new Movie();
-      movie.setTitle(xbmc.getTitle());
-      movie.setOriginalTitle(xbmc.getOriginaltitle());
-      movie.setRating(xbmc.getRating());
-      movie.setVotes(xbmc.getVotes());
-      movie.setYear(xbmc.getYear());
+      movie.setTitle(xbmc.title);
+      movie.setOriginalTitle(xbmc.originaltitle);
+      movie.setRating(xbmc.rating);
+      movie.setVotes(xbmc.votes);
+      movie.setYear(xbmc.year);
       try {
         movie.setReleaseDate(xbmc.premiered);
       }
       catch (ParseException e) {
       }
-      movie.setPlot(xbmc.getPlot());
-      movie.setTagline(xbmc.getTagline());
+      movie.setPlot(xbmc.plot);
+      movie.setTagline(xbmc.tagline);
       try {
-        String rt = xbmc.getRuntime().replaceAll("[^0-9]", "");
+        String rt = xbmc.runtime.replaceAll("[^0-9]", "");
         movie.setRuntime(Integer.parseInt(rt));
       }
       catch (Exception e) {
-        LOGGER.warn("could not parse runtime: " + xbmc.getRuntime());
+        LOGGER.warn("could not parse runtime: " + xbmc.runtime);
       }
 
-      if (xbmc.getThumb() != null) {
-        if (xbmc.getThumb().contains("http://")) {
-          movie.setPosterUrl(xbmc.getThumb());
+      if (StringUtils.isNotBlank(xbmc.thumb)) {
+        if (xbmc.thumb.contains("http://")) {
+          movie.setPosterUrl(xbmc.thumb);
         }
-        // else {
-        // movie.setPoster(xbmc.getThumb());
-        // }
       }
 
-      movie.setImdbId(xbmc.getId());
-      movie.setTmdbId(xbmc.getTmdbId());
+      movie.setImdbId(xbmc.id);
+      movie.setTmdbId(xbmc.tmdbId);
 
       // convert director to internal format
       String director = "";
-      for (String dir : xbmc.getDirector()) {
+      for (String dir : xbmc.director) {
         if (!StringUtils.isEmpty(director)) {
           director += ", ";
         }
@@ -428,7 +478,7 @@ public class MovieToXbmcNfoConnector {
 
       // convert writer to internal format
       String writer = "";
-      for (String wri : xbmc.getCredits()) {
+      for (String wri : xbmc.credits) {
         if (StringUtils.isNotEmpty(writer)) {
           writer += ", ";
         }
@@ -436,21 +486,21 @@ public class MovieToXbmcNfoConnector {
       }
       movie.setWriter(writer);
 
-      movie.setProductionCompany(xbmc.getStudio());
-      movie.setCountry(xbmc.getCountry());
-      if (!StringUtils.isEmpty(xbmc.getCertifications())) {
-        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.getCertifications()));
+      movie.setProductionCompany(xbmc.studio);
+      movie.setCountry(xbmc.country);
+      if (!StringUtils.isEmpty(xbmc.certifications)) {
+        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.certifications));
       }
-      if (!StringUtils.isEmpty(xbmc.getMpaa()) && movie.getCertification() == Certification.NOT_RATED) {
-        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.getMpaa()));
+      if (!StringUtils.isEmpty(xbmc.mpaa) && movie.getCertification() == Certification.NOT_RATED) {
+        movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.mpaa));
       }
-      movie.setWatched(xbmc.isWatched());
+      movie.setWatched(xbmc.watched);
 
       // movieset
-      if (StringUtils.isNotEmpty(xbmc.getSet())) {
+      if (StringUtils.isNotEmpty(xbmc.set)) {
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
-        MovieSet movieSet = movieList.getMovieSet(xbmc.getSet());
+        MovieSet movieSet = movieList.getMovieSet(xbmc.set);
 
         // add movie to movieset
         if (movieSet != null) {
@@ -460,20 +510,20 @@ public class MovieToXbmcNfoConnector {
 
       // be aware of the sorttitle - set an empty string if nothing has been
       // found
-      if (StringUtils.isEmpty(xbmc.getSorttitle())) {
+      if (StringUtils.isEmpty(xbmc.sorttitle)) {
         movie.setSortTitle("");
       }
       else {
-        movie.setSortTitle(xbmc.getSorttitle());
+        movie.setSortTitle(xbmc.sorttitle);
       }
 
       for (Actor actor : xbmc.getActors()) {
-        MovieActor cast = new MovieActor(actor.getName(), actor.getRole());
-        cast.setThumb(actor.getThumb());
+        MovieActor cast = new MovieActor(actor.name, actor.role);
+        cast.setThumb(actor.thumb);
         movie.addActor(cast);
       }
 
-      for (String genre : xbmc.getGenres()) {
+      for (String genre : xbmc.genres) {
         String[] genres = genre.split("/");
         for (String g : genres) {
           MediaGenres genreFound = MediaGenres.getGenre(g.trim());
@@ -483,31 +533,29 @@ public class MovieToXbmcNfoConnector {
         }
       }
 
-      if (StringUtils.isNotEmpty(xbmc.getTrailer())) {
+      if (StringUtils.isNotEmpty(xbmc.trailer)) {
         MediaTrailer trailer = new MediaTrailer();
         trailer.setName("fromNFO");
         trailer.setProvider("from NFO");
         trailer.setQuality("unknown");
 
-        trailer.setUrl(parseTrailerUrl(xbmc.getTrailer()));
+        trailer.setUrl(parseTrailerUrl(xbmc.trailer));
 
         trailer.setInNfo(true);
         movie.addTrailer(trailer);
       }
 
-      for (String tag : xbmc.getTags()) {
+      for (String tag : xbmc.tags) {
         movie.addToTags(tag);
       }
 
     }
     catch (UnmarshalException e) {
       LOGGER.error("getData " + e.getMessage());
-      // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
     catch (Exception e) {
       LOGGER.error("getData", e);
-      // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
 
@@ -540,64 +588,11 @@ public class MovieToXbmcNfoConnector {
     return (MovieToXbmcNfoConnector) um.unmarshal(in);
   }
 
-  /**
-   * Adds the genre.
-   * 
-   * @param genre
-   *          the genre
-   */
-  public void addGenre(String genre) {
-    genres.add(genre);
-  }
-
-  /**
-   * Gets the genres.
-   * 
-   * @return the genres
-   */
-  public List<String> getGenres() {
-    return this.genres;
-  }
-
-  /**
-   * Adds the tag.
-   * 
-   * @param tag
-   *          the tag
-   */
-  public void addTag(String tag) {
-    tags.add(tag);
-  }
-
-  /**
-   * Gets the tags.
-   * 
-   * @return the tags
-   */
-  public List<String> getTags() {
-    return this.tags;
-  }
-
-  /**
-   * Adds the actor.
-   * 
-   * @param name
-   *          the name
-   * @param role
-   *          the role
-   * @param thumb
-   *          the thumb
-   */
-  public void addActor(String name, String role, String thumb) {
+  private void addActor(String name, String role, String thumb) {
     Actor actor = new Actor(name, role, thumb);
     actors.add(actor);
   }
 
-  /**
-   * Gets the actors.
-   * 
-   * @return the actors
-   */
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
@@ -609,493 +604,6 @@ public class MovieToXbmcNfoConnector {
       }
     }
     return pureActors;
-  }
-
-  /**
-   * Gets the title.
-   * 
-   * @return the title
-   */
-  @XmlElement(name = "title")
-  public String getTitle() {
-    return title;
-  }
-
-  /**
-   * Sets the title.
-   * 
-   * @param title
-   *          the new title
-   */
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  /**
-   * Gets the originaltitle.
-   * 
-   * @return the originaltitle
-   */
-  @XmlElement(name = "originaltitle")
-  public String getOriginaltitle() {
-    return originaltitle;
-  }
-
-  /**
-   * Sets the originaltitle.
-   * 
-   * @param originaltitle
-   *          the new originaltitle
-   */
-  public void setOriginaltitle(String originaltitle) {
-    this.originaltitle = originaltitle;
-  }
-
-  /**
-   * Gets the rating.
-   * 
-   * @return the rating
-   */
-  @XmlElement(name = "rating")
-  public float getRating() {
-    return rating;
-  }
-
-  /**
-   * Sets the rating.
-   * 
-   * @param rating
-   *          the new rating
-   */
-  public void setRating(float rating) {
-    this.rating = rating;
-  }
-
-  /**
-   * Gets the votes.
-   * 
-   * @return the votes
-   */
-  @XmlElement(name = "votes")
-  public int getVotes() {
-    return votes;
-  }
-
-  /**
-   * Sets the votes.
-   * 
-   * @param votes
-   *          the new votes
-   */
-  public void setVotes(int votes) {
-    this.votes = votes;
-  }
-
-  /**
-   * Gets the year.
-   * 
-   * @return the year
-   */
-  @XmlElement(name = "year")
-  public String getYear() {
-    return year;
-  }
-
-  /**
-   * Sets the year.
-   * 
-   * @param year
-   *          the new year
-   */
-  public void setYear(String year) {
-    this.year = year;
-  }
-
-  /**
-   * Gets the outline.
-   * 
-   * @return the outline
-   */
-  @XmlElement(name = "outline")
-  public String getOutline() {
-    return outline;
-  }
-
-  /**
-   * Sets the outline.
-   * 
-   * @param outline
-   *          the new outline
-   */
-  public void setOutline(String outline) {
-    this.outline = outline;
-  }
-
-  /**
-   * Gets the plot.
-   * 
-   * @return the plot
-   */
-  @XmlElement(name = "plot")
-  public String getPlot() {
-    return plot;
-  }
-
-  /**
-   * Sets the plot.
-   * 
-   * @param plot
-   *          the new plot
-   */
-  public void setPlot(String plot) {
-    this.plot = plot;
-  }
-
-  /**
-   * Gets the tagline.
-   * 
-   * @return the tagline
-   */
-  @XmlElement(name = "tagline")
-  public String getTagline() {
-    return tagline;
-  }
-
-  /**
-   * Sets the tagline.
-   * 
-   * @param tagline
-   *          the new tagline
-   */
-  public void setTagline(String tagline) {
-    this.tagline = tagline;
-  }
-
-  /**
-   * Gets the runtime.
-   * 
-   * @return the runtime
-   */
-  @XmlElement(name = "runtime")
-  public String getRuntime() {
-    return runtime;
-  }
-
-  /**
-   * Sets the runtime.
-   * 
-   * @param runtime
-   *          the new runtime
-   */
-  public void setRuntime(String runtime) {
-    this.runtime = runtime;
-  }
-
-  /**
-   * Gets the thumb.
-   * 
-   * @return the thumb
-   */
-  @XmlElement(name = "thumb")
-  public String getThumb() {
-    return thumb;
-  }
-
-  /**
-   * Sets the thumb.
-   * 
-   * @param thumb
-   *          the new thumb
-   */
-  public void setThumb(String thumb) {
-    this.thumb = thumb;
-  }
-
-  /**
-   * Gets the id.
-   * 
-   * @return the id
-   */
-  @XmlElement(name = "id")
-  public String getId() {
-    return id;
-  }
-
-  /**
-   * Sets the id.
-   * 
-   * @param id
-   *          the new id
-   */
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  // /**
-  // * Gets the filenameandpath.
-  // *
-  // * @return the filenameandpath
-  // */
-  // @XmlElement(name = "filenameandpath")
-  // public String getFilenameandpath() {
-  // return filenameandpath;
-  // }
-  //
-  // /**
-  // * Sets the filenameandpath.
-  // *
-  // * @param filenameandpath
-  // * the new filenameandpath
-  // */
-  // public void setFilenameandpath(String filenameandpath) {
-  // this.filenameandpath = filenameandpath;
-  // }
-
-  /**
-   * Gets the director.
-   * 
-   * @return the director
-   */
-  public List<String> getDirector() {
-    return director;
-  }
-
-  /**
-   * Sets the director.
-   * 
-   * @param director
-   *          the new director
-   */
-  public void addDirector(String director) {
-    this.director.add(director);
-  }
-
-  /**
-   * Gets the studio.
-   * 
-   * @return the studio
-   */
-  @XmlElement(name = "studio")
-  public String getStudio() {
-    return studio;
-  }
-
-  /**
-   * Sets the studio.
-   * 
-   * @param studio
-   *          the new studio
-   */
-  public void setStudio(String studio) {
-    this.studio = studio;
-  }
-
-  /**
-   * @return the country
-   */
-  @XmlElement(name = "country")
-  public String getCountry() {
-    return country;
-  }
-
-  /**
-   * @param country
-   *          the country to set
-   */
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  /**
-   * Gets the mpaa.
-   * 
-   * @return the mpaa
-   */
-  @XmlElement(name = "mpaa")
-  public String getMpaa() {
-    return mpaa;
-  }
-
-  /**
-   * Sets the mpaa.
-   * 
-   * @param mpaa
-   *          the new mpaa
-   */
-  public void setMpaa(String mpaa) {
-    this.mpaa = mpaa;
-  }
-
-  /**
-   * Gets the certifications.
-   * 
-   * @return the certifications
-   */
-  @XmlElement(name = "certification")
-  public String getCertifications() {
-    return certifications;
-  }
-
-  /**
-   * Sets the certifications.
-   * 
-   * @param certifications
-   *          the new certifications
-   */
-  public void setCertifications(String certifications) {
-    this.certifications = certifications;
-  }
-
-  /**
-   * Gets the credits.
-   * 
-   * @return the credits
-   */
-  public List<String> getCredits() {
-    return credits;
-  }
-
-  /**
-   * Sets the credits.
-   * 
-   * @param credits
-   *          the new credits
-   */
-  public void addCredits(String credits) {
-    this.credits.add(credits);
-  }
-
-  /**
-   * Checks if is watched.
-   * 
-   * @return true, if is watched
-   */
-  @XmlElement(name = "watched")
-  public boolean isWatched() {
-    return watched;
-  }
-
-  /**
-   * Sets the watched.
-   * 
-   * @param watched
-   *          the new watched
-   */
-  public void setWatched(boolean watched) {
-    this.watched = watched;
-  }
-
-  /**
-   * Gets the playcount.
-   * 
-   * @return the playcount
-   */
-  @XmlElement(name = "playcount")
-  public int getPlaycount() {
-    return playcount;
-  }
-
-  /**
-   * Sets the playcount.
-   * 
-   * @param playcount
-   *          the new playcount
-   */
-  public void setPlaycount(int playcount) {
-    this.playcount = playcount;
-  }
-
-  /**
-   * Gets the tmdb id.
-   * 
-   * @return the tmdb id
-   */
-  @XmlElement(name = "tmdbid")
-  public int getTmdbId() {
-    return tmdbId;
-  }
-
-  /**
-   * Sets the tmdb id.
-   * 
-   * @param tmdbId
-   *          the new tmdb id
-   */
-  public void setTmdbId(int tmdbId) {
-    this.tmdbId = tmdbId;
-  }
-
-  /**
-   * Gets the trailer.
-   * 
-   * @return the trailer
-   */
-  @XmlElement(name = "trailer")
-  public String getTrailer() {
-    return trailer;
-  }
-
-  /**
-   * Sets the trailer.
-   * 
-   * @param trailer
-   *          the new trailer
-   */
-  public void setTrailer(String trailer) {
-    this.trailer = trailer;
-  }
-
-  /**
-   * Gets the sets the.
-   * 
-   * @return the sets the
-   */
-  @XmlElement(name = "set")
-  public String getSet() {
-    return set;
-  }
-
-  /**
-   * Gets the sorttitle.
-   * 
-   * @return the sorttitle
-   */
-  @XmlElement(name = "sorttitle")
-  public String getSorttitle() {
-    return sorttitle;
-  }
-
-  /**
-   * Sets the sets the.
-   * 
-   * @param set
-   *          the new sets the
-   */
-  public void setSet(String set) {
-    this.set = set;
-  }
-
-  /**
-   * Sets the sorttitle.
-   * 
-   * @param sorttitle
-   *          the new sorttitle
-   */
-  public void setSorttitle(String sorttitle) {
-    this.sorttitle = sorttitle;
-  }
-
-  /**
-   * Gets the fileinfo.
-   * 
-   * @return the fileinfo
-   */
-  public Fileinfo getFileinfo() {
-    return fileinfo;
-  }
-
-  public void setFileinfo(Fileinfo fileinfo) {
-    this.fileinfo = fileinfo;
   }
 
   private static String prepareTrailerForXbmc(MediaTrailer trailer) {
@@ -1144,212 +652,90 @@ public class MovieToXbmcNfoConnector {
     return nfoTrailerUrl;
   }
 
-  // inner class actor to represent actors
-  /**
-   * The Class Actor.
-   * 
-   * @author Manuel Laggner
+  /*
+   * inner class actor to represent actors
    */
   @XmlRootElement(name = "actor")
   public static class Actor {
 
-    /** The name. */
+    @XmlElement
     private String name;
 
-    /** The role. */
+    @XmlElement
     private String role;
 
-    /** The thumb. */
+    @XmlElement
     private String thumb;
 
-    /**
-     * Instantiates a new actor.
-     */
     public Actor() {
     }
 
-    /**
-     * Instantiates a new actor.
-     * 
-     * @param name
-     *          the name
-     * @param role
-     *          the role
-     * @param thumb
-     *          the thumb
-     */
     public Actor(String name, String role, String thumb) {
       this.name = name;
       this.role = role;
       this.thumb = thumb;
     }
-
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
-    @XmlElement(name = "name")
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * Sets the name.
-     * 
-     * @param name
-     *          the new name
-     */
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    /**
-     * Gets the role.
-     * 
-     * @return the role
-     */
-    @XmlElement(name = "role")
-    public String getRole() {
-      return role;
-    }
-
-    /**
-     * Sets the role.
-     * 
-     * @param role
-     *          the new role
-     */
-    public void setRole(String role) {
-      this.role = role;
-    }
-
-    /**
-     * Gets the thumb.
-     * 
-     * @return the thumb
-     */
-    @XmlElement(name = "thumb")
-    public String getThumb() {
-      return thumb;
-    }
-
-    /**
-     * Sets the thumb.
-     * 
-     * @param thumb
-     *          the new thumb
-     */
-    public void setThumb(String thumb) {
-      this.thumb = thumb;
-    }
-
   }
 
-  /**
-   * The Class Fileinfo.
-   * 
-   * @author Manuel Laggner
+  /*
+   * inner class holding file informations
    */
   static class Fileinfo {
-
-    /** The streamdetails. */
     @XmlElement
     Streamdetails streamdetails;
 
-    /**
-     * Instantiates a new fileinfo.
-     */
     public Fileinfo() {
       streamdetails = new Streamdetails();
     }
   }
 
-  /**
-   * The Class Streamdetails.
-   * 
-   * @author Manuel Laggner
+  /*
+   * inner class holding details of audio and video stream
    */
   static class Streamdetails {
-
-    /** The video. */
     @XmlElement
-    Video       video;
+    private Video       video;
 
-    /** The audio. */
     @XmlElement
-    List<Audio> audio;
+    private List<Audio> audio;
 
-    /**
-     * Instantiates a new streamdetails.
-     */
     public Streamdetails() {
       video = new Video();
       audio = new ArrayList<Audio>();
     }
   }
 
-  /**
-   * The Class Video.
-   * 
-   * @author Manuel Laggner
+  /*
+   * inner class holding details of the video stream
    */
   static class Video {
-
-    /** The codec. */
     @XmlElement
-    String codec;
+    private String codec;
 
-    /** The aspect. */
     @XmlElement
-    String aspect;
+    private String aspect;
 
-    /** The width. */
     @XmlElement
-    int    width;
+    private int    width;
 
-    /** The height. */
     @XmlElement
-    int    height;
+    private int    height;
 
-    /** The durationinseconds. */
     @XmlElement
-    int    durationinseconds;
+    private int    durationinseconds;
   }
 
-  /**
-   * The Class Audio.
-   * 
-   * @author Manuel Laggner
+  /*
+   * inner class holding details of the audio stream
    */
   static class Audio {
-
-    /** The codec. */
     @XmlElement
-    String codec;
+    private String codec;
 
-    /** The language. */
     @XmlElement
-    String language;
+    private String language;
 
-    /** The channels. */
     @XmlElement
-    String channels;
-  }
-
-  /**
-   * The Class Resume.
-   * 
-   * @author Manuel Laggner
-   */
-  static class Resume {
-
-    /** The position. */
-    @XmlElement
-    String position;
-
-    /** The total. */
-    @XmlElement
-    String total;
+    private String channels;
   }
 }

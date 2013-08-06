@@ -51,14 +51,14 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 @Entity
 public class MovieSet extends MediaEntity {
 
-  private static final Logger     LOGGER               = LoggerFactory.getLogger(MovieSet.class);
-  private static final Comparator MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
+  private static final Logger            LOGGER               = LoggerFactory.getLogger(MovieSet.class);
+  private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
 
-  private List<Movie>             movies               = new ArrayList<Movie>();
+  private List<Movie>                    movies               = new ArrayList<Movie>();
   @Transient
-  private List<Movie>             moviesObservable     = ObservableCollections.observableList(movies);
+  private List<Movie>                    moviesObservable     = ObservableCollections.observableList(movies);
   @Transient
-  private String                  titleSortable        = "";
+  private String                         titleSortable        = "";
 
   /**
    * Instantiates a new movieset. To initialize the propertychangesupport after loading
