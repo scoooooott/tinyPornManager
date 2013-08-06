@@ -388,8 +388,9 @@ public class MovieToXbmcNfoConnector {
 
     // and marshall it
     String nfoFilename = "";
-    for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
+    List<MediaFile> newNfos = new ArrayList<MediaFile>(1);
 
+    for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
       try {
         nfoFilename = movie.getNfoFilename(name);
 
@@ -408,14 +409,18 @@ public class MovieToXbmcNfoConnector {
         }
         File f = new File(movie.getPath(), nfoFilename);
         FileUtils.write(f, sb, "UTF-8");
-        MediaFile mf = new MediaFile(f);
-        movie.addToMediaFiles(mf);
+        newNfos.add(new MediaFile(f));
       }
       catch (Exception e) {
         LOGGER.error("setData", e.getMessage());
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { ":",
             e.getLocalizedMessage() }));
       }
+    }
+
+    if (newNfos.size() > 0) {
+      movie.removeAllMediaFiles(MediaFileType.NFO);
+      movie.addToMediaFiles(newNfos);
     }
   }
 

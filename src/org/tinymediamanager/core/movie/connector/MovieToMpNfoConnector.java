@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -213,6 +214,7 @@ public class MovieToMpNfoConnector {
 
     // and marshall it
     String nfoFilename = "";
+    List<MediaFile> newNfos = new ArrayList<MediaFile>(1);
     for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
 
       try {
@@ -233,14 +235,18 @@ public class MovieToMpNfoConnector {
         }
         File f = new File(movie.getPath(), nfoFilename);
         FileUtils.write(f, sb, "UTF-8");
-        MediaFile mf = new MediaFile(f);
-        movie.addToMediaFiles(mf);
+        newNfos.add(new MediaFile(f));
       }
       catch (Exception e) {
         LOGGER.error("setData", e);
         MessageManager.instance
             .pushMessage(new Message(MessageLevel.ERROR, movie, "message.nfo.writeerror", new String[] { e.getLocalizedMessage() }));
       }
+    }
+
+    if (newNfos.size() > 0) {
+      movie.removeAllMediaFiles(MediaFileType.NFO);
+      movie.addToMediaFiles(newNfos);
     }
   }
 
