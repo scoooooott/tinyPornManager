@@ -18,6 +18,8 @@ package org.tinymediamanager.ui.settings;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -34,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -73,7 +76,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieSettingsPanel extends JPanel {
+public class MovieSettingsPanel extends JPanel implements HierarchyListener {
   private static final long           serialVersionUID = -7580437046944123496L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -91,6 +94,7 @@ public class MovieSettingsPanel extends JPanel {
   private JLabel                      lblExample;
   private JCheckBox                   chckbxSpaceSubstitution;
   private JComboBox                   cbMovieForPreview;
+  private JCheckBox                   chckbxRemoveOtherNfos;
 
   /**
    * Instantiates a new movie settings panel.
@@ -175,7 +179,9 @@ public class MovieSettingsPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
     panelRenamer.add(lblMoviePath, "2, 2, right, default");
@@ -246,7 +252,7 @@ public class MovieSettingsPanel extends JPanel {
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtrChooseAFolder, "2, 8, 3, 1, fill, bottom");
 
-    JLabel lblExampleT = new JLabel("Example");
+    JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
     panelRenamer.add(lblExampleT, "2, 10");
 
     cbMovieForPreview = new JComboBox();
@@ -261,6 +267,18 @@ public class MovieSettingsPanel extends JPanel {
     lblExample = new JLabel("");
     lblExample.setFont(lblExample.getFont().deriveFont(11f));
     panelRenamer.add(lblExample, "2, 12, 5, 1");
+
+    JSeparator separator = new JSeparator();
+    panelRenamer.add(separator, "1, 14, 6, 1");
+
+    JLabel lblCleanupOptions = new JLabel(BUNDLE.getString("Settings.cleanupoptions")); //$NON-NLS-1$
+    panelRenamer.add(lblCleanupOptions, "2, 16");
+
+    chckbxRemoveOtherNfos = new JCheckBox("");
+    panelRenamer.add(chckbxRemoveOtherNfos, "2, 18, right, default");
+
+    JLabel lblRemoveAllNon = new JLabel(BUNDLE.getString("Settings.renamer.removenfo")); //$NON-NLS-1$
+    panelRenamer.add(lblRemoveAllNon, "4, 18");
 
     initDataBindings();
 
@@ -285,8 +303,6 @@ public class MovieSettingsPanel extends JPanel {
         checkChanges();
       }
     });
-
-    buildAndInstallMovieArray();
   }
 
   private void createRenamerExample() {
@@ -338,6 +354,51 @@ public class MovieSettingsPanel extends JPanel {
     }
   }
 
+  private void buildAndInstallMovieArray() {
+    cbMovieForPreview.removeAllItems();
+    List<Movie> allMovies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
+    Collections.sort(allMovies, new MovieComparator());
+    for (Movie movie : allMovies) {
+      MoviePreviewContainer container = new MoviePreviewContainer();
+      container.movie = movie;
+      cbMovieForPreview.addItem(container);
+    }
+  }
+
+  private class MoviePreviewContainer {
+    Movie movie;
+
+    public String toString() {
+      return movie.getTitle();
+    }
+  }
+
+  private class MovieComparator implements Comparator<Movie> {
+    @Override
+    public int compare(Movie arg0, Movie arg1) {
+      return arg0.getTitle().compareTo(arg1.getTitle());
+    }
+  }
+
+  @Override
+  public void hierarchyChanged(HierarchyEvent arg0) {
+    if (isShowing()) {
+      buildAndInstallMovieArray();
+    }
+  }
+
+  @Override
+  public void addNotify() {
+    super.addNotify();
+    addHierarchyListener(this);
+  }
+
+  @Override
+  public void removeNotify() {
+    removeHierarchyListener(this);
+    super.removeNotify();
+  }
+
   protected void initDataBindings() {
     BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("movieSettings.movieDataSource");
     JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,
@@ -371,32 +432,10 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxSpaceSubstitution, jCheckBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("movieSettings.movieRenamerNfoCleanup");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, chckbxRemoveOtherNfos, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
   }
-
-  private void buildAndInstallMovieArray() {
-    cbMovieForPreview.removeAllItems();
-    List<Movie> allMovies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
-    Collections.sort(allMovies, new MovieComparator());
-    for (Movie movie : allMovies) {
-      MoviePreviewContainer container = new MoviePreviewContainer();
-      container.movie = movie;
-      cbMovieForPreview.addItem(container);
-    }
-  }
-
-  private class MoviePreviewContainer {
-    Movie movie;
-
-    public String toString() {
-      return movie.getTitle();
-    }
-  }
-
-  private class MovieComparator implements Comparator<Movie> {
-    @Override
-    public int compare(Movie arg0, Movie arg1) {
-      return arg0.getTitle().compareTo(arg1.getTitle());
-    }
-  }
-
 }

@@ -519,6 +519,23 @@ public class MovieRenamer {
         }
       }
     }
+
+    // clean all non tmm nfos
+    File[] content = new File(movie.getPath()).listFiles();
+    for (File file : content) {
+      if (file.isFile() && file.getName().toLowerCase().endsWith(".nfo")) {
+        // check if it's a tmm nfo
+        boolean supported = false;
+        for (MediaFile nfo : movie.getMediaFiles(MediaFileType.NFO)) {
+          if (nfo.getFilename().equals(file.getName())) {
+            supported = true;
+          }
+        }
+        if (!supported) {
+          file.delete();
+        }
+      }
+    }
   }
 
   /**
@@ -540,7 +557,14 @@ public class MovieRenamer {
 
     // replace token first letter of title ($1)
     if (newDestination.contains("$1")) {
-      newDestination = replaceToken(newDestination, "$1", StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1) : "");
+      newDestination = replaceToken(newDestination, "$1", StringUtils.isNotBlank(movie.getTitle()) ? movie.getTitle().substring(0, 1).toUpperCase()
+          : "");
+    }
+
+    // replace token first letter of sort title ($2)
+    if (newDestination.contains("$2")) {
+      newDestination = replaceToken(newDestination, "$2", StringUtils.isNotBlank(movie.getTitleSortable()) ? movie.getTitleSortable().substring(0, 1)
+          .toUpperCase() : "");
     }
 
     // replace token year ($Y)
