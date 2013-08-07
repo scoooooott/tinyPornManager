@@ -532,7 +532,8 @@ public class MovieRenamer {
           }
         }
         if (!supported) {
-          file.delete();
+          LOGGER.debug("Deleting " + file.getName());
+          FileUtils.deleteQuietly(file);
         }
       }
     }
