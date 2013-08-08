@@ -38,6 +38,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -62,9 +63,10 @@ import org.tinymediamanager.core.tvshow.TvShowActor;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
@@ -258,8 +260,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       getContentPane().add(bottomPanel, BorderLayout.SOUTH);
 
       bottomPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
+          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
 
       JComboBox cbScraper = new JComboBox(TvShowScrapers.values());
       cbScraper.setSelectedItem(Globals.settings.getTvShowSettings().getTvShowScraper());
@@ -272,9 +274,17 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       btnScrape.setActionCommand("Scrape");
       btnScrape.addActionListener(this);
       bottomPanel.add(btnScrape, "4, 2, left, default");
+
+      JButton btnSearch = new JButton(BUNDLE.getString("tvshowepisodechooser.search")); //$NON-NLS-1$
+      btnSearch.setPreferredSize(new Dimension(100, 23));
+      btnSearch.setMinimumSize(new Dimension(100, 23));
+      btnSearch.setMaximumSize(new Dimension(0, 0));
+      btnSearch.setActionCommand("Search");
+      btnSearch.addActionListener(this);
+      bottomPanel.add(btnSearch, "6, 2, left, default");
       {
         JPanel buttonPane = new JPanel();
-        bottomPanel.add(buttonPane, "5, 2, fill, fill");
+        bottomPanel.add(buttonPane, "8, 2, fill, fill");
         EqualsLayout layout = new EqualsLayout(5);
         layout.setMinWidth(100);
         buttonPane.setLayout(layout);
@@ -356,17 +366,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     return continueQueue;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
-  /**
-   * Action performed.
-   * 
-   * @param e
-   *          the e
-   */
+  @Override
   public void actionPerformed(ActionEvent e) {
     // assign scraped data
     if ("OK".equals(e.getActionCommand())) {
@@ -419,6 +419,26 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       ScrapeTask task = new ScrapeTask(TvShowList.getInstance().getMetadataProvider());
       task.execute();
     }
+
+    // search
+    if ("Search".equals(e.getActionCommand())) {
+      TvShowEpisodeChooserDialog dialog = new TvShowEpisodeChooserDialog(episodeToEdit, TvShowList.getInstance().getMetadataProvider());
+      dialog.setLocationRelativeTo(this);
+      dialog.setVisible(true);
+      MediaEpisode metadata = dialog.getMetadata();
+      if (metadata != null && StringUtils.isNotBlank(metadata.title)) {
+        tfTitle.setText(metadata.title);
+        taPlot.setText(metadata.plot);
+        spEpisode.setValue(metadata.episode);
+        spSeason.setValue(metadata.season);
+        for (MediaArtwork ma : metadata.artwork) {
+          if (ma.getType() == MediaArtworkType.THUMB) {
+            lblThumb.setImageUrl(ma.getDefaultUrl());
+            break;
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -427,25 +447,12 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
    * @author Manuel Laggner
    */
   private class ScrapeTask extends SwingWorker<Void, Void> {
+    ITvShowMetadataProvider mp;
 
-    /** The mp. */
-    IMediaMetadataProvider mp;
-
-    /**
-     * Instantiates a new scrape task.
-     * 
-     * @param mp
-     *          the mp
-     */
-    public ScrapeTask(IMediaMetadataProvider mp) {
+    public ScrapeTask(ITvShowMetadataProvider mp) {
       this.mp = mp;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
     @Override
     protected Void doInBackground() throws Exception {
       MediaScrapeOptions options = new MediaScrapeOptions();
@@ -460,8 +467,14 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       options.setId("episodeNr", spEpisode.getValue().toString());
 
       try {
-        MediaMetadata metadata = mp.getMetadata(options);
-        if (StringUtils.isNotBlank(metadata.getTitle())) {
+        MediaMetadata metadata = mp.getEpisodeMetadata(options);
+
+        // if nothing has been found -> open the search box
+        if (metadata == null || StringUtils.isBlank(metadata.getTitle())) {
+          // message
+          JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$    
+        }
+        else {
           tfTitle.setText(metadata.getTitle());
           taPlot.setText(metadata.getPlot());
           for (MediaArtwork ma : metadata.getFanart()) {
@@ -478,7 +491,6 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
 
       return null;
     }
-
   }
 
   protected void initDataBindings() {

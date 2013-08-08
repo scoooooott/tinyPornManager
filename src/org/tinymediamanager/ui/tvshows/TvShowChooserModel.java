@@ -26,8 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -52,7 +52,7 @@ public class TvShowChooserModel extends AbstractModelObject {
   public static final TvShowChooserModel emptyResult      = new TvShowChooserModel();
 
   /** The metadata provider. */
-  private IMediaMetadataProvider         metadataProvider = null;
+  private ITvShowMetadataProvider        metadataProvider = null;
 
   /** The artwork provider. */
   private List<IMediaArtworkProvider>    artworkProviders = null;
@@ -100,7 +100,7 @@ public class TvShowChooserModel extends AbstractModelObject {
    * @param result
    *          the result
    */
-  public TvShowChooserModel(IMediaMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
+  public TvShowChooserModel(ITvShowMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
       List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
     this.metadataProvider = metadataProvider;
     this.artworkProviders = artworkProviders;
@@ -238,7 +238,7 @@ public class TvShowChooserModel extends AbstractModelObject {
       options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
       options.setType(MediaType.TV_SHOW);
-      metadata = metadataProvider.getMetadata(options);
+      metadata = metadataProvider.getTvShowMetadata(options);
       setOverview(metadata.getPlot());
       setTagline(metadata.getTagline());
 

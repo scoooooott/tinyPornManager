@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
@@ -35,15 +35,10 @@ import org.tinymediamanager.scraper.MediaType;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask implements Runnable {
+  private static final Logger           LOGGER           = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
-  /** The Constant LOGGER. */
-  private static final Logger          LOGGER           = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
-
-  /** The episodes. */
-  private final List<TvShowEpisode>    episodes;
-
-  /** The metadata provider. */
-  private final IMediaMetadataProvider metadataProvider = TvShowList.getInstance().getMetadataProvider();
+  private final List<TvShowEpisode>     episodes;
+  private final ITvShowMetadataProvider metadataProvider = TvShowList.getInstance().getMetadataProvider();
 
   /**
    * Instantiates a new tv show episode scrape task.
@@ -82,7 +77,7 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       options.setId("episodeNr", String.valueOf(episode.getEpisode()));
 
       try {
-        MediaMetadata metadata = metadataProvider.getMetadata(options);
+        MediaMetadata metadata = metadataProvider.getEpisodeMetadata(options);
         if (StringUtils.isNotBlank(metadata.getTitle())) {
           episode.setMetadata(metadata);
         }

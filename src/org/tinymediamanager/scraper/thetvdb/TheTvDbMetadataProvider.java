@@ -31,11 +31,12 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
+import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
@@ -58,8 +59,7 @@ import com.omertron.thetvdbapi.model.Series;
  * 
  * @author Manuel Laggner
  */
-public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaArtworkProvider {
-
+public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
   private static TheTVDBApi        tvdb;
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("tvdb", "thetvdb.com",
@@ -82,32 +82,6 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetaData(org. tinymediamanager.scraper.MediaScrapeOptions)
-   */
-  @Override
-  public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
-    LOGGER.debug("getMetadata() " + options.toString());
-    MediaMetadata md = null;
-
-    switch (options.getType()) {
-      case TV_SHOW:
-        md = getTvShowMetadata(options);
-        break;
-
-      case TV_EPISODE:
-        md = getTvShowEpisodeMetadata(options);
-        break;
-
-      default:
-        throw new Exception("wrong media type for this scraper");
-    }
-
-    return md;
   }
 
   /*
@@ -217,7 +191,8 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
    *          the options
    * @return the tv show metadata
    */
-  private MediaMetadata getTvShowMetadata(MediaScrapeOptions options) {
+  @Override
+  public MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     String id = "";
 
@@ -305,7 +280,8 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
    *          the options
    * @return the tv show episode metadata
    */
-  private MediaMetadata getTvShowEpisodeMetadata(MediaScrapeOptions options) {
+  @Override
+  public MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     String id = "";
@@ -569,5 +545,81 @@ public class TheTvDbMetadataProvider implements IMediaMetadataProvider, IMediaAr
       return arg0.getRating() > arg1.getRating() ? -1 : 1;
     }
 
+  }
+
+  @Override
+  public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
+    List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
+    String id = "";
+
+    // id from result
+    if (options.getResult() != null) {
+      id = options.getResult().getId();
+    }
+
+    // do we have an id from the options?
+    if (StringUtils.isEmpty(id)) {
+      id = options.getId(providerInfo.getId());
+    }
+
+    if (StringUtils.isEmpty(id)) {
+      return episodes;
+    }
+
+    List<Episode> eps = new ArrayList<Episode>();
+    synchronized (tvdb) {
+      // switched to getAllEpisodes for performance - only 1 request needed for scraping multiple episodes of one tv show
+      // episode = tvdb.getEpisode(id, seasonNr, episodeNr, Globals.settings.getScraperLanguage().name());
+      eps.addAll(tvdb.getAllEpisodes(id, Globals.settings.getTvShowSettings().getScraperLanguage().name()));
+    }
+
+    for (Episode ep : eps) {
+      MediaEpisode episode = new MediaEpisode(providerInfo.getId());
+      episode.season = ep.getSeasonNumber();
+      episode.episode = ep.getEpisodeNumber();
+      episode.title = ep.getEpisodeName();
+      episode.plot = ep.getOverview();
+
+      try {
+        episode.rating = Float.parseFloat(ep.getRating());
+      }
+      catch (NumberFormatException e) {
+        episode.rating = 0f;
+      }
+
+      episode.firstAired = ep.getFirstAired();
+      episode.ids.put(providerInfo.getId(), ep.getId());
+
+      // directors
+      for (String director : ep.getDirectors()) {
+        MediaCastMember cm = new MediaCastMember(CastType.DIRECTOR);
+        cm.setName(director);
+        episode.castMembers.add(cm);
+      }
+
+      // writers
+      for (String writer : ep.getWriters()) {
+        MediaCastMember cm = new MediaCastMember(CastType.WRITER);
+        cm.setName(writer);
+        episode.castMembers.add(cm);
+      }
+
+      // actors (guests?)
+      for (String guest : ep.getGuestStars()) {
+        MediaCastMember cm = new MediaCastMember(CastType.ACTOR);
+        cm.setName(guest);
+        episode.castMembers.add(cm);
+      }
+
+      // Thumb
+      MediaArtwork ma = new MediaArtwork();
+      ma.setType(MediaArtworkType.THUMB);
+      ma.setDefaultUrl(ep.getFilename());
+      episode.artwork.add(ma);
+
+      episodes.add(episode);
+    }
+
+    return episodes;
   }
 }

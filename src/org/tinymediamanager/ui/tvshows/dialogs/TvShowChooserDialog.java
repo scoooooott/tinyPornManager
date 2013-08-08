@@ -60,8 +60,8 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
@@ -136,7 +136,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   private TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
 
   /** The metadata provider. */
-  private IMediaMetadataProvider      metadataProvider;
+  private ITvShowMetadataProvider     metadataProvider;
 
   /** The artwork providers. */
   private List<IMediaArtworkProvider> artworkProviders;

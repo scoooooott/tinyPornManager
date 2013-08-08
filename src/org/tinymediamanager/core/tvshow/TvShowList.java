@@ -36,7 +36,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
@@ -226,7 +226,7 @@ public class TvShowList extends AbstractModelObject {
    * 
    * @return the metadata provider
    */
-  public IMediaMetadataProvider getMetadataProvider() {
+  public ITvShowMetadataProvider getMetadataProvider() {
     TvShowScrapers scraper = Globals.settings.getTvShowSettings().getTvShowScraper();
     return getMetadataProvider(scraper);
   }
@@ -238,8 +238,8 @@ public class TvShowList extends AbstractModelObject {
    *          the scraper
    * @return the metadata provider
    */
-  public IMediaMetadataProvider getMetadataProvider(TvShowScrapers scraper) {
-    IMediaMetadataProvider metadataProvider = null;
+  public ITvShowMetadataProvider getMetadataProvider(TvShowScrapers scraper) {
+    ITvShowMetadataProvider metadataProvider = null;
     switch (scraper) {
       case TVDB:
       default:
@@ -301,13 +301,13 @@ public class TvShowList extends AbstractModelObject {
    *          the metadata provider
    * @return the list
    */
-  public List<MediaSearchResult> searchTvShow(String searchTerm, IMediaMetadataProvider metadataProvider) {
+  public List<MediaSearchResult> searchTvShow(String searchTerm, ITvShowMetadataProvider metadataProvider) {
     // format searchstring
     // searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
     List<MediaSearchResult> searchResult = null;
     try {
-      IMediaMetadataProvider provider = metadataProvider;
+      ITvShowMetadataProvider provider = metadataProvider;
       // get a new metadataprovider if nothing is set
       if (provider == null) {
         provider = getMetadataProvider();

@@ -18,7 +18,7 @@ package org.tinymediamanager.core.tvshow;
 import java.util.List;
 
 import org.junit.Test;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -34,7 +34,7 @@ public class TvShowScraperTest {
 
   @Test
   public void testSearch() {
-    IMediaMetadataProvider mp = new TheTvDbMetadataProvider();
+    ITvShowMetadataProvider mp = new TheTvDbMetadataProvider();
     MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, "Breaking Bad");
     List<MediaSearchResult> results = null;
     try {
@@ -51,13 +51,13 @@ public class TvShowScraperTest {
 
   @Test
   public void testShowMetadata() {
-    IMediaMetadataProvider mp = new TheTvDbMetadataProvider();
+    ITvShowMetadataProvider mp = new TheTvDbMetadataProvider();
     MediaScrapeOptions options = new MediaScrapeOptions();
     options.setType(MediaType.TV_SHOW);
     options.setId("tvdb", "81189");
 
     try {
-      MediaMetadata md = mp.getMetadata(options);
+      MediaMetadata md = mp.getTvShowMetadata(options);
       System.out.println(md);
     }
     catch (Exception e) {

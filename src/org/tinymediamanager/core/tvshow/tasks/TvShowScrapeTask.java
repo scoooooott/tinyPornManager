@@ -33,7 +33,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
-import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
@@ -48,20 +48,11 @@ import org.tinymediamanager.ui.TmmSwingWorker;
  * @author Manuel Laggner
  */
 public class TvShowScrapeTask extends TmmSwingWorker {
-
-  /** The Constant LOGGER. */
   private final static Logger          LOGGER = LoggerFactory.getLogger(TvShowScrapeTask.class);
 
-  /** The tv shows to scrape. */
   private List<TvShow>                 tvShowsToScrape;
-
-  /** The do search. */
   private boolean                      doSearch;
-
-  /** The options. */
   private TvShowSearchAndScrapeOptions options;
-
-  /** The tv show count. */
   private int                          tvShowCount;
 
   /**
@@ -214,7 +205,7 @@ public class TvShowScrapeTask extends TmmSwingWorker {
         tvShowList = TvShowList.getInstance();
         // set up scrapers
         TvShowScraperMetadataConfig scraperMetadataConfig = options.getScraperMetadataConfig();
-        IMediaMetadataProvider mediaMetadataProvider = tvShowList.getMetadataProvider(options.getMetadataScraper());
+        ITvShowMetadataProvider mediaMetadataProvider = tvShowList.getMetadataProvider(options.getMetadataScraper());
         List<IMediaArtworkProvider> artworkProviders = tvShowList.getArtworkProviders(options.getArtworkScrapers());
         // List<IMediaTrailerProvider> trailerProviders = tvShowList.getTrailerProviders(options.getTrailerScrapers());
 
@@ -280,7 +271,7 @@ public class TvShowScrapeTask extends TmmSwingWorker {
                   || scraperMetadataConfig.isAired() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
                   || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isStatus() || scraperMetadataConfig.isTitle()
                   || scraperMetadataConfig.isYear()) {
-                md = mediaMetadataProvider.getMetadata(options);
+                md = mediaMetadataProvider.getTvShowMetadata(options);
                 tvShow.setMetadata(md, scraperMetadataConfig);
               }
 
