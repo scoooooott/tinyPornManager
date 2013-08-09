@@ -18,8 +18,10 @@ package org.tinymediamanager.ui.moviesets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -38,11 +40,11 @@ import org.tinymediamanager.core.movie.MovieSet;
  * @author Manuel Laggner
  */
 public class MovieSetTreeModel implements TreeModel {
-  private MovieSetRootTreeNode      root      = new MovieSetRootTreeNode();
-  private List<TreeModelListener>   listeners = new ArrayList<TreeModelListener>();
-  private HashMap<Object, TreeNode> nodeMap   = new HashMap<Object, TreeNode>();
-  private PropertyChangeListener    propertyChangeListener;
-  private MovieList                 movieList = MovieList.getInstance();
+  private MovieSetRootTreeNode    root      = new MovieSetRootTreeNode();
+  private List<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
+  private Map<Object, TreeNode>   nodeMap   = Collections.synchronizedMap(new HashMap<Object, TreeNode>());
+  private PropertyChangeListener  propertyChangeListener;
+  private MovieList               movieList = MovieList.getInstance();
 
   /**
    * Instantiates a new movie set tree model.
