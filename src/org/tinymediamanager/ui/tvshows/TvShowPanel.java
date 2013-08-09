@@ -420,7 +420,7 @@ public class TvShowPanel extends JPanel {
     // menu.addSeparator();
     // menu.add(actionEditMovie2);
 
-    // menu.add(actionRename);
+    menu.add(actionRename);
     // menu.add(actionMediaInformation2);
     // menu.add(actionExport);
     menu.addSeparator();
@@ -441,7 +441,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionRewriteTvShowNfo);
     popupMenu.add(actionRewriteTvShowEpisodeNfo);
     // popupMenu.add(actionBatchEdit);
-    // popupMenu.add(actionRename);
+    popupMenu.add(actionRename);
     // popupMenu.add(actionMediaInformation2);
     // popupMenu.add(actionExport);
     popupMenu.addSeparator();

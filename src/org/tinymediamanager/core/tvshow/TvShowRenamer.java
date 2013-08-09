@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -78,8 +80,39 @@ public class TvShowRenamer {
     LOGGER.debug("TvShow year: " + show.getYear());
     LOGGER.debug("TvShow path: " + show.getPath());
 
-    for (MediaFile mf : show.getMediaFiles()) {
+    // this are the TV show MFs like poster/banner/...
+    // for (MediaFile mf : show.getMediaFiles()) {
+    // renameMediaFile(mf, show);
+    // }
+
+    for (MediaFile mf : show.getEpisodesMediaFiles()) {
       renameMediaFile(mf, show);
+    }
+  }
+
+  /**
+   * Rename Season.
+   * 
+   * @param Season
+   *          the Season
+   */
+  public static void renameSeason(TvShowSeason season) {
+    LOGGER.info("Renaming TvShow '" + season.getTvShow().getTitle() + "' Season " + season.getSeason());
+    for (MediaFile mf : season.getMediaFiles()) {
+      renameMediaFile(mf, season.getTvShow());
+    }
+  }
+
+  /**
+   * Rename Episode (PLUS all Episodes having the same MediaFile!!!).
+   * 
+   * @param Episode
+   *          the Episode
+   */
+  public static void renameEpisode(TvShowEpisode episode) {
+    LOGGER.info("Renaming TvShow '" + episode.getTvShow().getTitle() + "' Episode " + episode.getEpisode());
+    for (MediaFile mf : episode.getMediaFiles()) {
+      renameMediaFile(mf, episode.getTvShow());
     }
   }
 
@@ -102,9 +135,9 @@ public class TvShowRenamer {
       LOGGER.warn("No episodes found for file '" + mf.getFilename() + "' - skipping");
       return;
     }
-
     // get first, for isDisc and season
     TvShowEpisode ep = eps.get(0);
+    LOGGER.debug("rename S:" + ep.getSeason() + " E:" + ep.getEpisode() + " MF:" + mf.getFilename());
 
     // create SeasonDir
     String seasonName = "Season " + String.valueOf(ep.getSeason());
@@ -124,7 +157,16 @@ public class TvShowRenamer {
 
       try {
         if (!mf.getFile().equals(newFile)) {
-          boolean ok = Utils.moveFileSafe(mf.getFile(), newFile);
+          boolean ok = false;
+          try {
+            ok = Utils.moveFileSafe(mf.getFile(), newFile);
+          }
+          catch (FileNotFoundException fnfe) {
+            LOGGER.warn("File '" + mf.getFilename() + "' not found - remove from DB");
+            for (TvShowEpisode e : eps) {
+              e.removeFromMediaFiles(mf);
+            }
+          }
           if (ok) {
             newMF.setPath(seasonDir.getAbsolutePath());
             newMF.setFilename(filename);
@@ -161,6 +203,9 @@ public class TvShowRenamer {
 
     TvShowEpisodeNaming form = Globals.settings.getTvShowSettings().getRenamerFormat();
     String separator = Globals.settings.getTvShowSettings().getRenamerSeparator();
+    if (separator.isEmpty()) {
+      separator = "_";
+    }
 
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(mf.getFile());
 
@@ -212,6 +257,9 @@ public class TvShowRenamer {
     }
     if (filename.startsWith(separator)) {
       filename = filename.substring(separator.length());
+    }
+    if (mf.getType().equals(MediaFileType.THUMB)) {
+      filename = filename + "-thumb";
     }
     filename = filename + "." + mf.getExtension(); // readd original extension
 

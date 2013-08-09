@@ -590,7 +590,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     Pattern thumbPattern = Pattern.compile("(?i)" + Pattern.quote(episode.getTitle()) + "-thumb\\..{2,4}");
 
     for (File file : directoryContents) {
-      if (file == videoFile) {
+      if (file.equals(videoFile)) {
         continue;
       }
 

@@ -1538,46 +1538,24 @@ public class TvShow extends MediaEntity {
     seasonPosterMap.put(season, path);
   }
 
-  // /**
-  // * Gets the media files of the tv show and all episodes.
-  // *
-  // * @return the media files
-  // */
-  // public List<MediaFile> getMediaFiles() {
-  // List<MediaFile> mediaFiles = new ArrayList<MediaFile>(super.getMediaFiles());
-  // for (TvShowEpisode episode : episodes) {
-  // for (MediaFile mf : episode.getMediaFiles()) {
-  //
-  // if (!mediaFiles.contains(mf)) {
-  // mediaFiles.add(mf);
-  // }
-  // }
-  // }
-  // return mediaFiles;
-  // }
-  //
-  // /**
-  // * Gets the media files of a specific MediaFile type
-  // *
-  // * @return the media files
-  // */
-  // public List<MediaFile> getMediaFiles(MediaFileType type) {
-  // List<MediaFile> mfs = new ArrayList<MediaFile>();
-  //
-  // // mediafiles from tv show
-  // mfs.addAll(super.getMediaFiles(type));
-  //
-  // // mediafiles from each episode
-  // for (TvShowEpisode episode : episodes) {
-  // for (MediaFile mf : episode.getMediaFiles(type)) {
-  // if (!mfs.contains(mf)) {
-  // mfs.add(mf);
-  // }
-  // }
-  // }
-  //
-  // return mfs;
-  // }
+  /**
+   * Gets the media files of all episodes.<br>
+   * (without the TV show MFs like poster/banner/...)
+   * 
+   * @return the media files
+   */
+  public List<MediaFile> getEpisodesMediaFiles() {
+    List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
+    for (TvShowEpisode episode : episodes) {
+      for (MediaFile mf : episode.getMediaFiles()) {
+
+        if (!mediaFiles.contains(mf)) {
+          mediaFiles.add(mf);
+        }
+      }
+    }
+    return mediaFiles;
+  }
 
   /**
    * Gets the images to cache.
