@@ -770,7 +770,7 @@ public class Utils {
         return false;
       }
       else {
-        LOGGER.info("Successfully moved folder " + srcFile.getPath() + " to " + destFile.getPath());
+        LOGGER.info("Successfully moved file from " + srcFile.getPath() + " to " + destFile.getPath());
         return true;
       }
     }

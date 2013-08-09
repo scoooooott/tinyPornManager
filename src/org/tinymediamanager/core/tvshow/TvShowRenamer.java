@@ -16,7 +16,6 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -135,9 +134,18 @@ public class TvShowRenamer {
       LOGGER.warn("No episodes found for file '" + mf.getFilename() + "' - skipping");
       return;
     }
+
     // get first, for isDisc and season
     TvShowEpisode ep = eps.get(0);
-    LOGGER.debug("rename S:" + ep.getSeason() + " E:" + ep.getEpisode() + " MF:" + mf.getFilename());
+
+    // test access rights or return
+    LOGGER.debug("testing file S:" + ep.getSeason() + " E:" + ep.getEpisode() + " MF:" + mf.getFile().getAbsolutePath());
+    File f = mf.getFile();
+    if (!f.renameTo(f)) { // haahaa, try to rename to itself :P
+      LOGGER.warn("File " + mf.getFile().getAbsolutePath() + " is not accessible!");
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename"));
+      return;
+    }
 
     // create SeasonDir
     String seasonName = "Season " + String.valueOf(ep.getSeason());
@@ -157,16 +165,7 @@ public class TvShowRenamer {
 
       try {
         if (!mf.getFile().equals(newFile)) {
-          boolean ok = false;
-          try {
-            ok = Utils.moveFileSafe(mf.getFile(), newFile);
-          }
-          catch (FileNotFoundException fnfe) {
-            LOGGER.warn("File '" + mf.getFilename() + "' not found - remove from DB");
-            for (TvShowEpisode e : eps) {
-              e.removeFromMediaFiles(mf);
-            }
-          }
+          boolean ok = Utils.moveFileSafe(mf.getFile(), newFile);
           if (ok) {
             newMF.setPath(seasonDir.getAbsolutePath());
             newMF.setFilename(filename);
@@ -174,6 +173,7 @@ public class TvShowRenamer {
             for (TvShowEpisode e : eps) {
               e.removeFromMediaFiles(mf);
               e.addToMediaFiles(newMF);
+              e.saveToDb();
             }
           }
         }
