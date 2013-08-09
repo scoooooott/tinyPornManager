@@ -103,7 +103,12 @@ public class TvShowTreeModel implements TreeModel {
         if (evt.getSource() instanceof TvShow || evt.getSource() instanceof TvShowEpisode) {
           DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodeMap.get(evt.getSource());
           if (node != null) {
-            nodeChanged(node);
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
+            int index = parent.getIndex(node);
+            TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { node });
+            for (TreeModelListener listener : listeners) {
+              listener.treeNodesChanged(event);
+            }
           }
         }
       }
@@ -214,7 +219,10 @@ public class TvShowTreeModel implements TreeModel {
         }
 
         // inform listeners (root - to update the sum)
-        nodeChanged(parent);
+        event = new TreeModelEvent(this, root.getPath(), null, null);
+        for (TreeModelListener listener : listeners) {
+          listener.treeNodesChanged(event);
+        }
       }
     }
   }
@@ -245,7 +253,10 @@ public class TvShowTreeModel implements TreeModel {
         }
 
         // inform listeners (root - to update the sum)
-        nodeChanged(parent.getParent());
+        event = new TreeModelEvent(this, root.getPath(), null, null);
+        for (TreeModelListener listener : listeners) {
+          listener.treeNodesChanged(event);
+        }
       }
 
     }
@@ -382,125 +393,5 @@ public class TvShowTreeModel implements TreeModel {
 
   @Override
   public void valueForPathChanged(TreePath arg0, Object arg1) {
-  }
-
-  /**
-   * Invoke this method after you've changed how node is to be represented in the tree.
-   */
-  public void nodeChanged(TreeNode node) {
-    if (listeners != null && node != null) {
-      TreeNode parent = node.getParent();
-
-      if (parent != null) {
-        int anIndex = parent.getIndex(node);
-        if (anIndex != -1) {
-          int[] cIndexs = new int[1];
-
-          cIndexs[0] = anIndex;
-          nodesChanged(parent, cIndexs);
-        }
-      }
-      else if (node == getRoot()) {
-        nodesChanged(node, null);
-      }
-    }
-  }
-
-  /**
-   * Invoke this method after you've changed how the children identified by childIndicies are to be represented in the tree.
-   */
-  private void nodesChanged(TreeNode node, int[] childIndices) {
-    if (node != null) {
-      if (childIndices != null) {
-        int cCount = childIndices.length;
-
-        if (cCount > 0) {
-          Object[] cChildren = new Object[cCount];
-
-          for (int counter = 0; counter < cCount; counter++)
-            cChildren[counter] = node.getChildAt(childIndices[counter]);
-          fireTreeNodesChanged(this, getPathToRoot(node), childIndices, cChildren);
-        }
-      }
-      else if (node == getRoot()) {
-        fireTreeNodesChanged(this, getPathToRoot(node), null, null);
-      }
-    }
-  }
-
-  /**
-   * Builds the parents of node up to and including the root node, where the original node is the last element in the returned array. The length of
-   * the returned array gives the node's depth in the tree.
-   * 
-   * @param aNode
-   *          the TreeNode to get the path for
-   */
-  private TreeNode[] getPathToRoot(TreeNode aNode) {
-    return getPathToRoot(aNode, 0);
-  }
-
-  /**
-   * Builds the parents of node up to and including the root node, where the original node is the last element in the returned array. The length of
-   * the returned array gives the node's depth in the tree.
-   * 
-   * @param aNode
-   *          the TreeNode to get the path for
-   * @param depth
-   *          an int giving the number of steps already taken towards the root (on recursive calls), used to size the returned array
-   * @return an array of TreeNodes giving the path from the root to the specified node
-   */
-  private TreeNode[] getPathToRoot(TreeNode aNode, int depth) {
-    TreeNode[] retNodes;
-    // This method recurses, traversing towards the root in order
-    // size the array. On the way back, it fills in the nodes,
-    // starting from the root and working back to the original node.
-
-    /*
-     * Check for null, in case someone passed in a null node, or they passed in an element that isn't rooted at root.
-     */
-    if (aNode == null) {
-      if (depth == 0)
-        return null;
-      else
-        retNodes = new TreeNode[depth];
-    }
-    else {
-      depth++;
-      if (aNode == root)
-        retNodes = new TreeNode[depth];
-      else
-        retNodes = getPathToRoot(aNode.getParent(), depth);
-      retNodes[retNodes.length - depth] = aNode;
-    }
-    return retNodes;
-  }
-
-  /**
-   * Notifies all listeners that have registered interest for notification on this event type. The event instance is lazily created using the
-   * parameters passed into the fire method.
-   * 
-   * @param source
-   *          the source of the {@code TreeModelEvent}; typically {@code this}
-   * @param path
-   *          the path to the parent of the nodes that changed; use {@code null} to identify the root has changed
-   * @param childIndices
-   *          the indices of the changed elements
-   * @param children
-   *          the changed elements
-   */
-  private void fireTreeNodesChanged(Object source, Object[] path, int[] childIndices, Object[] children) {
-    // Guaranteed to return a non-null array
-    Object[] listeners = this.listeners.toArray();
-    TreeModelEvent e = null;
-    // Process the listeners last to first, notifying
-    // those that are interested in this event
-    for (int i = listeners.length - 2; i >= 0; i -= 2) {
-      if (listeners[i] == TreeModelListener.class) {
-        // Lazily create the event:
-        if (e == null)
-          e = new TreeModelEvent(source, path, childIndices, children);
-        ((TreeModelListener) listeners[i + 1]).treeNodesChanged(e);
-      }
-    }
   }
 }
