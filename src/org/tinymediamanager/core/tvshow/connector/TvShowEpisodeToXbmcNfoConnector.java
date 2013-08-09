@@ -38,11 +38,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -152,19 +152,19 @@ public class TvShowEpisodeToXbmcNfoConnector {
    *          the tv show episodes
    * @return the string
    */
-  public static String setData(List<TvShowEpisode> tvShowEpisodes) {
+  public static void setData(List<TvShowEpisode> tvShowEpisodes) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":",
           "Context is null" }));
-      return "";
+      return;
     }
 
     if (tvShowEpisodes.size() == 0) {
-      return "";
+      return;
     }
 
     TvShowEpisode episode = tvShowEpisodes.get(0);
-    String nfoFilename = FilenameUtils.getBaseName(episode.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename()) + ".nfo";
+    String nfoFilename = episode.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename() + ".nfo";
     File nfoFile = new File(episode.getPath(), nfoFilename);
 
     // parse out all episodes from the nfo
@@ -271,18 +271,16 @@ public class TvShowEpisodeToXbmcNfoConnector {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":",
           e.getLocalizedMessage() }));
     }
-
-    return nfoFilename;
   }
 
   /**
    * Gets the data.
    * 
-   * @param nfoFilename
-   *          the nfo filename
+   * @param nfo
+   *          the nfo file
    * @return the data
    */
-  public static List<TvShowEpisode> getData(String nfoFilename) {
+  public static List<TvShowEpisode> getData(File nfo) {
     // try to parse XML
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
 
@@ -291,8 +289,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
     }
 
     // parse out all episodes from the nfo
-    File nfoFile = new File(nfoFilename);
-    List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = parseNfo(nfoFile);
+    List<TvShowEpisodeToXbmcNfoConnector> xbmcConnectors = parseNfo(nfo);
 
     for (TvShowEpisodeToXbmcNfoConnector xbmc : xbmcConnectors) {
       // only continue, if there is a title in the nfo
@@ -349,9 +346,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
         episode.addActor(cast);
       }
 
-      // set only the name w/o path
-      episode.setNfoFilename(FilenameUtils.getName(nfoFilename));
-
+      episode.addToMediaFiles(new MediaFile(nfo, MediaFileType.NFO));
       episodes.add(episode);
     }
 

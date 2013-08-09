@@ -38,11 +38,12 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -110,10 +111,10 @@ public class TvShowToXbmcNfoConnector {
    *          the tv show
    * @return the string
    */
-  public static String setData(TvShow tvShow) {
+  public static void setData(TvShow tvShow) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":", "Context is null" }));
-      return "";
+      return;
     }
 
     TvShowToXbmcNfoConnector xbmc = null;
@@ -185,19 +186,16 @@ public class TvShowToXbmcNfoConnector {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":",
           e.getLocalizedMessage() }));
     }
-
-    // return only the name w/o path
-    return nfoFilename;
   }
 
   /**
    * Gets the data.
    * 
-   * @param nfoFilename
+   * @param nfo
    *          the nfo filename
    * @return the data
    */
-  public static TvShow getData(String nfoFilename) {
+  public static TvShow getData(File nfo) {
     if (context == null) {
       return null;
     }
@@ -205,7 +203,7 @@ public class TvShowToXbmcNfoConnector {
     // try to parse XML
     TvShow tvShow = null;
     try {
-      TvShowToXbmcNfoConnector xbmc = parseNFO(new File(nfoFilename));
+      TvShowToXbmcNfoConnector xbmc = parseNFO(nfo);
       tvShow = new TvShow();
       if (StringUtils.isNotBlank(xbmc.getId())) {
         tvShow.setId("tvdb", xbmc.getId());
@@ -236,15 +234,15 @@ public class TvShowToXbmcNfoConnector {
         tvShow.addActor(tvShowActor);
       }
 
-      tvShow.setNfoFilename(FilenameUtils.getName(nfoFilename));
+      tvShow.addToMediaFiles(new MediaFile(nfo, MediaFileType.NFO));
     }
     catch (UnmarshalException e) {
-      LOGGER.error("failed to parse " + nfoFilename + " " + e.getMessage());
+      LOGGER.error("failed to parse " + nfo + " " + e.getMessage());
       // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }
     catch (Exception e) {
-      LOGGER.error(nfoFilename + " " + e.getMessage());
+      LOGGER.error(nfo + " " + e.getMessage());
       // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, nfoFilename, "message.nfo.readerror"));
       return null;
     }

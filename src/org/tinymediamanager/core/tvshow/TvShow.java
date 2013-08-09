@@ -137,9 +137,6 @@ public class TvShow extends MediaEntity {
   /** The data source. */
   private String                   dataSource         = "";
 
-  /** The nfo filename. */
-  private String                   nfoFilename        = "";
-
   /** The director. */
   private String                   director           = "";
 
@@ -712,48 +709,8 @@ public class TvShow extends MediaEntity {
    * Write nfo.
    */
   public void writeNFO() {
-    setNfoFilename(TvShowToXbmcNfoConnector.setData(this));
-  }
-
-  /**
-   * Sets the nfo filename.
-   * 
-   * @param newValue
-   *          the new nfo filename
-   */
-  public void setNfoFilename(String newValue) {
-    String oldValue = this.nfoFilename;
-    this.nfoFilename = newValue;
-    setNFO(new File(path, nfoFilename));
-    firePropertyChange(NFO_FILENAME, oldValue, newValue);
+    TvShowToXbmcNfoConnector.setData(this);
     firePropertyChange(HAS_NFO_FILE, false, true);
-  }
-
-  private void setNFO(File file) {
-    List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
-    MediaFile mediaFile = null;
-    if (nfos.size() > 0) {
-      mediaFile = nfos.get(0);
-      mediaFile.setFile(file);
-    }
-    else {
-      mediaFile = new MediaFile(file, MediaFileType.NFO);
-      addToMediaFiles(mediaFile);
-    }
-  }
-
-  /**
-   * Gets the nfo filename.
-   * 
-   * @return the nfo filename
-   */
-  public String getNfoFilename() {
-    if (!StringUtils.isEmpty(nfoFilename)) {
-      return path + File.separator + nfoFilename;
-    }
-    else {
-      return nfoFilename;
-    }
   }
 
   /**
@@ -762,7 +719,8 @@ public class TvShow extends MediaEntity {
    * @return the checks for nfo file
    */
   public Boolean getHasNfoFile() {
-    if (!StringUtils.isEmpty(nfoFilename)) {
+    List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
+    if (nfos != null && nfos.size() > 0) {
       return true;
     }
     return false;
@@ -1250,7 +1208,7 @@ public class TvShow extends MediaEntity {
     File[] nfoFiles = tvShowDirectory.listFiles(filter);
 
     for (File file : nfoFiles) {
-      tvShow = TvShowToXbmcNfoConnector.getData(file.getPath());
+      tvShow = TvShowToXbmcNfoConnector.getData(file);
       if (tvShow != null) {
         tvShow.setPath(tvShowDirectory.getPath());
         tvShow.addToMediaFiles(new MediaFile(file, MediaFileType.NFO));

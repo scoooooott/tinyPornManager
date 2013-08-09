@@ -83,9 +83,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   /** is this episode in a disc folder structure?. */
   private boolean             disc              = false;
 
-  /** The nfo filename. */
-  private String              nfoFilename       = "";
-
   /** The watched. */
   private boolean             watched           = false;
 
@@ -139,7 +136,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     director = new String(source.director);
     writer = new String(source.writer);
     disc = source.disc;
-    nfoFilename = new String(source.nfoFilename);
     watched = source.watched;
     votes = source.votes;
     subtitles = source.subtitles;
@@ -456,9 +452,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       episodesInNfo.addAll(TvShowList.getInstance().getTvEpisodesByFile(mf.getFile()));
     }
 
-    String nfoFilename = TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
+    TvShowEpisodeToXbmcNfoConnector.setData(episodesInNfo);
     for (TvShowEpisode episode : episodesInNfo) {
-      episode.setNfoFilename(nfoFilename);
       episode.saveToDb();
     }
   }
@@ -469,37 +464,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the checks for nfo file
    */
   public Boolean getHasNfoFile() {
-    if (!StringUtils.isEmpty(nfoFilename)) {
+    List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
+    if (nfos != null && nfos.size() > 0) {
       return true;
     }
     return false;
-  }
-
-  /**
-   * Sets the nfo filename.
-   * 
-   * @param newValue
-   *          the new nfo filename
-   */
-  public void setNfoFilename(String newValue) {
-    String oldValue = this.nfoFilename;
-    this.nfoFilename = newValue;
-    setNFO(new File(path, nfoFilename));
-    firePropertyChange(NFO_FILENAME, oldValue, newValue);
-    firePropertyChange(HAS_NFO_FILE, false, true);
-  }
-
-  private void setNFO(File file) {
-    List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
-    MediaFile mediaFile = null;
-    if (nfos.size() > 0) {
-      mediaFile = nfos.get(0);
-      mediaFile.setFile(file);
-    }
-    else {
-      mediaFile = new MediaFile(file, MediaFileType.NFO);
-      addToMediaFiles(mediaFile);
-    }
   }
 
   /**
@@ -651,7 +620,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
 
     String filename = episodeFile.getParent() + File.separator + FilenameUtils.getBaseName(episodeFile.getName()) + ".nfo";
-    episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(filename));
+    episodes.addAll(TvShowEpisodeToXbmcNfoConnector.getData(new File(filename)));
 
     return episodes;
   }
