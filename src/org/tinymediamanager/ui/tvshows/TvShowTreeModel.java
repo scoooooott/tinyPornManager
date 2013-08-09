@@ -99,8 +99,16 @@ public class TvShowTreeModel implements TreeModel {
           addTvShowEpisode(episode, episode.getTvShow().getSeasonForEpisode(episode));
         }
 
-        // update on changes of tv show or episode
-        if (evt.getSource() instanceof TvShow || evt.getSource() instanceof TvShowEpisode) {
+        // update on changes of tv show
+        if (evt.getSource() instanceof TvShow && "title".equals(evt.getPropertyName())) {
+          // inform listeners (root - to update the sum)
+          TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
+          for (TreeModelListener listener : listeners) {
+            listener.treeNodesChanged(event);
+          }
+        }
+        // update on changes of episode
+        if (evt.getSource() instanceof TvShowEpisode) {
           DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodeMap.get(evt.getSource());
           if (node != null) {
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();

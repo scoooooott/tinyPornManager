@@ -173,6 +173,21 @@ public class TvShow extends MediaEntity {
   public TvShow() {
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.tinymediamanager.core.MediaEntity#setTitle(java.lang.String)
+   */
+  @Override
+  public void setTitle(String newValue) {
+    String oldValue = this.title;
+    super.setTitle(newValue);
+
+    oldValue = this.titleSortable;
+    titleSortable = "";
+    firePropertyChange(TITLE_SORTABLE, oldValue, titleSortable);
+  }
+
   /**
    * Returns the sortable variant of title<br>
    * eg "The Big Bang Theory" -> "Big Bang Theory, The".
