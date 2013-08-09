@@ -165,6 +165,7 @@ public class TvShowSettingsPanel extends JPanel {
     rdbtnSeasonEpisode.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        checkChanges();
         createRenamerExample();
       }
     });
@@ -175,6 +176,7 @@ public class TvShowSettingsPanel extends JPanel {
     chckbxAddShow.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        checkChanges();
         createRenamerExample();
       }
     });
