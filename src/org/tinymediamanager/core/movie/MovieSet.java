@@ -139,6 +139,7 @@ public class MovieSet extends MediaEntity {
    * @param newValue
    *          the new poster url
    */
+  @Override
   public void setPosterUrl(String newValue) {
     super.setPosterUrl(newValue);
     boolean written = false;
@@ -176,6 +177,7 @@ public class MovieSet extends MediaEntity {
    * @param newValue
    *          the new fanart url
    */
+  @Override
   public void setFanartUrl(String newValue) {
     super.setFanartUrl(newValue);
     boolean written = false;
@@ -211,6 +213,7 @@ public class MovieSet extends MediaEntity {
    * 
    * @return the fanart
    */
+  @Override
   public String getFanart() {
     String fanart = "";
 
@@ -246,6 +249,7 @@ public class MovieSet extends MediaEntity {
    * 
    * @return the poster
    */
+  @Override
   public String getPoster() {
     String poster = "";
 
@@ -320,7 +324,7 @@ public class MovieSet extends MediaEntity {
       moviesObservable.add(-index - 1, movie);
     }
     else if (index >= 0) {
-      moviesObservable.add(index - 1, movie);
+      moviesObservable.add(index, movie);
     }
 
     saveToDb();

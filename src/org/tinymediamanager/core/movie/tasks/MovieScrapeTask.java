@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -145,34 +144,6 @@ public class MovieScrapeTask extends TmmSwingWorker {
   @Override
   public void done() {
     stopProgressBar();
-  }
-
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   * @param value
-   *          the value
-   */
-  private void startProgressBar(String description, int value) {
-    if (!GraphicsEnvironment.isHeadless()) {
-      lblProgressAction.setText(description);
-      progressBar.setVisible(true);
-      progressBar.setValue(value);
-      btnCancelTask.setVisible(true);
-    }
-  }
-
-  /**
-   * Stop progress bar.
-   */
-  private void stopProgressBar() {
-    if (!GraphicsEnvironment.isHeadless()) {
-      lblProgressAction.setText("");
-      progressBar.setVisible(false);
-      btnCancelTask.setVisible(false);
-    }
   }
 
   /**

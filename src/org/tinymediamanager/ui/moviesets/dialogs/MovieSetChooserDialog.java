@@ -38,6 +38,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -510,19 +511,29 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
    * @param description
    *          the description
    */
-  private void startProgressBar(String description) {
-    lblProgressAction.setText(description);
-    progressBar.setVisible(true);
-    progressBar.setIndeterminate(true);
+  private void startProgressBar(final String description) {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        lblProgressAction.setText(description);
+        progressBar.setVisible(true);
+        progressBar.setIndeterminate(true);
+      }
+    });
   }
 
   /**
    * Stop progress bar.
    */
   private void stopProgressBar() {
-    lblProgressAction.setText("");
-    progressBar.setVisible(false);
-    progressBar.setIndeterminate(false);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        lblProgressAction.setText("");
+        progressBar.setVisible(false);
+        progressBar.setIndeterminate(false);
+      }
+    });
   }
 
   /**

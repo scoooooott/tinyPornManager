@@ -52,6 +52,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
@@ -673,7 +674,12 @@ public class ImageChooserDialog extends JDialog {
         return null;
       }
 
-      startProgressBar(BUNDLE.getString("image.download.progress")); //$NON-NLS-1$
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          startProgressBar(BUNDLE.getString("image.download.progress")); //$NON-NLS-1$
+        }
+      });
 
       try {
         if (artworkProviders == null || artworkProviders.size() == 0) {
@@ -756,7 +762,12 @@ public class ImageChooserDialog extends JDialog {
      */
     @Override
     public void done() {
-      stopProgressBar();
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          stopProgressBar();
+        }
+      });
     }
   }
 

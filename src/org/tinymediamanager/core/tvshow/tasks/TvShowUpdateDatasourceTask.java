@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +24,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -626,58 +624,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   @Override
   public void done() {
     stopProgressBar();
-  }
-
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   * @param max
-   *          the max
-   * @param progress
-   *          the progress
-   */
-  private void startProgressBar(String description, int max, int progress) {
-    if (!GraphicsEnvironment.isHeadless()) {
-      if (!StringUtils.isEmpty(description)) {
-        lblProgressAction.setText(description);
-      }
-      progressBar.setVisible(true);
-      progressBar.setIndeterminate(false);
-      progressBar.setMaximum(max);
-      progressBar.setValue(progress);
-      btnCancelTask.setVisible(true);
-    }
-  }
-
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   */
-  private void startProgressBar(String description) {
-    if (!GraphicsEnvironment.isHeadless()) {
-      if (!StringUtils.isEmpty(description)) {
-        lblProgressAction.setText(description);
-      }
-      progressBar.setVisible(true);
-      progressBar.setIndeterminate(true);
-      btnCancelTask.setVisible(true);
-    }
-  }
-
-  /**
-   * Stop progress bar.
-   */
-  private void stopProgressBar() {
-    if (!GraphicsEnvironment.isHeadless()) {
-      lblProgressAction.setText("");
-      progressBar.setIndeterminate(false);
-      progressBar.setVisible(false);
-      btnCancelTask.setVisible(false);
-    }
   }
 
   /*

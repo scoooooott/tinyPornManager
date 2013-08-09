@@ -114,14 +114,15 @@ public class MovieList extends AbstractModelObject {
    *          the movie
    */
   public void addMovie(Movie movie) {
-    int oldValue = movieList.size();
     if (!movieList.contains(movie)) {
+      int oldValue = movieList.size();
       movieList.add(movie);
+
+      updateTags(movie);
+      movie.addPropertyChangeListener(tagListener);
+      firePropertyChange("movies", null, movieList);
+      firePropertyChange("movieCount", oldValue, movieList.size());
     }
-    updateTags(movie);
-    movie.addPropertyChangeListener(tagListener);
-    firePropertyChange("movies", null, movieList);
-    firePropertyChange("movieCount", oldValue, movieList.size());
   }
 
   /**
@@ -276,6 +277,8 @@ public class MovieList extends AbstractModelObject {
         LOGGER.debug("found no movieSets in database");
       }
 
+      // cross check movies and moviesets if linking is "stable"
+      checkAndCleanupMovieSets();
     }
     catch (Exception e) {
       LOGGER.error("loadMoviesFromDatabase", e);
@@ -855,6 +858,27 @@ public class MovieList extends AbstractModelObject {
   public void invalidateTitleSortable() {
     for (Movie movie : new ArrayList<Movie>(movieList)) {
       movie.clearTitleSortable();
+    }
+  }
+
+  /**
+   * cross check the linking between movies and moviesets and clean it
+   */
+  private void checkAndCleanupMovieSets() {
+    for (Movie movie : movieList) {
+      // first check if this movie is in the given movieset
+      if (movie.getMovieSet() != null && !movie.getMovieSet().getMovies().contains(movie)) {
+        // add it
+        movie.getMovieSet().addMovie(movie);
+        movie.getMovieSet().saveToDb();
+      }
+      // and check if this movie is in other moviesets
+      for (MovieSet movieSet : movieSetList) {
+        if (movieSet != movie.getMovieSet() && movieSet.getMovies().contains(movie)) {
+          movieSet.removeMovie(movie);
+          movieSet.saveToDb();
+        }
+      }
     }
   }
 }

@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -103,6 +101,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
         }
         waitForCompletionOrCancel();
+        if (cancel) {
+          break;
+        }
 
         startProgressBar("getting Mediainfo & cleanup...");
         initThreadPool(1, "mediainfo");
@@ -135,6 +136,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
         } // end movie loop
         waitForCompletionOrCancel();
+        if (cancel) {
+          break;
+        }
 
       } // END datasource loop
       LOGGER.info("Done updating datasource :)");
@@ -468,54 +472,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   @Override
   public void done() {
     stopProgressBar();
-  }
-
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   */
-  private void startProgressBar(String description, int max, int progress) {
-    if (!GraphicsEnvironment.isHeadless()) {
-      if (!StringUtils.isEmpty(description)) {
-        lblProgressAction.setText(description);
-      }
-      progressBar.setVisible(true);
-      progressBar.setIndeterminate(false);
-      progressBar.setMaximum(max);
-      progressBar.setValue(progress);
-      btnCancelTask.setVisible(true);
-    }
-  }
-
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   */
-  private void startProgressBar(String description) {
-    if (!GraphicsEnvironment.isHeadless()) {
-      if (!StringUtils.isEmpty(description)) {
-        lblProgressAction.setText(description);
-      }
-      progressBar.setVisible(true);
-      progressBar.setIndeterminate(true);
-      btnCancelTask.setVisible(true);
-    }
-  }
-
-  /**
-   * Stop progress bar.
-   */
-  private void stopProgressBar() {
-    if (!GraphicsEnvironment.isHeadless()) {
-      lblProgressAction.setText("");
-      progressBar.setIndeterminate(false);
-      progressBar.setVisible(false);
-      btnCancelTask.setVisible(false);
-    }
   }
 
   /*

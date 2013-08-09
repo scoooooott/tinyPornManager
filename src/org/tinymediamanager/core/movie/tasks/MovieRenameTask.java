@@ -15,11 +15,9 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
-import java.awt.GraphicsEnvironment;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.TmmThreadPool;
@@ -115,54 +113,6 @@ public class MovieRenameTask extends TmmThreadPool {
   @Override
   public void done() {
     stopProgressBar();
-  }
-
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   */
-  private void startProgressBar(String description, int max, int progress) {
-    if (!GraphicsEnvironment.isHeadless()) {
-      if (!StringUtils.isEmpty(description)) {
-        lblProgressAction.setText(description);
-      }
-      progressBar.setVisible(true);
-      progressBar.setIndeterminate(false);
-      progressBar.setMaximum(max);
-      progressBar.setValue(progress);
-      btnCancelTask.setVisible(true);
-    }
-  }
-
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   */
-  private void startProgressBar(String description) {
-    if (!GraphicsEnvironment.isHeadless()) {
-      if (!StringUtils.isEmpty(description)) {
-        lblProgressAction.setText(description);
-      }
-      progressBar.setVisible(true);
-      progressBar.setIndeterminate(true);
-      btnCancelTask.setVisible(true);
-    }
-  }
-
-  /**
-   * Stop progress bar.
-   */
-  private void stopProgressBar() {
-    if (!GraphicsEnvironment.isHeadless()) {
-      lblProgressAction.setText("");
-      progressBar.setIndeterminate(false);
-      progressBar.setVisible(false);
-      btnCancelTask.setVisible(false);
-    }
   }
 
   /*

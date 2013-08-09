@@ -276,7 +276,7 @@ public class MovieSetTreeModel implements TreeModel {
       // get the movie set node
       MovieSetTreeNode parent = (MovieSetTreeNode) nodeMap.get(movieSet);
       MovieTreeNode child = (MovieTreeNode) nodeMap.get(movie);
-      if (parent != null && child != null) {
+      if (parent != null && child != null && parent.isNodeChild(child)) {
         int index = parent.getIndex(child);
         parent.remove(child);
         nodeMap.remove(movie);

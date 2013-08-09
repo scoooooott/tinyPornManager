@@ -15,10 +15,15 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.GraphicsEnvironment;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The Class TmmSwingWorker.
@@ -26,15 +31,9 @@ import javax.swing.SwingWorker;
  * @author Manuel Laggner
  */
 public abstract class TmmSwingWorker extends SwingWorker<Void, Void> {
-
-  /** The label progressAction. */
-  protected JLabel       lblProgressAction;
-
-  /** The progress bar. */
-  protected JProgressBar progressBar;
-
-  /** The button cancelScraper. */
-  protected JButton      btnCancelTask;
+  private JLabel       lblProgressAction;
+  private JProgressBar progressBar;
+  private JButton      btnCancelTask;
 
   /**
    * Sets the references to the ui elements.
@@ -56,4 +55,90 @@ public abstract class TmmSwingWorker extends SwingWorker<Void, Void> {
    * Cancel.
    */
   public abstract void cancel();
+
+  /**
+   * Start progress bar.
+   * 
+   * @param description
+   *          the description
+   */
+  protected void startProgressBar(final String description) {
+    if (!GraphicsEnvironment.isHeadless()) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          if (!StringUtils.isEmpty(description)) {
+            lblProgressAction.setText(description);
+          }
+          progressBar.setVisible(true);
+          progressBar.setIndeterminate(true);
+          btnCancelTask.setVisible(true);
+        }
+      });
+    }
+  }
+
+  /**
+   * Start progress bar.
+   * 
+   * @param description
+   *          the description
+   */
+  protected void startProgressBar(final String description, final int max, final int progress) {
+    if (!GraphicsEnvironment.isHeadless()) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          if (!StringUtils.isEmpty(description)) {
+            lblProgressAction.setText(description);
+          }
+
+          progressBar.setVisible(true);
+          progressBar.setIndeterminate(false);
+          progressBar.setMaximum(max);
+          progressBar.setValue(progress);
+          btnCancelTask.setVisible(true);
+        }
+      });
+    }
+  }
+
+  /**
+   * Start progress bar.
+   * 
+   * @param description
+   *          the description
+   * @param value
+   *          the value
+   */
+  protected void startProgressBar(final String description, final int value) {
+    if (!GraphicsEnvironment.isHeadless()) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          lblProgressAction.setText(description);
+          progressBar.setVisible(true);
+          progressBar.setValue(value);
+          btnCancelTask.setVisible(true);
+        }
+      });
+    }
+  }
+
+  /**
+   * Stop progress bar.
+   */
+  protected void stopProgressBar() {
+    if (!GraphicsEnvironment.isHeadless()) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          lblProgressAction.setText("");
+          progressBar.setIndeterminate(false);
+          progressBar.setVisible(false);
+          btnCancelTask.setVisible(false);
+        }
+      });
+    }
+  }
 }
