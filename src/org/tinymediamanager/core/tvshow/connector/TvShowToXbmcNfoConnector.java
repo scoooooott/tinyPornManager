@@ -179,7 +179,10 @@ public class TvShowToXbmcNfoConnector {
       if (SystemUtils.IS_OS_WINDOWS) {
         sb = new StringBuilder(sb.toString().replaceAll("(?<!\r)\n", "\r\n"));
       }
+
       FileUtils.write(nfoFile, sb, "UTF-8");
+      tvShow.removeAllMediaFiles(MediaFileType.NFO);
+      tvShow.addToMediaFiles(new MediaFile(nfoFile));
     }
     catch (Exception e) {
       LOGGER.error(nfoFilename + " " + e.getMessage());

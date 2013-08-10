@@ -59,72 +59,42 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
 @XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "playcount", "lastplayed",
     "credits", "director", "aired", "premiered", "studio", "actors" })
 public class TvShowEpisodeToXbmcNfoConnector {
-
-  /** The Constant logger. */
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
+  private static JAXBContext  context   = initContext();
 
-  /** The season. */
   private String              season    = "";
-
-  /** The episode. */
   private String              episode   = "";
-
-  /** The uniqueid. */
   private String              uniqueid  = "";
-
-  /** The title. */
   private String              title     = "";
-
-  /** The showtitle. */
   private String              showtitle = "";
-
-  /** The rating. */
   private float               rating    = 0;
-
-  /** The votes. */
   private int                 votes     = 0;
-
-  /** The plot. */
   private String              plot      = "";
-
-  /** The studio. */
   private String              studio    = "";
-
-  /** The mpaa. */
   private String              mpaa      = "";
 
-  /** The actors. */
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
 
-  /** the credits. */
   @XmlElement(name = "credits")
   private List<String>        credits;
 
-  /** The director. */
   @XmlElement(name = "director")
   private List<String>        director;
 
-  /** The aired. */
   private String              aired     = "";
 
-  /** The premiered. */
   private String              premiered = "";
 
   /** not supported tags, but used to retrain in NFO. */
-
   @XmlElement
   String                      thumb;
 
-  /** The playcount. */
   @XmlElement
   String                      playcount;
 
-  /** The lastplayed. */
   @XmlElement
   String                      lastplayed;
-
-  private static JAXBContext  context   = initContext();
 
   private static JAXBContext initContext() {
     try {
@@ -265,6 +235,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
 
     try {
       FileUtils.write(nfoFile, outputXml, "UTF-8");
+      for (TvShowEpisode e : tvShowEpisodes) {
+        e.removeAllMediaFiles(MediaFileType.NFO);
+        e.addToMediaFiles(new MediaFile(nfoFile));
+      }
     }
     catch (Exception e) {
       LOGGER.error("setData", e.getMessage());

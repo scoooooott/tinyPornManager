@@ -131,12 +131,18 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       initThreadPool(3, "update");
 
       for (File subdir : dirs) {
+        if (cancel) {
+          break;
+        }
         if (subdir.isDirectory() && !skipFolders.contains(subdir.getName().toUpperCase()) && !subdir.getName().startsWith(".")) {
           submitTask(new FindTvShowTask(subdir, path));
         }
       }
 
       waitForCompletionOrCancel();
+      if (cancel) {
+        break;
+      }
 
       // cleanup & mediainfo
       startProgressBar("getting Mediainfo & cleanup...");
@@ -169,6 +175,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         }
       }
       waitForCompletionOrCancel();
+      if (cancel) {
+        break;
+      }
     }
     LOGGER.info("Done updating datasource :)");
 

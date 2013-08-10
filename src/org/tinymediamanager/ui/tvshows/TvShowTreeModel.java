@@ -100,7 +100,8 @@ public class TvShowTreeModel implements TreeModel {
         }
 
         // update on changes of tv show
-        if (evt.getSource() instanceof TvShow && "title".equals(evt.getPropertyName())) {
+        if (evt.getSource() instanceof TvShow
+            && (TITLE.equals(evt.getPropertyName()) || HAS_NFO_FILE.equals(evt.getPropertyName()) || HAS_IMAGES.equals(evt.getPropertyName()))) {
           // inform listeners (root - to update the sum)
           TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
           for (TreeModelListener listener : listeners) {
