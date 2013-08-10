@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -47,6 +48,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.ui.UTF8Control;
@@ -77,7 +79,7 @@ public class GeneralSettingsPanel extends JPanel {
   private JPasswordField              tfProxyPassword;
   private JCheckBox                   chckbxClearCacheShutdown;
   private JLabel                      lblLoglevel;
-  private JComboBox                   comboBox;
+  private JComboBox                   cbLogLevel;
   private JPanel                      panelCache;
   private JPanel                      panelLogger;
   private JPanel                      panelVideoFiletypes;
@@ -95,17 +97,21 @@ public class GeneralSettingsPanel extends JPanel {
   private JPanel                      panelAudioFiletypes;
   private JList                       listAudioFiletypes;
   private JTextField                  tfAudioFiletype;
+  private JPanel                      panelLanguage;
+  private JLabel                      lblUiLanguage;
+  private JComboBox                   cbLanguage;
+  private JLabel                      lblLanguageHint;
 
   /**
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"),
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default):grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     panelVideoFiletypes = new JPanel();
     panelVideoFiletypes.setBorder(new TitledBorder(
@@ -147,11 +153,45 @@ public class GeneralSettingsPanel extends JPanel {
         }
       }
     });
+
+    panelLanguage = new JPanel();
+    add(panelLanguage, "2, 2, 3, 1, fill, fill");
+    panelLanguage
+        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    lblUiLanguage = new JLabel(BUNDLE.getString("Settings.language")); //$NON-NLS-1$
+    panelLanguage.add(lblUiLanguage, "2, 2, right, default");
+
+    // listen to changes of the combo box
+    ItemListener listener = new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    };
+
+    Locale actualLocale = null;
+    for (Locale locale : Utils.getLanguages()) {
+      if (locale.equals(new Locale(Globals.settings.getLanguage()))) {
+        actualLocale = locale;
+      }
+    }
+    cbLanguage = new JComboBox(Utils.getLanguages().toArray());
+    if (actualLocale != null) {
+      cbLanguage.setSelectedItem(actualLocale);
+    }
+    panelLanguage.add(cbLanguage, "4, 2, fill, default");
+
+    lblLanguageHint = new JLabel("");
+    lblLanguageHint.setFont(lblLanguageHint.getFont().deriveFont(Font.BOLD));
+    panelLanguage.add(lblLanguageHint, "2, 4, 5, 1");
+    cbLanguage.addItemListener(listener);
     panelVideoFiletypes.add(btnAddVideoFiletype, "4, 4");
-    add(panelVideoFiletypes, "2, 2, fill, fill");
+    add(panelVideoFiletypes, "2, 4, fill, fill");
 
     panelSubtitleFiletypes = new JPanel();
-    add(panelSubtitleFiletypes, "4, 2, fill, fill");
+    add(panelSubtitleFiletypes, "4, 4, fill, fill");
     panelSubtitleFiletypes.setBorder(new TitledBorder(
         UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.extrafiletypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     panelSubtitleFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
@@ -193,7 +233,7 @@ public class GeneralSettingsPanel extends JPanel {
     panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "4, 4");
 
     panelAudioFiletypes = new JPanel();
-    add(panelAudioFiletypes, "6, 2, fill, fill");
+    add(panelAudioFiletypes, "6, 4, fill, fill");
     panelAudioFiletypes.setBorder(new TitledBorder(
         UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.audiofiletypes"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     panelAudioFiletypes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
@@ -237,7 +277,7 @@ public class GeneralSettingsPanel extends JPanel {
     JPanel panelSortOptions = new JPanel();
     panelSortOptions.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.sorting"),
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelSortOptions, "8, 2, fill, fill");
+    add(panelSortOptions, "8, 4, fill, fill");
     panelSortOptions.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -290,7 +330,7 @@ public class GeneralSettingsPanel extends JPanel {
 
     panelCache = new JPanel();
     panelCache.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.cache"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-    add(panelCache, "2, 4, fill, fill");
+    add(panelCache, "2, 6, fill, fill");
     panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -313,30 +353,24 @@ public class GeneralSettingsPanel extends JPanel {
     panelCache.add(chckbxBuildImageCache, "2, 8, 3, 1");
 
     panelLogger = new JPanel();
-    add(panelLogger, "2, 6, fill, fill");
+    add(panelLogger, "2, 8, fill, fill");
     panelLogger.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
     lblLoglevel = new JLabel(BUNDLE.getString("Settings.loglevel"));//$NON-NLS-1$
     panelLogger.add(lblLoglevel, "2, 2");
-    // listen to changes of the combo box
-    ItemListener listener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-      }
-    };
 
     Level[] levels = new Level[] { Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
     Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
-    comboBox = new JComboBox(levels);
-    panelLogger.add(comboBox, "4, 2");
-    comboBox.addItemListener(listener);
-    comboBox.setSelectedItem(actualLevel);
+    cbLogLevel = new JComboBox(levels);
+    panelLogger.add(cbLogLevel, "4, 2");
+    cbLogLevel.addItemListener(listener);
+    cbLogLevel.setSelectedItem(actualLevel);
 
     panelProxySettings = new JPanel();
     panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelProxySettings, "2, 8, fill, top");
+    add(panelProxySettings, "2, 10, fill, top");
     panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -380,10 +414,16 @@ public class GeneralSettingsPanel extends JPanel {
    * Check changes.
    */
   private void checkChanges() {
-    Level level = (Level) comboBox.getSelectedItem();
+    Level level = (Level) cbLogLevel.getSelectedItem();
     int actualLevel = Globals.settings.getLogLevel();
     if (actualLevel != level.levelInt) {
       Globals.settings.setLogLevel(level.levelInt);
+    }
+    Locale locale = (Locale) cbLanguage.getSelectedItem();
+    Locale actualLocale = new Locale(Globals.settings.getLanguage());
+    if (!locale.equals(actualLocale)) {
+      Globals.settings.setLanguage(locale.getLanguage());
+      lblLanguageHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
     }
   }
 

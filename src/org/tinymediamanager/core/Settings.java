@@ -900,6 +900,7 @@ public class Settings extends AbstractModelObject {
   public void setLanguage(String language) {
     String oldValue = this.language;
     this.language = language;
+    Locale.setDefault(new Locale(language));
     firePropertyChange(LANGUAGE, oldValue, language);
   }
 
