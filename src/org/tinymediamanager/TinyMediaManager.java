@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -112,6 +113,9 @@ public class TinyMediaManager {
         }
       }
     }
+
+    // set GUI default language
+    Locale.setDefault(new Locale(Globals.settings.getLanguage()));
 
     // initialize SWT if needed
     TmmUIHelper.init();

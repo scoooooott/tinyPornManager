@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -777,4 +778,24 @@ public class Utils {
     return true; // files are equal
   }
 
+  /**
+   * returns a list of all available GUI languages
+   * 
+   * @return List of Locales
+   */
+  public static List<Locale> getLanguages() {
+    ArrayList<Locale> loc = new ArrayList<Locale>();
+    loc.add(Locale.ENGLISH);
+    try {
+      File[] props = new File("locale").listFiles();
+      for (File file : props) {
+        String l = file.getName().substring(9, 11); // messages_XX.properties
+        loc.add(new Locale(l));
+      }
+    }
+    catch (Exception e) {
+      // do nothing
+    }
+    return loc;
+  }
 }

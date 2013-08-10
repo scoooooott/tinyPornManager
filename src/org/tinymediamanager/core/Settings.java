@@ -28,6 +28,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -94,6 +95,7 @@ public class Settings extends AbstractModelObject {
   private final static String         IMAGE_CACHE                 = "imageCache";
   private final static String         IMAGE_CACHE_TYPE            = "imageCacheType";
   private final static String         IMAGE_CACHE_BACKGROUND      = "imageCacheBackground";
+  private final static String         LANGUAGE                    = "language";
 
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -129,6 +131,8 @@ public class Settings extends AbstractModelObject {
   private MovieScraperMetadataConfig  movieScraperMetadataConfig  = null;
   private TvShowScraperMetadataConfig tvShowScraperMetadataConfig = null;
   private WindowConfig                windowConfig                = null;
+  // language 2 char - saved to config
+  private String                      language;
 
   private PropertyChangeListener      propertyChangeListener;
 
@@ -874,4 +878,29 @@ public class Settings extends AbstractModelObject {
     this.imageCacheBackground = newValue;
     firePropertyChange(IMAGE_CACHE_BACKGROUND, oldValue, newValue);
   }
+
+  /**
+   * get Localge.getLanguage() 2 char from settings
+   * 
+   * @return 2 char string - use "new Locale(getLanguage())"
+   */
+  @XmlElement(name = LANGUAGE)
+  public String getLanguage() {
+    if (language == null || language.isEmpty()) {
+      return Locale.getDefault().getLanguage();
+    }
+    return language;
+  }
+
+  /**
+   * set Localge.getLanguage() 2 char into settings
+   * 
+   * @param language
+   */
+  public void setLanguage(String language) {
+    String oldValue = this.language;
+    this.language = language;
+    firePropertyChange(LANGUAGE, oldValue, language);
+  }
+
 }
