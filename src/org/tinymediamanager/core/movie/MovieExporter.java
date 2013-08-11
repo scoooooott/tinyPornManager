@@ -268,7 +268,7 @@ public class MovieExporter {
         FileUtils.copyFileToDirectory(fileInTemplateDir, exportDir);
       }
       if (fileInTemplateDir.isDirectory()) {
-        FileUtils.copyDirectory(fileInTemplateDir, exportDir);
+        FileUtils.copyDirectoryToDirectory(fileInTemplateDir, exportDir);
       }
     }
   }
