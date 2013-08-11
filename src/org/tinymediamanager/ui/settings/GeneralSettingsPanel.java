@@ -177,7 +177,12 @@ public class GeneralSettingsPanel extends JPanel {
         actualLocale = locale;
       }
     }
-    cbLanguage = new JComboBox(Utils.getLanguages().toArray());
+
+    // cbLanguage = new JComboBox(Utils.getLanguages().toArray());
+    cbLanguage = new JComboBox();
+    for (Locale l : Utils.getLanguages()) {
+      cbLanguage.addItem(new LocaleComboBox(l));
+    }
     if (actualLocale != null) {
       cbLanguage.setSelectedItem(actualLocale);
     }
@@ -419,7 +424,9 @@ public class GeneralSettingsPanel extends JPanel {
     if (actualLevel != level.levelInt) {
       Globals.settings.setLogLevel(level.levelInt);
     }
-    Locale locale = (Locale) cbLanguage.getSelectedItem();
+
+    LocaleComboBox loc = (LocaleComboBox) cbLanguage.getSelectedItem();
+    Locale locale = loc.getLocale();
     Locale actualLocale = new Locale(Globals.settings.getLanguage());
     if (!locale.equals(actualLocale)) {
       Globals.settings.setLanguage(locale.getLanguage());
@@ -493,5 +500,25 @@ public class GeneralSettingsPanel extends JPanel {
     JListBinding<String, Settings, JList> jListBinding_3 = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_11, listAudioFiletypes);
     jListBinding_3.bind();
+  }
+
+  /**
+   * Helper class for customized toString() method
+   */
+  public class LocaleComboBox {
+    private Locale loc;
+
+    public LocaleComboBox(Locale loc) {
+      this.loc = loc;
+    }
+
+    public Locale getLocale() {
+      return loc;
+    }
+
+    @Override
+    public String toString() {
+      return loc.getDisplayLanguage();
+    }
   }
 }
