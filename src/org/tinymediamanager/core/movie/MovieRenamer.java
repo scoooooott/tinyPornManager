@@ -221,7 +221,21 @@ public class MovieRenamer {
     for (MediaFile vid : movie.getMediaFiles(MediaFileType.VIDEO)) {
       LOGGER.debug("testing file " + vid.getFile().getAbsolutePath());
       File f = vid.getFile();
-      if (!f.renameTo(f)) { // haahaa, try to rename to itself :P
+      boolean testRenameOk = false;
+      for (int i = 0; i < 5; i++) {
+        testRenameOk = f.renameTo(f); // haahaa, try to rename to itself :P
+        if (testRenameOk) {
+          break; // ok it worked, step out
+        }
+        try {
+          LOGGER.debug("rename did not work - sleep a while and try again...");
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+          LOGGER.warn("I'm so excited - could not sleep");
+        }
+      }
+      if (!testRenameOk) {
         LOGGER.warn("File " + vid.getFile().getAbsolutePath() + " is not accessible!");
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename"));
         return;
