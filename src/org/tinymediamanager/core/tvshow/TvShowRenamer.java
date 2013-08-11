@@ -162,7 +162,8 @@ public class TvShowRenamer {
     }
 
     // create SeasonDir
-    String seasonName = "Season " + String.valueOf(ep.getSeason());
+    // String seasonName = "Season " + String.valueOf(ep.getSeason());
+    String seasonName = generateSeasonDir(Globals.settings.getTvShowSettings().getRenamerSeasonFolder(), ep);
     File seasonDir = new File(show.getPath(), seasonName);
     if (!seasonDir.exists()) {
       seasonDir.mkdir();
@@ -278,5 +279,14 @@ public class TvShowRenamer {
     filename = filename + "." + mf.getExtension(); // readd original extension
 
     return filename;
+  }
+
+  public static String generateSeasonDir(String template, TvShowEpisode episode) {
+    String seasonDir = template;
+
+    seasonDir = seasonDir.replaceAll("\\$1", String.valueOf(episode.getSeason()));
+    seasonDir = seasonDir.replaceAll("\\$2", lz(episode.getSeason()));
+
+    return seasonDir;
   }
 }

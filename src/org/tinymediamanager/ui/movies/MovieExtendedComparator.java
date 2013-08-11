@@ -15,10 +15,10 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.text.RuleBasedCollator;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
@@ -30,12 +30,13 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieExtendedComparator implements Comparator<Movie> {
+  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER         = LoggerFactory.getLogger(MovieExtendedComparator.class);
 
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant LOGGER. */
-  private static final Logger         LOGGER = LoggerFactory.getLogger(MovieExtendedComparator.class);
+  private SortColumn                  sortColumn;
+  private boolean                     sortAscending;
+  // private StringComparator stringComparator = new StringComparator();
+  private RuleBasedCollator           stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
   /**
    * The Enum SortColumn.
@@ -183,15 +184,6 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     }
   }
 
-  /** The sort column. */
-  private SortColumn       sortColumn;
-
-  /** The sort ascending. */
-  private boolean          sortAscending;
-
-  /** The string comparator. */
-  private StringComparator stringComparator = new StringComparator();
-
   /**
    * Instantiates a new movie extended comparator.
    * 
@@ -219,12 +211,14 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       switch (sortColumn) {
         case TITLE:
           // sortOrder = movie1.getTitle().toLowerCase().compareTo(movie2.getTitle().toLowerCase());
-          sortOrder = stringComparator.compare(movie1.getTitle(), movie2.getTitle());
+          // sortOrder = stringComparator.compare(movie1.getTitle(), movie2.getTitle());
+          sortOrder = stringCollator.compare(movie1.getTitle(), movie2.getTitle());
           break;
 
         case YEAR:
           // sortOrder = movie1.getYear().compareTo(movie2.getYear());
-          sortOrder = stringComparator.compare(movie1.getYear(), movie2.getYear());
+          // sortOrder = stringComparator.compare(movie1.getYear(), movie2.getYear());
+          sortOrder = stringCollator.compare(movie1.getYear(), movie2.getYear());
           break;
 
         case DATE_ADDED:
@@ -265,22 +259,22 @@ public class MovieExtendedComparator implements Comparator<Movie> {
     }
   }
 
-  private static class StringComparator implements Comparator<String> {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
-    @Override
-    public int compare(String arg0, String arg1) {
-      if (StringUtils.isEmpty(arg0)) {
-        return -1;
-      }
-      if (StringUtils.isEmpty(arg1)) {
-        return 1;
-      }
-      return arg0.toLowerCase().compareTo(arg1.toLowerCase());
-    }
-  }
+  // private static class StringComparator implements Comparator<String> {
+  //
+  // /*
+  // * (non-Javadoc)
+  // *
+  // * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+  // */
+  // @Override
+  // public int compare(String arg0, String arg1) {
+  // if (StringUtils.isEmpty(arg0)) {
+  // return -1;
+  // }
+  // if (StringUtils.isEmpty(arg1)) {
+  // return 1;
+  // }
+  // return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+  // }
+  // }
 }

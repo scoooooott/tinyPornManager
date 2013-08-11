@@ -16,17 +16,23 @@
 
 package org.tinymediamanager.ui.settings;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -34,11 +40,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -47,8 +53,13 @@ import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeNaming;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -64,22 +75,33 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowSettingsPanel extends JPanel {
-  private static final long           serialVersionUID = -675729644848101096L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
+  private static final long           serialVersionUID       = -675729644848101096L;
+  private static final ResourceBundle BUNDLE                 = ResourceBundle.getBundle("messages", new UTF8Control());   //$NON-NLS-1$
+  private static final String         SPACE                  = "<space>";
+  private static final String         NONE                   = "<none>";
 
-  private Settings                    settings         = Settings.getInstance();
+  private Settings                    settings               = Settings.getInstance();
+  private List<String>                separators             = new ArrayList<String>(Arrays.asList(SPACE, ".", "_", "-"));
+  private List<String>                multiEpisodeSeparators = new ArrayList<String>(Arrays.asList(NONE, ".", "_", "-"));
 
   private JTable                      tableTvShowSources;
-  private JTextField                  tfWhitespaceSeparator;
   private JCheckBox                   chckbxAddSeason;
   private JCheckBox                   chckbxAddShow;
   private JCheckBox                   chckbxAddEpisodeTitle;
-  private JCheckBox                   chckbxUseWhitespaceSeparator;
   private JRadioButton                rdbtnRawNumber;
   private JRadioButton                rdbtnSeasonEpisode;
   private JRadioButton                rdbtnSxe;
-  private final ButtonGroup           buttonGroup      = new ButtonGroup();
+  private final ButtonGroup           buttonGroup            = new ButtonGroup();
+  private JLabel                      lblSeparator;
+  private JComboBox                   cbSeparator;
+  private JLabel                      lblMultiEpisodeSeparator;
+  private JComboBox                   cbMultiSeparator;
+  private JLabel                      lblSeasonFolderName;
+  private JTextField                  tfSeasonFoldername;
+  private JTextPane                   txtpnSeasonHint;
+  private JLabel                      lblExample;
+  private JComboBox                   cbTvShowForPreview;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -147,9 +169,10 @@ public class TvShowSettingsPanel extends JPanel {
 
     add(panelRenamer, "2, 4, fill, fill");
     panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.MIN_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.MIN_COLSPEC, },
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
             FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     chckbxAddSeason = new JCheckBox("add season to filename");
@@ -214,17 +237,24 @@ public class TvShowSettingsPanel extends JPanel {
     buttonGroup.add(rdbtnRawNumber);
     panelRenamer.add(rdbtnRawNumber, "6, 6");
 
-    chckbxUseWhitespaceSeparator = new JCheckBox("use whitespace separator");
-    chckbxUseWhitespaceSeparator.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        checkChanges();
-        createRenamerExample();
-      }
-    });
-    panelRenamer.add(chckbxUseWhitespaceSeparator, "2, 8");
+    lblSeparator = new JLabel("separator");
+    panelRenamer.add(lblSeparator, "2, 8, right, default");
 
-    tfWhitespaceSeparator = new JTextField();
-    tfWhitespaceSeparator.getDocument().addDocumentListener(new DocumentListener() {
+    cbSeparator = new JComboBox(separators.toArray());
+    panelRenamer.add(cbSeparator, "4, 8, fill, default");
+
+    lblMultiEpisodeSeparator = new JLabel("multi episode separator");
+    panelRenamer.add(lblMultiEpisodeSeparator, "2, 10, right, default");
+
+    cbMultiSeparator = new JComboBox(multiEpisodeSeparators.toArray());
+    panelRenamer.add(cbMultiSeparator, "4, 10, fill, default");
+
+    lblSeasonFolderName = new JLabel("season folder name");
+    panelRenamer.add(lblSeasonFolderName, "2, 12, right, default");
+
+    tfSeasonFoldername = new JTextField();
+    panelRenamer.add(tfSeasonFoldername, "4, 12, fill, default");
+    tfSeasonFoldername.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent arg0) {
         createRenamerExample();
@@ -240,22 +270,69 @@ public class TvShowSettingsPanel extends JPanel {
         createRenamerExample();
       }
     });
-    panelRenamer.add(tfWhitespaceSeparator, "4, 8, fill, default");
-    tfWhitespaceSeparator.setColumns(10);
+
+    txtpnSeasonHint = new JTextPane();
+    txtpnSeasonHint.setOpaque(false);
+    txtpnSeasonHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    txtpnSeasonHint.setText("$1 - Season number\n$2 - Season number with at least 2 digits");
+    panelRenamer.add(txtpnSeasonHint, "6, 12, fill, fill");
 
     JLabel lblExampleT = new JLabel("Example");
-    panelRenamer.add(lblExampleT, "2, 10");
+    panelRenamer.add(lblExampleT, "2, 14, right, default");
 
-    JLabel lblExample = new JLabel("");
-    panelRenamer.add(lblExample, "2, 12, 5, 1");
+    cbTvShowForPreview = new JComboBox();
+    cbTvShowForPreview.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        createRenamerExample();
+      }
+    });
+    panelRenamer.add(cbTvShowForPreview, "4, 14, 3, 1, fill, default");
+
+    lblExample = new JLabel("");
+    panelRenamer.add(lblExample, "2, 16, 5, 1");
 
     initDataBindings();
 
     {
       // set radio buttons and white space separator
-      if (StringUtils.isNotBlank(settings.getTvShowSettings().getRenamerSeparator())) {
-        chckbxUseWhitespaceSeparator.setSelected(true);
+      String separator = settings.getTvShowSettings().getRenamerSeparator();
+      int index = -1;
+      if (" ".equals(separator)) {
+        index = separators.indexOf(SPACE);
       }
+      else {
+        index = separators.indexOf(separator);
+      }
+      if (index >= 0) {
+        cbSeparator.setSelectedIndex(index);
+      }
+      cbSeparator.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          checkChanges();
+          createRenamerExample();
+        }
+      });
+
+      String multiEpisodeSeparator = settings.getTvShowSettings().getRenamerMultiepisodeSeparator();
+      index = -1;
+      if ("".equals(multiEpisodeSeparator)) {
+        index = multiEpisodeSeparators.indexOf(NONE);
+      }
+      else {
+        index = multiEpisodeSeparators.indexOf(multiEpisodeSeparator);
+      }
+      if (index >= 0) {
+        cbMultiSeparator.setSelectedIndex(index);
+      }
+      cbMultiSeparator.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          checkChanges();
+          createRenamerExample();
+        }
+      });
 
       switch (settings.getTvShowSettings().getRenamerFormat()) {
         case NUMBER:
@@ -274,8 +351,20 @@ public class TvShowSettingsPanel extends JPanel {
   }
 
   private void checkChanges() {
-    if (!chckbxUseWhitespaceSeparator.isSelected()) {
-      tfWhitespaceSeparator.setText("");
+    String separator = (String) cbSeparator.getSelectedItem();
+    if (SPACE.equals(separator)) {
+      settings.getTvShowSettings().setRenamerSeparator(" ");
+    }
+    else {
+      settings.getTvShowSettings().setRenamerSeparator(separator);
+    }
+
+    String multiEpisodeSeparator = (String) cbMultiSeparator.getSelectedItem();
+    if (NONE.equals(multiEpisodeSeparator)) {
+      settings.getTvShowSettings().setRenamerMultiepisodeSeparator("");
+    }
+    else {
+      settings.getTvShowSettings().setRenamerMultiepisodeSeparator(multiEpisodeSeparator);
     }
 
     if (rdbtnRawNumber.isSelected()) {
@@ -290,7 +379,22 @@ public class TvShowSettingsPanel extends JPanel {
   }
 
   private void createRenamerExample() {
-    // TODO create TV show renamer example
+    TvShow tvShow = null;
+
+    if (cbTvShowForPreview.getSelectedItem() instanceof TvShowPreviewContainer) {
+      TvShowPreviewContainer container = (TvShowPreviewContainer) cbTvShowForPreview.getSelectedItem();
+      tvShow = container.tvShow;
+    }
+
+    if (tvShow != null && tvShow.getEpisodes().size() > 0) {
+      TvShowEpisode episode = tvShow.getEpisodes().get(0);
+      String filename = TvShowRenamer.generateFilename(episode.getMediaFiles(MediaFileType.VIDEO).get(0));
+      String seasonDir = TvShowRenamer.generateSeasonDir(tfSeasonFoldername.getText(), episode);
+      lblExample.setText(seasonDir + File.separator + filename);
+    }
+    else {
+      lblExample.setText("");
+    }
   }
 
   protected void initDataBindings() {
@@ -319,15 +423,55 @@ public class TvShowSettingsPanel extends JPanel {
         settingsBeanProperty_2, chckbxAddEpisodeTitle, jCheckBoxBeanProperty);
     autoBinding_2.bind();
     //
-    BeanProperty<JTextField, Boolean> jTextFieldBeanProperty = BeanProperty.create("enabled");
-    AutoBinding<JCheckBox, Boolean, JTextField, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        chckbxUseWhitespaceSeparator, jCheckBoxBeanProperty, tfWhitespaceSeparator, jTextFieldBeanProperty);
+    BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("tvShowSettings.renamerSeasonFolder");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
+    AutoBinding<Settings, String, JTextField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_3, tfSeasonFoldername, jTextFieldBeanProperty);
     autoBinding_3.bind();
-    //
-    BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("tvShowSettings.renamerSeparator");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_3, tfWhitespaceSeparator, jTextFieldBeanProperty_1);
-    autoBinding_4.bind();
+  }
+
+  private class TvShowPreviewContainer {
+    TvShow tvShow;
+
+    public String toString() {
+      return tvShow.getTitle();
+    }
+  }
+
+  private class TvShowComparator implements Comparator<TvShow> {
+    @Override
+    public int compare(TvShow arg0, TvShow arg1) {
+      return arg0.getTitle().compareTo(arg1.getTitle());
+    }
+  }
+
+  @Override
+  public void hierarchyChanged(HierarchyEvent arg0) {
+    if (isShowing()) {
+      buildAndInstallTvShowArray();
+    }
+  }
+
+  @Override
+  public void addNotify() {
+    super.addNotify();
+    addHierarchyListener(this);
+  }
+
+  @Override
+  public void removeNotify() {
+    removeHierarchyListener(this);
+    super.removeNotify();
+  }
+
+  private void buildAndInstallTvShowArray() {
+    cbTvShowForPreview.removeAllItems();
+    List<TvShow> allTvShows = new ArrayList<TvShow>(TvShowList.getInstance().getTvShows());
+    Collections.sort(allTvShows, new TvShowComparator());
+    for (TvShow tvShow : allTvShows) {
+      TvShowPreviewContainer container = new TvShowPreviewContainer();
+      container.tvShow = tvShow;
+      cbTvShowForPreview.addItem(container);
+    }
   }
 }
