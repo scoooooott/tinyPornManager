@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -273,33 +274,40 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       tmdbId = options.getTmdbId();
     }
 
-    // tmdbId via imdbId
+    // imdbId from option
     String imdbId = options.getImdbId();
-    if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
-      // try to get tmdbId via imdbId
-      tmdbId = getTmdbIdFromImdbId(imdbId);
-    }
-
-    if (tmdbId == 0) {
-      LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
+    if (tmdbId == 0 && !Utils.isValidImdbId(imdbId)) {
+      LOGGER.warn("not possible to scrape from TMDB - no tmdbId/imdbId found");
       return md;
     }
 
     // scrape
-    LOGGER.debug("TMDB: getMetadata(tmdbId): " + tmdbId);
+    LOGGER.debug("TMDB: getMetadata: tmdbId = " + tmdbId + "; imdbId = " + imdbId);
     MovieDb movie = null;
     String baseUrl = null;
     synchronized (tmdb) {
       trackConnections();
-      movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
+      if (tmdbId == 0 && Utils.isValidImdbId(imdbId)) {
+        movie = tmdb.getMovieInfoImdb(imdbId, options.getLanguage().name());
+      }
+      if (movie == null && tmdbId != 0) {
+        movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
+      }
+
+      if (movie == null) {
+        LOGGER.warn("no result found");
+        return md;
+      }
+
       baseUrl = tmdb.getConfiguration().getBaseUrl();
 
       if (movie.getBelongsToCollection() != null) {
         md.setTmdbIdSet(movie.getBelongsToCollection().getId());
-        CollectionInfo info = tmdb.getCollectionInfo(md.getTmdbIdSet(), options.getLanguage().name());
-        if (info != null) {
-          md.setCollectionName(info.getName());
-        }
+        md.setCollectionName(movie.getBelongsToCollection().getName());
+        // CollectionInfo info = tmdb.getCollectionInfo(md.getTmdbIdSet(), options.getLanguage().name());
+        // if (info != null) {
+        // md.setCollectionName(info.getName());
+        // }
       }
     }
 
@@ -468,31 +476,46 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       tmdbId = options.getTmdbId();
     }
 
-    // tmdbId via imdbId
+    // imdbId from option
     String imdbId = options.getImdbId();
-    if (tmdbId == 0 && StringUtils.isNotEmpty(imdbId)) {
-      // try to get tmdbId via imdbId
-      tmdbId = getTmdbIdFromImdbId(imdbId);
-    }
-
-    if (tmdbId == 0) {
-      LOGGER.warn("not possible to scrape from TMDB - no tmdbId found");
+    if (tmdbId == 0 && !Utils.isValidImdbId(imdbId)) {
+      LOGGER.warn("not possible to scrape from TMDB - no tmdbId/imdbId found");
       return md;
     }
 
     // scrape
-    LOGGER.debug("TMDB: getMetadata(tmdbId): " + tmdbId);
+    LOGGER.debug("TMDB: getMetadata: tmdbId = " + tmdbId + "; imdbId = " + imdbId);
     MovieDb movie = null;
 
     synchronized (tmdb) {
       trackConnections();
-      movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
+      if (tmdbId == 0 && Utils.isValidImdbId(imdbId)) {
+        movie = tmdb.getMovieInfoImdb(imdbId, options.getLanguage().name());
+      }
+      if (movie == null && tmdbId != 0) {
+        movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
+      }
     }
 
+    if (movie == null) {
+      LOGGER.warn("no result found");
+      return md;
+    }
+
+    md.setTmdbId(movie.getId());
     md.setPlot(movie.getOverview());
     md.setTitle(movie.getTitle());
     md.setOriginalTitle(movie.getOriginalTitle());
     md.setTagline(movie.getTagline());
+
+    if (movie.getBelongsToCollection() != null) {
+      md.setTmdbIdSet(movie.getBelongsToCollection().getId());
+      md.setCollectionName(movie.getBelongsToCollection().getName());
+      // CollectionInfo info = tmdb.getCollectionInfo(md.getTmdbIdSet(), options.getLanguage().name());
+      // if (info != null) {
+      // md.setCollectionName(info.getName());
+      // }
+    }
 
     return md;
   }

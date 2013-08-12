@@ -640,6 +640,9 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         md.setTagline(tmdbMd.getTagline());
         // plot
         md.setPlot(tmdbMd.getPlot());
+        // collection info
+        md.setCollectionName(tmdbMd.getCollectionName());
+        md.setTmdbIdSet(tmdbMd.getTmdbIdSet());
       }
     }
 
