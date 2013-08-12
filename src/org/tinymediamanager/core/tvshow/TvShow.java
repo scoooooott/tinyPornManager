@@ -81,91 +81,55 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShow extends MediaEntity {
-
-  /** The Constant LOGGER. */
   private static final Logger      LOGGER             = LoggerFactory.getLogger(TvShow.class);
 
-  /** The episodes. */
-  private List<TvShowEpisode>      episodes           = new ArrayList<TvShowEpisode>();
+  private String                   dataSource         = "";
+  private String                   director           = "";
+  private String                   writer             = "";
+  private int                      runtime            = 0;
+  private int                      votes              = 0;
+  private Date                     firstAired         = null;
+  private String                   status             = "";
+  private String                   studio             = "";
+  private boolean                  watched            = false;
+  private String                   sortTitle          = "";
 
-  /** The episodes observable. */
+  private List<TvShowEpisode>      episodes           = new ArrayList<TvShowEpisode>();
+  private List<String>             tags               = new ArrayList<String>();
+  private HashMap<Integer, String> seasonPosterUrlMap = new HashMap<Integer, String>();
+  private HashMap<Integer, String> seasonPosterMap    = new HashMap<Integer, String>();
+
   @Transient
   private List<TvShowEpisode>      episodesObservable = ObservableCollections.observableList(episodes);
 
-  /** The seasons. */
   @Transient
   private List<TvShowSeason>       seasons            = ObservableCollections.observableList(new ArrayList<TvShowSeason>());
 
-  /** The actors. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<TvShowActor>        actors             = new ArrayList<TvShowActor>();
 
-  /** The actors observables. */
   @Transient
   private List<TvShowActor>        actorsObservables  = ObservableCollections.observableList(actors);
 
-  /** The new genres based on an enum like class. */
   private List<String>             genres             = new ArrayList<String>();
 
-  /** The genres2 for access. */
   @Transient
   private List<MediaGenres>        genresForAccess    = new ArrayList<MediaGenres>();
 
-  /** The tags. */
-  private List<String>             tags               = new ArrayList<String>();
-
-  /** The tags observable. */
   @Transient
   private List<String>             tagsObservable     = ObservableCollections.observableList(tags);
 
-  /** The trailer. */
   @OneToMany(cascade = CascadeType.ALL)
   private List<MediaTrailer>       trailer            = new ArrayList<MediaTrailer>();
 
-  /** The trailer observable. */
   @Transient
   private List<MediaTrailer>       trailerObservable  = ObservableCollections.observableList(trailer);
 
-  /** The certification. */
   @Enumerated(EnumType.STRING)
   private Certification            certification      = Certification.NOT_RATED;
 
-  /** The title sortable. */
   @Transient
   private String                   titleSortable      = "";
-
-  /** The data source. */
-  private String                   dataSource         = "";
-
-  /** The director. */
-  private String                   director           = "";
-
-  /** The writer. */
-  private String                   writer             = "";
-
-  /** The runtime. */
-  private int                      runtime            = 0;
-
-  /** The votes. */
-  private int                      votes              = 0;
-
-  /** the first aired date. */
-  private Date                     firstAired         = null;
-
-  /** The status. */
-  private String                   status             = "";
-
-  /** The studio. */
-  private String                   studio             = "";
-
-  /** The watched. */
-  private boolean                  watched            = false;
-
-  /** The season poster url map. */
-  private HashMap<Integer, String> seasonPosterUrlMap = new HashMap<Integer, String>();
-
-  /** The season poster map. */
-  private HashMap<Integer, String> seasonPosterMap    = new HashMap<Integer, String>();
 
   /**
    * Instantiates a tv show. To initialize the propertychangesupport after loading
@@ -203,6 +167,16 @@ public class TvShow extends MediaEntity {
 
   public void clearTitleSortable() {
     titleSortable = "";
+  }
+
+  public String getSortTitle() {
+    return sortTitle;
+  }
+
+  public void setSortTitle(String newValue) {
+    String oldValue = this.sortTitle;
+    this.sortTitle = newValue;
+    firePropertyChange(SORT_TITLE, oldValue, newValue);
   }
 
   /**

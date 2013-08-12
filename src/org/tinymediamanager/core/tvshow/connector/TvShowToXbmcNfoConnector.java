@@ -58,7 +58,8 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "status", "studio", "thumb", "actors" })
+@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "status", "studio", "thumb",
+    "actors" })
 public class TvShowToXbmcNfoConnector {
 
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
@@ -66,6 +67,7 @@ public class TvShowToXbmcNfoConnector {
 
   private String              id        = "";
   private String              title     = "";
+  private String              sorttitle = "";
   private float               rating    = 0;
   private int                 votes     = 0;
   private String              year      = "";
@@ -143,6 +145,7 @@ public class TvShowToXbmcNfoConnector {
       xbmc.setId(tvShow.getId("tvdb").toString());
     }
     xbmc.setTitle(tvShow.getTitle());
+    xbmc.setSorttitle(tvShow.getSortTitle());
     xbmc.setRating(tvShow.getRating());
     xbmc.setVotes(tvShow.getVotes());
     xbmc.setPlot(tvShow.getPlot());
@@ -212,6 +215,7 @@ public class TvShowToXbmcNfoConnector {
         tvShow.setId("tvdb", xbmc.getId());
       }
       tvShow.setTitle(xbmc.getTitle());
+      tvShow.setSortTitle(xbmc.getSorttitle());
       tvShow.setRating(xbmc.getRating());
       tvShow.setVotes(xbmc.getVotes());
       tvShow.setYear(xbmc.getYear());
@@ -296,6 +300,15 @@ public class TvShowToXbmcNfoConnector {
    */
   public void setTitle(String title) {
     this.title = title;
+  }
+
+  @XmlElement(name = "sorttitle")
+  public String getSorttitle() {
+    return sorttitle;
+  }
+
+  public void setSorttitle(String sorttitle) {
+    this.sorttitle = sorttitle;
   }
 
   /**

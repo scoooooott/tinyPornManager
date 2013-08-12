@@ -130,6 +130,7 @@ public class TvShowEditorDialog extends JDialog {
   private JSpinner                           spDateAdded;
   private JSpinner                           spPremiered;
   private JTable                             tableEpisodes;
+  private JTextField                         tfSorttitle;
 
   /**
    * Instantiates a new tv show editor dialog.
@@ -169,18 +170,17 @@ public class TvShowEditorDialog extends JDialog {
     getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
     details1Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-    details1Panel
-        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"),
-            FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"),
-            FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(75px;default)"),
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("75px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:30px:grow(2)"), }));
+    details1Panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"),
+        FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(75px;default)"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("75px:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow(2)"), }));
 
     {
       JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -204,100 +204,109 @@ public class TvShowEditorDialog extends JDialog {
         }
       });
       lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      details1Panel.add(lblPoster, "12, 2, 3, 15, fill, fill");
+      details1Panel.add(lblPoster, "12, 2, 3, 17, fill, fill");
+    }
+    {
+      JLabel lblSortTitle = new JLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
+      details1Panel.add(lblSortTitle, "2, 4, right, default");
+    }
+    {
+      tfSorttitle = new JTextField();
+      details1Panel.add(tfSorttitle, "4, 4, 7, 1, fill, default");
+      tfSorttitle.setColumns(10);
     }
     {
       JLabel lblYear = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-      details1Panel.add(lblYear, "2, 4, right, default");
+      details1Panel.add(lblYear, "2, 6, right, default");
     }
     {
       spYear = new JSpinner();
-      details1Panel.add(spYear, "4, 4, fill, top");
+      details1Panel.add(spYear, "4, 6, fill, top");
     }
     {
       JLabel lblpremiered = new JLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
-      details1Panel.add(lblpremiered, "8, 4, right, default");
+      details1Panel.add(lblpremiered, "8, 6, right, default");
     }
     {
       spPremiered = new JSpinner(new SpinnerDateModel());
-      details1Panel.add(spPremiered, "10, 4");
+      details1Panel.add(spPremiered, "10, 6");
     }
     {
       JLabel lblRuntime = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
-      details1Panel.add(lblRuntime, "2, 6, right, default");
+      details1Panel.add(lblRuntime, "2, 8, right, default");
     }
     {
       spRuntime = new JSpinner();
-      details1Panel.add(spRuntime, "4, 6, fill, default");
+      details1Panel.add(spRuntime, "4, 8, fill, default");
     }
 
     {
       JLabel lblMin = new JLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$
-      details1Panel.add(lblMin, "6, 6");
+      details1Panel.add(lblMin, "6, 8");
     }
     {
       JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
-      details1Panel.add(lblRating, "2, 8, right, default");
+      details1Panel.add(lblRating, "2, 10, right, default");
     }
     {
       spRating = new JSpinner();
-      details1Panel.add(spRating, "4, 8");
+      details1Panel.add(spRating, "4, 10");
     }
     {
       JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-      details1Panel.add(lblCertification, "8, 8, right, default");
+      details1Panel.add(lblCertification, "8, 10, right, default");
     }
     {
       cbCertification = new JComboBox();
       for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getTvShowSettings().getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
-      details1Panel.add(cbCertification, "10, 8, fill, default");
+      details1Panel.add(cbCertification, "10, 10, fill, default");
     }
     {
       lblImdbId = new JLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
-      details1Panel.add(lblImdbId, "2, 10, right, default");
+      details1Panel.add(lblImdbId, "2, 12, right, default");
     }
     {
       tfImdbId = new JTextField();
       lblImdbId.setLabelFor(tfImdbId);
-      details1Panel.add(tfImdbId, "4, 10, fill, default");
+      details1Panel.add(tfImdbId, "4, 12, fill, default");
       tfImdbId.setColumns(10);
     }
     {
       lblTvdbId = new JLabel(BUNDLE.getString("metatag.tvdb")); //$NON-NLS-1$
-      details1Panel.add(lblTvdbId, "8, 10, right, default");
+      details1Panel.add(lblTvdbId, "8, 12, right, default");
     }
     {
       tfTvdbId = new JTextField();
       lblTvdbId.setLabelFor(tfTvdbId);
-      details1Panel.add(tfTvdbId, "10, 10, fill, default");
+      details1Panel.add(tfTvdbId, "10, 12, fill, default");
       tfTvdbId.setColumns(10);
     }
     {
       JLabel lblStatus = new JLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
-      details1Panel.add(lblStatus, "2, 12, right, default");
+      details1Panel.add(lblStatus, "2, 14, right, default");
     }
     {
       cbStatus = new JComboBox(new String[] { "", "Continuing", "Ended" });
-      details1Panel.add(cbStatus, "4, 12, fill, default");
+      details1Panel.add(cbStatus, "4, 14, fill, default");
     }
     {
       JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      details1Panel.add(lblDateAdded, "8, 12, right, default");
+      details1Panel.add(lblDateAdded, "8, 14, right, default");
     }
     {
       spDateAdded = new JSpinner(new SpinnerDateModel());
-      details1Panel.add(spDateAdded, "10, 12");
+      details1Panel.add(spDateAdded, "10, 14");
     }
     spDateAdded.setValue(tvShow.getDateAdded());
     {
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-      details1Panel.add(lblPlot, "2, 14, right, top");
+      details1Panel.add(lblPlot, "2, 16, right, top");
     }
     {
       JScrollPane scrollPanePlot = new JScrollPane();
-      details1Panel.add(scrollPanePlot, "4, 14, 7, 3, fill, fill");
+      details1Panel.add(scrollPanePlot, "4, 16, 7, 3, fill, fill");
       {
         tpPlot = new JTextPane();
         scrollPanePlot.setViewportView(tpPlot);
@@ -305,11 +314,11 @@ public class TvShowEditorDialog extends JDialog {
     }
     {
       JLabel lblStudio = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
-      details1Panel.add(lblStudio, "2, 18, right, top");
+      details1Panel.add(lblStudio, "2, 20, right, top");
     }
     {
       tfStudio = new JTextField();
-      details1Panel.add(tfStudio, "4, 18, 7, 1");
+      details1Panel.add(tfStudio, "4, 20, 7, 1");
     }
 
     /**
@@ -508,6 +517,7 @@ public class TvShowEditorDialog extends JDialog {
     {
       lvlTvShowPath.setText(tvShow.getPath());
       tfTitle.setText(tvShow.getTitle());
+      tfSorttitle.setText(tvShow.getSortTitle());
       tfImdbId.setText(tvShow.getImdbId());
 
       Object obj = tvShow.getId("tvdb");
@@ -579,7 +589,7 @@ public class TvShowEditorDialog extends JDialog {
         dialog.setVisible(true);
       }
     });
-    details1Panel.add(lblBanner, "4, 20, 7, 3, fill, fill");
+    details1Panel.add(lblBanner, "4, 22, 7, 3, fill, fill");
     lblBanner.setImagePath(tvShow.getBanner());
     {
       // JLabel lblFanart = new JLabel("");
@@ -595,7 +605,7 @@ public class TvShowEditorDialog extends JDialog {
           dialog.setVisible(true);
         }
       });
-      details1Panel.add(lblFanart, "12, 18, 3, 5, fill, fill");
+      details1Panel.add(lblFanart, "12, 20, 3, 5, fill, fill");
     }
     lblFanart.setImagePath(tvShow.getFanart());
 
@@ -656,6 +666,7 @@ public class TvShowEditorDialog extends JDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       tvShowToEdit.setTitle(tfTitle.getText());
+      tvShowToEdit.setSortTitle(tfSorttitle.getText());
       tvShowToEdit.setYear(String.valueOf(spYear.getValue()));
       tvShowToEdit.setPlot(tpPlot.getText());
       tvShowToEdit.setRuntime((Integer) spRuntime.getValue());
