@@ -97,7 +97,6 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
   private JLabel                      lblSeparator;
   private JComboBox                   cbSeparator;
   private JLabel                      lblMultiEpisodeSeparator;
-  private JComboBox                   cbMultiSeparator;
   private JLabel                      lblSeasonFolderName;
   private JTextField                  tfSeasonFoldername;
   private JTextPane                   txtpnSeasonHint;
@@ -175,8 +174,8 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"), },
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-            FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     chckbxAddSeason = new JCheckBox("add season to filename");
     chckbxAddSeason.addActionListener(new ActionListener() {
@@ -246,17 +245,11 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     cbSeparator = new JComboBox(separators.toArray());
     panelRenamer.add(cbSeparator, "4, 8, fill, default");
 
-    lblMultiEpisodeSeparator = new JLabel("multi episode separator");
-    panelRenamer.add(lblMultiEpisodeSeparator, "2, 10, right, default");
-
-    cbMultiSeparator = new JComboBox(multiEpisodeSeparators.toArray());
-    panelRenamer.add(cbMultiSeparator, "4, 10, fill, default");
-
     lblSeasonFolderName = new JLabel("season folder name");
-    panelRenamer.add(lblSeasonFolderName, "2, 12, right, default");
+    panelRenamer.add(lblSeasonFolderName, "2, 10, right, top");
 
     tfSeasonFoldername = new JTextField();
-    panelRenamer.add(tfSeasonFoldername, "4, 12, fill, default");
+    panelRenamer.add(tfSeasonFoldername, "4, 10, fill, top");
     tfSeasonFoldername.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent arg0) {
@@ -278,10 +271,10 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     txtpnSeasonHint.setOpaque(false);
     txtpnSeasonHint.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtpnSeasonHint.setText("$1 - Season number\n$2 - Season number with at least 2 digits");
-    panelRenamer.add(txtpnSeasonHint, "6, 12, fill, fill");
+    panelRenamer.add(txtpnSeasonHint, "6, 10, fill, fill");
 
     JLabel lblExampleT = new JLabel("Example");
-    panelRenamer.add(lblExampleT, "2, 14, right, default");
+    panelRenamer.add(lblExampleT, "2, 12, right, default");
 
     cbTvShowForPreview = new JComboBox();
     cbTvShowForPreview.addActionListener(new ActionListener() {
@@ -290,10 +283,10 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
         createRenamerExample();
       }
     });
-    panelRenamer.add(cbTvShowForPreview, "4, 14, 3, 1, fill, default");
+    panelRenamer.add(cbTvShowForPreview, "4, 12, 3, 1, fill, default");
 
     lblExample = new JLabel("");
-    panelRenamer.add(lblExample, "2, 16, 5, 1");
+    panelRenamer.add(lblExample, "2, 14, 5, 1");
 
     initDataBindings();
 
@@ -311,25 +304,6 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
         cbSeparator.setSelectedIndex(index);
       }
       cbSeparator.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          checkChanges();
-          createRenamerExample();
-        }
-      });
-
-      String multiEpisodeSeparator = settings.getTvShowSettings().getRenamerMultiepisodeSeparator();
-      index = -1;
-      if ("".equals(multiEpisodeSeparator)) {
-        index = multiEpisodeSeparators.indexOf(NONE);
-      }
-      else {
-        index = multiEpisodeSeparators.indexOf(multiEpisodeSeparator);
-      }
-      if (index >= 0) {
-        cbMultiSeparator.setSelectedIndex(index);
-      }
-      cbMultiSeparator.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {
           checkChanges();
@@ -360,14 +334,6 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     }
     else {
       settings.getTvShowSettings().setRenamerSeparator(separator);
-    }
-
-    String multiEpisodeSeparator = (String) cbMultiSeparator.getSelectedItem();
-    if (NONE.equals(multiEpisodeSeparator)) {
-      settings.getTvShowSettings().setRenamerMultiepisodeSeparator("");
-    }
-    else {
-      settings.getTvShowSettings().setRenamerMultiepisodeSeparator(multiEpisodeSeparator);
     }
 
     if (rdbtnRawNumber.isSelected()) {
