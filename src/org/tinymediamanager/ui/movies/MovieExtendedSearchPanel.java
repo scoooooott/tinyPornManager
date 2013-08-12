@@ -16,7 +16,12 @@
 package org.tinymediamanager.ui.movies;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -49,87 +54,39 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieExtendedSearchPanel extends CollapsiblePanel {
-
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = -4170930017190753789L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = -4170930017190753789L;
-
-  /** The cb search watched. */
-  private JCheckBox                   cbFilterWatched;
-
-  /** The action sort. */
-  private final Action                actionSort       = new SortAction();
-
-  /** The movie selection model. */
+  private MovieList                   movieList        = MovieList.getInstance();
   private MovieSelectionModel         movieSelectionModel;
 
-  /** The movie list. */
-  private MovieList                   movieList        = MovieList.getInstance();
-
-  /** The lbl genre. */
+  /**
+   * UI Elements
+   */
+  private JCheckBox                   cbFilterWatched;
   private JLabel                      lblGenre;
-
-  /** The cb genre. */
   private JComboBox                   cbGenre;
-
-  /** The cb sort column. */
   private JComboBox                   cbSortColumn;
-
-  /** The cb sort order. */
   private JComboBox                   cbSortOrder;
-
-  /** The lbl filter by. */
   private JLabel                      lblFilterBy;
-
-  /** The lbl watched flag. */
   private JLabel                      lblWatchedFlag;
-
-  /** The cb watched. */
   private JComboBox                   cbWatched;
-
-  /** The cb filter genre. */
   private JCheckBox                   cbFilterGenre;
-
-  /** The lbl sort by. */
   private JLabel                      lblSortBy;
-
-  /** The cb filter cast. */
   private JCheckBox                   cbFilterCast;
-
-  /** The lbl cast member. */
   private JLabel                      lblCastMember;
-
-  /** The tf cast member. */
   private JTextField                  tfCastMember;
-
-  /** The action filter. */
-  private final Action                actionFilter     = new FilterAction();
-
-  /** The cb filter tag. */
   private JCheckBox                   cbFilterTag;
-
-  /** The lbl tag. */
   private JLabel                      lblTag;
-
-  /** The cb tag. */
   private JComboBox                   cbTag;
-
-  /** The cb filter duplicates. */
   private JCheckBox                   cbFilterDuplicates;
-
-  /** The lbl show duplicates. */
   private JLabel                      lblShowDuplicates;
-
-  /** The cb filter movieset. */
   private JCheckBox                   cbFilterMovieset;
-
-  /** The lbl movies in movieset. */
   private JLabel                      lblMoviesInMovieset;
-
-  /** The cb movieset. */
   private JComboBox                   cbMovieset;
+
+  private final Action                actionSort       = new SortAction();
+  private final Action                actionFilter     = new FilterAction();
 
   /**
    * Instantiates a new movie extended search panel.
@@ -213,7 +170,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     lblTag = new JLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
     panel.add(lblTag, "4, 7, right, default");
 
-    cbTag = new JComboBox(movieList.getTagsInMovies().toArray());
+    cbTag = new JComboBox();
     cbTag.setAction(actionFilter);
 
     panel.add(cbTag, "6, 7, fill, default");
@@ -242,29 +199,37 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
     add(panel);
     setCollapsed(true);
+
+    PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() instanceof MovieList && "tag".equals(evt.getPropertyName())) {
+          buildAndInstallTagsArray();
+        }
+      }
+    };
+    movieList.addPropertyChangeListener(propertyChangeListener);
+    buildAndInstallTagsArray();
   }
 
-  /**
-   * The Class SortAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SortAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -4057379119252539003L;
-
-    /**
-     * Instantiates a new sort action.
-     */
-    public SortAction() {
+  private void buildAndInstallTagsArray() {
+    cbTag.removeAllItems();
+    List<String> tags = new ArrayList<String>(movieList.getTagsInMovies());
+    Collections.sort(tags);
+    for (String tag : tags) {
+      cbTag.addItem(tag);
     }
+  }
+
+  private class SortAction extends AbstractAction {
+    private static final long serialVersionUID = -4057379119252539003L;
 
     /*
      * (non-Javadoc)
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       SortColumn column = (SortColumn) cbSortColumn.getSelectedItem();
       SortOrder order = (SortOrder) cbSortOrder.getSelectedItem();
@@ -275,27 +240,15 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     }
   }
 
-  /**
-   * The Class FilterAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class FilterAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 7488733475791640009L;
-
-    /**
-     * Instantiates a new filter action.
-     */
-    public FilterAction() {
-    }
 
     /*
      * (non-Javadoc)
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       HashMap<SearchOptions, Object> searchOptions = new HashMap<SearchOptions, Object>();
 
