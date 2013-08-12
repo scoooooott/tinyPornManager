@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -149,7 +150,9 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
               BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
               BUNDLE.getString("Button.abort")); //$NON-NLS-1$
           if (decision == 0) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             Globals.settings.getMovieSettings().removeMovieDataSources(path);
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
         }
       }
