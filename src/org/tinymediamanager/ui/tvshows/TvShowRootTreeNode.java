@@ -16,6 +16,7 @@
 
 package org.tinymediamanager.ui.tvshows;
 
+import java.text.RuleBasedCollator;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -31,10 +32,9 @@ import org.tinymediamanager.core.tvshow.TvShow;
  * @author Manuel Laggner
  */
 public class TvShowRootTreeNode extends DefaultMutableTreeNode {
-
   private static final long    serialVersionUID = 6510900885675830369L;
 
-  /** The node comparator. */
+  private RuleBasedCollator    stringCollator   = (RuleBasedCollator) RuleBasedCollator.getInstance();
   private Comparator<TreeNode> nodeComparator;
 
   /**
@@ -52,6 +52,9 @@ public class TvShowRootTreeNode extends DefaultMutableTreeNode {
           TvShow tvShow1 = (TvShow) node1.getUserObject();
           TvShowTreeNode node2 = (TvShowTreeNode) o2;
           TvShow tvShow2 = (TvShow) node2.getUserObject();
+          if (stringCollator != null) {
+            return stringCollator.compare(tvShow1.getTitleSortable().toLowerCase(), tvShow2.getTitleSortable().toLowerCase());
+          }
           return tvShow1.getTitleSortable().compareToIgnoreCase(tvShow2.getTitleSortable());
         }
         return o1.toString().compareToIgnoreCase(o2.toString());

@@ -34,12 +34,13 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
  * @author Manuel Laggner
  */
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
-  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
-  private final static ImageIcon       checkIcon        = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
-  private final static ImageIcon       crossIcon        = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
-  private static Comparator<Movie>     movieComparator  = new MovieComparator();
-  private static Comparator<String>    stringComparator = new StringComparator();
-  private static Comparator<ImageIcon> imageComparator  = new ImageComparator();
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
+  private final static ImageIcon      checkIcon        = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
+  private final static ImageIcon      crossIcon        = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
+
+  private Comparator<Movie>           movieComparator  = new MovieComparator();
+  private Comparator<String>          stringComparator = new StringComparator();
+  private Comparator<ImageIcon>       imageComparator  = new ImageComparator();
 
   /*
    * (non-Javadoc)

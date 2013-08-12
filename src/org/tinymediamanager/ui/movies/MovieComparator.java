@@ -15,17 +15,18 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.text.RuleBasedCollator;
 import java.util.Comparator;
 
 import org.tinymediamanager.core.movie.Movie;
 
 /**
- * The Class MovieComparator is used to (initial) sort the movies in the
- * moviepanel.
+ * The Class MovieComparator is used to (initial) sort the movies in the moviepanel.
  * 
  * @author Manuel Laggner
  */
 public class MovieComparator implements Comparator<Movie> {
+  private RuleBasedCollator stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
   /*
    * (non-Javadoc)
@@ -34,6 +35,9 @@ public class MovieComparator implements Comparator<Movie> {
    */
   @Override
   public int compare(Movie movie1, Movie movie2) {
+    if (stringCollator != null) {
+      return stringCollator.compare(movie1.getTitleSortable().toLowerCase(), movie2.getTitleSortable().toLowerCase());
+    }
     return movie1.getTitleSortable().toLowerCase().compareTo(movie2.getTitleSortable().toLowerCase());
   }
 

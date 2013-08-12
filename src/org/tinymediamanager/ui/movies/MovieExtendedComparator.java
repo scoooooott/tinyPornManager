@@ -212,7 +212,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
         case TITLE:
           // sortOrder = movie1.getTitle().toLowerCase().compareTo(movie2.getTitle().toLowerCase());
           // sortOrder = stringComparator.compare(movie1.getTitle(), movie2.getTitle());
-          sortOrder = stringCollator.compare(movie1.getTitle(), movie2.getTitle());
+          sortOrder = stringCollator.compare(movie1.getTitleSortable().toLowerCase(), movie2.getTitleSortable().toLowerCase());
           break;
 
         case YEAR:
