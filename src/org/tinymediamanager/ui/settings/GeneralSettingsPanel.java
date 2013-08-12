@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -71,6 +72,7 @@ public class GeneralSettingsPanel extends JPanel {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();
+  private List<LocaleComboBox>        locales          = new ArrayList<LocaleComboBox>();
 
   private JPanel                      panelProxySettings;
   private JTextField                  tfProxyHost;
@@ -171,18 +173,18 @@ public class GeneralSettingsPanel extends JPanel {
       }
     };
 
-    Locale actualLocale = null;
-    for (Locale locale : Utils.getLanguages()) {
-      if (locale.equals(new Locale(Globals.settings.getLanguage()))) {
-        actualLocale = locale;
-      }
-    }
+    LocaleComboBox actualLocale = null;
 
     // cbLanguage = new JComboBox(Utils.getLanguages().toArray());
-    cbLanguage = new JComboBox();
     for (Locale l : Utils.getLanguages()) {
-      cbLanguage.addItem(new LocaleComboBox(l));
+      LocaleComboBox localeComboBox = new LocaleComboBox();
+      localeComboBox.loc = l;
+      locales.add(localeComboBox);
+      if (l.equals(new Locale(Globals.settings.getLanguage()))) {
+        actualLocale = localeComboBox;
+      }
     }
+    cbLanguage = new JComboBox(locales.toArray());
     if (actualLocale != null) {
       cbLanguage.setSelectedItem(actualLocale);
     }
@@ -426,7 +428,7 @@ public class GeneralSettingsPanel extends JPanel {
     }
 
     LocaleComboBox loc = (LocaleComboBox) cbLanguage.getSelectedItem();
-    Locale locale = loc.getLocale();
+    Locale locale = loc.loc;
     Locale actualLocale = new Locale(Globals.settings.getLanguage());
     if (!locale.equals(actualLocale)) {
       Globals.settings.setLanguage(locale.getLanguage());
@@ -505,16 +507,8 @@ public class GeneralSettingsPanel extends JPanel {
   /**
    * Helper class for customized toString() method
    */
-  public class LocaleComboBox {
+  private class LocaleComboBox {
     private Locale loc;
-
-    public LocaleComboBox(Locale loc) {
-      this.loc = loc;
-    }
-
-    public Locale getLocale() {
-      return loc;
-    }
 
     @Override
     public String toString() {
