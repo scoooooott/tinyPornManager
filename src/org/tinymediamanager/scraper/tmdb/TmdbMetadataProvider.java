@@ -906,7 +906,14 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       return info;
     }
 
-    info = tmdb.getCollectionInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name());
+    synchronized (tmdb) {
+      trackConnections();
+      info = tmdb.getCollectionInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name());
+      if (StringUtils.isBlank(info.getOverview())) {
+        // fallback to en
+        info = tmdb.getCollectionInfo(tmdbId, "en");
+      }
+    }
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
     info.setPosterPath(baseUrl + "w342" + info.getPosterPath());
