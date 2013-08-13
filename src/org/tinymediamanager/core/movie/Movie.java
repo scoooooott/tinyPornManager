@@ -1886,6 +1886,10 @@ public class Movie extends MediaEntity {
     return runtime;
   }
 
+  public int getRuntimeFromMediaFilesInMinutes() {
+    return getRuntimeFromMediaFiles() / 60;
+  }
+
   public Date getReleaseDate() {
     return releaseDate;
   }
@@ -1930,5 +1934,9 @@ public class Movie extends MediaEntity {
     if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP) {
       writeNFO();
     }
+  }
+
+  public List<MediaFile> getVideoFiles() {
+    return getMediaFiles(MediaFileType.VIDEO);
   }
 }
