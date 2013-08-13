@@ -91,11 +91,11 @@ resource = [windows-x86] native/windows-x86/mingwm10.dll
 
 # templates
 resource = templates/readme.txt
-uresource = templates/DetailExampleHtml.zip
-uresource = templates/DetailExample2Html.zip
-uresource = templates/ListExampleCsv.zip
-uresource = templates/ListExampleHtml.zip
-uresource = templates/ListExampleXml.zip
+uresource = templates/DetailExampleHtml.jar
+uresource = templates/DetailExample2Html.jar
+uresource = templates/ListExampleCsv.jar
+uresource = templates/ListExampleHtml.jar
+uresource = templates/ListExampleXml.jar
 
 # The main entry point for the application
 class = org.tinymediamanager.TinyMediaManager
