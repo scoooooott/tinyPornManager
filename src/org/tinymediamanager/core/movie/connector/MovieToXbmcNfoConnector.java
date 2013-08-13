@@ -284,7 +284,7 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.tagline = movie.getTagline();
     xbmc.runtime = String.valueOf(movie.getRuntime());
-    // xbmc.setThumb(movie.getPoster());
+    xbmc.thumb = movie.getPosterUrl();
     xbmc.id = movie.getImdbId();
     xbmc.tmdbId = movie.getTmdbId();
 
