@@ -517,7 +517,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       if (result.episodes.size() == 0) {
         // if episode STILL empty, try Myron's way of parsing - lol
         result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(
-            new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath(), tvShow.getPath());
+            new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath(), tvShow.getTitle());
         LOGGER.debug(firstVideoFile.getName() + " - " + result.toString());
       }
 
