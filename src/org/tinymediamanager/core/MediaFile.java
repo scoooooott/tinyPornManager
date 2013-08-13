@@ -285,9 +285,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    *          the new file
    */
   public void setFile(File file) {
-    this.file = file;
     setFilename(file.getName());
     setPath(file.getParent());
+    this.file = file;
   }
 
   /**

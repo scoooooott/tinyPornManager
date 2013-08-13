@@ -521,6 +521,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         LOGGER.debug(firstVideoFile.getName() + " - " + result.toString());
       }
 
+      // FIXME: Episode root is outside of disc folders ?!
+      while (dir.getPath().toUpperCase().contains("BDMV") || dir.getPath().toUpperCase().contains("VIDEO_TS")) {
+        dir = dir.getParentFile();
+      }
+
       if (result.episodes.size() > 0) {
         // add it
         for (int ep : result.episodes) {

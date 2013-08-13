@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow;
 import java.io.File;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,8 +171,43 @@ public class TvShowRenamer {
     }
 
     if (ep.isDisc()) {
-      // TODO: handle disc folder
-      LOGGER.warn("Episode is a DVD/BD disc folder - not yet implemented!");
+      // \Season 1\S01E02E03\VIDEO_TS\VIDEO_TS.VOB
+      // ......... \epFolder \disc... \ file
+      File disc = mf.getFile().getParentFile();
+      File epFolder = disc.getParentFile();
+
+      // sanity check
+      if (!disc.getName().equalsIgnoreCase("BDMV") && !disc.getName().equalsIgnoreCase("VIDEO_TS")) {
+        LOGGER.error("Episode is labeled as 'on BD/DVD', but structure seems not to match. Better exit and do nothing... o_O");
+        return;
+      }
+
+      String newFoldername = FilenameUtils.getBaseName(generateFilename(mf)); // w/o extension
+      File newEpFolder = new File(seasonDir + File.separator + newFoldername);
+      File newDisc = new File(newEpFolder + File.separator + disc.getName()); // old disc name
+
+      try {
+        if (!epFolder.equals(newEpFolder)) {
+          boolean ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
+          if (ok) {
+            // iterate over all EPs & MFs and fix new path
+            LOGGER.debug("updating *all* MFs for new path -> " + newEpFolder);
+            for (TvShowEpisode e : eps) {
+              e.updateMediaFilePath(disc, newDisc);
+              e.setPath(newEpFolder.getPath());
+              e.saveToDb();
+            }
+          }
+        }
+        else {
+          // old and new folder are equal, do nothing
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("error moving video file", e);
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+            e.getLocalizedMessage() }));
+      }
     }
     else {
       MediaFile newMF = new MediaFile(mf); // clone MF
