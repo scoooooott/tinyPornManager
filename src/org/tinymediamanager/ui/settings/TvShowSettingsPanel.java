@@ -77,14 +77,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
-  private static final long           serialVersionUID       = -675729644848101096L;
-  private static final ResourceBundle BUNDLE                 = ResourceBundle.getBundle("messages", new UTF8Control());   //$NON-NLS-1$
-  private static final String         SPACE                  = "<space>";
-  private static final String         NONE                   = "<none>";
+  private static final long           serialVersionUID = -675729644848101096L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());   //$NON-NLS-1$
+  private static final String         SPACE            = "<space>";
 
-  private Settings                    settings               = Settings.getInstance();
-  private List<String>                separators             = new ArrayList<String>(Arrays.asList(SPACE, ".", "_", "-"));
-  private List<String>                multiEpisodeSeparators = new ArrayList<String>(Arrays.asList(NONE, ".", "_", "-"));
+  private Settings                    settings         = Settings.getInstance();
+  private List<String>                separators       = new ArrayList<String>(Arrays.asList(SPACE, ".", "_", "-"));
 
   private JTable                      tableTvShowSources;
   private JCheckBox                   chckbxAddSeason;
@@ -93,10 +91,9 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
   private JRadioButton                rdbtnRawNumber;
   private JRadioButton                rdbtnSeasonEpisode;
   private JRadioButton                rdbtnSxe;
-  private final ButtonGroup           buttonGroup            = new ButtonGroup();
+  private final ButtonGroup           buttonGroup      = new ButtonGroup();
   private JLabel                      lblSeparator;
   private JComboBox                   cbSeparator;
-  private JLabel                      lblMultiEpisodeSeparator;
   private JLabel                      lblSeasonFolderName;
   private JTextField                  tfSeasonFoldername;
   private JTextPane                   txtpnSeasonHint;
