@@ -71,7 +71,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso(Actor.class)
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
-    "runtime", "thumb", "mpaa", "certifications", "id", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired", "fileinfo",
+    "runtime", "thumb", "fanart", "mpaa", "certifications", "id", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired", "fileinfo",
     "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "resume", "lastplayed", "dateadded", "keywords", "poster",
     "url" })
 public class MovieToXbmcNfoConnector {
@@ -101,6 +101,9 @@ public class MovieToXbmcNfoConnector {
 
   @XmlElement
   private String              thumb          = "";
+
+  @XmlElement
+  private String              fanart         = "";
 
   @XmlElement
   private String              id             = "";
@@ -285,6 +288,7 @@ public class MovieToXbmcNfoConnector {
     xbmc.tagline = movie.getTagline();
     xbmc.runtime = String.valueOf(movie.getRuntime());
     xbmc.thumb = movie.getPosterUrl();
+    xbmc.fanart = movie.getFanartUrl();
     xbmc.id = movie.getImdbId();
     xbmc.tmdbId = movie.getTmdbId();
 
@@ -465,6 +469,12 @@ public class MovieToXbmcNfoConnector {
       if (StringUtils.isNotBlank(xbmc.thumb)) {
         if (xbmc.thumb.contains("http://")) {
           movie.setPosterUrl(xbmc.thumb);
+        }
+      }
+
+      if (StringUtils.isNotBlank(xbmc.fanart)) {
+        if (xbmc.fanart.contains("http://")) {
+          movie.setFanartUrl(xbmc.fanart);
         }
       }
 
