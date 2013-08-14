@@ -82,7 +82,6 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
     super.paintComponent(g);
 
     if (!this.hasFocus() && this.getText().equals("")) {
-      int width = this.getWidth();
       int height = this.getHeight();
       Font prev = g.getFont();
       Font italic = prev.deriveFont(Font.ITALIC);

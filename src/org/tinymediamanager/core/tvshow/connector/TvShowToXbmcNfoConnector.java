@@ -111,7 +111,6 @@ public class TvShowToXbmcNfoConnector {
    * 
    * @param tvShow
    *          the tv show
-   * @return the string
    */
   public static void setData(TvShow tvShow) {
     if (context == null) {

@@ -119,8 +119,9 @@ public class TvShowEpisodeAndSeasonParser {
   /**
    * old-style ;)
    * 
-   * @param filename
-   * @return
+   * @param name
+   * @param showname
+   * @return result
    */
   public static EpisodeMatchingResult detectEpisodeFromFilenameAlternative(String name, String showname) {
     LOGGER.debug("parsing '" + name + "' with alternate method...");

@@ -45,12 +45,6 @@ public class MovieRenameTask extends TmmThreadPool {
    * 
    * @param moviesToRename
    *          the movies to rename
-   * @param label
-   *          the label
-   * @param progressBar
-   *          the progress bar
-   * @param button
-   *          the button
    */
   public MovieRenameTask(List<Movie> moviesToRename) {
     this.moviesToRename = moviesToRename;

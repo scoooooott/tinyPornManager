@@ -599,7 +599,7 @@ public class Utils {
    * 
    * @param source
    *          string
-   * @param replacement
+   * @param replacements
    *          array
    * @return replaced string
    */

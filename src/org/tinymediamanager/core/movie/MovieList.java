@@ -309,8 +309,8 @@ public class MovieList extends AbstractModelObject {
    * 
    * @param searchTerm
    *          the search term
-   * @param ImdbId
-   *          the imdb id
+   * @param movie
+   *          the movie
    * @param metadataProvider
    *          the metadata provider
    * @return the list

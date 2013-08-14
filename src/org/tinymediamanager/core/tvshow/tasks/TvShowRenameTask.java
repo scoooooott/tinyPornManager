@@ -45,12 +45,6 @@ public class TvShowRenameTask extends TmmThreadPool {
    * 
    * @param tvShowToRename
    *          the tvshow to rename
-   * @param label
-   *          the label
-   * @param progressBar
-   *          the progress bar
-   * @param button
-   *          the button
    */
   public TvShowRenameTask(List<TvShow> tvShowToRename) {
     this.tvShowToRename = tvShowToRename;

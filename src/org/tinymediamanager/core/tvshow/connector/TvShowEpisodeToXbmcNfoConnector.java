@@ -120,7 +120,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
    * 
    * @param tvShowEpisodes
    *          the tv show episodes
-   * @return the string
    */
   public static void setData(List<TvShowEpisode> tvShowEpisodes) {
     if (context == null) {

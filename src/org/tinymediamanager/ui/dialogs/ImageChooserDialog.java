@@ -499,7 +499,7 @@ public class ImageChooserDialog extends JDialog {
    *          the tmdb artwork
    */
   private void addImage(BufferedImage originalImage, MediaArtwork artwork) {
-    int imageType = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+    // int imageType = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
     Point size = null;
 
     GridBagLayout gbl = new GridBagLayout();
@@ -804,44 +804,6 @@ public class ImageChooserDialog extends JDialog {
         dispose();
       }
 
-    }
-
-    /**
-     * The Class ImageFileFilter.
-     * 
-     * @author Manuel Laggner
-     */
-    public class ImageFileFilter extends FileFilter {
-
-      /** The ok file extensions. */
-      private final String[] okFileExtensions = new String[] { "jpg", "png" };
-
-      /*
-       * (non-Javadoc)
-       * 
-       * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
-       */
-      public boolean accept(File file) {
-        if (file.isDirectory())
-          return true;
-
-        for (String extension : okFileExtensions) {
-          if (file.getName().toLowerCase().endsWith(extension)) {
-            return true;
-          }
-        }
-        return false;
-      }
-
-      /*
-       * (non-Javadoc)
-       * 
-       * @see javax.swing.filechooser.FileFilter#getDescription()
-       */
-      @Override
-      public String getDescription() {
-        return "image files (.jpg; .png)";
-      }
     }
   }
 }

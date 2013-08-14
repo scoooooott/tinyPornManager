@@ -560,8 +560,8 @@ public class MoviePanel extends JPanel {
     /**
      * Instantiates a new UpdateDataSourcesAction.
      * 
-     * @param withTitle
-     *          the with title
+     * @param datasource
+     *          the datasource
      */
     public UpdateSingleDataSourceAction(String datasource) {
       putValue(NAME, datasource);

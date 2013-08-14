@@ -136,7 +136,6 @@ public class MovieToMpNfoConnector {
    * 
    * @param movie
    *          the movie
-   * @return the string
    */
   public static void setData(Movie movie) {
     if (context == null) {

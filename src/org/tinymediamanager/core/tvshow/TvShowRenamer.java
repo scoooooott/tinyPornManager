@@ -65,7 +65,7 @@ public class TvShowRenamer {
   /**
    * Rename TvShow.
    * 
-   * @param TvShow
+   * @param show
    *          the TvShow
    */
   public static void renameTvShow(TvShow show) {
@@ -93,7 +93,7 @@ public class TvShowRenamer {
   /**
    * Rename Season.
    * 
-   * @param Season
+   * @param season
    *          the Season
    */
   public static void renameSeason(TvShowSeason season) {
@@ -106,7 +106,7 @@ public class TvShowRenamer {
   /**
    * Rename Episode (PLUS all Episodes having the same MediaFile!!!).
    * 
-   * @param Episode
+   * @param episode
    *          the Episode
    */
   public static void renameEpisode(TvShowEpisode episode) {

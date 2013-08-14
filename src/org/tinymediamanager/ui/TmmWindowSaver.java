@@ -24,8 +24,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.WindowConfig;
 import org.tinymediamanager.ui.movies.MoviePanel;
@@ -36,11 +34,6 @@ import org.tinymediamanager.ui.movies.MoviePanel;
  * @author Manuel Laggner
  */
 public class TmmWindowSaver implements AWTEventListener {
-
-  /** The Constant LOGGER. */
-  private static final Logger   LOGGER = LoggerFactory.getLogger(TmmWindowSaver.class);
-
-  /** The instance. */
   private static TmmWindowSaver instance;
 
   /**

@@ -47,11 +47,6 @@ public class StarRater extends JPanel {
   private static final Image STAR_FOREGROUND_IMAGE = com.bric.image.ImageLoader.createImage(MainWindow.class
                                                        .getResource("/org/tinymediamanager/ui/images/mark24.png"));
 
-  /**
-   * The listener.
-   * 
-   * @see StarEvent
-   */
   public static interface StarListener {
 
     /**

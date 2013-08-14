@@ -70,7 +70,7 @@ public class TvShowCastPanel extends JPanel {
   /**
    * Instantiates a new tv show cast panel.
    * 
-   * @param selectionModel
+   * @param model
    *          the selection model
    */
   public TvShowCastPanel(TvShowSelectionModel model) {

@@ -22,8 +22,6 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Class MediaArt.
@@ -158,37 +156,16 @@ public class MediaArtwork {
     }
   }
 
-  /** The Constant logger. */
-  private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaArtwork.class);
-
-  /** The imdb id. */
   private String                imdbId;
-
-  /** The tmdb id. */
   private int                   tmdbId;
-
-  /** The season. */
   private int                   season     = -1;
-
-  /** The download url. */
   private String                previewUrl;
-
-  /** The default url. */
   private String                defaultUrl;
-
-  /** The language. */
   private String                language;
-
-  /** The provider id. */
   private String                providerId;
-
-  /** The type. */
   private MediaArtworkType      type;
-
-  /** The size order. */
   private int                   sizeOrder  = 0;
 
-  /** The image sizes. */
   private List<ImageSizeAndUrl> imageSizes = new ArrayList<ImageSizeAndUrl>();
 
   /**

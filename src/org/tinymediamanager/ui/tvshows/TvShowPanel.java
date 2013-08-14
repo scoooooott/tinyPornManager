@@ -59,8 +59,6 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
@@ -98,10 +96,8 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class TvShowPanel extends JPanel {
-
   private static final long           serialVersionUID              = -1923811385292825136L;
   private static final ResourceBundle BUNDLE                        = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private final static Logger         LOGGER                        = LoggerFactory.getLogger(TvShowPanel.class);
 
   private TvShowTreeModel             treeModel;
   private TvShowSelectionModel        tvShowSelectionModel;
@@ -960,9 +956,6 @@ public class TvShowPanel extends JPanel {
 
     /**
      * Instantiates a new rename action.
-     * 
-     * @param withTitle
-     *          the with title
      */
     public RenameAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));

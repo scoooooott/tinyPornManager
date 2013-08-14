@@ -47,7 +47,7 @@ public interface ITvShowMetadataProvider {
   /**
    * Gets an episode list for the given TV show
    * 
-   * @param the
+   * @param options
    *          scrape options (containing the ID of the TV show)
    * @return a list of episodes
    * @throws Exception

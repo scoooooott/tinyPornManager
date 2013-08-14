@@ -17,8 +17,6 @@ package org.tinymediamanager.ui.tvshows;
 
 import java.util.ResourceBundle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaEpisode;
@@ -30,19 +28,18 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeChooserModel extends AbstractModelObject {
-  private static final ResourceBundle           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger                   LOGGER           = LoggerFactory.getLogger(TvShowEpisodeChooserModel.class);
-  public static final TvShowEpisodeChooserModel emptyResult      = new TvShowEpisodeChooserModel();
+  private static final ResourceBundle           BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  public static final TvShowEpisodeChooserModel emptyResult = new TvShowEpisodeChooserModel();
 
-  private ITvShowMetadataProvider               metadataProvider = null;
+  // private ITvShowMetadataProvider metadataProvider = null;
   private MediaEpisode                          mediaEpisode;
-  private String                                title            = "";
-  private String                                overview         = "";
-  private int                                   season           = -1;
-  private int                                   episode          = -1;
+  private String                                title       = "";
+  private String                                overview    = "";
+  private int                                   season      = -1;
+  private int                                   episode     = -1;
 
   public TvShowEpisodeChooserModel(ITvShowMetadataProvider metadataProvider, MediaEpisode episode) {
-    this.metadataProvider = metadataProvider;
+    // this.metadataProvider = metadataProvider;
     this.mediaEpisode = episode;
 
     setTitle(episode.title);

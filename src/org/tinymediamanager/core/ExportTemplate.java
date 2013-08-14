@@ -159,7 +159,7 @@ public class ExportTemplate extends AbstractModelObject {
   /**
    * Sets the url.
    * 
-   * @param url
+   * @param newValue
    *          the new url
    */
   public void setUrl(String newValue) {

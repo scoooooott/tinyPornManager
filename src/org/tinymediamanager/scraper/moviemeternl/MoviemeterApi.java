@@ -85,7 +85,7 @@ public class MoviemeterApi {
    *          the method
    * @param params
    *          the params
-   * @return
+   * @return return value
    * @throws XmlRpcFault
    * @throws XmlRpcException
    */

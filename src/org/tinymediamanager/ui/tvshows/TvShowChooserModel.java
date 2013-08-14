@@ -41,53 +41,24 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowChooserModel extends AbstractModelObject {
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The Constant logger. */
   private static final Logger            LOGGER           = LoggerFactory.getLogger(TvShowChooserModel.class);
-
-  /** The Constant emptyResult. */
   public static final TvShowChooserModel emptyResult      = new TvShowChooserModel();
 
-  /** The metadata provider. */
   private ITvShowMetadataProvider        metadataProvider = null;
-
-  /** The artwork provider. */
   private List<IMediaArtworkProvider>    artworkProviders = null;
-
-  /** The trailer provider. */
-  private List<IMediaTrailerProvider>    trailerProviders = null;
-
-  /** The result. */
   private MediaSearchResult              result           = null;
-
-  /** The metadata. */
   private MediaMetadata                  metadata         = null;
-
-  /** The name. */
   private String                         name             = "";
-
-  /** The overview. */
   private String                         overview         = "";
-
-  /** The year. */
   private String                         year             = "";
-
-  /** The combined name. */
   private String                         combinedName     = "";
-
-  /** The poster url. */
   private String                         posterUrl        = "";
-
-  /** The tagline. */
   private String                         tagline          = "";
-
-  /** The scraped. */
   private boolean                        scraped          = false;
 
-  /* new scraper logic */
+  // private List<IMediaTrailerProvider> trailerProviders = null;
+
   /**
    * Instantiates a new tv show chooser model.
    * 
@@ -104,7 +75,7 @@ public class TvShowChooserModel extends AbstractModelObject {
       List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
     this.metadataProvider = metadataProvider;
     this.artworkProviders = artworkProviders;
-    this.trailerProviders = trailerProviders;
+    // this.trailerProviders = trailerProviders;
     this.result = result;
 
     // name

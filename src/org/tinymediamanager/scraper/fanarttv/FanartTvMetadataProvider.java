@@ -41,17 +41,9 @@ import com.omertron.fanarttvapi.model.FanartTvArtwork;
  * @author Myron Boyle (myron0815@gmx.net)
  */
 public class FanartTvMetadataProvider implements IMediaArtworkProvider {
-
-  /** The Constant LOGGER. */
   private static final Logger      LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
-
-  /** The Constant BASE_URL. */
-  private static final String      BASE_URL     = "http://www.fanart.tv";
-
-  /** The provider info. */
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("fanart", "fanart.tv", "Scraper for fanarts");
 
-  /** The ftv. */
   private FanartTvApi              ftv          = null;
 
   /**

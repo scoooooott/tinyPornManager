@@ -165,7 +165,6 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
     int maxWidth = dim[0].width;
     int maxHeight = dim[0].height;
     int usedWidth = dim[1].width;
-    int usedHeight = dim[1].height;
 
     switch (alignment) {
       case LEFT:
@@ -218,8 +217,7 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
   /*
    * (non-Javadoc)
    * 
-   * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String,
-   * java.awt.Component)
+   * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String, java.awt.Component)
    */
   @Override
   public void addLayoutComponent(String string, Component comp) {

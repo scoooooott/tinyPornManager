@@ -513,7 +513,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
      * 
      * @param searchTerm
      *          the search term
-     * @param Movie
+     * @param movie
      *          the movie
      */
     public SearchTask(String searchTerm, Movie movie) {
