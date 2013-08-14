@@ -132,7 +132,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     episode = source.episode;
     season = source.season;
-    firstAired = new Date(source.firstAired.getTime());
+    if (source.firstAired != null) {
+      firstAired = new Date(source.firstAired.getTime());
+    }
     director = new String(source.director);
     writer = new String(source.writer);
     disc = source.disc;
