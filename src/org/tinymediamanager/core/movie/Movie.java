@@ -68,9 +68,13 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
+import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
+
+import com.omertron.themoviedbapi.model.CollectionInfo;
 
 /**
  * The main class for movies.
@@ -940,6 +944,24 @@ public class Movie extends MediaEntity {
         MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getCollectionName());
         if (movieSet.getTmdbId() == 0) {
           movieSet.setTmdbId(col);
+          // get movieset metadata
+          try {
+            TmdbMetadataProvider mp = new TmdbMetadataProvider();
+            MediaScrapeOptions options = new MediaScrapeOptions();
+            options.setTmdbId(col);
+            options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+            options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+
+            CollectionInfo info = mp.getMovieSetMetadata(options);
+            if (info != null) {
+              movieSet.setTitle(info.getName());
+              movieSet.setPlot(info.getOverview());
+              movieSet.setPosterUrl(info.getPosterPath());
+              movieSet.setFanartUrl(info.getBackdropPath());
+            }
+          }
+          catch (Exception e) {
+          }
         }
 
         // add movie to movieset
@@ -951,6 +973,7 @@ public class Movie extends MediaEntity {
           // movieSet.addMovie(this);
           setMovieSet(movieSet);
           movieSet.insertMovie(this);
+          setSortTitleFromMovieSet();
           saveToDb();
         }
       }

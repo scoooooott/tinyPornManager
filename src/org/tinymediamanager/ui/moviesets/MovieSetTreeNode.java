@@ -47,10 +47,12 @@ public class MovieSetTreeNode extends DefaultMutableTreeNode {
           MovieTreeNode node2 = (MovieTreeNode) o2;
           Movie movie2 = (Movie) node2.getUserObject();
 
+          if (movie1 == null || movie2 == null || movie1.getMovieSet() == null || movie2.getMovieSet() == null) {
+            return 0;
+          }
           int index1 = movie1.getMovieSet().getMovieIndex(movie1);
           int index2 = movie2.getMovieSet().getMovieIndex(movie2);
           return index1 - index2;
-          // return movie1.getSortTitle().compareTo(movie2.getSortTitle());
         }
         return o1.toString().compareToIgnoreCase(o2.toString());
       }
