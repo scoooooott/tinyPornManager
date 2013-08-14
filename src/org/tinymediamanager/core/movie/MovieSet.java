@@ -360,6 +360,10 @@ public class MovieSet extends MediaEntity {
     if (imageFile.exists()) {
       imageFile.delete();
     }
+    if (movie.getMovieSet() != null) {
+      movie.setMovieSet(null);
+      movie.saveToDb();
+    }
 
     moviesObservable.remove(movie);
     saveToDb();
@@ -398,6 +402,11 @@ public class MovieSet extends MediaEntity {
       imageFile = new File(movie.getPath() + File.separator + "movieset-poster.jpg");
       if (imageFile.exists()) {
         imageFile.delete();
+      }
+
+      if (movie.getMovieSet() != null) {
+        movie.setMovieSet(null);
+        movie.saveToDb();
       }
     }
 

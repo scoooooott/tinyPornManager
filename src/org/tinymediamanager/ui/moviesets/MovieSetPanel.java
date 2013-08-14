@@ -69,48 +69,26 @@ import com.jtattoo.plaf.JTattooUtilities;
  * @author Manuel Laggner
  */
 public class MovieSetPanel extends JPanel {
-
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID     = -7095093579735941697L;
   private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID     = 1L;
-
-  /** The split pane horizontal. */
-  private JSplitPane                  splitPaneHorizontal;
-
-  /** The movie selection model. */
   private MovieSelectionModel         movieSelectionModel;
-
-  /** The movieset selection model. */
   private MovieSetSelectionModel      movieSetSelectionModel;
-
-  /** The movie list. */
   private MovieList                   movieList            = MovieList.getInstance();
-
-  /** The action add movie set. */
-  private final Action                actionAddMovieSet    = new AddMovieSetAction();
-
-  /** The tree. */
-  private JTree                       tree;
-
-  /** The tree model. */
   private MovieSetTreeModel           treeModel;
+  private int                         width                = 0;
 
-  /** The action remove movie set. */
-  private final Action                actionRemoveMovieSet = new RemoveMovieSetAction();
-
-  /** The action search movie set. */
-  private final Action                actionSearchMovieSet = new SearchMovieSetAction();
-
-  /** The lbl movie set count. */
+  /**
+   * UI elements
+   */
+  private JSplitPane                  splitPaneHorizontal;
+  private JTree                       tree;
   private JLabel                      lblMovieSetCount;
 
-  /** The action edit movie set. */
+  private final Action                actionAddMovieSet    = new AddMovieSetAction();
+  private final Action                actionRemoveMovieSet = new RemoveMovieSetAction();
+  private final Action                actionSearchMovieSet = new SearchMovieSetAction();
   private final Action                actionEditMovieSet   = new EditMovieSetAction();
-
-  /** The width. */
-  private int                         width                = 0;
 
   /**
    * Instantiates a new movie set panel.
