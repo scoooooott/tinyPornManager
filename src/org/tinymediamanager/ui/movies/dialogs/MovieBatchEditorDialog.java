@@ -234,7 +234,9 @@ public class MovieBatchEditorDialog extends JDialog {
                 movieSet.insertMovie(movie);
               }
 
-              movie.setSortTitleFromMovieSet();
+              // movie.setSortTitleFromMovieSet();
+              // movie.saveToDb();
+              movieSet.updateMovieSorttitle();
             }
           }
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

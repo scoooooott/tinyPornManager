@@ -973,8 +973,8 @@ public class Movie extends MediaEntity {
           // movieSet.addMovie(this);
           setMovieSet(movieSet);
           movieSet.insertMovie(this);
-          setSortTitleFromMovieSet();
-          saveToDb();
+          movieSet.updateMovieSorttitle();
+          // saveToDb();
         }
       }
     }

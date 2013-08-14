@@ -716,4 +716,15 @@ public class MovieSet extends MediaEntity {
   @Override
   public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
   }
+
+  /**
+   * recalculate all movie sorttitles
+   */
+  public void updateMovieSorttitle() {
+    for (Movie movie : new ArrayList<Movie>(moviesObservable)) {
+      movie.setSortTitleFromMovieSet();
+      movie.saveToDb();
+      movie.writeNFO();
+    }
+  }
 }

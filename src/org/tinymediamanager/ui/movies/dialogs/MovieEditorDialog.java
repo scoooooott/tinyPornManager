@@ -822,7 +822,8 @@ public class MovieEditorDialog extends JDialog {
           movieSet.insertMovie(movieToEdit);
         }
 
-        movieToEdit.setSortTitleFromMovieSet();
+        // movieToEdit.setSortTitleFromMovieSet();
+        movieSet.updateMovieSorttitle();
       }
 
       double tempRating = (Double) spRating.getValue();
