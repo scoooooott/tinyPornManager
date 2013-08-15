@@ -1633,4 +1633,18 @@ public class TvShow extends MediaEntity {
     }
     return ep;
   }
+
+  /**
+   * check if one of the tv shows episode is newly added
+   * 
+   * @return true/false
+   */
+  public boolean isNewlyAdded() {
+    for (TvShowEpisode episode : episodes) {
+      if (episode.isNewlyAdded()) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

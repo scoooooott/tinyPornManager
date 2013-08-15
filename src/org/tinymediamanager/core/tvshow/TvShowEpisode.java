@@ -58,44 +58,25 @@ import org.tinymediamanager.scraper.MediaMetadata;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
-
-  /** The Constant LOGGER. */
   private static final Logger LOGGER            = LoggerFactory.getLogger(TvShowEpisode.class);
 
-  /** The tv show. */
   private TvShow              tvShow            = null;
-
-  /** The episode. */
   private int                 episode           = 0;
-
-  /** The season. */
   private int                 season            = -1;
-
-  /** the first aired date. */
   private Date                firstAired        = null;
-
-  /** The director. */
   private String              director          = "";
-
-  /** The writer. */
   private String              writer            = "";
-
-  /** is this episode in a disc folder structure?. */
   private boolean             disc              = false;
-
-  /** The watched. */
   private boolean             watched           = false;
-
-  /** The votes. */
   private int                 votes             = 0;
-
   private boolean             subtitles         = false;
 
-  /** The actors. */
+  @Transient
+  private boolean             newlyAdded        = false;
+
   @OneToMany(cascade = CascadeType.ALL)
   private List<TvShowActor>   actors            = new ArrayList<TvShowActor>();
 
-  /** The actors observables. */
   @Transient
   private List<TvShowActor>   actorsObservables = ObservableCollections.observableList(actors);
 
@@ -845,5 +826,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @Override
   public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
+  }
+
+  public boolean isNewlyAdded() {
+    return this.newlyAdded;
+  }
+
+  public void setNewlyAdded(boolean newlyAdded) {
+    this.newlyAdded = newlyAdded;
   }
 }

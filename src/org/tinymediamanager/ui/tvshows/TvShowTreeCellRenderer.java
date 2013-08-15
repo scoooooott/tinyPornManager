@@ -66,12 +66,13 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
   private JLabel                      tvShowEpisodeSubtitleLabel = new JLabel();
 
   private DefaultTreeCellRenderer     defaultRenderer            = new DefaultTreeCellRenderer();
+  private final Color                 defaultColor               = tvShowTitle.getForeground();
+  private final Color                 newlyAddedColor            = new Color(76, 143, 72);
 
   /**
    * Instantiates a new tv show tree cell renderer.
    */
   public TvShowTreeCellRenderer() {
-    // tvShowPanel.setLayout(new BoxLayout(tvShowPanel, BoxLayout.Y_AXIS));
     tvShowPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
         ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
@@ -122,6 +123,13 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         else {
           tvShowTitle.setText(tvShow.getTitleSortable() + " (" + tvShow.getYear() + ")");
         }
+        if (tvShow.isNewlyAdded()) {
+          tvShowTitle.setForeground(newlyAddedColor);
+        }
+        else {
+          tvShowTitle.setForeground(defaultColor);
+        }
+
         tvShowInfo.setText(tvShow.getSeasons().size()
             + " " + BUNDLE.getString("metatag.seasons") + " - " + tvShow.getEpisodes().size() + " " + BUNDLE.getString("metatag.episodes")); //$NON-NLS-1$
         tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
@@ -140,6 +148,13 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         tvShowSeasonTitle.setText(BUNDLE.getString("metatag.season") + " " + season.getSeason());//$NON-NLS-1$
         tvShowSeasonPanel.setEnabled(tree.isEnabled());
 
+        if (season.isNewlyAdded()) {
+          tvShowSeasonTitle.setForeground(newlyAddedColor);
+        }
+        else {
+          tvShowSeasonTitle.setForeground(defaultColor);
+        }
+
         returnValue = tvShowSeasonPanel;
       }
     }
@@ -155,6 +170,13 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         else {
           tvShowEpisodeTitle.setText(episode.getTitle());
         }
+        if (episode.isNewlyAdded()) {
+          tvShowEpisodeTitle.setForeground(newlyAddedColor);
+        }
+        else {
+          tvShowEpisodeTitle.setForeground(defaultColor);
+        }
+
         tvShowEpisodePanel.setEnabled(tree.isEnabled());
 
         tvShowEpisodeNfoLabel.setIcon(episode.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);

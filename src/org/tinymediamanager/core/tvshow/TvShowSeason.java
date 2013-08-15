@@ -164,4 +164,18 @@ public class TvShowSeason extends AbstractModelObject {
     mfs.addAll(unique);
     return mfs;
   }
+
+  /**
+   * check if one of the seasons episode is newly added
+   * 
+   * @return true/false
+   */
+  public boolean isNewlyAdded() {
+    for (TvShowEpisode episode : episodes) {
+      if (episode.isNewlyAdded()) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
