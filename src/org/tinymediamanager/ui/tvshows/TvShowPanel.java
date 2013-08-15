@@ -116,6 +116,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionScrape                  = new SingleScrapeAction(false);
   private final Action                actionScrape2                 = new SingleScrapeAction(true);
   private final Action                actionScrapeSelected          = new SelectedScrapeAction();
+  private final Action                actionScrapeNewItems          = new ScrapeNewItemsAction();
   private final Action                actionEdit                    = new EditAction(false);
   private final Action                actionEdit2                   = new EditAction(true);
   private final Action                actionRemove2                 = new RemoveAction(true);
@@ -222,6 +223,8 @@ public class TvShowPanel extends JPanel {
     // popup.add(item);
     item = new JMenuItem(actionScrapeSelected);
     popup.add(item);
+    item = new JMenuItem(actionScrapeNewItems);
+    popup.add(item);
     buttonScrape.setPopupMenu(popup);
     toolBar.add(buttonScrape);
     toolBar.add(actionEdit);
@@ -230,6 +233,7 @@ public class TvShowPanel extends JPanel {
     tree = new ZebraJTree(treeModel) {
       private static final long serialVersionUID = 1L;
 
+      @Override
       public void paintComponent(Graphics g) {
         width = this.getWidth();
         super.paintComponent(g);
@@ -237,6 +241,7 @@ public class TvShowPanel extends JPanel {
     };
 
     TreeUI ui = new TreeUI() {
+      @Override
       protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
           boolean hasBeenExpanded, boolean isLeaf) {
         bounds.width = width - bounds.x;
@@ -673,6 +678,47 @@ public class TvShowPanel extends JPanel {
 
       TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
       Globals.executor.execute(task);
+    }
+  }
+
+  private class ScrapeNewItemsAction extends AbstractAction {
+    private static final long serialVersionUID = -3365542777082781952L;
+
+    public ScrapeNewItemsAction() {
+      putValue(NAME, BUNDLE.getString("tvshow.scrape.newitems")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      List<TvShow> newTvShows = new ArrayList<TvShow>();
+      List<TvShowEpisode> newEpisodes = new ArrayList<TvShowEpisode>();
+
+      for (TvShow tvShow : new ArrayList<TvShow>(tvShowList.getTvShows())) {
+        // if there is at least one new episode and no scraper id we assume the TV show is new
+        if (tvShow.isNewlyAdded() && !tvShow.isScraped()) {
+          newTvShows.add(tvShow);
+          continue;
+        }
+        // else: check every episode if there is a new episode
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          if (episode.isNewlyAdded() && !episode.isScraped()) {
+            newEpisodes.add(episode);
+          }
+        }
+      }
+
+      // now start the scrape tasks
+      // epsiode scraping can run in background
+      TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(newEpisodes);
+      Globals.executor.execute(task);
+
+      // whereas tv show scraping has to run in foreground
+      for (TvShow tvShow : newTvShows) {
+        TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, newTvShows.size() > 1 ? true : false);
+        if (!chooser.showDialog()) {
+          break;
+        }
+      }
     }
   }
 
