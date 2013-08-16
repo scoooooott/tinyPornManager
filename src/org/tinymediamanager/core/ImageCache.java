@@ -38,6 +38,7 @@ import javax.imageio.stream.ImageOutputStream;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -232,6 +233,44 @@ public class ImageCache {
     if (cachedFile.exists()) {
       cachedFile.delete();
     }
+  }
+
+  /**
+   * Gets the cached file.
+   * 
+   * @param path
+   *          the path
+   * @return the cached file
+   */
+  public static File getCachedFile(String path) {
+    if (StringUtils.isEmpty(path)) {
+      return null;
+    }
+
+    // is the image cache activated?
+    if (!Globals.settings.isImageCache()) {
+      return new File(path);
+    }
+
+    // is the path in the cache dir?
+    if (path.startsWith(ImageCache.CACHE_DIR)) {
+      return new File(path);
+    }
+
+    try {
+      File originalFile = new File(path);
+      return ImageCache.cacheImage(originalFile);
+
+    }
+    catch (FileNotFoundException e) {
+      LOGGER.warn(e.getMessage());
+    }
+    catch (Exception e) {
+      LOGGER.warn("problem caching file: ", e);
+    }
+
+    // fallback
+    return new File(path);
   }
 
 }

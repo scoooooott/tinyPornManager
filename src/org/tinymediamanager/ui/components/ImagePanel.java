@@ -16,10 +16,12 @@
 package org.tinymediamanager.ui.components;
 
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.ui.WrapLayout;
 
@@ -43,22 +46,23 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class ImagePanel extends JPanel implements HierarchyListener {
-  private static final long         serialVersionUID = -5344085698387374260L;
+  private static final long                serialVersionUID = -5344085698387374260L;
 
-  private List<MediaFile>           mediaFiles       = null;
-  protected SwingWorker<Void, Void> worker           = null;
+  private List<MediaFile>                  mediaFiles       = null;
+  protected SwingWorker<List<Image>, Void> worker           = null;
 
   /**
    * UI components
    */
 
-  private JPanel                    panelImages;
+  private JPanel                           panelImages;
+  private JScrollPane                      scrollPane;
 
   public ImagePanel(List<MediaFile> mediaFiles) {
     this.mediaFiles = mediaFiles;
     setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("100px:grow"), }, new RowSpec[] { RowSpec.decode("100px:grow"), }));
 
-    JScrollPane scrollPane = new JScrollPane();
+    scrollPane = new JScrollPane();
     add(scrollPane, "1, 1, fill, fill");
 
     panelImages = new JPanel();
@@ -70,6 +74,10 @@ public class ImagePanel extends JPanel implements HierarchyListener {
    * Trigger to rebuild the panel
    */
   public void rebuildPanel() {
+    panelImages.removeAll();
+    panelImages.revalidate();
+    scrollPane.repaint();
+
     // stop previous worker
     if (worker != null && !worker.isDone()) {
       worker.cancel(true);
@@ -101,9 +109,9 @@ public class ImagePanel extends JPanel implements HierarchyListener {
   }
 
   /**
-   * worker to load the images asynchron
+   * worker to load the images asynchrony
    */
-  protected class ImageLoader extends SwingWorker<Void, Void> {
+  protected class ImageLoader extends SwingWorker<List<Image>, Void> {
     private List<MediaFile> mediaFiles;
 
     private ImageLoader(List<MediaFile> mediaFiles) {
@@ -111,27 +119,38 @@ public class ImagePanel extends JPanel implements HierarchyListener {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
-      panelImages.removeAll();
-      panelImages.revalidate();
+    protected List<Image> doInBackground() throws Exception {
+      List<Image> images = new ArrayList<Image>();
       if (isShowing()) {
         for (MediaFile mediaFile : mediaFiles) {
           if (isCancelled()) {
             return null;
           }
           try {
-            BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(mediaFile.getFile());
+            File file = ImageCache.getCachedFile(mediaFile.getPath() + File.separator + mediaFile.getFilename());
+            BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(file);
             Point size = ImageLabel.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
-            JLabel lblImageJLabel = new JLabel(new ImageIcon(Scaling.scale(bufferedImage, size.x, size.y)));
-            panelImages.add(lblImageJLabel);
-            panelImages.validate();
-            panelImages.getParent().validate();
+            images.add(Scaling.scale(bufferedImage, size.x, size.y));
           }
           catch (Exception e) {
           }
         }
       }
-      return null;
+      return images;
+    }
+
+    @Override
+    protected void done() {
+      try {
+        for (Image image : get()) {
+          JLabel lblImageJLabel = new JLabel(new ImageIcon(image));
+          panelImages.add(lblImageJLabel);
+        }
+        panelImages.revalidate();
+        scrollPane.repaint();
+      }
+      catch (Exception e) {
+      }
     }
   }
 }

@@ -26,7 +26,6 @@ import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -35,7 +34,6 @@ import javax.swing.SwingWorker;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.UTF8Control;
@@ -345,44 +343,6 @@ public class ImageLabel extends JLabel {
   }
 
   /**
-   * Gets the cached file.
-   * 
-   * @param path
-   *          the path
-   * @return the cached file
-   */
-  private synchronized File getCachedFile(String path) {
-    if (StringUtils.isEmpty(path)) {
-      return null;
-    }
-
-    // is the image cache activated?
-    if (!Globals.settings.isImageCache()) {
-      return new File(path);
-    }
-
-    // is the path in the cache dir?
-    if (path.startsWith(ImageCache.CACHE_DIR)) {
-      return new File(path);
-    }
-
-    try {
-      File originalFile = new File(path);
-      return ImageCache.cacheImage(originalFile);
-
-    }
-    catch (FileNotFoundException e) {
-      LOGGER.warn(e.getMessage());
-    }
-    catch (Exception e) {
-      LOGGER.warn("problem caching file: ", e);
-    }
-
-    // fallback
-    return new File(path);
-  }
-
-  /**
    * The Class ImageFetcher.
    * 
    * @author Manuel Laggner
@@ -451,7 +411,7 @@ public class ImageLabel extends JLabel {
      */
     @Override
     protected BufferedImage doInBackground() throws Exception {
-      File file = getCachedFile(imagePath);
+      File file = ImageCache.getCachedFile(imagePath);
       if (file != null && file.exists()) {
         try {
           return com.bric.image.ImageLoader.createImage(file);
