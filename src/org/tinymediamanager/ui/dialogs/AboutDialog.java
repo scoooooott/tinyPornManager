@@ -148,20 +148,16 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblXzener, "6, 20");
     }
     {
-      JLabel lblXzener = new JLabel("xsintive for french translation");
+      JLabel lblXzener = new JLabel("Our translators: xsintive, kriss1981, Joostzilla, zbynek.fiala, carlosmarchi");
       contentPanel.add(lblXzener, "6, 22");
     }
     {
-      JLabel lblXzener = new JLabel("kriss1981 for dutch translation");
-      contentPanel.add(lblXzener, "6, 24");
-    }
-    {
       JLabel lblLibs = new JLabel("The creators of all libs I've used");
-      contentPanel.add(lblLibs, "6, 26");
+      contentPanel.add(lblLibs, "6, 24");
     }
     {
       JLabel lblTester = new JLabel("Everyone who tested and provided feedback");
-      contentPanel.add(lblTester, "6, 28");
+      contentPanel.add(lblTester, "6, 26");
     }
     {
       JPanel buttonPane = new JPanel();
