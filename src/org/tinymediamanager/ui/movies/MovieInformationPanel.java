@@ -22,6 +22,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.Icon;
@@ -37,6 +39,8 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.CertificationImageConverter;
@@ -47,6 +51,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.VoteCountConverter;
 import org.tinymediamanager.ui.WatchedIconConverter;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ImagePanel;
 import org.tinymediamanager.ui.components.StarRater;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -298,6 +303,10 @@ public class MovieInformationPanel extends JPanel {
     panelMediaFiles = new MovieMediaFilesPanel(movieSelectionModel);
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.mediafiles"), null, panelMediaFiles, null); //$NON-NLS-1$
 
+    final List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
+    final ImagePanel panelArtwork = new ImagePanel(mediaFiles);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.artwork"), null, panelArtwork, null); //$NON-NLS-1$
+
     panelMovieTrailer = new MovieTrailerPanel(movieSelectionModel);
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.trailer"), null, panelMovieTrailer, null); //$NON-NLS-1$
 
@@ -314,6 +323,26 @@ public class MovieInformationPanel extends JPanel {
           MovieSelectionModel model = (MovieSelectionModel) source;
           lblMovieBackground.setImagePath(model.getSelectedMovie().getFanart());
           lblMoviePoster.setImagePath(model.getSelectedMovie().getPoster());
+
+          synchronized (mediaFiles) {
+            mediaFiles.clear();
+            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.POSTER)) {
+              mediaFiles.add(mediafile);
+            }
+            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.FANART)) {
+              mediaFiles.add(mediafile);
+            }
+            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.BANNER)) {
+              mediaFiles.add(mediafile);
+            }
+            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.THUMB)) {
+              mediaFiles.add(mediafile);
+            }
+            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.EXTRAFANART)) {
+              mediaFiles.add(mediafile);
+            }
+            panelArtwork.rebuildPanel();
+          }
         }
         if ((source.getClass() == Movie.class && FANART.equals(property))) {
           Movie movie = (Movie) source;
