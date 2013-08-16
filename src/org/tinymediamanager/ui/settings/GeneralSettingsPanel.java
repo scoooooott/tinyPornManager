@@ -512,7 +512,7 @@ public class GeneralSettingsPanel extends JPanel {
 
     @Override
     public String toString() {
-      return loc.getDisplayLanguage();
+      return loc.getDisplayLanguage(loc);
     }
   }
 }
