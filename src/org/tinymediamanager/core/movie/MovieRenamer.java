@@ -63,7 +63,7 @@ public class MovieRenamer {
       if (sub.getFilename().toLowerCase().contains("forced")) {
         // add "forced" prior language
         forced = ".forced";
-        shortname = shortname.replaceAll("forced", "");
+        shortname = shortname.replace("forced", "");
       }
       shortname = shortname.replaceAll("\\p{Punct}", "").trim();
 
@@ -636,9 +636,9 @@ public class MovieRenamer {
     }
     else {
       // no mediafiles; remove at least token (if available)
-      newDestination = newDestination.replaceAll("\\$R", "");
-      newDestination = newDestination.replaceAll("\\$A", "");
-      newDestination = newDestination.replaceAll("\\$V", "");
+      newDestination = newDestination.replace("$R", "");
+      newDestination = newDestination.replace("$A", "");
+      newDestination = newDestination.replace("$V", "");
     }
 
     // replace token media source (BluRay|DVD|TV|...) ($S)
@@ -676,7 +676,7 @@ public class MovieRenamer {
       // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
       replacingCleaned = replacement.replaceAll("([\"\\:<>|/?*])", "");
     }
-    return destination.replaceAll("\\" + token, replacingCleaned);
+    return destination.replace(token, replacingCleaned);
   }
 
   /**
