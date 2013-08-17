@@ -319,29 +319,38 @@ public class MovieInformationPanel extends JPanel {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
         // react on selection of a movie and change of a movie
-        if (source instanceof MovieSelectionModel) {
-          MovieSelectionModel model = (MovieSelectionModel) source;
-          lblMovieBackground.setImagePath(model.getSelectedMovie().getFanart());
-          lblMoviePoster.setImagePath(model.getSelectedMovie().getPoster());
+        if (source instanceof MovieSelectionModel || (source instanceof Movie && MEDIA_FILES.equals(property))) {
+          Movie movie = null;
+          if (source instanceof MovieSelectionModel) {
+            movie = ((MovieSelectionModel) source).getSelectedMovie();
+          }
+          if (source instanceof Movie) {
+            movie = (Movie) source;
+          }
 
-          synchronized (mediaFiles) {
-            mediaFiles.clear();
-            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.POSTER)) {
-              mediaFiles.add(mediafile);
+          if (movie != null) {
+            lblMovieBackground.setImagePath(movie.getFanart());
+            lblMoviePoster.setImagePath(movie.getPoster());
+
+            synchronized (mediaFiles) {
+              mediaFiles.clear();
+              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.POSTER)) {
+                mediaFiles.add(mediafile);
+              }
+              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.FANART)) {
+                mediaFiles.add(mediafile);
+              }
+              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.BANNER)) {
+                mediaFiles.add(mediafile);
+              }
+              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.THUMB)) {
+                mediaFiles.add(mediafile);
+              }
+              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.EXTRAFANART)) {
+                mediaFiles.add(mediafile);
+              }
+              panelArtwork.rebuildPanel();
             }
-            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.FANART)) {
-              mediaFiles.add(mediafile);
-            }
-            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.BANNER)) {
-              mediaFiles.add(mediafile);
-            }
-            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.THUMB)) {
-              mediaFiles.add(mediafile);
-            }
-            for (MediaFile mediafile : model.getSelectedMovie().getMediaFiles(MediaFileType.EXTRAFANART)) {
-              mediaFiles.add(mediafile);
-            }
-            panelArtwork.rebuildPanel();
           }
         }
         if ((source.getClass() == Movie.class && FANART.equals(property))) {

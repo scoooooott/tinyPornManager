@@ -693,6 +693,7 @@ public class Movie extends MediaEntity {
       File folder = new File(path);
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
+        removeAllMediaFiles(MediaFileType.THUMB);
       }
 
       folder.mkdirs();
@@ -704,8 +705,10 @@ public class Movie extends MediaEntity {
 
         FileOutputStream outputStream = null;
         InputStream is = null;
+        File file = null;
         if (Globals.settings.getMovieSettings().isImageExtraThumbsResize() && Globals.settings.getMovieSettings().getImageExtraThumbsSize() > 0) {
-          outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + ".jpg");
+          file = new File(path, "thumb" + (i + 1) + ".jpg");
+          outputStream = new FileOutputStream(file);
           try {
             is = ImageCache.scaleImage(url, Globals.settings.getMovieSettings().getImageExtraThumbsSize());
           }
@@ -715,7 +718,8 @@ public class Movie extends MediaEntity {
           }
         }
         else {
-          outputStream = new FileOutputStream(path + File.separator + "thumb" + (i + 1) + "." + providedFiletype);
+          file = new File(path, "thumb" + (i + 1) + "." + providedFiletype);
+          outputStream = new FileOutputStream(file);
           CachedUrl cachedUrl = new CachedUrl(url);
           is = cachedUrl.getInputStream();
         }
@@ -723,6 +727,7 @@ public class Movie extends MediaEntity {
         IOUtils.copy(is, outputStream);
         outputStream.close();
         is.close();
+        addToMediaFiles(new MediaFile(file, MediaFileType.THUMB));
       }
     }
     catch (IOException e) {
@@ -772,6 +777,7 @@ public class Movie extends MediaEntity {
       File folder = new File(path);
       if (folder.exists()) {
         FileUtils.deleteDirectory(folder);
+        removeAllMediaFiles(MediaFileType.EXTRAFANART);
       }
 
       folder.mkdirs();
@@ -781,11 +787,13 @@ public class Movie extends MediaEntity {
         String url = fanarts.get(i);
         String providedFiletype = FilenameUtils.getExtension(url);
         CachedUrl cachedUrl = new CachedUrl(url);
-        FileOutputStream outputStream = new FileOutputStream(path + File.separator + "fanart" + (i + 1) + "." + providedFiletype);
+        File file = new File(path, "fanart" + (i + 1) + "." + providedFiletype);
+        FileOutputStream outputStream = new FileOutputStream(file);
         InputStream is = cachedUrl.getInputStream();
         IOUtils.copy(is, outputStream);
         outputStream.close();
         is.close();
+        addToMediaFiles(new MediaFile(file, MediaFileType.EXTRAFANART));
       }
     }
     catch (IOException e) {
