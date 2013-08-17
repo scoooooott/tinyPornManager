@@ -302,7 +302,7 @@ public class MovieToMpNfoConnector {
         MovieSets sets = mp.getSets().get(0);
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
-        MovieSet movieSet = movieList.getMovieSet(sets.getName());
+        MovieSet movieSet = movieList.getMovieSet(sets.getName(), 0);
 
         // add movie to movieset
         if (movieSet != null) {

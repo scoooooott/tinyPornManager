@@ -816,7 +816,16 @@ public class MovieList extends AbstractModelObject {
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
   }
 
-  private MovieSet findMovieSet(String title) {
+  private MovieSet findMovieSet(String title, int tmdbId) {
+    // first search by tmdbId
+    if (tmdbId > 0) {
+      for (MovieSet movieSet : movieSetList) {
+        if (movieSet.getTmdbId() == tmdbId) {
+          return movieSet;
+        }
+      }
+    }
+
     // search for the movieset by name
     for (MovieSet movieSet : movieSetList) {
       if (movieSet.getTitle().equals(title)) {
@@ -827,8 +836,8 @@ public class MovieList extends AbstractModelObject {
     return null;
   }
 
-  public synchronized MovieSet getMovieSet(String title) {
-    MovieSet movieSet = findMovieSet(title);
+  public synchronized MovieSet getMovieSet(String title, int tmdbId) {
+    MovieSet movieSet = findMovieSet(title, tmdbId);
 
     if (movieSet == null) {
       movieSet = new MovieSet(title);

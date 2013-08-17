@@ -941,7 +941,7 @@ public class Movie extends MediaEntity {
     if (config.isCollection()) {
       int col = metadata.getTmdbIdSet();
       if (col != 0) {
-        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getCollectionName());
+        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getCollectionName(), metadata.getTmdbIdSet());
         if (movieSet.getTmdbId() == 0) {
           movieSet.setTmdbId(col);
           // get movieset metadata

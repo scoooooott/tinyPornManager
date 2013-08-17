@@ -514,7 +514,7 @@ public class MovieToXbmcNfoConnector {
       if (StringUtils.isNotEmpty(xbmc.set)) {
         // search for that movieset
         MovieList movieList = MovieList.getInstance();
-        MovieSet movieSet = movieList.getMovieSet(xbmc.set);
+        MovieSet movieSet = movieList.getMovieSet(xbmc.set, 0);
 
         // add movie to movieset
         if (movieSet != null) {
