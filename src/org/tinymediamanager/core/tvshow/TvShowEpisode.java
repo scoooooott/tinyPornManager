@@ -676,7 +676,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public String getMediaInfoVideoFormat() {
     if (mediaFiles.size() > 0) {
-      MediaFile mediaFile = mediaFiles.get(0);
+      MediaFile mediaFile = getMediaFiles(MediaFileType.VIDEO).get(0);
       return mediaFile.getVideoFormat();
     }
 
@@ -690,7 +690,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public String getMediaInfoVideoCodec() {
     if (mediaFiles.size() > 0) {
-      MediaFile mediaFile = mediaFiles.get(0);
+      MediaFile mediaFile = getMediaFiles(MediaFileType.VIDEO).get(0);
       return mediaFile.getVideoCodec();
     }
 
@@ -704,7 +704,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public String getMediaInfoAudioCodecAndChannels() {
     if (mediaFiles.size() > 0) {
-      MediaFile mediaFile = mediaFiles.get(0);
+      MediaFile mediaFile = getMediaFiles(MediaFileType.VIDEO).get(0);
       return mediaFile.getAudioCodec() + "_" + mediaFile.getAudioChannels();
     }
 
