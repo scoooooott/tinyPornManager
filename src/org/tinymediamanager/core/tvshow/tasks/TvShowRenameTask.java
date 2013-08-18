@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -25,6 +26,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
 
 /**
@@ -33,21 +35,20 @@ import org.tinymediamanager.core.tvshow.TvShowRenamer;
  * @author Manuel Laggner
  */
 public class TvShowRenameTask extends TmmThreadPool {
+  private final static Logger LOGGER           = LoggerFactory.getLogger(TvShowRenameTask.class);
 
-  /** The Constant LOGGER. */
-  private final static Logger LOGGER = LoggerFactory.getLogger(TvShowRenameTask.class);
-
-  /** The movies to rename. */
-  private List<TvShow>        tvShowToRename;
+  private List<TvShow>        tvShowsToRename  = new ArrayList<TvShow>();
+  private List<TvShowEpisode> episodesToRename = new ArrayList<TvShowEpisode>();
 
   /**
-   * Instantiates a new movie rename task.
+   * Instantiates a new tv show rename task.
    * 
-   * @param tvShowToRename
-   *          the tvshow to rename
+   * @param tvShowsToRename
+   *          the tvshows to rename
    */
-  public TvShowRenameTask(List<TvShow> tvShowToRename) {
-    this.tvShowToRename = tvShowToRename;
+  public TvShowRenameTask(List<TvShow> tvShowsToRename, List<TvShowEpisode> episodesToRename) {
+    this.tvShowsToRename.addAll(tvShowsToRename);
+    this.episodesToRename.addAll(episodesToRename);
   }
 
   /*
@@ -60,10 +61,15 @@ public class TvShowRenameTask extends TmmThreadPool {
     try {
       initThreadPool(1, "rename");
       startProgressBar("renaming TV shows...");
-      // rename movies
-      for (int i = 0; i < tvShowToRename.size(); i++) {
-        TvShow show = tvShowToRename.get(i);
+      // rename complete tv shows
+      for (int i = 0; i < tvShowsToRename.size(); i++) {
+        TvShow show = tvShowsToRename.get(i);
         submitTask(new RenameTvShowTask(show));
+      }
+      // rename episodes
+      for (int i = 0; i < episodesToRename.size(); i++) {
+        TvShowEpisode episode = episodesToRename.get(i);
+        submitTask(new RenameEpisodeTask(episode));
       }
       waitForCompletionOrCancel();
       if (cancel) {
@@ -79,7 +85,7 @@ public class TvShowRenameTask extends TmmThreadPool {
   }
 
   /**
-   * ThreadpoolWorker to work off ONE possible movie from root datasource directory
+   * ThreadpoolWorker to work off ONE tv show
    * 
    * @author Myron Boyle
    * @version 1.0
@@ -96,6 +102,27 @@ public class TvShowRenameTask extends TmmThreadPool {
     public String call() throws Exception {
       TvShowRenamer.renameTvShow(show);
       return show.getTitle();
+    }
+  }
+
+  /**
+   * ThreadpoolWorker to work off ONE episode
+   * 
+   * @author Manuel Laggner
+   * @version 1.0
+   */
+  private class RenameEpisodeTask implements Callable<Object> {
+
+    private TvShowEpisode episode = null;
+
+    public RenameEpisodeTask(TvShowEpisode episode) {
+      this.episode = episode;
+    }
+
+    @Override
+    public String call() throws Exception {
+      TvShowRenamer.renameEpisode(episode);
+      return episode.getTitle();
     }
   }
 

@@ -1015,11 +1015,21 @@ public class TvShowPanel extends JPanel {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      List<TvShow> selectedTvShows = new ArrayList<TvShow>();
-      selectedTvShows.add(tvShowSelectionModel.getSelectedTvShow());
+      List<TvShow> selectedTvShows = getSelectedTvShows();
+      List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+
+      // add all episodes which are not part of a selected tv show
+      for (Object obj : getSelectedObjects()) {
+        if (obj instanceof TvShowEpisode) {
+          TvShowEpisode episode = (TvShowEpisode) obj;
+          if (!selectedTvShows.contains(episode.getTvShow())) {
+            selectedEpisodes.add(episode);
+          }
+        }
+      }
 
       // rename
-      TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows);
+      TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows, selectedEpisodes);
       if (!MainWindow.executeMainTask(renameTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }

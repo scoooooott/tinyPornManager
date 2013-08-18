@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -111,7 +112,7 @@ public class TvShowRenamer {
    */
   public static void renameEpisode(TvShowEpisode episode) {
     LOGGER.info("Renaming TvShow '" + episode.getTvShow().getTitle() + "' Episode " + episode.getEpisode());
-    for (MediaFile mf : episode.getMediaFiles()) {
+    for (MediaFile mf : new ArrayList<MediaFile>(episode.getMediaFiles())) {
       renameMediaFile(mf, episode.getTvShow());
     }
   }
@@ -320,8 +321,8 @@ public class TvShowRenamer {
   public static String generateSeasonDir(String template, TvShowEpisode episode) {
     String seasonDir = template;
 
-    seasonDir = seasonDir.replaceAll("\\$1", String.valueOf(episode.getSeason()));
-    seasonDir = seasonDir.replaceAll("\\$2", lz(episode.getSeason()));
+    seasonDir = seasonDir.replace("$1", String.valueOf(episode.getSeason()));
+    seasonDir = seasonDir.replace("$2", lz(episode.getSeason()));
 
     return seasonDir;
   }
