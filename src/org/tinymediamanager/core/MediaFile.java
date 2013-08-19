@@ -1132,31 +1132,22 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // video format
     String format = "";
-    if (StringUtils.isNotEmpty(width)) {
-      try {
-        int w = Integer.parseInt(width);
+    int w = getVideoWidth();
+    int h = getVideoHeight();
 
-        // 1080
-        if (w >= 1920) {
-          format = "1080p";
-        }
-
-        // 720
-        if (format.isEmpty() && w >= 1280) {
-          format = "720p";
-        }
-
-        // SD with aspect ratio
-        if (format.isEmpty() && w > 0) {
-          if (isWidescreen()) {
-            format = "SD 16:9";
-          }
-          else {
-            format = "SD 4:3";
-          }
-        }
+    if (w >= 1920 || h >= 1080) {
+      format = "1080p";
+    }
+    if (format.isEmpty() && (w >= 1280 || h >= 720)) {
+      format = "720p";
+    }
+    // SD with aspect ratio
+    if (format.isEmpty() && w > 0) {
+      if (isWidescreen()) {
+        format = "SD 16:9";
       }
-      catch (NumberFormatException e) {
+      else {
+        format = "SD 4:3";
       }
     }
     setVideoFormat(format);
