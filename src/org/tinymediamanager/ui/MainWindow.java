@@ -17,7 +17,6 @@ package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
@@ -55,27 +54,22 @@ import javax.swing.SwingWorker;
 import javax.swing.text.JTextComponent;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieSet;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.ui.actions.AboutAction;
+import org.tinymediamanager.ui.actions.BugReportAction;
+import org.tinymediamanager.ui.actions.ClearImageCacheAction;
+import org.tinymediamanager.ui.actions.ClearUrlCacheAction;
+import org.tinymediamanager.ui.actions.DonateAction;
+import org.tinymediamanager.ui.actions.FeedbackAction;
+import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.components.NotificationMessage;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
-import org.tinymediamanager.ui.dialogs.AboutDialog;
-import org.tinymediamanager.ui.dialogs.BugReportDialog;
-import org.tinymediamanager.ui.dialogs.FeedbackDialog;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageSummaryDialog;
 import org.tinymediamanager.ui.movies.MoviePanel;
@@ -223,73 +217,14 @@ public class MainWindow extends JFrame {
     JMenu cache = new JMenu(BUNDLE.getString("tmm.cache")); //$NON-NLS-1$
     debug.add(cache);
 
-    JMenuItem clearUrlCache = new JMenuItem(BUNDLE.getString("tmm.clearurlcache")); //$NON-NLS-1$
+    JMenuItem clearUrlCache = new JMenuItem(new ClearUrlCacheAction());
     cache.add(clearUrlCache);
-    clearUrlCache.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        File cache = new File(CachedUrl.CACHE_DIR);
-        if (cache.exists()) {
-          try {
-            FileUtils.deleteDirectory(cache);
-          }
-          catch (Exception e) {
-            LOGGER.warn(e.getMessage());
-          }
-        }
-      }
-    });
     cache.addSeparator();
-    JMenuItem clearImageCache = new JMenuItem(BUNDLE.getString("tmm.clearimagecache")); //$NON-NLS-1$
+    JMenuItem clearImageCache = new JMenuItem(new ClearImageCacheAction());
     cache.add(clearImageCache);
-    clearImageCache.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        File cache = new File(ImageCache.CACHE_DIR);
-        if (cache.exists()) {
-          try {
-            FileUtils.deleteDirectory(cache);
-          }
-          catch (Exception e) {
-            LOGGER.warn(e.getMessage());
-          }
-        }
-      }
-    });
 
-    JMenuItem rebuildImageCache = new JMenuItem(BUNDLE.getString("tmm.rebuildimagecache")); //$NON-NLS-1$
+    JMenuItem rebuildImageCache = new JMenuItem(new RebuildImageCacheAction());
     cache.add(rebuildImageCache);
-    rebuildImageCache.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        if (!Globals.settings.isImageCache()) {
-          JOptionPane.showMessageDialog(null, "Image cache is not activated!");
-          return;
-        }
-
-        List<File> imageFiles = new ArrayList<File>();
-        // movie list
-        List<Movie> movies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
-        for (Movie movie : movies) {
-          imageFiles.addAll(movie.getImagesToCache());
-        }
-
-        // moviesets
-        List<MovieSet> movieSets = new ArrayList<MovieSet>(MovieList.getInstance().getMovieSetList());
-        for (MovieSet movieSet : movieSets) {
-          imageFiles.addAll(movieSet.getImagesToCache());
-        }
-
-        // tv dhows
-        List<TvShow> tvShows = new ArrayList<TvShow>(TvShowList.getInstance().getTvShows());
-        for (TvShow tvShow : tvShows) {
-          imageFiles.addAll(tvShow.getImagesToCache());
-        }
-
-        ImageCacheTask task = new ImageCacheTask(imageFiles);
-        Globals.executor.execute(task);
-      }
-    });
 
     JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir")); //$NON-NLS-1$
     debug.add(tmmFolder);
@@ -605,36 +540,6 @@ public class MainWindow extends JFrame {
   }
 
   /**
-   * The Class AboutAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class AboutAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new about action.
-     */
-    public AboutAction() {
-      // putValue(NAME, "SwingAction");
-      // putValue(SHORT_DESCRIPTION, "Some short description");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      Dialog aboutDialog = new AboutDialog();
-      aboutDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      aboutDialog.setVisible(true);
-    }
-  }
-
-  /**
    * Executes a "main" task. A "main" task is a task which can't be parallelized
    * 
    * @param task
@@ -657,105 +562,12 @@ public class MainWindow extends JFrame {
   }
 
   /**
-   * The Class FeedbackAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class FeedbackAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new feedback action.
-     */
-    public FeedbackAction() {
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      JDialog dialog = new FeedbackDialog();
-      dialog.pack();
-      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      dialog.setVisible(true);
-    }
-  }
-
-  /**
    * Gets the frame.
    * 
    * @return the frame
    */
   public static JFrame getFrame() {
     return instance;
-  }
-
-  /**
-   * The Class BugReportAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class BugReportAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new feedback action.
-     */
-    public BugReportAction() {
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      JDialog dialog = new BugReportDialog();
-      dialog.pack();
-      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      dialog.setVisible(true);
-    }
-  }
-
-  /**
-   * The Class DonateAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class DonateAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new feedback action.
-     */
-    public DonateAction() {
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      String url = StringEscapeUtils
-          .unescapeHtml4("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=manuel%2elaggner%40gmail%2ecom&amp;lc=GB&amp;item_name=tinyMediaManager&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted");
-      try {
-        TmmUIHelper.browseUrl(url);
-      }
-      catch (Exception e1) {
-        LOGGER.error("Donate", e1);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl",
-            new String[] { ":", e1.getLocalizedMessage() }));
-      }
-    }
   }
 
   public void addMessage(String title, String message) {

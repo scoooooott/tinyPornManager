@@ -23,11 +23,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,7 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -59,23 +55,25 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
-import org.tinymediamanager.core.movie.tasks.MovieReloadMediaInformationTask;
-import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
-import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
-import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.ui.BorderCellRenderer;
 import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JSearchTextField;
 import org.tinymediamanager.ui.components.ZebraJTable;
-import org.tinymediamanager.ui.movies.dialogs.MovieBatchEditorDialog;
-import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
-import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
-import org.tinymediamanager.ui.movies.dialogs.MovieExporterDialog;
-import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
+import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
+import org.tinymediamanager.ui.movies.actions.MovieEditAction;
+import org.tinymediamanager.ui.movies.actions.MovieExportAction;
+import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
+import org.tinymediamanager.ui.movies.actions.MovieRemoveAction;
+import org.tinymediamanager.ui.movies.actions.MovieRenameAction;
+import org.tinymediamanager.ui.movies.actions.MovieRewriteNfoAction;
+import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
+import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
+import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
 
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
@@ -116,45 +114,45 @@ public class MoviePanel extends JPanel {
   private JTable                        table;
 
   /** The action update data sources. */
-  private final Action                  actionUpdateDataSources      = new UpdateDataSourcesAction(false);
+  private final Action                  actionUpdateDataSources      = new MovieUpdateDatasourceAction(false);
 
   /** The action update data sources. */
-  private final Action                  actionUpdateDataSources2     = new UpdateDataSourcesAction(true);
+  private final Action                  actionUpdateDataSources2     = new MovieUpdateDatasourceAction(true);
 
   /** The action scrape. */
-  private final Action                  actionScrape                 = new SingleScrapeAction(false);
+  private final Action                  actionScrape                 = new MovieSingleScrapeAction(false);
 
   /** The action scrape. */
-  private final Action                  actionScrape2                = new SingleScrapeAction(true);
+  private final Action                  actionScrape2                = new MovieSingleScrapeAction(true);
 
   /** The action edit movie. */
-  private final Action                  actionEditMovie              = new EditAction(false);
+  private final Action                  actionEditMovie              = new MovieEditAction(false);
 
   /** The action edit movie. */
-  private final Action                  actionEditMovie2             = new EditAction(true);
+  private final Action                  actionEditMovie2             = new MovieEditAction(true);
 
   /** The action scrape unscraped movies. */
-  private final Action                  actionScrapeUnscraped        = new UnscrapedScrapeAction();
+  private final Action                  actionScrapeUnscraped        = new MovieUnscrapedScrapeAction();
 
   /** The action scrape selected movies. */
-  private final Action                  actionScrapeSelected         = new SelectedScrapeAction();
+  private final Action                  actionScrapeSelected         = new MovieSelectedScrapeAction();
 
   /** The action scrape metadata selected. */
-  private final Action                  actionScrapeMetadataSelected = new SelectedScrapeMetadataAction();
+  private final Action                  actionScrapeMetadataSelected = new MovieSelectedScrapeMetadataAction();
 
   /** The action rename. */
-  private final Action                  actionRename                 = new RenameAction(false);
+  private final Action                  actionRename                 = new MovieRenameAction(false);
 
   /** The action rename2. */
-  private final Action                  actionRename2                = new RenameAction(true);
+  private final Action                  actionRename2                = new MovieRenameAction(true);
 
   /** The action remove2. */
-  private final Action                  actionRemove2                = new RemoveAction(true);
+  private final Action                  actionRemove2                = new MovieRemoveAction();
 
   /** The action export. */
-  private final Action                  actionExport                 = new ExportAction(true);
+  private final Action                  actionExport                 = new MovieExportAction();
 
-  private final Action                  actionRewriteNfo             = new RewriteNfoAction();
+  private final Action                  actionRewriteNfo             = new MovieRewriteNfoAction();
 
   /** The panel movie count. */
   private JPanel                        panelMovieCount;
@@ -175,7 +173,7 @@ public class MoviePanel extends JPanel {
   private DefaultEventTableModel<Movie> movieTableModel;
 
   /** The movie selection model. */
-  private MovieSelectionModel           movieSelectionModel;
+  MovieSelectionModel                   movieSelectionModel;
 
   /** The sorted movies. */
   private SortedList<Movie>             sortedMovies;
@@ -202,13 +200,13 @@ public class MoviePanel extends JPanel {
   private JButton                       btnMediaInformation;
 
   /** The action media information. */
-  private final Action                  actionMediaInformation       = new MediaInformationAction(false);
+  private final Action                  actionMediaInformation       = new MovieMediaInformationAction(false);
 
   /** The action media information2. */
-  private final Action                  actionMediaInformation2      = new MediaInformationAction(true);
+  private final Action                  actionMediaInformation2      = new MovieMediaInformationAction(true);
 
   /** The action batch edit. */
-  private final Action                  actionBatchEdit              = new BatchEditAction();
+  private final Action                  actionBatchEdit              = new MovieBatchEditAction();
 
   /**
    * Create the panel.
@@ -270,7 +268,7 @@ public class MoviePanel extends JPanel {
         buttonUpdateDatasource.getPopupMenu().add(item);
         buttonUpdateDatasource.getPopupMenu().addSeparator();
         for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
-          buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new UpdateSingleDataSourceAction(ds)));
+          buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new MovieUpdateSingleDatasourceAction(ds)));
         }
 
         buttonUpdateDatasource.getPopupMenu().pack();
@@ -512,481 +510,6 @@ public class MoviePanel extends JPanel {
   }
 
   /**
-   * The Class UpdateDataSourcesAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class UpdateDataSourcesAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new UpdateDataSourcesAction.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public UpdateDataSourcesAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
-      }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
-      }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      TmmSwingWorker task = new MovieUpdateDatasourceTask();
-      if (!MainWindow.executeMainTask(task)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
-    }
-  }
-
-  private class UpdateSingleDataSourceAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    private String            datasource;
-
-    /**
-     * Instantiates a new UpdateDataSourcesAction.
-     * 
-     * @param datasource
-     *          the datasource
-     */
-    public UpdateSingleDataSourceAction(String datasource) {
-      putValue(NAME, datasource);
-      this.datasource = datasource;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      TmmSwingWorker task = new MovieUpdateDatasourceTask(datasource);
-      if (!MainWindow.executeMainTask(task)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
-    }
-  }
-
-  /**
-   * The Class SingleScrapeAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SingleScrapeAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new SingleScrapeAction.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public SingleScrapeAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
-      }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
-      }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      List<Movie> selectedMovies = new ArrayList<Movie>();
-      // save all selected movies in an extra list (maybe scraping of one movie changes the whole list)
-      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        selectedMovies.add(movie);
-      }
-      for (Movie movie : selectedMovies) {
-        MovieChooserDialog dialogMovieChooser = new MovieChooserDialog(movie, selectedMovies.size() > 1 ? true : false);
-        if (!dialogMovieChooser.showDialog()) {
-          break;
-        }
-      }
-    }
-  }
-
-  /**
-   * The Class UnscrapedScrapeAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class UnscrapedScrapeAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new UnscrapedScrapeAction.
-     */
-    public UnscrapedScrapeAction() {
-      putValue(NAME, BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.unscraped.desc")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      List<Movie> unscrapedMovies = movieList.getUnscrapedMovies();
-      if (unscrapedMovies.size() > 0) {
-        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$
-        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        dialog.setVisible(true);
-        // get options from dialog
-        MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
-        // do we want to scrape?
-        if (dialog.shouldStartScrape()) {
-          // scrape
-          TmmSwingWorker scrapeTask = new MovieScrapeTask(unscrapedMovies, true, options);
-          if (!MainWindow.executeMainTask(scrapeTask)) {
-            // inform that only one task at a time can be executed
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-          }
-        }
-        dialog.dispose();
-      }
-    }
-  }
-
-  /**
-   * The Class UnscrapedScrapeAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SelectedScrapeAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new UnscrapedScrapeAction.
-     */
-    public SelectedScrapeAction() {
-      putValue(NAME, BUNDLE.getString("movie.scrape.selected.force")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected.force.desc")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      List<Movie> selectedMovies = new ArrayList<Movie>();
-      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        selectedMovies.add(movie);
-      }
-
-      if (selectedMovies.size() > 0) {
-        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.selected.force")); //$NON-NLS-1$
-        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        dialog.setVisible(true);
-        // get options from dialog
-        MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
-        // do we want to scrape?
-        if (dialog.shouldStartScrape()) {
-          // scrape
-          TmmSwingWorker scrapeTask = new MovieScrapeTask(selectedMovies, true, options);
-          if (!MainWindow.executeMainTask(scrapeTask)) {
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-          }
-        }
-        dialog.dispose();
-      }
-    }
-  }
-
-  /**
-   * The Class SelectedScrapeMetadataAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SelectedScrapeMetadataAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new UnscrapedScrapeAction.
-     */
-    public SelectedScrapeMetadataAction() {
-      putValue(NAME, BUNDLE.getString("movie.scrape.metadata")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.metadata.desc")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      List<Movie> selectedMovies = new ArrayList<Movie>();
-      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        selectedMovies.add(movie);
-      }
-
-      if (selectedMovies.size() > 0) {
-        MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.metadata")); //$NON-NLS-1$
-        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        dialog.setVisible(true);
-        // get options from dialog
-        MovieSearchAndScrapeOptions options = dialog.getMovieSearchAndScrapeConfig();
-        // do we want to scrape?
-        if (dialog.shouldStartScrape()) {
-          // scrape
-          TmmSwingWorker scrapeTask = new MovieScrapeTask(selectedMovies, false, options);
-          if (!MainWindow.executeMainTask(scrapeTask)) {
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-          }
-        }
-        dialog.dispose();
-      }
-    }
-  }
-
-  /**
-   * The Class EditAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class EditAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new EditAction.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public EditAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(LARGE_ICON_KEY, "");
-        putValue(NAME, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
-      }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
-      }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      // for (int row : table.getSelectedRows()) {
-      // row = table.convertRowIndexToModel(row);
-      // Movie movie = movieList.getMovies().get(row);
-      // MovieEditor dialogMovieEditor = new MovieEditor(movie);
-      // // dialogMovieEditor.pack();
-      // dialogMovieEditor.setVisible(true);
-      // }
-      List<Movie> selectedMovies = new ArrayList<Movie>();
-      // save all selected movies in an extra list (maybe scraping of one movie
-      // changes the whole list)
-      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        selectedMovies.add(movie);
-      }
-      for (Movie movie : selectedMovies) {
-        MovieEditorDialog dialogMovieEditor = new MovieEditorDialog(movie, selectedMovies.size() > 1 ? true : false);
-        // dialogMovieEditor.setVisible(true);
-        if (!dialogMovieEditor.showDialog()) {
-          break;
-        }
-      }
-    }
-  }
-
-  /**
-   * The Class RemoveAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class RemoveAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new RemoveAction.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public RemoveAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(LARGE_ICON_KEY, "");
-        putValue(NAME, BUNDLE.getString("movie.remove")); //$NON-NLS-1$
-      }
-      else {
-        // putValue(LARGE_ICON_KEY, new
-        // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.remove")); //$NON-NLS-1$
-      }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-      // save all selected movies in an extra list (maybe scraping of one movie
-      // changes the whole list)
-      List<Movie> selectedMovies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
-
-      // remove selected movies
-      if (selectedMovies.size() > 0) {
-        for (int i = 0; i < selectedMovies.size(); i++) {
-          movieList.removeMovie(selectedMovies.get(i));
-        }
-      }
-    }
-
-  }
-
-  /**
-   * The Class ExportAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class ExportAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new RemoveAction.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public ExportAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(LARGE_ICON_KEY, "");
-        putValue(NAME, BUNDLE.getString("movie.export")); //$NON-NLS-1$
-      }
-      else {
-        // putValue(LARGE_ICON_KEY, new
-        // ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.export")); //$NON-NLS-1$
-      }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-      List<Movie> movies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
-
-      // export selected movies
-      if (movies.size() > 0) {
-        MovieExporterDialog dialog = new MovieExporterDialog(movies);
-        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        dialog.setVisible(true);
-      }
-    }
-  }
-
-  /**
-   * The Class RenameAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class RenameAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new rename action.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public RenameAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(LARGE_ICON_KEY, "");
-        putValue(NAME, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
-      }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
-      }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      List<Movie> selectedMovies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
-
-      // rename
-      TmmSwingWorker renameTask = new MovieRenameTask(selectedMovies);
-      if (!MainWindow.executeMainTask(renameTask)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
-    }
-  }
-
-  private class RewriteNfoAction extends AbstractAction {
-    private static final long serialVersionUID = 6473021281304077151L;
-
-    public RewriteNfoAction() {
-      putValue(NAME, BUNDLE.getString("movie.rewritenfo")); //$NON-NLS-1$
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      final List<Movie> selectedMovies = new ArrayList<Movie>(movieSelectionModel.getSelectedMovies());
-
-      // rewrite selected NFOs
-      Globals.executor.execute(new Runnable() {
-        @Override
-        public void run() {
-          for (Movie movie : selectedMovies) {
-            movie.writeNFO();
-          }
-        }
-      });
-    }
-  }
-
-  /**
    * The listener interface for receiving popup events. The class that is interested in processing a popup event implements this interface, and the
    * object created with that class is registered with a component using the component's <code>addPopupListener<code> method. When
    * the popup event occurs, that object's appropriate
@@ -1088,92 +611,5 @@ public class MoviePanel extends JPanel {
         movieListBeanProperty, lblMovieCountTotal, jLabelBeanProperty);
     autoBinding_20.bind();
     //
-  }
-
-  /**
-   * The Class MediaInformationAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class MediaInformationAction extends AbstractAction {
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -2779609579926382991L;
-
-    /**
-     * Instantiates a new media information action.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public MediaInformationAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
-      }
-      else {
-        // putValue(NAME, "MI");
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-      }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      List<Movie> selectedMovies = new ArrayList<Movie>();
-      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        selectedMovies.add(movie);
-      }
-
-      // get data of all files within all selected movies
-      if (selectedMovies.size() > 0) {
-        TmmSwingWorker task = new MovieReloadMediaInformationTask(selectedMovies);
-        if (!MainWindow.executeMainTask(task)) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-        }
-      }
-    }
-  }
-
-  /**
-   * The Class BatchEditAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class BatchEditAction extends AbstractAction {
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -1193886444149690516L;
-
-    /**
-     * Instantiates a new batch edit action.
-     */
-    public BatchEditAction() {
-      putValue(NAME, BUNDLE.getString("movie.bulkedit")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.bulkedit.desc")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<Movie> selectedMovies = new ArrayList<Movie>();
-      for (Movie movie : movieSelectionModel.getSelectedMovies()) {
-        selectedMovies.add(movie);
-      }
-
-      // get data of all files within all selected movies
-      if (selectedMovies.size() > 0) {
-        MovieBatchEditorDialog editor = new MovieBatchEditorDialog(selectedMovies);
-        editor.setLocationRelativeTo(MainWindow.getActiveInstance());
-        editor.setVisible(true);
-      }
-
-    }
   }
 }
