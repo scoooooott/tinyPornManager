@@ -69,9 +69,12 @@ resource = splashscreen.png
 resource = objectdb.conf
 
 # translations
+resource = locale/messages_cs.properties
 resource = locale/messages_de.properties
 resource = locale/messages_fr.properties
 resource = locale/messages_nl.properties
+resource = locale/messages_pt.properties
+resource = locale/messages_sk.properties
 #resource = locale/messages_.properties
 
 # mediainfo native libs
