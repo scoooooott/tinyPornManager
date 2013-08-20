@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @author Manuel Laggner
  */
-public abstract class TmmSwingWorker extends SwingWorker<Void, Void> {
+public abstract class TmmSwingWorker<T, V> extends SwingWorker<T, V> {
   private JLabel       lblProgressAction;
   private JProgressBar progressBar;
   private JButton      btnCancelTask;
