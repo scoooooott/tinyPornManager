@@ -974,7 +974,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             String shortname = getBasename().toLowerCase();
             Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
             for (String l : langArray) {
-              if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[_ .-]+" + l + "$")) {// ends with lang + delimiter prefix
+              if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
                 String lang = Utils.getDisplayLanguage(l);
                 LOGGER.debug("found language '" + l + "' in audiofile; displaying it as '" + lang + "'");
                 stream.setLanguage(lang);
@@ -1025,7 +1025,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           }
           Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
           for (String l : langArray) {
-            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[_ .-]+" + l + "$")) {// ends with lang + delimiter prefix
+            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
               String lang = Utils.getDisplayLanguage(l);
               LOGGER.debug("found language '" + l + "' in subtitle; displaying it as '" + lang + "'");
               sub.setLanguage(lang);
@@ -1056,7 +1056,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           String shortname = getBasename().toLowerCase();
           Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
           for (String l : langArray) {
-            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[_ .-]+" + l + "$")) {// ends with lang + delimiter prefix
+            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
               String lang = Utils.getDisplayLanguage(l);
               LOGGER.debug("found language '" + l + "' in audiofile; displaying it as '" + lang + "'");
               stream.setLanguage(lang);

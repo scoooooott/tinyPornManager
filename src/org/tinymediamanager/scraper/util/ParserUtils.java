@@ -62,7 +62,7 @@ public class ParserUtils {
 
     // remove extension (if found) and split
     String fname = filename.replaceFirst("\\.\\w{2,4}$", "");
-    String[] s = fname.split("[\\(\\)\\[\\]_ \\-\\.]");
+    String[] s = fname.split("[\\[\\]() _.-]");
     int firstFoundStopwordPosition = s.length;
 
     // iterate over all splitted items
@@ -132,7 +132,7 @@ public class ParserUtils {
 
     // remove extension (if found) and split
     String fname = filename.replaceFirst("\\.\\w{2,4}$", "");
-    String[] s = fname.split("[()\\[\\]_ -.]");
+    String[] s = fname.split("[()\\[\\] _.-]");
 
     // iterate over all splitted items and remove stopwords
     String ret = "";
