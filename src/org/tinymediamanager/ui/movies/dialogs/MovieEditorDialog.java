@@ -278,7 +278,7 @@ public class MovieEditorDialog extends JDialog {
     }
     {
       JLabel lblReleaseDate = new JLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
-      details1Panel.add(lblReleaseDate, "2, 14");
+      details1Panel.add(lblReleaseDate, "2, 14, right, default");
     }
     {
       spReleaseDate = new JSpinner(new SpinnerDateModel());
