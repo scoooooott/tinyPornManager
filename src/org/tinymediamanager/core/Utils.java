@@ -26,9 +26,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -798,5 +801,42 @@ public class Utils {
       // do nothing
     }
     return new ArrayList<Locale>(loc);
+  }
+
+  /**
+   * creates a backup of file in backup folder with yyyy-MM-dd timestamp<br>
+   * <b>does not overwrite already existing file from today!</b>
+   * 
+   * @param f
+   *          the file to backup
+   */
+  public static final void createBackupFile(File f) {
+    createBackupFile(f, false);
+  }
+
+  /**
+   * creates a backup of file in backup folder with yyyy-MM-dd timestamp
+   * 
+   * @param f
+   *          the file to backup
+   * @param overwrite
+   *          if file is already there, ignore that and overwrite with new copy
+   */
+  public static final void createBackupFile(File f, boolean overwrite) {
+    File backup = new File("backup");
+    if (!backup.exists()) {
+      backup.mkdir();
+    }
+    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    String date = formatter.format(new Date());
+    backup = new File("backup", f.getName() + "." + date);
+    if (!backup.exists() || overwrite == true) {
+      try {
+        FileUtils.copyFile(f, backup, true);
+      }
+      catch (IOException e) {
+        LOGGER.error("Could not backup file " + backup);
+      }
+    }
   }
 }

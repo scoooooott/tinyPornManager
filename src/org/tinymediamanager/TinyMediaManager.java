@@ -466,6 +466,11 @@ public class TinyMediaManager {
             }
           }
         }
+
+        // do a DB backup if last is old enough
+        // Utils.createBackupFile(new File("tmm.odb"));
+        // TODO: cleanup daily backups
+
       }
     });
 
