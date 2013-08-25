@@ -209,7 +209,7 @@ public class TvShowRenamer {
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
             e.getLocalizedMessage() }));
       }
-    }
+    } // end isDisc
     else {
       MediaFile newMF = new MediaFile(mf); // clone MF
       String filename = generateFilename(mf);
@@ -225,6 +225,7 @@ public class TvShowRenamer {
             for (TvShowEpisode e : eps) {
               e.removeFromMediaFiles(mf);
               e.addToMediaFiles(newMF);
+              e.setPath(seasonDir.getAbsolutePath());
               e.saveToDb();
             }
           }
