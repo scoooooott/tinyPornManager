@@ -53,28 +53,44 @@ public class MovieRenamer {
     // build language lists
     Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
 
-    // the filename of movie, to remove from subtitle, to ease parsing
-    String vname = Utils.cleanStackingMarkers(m.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename()).toLowerCase();
-
     for (MediaFile sub : m.getMediaFiles(MediaFileType.SUBTITLE)) {
       String lang = "";
       String forced = "";
-      String shortname = sub.getBasename().toLowerCase().replace(vname, "");
-      if (sub.getFilename().toLowerCase().contains("forced")) {
-        // add "forced" prior language
-        forced = ".forced";
-        shortname = shortname.replace("forced", "");
-      }
-      shortname = shortname.replaceAll("\\p{Punct}", "").trim();
+      List<MediaFileSubtitle> mfsl = sub.getSubtitles();
 
-      for (String l : langArray) {
-        if (shortname.endsWith(l.toLowerCase())) {
-          lang = Utils.getDisplayLanguage(l);
-          LOGGER.debug("found language '" + l + "' in subtitle; displaying it as '" + lang + "'");
-          break;
+      if (mfsl != null && mfsl.size() > 0) {
+        // use internal values
+        MediaFileSubtitle mfs = mfsl.get(0);
+        lang = mfs.getLanguage();
+        if (mfs.isForced()) {
+          forced = ".forced";
+        }
+      }
+      else {
+        // detect from filename, if we don't have a MediaFileSubtitle entry!
+
+        // FIXME: DOES NOT WORK, movie already renamed!!! - execute before movie rename?!
+        // remove the filename of movie from subtitle, to ease parsing
+        String vname = Utils.cleanStackingMarkers(m.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename()).toLowerCase();
+        String shortname = sub.getBasename().toLowerCase().replace(vname, "");
+
+        if (sub.getFilename().toLowerCase().contains("forced")) {
+          // add "forced" prior language
+          forced = ".forced";
+          shortname = shortname.replaceAll("\\p{Punct}*forced", "");
+        }
+        // shortname = shortname.replaceAll("\\p{Punct}", "").trim(); // NEVER EVER!!!
+
+        for (String l : langArray) {
+          if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {
+            lang = Utils.getDisplayLanguage(l);
+            LOGGER.debug("found language '" + l + "' in subtitle; displaying it as '" + lang + "'");
+            break;
+          }
         }
       }
 
+      // rebuild new filename
       String newSubName = "";
 
       if (sub.getStacking() == 0) {
