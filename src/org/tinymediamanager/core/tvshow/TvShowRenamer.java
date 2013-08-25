@@ -314,6 +314,9 @@ public class TvShowRenamer {
     if (mf.getType().equals(MediaFileType.THUMB)) {
       filename = filename + "-thumb";
     }
+    if (mf.getType().equals(MediaFileType.TRAILER)) {
+      filename = filename + "-trailer";
+    }
     filename = filename + "." + mf.getExtension(); // readd original extension
 
     return filename;
