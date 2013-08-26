@@ -171,7 +171,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             }
           }
           tvShow.saveToDb();
+
+          // get mediainfo for tv show (fanart/poster..)
           submitTask(new MediaFileInformationFetcherTask(tvShow.getMediaFiles(), tvShow));
+
+          // get mediainfo for all episodes within this tv show
+          for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
+            submitTask(new MediaFileInformationFetcherTask(episode.getMediaFiles(), episode));
+          }
         }
       }
       waitForCompletionOrCancel();
