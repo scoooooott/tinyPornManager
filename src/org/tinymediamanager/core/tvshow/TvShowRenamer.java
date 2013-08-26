@@ -139,6 +139,7 @@ public class TvShowRenamer {
 
     // get first, for isDisc and season
     TvShowEpisode ep = eps.get(0);
+    File episodePath = new File(ep.getPath());
 
     // test access rights or return
     LOGGER.debug("testing file S:" + ep.getSeason() + " E:" + ep.getEpisode() + " MF:" + mf.getFile().getAbsolutePath());
@@ -199,6 +200,8 @@ public class TvShowRenamer {
               e.saveToDb();
             }
           }
+          // and cleanup
+          cleanEmptyDir(epFolder);
         }
         else {
           // old and new folder are equal, do nothing
@@ -217,7 +220,8 @@ public class TvShowRenamer {
 
       try {
         if (!mf.getFile().equals(newFile)) {
-          boolean ok = Utils.moveFileSafe(mf.getFile(), newFile);
+          File oldMfFile = mf.getFile();
+          boolean ok = Utils.moveFileSafe(oldMfFile, newFile);
           if (ok) {
             newMF.setPath(seasonDir.getAbsolutePath());
             newMF.setFilename(filename);
@@ -229,6 +233,8 @@ public class TvShowRenamer {
               e.saveToDb();
             }
           }
+          // and cleanup
+          cleanEmptyDir(oldMfFile.getParentFile());
         }
         else {
           // old and new file are equal, keep MF
@@ -239,6 +245,13 @@ public class TvShowRenamer {
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
             e.getLocalizedMessage() }));
       }
+    }
+  }
+
+  private static void cleanEmptyDir(File dir) {
+    if (dir.isDirectory() && dir.listFiles().length == 0) {
+      dir.delete();
+      cleanEmptyDir(dir.getParentFile());
     }
   }
 
