@@ -66,6 +66,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
+import org.tinymediamanager.core.tvshow.tasks.TvShowReloadMediaInformationTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
@@ -126,6 +127,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionRewriteTvShowNfo        = new RewriteTvShowNfoAction();
   private final Action                actionRewriteTvShowEpisodeNfo = new RewriteTvShowEpisodeNfoAction();
   private final Action                actionRename                  = new RenameAction();
+  private final Action                actionMediaInformation        = new MediaInformationAction(false);
 
   private int                         width                         = 0;
 
@@ -228,6 +230,10 @@ public class TvShowPanel extends JPanel {
     buttonScrape.setPopupMenu(popup);
     toolBar.add(buttonScrape);
     toolBar.add(actionEdit);
+
+    JButton btnMediaInformation = new JButton();
+    btnMediaInformation.setAction(actionMediaInformation);
+    toolBar.add(btnMediaInformation);
 
     // install drawing of full with
     tree = new ZebraJTree(treeModel) {
@@ -1127,5 +1133,50 @@ public class TvShowPanel extends JPanel {
     AutoBinding<TvShowList, Integer, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowList,
         tvShowListBeanProperty_1, lblEpisodes, jLabelBeanProperty);
     autoBinding_1.bind();
+  }
+
+  public class MediaInformationAction extends AbstractAction {
+    private static final long serialVersionUID = -1274423130095036944L;
+
+    public MediaInformationAction(boolean withTitle) {
+      if (withTitle) {
+        putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
+        putValue(LARGE_ICON_KEY, "");
+      }
+      else {
+        // putValue(NAME, "MI");
+        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
+        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
+      }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      List<TvShow> selectedTvShows = getSelectedTvShows();
+      List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+
+      // add all episodes which are not part of a selected tv show
+      for (Object obj : getSelectedObjects()) {
+        if (obj instanceof TvShowEpisode) {
+          TvShowEpisode episode = (TvShowEpisode) obj;
+          if (!selectedTvShows.contains(episode.getTvShow())) {
+            selectedEpisodes.add(episode);
+          }
+        }
+      }
+
+      // get data of all files within all selected movies
+      if (selectedTvShows.size() > 0 || selectedEpisodes.size() > 0) {
+        TmmSwingWorker task = new TvShowReloadMediaInformationTask(selectedTvShows, selectedEpisodes);
+        if (!MainWindow.executeMainTask(task)) {
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
+        }
+      }
+    }
   }
 }
