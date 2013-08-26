@@ -613,13 +613,23 @@ public class MovieRenamer {
       newDestination = replaceToken(newDestination, "$O", movie.getOriginalTitle());
     }
 
-    // replace token Movie set title ($M)
+    // replace token Movie set title - sorted ($M)
     if (newDestination.contains("$M")) {
       if (movie.getMovieSet() != null) {
         newDestination = replaceToken(newDestination, "$M", movie.getMovieSet().getTitleSortable());
       }
       else {
         newDestination = newDestination.replace("$M", "");
+      }
+    }
+
+    // replace token Movie set title ($N)
+    if (newDestination.contains("$N")) {
+      if (movie.getMovieSet() != null) {
+        newDestination = replaceToken(newDestination, "$N", movie.getMovieSet().getTitle());
+      }
+      else {
+        newDestination = newDestination.replace("$N", "");
       }
     }
 
