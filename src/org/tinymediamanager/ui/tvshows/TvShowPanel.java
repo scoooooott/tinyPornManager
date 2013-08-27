@@ -187,13 +187,13 @@ public class TvShowPanel extends JPanel {
       public void splitButtonClicked(ActionEvent e) {
         // build the popupmenu on the fly
         buttonUpdateDatasource.getPopupMenu().removeAll();
-        JMenuItem item = new JMenuItem(actionUpdateDatasources2);
-        buttonUpdateDatasource.getPopupMenu().add(item);
+        buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateDatasources2));
         buttonUpdateDatasource.getPopupMenu().addSeparator();
         for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
           buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new UpdateSingleDatasourceAction(ds)));
         }
-
+        buttonUpdateDatasource.getPopupMenu().addSeparator();
+        buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateTvShow));
         buttonUpdateDatasource.getPopupMenu().pack();
       }
     });
@@ -614,6 +614,10 @@ public class TvShowPanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
       List<TvShow> selectedTvShows = getSelectedTvShows();
       List<File> tvShowFolders = new ArrayList<File>();
+
+      if (selectedTvShows.isEmpty()) {
+        return;
+      }
 
       for (TvShow tvShow : selectedTvShows) {
         tvShowFolders.add(new File(tvShow.getPath()));
