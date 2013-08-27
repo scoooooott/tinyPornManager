@@ -210,10 +210,12 @@ public class TvShowPanel extends JPanel {
 
     // register for listener
     buttonScrape.addSplitButtonActionListener(new SplitButtonActionListener() {
+      @Override
       public void buttonClicked(ActionEvent e) {
         actionScrape.actionPerformed(e);
       }
 
+      @Override
       public void splitButtonClicked(ActionEvent e) {
       }
     });
@@ -453,6 +455,9 @@ public class TvShowPanel extends JPanel {
     // popupMenu.add(actionExport);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
+    popupMenu.addSeparator();
+    popupMenu.add(new ExpandAllAction(tree));
+    popupMenu.add(new CollapseAllAction(tree));
 
     MouseListener popupListener = new PopupListener(popupMenu);
     tree.addMouseListener(popupListener);
@@ -569,7 +574,9 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
+      @SuppressWarnings("rawtypes")
       TmmSwingWorker task = new TvShowUpdateDatasourceTask();
       if (!MainWindow.executeMainTask(task)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
@@ -591,7 +598,9 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
+      @SuppressWarnings("rawtypes")
       TmmSwingWorker task = new TvShowUpdateDatasourceTask(datasource);
       if (!MainWindow.executeMainTask(task)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
@@ -611,6 +620,7 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       List<TvShow> selectedTvShows = getSelectedTvShows();
       List<File> tvShowFolders = new ArrayList<File>();
@@ -623,6 +633,7 @@ public class TvShowPanel extends JPanel {
         tvShowFolders.add(new File(tvShow.getPath()));
       }
 
+      @SuppressWarnings("rawtypes")
       TmmSwingWorker task = new TvShowUpdateDatasourceTask(tvShowFolders);
       if (!MainWindow.executeMainTask(task)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
@@ -662,6 +673,7 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       List<TvShow> selectedTvShows = getSelectedTvShows();
 
@@ -764,6 +776,7 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       List<Object> selectedObjects = getSelectedObjects();
 
@@ -789,6 +802,8 @@ public class TvShowPanel extends JPanel {
   }
 
   private class RemoveAction extends AbstractAction {
+    private static final long serialVersionUID = -2355545751433709417L;
+
     public RemoveAction(boolean withTitle) {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
@@ -805,6 +820,7 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       List<Object> selectedObjects = getSelectedObjects();
 
@@ -829,8 +845,6 @@ public class TvShowPanel extends JPanel {
    * @author Manuel Laggner
    */
   private class ChangeSeasonPosterAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8356413227405772558L;
 
     /**
@@ -855,6 +869,7 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       List<Object> selectedObjects = getSelectedObjects();
 
@@ -878,7 +893,6 @@ public class TvShowPanel extends JPanel {
   }
 
   private class BatchEditAction extends AbstractAction {
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1193886444149690516L;
 
     /**
@@ -889,6 +903,7 @@ public class TvShowPanel extends JPanel {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.bulkedit.desc")); //$NON-NLS-1$
     }
 
+    @Override
     public void actionPerformed(ActionEvent arg0) {
       List<Object> selectedObjects = getSelectedObjects();
       List<TvShow> selectedTvShows = new ArrayList<TvShow>();
@@ -914,8 +929,6 @@ public class TvShowPanel extends JPanel {
   }
 
   private class SelectedScrapeAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 699165862194137592L;
 
     /**
@@ -931,6 +944,7 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       List<TvShow> selectedTvShows = getSelectedTvShows();
 
@@ -944,6 +958,7 @@ public class TvShowPanel extends JPanel {
         // do we want to scrape?
         if (dialog.shouldStartScrape()) {
           // scrape
+          @SuppressWarnings("rawtypes")
           TmmSwingWorker scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
           if (!MainWindow.executeMainTask(scrapeTask)) {
             JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
@@ -1006,9 +1021,7 @@ public class TvShowPanel extends JPanel {
    * @author Manuel Laggner
    */
   private class RenameAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8988748633666277616L;
 
     /**
      * Instantiates a new rename action.
@@ -1024,6 +1037,7 @@ public class TvShowPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       List<TvShow> selectedTvShows = getSelectedTvShows();
       List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
@@ -1039,6 +1053,7 @@ public class TvShowPanel extends JPanel {
       }
 
       // rename
+      @SuppressWarnings("rawtypes")
       TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows, selectedEpisodes);
       if (!MainWindow.executeMainTask(renameTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
@@ -1055,8 +1070,6 @@ public class TvShowPanel extends JPanel {
    * @see PopupEvent
    */
   private class PopupListener extends MouseAdapter {
-
-    /** The popup. */
     private JPopupMenu popup;
 
     /**
@@ -1176,11 +1189,49 @@ public class TvShowPanel extends JPanel {
 
       // get data of all files within all selected movies
       if (selectedTvShows.size() > 0 || selectedEpisodes.size() > 0) {
+        @SuppressWarnings("rawtypes")
         TmmSwingWorker task = new TvShowReloadMediaInformationTask(selectedTvShows, selectedEpisodes);
         if (!MainWindow.executeMainTask(task)) {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
         }
       }
+    }
+  }
+
+  public class CollapseAllAction extends AbstractAction {
+    private static final long serialVersionUID = -1444530142931061317L;
+
+    private JTree             tree;
+
+    public CollapseAllAction(JTree tree) {
+      this.tree = tree;
+      putValue(NAME, BUNDLE.getString("tree.collapseall")); //$NON-NLS-1$  
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      for (int i = this.tree.getRowCount() - 1; i >= 0; i--) {
+        this.tree.collapseRow(i);
+      }
+    }
+  }
+
+  public class ExpandAllAction extends AbstractAction {
+    private static final long serialVersionUID = 6191727607109012198L;
+
+    private JTree             tree;
+
+    public ExpandAllAction(JTree tree) {
+      this.tree = tree;
+      putValue(NAME, BUNDLE.getString("tree.expandall")); //$NON-NLS-1$  
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int i = 0;
+      do {
+        this.tree.expandRow(i++);
+      } while (i < this.tree.getRowCount());
     }
   }
 }
