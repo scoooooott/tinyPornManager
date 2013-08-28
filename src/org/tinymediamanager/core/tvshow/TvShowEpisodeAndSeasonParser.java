@@ -101,7 +101,7 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the episode matching result
    */
   public static EpisodeMatchingResult detectEpisodeFromFilename(File file) {
-    LOGGER.debug("Detect episodes/seasons from " + file.getName());
+    LOGGER.debug("Detect episodes/seasons from file " + file.getName());
     EpisodeMatchingResult result = new EpisodeMatchingResult();
     String fileName = file.getName();
 
@@ -471,7 +471,7 @@ public class TvShowEpisodeAndSeasonParser {
    * @return the int
    */
   public static int detectSeason(String relativePath) {
-    LOGGER.info("detect season from " + relativePath);
+    LOGGER.info("detect season from path " + relativePath);
     int season = -1;
 
     // season detection
@@ -485,7 +485,7 @@ public class TvShowEpisodeAndSeasonParser {
         // can not happen from regex since we only come here with max 2 numeric chars
       }
     }
-
+    LOGGER.debug("returning result " + season);
     return season;
   }
 

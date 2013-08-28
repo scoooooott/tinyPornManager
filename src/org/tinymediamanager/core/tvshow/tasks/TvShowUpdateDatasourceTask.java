@@ -375,7 +375,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           if (result.season == -1) {
             // did the search find a season?
             // no -> search for it in the folder name (relative path between tv show root and the current dir)
-            result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath());
+            result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.getParentFile().toURI())
+                .getPath());
           }
 
           if (result.episodes.size() == 0) {
