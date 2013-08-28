@@ -475,7 +475,7 @@ public class TvShowEpisodeAndSeasonParser {
     int season = -1;
 
     // season detection
-    Pattern regex = Pattern.compile("(?i)(?:s|season|staffel|)[\\s]*(\\d+)");
+    Pattern regex = Pattern.compile("(?i)(?:s|season|staffel)[\\s]*(\\d+)");
     Matcher m = regex.matcher(relativePath);
     if (m.find()) {
       try {
