@@ -33,6 +33,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -47,8 +48,10 @@ public class TvShowTreeModel implements TreeModel {
   private TvShowRootTreeNode      root       = new TvShowRootTreeNode();
   private List<TreeModelListener> listeners  = new ArrayList<TreeModelListener>();
   private Map<Object, TreeNode>   nodeMap    = Collections.synchronizedMap(new HashMap<Object, TreeNode>());
-  private PropertyChangeListener  propertyChangeListener;
   private TvShowList              tvShowList = TvShowList.getInstance();
+  private PropertyChangeListener  propertyChangeListener;
+
+  private String                  filter     = "";
 
   /**
    * Instantiates a new tv show tree model.
@@ -352,24 +355,45 @@ public class TvShowTreeModel implements TreeModel {
 
   @Override
   public Object getChild(Object parent, int index) {
-    return ((TreeNode) parent).getChildAt(index);
+    int count = 0;
+    int childCount = getChildCountInternal(parent);
+    for (int i = 0; i < childCount; i++) {
+      Object child = getChildInternal(parent, i);
+      if (filterMatch(child, filter)) {
+        if (count == index) {
+          return child;
+        }
+        count++;
+      }
+    }
+    return null;
   }
 
   @Override
   public int getChildCount(Object parent) {
-    return ((TreeNode) parent).getChildCount();
+    int count = 0;
+    int childCount = getChildCountInternal(parent);
+    for (int i = 0; i < childCount; i++) {
+      Object child = getChildInternal(parent, i);
+      if (filterMatch(child, filter)) {
+        count++;
+      }
+    }
+    return count;
   }
 
   @Override
-  public int getIndexOfChild(Object parent, Object child) {
-    TreeNode childNode = null;
-    if (child instanceof TreeNode) {
-      childNode = (TreeNode) child;
+  public int getIndexOfChild(Object parent, Object childToFind) {
+    int childCount = getChildCountInternal(parent);
+    for (int i = 0; i < childCount; i++) {
+      Object child = getChildInternal(parent, i);
+      if (filterMatch(child, filter)) {
+        if (childToFind.equals(child)) {
+          return i;
+        }
+      }
     }
-    else {
-      childNode = nodeMap.get(child);
-    }
-    return ((TreeNode) parent).getIndex(childNode);
+    return -1;
   }
 
   @Override
@@ -402,5 +426,104 @@ public class TvShowTreeModel implements TreeModel {
 
   @Override
   public void valueForPathChanged(TreePath arg0, Object arg1) {
+  }
+
+  private boolean filterMatch(final Object node, final String filter) {
+    // do nothing if there's nothing to filter
+    if (StringUtils.isBlank(filter)) {
+      return true;
+    }
+
+    // if the node is a TvShowNode, we have to check the TvShow and all episodes within it
+    if (node instanceof TvShowTreeNode) {
+      TvShow show = (TvShow) ((TvShowTreeNode) node).getUserObject();
+      return tvShowFilterMatch(show, filter);
+    }
+
+    // if the node is a TvShowSeasonNode, we have to check the parent TV show and its episodes
+    if (node instanceof TvShowSeasonTreeNode) {
+      TvShowSeason season = (TvShowSeason) ((TvShowSeasonTreeNode) node).getUserObject();
+      return tvShowSeasonFilterMatch(season, filter);
+    }
+
+    // if the node is a TvShowEpisodeNode, we have to check the parent TV show and the episode
+    if (node instanceof TvShowEpisodeTreeNode) {
+      TvShowEpisode episode = (TvShowEpisode) ((TvShowEpisodeTreeNode) node).getUserObject();
+      return tvShowEpisodeFilterMatch(episode, filter);
+    }
+
+    // fallback
+    return true;
+  }
+
+  private boolean tvShowFilterMatch(TvShow tvShow, String filter) {
+    // first: filter on the TV show title
+    if (tvShow.getTitle().matches(filter)) {
+      return true;
+    }
+
+    // filter all episodes
+    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
+      if (episode.getTitle().matches(filter)) {
+        return true;
+      }
+    }
+
+    // fallback
+    return false;
+  }
+
+  private boolean tvShowSeasonFilterMatch(TvShowSeason season, String filter) {
+    // first: filter on the TV show title
+    if (season.getTvShow().getTitle().matches(filter)) {
+      return true;
+    }
+
+    // filter all episodes
+    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(season.getEpisodes())) {
+      if (episode.getTitle().matches(filter)) {
+        return true;
+      }
+    }
+
+    // fallback
+    return false;
+  }
+
+  private boolean tvShowEpisodeFilterMatch(TvShowEpisode episode, String filter) {
+    // first: filter on the TV show title
+    if (episode.getTvShow().getTitle().matches(filter)) {
+      return true;
+    }
+
+    // second: filter the episode title
+    if (episode.getTitle().matches(filter)) {
+      return true;
+    }
+
+    // fallback
+    return false;
+  }
+
+  private int getChildCountInternal(Object node) {
+    return ((TreeNode) node).getChildCount();
+  }
+
+  private Object getChildInternal(Object parent, int index) {
+    return ((TreeNode) parent).getChildAt(index);
+  }
+
+  public void setFilter(String filter) {
+    if (StringUtils.isBlank(filter)) {
+      this.filter = "";
+    }
+    this.filter = "(?i).*" + filter + ".*";
+  }
+
+  public void reload() {
+    TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
+    for (TreeModelListener listener : listeners) {
+      listener.treeStructureChanged(event);
+    }
   }
 }

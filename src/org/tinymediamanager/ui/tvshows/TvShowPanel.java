@@ -42,9 +42,12 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -74,6 +77,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.JSearchTextField;
 import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
@@ -130,6 +134,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionMediaInformation2       = new MediaInformationAction(true);
 
   private int                         width                         = 0;
+  private JTextField                  textField;
 
   /**
    * Instantiates a new tv show panel.
@@ -157,13 +162,43 @@ public class TvShowPanel extends JPanel {
 
     JPanel panelTvShowTree = new JPanel();
     splitPane.setLeftComponent(panelTvShowTree);
-    panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), }, new RowSpec[] {
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+    panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
+        ColumnSpec.decode("150px:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    textField = new JSearchTextField();
+    panelTvShowTree.add(textField, "3, 1, right, bottom");
+    textField.setColumns(10);
+    textField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(final DocumentEvent e) {
+        applyFilter();
+      }
+
+      @Override
+      public void removeUpdate(final DocumentEvent e) {
+        applyFilter();
+      }
+
+      @Override
+      public void changedUpdate(final DocumentEvent e) {
+        applyFilter();
+      }
+
+      public void applyFilter() {
+        TvShowTreeModel filteredModel = (TvShowTreeModel) tree.getModel();
+        filteredModel.setFilter(textField.getText());
+        filteredModel.reload();
+
+        for (int i = 0; i < tree.getRowCount(); i++) {
+          tree.expandRow(i);
+        }
+      }
+    });
 
     JScrollPane scrollPane = new JScrollPane();
     scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    panelTvShowTree.add(scrollPane, "2, 3, fill, fill");
+    panelTvShowTree.add(scrollPane, "2, 3, 2, 1, fill, fill");
 
     JToolBar toolBar = new JToolBar();
     toolBar.setRollover(true);
