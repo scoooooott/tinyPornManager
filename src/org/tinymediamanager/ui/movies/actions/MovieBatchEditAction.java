@@ -55,6 +55,7 @@ public class MovieBatchEditAction extends AbstractAction {
     if (selectedMovies.size() > 0) {
       MovieBatchEditorDialog editor = new MovieBatchEditorDialog(selectedMovies);
       editor.setLocationRelativeTo(MainWindow.getActiveInstance());
+      editor.pack();
       editor.setVisible(true);
     }
   }

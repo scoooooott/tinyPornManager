@@ -54,32 +54,16 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieBatchEditorDialog extends JDialog {
-
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = -8515248604267310279L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = -8515248604267310279L;
-
-  /** The movie list. */
   private MovieList                   movieList        = MovieList.getInstance();
-
-  /** The movies to edit. */
   private List<Movie>                 moviesToEdit;
-
-  /** The changed. */
   private boolean                     changed          = false;
 
-  /** The cb genres. */
   private JComboBox                   cbGenres;
-
-  /** The cb tags. */
   private JComboBox                   cbTags;
-
-  /** The cb movie set. */
   private JComboBox                   cbMovieSet;
-
-  /** The chckbx watched. */
   private JCheckBox                   chckbxWatched;
 
   /**
