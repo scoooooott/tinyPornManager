@@ -22,8 +22,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
@@ -71,6 +69,7 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
@@ -128,6 +127,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionRewriteTvShowEpisodeNfo = new RewriteTvShowEpisodeNfoAction();
   private final Action                actionRename                  = new RenameAction();
   private final Action                actionMediaInformation        = new MediaInformationAction(false);
+  private final Action                actionMediaInformation2       = new MediaInformationAction(true);
 
   private int                         width                         = 0;
 
@@ -430,7 +430,7 @@ public class TvShowPanel extends JPanel {
     // menu.add(actionEditMovie2);
 
     menu.add(actionRename);
-    // menu.add(actionMediaInformation2);
+    menu.add(actionMediaInformation2);
     // menu.add(actionExport);
     menu.addSeparator();
     menu.add(actionRemove2);
@@ -451,7 +451,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionRewriteTvShowEpisodeNfo);
     // popupMenu.add(actionBatchEdit);
     popupMenu.add(actionRename);
-    // popupMenu.add(actionMediaInformation2);
+    popupMenu.add(actionMediaInformation2);
     // popupMenu.add(actionExport);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
@@ -459,7 +459,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(new ExpandAllAction(tree));
     popupMenu.add(new CollapseAllAction(tree));
 
-    MouseListener popupListener = new PopupListener(popupMenu);
+    MouseListener popupListener = new PopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);
   }
 
@@ -1057,84 +1057,6 @@ public class TvShowPanel extends JPanel {
       TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows, selectedEpisodes);
       if (!MainWindow.executeMainTask(renameTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
-    }
-  }
-
-  /**
-   * The listener interface for receiving popup events. The class that is interested in processing a popup event implements this interface, and the
-   * object created with that class is registered with a component using the component's <code>addPopupListener<code> method. When
-   * the popup event occurs, that object's appropriate
-   * method is invoked.
-   * 
-   * @see PopupEvent
-   */
-  private class PopupListener extends MouseAdapter {
-    private JPopupMenu popup;
-
-    /**
-     * Instantiates a new popup listener.
-     * 
-     * @param popupMenu
-     *          the popup menu
-     */
-    PopupListener(JPopupMenu popupMenu) {
-      popup = popupMenu;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.MouseAdapter#mousePressed(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mousePressed(MouseEvent e) {
-      maybeShowPopup(e);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.MouseAdapter#mouseReleased(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseReleased(MouseEvent e) {
-      // if (table.getSelectedRow() != -1) {
-      maybeShowPopup(e);
-      // }
-    }
-
-    /**
-     * Maybe show popup.
-     * 
-     * @param e
-     *          the e
-     */
-    private void maybeShowPopup(MouseEvent e) {
-      if (e.isPopupTrigger()) {
-        boolean selected = false;
-        // check the selected rows
-        int row = tree.getClosestRowForLocation(e.getPoint().x, e.getPoint().y);
-
-        TreePath[] paths = tree.getSelectionPaths();
-
-        // filter out all objects from the selection
-        if (paths != null) {
-          for (TreePath path : paths) {
-            if (path.getPathCount() > 1) {
-              if (tree.getRowForPath(path) == row) {
-                selected = true;
-              }
-            }
-          }
-        }
-
-        // if the row, which has been right clicked is not selected - select it
-        if (!selected) {
-          tree.getSelectionModel().setSelectionPath(tree.getPathForRow(row));
-        }
-
-        popup.show(e.getComponent(), e.getX(), e.getY());
       }
     }
   }

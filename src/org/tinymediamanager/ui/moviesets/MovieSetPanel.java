@@ -52,6 +52,7 @@ import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.movies.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.MovieSetTreeCellRenderer;
+import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetEditorDialog;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
@@ -143,6 +144,7 @@ public class MovieSetPanel extends JPanel {
     tree = new ZebraJTree(treeModel) {
       private static final long serialVersionUID = 1L;
 
+      @Override
       public void paintComponent(Graphics g) {
         width = this.getWidth();
         super.paintComponent(g);
@@ -150,6 +152,7 @@ public class MovieSetPanel extends JPanel {
     };
 
     TreeUI ui = new TreeUI() {
+      @Override
       protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded,
           boolean hasBeenExpanded, boolean isLeaf) {
         bounds.width = width - bounds.x;
@@ -165,6 +168,8 @@ public class MovieSetPanel extends JPanel {
     scrollPane.setViewportView(tree);
 
     JPanel panelHeader = new JPanel() {
+      private static final long serialVersionUID = -6646766582759138262L;
+
       @Override
       public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -232,7 +237,22 @@ public class MovieSetPanel extends JPanel {
         }
       }
     });
+    // further initializations
+    init();
     initDataBindings();
+  }
+
+  private void init() {
+    // build menu
+    buildMenu();
+
+  }
+
+  private void buildMenu() {
+    // TODO popup menu for moviesets
+    // // popup menu
+    // JPopupMenu popupMenu = new JPopupMenu();
+
   }
 
   /**
@@ -241,9 +261,7 @@ public class MovieSetPanel extends JPanel {
    * @author Manuel Laggner
    */
   private class AddMovieSetAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 819724436270051906L;
 
     /**
      * Instantiates a new adds the movie set action.
@@ -258,6 +276,7 @@ public class MovieSetPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       String name = JOptionPane.showInputDialog(null, BUNDLE.getString("movieset.title"), "", 1); //$NON-NLS-1$
       if (StringUtils.isNotEmpty(name)) {
@@ -274,9 +293,7 @@ public class MovieSetPanel extends JPanel {
    * @author Manuel Laggner
    */
   private class RemoveMovieSetAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -9030996266835702009L;
 
     /**
      * Instantiates a new removes the movie set action.
@@ -291,6 +308,7 @@ public class MovieSetPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
       tree.clearSelection();
@@ -317,9 +335,7 @@ public class MovieSetPanel extends JPanel {
    * @author Manuel Laggner
    */
   private class SearchMovieSetAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2260581786599155278L;
 
     /**
      * Instantiates a new search movie set action.
@@ -334,6 +350,7 @@ public class MovieSetPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
       // tree.clearSelection();
@@ -376,9 +393,7 @@ public class MovieSetPanel extends JPanel {
    * @author Manuel Laggner
    */
   private class EditMovieSetAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1848573591741154631L;
 
     /**
      * Instantiates a new edits the movie set action.
@@ -393,6 +408,7 @@ public class MovieSetPanel extends JPanel {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       TreePath[] paths = tree.getSelectionPaths();
       // tree.clearSelection();
@@ -406,8 +422,17 @@ public class MovieSetPanel extends JPanel {
             if (node.getUserObject() instanceof MovieSet) {
               MovieSet movieSet = (MovieSet) node.getUserObject();
 
-              // display movie set chooser
+              // display movie set editor
               MovieSetEditorDialog editor = new MovieSetEditorDialog(movieSet, paths.length > 1 ? true : false);
+              if (!editor.showDialog()) {
+                break;
+              }
+            }
+            if (node.getUserObject() instanceof Movie) {
+              Movie movie = (Movie) node.getUserObject();
+
+              // display movie editor
+              MovieEditorDialog editor = new MovieEditorDialog(movie, paths.length > 1 ? true : false);
               if (!editor.showDialog()) {
                 break;
               }
