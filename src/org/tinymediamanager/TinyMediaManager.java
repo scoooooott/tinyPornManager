@@ -32,7 +32,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Properties;
@@ -440,7 +442,15 @@ public class TinyMediaManager {
           File desktop = new File("tinyMediaManager.desktop");
           if (!desktop.exists()) {
             // create .desktop
-            String path = this.getClass().getClassLoader().getResource(".").getPath();
+            // String path = this.getClass().getClassLoader().getResource(".").getPath();
+
+            // get the path in a safe way
+            String path = new File(TinyMediaManager.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
+            try {
+              path = URLDecoder.decode(path, "UTF-8");
+            }
+            catch (UnsupportedEncodingException e1) {
+            }
             StringBuilder sb = new StringBuilder("[Desktop Entry]\n");
             sb.append("Type=Application\n");
             sb.append("Name=tinyMediaManager\n");
@@ -449,10 +459,10 @@ public class TinyMediaManager {
             sb.append("\n");
             sb.append("Exec=/bin/sh \"");
             sb.append(path);
-            sb.append("tinyMediaManager.sh\"\n");
+            sb.append("/tinyMediaManager.sh\"\n");
             sb.append("Icon=");
             sb.append(path);
-            sb.append("tmm.png\n");
+            sb.append("/tmm.png\n");
             sb.append("Categories=Application;Multimedia;");
             FileWriter writer;
             try {
