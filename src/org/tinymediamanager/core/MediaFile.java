@@ -191,7 +191,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
 
       // best approach so far: https://github.com/brentosmith/xbmc-dvdextras
-      if (name.contains("-extras-") || foldername.equalsIgnoreCase("extras")) {
+      if (name.matches("(?i).*[ _.-]extras[ _.-].*") || foldername.equalsIgnoreCase("extras")) {
         return MediaFileType.VIDEO_EXTRA;
       }
 

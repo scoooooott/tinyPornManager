@@ -18,6 +18,8 @@ package org.tinymediamanager.core.tvshow;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -332,9 +334,12 @@ public class TvShowRenamer {
     }
     if (mf.getType().equals(MediaFileType.VIDEO_EXTRA)) {
       String name = mf.getBasename();
-      if (name.contains("-extras-")) {
-        name = name.substring(name.indexOf("-extras-") + 8); // everything behind
-      } // if not, MF must be within /extras/ folder - use name 1:1
+      Pattern p = Pattern.compile("(?i).*([ _.-]extras[ _.-]).*");
+      Matcher m = p.matcher(name);
+      if (m.matches()) {
+        name = name.substring(m.end(1)); // everything behind
+      }
+      // if not, MF must be within /extras/ folder - use name 1:1
       filename = filename + "-extras-" + name;
     }
     filename = filename + "." + mf.getExtension(); // readd original extension
