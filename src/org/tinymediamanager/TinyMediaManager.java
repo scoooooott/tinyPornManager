@@ -477,10 +477,10 @@ public class TinyMediaManager {
           }
         }
 
-        // do a DB backup if last is old enough
-        // Utils.createBackupFile(new File("tmm.odb"));
-        // TODO: cleanup daily backups
-
+        // do a DB backup, and keep last 15 copies
+        File db = new File("tmm.odb");
+        Utils.createBackupFile(db);
+        Utils.deleteOldBackupFile(db, 15);
       }
     });
 

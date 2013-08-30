@@ -1,5 +1,6 @@
 package org.tinymediamanager.core;
 
+import java.io.File;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -33,6 +34,12 @@ public class UtilsTest {
     Assert.assertEquals("German", Utils.getDisplayLanguage("AUT"));
     Assert.assertEquals("German", Utils.getDisplayLanguage("GER"));
     Assert.assertEquals("German", Utils.getDisplayLanguage("ger"));
+  }
+
+  @Test
+  public void backup() {
+    Utils.createBackupFile(new File("tmm.odb"));
+    Utils.deleteOldBackupFile(new File("tmm.odb"), 15);
   }
 
   @Test

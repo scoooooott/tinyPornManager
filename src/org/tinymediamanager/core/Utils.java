@@ -24,6 +24,9 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
@@ -837,6 +840,68 @@ public class Utils {
       catch (IOException e) {
         LOGGER.error("Could not backup file " + backup);
       }
+    }
+  }
+
+  /**
+   * Deletes old backup files in backup folder; keep only last X files
+   * 
+   * @param f
+   *          the file of backup to be deleted
+   * @param keep
+   *          keep last X versions
+   */
+  public static final void deleteOldBackupFile(File f, int keep) {
+    File[] files = new File("backup").listFiles();
+    ArrayList<File> al = new ArrayList<File>();
+    for (File s : files) {
+      if (s.getName().matches(f.getName() + "\\.\\d{4}\\-\\d{2}\\-\\d{2}")) { // name.yyyy-mm-dd
+        al.add(s);
+      }
+    }
+    for (int i = 0; i < al.size() - keep; i++) {
+      // System.out.println("del " + al.get(i).getName());
+      FileUtils.deleteQuietly(al.get(i));
+    }
+  }
+
+  /**
+   * Sends a wake-on-lan packet for specified MAC address across subnet
+   * 
+   * @param macAddr
+   *          the mac address to 'wake up'
+   */
+  public static final void sendWakeOnLanPacket(String macAddr) {
+    // Broadcast IP address
+    final String IP = "255.255.255.255";
+    final int port = 7;
+
+    try {
+      final byte[] MACBYTE = new byte[6];
+      final String[] hex = macAddr.split("(\\:|\\-)");
+
+      for (int i = 0; i < 6; i++) {
+        MACBYTE[i] = (byte) Integer.parseInt(hex[i], 16);
+      }
+      final byte[] bytes = new byte[6 + 16 * MACBYTE.length];
+      for (int i = 0; i < 6; i++) {
+        bytes[i] = (byte) 0xff;
+      }
+      for (int i = 6; i < bytes.length; i += MACBYTE.length) {
+        System.arraycopy(MACBYTE, 0, bytes, i, MACBYTE.length);
+      }
+
+      // Send UDP packet here
+      final InetAddress address = InetAddress.getByName(IP);
+      final DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, port);
+      final DatagramSocket socket = new DatagramSocket();
+      socket.send(packet);
+      socket.close();
+
+      LOGGER.info("Sent WOL packet to " + macAddr);
+    }
+    catch (final Exception e) {
+      LOGGER.error("Error sending WOL packet to " + macAddr, e);
     }
   }
 }
