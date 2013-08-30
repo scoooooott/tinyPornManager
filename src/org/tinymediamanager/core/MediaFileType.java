@@ -39,6 +39,7 @@ public enum MediaFileType {
   TRAILER, 
   EXTRAFANART, 
   GRAPHIC, 
-  UNKNOWN;
+  UNKNOWN,
+  VIDEO_EXTRA; // bonus/extra videos
   // @formatter:on
 }

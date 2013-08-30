@@ -169,11 +169,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     String name = getFilename().toLowerCase();
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase();
 
-    if ((name.contains("sample") || name.contains("trailer") || foldername.contains("sample")
-        && Globals.settings.getVideoFileType().contains("." + ext))) {
-      return MediaFileType.TRAILER;
-    }
-
     if (ext.equals("nfo")) {
       return MediaFileType.NFO;
     }
@@ -191,6 +186,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
+      if (name.contains("sample") || name.contains("trailer") || foldername.contains("sample")) {
+        return MediaFileType.TRAILER;
+      }
+
+      // best approach so far: https://github.com/brentosmith/xbmc-dvdextras
+      if (name.contains("-extras-") || foldername.equalsIgnoreCase("extras")) {
+        return MediaFileType.VIDEO_EXTRA;
+      }
+
       return MediaFileType.VIDEO;
     }
 

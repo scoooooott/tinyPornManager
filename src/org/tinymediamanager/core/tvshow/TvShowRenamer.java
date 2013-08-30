@@ -330,6 +330,13 @@ public class TvShowRenamer {
     if (mf.getType().equals(MediaFileType.TRAILER)) {
       filename = filename + "-trailer";
     }
+    if (mf.getType().equals(MediaFileType.VIDEO_EXTRA)) {
+      String name = mf.getBasename();
+      if (name.contains("-extras-")) {
+        name = name.substring(name.indexOf("-extras-") + 8); // everything behind
+      } // if not, MF must be within /extras/ folder - use name 1:1
+      filename = filename + "-extras-" + name;
+    }
     filename = filename + "." + mf.getExtension(); // readd original extension
 
     return filename;
