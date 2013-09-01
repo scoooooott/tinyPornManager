@@ -34,7 +34,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -831,7 +830,7 @@ public class Utils {
       backup.mkdir();
     }
     DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    String date = formatter.format(new Date());
+    String date = formatter.format(f.lastModified());
     backup = new File("backup", f.getName() + "." + date);
     if (!backup.exists() || overwrite == true) {
       try {
