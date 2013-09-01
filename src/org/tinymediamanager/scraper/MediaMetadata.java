@@ -499,7 +499,9 @@ public class MediaMetadata {
    *          the genre
    */
   public void addGenre(MediaGenres genre) {
-    genres.add(genre);
+    if (genre != null && !genres.contains(genre)) {
+      genres.add(genre);
+    }
   }
 
   /**

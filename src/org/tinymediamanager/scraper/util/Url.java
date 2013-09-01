@@ -260,4 +260,18 @@ public class Url {
 
     return entity.getContentEncoding().getValue();
   }
+
+  /**
+   * the number of bytes of the content, or a negative number if unknown. If the content length is known but exceeds Long.MAX_VALUE, a negative number
+   * is returned.
+   * 
+   * @return the content length
+   */
+  public long getContentLength() {
+    if (entity == null) {
+      return -1;
+    }
+
+    return entity.getContentLength();
+  }
 }

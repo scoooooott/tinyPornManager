@@ -149,10 +149,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       // Genre: <a href="view.php?page=genre&Genre=Action">Action</a>
       el = doc.getElementsByAttributeValueContaining("href", "page=genre");
       for (Element g : el) {
-        MediaGenres genre = MediaGenres.getGenre(g.text());
-        if (genre != null && !md.getGenres().contains(genre)) {
-          md.addGenre(genre);
-        }
+        md.addGenre(getTmmGenre(g.text()));
       }
 
       // rating
@@ -246,6 +243,69 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     }
 
     return md;
+  }
+
+  /**
+   * Maps scraper Genres to internal TMM genres
+   * 
+   * @param genre
+   *          as stinr
+   * @return TMM genre
+   */
+  private MediaGenres getTmmGenre(String genre) {
+    MediaGenres g = null;
+    if (genre.isEmpty()) {
+      return g;
+    }
+    // @formatter:off
+    else if (genre.equals("Abenteuer"))            { g = MediaGenres.ADVENTURE; }
+    else if (genre.equals("Action"))               { g = MediaGenres.ACTION; }
+    else if (genre.equals("Amateur"))              { g = MediaGenres.INDIE; }
+    else if (genre.equals("Animation"))            { g = MediaGenres.ANIMATION; }
+    else if (genre.equals("Anime"))                { g = MediaGenres.ANIMATION; }
+    else if (genre.equals("Biographie"))           { g = MediaGenres.BIOGRAPHY; }
+    else if (genre.equals("Dokumentation"))        { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Drama"))                { g = MediaGenres.DRAMA; }
+    else if (genre.equals("Eastern"))              { g = MediaGenres.EASTERN; }
+    else if (genre.equals("Erotik"))               { g = MediaGenres.EROTIC; }
+    else if (genre.equals("Essayfilm"))            { g = MediaGenres.INDIE; }
+    else if (genre.equals("Experimentalfilm"))     { g = MediaGenres.INDIE; }
+    else if (genre.equals("Fantasy"))              { g = MediaGenres.FANTASY; }
+    else if (genre.equals("Grusel"))               { g = MediaGenres.HORROR; }
+    else if (genre.equals("Hardcore"))             { g = MediaGenres.EROTIC; }
+    else if (genre.equals("Heimatfilm"))           { g = MediaGenres.TV_MOVIE; }
+    else if (genre.equals("Historienfilm"))        { g = MediaGenres.HISTORY; }
+    else if (genre.equals("Horror"))               { g = MediaGenres.HORROR; }
+    else if (genre.equals("Kampfsport"))           { g = MediaGenres.SPORT; }
+    else if (genre.equals("Katastrophen"))         { g = MediaGenres.DISASTER; }
+    else if (genre.equals("Kinder-/Familienfilm")) { g = MediaGenres.FAMILY; }
+    else if (genre.equals("Komödie"))              { g = MediaGenres.COMEDY; }
+    else if (genre.equals("Krieg"))                { g = MediaGenres.WAR; }
+    else if (genre.equals("Krimi"))                { g = MediaGenres.CRIME; }
+    else if (genre.equals("Kurzfilm"))             { g = MediaGenres.SHORT; }
+    else if (genre.equals("Liebe/Romantik"))       { g = MediaGenres.ROMANCE; }
+    else if (genre.equals("Mondo"))                { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Musikfilm"))            { g = MediaGenres.MUSIC; }
+    else if (genre.equals("Mystery"))              { g = MediaGenres.MYSTERY; }
+    else if (genre.equals("Science-Fiction"))      { g = MediaGenres.SCIENCE_FICTION; }
+    else if (genre.equals("Serial"))               { g = MediaGenres.SERIES; }
+    else if (genre.equals("Sex"))                  { g = MediaGenres.EROTIC; }
+    else if (genre.equals("Splatter"))             { g = MediaGenres.HORROR; }
+    else if (genre.equals("Sportfilm"))            { g = MediaGenres.SPORT; }
+    else if (genre.equals("Stummfilm"))            { g = MediaGenres.SILENT_MOVIE; }
+    else if (genre.equals("TV-Film"))              { g = MediaGenres.TV_MOVIE; }
+    else if (genre.equals("TV-Mini-Serie"))        { g = MediaGenres.SERIES; }
+    else if (genre.equals("TV-Pilotfilm"))         { g = MediaGenres.TV_MOVIE; }
+    else if (genre.equals("TV-Serie"))             { g = MediaGenres.SERIES; }
+    else if (genre.equals("Thriller"))             { g = MediaGenres.THRILLER; }
+    else if (genre.equals("Tierfilm"))             { g = MediaGenres.ANIMAL; }
+    else if (genre.equals("Webserie"))             { g = MediaGenres.SERIES; }
+    else if (genre.equals("Western"))              { g = MediaGenres.WESTERN; }
+    // @formatter:on
+    if (g == null) {
+      g = MediaGenres.getGenre(genre);
+    }
+    return g;
   }
 
   /**

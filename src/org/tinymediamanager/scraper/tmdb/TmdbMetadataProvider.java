@@ -446,7 +446,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // MediaGenres2
     List<Genre> MediaGenres2 = movie.getGenres();
     for (Genre genre : MediaGenres2) {
-      addGenre(genre, md);
+      md.addGenre(getTmmGenre(genre));
     }
 
     return md;
@@ -701,157 +701,57 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   }
 
   /**
-   * Adds the genre.
+   * Maps scraper Genres to internal TMM genres
    * 
    * @param genre
-   *          the genre
-   * @param md
-   *          the md
+   *          as stinr
+   * @return TMM genre
    */
-  private void addGenre(Genre genre, MediaMetadata md) {
+  private MediaGenres getTmmGenre(Genre genre) {
+    MediaGenres g = null;
     switch (genre.getId()) {
-      case 28:
-        md.addGenre(MediaGenres.ACTION);
-        break;
-
-      case 12:
-        md.addGenre(MediaGenres.ADVENTURE);
-        break;
-
-      case 16:
-        md.addGenre(MediaGenres.ANIMATION);
-        break;
-
-      case 35:
-        md.addGenre(MediaGenres.COMEDY);
-        break;
-
-      case 80:
-        md.addGenre(MediaGenres.CRIME);
-        break;
-
-      case 105:
-        md.addGenre(MediaGenres.DISASTER);
-        break;
-
-      case 99:
-        md.addGenre(MediaGenres.DOCUMENTARY);
-        break;
-
-      case 18:
-        md.addGenre(MediaGenres.DRAMA);
-        break;
-
-      case 82:
-        md.addGenre(MediaGenres.EASTERN);
-        break;
-
-      case 2916:
-        md.addGenre(MediaGenres.EROTIC);
-        break;
-
-      case 10751:
-        md.addGenre(MediaGenres.FAMILY);
-        break;
-
-      case 10750:
-        md.addGenre(MediaGenres.FAN_FILM);
-        break;
-
-      case 14:
-        md.addGenre(MediaGenres.FANTASY);
-        break;
-
-      case 10753:
-        md.addGenre(MediaGenres.FILM_NOIR);
-        break;
-
-      case 10769:
-        md.addGenre(MediaGenres.FOREIGN);
-        break;
-
-      case 36:
-        md.addGenre(MediaGenres.HISTORY);
-        break;
-
-      case 10595:
-        md.addGenre(MediaGenres.HOLIDAY);
-        break;
-
-      case 27:
-        md.addGenre(MediaGenres.HORROR);
-        break;
-
-      case 10756:
-        md.addGenre(MediaGenres.INDIE);
-        break;
-
-      case 10402:
-        md.addGenre(MediaGenres.MUSIC);
-        break;
-
-      case 22:
-        md.addGenre(MediaGenres.MUSICAL);
-        break;
-
-      case 9648:
-        md.addGenre(MediaGenres.MYSTERY);
-        break;
-
-      case 10754:
-        md.addGenre(MediaGenres.NEO_NOIR);
-        break;
-
-      case 1115:
-        md.addGenre(MediaGenres.ROAD_MOVIE);
-        break;
-
-      case 10749:
-        md.addGenre(MediaGenres.ROMANCE);
-        break;
-
-      case 878:
-        md.addGenre(MediaGenres.SCIENCE_FICTION);
-        break;
-
-      case 10755:
-        md.addGenre(MediaGenres.SHORT);
-        break;
-
-      case 9805:
-        md.addGenre(MediaGenres.SPORT);
-        break;
-
-      case 10758:
-        md.addGenre(MediaGenres.SPORTING_EVENT);
-        break;
-
-      case 10757:
-        md.addGenre(MediaGenres.SPORTS_FILM);
-        break;
-
-      case 10748:
-        md.addGenre(MediaGenres.SUSPENSE);
-        break;
-
-      case 10770:
-        md.addGenre(MediaGenres.TV_MOVIE);
-        break;
-
-      case 53:
-        md.addGenre(MediaGenres.THRILLER);
-        break;
-
-      case 10752:
-        md.addGenre(MediaGenres.WAR);
-        break;
-
-      case 37:
-        md.addGenre(MediaGenres.WESTERN);
-        break;
-
+    // @formatter:off
+      case 28:    g = MediaGenres.ACTION; break; 
+      case 12:    g = MediaGenres.ADVENTURE; break; 
+      case 16:    g = MediaGenres.ANIMATION; break; 
+      case 35:    g = MediaGenres.COMEDY; break; 
+      case 80:    g = MediaGenres.CRIME; break; 
+      case 105:   g = MediaGenres.DISASTER; break; 
+      case 99:    g = MediaGenres.DOCUMENTARY; break; 
+      case 18:    g = MediaGenres.DRAMA; break; 
+      case 82:    g = MediaGenres.EASTERN; break; 
+      case 2916:  g = MediaGenres.EROTIC; break; 
+      case 10751: g = MediaGenres.FAMILY; break; 
+      case 10750: g = MediaGenres.FAN_FILM; break; 
+      case 14:    g = MediaGenres.FANTASY; break; 
+      case 10753: g = MediaGenres.FILM_NOIR; break; 
+      case 10769: g = MediaGenres.FOREIGN; break; 
+      case 36:    g = MediaGenres.HISTORY; break; 
+      case 10595: g = MediaGenres.HOLIDAY; break; 
+      case 27:    g = MediaGenres.HORROR; break; 
+      case 10756: g = MediaGenres.INDIE; break; 
+      case 10402: g = MediaGenres.MUSIC; break; 
+      case 22:    g = MediaGenres.MUSICAL; break; 
+      case 9648:  g = MediaGenres.MYSTERY; break; 
+      case 10754: g = MediaGenres.NEO_NOIR; break; 
+      case 1115:  g = MediaGenres.ROAD_MOVIE; break; 
+      case 10749: g = MediaGenres.ROMANCE; break; 
+      case 878:   g = MediaGenres.SCIENCE_FICTION; break; 
+      case 10755: g = MediaGenres.SHORT; break; 
+      case 9805:  g = MediaGenres.SPORT; break; 
+      case 10758: g = MediaGenres.SPORTING_EVENT; break; 
+      case 10757: g = MediaGenres.SPORTS_FILM; break; 
+      case 10748: g = MediaGenres.SUSPENSE; break; 
+      case 10770: g = MediaGenres.TV_MOVIE; break; 
+      case 53:    g = MediaGenres.THRILLER; break; 
+      case 10752: g = MediaGenres.WAR; break; 
+      case 37:    g = MediaGenres.WESTERN; break; 
+      // @formatter:on
     }
-
+    if (g == null) {
+      g = MediaGenres.getGenre(genre.getName());
+    }
+    return g;
   }
 
   /**

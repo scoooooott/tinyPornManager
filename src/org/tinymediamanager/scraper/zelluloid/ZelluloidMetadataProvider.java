@@ -196,10 +196,8 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       // parse genres
       el = doc.getElementsByAttributeValueContaining("href", "az.php3?g=");
       for (Element g : el) {
-        MediaGenres genre = MediaGenres.getGenre(g.text());
-        if (genre != null && !md.getGenres().contains(genre)) {
-          md.addGenre(genre);
-        }
+        String gid = g.attr("href").substring(g.attr("href").lastIndexOf('=') + 1);
+        md.addGenre(getTmmGenre(gid));
       }
 
       // parse cert
@@ -478,5 +476,86 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     // http://www.zelluloid.de/filme/trailer.php3?id=7614
     return null;
+  }
+
+  /**
+   * Maps scraper Genres to internal TMM genres
+   * 
+   * @param genre
+   *          as stinr
+   * @return TMM genre
+   */
+  private MediaGenres getTmmGenre(String genre) {
+    MediaGenres g = null;
+    if (genre.isEmpty()) {
+      return g;
+    }
+    try {
+      int gid = Integer.parseInt(genre);
+      // @formatter:off
+      switch (gid) {
+        case 2:   g = MediaGenres.COMEDY; break; // Komödie
+        case 3:   g = MediaGenres.ACTION; break; // Action
+        case 4:   g = MediaGenres.THRILLER; break; // Thriller
+        case 5:   g = MediaGenres.WAR; break; // Krieg
+        case 6:   g = MediaGenres.SCIENCE_FICTION; break; // Science-Fiction
+        case 7:   g = MediaGenres.FANTASY; break; // Fantasy
+        case 9:   g = MediaGenres.ANIMATION; break; // Zeichentrick
+        case 10:  g = MediaGenres.ANIMATION; break; // Computeranim...
+        case 11:  g = null; break; // Remake
+        case 13:  g = MediaGenres.ANIMATION; break; // Anime
+        case 14:  g = MediaGenres.DRAMA; break; // Drama
+        case 15:  g = MediaGenres.DOCUMENTARY; break; // Dokumentation
+        case 16:  g = MediaGenres.ADVENTURE; break; // Abenteuer
+        case 17:  g = MediaGenres.ROMANCE; break; // Lovestory
+        case 18:  g = MediaGenres.ANIMATION; break; // Comicverfilmung
+        case 19:  g = MediaGenres.ROAD_MOVIE; break; // Roadmovie
+        case 22:  g = MediaGenres.HORROR; break; // Horror
+        case 23:  g = MediaGenres.EROTIC; break; // Erotik
+        case 25:  g = MediaGenres.DISASTER; break; // Katastrophe
+        case 26:  g = MediaGenres.THRILLER; break; // Spionage
+        case 27:  g = MediaGenres.SPORT; break; // Kampfsport
+        case 28:  g = MediaGenres.BIOGRAPHY; break; // Biografie
+        case 29:  g = MediaGenres.HISTORY; break; // Ritter
+        case 30:  g = MediaGenres.SCIENCE_FICTION; break; // Endzeit
+        case 31:  g = MediaGenres.SCIENCE_FICTION; break; // Cyberspace
+        case 32:  g = MediaGenres.SCIENCE_FICTION; break; // Computer
+        case 33:  g = MediaGenres.WESTERN; break; // Western
+        case 34:  g = MediaGenres.CRIME; break; // Gericht
+        case 35:  g = MediaGenres.WAR; break; // U-Boot
+        case 36:  g = MediaGenres.CRIME; break; // Krimi
+        case 37:  g = MediaGenres.HORROR; break; // Splatter
+        case 38:  g = MediaGenres.MUSICAL; break; // Musical
+        case 39:  g = MediaGenres.MUSIC; break; // Musik
+        case 40:  g = MediaGenres.FAMILY; break; // Familie
+        case 42:  g = MediaGenres.MYSTERY; break; // Mystery
+        case 43:  g = MediaGenres.SPORT; break; // Sport
+        case 44:  g = MediaGenres.REALITY_TV; break; // Schule
+        case 45:  g = MediaGenres.WAR; break; // Militär
+        case 46:  g = MediaGenres.ANIMATION; break; // Trick
+        case 47:  g = MediaGenres.INDIE; break; // Experimental...
+        case 48:  g = MediaGenres.HORROR; break; // Vampire
+        case 49:  g = MediaGenres.SCIENCE_FICTION; break; // Zeitreise
+        case 50:  g = MediaGenres.FANTASY; break; // Märchen
+        case 51:  g = MediaGenres.CRIME; break; // Serienkiller
+        case 52:  g = MediaGenres.SILENT_MOVIE; break; // Stummfilm
+        case 53:  g = MediaGenres.SHORT; break; // Kurzfilm
+        case 54:  g = MediaGenres.INDIE; break; // Blaxploitation
+        case 55:  g = MediaGenres.FAMILY; break; // Heimat
+        case 56:  g = MediaGenres.SCIENCE_FICTION; break; // Spielverfilmung
+        case 59:  g = MediaGenres.FAMILY; break; // Weihnachten
+        case 61:  g = MediaGenres.SERIES; break; // Soap
+        case 62:  g = MediaGenres.HISTORY; break; // Piraten
+        case 63:  g = MediaGenres.FOREIGN; break; // Bollywood
+        case 64:  g = MediaGenres.GAME_SHOW; break; // Show
+        case 65:  g = null; break; // 3D
+        case 68:  g = MediaGenres.HORROR; break; // Zombies
+      }
+      // @formatter:on
+    }
+    catch (Exception e) {
+      g = MediaGenres.getGenre(genre);
+    }
+    return g;
   }
 }

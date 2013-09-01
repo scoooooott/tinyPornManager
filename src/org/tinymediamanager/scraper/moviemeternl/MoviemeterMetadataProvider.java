@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -31,6 +32,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.moviemeternl.model.Film;
 import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail;
+import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail.Genre;
 
 /**
  * The Class OfdbMetadataProvider.
@@ -103,6 +105,9 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
     // md.setRating(fd.getAverage());
     md.setRuntime(Integer.valueOf(fd.getDurations().get(0).duration));
     md.setVoteCount(Integer.valueOf(fd.getVotes_count()));
+    for (Genre g : fd.getGenres()) {
+      md.addGenre(getTmmGenre(g.getName()));
+    }
 
     return md;
   }
@@ -180,4 +185,43 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
     return resultList;
   }
 
+  /**
+   * Maps scraper Genres to internal TMM genres
+   * 
+   * @param genre
+   *          as stinr
+   * @return TMM genre
+   */
+  private MediaGenres getTmmGenre(String genre) {
+    MediaGenres g = null;
+    if (genre.isEmpty()) {
+      return g;
+    }
+    // @formatter:off
+    else if (genre.equals("Actie"))            { g = MediaGenres.ACTION; }
+    else if (genre.equals("Animatie"))         { g = MediaGenres.ANIMATION; }
+    else if (genre.equals("Avontuur"))         { g = MediaGenres.ADVENTURE; }
+    else if (genre.equals("Documentaire"))     { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Drama"))            { g = MediaGenres.DRAMA; }
+    else if (genre.equals("Erotiek"))          { g = MediaGenres.EROTIC; }
+    else if (genre.equals("Familie"))          { g = MediaGenres.FAMILY; }
+    else if (genre.equals("Fantasy"))          { g = MediaGenres.FANTASY; }
+    else if (genre.equals("Film noir"))        { g = MediaGenres.FILM_NOIR; }
+    else if (genre.equals("Horror"))           { g = MediaGenres.HORROR; }
+    else if (genre.equals("Komedie"))          { g = MediaGenres.COMEDY; }
+    else if (genre.equals("Misdaad"))          { g = MediaGenres.CRIME; }
+    else if (genre.equals("Muziek"))           { g = MediaGenres.MUSIC; }
+    else if (genre.equals("Mystery"))          { g = MediaGenres.MYSTERY; }
+    else if (genre.equals("Oorlog"))           { g = MediaGenres.WAR; }
+    else if (genre.equals("Roadmovie"))        { g = MediaGenres.ROAD_MOVIE; }
+    else if (genre.equals("Romantiek"))        { g = MediaGenres.ROMANCE; }
+    else if (genre.equals("Sciencefiction"))   { g = MediaGenres.SCIENCE_FICTION; }
+    else if (genre.equals("Thriller"))         { g = MediaGenres.THRILLER; }
+    else if (genre.equals("Western"))          { g = MediaGenres.WESTERN; }
+    // @formatter:on
+    if (g == null) {
+      g = MediaGenres.getGenre(genre);
+    }
+    return g;
+  }
 }

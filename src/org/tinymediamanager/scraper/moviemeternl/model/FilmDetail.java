@@ -40,7 +40,7 @@ public class FilmDetail {
   private String              directors_text;
   private ArrayList<Country>  countries;
   private String              countries_text;
-  private ArrayList<String>   genres;
+  private ArrayList<Genre>    genres;
   private String              genres_text;
   private ArrayList<Date>     dates_cinema;
   private ArrayList<Date>     dates_video;
@@ -92,7 +92,7 @@ public class FilmDetail {
     return al;
   }
 
-  public ArrayList getSeparated(XmlRpcArray arr) {
+  public ArrayList<Genre> getSeparated(XmlRpcArray arr) {
     ArrayList al = new ArrayList();
     for (int i = 0; i < arr.size(); i++) {
       al.add(new Genre(arr.get(i).toString()));
@@ -199,7 +199,7 @@ public class FilmDetail {
       this.name = name;
     }
 
-    public String getDate() {
+    public String getName() {
       return this.name;
     }
 
@@ -277,7 +277,7 @@ public class FilmDetail {
     return this.countries_text;
   }
 
-  public ArrayList<String> getGenres() {
+  public ArrayList<Genre> getGenres() {
     return this.genres;
   }
 

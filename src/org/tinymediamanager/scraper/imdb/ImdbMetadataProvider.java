@@ -366,10 +366,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
             Elements a = div.first().getElementsByTag("a");
             for (Element anchor : a) {
               if (anchor.attr("href").matches("/Sections/Genres/.*")) {
-                MediaGenres genre = MediaGenres.getGenre(anchor.ownText());
-                if (genre != null && !md.getGenres().contains(genre)) {
-                  md.addGenre(genre);
-                }
+                md.addGenre(getTmmGenre(anchor.ownText()));
               }
             }
           }
@@ -1080,5 +1077,51 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         return null;
       }
     }
+  }
+
+  /**
+   * Maps scraper Genres to internal TMM genres
+   * 
+   * @param genre
+   *          as stinr
+   * @return TMM genre
+   */
+  private MediaGenres getTmmGenre(String genre) {
+    MediaGenres g = null;
+    if (genre.isEmpty()) {
+      return g;
+    }
+    // @formatter:off
+    else if (genre.equals("Action"))         { g = MediaGenres.ACTION; }
+    else if (genre.equals("Adventure"))      { g = MediaGenres.ADVENTURE; }
+    else if (genre.equals("Animation"))      { g = MediaGenres.ANIMATION; }
+    else if (genre.equals("Biography"))      { g = MediaGenres.BIOGRAPHY; }
+    else if (genre.equals("Comedy"))         { g = MediaGenres.COMEDY; }
+    else if (genre.equals("Crime"))          { g = MediaGenres.CRIME; }
+    else if (genre.equals("Documentary"))    { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Drama"))          { g = MediaGenres.DRAMA; }
+    else if (genre.equals("Family"))         { g = MediaGenres.FAMILY; }
+    else if (genre.equals("Fantasy"))        { g = MediaGenres.FANTASY; }
+    else if (genre.equals("Film-Noir"))      { g = MediaGenres.FILM_NOIR; }
+    else if (genre.equals("Game-Show"))      { g = MediaGenres.GAME_SHOW; }
+    else if (genre.equals("History"))        { g = MediaGenres.HISTORY; }
+    else if (genre.equals("Horror"))         { g = MediaGenres.HORROR; }
+    else if (genre.equals("Music"))          { g = MediaGenres.MUSIC; }
+    else if (genre.equals("Musical"))        { g = MediaGenres.MUSICAL; }
+    else if (genre.equals("Mystery"))        { g = MediaGenres.MYSTERY; }
+    else if (genre.equals("News"))           { g = MediaGenres.NEWS; }
+    else if (genre.equals("Reality-TV"))     { g = MediaGenres.REALITY_TV; }
+    else if (genre.equals("Romance"))        { g = MediaGenres.ROMANCE; }
+    else if (genre.equals("Sci-Fi"))         { g = MediaGenres.SCIENCE_FICTION; }
+    else if (genre.equals("Sport"))          { g = MediaGenres.SPORT; }
+    else if (genre.equals("Talk-Show"))      { g = MediaGenres.TALK_SHOW; }
+    else if (genre.equals("Thriller"))       { g = MediaGenres.THRILLER; }
+    else if (genre.equals("War"))            { g = MediaGenres.WAR; }
+    else if (genre.equals("Western"))        { g = MediaGenres.WESTERN; }
+    // @formatter:on
+    if (g == null) {
+      g = MediaGenres.getGenre(genre);
+    }
+    return g;
   }
 }

@@ -266,8 +266,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
 
     // genres
     for (String genreAsString : show.getGenres()) {
-      MediaGenres genre = MediaGenres.getGenre(genreAsString);
-      md.addGenre(genre);
+      md.addGenre(getTmmGenre(genreAsString));
     }
 
     return md;
@@ -621,5 +620,51 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     }
 
     return episodes;
+  }
+
+  /**
+   * Maps scraper Genres to internal TMM genres
+   * 
+   * @param genre
+   *          as stinr
+   * @return TMM genre
+   */
+  private MediaGenres getTmmGenre(String genre) {
+    MediaGenres g = null;
+    if (genre.isEmpty()) {
+      return g;
+    }
+    // @formatter:off
+    else if (genre.equals("Action"))           { g = MediaGenres.ACTION; }
+    else if (genre.equals("Adventure"))        { g = MediaGenres.ADVENTURE; }
+    else if (genre.equals("Animation"))        { g = MediaGenres.ANIMATION; }
+    else if (genre.equals("Children"))         { g = MediaGenres.FAMILY; }
+    else if (genre.equals("Comedy"))           { g = MediaGenres.COMEDY; }
+    else if (genre.equals("Crime"))            { g = MediaGenres.CRIME; }
+    else if (genre.equals("Documentary"))      { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Drama"))            { g = MediaGenres.DRAMA; }
+    else if (genre.equals("Family"))           { g = MediaGenres.FAMILY; }
+    else if (genre.equals("Fantasy"))          { g = MediaGenres.FANTASY; }
+    else if (genre.equals("Food"))             { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Game Show"))        { g = MediaGenres.GAME_SHOW; }
+    else if (genre.equals("Home and Garden"))  { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Horror"))           { g = MediaGenres.HORROR; }
+    else if (genre.equals("Mini-Series"))      { g = MediaGenres.SERIES; }
+    else if (genre.equals("News"))             { g = MediaGenres.NEWS; }
+    else if (genre.equals("Reality"))          { g = MediaGenres.REALITY_TV; }
+    else if (genre.equals("Science-Fiction"))  { g = MediaGenres.SCIENCE_FICTION; }
+    else if (genre.equals("Soap"))             { g = MediaGenres.SERIES; }
+    else if (genre.equals("Special Interest")) { g = MediaGenres.INDIE; }
+    else if (genre.equals("Sport"))            { g = MediaGenres.SPORT; }
+    else if (genre.equals("Suspense"))         { g = MediaGenres.SUSPENSE; }
+    else if (genre.equals("Talk Show"))        { g = MediaGenres.TALK_SHOW; }
+    else if (genre.equals("Thriller"))         { g = MediaGenres.THRILLER; }
+    else if (genre.equals("Travel"))           { g = MediaGenres.HOLIDAY; }
+    else if (genre.equals("Western"))          { g = MediaGenres.WESTERN; }
+    // @formatter:on
+    if (g == null) {
+      g = MediaGenres.getGenre(genre);
+    }
+    return g;
   }
 }
