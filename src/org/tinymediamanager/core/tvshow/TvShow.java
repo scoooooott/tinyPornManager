@@ -434,7 +434,7 @@ public class TvShow extends MediaEntity {
       if (!StringUtils.isEmpty(sb)) {
         sb.append(", ");
       }
-      sb.append(genre != null ? genre.toString() : "null");
+      sb.append(genre != null ? genre.getLocalizedName() : "null");
     }
     return sb.toString();
   }
