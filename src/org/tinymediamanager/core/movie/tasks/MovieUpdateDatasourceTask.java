@@ -96,8 +96,17 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           continue;
         }
         for (File file : dirs) {
-          if (file.isDirectory() && !cancel) {
-            submitTask(new FindMovieTask(file, ds));
+          if (!cancel) {
+            if (file.isDirectory()) {
+              submitTask(new FindMovieTask(file, ds));
+            }
+            else {
+              // a video FILE was found in DS root - not supported!
+              if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()))) {
+                MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.movieinroot",
+                    new String[] { file.getName() }));
+              }
+            }
           }
         }
         waitForCompletionOrCancel();
