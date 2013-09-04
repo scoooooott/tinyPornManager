@@ -487,6 +487,14 @@ public class MovieRenamer {
     }
 
     // ######################################################################
+    // ## rename VIDEO_EXTRA
+    // ######################################################################
+    for (MediaFile vextra : movie.getMediaFiles(MediaFileType.VIDEO_EXTRA)) {
+      needed.add(vextra); // keep all extras
+      // TODO: movie to extras folder (or name)
+    }
+
+    // ######################################################################
     // ## rename UNKNOWN
     // ######################################################################
     for (MediaFile unk : movie.getMediaFiles(MediaFileType.UNKNOWN)) {
@@ -506,6 +514,8 @@ public class MovieRenamer {
         case THUMB:
         case UNKNOWN:
           ImageCache.invalidateCachedImage(all.getPath() + File.separator + all.getFilename());
+        default:
+          break;
       }
     }
 
@@ -675,6 +685,7 @@ public class MovieRenamer {
 
     // replace empty brackets
     newDestination = newDestination.replaceAll("\\(\\)", "");
+    newDestination = newDestination.replaceAll("\\[\\]", "");
 
     // if there are multiple file separators in a row - strip them out
     if (SystemUtils.IS_OS_WINDOWS) {
