@@ -31,6 +31,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.ui.WrapLayout;
@@ -46,17 +49,16 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class ImagePanel extends JPanel implements HierarchyListener {
-  private static final long                serialVersionUID = -5344085698387374260L;
-
-  private List<MediaFile>                  mediaFiles       = null;
-  protected SwingWorker<List<Image>, Void> worker           = null;
+  private static final long   serialVersionUID = -5344085698387374260L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(ImagePanel.class);
+  private List<MediaFile>     mediaFiles       = null;
 
   /**
    * UI components
    */
 
-  private JPanel                           panelImages;
-  private JScrollPane                      scrollPane;
+  private JPanel              panelImages;
+  private JScrollPane         scrollPane;
 
   public ImagePanel(List<MediaFile> mediaFiles) {
     this.mediaFiles = mediaFiles;
@@ -78,14 +80,8 @@ public class ImagePanel extends JPanel implements HierarchyListener {
     panelImages.revalidate();
     scrollPane.repaint();
 
-    // stop previous worker
-    if (worker != null && !worker.isDone()) {
-      worker.cancel(true);
-    }
-
     // fetch image in separate worker -> performance
-    worker = new ImageLoader(new ArrayList<MediaFile>(mediaFiles));
-    worker.execute();
+    Globals.executor.submit(new ImageLoader(new ArrayList<MediaFile>(mediaFiles)));
   }
 
   @Override
@@ -128,9 +124,11 @@ public class ImagePanel extends JPanel implements HierarchyListener {
           }
           try {
             File file = ImageCache.getCachedFile(mediaFile.getPath() + File.separator + mediaFile.getFilename());
+            LOGGER.debug("loading " + file);
             BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(file);
             Point size = ImageLabel.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
             images.add(Scaling.scale(bufferedImage, size.x, size.y));
+            // TODO: use publish & process for intermediate updates (waiting for all is way too slow)
           }
           catch (Exception e) {
           }
