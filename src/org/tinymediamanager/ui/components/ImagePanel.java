@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.components;
 
 import java.awt.FlowLayout;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -81,7 +80,9 @@ public class ImagePanel extends JPanel implements HierarchyListener {
     scrollPane.repaint();
 
     // fetch image in separate worker -> performance
-    Globals.executor.submit(new ImageLoader(new ArrayList<MediaFile>(mediaFiles)));
+    for (MediaFile mf : new ArrayList<MediaFile>(mediaFiles)) {
+      Globals.executor.submit(new ImageLoader(mf));
+    }
   }
 
   @Override
@@ -107,43 +108,37 @@ public class ImagePanel extends JPanel implements HierarchyListener {
   /**
    * worker to load the images asynchrony
    */
-  protected class ImageLoader extends SwingWorker<List<Image>, Void> {
-    private List<MediaFile> mediaFiles;
+  protected class ImageLoader extends SwingWorker<Void, BufferedImage> {
+    private MediaFile mediaFile;
 
-    private ImageLoader(List<MediaFile> mediaFiles) {
-      this.mediaFiles = mediaFiles;
+    private ImageLoader(MediaFile mediaFile) {
+      this.mediaFile = mediaFile;
     }
 
     @Override
-    protected List<Image> doInBackground() throws Exception {
-      List<Image> images = new ArrayList<Image>();
+    protected Void doInBackground() throws Exception {
       if (isShowing()) {
-        for (MediaFile mediaFile : mediaFiles) {
-          if (isCancelled()) {
-            return null;
-          }
-          try {
-            File file = ImageCache.getCachedFile(mediaFile.getPath() + File.separator + mediaFile.getFilename());
-            LOGGER.debug("loading " + file);
-            BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(file);
-            Point size = ImageLabel.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
-            images.add(Scaling.scale(bufferedImage, size.x, size.y));
-            // TODO: use publish & process for intermediate updates (waiting for all is way too slow)
-          }
-          catch (Exception e) {
-          }
+        if (isCancelled()) {
+          return null;
+        }
+        try {
+          File file = ImageCache.getCachedFile(mediaFile.getPath() + File.separator + mediaFile.getFilename());
+          LOGGER.debug("loading " + file);
+          BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(file);
+          Point size = ImageLabel.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
+          publish(Scaling.scale(bufferedImage, size.x, size.y));
+        }
+        catch (Exception e) {
         }
       }
-      return images;
+      return null;
     }
 
     @Override
-    protected void done() {
+    protected void process(List<BufferedImage> chunks) {
       try {
-        for (Image image : get()) {
-          JLabel lblImageJLabel = new JLabel(new ImageIcon(image));
-          panelImages.add(lblImageJLabel);
-        }
+        JLabel lblImageJLabel = new JLabel(new ImageIcon(chunks.get(chunks.size() - 1))); // display last
+        panelImages.add(lblImageJLabel);
         panelImages.revalidate();
         scrollPane.repaint();
       }
