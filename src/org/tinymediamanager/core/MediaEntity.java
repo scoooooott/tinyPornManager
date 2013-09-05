@@ -493,9 +493,10 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
-  public void updateMediaFilePath(File oldPath, File newPath) {
+  public void updateMediaFilePath(File newPath) {
     for (MediaFile mf : new ArrayList<MediaFile>(mediaFilesObservable)) {
-      mf.fixPathForRenamedFolder(oldPath, newPath);
+      // mf.fixPathForRenamedFolder(oldPath, newPath);
+      mf.setPath(newPath.getAbsolutePath());
     }
   }
 

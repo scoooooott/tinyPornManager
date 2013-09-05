@@ -189,7 +189,7 @@ public class MovieRenamer {
           // FileUtils.moveDirectory(srcDir, destDir);
           ok = Utils.moveDirectorySafe(srcDir, destDir);
           if (ok) {
-            movie.updateMediaFilePath(srcDir, destDir);
+            movie.updateMediaFilePath(destDir);
             movie.setPath(newPathname);
             movie.saveToDb();
           }
