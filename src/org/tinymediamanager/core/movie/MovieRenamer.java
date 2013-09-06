@@ -561,19 +561,21 @@ public class MovieRenamer {
     }
 
     // clean all non tmm nfos
-    File[] content = new File(movie.getPath()).listFiles();
-    for (File file : content) {
-      if (file.isFile() && file.getName().toLowerCase().endsWith(".nfo")) {
-        // check if it's a tmm nfo
-        boolean supported = false;
-        for (MediaFile nfo : movie.getMediaFiles(MediaFileType.NFO)) {
-          if (nfo.getFilename().equals(file.getName())) {
-            supported = true;
+    if (Globals.settings.getMovieSettings().isMovieRenamerNfoCleanup()) {
+      File[] content = new File(movie.getPath()).listFiles();
+      for (File file : content) {
+        if (file.isFile() && file.getName().toLowerCase().endsWith(".nfo")) {
+          // check if it's a tmm nfo
+          boolean supported = false;
+          for (MediaFile nfo : movie.getMediaFiles(MediaFileType.NFO)) {
+            if (nfo.getFilename().equals(file.getName())) {
+              supported = true;
+            }
           }
-        }
-        if (!supported) {
-          LOGGER.debug("Deleting " + file.getName());
-          FileUtils.deleteQuietly(file);
+          if (!supported) {
+            LOGGER.debug("Deleting " + file.getName());
+            FileUtils.deleteQuietly(file);
+          }
         }
       }
     }

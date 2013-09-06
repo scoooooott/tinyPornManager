@@ -19,7 +19,7 @@ public class MovieMediaFileTest {
 
     File oldPath = new File(movie.getPath());
     File newPath = new File("C:\\private\\Test_Filme\\300");
-    movie.updateMediaFilePath(oldPath, newPath);
+    movie.updateMediaFilePath(newPath);
 
     Assert.assertEquals("C:\\private\\Test_Filme\\300\\movie.avi", mf.getPath() + File.separator + mf.getFilename());
   }
