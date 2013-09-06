@@ -40,6 +40,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Utils;
@@ -58,20 +60,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class FeedbackDialog extends JDialog {
-
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = -6659205003576096326L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(FeedbackDialog.class);
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
-
-  /** The text field. */
   private JTextField                  tfName;
-
-  /** The text area. */
   private JTextArea                   textArea;
-
-  /** The tf email. */
   private JTextField                  tfEmail;
 
   /**
@@ -175,6 +169,7 @@ public class FeedbackDialog extends JDialog {
 
         }
         catch (IOException e) {
+          LOGGER.error("failed sending feedback: " + e.getMessage());
           JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.error")); //$NON-NLS-1$
           return;
         }

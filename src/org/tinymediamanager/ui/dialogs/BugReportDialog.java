@@ -250,6 +250,7 @@ public class BugReportDialog extends JDialog {
 
         }
         catch (IOException e) {
+          LOGGER.error("failed sending bug report" + e.getMessage());
           JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.error")); //$NON-NLS-1$
           return;
         }
