@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -342,6 +343,20 @@ public class TvShowRenamer {
       // if not, MF must be within /extras/ folder - use name 1:1
       filename = filename + "-extras-" + name;
     }
+    if (mf.getType().equals(MediaFileType.SUBTITLE)) {
+      MediaFileSubtitle mfs = mf.getSubtitles().get(0);
+      if (mfs != null) {
+        filename = filename + "." + mfs.getLanguage();
+        if (mfs.isForced()) {
+          filename = filename + ".forced";
+        }
+      }
+      else {
+        // TODO: meh, we didn't have an actual MF yet - need to parse filename ourselves (like movie). But with a recent scan of files/DB this should
+        // not occur.
+      }
+    }
+
     filename = filename + "." + mf.getExtension(); // readd original extension
 
     return filename;
