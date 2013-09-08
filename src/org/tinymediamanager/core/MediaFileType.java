@@ -23,23 +23,19 @@ package org.tinymediamanager.core;
  */
 public enum MediaFileType {
 
-  // NOTE: do not change the sort order or insert any new inbetween!
-  // this renumerates the internal ID for the types and ALL saved values are wrong!
-  // when you change that, we need to delete the whole DB !!!
-
   // @formatter:off
   VIDEO, 
+  VIDEO_EXTRA, // bonus/extra videos
+  TRAILER, 
   AUDIO, 
   SUBTITLE, 
   NFO, 
   POSTER, 
   FANART, 
   BANNER, 
-  THUMB, 
-  TRAILER, 
   EXTRAFANART, 
+  THUMB, 
   GRAPHIC, 
-  UNKNOWN,
-  VIDEO_EXTRA; // bonus/extra videos
+  UNKNOWN;
   // @formatter:on
 }
