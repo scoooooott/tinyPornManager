@@ -285,6 +285,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               movie.addToMediaFiles(mf);
               break;
 
+            case VIDEO_EXTRA:
+              LOGGER.debug("parsing extra " + mf.getFilename());
+              movie.addToMediaFiles(mf);
+              break;
+
             case TRAILER:
               LOGGER.debug("parsing trailer " + mf.getFilename());
               MediaTrailer mt = new MediaTrailer();
