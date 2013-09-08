@@ -100,7 +100,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @see org.tinymediamanager.core.DynaEnum#toString()
    */
   public String toString() {
-    return this.name;
+    return this.getLocalizedName();
   }
 
   /**
