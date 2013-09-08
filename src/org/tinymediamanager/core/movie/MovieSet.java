@@ -60,6 +60,10 @@ public class MovieSet extends MediaEntity {
   @Transient
   private String                         titleSortable        = "";
 
+  static {
+    mediaFileComparator = new MovieMediaFileComparator();
+  }
+
   /**
    * Instantiates a new movieset. To initialize the propertychangesupport after loading
    */

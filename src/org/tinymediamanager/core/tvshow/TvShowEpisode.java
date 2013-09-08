@@ -80,6 +80,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @Transient
   private List<TvShowActor>   actorsObservables = ObservableCollections.observableList(actors);
 
+  static {
+    mediaFileComparator = new TvShowMediaFileComparator();
+  }
+
   /**
    * Instantiates a new tv show episode. To initialize the propertychangesupport after loading
    */

@@ -134,6 +134,10 @@ public class Movie extends MediaEntity {
   @Transient
   private List<String>        tagsObservable    = ObservableCollections.observableList(tags);
 
+  static {
+    mediaFileComparator = new MovieMediaFileComparator();
+  }
+
   /**
    * Instantiates a new movie. To initialize the propertychangesupport after loading
    */
@@ -273,6 +277,7 @@ public class Movie extends MediaEntity {
    */
   public void initializeAfterLoading() {
     super.initializeAfterLoading();
+
     // remove empty tag and null values
     Utils.removeEmptyStringsFromList(tags);
     Utils.removeEmptyStringsFromList(genres);

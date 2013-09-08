@@ -131,6 +131,10 @@ public class TvShow extends MediaEntity {
   @Transient
   private String                   titleSortable      = "";
 
+  static {
+    mediaFileComparator = new TvShowMediaFileComparator();
+  }
+
   /**
    * Instantiates a tv show. To initialize the propertychangesupport after loading
    */

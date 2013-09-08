@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
  */
 @MappedSuperclass
 public abstract class MediaEntity extends AbstractModelObject {
+  protected static Comparator<MediaFile>       mediaFileComparator  = null;
 
   /** The id for the database. */
   @GeneratedValue
@@ -82,6 +84,16 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public void initializeAfterLoading() {
     mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+    sortMediaFiles();
+  }
+
+  protected void sortMediaFiles() {
+    if (mediaFileComparator != null) {
+      Collections.sort(mediaFilesObservable, mediaFileComparator);
+    }
+    else {
+      Collections.sort(mediaFilesObservable);
+    }
   }
 
   /**
@@ -348,7 +360,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     synchronized (mediaFilesObservable) {
       if (!mediaFilesObservable.contains(mediaFile)) {
         mediaFilesObservable.add(mediaFile);
-        Collections.sort(mediaFilesObservable);
+        sortMediaFiles();
       }
     }
 
@@ -359,7 +371,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   public void addToMediaFiles(List<MediaFile> mediaFiles) {
     synchronized (mediaFilesObservable) {
       mediaFilesObservable.addAll(mediaFiles);
-      Collections.sort(mediaFilesObservable);
+      sortMediaFiles();
     }
 
     // fire the right events
