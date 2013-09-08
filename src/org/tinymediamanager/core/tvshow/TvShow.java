@@ -269,7 +269,7 @@ public class TvShow extends MediaEntity {
     trailerObservable = ObservableCollections.observableList(trailer);
 
     // load genres
-    for (String genre : genres) {
+    for (String genre : new ArrayList<String>(genres)) {
       addGenre(MediaGenres.getGenre(genre));
     }
 
