@@ -141,7 +141,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               }
             }
             movie.saveToDb();
-            submitTask(new MediaFileInformationFetcherTask(movie.getMediaFiles(), movie));
+            submitTask(new MediaFileInformationFetcherTask(movie.getMediaFiles(), movie, false));
           }
         } // end movie loop
         waitForCompletionOrCancel();

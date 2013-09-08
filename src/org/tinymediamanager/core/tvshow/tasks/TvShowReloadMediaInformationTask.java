@@ -65,14 +65,14 @@ public class TvShowReloadMediaInformationTask extends TmmThreadPool {
         if (cancel) {
           break;
         }
-        submitTask(new MediaFileInformationFetcherTask(show.getMediaFiles(), show));
+        submitTask(new MediaFileInformationFetcherTask(show.getMediaFiles(), show, true));
       }
 
       for (TvShowEpisode episode : episodes) {
         if (cancel) {
           break;
         }
-        submitTask(new MediaFileInformationFetcherTask(episode.getMediaFiles(), episode));
+        submitTask(new MediaFileInformationFetcherTask(episode.getMediaFiles(), episode, true));
       }
 
       waitForCompletionOrCancel();

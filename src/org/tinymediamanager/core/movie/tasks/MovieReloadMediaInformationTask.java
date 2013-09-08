@@ -52,7 +52,7 @@ public class MovieReloadMediaInformationTask extends TmmThreadPool {
         if (cancel) {
           break;
         }
-        submitTask(new MediaFileInformationFetcherTask(m.getMediaFiles(), m));
+        submitTask(new MediaFileInformationFetcherTask(m.getMediaFiles(), m, true));
       }
 
       waitForCompletionOrCancel();

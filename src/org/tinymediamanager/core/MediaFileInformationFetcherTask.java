@@ -32,15 +32,11 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
  * @author Manuel Laggner
  */
 public class MediaFileInformationFetcherTask implements Callable<Object> {
+  private final static Logger LOGGER      = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
 
-  /** The Constant LOGGER. */
-  private final static Logger LOGGER = LoggerFactory.getLogger(MediaFileInformationFetcherTask.class);
-
-  /** The media files. */
   private List<MediaFile>     mediaFiles;
-
-  /** The media entity. */
   private MediaEntity         mediaEntity;
+  private boolean             forceUpdate = false;
 
   /**
    * Instantiates a new media file information fetcher task.
@@ -50,9 +46,10 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
    * @param mediaEntity
    *          the media entity
    */
-  public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles, MediaEntity mediaEntity) {
+  public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles, MediaEntity mediaEntity, boolean forceUpdate) {
     this.mediaFiles = mediaFiles;
     this.mediaEntity = mediaEntity;
+    this.forceUpdate = forceUpdate;
   }
 
   /*
@@ -65,7 +62,7 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     // try/catch block in the root of the thread to log crashes
     try {
       for (MediaFile mediaFile : mediaFiles) {
-        mediaFile.gatherMediaInformation();
+        mediaFile.gatherMediaInformation(forceUpdate);
         if (mediaEntity != null && mediaEntity instanceof Movie && mediaFile.hasSubtitles()) {
           Movie movie = (Movie) mediaEntity;
           movie.setSubtitles(true);
