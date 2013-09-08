@@ -596,12 +596,12 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Gets the runtime.
+   * Gets the runtime in minutes
    * 
    * @return the runtime
    */
   public int getRuntime() {
-    return runtime;
+    return runtime == 0 ? getRuntimeFromMediaFilesInMinutes() : runtime;
   }
 
   /**
@@ -1221,7 +1221,7 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Sets the runtime.
+   * Sets the runtime in minutes
    * 
    * @param newValue
    *          the new runtime
