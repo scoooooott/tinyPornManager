@@ -367,7 +367,9 @@ public class TvShowRenamer {
 
     seasonDir = seasonDir.replace("$1", String.valueOf(episode.getSeason()));
     seasonDir = seasonDir.replace("$2", lz(episode.getSeason()));
-
+    if (seasonDir.isEmpty()) {
+      seasonDir = "Season " + String.valueOf(episode.getSeason());
+    }
     return seasonDir;
   }
 }
