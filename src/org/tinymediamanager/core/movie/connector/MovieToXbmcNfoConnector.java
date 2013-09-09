@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileAudioStream;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -380,11 +381,13 @@ public class MovieToXbmcNfoConnector {
         info.streamdetails.video.height = mediaFile.getVideoHeight();
         info.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
 
-        Audio audio = new Audio();
-        audio.codec = mediaFile.getAudioCodec();
-        audio.language = mediaFile.getAudioLanguage();
-        audio.channels = String.valueOf(mediaFile.getAudioChannelsAsInt());
-        info.streamdetails.audio.add(audio);
+        for (MediaFileAudioStream as : mediaFile.getAudioStreams()) {
+          Audio audio = new Audio();
+          audio.codec = as.getCodec();
+          audio.language = as.getLanguage();
+          audio.channels = String.valueOf(as.getChannelsAsInt());
+          info.streamdetails.audio.add(audio);
+        }
         xbmc.fileinfo = info;
       }
     }

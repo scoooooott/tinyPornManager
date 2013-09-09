@@ -697,18 +697,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return "";
   }
 
-  /**
-   * returns the amount of audio channels.
-   * 
-   * @return the amount of audio channels (eg. 6ch)
-   */
-  public int getAudioChannelsAsInt() {
-    if (audioStreams.size() > 0) {
-      return audioStreams.get(0).getChannelsAsInt();
-    }
-    return 0;
-  }
-
   // /**
   // * Sets the audio channels.
   // *
