@@ -781,10 +781,48 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return the aspect ratio
    */
   public Float getAspectRatio() {
+    Float ret = 0F;
     if (this.videoWidth == 0 || this.videoHeight == 0) {
-      return 0F;
+      return ret;
     }
-    return (float) (Math.round((float) this.videoWidth / (float) this.videoHeight * 100) / 100.0);
+    Float ar = (float) this.videoWidth / (float) this.videoHeight;
+
+    // https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L538
+    // Given that we're never going to be able to handle every single possibility in
+    // aspect ratios, particularly when cropping prior to video encoding is taken into account
+    // the best we can do is take the "common" aspect ratios, and return the closest one available.
+    // The cutoffs are the geometric mean of the two aspect ratios either side.
+    if (ar < 1.3499f) { // sqrt(1.33*1.37)
+      ret = 1.33F;
+    }
+    else if (ar < 1.5080f) { // sqrt(1.37*1.66)
+      ret = 1.37F;
+    }
+    else if (ar < 1.7190f) { // sqrt(1.66*1.78)
+      ret = 1.66F;
+    }
+    else if (ar < 1.8147f) { // sqrt(1.78*1.85)
+      ret = 1.78F;
+    }
+    else if (ar < 2.0174f) { // sqrt(1.85*2.20)
+      ret = 1.85F;
+    }
+    else if (ar < 2.2738f) { // sqrt(2.20*2.35)
+      ret = 2.20F;
+    }
+    else if (ar < 2.3749f) { // sqrt(2.35*2.40)
+      ret = 2.35F;
+    }
+    else if (ar < 2.4739f) { // sqrt(2.40*2.55)
+      ret = 2.40F;
+    }
+    else if (ar < 2.6529f) { // sqrt(2.55*2.76)
+      ret = 2.55F;
+    }
+    else {
+      ret = 2.76F;
+    }
+    return ret;
   }
 
   /**
@@ -1133,26 +1171,32 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     int w = getVideoWidth();
     int h = getVideoHeight();
 
-    if (w >= 7680 || h >= 4320) {
-      format = "8k";
+    // use XBMC implementation https://github.com/xbmc/xbmc/blob/master/xbmc/utils/StreamDetails.cpp#L514
+    if (w == 0 || h == 0) {
+      format = "";
     }
-    else if (w >= 3840 || h >= 2160) {
-      format = "4k";
-    }
-    else if (w >= 1920 || h >= 1080) {
-      format = "1080p";
-    }
-    else if (w >= 1280 || h >= 720) {
-      format = "720p";
-    }
-    else if (w >= 720 || h >= 576) {
-      format = "576p";
-    }
-    else if (w >= 576 || h >= 480) {
+    else if (w <= 720 && h <= 480) {
       format = "480p";
     }
+    else if (w <= 768 && h <= 576) {
+      // 720x576 (PAL) (768 when rescaled for square pixels)
+      format = "576p";
+    }
+    else if (w <= 960 && h <= 544) {
+      // 960x540 (sometimes 544 which is multiple of 16)
+      format = "540p";
+    }
+    else if (w <= 1280 && h <= 720) {
+      format = "720p";
+    }
+    else if (w <= 1920 && h <= 1080) {
+      format = "1080p";
+    }
+    else if (w <= 3840 && h <= 2160) {
+      format = "4k";
+    }
     else {
-      format = "SD";
+      format = "8k";
     }
     setVideoFormat(format);
 
