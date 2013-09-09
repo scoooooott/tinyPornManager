@@ -292,10 +292,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
             case TRAILER:
               LOGGER.debug("parsing trailer " + mf.getFilename());
+              mf.gatherMediaInformation(); // do this exceptionally here, to set quality in one rush
               MediaTrailer mt = new MediaTrailer();
               mt.setName(mf.getFilename());
               mt.setProvider("downloaded");
-              mt.setQuality("unknown");
+              mt.setQuality(mf.getVideoFormat());
               mt.setInNfo(false);
               mt.setUrl(mf.getFile().toURI().toString());
               movie.addTrailer(mt);

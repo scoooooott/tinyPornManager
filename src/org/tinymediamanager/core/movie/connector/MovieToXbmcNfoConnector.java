@@ -347,11 +347,15 @@ public class MovieToXbmcNfoConnector {
     }
 
     for (MediaTrailer trailer : movie.getTrailers()) {
-      if (trailer.getInNfo()) {
-        // parse trailer url for nfo
+      if (trailer.getInNfo() && !trailer.getUrl().startsWith("file")) {
+        // parse internet trailer url for nfo (do not add local one)
         xbmc.trailer = prepareTrailerForXbmc(trailer);
         break;
       }
+    }
+    // keep trailer already in NFO, remove tag only when empty
+    if (xbmc.trailer.isEmpty()) {
+      xbmc.trailer = null;
     }
 
     xbmc.tags.clear();
@@ -373,7 +377,7 @@ public class MovieToXbmcNfoConnector {
         break;
       }
 
-      if (xbmc.fileinfo == null) {
+      if (xbmc.fileinfo == null) { // why not overwrite?!
         Fileinfo info = new Fileinfo();
         info.streamdetails.video.codec = mediaFile.getVideoCodec();
         info.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
@@ -551,15 +555,17 @@ public class MovieToXbmcNfoConnector {
       }
 
       if (StringUtils.isNotEmpty(xbmc.trailer)) {
-        MediaTrailer trailer = new MediaTrailer();
-        trailer.setName("fromNFO");
-        trailer.setProvider("from NFO");
-        trailer.setQuality("unknown");
-
-        trailer.setUrl(parseTrailerUrl(xbmc.trailer));
-
-        trailer.setInNfo(true);
-        movie.addTrailer(trailer);
+        String urlFromNfo = parseTrailerUrl(xbmc.trailer);
+        if (!urlFromNfo.startsWith("file")) {
+          // only add new MT when not a local file
+          MediaTrailer trailer = new MediaTrailer();
+          trailer.setName("fromNFO");
+          trailer.setProvider("from NFO");
+          trailer.setQuality("unknown");
+          trailer.setUrl(urlFromNfo);
+          trailer.setInNfo(true);
+          movie.addTrailer(trailer);
+        }
       }
 
       for (String tag : xbmc.tags) {

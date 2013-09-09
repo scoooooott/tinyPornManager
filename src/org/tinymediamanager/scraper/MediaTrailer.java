@@ -170,6 +170,10 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
    *          the new in nfo
    */
   public void setInNfo(Boolean newValue) {
+    if (this.url.startsWith("file")) {
+      // local trailers never in url
+      newValue = false;
+    }
     Boolean oldValue = this.inNfo;
     this.inNfo = newValue;
     firePropertyChange("inNfo", oldValue, newValue);

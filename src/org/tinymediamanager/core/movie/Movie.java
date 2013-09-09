@@ -998,7 +998,7 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Sets the trailers.
+   * Sets the trailers; first one is "inNFO" if not a local one.
    * 
    * @param trailers
    *          the new trailers
@@ -1006,7 +1006,7 @@ public class Movie extends MediaEntity {
   public void setTrailers(List<MediaTrailer> trailers) {
     removeAllTrailers();
     for (MediaTrailer trailer : trailers) {
-      if (this.trailer.size() == 0) {
+      if (this.trailer.size() == 0 && !trailer.getUrl().startsWith("file")) {
         trailer.setInNfo(Boolean.TRUE);
       }
       addTrailer(trailer);
