@@ -172,7 +172,13 @@ public class ImageCache {
 
       // recreate cache dir if needed
       // rescale & cache
-      BufferedImage originalImage = com.bric.image.ImageLoader.createImage(originalFile);
+      BufferedImage originalImage = null;
+      try {
+        originalImage = com.bric.image.ImageLoader.createImage(originalFile);
+      }
+      catch (Exception e) {
+        throw new Exception("cannot create image - file seems not to be valid? " + originalFile);
+      }
       // BufferedImage originalImage = ImageIO.read(originalFile);
 
       // rescale and reencode only, if its bigger than 1000x500
