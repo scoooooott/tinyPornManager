@@ -41,6 +41,30 @@ public class MediaFileAudioStream extends AbstractModelObject {
     return channels;
   }
 
+  /**
+   * workaround for not changing the var to int.<br>
+   * channels usually filled like "6ch".
+   * 
+   * @return channels as int
+   */
+  public int getChannelsAsInt() {
+    int ch = 0;
+    if (!channels.isEmpty()) {
+      try {
+        String[] c = channels.split("[^0-9]"); // split on not-numbers and count all; so 5.1 -> 6
+        for (String s : c) {
+          if (s.matches("[0-9]+")) {
+            ch += Integer.parseInt(s);
+          }
+        }
+      }
+      catch (NumberFormatException e) {
+        ch = 0;
+      }
+    }
+    return ch;
+  }
+
   public int getBitrate() {
     return bitrate;
   }
