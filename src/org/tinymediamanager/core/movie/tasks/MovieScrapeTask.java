@@ -24,6 +24,8 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -331,6 +333,18 @@ public class MovieScrapeTask extends TmmSwingWorker {
      */
     private List<MediaTrailer> getTrailers(Movie movie, MediaMetadata metadata, List<IMediaTrailerProvider> trailerProviders) {
       List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
+
+      // add local trailers!
+      for (MediaFile mf : movie.getMediaFiles(MediaFileType.TRAILER)) {
+        LOGGER.debug("adding local trailer " + mf.getFilename());
+        MediaTrailer mt = new MediaTrailer();
+        mt.setName(mf.getFilename());
+        mt.setProvider("downloaded");
+        mt.setQuality(mf.getVideoFormat());
+        mt.setInNfo(false);
+        mt.setUrl(mf.getFile().toURI().toString());
+        trailers.add(mt);
+      }
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setMetadata(metadata);

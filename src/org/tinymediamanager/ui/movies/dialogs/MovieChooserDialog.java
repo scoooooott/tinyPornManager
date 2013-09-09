@@ -56,6 +56,8 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
@@ -422,6 +424,17 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           // get trailers?
           if (scraperMetadataConfig.isTrailer()) {
             List<MediaTrailer> trailers = model.getTrailers();
+            // add local trailers!
+            for (MediaFile mf : movieToScrape.getMediaFiles(MediaFileType.TRAILER)) {
+              LOGGER.debug("adding local trailer " + mf.getFilename());
+              MediaTrailer mt = new MediaTrailer();
+              mt.setName(mf.getFilename());
+              mt.setProvider("downloaded");
+              mt.setQuality(mf.getVideoFormat());
+              mt.setInNfo(false);
+              mt.setUrl(mf.getFile().toURI().toString());
+              trailers.add(0, mt); // add as first
+            }
             movieToScrape.setTrailers(trailers);
           }
 
