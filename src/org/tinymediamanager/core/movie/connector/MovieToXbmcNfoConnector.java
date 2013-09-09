@@ -382,8 +382,8 @@ public class MovieToXbmcNfoConnector {
 
         Audio audio = new Audio();
         audio.codec = mediaFile.getAudioCodec();
-        audio.language = "";
-        audio.channels = mediaFile.getAudioChannels();
+        audio.language = mediaFile.getAudioLanguage();
+        audio.channels = String.valueOf(mediaFile.getAudioChannelsAsInt());
         info.streamdetails.audio.add(audio);
         xbmc.fileinfo = info;
       }

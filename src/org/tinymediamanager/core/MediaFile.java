@@ -595,7 +595,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (audioStreams.size() > 0) {
       return audioStreams.get(0).getCodec();
     }
+    return "";
+  }
 
+  /**
+   * gets the audio language<br>
+   * 
+   * @return the audio language
+   */
+  public String getAudioLanguage() {
+    if (audioStreams.size() > 0) {
+      return audioStreams.get(0).getLanguage();
+    }
     return "";
   }
 
@@ -633,17 +644,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * gets the common video format<br>
-   * .
+   * gets the "common" video format.
    * 
-   * @return 1080p 720p 480p... or null if too small
+   * @return 1080p 720p 480p... or SD if too small
    */
   public String getVideoFormat() {
     return this.videoFormat;
   }
 
   /**
-   * Sets the video format.
+   * Sets the "common" video format (1080p 720p 480p...).
    * 
    * @param newValue
    *          the new video format
@@ -664,7 +674,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * Sets the exact video format.
+   * Sets the exact video format (height + scantype p/i).
    * 
    * @param newValue
    *          the new exact video format
@@ -684,8 +694,19 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if (audioStreams.size() > 0) {
       return audioStreams.get(0).getChannels();
     }
-
     return "";
+  }
+
+  /**
+   * returns the amount of audio channels.
+   * 
+   * @return the amount of audio channels (eg. 6ch)
+   */
+  public int getAudioChannelsAsInt() {
+    if (audioStreams.size() > 0) {
+      return audioStreams.get(0).getChannelsAsInt();
+    }
+    return 0;
   }
 
   // /**
@@ -933,6 +954,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     switch (type) {
       case VIDEO:
+      case VIDEO_EXTRA:
       case TRAILER:
         height = getMediaInfo(StreamKind.Video, 0, "Height");
         scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
@@ -1075,9 +1097,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         scanType = getMediaInfo(StreamKind.Image, 0, "ScanType");
         width = getMediaInfo(StreamKind.Image, 0, "Width");
         videoCodec = getMediaInfo(StreamKind.Image, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
+        // System.out.println(height + "-" + width + "-" + videoCodec);
         break;
 
       default:
+        LOGGER.warn("no mediainformation handling for MediaFile type " + getType() + " yet.");
         break;
     }
 
@@ -1121,20 +1145,26 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     int w = getVideoWidth();
     int h = getVideoHeight();
 
-    if (w >= 1920 || h >= 1080) {
+    if (w >= 7680 || h >= 4320) {
+      format = "8k";
+    }
+    else if (w >= 3840 || h >= 2160) {
+      format = "4k";
+    }
+    else if (w >= 1920 || h >= 1080) {
       format = "1080p";
     }
-    if (format.isEmpty() && (w >= 1280 || h >= 720)) {
+    else if (w >= 1280 || h >= 720) {
       format = "720p";
     }
-    // SD with aspect ratio
-    if (format.isEmpty() && w > 0) {
-      if (isWidescreen()) {
-        format = "SD 16:9";
-      }
-      else {
-        format = "SD 4:3";
-      }
+    else if (w >= 720 || h >= 576) {
+      format = "576p";
+    }
+    else if (w >= 576 || h >= 480) {
+      format = "480p";
+    }
+    else {
+      format = "SD";
     }
     setVideoFormat(format);
 
@@ -1197,8 +1227,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // parse audio, video and graphic files
-    if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.TRAILER) || type.equals(MediaFileType.SUBTITLE)
-        || type.equals(MediaFileType.AUDIO) || isGraphic()) {
+    if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER)
+        || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO) || isGraphic()) {
       return true;
     }
 
