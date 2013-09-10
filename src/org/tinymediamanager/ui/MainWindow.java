@@ -26,7 +26,6 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -350,12 +349,12 @@ public class MainWindow extends JFrame {
     progressBar.setVisible(false);
 
     lblLoadingImg = new JLabel("");
-    lblLoadingImg.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent arg0) {
-        createTaskPopup(arg0);
-      }
-    });
+    // lblLoadingImg.addMouseListener(new MouseAdapter() {
+    // @Override
+    // public void mouseClicked(MouseEvent arg0) {
+    // createTaskPopup(arg0);
+    // }
+    // });
     panelStatusBar.add(lblLoadingImg, "9, 1");
 
     panelMovies = new MoviePanel();
@@ -486,7 +485,7 @@ public class MainWindow extends JFrame {
             lblLoadingImg.setIcon(null);
           }
 
-          lblLoadingImg.setIcon(loading);
+          // lblLoadingImg.setIcon(loading);
 
           // if a main task is finished and a message collector is alive -> show it with the messages collected
           if (messagesList != null && activeTask != null && (activeTask.isDone() || activeTask.isCancelled())) {

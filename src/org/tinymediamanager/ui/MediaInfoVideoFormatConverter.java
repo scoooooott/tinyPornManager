@@ -21,9 +21,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.beansbinding.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdesktop.beansbinding.Converter;
 
 /**
  * The Class ImageIconConverter.
@@ -67,14 +67,22 @@ public class MediaInfoVideoFormatConverter extends Converter<String, Icon> {
         file = MediaInfoVideoFormatConverter.class.getResource("/images/mediainfo/video/720p.png");
       }
 
-      // everything else is SD
-      if (arg0.contains("16:9")) {
-        // try to load sd169.png
-        file = MediaInfoVideoFormatConverter.class.getResource("/images/mediainfo/video/sd169.png");
+      // check 576p
+      if (arg0.contains("576p")) {
+        // try to load 576p.png
+        file = MediaInfoVideoFormatConverter.class.getResource("/images/mediainfo/video/576p.png");
       }
-      if (arg0.contains("4:3")) {
-        // try to load sd43.png
-        file = MediaInfoVideoFormatConverter.class.getResource("/images/mediainfo/video/sd43.png");
+
+      // check 540p
+      if (arg0.contains("540p")) {
+        // try to load 540p.png
+        file = MediaInfoVideoFormatConverter.class.getResource("/images/mediainfo/video/540p.png");
+      }
+
+      // check 480p
+      if (arg0.contains("480p")) {
+        // try to load 480p.png
+        file = MediaInfoVideoFormatConverter.class.getResource("/images/mediainfo/video/480p.png");
       }
 
       // return image

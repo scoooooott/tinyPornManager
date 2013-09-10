@@ -324,7 +324,8 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
   }
 
   private String[] getVideoFormats() {
-    return new String[] { MediaFile.VIDEO_RESOLUTION_480P, MediaFile.VIDEO_RESOLUTION_540P, MediaFile.VIDEO_RESOLUTION_576P,
-        MediaFile.VIDEO_RESOLUTION_720P, MediaFile.VIDEO_RESOLUTION_1080P, MediaFile.VIDEO_RESOLUTION_4K, MediaFile.VIDEO_RESOLUTION_8K };
+    return new String[] { MediaFile.VIDEO_FORMAT_480P, MediaFile.VIDEO_FORMAT_540P, MediaFile.VIDEO_FORMAT_576P,
+        MediaFile.VIDEO_FORMAT_720P, MediaFile.VIDEO_FORMAT_1080P, MediaFile.VIDEO_FORMAT_4K, MediaFile.VIDEO_FORMAT_8K,
+        MediaFile.VIDEO_FORMAT_SD, MediaFile.VIDEO_FORMAT_HD };
   }
 }

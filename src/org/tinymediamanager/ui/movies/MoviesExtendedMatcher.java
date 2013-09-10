@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -165,11 +166,37 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     // check against video format
     if (searchOptions.containsKey(SearchOptions.VIDEO_FORMAT)) {
       String videoFormat = (String) searchOptions.get(SearchOptions.VIDEO_FORMAT);
-      if (videoFormat == movie.getMediaInfoVideoFormat()) {
-        return true;
+      if (videoFormat == MediaFile.VIDEO_FORMAT_HD || videoFormat == MediaFile.VIDEO_FORMAT_SD) {
+        if (videoFormat == MediaFile.VIDEO_FORMAT_HD && !isVideoHD(movie.getMediaInfoVideoFormat())) {
+          return false;
+        }
+        if (videoFormat == MediaFile.VIDEO_FORMAT_SD && isVideoHD(movie.getMediaInfoVideoFormat())) {
+          return false;
+        }
+      }
+      else {
+        if (videoFormat != movie.getMediaInfoVideoFormat()) {
+          return false;
+        }
       }
     }
 
     return true;
+  }
+
+  private boolean isVideoHD(String videoFormat) {
+    if (videoFormat == MediaFile.VIDEO_FORMAT_720P) {
+      return true;
+    }
+    if (videoFormat == MediaFile.VIDEO_FORMAT_1080P) {
+      return true;
+    }
+    if (videoFormat == MediaFile.VIDEO_FORMAT_4K) {
+      return true;
+    }
+    if (videoFormat == MediaFile.VIDEO_FORMAT_8K) {
+      return true;
+    }
+    return false;
   }
 }

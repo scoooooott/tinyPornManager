@@ -49,48 +49,52 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
  */
 @Embeddable
 public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
-  private static final Logger        LOGGER                 = LoggerFactory.getLogger(MediaFile.class);
+  private static final Logger        LOGGER             = LoggerFactory.getLogger(MediaFile.class);
 
-  private static final String        PATH                   = "path";
-  private static final String        FILENAME               = "filename";
-  private static final String        FILESIZE               = "filesize";
-  private static final String        FILESIZE_IN_MB         = "filesizeInMegabytes";
+  private static final String        PATH               = "path";
+  private static final String        FILENAME           = "filename";
+  private static final String        FILESIZE           = "filesize";
+  private static final String        FILESIZE_IN_MB     = "filesizeInMegabytes";
 
-  private static Pattern             posterPattern          = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
-  private static Pattern             fanartPattern          = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
-  private static Pattern             bannerPattern          = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
-  private static Pattern             thumbPattern           = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
+  private static Pattern             posterPattern      = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
+  private static Pattern             fanartPattern      = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
+  private static Pattern             bannerPattern      = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
+  private static Pattern             thumbPattern       = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
 
-  public static final String         VIDEO_RESOLUTION_480P  = "480p";
-  public static final String         VIDEO_RESOLUTION_576P  = "576p";
-  public static final String         VIDEO_RESOLUTION_540P  = "540p";
-  public static final String         VIDEO_RESOLUTION_720P  = "720p";
-  public static final String         VIDEO_RESOLUTION_1080P = "1080p";
-  public static final String         VIDEO_RESOLUTION_4K    = "4k";
-  public static final String         VIDEO_RESOLUTION_8K    = "8k";
+  public static final String         VIDEO_FORMAT_480P  = "480p";
+  public static final String         VIDEO_FORMAT_576P  = "576p";
+  public static final String         VIDEO_FORMAT_540P  = "540p";
+  public static final String         VIDEO_FORMAT_720P  = "720p";
+  public static final String         VIDEO_FORMAT_1080P = "1080p";
+  public static final String         VIDEO_FORMAT_4K    = "4k";
+  public static final String         VIDEO_FORMAT_8K    = "8k";
 
-  private String                     path                   = "";
-  private String                     filename               = "";
-  private long                       filesize               = 0;
-  private String                     videoCodec             = "";
-  private String                     containerFormat        = "";
-  private String                     exactVideoFormat       = "";
-  private int                        videoWidth             = 0;
-  private int                        videoHeight            = 0;
-  private int                        overallBitRate         = 0;
-  private int                        durationInSecs         = 0;
-  private int                        stacking               = 0;
+  // meta formats
+  public static final String         VIDEO_FORMAT_SD    = "SD";
+  public static final String         VIDEO_FORMAT_HD    = "HD";
+
+  private String                     path               = "";
+  private String                     filename           = "";
+  private long                       filesize           = 0;
+  private String                     videoCodec         = "";
+  private String                     containerFormat    = "";
+  private String                     exactVideoFormat   = "";
+  private int                        videoWidth         = 0;
+  private int                        videoHeight        = 0;
+  private int                        overallBitRate     = 0;
+  private int                        durationInSecs     = 0;
+  private int                        stacking           = 0;
 
   @Enumerated(EnumType.STRING)
-  private MediaFileType              type                   = MediaFileType.UNKNOWN;
+  private MediaFileType              type               = MediaFileType.UNKNOWN;
 
-  private List<MediaFileAudioStream> audioStreams           = new ArrayList<MediaFileAudioStream>();
-  private List<MediaFileSubtitle>    subtitles              = new ArrayList<MediaFileSubtitle>();
+  private List<MediaFileAudioStream> audioStreams       = new ArrayList<MediaFileAudioStream>();
+  private List<MediaFileSubtitle>    subtitles          = new ArrayList<MediaFileSubtitle>();
 
   @Transient
   private MediaInfo                  mediaInfo;
   @Transient
-  private File                       file                   = null;
+  private File                       file               = null;
 
   /**
    * "clones" a new media file.
@@ -662,27 +666,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return "";
     }
     else if (w <= 720 && h <= 480) {
-      return VIDEO_RESOLUTION_480P;
+      return VIDEO_FORMAT_480P;
     }
     else if (w <= 768 && h <= 576) {
       // 720x576 (PAL) (768 when rescaled for square pixels)
-      return VIDEO_RESOLUTION_576P;
+      return VIDEO_FORMAT_576P;
     }
     else if (w <= 960 && h <= 544) {
       // 960x540 (sometimes 544 which is multiple of 16)
-      return VIDEO_RESOLUTION_540P;
+      return VIDEO_FORMAT_540P;
     }
     else if (w <= 1280 && h <= 720) {
-      return VIDEO_RESOLUTION_720P;
+      return VIDEO_FORMAT_720P;
     }
     else if (w <= 1920 && h <= 1080) {
-      return VIDEO_RESOLUTION_1080P;
+      return VIDEO_FORMAT_1080P;
     }
     else if (w <= 3840 && h <= 2160) {
-      return VIDEO_RESOLUTION_4K;
+      return VIDEO_FORMAT_4K;
     }
 
-    return VIDEO_RESOLUTION_8K;
+    return VIDEO_FORMAT_8K;
   }
 
   /**
