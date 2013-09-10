@@ -377,23 +377,23 @@ public class MovieToXbmcNfoConnector {
         break;
       }
 
-      if (xbmc.fileinfo == null) { // why not overwrite?!
-        Fileinfo info = new Fileinfo();
-        info.streamdetails.video.codec = mediaFile.getVideoCodec();
-        info.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
-        info.streamdetails.video.width = mediaFile.getVideoWidth();
-        info.streamdetails.video.height = mediaFile.getVideoHeight();
-        info.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
+      // if (xbmc.fileinfo == null) {
+      Fileinfo info = new Fileinfo();
+      info.streamdetails.video.codec = mediaFile.getVideoCodec();
+      info.streamdetails.video.aspect = String.valueOf(mediaFile.getAspectRatio());
+      info.streamdetails.video.width = mediaFile.getVideoWidth();
+      info.streamdetails.video.height = mediaFile.getVideoHeight();
+      info.streamdetails.video.durationinseconds = movie.getRuntimeFromMediaFiles();
 
-        for (MediaFileAudioStream as : mediaFile.getAudioStreams()) {
-          Audio audio = new Audio();
-          audio.codec = as.getCodec();
-          audio.language = as.getLanguage();
-          audio.channels = String.valueOf(as.getChannelsAsInt());
-          info.streamdetails.audio.add(audio);
-        }
-        xbmc.fileinfo = info;
+      for (MediaFileAudioStream as : mediaFile.getAudioStreams()) {
+        Audio audio = new Audio();
+        audio.codec = as.getCodec();
+        audio.language = as.getLanguage();
+        audio.channels = String.valueOf(as.getChannelsAsInt());
+        info.streamdetails.audio.add(audio);
       }
+      xbmc.fileinfo = info;
+      // }
     }
 
     // and marshall it
