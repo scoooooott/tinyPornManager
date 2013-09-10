@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Locale;
 
 /**
@@ -104,12 +106,15 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   }
 
   /**
-   * Values.
+   * All the localized MediaGenres values, alphabetically sorted.
    * 
    * @return the media genres2[]
    */
   public static MediaGenres[] values() {
-    return values(MediaGenres.class);
+    Comparator<MediaGenres> comp = new MediaGenres.MediaGenresComparator();
+    MediaGenres[] mg = values(MediaGenres.class);
+    Arrays.sort(mg, comp);
+    return mg;
   }
 
   /**
@@ -165,4 +170,27 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
     }
     return name;
   }
+
+  /**
+   * Comparator for sorting our MediaGenres in a localized fashion
+   * 
+   * @author Myron
+   */
+  public static class MediaGenresComparator implements Comparator<MediaGenres> {
+    @Override
+    public int compare(MediaGenres o1, MediaGenres o2) {
+      // toString is localized name
+      if (o1.toString() == null && o2.toString() == null) {
+        return 0;
+      }
+      if (o1.toString() == null) {
+        return 1;
+      }
+      if (o2.toString() == null) {
+        return -1;
+      }
+      return o1.toString().compareTo(o2.toString());
+    }
+  }
+
 }
