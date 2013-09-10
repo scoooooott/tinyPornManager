@@ -35,7 +35,6 @@ public class MovieExtendedComparator implements Comparator<Movie> {
 
   private SortColumn                  sortColumn;
   private boolean                     sortAscending;
-  // private StringComparator stringComparator = new StringComparator();
   private RuleBasedCollator           stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
   /**
@@ -210,14 +209,10 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       // try to sort the chosen column
       switch (sortColumn) {
         case TITLE:
-          // sortOrder = movie1.getTitle().toLowerCase().compareTo(movie2.getTitle().toLowerCase());
-          // sortOrder = stringComparator.compare(movie1.getTitle(), movie2.getTitle());
           sortOrder = stringCollator.compare(movie1.getTitleSortable().toLowerCase(), movie2.getTitleSortable().toLowerCase());
           break;
 
         case YEAR:
-          // sortOrder = movie1.getYear().compareTo(movie2.getYear());
-          // sortOrder = stringComparator.compare(movie1.getYear(), movie2.getYear());
           sortOrder = stringCollator.compare(movie1.getYear(), movie2.getYear());
           break;
 
@@ -240,7 +235,6 @@ public class MovieExtendedComparator implements Comparator<Movie> {
           Integer runtime2 = Integer.valueOf(movie2.getRuntime());
           sortOrder = runtime1.compareTo(runtime2);
           break;
-
       }
     }
     catch (NullPointerException e) {
@@ -258,23 +252,4 @@ public class MovieExtendedComparator implements Comparator<Movie> {
       return sortOrder * -1;
     }
   }
-
-  // private static class StringComparator implements Comparator<String> {
-  //
-  // /*
-  // * (non-Javadoc)
-  // *
-  // * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-  // */
-  // @Override
-  // public int compare(String arg0, String arg1) {
-  // if (StringUtils.isEmpty(arg0)) {
-  // return -1;
-  // }
-  // if (StringUtils.isEmpty(arg1)) {
-  // return 1;
-  // }
-  // return arg0.toLowerCase().compareTo(arg1.toLowerCase());
-  // }
-  // }
 }

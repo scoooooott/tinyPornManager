@@ -38,5 +38,4 @@ public class MovieFilterator implements TextFilterator<Movie> {
     baseList.add(movie.getTitle());
     baseList.add(movie.getOriginalTitle());
   }
-
 }

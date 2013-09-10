@@ -50,7 +50,7 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     /** The tag. */
     TAG,
     /** The movieset. */
-    MOVIESET;
+    MOVIESET, VIDEO_FORMAT;
   }
 
   /** The search options. */
@@ -160,6 +160,14 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
       }
 
       return false;
+    }
+
+    // check against video format
+    if (searchOptions.containsKey(SearchOptions.VIDEO_FORMAT)) {
+      String videoFormat = (String) searchOptions.get(SearchOptions.VIDEO_FORMAT);
+      if (videoFormat == movie.getMediaInfoVideoFormat()) {
+        return true;
+      }
     }
 
     return true;

@@ -16,14 +16,17 @@
 package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -48,6 +51,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
@@ -141,6 +145,7 @@ public class MainWindow extends JFrame {
   private List<String>                messagesList;
 
   private JPanel                      messagePanel;
+  private JPopupMenu                  taskPopup;
 
   /**
    * Create the application.
@@ -345,6 +350,12 @@ public class MainWindow extends JFrame {
     progressBar.setVisible(false);
 
     lblLoadingImg = new JLabel("");
+    lblLoadingImg.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent arg0) {
+        createTaskPopup(arg0);
+      }
+    });
     panelStatusBar.add(lblLoadingImg, "9, 1");
 
     panelMovies = new MoviePanel();
@@ -475,6 +486,8 @@ public class MainWindow extends JFrame {
             lblLoadingImg.setIcon(null);
           }
 
+          lblLoadingImg.setIcon(loading);
+
           // if a main task is finished and a message collector is alive -> show it with the messages collected
           if (messagesList != null && activeTask != null && (activeTask.isDone() || activeTask.isCancelled())) {
             if (messagesList.size() > 0) {
@@ -587,5 +600,33 @@ public class MainWindow extends JFrame {
   public void removeMessage(JComponent comp) {
     messagePanel.remove(comp);
     messagePanel.revalidate();
+  }
+
+  private void createTaskPopup(MouseEvent arg0) {
+    JPanel panel = new JPanel();
+    panel.setLayout(new GridLayout(5, 1));
+
+    do {
+      JPanel subPanel = new JPanel();
+      subPanel.setLayout(new BorderLayout());
+      JButton btnCancel = new JButton(new ImageIcon(MoviePanel.class.getResource("/org/tinymediamanager/ui/images/Button_Stop.png")));
+      btnCancel.setContentAreaFilled(false);
+      btnCancel.setBorderPainted(false);
+      btnCancel.setBorder(null);
+      btnCancel.setMargin(new Insets(0, 2, 0, 2));
+
+      subPanel.add(btnCancel, BorderLayout.EAST);
+      subPanel.add(new JLabel("Task status " + panel.getComponentCount()), BorderLayout.CENTER);
+      panel.add(subPanel);
+
+    } while (panel.getComponentCount() < 5);
+
+    int x = -panel.getPreferredSize().width - 5;
+    int y = -panel.getPreferredSize().height - 5;
+
+    taskPopup = new JPopupMenu();
+    taskPopup.setLayout(new BorderLayout());
+    taskPopup.add(panel, BorderLayout.CENTER);
+    taskPopup.show(lblLoadingImg, x, y);
   }
 }

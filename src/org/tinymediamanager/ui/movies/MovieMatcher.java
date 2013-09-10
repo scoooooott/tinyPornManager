@@ -36,19 +36,7 @@ public class MovieMatcher {
    * @author Manuel Laggner
    */
   public enum SearchOptions {
-
-    /** The duplicates. */
-    DUPLICATES,
-    /** The watched. */
-    WATCHED,
-    /** The genre. */
-    GENRE,
-    /** The cast. */
-    CAST,
-    /** The tag. */
-    TAG,
-    /** The movieset. */
-    MOVIESET;
+    DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET, VIDEO_FORMAT,
   }
 
   /** The search options. */
@@ -159,6 +147,14 @@ public class MovieMatcher {
       }
 
       return false;
+    }
+
+    // check against video format
+    if (searchOptions.containsKey(SearchOptions.VIDEO_FORMAT)) {
+      String videoFormat = (String) searchOptions.get(SearchOptions.VIDEO_FORMAT);
+      if (videoFormat == movie.getMediaInfoVideoFormat()) {
+        return true;
+      }
     }
 
     return true;
