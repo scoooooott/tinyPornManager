@@ -468,4 +468,22 @@ public class TvShowList extends AbstractModelObject {
     }
     return newShows;
   }
+
+  /**
+   * Gets the new episodes
+   * 
+   * @return the new episodes
+   */
+  public List<TvShowEpisode> getNewEpisodes() {
+    List<TvShowEpisode> newEp = new ArrayList<TvShowEpisode>();
+    for (TvShow show : tvShowList) {
+      for (TvShowEpisode ep : show.getEpisodes()) {
+        if (ep.isNewlyAdded()) {
+          newEp.add(ep);
+        }
+      }
+    }
+    return newEp;
+  }
+
 }
