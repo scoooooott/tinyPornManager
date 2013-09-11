@@ -124,6 +124,34 @@ public class TinyMediaManager {
         else if (cmd.equalsIgnoreCase("-closeGui")) {
           closeGui = true;
         }
+        else if (cmd.toLowerCase().contains("help")) { // -help, --help, help ...
+          // @formatter:off
+          String syntax =
+              "\n" +
+              "=====================================================\n" +
+              "=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===\n" +
+              "=====================================================\n" +
+              "\n" +
+              "    SYNTAX: java -jar tmm.jar <parameters>\n" +
+              "\n" +
+              "PARAMETERS:\n" +
+              "\n" +
+              "    -noGui               do not display GUI; work headless (recommended!)\n" +
+              "\n" +
+              "    -updateMovies        update movie datasources and add new movies/files to DB\n" +
+              "    -updateTv            update TvShow datasources and add new TvShows/episodes to DB\n" +
+              "    -update              update all (short for '-updateMovies -updateTv')\n" +
+              "\n" +
+              "    -scrapeNew           auto-scrape (force best match) new found movies/TvShows/episodes from former update(s)\n" +
+              "    -renameNew           rename & cleanup of the new found movies/TvShows/episodes\n" +
+              "\n";
+          // @formatter:on
+          LOGGER.info(syntax);
+          System.exit(0);
+        }
+        else {
+          LOGGER.info("Commandline: unrecognized command '" + cmd + "' - ignoring");
+        }
       }
     }
 
