@@ -110,11 +110,9 @@ public class ParserUtils {
    * @return the cleaned one
    */
   public static String removeStopwordsFromTvEpisodeName(String filename) {
-    System.out.println(filename);
     for (String s : stopwords) {
-      filename = filename.replaceAll("\\W" + s, ""); // stopword must start with a non-word (else too global)
+      filename = filename.replaceAll("(?i)\\W" + s, ""); // stopword must start with a non-word (else too global)
     }
-    System.out.println(filename);
     return filename;
   }
 
