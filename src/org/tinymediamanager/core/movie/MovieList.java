@@ -151,14 +151,27 @@ public class MovieList extends AbstractModelObject {
    */
   public List<Movie> getUnscrapedMovies() {
     List<Movie> unscrapedMovies = new ArrayList<Movie>();
-
     for (Movie movie : movieList) {
       if (!movie.isScraped()) {
         unscrapedMovies.add(movie);
       }
     }
-
     return unscrapedMovies;
+  }
+
+  /**
+   * Gets the new movies or movies with new files
+   * 
+   * @return the new movies
+   */
+  public List<Movie> getNewMovies() {
+    List<Movie> newMovies = new ArrayList<Movie>();
+    for (Movie movie : movieList) {
+      if (movie.isNewlyAdded()) {
+        newMovies.add(movie);
+      }
+    }
+    return newMovies;
   }
 
   /**

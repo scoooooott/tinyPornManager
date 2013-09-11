@@ -36,8 +36,10 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
@@ -49,9 +51,15 @@ import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
+import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.thirdparty.MediaInfo;
@@ -77,7 +85,7 @@ public class TinyMediaManager {
 
   private static boolean      updateMovies = false;
   private static boolean      updateTv     = false;
-  private static boolean      autoScrape   = false;
+  private static boolean      scrapeNew    = false;
   private static boolean      rename       = false;
   private static boolean      closeGui     = false;
 
@@ -101,8 +109,8 @@ public class TinyMediaManager {
           updateMovies = true;
           updateTv = true;
         }
-        else if (cmd.equalsIgnoreCase("-autoScrape")) {
-          autoScrape = true;
+        else if (cmd.equalsIgnoreCase("-scrapeNew")) {
+          scrapeNew = true;
         }
         else if (cmd.equalsIgnoreCase("-rename")) {
           rename = true;
@@ -317,9 +325,23 @@ public class TinyMediaManager {
           else {
             startCommandLineTasks();
 
-            // TODO: better headless shutdown
-            Globals.shutdownDatabase();
             LOGGER.info("bye bye");
+            // MainWindows.shutdown()
+            try {
+              // send shutdown signal
+              Globals.executor.shutdown();
+              // save unsaved settings
+              Globals.settings.saveSettings();
+              // close database connection
+              Globals.shutdownDatabase();
+              // wait a bit for threads to finish (if any)
+              Globals.executor.awaitTermination(2, TimeUnit.SECONDS);
+              // hard kill
+              Globals.executor.shutdownNow();
+            }
+            catch (Exception ex) {
+              LOGGER.warn(ex.getMessage());
+            }
           }
         }
         catch (javax.persistence.PersistenceException e) {
@@ -508,6 +530,7 @@ public class TinyMediaManager {
   private static void startCommandLineTasks() {
     try {
       if (updateMovies) {
+        LOGGER.info("Commandline - updating movies...");
         TmmSwingWorker task = new MovieUpdateDatasourceTask();
         if (!GraphicsEnvironment.isHeadless()) {
           MainWindow.executeMainTask(task);
@@ -519,6 +542,7 @@ public class TinyMediaManager {
         }
       }
       if (updateTv) {
+        LOGGER.info("Commandline - updating TvShows and episodes...");
         TmmSwingWorker task = new TvShowUpdateDatasourceTask();
         if (!GraphicsEnvironment.isHeadless()) {
           MainWindow.executeMainTask(task);
@@ -527,6 +551,46 @@ public class TinyMediaManager {
         else {
           task.execute();
           task.get(); // blocking
+        }
+      }
+      if (scrapeNew && updateMovies) {
+        LOGGER.info("Commandline - scraping new movies...");
+        List<Movie> newMovies = MovieList.getInstance().getNewMovies();
+        if (newMovies.size() > 0) {
+          MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+          options.loadDefaults();
+          TmmSwingWorker task = new MovieScrapeTask(newMovies, true, options);
+          if (!GraphicsEnvironment.isHeadless()) {
+            MainWindow.executeMainTask(task);
+            // wait for completion?!?
+          }
+          else {
+            task.execute();
+            task.get(); // blocking
+          }
+        }
+        else {
+          LOGGER.info("No new movies found to scrape - skipping");
+        }
+      }
+      if (scrapeNew && updateTv) {
+        LOGGER.info("Commandline - scraping new TvShows and episodes...");
+        List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
+        if (newTv.size() > 0) {
+          TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
+          options.loadDefaults();
+          TmmSwingWorker task = new TvShowScrapeTask(newTv, true, options);
+          if (!GraphicsEnvironment.isHeadless()) {
+            MainWindow.executeMainTask(task);
+            // wait for completion?!?
+          }
+          else {
+            task.execute();
+            task.get(); // blocking
+          }
+        }
+        else {
+          LOGGER.info("No new TvShows/episodes found to scrape - skipping");
         }
       }
     }

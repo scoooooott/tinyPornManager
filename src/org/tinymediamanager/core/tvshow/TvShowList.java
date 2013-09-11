@@ -453,4 +453,19 @@ public class TvShowList extends AbstractModelObject {
       tvShow.clearTitleSortable();
     }
   }
+
+  /**
+   * Gets the new TvShows or TvShows with new episodes
+   * 
+   * @return the new TvShows
+   */
+  public List<TvShow> getNewTvShows() {
+    List<TvShow> newShows = new ArrayList<TvShow>();
+    for (TvShow show : tvShowList) {
+      if (show.isNewlyAdded()) {
+        newShows.add(show);
+      }
+    }
+    return newShows;
+  }
 }
