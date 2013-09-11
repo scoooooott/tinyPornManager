@@ -30,7 +30,16 @@ import org.tinymediamanager.core.Utils;
 public class ParserUtils {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(ParserUtils.class);
+  private static final Logger LOGGER    = LoggerFactory.getLogger(ParserUtils.class);
+
+  public static String[]      stopwords = { "1080", "1080i", "1080p", "480i", "480p", "576i", "576p", "720", "720i", "720p", "ac3", "ac3ld", "ac3md",
+      "aoe", "bd5", "bdrip", "bdrip", "blueray", "bluray", "brrip", "cam", "cd1", "cd2", "cd3", "cd4", "cd5", "cd6", "cd7", "cd8", "cd9", "custom",
+      "dc", "disc1", "disc2", "disc3", "disc4", "disc5", "disc6", "disc7", "disc8", "disc9", "divx", "divx5", "dl", "docu", "dsr", "dsrip", "dts",
+      "dtv", "dubbed", "dutch", "dvd", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8", "dvd9", "dvdivx", "dvdrip", "dvdscr",
+      "dvdscreener", "emule", "etm", "extended", "fragment", "fs", "german", "h264", "hddvd", "hdrip", "hdtv", "hdtvrip", "hrhd", "hrhdtv", "ind",
+      "internal", "ld", "limited", "md", "multisubs", "nfo", "nfofix", "ntg", "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "pso", "r3", "r5",
+      "read", "repack", "rerip", "retail", "roor", "rs", "screener", "se", "subbed", "svcd", "swedish", "tc", "telecine", "telesync", "ts", "uncut",
+      "unrated", "vcf", "webdl", "webrip", "workprint", "ws", "www", "x264", "xf", "xvid", "xvidvd", "xxx" };
 
   /**
    * Tries to get movie name from filename<br>
@@ -46,15 +55,6 @@ public class ParserUtils {
    */
   public static String detectCleanMoviename(String filename) {
     LOGGER.debug("Parse filename for movie title: \"" + filename + "\"");
-
-    String[] stopwords = { "1080", "1080i", "1080p", "480i", "480p", "576i", "576p", "720", "720i", "720p", "ac3", "ac3ld", "ac3md", "aoe", "bd5",
-        "bdrip", "bdrip", "blueray", "bluray", "brrip", "cam", "cd1", "cd2", "cd3", "cd4", "cd5", "cd6", "cd7", "cd8", "cd9", "custom", "dc",
-        "disc1", "disc2", "disc3", "disc4", "disc5", "disc6", "disc7", "disc8", "disc9", "divx", "divx5", "dl", "docu", "dsr", "dsrip", "dts", "dtv",
-        "dubbed", "dutch", "dvd", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8", "dvd9", "dvdivx", "dvdrip", "dvdscr",
-        "dvdscreener", "emule", "etm", "extended", "fragment", "fs", "german", "h264", "hddvd", "hdrip", "hdtv", "hdtvrip", "hrhd", "hrhdtv", "ind",
-        "internal", "ld", "limited", "md", "multisubs", "nfo", "nfofix", "ntg", "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "pso", "r3", "r5",
-        "read", "repack", "rerip", "retail", "roor", "rs", "screener", "se", "subbed", "svcd", "swedish", "tc", "telecine", "telesync", "ts",
-        "uncut", "unrated", "vcf", "webdl", "webrip", "workprint", "ws", "www", "x264", "xf", "xvid", "xvidvd", "xxx" };
 
     if (filename == null || filename.isEmpty()) {
       LOGGER.warn("Filename empty?!");
@@ -110,48 +110,12 @@ public class ParserUtils {
    * @return the cleaned one
    */
   public static String removeStopwordsFromTvEpisodeName(String filename) {
-    String[] stopwords = { "720p", "1080", "x264", "h264", "webdl", "hdtv", "dubbed", "xvid", "bdrip", "webrip", "hdrip" };
+    System.out.println(filename);
     for (String s : stopwords) {
-      filename = filename.replaceAll(s, "");
+      filename = filename.replaceAll("\\W" + s, ""); // stopword must start with a non-word (else too global)
     }
+    System.out.println(filename);
     return filename;
-  }
-
-  /**
-   * returns cleaned tvepisode name
-   * 
-   * @param filename
-   * @return the cleaned one
-   */
-  public static String cleanTvEpisodeName(String filename) {
-    String[] stopwords = { "720p", "1080", "x264", "h264", "webdl", "hdtv", "dubbed", "xvid", "bdrip", "webrip", "hdrip" };
-
-    if (filename == null || filename.isEmpty()) {
-      LOGGER.warn("Filename empty?!");
-      return "";
-    }
-
-    // remove extension (if found) and split
-    String fname = filename.replaceFirst("\\.\\w{2,4}$", "");
-    String[] s = fname.split("[()\\[\\] _.-]");
-
-    // iterate over all splitted items and remove stopwords
-    String ret = "";
-    for (int i = 0; i < s.length; i++) {
-      if (s[i] != null && !s[i].isEmpty()) {
-        boolean stopword_found = false;
-        for (String stop : stopwords) {
-          if (s[i].toLowerCase().startsWith(stop)) {
-            // we found a stopword - ignore
-            stopword_found = true;
-          }
-        }
-        if (!stopword_found) {
-          ret = ret + s[i] + " ";
-        }
-      }
-    }
-    return ret.trim();
   }
 
   /**
