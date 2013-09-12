@@ -365,6 +365,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             // get any assigned episode
             TvShowEpisode ep = tvShow.getEpisode(result.season, result.episodes.get(0));
             if (ep != null) {
+              ep.setNewlyAdded(true);
               ep.addToMediaFiles(new MediaFile(file));
               continue;
             }
@@ -537,6 +538,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           episode.setPath(dir.getPath());
           episode.setTvShow(tvShow);
           episode.setDisc(true);
+          episode.setNewlyAdded(true);
           episode.addToMediaFiles(videoFiles);
           findAdditionalEpisodeFiles(episode, firstVideoFile, content);
           episode.saveToDb();
