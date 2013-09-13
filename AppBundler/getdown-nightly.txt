@@ -102,8 +102,9 @@ uresource = templates/ListExampleXml.jar
 uresource = templates/jQueryliscious.jar
 uresource = templates/SimpleConfluence.jar
 
-# The main entry point for the application
+# The main entry point for the application (prefix needed for GD params)
 class = org.tinymediamanager.TinyMediaManager
+tmm.class = org.tinymediamanager.TinyMediaManager
 
 # allow offline use
 allow_offline = true
