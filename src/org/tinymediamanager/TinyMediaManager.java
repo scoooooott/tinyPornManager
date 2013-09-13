@@ -90,7 +90,27 @@ public class TinyMediaManager {
   private static boolean      updateTv     = false;
   private static boolean      scrapeNew    = false;
   private static boolean      renameNew    = false;
-  private static boolean      closeGui     = false;
+
+  private static void syntax() {
+    // @formatter:off
+    System.out.println("\n" +
+        "=====================================================\n" +
+        "=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===\n" +
+        "=====================================================\n" +
+        "\n" +
+        "    SYNTAX: java -jar tmm.jar <parameters>\n" +
+        "\n" +
+        "PARAMETERS:\n" +
+        "\n" +
+        "    -updateMovies        update movie datasources and add new movies/files to DB\n" +
+        "    -updateTv            update TvShow datasources and add new TvShows/episodes to DB\n" +
+        "    -update              update all (short for '-updateMovies -updateTv')\n" +
+        "\n" +
+        "    -scrapeNew           auto-scrape (force best match) new found movies/TvShows/episodes from former update(s)\n" +
+        "    -renameNew           rename & cleanup of the new found movies/TvShows/episodes\n" +
+        "\n");
+    // @formatter:on
+  }
 
   /**
    * The main method.
@@ -100,7 +120,7 @@ public class TinyMediaManager {
    */
   public static void main(String[] args) {
     // simple parse command line
-    if (args != null) {
+    if (args != null && args.length > 0) {
       for (String cmd : args) {
         if (cmd.equalsIgnoreCase("-updateMovies")) {
           updateMovies = true;
@@ -118,40 +138,27 @@ public class TinyMediaManager {
         else if (cmd.equalsIgnoreCase("-renameNew")) {
           renameNew = true;
         }
-        else if (cmd.equalsIgnoreCase("-noGui")) {
-          System.setProperty("java.awt.headless", "true");
-        }
-        else if (cmd.equalsIgnoreCase("-closeGui")) {
-          closeGui = true;
-        }
         else if (cmd.toLowerCase().contains("help")) { // -help, --help, help ...
-          // @formatter:off
-          String syntax =
-              "\n" +
-              "=====================================================\n" +
-              "=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===\n" +
-              "=====================================================\n" +
-              "\n" +
-              "    SYNTAX: java -jar tmm.jar <parameters>\n" +
-              "\n" +
-              "PARAMETERS:\n" +
-              "\n" +
-              "    -noGui               do not display GUI; work headless (recommended!)\n" +
-              "\n" +
-              "    -updateMovies        update movie datasources and add new movies/files to DB\n" +
-              "    -updateTv            update TvShow datasources and add new TvShows/episodes to DB\n" +
-              "    -update              update all (short for '-updateMovies -updateTv')\n" +
-              "\n" +
-              "    -scrapeNew           auto-scrape (force best match) new found movies/TvShows/episodes from former update(s)\n" +
-              "    -renameNew           rename & cleanup of the new found movies/TvShows/episodes\n" +
-              "\n";
-          // @formatter:on
-          LOGGER.info(syntax);
+          syntax();
           System.exit(0);
         }
         else {
-          LOGGER.info("Commandline: unrecognized command '" + cmd + "' - ignoring");
+          System.out.println("ERROR: unrecognized command '" + cmd);
+          syntax();
+          System.exit(0);
         }
+      }
+      LOGGER.info("=====================================================");
+      LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
+      LOGGER.info("=====================================================");
+      LOGGER.info("starting without GUI...");
+      System.setProperty("java.awt.headless", "true");
+    }
+    else {
+      // no cmd params found, but if we are headless - display syntax
+      if (System.getProperty("java.awt.headless").equals("true")) {
+        syntax();
+        System.exit(0);
       }
     }
 
@@ -350,8 +357,6 @@ public class TinyMediaManager {
 
             TmmWindowSaver.loadSettings(window);
             window.setVisible(true);
-
-            startCommandLineTasks();
           }
           else {
             startCommandLineTasks();
@@ -565,14 +570,8 @@ public class TinyMediaManager {
       if (updateMovies) {
         LOGGER.info("Commandline - updating movies...");
         TmmSwingWorker task = new MovieUpdateDatasourceTask();
-        if (!GraphicsEnvironment.isHeadless()) {
-          MainWindow.executeMainTask(task);
-          // wait for completion?!?
-        }
-        else {
-          task.execute();
-          task.get(); // blocking
-        }
+        task.execute();
+        task.get(); // blocking
         List<Movie> newMovies = MovieList.getInstance().getNewMovies();
 
         if (scrapeNew) {
@@ -581,14 +580,8 @@ public class TinyMediaManager {
             MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
             options.loadDefaults();
             task = new MovieScrapeTask(newMovies, true, options);
-            if (!GraphicsEnvironment.isHeadless()) {
-              MainWindow.executeMainTask(task);
-              // wait for completion?!?
-            }
-            else {
-              task.execute();
-              task.get(); // blocking
-            }
+            task.execute();
+            task.get(); // blocking
           }
           else {
             LOGGER.info("No new movies found to scrape - skipping");
@@ -599,14 +592,8 @@ public class TinyMediaManager {
           LOGGER.info("Commandline - rename & cleanup new movies...");
           if (newMovies.size() > 0) {
             task = new MovieRenameTask(newMovies);
-            if (!GraphicsEnvironment.isHeadless()) {
-              MainWindow.executeMainTask(task);
-              // wait for completion?!?
-            }
-            else {
-              task.execute();
-              task.get(); // blocking
-            }
+            task.execute();
+            task.get(); // blocking
           }
         }
       }
@@ -615,14 +602,8 @@ public class TinyMediaManager {
       if (updateTv) {
         LOGGER.info("Commandline - updating TvShows and episodes...");
         TmmSwingWorker task = new TvShowUpdateDatasourceTask();
-        if (!GraphicsEnvironment.isHeadless()) {
-          MainWindow.executeMainTask(task);
-          // wait for completion?!?
-        }
-        else {
-          task.execute();
-          task.get(); // blocking
-        }
+        task.execute();
+        task.get(); // blocking
         List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
         List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
 
@@ -633,14 +614,8 @@ public class TinyMediaManager {
             TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
             options.loadDefaults();
             task = new TvShowScrapeTask(newTv, true, options);
-            if (!GraphicsEnvironment.isHeadless()) {
-              MainWindow.executeMainTask(task);
-              // wait for completion?!?
-            }
-            else {
-              task.execute();
-              task.get(); // blocking
-            }
+            task.execute();
+            task.get(); // blocking
           }
           else {
             LOGGER.info("No new TvShows/episodes found to scrape - skipping");
@@ -651,14 +626,8 @@ public class TinyMediaManager {
           LOGGER.info("Commandline - rename & cleanup new spidoes...");
           if (newTv.size() > 0 && newEp.size() > 0) {
             task = new TvShowRenameTask(null, newEp); // just rename new EPs
-            if (!GraphicsEnvironment.isHeadless()) {
-              MainWindow.executeMainTask(task);
-              // wait for completion?!?
-            }
-            else {
-              task.execute();
-              task.get(); // blocking
-            }
+            task.execute();
+            task.get(); // blocking
           }
         }
       }

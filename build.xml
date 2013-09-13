@@ -41,7 +41,7 @@
 
     <target name="compile" depends="init">
         <echo message="${ant.project.name}: ${ant.file}" />
-        <javac debug="true" debuglevel="source,lines,vars" destdir="${bin.dir}" source="1.6" target="1.6">
+        <javac debug="true" debuglevel="source,lines,vars" destdir="${bin.dir}" source="1.6" target="1.6" encoding="UTF-8">
             <src path="src" />
             <classpath refid="classpath.default" />
         </javac>
@@ -147,6 +147,8 @@
                  classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/xstream.jar" />
         <launch4j configFile="AppBundler/launch4j.xml" txtProductVersion="${version}_r${svn.info.revision}"
                   outfile="${dist.dir}/tinyMediaManager.exe"/>
+        <launch4j configFile="AppBundler/launch4jcmd.xml" txtProductVersion="${version}_r${svn.info.revision}"
+                  outfile="${dist.dir}/tinyMediaManagerCMD.exe"/>
         <zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_win.zip" level="9">
             <zipfileset filemode="755" dir="${build.dir}" />
             <zipfileset filemode="755" dir="${dist.dir}" includes="*.exe"/>
@@ -172,6 +174,7 @@
             <fileset dir="locale"/>
         </copy>
         <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.exe" />
+        <copy file="${dist.dir}/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.exe" />
         <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
         <copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
 

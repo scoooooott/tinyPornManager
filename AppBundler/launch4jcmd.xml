@@ -1,0 +1,43 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>console</headerType>
+  <jar>tmm.jar</jar>
+  <outfile>../dist/tinyMediaManagerCMD.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <manifest></manifest>
+  <icon>tmm.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <initialHeapSize>128</initialHeapSize>
+    <maxHeapSize>512</maxHeapSize>
+    <opt>-Xss512k</opt>
+    <opt>-Djava.awt.headless=true</opt>
+  </jre>
+  <versionInfo>
+    <fileVersion>2.0.0.0</fileVersion>
+    <txtFileVersion>text</txtFileVersion>
+    <fileDescription>tinyMediaManager is a media management tool written in Java/Swing. It is written to provide metadata for the XBOX Media Center (XBMC).</fileDescription>
+    <copyright>(c) 2012-2013 Manuel Laggner</copyright>
+    <productVersion>2.0.0.0</productVersion>
+    <txtProductVersion>text</txtProductVersion>
+    <productName>tinyMediaManager</productName>
+    <internalName>tmm</internalName>
+    <originalFilename>tmm.exe</originalFilename>
+  </versionInfo>
+  <messages>
+    <startupErr>An error occurred while starting the application.</startupErr>
+    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
+    <jreVersionErr>This application requires a Java Runtime Environment 1.6 or higher</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java Runtime Environment installation or the runtime is corrupted.</launcherErr>
+    <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
+  </messages>
+</launch4jConfig>

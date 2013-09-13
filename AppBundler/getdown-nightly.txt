@@ -62,6 +62,7 @@ delete = lib/commons-logging.jar
 delete = lib/log4j.jar
 
 #resource = [windows] tinyMediaManager.exe #not yet - need more testing
+resource = [windows] tinyMediaManagerCMD.exe
 resource = [!windows] tinyMediaManager.sh
 resource = getdown-new.jar
 resource = version

@@ -62,6 +62,7 @@ delete = lib/commons-logging.jar
 delete = lib/log4j.jar
 
 #resource = [windows] tinyMediaManager.exe #not yet - need more testing
+resource = [windows] tinyMediaManagerCMD.exe
 resource = [!windows] tinyMediaManager.sh
 resource = getdown-new.jar
 resource = version
@@ -102,8 +103,9 @@ uresource = templates/ListExampleXml.jar
 uresource = templates/jQueryliscious.jar
 uresource = templates/SimpleConfluence.jar
 
-# The main entry point for the application
+# The main entry point for the application (prefix needed for GD params)
 class = org.tinymediamanager.TinyMediaManager
+tmm.class = org.tinymediamanager.TinyMediaManager
 
 # allow offline use
 allow_offline = true
