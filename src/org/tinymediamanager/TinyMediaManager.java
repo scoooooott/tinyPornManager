@@ -156,7 +156,8 @@ public class TinyMediaManager {
     }
     else {
       // no cmd params found, but if we are headless - display syntax
-      if (System.getProperty("java.awt.headless").equals("true")) {
+      String head = System.getProperty("java.awt.headless");
+      if (head != null && head.equals("true")) {
         syntax();
         System.exit(0);
       }
