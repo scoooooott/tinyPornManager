@@ -703,6 +703,7 @@ public class MovieRenamer {
     // replace spaces with underscores if needed
     if (Globals.settings.getMovieSettings().isMovieRenamerSpaceSubstitution()) {
       newDestination = newDestination.replace(" ", "_");
+      newDestination = newDestination.replace("__", "_");
     }
 
     return newDestination.trim();
