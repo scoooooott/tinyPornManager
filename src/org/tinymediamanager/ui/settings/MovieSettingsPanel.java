@@ -25,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -82,6 +83,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();
+  private List<String>                separators       = new ArrayList<String>(Arrays.asList("_", ".", "-"));
 
   /**
    * UI elements
@@ -94,6 +96,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
   private JTextField                  tfMovieFilename;
   private JLabel                      lblExample;
   private JCheckBox                   chckbxSpaceSubstitution;
+  private JComboBox                   cbSeparator;
   private JComboBox                   cbMovieForPreview;
   private JCheckBox                   chckbxRemoveOtherNfos;
 
@@ -179,12 +182,13 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelRenamer, "2, 4, fill, fill");
     panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
     panelRenamer.add(lblMoviePath, "2, 2, right, default");
@@ -206,7 +210,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
         createRenamerExample();
       }
     });
-    panelRenamer.add(tfMoviePath, "4, 2, fill, default");
+    panelRenamer.add(tfMoviePath, "4, 2, 3, 1, fill, default");
     tfMoviePath.setColumns(10);
 
     JTextPane txtpntTitle = new JTextPane();
@@ -214,7 +218,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
     txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
-    panelRenamer.add(txtpntTitle, "6, 2, 1, 7, fill, fill");
+    panelRenamer.add(txtpntTitle, "8, 2, 1, 7, fill, fill");
 
     JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
     panelRenamer.add(lblMovieFilename, "2, 4, right, fill");
@@ -237,7 +241,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
       }
     });
     lblMovieFilename.setLabelFor(tfMovieFilename);
-    panelRenamer.add(tfMovieFilename, "4, 4, fill, default");
+    panelRenamer.add(tfMovieFilename, "4, 4, 3, 1, fill, default");
     tfMovieFilename.setColumns(10);
 
     chckbxSpaceSubstitution = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
@@ -248,6 +252,16 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
       }
     });
     panelRenamer.add(chckbxSpaceSubstitution, "4, 6");
+
+    cbSeparator = new JComboBox(separators.toArray());
+    panelRenamer.add(cbSeparator, "6, 6, fill, default");
+    cbSeparator.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        checkChanges();
+        createRenamerExample();
+      }
+    });
 
     JTextPane txtrChooseAFolder = new JTextPane();
     txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
@@ -265,14 +279,14 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
         createRenamerExample();
       }
     });
-    panelRenamer.add(cbMovieForPreview, "4, 10, fill, default");
+    panelRenamer.add(cbMovieForPreview, "4, 10, 3, 1, fill, default");
 
     lblExample = new JLabel("");
     lblExample.setFont(lblExample.getFont().deriveFont(11f));
-    panelRenamer.add(lblExample, "2, 12, 5, 1");
+    panelRenamer.add(lblExample, "2, 12, 7, 1");
 
     JSeparator separator = new JSeparator();
-    panelRenamer.add(separator, "1, 14, 6, 1");
+    panelRenamer.add(separator, "1, 14, 8, 1");
 
     JLabel lblCleanupOptions = new JLabel(BUNDLE.getString("Settings.cleanupoptions")); //$NON-NLS-1$
     panelRenamer.add(lblCleanupOptions, "2, 16");
@@ -306,6 +320,13 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
         checkChanges();
       }
     });
+
+    // space separator
+    String replacement = settings.getMovieSettings().getMovieRenamerSpaceReplacement();
+    int index = separators.indexOf(replacement);
+    if (index >= 0) {
+      cbSeparator.setSelectedIndex(index);
+    }
   }
 
   private void createRenamerExample() {
@@ -355,6 +376,9 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     if (cbMovieNfoFilename2.isSelected()) {
       settings.getMovieSettings().addMovieNfoFilename(MovieNfoNaming.MOVIE_NFO);
     }
+    // separator
+    String separator = (String) cbSeparator.getSelectedItem();
+    settings.getMovieSettings().setMovieRenamerSpaceReplacement(separator);
   }
 
   private void buildAndInstallMovieArray() {

@@ -56,6 +56,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           MOVIE_RENAMER_PATHNAME           = "movieRenamerPathname";
   private final static String           MOVIE_RENAMER_FILENAME           = "movieRenamerFilename";
   private final static String           MOVIE_RENAMER_SPACE_SUBSTITUTION = "movieRenamerSpaceSubstitution";
+  private final static String           MOVIE_RENAMER_SPACE_REPLACEMENT  = "movieRenamerSpaceReplacement";
   private final static String           MOVIE_RENAMER_NFO_CLEANUP        = "movieRenamerNfoCleanup";
   private final static String           MOVIE_SCRAPER                    = "movieScraper";
   private final static String           SCRAPE_BEST_IMAGE                = "scrapeBestImage";
@@ -90,6 +91,7 @@ public class MovieSettings extends AbstractModelObject {
   private String                        movieRenamerPathname             = "$T ($Y)";
   private String                        movieRenamerFilename             = "$T ($Y) $V $A";
   private boolean                       movieRenamerSpaceSubstitution    = false;
+  private String                        movieRenamerSpaceReplacement     = "_";
   private boolean                       movieRenamerNfoCleanup           = false;
   private boolean                       imdbScrapeForeignLanguage        = false;
   private MovieScrapers                 movieScraper                     = MovieScrapers.TMDB;
@@ -346,6 +348,15 @@ public class MovieSettings extends AbstractModelObject {
 
   public void setMovieRenamerSpaceSubstitution(boolean movieRenamerSpaceSubstitution) {
     this.movieRenamerSpaceSubstitution = movieRenamerSpaceSubstitution;
+  }
+
+  @XmlElement(name = MOVIE_RENAMER_SPACE_REPLACEMENT)
+  public String getMovieRenamerSpaceReplacement() {
+    return movieRenamerSpaceReplacement;
+  }
+
+  public void setMovieRenamerSpaceReplacement(String movieRenamerSpaceReplacement) {
+    this.movieRenamerSpaceReplacement = movieRenamerSpaceReplacement;
   }
 
   public MovieScrapers getMovieScraper() {

@@ -702,8 +702,16 @@ public class MovieRenamer {
 
     // replace spaces with underscores if needed
     if (Globals.settings.getMovieSettings().isMovieRenamerSpaceSubstitution()) {
-      newDestination = newDestination.replace(" ", "_");
-      newDestination = newDestination.replace("__", "_");
+      String replacement = Globals.settings.getMovieSettings().getMovieRenamerSpaceReplacement();
+      newDestination = newDestination.replace(" ", replacement);
+
+      // also replace triple and double replacements with one to avoid strange looking results;
+      // example:
+      // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
+      newDestination = newDestination.replace(replacement + replacement + replacement, replacement);
+      newDestination = newDestination.replace(replacement + replacement, replacement);
+      // newDestination = newDestination.replace(" ", "_");
+      // newDestination = newDestination.replace("__", "_");
     }
 
     return newDestination.trim();
