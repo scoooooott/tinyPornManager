@@ -1,8 +1,9 @@
 #!/bin/bash
-if [ "$(uname)" == "Darwin" ]; then
-  java -jar tmm.jar -Xms64m -Xmx512m -Xss512k $1     
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-  java -jar tmm.jar -Xms64m -Xmx512m -Xss512k -Djna.nosys=true $1
-else 
-  echo "not supported OS"
+
+PARAMS=
+ 
+if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  PARAMS=-Djna.nosys=true
 fi
+
+java -Djava.awt.headless=true -Xms64m -Xmx512m -Xss512k $PARAMS -jar tmm.jar $1 $2 $3 $4 $5
