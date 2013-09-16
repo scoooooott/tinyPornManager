@@ -21,11 +21,7 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -50,19 +46,17 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class ImagePanel extends JPanel implements HierarchyListener {
-  private static final long              serialVersionUID = -5344085698387374260L;
-  private static final Logger            LOGGER           = LoggerFactory.getLogger(ImagePanel.class);
-  private List<MediaFile>                mediaFiles       = null;
-  public static final ThreadPoolExecutor imgpool          = new ThreadPoolExecutor(5, 5, // max threads
-                                                              2, TimeUnit.SECONDS, // time to wait before closing idle workers
-                                                              new LinkedBlockingQueue<Runnable>());   // our queue
+  private static final long   serialVersionUID = -5344085698387374260L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(ImagePanel.class);
+  private List<MediaFile>     mediaFiles       = null;
+  private ImageLoader         activeWorker     = null;
 
   /**
    * UI components
    */
 
-  private JPanel                         panelImages;
-  private JScrollPane                    scrollPane;
+  private JPanel              panelImages;
+  private JScrollPane         scrollPane;
 
   public ImagePanel(List<MediaFile> mediaFiles) {
     this.mediaFiles = mediaFiles;
@@ -80,15 +74,17 @@ public class ImagePanel extends JPanel implements HierarchyListener {
    * Trigger to rebuild the panel
    */
   public void rebuildPanel() {
-    imgpool.getQueue().clear();
+    if (activeWorker != null && !activeWorker.isDone()) {
+      activeWorker.cancel(true);
+    }
+
     panelImages.removeAll();
     panelImages.revalidate();
     scrollPane.repaint();
 
     // fetch image in separate worker -> performance
-    for (MediaFile mf : new ArrayList<MediaFile>(mediaFiles)) {
-      imgpool.submit(new ImageLoader(mf));
-    }
+    activeWorker = new ImageLoader(mediaFiles);
+    activeWorker.execute();
   }
 
   @Override
@@ -115,26 +111,34 @@ public class ImagePanel extends JPanel implements HierarchyListener {
    * worker to load the images asynchrony
    */
   protected class ImageLoader extends SwingWorker<Void, BufferedImage> {
-    private MediaFile mediaFile;
+    private List<MediaFile> mediaFile;
 
-    private ImageLoader(MediaFile mediaFile) {
-      this.mediaFile = mediaFile;
+    private ImageLoader(List<MediaFile> mediaFiles) {
+      this.mediaFile = mediaFiles;
     }
 
     @Override
     protected Void doInBackground() throws Exception {
-      if (isShowing()) {
-        if (isCancelled()) {
-          return null;
-        }
-        try {
-          File file = ImageCache.getCachedFile(mediaFile.getPath() + File.separator + mediaFile.getFilename());
-          LOGGER.debug("loading " + file);
-          BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(file);
-          Point size = ImageLabel.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
-          publish(Scaling.scale(bufferedImage, size.x, size.y));
-        }
-        catch (Exception e) {
+      for (MediaFile mediaFile : mediaFiles) {
+        if (isShowing()) {
+          if (isCancelled()) {
+            return null;
+          }
+          try {
+            File file = ImageCache.getCachedFile(mediaFile.getPath() + File.separator + mediaFile.getFilename());
+            LOGGER.debug("loading " + file);
+            BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(file);
+            Point size = ImageLabel.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
+            BufferedImage img = Scaling.scale(bufferedImage, size.x, size.y);
+
+            if (isCancelled()) {
+              return null;
+            }
+
+            publish(img);
+          }
+          catch (Exception e) {
+          }
         }
       }
       return null;
@@ -142,13 +146,19 @@ public class ImagePanel extends JPanel implements HierarchyListener {
 
     @Override
     protected void process(List<BufferedImage> chunks) {
-      try {
-        JLabel lblImageJLabel = new JLabel(new ImageIcon(chunks.get(chunks.size() - 1))); // display last
-        panelImages.add(lblImageJLabel);
-        panelImages.revalidate();
-        scrollPane.repaint();
-      }
-      catch (Exception e) {
+      for (BufferedImage image : chunks) {
+        try {
+          if (isCancelled()) {
+            return;
+          }
+
+          JLabel lblImageJLabel = new JLabel(new ImageIcon(image));
+          panelImages.add(lblImageJLabel);
+          panelImages.revalidate();
+          scrollPane.repaint();
+        }
+        catch (Exception e) {
+        }
       }
     }
   }
