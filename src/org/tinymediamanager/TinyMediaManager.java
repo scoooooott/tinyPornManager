@@ -84,12 +84,13 @@ import com.sun.jna.Platform;
 public class TinyMediaManager {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER       = LoggerFactory.getLogger(TinyMediaManager.class);
+  private static final Logger LOGGER          = LoggerFactory.getLogger(TinyMediaManager.class);
 
-  private static boolean      updateMovies = false;
-  private static boolean      updateTv     = false;
-  private static boolean      scrapeNew    = false;
-  private static boolean      renameNew    = false;
+  private static boolean      updateMovies    = false;
+  private static boolean      updateTv        = false;
+  private static boolean      scrapeNew       = false;
+  private static boolean      scrapeUnscraped = false;
+  private static boolean      renameNew       = false;
 
   private static void syntax() {
     // @formatter:off
@@ -107,6 +108,7 @@ public class TinyMediaManager {
         "    -update              update all (short for '-updateMovies -updateTv')\n" +
         "\n" +
         "    -scrapeNew           auto-scrape (force best match) new found movies/TvShows/episodes from former update(s)\n" +
+        "    -scrapeUnscraped     auto-scrape (force best match) all movies, which have not yet been scraped (not for TV/episodes!)\n" +
         "    -renameNew           rename & cleanup of the new found movies/TvShows/episodes\n" +
         "\n");
     // @formatter:on
@@ -134,6 +136,9 @@ public class TinyMediaManager {
         }
         else if (cmd.equalsIgnoreCase("-scrapeNew")) {
           scrapeNew = true;
+        }
+        else if (cmd.equalsIgnoreCase("-scrapeUnscraped")) {
+          scrapeUnscraped = true;
         }
         else if (cmd.equalsIgnoreCase("-renameNew")) {
           renameNew = true;
@@ -566,11 +571,12 @@ public class TinyMediaManager {
    */
   private static void startCommandLineTasks() {
     try {
+      TmmSwingWorker task = null;
 
       // update movies //////////////////////////////////////////////
       if (updateMovies) {
         LOGGER.info("Commandline - updating movies...");
-        TmmSwingWorker task = new MovieUpdateDatasourceTask();
+        task = new MovieUpdateDatasourceTask();
         task.execute();
         task.get(); // blocking
         List<Movie> newMovies = MovieList.getInstance().getNewMovies();
@@ -598,11 +604,30 @@ public class TinyMediaManager {
           }
         }
       }
+      if (scrapeUnscraped) {
+        LOGGER.info("Commandline - scraping all unscraped movies...");
+        List<Movie> unscrapedMovies = MovieList.getInstance().getUnscrapedMovies();
+        if (unscrapedMovies.size() > 0) {
+          MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
+          options.loadDefaults();
+          task = new MovieScrapeTask(unscrapedMovies, true, options);
+          task.execute();
+          task.get(); // blocking
+        }
+        if (renameNew) {
+          LOGGER.info("Commandline - rename & cleanup new movies...");
+          if (unscrapedMovies.size() > 0) {
+            task = new MovieRenameTask(unscrapedMovies);
+            task.execute();
+            task.get(); // blocking
+          }
+        }
+      }
 
       // update TvShows //////////////////////////////////////////////
       if (updateTv) {
         LOGGER.info("Commandline - updating TvShows and episodes...");
-        TmmSwingWorker task = new TvShowUpdateDatasourceTask();
+        task = new TvShowUpdateDatasourceTask();
         task.execute();
         task.get(); // blocking
         List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
@@ -624,7 +649,7 @@ public class TinyMediaManager {
         }
 
         if (renameNew) {
-          LOGGER.info("Commandline - rename & cleanup new spidoes...");
+          LOGGER.info("Commandline - rename & cleanup new episodes...");
           if (newTv.size() > 0 && newEp.size() > 0) {
             task = new TvShowRenameTask(null, newEp); // just rename new EPs
             task.execute();
