@@ -77,6 +77,7 @@ resource = locale/messages_fr.properties
 resource = locale/messages_nl.properties
 resource = locale/messages_pt.properties
 resource = locale/messages_sk.properties
+resource = locale/messages_vi.properties
 #resource = locale/messages_.properties
 
 # mediainfo native libs
