@@ -210,31 +210,33 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
 
     for (MovieDb movie : moviesFound) {
-      MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
-      sr.setId(Integer.toString(movie.getId()));
-      sr.setIMDBId(movie.getImdbID());
-      sr.setTitle(movie.getTitle());
-      sr.setOriginalTitle(movie.getOriginalTitle());
-      sr.setPosterUrl(baseUrl + "w342" + movie.getPosterPath());
+      if (movie != null) {
+        MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
+        sr.setId(Integer.toString(movie.getId()));
+        sr.setIMDBId(movie.getImdbID());
+        sr.setTitle(movie.getTitle());
+        sr.setOriginalTitle(movie.getOriginalTitle());
+        sr.setPosterUrl(baseUrl + "w342" + movie.getPosterPath());
 
-      // parse release date to year
-      String releaseDate = movie.getReleaseDate();
-      if (releaseDate != null && releaseDate.length() > 3) {
-        sr.setYear(movie.getReleaseDate().substring(0, 4));
-      }
+        // parse release date to year
+        String releaseDate = movie.getReleaseDate();
+        if (releaseDate != null && releaseDate.length() > 3) {
+          sr.setYear(movie.getReleaseDate().substring(0, 4));
+        }
 
-      // populate extra args
-      MetadataUtil.copySearchQueryToSearchResult(query, sr);
+        // populate extra args
+        MetadataUtil.copySearchQueryToSearchResult(query, sr);
 
-      if (imdbId.equals(sr.getIMDBId()) || String.valueOf(tmdbId).equals(sr.getId())) {
-        // perfect match
-        sr.setScore(1);
+        if (imdbId.equals(sr.getIMDBId()) || String.valueOf(tmdbId).equals(sr.getId())) {
+          // perfect match
+          sr.setScore(1);
+        }
+        else {
+          // compare score based on names
+          sr.setScore(MetadataUtil.calculateScore(searchString, movie.getTitle()));
+        }
+        resultList.add(sr);
       }
-      else {
-        // compare score based on names
-        sr.setScore(MetadataUtil.calculateScore(searchString, movie.getTitle()));
-      }
-      resultList.add(sr);
     }
     Collections.sort(resultList);
     Collections.reverse(resultList);
