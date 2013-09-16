@@ -23,6 +23,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -32,7 +35,6 @@ import javax.swing.SwingWorker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.ui.WrapLayout;
@@ -48,16 +50,19 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class ImagePanel extends JPanel implements HierarchyListener {
-  private static final long   serialVersionUID = -5344085698387374260L;
-  private static final Logger LOGGER           = LoggerFactory.getLogger(ImagePanel.class);
-  private List<MediaFile>     mediaFiles       = null;
+  private static final long              serialVersionUID = -5344085698387374260L;
+  private static final Logger            LOGGER           = LoggerFactory.getLogger(ImagePanel.class);
+  private List<MediaFile>                mediaFiles       = null;
+  public static final ThreadPoolExecutor imgpool          = new ThreadPoolExecutor(5, 5, // max threads
+                                                              2, TimeUnit.SECONDS, // time to wait before closing idle workers
+                                                              new LinkedBlockingQueue<Runnable>());   // our queue
 
   /**
    * UI components
    */
 
-  private JPanel              panelImages;
-  private JScrollPane         scrollPane;
+  private JPanel                         panelImages;
+  private JScrollPane                    scrollPane;
 
   public ImagePanel(List<MediaFile> mediaFiles) {
     this.mediaFiles = mediaFiles;
@@ -75,13 +80,14 @@ public class ImagePanel extends JPanel implements HierarchyListener {
    * Trigger to rebuild the panel
    */
   public void rebuildPanel() {
+    imgpool.getQueue().clear();
     panelImages.removeAll();
     panelImages.revalidate();
     scrollPane.repaint();
 
     // fetch image in separate worker -> performance
     for (MediaFile mf : new ArrayList<MediaFile>(mediaFiles)) {
-      Globals.executor.submit(new ImageLoader(mf));
+      imgpool.submit(new ImageLoader(mf));
     }
   }
 
