@@ -156,7 +156,9 @@
 
         <!-- Linux -->
         <copy file="AppBundler/tinyMediaManager.sh" todir="${dist.dir}" />
+    	<copy file="AppBundler/tinyMediaManagerCMD.sh" todir="${dist.dir}" />
         <chmod file="${dist.dir}/tinyMediaManager.sh" perm="ugo+rx" />
+    	<chmod file="${dist.dir}/tinyMediaManagerCMD.sh" perm="ugo+rx" />
         <tar destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar" >
             <tarfileset dir="${build.dir}"/>
             <tarfileset dir="${dist.dir}" includes="*.sh"/>
@@ -176,6 +178,7 @@
         <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.exe" />
         <copy file="${dist.dir}/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.exe" />
         <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
+    	<copy file="${dist.dir}/tinyMediaManagerCMD.sh" tofile="${build.dir}/tinyMediaManagerCMD.sh" />
         <copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
 
         <!-- finally create checksums -->

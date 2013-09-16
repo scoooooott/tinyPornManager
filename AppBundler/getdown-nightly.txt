@@ -63,6 +63,7 @@ delete = lib/log4j.jar
 
 #resource = [windows] tinyMediaManager.exe #not yet - need more testing
 resource = [windows] tinyMediaManagerCMD.exe
+resource = [!windows] tinyMediaManagerCMD.sh
 resource = [!windows] tinyMediaManager.sh
 resource = getdown-new.jar
 resource = version
@@ -111,6 +112,7 @@ tmm.class = org.tinymediamanager.TinyMediaManager
 allow_offline = true
 
 # jvm args
+# NOTE: please consider to write fundamental changes to the commandline start scripts too
 jvmarg = -Xms64m 
 jvmarg = -Xmx512m
 jvmarg = -Xss512k
