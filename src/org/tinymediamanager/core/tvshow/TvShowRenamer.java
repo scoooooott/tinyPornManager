@@ -175,7 +175,7 @@ public class TvShowRenamer {
       seasonDir.mkdir();
     }
 
-    if (ep.isDisc()) {
+    if (ep.isDisc() || mf.isDiscFile()) {
       // \Season 1\S01E02E03\VIDEO_TS\VIDEO_TS.VOB
       // ......... \epFolder \disc... \ file
       File disc = mf.getFile().getParentFile();
