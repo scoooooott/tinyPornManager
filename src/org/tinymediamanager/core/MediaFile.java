@@ -128,36 +128,30 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * Instantiates a new media file.
    * 
    * @param f
-   *          the f
+   *          the file
    */
   public MediaFile(File f) {
-    this.path = f.getParent(); // just path w/o filename
-    this.filename = f.getName();
-    this.file = f;
-    this.type = parseType();
-    this.stacking = Utils.getStackingNumber(f.getName());
-    if (this.stacking == 0) {
-      // try to parse from parent directory
-      this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
-    }
-    if (file.exists()) {
-      setFilesize(FileUtils.sizeOf(file));
-    }
+    this(f, null);
   }
 
   /**
    * Instantiates a new media file.
    * 
    * @param f
-   *          the f
+   *          the file
    * @param type
-   *          the type
+   *          the MediaFileType
    */
   public MediaFile(File f, MediaFileType type) {
     this.path = f.getParent(); // just path w/o filename
     this.filename = f.getName();
     this.file = f;
-    this.type = type;
+    if (type == null) {
+      this.type = parseType();
+    }
+    else {
+      this.type = type;
+    }
     this.stacking = Utils.getStackingNumber(f.getName());
     if (this.stacking == 0) {
       // try to parse from parent directory
@@ -281,7 +275,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public boolean isDiscFile() {
     String name = getFilename().toLowerCase();
     return (name.matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)") || // dvd
-    name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts")); // bluray
+    name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")); // bluray
   }
 
   /**
@@ -1269,6 +1263,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     return false;
+  }
+
+  /**
+   * does MediaFile exists?
+   * 
+   * @return true/false
+   */
+  public boolean exists() {
+    return getFile().exists();
   }
 
   /*

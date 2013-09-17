@@ -318,6 +318,23 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * Gets a list of movies by same path.
+   * 
+   * @param path
+   *          the path
+   * @return the movie list
+   */
+  public synchronized List<Movie> getMoviesByPath(String path) {
+    ArrayList<Movie> movies = new ArrayList<Movie>();
+    for (Movie movie : movieList) {
+      if (movie.getPath().compareTo(path) == 0) {
+        movies.add(movie);
+      }
+    }
+    return movies;
+  }
+
+  /**
    * Search movie.
    * 
    * @param searchTerm
