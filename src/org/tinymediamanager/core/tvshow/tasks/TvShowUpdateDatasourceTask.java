@@ -55,7 +55,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private List<File>                tvShowFolders = new ArrayList<File>();
   private TvShowList                tvShowList;
   // skip well-known, but unneeded BD & DVD folders
-  private static final List<String> skipFolders   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "AUXDATA", "AUDIO_TS");
+  private static final List<String> skipFolders   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA", "AUDIO_TS");
 
   /**
    * Instantiates a new scrape task - to update all datasources

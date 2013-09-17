@@ -274,6 +274,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * is this a "disc file"? (video_ts, vts, bdmv, ...) for movierenamer
+   * 
+   * @return true/false
+   */
+  public boolean isDiscFile() {
+    String name = getFilename().toLowerCase();
+    return (name.matches("(video_ts|vts_\\d\\d_\\d)\\.(vob|bup|ifo)") || // dvd
+    name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts")); // bluray
+  }
+
+  /**
    * gets the file handle.
    * 
    * @return the file handle or NULL if file does not exits
