@@ -264,7 +264,7 @@ public class MovieRenamer {
       String newPath = movie.getPath() + File.separator;
       String fileExtension = FilenameUtils.getExtension(vid.getFilename());
 
-      if (!movie.isDisc()) {
+      if (!movie.isDisc() || vid.isDiscFile()) {
         cleanup.add(new MediaFile(vid)); // mark old file for cleanup (clone current)
         if (renameFiles) {
           // create new filename according to template
