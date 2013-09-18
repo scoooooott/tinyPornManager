@@ -168,9 +168,10 @@ public class TinyMediaManager {
     LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
     LOGGER.info("=====================================================");
 
-    // set GUI default language
-    Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
-    LOGGER.debug("Language set to: " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
+    LOGGER.info("os.name          : " + System.getProperty("os.name"));
+    LOGGER.info("os.version       : " + System.getProperty("os.version"));
+    LOGGER.info("os.arch          : " + System.getProperty("os.arch"));
+    LOGGER.info("java.version     : " + System.getProperty("java.version"));
 
     // initialize SWT if needed
     TmmUIHelper.init();
@@ -179,7 +180,7 @@ public class TinyMediaManager {
     }
 
     // START character encoding debug
-    debugCharacterEncoding();
+    debugCharacterEncoding("default encoding : ");
     System.setProperty("file.encoding", "UTF-8");
     Field charset;
     try {
@@ -192,8 +193,15 @@ public class TinyMediaManager {
     catch (Exception e) {
       LOGGER.warn("Error resetting to UTF-8", e);
     }
-    debugCharacterEncoding();
+    debugCharacterEncoding("set encoding to  : ");
     // END character encoding debug
+
+    // set GUI default language
+    Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
+    LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.language"));
+    LOGGER.info("GUI language     : " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
+    LOGGER.info("Scraper language : " + Globals.settings.getMovieSettings().getScraperLanguage());
+    LOGGER.info("TV Scraper lang  : " + Globals.settings.getTvShowSettings().getScraperLanguage());
 
     // start EDT
     EventQueue.invokeLater(new Runnable() {
@@ -258,7 +266,7 @@ public class TinyMediaManager {
             splash.update();
           }
 
-          LOGGER.debug("=====================================================");
+          LOGGER.info("=====================================================");
           LOGGER.info("starting tinyMediaManager");
 
           // initialize database //////////////////////////////////////////////
@@ -558,14 +566,12 @@ public class TinyMediaManager {
   /**
    * debug various JVM character settings
    */
-  private static void debugCharacterEncoding() {
+  private static void debugCharacterEncoding(String text) {
     String defaultCharacterEncoding = System.getProperty("file.encoding");
-    LOGGER.debug("defaultCharacterEncoding by property: " + defaultCharacterEncoding);
     byte[] bArray = { 'w' };
     InputStream is = new ByteArrayInputStream(bArray);
     InputStreamReader reader = new InputStreamReader(is);
-    LOGGER.debug("defaultCharacterEncoding by code: " + reader.getEncoding());
-    LOGGER.debug("defaultCharacterEncoding by charSet: " + Charset.defaultCharset());
+    LOGGER.info(text + defaultCharacterEncoding + " | " + reader.getEncoding() + " | " + Charset.defaultCharset());
   }
 
   /**
