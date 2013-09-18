@@ -95,6 +95,10 @@ public class TinyMediaManager {
   private static void syntax() {
     // @formatter:off
     System.out.println("\n" +
+        "=====================================================\n" +
+        "=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===\n" +
+        "=====================================================\n" +
+        "\n" +
         "    SYNTAX: java -jar tmm.jar <parameters>\n" +
         "\n" +
         "PARAMETERS:\n" +
@@ -117,9 +121,6 @@ public class TinyMediaManager {
    *          the arguments
    */
   public static void main(String[] args) {
-    LOGGER.info("=====================================================");
-    LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
-    LOGGER.info("=====================================================");
     // simple parse command line
     if (args != null && args.length > 0) {
       for (String cmd : args) {
@@ -152,7 +153,6 @@ public class TinyMediaManager {
           System.exit(0);
         }
       }
-      LOGGER.info("starting without GUI...");
       System.setProperty("java.awt.headless", "true");
     }
     else {
@@ -163,6 +163,11 @@ public class TinyMediaManager {
         System.exit(0);
       }
     }
+
+    LOGGER.info("=====================================================");
+    LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
+    LOGGER.info("=====================================================");
+
     // set GUI default language
     Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
     LOGGER.debug("Language set to: " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
@@ -200,6 +205,7 @@ public class TinyMediaManager {
           }
           else {
             Thread.currentThread().setName("headless");
+            LOGGER.debug("starting without GUI...");
           }
           Toolkit tk = Toolkit.getDefaultToolkit();
           tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
