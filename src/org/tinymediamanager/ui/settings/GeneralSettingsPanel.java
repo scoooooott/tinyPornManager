@@ -176,11 +176,12 @@ public class GeneralSettingsPanel extends JPanel {
     LocaleComboBox actualLocale = null;
 
     // cbLanguage = new JComboBox(Utils.getLanguages().toArray());
+    Locale settingsLang = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
     for (Locale l : Utils.getLanguages()) {
       LocaleComboBox localeComboBox = new LocaleComboBox();
       localeComboBox.loc = l;
       locales.add(localeComboBox);
-      if (l.equals(new Locale(Globals.settings.getLanguage()))) {
+      if (l.equals(settingsLang)) {
         actualLocale = localeComboBox;
       }
     }
@@ -429,7 +430,7 @@ public class GeneralSettingsPanel extends JPanel {
 
     LocaleComboBox loc = (LocaleComboBox) cbLanguage.getSelectedItem();
     Locale locale = loc.loc;
-    Locale actualLocale = new Locale(Globals.settings.getLanguage());
+    Locale actualLocale = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
     if (!locale.equals(actualLocale)) {
       Globals.settings.setLanguage(locale.getLanguage());
       lblLanguageHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
@@ -505,7 +506,7 @@ public class GeneralSettingsPanel extends JPanel {
   }
 
   /**
-   * Helper class for customized toString() method
+   * Helper class for customized toString() method, to get the Name in localized language.
    */
   private class LocaleComboBox {
     private Locale loc;

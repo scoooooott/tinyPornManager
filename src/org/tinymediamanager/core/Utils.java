@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +49,7 @@ import javax.net.ssl.SSLException;
 
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -536,7 +536,7 @@ public class Utils {
         System.getProperty("os.version", ""),
         System.getProperty("os.arch", ""),
         System.getProperty("user.language", "en"),
-        System.getProperty("user.country", "EN"));
+        System.getProperty("user.country", "US"));
     // @formatter:on
 
     return ua;
@@ -738,19 +738,49 @@ public class Utils {
    * @return List of Locales
    */
   public static List<Locale> getLanguages() {
-    HashSet<Locale> loc = new HashSet<Locale>();
-    loc.add(Locale.ENGLISH);
+    ArrayList<Locale> loc = new ArrayList<Locale>();
+    loc.add(getLocaleFromLanguage(Locale.ENGLISH.getLanguage()));
     try {
       File[] props = new File("locale").listFiles();
       for (File file : props) {
         String l = file.getName().substring(9, 11); // messages_XX.properties
-        loc.add(new Locale(l));
+        Locale myloc = getLocaleFromLanguage(l);
+        if (!loc.contains(myloc)) {
+          loc.add(myloc);
+        }
       }
     }
     catch (Exception e) {
       // do nothing
     }
-    return new ArrayList<Locale>(loc);
+    return loc;
+  }
+
+  /**
+   * Gets a correct Locale (language + country) from given language.
+   * 
+   * @param language
+   *          as 2char
+   * @return Locale
+   */
+  public static Locale getLocaleFromLanguage(String language) {
+    if (language == null || language.isEmpty()) {
+      return null;
+    }
+    Locale l = null;
+    List<Locale> countries = LocaleUtils.countriesByLanguage(language);
+    for (Locale locale : countries) {
+      if (locale.getCountry().equalsIgnoreCase(language)) {
+        // map to main countries; de->de_DE (and not de_CH)
+        l = locale;
+      }
+    }
+    if (l == null && countries != null && countries.size() > 0) {
+      // well, take the first one
+      l = countries.get(0);
+    }
+
+    return l;
   }
 
   /**

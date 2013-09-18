@@ -169,7 +169,8 @@ public class TinyMediaManager {
     }
 
     // set GUI default language
-    Locale.setDefault(new Locale(Globals.settings.getLanguage()));
+    Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
+    LOGGER.debug("Language set to: " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
 
     // initialize SWT if needed
     TmmUIHelper.init();
