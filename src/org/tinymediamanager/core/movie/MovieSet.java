@@ -476,7 +476,9 @@ public class MovieSet extends MediaEntity {
     // write image for all movies
     for (Movie movie : movies) {
       try {
-        writeImage(url, movie.getPath() + File.separator + filename);
+        if (!movie.isMultiMovieDir()) {
+          writeImage(url, movie.getPath() + File.separator + filename);
+        }
       }
       catch (IOException e) {
         LOGGER.warn("could not write files", e);

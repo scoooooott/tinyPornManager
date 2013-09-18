@@ -400,7 +400,15 @@ public class MovieToXbmcNfoConnector {
     String nfoFilename = "";
     List<MediaFile> newNfos = new ArrayList<MediaFile>(1);
 
-    for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
+    List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
+    if (movie.isMultiMovieDir()) {
+      // Fixate the name regardless of setting
+      nfonames.add(MovieNfoNaming.FILENAME_NFO);
+    }
+    else {
+      nfonames = Globals.settings.getMovieSettings().getMovieNfoFilenames();
+    }
+    for (MovieNfoNaming name : nfonames) {
       try {
         nfoFilename = movie.getNfoFilename(name);
 

@@ -68,14 +68,16 @@ public class MovieExtraImageFetcher implements Runnable {
   public void run() {
     // try/catch block in the root of the thread to log crashes
     try {
-      // download extrathumbs
-      if (extrathumbs) {
-        movie.downloadExtraThumbs(new ArrayList<String>(movie.getExtraThumbs()));
-      }
+      if (!movie.isMultiMovieDir()) {
+        // download extrathumbs
+        if (extrathumbs) {
+          movie.downloadExtraThumbs(new ArrayList<String>(movie.getExtraThumbs()));
+        }
 
-      // download extrafanart
-      if (extrafanart) {
-        movie.downloadExtraFanarts(new ArrayList<String>(movie.getExtraFanarts()));
+        // download extrafanart
+        if (extrafanart) {
+          movie.downloadExtraFanarts(new ArrayList<String>(movie.getExtraFanarts()));
+        }
       }
     }
     catch (Exception e) {

@@ -176,38 +176,49 @@ public class MovieRenamer {
 
     String newPathname = createDestination(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
     String oldPathname = movie.getPath();
+    boolean resetMultidir = false;
 
     if (!newPathname.isEmpty()) {
       newPathname = movie.getDataSource() + File.separator + newPathname;
-
       File srcDir = new File(oldPathname);
       File destDir = new File(newPathname);
       // move directory if needed
       if (!srcDir.equals(destDir)) {
-        boolean ok = false;
-        try {
-          // FileUtils.moveDirectory(srcDir, destDir);
-          ok = Utils.moveDirectorySafe(srcDir, destDir);
-          if (ok) {
-            movie.updateMediaFilePath(destDir);
-            movie.setPath(newPathname);
-            movie.saveToDb();
+        if (!movie.isMultiMovieDir()) {
+          boolean ok = false;
+          try {
+            // FileUtils.moveDirectory(srcDir, destDir);
+            ok = Utils.moveDirectorySafe(srcDir, destDir);
+            if (ok) {
+              movie.updateMediaFilePath(destDir);
+              movie.setPath(newPathname);
+              movie.saveToDb();
+            }
+          }
+          catch (Exception e) {
+            LOGGER.error("error moving folder: ", e);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":",
+                e.getLocalizedMessage() }));
+          }
+          if (!ok) {
+            // FIXME: when we were not able to rename folder, display error msg
+            // and abort!!!
+            return;
           }
         }
-        catch (Exception e) {
-          LOGGER.error("error moving folder: ", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
-        }
-        if (!ok) {
-          // FIXME: when we were not able to rename folder, display error msg
-          // and abort!!!
-          return;
+        else {
+          // movie in multidir; just create structure...
+          if (!destDir.exists()) {
+            destDir.mkdirs();
+          }
+          resetMultidir = true;
         }
       }
     }
     else {
       LOGGER.info("Folder rename settings were empty - NOT renaming folder");
+      // set it to current for file renaming
+      newPathname = movie.getPath();
     }
 
     // if empty, do not rename file, but DO move them to movie root
@@ -261,7 +272,7 @@ public class MovieRenamer {
       LOGGER.info("rename file " + vid.getFile().getAbsolutePath());
 
       String newFilename = vid.getFilename();
-      String newPath = movie.getPath() + File.separator;
+      // String newPath = movie.getPath() + File.separator;
       String fileExtension = FilenameUtils.getExtension(vid.getFilename());
 
       if (!movie.isDisc() || vid.isDiscFile()) {
@@ -287,11 +298,11 @@ public class MovieRenamer {
         }
 
         MediaFile newMF = new MediaFile(vid);
-        File newFile = new File(newPath, newFilename);
+        File newFile = new File(newPathname, newFilename);
         try {
           boolean ok = Utils.moveFileSafe(vid.getFile(), newFile);
           if (ok) {
-            newMF.setPath(newPath);
+            newMF.setPath(newPathname);
             newMF.setFilename(newFilename);
           }
           else {
@@ -328,17 +339,25 @@ public class MovieRenamer {
       mf = mfl.get(0);
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
-      String newPath = movie.getPath() + File.separator;
+      // String newPath = movie.getPath() + File.separator;
 
-      for (MovieNfoNaming name : Globals.settings.getMovieSettings().getMovieNfoFilenames()) {
+      List<MovieNfoNaming> nfonames = new ArrayList<MovieNfoNaming>();
+      if (movie.isMultiMovieDir()) {
+        // Fixate the name regardless of setting
+        nfonames.add(MovieNfoNaming.FILENAME_NFO);
+      }
+      else {
+        nfonames = Globals.settings.getMovieSettings().getMovieNfoFilenames();
+      }
+      for (MovieNfoNaming name : nfonames) {
         MediaFile newMF = new MediaFile(mf);
         newFilename = movie.getNfoFilename(name, newMovieFilename);
-        File newFile = new File(newPath, newFilename);
+        File newFile = new File(newPathname, newFilename);
         try {
           boolean ok = copyFile(mf.getFile(), newFile);
           if (ok) {
             // movie.setNfoFilename(newFilename); // TODO remove when work completely with MediaFiles
-            newMF.setPath(newPath);
+            newMF.setPath(newPathname);
             newMF.setFilename(newFilename);
           }
         }
@@ -359,9 +378,18 @@ public class MovieRenamer {
       mf = mfl.get(0);
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
-      String newPath = movie.getPath() + File.separator;
+      // String newPath = movie.getPath() + File.separator;
 
-      for (MoviePosterNaming name : Globals.settings.getMovieSettings().getMoviePosterFilenames()) {
+      List<MoviePosterNaming> posternames = new ArrayList<MoviePosterNaming>();
+      if (movie.isMultiMovieDir()) {
+        // Fixate the name regardless of setting
+        posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
+        posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
+      }
+      else {
+        posternames = Globals.settings.getMovieSettings().getMoviePosterFilenames();
+      }
+      for (MoviePosterNaming name : posternames) {
         newFilename = movie.getPosterFilename(name, newMovieFilename);
         String curExt = mf.getExtension();
         if (curExt.equalsIgnoreCase("tbn")) {
@@ -380,11 +408,11 @@ public class MovieRenamer {
         posterRenamed = true;
 
         MediaFile newMF = new MediaFile(mf);
-        File newFile = new File(newPath, newFilename);
+        File newFile = new File(newPathname, newFilename);
         try {
           boolean ok = copyFile(mf.getFile(), newFile);
           if (ok) {
-            newMF.setPath(newPath);
+            newMF.setPath(newPathname);
             newMF.setFilename(newFilename);
           }
         }
@@ -406,9 +434,18 @@ public class MovieRenamer {
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
 
       String newFilename = mf.getFilename();
-      String newPath = movie.getPath() + File.separator;
+      // String newPath = movie.getPath() + File.separator;
 
-      for (MovieFanartNaming name : Globals.settings.getMovieSettings().getMovieFanartFilenames()) {
+      List<MovieFanartNaming> fanartnames = new ArrayList<MovieFanartNaming>();
+      if (movie.isMultiMovieDir()) {
+        // Fixate the name regardless of setting
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+      }
+      else {
+        fanartnames = Globals.settings.getMovieSettings().getMovieFanartFilenames();
+      }
+      for (MovieFanartNaming name : fanartnames) {
         newFilename = movie.getFanartFilename(name, newMovieFilename);
         String curExt = mf.getExtension();
         if (curExt.equalsIgnoreCase("tbn")) {
@@ -427,11 +464,11 @@ public class MovieRenamer {
         fanartRenamed = true;
 
         MediaFile newMF = new MediaFile(mf);
-        File newFile = new File(newPath, newFilename);
+        File newFile = new File(newPathname, newFilename);
         try {
           boolean ok = copyFile(mf.getFile(), newFile);
           if (ok) {
-            newMF.setPath(newPath);
+            newMF.setPath(newPathname);
             newMF.setFilename(newFilename);
           }
         }
@@ -452,15 +489,15 @@ public class MovieRenamer {
       mf = mfl.get(0);
       cleanup.add(new MediaFile(mf)); // mark old file for cleanup (clone current)
       String newFilename = mf.getFilename();
-      String newPath = movie.getPath() + File.separator;
+      // String newPath = movie.getPath() + File.separator;
       String fileExtension = FilenameUtils.getExtension(mf.getFilename());
       newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie) + "-trailer." + fileExtension;
       MediaFile newMF = new MediaFile(mf);
-      File newFile = new File(newPath, newFilename);
+      File newFile = new File(newPathname, newFilename);
       try {
         boolean ok = Utils.moveFileSafe(mf.getFile(), newFile);
         if (ok) {
-          newMF.setPath(newPath);
+          newMF.setPath(newPathname);
           newMF.setFilename(newFilename);
         }
       }
@@ -524,8 +561,12 @@ public class MovieRenamer {
     needed.clear();
     needed.addAll(newMFs);
 
+    if (resetMultidir) {
+      movie.setMultiMovieDir(false);
+    }
     movie.removeAllMediaFiles();
     movie.addToMediaFiles(needed);
+    movie.setPath(newPathname);
     movie.saveToDb();
 
     // cleanup & rename subtitle files
@@ -708,10 +749,7 @@ public class MovieRenamer {
       // also replace triple and double replacements with one to avoid strange looking results;
       // example:
       // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
-      newDestination = newDestination.replace(replacement + replacement + replacement, replacement);
-      newDestination = newDestination.replace(replacement + replacement, replacement);
-      // newDestination = newDestination.replace(" ", "_");
-      // newDestination = newDestination.replace("__", "_");
+      newDestination = newDestination.replaceAll(replacement + replacement, replacement);
     }
 
     return newDestination.trim();

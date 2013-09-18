@@ -101,6 +101,7 @@ public class Movie extends MediaEntity {
   private boolean             subtitles         = false;
   private String              country           = "";
   private Date                releaseDate       = null;
+  private boolean             multiMovieDir     = false;                                        // we detected more movies in same folder
 
   private List<String>        genres            = new ArrayList<String>();
   private List<String>        tags              = new ArrayList<String>();
@@ -1137,41 +1138,43 @@ public class Movie extends MediaEntity {
         }
       }
 
-      // extrathumbs
-      List<String> extrathumbs = new ArrayList<String>();
-      if (Globals.settings.getMovieSettings().isImageExtraThumbs() && Globals.settings.getMovieSettings().getImageExtraThumbsCount() > 0) {
-        for (MediaArtwork art : artwork) {
-          // only get artwork in desired resolution
-          if (art.getType() == MediaArtworkType.BACKGROUND
-              && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
-            extrathumbs.add(art.getDefaultUrl());
-            if (extrathumbs.size() >= Globals.settings.getMovieSettings().getImageExtraThumbsCount()) {
-              break;
+      if (!isMultiMovieDir()) {
+        // extrathumbs
+        List<String> extrathumbs = new ArrayList<String>();
+        if (Globals.settings.getMovieSettings().isImageExtraThumbs() && Globals.settings.getMovieSettings().getImageExtraThumbsCount() > 0) {
+          for (MediaArtwork art : artwork) {
+            // only get artwork in desired resolution
+            if (art.getType() == MediaArtworkType.BACKGROUND
+                && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
+              extrathumbs.add(art.getDefaultUrl());
+              if (extrathumbs.size() >= Globals.settings.getMovieSettings().getImageExtraThumbsCount()) {
+                break;
+              }
             }
           }
+          setExtraThumbs(extrathumbs);
         }
-        setExtraThumbs(extrathumbs);
-      }
 
-      // extrafanarts
-      List<String> extrafanarts = new ArrayList<String>();
-      if (Globals.settings.getMovieSettings().isImageExtraFanart() && Globals.settings.getMovieSettings().getImageExtraFanartCount() > 0) {
-        for (MediaArtwork art : artwork) {
-          // only get artwork in desired resolution
-          if (art.getType() == MediaArtworkType.BACKGROUND
-              && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
-            extrafanarts.add(art.getDefaultUrl());
-            if (extrafanarts.size() >= Globals.settings.getMovieSettings().getImageExtraFanartCount()) {
-              break;
+        // extrafanarts
+        List<String> extrafanarts = new ArrayList<String>();
+        if (Globals.settings.getMovieSettings().isImageExtraFanart() && Globals.settings.getMovieSettings().getImageExtraFanartCount() > 0) {
+          for (MediaArtwork art : artwork) {
+            // only get artwork in desired resolution
+            if (art.getType() == MediaArtworkType.BACKGROUND
+                && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
+              extrafanarts.add(art.getDefaultUrl());
+              if (extrafanarts.size() >= Globals.settings.getMovieSettings().getImageExtraFanartCount()) {
+                break;
+              }
             }
           }
+          setExtraFanarts(extrafanarts);
         }
-        setExtraFanarts(extrafanarts);
-      }
 
-      // download extra images
-      if (extrathumbs.size() > 0 || extrafanarts.size() > 0) {
-        writeExtraImages(true, true);
+        // download extra images
+        if (extrathumbs.size() > 0 || extrafanarts.size() > 0) {
+          writeExtraImages(true, true);
+        }
       }
 
       // download images
@@ -1449,7 +1452,16 @@ public class Movie extends MediaEntity {
     if (poster && !StringUtils.isEmpty(getPosterUrl())) {
       // try {
       int i = 0;
-      for (MoviePosterNaming name : Globals.settings.getMovieSettings().getMoviePosterFilenames()) {
+      List<MoviePosterNaming> posternames = new ArrayList<MoviePosterNaming>();
+      if (isMultiMovieDir()) {
+        // Fixate the name regardless of setting
+        posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
+        posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
+      }
+      else {
+        posternames = Globals.settings.getMovieSettings().getMoviePosterFilenames();
+      }
+      for (MoviePosterNaming name : posternames) {
         boolean firstImage = false;
         filename = getPosterFilename(name);
 
@@ -1473,7 +1485,16 @@ public class Movie extends MediaEntity {
     // fanart
     if (fanart && !StringUtils.isEmpty(getFanartUrl())) {
       int i = 0;
-      for (MovieFanartNaming name : Globals.settings.getMovieSettings().getMovieFanartFilenames()) {
+      List<MovieFanartNaming> fanartnames = new ArrayList<MovieFanartNaming>();
+      if (isMultiMovieDir()) {
+        // Fixate the name regardless of setting
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
+        fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+      }
+      else {
+        fanartnames = Globals.settings.getMovieSettings().getMovieFanartFilenames();
+      }
+      for (MovieFanartNaming name : fanartnames) {
         boolean firstImage = false;
         filename = getFanartFilename(name);
 
@@ -1500,7 +1521,7 @@ public class Movie extends MediaEntity {
    */
   public void writeActorImages() {
     // check if actor images shall be written
-    if (!Globals.settings.getMovieSettings().isWriteActorImages()) {
+    if (!Globals.settings.getMovieSettings().isWriteActorImages() || isMultiMovieDir()) {
       return;
     }
 
@@ -1685,6 +1706,27 @@ public class Movie extends MediaEntity {
     boolean oldValue = this.watched;
     this.watched = newValue;
     firePropertyChange(WATCHED, oldValue, newValue);
+  }
+
+  /**
+   * Checks if this movie is in a folder with other movies and not in an own folder<br>
+   * so disable everything except renaming
+   * 
+   * @return true, if in datasource root
+   */
+  public boolean isMultiMovieDir() {
+    return multiMovieDir;
+  }
+
+  /**
+   * Sets the flag, that the movie is not in an own folder<br>
+   * so disable everything except renaming
+   * 
+   * @param multiDir
+   *          true/false
+   */
+  public void setMultiMovieDir(boolean multiDir) {
+    this.multiMovieDir = multiDir;
   }
 
   /**
