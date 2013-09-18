@@ -238,12 +238,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           LOGGER.debug("create new movie");
           movie = new Movie();
           movie.setTitle(ParserUtils.detectCleanMoviename(basename));
-          movie.setPath(mf.getPath());
-          movie.setDataSource(datasource);
           movie.setDateAdded(new Date());
           movie.saveToDb();
         }
+        movie.setDataSource(datasource);
         movie.setNewlyAdded(true);
+        movie.setPath(mf.getPath());
       }
 
       movie.addToMediaFiles(mf);
@@ -330,26 +330,28 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    */
   private void parseMovieDirectory(File movieDir, String dataSource) {
     try {
-      HashSet<String> h = new HashSet<String>();
-      File[] files = null;
-
-      if (Globals.settings.getMovieSettings().isDetectMovieMultiDir()) {
-        // list all type VIDEO files
-        files = movieDir.listFiles(new FilenameFilter() {
-          @Override
-          public boolean accept(File dir, String name) {
-            return new MediaFile(new File(dir, name)).getType().equals(MediaFileType.VIDEO); // no trailer or extra vids!
-          }
-        });
-        // check if we have more than one movie in dir
-        for (File file : files) {
-          h.add(ParserUtils.detectCleanMoviename(Utils.cleanStackingMarkers(FilenameUtils.getBaseName(file.getName()))));
+      // list all type VIDEO files
+      File[] files = movieDir.listFiles(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return new MediaFile(new File(dir, name)).getType().equals(MediaFileType.VIDEO); // no trailer or extra vids!
         }
+      });
+      // check if we have more than one movie in dir
+      HashSet<String> h = new HashSet<String>();
+      for (File file : files) {
+        h.add(ParserUtils.detectCleanMoviename(Utils.cleanStackingMarkers(FilenameUtils.getBaseName(file.getName()))));
       }
       // more than 1, or if DS=dir then assume a multi dir (only second level is a normal movie dir)
       if (h.size() > 1 || movieDir.equals(new File(dataSource))) {
         LOGGER.debug("WOOT - we have a multi movie directory: " + movieDir);
-        parseMultiMovieDir(files, dataSource);
+        if (Globals.settings.getMovieSettings().isDetectMovieMultiDir()) {
+          parseMultiMovieDir(files, dataSource);
+        }
+        else {
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.movieinroot",
+              new String[] { movieDir.getName() }));
+        }
       }
       else {
         LOGGER.debug("PAH - normal movie directory: " + movieDir);
