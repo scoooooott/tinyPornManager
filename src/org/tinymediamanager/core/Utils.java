@@ -91,8 +91,10 @@ public class Utils {
   /** The client. */
   private static DefaultHttpClient                  client;
   /** The Constant HTTP_USER_AGENT. */
+
+  // do not use static here, since we need to FIRST set our language....
   // protected static final String HTTP_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:19.0) Gecko/20100101 Firefox/19.0";
-  protected static final String                     HTTP_USER_AGENT   = generateUA();
+  // public static final String HTTP_USER_AGENT = generateUA();
 
   /** The Constant LOGGER. */
   private static final Logger                       LOGGER            = LoggerFactory.getLogger(Utils.class);
@@ -352,7 +354,9 @@ public class Utils {
     HttpParams params = client.getParams();
     HttpConnectionParams.setConnectionTimeout(params, 10000);
     HttpConnectionParams.setSoTimeout(params, 10000);
-    HttpProtocolParams.setUserAgent(params, HTTP_USER_AGENT);
+    String ua = generateUA();
+    LOGGER.debug("setting HTTP user-agent to: " + ua);
+    HttpProtocolParams.setUserAgent(params, ua);
 
     // my own retry handler
     HttpRequestRetryHandler myRetryHandler = new HttpRequestRetryHandler() {
@@ -535,8 +539,8 @@ public class Utils {
         System.getProperty("os.name", ""),
         System.getProperty("os.version", ""),
         System.getProperty("os.arch", ""),
-        System.getProperty("user.language", "en"),
-        System.getProperty("user.country", "US"));
+        Locale.getDefault().getLanguage(),
+        Locale.getDefault().getCountry());
     // @formatter:on
 
     return ua;
