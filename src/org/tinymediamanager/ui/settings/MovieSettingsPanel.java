@@ -99,6 +99,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
   private JComboBox                   cbSeparator;
   private JComboBox                   cbMovieForPreview;
   private JCheckBox                   chckbxRemoveOtherNfos;
+  private JCheckBox                   chckbxMultipleMoviesPerFolder;
 
   /**
    * Instantiates a new movie settings panel.
@@ -113,11 +114,13 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     panelMovieDataSources.setBorder(new TitledBorder(null,
         BUNDLE.getString("Settings.movie.datasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelMovieDataSources, "2, 2, fill, fill");
-    panelMovieDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(72dlu;default)"),
+    panelMovieDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(66dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(44dlu;default)"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        ColumnSpec.decode("max(72dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("100px:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JScrollPane scrollPane = new JScrollPane();
     panelMovieDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
@@ -126,7 +129,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     scrollPane.setViewportView(tableMovieSources);
 
     JPanel panelMovieSourcesButtons = new JPanel();
-    panelMovieDataSources.add(panelMovieSourcesButtons, "8, 2, default, top");
+    panelMovieDataSources.add(panelMovieSourcesButtons, "8, 2, fill, top");
     panelMovieSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
@@ -162,20 +165,36 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     });
     panelMovieSourcesButtons.add(btnRemove, "2, 3, fill, top");
 
+    JLabel lblAllowMultipleMoviesPerFolder = new JLabel(BUNDLE.getString("Settings.multipleMovies")); //$NON-NLS-1$
+    panelMovieDataSources.add(lblAllowMultipleMoviesPerFolder, "2, 4, right, default");
+
+    chckbxMultipleMoviesPerFolder = new JCheckBox("");
+    panelMovieDataSources.add(chckbxMultipleMoviesPerFolder, "4, 4");
+
+    JTextPane tpMultipleMoviesHint = new JTextPane();
+    tpMultipleMoviesHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    tpMultipleMoviesHint.setBackground(UIManager.getColor("Panel.background"));
+    tpMultipleMoviesHint.setText(BUNDLE.getString("Settings.multipleMovies.hint")); //$NON-NLS-1$
+    tpMultipleMoviesHint.setEditable(false);
+    panelMovieDataSources.add(tpMultipleMoviesHint, "6, 4, 5, 1, fill, fill");
+
+    JSeparator separator_1 = new JSeparator();
+    panelMovieDataSources.add(separator_1, "2, 6, 9, 1");
+
     JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
-    panelMovieDataSources.add(lblNfoFormat, "2, 4, right, default");
+    panelMovieDataSources.add(lblNfoFormat, "2, 8, right, default");
 
     cbNfoFormat = new JComboBox(MovieConnectors.values());
-    panelMovieDataSources.add(cbNfoFormat, "4, 4, fill, default");
+    panelMovieDataSources.add(cbNfoFormat, "4, 8, fill, default");
 
     JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
-    panelMovieDataSources.add(lblNfoFileNaming, "2, 6, right, default");
+    panelMovieDataSources.add(lblNfoFileNaming, "2, 10, right, default");
 
     cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
-    panelMovieDataSources.add(cbMovieNfoFilename1, "4, 6");
+    panelMovieDataSources.add(cbMovieNfoFilename1, "4, 10");
 
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
-    panelMovieDataSources.add(cbMovieNfoFilename2, "4, 7");
+    panelMovieDataSources.add(cbMovieNfoFilename2, "4, 11");
 
     // the panel renamer
     JPanel panelRenamer = new JPanel();
@@ -464,5 +483,10 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_1, chckbxRemoveOtherNfos, jCheckBoxBeanProperty);
     autoBinding_1.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.detectMovieMultiDir");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, chckbxMultipleMoviesPerFolder, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }

@@ -106,7 +106,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
             else {
               if (Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()))) {
-                if (Globals.settings.isDetectMovieMultiDir()) {
+                if (Globals.settings.getMovieSettings().isDetectMovieMultiDir()) {
                   parseDsRoot = true; // at least on movie found in DS root
                 }
                 else {
@@ -333,7 +333,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       HashSet<String> h = new HashSet<String>();
       File[] files = null;
 
-      if (Globals.settings.isDetectMovieMultiDir()) {
+      if (Globals.settings.getMovieSettings().isDetectMovieMultiDir()) {
         // list all type VIDEO files
         files = movieDir.listFiles(new FilenameFilter() {
           @Override

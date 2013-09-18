@@ -70,6 +70,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           IMDB_SITE                        = "imdbSite";
   private final static String           SCRAPER_LANGU                    = "scraperLanguage";
   private final static String           CERTIFICATION_COUNTRY            = "certificationCountry";
+  private final static String           DETECT_MOVIE_MULTI_DIR           = "detectMovieMultiDir";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -115,6 +116,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       writeActorImages                 = false;
   private MediaLanguages                scraperLanguage                  = MediaLanguages.en;
   private CountryCode                   certificationCountry             = CountryCode.US;
+  private boolean                       detectMovieMultiDir              = false;
 
   public MovieSettings() {
   }
@@ -491,5 +493,26 @@ public class MovieSettings extends AbstractModelObject {
 
   public void setMovieRenamerNfoCleanup(boolean movieRenamerNfoCleanup) {
     this.movieRenamerNfoCleanup = movieRenamerNfoCleanup;
+  }
+
+  /**
+   * Should we detect (and create) movies from directories containing more than one movie?
+   * 
+   * @return true/false
+   */
+  public boolean isDetectMovieMultiDir() {
+    return detectMovieMultiDir;
+  }
+
+  /**
+   * Should we detect (and create) movies from directories containing more than one movie?
+   * 
+   * @param newValue
+   *          true/false
+   */
+  public void setDetectMovieMultiDir(boolean newValue) {
+    boolean oldValue = this.detectMovieMultiDir;
+    this.detectMovieMultiDir = newValue;
+    firePropertyChange(DETECT_MOVIE_MULTI_DIR, oldValue, newValue);
   }
 }

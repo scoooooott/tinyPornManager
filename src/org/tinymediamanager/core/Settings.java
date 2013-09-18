@@ -126,7 +126,6 @@ public class Settings extends AbstractModelObject {
   private boolean                     imageCacheBackground        = false;
   private boolean                     dirty                       = false;
   private boolean                     clearCacheShutdown          = false;
-  private boolean                     detectMovieMultiDir         = false;
   private MovieSettings               movieSettings               = null;
   private TvShowSettings              tvShowSettings              = null;
   private MovieScraperMetadataConfig  movieScraperMetadataConfig  = null;
@@ -715,27 +714,6 @@ public class Settings extends AbstractModelObject {
     boolean oldValue = this.clearCacheShutdown;
     this.clearCacheShutdown = newValue;
     firePropertyChange(CLEAR_CACHE_SHUTDOWN, oldValue, newValue);
-  }
-
-  /**
-   * Should we detect (and create) movies from directories containing more than one movie?
-   * 
-   * @return true/false
-   */
-  public boolean isDetectMovieMultiDir() {
-    return detectMovieMultiDir;
-  }
-
-  /**
-   * Should we detect (and create) movies from directories containing more than one movie?
-   * 
-   * @param newValue
-   *          true/false
-   */
-  public void setDetectMovieMultiDir(boolean newValue) {
-    boolean oldValue = this.detectMovieMultiDir;
-    this.detectMovieMultiDir = newValue;
-    // firePropertyChange("???", oldValue, newValue);
   }
 
   /**
