@@ -771,6 +771,9 @@ public class Utils {
     if (language == null || language.isEmpty()) {
       return null;
     }
+    if (language.equalsIgnoreCase("en")) {
+      return new Locale("en", "US"); // don't mess around; at least fixtate this
+    }
     Locale l = null;
     List<Locale> countries = LocaleUtils.countriesByLanguage(language);
     for (Locale locale : countries) {

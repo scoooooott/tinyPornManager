@@ -118,6 +118,7 @@ public class Url {
    *          the value
    */
   public void addHeader(String key, String value) {
+    LOGGER.debug("add HTTP header: " + key + "=" + value);
     headersRequest.add(new BasicHeader(key, value));
   }
 
