@@ -537,7 +537,7 @@ public class Utils {
     // set header according to movie scraper language (or default GUI language as fallback)
     Locale l = null;
     MediaLanguages ml = Globals.settings.getMovieSettings().getScraperLanguage();
-    if (ml != null) {
+    if (ml == null) {
       ml = Globals.settings.getTvShowSettings().getScraperLanguage();
     }
     if (ml != null) {
@@ -553,7 +553,7 @@ public class Utils {
         System.getProperty("os.name", ""),
         System.getProperty("os.version", ""),
         System.getProperty("os.arch", ""),
-        l.getLanguage(), // TODO: user scraper language!!!
+        l.getLanguage(),
         l.getCountry());
     // @formatter:on
 
