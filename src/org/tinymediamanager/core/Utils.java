@@ -76,6 +76,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
 
@@ -479,7 +480,7 @@ public class Utils {
                 + "&ec=" + event
                 + "&ea=" + event 
                 + "&je=1"
-                + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country") 
+                + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
                 + "&vp=" + Globals.settings.getWindowConfig().getInteger("mainWindowW") + "x" + Globals.settings.getWindowConfig().getInteger("mainWindowH")
                 + "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height 
                 + "&cd1=" + getEncProp("os.name") 
@@ -517,7 +518,7 @@ public class Utils {
     }
   }
 
-  private static String generateUA() {
+  protected static String generateUA() {
     // this is due to the fact, that the OS is not correctly recognized (eg Mobile FirefoxOS, where it isn't)
     String hardcodeOS = "";
     if (Platform.isWindows()) {
@@ -533,14 +534,27 @@ public class Utils {
       hardcodeOS = System.getProperty("os.name");
     }
 
+    // set header according to movie scraper language (or default GUI language as fallback)
+    Locale l = null;
+    MediaLanguages ml = Globals.settings.getMovieSettings().getScraperLanguage();
+    if (ml != null) {
+      ml = Globals.settings.getTvShowSettings().getScraperLanguage();
+    }
+    if (ml != null) {
+      l = getLocaleFromLanguage(ml.name());
+    }
+    else {
+      l = getLocaleFromLanguage(Locale.getDefault().getLanguage());
+    }
+
     // @formatter:off
     String ua = String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:19.0) Gecko/20100101 Firefox/19.0", 
         hardcodeOS,
         System.getProperty("os.name", ""),
         System.getProperty("os.version", ""),
         System.getProperty("os.arch", ""),
-        Locale.getDefault().getLanguage(),
-        Locale.getDefault().getCountry());
+        l.getLanguage(), // TODO: user scraper language!!!
+        l.getCountry());
     // @formatter:on
 
     return ua;
@@ -775,7 +789,7 @@ public class Utils {
       return new Locale("en", "US"); // don't mess around; at least fixtate this
     }
     Locale l = null;
-    List<Locale> countries = LocaleUtils.countriesByLanguage(language);
+    List<Locale> countries = LocaleUtils.countriesByLanguage(language.toLowerCase());
     for (Locale locale : countries) {
       if (locale.getCountry().equalsIgnoreCase(language)) {
         // map to main countries; de->de_DE (and not de_CH)
