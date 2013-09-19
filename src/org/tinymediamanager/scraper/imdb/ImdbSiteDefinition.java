@@ -26,33 +26,11 @@ import org.apache.commons.lang3.StringUtils;
  * @author Manuel Laggner
  */
 public enum ImdbSiteDefinition {
-  // akas.imdb.com - international site
-  /** The imdb com. */
-  IMDB_COM("http://akas.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification", "Release Date"),
+  // www.imdb.com - international site
+  IMDB_COM("http://www.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification", "Release Date"),
   // www.imdb.de - german site
-  /** The imdb de. */
   IMDB_DE("http://www.imdb.de/", "iso-8859-1", "", "", "", "", "", "", "");
 
-  /**
-   * Instantiates a new imdb site definition.
-   * 
-   * @param site
-   *          the site
-   * @param charsetName
-   *          the charset name
-   * @param tagline
-   *          the tagline
-   * @param genre
-   *          the genre
-   * @param runtime
-   *          the runtime
-   * @param productionCompanies
-   *          the production companies
-   * @param writers
-   *          the writers
-   * @param certification
-   *          the certification
-   */
   private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies,
       String writers, String certification, String releaseDate) {
     this.site = site;
@@ -174,13 +152,6 @@ public enum ImdbSiteDefinition {
 // "Production Co", "Genres", "Quotes", "Storyline", "Rated", "Certification",
 // "Original Air Date", "Writer|Writers|Writing credits", "Taglines"));
 //
-// // TODO: Leaving this as labs.imdb.com for the time being, but will be
-// // updated to www.imdb.com
-// IMDB_SITES.put("us2", new ImdbSiteDefinition("http://labs.imdb.com/",
-// "ISO-8859-1", "Director|Directors|Directed by", "Cast", "Release Date",
-// "Runtime", "Country",
-// "Production Co", "Genres", "Quotes", "Storyline", "Rated", "Certification",
-// "Original Air Date", "Writer|Writers|Writing credits", "Taglines"));
 //
 // // Not 100% sure these are correct
 // IMDB_SITES.put("it2", new ImdbSiteDefinition("http://www.imdb.it/",
@@ -188,117 +159,3 @@ public enum ImdbSiteDefinition {
 // "Durata", "Nazionalit&#xE0;",
 // "Compagnia", "Genere", "Quotes", "Trama", "Rated", "Certification",
 // "Data di uscita", "Sceneggiatore|Scritto da", "Taglines"));
-
-// public class ImdbSiteDefinition {
-// private String site;
-// private String director;
-// private String cast;
-// private String releaseDate;
-// private String runtime;
-// private String country;
-// private String company;
-// private String genre;
-// private String quotes;
-// private String plot;
-// private String rated;
-// private String certification;
-// private String originalAirDate;
-// private String writer;
-// private String taglines;
-// private Charset charset;
-//
-// public ImdbSiteDefinition(String site, String charsetName, String director,
-// String cast, String releaseDate, String runtime, String country,
-// String company, String genre, String quotes, String plot, String rated,
-// String certification, String originalAirDate, String writer,
-// String taglines) {
-// super();
-// this.site = site;
-// this.director = director;
-// this.cast = cast;
-// this.releaseDate = releaseDate;
-// this.runtime = runtime;
-// this.country = country;
-// this.company = company;
-// this.genre = genre;
-// this.quotes = quotes;
-// this.plot = plot;
-// this.rated = rated;
-// this.certification = certification;
-// this.originalAirDate = originalAirDate;
-// this.writer = writer;
-// this.taglines = taglines;
-//
-// if (StringUtils.isBlank(charsetName)) {
-// this.charset = Charset.defaultCharset();
-// }
-// else {
-// this.charset = Charset.forName(charsetName);
-// }
-// }
-//
-// public String getSite() {
-// return site;
-// }
-//
-// public String getDirector() {
-// return director;
-// }
-//
-// public String getCast() {
-// return cast;
-// }
-//
-// public String getReleaseDate() {
-// return releaseDate;
-// }
-//
-// public String getRuntime() {
-// return runtime;
-// }
-//
-// public String getCountry() {
-// return country;
-// }
-//
-// public String getCompany() {
-// return company;
-// }
-//
-// public String getGenre() {
-// return genre;
-// }
-//
-// public String getQuotes() {
-// return quotes;
-// }
-//
-// public String getPlot() {
-// return plot;
-// }
-//
-// public String getRated() {
-// return rated;
-// }
-//
-// public String getCertification() {
-// return certification;
-// }
-//
-// public String getOriginalAirDate() {
-// return originalAirDate;
-// }
-//
-// public String getWriter() {
-// return writer;
-// }
-//
-// public String getTaglines() {
-// return taglines;
-// }
-//
-// public Charset getCharset() {
-// return charset;
-// }
-//
-// }

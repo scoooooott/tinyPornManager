@@ -145,7 +145,7 @@ public class TvShowMediaInformationPanel extends JPanel {
     // if (f.exists()) {
     //
     // String vlcF = f.getAbsolutePath();
-    // // FIXME: german umlauts do not decode correctly; Bug in
+    // // F I X M E: german umlauts do not decode correctly; Bug in
     // // libDvdNav? so workaround;
     // if (vlcF.matches(".*[äöüÄÖÜ].*")) {
     // LOGGER.debug("VLC: workaround: german umlauts found - use system player");

@@ -191,7 +191,6 @@ public class MovieUIModule implements ITmmUIModule {
    */
   @Override
   public JPopupMenu getUpdateMenu() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -202,7 +201,6 @@ public class MovieUIModule implements ITmmUIModule {
    */
   @Override
   public Action getExportAction() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -213,7 +211,6 @@ public class MovieUIModule implements ITmmUIModule {
    */
   @Override
   public JPopupMenu getExportMenu() {
-    // TODO Auto-generated method stub
     return null;
   }
 

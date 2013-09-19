@@ -356,7 +356,6 @@ public class MovieRenamer {
         try {
           boolean ok = copyFile(mf.getFile(), newFile);
           if (ok) {
-            // movie.setNfoFilename(newFilename); // TODO remove when work completely with MediaFiles
             newMF.setPath(newPathname);
             newMF.setFilename(newFilename);
           }
