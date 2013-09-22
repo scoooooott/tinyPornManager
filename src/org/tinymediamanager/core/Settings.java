@@ -96,6 +96,7 @@ public class Settings extends AbstractModelObject {
   private final static String         IMAGE_CACHE_TYPE            = "imageCacheType";
   private final static String         IMAGE_CACHE_BACKGROUND      = "imageCacheBackground";
   private final static String         LANGUAGE                    = "language";
+  private final static String         WOL_DEVICES                 = "wolDevices";
 
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -112,6 +113,9 @@ public class Settings extends AbstractModelObject {
   @XmlElementWrapper(name = SUBTITLE_FILE_TYPE)
   @XmlElement(name = FILETYPE)
   private final List<String>          subtitleFileTypes           = ObservableCollections.observableList(new ArrayList<String>());
+
+  @XmlElementWrapper(name = WOL_DEVICES)
+  private final List<WolDevice>       wolDevices                  = ObservableCollections.observableList(new ArrayList<WolDevice>());
 
   @XmlAttribute
   private String                      version                     = "";
@@ -904,4 +908,17 @@ public class Settings extends AbstractModelObject {
     firePropertyChange(LANGUAGE, oldValue, language);
   }
 
+  public void addWolDevice(WolDevice newDevice) {
+    wolDevices.add(newDevice);
+    firePropertyChange(WOL_DEVICES, null, wolDevices.size());
+  }
+
+  public void removeWolDevice(WolDevice device) {
+    wolDevices.remove(device);
+    firePropertyChange(WOL_DEVICES, null, wolDevices.size());
+  }
+
+  public List<WolDevice> getWolDevices() {
+    return wolDevices;
+  }
 }

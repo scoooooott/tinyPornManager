@@ -54,6 +54,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
 import org.apache.commons.io.FileUtils;
@@ -63,6 +65,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
@@ -173,6 +177,35 @@ public class MainWindow extends JFrame {
 
     JMenuItem mntmBugReport = mnTmm.add(actionBugReport);
     mntmBugReport.setText(BUNDLE.getString("BugReport")); //$NON-NLS-1$
+
+    mnTmm.addSeparator();
+
+    final JMenu menuWakeOnLan = new JMenu("Wake on LAN");
+    menuWakeOnLan.addMenuListener(new MenuListener() {
+      @Override
+      public void menuCanceled(MenuEvent arg0) {
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent arg0) {
+      }
+
+      @Override
+      public void menuSelected(MenuEvent arg0) {
+        menuWakeOnLan.removeAll();
+        for (final WolDevice device : Globals.settings.getWolDevices()) {
+          JMenuItem item = new JMenuItem(device.getName());
+          item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+              Utils.sendWakeOnLanPacket(device.getMacAddress());
+            }
+          });
+          menuWakeOnLan.add(item);
+        }
+      }
+    });
+    mnTmm.add(menuWakeOnLan);
 
     mnTmm.addSeparator();
 

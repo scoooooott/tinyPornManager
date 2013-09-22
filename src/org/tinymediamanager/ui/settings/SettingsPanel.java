@@ -42,39 +42,20 @@ import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
  * @author Manuel Laggner
  */
 public class SettingsPanel extends JPanel {
+  private static final long            serialVersionUID = -3509434882626534578L;
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = -3509434882626534578L;
+  private Settings                     settings         = Settings.getInstance();
 
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The settings. */
-  private Settings                    settings         = Settings.getInstance();
-
-  /** The current component. */
-  private Component                   currentComponent;
-
-  /** The toolbar. */
-  private JButtonBar                  toolbar;
-
-  /** The panel general settings. */
-  private GeneralSettingsPanel        panelGeneralSettings;
-
-  /** The panel movie settings. */
-  private MovieSettingsPanel          panelMovieSettings;
-
-  /** The panel scraper movie settings. */
-  private MovieScraperSettingsPanel   panelScraperMovieSettings;
-
-  /** The panel image movie settings. */
-  private MovieImageSettingsPanel     panelImageMovieSettings;
-
-  /** The panel tv show settings. */
-  private TvShowSettingsPanel         panelTvShowSettings;
-
-  /** The panel tv show scraper settings. */
-  private TvShowScraperSettingsPanel  panelTvShowScraperSettings;
+  private Component                    currentComponent;
+  private JButtonBar                   toolbar;
+  private GeneralSettingsPanel         panelGeneralSettings;
+  private MovieSettingsPanel           panelMovieSettings;
+  private MovieScraperSettingsPanel    panelScraperMovieSettings;
+  private MovieImageSettingsPanel      panelImageMovieSettings;
+  private TvShowSettingsPanel          panelTvShowSettings;
+  private TvShowScraperSettingsPanel   panelTvShowScraperSettings;
+  private ExternalDevicesSettingsPanel panelExternalDevicesSettings;
 
   /**
    * Create the panel.
@@ -100,6 +81,9 @@ public class SettingsPanel extends JPanel {
     addButton(BUNDLE.getString("Settings.tvshowscraper"), "/org/tinymediamanager/ui/images/tv_show.png", panelTvShowScraperSettings, toolbar, group); //$NON-NLS-1$
     panelGeneralSettings = new GeneralSettingsPanel();
     addButton(BUNDLE.getString("Settings.general"), "/org/tinymediamanager/ui/images/Action-configure-icon.png", panelGeneralSettings, toolbar, group); //$NON-NLS-1$
+    panelExternalDevicesSettings = new ExternalDevicesSettingsPanel();
+    addButton(
+        BUNDLE.getString("Settings.externaldevices"), "/org/tinymediamanager/ui/images/devices.png", panelExternalDevicesSettings, toolbar, group); //$NON-NLS-1$
 
     addComponentListener(new ComponentAdapter() {
       @Override
