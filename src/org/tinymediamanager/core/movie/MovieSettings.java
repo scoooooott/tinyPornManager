@@ -71,6 +71,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           SCRAPER_LANGU                    = "scraperLanguage";
   private final static String           CERTIFICATION_COUNTRY            = "certificationCountry";
   private final static String           DETECT_MOVIE_MULTI_DIR           = "detectMovieMultiDir";
+  private final static String           BUILD_IMAGE_CACHE_ON_IMPORT      = "buildImageCacheOnImport";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -117,6 +118,7 @@ public class MovieSettings extends AbstractModelObject {
   private MediaLanguages                scraperLanguage                  = MediaLanguages.en;
   private CountryCode                   certificationCountry             = CountryCode.US;
   private boolean                       detectMovieMultiDir              = false;
+  private boolean                       buildImageCacheOnImport          = false;
 
   public MovieSettings() {
   }
@@ -514,5 +516,15 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.detectMovieMultiDir;
     this.detectMovieMultiDir = newValue;
     firePropertyChange(DETECT_MOVIE_MULTI_DIR, oldValue, newValue);
+  }
+
+  public boolean isBuildImageCacheOnImport() {
+    return buildImageCacheOnImport;
+  }
+
+  public void setBuildImageCacheOnImport(boolean newValue) {
+    boolean oldValue = this.buildImageCacheOnImport;
+    this.buildImageCacheOnImport = newValue;
+    firePropertyChange(BUILD_IMAGE_CACHE_ON_IMPORT, oldValue, newValue);
   }
 }

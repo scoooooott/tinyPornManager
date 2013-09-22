@@ -89,6 +89,7 @@ import com.jgoodies.forms.layout.RowSpec;
 public class TvShowEditorDialog extends JDialog {
   private static final long                  serialVersionUID = 3270218410302989845L;
   private final static ResourceBundle        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                            //$NON-NLS-1$
+  private static final Date                  INITIAL_DATE     = new Date(0);
 
   private TvShow                             tvShowToEdit;
   private TvShowList                         tvShowList       = TvShowList.getInstance();
@@ -546,6 +547,13 @@ public class TvShowEditorDialog extends JDialog {
       SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
       spPremiered.setEditor(new JSpinner.DateEditor(spPremiered, dateFormat.toPattern()));
 
+      if (tvShow.getFirstAired() != null) {
+        spPremiered.setValue(tvShow.getFirstAired());
+      }
+      else {
+        spPremiered.setValue(INITIAL_DATE);
+      }
+
       for (TvShowActor origCast : tvShow.getActors()) {
         TvShowActor actor = new TvShowActor();
         actor.setName(origCast.getName());
@@ -713,7 +721,12 @@ public class TvShowEditorDialog extends JDialog {
 
       tvShowToEdit.setTags(tags);
       tvShowToEdit.setDateAdded((Date) spDateAdded.getValue());
-      tvShowToEdit.setFirstAired((Date) spPremiered.getValue());
+
+      Date premieredDate = (Date) spPremiered.getValue();
+      if (!premieredDate.equals(INITIAL_DATE)) {
+        tvShowToEdit.setFirstAired(premieredDate);
+      }
+
       tvShowToEdit.setStatus(cbStatus.getSelectedItem().toString());
 
       double tempRating = (Double) spRating.getValue();

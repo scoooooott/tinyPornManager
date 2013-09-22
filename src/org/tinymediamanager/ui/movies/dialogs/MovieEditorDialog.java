@@ -753,12 +753,18 @@ public class MovieEditorDialog extends JDialog {
       movieToEdit.setWatched(cbWatched.isSelected());
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
       movieToEdit.setCountry(tfCountry.getText());
-      try {
-        movieToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
+
+      if (StringUtils.isNotBlank(tfTmdbId.getText())) {
+        try {
+          movieToEdit.setTmdbId(Integer.parseInt(tfTmdbId.getText()));
+        }
+        catch (NumberFormatException ex) {
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("tmdb.wrongformat")); //$NON-NLS-1$
+          return;
+        }
       }
-      catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("tmdb.wrongformat")); //$NON-NLS-1$
-        return;
+      else {
+        movieToEdit.setTmdbId(0);
       }
 
       Object certification = cbCertification.getSelectedItem();

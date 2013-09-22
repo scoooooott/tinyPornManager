@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -53,10 +55,7 @@ import com.bric.image.pixel.Scaling;
  * @author Manuel Laggner
  */
 public class ImageCache {
-  /** The static LOGGER. */
   private static final Logger LOGGER    = LoggerFactory.getLogger(ImageCache.class);
-
-  /** The Constant CACHE_DIR. */
   public static final String  CACHE_DIR = "cache/image";
 
   /**
@@ -93,8 +92,7 @@ public class ImageCache {
       if (path == null)
         return null;
       // now uses a simple md5 hash, which should have a fairly low collision
-      // rate, especially for our
-      // limited use
+      // rate, especially for our limited use
       byte[] key = DigestUtils.md5(path);
       return new String(Hex.encodeHex(key));
     }
@@ -198,7 +196,6 @@ public class ImageCache {
         }
 
         // convert to rgb
-        // BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
         BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
 
         ColorConvertOp xformOp = new ColorConvertOp(null);
@@ -279,4 +276,21 @@ public class ImageCache {
     return new File(path);
   }
 
+  /**
+   * clear the image cache for all graphics within the given media entity
+   * 
+   * @param entity
+   *          the media entity
+   */
+  public static void clearImageCacheForMediaEntity(MediaEntity entity) {
+    List<MediaFile> mediaFiles = new ArrayList<MediaFile>(entity.getMediaFiles());
+    for (MediaFile mediaFile : mediaFiles) {
+      if (mediaFile.isGraphic()) {
+        File file = ImageCache.getCachedFile(mediaFile.getFile().getPath());
+        if (file.exists()) {
+          FileUtils.deleteQuietly(file);
+        }
+      }
+    }
+  }
 }

@@ -100,6 +100,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
   private JComboBox                   cbMovieForPreview;
   private JCheckBox                   chckbxRemoveOtherNfos;
   private JCheckBox                   chckbxMultipleMoviesPerFolder;
+  private JCheckBox                   chckbxImageCache;
 
   /**
    * Instantiates a new movie settings panel.
@@ -120,7 +121,8 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         RowSpec.decode("100px:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JScrollPane scrollPane = new JScrollPane();
     panelMovieDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
@@ -195,6 +197,19 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
 
     cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
     panelMovieDataSources.add(cbMovieNfoFilename2, "4, 11");
+
+    JSeparator separator_2 = new JSeparator();
+    panelMovieDataSources.add(separator_2, "2, 13, 9, 1");
+
+    JLabel lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
+    panelMovieDataSources.add(lblImageCache, "2, 15");
+
+    chckbxImageCache = new JCheckBox("");
+    panelMovieDataSources.add(chckbxImageCache, "4, 15");
+
+    JLabel lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+    lblImageCacheHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    panelMovieDataSources.add(lblImageCacheHint, "6, 15, 5, 1");
 
     // the panel renamer
     JPanel panelRenamer = new JPanel();
@@ -488,5 +503,10 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_2, chckbxMultipleMoviesPerFolder, jCheckBoxBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_3 = BeanProperty.create("movieSettings.buildImageCacheOnImport");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_3, chckbxImageCache, jCheckBoxBeanProperty);
+    autoBinding_3.bind();
   }
 }

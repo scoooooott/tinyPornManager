@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
+import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.Message;
@@ -138,8 +139,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           submitTask(new FindTvShowTask(subdir, path));
         }
         if (subdir.isFile() && Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(subdir.getName()))) {
-          // movie FILE in DS root - not supported!
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.movieinroot",
+          // video FILE in DS root - not supported!
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.episodeinroot",
               new String[] { subdir.getName() }));
         }
       }
@@ -189,6 +190,31 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       waitForCompletionOrCancel();
       if (cancel) {
         break;
+      }
+
+      // build image cache on import
+      if (Globals.settings.getTvShowSettings().isBuildImageCacheOnImport()) {
+        List<File> imageFiles = new ArrayList<File>();
+        for (TvShow tvShow : new ArrayList<TvShow>(tvShowList.getTvShows())) {
+          if (!path.equals(tvShow.getDataSource())) {
+            continue;
+          }
+          for (MediaFile mf : new ArrayList<MediaFile>(tvShow.getMediaFiles())) {
+            if (mf.isGraphic()) {
+              imageFiles.add(mf.getFile());
+            }
+          }
+          for (TvShowEpisode episode : tvShow.getEpisodes()) {
+            for (MediaFile mf : new ArrayList<MediaFile>(episode.getMediaFiles())) {
+              if (mf.isGraphic()) {
+                imageFiles.add(mf.getFile());
+              }
+            }
+          }
+        }
+
+        ImageCacheTask task = new ImageCacheTask(imageFiles);
+        Globals.executor.execute(task);
       }
     }
     LOGGER.info("Done updating datasource :)");

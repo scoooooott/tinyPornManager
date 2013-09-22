@@ -28,10 +28,8 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner
  */
 public class ImageCacheTask implements Runnable {
-  /** The static LOGGER. */
   private static final Logger LOGGER       = LoggerFactory.getLogger(ImageCacheTask.class);
 
-  /** The files to cache. */
   private List<File>          filesToCache = new ArrayList<File>();
 
   /**

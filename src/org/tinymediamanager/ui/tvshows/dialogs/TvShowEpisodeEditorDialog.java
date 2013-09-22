@@ -92,6 +92,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   private static final long           serialVersionUID = 7702248909791283043L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final Date           INITIAL_DATE     = new Date(0);
 
   private TvShowEpisode               episodeToEdit;
   private List<TvShowActor>           cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
@@ -330,7 +331,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         spFirstAired.setValue(episodeToEdit.getFirstAired());
       }
       else {
-        spFirstAired.setValue(new Date(0));
+        spFirstAired.setValue(INITIAL_DATE);
       }
       lblThumb.setImagePath(episodeToEdit.getThumb());
       spRating.setModel(new SpinnerNumberModel(episodeToEdit.getRating(), 0.0, 10.0, 0.1));
@@ -383,7 +384,12 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       }
 
       episodeToEdit.setDateAdded((Date) spDateAdded.getValue());
-      episodeToEdit.setFirstAired((Date) spFirstAired.getValue());
+
+      Date firstAiredDate = (Date) spFirstAired.getValue();
+      if (!firstAiredDate.equals(INITIAL_DATE)) {
+        episodeToEdit.setFirstAired(firstAiredDate);
+      }
+
       episodeToEdit.setWatched(chckbxWatched.isSelected());
       episodeToEdit.setDirector(tfDirector.getText());
       episodeToEdit.setWriter(tfWriter.getText());

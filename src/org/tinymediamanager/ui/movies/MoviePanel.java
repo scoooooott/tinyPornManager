@@ -62,6 +62,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JSearchTextField;
 import org.tinymediamanager.ui.components.ZebraJTable;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
+import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieExportAction;
 import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
@@ -207,6 +208,8 @@ public class MoviePanel extends JPanel {
 
   /** The action batch edit. */
   private final Action                  actionBatchEdit              = new MovieBatchEditAction();
+
+  private final Action                  actionClearImageCache        = new MovieClearImageCacheAction();
 
   /**
    * Create the panel.
@@ -426,6 +429,8 @@ public class MoviePanel extends JPanel {
     menu.add(actionMediaInformation2);
     menu.add(actionExport);
     menu.add(actionRemove2);
+    menu.addSeparator();
+    menu.add(actionClearImageCache);
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
@@ -439,6 +444,8 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionRename2);
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
+    popupMenu.addSeparator();
+    popupMenu.add(actionClearImageCache);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
 

@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
+import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
@@ -160,6 +161,25 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         waitForCompletionOrCancel();
         if (cancel) {
           break;
+        }
+
+        // build image cache on import
+        if (Globals.settings.getMovieSettings().isBuildImageCacheOnImport()) {
+          List<File> imageFiles = new ArrayList<File>();
+          for (Movie movie : movieList.getMovies()) {
+            if (!ds.equals(movie.getDataSource())) {
+              // check only movies matching datasource
+              continue;
+            }
+            for (MediaFile mf : new ArrayList<MediaFile>(movie.getMediaFiles())) {
+              if (mf.isGraphic()) {
+                imageFiles.add(mf.getFile());
+              }
+            }
+          }
+
+          ImageCacheTask task = new ImageCacheTask(imageFiles);
+          Globals.executor.execute(task);
         }
 
       } // END datasource loop

@@ -36,34 +36,36 @@ import org.tinymediamanager.scraper.MediaLanguages;
  */
 @XmlRootElement(name = "TvShowSettings")
 public class TvShowSettings extends AbstractModelObject {
-  private final static String TV_SHOW_DATA_SOURCE   = "tvShowDataSource";
-  private final static String TV_SHOW_SCRAPER       = "tvShowScraper";
-  private final static String PATH                  = "path";
-  private final static String SCRAPE_BEST_IMAGE     = "scrapeBestImage";
-  private final static String SCRAPER_LANGU         = "scraperLanguage";
-  private final static String CERTIFICATION_COUNTRY = "certificationCountry";
-  private final static String RENAMER_ADD_SHOW      = "renamerAddShow";
-  private final static String RENAMER_ADD_SEASON    = "renamerAddSeason";
-  private final static String RENAMER_ADD_TITLE     = "renamerAddTitle";
-  private final static String RENAMER_FORMAT        = "renamerFormat";
-  private final static String RENAMER_SEPARATOR     = "renamerSeparator";
-  private final static String RENAMER_SEASON_FOLDER = "renamerSeasonFolder";
+  private final static String TV_SHOW_DATA_SOURCE         = "tvShowDataSource";
+  private final static String TV_SHOW_SCRAPER             = "tvShowScraper";
+  private final static String PATH                        = "path";
+  private final static String SCRAPE_BEST_IMAGE           = "scrapeBestImage";
+  private final static String SCRAPER_LANGU               = "scraperLanguage";
+  private final static String CERTIFICATION_COUNTRY       = "certificationCountry";
+  private final static String RENAMER_ADD_SHOW            = "renamerAddShow";
+  private final static String RENAMER_ADD_SEASON          = "renamerAddSeason";
+  private final static String RENAMER_ADD_TITLE           = "renamerAddTitle";
+  private final static String RENAMER_FORMAT              = "renamerFormat";
+  private final static String RENAMER_SEPARATOR           = "renamerSeparator";
+  private final static String RENAMER_SEASON_FOLDER       = "renamerSeasonFolder";
+  private final static String BUILD_IMAGE_CACHE_ON_IMPORT = "buildImageCacheOnImport";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
-  private final List<String>  tvShowDataSources     = ObservableCollections.observableList(new ArrayList<String>());
-  private TvShowScrapers      tvShowScraper         = TvShowScrapers.TVDB;
-  private boolean             scrapeBestImage       = true;
-  private MediaLanguages      scraperLanguage       = MediaLanguages.en;
-  private CountryCode         certificationCountry  = CountryCode.US;
-  private boolean             renamerAddShow        = true;
-  private boolean             renamerAddSeason      = true;
-  private boolean             renamerAddTitle       = true;
-  private String              renamerSeparator      = "_";
-  private String              renamerSeasonFolder   = "Season $1";
+  private final List<String>  tvShowDataSources           = ObservableCollections.observableList(new ArrayList<String>());
+  private TvShowScrapers      tvShowScraper               = TvShowScrapers.TVDB;
+  private boolean             scrapeBestImage             = true;
+  private MediaLanguages      scraperLanguage             = MediaLanguages.en;
+  private CountryCode         certificationCountry        = CountryCode.US;
+  private boolean             renamerAddShow              = true;
+  private boolean             renamerAddSeason            = true;
+  private boolean             renamerAddTitle             = true;
+  private String              renamerSeparator            = "_";
+  private String              renamerSeasonFolder         = "Season $1";
+  private boolean             buildImageCacheOnImport     = false;
 
   @Enumerated(EnumType.STRING)
-  private TvShowEpisodeNaming renamerFormat         = TvShowEpisodeNaming.WITH_SE;
+  private TvShowEpisodeNaming renamerFormat               = TvShowEpisodeNaming.WITH_SE;
 
   /**
    * Instantiates a new tv show settings.
@@ -309,5 +311,15 @@ public class TvShowSettings extends AbstractModelObject {
     String oldValue = this.renamerSeasonFolder;
     this.renamerSeasonFolder = newValue;
     firePropertyChange(RENAMER_SEASON_FOLDER, oldValue, newValue);
+  }
+
+  public boolean isBuildImageCacheOnImport() {
+    return buildImageCacheOnImport;
+  }
+
+  public void setBuildImageCacheOnImport(boolean newValue) {
+    boolean oldValue = this.buildImageCacheOnImport;
+    this.buildImageCacheOnImport = newValue;
+    firePropertyChange(BUILD_IMAGE_CACHE_ON_IMPORT, oldValue, newValue);
   }
 }

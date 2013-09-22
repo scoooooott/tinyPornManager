@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.CardLayout;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -61,6 +62,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -132,6 +134,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionRename                  = new RenameAction();
   private final Action                actionMediaInformation        = new MediaInformationAction(false);
   private final Action                actionMediaInformation2       = new MediaInformationAction(true);
+  private final Action                actionClearImageCache         = new TvShowClearImageCacheAction();
 
   private int                         width                         = 0;
   private JTextField                  textField;
@@ -335,7 +338,7 @@ public class TvShowPanel extends JPanel {
     panelHeader.add(lblSubtitleColumn, "6, 1");
 
     JPanel panel = new JPanel();
-    panelTvShowTree.add(panel, "2, 5, fill, fill");
+    panelTvShowTree.add(panel, "2, 5, 2, 1, fill, fill");
     panel
         .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
             FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
@@ -466,6 +469,7 @@ public class TvShowPanel extends JPanel {
 
     menu.add(actionRename);
     menu.add(actionMediaInformation2);
+    menu.add(actionClearImageCache);
     // menu.add(actionExport);
     menu.addSeparator();
     menu.add(actionRemove2);
@@ -488,6 +492,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionRename);
     popupMenu.add(actionMediaInformation2);
     // popupMenu.add(actionExport);
+    popupMenu.add(actionClearImageCache);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
     popupMenu.addSeparator();
@@ -1190,5 +1195,46 @@ public class TvShowPanel extends JPanel {
         this.tree.expandRow(i++);
       } while (i < this.tree.getRowCount());
     }
+  }
+
+  public class TvShowClearImageCacheAction extends AbstractAction {
+    private static final long serialVersionUID = 3452373237085274937L;
+
+    public TvShowClearImageCacheAction() {
+      putValue(NAME, BUNDLE.getString("tvshow.clearimagecache")); //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+      List<TvShow> selectedTvShows = getSelectedTvShows();
+      List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+
+      // add all episodes which are not part of a selected tv show
+      for (Object obj : getSelectedObjects()) {
+        if (obj instanceof TvShowEpisode) {
+          TvShowEpisode episode = (TvShowEpisode) obj;
+          if (!selectedTvShows.contains(episode.getTvShow())) {
+            selectedEpisodes.add(episode);
+          }
+        }
+      }
+
+      // clear the cache
+      MainWindow.getActiveInstance().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      for (TvShow tvShow : selectedTvShows) {
+        ImageCache.clearImageCacheForMediaEntity(tvShow);
+      }
+
+      for (TvShowEpisode episode : selectedEpisodes) {
+        ImageCache.clearImageCacheForMediaEntity(episode);
+      }
+      MainWindow.getActiveInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
+
   }
 }

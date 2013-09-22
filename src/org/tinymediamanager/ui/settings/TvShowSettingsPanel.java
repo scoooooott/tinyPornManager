@@ -99,6 +99,9 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
   private JTextPane                   txtpnSeasonHint;
   private JLabel                      lblExample;
   private JComboBox                   cbTvShowForPreview;
+  private JLabel                      lblImageCache;
+  private JCheckBox                   chckbxImageCache;
+  private JLabel                      lblImageCacheHint;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -113,10 +116,11 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     panelTvShowDataSources.setBorder(new TitledBorder(null,
         BUNDLE.getString("Settings.tvshowdatasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelTvShowDataSources, "2, 2, fill, top");
-    panelTvShowDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(72dlu;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(66dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(44dlu;default)"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"), }));
+    panelTvShowDataSources.setLayout(new FormLayout(
+        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+            ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(44dlu;default):grow"),
+            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JScrollPane scrollPane = new JScrollPane();
     panelTvShowDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
@@ -161,6 +165,16 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
       }
     });
     panelTvShowSourcesButtons.add(btnRemove, "2, 3, fill, top");
+
+    lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
+    panelTvShowDataSources.add(lblImageCache, "2, 4");
+
+    chckbxImageCache = new JCheckBox("");
+    panelTvShowDataSources.add(chckbxImageCache, "4, 4");
+
+    lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+    lblImageCacheHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    panelTvShowDataSources.add(lblImageCacheHint, "6, 4, 3, 1");
 
     // the panel renamer
     JPanel panelRenamer = new JPanel();
@@ -363,39 +377,6 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     }
   }
 
-  protected void initDataBindings() {
-    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("tvShowSettings.tvShowDataSource");
-    JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,
-        tableTvShowSources);
-    //
-    ObjectProperty<String> stringObjectProperty = ObjectProperty.create();
-    jTableBinding.addColumnBinding(stringObjectProperty).setColumnName("Source");
-    //
-    jTableBinding.bind();
-    //
-    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("tvShowSettings.renamerAddSeason");
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty, chckbxAddSeason, jCheckBoxBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("tvShowSettings.renamerAddShow");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_1, chckbxAddShow, jCheckBoxBeanProperty);
-    autoBinding_1.bind();
-    //
-    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("tvShowSettings.renamerAddTitle");
-    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_2, chckbxAddEpisodeTitle, jCheckBoxBeanProperty);
-    autoBinding_2.bind();
-    //
-    BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("tvShowSettings.renamerSeasonFolder");
-    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
-    AutoBinding<Settings, String, JTextField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        settingsBeanProperty_3, tfSeasonFoldername, jTextFieldBeanProperty);
-    autoBinding_3.bind();
-  }
-
   private class TvShowPreviewContainer {
     TvShow tvShow;
 
@@ -439,5 +420,43 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
       container.tvShow = tvShow;
       cbTvShowForPreview.addItem(container);
     }
+  }
+
+  protected void initDataBindings() {
+    BeanProperty<Settings, List<String>> settingsBeanProperty_4 = BeanProperty.create("tvShowSettings.tvShowDataSource");
+    JTableBinding<String, Settings, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, settings, settingsBeanProperty_4,
+        tableTvShowSources);
+    //
+    ObjectProperty<String> stringObjectProperty = ObjectProperty.create();
+    jTableBinding.addColumnBinding(stringObjectProperty).setColumnName("Source");
+    //
+    jTableBinding.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("tvShowSettings.renamerAddSeason");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty, chckbxAddSeason, jCheckBoxBeanProperty);
+    autoBinding.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("tvShowSettings.renamerAddShow");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, chckbxAddShow, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("tvShowSettings.renamerAddTitle");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, chckbxAddEpisodeTitle, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
+    //
+    BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("tvShowSettings.renamerSeasonFolder");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
+    AutoBinding<Settings, String, JTextField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_3, tfSeasonFoldername, jTextFieldBeanProperty);
+    autoBinding_3.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_5 = BeanProperty.create("tvShowSettings.buildImageCacheOnImport");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, chckbxImageCache, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }
