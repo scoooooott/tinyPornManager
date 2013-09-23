@@ -80,7 +80,7 @@ public class WolDeviceDialog extends JDialog {
     getContentPane().add(tfName, "4, 2, 5, 1, fill, default");
     tfName.setColumns(10);
 
-    JLabel lblMacAddress = new JLabel(BUNDLE.getString("Settings.devicename")); //$NON-NLS-1$
+    JLabel lblMacAddress = new JLabel(BUNDLE.getString("Settings.macaddress")); //$NON-NLS-1$
     getContentPane().add(lblMacAddress, "2, 4, right, default");
 
     tfMacAddress = new JTextField();
