@@ -23,6 +23,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
 /**
  * The Class MovieExtraImageFetcher.
@@ -78,6 +79,8 @@ public class MovieExtraImageFetcher implements Runnable {
         if (extrafanart) {
           movie.downloadExtraFanarts(new ArrayList<String>(movie.getExtraFanarts()));
         }
+
+        movie.callbackForWrittenArtwork(MediaArtworkType.ALL);
       }
     }
     catch (Exception e) {
