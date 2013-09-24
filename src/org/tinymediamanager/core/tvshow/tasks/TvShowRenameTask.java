@@ -64,7 +64,9 @@ public class TvShowRenameTask extends TmmThreadPool {
       // rename complete tv shows
       for (int i = 0; i < tvShowsToRename.size(); i++) {
         TvShow show = tvShowsToRename.get(i);
-        submitTask(new RenameTvShowTask(show));
+        for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(show.getEpisodes())) {
+          submitTask(new RenameEpisodeTask(episode));
+        }
       }
       // rename episodes
       for (int i = 0; i < episodesToRename.size(); i++) {
@@ -82,27 +84,6 @@ public class TvShowRenameTask extends TmmThreadPool {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "Settings.renamer", "message.renamer.threadcrashed"));
     }
     return null;
-  }
-
-  /**
-   * ThreadpoolWorker to work off ONE tv show
-   * 
-   * @author Myron Boyle
-   * @version 1.0
-   */
-  private class RenameTvShowTask implements Callable<Object> {
-
-    private TvShow show = null;
-
-    public RenameTvShowTask(TvShow show) {
-      this.show = show;
-    }
-
-    @Override
-    public String call() throws Exception {
-      TvShowRenamer.renameTvShow(show);
-      return show.getTitle();
-    }
   }
 
   /**

@@ -71,7 +71,9 @@ public class TvShowRenamer {
    * 
    * @param show
    *          the TvShow
+   * @deprecated use renameEpisode(TvShowEpisode episode) instead. Calling this method won't be interruptable
    */
+  @Deprecated
   public static void renameTvShow(TvShow show) {
 
     // check if a datasource is set
@@ -99,7 +101,9 @@ public class TvShowRenamer {
    * 
    * @param season
    *          the Season
+   * @deprecated use renameEpisode(TvShowEpisode episode) instead. Calling this method won't be interruptable
    */
+  @Deprecated
   public static void renameSeason(TvShowSeason season) {
     LOGGER.info("Renaming TvShow '" + season.getTvShow().getTitle() + "' Season " + season.getSeason());
     for (MediaFile mf : season.getMediaFiles()) {
