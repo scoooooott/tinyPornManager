@@ -82,7 +82,7 @@ public class MovieScrapeMetadataDialog extends JDialog {
   private JCheckBox                   chckbxOfdbde;
 
   /** The start scrape. */
-  private boolean                     startScrape                = true;
+  private boolean                     startScrape                = false;
 
   /**
    * Instantiates a new movie scrape metadata.
