@@ -42,6 +42,10 @@ public class Similarity {
    * @return an array of adjacent letter pairs contained in the input string
    */
   private String[] letterPairs(String str) {
+    if (str.length() == 1) {
+      // fill up to min 2 chars
+      str += " ";
+    }
 
     int numPairs = str.length() - 1;
     // address an issue where str is ""
@@ -52,7 +56,6 @@ public class Similarity {
     for (int i = 0; i < numPairs; i++) {
       pairs[i] = str.substring(i, i + 2);
     }
-
     return pairs;
   }
 
@@ -93,6 +96,7 @@ public class Similarity {
     if (str1 == null || str2 == null)
       return 0.0f;
     if (str1.equalsIgnoreCase(str2)) {
+      LOGGER.debug(String.format("Similarity Score: [%s][%s]=[%s]", str1, str2, 1.0f));
       return 1.0f;
     }
 
@@ -141,7 +145,7 @@ public class Similarity {
       return score;
     }
     catch (Exception e) {
-      LOGGER.debug("Exception in compareStrings str1 = " + str1 + " str12 = " + str2);
+      LOGGER.warn("Exception in compareStrings str1 = " + str1 + " str12 = " + str2);
       return (float) 0.0;
     }
   }
