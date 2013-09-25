@@ -61,8 +61,15 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  */
 public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("imdb", "imdb.com", "Scraper for imdb which is able to scrape movie metadata");
-  private static final Logger      LOGGER       = LoggerFactory.getLogger(ImdbMetadataProvider.class);
+  private static MediaProviderInfo providerInfo  = new MediaProviderInfo("imdb", "imdb.com",
+                                                     "Scraper for imdb which is able to scrape movie metadata");
+  private static final Logger      LOGGER        = LoggerFactory.getLogger(ImdbMetadataProvider.class);
+
+  public static final String       CAT_ALL       = "&s=all";
+  public static final String       CAT_MOVIES    = "&s=tt&ttype=ft&ref_=fn_ft";
+  public static final String       CAT_TV        = "&s=tt&ttype=tv&ref_=fn_tv";
+  public static final String       CAT_EPISODE   = "&s=tt&ttype=ep&ref_=fn_ep";
+  public static final String       CAT_VIDEOGAME = "&s=tt&ttype=vg&ref_=fn_vg";
 
   private ImdbSiteDefinition       imdbSite;
 
@@ -717,7 +724,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       sb.append(searchTerm);
     }
 
-    sb.append("&s=tt");
+    // sb.append("&s=tt");
+    sb.append(CAT_MOVIES); // just search for type movies
 
     LOGGER.debug("========= BEGIN IMDB Scraper Search for: " + sb.toString());
     Document doc;
@@ -809,13 +817,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           continue;
         }
 
-        // filter out unwanted results
-        Pattern unwanted = Pattern.compile(".*\\((TV Episode|Short|Video Game)\\).*"); // stripped out .*\\(Video\\).*|
-        Matcher matcher = unwanted.matcher(element.text());
-        if (matcher.find()) {
-          continue;
-        }
-
         // is there a localized name? (aka)
         String localizedName = "";
         Elements italics = element.getElementsByTag("i");
@@ -837,7 +838,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
             // parse id
             String href = a.attr("href");
-            matcher = imdbIdPattern.matcher(href);
+            Matcher matcher = imdbIdPattern.matcher(href);
             while (matcher.find()) {
               if (matcher.group(1) != null) {
                 movieId = matcher.group(1);
