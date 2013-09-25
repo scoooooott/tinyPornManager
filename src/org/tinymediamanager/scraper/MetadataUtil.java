@@ -44,8 +44,8 @@ public class MetadataUtil {
    * @return the best out of the 2 scored attempts
    */
   public static float calculateScore(String searchTitle, String matchTitle) {
-    float score1 = Similarity.getInstance().compareStrings(searchTitle, matchTitle);
-    float score2 = Similarity.getInstance().compareStrings(searchTitle, removeNonSearchCharacters(matchTitle));
+    float score1 = Similarity.compareStrings(searchTitle, matchTitle);
+    float score2 = Similarity.compareStrings(searchTitle, removeNonSearchCharacters(matchTitle));
     return Math.max(score1, score2);
   }
 

@@ -28,11 +28,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Similarity {
 
-  /** The instance. */
-  private static Similarity   instance = new Similarity();
-
   /** The Constant log. */
-  private static final Logger LOGGER   = LoggerFactory.getLogger(Similarity.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Similarity.class);
 
   /**
    * Letter pairs.
@@ -41,7 +38,7 @@ public class Similarity {
    *          the str
    * @return an array of adjacent letter pairs contained in the input string
    */
-  private String[] letterPairs(String str) {
+  private static String[] letterPairs(String str) {
     if (str.length() == 1) {
       // fill up to min 2 chars
       str += " ";
@@ -66,7 +63,7 @@ public class Similarity {
    *          the str
    * @return an ArrayList of 2-character Strings.
    */
-  private ArrayList<String> wordLetterPairs(String str) {
+  private static ArrayList<String> wordLetterPairs(String str) {
 
     ArrayList<String> allPairs = new ArrayList<String>();
     // Tokenize the string and put the tokens/words into an array
@@ -92,7 +89,7 @@ public class Similarity {
    *          the str2
    * @return lexical similarity value in the range [0,1]
    */
-  public float compareStrings(String str1, String str2) {
+  public static float compareStrings(String str1, String str2) {
     if (str1 == null || str2 == null)
       return 0.0f;
     if (str1.equalsIgnoreCase(str2)) {
@@ -150,12 +147,4 @@ public class Similarity {
     }
   }
 
-  /**
-   * Gets the single instance of Similarity.
-   * 
-   * @return single instance of Similarity
-   */
-  public static Similarity getInstance() {
-    return instance;
-  }
 }

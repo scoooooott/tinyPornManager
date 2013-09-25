@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -809,7 +810,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         }
 
         // filter out unwanted results
-        Pattern unwanted = Pattern.compile(".*\\(TV Episode\\).*|.*\\(Short\\).*"); // stripped out .*\\(Video\\).*|
+        Pattern unwanted = Pattern.compile(".*\\((TV Episode|Short|Video Game)\\).*"); // stripped out .*\\(Video\\).*|
         Matcher matcher = unwanted.matcher(element.text());
         if (matcher.find()) {
           continue;
@@ -900,6 +901,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         break;
       }
     }
+    Collections.sort(result);
+    Collections.reverse(result);
 
     return result;
   }

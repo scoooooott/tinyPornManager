@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper.moviemeternl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -181,6 +182,8 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
       sr.setScore(MetadataUtil.calculateScore(searchString, film.getTitle()));
       resultList.add(sr);
     }
+    Collections.sort(resultList);
+    Collections.reverse(resultList);
 
     return resultList;
   }
