@@ -359,7 +359,7 @@ public class TinyMediaManager {
             splash.update();
           }
           if (!GraphicsEnvironment.isHeadless()) {
-            MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getVersion() + " - " + ReleaseInfo.getBuild());
+            MainWindow window = new MainWindow("tinyMediaManager / " + ReleaseInfo.getRealVersion());
 
             // finished ////////////////////////////////////////////////////
             if (g2 != null) {
@@ -427,7 +427,7 @@ public class TinyMediaManager {
         g2.setColor(Color.WHITE);
         g2.drawString(text + "...", 20, 295);
         g2.fillRect(20, 300, 460 * progress / 100, 10);
-        g2.drawString(ReleaseInfo.getVersion() + " " + ReleaseInfo.getBuild(), 430, 325);
+        g2.drawString(ReleaseInfo.getRealVersion(), 430, 325);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
       }
 

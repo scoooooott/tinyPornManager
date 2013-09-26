@@ -95,12 +95,11 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblByManuel, "4, 4, 3, 1, center, default");
     }
     {
-      JLabel lblVersion = new JLabel("Version: " + ReleaseInfo.getVersion());
+      JLabel lblVersion = new JLabel("Version: " + ReleaseInfo.getRealVersion());
       contentPanel.add(lblVersion, "6, 8, left, top");
-
     }
     {
-      JLabel lblBuild = new JLabel("Build: " + ReleaseInfo.getBuild() + " (" + ReleaseInfo.getBuildDate() + ")");
+      JLabel lblBuild = new JLabel("Build date: " + ReleaseInfo.getRealBuildDate());
       contentPanel.add(lblBuild, "6, 10, left, top");
     }
     {
