@@ -427,7 +427,8 @@ public class TinyMediaManager {
         g2.setColor(Color.WHITE);
         g2.drawString(text + "...", 20, 295);
         g2.fillRect(20, 300, 460 * progress / 100, 10);
-        g2.drawString(ReleaseInfo.getRealVersion(), 430, 325);
+        int l = g2.getFontMetrics().stringWidth(ReleaseInfo.getRealVersion()); // bound right
+        g2.drawString(ReleaseInfo.getRealVersion(), 480 - l, 325);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
       }
 
