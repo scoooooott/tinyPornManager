@@ -354,7 +354,20 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
       return -1;
     }
     else if (getScore() == arg0.getScore()) {
-      return 0;
+      // same score - rank on year
+      try {
+        int y1 = Integer.valueOf(getYear());
+        int y2 = Integer.valueOf(arg0.getYear());
+        if (y1 > y2) {
+          return 1;
+        }
+        else {
+          return -1;
+        }
+      }
+      catch (Exception e) {
+        return 0;
+      }
     }
     else {
       return 1;
@@ -363,8 +376,7 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
 
   /**
    * <p>
-   * Uses <code>ReflectionToStringBuilder</code> to generate a
-   * <code>toString</code> for the specified object.
+   * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
    * 
    * @return the String result
