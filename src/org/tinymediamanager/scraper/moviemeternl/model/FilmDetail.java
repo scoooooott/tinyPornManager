@@ -18,6 +18,9 @@ package org.tinymediamanager.scraper.moviemeternl.model;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import redstone.xmlrpc.XmlRpcArray;
 import redstone.xmlrpc.XmlRpcStruct;
 
@@ -121,6 +124,11 @@ public class FilmDetail {
     public String getDescription() {
       return this.description;
     }
+
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
   }
 
   public static class Actor {
@@ -138,6 +146,11 @@ public class FilmDetail {
 
     public String getVoice() {
       return this.voice;
+    }
+
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
   }
 
@@ -158,6 +171,10 @@ public class FilmDetail {
       return this.name;
     }
 
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
   }
 
   public static class Country {
@@ -177,6 +194,10 @@ public class FilmDetail {
       return this.name;
     }
 
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
   }
 
   public static class Date {
@@ -190,6 +211,10 @@ public class FilmDetail {
       return this.date;
     }
 
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
   }
 
   public static class Genre {
@@ -203,6 +228,10 @@ public class FilmDetail {
       return this.name;
     }
 
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
   }
 
   public static class Title {
@@ -214,6 +243,11 @@ public class FilmDetail {
 
     public String getTitle() {
       return this.title;
+    }
+
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
   }
 
@@ -305,4 +339,8 @@ public class FilmDetail {
     return this.filmId;
   }
 
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 }

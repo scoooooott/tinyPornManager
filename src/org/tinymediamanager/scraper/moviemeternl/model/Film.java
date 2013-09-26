@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.scraper.moviemeternl.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import redstone.xmlrpc.XmlRpcStruct;
 
 /**
@@ -73,4 +76,8 @@ public class Film {
     return this.similarity;
   }
 
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 }

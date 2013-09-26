@@ -53,29 +53,31 @@ public class MoviemeterApi {
     }
   }
 
-  // api.startSession
-  // api.closeSession
-  // film.search
-  // film.retrieveCinema
-  // film.retrieveVideo
-  // film.retrieveTv
-  // film.retrieveTvAll
-  // film.retrieveScore
-  // film.retrieveImdb
-  // film.retrieveByImdb
-  // film.retrieveDetails
-  // film.retrieveImage
-  // film.retrieveReviews
-  // film.retrieveReview
-  // director.search
-  // director.retrieveDetails
-  // director.retrieveImage
-  // director.retrieveFilms
-  // system.listMethods
-  // system.methodHelp
-  // system.methodSignature
-  // system.multicall
-  // system.getCapabilities
+  // system.listMethods()
+  // system.methodHelp(string method_name)
+  // system.methodSignature(string method_name)
+  //
+  // api.startSession(string apikey), returns array with sessionkey and unix timestamp for session's expiration date
+  // api.closeSession(string sessionkey), returns boolean
+  //
+  // film.search(string sessionkey, string search), returns array with films
+  // film.retrieveScore(string sessionkey, int filmId), returns array with information about the current score (average, total, amount of votes)
+  // film.retrieveImdb(string sessionkey, int filmId), returns array with imdb code, url, score and votes for this film
+  // film.retrieveByImdb(string sessionkey, string imdb code), returns filmId corresponding to the imdb code supplied
+  // film.retrieveDetails(string sessionkey, int filmId), returns array with information about the film
+  // film.retrieveImage(string sessionkey, int filmId), returns array with information and base64 encoded contents of poster and its thumbnail
+  // film.retrieveReviews(string sessionkey, int filmId), retrieve summarized reviews for the film
+  // film.retrieveReview(string sessionkey, int filmId, int messageId), retrieves full review
+  //
+  // film.retrieveCinema(string sessionkey)
+  // film.retrieveVideo(string sessionkey)
+  // film.retrieveTv(string sessionkey)
+  // film.retrieveTvAll(string sessionkey)
+  //
+  // director.search(string sessionkey, string search), returns array with directors
+  // director.retrieveDetails(string sessionkey, int directorId), returns array with director's information
+  // director.retrieveFilms(string sessionkey, int directorId), returns array with director's films
+  // director.retrieveImage(string sessionkey, int directorId), returns array with information and base64 encoded contents of director image
 
   /**
    * 
@@ -100,6 +102,20 @@ public class MoviemeterApi {
     }
     return token;
 
+  }
+
+  public ArrayList filmImages(int filmId) {
+    ArrayList al = new ArrayList();
+    try {
+      XmlRpcStruct token = (XmlRpcStruct) methodCall("film.retrieveImage", filmId);
+      for (int i = 0; i < token.size(); i++) {
+        // TODO: gets base64 encoded images inline
+      }
+    }
+    catch (Exception e) {
+      LOGGER.error("Error getting images: " + filmId);
+    }
+    return al;
   }
 
   public ArrayList<Film> filmSearch(String search) {

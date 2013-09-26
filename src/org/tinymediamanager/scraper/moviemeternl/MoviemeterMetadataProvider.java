@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
+import org.tinymediamanager.scraper.MediaCastMember;
+import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
@@ -33,6 +35,9 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
 import org.tinymediamanager.scraper.moviemeternl.model.Film;
 import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail;
+import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail.Actor;
+import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail.Date;
+import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail.Director;
 import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail.Genre;
 
 /**
@@ -100,16 +105,46 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
     }
 
     md.setTitle(fd.getTitle());
+    md.setImdbId("tt" + fd.getImdb());
+    md.setYear(fd.getYear());
     md.setPlot(fd.getPlot());
     md.setTagline(fd.getPlot().length() > 150 ? fd.getPlot().substring(0, 150) : fd.getPlot());
     // md.setOriginalTitle(fd.getAlternative_titles());
-    // md.setRating(fd.getAverage());
-    md.setRuntime(Integer.valueOf(fd.getDurations().get(0).duration));
+    try {
+      md.setRating(Double.parseDouble(fd.getAverage()));
+    }
+    catch (Exception e) {
+      md.setRating(0);
+    }
+    md.setId("moviemeter", fd.getFilmId());
+    try {
+      md.setRuntime(Integer.valueOf(fd.getDurations().get(0).duration));
+    }
+    catch (Exception e) {
+      md.setRuntime(0);
+    }
     md.setVoteCount(Integer.valueOf(fd.getVotes_count()));
     for (Genre g : fd.getGenres()) {
       md.addGenre(getTmmGenre(g.getName()));
     }
-
+    md.setPosterUrl(fd.getThumbnail().replace(".50.jpg", ".jpg")); // full res
+    ArrayList<Date> dateList = fd.getDates_cinema();
+    if (dateList != null && dateList.size() > 0) {
+      md.setReleaseDate(dateList.get(0).getDate());
+    }
+    md.setCountry(fd.getCountries_text());
+    for (Actor a : fd.getActors()) {
+      MediaCastMember cm = new MediaCastMember();
+      cm.setName(a.getName());
+      cm.setType(CastType.ACTOR);
+      md.addCastMember(cm);
+    }
+    for (Director d : fd.getDirectors()) {
+      MediaCastMember cm = new MediaCastMember();
+      cm.setName(d.getName());
+      cm.setType(CastType.DIRECTOR);
+      md.addCastMember(cm);
+    }
     return md;
   }
 
