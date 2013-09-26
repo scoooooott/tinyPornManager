@@ -288,8 +288,8 @@ public class TvShowScrapeTask extends TmmSwingWorker {
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
-      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+      options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       for (Entry<String, Object> entry : tvShow.getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }
