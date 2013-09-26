@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.tinymediamanager.scraper.moviemeternl.model.Film;
 import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail;
+import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail.Genre;
 
 public class MoviemeterMetadataProviderTest {
 
@@ -35,6 +36,10 @@ public class MoviemeterMetadataProviderTest {
     MoviemeterApi mm = new MoviemeterApi(APIKEY);
     FilmDetail fd = mm.filmDetail(31586);
     System.out.println(fd.getTitle());
+    for (Genre g : fd.getGenres()) {
+      // md.addGenre(genre)
+      System.out.println(g.getName());
+    }
     mm.closeSession();
   }
 
