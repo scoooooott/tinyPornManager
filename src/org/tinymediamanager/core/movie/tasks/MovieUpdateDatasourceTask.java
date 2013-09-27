@@ -360,6 +360,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       // check if we have more than one movie in dir
       HashSet<String> h = new HashSet<String>();
       for (File file : files) {
+        MediaFile mf = new MediaFile(file);
+        if (mf.isDiscFile()) {
+          // ignore disc files when trying to detect multi movie dir!
+          continue;
+        }
         h.add(ParserUtils.detectCleanMoviename(Utils.cleanStackingMarkers(FilenameUtils.getBaseName(file.getName()))));
       }
       // more than 1, or if DS=dir then assume a multi dir (only second level is a normal movie dir)
