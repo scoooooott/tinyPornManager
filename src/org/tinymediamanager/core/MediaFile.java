@@ -340,6 +340,24 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * (re)sets the path (when renaming MediaEntity folder).<br>
+   * calculates relative path from old and exchanges new path (for subdirs like extrafanarts)
+   * 
+   * @param oldPath
+   *          the old path
+   * @param newPath
+   *          the new path
+   */
+  public void fixPathForRenamedFolder(File oldPath, File newPath) {
+    String rel = Utils.relPath(oldPath, this.path); // relative from old
+    String newPathS = newPath.getPath();
+    if (!rel.isEmpty()) {
+      newPathS += File.separator + rel;
+    }
+    setPath(newPathS);
+  }
+
+  /**
    * Gets the filename.
    * 
    * @return the filename

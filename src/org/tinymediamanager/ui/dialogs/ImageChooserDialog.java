@@ -54,7 +54,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.filechooser.FileFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -712,7 +711,10 @@ public class ImageChooserDialog extends JDialog {
 
           // populate ids
           for (Entry<String, Object> entry : ids.entrySet()) {
-            options.setId((String) entry.getKey(), entry.getValue().toString());
+            Object v = entry.getValue();
+            if (v != null) {
+              options.setId((String) entry.getKey(), v.toString());
+            }
           }
 
           // get the artwork

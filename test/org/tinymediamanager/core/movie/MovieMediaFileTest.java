@@ -2,8 +2,6 @@ package org.tinymediamanager.core.movie;
 
 import java.io.File;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 import org.tinymediamanager.core.MediaFile;
 
@@ -12,15 +10,20 @@ public class MovieMediaFileTest {
   @Test
   public void testUpdateMediaFilePath() {
     Movie movie = new Movie();
-    movie.setPath("C:\\private\\Test_Filme\\21");
-    File mediaFile = new File("C:\\private\\Test_Filme\\21\\movie.avi");
+    movie.setPath("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1");
+    File mediaFile = new File("C:\\private\\Test_Filme\\Alien Collecion\\Alien 1\\asdf\\jklö\\VIDEO_TS\\VIDEO_TS.IFO");
     MediaFile mf = new MediaFile(mediaFile);
     movie.addToMediaFiles(mf);
 
-    File oldPath = new File(movie.getPath());
-    File newPath = new File("C:\\private\\Test_Filme\\300");
-    movie.updateMediaFilePath(newPath);
+    System.out.println("Movie Path: " + movie.getPath());
+    System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFile().getAbsolutePath());
 
-    Assert.assertEquals("C:\\private\\Test_Filme\\300\\movie.avi", mf.getPath() + File.separator + mf.getFilename());
+    File oldPath = new File(movie.getPath());
+    File newPath = new File("C:\\private\\Test_Filme\\Alien 1");
+    movie.updateMediaFilePath(oldPath, newPath);
+    movie.setPath(newPath.getPath());
+
+    System.out.println("Movie Path: " + movie.getPath());
+    System.out.println("File Path:  " + movie.getMediaFiles().get(0).getFile().getAbsolutePath());
   }
 }

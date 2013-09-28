@@ -18,12 +18,11 @@ package org.tinymediamanager.core.movie.tasks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
@@ -42,14 +41,13 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
  * The Class MovieScrapeTask.
  * 
  * @author Manuel Laggner
  */
-public class MovieScrapeTask extends TmmSwingWorker {
+public class MovieScrapeTask extends TmmThreadPool {
 
   private final static Logger         LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
 
@@ -82,47 +80,18 @@ public class MovieScrapeTask extends TmmSwingWorker {
    */
   @Override
   protected Void doInBackground() throws Exception {
+    initThreadPool(3, "scrape");
     startProgressBar("scraping movies", 0);
 
-    ExecutorService executor = Executors.newFixedThreadPool(3);
-
-    // start 3 threads
-    executor.execute(new Worker(this));
-    // start second thread, if there are more than one movies to scrape
-    if (movieCount > 1) {
-      executor.execute(new Worker(this));
+    for (int i = 0; i < moviesToScrape.size(); i++) {
+      Movie movie = moviesToScrape.get(i);
+      submitTask(new Worker(movie));
     }
-    // start third thread, if there are more than two movies to scrape
-    if (movieCount > 2) {
-      executor.execute(new Worker(this));
+    waitForCompletionOrCancel();
+    if (cancel) {
+      cancel(false);// swing cancel
     }
-
-    executor.shutdown();
-
-    // wait till scraping is finished
-    while (true) {
-      if (executor.isTerminated()) {
-        break;
-      }
-      Thread.sleep(1000);
-    }
-
-    return null;
-  }
-
-  /**
-   * Gets the next movie.
-   * 
-   * @return the next movie
-   */
-  private synchronized Movie getNextMovie() {
-    // get next movie to scrape
-    if (moviesToScrape.size() > 0) {
-      Movie movie = moviesToScrape.get(0);
-      moviesToScrape.remove(movie);
-      startProgressBar("scraping movies", 100 * (movieCount - moviesToScrape.size()) / movieCount);
-      return movie;
-    }
+    LOGGER.info("Done scraping movies)");
 
     return null;
   }
@@ -135,14 +104,6 @@ public class MovieScrapeTask extends TmmSwingWorker {
     moviesToScrape.clear();
   }
 
-  /*
-   * Executed in event dispatching thread
-   */
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#done()
-   */
   @Override
   public void done() {
     stopProgressBar();
@@ -153,20 +114,14 @@ public class MovieScrapeTask extends TmmSwingWorker {
    */
   private class Worker implements Runnable {
 
-    /** The movie list. */
-    private MovieList       movieList;
-
-    /** The scrape task. */
-    private MovieScrapeTask scrapeTask;
+    private MovieList movieList;
+    private Movie     movie;
 
     /**
      * Instantiates a new worker.
-     * 
-     * @param scrapeTask
-     *          the scrape task
      */
-    public Worker(MovieScrapeTask scrapeTask) {
-      this.scrapeTask = scrapeTask;
+    public Worker(Movie movie) {
+      this.movie = movie;
     }
 
     /*
@@ -184,87 +139,77 @@ public class MovieScrapeTask extends TmmSwingWorker {
         List<IMediaArtworkProvider> artworkProviders = movieList.getArtworkProviders(options.getArtworkScrapers());
         List<IMediaTrailerProvider> trailerProviders = movieList.getTrailerProviders(options.getTrailerScrapers());
 
-        // do work
-        while (true) {
-          Movie movie = scrapeTask.getNextMovie();
-          if (movie == null) {
-            break;
-          }
-
-          // scrape movie
-
-          // search movie
-          MediaSearchResult result1 = null;
-          if (doSearch) {
-            List<MediaSearchResult> results = movieList.searchMovie(movie.getTitle(), movie, mediaMetadataProvider);
-            if (results != null && !results.isEmpty()) {
-              result1 = results.get(0);
-              // check if there is an other result with 100% score
-              if (results.size() > 1) {
-                MediaSearchResult result2 = results.get(1);
-                // if both results have 100% score - do not take any result
-                if (result1.getScore() == 1 && result2.getScore() == 1) {
-                  LOGGER.info("two 100% results, can't decide whitch to take - ignore result");
-                  MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.nomatchfound"));
-                  continue;
-                }
-              }
-
-              // create a treshold of 0.75 - to minimize false positives
-              if (result1.getScore() < 0.75) {
-                LOGGER.info("score is lower than 0.75 (" + result1.getScore() + ") - ignore result");
+        // search movie
+        MediaSearchResult result1 = null;
+        if (doSearch) {
+          List<MediaSearchResult> results = movieList.searchMovie(movie.getTitle(), movie, mediaMetadataProvider);
+          if (results != null && !results.isEmpty()) {
+            result1 = results.get(0);
+            // check if there is an other result with 100% score
+            if (results.size() > 1) {
+              MediaSearchResult result2 = results.get(1);
+              // if both results have 100% score - do not take any result
+              if (result1.getScore() == 1 && result2.getScore() == 1) {
+                LOGGER.info("two 100% results, can't decide whitch to take - ignore result");
                 MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.nomatchfound"));
-                continue;
+                return;
               }
             }
-            else {
-              LOGGER.info("no result found for " + movie.getTitle());
+
+            // create a treshold of 0.75 - to minimize false positives
+            if (result1.getScore() < 0.75) {
+              LOGGER.info("score is lower than 0.75 (" + result1.getScore() + ") - ignore result");
               MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.nomatchfound"));
+              return;
             }
           }
+          else {
+            LOGGER.info("no result found for " + movie.getTitle());
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.nomatchfound"));
+          }
+        }
 
-          // get metadata, artwork and trailers
-          if ((doSearch && result1 != null) || !doSearch) {
-            try {
-              MediaScrapeOptions options = new MediaScrapeOptions();
-              options.setResult(result1);
-              options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-              options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+        // get metadata, artwork and trailers
+        if ((doSearch && result1 != null) || !doSearch) {
+          try {
+            MediaScrapeOptions options = new MediaScrapeOptions();
+            options.setResult(result1);
+            options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+            options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
-              // we didn't do a search - pass imdbid and tmdbid from movie
-              // object
-              if (!doSearch) {
-                for (Entry<String, Object> entry : movie.getIds().entrySet()) {
-                  options.setId(entry.getKey(), entry.getValue().toString());
-                }
+            // we didn't do a search - pass imdbid and tmdbid from movie
+            // object
+            if (!doSearch) {
+              for (Entry<String, Object> entry : movie.getIds().entrySet()) {
+                options.setId(entry.getKey(), entry.getValue().toString());
               }
-
-              // scrape metadata if wanted
-              MediaMetadata md = null;
-
-              if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
-                  || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
-                  || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
-                  || scraperMetadataConfig.isYear()) {
-                md = mediaMetadataProvider.getMetadata(options);
-                movie.setMetadata(md, scraperMetadataConfig);
-              }
-
-              // scrape artwork if wanted
-              if (scraperMetadataConfig.isArtwork()) {
-                movie.setArtwork(getArtwork(movie, md, artworkProviders), scraperMetadataConfig);
-              }
-
-              // scrape trailer if wanted
-              if (scraperMetadataConfig.isTrailer()) {
-                movie.setTrailers(getTrailers(movie, md, trailerProviders));
-              }
-              movie.writeNFO();
             }
-            catch (Exception e) {
-              LOGGER.error("movie.setMetadata", e);
-              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.metadatamoviefailed"));
+
+            // scrape metadata if wanted
+            MediaMetadata md = null;
+
+            if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
+                || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
+                || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
+                || scraperMetadataConfig.isYear()) {
+              md = mediaMetadataProvider.getMetadata(options);
+              movie.setMetadata(md, scraperMetadataConfig);
             }
+
+            // scrape artwork if wanted
+            if (scraperMetadataConfig.isArtwork()) {
+              movie.setArtwork(getArtwork(movie, md, artworkProviders), scraperMetadataConfig);
+            }
+
+            // scrape trailer if wanted
+            if (scraperMetadataConfig.isTrailer()) {
+              movie.setTrailers(getTrailers(movie, md, trailerProviders));
+            }
+            movie.writeNFO();
+          }
+          catch (Exception e) {
+            LOGGER.error("movie.setMetadata", e);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.metadatamoviefailed"));
           }
         }
       }
@@ -367,5 +312,11 @@ public class MovieScrapeTask extends TmmSwingWorker {
 
       return trailers;
     }
+  }
+
+  @Override
+  public void callback(Object obj) {
+    // TODO Auto-generated method stub
+
   }
 }

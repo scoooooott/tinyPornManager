@@ -50,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
@@ -91,6 +92,7 @@ public class TinyMediaManager {
   private static boolean      scrapeNew       = false;
   private static boolean      scrapeUnscraped = false;
   private static boolean      renameNew       = false;
+  private static boolean      checkFiles      = false;
 
   private static void syntax() {
     // @formatter:off
@@ -139,6 +141,9 @@ public class TinyMediaManager {
         }
         else if (cmd.equalsIgnoreCase("-scrapeUnscraped")) {
           scrapeUnscraped = true;
+        }
+        else if (cmd.equalsIgnoreCase("-checkFiles")) {
+          checkFiles = true;
         }
         else if (cmd.equalsIgnoreCase("-renameNew")) {
           renameNew = true;
@@ -376,6 +381,10 @@ public class TinyMediaManager {
           }
           else {
             startCommandLineTasks();
+            // wait for other tmm threads (artwork download et all)
+            while (Globals.poolRunning()) {
+              Thread.sleep(2000);
+            }
 
             LOGGER.info("bye bye");
             // MainWindows.shutdown()
@@ -598,6 +607,11 @@ public class TinyMediaManager {
             task = new MovieScrapeTask(newMovies, true, options);
             task.execute();
             task.get(); // blocking
+
+            // wait for other tmm threads (artwork download et all)
+            while (Globals.poolRunning()) {
+              Thread.sleep(2000);
+            }
           }
           else {
             LOGGER.info("No new movies found to scrape - skipping");
@@ -622,6 +636,11 @@ public class TinyMediaManager {
           task = new MovieScrapeTask(unscrapedMovies, true, options);
           task.execute();
           task.get(); // blocking
+
+          // wait for other tmm threads (artwork download et all)
+          while (Globals.poolRunning()) {
+            Thread.sleep(2000);
+          }
         }
         if (renameNew) {
           LOGGER.info("Commandline - rename & cleanup new movies...");
@@ -665,6 +684,19 @@ public class TinyMediaManager {
             task.get(); // blocking
           }
         }
+      }
+
+      if (checkFiles) {
+        // check db
+        LOGGER.info("Check all MFs if existing");
+        for (Movie m : MovieList.getInstance().getMovies()) {
+          for (MediaFile mf : m.getMediaFiles()) {
+            if (!mf.exists()) {
+              LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+            }
+          }
+        }
+        LOGGER.info("...done");
       }
     }
     catch (Exception e) {

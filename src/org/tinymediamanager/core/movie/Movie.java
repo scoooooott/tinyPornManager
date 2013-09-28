@@ -305,6 +305,21 @@ public class Movie extends MediaEntity {
   }
 
   /**
+   * updates all the MediaFiles to their new absolute path
+   * 
+   * @param oldMoviePath
+   *          the old movie path
+   * @param newMoviePath
+   *          the new movie path
+   */
+  public void updateMediaFilePath(File oldMoviePath, File newMoviePath) {
+    for (MediaFile mf : mediaFilesObservable) {
+      mf.fixPathForRenamedFolder(oldMoviePath, newMoviePath);
+    }
+    // firePropertyChange(MEDIA_FILES, null, this.getMediaFiles());
+  }
+
+  /**
    * Gets the trailers.
    * 
    * @return the trailers

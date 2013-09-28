@@ -202,7 +202,7 @@ public class TvShowRenamer {
             // iterate over all EPs & MFs and fix new path
             LOGGER.debug("updating *all* MFs for new path -> " + newEpFolder);
             for (TvShowEpisode e : eps) {
-              e.updateMediaFilePath(newDisc);
+              e.updateMediaFilePath(disc, newDisc);
               e.setPath(newEpFolder.getPath());
               e.saveToDb();
             }

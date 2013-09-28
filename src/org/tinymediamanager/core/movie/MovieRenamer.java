@@ -190,7 +190,7 @@ public class MovieRenamer {
             // FileUtils.moveDirectory(srcDir, destDir);
             ok = Utils.moveDirectorySafe(srcDir, destDir);
             if (ok) {
-              movie.updateMediaFilePath(destDir);
+              movie.updateMediaFilePath(srcDir, destDir);
               movie.setPath(newPathname);
               movie.saveToDb();
             }
@@ -275,53 +275,55 @@ public class MovieRenamer {
       // String newPath = movie.getPath() + File.separator;
       String fileExtension = FilenameUtils.getExtension(vid.getFilename());
 
-      if (!movie.isDisc() || vid.isDiscFile()) {
-        cleanup.add(new MediaFile(vid)); // mark old file for cleanup (clone current)
-        if (renameFiles) {
-          // create new filename according to template
-          newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
-          // is there any stacking information in the filename?
-          // use vid.getStacking() != 0 for custom stacking format?
-          String stacking = Utils.getStackingMarker(vid.getFilename());
-          if (!stacking.isEmpty()) {
-            newFilename += " " + stacking;
+      if (!movie.isDisc()) {
+        if (!vid.isDiscFile()) { // separate check, if we have old entries in DB
+          cleanup.add(new MediaFile(vid)); // mark old file for cleanup (clone current)
+          if (renameFiles) {
+            // create new filename according to template
+            newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
+            // is there any stacking information in the filename?
+            // use vid.getStacking() != 0 for custom stacking format?
+            String stacking = Utils.getStackingMarker(vid.getFilename());
+            if (!stacking.isEmpty()) {
+              newFilename += " " + stacking;
+            }
+            else if (vid.getStacking() != 0) {
+              newFilename += " CD" + vid.getStacking();
+            }
+            newFilename += "." + fileExtension;
           }
-          else if (vid.getStacking() != 0) {
-            newFilename += " CD" + vid.getStacking();
-          }
-          newFilename += "." + fileExtension;
-        }
 
-        // save new movie filename for further operations
-        if (StringUtils.isBlank(newMovieFilename)) {
-          newMovieFilename = newFilename;
-        }
-
-        MediaFile newMF = new MediaFile(vid);
-        File newFile = new File(newPathname, newFilename);
-        try {
-          boolean ok = Utils.moveFileSafe(vid.getFile(), newFile);
-          if (ok) {
-            newMF.setPath(newPathname);
-            newMF.setFilename(newFilename);
+          // save new movie filename for further operations
+          if (StringUtils.isBlank(newMovieFilename)) {
+            newMovieFilename = newFilename;
           }
-          else {
+
+          MediaFile newMF = new MediaFile(vid);
+          File newFile = new File(newPathname, newFilename);
+          try {
+            boolean ok = Utils.moveFileSafe(vid.getFile(), newFile);
+            if (ok) {
+              newMF.setPath(newPathname);
+              newMF.setFilename(newFilename);
+            }
+            else {
+              return; // rename failed
+            }
+          }
+          catch (FileNotFoundException e) {
+            LOGGER.error("error moving video file - file not found", e);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename", new String[] {
+                ":", e.getLocalizedMessage() }));
             return; // rename failed
           }
+          catch (Exception e) {
+            LOGGER.error("error moving video file", e);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename", new String[] {
+                ":", e.getLocalizedMessage() }));
+            return; // rename failed
+          }
+          needed.add(newMF);
         }
-        catch (FileNotFoundException e) {
-          LOGGER.error("error moving video file - file not found", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
-          return; // rename failed
-        }
-        catch (Exception e) {
-          LOGGER.error("error moving video file", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, vid.getFilename(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
-          return; // rename failed
-        }
-        needed.add(newMF);
       }
       else {
         LOGGER.info("Movie is a DVD/BluRay disc folder - NOT renaming file");
