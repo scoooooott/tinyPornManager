@@ -100,8 +100,9 @@ public class MovieScrapeTask extends TmmThreadPool {
    * Cancel.
    */
   public void cancel() {
-    cancel(false);
-    moviesToScrape.clear();
+    cancel = true;
+    // cancel(false);
+    // moviesToScrape.clear();
   }
 
   @Override
@@ -316,7 +317,6 @@ public class MovieScrapeTask extends TmmThreadPool {
 
   @Override
   public void callback(Object obj) {
-    // TODO Auto-generated method stub
-
+    startProgressBar((String) obj, getTaskcount(), getTaskdone());
   }
 }

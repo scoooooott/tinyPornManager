@@ -130,7 +130,10 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
         LOGGER.info("Abort queue (discarding " + (getTaskcount() - getTaskdone()) + " tasks)");
         pool.getQueue().clear();
         pool.awaitTermination(3, TimeUnit.SECONDS);
-        pool.shutdownNow();
+
+        // shutdown now can cause a inconsistency because it will call Thread.interrupt which can cause a (sub)thread to crash
+        // pool.shutdownNow();
+        pool.shutdown();
       }
       catch (InterruptedException e) {
         LOGGER.error("ThreadPool " + this.poolname + " interrupted in shutdown!", e);
