@@ -169,54 +169,14 @@ public class MainWindow extends JFrame {
     JMenu mnTmm = new JMenu("tinyMediaManager");
     menuBar.add(mnTmm);
 
-    // JMenuItem mntmSettings = mnTmm.add(actionSettings);
-    // mntmSettings.setText("Settings");
-
-    JMenuItem mntmFeedback = mnTmm.add(actionFeedback);
-    mntmFeedback.setText(BUNDLE.getString("Feedback")); //$NON-NLS-1$
-
-    JMenuItem mntmBugReport = mnTmm.add(actionBugReport);
-    mntmBugReport.setText(BUNDLE.getString("BugReport")); //$NON-NLS-1$
-
-    mnTmm.addSeparator();
-
-    final JMenu menuWakeOnLan = new JMenu("Wake on LAN");
-    menuWakeOnLan.addMenuListener(new MenuListener() {
-      @Override
-      public void menuCanceled(MenuEvent arg0) {
-      }
-
-      @Override
-      public void menuDeselected(MenuEvent arg0) {
-      }
-
-      @Override
-      public void menuSelected(MenuEvent arg0) {
-        menuWakeOnLan.removeAll();
-        for (final WolDevice device : Globals.settings.getWolDevices()) {
-          JMenuItem item = new JMenuItem(device.getName());
-          item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-              Utils.sendWakeOnLanPacket(device.getMacAddress());
-            }
-          });
-          menuWakeOnLan.add(item);
-        }
-      }
-    });
-    mnTmm.add(menuWakeOnLan);
-
-    mnTmm.addSeparator();
-
     JMenuItem mntmExit = mnTmm.add(actionExit);
     mntmExit.setText(BUNDLE.getString("tmm.exit")); //$NON-NLS-1$
     initialize();
 
-    // debug menu
-    JMenu debug = new JMenu(BUNDLE.getString("tmm.debug")); //$NON-NLS-1$
+    // tools menu
+    JMenu tools = new JMenu(BUNDLE.getString("tmm.tools")); //$NON-NLS-1$
     JMenuItem clearDatabase = new JMenuItem(BUNDLE.getString("tmm.cleardatabase")); //$NON-NLS-1$
-    debug.add(clearDatabase);
+    tools.add(clearDatabase);
     clearDatabase.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -252,7 +212,7 @@ public class MainWindow extends JFrame {
     });
 
     JMenu cache = new JMenu(BUNDLE.getString("tmm.cache")); //$NON-NLS-1$
-    debug.add(cache);
+    tools.add(cache);
 
     JMenuItem clearUrlCache = new JMenuItem(new ClearUrlCacheAction());
     cache.add(clearUrlCache);
@@ -264,7 +224,7 @@ public class MainWindow extends JFrame {
     cache.add(rebuildImageCache);
 
     JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir")); //$NON-NLS-1$
-    debug.add(tmmFolder);
+    tools.add(tmmFolder);
     tmmFolder.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -284,7 +244,7 @@ public class MainWindow extends JFrame {
     });
 
     JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs")); //$NON-NLS-1$
-    debug.add(tmmLogs);
+    tools.add(tmmLogs);
     tmmLogs.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -294,16 +254,53 @@ public class MainWindow extends JFrame {
       }
     });
 
-    menuBar.add(debug);
+    tools.addSeparator();
+    final JMenu menuWakeOnLan = new JMenu("Wake on LAN");
+    menuWakeOnLan.addMenuListener(new MenuListener() {
+      @Override
+      public void menuCanceled(MenuEvent arg0) {
+      }
 
-    mnTmm = new JMenu("?");
+      @Override
+      public void menuDeselected(MenuEvent arg0) {
+      }
+
+      @Override
+      public void menuSelected(MenuEvent arg0) {
+        menuWakeOnLan.removeAll();
+        for (final WolDevice device : Globals.settings.getWolDevices()) {
+          JMenuItem item = new JMenuItem(device.getName());
+          item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+              Utils.sendWakeOnLanPacket(device.getMacAddress());
+            }
+          });
+          menuWakeOnLan.add(item);
+        }
+      }
+    });
+    tools.add(menuWakeOnLan);
+
+    menuBar.add(tools);
+
+    mnTmm = new JMenu(BUNDLE.getString("tmm.contact")); //$NON-NLS-1$
+    JMenuItem mntmFeedback = mnTmm.add(actionFeedback);
+    mntmFeedback.setText(BUNDLE.getString("Feedback")); //$NON-NLS-1$
+
+    JMenuItem mntmBugReport = mnTmm.add(actionBugReport);
+    mntmBugReport.setText(BUNDLE.getString("BugReport")); //$NON-NLS-1$
+    menuBar.add(mnTmm);
+
+    mnTmm = new JMenu(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
     menuBar.add(mnTmm);
     JMenuItem mntmDonate = mnTmm.add(actionDonate);
     mntmDonate.setText(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
-    mnTmm.addSeparator();
+
+    mnTmm = new JMenu("?");
+    menuBar.add(mnTmm);
     JMenuItem mntmAbout = mnTmm.add(actionAbout);
     mntmAbout.setText(BUNDLE.getString("tmm.about")); //$NON-NLS-1$
-    // setVisible(true);
 
     // Globals.executor.execute(new MyStatusbarThread());
     // use a Future to be able to cancel it
