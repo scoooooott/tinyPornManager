@@ -38,6 +38,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.scraper.Certification;
 
 /**
  * The Class MovieRenamer.
@@ -697,6 +698,16 @@ public class MovieRenamer {
       newDestination = replaceToken(newDestination, "$E", movie.getTitleSortable());
     }
 
+    // replace certification ($C)
+    if (newDestination.contains("$C")) {
+      if (movie.getCertification() != Certification.NOT_RATED) {
+        newDestination = replaceToken(newDestination, "$C", movie.getCertification().getName());
+      }
+      else {
+        newDestination = newDestination.replace("$C", "");
+      }
+    }
+
     if (movie.getMediaFiles(MediaFileType.VIDEO).size() > 0) {
       MediaFile mf = movie.getMediaFiles(MediaFileType.VIDEO).get(0);
       // replace token resolution ($R)
@@ -741,6 +752,9 @@ public class MovieRenamer {
       newDestination = newDestination.replaceAll(File.separator + "{2,}", File.separator);
       newDestination = newDestination.replaceAll("^" + File.separator, "");
     }
+
+    // trim out unnecessary whitespaces
+    newDestination = newDestination.trim();
 
     // replace spaces with underscores if needed
     if (Globals.settings.getMovieSettings().isMovieRenamerSpaceSubstitution()) {
