@@ -15,13 +15,18 @@
  */
 package org.tinymediamanager.ui.dialogs;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -182,6 +187,8 @@ public class BugReportDialog extends JDialog {
           // textField.getText() + "\n\n");
           // message += textArea.getText();
 
+          BugReportDialog.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
           MultipartEntity mpEntity = new MultipartEntity(HttpMultipartMode.STRICT);
           mpEntity.addPart("message", new StringBody(message.toString(), Charset.forName("UTF-8")));
 
@@ -198,13 +205,29 @@ public class BugReportDialog extends JDialog {
 
               // attach logs
               if (chckbxLogs.isSelected()) {
-                ZipEntry ze = new ZipEntry("tmm.log");
-                zos.putNextEntry(ze);
-                FileInputStream in = new FileInputStream("logs/tmm.log");
+                File[] logs = new File("logs").listFiles(new FilenameFilter() {
+                  Pattern logPattern = Pattern.compile("tmm\\.log\\.*");
 
-                IOUtils.copy(in, zos);
-                in.close();
-                zos.closeEntry();
+                  @Override
+                  public boolean accept(File directory, String filename) {
+                    Matcher matcher = logPattern.matcher(filename);
+                    if (matcher.find()) {
+                      return true;
+                    }
+                    return false;
+                  }
+                });
+                if (logs != null) {
+                  for (File logFile : logs) {
+                    ZipEntry ze = new ZipEntry(logFile.getName());
+                    zos.putNextEntry(ze);
+                    FileInputStream in = new FileInputStream(logFile);
+
+                    IOUtils.copy(in, zos);
+                    in.close();
+                    zos.closeEntry();
+                  }
+                }
               }
 
               // attach config file
@@ -257,6 +280,7 @@ public class BugReportDialog extends JDialog {
         finally {
           post.releaseConnection();
         }
+        BugReportDialog.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.ok")); //$NON-NLS-1$
         setVisible(false);
