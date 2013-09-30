@@ -249,7 +249,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     panel.add(cbSortOrder, "6, 13, fill, default");
 
     add(panel);
-    // setCollapsed(true);
+    setCollapsed(true);
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -361,7 +361,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
   private String[] getVideoFormats() {
     return new String[] { MediaFile.VIDEO_FORMAT_480P, MediaFile.VIDEO_FORMAT_540P, MediaFile.VIDEO_FORMAT_576P, MediaFile.VIDEO_FORMAT_720P,
-        MediaFile.VIDEO_FORMAT_1080P, MediaFile.VIDEO_FORMAT_4K, MediaFile.VIDEO_FORMAT_8K, MediaFile.VIDEO_FORMAT_SD, MediaFile.VIDEO_FORMAT_HD };
+        MediaFile.VIDEO_FORMAT_1080P, MediaFile.VIDEO_FORMAT_4K, MediaFile.VIDEO_FORMAT_SD, MediaFile.VIDEO_FORMAT_HD }; // MediaFile.VIDEO_FORMAT_8K,
   }
 
   private void setComponentFont(JComponent comp) {

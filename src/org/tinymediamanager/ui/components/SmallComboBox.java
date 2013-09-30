@@ -81,7 +81,9 @@ public class SmallComboBox extends JComboBox {
 
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      labelItem.setText(value.toString());
+      if (value != null) {
+        labelItem.setText(value.toString());
+      }
 
       Color bg = null;
       Color fg = null;
