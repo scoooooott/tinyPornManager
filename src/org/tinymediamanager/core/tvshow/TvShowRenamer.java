@@ -192,65 +192,69 @@ public class TvShowRenamer {
       }
 
       String newFoldername = FilenameUtils.getBaseName(generateFilename(mf)); // w/o extension
-      File newEpFolder = new File(seasonDir + File.separator + newFoldername);
-      File newDisc = new File(newEpFolder + File.separator + disc.getName()); // old disc name
+      if (newFoldername != null && !newFoldername.isEmpty()) {
+        File newEpFolder = new File(seasonDir + File.separator + newFoldername);
+        File newDisc = new File(newEpFolder + File.separator + disc.getName()); // old disc name
 
-      try {
-        if (!epFolder.equals(newEpFolder)) {
-          boolean ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
-          if (ok) {
-            // iterate over all EPs & MFs and fix new path
-            LOGGER.debug("updating *all* MFs for new path -> " + newEpFolder);
-            for (TvShowEpisode e : eps) {
-              e.updateMediaFilePath(disc, newDisc);
-              e.setPath(newEpFolder.getPath());
-              e.saveToDb();
+        try {
+          if (!epFolder.equals(newEpFolder)) {
+            boolean ok = Utils.moveDirectorySafe(epFolder, newEpFolder);
+            if (ok) {
+              // iterate over all EPs & MFs and fix new path
+              LOGGER.debug("updating *all* MFs for new path -> " + newEpFolder);
+              for (TvShowEpisode e : eps) {
+                e.updateMediaFilePath(disc, newDisc);
+                e.setPath(newEpFolder.getPath());
+                e.saveToDb();
+              }
             }
+            // and cleanup
+            cleanEmptyDir(epFolder);
           }
-          // and cleanup
-          cleanEmptyDir(epFolder);
+          else {
+            // old and new folder are equal, do nothing
+          }
         }
-        else {
-          // old and new folder are equal, do nothing
+        catch (Exception e) {
+          LOGGER.error("error moving video file", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
-      }
-      catch (Exception e) {
-        LOGGER.error("error moving video file", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-            e.getLocalizedMessage() }));
       }
     } // end isDisc
     else {
       MediaFile newMF = new MediaFile(mf); // clone MF
       String filename = generateFilename(mf);
-      File newFile = new File(seasonDir, filename);
+      if (filename != null && !filename.isEmpty()) {
+        File newFile = new File(seasonDir, filename);
 
-      try {
-        if (!mf.getFile().equals(newFile)) {
-          File oldMfFile = mf.getFile();
-          boolean ok = Utils.moveFileSafe(oldMfFile, newFile);
-          if (ok) {
-            newMF.setPath(seasonDir.getAbsolutePath());
-            newMF.setFilename(filename);
-            // iterate over all EPs and delete old / set new MF
-            for (TvShowEpisode e : eps) {
-              e.removeFromMediaFiles(mf);
-              e.addToMediaFiles(newMF);
-              e.setPath(seasonDir.getAbsolutePath());
-              e.saveToDb();
+        try {
+          if (!mf.getFile().equals(newFile)) {
+            File oldMfFile = mf.getFile();
+            boolean ok = Utils.moveFileSafe(oldMfFile, newFile);
+            if (ok) {
+              newMF.setPath(seasonDir.getAbsolutePath());
+              newMF.setFilename(filename);
+              // iterate over all EPs and delete old / set new MF
+              for (TvShowEpisode e : eps) {
+                e.removeFromMediaFiles(mf);
+                e.addToMediaFiles(newMF);
+                e.setPath(seasonDir.getAbsolutePath());
+                e.saveToDb();
+              }
             }
+            // and cleanup
+            cleanEmptyDir(oldMfFile.getParentFile());
           }
-          // and cleanup
-          cleanEmptyDir(oldMfFile.getParentFile());
+          else {
+            // old and new file are equal, keep MF
+          }
         }
-        else {
-          // old and new file are equal, keep MF
+        catch (Exception e) {
+          LOGGER.error("error moving video file", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
         }
-      }
-      catch (Exception e) {
-        LOGGER.error("error moving video file", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-            e.getLocalizedMessage() }));
       }
     }
   }
@@ -281,6 +285,9 @@ public class TvShowRenamer {
     }
 
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(mf.getFile());
+    if (eps == null || eps.size() > 0) {
+      return "";
+    }
 
     String show = cleanForFilename(eps.get(0).getTvShow().getTitle());
     if (Globals.settings.getTvShowSettings().getRenamerAddShow()) {

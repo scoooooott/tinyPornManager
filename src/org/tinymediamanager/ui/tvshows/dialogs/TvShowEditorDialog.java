@@ -57,6 +57,7 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowActor;
@@ -995,7 +996,13 @@ public class TvShowEditorDialog extends JDialog {
     }
 
     public String getMediaFilename() {
-      return tvShowEpisode.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename();
+      List<MediaFile> mfs = tvShowEpisode.getMediaFiles(MediaFileType.VIDEO);
+      if (mfs != null && mfs.size() > 0) {
+        return mfs.get(0).getFilename();
+      }
+      else {
+        return "";
+      }
     }
 
     public int getEpisode() {

@@ -1289,7 +1289,13 @@ public class Movie extends MediaEntity {
    * @return the poster filename
    */
   public String getPosterFilename(MoviePosterNaming poster) {
-    return getPosterFilename(poster, getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
+    if (mfs != null && mfs.size() > 0) {
+      return getPosterFilename(poster, mfs.get(0).getFilename());
+    }
+    else {
+      return getPosterFilename(poster, ""); // no video files
+    }
   }
 
   public String getPosterFilename(MoviePosterNaming poster, String newMovieFilename) {
@@ -1307,22 +1313,22 @@ public class Movie extends MediaEntity {
         filename += getTitle() + ".tbn";
         break;
       case FILENAME_POSTER_PNG:
-        filename += mediafile + "-poster.png";
+        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.png";
         break;
       case FILENAME_POSTER_JPG:
-        filename += mediafile + "-poster.jpg";
+        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.jpg";
         break;
       case FILENAME_POSTER_TBN:
-        filename += mediafile + "-poster.tbn";
+        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.tbn";
         break;
       case FILENAME_PNG:
-        filename += mediafile + ".png";
+        filename += mediafile.isEmpty() ? "" : mediafile + ".png";
         break;
       case FILENAME_JPG:
-        filename += mediafile + ".jpg";
+        filename += mediafile.isEmpty() ? "" : mediafile + ".jpg";
         break;
       case FILENAME_TBN:
-        filename += mediafile + ".tbn";
+        filename += mediafile.isEmpty() ? "" : mediafile + ".tbn";
         break;
       case MOVIE_PNG:
         filename += "movie.png";
@@ -1366,7 +1372,13 @@ public class Movie extends MediaEntity {
    * @return the fanart filename
    */
   public String getFanartFilename(MovieFanartNaming fanart) {
-    return getFanartFilename(fanart, getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
+    if (mfs != null && mfs.size() > 0) {
+      return getFanartFilename(fanart, mfs.get(0).getFilename());
+    }
+    else {
+      return getFanartFilename(fanart, ""); // no video files
+    }
   }
 
   public String getFanartFilename(MovieFanartNaming fanart, String newMovieFilename) {
@@ -1384,19 +1396,19 @@ public class Movie extends MediaEntity {
         filename += "fanart.tbn";
         break;
       case FILENAME_FANART_PNG:
-        filename += mediafile + "-fanart.png";
+        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.png";
         break;
       case FILENAME_FANART_JPG:
-        filename += mediafile + "-fanart.jpg";
+        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.jpg";
         break;
       case FILENAME_FANART2_PNG:
-        filename += mediafile + ".fanart.png";
+        filename += mediafile.isEmpty() ? "" : mediafile + ".fanart.png";
         break;
       case FILENAME_FANART2_JPG:
-        filename += mediafile + ".fanart.jpg";
+        filename += mediafile.isEmpty() ? "" : mediafile + ".fanart.jpg";
         break;
       case FILENAME_FANART_TBN:
-        filename += mediafile + "-fanart.tbn";
+        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.tbn";
         break;
       case MOVIENAME_FANART_PNG:
         filename += getTitle() + "-fanart.png";
@@ -1422,7 +1434,13 @@ public class Movie extends MediaEntity {
    * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
-    return getNfoFilename(nfo, getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
+    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
+    if (mfs != null && mfs.size() > 0) {
+      return getNfoFilename(nfo, mfs.get(0).getFilename());
+    }
+    else {
+      return getNfoFilename(nfo, ""); // no video files
+    }
   }
 
   /**
@@ -1440,7 +1458,7 @@ public class Movie extends MediaEntity {
     switch (nfo) {
       case FILENAME_NFO:
         String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
-        filename += Utils.cleanStackingMarkers(movieFilename) + ".nfo"; // w/o stacking information
+        filename += movieFilename.isEmpty() ? "" : Utils.cleanStackingMarkers(movieFilename) + ".nfo"; // w/o stacking information
         break;
       case MOVIE_NFO:
         filename += "movie.nfo";

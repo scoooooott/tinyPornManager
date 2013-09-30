@@ -72,8 +72,12 @@ public class MovieRenamer {
 
         // FIXME: DOES NOT WORK, movie already renamed!!! - execute before movie rename?!
         // remove the filename of movie from subtitle, to ease parsing
-        String vname = Utils.cleanStackingMarkers(m.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename()).toLowerCase();
-        String shortname = sub.getBasename().toLowerCase().replace(vname, "");
+        List<MediaFile> mfs = m.getMediaFiles(MediaFileType.VIDEO);
+        String shortname = sub.getBasename().toLowerCase();
+        if (mfs != null && mfs.size() > 0) {
+          String vname = Utils.cleanStackingMarkers(mfs.get(0).getBasename()).toLowerCase();
+          shortname = sub.getBasename().toLowerCase().replace(vname, "");
+        }
 
         if (sub.getFilename().toLowerCase().contains("forced")) {
           // add "forced" prior language
@@ -393,37 +397,39 @@ public class MovieRenamer {
       }
       for (MoviePosterNaming name : posternames) {
         newFilename = movie.getPosterFilename(name, newMovieFilename);
-        String curExt = mf.getExtension();
-        if (curExt.equalsIgnoreCase("tbn")) {
-          String cont = mf.getContainerFormat();
-          if (cont.equalsIgnoreCase("PNG")) {
-            curExt = "png";
+        if (newFilename != null && !newFilename.isEmpty()) {
+          String curExt = mf.getExtension();
+          if (curExt.equalsIgnoreCase("tbn")) {
+            String cont = mf.getContainerFormat();
+            if (cont.equalsIgnoreCase("PNG")) {
+              curExt = "png";
+            }
+            else if (cont.equalsIgnoreCase("JPEG")) {
+              curExt = "jpg";
+            }
           }
-          else if (cont.equalsIgnoreCase("JPEG")) {
-            curExt = "jpg";
+          if (!curExt.equals(FilenameUtils.getExtension(newFilename))) {
+            // match extension to not rename PNG to JPG and vice versa
+            continue;
           }
-        }
-        if (!curExt.equals(FilenameUtils.getExtension(newFilename))) {
-          // match extension to not rename PNG to JPG and vice versa
-          continue;
-        }
-        posterRenamed = true;
+          posterRenamed = true;
 
-        MediaFile newMF = new MediaFile(mf);
-        File newFile = new File(newPathname, newFilename);
-        try {
-          boolean ok = copyFile(mf.getFile(), newFile);
-          if (ok) {
-            newMF.setPath(newPathname);
-            newMF.setFilename(newFilename);
+          MediaFile newMF = new MediaFile(mf);
+          File newFile = new File(newPathname, newFilename);
+          try {
+            boolean ok = copyFile(mf.getFile(), newFile);
+            if (ok) {
+              newMF.setPath(newPathname);
+              newMF.setFilename(newFilename);
+            }
           }
+          catch (Exception e) {
+            LOGGER.error("error renaming poster", e);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+                e.getLocalizedMessage() }));
+          }
+          needed.add(newMF);
         }
-        catch (Exception e) {
-          LOGGER.error("error renaming poster", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
-        }
-        needed.add(newMF);
       }
     }
 
@@ -449,37 +455,39 @@ public class MovieRenamer {
       }
       for (MovieFanartNaming name : fanartnames) {
         newFilename = movie.getFanartFilename(name, newMovieFilename);
-        String curExt = mf.getExtension();
-        if (curExt.equalsIgnoreCase("tbn")) {
-          String cont = mf.getContainerFormat();
-          if (cont.equalsIgnoreCase("PNG")) {
-            curExt = "png";
+        if (newFilename != null && !newFilename.isEmpty()) {
+          String curExt = mf.getExtension();
+          if (curExt.equalsIgnoreCase("tbn")) {
+            String cont = mf.getContainerFormat();
+            if (cont.equalsIgnoreCase("PNG")) {
+              curExt = "png";
+            }
+            else if (cont.equalsIgnoreCase("JPEG")) {
+              curExt = "jpg";
+            }
           }
-          else if (cont.equalsIgnoreCase("JPEG")) {
-            curExt = "jpg";
+          if (!curExt.equals(FilenameUtils.getExtension(newFilename))) {
+            // match extension to not rename PNG to JPG and vice versa
+            continue;
           }
-        }
-        if (!curExt.equals(FilenameUtils.getExtension(newFilename))) {
-          // match extension to not rename PNG to JPG and vice versa
-          continue;
-        }
-        fanartRenamed = true;
+          fanartRenamed = true;
 
-        MediaFile newMF = new MediaFile(mf);
-        File newFile = new File(newPathname, newFilename);
-        try {
-          boolean ok = copyFile(mf.getFile(), newFile);
-          if (ok) {
-            newMF.setPath(newPathname);
-            newMF.setFilename(newFilename);
+          MediaFile newMF = new MediaFile(mf);
+          File newFile = new File(newPathname, newFilename);
+          try {
+            boolean ok = copyFile(mf.getFile(), newFile);
+            if (ok) {
+              newMF.setPath(newPathname);
+              newMF.setFilename(newFilename);
+            }
           }
+          catch (Exception e) {
+            LOGGER.error("error renaming fanart", e);
+            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+                e.getLocalizedMessage() }));
+          }
+          needed.add(newMF);
         }
-        catch (Exception e) {
-          LOGGER.error("error renaming fanart", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-              e.getLocalizedMessage() }));
-        }
-        needed.add(newMF);
       }
     }
 

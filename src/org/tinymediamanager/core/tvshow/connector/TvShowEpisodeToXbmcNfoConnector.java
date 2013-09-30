@@ -133,7 +133,11 @@ public class TvShowEpisodeToXbmcNfoConnector {
     }
 
     TvShowEpisode episode = tvShowEpisodes.get(0);
-    String nfoFilename = episode.getMediaFiles(MediaFileType.VIDEO).get(0).getBasename() + ".nfo";
+    List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+    if (mfs == null || mfs.size() == 0) {
+      return; // no video file?
+    }
+    String nfoFilename = mfs.get(0).getBasename() + ".nfo";
     File nfoFile = new File(episode.getPath(), nfoFilename);
 
     // parse out all episodes from the nfo
