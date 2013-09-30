@@ -104,6 +104,21 @@ public class ParserUtils {
   }
 
   /**
+   * gets IMDB id out of filename
+   * 
+   * @param filename
+   *          a string
+   * @return imdbid or empty
+   */
+  public static String detectImdbId(String filename) {
+    String imdb = "";
+    if (filename != null && !filename.isEmpty()) {
+      imdb = StrgUtils.substr(filename, ".*(tt\\d{7}).*");
+    }
+    return imdb;
+  }
+
+  /**
    * removes some weird number-stopwords like 1080, 720 etc.. to ease the regex parsing for season/episode
    * 
    * @param filename
