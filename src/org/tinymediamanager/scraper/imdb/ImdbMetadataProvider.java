@@ -724,8 +724,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       sb.append(searchTerm);
     }
 
-    // sb.append("&s=tt");
-    sb.append(CAT_MOVIES); // just search for type movies
+    // we need to search for all - otherwise we do not find TV movies
+    sb.append(CAT_ALL);
 
     LOGGER.debug("========= BEGIN IMDB Scraper Search for: " + sb.toString());
     Document doc;
@@ -817,6 +817,13 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           continue;
         }
 
+        // filter out unwanted results
+        Pattern unwanted = Pattern.compile(".*\\((TV Episode|Short|Video Game)\\).*"); // stripped out .*\\(Video\\).*|
+        Matcher matcher = unwanted.matcher(element.text());
+        if (matcher.find()) {
+          continue;
+        }
+
         // is there a localized name? (aka)
         String localizedName = "";
         Elements italics = element.getElementsByTag("i");
@@ -838,7 +845,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
             // parse id
             String href = a.attr("href");
-            Matcher matcher = imdbIdPattern.matcher(href);
+            matcher = imdbIdPattern.matcher(href);
             while (matcher.find()) {
               if (matcher.group(1) != null) {
                 movieId = matcher.group(1);
