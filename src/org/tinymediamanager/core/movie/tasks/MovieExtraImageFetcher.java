@@ -80,6 +80,7 @@ public class MovieExtraImageFetcher implements Runnable {
           movie.downloadExtraFanarts(new ArrayList<String>(movie.getExtraFanarts()));
         }
 
+        movie.saveToDb();
         movie.callbackForWrittenArtwork(MediaArtworkType.ALL);
       }
     }
