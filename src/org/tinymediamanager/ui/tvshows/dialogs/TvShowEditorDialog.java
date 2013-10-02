@@ -68,7 +68,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TableSpinnerEditor;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -618,12 +618,6 @@ public class TvShowEditorDialog extends JDialog {
     }
     lblFanart.setImagePath(tvShow.getFanart());
 
-    // adjust table columns
-    TableColumnAdjuster tableColumnAdjuster = new TableColumnAdjuster(tableTrailer);
-    tableColumnAdjuster.setColumnDataIncluded(true);
-    tableColumnAdjuster.setColumnHeaderIncluded(true);
-    tableColumnAdjuster.adjustColumns();
-
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
     tableActors.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
@@ -642,6 +636,11 @@ public class TvShowEditorDialog extends JDialog {
     tableEpisodes.getColumnModel().getColumn(3).setMaxWidth(150);
     tableEpisodes.getColumnModel().getColumn(2).setCellEditor(new TableSpinnerEditor());
     tableEpisodes.getColumnModel().getColumn(3).setCellEditor(new TableSpinnerEditor());
+
+    // adjust table columns
+    TableColumnResizer.adjustColumnPreferredWidths(tableActors, 6);
+    TableColumnResizer.adjustColumnPreferredWidths(tableTrailer, 6);
+    TableColumnResizer.adjustColumnPreferredWidths(tableEpisodes, 6);
 
     // // implement listener to simulate button group
     // tableTrailer.getModel().addTableModelListener(new TableModelListener() {

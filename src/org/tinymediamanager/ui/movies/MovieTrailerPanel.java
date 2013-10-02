@@ -41,7 +41,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
@@ -67,13 +67,13 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieTrailerPanel extends JPanel {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle          BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle          BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */
-  private static final long                    serialVersionUID    = 1L;
+  private static final long                    serialVersionUID  = 1L;
 
   /** The logger. */
-  private static final Logger                  LOGGER              = LoggerFactory.getLogger(MovieTrailerPanel.class);
+  private static final Logger                  LOGGER            = LoggerFactory.getLogger(MovieTrailerPanel.class);
 
   /** The movie selection model. */
   private MovieSelectionModel                  movieSelectionModel;
@@ -81,14 +81,11 @@ public class MovieTrailerPanel extends JPanel {
   /** The table. */
   private JTable                               table;
 
-  /** The table column adjuster. */
-  private TableColumnAdjuster                  tableColumnAdjuster = null;
-
   /** The trailer event list. */
-  private EventList<MediaTrailer>              trailerEventList    = null;
+  private EventList<MediaTrailer>              trailerEventList  = null;
 
   /** The trailer table model. */
-  private DefaultEventTableModel<MediaTrailer> trailerTableModel   = null;
+  private DefaultEventTableModel<MediaTrailer> trailerTableModel = null;
 
   /**
    * Instantiates a new movie details panel.
@@ -118,10 +115,6 @@ public class MovieTrailerPanel extends JPanel {
     table.addMouseListener(renderer);
     table.addMouseMotionListener(renderer);
 
-    tableColumnAdjuster = new TableColumnAdjuster(table);
-    tableColumnAdjuster.setColumnDataIncluded(true);
-    tableColumnAdjuster.setColumnHeaderIncluded(true);
-
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -133,7 +126,7 @@ public class MovieTrailerPanel extends JPanel {
           trailerEventList.clear();
           trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailers());
           try {
-            tableColumnAdjuster.adjustColumns();
+            TableColumnResizer.adjustColumnPreferredWidths(table, 6);
           }
           catch (Exception e) {
           }

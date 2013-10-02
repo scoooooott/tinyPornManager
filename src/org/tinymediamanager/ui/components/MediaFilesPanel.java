@@ -32,7 +32,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.ui.TableColumnAdjuster;
+import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -61,7 +61,6 @@ public class MediaFilesPanel extends JPanel {
   private JScrollPane                       scrollPaneFiles;
   private JTable                            tableFiles;
 
-  private TableColumnAdjuster               tableColumnAdjuster = null;
   private EventList<MediaFile>              mediaFileEventList;
   private DefaultEventTableModel<MediaFile> mediaFileTableModel = null;
 
@@ -116,19 +115,13 @@ public class MediaFilesPanel extends JPanel {
 
     scrollPaneFiles.setViewportView(tableFiles);
 
-    // adjust table
-    tableColumnAdjuster = new TableColumnAdjuster(tableFiles);
-    tableColumnAdjuster.setColumnDataIncluded(true);
-    tableColumnAdjuster.setColumnHeaderIncluded(true);
-    tableColumnAdjuster.setOnlyAdjustLarger(false);
-
   }
 
   /**
    * Adjust columns.
    */
   public void adjustColumns() {
-    tableColumnAdjuster.adjustColumns();
+    TableColumnResizer.adjustColumnPreferredWidths(tableFiles, 6);
   }
 
   /**
