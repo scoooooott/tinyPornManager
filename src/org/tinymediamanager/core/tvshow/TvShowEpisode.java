@@ -745,8 +745,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // get files to cache
     List<File> filesToCache = new ArrayList<File>();
 
-    if (StringUtils.isNotBlank(getFanart())) {
-      filesToCache.add(new File(getFanart()));
+    for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
+      if (mf.isGraphic()) {
+        filesToCache.add(mf.getFile());
+      }
     }
 
     return filesToCache;

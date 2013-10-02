@@ -171,11 +171,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               // check only movies matching datasource
               continue;
             }
-            for (MediaFile mf : new ArrayList<MediaFile>(movie.getMediaFiles())) {
-              if (mf.isGraphic()) {
-                imageFiles.add(mf.getFile());
-              }
-            }
+            imageFiles.addAll(movie.getImagesToCache());
           }
 
           ImageCacheTask task = new ImageCacheTask(imageFiles);

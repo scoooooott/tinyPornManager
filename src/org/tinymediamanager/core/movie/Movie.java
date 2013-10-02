@@ -1940,13 +1940,10 @@ public class Movie extends MediaEntity {
   public List<File> getImagesToCache() {
     // get files to cache
     List<File> filesToCache = new ArrayList<File>();
-
-    if (StringUtils.isNotBlank(getPoster())) {
-      filesToCache.add(new File(getPoster()));
-    }
-
-    if (StringUtils.isNotBlank(getFanart())) {
-      filesToCache.add(new File(getFanart()));
+    for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
+      if (mf.isGraphic()) {
+        filesToCache.add(mf.getFile());
+      }
     }
 
     return filesToCache;

@@ -1517,22 +1517,9 @@ public class TvShow extends MediaEntity {
     // get files to cache
     List<File> filesToCache = new ArrayList<File>();
 
-    if (StringUtils.isNotBlank(getPoster())) {
-      filesToCache.add(new File(getPoster()));
-    }
-
-    if (StringUtils.isNotBlank(getFanart())) {
-      filesToCache.add(new File(getFanart()));
-    }
-
-    if (StringUtils.isNotBlank(getBanner())) {
-      filesToCache.add(new File(getBanner()));
-    }
-
-    // season poster
-    for (Entry<Integer, String> entry : seasonPosterMap.entrySet()) {
-      if (StringUtils.isNotBlank(entry.getValue())) {
-        filesToCache.add(new File(getSeasonPoster(entry.getKey())));
+    for (MediaFile mf : new ArrayList<MediaFile>(getMediaFiles())) {
+      if (mf.isGraphic()) {
+        filesToCache.add(mf.getFile());
       }
     }
 
