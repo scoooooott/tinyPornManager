@@ -55,6 +55,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -72,7 +73,6 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.WrapLayout;
 import org.tinymediamanager.ui.components.ImageLabel;
 
-import com.bric.image.pixel.Scaling;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -541,7 +541,8 @@ public class ImageChooserDialog extends JDialog {
     button.setBackground(Color.white);
     button.setUI(toggleButtonUI);
     button.setMargin(new Insets(10, 10, 10, 10));
-    ImageIcon imageIcon = new ImageIcon(Scaling.scale(originalImage, size.x, size.y));
+    // ImageIcon imageIcon = new ImageIcon(Scaling.scale(originalImage, size.x, size.y));
+    ImageIcon imageIcon = new ImageIcon(Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS));
     button.setIcon(imageIcon);
     button.putClientProperty("MediaArtwork", artwork);
 

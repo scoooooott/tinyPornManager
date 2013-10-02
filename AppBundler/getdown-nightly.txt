@@ -28,6 +28,7 @@ code = lib/glazedlists.jar
 code = lib/httpclient.jar
 code = lib/httpcore.jar
 code = lib/httpmime.jar
+code = lib/imgscalr-lib.jar
 code = lib/jackson-annotations.jar
 code = lib/jackson-core.jar
 code = lib/jackson-databind.jar

@@ -29,13 +29,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
+import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.ui.WrapLayout;
 
-import com.bric.image.pixel.Scaling;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
@@ -129,13 +129,16 @@ public class ImagePanel extends JPanel implements HierarchyListener {
             LOGGER.debug("loading " + file);
             BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(file);
             Point size = ImageLabel.calculateSize(300, 100, bufferedImage.getWidth(), bufferedImage.getHeight(), true);
-            BufferedImage img = Scaling.scale(bufferedImage, size.x, size.y);
+            // BufferedImage img = Scaling.scale(bufferedImage, size.x, size.y);
+            BufferedImage img = Scalr.resize(bufferedImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
+            bufferedImage = null;
 
             if (isCancelled()) {
               return null;
             }
 
             publish(img);
+            img = null;
           }
           catch (Exception e) {
           }

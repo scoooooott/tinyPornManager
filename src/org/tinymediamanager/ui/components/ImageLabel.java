@@ -32,13 +32,12 @@ import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
+import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.UTF8Control;
-
-import com.bric.image.pixel.Scaling;
 
 /**
  * The Class ImageLabel.
@@ -222,7 +221,9 @@ public class ImageLabel extends JLabel {
         g.drawRect(offsetX, offsetY, size.x + 7, size.y + 7);
         g.setColor(Color.WHITE);
         g.fillRect(offsetX + 1, offsetY + 1, size.x + 6, size.y + 6);
-        g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
+        // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
+        g.drawImage(Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newWidth, newHeight, Scalr.OP_ANTIALIAS), offsetX + 4,
+            offsetY + 4, newWidth, newHeight, this);
       }
       else {
         Point size = null;
@@ -244,7 +245,9 @@ public class ImageLabel extends JLabel {
 
         newWidth = size.x;
         newHeight = size.y;
-        g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
+        // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
+        g.drawImage(Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newWidth, newHeight, Scalr.OP_ANTIALIAS), offsetX,
+            offsetY, newWidth, newHeight, this);
       }
 
     }

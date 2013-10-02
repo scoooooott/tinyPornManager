@@ -41,13 +41,12 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.components.ImageLabel;
-
-import com.bric.image.pixel.Scaling;
 
 /**
  * The Class ImageCache.
@@ -122,13 +121,16 @@ public class ImageCache {
     size.x = width;
     size.y = size.x * originalImage.getHeight() / originalImage.getWidth();
 
-    BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
+    // BufferedImage scaledImage = Scaling.scale(originalImage, size.x, size.y);
+    BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
+    originalImage = null;
 
     // convert to rgb
     BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
     ColorConvertOp xformOp = new ColorConvertOp(null);
     xformOp.filter(scaledImage, rgb);
+    scaledImage = null;
 
     ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
     ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
@@ -141,6 +143,7 @@ public class ImageCache {
     IIOImage outputImage = new IIOImage(rgb, null, null);
     imgWrtr.write(null, outputImage, jpgWrtPrm);
     imgWrtr.dispose();
+    rgb = null;
 
     byte[] bytes = baos.toByteArray();
 
@@ -187,19 +190,23 @@ public class ImageCache {
 
         if (Globals.settings.getImageCacheType() == CacheType.FAST) {
           // scale fast
-          scaledImage = Scaling.scale(originalImage, size.x, size.y);
+          // scaledImage = Scaling.scale(originalImage, size.x, size.y);
+          scaledImage = Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.FIT_EXACT, size.x, size.y, Scalr.OP_ANTIALIAS);
         }
         else {
           // scale with good quality
-          scaledImage = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
-          scaledImage.getGraphics().drawImage(originalImage.getScaledInstance(size.x, size.y, Image.SCALE_SMOOTH), 0, 0, null);
+          // scaledImage = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+          // scaledImage.getGraphics().drawImage(originalImage.getScaledInstance(size.x, size.y, Image.SCALE_SMOOTH), 0, 0, null);
+          scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, size.x, size.y, Scalr.OP_ANTIALIAS);
         }
+        originalImage = null;
 
         // convert to rgb
         BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
 
         ColorConvertOp xformOp = new ColorConvertOp(null);
         xformOp.filter(scaledImage, rgb);
+        scaledImage = null;
 
         ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
         ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
@@ -212,6 +219,7 @@ public class ImageCache {
         imgWrtr.write(null, image, jpgWrtPrm);
         imgWrtr.dispose();
         output.close();
+        rgb = null;
       }
       else {
         FileUtils.copyFile(originalFile, cachedFile);
