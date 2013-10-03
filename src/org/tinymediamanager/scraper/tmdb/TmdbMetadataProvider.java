@@ -383,7 +383,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     List<ReleaseInfo> releaseInfo = null;
     synchronized (tmdb) {
       trackConnections();
-      releaseInfo = tmdb.getMovieReleaseInfo(tmdbId, options.getLanguage().name());
+      releaseInfo = tmdb.getMovieReleaseInfo(movie.getId(), options.getLanguage().name());
     }
 
     for (ReleaseInfo info : releaseInfo) {
@@ -413,7 +413,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     List<Person> cast = null;
     synchronized (tmdb) {
       trackConnections();
-      cast = tmdb.getMovieCasts(tmdbId);
+      cast = tmdb.getMovieCasts(movie.getId());
     }
 
     for (Person castMember : cast) {

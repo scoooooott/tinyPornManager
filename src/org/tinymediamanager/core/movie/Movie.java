@@ -866,8 +866,12 @@ public class Movie extends MediaEntity {
       return;
     }
 
-    setImdbId(metadata.getImdbId());
-    setTmdbId(metadata.getTmdbId());
+    if (StringUtils.isNotBlank(metadata.getImdbId())) {
+      setImdbId(metadata.getImdbId());
+    }
+    if (metadata.getTmdbId() > 0) {
+      setTmdbId(metadata.getTmdbId());
+    }
 
     // set chosen metadata
     if (config.isTitle()) {
