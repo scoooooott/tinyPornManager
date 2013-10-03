@@ -135,7 +135,16 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (cancel) {
           break;
         }
-        if (subdir.isDirectory() && !skipFolders.contains(subdir.getName().toUpperCase()) && !subdir.getName().startsWith(".")) {
+
+        String directoryName = subdir.getName();
+        // check against unwanted dirs
+        if (directoryName.startsWith(".") || directoryName.equalsIgnoreCase("$RECYCLE.BIN") || directoryName.equalsIgnoreCase("Recycler")
+            || directoryName.equalsIgnoreCase("System Volume Information")) {
+          LOGGER.info("ignoring directory " + directoryName);
+          continue;
+        }
+
+        if (subdir.isDirectory() && !skipFolders.contains(subdir.getName().toUpperCase())) {
           submitTask(new FindTvShowTask(subdir, path));
         }
         if (subdir.isFile() && Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(subdir.getName()))) {

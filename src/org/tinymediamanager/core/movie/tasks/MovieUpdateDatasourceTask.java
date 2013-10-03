@@ -103,6 +103,15 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         for (File file : dirs) {
           if (!cancel) {
             if (file.isDirectory()) {
+              String directoryName = file.getName();
+              // check against unwanted dirs
+              if (directoryName.startsWith(".") || directoryName.equalsIgnoreCase("$RECYCLE.BIN") || directoryName.equalsIgnoreCase("Recycler")
+                  || directoryName.equalsIgnoreCase("System Volume Information")) {
+                LOGGER.info("ignoring directory " + directoryName);
+                continue;
+              }
+
+              // dig deeper in this dir
               submitTask(new FindMovieTask(file, ds));
             }
             else {
