@@ -156,7 +156,8 @@ public class Url {
     ByteArrayInputStream is = null;
 
     // replace our API keys for logging...
-    LOGGER.debug("getting " + url.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>"));
+    String logUrl = url.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>");
+    LOGGER.debug("getting " + logUrl);
     HttpGet httpget = new HttpGet(url);
 
     // set custom headers
@@ -177,7 +178,7 @@ public class Url {
       LOGGER.error("proxy or host not found/reachable", e);
     }
     catch (Exception e) {
-      LOGGER.error("Exception getting url", e);
+      LOGGER.error("Exception getting url " + logUrl, e);
     }
     finally {
       EntityUtils.consume(entity);

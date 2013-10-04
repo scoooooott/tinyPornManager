@@ -591,6 +591,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     ArrayList<File> files = new ArrayList<File>();
     ArrayList<File> dirs = new ArrayList<File>();
     File[] list = directory.listFiles();
+    if (list == null) {
+      LOGGER.error("Whops. Cannot access directory: " + directory);
+      return ar;
+    }
     for (File file : list) {
       if (file.isFile()) {
         files.add(file);

@@ -382,7 +382,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         // }
 
         /*
-         * <div class="info"><h5>Runtime:</h5><div class="info-content">129 min </div></div>
+         * <div class="info"><h5>Runtime:</h5><div class="info-content">162 min | 171 min (special edition) | 178 min (extended cut)</div></div>
          */
         // runtime
         // if (h5Title.matches("(?i)" + imdbSite.getRuntime() + ".*")) {
@@ -390,7 +390,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           Elements div = element.getElementsByClass("info-content");
           if (div.size() > 0) {
             Element taglineElement = div.first();
-            String runtimeAsString = cleanString(taglineElement.ownText().replaceAll("min", ""));
+            String first = taglineElement.ownText().split("\\|")[0];
+            String runtimeAsString = cleanString(first.replaceAll("min", ""));
             int runtime = 0;
             try {
               runtime = Integer.parseInt(runtimeAsString);

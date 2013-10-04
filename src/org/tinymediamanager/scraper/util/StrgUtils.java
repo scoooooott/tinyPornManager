@@ -152,7 +152,7 @@ public class StrgUtils {
     }
 
     if (date == null) {
-      throw new ParseException("could not parse date from: " + dateAsString, 0);
+      throw new ParseException("could not parse date from: \"" + dateAsString + "\"", 0);
     }
 
     return date;

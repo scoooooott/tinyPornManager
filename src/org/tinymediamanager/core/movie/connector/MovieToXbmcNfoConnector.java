@@ -477,7 +477,7 @@ public class MovieToXbmcNfoConnector {
         movie.setRuntime(Integer.parseInt(rt));
       }
       catch (Exception e) {
-        LOGGER.warn("could not parse runtime: " + xbmc.runtime);
+        LOGGER.warn("could not parse runtime: " + xbmc.runtime + "; Movie: " + movie.getPath());
       }
 
       if (StringUtils.isNotBlank(xbmc.thumb)) {
