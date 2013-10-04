@@ -876,6 +876,9 @@ public class Utils {
    *          if file is already there, ignore that and overwrite with new copy
    */
   public static final void createBackupFile(File f, boolean overwrite) {
+    if (!f.exists()) {
+      return;
+    }
     File backup = new File("backup");
     if (!backup.exists()) {
       backup.mkdir();
