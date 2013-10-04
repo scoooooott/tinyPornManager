@@ -22,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -67,57 +66,21 @@ public class TvShowRenamer {
   }
 
   /**
-   * Rename TvShow.
-   * 
-   * @param show
-   *          the TvShow
-   * @deprecated use renameEpisode(TvShowEpisode episode) instead. Calling this method won't be interruptable
-   */
-  @Deprecated
-  public static void renameTvShow(TvShow show) {
-
-    // check if a datasource is set
-    if (StringUtils.isEmpty(show.getDataSource())) {
-      LOGGER.error("no Datasource set");
-      return;
-    }
-
-    LOGGER.info("Renaming TvShow: " + show.getTitle());
-    LOGGER.debug("TvShow year: " + show.getYear());
-    LOGGER.debug("TvShow path: " + show.getPath());
-
-    // this are the TV show MFs like poster/banner/...
-    // for (MediaFile mf : show.getMediaFiles()) {
-    // renameMediaFile(mf, show);
-    // }
-
-    for (MediaFile mf : show.getEpisodesMediaFiles()) {
-      renameMediaFile(mf, show);
-    }
-  }
-
-  /**
-   * Rename Season.
-   * 
-   * @param season
-   *          the Season
-   * @deprecated use renameEpisode(TvShowEpisode episode) instead. Calling this method won't be interruptable
-   */
-  @Deprecated
-  public static void renameSeason(TvShowSeason season) {
-    LOGGER.info("Renaming TvShow '" + season.getTvShow().getTitle() + "' Season " + season.getSeason());
-    for (MediaFile mf : season.getMediaFiles()) {
-      renameMediaFile(mf, season.getTvShow());
-    }
-  }
-
-  /**
    * Rename Episode (PLUS all Episodes having the same MediaFile!!!).
    * 
    * @param episode
    *          the Episode
    */
   public static void renameEpisode(TvShowEpisode episode) {
+    // test for valid season/episode number
+    if (episode.getSeason() < 0 || episode.getEpisode() < 0) {
+      LOGGER.warn("failed to rename episode " + episode.getTitle() + " (TV show " + episode.getTvShow().getTitle()
+          + ") - invalid season/episode number");
+      MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, episode.getTvShow().getTitle(), "tvshow.renamer.failedrename",
+          new String[] { episode.getTitle() }));
+      return;
+    }
+
     LOGGER.info("Renaming TvShow '" + episode.getTvShow().getTitle() + "' Episode " + episode.getEpisode());
     for (MediaFile mf : new ArrayList<MediaFile>(episode.getMediaFiles())) {
       renameMediaFile(mf, episode.getTvShow());
@@ -216,7 +179,7 @@ public class TvShowRenamer {
           }
         }
         catch (Exception e) {
-          LOGGER.error("error moving video file", e);
+          LOGGER.error("error moving video file " + disc.getName() + " to " + newFoldername, e);
           MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
               e.getLocalizedMessage() }));
         }
@@ -251,7 +214,7 @@ public class TvShowRenamer {
           }
         }
         catch (Exception e) {
-          LOGGER.error("error moving video file", e);
+          LOGGER.error("error moving video file " + mf.getFilename() + " to " + newFile.getPath(), e);
           MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
               e.getLocalizedMessage() }));
         }
@@ -285,7 +248,7 @@ public class TvShowRenamer {
     }
 
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(mf.getFile());
-    if (eps == null || eps.size() > 0) {
+    if (eps == null || eps.size() == 0) {
       return "";
     }
 
