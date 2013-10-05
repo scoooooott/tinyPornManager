@@ -180,6 +180,13 @@ public class MainWindow extends JFrame {
     clearDatabase.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
+        // display warning popup
+        int answer = JOptionPane.showConfirmDialog(MainWindow.this, BUNDLE.getString("tmm.cleardatabase.hint"),
+            BUNDLE.getString("tmm.cleardatabase"), JOptionPane.YES_NO_OPTION);
+        if (answer != JOptionPane.OK_OPTION) {
+          return;
+        }
+
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // delete the database
         try {
