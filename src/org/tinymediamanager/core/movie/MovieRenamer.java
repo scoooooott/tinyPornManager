@@ -503,18 +503,20 @@ public class MovieRenamer {
       String fileExtension = FilenameUtils.getExtension(mf.getFilename());
       newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie) + "-trailer." + fileExtension;
       MediaFile newMF = new MediaFile(mf);
-      File newFile = new File(newPathname, newFilename);
-      try {
-        boolean ok = Utils.moveFileSafe(mf.getFile(), newFile);
-        if (ok) {
-          newMF.setPath(newPathname);
-          newMF.setFilename(newFilename);
+      if (renameFiles) { // renamer template was not empty
+        File newFile = new File(newPathname, newFilename);
+        try {
+          boolean ok = Utils.moveFileSafe(mf.getFile(), newFile);
+          if (ok) {
+            newMF.setPath(newPathname);
+            newMF.setFilename(newFilename);
+          }
         }
-      }
-      catch (Exception e) {
-        LOGGER.error("error renaming trailer", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
-            e.getLocalizedMessage() }));
+        catch (Exception e) {
+          LOGGER.error("error renaming trailer", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf.getFilename(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
+        }
       }
       needed.add(newMF);
     }
