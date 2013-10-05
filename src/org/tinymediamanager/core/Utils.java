@@ -876,12 +876,12 @@ public class Utils {
    *          if file is already there, ignore that and overwrite with new copy
    */
   public static final void createBackupFile(File f, boolean overwrite) {
-    if (!f.exists()) {
-      return;
-    }
     File backup = new File("backup");
     if (!backup.exists()) {
       backup.mkdir();
+    }
+    if (!f.exists()) {
+      return;
     }
     DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     String date = formatter.format(f.lastModified());
@@ -906,6 +906,9 @@ public class Utils {
    */
   public static final void deleteOldBackupFile(File f, int keep) {
     File[] files = new File("backup").listFiles();
+    if (files == null) {
+      return;
+    }
     ArrayList<File> al = new ArrayList<File>();
     for (File s : files) {
       if (s.getName().matches(f.getName() + "\\.\\d{4}\\-\\d{2}\\-\\d{2}")) { // name.yyyy-mm-dd
