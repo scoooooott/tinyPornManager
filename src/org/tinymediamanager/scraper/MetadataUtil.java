@@ -46,7 +46,11 @@ public class MetadataUtil {
   public static float calculateScore(String searchTitle, String matchTitle) {
     float score1 = Similarity.compareStrings(searchTitle, matchTitle);
     float score2 = Similarity.compareStrings(searchTitle, removeNonSearchCharacters(matchTitle));
-    return Math.max(score1, score2);
+    float score3 = 0;
+    if (searchTitle != null && searchTitle.matches(".* \\d{4}$")) { // ends with space+year
+      score3 = Similarity.compareStrings(searchTitle.replaceFirst(" \\d{4}$", ""), matchTitle);
+    }
+    return Math.max(score1, Math.max(score3, score2));
   }
 
   /**
