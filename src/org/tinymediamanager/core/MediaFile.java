@@ -56,6 +56,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static final String        FILESIZE           = "filesize";
   private static final String        FILESIZE_IN_MB     = "filesizeInMegabytes";
 
+  private static Pattern             moviesetPattern    = Pattern.compile("(?i)(movieset-poster|movieset-fanart)\\..{2,4}");
   private static Pattern             posterPattern      = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
   private static Pattern             fanartPattern      = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
   private static Pattern             bannerPattern      = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
@@ -216,8 +217,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private MediaFileType parseImageType() {
     String name = getFilename();
 
+    // movieset artwork
+    Matcher matcher = moviesetPattern.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.GRAPHIC;
+    }
+
     // *-poster.* or poster.* or folder.* or movie.*
-    Matcher matcher = posterPattern.matcher(name);
+    matcher = posterPattern.matcher(name);
     if (matcher.matches()) {
       return MediaFileType.POSTER;
     }
