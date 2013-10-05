@@ -79,11 +79,11 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSettingsPanel extends JPanel implements HierarchyListener {
-  private static final long           serialVersionUID = -7580437046944123496L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID           = -7580437046944123496L;
+  private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                    settings         = Settings.getInstance();
-  private List<String>                separators       = new ArrayList<String>(Arrays.asList("_", ".", "-"));
+  private Settings                    settings                   = Settings.getInstance();
+  private List<String>                separators                 = new ArrayList<String>(Arrays.asList("_", ".", "-"));
 
   /**
    * UI elements
@@ -101,6 +101,14 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
   private JCheckBox                   chckbxRemoveOtherNfos;
   private JCheckBox                   chckbxMultipleMoviesPerFolder;
   private JCheckBox                   chckbxImageCache;
+  private JCheckBox                   chckbxMoviesetSingleMovie;
+
+  private ActionListener              actionCreateRenamerExample = new ActionListener() {
+                                                                   @Override
+                                                                   public void actionPerformed(ActionEvent e) {
+                                                                     createRenamerExample();
+                                                                   }
+                                                                 };
 
   /**
    * Instantiates a new movie settings panel.
@@ -215,14 +223,14 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     JPanel panelRenamer = new JPanel();
     panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelRenamer, "2, 4, fill, fill");
-    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMoviePath = new JLabel(BUNDLE.getString("Settings.renamer.folder")); //$NON-NLS-1$
     panelRenamer.add(lblMoviePath, "2, 2, right, default");
@@ -252,7 +260,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
     txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
-    panelRenamer.add(txtpntTitle, "8, 2, 1, 7, fill, fill");
+    panelRenamer.add(txtpntTitle, "10, 2, 1, 9, fill, fill");
 
     JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
     panelRenamer.add(lblMovieFilename, "2, 4, right, fill");
@@ -279,12 +287,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     tfMovieFilename.setColumns(10);
 
     chckbxSpaceSubstitution = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
-    chckbxSpaceSubstitution.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        createRenamerExample();
-      }
-    });
+    chckbxSpaceSubstitution.addActionListener(actionCreateRenamerExample);
     panelRenamer.add(chckbxSpaceSubstitution, "4, 6");
 
     cbSeparator = new JComboBox(separators.toArray());
@@ -297,39 +300,38 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
       }
     });
 
+    chckbxMoviesetSingleMovie = new JCheckBox(BUNDLE.getString("Settings.renamer.moviesetsinglemovie")); //$NON-NLS-1$
+    chckbxMoviesetSingleMovie.addActionListener(actionCreateRenamerExample);
+    panelRenamer.add(chckbxMoviesetSingleMovie, "4, 8, 5, 1, fill, default");
+
     JTextPane txtrChooseAFolder = new JTextPane();
     txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtrChooseAFolder.setText(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
-    panelRenamer.add(txtrChooseAFolder, "2, 8, 3, 1, fill, bottom");
+    panelRenamer.add(txtrChooseAFolder, "2, 10, 3, 1, fill, bottom");
 
     JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
-    panelRenamer.add(lblExampleT, "2, 10");
+    panelRenamer.add(lblExampleT, "2, 12");
 
     cbMovieForPreview = new JComboBox();
-    cbMovieForPreview.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        createRenamerExample();
-      }
-    });
-    panelRenamer.add(cbMovieForPreview, "4, 10, 3, 1, fill, default");
+    cbMovieForPreview.addActionListener(actionCreateRenamerExample);
+    panelRenamer.add(cbMovieForPreview, "4, 12, 5, 1, fill, default");
 
     lblExample = new JLabel("");
     lblExample.setFont(lblExample.getFont().deriveFont(11f));
-    panelRenamer.add(lblExample, "2, 12, 7, 1");
+    panelRenamer.add(lblExample, "2, 14, 9, 1");
 
     JSeparator separator = new JSeparator();
-    panelRenamer.add(separator, "1, 14, 8, 1");
+    panelRenamer.add(separator, "1, 16, 10, 1");
 
     JLabel lblCleanupOptions = new JLabel(BUNDLE.getString("Settings.cleanupoptions")); //$NON-NLS-1$
-    panelRenamer.add(lblCleanupOptions, "2, 16");
+    panelRenamer.add(lblCleanupOptions, "2, 18, 3, 1");
 
     chckbxRemoveOtherNfos = new JCheckBox("");
-    panelRenamer.add(chckbxRemoveOtherNfos, "2, 18, right, default");
+    panelRenamer.add(chckbxRemoveOtherNfos, "2, 20, right, default");
 
     JLabel lblRemoveAllNon = new JLabel(BUNDLE.getString("Settings.renamer.removenfo")); //$NON-NLS-1$
-    panelRenamer.add(lblRemoveAllNon, "4, 18");
+    panelRenamer.add(lblRemoveAllNon, "4, 20, 5, 1");
 
     initDataBindings();
 
@@ -508,5 +510,10 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_3, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_3.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_5 = BeanProperty.create("movieSettings.movieRenamerCreateMoviesetForSingleMovie");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, chckbxMoviesetSingleMovie, jCheckBoxBeanProperty);
+    autoBinding_4.bind();
   }
 }

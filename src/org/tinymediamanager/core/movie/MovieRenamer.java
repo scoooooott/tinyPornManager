@@ -678,7 +678,8 @@ public class MovieRenamer {
 
     // replace token Movie set title - sorted ($M)
     if (newDestination.contains("$M")) {
-      if (movie.getMovieSet() != null) {
+      if (movie.getMovieSet() != null
+          && (movie.getMovieSet().getMovies().size() > 1 || Globals.settings.getMovieSettings().isMovieRenamerCreateMoviesetForSingleMovie())) {
         newDestination = replaceToken(newDestination, "$M", movie.getMovieSet().getTitleSortable());
       }
       else {
@@ -688,7 +689,8 @@ public class MovieRenamer {
 
     // replace token Movie set title ($N)
     if (newDestination.contains("$N")) {
-      if (movie.getMovieSet() != null) {
+      if (movie.getMovieSet() != null
+          && (movie.getMovieSet().getMovies().size() > 1 || Globals.settings.getMovieSettings().isMovieRenamerCreateMoviesetForSingleMovie())) {
         newDestination = replaceToken(newDestination, "$N", movie.getMovieSet().getTitle());
       }
       else {
