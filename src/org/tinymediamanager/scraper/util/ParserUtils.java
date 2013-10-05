@@ -85,9 +85,8 @@ public class ParserUtils {
       }
     }
 
-    // if we have at least 3 tokens, and the last one is a 4 digit, assume year
-    // and remove
-    if (firstFoundStopwordPosition > 3 && s[firstFoundStopwordPosition - 1].matches("\\d{4}")) {
+    // if we have at least 1 token, and the last one is a 4 digit, assume year and remove
+    if (firstFoundStopwordPosition > 1 && s[firstFoundStopwordPosition - 1].matches("\\d{4}")) {
       LOGGER.debug("removed last token - seems to be year");
       firstFoundStopwordPosition--;
     }
