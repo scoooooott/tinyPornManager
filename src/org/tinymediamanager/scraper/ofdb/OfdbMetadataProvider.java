@@ -434,7 +434,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getTrailers() " + options.toString());
     List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
-    if (options.getImdbId().isEmpty()) {
+    if (!Utils.isValidImdbId(options.getImdbId())) {
       LOGGER.debug("IMDB id not found");
       return trailers;
     }

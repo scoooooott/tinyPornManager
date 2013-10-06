@@ -271,7 +271,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         movie.setPath(mf.getPath());
       }
 
-      if (movie.getImdbId().isEmpty()) {
+      if (!Utils.isValidImdbId(movie.getImdbId())) {
         movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
       }
       movie.addToMediaFiles(mf);
@@ -465,7 +465,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               movie.setDisc(true);
             }
 
-            if (movie.getImdbId().isEmpty()) {
+            if (!Utils.isValidImdbId(movie.getImdbId())) {
               movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
             }
 

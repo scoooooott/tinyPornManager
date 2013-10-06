@@ -34,6 +34,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -359,7 +360,7 @@ public class MovieList extends AbstractModelObject {
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
       options.set(SearchParam.LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
       if (movie != null) {
-        if (!movie.getImdbId().isEmpty()) {
+        if (Utils.isValidImdbId(movie.getImdbId())) {
           options.set(SearchParam.IMDBID, movie.getImdbId());
           idFound = true;
         }

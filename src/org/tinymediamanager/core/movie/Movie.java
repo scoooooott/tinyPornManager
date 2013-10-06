@@ -561,7 +561,7 @@ public class Movie extends MediaEntity {
    */
   public String getImdbId() {
     Object obj = ids.get("imdbId");
-    if (obj == null) {
+    if (obj == null || !Utils.isValidImdbId(obj.toString())) {
       return "";
     }
     return obj.toString();
@@ -843,6 +843,9 @@ public class Movie extends MediaEntity {
    *          the new imdb id
    */
   public void setImdbId(String newValue) {
+    if (!Utils.isValidImdbId(newValue)) {
+      newValue = "";
+    }
     String oldValue = getImdbId();
     ids.put("imdbId", newValue);
     firePropertyChange("imdbId", oldValue, newValue);
