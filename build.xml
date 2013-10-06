@@ -113,6 +113,18 @@
             <entry key="date" value="${today}" />
         </propertyfile>
     </target>
+	
+    <target name="downloadLocales">
+        <property name="tfuser" value="" /> <!-- set your transifex username -->
+        <property name="tfpwd" value="" /> <!-- set your transifex password -->
+        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/cs/?file" dest="locale/messages_cs.properties" username="${tfuser}" password="${tfpwd}"/>
+        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/de/?file" dest="locale/messages_de.properties" username="${tfuser}" password="${tfpwd}"/>
+        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/fr/?file" dest="locale/messages_fr.properties" username="${tfuser}" password="${tfpwd}"/>
+        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/nl/?file" dest="locale/messages_nl.properties" username="${tfuser}" password="${tfpwd}"/>
+        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/pt/?file" dest="locale/messages_pt.properties" username="${tfuser}" password="${tfpwd}"/>
+        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/sk/?file" dest="locale/messages_sk.properties" username="${tfuser}" password="${tfpwd}"/>
+        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/vi/?file" dest="locale/messages_vi.properties" username="${tfuser}" password="${tfpwd}"/>
+    </target>
 
     <target name='package-app' description="builds the packages" depends='create_tmm_jar'>
         <!-- default files, to include in dist -->
