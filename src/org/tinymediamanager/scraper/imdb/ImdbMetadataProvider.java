@@ -819,7 +819,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         }
 
         // filter out unwanted results
-        Pattern unwanted = Pattern.compile(".*\\((TV Episode|Short|Video Game)\\).*"); // stripped out .*\\(Video\\).*|
+        Pattern unwanted = Pattern.compile(".*\\((TV Series|TV Episode|Short|Video Game)\\).*"); // stripped out .*\\(Video\\).*|
         Matcher matcher = unwanted.matcher(element.text());
         if (matcher.find()) {
           continue;
@@ -900,7 +900,12 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       }
       else {
         // compare score based on names
-        sr.setScore(MetadataUtil.calculateScore(searchTerm, movieName));
+        float score = MetadataUtil.calculateScore(searchTerm, movieName);
+        if (posterUrl.isEmpty() || posterUrl.contains("nopicture")) {
+          LOGGER.debug("no poster - downgrading score by 0.01");
+          score = score - 0.01f;
+        }
+        sr.setScore(score);
       }
 
       result.add(sr);
