@@ -776,7 +776,7 @@ public class MovieRenamer {
       // also replace triple and double replacements with one to avoid strange looking results;
       // example:
       // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
-      newDestination = newDestination.replaceAll(replacement + replacement, replacement);
+      newDestination = newDestination.replaceAll("\\" + replacement + "\\" + replacement, replacement);
     }
 
     return newDestination.trim();
