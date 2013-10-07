@@ -732,9 +732,14 @@ public class MovieRenamer {
         newDestination = replaceToken(newDestination, "$A", mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels());
       }
 
-      // replace token video codec + channels ($V)
+      // replace token video codec + format ($V)
       if (newDestination.contains("$V")) {
         newDestination = replaceToken(newDestination, "$V", mf.getVideoCodec() + (mf.getVideoCodec().isEmpty() ? "" : "-") + mf.getVideoFormat());
+      }
+
+      // replace token video format ($F)
+      if (newDestination.contains("$F")) {
+        newDestination = replaceToken(newDestination, "$F", mf.getVideoFormat());
       }
     }
     else {
