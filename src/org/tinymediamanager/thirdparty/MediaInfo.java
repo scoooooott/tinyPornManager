@@ -18,15 +18,12 @@ package org.tinymediamanager.thirdparty;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.text.Normalizer;
-import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,11 +96,7 @@ public class MediaInfo implements Closeable {
    */
   public synchronized boolean open(File file) {
     if (file != null && isLoaded()) {
-      String filename = file.getAbsolutePath();
-      if (SystemUtils.IS_OS_MAC_OSX) {
-        filename = Normalizer.normalize(filename, Form.NFD);
-      }
-      return file.isFile() && MediaInfoLibrary.INSTANCE.Open(handle, new WString(filename)) > 0;
+      return file.isFile() && MediaInfoLibrary.INSTANCE.Open(handle, new WString(file.getAbsolutePath())) > 0;
     }
     else {
       return false;
