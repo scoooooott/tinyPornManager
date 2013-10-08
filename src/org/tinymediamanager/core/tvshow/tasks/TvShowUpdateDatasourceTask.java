@@ -339,7 +339,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // create new one
         tvShow = new TvShow();
         tvShow.setPath(dir.getPath());
-        tvShow.setTitle(ParserUtils.detectCleanMoviename(dir.getName()));
+        String[] ty = ParserUtils.detectCleanMovienameAndYear(dir.getName());
+        tvShow.setTitle(ty[0]);
+        if (!ty[1].isEmpty()) {
+          tvShow.setYear(ty[1]);
+        }
       }
       if (tvShow != null) {
         tvShow.setDataSource(datasource);

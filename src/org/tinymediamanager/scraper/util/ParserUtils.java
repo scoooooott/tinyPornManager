@@ -45,7 +45,7 @@ public class ParserUtils {
    * Tries to get movie name from filename<br>
    * 1. splits string using common delimiters ".- ()"<br>
    * 2. searches for first occurrence of common stopwords<br>
-   * 3. if last token is 4 digits, assume year and remove (only if we have at least 3 tokens)<br>
+   * 3. if last token is 4 digits, assume year and remove<br>
    * 4. everything before the first stopword must be the movie name :p
    * 
    * @param filename
@@ -54,11 +54,28 @@ public class ParserUtils {
    * @author Myron Boyle
    */
   public static String detectCleanMoviename(String filename) {
+    return detectCleanMovienameAndYear(filename)[0];
+  }
+
+  /**
+   * Tries to get movie name and year from filename<br>
+   * 1. splits string using common delimiters ".- ()"<br>
+   * 2. searches for first occurrence of common stopwords<br>
+   * 3. if last token is 4 digits, assume year and set [1]<br>
+   * 4. everything before the first stopword must be the movie name :p
+   * 
+   * @param filename
+   *          the filename to get the title from
+   * @return title/year string (year can be empty)
+   * @author Myron Boyle
+   */
+  public static String[] detectCleanMovienameAndYear(String filename) {
+    String[] ret = { "", "" };
     LOGGER.debug("Parse filename for movie title: \"" + filename + "\"");
 
     if (filename == null || filename.isEmpty()) {
       LOGGER.warn("Filename empty?!");
-      return "";
+      return ret;
     }
 
     // remove extension (if found) and split
@@ -89,17 +106,19 @@ public class ParserUtils {
     if (firstFoundStopwordPosition > 1 && s[firstFoundStopwordPosition - 1].matches("\\d{4}")) {
       LOGGER.debug("removed last token - seems to be year");
       firstFoundStopwordPosition--;
+      ret[1] = s[firstFoundStopwordPosition];
     }
 
     // rebuild string
-    String ret = "";
+    String name = "";
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
-        ret = ret + s[i] + " ";
+        name = name + s[i] + " ";
       }
     }
-    LOGGER.debug("Movie title should be: \"" + ret.trim() + "\"");
-    return ret.trim();
+    ret[0] = name.trim();
+    LOGGER.debug("Movie title should be: \"" + ret[0] + "\", from " + ret[1]);
+    return ret;
   }
 
   /**

@@ -262,7 +262,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           // still NULL, create new movie movie from file
           LOGGER.debug("create new movie");
           movie = new Movie();
-          movie.setTitle(ParserUtils.detectCleanMoviename(basename));
+          String[] ty = ParserUtils.detectCleanMovienameAndYear(basename);
+          movie.setTitle(ty[0]);
+          if (!ty[1].isEmpty()) {
+            movie.setYear(ty[1]);
+          }
           movie.setDateAdded(new Date());
           movie.saveToDb();
         }
@@ -432,7 +436,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
 
           if (movie.getTitle().isEmpty()) {
-            movie.setTitle(ParserUtils.detectCleanMoviename(movieDir.getName()));
+            String[] ty = ParserUtils.detectCleanMovienameAndYear(movieDir.getName());
+            movie.setTitle(ty[0]);
+            if (!ty[1].isEmpty()) {
+              movie.setYear(ty[1]);
+            }
           }
           movie.setPath(movieDir.getPath());
           movie.setDataSource(dataSource);
