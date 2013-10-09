@@ -647,14 +647,15 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         continue;
       }
 
+      // FIXME: to every episode file in dir, the same single SUB gets added!!! - detect S/EP from file!!!!
       // and last but not least we add a directory called sample/subs/subtitle
-      if (file.isDirectory()
-          && ("sample".equalsIgnoreCase(file.getName()) || "subs".equalsIgnoreCase(file.getName()) || "subtitle".equalsIgnoreCase(file.getName()))) {
-        File[] subDirContent = file.listFiles();
-        for (File subDirFile : subDirContent) {
-          episode.addToMediaFiles(new MediaFile(subDirFile));
-        }
-      }
+      // if (file.isDirectory()
+      // && ("sample".equalsIgnoreCase(file.getName()) || "subs".equalsIgnoreCase(file.getName()) || "subtitle".equalsIgnoreCase(file.getName()))) {
+      // File[] subDirContent = file.listFiles();
+      // for (File subDirFile : subDirContent) {
+      // episode.addToMediaFiles(new MediaFile(subDirFile));
+      // }
+      // }
     }
   }
 
