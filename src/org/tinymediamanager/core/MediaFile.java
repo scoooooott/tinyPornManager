@@ -1046,6 +1046,26 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
         // get audio streams
         int streams = getMediaInfo().streamCount(StreamKind.Audio);
+        if (streams == 0) {
+          // fallback 1
+          String cnt = getMediaInfo(StreamKind.General, 0, "AudioCount");
+          try {
+            streams = Integer.parseInt(cnt);
+          }
+          catch (Exception e) {
+            streams = 0;
+          }
+        }
+        if (streams == 0) {
+          // fallback 2
+          String cnt = getMediaInfo(StreamKind.Audio, 0, "StreamCount");
+          try {
+            streams = Integer.parseInt(cnt);
+          }
+          catch (Exception e) {
+            streams = 0;
+          }
+        }
         audioStreams.clear();
         for (int i = 0; i < streams; i++) {
           MediaFileAudioStream stream = new MediaFileAudioStream();
@@ -1090,6 +1110,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
         // get subtitle streams
         streams = getMediaInfo().streamCount(StreamKind.Text);
+        if (streams == 0) {
+          // fallback 1
+          String cnt = getMediaInfo(StreamKind.General, 0, "TextCount");
+          try {
+            streams = Integer.parseInt(cnt);
+          }
+          catch (Exception e) {
+            streams = 0;
+          }
+        }
+        if (streams == 0) {
+          // fallback 2
+          String cnt = getMediaInfo(StreamKind.Text, 0, "StreamCount");
+          try {
+            streams = Integer.parseInt(cnt);
+          }
+          catch (Exception e) {
+            streams = 0;
+          }
+        }
+
         subtitles.clear();
         for (int i = 0; i < streams; i++) {
           MediaFileSubtitle stream = new MediaFileSubtitle();
