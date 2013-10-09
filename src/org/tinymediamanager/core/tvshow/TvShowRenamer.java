@@ -320,7 +320,9 @@ public class TvShowRenamer {
     if (mf.getType().equals(MediaFileType.SUBTITLE)) {
       MediaFileSubtitle mfs = mf.getSubtitles().get(0);
       if (mfs != null) {
-        filename = filename + "." + mfs.getLanguage();
+        if (!mfs.getLanguage().isEmpty()) {
+          filename = filename + "." + mfs.getLanguage();
+        }
         if (mfs.isForced()) {
           filename = filename + ".forced";
         }
