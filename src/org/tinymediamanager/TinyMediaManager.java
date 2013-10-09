@@ -172,6 +172,7 @@ public class TinyMediaManager {
     LOGGER.info("=====================================================");
     LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
     LOGGER.info("=====================================================");
+    LOGGER.info("tmm.version      : " + ReleaseInfo.getRealBuildDate());
 
     LOGGER.info("os.name          : " + System.getProperty("os.name"));
     LOGGER.info("os.version       : " + System.getProperty("os.version"));
