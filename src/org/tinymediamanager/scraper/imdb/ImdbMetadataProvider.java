@@ -709,6 +709,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
     // parse out language and coutry from the scraper options
     String language = query.get(SearchParam.LANGUAGE);
+    String myear = query.get(SearchParam.YEAR);
     String country = ""; // we do not have a country in the search params
 
     searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
@@ -903,6 +904,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         float score = MetadataUtil.calculateScore(searchTerm, movieName);
         if (posterUrl.isEmpty() || posterUrl.contains("nopicture")) {
           LOGGER.debug("no poster - downgrading score by 0.01");
+          score = score - 0.01f;
+        }
+        if (myear != null && !myear.isEmpty() && !myear.equals(year)) {
+          LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
           score = score - 0.01f;
         }
         sr.setScore(score);
