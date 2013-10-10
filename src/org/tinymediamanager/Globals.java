@@ -17,6 +17,7 @@ package org.tinymediamanager;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +25,9 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 
+import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.MainWindow;
@@ -62,7 +65,14 @@ public class Globals {
    */
   public static void startDatabase() throws Exception {
     emf = Persistence.createEntityManagerFactory("tmm.odb");
-    entityManager = emf.createEntityManager();
+    try {
+      entityManager = emf.createEntityManager();
+    }
+    catch (PersistenceException e) {
+      // happens when there's a recovery file which does not match (cannot be recovered) - just delete and try again
+      FileUtils.deleteQuietly(new File("tmm.odb$"));
+      entityManager = emf.createEntityManager();
+    }
   }
 
   /**
