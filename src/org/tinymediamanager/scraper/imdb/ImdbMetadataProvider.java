@@ -66,6 +66,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
   private static final Logger      LOGGER        = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 
   public static final String       CAT_ALL       = "&s=all";
+  public static final String       CAT_TITLE     = "&s=tt";
   public static final String       CAT_MOVIES    = "&s=tt&ttype=ft&ref_=fn_ft";
   public static final String       CAT_TV        = "&s=tt&ttype=tv&ref_=fn_tv";
   public static final String       CAT_EPISODE   = "&s=tt&ttype=ep&ref_=fn_ep";
@@ -727,7 +728,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
 
     // we need to search for all - otherwise we do not find TV movies
-    sb.append(CAT_ALL);
+    sb.append(CAT_TITLE);
 
     LOGGER.debug("========= BEGIN IMDB Scraper Search for: " + sb.toString());
     Document doc;
@@ -838,7 +839,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         for (Element a : anchors) {
           if (StringUtils.isNotEmpty(a.text())) {
             // movie name
-            if (StringUtils.isNotBlank(localizedName)) {
+            if (StringUtils.isNotBlank(localizedName) && !language.equals("en")) {
+              // take AKA as title, but only if not EN
               movieName = localizedName;
             }
             else {
