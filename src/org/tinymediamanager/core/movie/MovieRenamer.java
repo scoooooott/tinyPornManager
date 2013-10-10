@@ -289,11 +289,15 @@ public class MovieRenamer {
             // is there any stacking information in the filename?
             // use vid.getStacking() != 0 for custom stacking format?
             String stacking = Utils.getStackingMarker(vid.getFilename());
+            String delimiter = " ";
+            if (Globals.settings.getMovieSettings().isMovieRenamerSpaceSubstitution()) {
+              delimiter = Globals.settings.getMovieSettings().getMovieRenamerSpaceReplacement();
+            }
             if (!stacking.isEmpty()) {
-              newFilename += " " + stacking;
+              newFilename += delimiter + stacking;
             }
             else if (vid.getStacking() != 0) {
-              newFilename += " CD" + vid.getStacking();
+              newFilename += delimiter + "CD" + vid.getStacking();
             }
             newFilename += "." + fileExtension;
           }
