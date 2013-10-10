@@ -908,7 +908,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           LOGGER.debug("no poster - downgrading score by 0.01");
           score = score - 0.01f;
         }
-        if (myear != null && !myear.isEmpty() && !myear.equals(year)) {
+        if (myear != null && !myear.isEmpty() && !myear.equals("0") && !myear.equals(year)) {
           LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
           score = score - 0.01f;
         }
