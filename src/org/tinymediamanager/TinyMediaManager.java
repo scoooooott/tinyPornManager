@@ -50,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.Movie;
@@ -487,7 +488,7 @@ public class TinyMediaManager {
           JOptionPane
               .showMessageDialog(null,
                   "And since you are upgrading to a complete new version, we need to cleanup/delete the complete database this time.\nWe're sorry for that.");
-          FileUtils.deleteQuietly(new File("tmm.odb"));
+          FileUtils.deleteQuietly(new File(Constants.DB));
 
           // upgrade from alpha - delete unneeded files
           FileUtils.deleteQuietly(new File("lib/jackson-core-lgpl.jar"));
@@ -563,7 +564,7 @@ public class TinyMediaManager {
         }
 
         // do a DB backup, and keep last 15 copies
-        File db = new File("tmm.odb");
+        File db = new File(Constants.DB);
         Utils.createBackupFile(db);
         Utils.deleteOldBackupFile(db, 15);
       }

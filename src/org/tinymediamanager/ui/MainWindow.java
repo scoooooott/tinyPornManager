@@ -62,6 +62,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -191,7 +192,7 @@ public class MainWindow extends JFrame {
         // delete the database
         try {
           Globals.shutdownDatabase();
-          File db = new File("tmm.odb");
+          File db = new File(Constants.DB);
           if (db.exists()) {
             db.delete();
           }

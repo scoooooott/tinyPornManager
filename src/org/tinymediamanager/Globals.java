@@ -29,6 +29,7 @@ import javax.persistence.PersistenceException;
 
 import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.TmmThreadPool.TmmThreadFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.MainWindow;
 
@@ -64,13 +65,13 @@ public class Globals {
    *           the exception
    */
   public static void startDatabase() throws Exception {
-    emf = Persistence.createEntityManagerFactory("tmm.odb");
+    emf = Persistence.createEntityManagerFactory(Constants.DB);
     try {
       entityManager = emf.createEntityManager();
     }
     catch (PersistenceException e) {
       // happens when there's a recovery file which does not match (cannot be recovered) - just delete and try again
-      FileUtils.deleteQuietly(new File("tmm.odb$"));
+      FileUtils.deleteQuietly(new File(Constants.DB + "$"));
       entityManager = emf.createEntityManager();
     }
   }

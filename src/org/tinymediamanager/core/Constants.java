@@ -22,6 +22,8 @@ package org.tinymediamanager.core;
  */
 public final class Constants {
 
+  public final static String DB                     = "tmm.odb";
+
   public final static String ACTORS                 = "actors";
   public final static String ADDED_EPISODE          = "addedEpisode";
   public final static String ADDED_SEASON           = "season";

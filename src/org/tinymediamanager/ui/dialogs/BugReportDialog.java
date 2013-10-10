@@ -244,9 +244,9 @@ public class BugReportDialog extends JDialog {
               // // attach database
               // ToDo
               // if (chckbxDatabase.isSelected()) {
-              // ZipEntry ze = new ZipEntry("tmm.odb");
+              // ZipEntry ze = new ZipEntry(Constants.DB);
               // zos.putNextEntry(ze);
-              // FileInputStream in = new FileInputStream("tmm.odb");
+              // FileInputStream in = new FileInputStream(Constants.DB);
               //
               // IOUtils.copy(in, zos);
               // in.close();
