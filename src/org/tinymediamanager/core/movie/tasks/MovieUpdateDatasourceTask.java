@@ -91,7 +91,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       for (String ds : dataSources) {
 
         startProgressBar("prepare scan '" + ds + "'");
-        initThreadPool(1, "update"); // use only one, since the multiDir detection relies on accurate values...
+        if (Globals.settings.getMovieSettings().isDetectMovieMultiDir()) {
+          initThreadPool(1, "update"); // use only one, since the multiDir detection relies on accurate values...
+        }
+        else {
+          initThreadPool(3, "update");
+        }
         File[] dirs = new File(ds).listFiles();
         if (dirs == null) {
           // error - continue with next datasource
