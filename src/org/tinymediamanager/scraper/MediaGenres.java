@@ -19,12 +19,21 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * The Class MediaGenres2.
  * 
  * @author Manuel Laggner
  */
 public class MediaGenres extends DynaEnum<MediaGenres> {
+
+
+
+
+
+
 
   //@formatter:off
   public final static MediaGenres ACTION            = new MediaGenres("ACTION", 0, "Action",                      new String[] { "nl-Actie", "cz-Akcní", "sk-Akčný" });
@@ -105,6 +114,10 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
     return this.getLocalizedName();
   }
 
+  public String dump() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
   /**
    * All the localized MediaGenres values, alphabetically sorted.
    * 
@@ -140,11 +153,11 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
           return genre;
         }
         // first 3 chars are language like "de-"
-        if (notation.substring(3).equalsIgnoreCase(name)) {
+        if (notation.substring(0, 3).equalsIgnoreCase(name)) {
           return genre;
         }
         // match names without prefix
-        if (notation.substring(3).equalsIgnoreCase(name.substring(3))) {
+        if (notation.substring(0, 3).equalsIgnoreCase(name.substring(0, 3))) {
           return genre;
         }
       }
