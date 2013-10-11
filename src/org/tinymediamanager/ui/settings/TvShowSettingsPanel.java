@@ -188,7 +188,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
             FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    chckbxAddSeason = new JCheckBox("add season to filename");
+    chckbxAddSeason = new JCheckBox(BUNDLE.getString("Settings.tvshowseasontofilename")); //$NON-NLS-1$
     chckbxAddSeason.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -208,7 +208,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     buttonGroup.add(rdbtnSeasonEpisode);
     panelRenamer.add(rdbtnSeasonEpisode, "6, 2");
 
-    chckbxAddShow = new JCheckBox("add TV show name to filename");
+    chckbxAddShow = new JCheckBox(BUNDLE.getString("Settings.tvshowtofilename")); //$NON-NLS-1$
     chckbxAddShow.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -229,7 +229,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     buttonGroup.add(rdbtnSxe);
     panelRenamer.add(rdbtnSxe, "6, 4");
 
-    chckbxAddEpisodeTitle = new JCheckBox("add episode title to filename");
+    chckbxAddEpisodeTitle = new JCheckBox(BUNDLE.getString("Settings.tvshowepisodetofilename")); //$NON-NLS-1$
     chckbxAddEpisodeTitle.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -256,7 +256,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     cbSeparator = new JComboBox(separators.toArray());
     panelRenamer.add(cbSeparator, "4, 8, fill, default");
 
-    lblSeasonFolderName = new JLabel("season folder name");
+    lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
     panelRenamer.add(lblSeasonFolderName, "2, 10, right, top");
 
     tfSeasonFoldername = new JTextField();
@@ -281,7 +281,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     txtpnSeasonHint = new JTextPane();
     txtpnSeasonHint.setOpaque(false);
     txtpnSeasonHint.setFont(new Font("Dialog", Font.PLAIN, 10));
-    txtpnSeasonHint.setText("$1 - Season number\n$2 - Season number with at least 2 digits");
+    txtpnSeasonHint.setText(BUNDLE.getString("Settings.tvshowseasonhint")); //$NON-NLS-1$
     panelRenamer.add(txtpnSeasonHint, "6, 10, fill, fill");
 
     JLabel lblExampleT = new JLabel("Example");
