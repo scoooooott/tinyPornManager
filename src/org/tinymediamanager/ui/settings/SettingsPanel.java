@@ -28,6 +28,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 
 import org.tinymediamanager.core.Settings;
@@ -47,6 +48,9 @@ public class SettingsPanel extends JPanel {
 
   private Settings                     settings         = Settings.getInstance();
 
+  /**
+   * UI components
+   */
   private Component                    currentComponent;
   private JButtonBar                   toolbar;
   private GeneralSettingsPanel         panelGeneralSettings;
@@ -56,17 +60,20 @@ public class SettingsPanel extends JPanel {
   private TvShowSettingsPanel          panelTvShowSettings;
   private TvShowScraperSettingsPanel   panelTvShowScraperSettings;
   private ExternalDevicesSettingsPanel panelExternalDevicesSettings;
+  private JScrollPane                  scrollPane;
 
   /**
    * Create the panel.
    */
   public SettingsPanel() {
     toolbar = new JButtonBar(JButtonBar.VERTICAL);
-    // toolbar.setUI(new IconPackagerButtonBarUI());
     toolbar.setUI(new BlueishButtonBarUI());
     setLayout(new BorderLayout());
 
     add("West", toolbar);
+
+    scrollPane = new JScrollPane();
+    add("Center", scrollPane);
 
     ButtonGroup group = new ButtonGroup();
     panelMovieSettings = new MovieSettingsPanel();
@@ -101,11 +108,9 @@ public class SettingsPanel extends JPanel {
    */
   private void show(Component component) {
     if (currentComponent != null) {
-      remove(currentComponent);
+      scrollPane.remove(currentComponent);
     }
-    add("Center", currentComponent = component);
-    revalidate();
-    repaint();
+    scrollPane.setViewportView(component);
   }
 
   /**
