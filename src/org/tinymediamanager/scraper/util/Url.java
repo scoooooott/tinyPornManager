@@ -52,6 +52,8 @@ public class Url {
   /** The client. */
   private static DefaultHttpClient client;
 
+  protected int                    responseCode    = 0;
+
   /** The url. */
   protected String                 url             = null;
 
@@ -169,7 +171,7 @@ public class Url {
       HttpResponse response = httpclient.execute(httpget, localContext);
       headersResponse = response.getAllHeaders();
       entity = response.getEntity();
-
+      responseCode = response.getStatusLine().getStatusCode();
       if (entity != null) {
         is = new ByteArrayInputStream(EntityUtils.toByteArray(entity));
       }
@@ -184,6 +186,15 @@ public class Url {
       EntityUtils.consume(entity);
     }
     return is;
+  }
+
+  /**
+   * is the HTTP status code a 4xx/5xx?
+   * 
+   * @return true/false
+   */
+  public boolean isFault() {
+    return responseCode >= 400 ? true : false;
   }
 
   /**
