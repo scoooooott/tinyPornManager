@@ -31,6 +31,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
 
 
 
+
+
   //@formatter:off
   public final static MediaGenres ACTION            = new MediaGenres("ACTION", 0, "Action",                      new String[] { "nl-Actie", "cz-Akcní", "sk-Akčný" });
   public final static MediaGenres ADVENTURE         = new MediaGenres("ADVENTURE", 1, "Adventure",                new String[] { "de-Abenteuer", "nl-Avontuur", "cz-Dobrodružný", "sk-Dobrodružný" });
@@ -150,13 +152,13 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
         }
         if (notation.length() > 3) {
           // first 3 chars are language like "de-"
-          if (notation.substring(0, 3).equalsIgnoreCase(name)) {
+          if (notation.substring(3).equalsIgnoreCase(name)) {
             return genre;
           }
 
           if (name.length() > 3) {
             // match names without prefix
-            if (notation.substring(0, 3).equalsIgnoreCase(name.substring(0, 3))) {
+            if (notation.substring(3).equalsIgnoreCase(name.substring(3))) {
               return genre;
             }
           }
