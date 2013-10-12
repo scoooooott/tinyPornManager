@@ -158,9 +158,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       // try to parse from parent directory
       this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
     }
-    if (file.exists()) {
-      setFilesize(FileUtils.sizeOf(file));
-    }
   }
 
   /**
@@ -1029,6 +1026,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     LOGGER.debug("start MediaInfo for " + this.filename);
+    try {
+      setFilesize(FileUtils.sizeOf(getFile()));
+    }
+    catch (Exception e) {
+      LOGGER.error("error getting MediaInfo for " + this.filename);
+      return;
+    }
 
     String height = "";
     String scanType = "";
