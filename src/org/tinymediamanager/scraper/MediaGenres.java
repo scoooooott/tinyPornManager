@@ -15,12 +15,16 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class MediaGenres2.
@@ -29,55 +33,49 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class MediaGenres extends DynaEnum<MediaGenres> {
 
-
-
-
-
-  //@formatter:off
-  public final static MediaGenres ACTION            = new MediaGenres("ACTION", 0, "Action",                      new String[] { "nl-Actie", "cz-Akcní", "sk-Akčný" });
-  public final static MediaGenres ADVENTURE         = new MediaGenres("ADVENTURE", 1, "Adventure",                new String[] { "de-Abenteuer", "nl-Avontuur", "cz-Dobrodružný", "sk-Dobrodružný" });
-  public final static MediaGenres ANIMATION         = new MediaGenres("ANIMATION", 2, "Animation",                new String[] { "Anime", "de-Zeichentrick", "cz-Animovaný", "nl-Animatie", "sk-Animovaný" });
-  public final static MediaGenres ANIMAL            = new MediaGenres("ANIMAL", 3, "Animal",                      new String[] { "de-Tierfilm", "cz-O zvíratech", "nl-Dieren", "sk-O zvieratách" });
-  public final static MediaGenres BIOGRAPHY         = new MediaGenres("BIOGRAPHY", 4, "Biography",                new String[] { "de-Biographie", "cz-Životopisný", "nl-Biografie","sk-Životopisný" });
-  public final static MediaGenres COMEDY            = new MediaGenres("COMEDY", 5, "Comedy",                      new String[] { "de-Komödie", "nl-Komedie", "cz-Komedie", "sk-Komédia" });
-  public final static MediaGenres CRIME             = new MediaGenres("CRIME", 6, "Crime",                        new String[] { "de-Krimi", "nl-Misdaad", "cz-Kriminální", "sk-Kriminálny" });
-  public final static MediaGenres DISASTER          = new MediaGenres("DISASTER", 7, "Disaster",                  new String[] { "de-Katastrophen", "Katastrophenfilm", "nl-Rampen", "cz-Katastrofický", "sk-Katastrofický" });
-  public final static MediaGenres DOCUMENTARY       = new MediaGenres("DOCUMENTARY", 8, "Documentary",            new String[] { "de-Dokumentation", "Mondo", "cz-Dokumentární", "nl-Documentaire", " sk-Dokumentárny" });
-  public final static MediaGenres DRAMA             = new MediaGenres("DRAMA", 9, "Drama",                        new String[] { "sk-Dramatický" });
-  public final static MediaGenres EASTERN           = new MediaGenres("EASTERN", 10, "Eastern",                   new String[] { "cz-Východní", "nl-Oosters", "sk-Orientálny" });
-  public final static MediaGenres EROTIC            = new MediaGenres("EROTIC", 11, "Erotic",                     new String[] { "de-Erotik", "Sex", "Adult", "nl-Erotiek", "cz-Erotický", "Hardcore", "sk-Erotický" });
-  public final static MediaGenres FAMILY            = new MediaGenres("FAMILY", 12, "Family",                     new String[] { "Kinder-/Familienfilm", "nl-Familie", "cz-Rodinný", "de-Familienfilm", "sk-Rodinný" });
-  public final static MediaGenres FAN_FILM          = new MediaGenres("FAN_FILM", 13, "Fan Film",                 new String[] { "Fan-Film", "cz-Fanouškovský", "sk-Fanúšikovský" });
-  public final static MediaGenres FANTASY           = new MediaGenres("FANTASY", 14, "Fantasy",                   new String[] { "cz-Fantazy" });
-  public final static MediaGenres FILM_NOIR         = new MediaGenres("FILM_NOIR", 15, "Film Noir",               new String[] { "Film-Noir", "Neo-noir" });
-  public final static MediaGenres FOREIGN           = new MediaGenres("FOREIGN", 16, "Foreign",                   new String[] { "de-Ausländisch", "cz-Zahranicní", "nl-Buitenlands", "sk-Zahraničný" });
-  public final static MediaGenres GAME_SHOW         = new MediaGenres("GAME_SHOW", 17, "Gameshow",                new String[] { "Game-Show", "cz-Herní Show", "nl-Spelshow" });
-  public final static MediaGenres HISTORY           = new MediaGenres("HISTORY", 18, "History",                   new String[] { "de-Historienfilm", "Geschichte", "cz-Historický", "nl-Historie", "sk-Historický" });
-  public final static MediaGenres HOLIDAY           = new MediaGenres("HOLIDAY", 19, "Holiday",                   new String[] { "cz-Prázdninový", "nl-Vakantie", "sk-Sviatočný" });
-  public final static MediaGenres HORROR            = new MediaGenres("HORROR", 20, "Horror",                     new String[] { "Splatter", "Grusel", "sk-Horor" });
-  public final static MediaGenres INDIE             = new MediaGenres("INDIE", 21, "Indie",                       new String[] { "Experimentalfilm", "Amateur", "Essayfilm", "cz-Nezávislý" });
-  public final static MediaGenres MUSIC             = new MediaGenres("MUSIC", 22, "Music",                       new String[] { "de-Musikfilm", "Musik", "nl-Muziek", "cz-Hudební", "sk-Hudobný" });
-  public final static MediaGenres MUSICAL           = new MediaGenres("MUSICAL", 23, "Musical",                   new String[] { "cz-Muzikál", "sk-Muzikál" });
-  public final static MediaGenres MYSTERY           = new MediaGenres("MYSTERY", 24, "Mystery",                   new String[] { "cz-Mysteriózní", "nl-Mysterie", "sk-Mysteriózny" });
-  public final static MediaGenres NEO_NOIR          = new MediaGenres("NEO_NOIR", 25, "Neo Noir",                 new String[] {});
-  public final static MediaGenres NEWS              = new MediaGenres("NEWS", 26, "News",                         new String[] { "de-Nachrichten", "cz-Zprávodajský", "nl-Nieuws", "sk-Správy" });
-  public final static MediaGenres REALITY_TV        = new MediaGenres("REALITY_TV", 27, "Reality TV",             new String[] { "Reality-TV", "sk-Reality show" });
-  public final static MediaGenres ROAD_MOVIE        = new MediaGenres("ROAD_MOVIE", 28, "Road Movie",             new String[] { "Roadmovie" });
-  public final static MediaGenres ROMANCE           = new MediaGenres("ROMANCE", 29, "Romance",                   new String[] { "Liebe/Romantik", "Romanze", "cz-Romantický", "Lovestory", "Liebe", "de-Romantik", "nl-Romantiek", "sk-Romantický" });
-  public final static MediaGenres SCIENCE_FICTION   = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction",   new String[] { "Sci-Fi", "Science-Fiction", "Sciencefiction" });
-  public final static MediaGenres SERIES            = new MediaGenres("SERIES", 31, "Series",                     new String[] { "de-Serie", "TV-Serie", "TV-Mini-Serie", "cz-Serie", "Webserie", "sk-Seriál" });
-  public final static MediaGenres SHORT             = new MediaGenres("SHORT", 32, "Short",                       new String[] { "de-Kurzfilm", "z-Krátký film", "nl-Korte Film", "sk-Krátky film" });
-  public final static MediaGenres SILENT_MOVIE      = new MediaGenres("SILENT_MOVIE", 33, "Silent Movie",         new String[] { "de-Stummfilm", "cz-Nemý film", "nl-Stomme Film", "sk-Nemý Film" });
-  public final static MediaGenres SPORT             = new MediaGenres("SPORT", 34, "Sport",                       new String[] { "Kampfsport", "cz-Sportovní", "nl-Sport", "sk-Šport" });
-  public final static MediaGenres SPORTING_EVENT    = new MediaGenres("SPORTING_EVENT", 35, "Sporting Event",     new String[] { "de-Sportereignis", "nl-Sport Evenement", "cz-Sportovní událost", "sk-Športová udalosť" });
-  public final static MediaGenres SPORTS_FILM       = new MediaGenres("SPORTS_FILM", 36, "Sports Film",           new String[] { "de-Sportfilm", "Sport Film", "nl-Sport Film", "cz-Spor", "sk-Športový Film" });
-  public final static MediaGenres SUSPENSE          = new MediaGenres("SUSPENSE", 37, "Suspense",                 new String[] { "de-Spannung", "nl-Spanning" });
-  public final static MediaGenres TALK_SHOW         = new MediaGenres("TALK_SHOW", 38, "Talk show",               new String[] { "Talk-Show" });
-  public final static MediaGenres TV_MOVIE          = new MediaGenres("TV_MOVIE", 39, "TV Movie",                 new String[] { "de-TV-Film", "TV-Pilotfilm", "cz-Televizní film", "nl-TV film", "Heimatfilm", "sk-TV film" });
-  public final static MediaGenres THRILLER          = new MediaGenres("THRILLER", 40, "Thriller",                 new String[] {});
-  public final static MediaGenres WAR               = new MediaGenres("WAR", 41, "War",                           new String[] { "de-Krieg", "Kriegsfilm", "nl-Oorlog", "cz-Válecný", "sk-Vojnový" });
-  public final static MediaGenres WESTERN           = new MediaGenres("WESTERN", 42, "Western",                   new String[] {});
-  //@formatter:on
+  public final static MediaGenres ACTION          = new MediaGenres("ACTION", 0, "Action");
+  public final static MediaGenres ADVENTURE       = new MediaGenres("ADVENTURE", 1, "Adventure");
+  public final static MediaGenres ANIMATION       = new MediaGenres("ANIMATION", 2, "Animation");
+  public final static MediaGenres ANIMAL          = new MediaGenres("ANIMAL", 3, "Animal");
+  public final static MediaGenres BIOGRAPHY       = new MediaGenres("BIOGRAPHY", 4, "Biography");
+  public final static MediaGenres COMEDY          = new MediaGenres("COMEDY", 5, "Comedy");
+  public final static MediaGenres CRIME           = new MediaGenres("CRIME", 6, "Crime");
+  public final static MediaGenres DISASTER        = new MediaGenres("DISASTER", 7, "Disaster");
+  public final static MediaGenres DOCUMENTARY     = new MediaGenres("DOCUMENTARY", 8, "Documentary");
+  public final static MediaGenres DRAMA           = new MediaGenres("DRAMA", 9, "Drama");
+  public final static MediaGenres EASTERN         = new MediaGenres("EASTERN", 10, "Eastern");
+  public final static MediaGenres EROTIC          = new MediaGenres("EROTIC", 11, "Erotic");
+  public final static MediaGenres FAMILY          = new MediaGenres("FAMILY", 12, "Family");
+  public final static MediaGenres FAN_FILM        = new MediaGenres("FAN_FILM", 13, "Fan Film");
+  public final static MediaGenres FANTASY         = new MediaGenres("FANTASY", 14, "Fantasy");
+  public final static MediaGenres FILM_NOIR       = new MediaGenres("FILM_NOIR", 15, "Film Noir");
+  public final static MediaGenres FOREIGN         = new MediaGenres("FOREIGN", 16, "Foreign");
+  public final static MediaGenres GAME_SHOW       = new MediaGenres("GAME_SHOW", 17, "Gameshow");
+  public final static MediaGenres HISTORY         = new MediaGenres("HISTORY", 18, "History");
+  public final static MediaGenres HOLIDAY         = new MediaGenres("HOLIDAY", 19, "Holiday");
+  public final static MediaGenres HORROR          = new MediaGenres("HORROR", 20, "Horror");
+  public final static MediaGenres INDIE           = new MediaGenres("INDIE", 21, "Indie");
+  public final static MediaGenres MUSIC           = new MediaGenres("MUSIC", 22, "Music");
+  public final static MediaGenres MUSICAL         = new MediaGenres("MUSICAL", 23, "Musical");
+  public final static MediaGenres MYSTERY         = new MediaGenres("MYSTERY", 24, "Mystery");
+  public final static MediaGenres NEO_NOIR        = new MediaGenres("NEO_NOIR", 25, "Neo Noir");
+  public final static MediaGenres NEWS            = new MediaGenres("NEWS", 26, "News");
+  public final static MediaGenres REALITY_TV      = new MediaGenres("REALITY_TV", 27, "Reality TV");
+  public final static MediaGenres ROAD_MOVIE      = new MediaGenres("ROAD_MOVIE", 28, "Road Movie");
+  public final static MediaGenres ROMANCE         = new MediaGenres("ROMANCE", 29, "Romance");
+  public final static MediaGenres SCIENCE_FICTION = new MediaGenres("SCIENCE_FICTION", 30, "Science Fiction");
+  public final static MediaGenres SERIES          = new MediaGenres("SERIES", 31, "Series");
+  public final static MediaGenres SHORT           = new MediaGenres("SHORT", 32, "Short");
+  public final static MediaGenres SILENT_MOVIE    = new MediaGenres("SILENT_MOVIE", 33, "Silent Movie");
+  public final static MediaGenres SPORT           = new MediaGenres("SPORT", 34, "Sport");
+  public final static MediaGenres SPORTING_EVENT  = new MediaGenres("SPORTING_EVENT", 35, "Sporting Event");
+  public final static MediaGenres SPORTS_FILM     = new MediaGenres("SPORTS_FILM", 36, "Sports Film");
+  public final static MediaGenres SUSPENSE        = new MediaGenres("SUSPENSE", 37, "Suspense");
+  public final static MediaGenres TALK_SHOW       = new MediaGenres("TALK_SHOW", 38, "Talk show");
+  public final static MediaGenres TV_MOVIE        = new MediaGenres("TV_MOVIE", 39, "TV Movie");
+  public final static MediaGenres THRILLER        = new MediaGenres("THRILLER", 40, "Thriller");
+  public final static MediaGenres WAR             = new MediaGenres("WAR", 41, "War");
+  public final static MediaGenres WESTERN         = new MediaGenres("WESTERN", 42, "Western");
 
   /** The name. */
   private String                  name;
@@ -97,10 +95,11 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * @param alternateNames
    *          the alternate names
    */
-  private MediaGenres(String enumName, int ordinal, String name, String[] alternateNames) {
+  private MediaGenres(String enumName, int ordinal, String name) {
     super(enumName, ordinal);
     this.name = name;
-    this.alternateNames = alternateNames;
+    this.alternateNames = loadAlternateNames(enumName);
+    // System.out.println(dump());
   }
 
   /*
@@ -114,6 +113,27 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
 
   public String dump() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
+  /**
+   * Iterates ofer all found languages ang gets the "alternative name" of specified property
+   * 
+   * @param propName
+   *          the property
+   * @return
+   */
+  public static String[] loadAlternateNames(String propName) {
+    ArrayList<String> alt = new ArrayList<String>();
+    for (Locale loc : Utils.getLanguages()) {
+      ResourceBundle b = ResourceBundle.getBundle("messages", loc, new UTF8Control()); //$NON-NLS-1$
+      try {
+        alt.add(loc.getLanguage() + "-" + b.getString("Genres." + propName)); // just genres
+      }
+      catch (Exception e) {
+        // not found or localized - ignore
+      }
+    }
+    return alt.toArray(new String[alt.size()]);
   }
 
   /**
@@ -157,7 +177,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
           }
 
           if (name.length() > 3) {
-            // match names without prefix
+            // match both names without prefix
             if (notation.substring(3).equalsIgnoreCase(name.substring(3))) {
               return genre;
             }
@@ -167,7 +187,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
     }
 
     // dynamically create new one
-    return new MediaGenres(name, values().length, name, new String[] {});
+    return new MediaGenres(name, values().length, name);
   }
 
   /**
