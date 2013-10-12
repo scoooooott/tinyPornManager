@@ -92,7 +92,7 @@ public class MovieList extends AbstractModelObject {
           Movie movie = (Movie) evt.getSource();
           updateTags(movie);
         }
-        if (MEDIA_FILES.equals(evt.getPropertyName())) {
+        if (MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName())) {
           Movie movie = (Movie) evt.getSource();
           updateMediaInformationLists(movie);
         }
