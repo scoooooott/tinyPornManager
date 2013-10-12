@@ -98,8 +98,8 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   private MediaGenres(String enumName, int ordinal, String name) {
     super(enumName, ordinal);
     this.name = name;
+    // System.out.println(enumName + " - " + name);
     this.alternateNames = loadAlternateNames(enumName);
-    // System.out.println(dump());
   }
 
   /*
@@ -125,8 +125,13 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public static String[] loadAlternateNames(String propName) {
     ArrayList<String> alt = new ArrayList<String>();
     for (Locale loc : Utils.getLanguages()) {
+      if (loc.getLanguage().equals("en")) {
+        // FIXME: all english is translated to german? wtf? but not needed, since EN has the name set...
+        continue;
+      }
       ResourceBundle b = ResourceBundle.getBundle("messages", loc, new UTF8Control()); //$NON-NLS-1$
       try {
+        // System.out.println(" " + loc.getLanguage() + "-" + b.getString("Genres." + propName));
         alt.add(loc.getLanguage() + "-" + b.getString("Genres." + propName)); // just genres
       }
       catch (Exception e) {
