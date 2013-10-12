@@ -243,7 +243,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     cbFilterVideoCodec.setAction(actionFilter);
     panel.add(cbFilterVideoCodec, "2, 10");
 
-    lblVideoCodec = new JLabel(BUNDLE.getString("metatag.codec")); //$NON-NLS-1$
+    lblVideoCodec = new JLabel(BUNDLE.getString("metatag.videocodec")); //$NON-NLS-1$
     setComponentFont(lblVideoCodec);
     panel.add(lblVideoCodec, "4, 10, right, default");
 
@@ -257,7 +257,7 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     cbFilterAudioCodec.setAction(actionFilter);
     panel.add(cbFilterAudioCodec, "2, 11");
 
-    lblAudioCodec = new JLabel(BUNDLE.getString("metatag.codec")); //$NON-NLS-1$
+    lblAudioCodec = new JLabel(BUNDLE.getString("metatag.audiocodec")); //$NON-NLS-1$
     setComponentFont(lblAudioCodec);
     panel.add(lblAudioCodec, "4, 11, right, default");
 
