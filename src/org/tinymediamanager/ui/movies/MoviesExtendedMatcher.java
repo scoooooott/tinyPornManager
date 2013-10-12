@@ -16,10 +16,13 @@
 package org.tinymediamanager.ui.movies;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileAudioStream;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -39,19 +42,7 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
    * @author Manuel Laggner
    */
   public enum SearchOptions {
-
-    /** The duplicates. */
-    DUPLICATES,
-    /** The watched. */
-    WATCHED,
-    /** The genre. */
-    GENRE,
-    /** The cast. */
-    CAST,
-    /** The tag. */
-    TAG,
-    /** The movieset. */
-    MOVIESET, VIDEO_FORMAT;
+    DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC
   }
 
   /** The search options. */
@@ -106,61 +97,25 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     // check against cast member
     if (searchOptions.containsKey(SearchOptions.CAST)) {
       String castSearch = (String) searchOptions.get(SearchOptions.CAST);
-      if (StringUtils.isNotEmpty(castSearch)) {
-        Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(castSearch));
-        java.util.regex.Matcher matcher = null;
-
-        // director
-        if (StringUtils.isNotEmpty(movie.getDirector())) {
-          matcher = pattern.matcher(movie.getDirector());
-          if (matcher.find()) {
-            return true;
-          }
-        }
-
-        // writer
-        if (StringUtils.isNotEmpty(movie.getWriter())) {
-          matcher = pattern.matcher(movie.getWriter());
-          if (matcher.find()) {
-            return true;
-          }
-        }
-
-        // actors
-        for (MovieActor cast : movie.getActors()) {
-          if (StringUtils.isNotEmpty(cast.getName())) {
-            matcher = pattern.matcher(cast.getName());
-            if (matcher.find()) {
-              return true;
-            }
-          }
-        }
+      if (!containsCast(movie, castSearch)) {
+        return false;
       }
-
-      return false;
     }
 
     // check against tag
     if (searchOptions.containsKey(SearchOptions.TAG)) {
       String tag = (String) searchOptions.get(SearchOptions.TAG);
-
-      for (String tagInMovie : movie.getTags()) {
-        if (tagInMovie.equals(tag)) {
-          return true;
-        }
+      if (!containsTag(movie, tag)) {
+        return false;
       }
-
-      return false;
     }
 
     // check against MOVIESET
     if (searchOptions.containsKey(SearchOptions.MOVIESET)) {
       Boolean isInSet = (Boolean) searchOptions.get(SearchOptions.MOVIESET);
-      if ((movie.getMovieSet() != null) == isInSet) {
-        return true;
+      if ((movie.getMovieSet() != null) != isInSet) {
+        return false;
       }
-
-      return false;
     }
 
     // check against video format
@@ -181,6 +136,22 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
       }
     }
 
+    // check against video codec
+    if (searchOptions.containsKey(SearchOptions.VIDEO_CODEC)) {
+      String videoCodec = (String) searchOptions.get(SearchOptions.VIDEO_CODEC);
+      if (!videoCodec.equals(movie.getMediaInfoVideoCodec())) {
+        return false;
+      }
+    }
+
+    // check against audio codec
+    if (searchOptions.containsKey(SearchOptions.AUDIO_CODEC)) {
+      String audioCodec = (String) searchOptions.get(SearchOptions.AUDIO_CODEC);
+      if (!containsAudioCodec(movie, audioCodec)) {
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -196,6 +167,67 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     }
     if (videoFormat == MediaFile.VIDEO_FORMAT_8K) {
       return true;
+    }
+    return false;
+  }
+
+  private boolean containsAudioCodec(Movie movie, String codec) {
+    List<MediaFile> videoFiles = movie.getMediaFiles(MediaFileType.VIDEO);
+
+    if (videoFiles.size() == 0) {
+      return false;
+    }
+
+    MediaFile mf = videoFiles.get(0);
+    for (MediaFileAudioStream stream : mf.getAudioStreams()) {
+      if (codec.equals(stream.getCodec())) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean containsTag(Movie movie, String tag) {
+    for (String tagInMovie : movie.getTags()) {
+      if (tagInMovie.equals(tag)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean containsCast(Movie movie, String name) {
+    if (StringUtils.isNotEmpty(name)) {
+      Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(name));
+      java.util.regex.Matcher matcher = null;
+
+      // director
+      if (StringUtils.isNotEmpty(movie.getDirector())) {
+        matcher = pattern.matcher(movie.getDirector());
+        if (matcher.find()) {
+          return true;
+        }
+      }
+
+      // writer
+      if (StringUtils.isNotEmpty(movie.getWriter())) {
+        matcher = pattern.matcher(movie.getWriter());
+        if (matcher.find()) {
+          return true;
+        }
+      }
+
+      // actors
+      for (MovieActor cast : movie.getActors()) {
+        if (StringUtils.isNotEmpty(cast.getName())) {
+          matcher = pattern.matcher(cast.getName());
+          if (matcher.find()) {
+            return true;
+          }
+        }
+      }
     }
     return false;
   }

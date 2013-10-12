@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -785,7 +786,7 @@ public class MovieRenamer {
       // also replace triple and double replacements with one to avoid strange looking results;
       // example:
       // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
-      newDestination = newDestination.replaceAll("\\" + replacement + "\\" + replacement, replacement);
+      newDestination = newDestination.replaceAll(Pattern.quote(replacement) + "{2,}", replacement);
     }
 
     return newDestination.trim();

@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -95,6 +96,12 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
   private JCheckBox                    cbFilterVideoFormat;
   private JLabel                       lblVideoFormat;
   private JComboBox                    cbVideoFormat;
+  private JCheckBox                    cbFilterVideoCodec;
+  private JLabel                       lblVideoCodec;
+  private JComboBox                    cbVideoCodec;
+  private JCheckBox                    cbFilterAudioCodec;
+  private JLabel                       lblAudioCodec;
+  private JComboBox                    cbAudioCodec;
 
   private final Action                 actionSort       = new SortAction();
   private final Action                 actionFilter     = new FilterAction();
@@ -115,8 +122,9 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     //    lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     // setComponentFont(lblFilterBy);
@@ -230,23 +238,51 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     cbVideoFormat.setAction(actionFilter);
     panel.add(cbVideoFormat, "6, 9, fill, default");
 
+    cbFilterVideoCodec = new JCheckBox("");
+    cbFilterVideoCodec.setUI(CHECKBOX_UI);
+    cbFilterVideoCodec.setAction(actionFilter);
+    panel.add(cbFilterVideoCodec, "2, 10");
+
+    lblVideoCodec = new JLabel(BUNDLE.getString("metatag.codec")); //$NON-NLS-1$
+    setComponentFont(lblVideoCodec);
+    panel.add(lblVideoCodec, "4, 10, right, default");
+
+    cbVideoCodec = new SmallComboBox();
+    setComponentFont(cbVideoCodec);
+    cbVideoCodec.setAction(actionFilter);
+    panel.add(cbVideoCodec, "6, 10, fill, default");
+
+    cbFilterAudioCodec = new JCheckBox("");
+    cbFilterAudioCodec.setUI(CHECKBOX_UI);
+    cbFilterAudioCodec.setAction(actionFilter);
+    panel.add(cbFilterAudioCodec, "2, 11");
+
+    lblAudioCodec = new JLabel(BUNDLE.getString("metatag.codec")); //$NON-NLS-1$
+    setComponentFont(lblAudioCodec);
+    panel.add(lblAudioCodec, "4, 11, right, default");
+
+    cbAudioCodec = new SmallComboBox();
+    setComponentFont(cbAudioCodec);
+    cbAudioCodec.setAction(actionFilter);
+    panel.add(cbAudioCodec, "6, 11, fill, default");
+
     JSeparator separator = new JSeparator();
-    panel.add(separator, "2, 11, 5, 1");
+    panel.add(separator, "2, 13, 5, 1");
 
     lblSortBy = new JLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
     setComponentFont(lblSortBy);
     // panel.add(lblSortBy, "2, 11, 3, 1");
-    panel.add(lblSortBy, "2, 13");
+    panel.add(lblSortBy, "2, 15");
 
     cbSortColumn = new SmallComboBox(SortColumn.values());
     setComponentFont(cbSortColumn);
     cbSortColumn.setAction(actionSort);
-    panel.add(cbSortColumn, "4, 13, fill, default");
+    panel.add(cbSortColumn, "4, 15, fill, default");
 
     cbSortOrder = new SmallComboBox(SortOrder.values());
     setComponentFont(cbSortOrder);
     cbSortOrder.setAction(actionSort);
-    panel.add(cbSortOrder, "6, 13, fill, default");
+    panel.add(cbSortOrder, "6, 15, fill, default");
 
     add(panel);
     setCollapsed(true);
@@ -257,10 +293,17 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
         if (evt.getSource() instanceof MovieList && "tag".equals(evt.getPropertyName())) {
           buildAndInstallTagsArray();
         }
+        if (evt.getSource() instanceof MovieList && "videoCodec".equals(evt.getPropertyName())) {
+          buildAndInstallCodecArray();
+        }
+        if (evt.getSource() instanceof MovieList && "audioCodec".equals(evt.getPropertyName())) {
+          buildAndInstallCodecArray();
+        }
       }
     };
     movieList.addPropertyChangeListener(propertyChangeListener);
     buildAndInstallTagsArray();
+    buildAndInstallCodecArray();
   }
 
   private void buildAndInstallTagsArray() {
@@ -269,6 +312,22 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
     Collections.sort(tags);
     for (String tag : tags) {
       cbTag.addItem(tag);
+    }
+  }
+
+  private void buildAndInstallCodecArray() {
+    cbVideoCodec.removeAllItems();
+    List<String> codecs = new ArrayList<String>(movieList.getVideoCodecsInMovies());
+    Collections.sort(codecs);
+    for (String codec : codecs) {
+      cbVideoCodec.addItem(codec);
+    }
+
+    cbAudioCodec.removeAllItems();
+    codecs = new ArrayList<String>(movieList.getAudioCodecsInMovies());
+    Collections.sort(codecs);
+    for (String codec : codecs) {
+      cbAudioCodec.addItem(codec);
     }
   }
 
@@ -329,13 +388,17 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
 
       // filter by cast
       if (cbFilterCast.isSelected()) {
-        searchOptions.put(SearchOptions.CAST, tfCastMember.getText());
+        if (StringUtils.isNotBlank(tfCastMember.getText())) {
+          searchOptions.put(SearchOptions.CAST, tfCastMember.getText());
+        }
       }
 
       // filter by tag
       if (cbFilterTag.isSelected()) {
         String tag = (String) cbTag.getSelectedItem();
-        searchOptions.put(SearchOptions.TAG, tag);
+        if (StringUtils.isNotBlank(tag)) {
+          searchOptions.put(SearchOptions.TAG, tag);
+        }
       }
 
       // filter by movie in movieset
@@ -352,6 +415,22 @@ public class MovieExtendedSearchPanel extends CollapsiblePanel {
       if (cbFilterVideoFormat.isSelected()) {
         String videoFormat = (String) cbVideoFormat.getSelectedItem();
         searchOptions.put(SearchOptions.VIDEO_FORMAT, videoFormat);
+      }
+
+      // filter by video codec
+      if (cbFilterVideoCodec.isSelected()) {
+        String videoCodec = (String) cbVideoCodec.getSelectedItem();
+        if (StringUtils.isNotBlank(videoCodec)) {
+          searchOptions.put(SearchOptions.VIDEO_CODEC, videoCodec);
+        }
+      }
+
+      // filter by audio codec
+      if (cbFilterAudioCodec.isSelected()) {
+        String audioCodec = (String) cbAudioCodec.getSelectedItem();
+        if (StringUtils.isNotBlank(audioCodec)) {
+          searchOptions.put(SearchOptions.AUDIO_CODEC, audioCodec);
+        }
       }
 
       // apply the filter

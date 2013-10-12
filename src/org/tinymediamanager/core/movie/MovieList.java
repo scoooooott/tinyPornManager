@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.core.movie;
 
+import static org.tinymediamanager.core.Constants.*;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -31,6 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileAudioStream;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -60,24 +65,19 @@ import ca.odell.glazedlists.ObservableElementList;
  * @author Manuel Laggner
  */
 public class MovieList extends AbstractModelObject {
-
-  /** The Constant logger. */
-  private static final Logger          LOGGER         = LoggerFactory.getLogger(MovieList.class);
-
-  /** The instance. */
+  private static final Logger          LOGGER                = LoggerFactory.getLogger(MovieList.class);
   private static MovieList             instance;
 
-  /** The movie list. */
   private ObservableElementList<Movie> movieList;
-
-  /** The movie set list. */
   private List<MovieSet>               movieSetList;
-
-  /** The tag listener. */
   private PropertyChangeListener       tagListener;
+  private List<String>                 tagsObservable        = ObservableCollections.observableList(Collections
+                                                                 .synchronizedList(new ArrayList<String>()));
+  private List<String>                 videoCodecsObservable = ObservableCollections.observableList(Collections
+                                                                 .synchronizedList(new ArrayList<String>()));
 
-  /** The tags observable. */
-  private List<String>                 tagsObservable = ObservableCollections.observableList(Collections.synchronizedList(new ArrayList<String>()));
+  private List<String>                 audioCodecsObservable = ObservableCollections.observableList(Collections
+                                                                 .synchronizedList(new ArrayList<String>()));
 
   /**
    * Instantiates a new movie list.
@@ -91,6 +91,10 @@ public class MovieList extends AbstractModelObject {
         if ("tag".equals(evt.getPropertyName())) {
           Movie movie = (Movie) evt.getSource();
           updateTags(movie);
+        }
+        if (MEDIA_FILES.equals(evt.getPropertyName())) {
+          Movie movie = (Movie) evt.getSource();
+          updateMediaInformationLists(movie);
         }
       }
     };
@@ -247,6 +251,7 @@ public class MovieList extends AbstractModelObject {
               // addMovie(movie);
               movieList.add(movie);
               updateTags(movie);
+              updateMediaInformationLists(movie);
               movie.addPropertyChangeListener(tagListener);
             }
             catch (Exception e) {
@@ -732,6 +737,58 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * Update media information used in movies.
+   * 
+   * @param movie
+   *          the movie
+   */
+  private void updateMediaInformationLists(Movie movie) {
+    // video codec
+    for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      String codec = mf.getVideoCodec();
+      boolean codecFound = false;
+
+      for (String mfCodec : videoCodecsObservable) {
+        if (mfCodec.equals(codec)) {
+          codecFound = true;
+          break;
+        }
+      }
+
+      if (!codecFound) {
+        addVideoCodec(codec);
+      }
+    }
+
+    // audio codec
+    for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      for (MediaFileAudioStream audio : mf.getAudioStreams()) {
+        String codec = audio.getCodec();
+        boolean codecFound = false;
+        for (String mfCodec : audioCodecsObservable) {
+          if (mfCodec.equals(codec)) {
+            codecFound = true;
+            break;
+          }
+        }
+
+        if (!codecFound) {
+          addAudioCodec(codec);
+        }
+      }
+    }
+
+  }
+
+  public List<String> getVideoCodecsInMovies() {
+    return videoCodecsObservable;
+  }
+
+  public List<String> getAudioCodecsInMovies() {
+    return audioCodecsObservable;
+  }
+
+  /**
    * Adds the tag.
    * 
    * @param newTag
@@ -750,6 +807,36 @@ public class MovieList extends AbstractModelObject {
 
     tagsObservable.add(newTag);
     firePropertyChange("tag", null, tagsObservable);
+  }
+
+  private void addVideoCodec(String newCodec) {
+    if (StringUtils.isBlank(newCodec)) {
+      return;
+    }
+
+    for (String codec : videoCodecsObservable) {
+      if (codec.equals(newCodec)) {
+        return;
+      }
+    }
+
+    videoCodecsObservable.add(newCodec);
+    firePropertyChange("videoCodec", null, videoCodecsObservable);
+  }
+
+  private void addAudioCodec(String newCodec) {
+    if (StringUtils.isBlank(newCodec)) {
+      return;
+    }
+
+    for (String codec : audioCodecsObservable) {
+      if (codec.equals(newCodec)) {
+        return;
+      }
+    }
+
+    audioCodecsObservable.add(newCodec);
+    firePropertyChange("audioCodec", null, audioCodecsObservable);
   }
 
   /**
