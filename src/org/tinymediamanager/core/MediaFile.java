@@ -18,8 +18,10 @@ package org.tinymediamanager.core;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -30,7 +32,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -49,53 +50,57 @@ import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
  */
 @Embeddable
 public class MediaFile extends AbstractModelObject implements Comparable<MediaFile> {
-  private static final Logger        LOGGER             = LoggerFactory.getLogger(MediaFile.class);
+  private static final Logger                        LOGGER             = LoggerFactory.getLogger(MediaFile.class);
 
-  private static final String        PATH               = "path";
-  private static final String        FILENAME           = "filename";
-  private static final String        FILESIZE           = "filesize";
-  private static final String        FILESIZE_IN_MB     = "filesizeInMegabytes";
+  private static final String                        PATH               = "path";
+  private static final String                        FILENAME           = "filename";
+  private static final String                        FILESIZE           = "filesize";
+  private static final String                        FILESIZE_IN_MB     = "filesizeInMegabytes";
 
-  private static Pattern             moviesetPattern    = Pattern.compile("(?i)(movieset-poster|movieset-fanart)\\..{2,4}");
-  private static Pattern             posterPattern      = Pattern.compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
-  private static Pattern             fanartPattern      = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
-  private static Pattern             bannerPattern      = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
-  private static Pattern             thumbPattern       = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
+  private static Pattern                             moviesetPattern    = Pattern.compile("(?i)(movieset-poster|movieset-fanart)\\..{2,4}");
+  private static Pattern                             posterPattern      = Pattern
+                                                                            .compile("(?i)(.*-poster|poster|folder|movie|.*-cover|cover)\\..{2,4}");
+  private static Pattern                             fanartPattern      = Pattern.compile("(?i)(.*-fanart|.*\\.fanart|fanart)[0-9]{0,2}\\..{2,4}");
+  private static Pattern                             bannerPattern      = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
+  private static Pattern                             thumbPattern       = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
 
-  public static final String         VIDEO_FORMAT_480P  = "480p";
-  public static final String         VIDEO_FORMAT_576P  = "576p";
-  public static final String         VIDEO_FORMAT_540P  = "540p";
-  public static final String         VIDEO_FORMAT_720P  = "720p";
-  public static final String         VIDEO_FORMAT_1080P = "1080p";
-  public static final String         VIDEO_FORMAT_4K    = "4k";
-  public static final String         VIDEO_FORMAT_8K    = "8k";
+  public static final String                         VIDEO_FORMAT_480P  = "480p";
+  public static final String                         VIDEO_FORMAT_576P  = "576p";
+  public static final String                         VIDEO_FORMAT_540P  = "540p";
+  public static final String                         VIDEO_FORMAT_720P  = "720p";
+  public static final String                         VIDEO_FORMAT_1080P = "1080p";
+  public static final String                         VIDEO_FORMAT_4K    = "4k";
+  public static final String                         VIDEO_FORMAT_8K    = "8k";
 
   // meta formats
-  public static final String         VIDEO_FORMAT_SD    = "SD";
-  public static final String         VIDEO_FORMAT_HD    = "HD";
+  public static final String                         VIDEO_FORMAT_SD    = "SD";
+  public static final String                         VIDEO_FORMAT_HD    = "HD";
 
-  private String                     path               = "";
-  private String                     filename           = "";
-  private long                       filesize           = 0;
-  private String                     videoCodec         = "";
-  private String                     containerFormat    = "";
-  private String                     exactVideoFormat   = "";
-  private int                        videoWidth         = 0;
-  private int                        videoHeight        = 0;
-  private int                        overallBitRate     = 0;
-  private int                        durationInSecs     = 0;
-  private int                        stacking           = 0;
+  private String                                     path               = "";
+  private String                                     filename           = "";
+  private long                                       filesize           = 0;
+  private String                                     videoCodec         = "";
+  private String                                     containerFormat    = "";
+  private String                                     exactVideoFormat   = "";
+  private int                                        videoWidth         = 0;
+  private int                                        videoHeight        = 0;
+  private int                                        overallBitRate     = 0;
+  private int                                        durationInSecs     = 0;
+  private int                                        stacking           = 0;
 
   @Enumerated(EnumType.STRING)
-  private MediaFileType              type               = MediaFileType.UNKNOWN;
+  private MediaFileType                              type               = MediaFileType.UNKNOWN;
 
-  private List<MediaFileAudioStream> audioStreams       = new ArrayList<MediaFileAudioStream>();
-  private List<MediaFileSubtitle>    subtitles          = new ArrayList<MediaFileSubtitle>();
+  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>();
+  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<MediaFileSubtitle>();
 
   @Transient
-  private MediaInfo                  mediaInfo;
+  private MediaInfo                                  mediaInfo;
   @Transient
-  private File                       file               = null;
+  private Map<StreamKind, List<Map<String, String>>> miSnapshot         = null;
+
+  @Transient
+  private File                                       file               = null;
 
   /**
    * "clones" a new media file.
@@ -552,6 +557,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       if (!mediaInfo.open(this.getFile())) {
         LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename());
       }
+      miSnapshot = mediaInfo.snapshot();
     }
     return mediaInfo;
   }
@@ -580,9 +586,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   private String getMediaInfo(StreamKind streamKind, int streamNumber, String... keys) {
     for (String key : keys) {
-      String value = getMediaInfo().get(streamKind, streamNumber, key);
-      if (value.length() > 0) {
-        return value;
+      // Map<StreamKind, List<Map<String, String>>>
+      List stream = miSnapshot.get(streamKind);
+      if (stream != null) {
+        LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(streamNumber);
+        if (info != null) {
+          String value = info.get(key);
+          if (value != null && value.length() > 0) {
+            // System.out.println("  " + streamKind + " " + key + " = " + value);
+            return value;
+          }
+        }
       }
     }
     return "";
@@ -1026,8 +1040,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     LOGGER.debug("start MediaInfo for " + this.filename);
+    mediaInfo = getMediaInfo();
     try {
-      setFilesize(FileUtils.sizeOf(getFile()));
+      setFilesize(Long.parseLong(getMediaInfo(StreamKind.General, 0, "FileSize")));
     }
     catch (Exception e) {
       LOGGER.error("error getting MediaInfo for " + this.filename);
@@ -1049,7 +1064,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         videoCodec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
 
         // get audio streams
-        int streams = getMediaInfo().streamCount(StreamKind.Audio);
+        // int streams = getMediaInfo().streamCount(StreamKind.Audio);
+        int streams = 0;
         if (streams == 0) {
           // fallback 1
           String cnt = getMediaInfo(StreamKind.General, 0, "AudioCount");
@@ -1113,7 +1129,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
 
         // get subtitle streams
-        streams = getMediaInfo().streamCount(StreamKind.Text);
+        // streams = getMediaInfo().streamCount(StreamKind.Text);
+        streams = 0;
         if (streams == 0) {
           // fallback 1
           String cnt = getMediaInfo(StreamKind.General, 0, "TextCount");
