@@ -1049,6 +1049,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return;
     }
 
+    // do not work further on 0 byte files
+    if (getFilesize() == 0) {
+      LOGGER.warn("0 Byte file detected: " + this.filename);
+      closeMediaInfo();
+      return;
+    }
+
     String height = "";
     String scanType = "";
     String width = "";
@@ -1188,7 +1195,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           sub.setCodec(getExtension());
           subtitles.add(sub);
         }
-        setContainerFormat(getExtension());
         break;
 
       case AUDIO:
@@ -1255,10 +1261,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // get first token (e.g. DivX 5 => DivX)
     setVideoCodec(StringUtils.isEmpty(videoCodec) ? "" : new Scanner(videoCodec).next());
 
-    // container format
-    String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
-    // get first extension
-    setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
+    // container format for all except subtitles (subtitle container format is handled another way)
+    if (type == MediaFileType.SUBTITLE) {
+      setContainerFormat(getExtension());
+    }
+    else {
+      String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
+      // get first extension
+      setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
+    }
 
     if (height.isEmpty() || scanType.isEmpty()) {
       setExactVideoFormat("");
