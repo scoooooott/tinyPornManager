@@ -39,36 +39,16 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner
  */
 public class CachedUrl extends Url {
+  private static final Logger  LOGGER       = LoggerFactory.getLogger(CachedUrl.class);
+  public static final String   CACHE_DIR    = "cache/url";
+  private static final int     CACHE_EXPIRY = 3600;
+  private static final int     IMAGE_FACTOR = 48;
+  private static final Pattern pattern      = Pattern.compile("([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)");
 
-  /** The Constant log. */
-  private static final Logger  LOGGER        = LoggerFactory.getLogger(CachedUrl.class);
-
-  /** The Constant CACHE_DIR. */
-  public static final String   CACHE_DIR     = "cache/url";
-
-  /** The Constant CACHE_EXPIRY. */
-  private static final int     CACHE_EXPIRY  = 3600;
-
-  /** factor that the cache of image file is longer. */
-  private static final int     IMAGE_FACTOR  = 48;
-
-  /** The Constant IMAGE_PATTERN. */
-  private static final String  IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
-
-  /** The pattern. */
-  private static final Pattern pattern       = Pattern.compile(IMAGE_PATTERN);
-
-  /** The url id. */
-  private String               urlId         = null;
-
-  /** The prop file. */
-  private File                 propFile      = null;
-
-  /** The props. */
-  private Properties           props         = null;
-
-  /** The url cache dir. */
-  private File                 urlCacheDir   = null;
+  private String               urlId        = null;
+  private File                 propFile     = null;
+  private Properties           props        = null;
+  private File                 urlCacheDir  = null;
 
   /**
    * Instantiates a new cached url.
@@ -306,7 +286,7 @@ public class CachedUrl extends Url {
       is = new FileInputStream(file);
     }
     File f = getCachedFile();
-    if (is == null) {
+    if (is == null || isFault()) {
       LOGGER.debug("Url " + url + ": did not receive a response; writing empty file");
       f.createNewFile();
       return;
