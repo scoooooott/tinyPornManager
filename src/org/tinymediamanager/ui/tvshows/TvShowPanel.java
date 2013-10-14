@@ -602,11 +602,9 @@ public class TvShowPanel extends JPanel {
     public UpdateDatasourcesAction(boolean withTitle) {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
       }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
-      }
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
     }
 
     /*
@@ -653,6 +651,8 @@ public class TvShowPanel extends JPanel {
 
     public UpdateTvShowAction() {
       putValue(NAME, BUNDLE.getString("tvshow.update")); //$NON-NLS-1$
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
     }
 
     /*
@@ -700,12 +700,10 @@ public class TvShowPanel extends JPanel {
     public SingleScrapeAction(boolean withTitle) {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
       }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
-      }
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
     }
 
     /*
@@ -732,6 +730,8 @@ public class TvShowPanel extends JPanel {
 
     public ScrapeEpisodesAction() {
       putValue(NAME, BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
     }
 
     @Override
@@ -748,6 +748,8 @@ public class TvShowPanel extends JPanel {
 
     public ScrapeNewItemsAction() {
       putValue(NAME, BUNDLE.getString("tvshow.scrape.newitems")); //$NON-NLS-1$
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
     }
 
     @Override
@@ -803,12 +805,10 @@ public class TvShowPanel extends JPanel {
     public EditAction(boolean withTitle) {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
       }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
-      }
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
     }
 
     /*
@@ -847,12 +847,10 @@ public class TvShowPanel extends JPanel {
     public RemoveAction(boolean withTitle) {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
       }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
-      }
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Cross.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Cross.png")));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
     }
 
     /*
@@ -896,12 +894,10 @@ public class TvShowPanel extends JPanel {
     public ChangeSeasonPosterAction(boolean withTitle) {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
       }
-      else {
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
-      }
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
     }
 
     /*
@@ -941,6 +937,8 @@ public class TvShowPanel extends JPanel {
     public BatchEditAction() {
       putValue(NAME, BUNDLE.getString("tvshow.bulkedit")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.bulkedit.desc")); //$NON-NLS-1$
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
     }
 
     @Override
@@ -977,6 +975,8 @@ public class TvShowPanel extends JPanel {
     public SelectedScrapeAction() {
       putValue(NAME, BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected.force.desc")); //$NON-NLS-1$
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
     }
 
     /*
@@ -1068,6 +1068,7 @@ public class TvShowPanel extends JPanel {
      */
     public RenameAction() {
       putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
       putValue(NAME, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
     }
@@ -1120,13 +1121,10 @@ public class TvShowPanel extends JPanel {
     public MediaInformationAction(boolean withTitle) {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-        putValue(LARGE_ICON_KEY, "");
       }
-      else {
-        // putValue(NAME, "MI");
-        putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-        putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-      }
+      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
+      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
     }
 
     /*

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.Movie;
@@ -44,6 +45,8 @@ public class MovieSelectedScrapeAction extends AbstractAction {
   public MovieSelectedScrapeAction() {
     putValue(NAME, BUNDLE.getString("movie.scrape.selected.force")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected.force.desc")); //$NON-NLS-1$
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
   }
 
   /*

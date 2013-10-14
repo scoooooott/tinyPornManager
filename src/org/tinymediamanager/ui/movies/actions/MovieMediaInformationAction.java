@@ -43,13 +43,9 @@ public class MovieMediaInformationAction extends AbstractAction {
   public MovieMediaInformationAction(boolean withTitle) {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, "");
     }
-    else {
-      // putValue(NAME, "MI");
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-    }
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
   }
 
   /*

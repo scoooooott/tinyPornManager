@@ -46,12 +46,10 @@ public class MovieSingleScrapeAction extends AbstractAction {
   public MovieSingleScrapeAction(boolean withTitle) {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, "");
     }
-    else {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
-    }
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
   }
 
   /*

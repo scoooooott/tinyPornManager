@@ -39,11 +39,9 @@ public class MovieUpdateDatasourceAction extends AbstractAction {
   public MovieUpdateDatasourceAction(boolean withTitle) {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, "");
     }
-    else {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
-    }
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
   }
 
   /*

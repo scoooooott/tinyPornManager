@@ -42,13 +42,11 @@ public class MovieRenameAction extends AbstractAction {
 
   public MovieRenameAction(boolean withTitle) {
     if (withTitle) {
-      putValue(LARGE_ICON_KEY, "");
       putValue(NAME, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
     }
-    else {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
-    }
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
   }
 
   /*

@@ -39,13 +39,11 @@ public class MovieEditAction extends AbstractAction {
 
   public MovieEditAction(boolean withTitle) {
     if (withTitle) {
-      putValue(LARGE_ICON_KEY, "");
       putValue(NAME, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
     }
-    else {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
-    }
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
   }
 
   /*

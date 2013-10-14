@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
@@ -40,6 +41,8 @@ public class MovieUpdateSingleDatasourceAction extends AbstractAction {
   public MovieUpdateSingleDatasourceAction(String datasource) {
     putValue(NAME, datasource);
     this.datasource = datasource;
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
   }
 
   /*

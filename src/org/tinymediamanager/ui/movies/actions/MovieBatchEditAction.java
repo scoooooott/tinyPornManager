@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.ui.MainWindow;
@@ -40,6 +41,8 @@ public class MovieBatchEditAction extends AbstractAction {
   public MovieBatchEditAction() {
     putValue(NAME, BUNDLE.getString("movie.bulkedit")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.bulkedit.desc")); //$NON-NLS-1$
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
   }
 
   /*
