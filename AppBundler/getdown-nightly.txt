@@ -20,6 +20,7 @@ code = lib/betterbeansbinding-swingbinding.jar
 code = lib/commons-codec.jar
 code = lib/commons-io.jar
 code = lib/commons-lang3.jar
+code = lib/core.jar
 code = lib/DJNativeSwing.jar
 code = lib/DJNativeSwing-SWT.jar 
 code = lib/fanarttvapi.jar
@@ -51,6 +52,7 @@ code = lib/Scaling-bin.jar
 code = lib/slf4j-api.jar
 code = lib/themoviedbapi.jar
 code = lib/thetvdbapi.jar
+code = lib/twinkle.jar
 code = lib/xmlrpc-client.jar
 
 # strings added to classpath
