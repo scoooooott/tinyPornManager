@@ -19,7 +19,6 @@ import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -40,7 +39,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -75,7 +73,6 @@ import org.tinymediamanager.ui.actions.ClearUrlCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
-import org.tinymediamanager.ui.components.NotificationMessage;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.LogDialog;
@@ -84,6 +81,9 @@ import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.settings.SettingsPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
+
+import ch.swingfx.twinkle.NotificationBuilder;
+import ch.swingfx.twinkle.window.Positions;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -98,12 +98,13 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MainWindow extends JFrame {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                                 //$NON-NLS-1$
   /** The logger. */
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
+  public static final ImageIcon       IMAGE_ERROR      = new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Error.png"));
 
   /** The action exit. */
   private final Action                actionExit       = new ExitAction();
@@ -148,7 +149,6 @@ public class MainWindow extends JFrame {
   private StatusbarThread             statusTask       = new StatusbarThread();
   private List<String>                messagesList;
 
-  private JPanel                      messagePanel;
   private JPopupMenu                  taskPopup;
 
   /**
@@ -346,13 +346,6 @@ public class MainWindow extends JFrame {
     tabbedPane.setTabPlacement(JTabbedPane.LEFT);
     mainPanel.add(tabbedPane, "1, 1, fill, fill");
     // getContentPane().add(tabbedPane, "1, 2, fill, fill");
-
-    messagePanel = new JPanel();
-    messagePanel.setOpaque(false);
-    messagePanel.setLayout(new FlowLayout());
-
-    content.add(messagePanel, "3, 1, right, fill");
-    content.setLayer(messagePanel, 2);
 
     panelStatusBar = new JPanel();
     getContentPane().add(panelStatusBar, "1, 4");
@@ -621,22 +614,23 @@ public class MainWindow extends JFrame {
   }
 
   public void addMessage(String title, String message) {
-    JPanel msg = new NotificationMessage(title, message);
-    messagePanel.add(msg);
+    // JPanel msg = new NotificationMessage(title, message);
+    // messagePanel.add(msg);
+    NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
+        .withPosition(Positions.SOUTH_EAST);
+    builder.showNotification();
   }
 
   public void addMessage(MessageLevel level, String title, String message) {
-    JPanel msg = new NotificationMessage(level, title, message);
-    messagePanel.add(msg);
+    // JPanel msg = new NotificationMessage(level, title, message);
+    // messagePanel.add(msg);
+    NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
+        .withPosition(Positions.SOUTH_EAST).withIcon(IMAGE_ERROR);
+    builder.showNotification();
 
     if (messagesList != null) {
       messagesList.add(message + ": " + title);
     }
-  }
-
-  public void removeMessage(JComponent comp) {
-    messagePanel.remove(comp);
-    messagePanel.revalidate();
   }
 
   private void createTaskPopup(MouseEvent arg0) {
