@@ -170,6 +170,18 @@ public class TinyMediaManager {
       }
     }
 
+    File f = new File("access.test");
+    if (!f.canWrite()) {
+      String msg = "Cannot write to TMM directory, have no rights - exiting.";
+      if (!GraphicsEnvironment.isHeadless()) {
+        JOptionPane.showMessageDialog(null, msg);
+      }
+      else {
+        System.out.println(msg);
+      }
+      System.exit(1);
+    }
+
     LOGGER.info("=====================================================");
     LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
     LOGGER.info("=====================================================");
