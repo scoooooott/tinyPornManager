@@ -266,14 +266,14 @@ public class CachedUrl extends Url {
    */
   private void cache() throws IOException {
     LOGGER.debug("Caching Url: " + url);
-
+    long sizeHttp = -1;
     // workaround for local files
     InputStream is = null;
     if (!url.startsWith("file:")) {
       Url u = new Url(url);
       u.addHeaders(headersRequest);
-
       is = u.getInputStream();
+      sizeHttp = u.getContentLength();
 
       // also store encoding
       if (u.getCharset() != null) {
@@ -292,10 +292,14 @@ public class CachedUrl extends Url {
       return;
     }
     FileOutputStream fos = new FileOutputStream(f);
-    IOUtils.copy(is, fos);
+    long sizeCopy = IOUtils.copy(is, fos);
     fos.flush();
     fos.close();
     is.close();
+
+    if (sizeHttp > 0 && sizeHttp != sizeCopy) {
+      LOGGER.warn("File not fully cached! " + f.getAbsolutePath());
+    }
     LOGGER.debug("Url " + url + " Cached To: " + f.getAbsolutePath());
     PropertiesUtils.store(props, getPropertyFile(), "Cached Url Properties");
   }
