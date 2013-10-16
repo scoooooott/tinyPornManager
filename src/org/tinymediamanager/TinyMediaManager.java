@@ -32,6 +32,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
@@ -170,8 +171,13 @@ public class TinyMediaManager {
       }
     }
 
-    File f = new File("access.test");
-    if (!f.canWrite()) {
+    // check if we have write permissions to this folder
+    try {
+      RandomAccessFile f = new RandomAccessFile("access.test", "rw");
+      f.close();
+      FileUtils.deleteQuietly(new File("access.test"));
+    }
+    catch (Exception e2) {
       String msg = "Cannot write to TMM directory, have no rights - exiting.";
       if (!GraphicsEnvironment.isHeadless()) {
         JOptionPane.showMessageDialog(null, msg);
