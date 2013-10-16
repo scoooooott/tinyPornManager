@@ -49,7 +49,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.ui.components.ImageLabel;
 
 /**
- * The Class ImageCache.
+ * The Class ImageCache - used to build a local image cache (scaled down versions & thumbnails - also for offline access).
  * 
  * @author Manuel Laggner
  */
@@ -57,17 +57,12 @@ public class ImageCache {
   private static final Logger LOGGER    = LoggerFactory.getLogger(ImageCache.class);
   public static final String  CACHE_DIR = "cache/image";
 
-  /**
-   * The Enum CacheType.
-   * 
-   * @author Manuel Laggner
-   */
   public enum CacheType {
     FAST, SMOOTH
   }
 
   /**
-   * Gets the cache dir.
+   * Gets the cache dir. If it is not on the disk - it will also create it
    * 
    * @return the cache dir
    */
@@ -80,7 +75,7 @@ public class ImageCache {
   }
 
   /**
-   * Gets the cached file name.
+   * Gets the file name of the cached file.
    * 
    * @param path
    *          the url
@@ -158,11 +153,11 @@ public class ImageCache {
    * 
    * @param originalFile
    *          the original file
-   * @return the file
+   * @return the file the cached file
    * @throws Exception
-   *           the exception
    */
-  public static File cacheImage(File originalFile) throws Exception {
+  public static File cacheImage(MediaFile mf) throws Exception {
+    File originalFile = mf.getFile();
     String cacheFilename = ImageCache.getCachedFileName(originalFile.getPath());
     File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
     if (!cachedFile.exists()) {
@@ -180,50 +175,67 @@ public class ImageCache {
       catch (Exception e) {
         throw new Exception("cannot create image - file seems not to be valid? " + originalFile);
       }
-      // BufferedImage originalImage = ImageIO.read(originalFile);
 
-      // rescale and reencode only, if its bigger than 1000x500
-      if (originalImage.getWidth() > 1000 || originalImage.getHeight() > 500) {
-        Point size = ImageLabel.calculateSize((int) (originalImage.getWidth() / 1.5), (int) (originalImage.getHeight() / 1.5),
-            originalImage.getWidth(), originalImage.getHeight(), true);
-        BufferedImage scaledImage = null;
+      // calculate width based on MF type
+      int desiredWidth = originalImage.getWidth(); // initialize with fallback
+      switch (mf.getType()) {
+        case FANART:
+          if (originalImage.getWidth() > 1000) {
+            desiredWidth = 1000;
+          }
+          break;
+        case POSTER:
+          if (originalImage.getHeight() > 500) {
+            desiredWidth = 350;
+          }
+          break;
+        case EXTRAFANART:
+        case THUMB:
+        case BANNER:
+        case GRAPHIC:
+          desiredWidth = 300;
+      }
 
-        if (Globals.settings.getImageCacheType() == CacheType.FAST) {
-          // scale fast
-          // scaledImage = Scaling.scale(originalImage, size.x, size.y);
-          scaledImage = Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.FIT_EXACT, size.x, size.y, Scalr.OP_ANTIALIAS);
-        }
-        else {
-          // scale with good quality
-          // scaledImage = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
-          // scaledImage.getGraphics().drawImage(originalImage.getScaledInstance(size.x, size.y, Image.SCALE_SMOOTH), 0, 0, null);
-          scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, size.x, size.y, Scalr.OP_ANTIALIAS);
-        }
-        originalImage = null;
+      Point size = ImageLabel.calculateSize(desiredWidth, (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
+          originalImage.getHeight(), true);
+      BufferedImage scaledImage = null;
 
-        // convert to rgb
-        BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
-
-        ColorConvertOp xformOp = new ColorConvertOp(null);
-        xformOp.filter(scaledImage, rgb);
-        scaledImage = null;
-
-        ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
-        ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
-        jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-        jpgWrtPrm.setCompressionQuality(0.80f);
-
-        FileImageOutputStream output = new FileImageOutputStream(cachedFile);
-        imgWrtr.setOutput(output);
-        IIOImage image = new IIOImage(rgb, null, null);
-        imgWrtr.write(null, image, jpgWrtPrm);
-        imgWrtr.dispose();
-        output.close();
-        rgb = null;
+      if (Globals.settings.getImageCacheType() == CacheType.FAST) {
+        // scale fast
+        // scaledImage = Scaling.scale(originalImage, size.x, size.y);
+        scaledImage = Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.FIT_EXACT, size.x, size.y);
       }
       else {
-        FileUtils.copyFile(originalFile, cachedFile);
+        // scale with good quality
+        // scaledImage = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+        // scaledImage.getGraphics().drawImage(originalImage.getScaledInstance(size.x, size.y, Image.SCALE_SMOOTH), 0, 0, null);
+        scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, size.x, size.y);
       }
+      originalImage = null;
+
+      // convert to rgb
+      BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+
+      ColorConvertOp xformOp = new ColorConvertOp(null);
+      xformOp.filter(scaledImage, rgb);
+      scaledImage = null;
+
+      ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+      ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
+      jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+      jpgWrtPrm.setCompressionQuality(0.80f);
+
+      FileImageOutputStream output = new FileImageOutputStream(cachedFile);
+      imgWrtr.setOutput(output);
+      IIOImage image = new IIOImage(rgb, null, null);
+      imgWrtr.write(null, image, jpgWrtPrm);
+      imgWrtr.dispose();
+      output.close();
+      rgb = null;
+      // }
+      // else {
+      // FileUtils.copyFile(originalFile, cachedFile);
+      // }
     }
 
     if (!cachedFile.exists()) {
@@ -269,9 +281,8 @@ public class ImageCache {
     }
 
     try {
-      File originalFile = new File(path);
-      return ImageCache.cacheImage(originalFile);
-
+      MediaFile mf = new MediaFile(new File(path));
+      return ImageCache.cacheImage(mf);
     }
     catch (FileNotFoundException e) {
       LOGGER.warn(e.getMessage());

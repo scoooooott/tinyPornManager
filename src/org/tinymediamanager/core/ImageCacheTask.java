@@ -71,7 +71,7 @@ public class ImageCacheTask implements Runnable {
   public void run() {
     for (File fileToCache : filesToCache) {
       try {
-        ImageCache.cacheImage(fileToCache);
+        ImageCache.cacheImage(new MediaFile(fileToCache));
       }
       catch (Exception e) {
         LOGGER.warn("failed to cache file: " + fileToCache.getPath());
