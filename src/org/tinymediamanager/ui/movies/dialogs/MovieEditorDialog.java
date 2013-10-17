@@ -623,9 +623,9 @@ public class MovieEditorDialog extends JDialog {
       }
       catch (Exception e) {
       }
-      spYear.setValue(year);
-
+      spYear.setModel(new SpinnerNumberModel(year, 0, 3000, 1));
       spYear.setEditor(new JSpinner.NumberEditor(spYear, "#"));
+
       spRating.setModel(new SpinnerNumberModel(movie.getRating(), 0.0, 10.0, 0.1));
       SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
       spReleaseDate.setEditor(new JSpinner.DateEditor(spReleaseDate, dateFormat.toPattern()));
@@ -742,7 +742,7 @@ public class MovieEditorDialog extends JDialog {
       movieToEdit.setOriginalTitle(tfOriginalTitle.getText());
       movieToEdit.setTagline(tpTagline.getText());
       movieToEdit.setPlot(tpPlot.getText());
-      movieToEdit.setYear(String.valueOf(spYear.getValue()));
+      movieToEdit.setYear(spYear.getValue().equals(0) ? "" : String.valueOf(spYear.getValue())); // set empty on 0
 
       Date releaseDate = (Date) spReleaseDate.getValue();
       if (!releaseDate.equals(INITIAL_DATE)) {
