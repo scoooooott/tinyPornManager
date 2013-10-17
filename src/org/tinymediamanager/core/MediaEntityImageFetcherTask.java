@@ -109,8 +109,9 @@ public class MediaEntityImageFetcherTask implements Runnable {
       FileOutputStream outputStream = new FileOutputStream(new File(entity.getPath(), filename));
       InputStream is = cachedUrl.getInputStream();
       IOUtils.copy(is, outputStream);
-      outputStream.close();
+      outputStream.flush();
       outputStream.getFD().sync(); // wait until file has been completely written
+      outputStream.close();
       is.close();
 
       // set the new image if its the first image

@@ -233,6 +233,7 @@ public class ImageCache {
       IIOImage image = new IIOImage(rgb, null, null);
       imgWrtr.write(null, image, jpgWrtPrm);
       imgWrtr.dispose();
+      output.flush();
       output.close();
       rgb = null;
       // }
