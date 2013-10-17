@@ -70,9 +70,15 @@ public class Globals {
       entityManager = emf.createEntityManager();
     }
     catch (PersistenceException e) {
-      // happens when there's a recovery file which does not match (cannot be recovered) - just delete and try again
-      FileUtils.deleteQuietly(new File(Constants.DB + "$"));
-      entityManager = emf.createEntityManager();
+      if (e.getCause().getMessage().contains("does not match db file")) {
+        // happens when there's a recovery file which does not match (cannot be recovered) - just delete and try again
+        FileUtils.deleteQuietly(new File(Constants.DB + "$"));
+        entityManager = emf.createEntityManager();
+      }
+      else {
+        // unknown
+        throw (e);
+      }
     }
   }
 
