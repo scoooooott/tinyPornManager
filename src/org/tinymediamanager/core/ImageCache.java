@@ -151,8 +151,8 @@ public class ImageCache {
   /**
    * Cache image.
    * 
-   * @param originalFile
-   *          the original file
+   * @param mf
+   *          the media file
    * @return the file the cached file
    * @throws Exception
    */
@@ -194,6 +194,9 @@ public class ImageCache {
         case BANNER:
         case GRAPHIC:
           desiredWidth = 300;
+
+        default:
+          break;
       }
 
       Point size = ImageLabel.calculateSize(desiredWidth, (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),

@@ -34,23 +34,12 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  * @author Manuel Laggner
  */
 public class MediaEntityImageFetcherTask implements Runnable {
-
-  /** The Constant LOGGER. */
   private final static Logger LOGGER = LoggerFactory.getLogger(MediaEntityImageFetcherTask.class);
 
-  /** The entity. */
   private MediaEntity         entity;
-
-  /** The url. */
   private String              url;
-
-  /** The type. */
   private MediaArtworkType    type;
-
-  /** The filename. */
   private String              filename;
-
-  /** The first image. */
   private boolean             firstImage;
 
   /**
@@ -121,6 +110,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
       InputStream is = cachedUrl.getInputStream();
       IOUtils.copy(is, outputStream);
       outputStream.close();
+      outputStream.getFD().sync(); // wait until file has been completely written
       is.close();
 
       // set the new image if its the first image
