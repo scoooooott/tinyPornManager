@@ -553,6 +553,9 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
         }
       }
+      if (moviesFound.size() == 1) { // only one result
+        table.setRowSelectionInterval(0, 0); // select first row
+      }
 
       return null;
     }
