@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -114,6 +115,8 @@ public class TinyMediaManager {
         "    -scrapeNew           auto-scrape (force best match) new found movies/TvShows/episodes from former update(s)\n" +
         "    -scrapeUnscraped     auto-scrape (force best match) all movies, which have not yet been scraped (not for TV/episodes!)\n" +
         "    -renameNew           rename & cleanup of the new found movies/TvShows/episodes\n" +
+        "\n" +
+        "    -checkFiles          does a physical check, if all files in DB are existent on filesystem (might take long!)\n" +
         "\n");
     // @formatter:on
   }
@@ -699,7 +702,7 @@ public class TinyMediaManager {
         if (renameNew) {
           LOGGER.info("Commandline - rename & cleanup new episodes...");
           if (newTv.size() > 0 && newEp.size() > 0) {
-            task = new TvShowRenameTask(null, newEp); // just rename new EPs
+            task = new TvShowRenameTask(null, newEp, true); // just rename new EPs AND root folder
             task.execute();
             task.get(); // blocking
           }
@@ -707,16 +710,42 @@ public class TinyMediaManager {
       }
 
       if (checkFiles) {
+        boolean allOk = true;
         // check db
-        LOGGER.info("Check all MFs if existing");
+        LOGGER.info("Check all files if existing");
         for (Movie m : MovieList.getInstance().getMovies()) {
+          System.out.print(".");
           for (MediaFile mf : m.getMediaFiles()) {
             if (!mf.exists()) {
+              System.out.println();
               LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+              allOk = false;
             }
           }
         }
-        LOGGER.info("...done");
+        for (TvShow s : TvShowList.getInstance().getTvShows()) {
+          System.out.print(".");
+          for (MediaFile mf : s.getMediaFiles()) { // show MFs
+            if (!mf.exists()) {
+              System.out.println();
+              LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+              allOk = false;
+            }
+          }
+          for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(s.getEpisodes())) {
+            for (MediaFile mf : episode.getMediaFiles()) { // episode MFs
+              if (!mf.exists()) {
+                System.out.println();
+                LOGGER.warn("MediaFile not found! " + mf.getFile().getAbsolutePath());
+                allOk = false;
+              }
+            }
+          }
+        }
+        System.out.println();
+        if (allOk) {
+          LOGGER.info("no problems found - everything ok :)");
+        }
       }
     }
     catch (Exception e) {

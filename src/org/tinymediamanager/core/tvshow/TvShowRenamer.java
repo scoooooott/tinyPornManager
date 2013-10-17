@@ -22,6 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -63,6 +65,46 @@ public class TvShowRenamer {
    */
   private static String cleanForFilename(String name) {
     return name.replaceAll("([\"\\:<>|/?*])", "");
+  }
+
+  /**
+   * renames the TvSHow root folder and updates all mediaFiles
+   * 
+   * @param show
+   *          the show
+   */
+  public static void renameTvShowRoot(TvShow show) {
+    LOGGER.debug("movie year: " + show.getYear());
+    LOGGER.debug("movie path: " + show.getPath());
+    String newPathname = createDestination("$T ($Y)", show); // hardcode for now
+    String oldPathname = show.getPath();
+
+    if (!newPathname.isEmpty()) {
+      newPathname = show.getDataSource() + File.separator + newPathname;
+      File srcDir = new File(oldPathname);
+      File destDir = new File(newPathname);
+      // move directory if needed
+      if (!srcDir.equals(destDir)) {
+        boolean ok = false;
+        try {
+          // FileUtils.moveDirectory(srcDir, destDir);
+          ok = Utils.moveDirectorySafe(srcDir, destDir);
+          if (ok) {
+            show.updateMediaFilePath(srcDir, destDir); // TvShow MFs
+            show.setPath(newPathname);
+            for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(show.getEpisodes())) {
+              episode.updateMediaFilePath(srcDir, destDir);
+            }
+            show.saveToDb();
+          }
+        }
+        catch (Exception e) {
+          LOGGER.error("error moving folder: ", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, srcDir.getPath(), "message.renamer.failedrename", new String[] { ":",
+              e.getLocalizedMessage() }));
+        }
+      }
+    }
   }
 
   /**
@@ -348,4 +390,90 @@ public class TvShowRenamer {
     }
     return seasonDir;
   }
+
+  /**
+   * Creates the new file/folder name according to template string
+   * 
+   * @param template
+   *          the template
+   * @param show
+   *          the movie
+   * @return the string
+   */
+  public static String createDestination(String template, TvShow show) {
+    String newDestination = template;
+
+    // replace token title ($T)
+    if (newDestination.contains("$T")) {
+      newDestination = replaceToken(newDestination, "$T", show.getTitle());
+    }
+
+    // replace token first letter of title ($1)
+    if (newDestination.contains("$1")) {
+      newDestination = replaceToken(newDestination, "$1", StringUtils.isNotBlank(show.getTitle()) ? show.getTitle().substring(0, 1).toUpperCase()
+          : "");
+    }
+
+    // replace token first letter of sort title ($2)
+    if (newDestination.contains("$2")) {
+      newDestination = replaceToken(newDestination, "$2", StringUtils.isNotBlank(show.getTitleSortable()) ? show.getTitleSortable().substring(0, 1)
+          .toUpperCase() : "");
+    }
+
+    // replace token year ($Y)
+    if (newDestination.contains("$Y")) {
+      if (show.getYear().equals("0")) {
+        newDestination = newDestination.replace("$Y", "");
+      }
+      else {
+        newDestination = replaceToken(newDestination, "$Y", show.getYear());
+      }
+    }
+
+    // replace token orignal title ($O)
+    if (newDestination.contains("$O")) {
+      newDestination = replaceToken(newDestination, "$O", show.getOriginalTitle());
+    }
+
+    // replace token IMDBid ($I)
+    if (newDestination.contains("$I")) {
+      newDestination = replaceToken(newDestination, "$I", show.getImdbId());
+    }
+
+    // replace token sort title ($E)
+    if (newDestination.contains("$E")) {
+      newDestination = replaceToken(newDestination, "$E", show.getTitleSortable());
+    }
+
+    // replace empty brackets
+    newDestination = newDestination.replaceAll("\\(\\)", "");
+    newDestination = newDestination.replaceAll("\\[\\]", "");
+
+    // if there are multiple file separators in a row - strip them out
+    if (SystemUtils.IS_OS_WINDOWS) {
+      // we need to mask it in windows
+      newDestination = newDestination.replaceAll("\\\\{2,}", "\\\\");
+      newDestination = newDestination.replaceAll("^\\\\", "");
+    }
+    else {
+      newDestination = newDestination.replaceAll(File.separator + "{2,}", File.separator);
+      newDestination = newDestination.replaceAll("^" + File.separator, "");
+    }
+
+    // trim out unnecessary whitespaces
+    newDestination = newDestination.trim();
+
+    return newDestination.trim();
+  }
+
+  private static String replaceToken(String destination, String token, String replacement) {
+    String replacingCleaned = "";
+    if (StringUtils.isNotBlank(replacement)) {
+      // replace illegal characters
+      // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
+      replacingCleaned = replacement.replaceAll("([\"\\:<>|/?*])", "");
+    }
+    return destination.replace(token, replacingCleaned);
+  }
+
 }

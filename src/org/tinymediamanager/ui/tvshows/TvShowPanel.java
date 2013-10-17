@@ -1095,7 +1095,7 @@ public class TvShowPanel extends JPanel {
 
       // rename
       @SuppressWarnings("rawtypes")
-      TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows, selectedEpisodes);
+      TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows, selectedEpisodes, true);
       if (!MainWindow.executeMainTask(renameTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }

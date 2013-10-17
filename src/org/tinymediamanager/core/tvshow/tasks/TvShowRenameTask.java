@@ -39,6 +39,7 @@ public class TvShowRenameTask extends TmmThreadPool {
 
   private List<TvShow>        tvShowsToRename  = new ArrayList<TvShow>();
   private List<TvShowEpisode> episodesToRename = new ArrayList<TvShowEpisode>();
+  private boolean             renameRoot       = true;
 
   /**
    * Instantiates a new tv show rename task.
@@ -46,9 +47,10 @@ public class TvShowRenameTask extends TmmThreadPool {
    * @param tvShowsToRename
    *          the tvshows to rename
    */
-  public TvShowRenameTask(List<TvShow> tvShowsToRename, List<TvShowEpisode> episodesToRename) {
+  public TvShowRenameTask(List<TvShow> tvShowsToRename, List<TvShowEpisode> episodesToRename, boolean renameRootFolder) {
     this.tvShowsToRename.addAll(tvShowsToRename);
     this.episodesToRename.addAll(episodesToRename);
+    this.renameRoot = renameRootFolder;
   }
 
   /*
@@ -77,6 +79,13 @@ public class TvShowRenameTask extends TmmThreadPool {
       if (cancel) {
         cancel(false);// swing cancel
       }
+      // rename TvShowRoot and update all MFs in DB to new path
+      if (renameRoot) {
+        for (int i = 0; i < tvShowsToRename.size(); i++) {
+          TvShowRenamer.renameTvShowRoot(tvShowsToRename.get(i)); // rename root and update ShowMFs
+        }
+      }
+
       LOGGER.info("Done renaming TV shows)");
     }
     catch (Exception e) {
