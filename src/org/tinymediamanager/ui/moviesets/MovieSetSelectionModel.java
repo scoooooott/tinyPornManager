@@ -17,8 +17,15 @@ package org.tinymediamanager.ui.moviesets;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 
 /**
@@ -27,24 +34,19 @@ import org.tinymediamanager.core.movie.MovieSet;
  * @author Manuel Laggner
  */
 public class MovieSetSelectionModel extends AbstractModelObject {
-
-  /** The Constant SELECTED_MOVIE_SET. */
   private static final String    SELECTED_MOVIE_SET = "selectedMovieSet";
 
-  /** The selected movie. */
   private MovieSet               selectedMovieSet;
-
-  /** The inital movie. */
   private MovieSet               initalMovieSet     = new MovieSet("");
-
-  /** The property change listener. */
   private PropertyChangeListener propertyChangeListener;
+  private JTree                  tree;
 
   /**
    * Instantiates a new movie selection model. Usage in MovieSetPanel
    */
-  public MovieSetSelectionModel() {
+  public MovieSetSelectionModel(JTree tree) {
     selectedMovieSet = initalMovieSet;
+    this.tree = tree;
 
     propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -89,4 +91,55 @@ public class MovieSetSelectionModel extends AbstractModelObject {
   public MovieSet getSelectedMovieSet() {
     return selectedMovieSet;
   }
+
+  /**
+   * Gets the selected movie sets
+   * 
+   * @return the selected movie sets
+   */
+  public List<MovieSet> getSelectedMovieSets() {
+    List<MovieSet> selectedMovieSets = new ArrayList<MovieSet>();
+    TreePath[] paths = tree.getSelectionPaths();
+    // tree.clearSelection();
+
+    // filter out all movie sets from the selection
+    if (paths != null) {
+      for (TreePath path : paths) {
+        if (path.getPathCount() > 1) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+          if (node.getUserObject() instanceof MovieSet) {
+            MovieSet movieSet = (MovieSet) node.getUserObject();
+            selectedMovieSets.add(movieSet);
+          }
+        }
+      }
+    }
+
+    return selectedMovieSets;
+  }
+
+  public List<Movie> getSelectedMovies() {
+    List<Movie> selectedMovies = new ArrayList<Movie>();
+    TreePath[] paths = tree.getSelectionPaths();
+    // tree.clearSelection();
+
+    // filter out all movie sets from the selection
+    if (paths != null) {
+      for (TreePath path : paths) {
+        if (path.getPathCount() > 1) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+          if (node.getUserObject() instanceof Movie) {
+            Movie movie = (Movie) node.getUserObject();
+            selectedMovies.add(movie);
+          }
+        }
+      }
+    }
+
+    return selectedMovies;
+  }
+
+  // public List<Movie> getSelectedMoviesRecursive() {
+  //
+  // }
 }

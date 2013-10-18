@@ -126,6 +126,7 @@ public class MainWindow extends JFrame {
 
   /** The panel movies. */
   private JPanel                      panelMovies;
+  private JPanel                      panelMovieSets;
 
   /** The panel status bar. */
   private JPanel                      panelStatusBar;
@@ -391,7 +392,7 @@ public class MainWindow extends JFrame {
     panelMovies = new MoviePanel();
     VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.movies"), panelMovies); //$NON-NLS-1$
 
-    JPanel panelMovieSets = new MovieSetPanel();
+    panelMovieSets = new MovieSetPanel();
     VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.moviesets"), panelMovieSets); //$NON-NLS-1$
 
     JPanel panelTvShows = new TvShowPanel();
@@ -580,6 +581,10 @@ public class MainWindow extends JFrame {
    */
   public MoviePanel getMoviePanel() {
     return (MoviePanel) panelMovies;
+  }
+
+  public MovieSetPanel getMovieSetPanel() {
+    return (MovieSetPanel) panelMovieSets;
   }
 
   /**

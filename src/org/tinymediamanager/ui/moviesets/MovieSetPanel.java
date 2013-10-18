@@ -20,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -29,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
@@ -46,6 +48,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTree;
@@ -53,6 +56,7 @@ import org.tinymediamanager.ui.movies.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.MovieSetTreeCellRenderer;
 import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetEditorDialog;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
@@ -73,8 +77,8 @@ public class MovieSetPanel extends JPanel {
   private static final long           serialVersionUID     = -7095093579735941697L;
   private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private MovieSelectionModel         movieSelectionModel;
-  private MovieSetSelectionModel      movieSetSelectionModel;
+  MovieSelectionModel                 movieSelectionModel;
+  MovieSetSelectionModel              movieSetSelectionModel;
   private MovieList                   movieList            = MovieList.getInstance();
   private MovieSetTreeModel           treeModel;
   private int                         width                = 0;
@@ -98,7 +102,6 @@ public class MovieSetPanel extends JPanel {
     super();
 
     movieSelectionModel = new MovieSelectionModel();
-    movieSetSelectionModel = new MovieSetSelectionModel();
     treeModel = new MovieSetTreeModel(movieList.getMovieSetList());
 
     setLayout(new FormLayout(
@@ -150,6 +153,7 @@ public class MovieSetPanel extends JPanel {
         super.paintComponent(g);
       }
     };
+    movieSetSelectionModel = new MovieSetSelectionModel(tree);
 
     TreeUI ui = new TreeUI() {
       @Override
@@ -250,9 +254,16 @@ public class MovieSetPanel extends JPanel {
 
   private void buildMenu() {
     // TODO popup menu for moviesets
-    // // popup menu
-    // JPopupMenu popupMenu = new JPopupMenu();
+    // popup menu
+    JPopupMenu popupMenu = new JPopupMenu();
 
+    // movie actions
+    popupMenu.addSeparator();
+    Action actionEditMovie = new MovieSetEditAction(true);
+    popupMenu.add(actionEditMovie);
+
+    MouseListener popupListener = new PopupListener(popupMenu, tree);
+    tree.addMouseListener(popupListener);
   }
 
   /**
