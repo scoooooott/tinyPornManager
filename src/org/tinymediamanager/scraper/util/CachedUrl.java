@@ -294,7 +294,12 @@ public class CachedUrl extends Url {
     FileOutputStream fos = new FileOutputStream(f);
     long sizeCopy = IOUtils.copy(is, fos);
     fos.flush();
-    fos.getFD().sync(); // wait until file has been completely written
+    try {
+      fos.getFD().sync(); // wait until file has been completely written
+    }
+    catch (Exception e) {
+      // empty -> just do not crash the thread
+    }
     fos.close();
     is.close();
 

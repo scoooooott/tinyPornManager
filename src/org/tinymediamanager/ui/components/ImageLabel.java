@@ -36,7 +36,7 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -360,8 +360,8 @@ public class ImageLabel extends JLabel {
     @Override
     protected BufferedImage doInBackground() throws Exception {
       try {
-        CachedUrl cachedUrl = new CachedUrl(imageUrl);
-        Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+        Url url = new Url(imageUrl);
+        Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
         return com.bric.image.ImageLoader.createImage(image);
 
       }

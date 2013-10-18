@@ -71,7 +71,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.omertron.themoviedbapi.model.CollectionInfo;
@@ -726,11 +726,18 @@ public class Movie extends MediaEntity {
         else {
           file = new File(path, "thumb" + (i + 1) + "." + providedFiletype);
           outputStream = new FileOutputStream(file);
-          CachedUrl cachedUrl = new CachedUrl(url);
-          is = cachedUrl.getInputStream();
+          Url url1 = new Url(url);
+          is = url1.getInputStream();
         }
 
         IOUtils.copy(is, outputStream);
+        outputStream.flush();
+        try {
+          outputStream.getFD().sync();
+        }
+        catch (Exception e) {
+          // empty here -> just not let the thread crash
+        }
         outputStream.close();
         is.close();
         addToMediaFiles(new MediaFile(file, MediaFileType.THUMB));
@@ -790,14 +797,22 @@ public class Movie extends MediaEntity {
 
       // fetch and store images
       for (int i = 0; i < fanarts.size(); i++) {
-        String url = fanarts.get(i);
-        String providedFiletype = FilenameUtils.getExtension(url);
-        CachedUrl cachedUrl = new CachedUrl(url);
+        String urlAsString = fanarts.get(i);
+        String providedFiletype = FilenameUtils.getExtension(urlAsString);
+        Url url = new Url(urlAsString);
         File file = new File(path, "fanart" + (i + 1) + "." + providedFiletype);
         FileOutputStream outputStream = new FileOutputStream(file);
-        InputStream is = cachedUrl.getInputStream();
+        InputStream is = url.getInputStream();
         IOUtils.copy(is, outputStream);
+        outputStream.flush();
+        try {
+          outputStream.getFD().sync();
+        }
+        catch (Exception e) {
+          // empty here -> just not let the thread crash
+        }
         outputStream.close();
+
         is.close();
         addToMediaFiles(new MediaFile(file, MediaFileType.EXTRAFANART));
       }

@@ -45,7 +45,7 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.components.ImageLabel;
 
 /**
@@ -108,8 +108,8 @@ public class ImageCache {
    *           Signals that an I/O exception has occurred.
    */
   public static InputStream scaleImage(String imageUrl, int width) throws IOException {
-    CachedUrl cachedUrl = new CachedUrl(imageUrl);
-    Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+    Url url = new Url(imageUrl);
+    Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
     BufferedImage originalImage = com.bric.image.ImageLoader.createImage(image);
 
     Point size = new Point();
@@ -142,6 +142,7 @@ public class ImageCache {
 
     byte[] bytes = baos.toByteArray();
 
+    output.flush();
     output.close();
     baos.close();
 

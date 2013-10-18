@@ -41,7 +41,7 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 
 /**
  * The Class MovieSet.
@@ -552,10 +552,17 @@ public class MovieSet extends MediaEntity {
    *           Signals that an I/O exception has occurred.
    */
   private void writeImage(String url, String pathAndFilename) throws IOException {
-    CachedUrl cachedUrl = new CachedUrl(url);
+    Url url1 = new Url(url);
     FileOutputStream outputStream = new FileOutputStream(pathAndFilename);
-    InputStream is = cachedUrl.getInputStream();
+    InputStream is = url1.getInputStream();
     IOUtils.copy(is, outputStream);
+    outputStream.flush();
+    try {
+      outputStream.getFD().sync(); // wait until file has been completely written
+    }
+    catch (Exception e) {
+      // empty here -> just not let the thread crash
+    }
     outputStream.close();
     is.close();
 
@@ -624,11 +631,18 @@ public class MovieSet extends MediaEntity {
       File outputFile = new File(ImageCache.getCacheDir(), filename + ".jpg");
 
       try {
-        CachedUrl url = new CachedUrl(imageUrl);
+        Url url = new Url(imageUrl);
         FileOutputStream outputStream = new FileOutputStream(outputFile);
         InputStream is = url.getInputStream();
         IOUtils.copy(is, outputStream);
         outputStream.close();
+        outputStream.flush();
+        try {
+          outputStream.getFD().sync(); // wait until file has been completely written
+        }
+        catch (Exception e) {
+          // empty here -> just not let the thread crash
+        }
         is.close();
 
         firePropertyChange(propertyName, "", outputFile);

@@ -64,7 +64,7 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -730,19 +730,15 @@ public class ImageChooserDialog extends JDialog {
               return null;
             }
 
-            CachedUrl cachedUrl = null;
+            Url url = null;
             try {
-              cachedUrl = new CachedUrl(art.getPreviewUrl());
-              Image image = Toolkit.getDefaultToolkit().createImage(cachedUrl.getBytes());
+              url = new Url(art.getPreviewUrl());
+              Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
               BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
               addImage(bufferedImage, art);
             }
             catch (Exception e) {
               LOGGER.error("DownloadTask", e);
-              // mark cache file as damaged
-              if (cachedUrl != null) {
-                cachedUrl.removeCachedFile();
-              }
             }
 
           }

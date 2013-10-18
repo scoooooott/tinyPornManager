@@ -25,7 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.DownloadWorker.ProgressType;
 
@@ -61,16 +61,16 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
     long bytesDone = 0;
     try {
       LOGGER.info("Downloading " + url + " to " + file);
+      Url u = new Url(UrlUtil.getURIEncoded(url).toASCIIString());
+      File tempFile = new File(file.getAbsolutePath() + ".part");
 
-      // FIXME: how to do this with cachedUrl?! better not?
-      CachedUrl u = new CachedUrl(UrlUtil.getURIEncoded(url).toASCIIString());
       InputStream is = u.getInputStream();
 
       long length = u.getContentLength();
       LOGGER.debug("Content length: " + length);
 
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
-      FileOutputStream outputStream = new FileOutputStream(u.getCachedFile());
+      FileOutputStream outputStream = new FileOutputStream(tempFile);
       int count = 0;
       int percent = 0;
       byte buffer[] = new byte[1024];
@@ -87,12 +87,12 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       is.close();
       if (isCancelled()) {
         // delete half downloaded file
-        FileUtils.deleteQuietly(u.getCachedFile());
+        FileUtils.deleteQuietly(tempFile);
       }
       else {
-        boolean ok = Utils.moveFileSafe(u.getCachedFile(), file);
+        boolean ok = Utils.moveFileSafe(tempFile, file);
         if (ok) {
-          FileUtils.deleteQuietly(u.getCachedFile());
+          FileUtils.deleteQuietly(tempFile);
         }
         else {
           // TODO: well, yes, what to do? Download was ok, but moving failed...

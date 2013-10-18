@@ -71,7 +71,7 @@ import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 
 /**
  * The Class TvShow.
@@ -1580,11 +1580,18 @@ public class TvShow extends MediaEntity {
         LOGGER.debug("writing season poster " + filename);
 
         // fetch and store images
-        CachedUrl cachedUrl = new CachedUrl(url);
+        Url url1 = new Url(url);
         FileOutputStream outputStream = new FileOutputStream(filename);
-        InputStream is = cachedUrl.getInputStream();
+        InputStream is = url1.getInputStream();
         IOUtils.copy(is, outputStream);
         outputStream.close();
+        outputStream.flush();
+        try {
+          outputStream.getFD().sync(); // wait until file has been completely written
+        }
+        catch (Exception e) {
+          // empty here -> just not let the thread crash
+        }
         is.close();
 
         ImageCache.invalidateCachedImage(filename);
