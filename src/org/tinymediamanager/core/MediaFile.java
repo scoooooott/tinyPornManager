@@ -602,6 +602,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         }
       }
     }
+
+    // fallback to the "old" logic
+    for (String key : keys) {
+      String value = mediaInfo.get(streamKind, streamNumber, key);
+      if (value.length() > 0) {
+        return value;
+      }
+    }
+
     return "";
   }
 
