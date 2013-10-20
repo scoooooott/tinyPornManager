@@ -102,11 +102,15 @@ public class ParserUtils {
       }
     }
 
-    // if we have at least 1 token, and the last one is a 4 digit, assume year and remove
-    if (firstFoundStopwordPosition > 1 && s[firstFoundStopwordPosition - 1].matches("\\d{4}")) {
-      LOGGER.debug("removed last token - seems to be year");
-      firstFoundStopwordPosition--;
-      ret[1] = s[firstFoundStopwordPosition];
+    // scan backwards - if we have at least 1 token, and the last one is a 4 digit, assume year and remove
+    String year = "";
+    for (int i = s.length - 1; i > 0; i--) {
+      if (!s[i].isEmpty() && s[i].matches("\\d{4}")) {
+        LOGGER.debug("removed token '" + s[i] + "'- seems to be year");
+        year = s[i];
+        s[i] = "";
+        break;
+      }
     }
 
     // rebuild string
@@ -117,6 +121,7 @@ public class ParserUtils {
       }
     }
     ret[0] = name.trim();
+    ret[1] = year.trim();
     LOGGER.debug("Movie title should be: \"" + ret[0] + "\", from " + ret[1]);
     return ret;
   }
