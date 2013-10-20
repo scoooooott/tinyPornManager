@@ -115,9 +115,9 @@ public class TinyMediaManager {
         "PARAMETERS:\n" +
         "\n" +
         "    -updateMovies        update all movie datasources and add new movies/files to DB\n" +
-        "    -updateMoviesX       replace X with 1-9 - just updates a single movie datasource; ordering like GUI" +
+        "    -updateMoviesX       replace X with 1-9 - just updates a single movie datasource; ordering like GUI\n" +
         "    -updateTv            update all TvShow datasources and add new TvShows/episodes to DB\n" +
-        "    -updateTvX           replace X with 1-9 - just updates a single TvShow datasource; ordering like GUI" +
+        "    -updateTvX           replace X with 1-9 - just updates a single TvShow datasource; ordering like GUI\n" +
         "    -update              update all (short for '-updateMovies -updateTv')\n" +
         "\n" +
         "    -scrapeNew           auto-scrape (force best match) new found movies/TvShows/episodes from former update(s)\n" +
