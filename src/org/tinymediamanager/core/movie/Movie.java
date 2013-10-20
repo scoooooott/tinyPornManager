@@ -740,7 +740,10 @@ public class Movie extends MediaEntity {
         }
         outputStream.close();
         is.close();
-        addToMediaFiles(new MediaFile(file, MediaFileType.THUMB));
+
+        MediaFile mf = new MediaFile(file, MediaFileType.THUMB);
+        mf.gatherMediaInformation();
+        addToMediaFiles(mf);
       }
     }
     catch (IOException e) {
@@ -814,7 +817,9 @@ public class Movie extends MediaEntity {
         outputStream.close();
 
         is.close();
-        addToMediaFiles(new MediaFile(file, MediaFileType.EXTRAFANART));
+        MediaFile mf = new MediaFile(file, MediaFileType.EXTRAFANART);
+        mf.gatherMediaInformation();
+        addToMediaFiles(mf);
       }
     }
     catch (IOException e) {
