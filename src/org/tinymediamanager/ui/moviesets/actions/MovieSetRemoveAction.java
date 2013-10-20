@@ -22,27 +22,29 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 
 /**
- * MovieEditAction - edit movies from within moviesets
- * 
  * @author Manuel Laggner
+ * 
  */
-public class MovieEditAction extends AbstractAction {
-  private static final long           serialVersionUID = 1848573591741154631L;
+public class MovieSetRemoveAction extends AbstractAction {
+  private static final long           serialVersionUID = -9030996266835702009L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public MovieEditAction(boolean withTitle) {
+  /**
+   * Instantiates a new removes the movie set action.
+   */
+  public MovieSetRemoveAction(boolean withTitle) {
     if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
     }
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
   }
 
   /*
@@ -52,13 +54,12 @@ public class MovieEditAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    List<Movie> selectedMovies = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovies();
+    List<MovieSet> selectedMovieSets = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovieSets();
 
-    for (Movie movie : selectedMovies) {
-      MovieEditorDialog editor = new MovieEditorDialog(movie, selectedMovies.size() > 1 ? true : false);
-      if (!editor.showDialog()) {
-        break;
-      }
+    for (int i = 0; i < selectedMovieSets.size(); i++) {
+      MovieSet movieSet = selectedMovieSets.get(i);
+      MovieList.getInstance().removeMovieSet(movieSet);
     }
+
   }
 }

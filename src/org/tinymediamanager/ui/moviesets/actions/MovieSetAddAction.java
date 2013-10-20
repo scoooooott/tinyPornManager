@@ -16,33 +16,35 @@
 package org.tinymediamanager.ui.moviesets.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
-import org.tinymediamanager.core.movie.Movie;
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
-import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 
 /**
- * MovieEditAction - edit movies from within moviesets
- * 
  * @author Manuel Laggner
+ * 
  */
-public class MovieEditAction extends AbstractAction {
-  private static final long           serialVersionUID = 1848573591741154631L;
+public class MovieSetAddAction extends AbstractAction {
+  private static final long           serialVersionUID = 819724436270051906L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public MovieEditAction(boolean withTitle) {
+  /**
+   * Instantiates a new adds the movie set action.
+   */
+  public MovieSetAddAction(boolean withTitle) {
     if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
     }
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Add.png")));
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Add.png")));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
   }
 
   /*
@@ -52,13 +54,11 @@ public class MovieEditAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    List<Movie> selectedMovies = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovies();
-
-    for (Movie movie : selectedMovies) {
-      MovieEditorDialog editor = new MovieEditorDialog(movie, selectedMovies.size() > 1 ? true : false);
-      if (!editor.showDialog()) {
-        break;
-      }
+    String name = JOptionPane.showInputDialog(null, BUNDLE.getString("movieset.title"), "", 1); //$NON-NLS-1$
+    if (StringUtils.isNotEmpty(name)) {
+      MovieSet movieSet = new MovieSet(name);
+      movieSet.saveToDb();
+      MovieList.getInstance().addMovieSet(movieSet);
     }
   }
 }

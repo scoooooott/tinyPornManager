@@ -19,16 +19,13 @@ import java.awt.CardLayout;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -40,7 +37,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -55,10 +51,12 @@ import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.movies.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.MovieSetTreeCellRenderer;
-import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
+import org.tinymediamanager.ui.moviesets.actions.MovieEditAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
-import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
-import org.tinymediamanager.ui.moviesets.dialogs.MovieSetEditorDialog;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetRemoveAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetRenameAction;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetSearchAction;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -90,10 +88,10 @@ public class MovieSetPanel extends JPanel {
   private JTree                       tree;
   private JLabel                      lblMovieSetCount;
 
-  private final Action                actionAddMovieSet    = new AddMovieSetAction();
-  private final Action                actionRemoveMovieSet = new RemoveMovieSetAction();
-  private final Action                actionSearchMovieSet = new SearchMovieSetAction();
-  private final Action                actionEditMovieSet   = new EditMovieSetAction();
+  private final Action                actionAddMovieSet    = new MovieSetAddAction(false);
+  private final Action                actionRemoveMovieSet = new MovieSetRemoveAction(false);
+  private final Action                actionSearchMovieSet = new MovieSetSearchAction(false);
+  private final Action                actionEditMovieSet   = new MovieSetEditAction(false);
 
   /**
    * Instantiates a new movie set panel.
@@ -257,134 +255,28 @@ public class MovieSetPanel extends JPanel {
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
 
+    // movieset actions
+    Action actionAddMovieSet = new MovieSetAddAction(true);
+    popupMenu.add(actionAddMovieSet);
+    Action actionRemoveMovieSet = new MovieSetRemoveAction(true);
+    popupMenu.add(actionRemoveMovieSet);
+    Action actionEditMovieSet = new MovieSetEditAction(true);
+    popupMenu.add(actionEditMovieSet);
+    Action actionSearchMovieSet = new MovieSetSearchAction(true);
+    popupMenu.add(actionSearchMovieSet);
+
     // movie actions
     popupMenu.addSeparator();
-    Action actionEditMovie = new MovieSetEditAction(true);
+    Action actionEditMovie = new MovieEditAction(true);
     popupMenu.add(actionEditMovie);
+
+    // actions for both of them
+    popupMenu.addSeparator();
+    Action actionRenameMovies = new MovieSetRenameAction();
+    popupMenu.add(actionRenameMovies);
 
     MouseListener popupListener = new PopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);
-  }
-
-  /**
-   * The Class AddMovieSetAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class AddMovieSetAction extends AbstractAction {
-    private static final long serialVersionUID = 819724436270051906L;
-
-    /**
-     * Instantiates a new adds the movie set action.
-     */
-    public AddMovieSetAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Add.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      String name = JOptionPane.showInputDialog(null, BUNDLE.getString("movieset.title"), "", 1); //$NON-NLS-1$
-      if (StringUtils.isNotEmpty(name)) {
-        MovieSet movieSet = new MovieSet(name);
-        movieSet.saveToDb();
-        movieList.addMovieSet(movieSet);
-      }
-    }
-  }
-
-  /**
-   * The Class RemoveMovieSetAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class RemoveMovieSetAction extends AbstractAction {
-    private static final long serialVersionUID = -9030996266835702009L;
-
-    /**
-     * Instantiates a new removes the movie set action.
-     */
-    public RemoveMovieSetAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      TreePath[] paths = tree.getSelectionPaths();
-      tree.clearSelection();
-
-      // filter out all movie sets from the selection
-      if (paths != null) {
-        for (TreePath path : paths) {
-          if (path.getPathCount() > 1) {
-
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            if (node.getUserObject() instanceof MovieSet) {
-              MovieSet movieSet = (MovieSet) node.getUserObject();
-              movieList.removeMovieSet(movieSet);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * The Class SearchMovieSetAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SearchMovieSetAction extends AbstractAction {
-    private static final long serialVersionUID = -2260581786599155278L;
-
-    /**
-     * Instantiates a new search movie set action.
-     */
-    public SearchMovieSetAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      TreePath[] paths = tree.getSelectionPaths();
-      // tree.clearSelection();
-
-      // filter out all movie sets from the selection
-      if (paths != null) {
-        for (TreePath path : paths) {
-          if (path.getPathCount() > 1) {
-
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            if (node.getUserObject() instanceof MovieSet) {
-              MovieSet movieSet = (MovieSet) node.getUserObject();
-
-              // display movie set chooser
-              MovieSetChooserDialog chooser = new MovieSetChooserDialog(movieSet, paths.length > 1 ? true : false);
-              if (!chooser.showDialog()) {
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
   }
 
   /**
@@ -396,61 +288,5 @@ public class MovieSetPanel extends JPanel {
     AutoBinding<MovieList, Integer, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, movieList, movieListBeanProperty,
         lblMovieSetCount, jLabelBeanProperty);
     autoBinding.bind();
-  }
-
-  /**
-   * The Class EditMovieSetAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class EditMovieSetAction extends AbstractAction {
-    private static final long serialVersionUID = 1848573591741154631L;
-
-    /**
-     * Instantiates a new edits the movie set action.
-     */
-    public EditMovieSetAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      TreePath[] paths = tree.getSelectionPaths();
-      // tree.clearSelection();
-
-      // filter out all movie sets from the selection
-      if (paths != null) {
-        for (TreePath path : paths) {
-          if (path.getPathCount() > 1) {
-
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            if (node.getUserObject() instanceof MovieSet) {
-              MovieSet movieSet = (MovieSet) node.getUserObject();
-
-              // display movie set editor
-              MovieSetEditorDialog editor = new MovieSetEditorDialog(movieSet, paths.length > 1 ? true : false);
-              if (!editor.showDialog()) {
-                break;
-              }
-            }
-            if (node.getUserObject() instanceof Movie) {
-              Movie movie = (Movie) node.getUserObject();
-
-              // display movie editor
-              MovieEditorDialog editor = new MovieEditorDialog(movie, paths.length > 1 ? true : false);
-              if (!editor.showDialog()) {
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }

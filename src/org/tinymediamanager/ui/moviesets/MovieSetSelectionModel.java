@@ -118,10 +118,14 @@ public class MovieSetSelectionModel extends AbstractModelObject {
     return selectedMovieSets;
   }
 
+  /**
+   * get all selected movies. selected movie sets will NOT return all their movies
+   * 
+   * @return list of all selected movies
+   */
   public List<Movie> getSelectedMovies() {
     List<Movie> selectedMovies = new ArrayList<Movie>();
     TreePath[] paths = tree.getSelectionPaths();
-    // tree.clearSelection();
 
     // filter out all movie sets from the selection
     if (paths != null) {
@@ -139,7 +143,39 @@ public class MovieSetSelectionModel extends AbstractModelObject {
     return selectedMovies;
   }
 
-  // public List<Movie> getSelectedMoviesRecursive() {
-  //
-  // }
+  /**
+   * get all selected movies. selected movie sets will return all their movies
+   * 
+   * @return list of all selected movies
+   */
+  public List<Movie> getSelectedMoviesRecursive() {
+    List<Movie> selectedMovies = new ArrayList<Movie>();
+
+    TreePath[] paths = tree.getSelectionPaths();
+
+    // filter out all movie sets from the selection
+    if (paths != null) {
+      for (TreePath path : paths) {
+        if (path.getPathCount() > 1) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+          if (node.getUserObject() instanceof MovieSet) {
+            MovieSet movieSet = (MovieSet) node.getUserObject();
+            for (Movie movie : movieSet.getMovies()) {
+              if (!selectedMovies.contains(movie)) {
+                selectedMovies.add(movie);
+              }
+            }
+          }
+          if (node.getUserObject() instanceof Movie) {
+            Movie movie = (Movie) node.getUserObject();
+            if (!selectedMovies.contains(movie)) {
+              selectedMovies.add(movie);
+            }
+          }
+        }
+      }
+    }
+
+    return selectedMovies;
+  }
 }
