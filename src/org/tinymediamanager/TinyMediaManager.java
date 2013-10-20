@@ -142,14 +142,14 @@ public class TinyMediaManager {
         if (cmd.equalsIgnoreCase("-updateMovies")) {
           updateMovies = true;
         }
-        else if (cmd.matches("(?)-updateMovies\\d")) {
+        else if (cmd.matches("(?)-updateMovies[1-9]")) {
           updateMovies = true;
           updateMovieDs.add(Integer.parseInt(StrgUtils.substr(cmd, "(?)-updateMovies(\\d)")));
         }
         else if (cmd.equalsIgnoreCase("-updateTv")) {
           updateTv = true;
         }
-        else if (cmd.matches("(?)-updateTv(\\d)")) {
+        else if (cmd.matches("(?)-updateTv[1-9]")) {
           updateTv = true;
           updateTvDs.add(Integer.parseInt(StrgUtils.substr(cmd, "(?)-updateTv(\\d)")));
         }
