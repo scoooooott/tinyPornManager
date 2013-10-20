@@ -38,6 +38,7 @@ import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -69,6 +70,7 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;
@@ -88,14 +90,18 @@ import com.sun.jna.Platform;
 public class TinyMediaManager {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER          = LoggerFactory.getLogger(TinyMediaManager.class);
+  private static final Logger     LOGGER          = LoggerFactory.getLogger(TinyMediaManager.class);
 
-  private static boolean      updateMovies    = false;
-  private static boolean      updateTv        = false;
-  private static boolean      scrapeNew       = false;
-  private static boolean      scrapeUnscraped = false;
-  private static boolean      renameNew       = false;
-  private static boolean      checkFiles      = false;
+  private static boolean          updateMovies    = false;
+  private static boolean          updateTv        = false;
+  private static boolean          scrapeNew       = false;
+  private static boolean          scrapeUnscraped = false;
+  private static boolean          renameNew       = false;
+  private static boolean          checkFiles      = false;
+
+  // datasource IDs
+  private static HashSet<Integer> updateMovieDs   = new HashSet<Integer>();
+  private static HashSet<Integer> updateTvDs      = new HashSet<Integer>();
 
   private static void syntax() {
     // @formatter:off
@@ -108,8 +114,10 @@ public class TinyMediaManager {
         "\n" +
         "PARAMETERS:\n" +
         "\n" +
-        "    -updateMovies        update movie datasources and add new movies/files to DB\n" +
-        "    -updateTv            update TvShow datasources and add new TvShows/episodes to DB\n" +
+        "    -updateMovies        update all movie datasources and add new movies/files to DB\n" +
+        "    -updateMoviesX       replace X with 1-9 - just updates a single movie datasource; ordering like GUI" +
+        "    -updateTv            update all TvShow datasources and add new TvShows/episodes to DB\n" +
+        "    -updateTvX           replace X with 1-9 - just updates a single TvShow datasource; ordering like GUI" +
         "    -update              update all (short for '-updateMovies -updateTv')\n" +
         "\n" +
         "    -scrapeNew           auto-scrape (force best match) new found movies/TvShows/episodes from former update(s)\n" +
@@ -134,8 +142,16 @@ public class TinyMediaManager {
         if (cmd.equalsIgnoreCase("-updateMovies")) {
           updateMovies = true;
         }
+        else if (cmd.matches("(?)-updateMovies\\d")) {
+          updateMovies = true;
+          updateMovieDs.add(Integer.parseInt(StrgUtils.substr(cmd, "(?)-updateMovies(\\d)")));
+        }
         else if (cmd.equalsIgnoreCase("-updateTv")) {
           updateTv = true;
+        }
+        else if (cmd.matches("(?)-updateTv(\\d)")) {
+          updateTv = true;
+          updateTvDs.add(Integer.parseInt(StrgUtils.substr(cmd, "(?)-updateTv(\\d)")));
         }
         else if (cmd.equalsIgnoreCase("-update")) {
           updateMovies = true;
@@ -617,9 +633,21 @@ public class TinyMediaManager {
       // update movies //////////////////////////////////////////////
       if (updateMovies) {
         LOGGER.info("Commandline - updating movies...");
-        task = new MovieUpdateDatasourceTask();
-        task.execute();
-        task.get(); // blocking
+        if (updateMovieDs.isEmpty()) {
+          task = new MovieUpdateDatasourceTask();
+          task.execute();
+          task.get(); // blocking
+        }
+        else {
+          List<String> dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
+          for (Integer i : updateMovieDs) {
+            if (dataSources != null && dataSources.size() >= i - 1) {
+              task = new MovieUpdateDatasourceTask(dataSources.get(i - 1));
+              task.execute();
+              task.get(); // blocking
+            }
+          }
+        }
         List<Movie> newMovies = MovieList.getInstance().getNewMovies();
 
         if (scrapeNew) {
@@ -678,9 +706,21 @@ public class TinyMediaManager {
       // update TvShows //////////////////////////////////////////////
       if (updateTv) {
         LOGGER.info("Commandline - updating TvShows and episodes...");
-        task = new TvShowUpdateDatasourceTask();
-        task.execute();
-        task.get(); // blocking
+        if (updateTvDs.isEmpty()) {
+          task = new TvShowUpdateDatasourceTask();
+          task.execute();
+          task.get(); // blocking
+        }
+        else {
+          List<String> dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
+          for (Integer i : updateTvDs) {
+            if (dataSources != null && dataSources.size() >= i - 1) {
+              task = new TvShowUpdateDatasourceTask(dataSources.get(i - 1));
+              task.execute();
+              task.get(); // blocking
+            }
+          }
+        }
         List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
         List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
 
