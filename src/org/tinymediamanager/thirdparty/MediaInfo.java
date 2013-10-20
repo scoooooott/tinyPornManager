@@ -249,7 +249,15 @@ public class MediaInfo implements Closeable {
    */
   public synchronized int streamCount(StreamKind streamKind) {
     if (isLoaded()) {
-      return MediaInfoLibrary.INSTANCE.Count_Get(handle, streamKind.ordinal(), -1);
+      // return MediaInfoLibrary.INSTANCE.Count_Get(handle, streamKind.ordinal(), -1);
+      // We should use NativeLong for -1, but it fails on 64-bit
+      // so we use slower Get() with a character string
+      try {
+        return Integer.parseInt(get(streamKind, 0, "StreamCount").toString());
+      }
+      catch (Exception e) {
+        return 0;
+      }
     }
     else {
       return 0;

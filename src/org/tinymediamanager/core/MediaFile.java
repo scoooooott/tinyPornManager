@@ -589,14 +589,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   private String getMediaInfo(StreamKind streamKind, int streamNumber, String... keys) {
     for (String key : keys) {
-      // Map<StreamKind, List<Map<String, String>>>
-      List stream = miSnapshot.get(streamKind);
+      List<Map<String, String>> stream = miSnapshot.get(streamKind);
       if (stream != null) {
         LinkedHashMap<String, String> info = (LinkedHashMap<String, String>) stream.get(streamNumber);
         if (info != null) {
           String value = info.get(key);
+          // System.out.println("  " + streamKind + " " + key + " = " + value);
           if (value != null && value.length() > 0) {
-            // System.out.println("  " + streamKind + " " + key + " = " + value);
             return value;
           }
         }
@@ -606,6 +605,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // fallback to the "old" logic
     for (String key : keys) {
       String value = mediaInfo.get(streamKind, streamNumber, key);
+      // System.out.println("  " + streamKind + " " + key + " = " + value);
       if (value.length() > 0) {
         return value;
       }
