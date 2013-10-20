@@ -327,7 +327,7 @@ public class TvShowRenamer {
       filename = filename + delim;
       filename = filename + e;
 
-      if (Globals.settings.getTvShowSettings().getRenamerAddTitle() && eps.size() < 2) {
+      if (Globals.settings.getTvShowSettings().getRenamerAddTitle() && eps.size() < 3) {
         String epTitle = cleanForFilename(ep.getTitle());
         if (epTitle.matches("[0-9]+.*") && separator.equals(".")) {
           // EP title starts with a number, so "S01E01.1 Day in..." could be misleading parsed
