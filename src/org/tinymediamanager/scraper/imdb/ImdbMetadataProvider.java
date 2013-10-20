@@ -606,10 +606,13 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
     // imdb.com has another site structure
     if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
-      Elements plotpar = doc.getElementsByClass("plotpar");
-      if (plotpar.size() > 0) {
-        String plot = cleanString(plotpar.get(0).ownText());
-        md.setPlot(plot);
+      Elements odd = doc.getElementsByClass("odd");
+      if (odd.size() > 0) {
+        Elements p = odd.get(0).getElementsByTag("p");
+        if (p.size() > 0) {
+          String plot = cleanString(p.get(0).ownText());
+          md.setPlot(plot);
+        }
       }
     }
     else {
