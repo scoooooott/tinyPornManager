@@ -229,6 +229,14 @@ public class TvShowRenamer {
     } // end isDisc
     else {
       MediaFile newMF = new MediaFile(mf); // clone MF
+      if (mf.getType().equals(MediaFileType.TRAILER)) {
+        // move trailer into separate dir - not supported by XBMC
+        File sample = new File(seasonDir, "sample");
+        if (!sample.exists()) {
+          sample.mkdir();
+        }
+        seasonDir = sample; // change directory storage
+      }
       String filename = generateFilename(mf);
       if (filename != null && !filename.isEmpty()) {
         File newFile = new File(seasonDir, filename);

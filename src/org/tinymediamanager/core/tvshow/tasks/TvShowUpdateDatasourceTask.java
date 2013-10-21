@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -31,6 +29,7 @@ import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -56,7 +55,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private List<File>                tvShowFolders = new ArrayList<File>();
   private TvShowList                tvShowList;
   // skip well-known, but unneeded BD & DVD folders
-  private static final List<String> skipFolders   = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA", "AUDIO_TS");
+  private static final List<String> skipFolders   = Arrays.asList("SAMPLE", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+                                                      "AUDIO_TS");
 
   /**
    * Instantiates a new scrape task - to update all datasources
@@ -388,8 +388,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     Arrays.sort(content);
     for (File file : content) {
       if (file.isFile()) {
+
+        MediaFile mf = new MediaFile(file);
         // check filetype - we only proceed here if it's a video file
-        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()).toLowerCase())) {
+        if (!mf.getType().equals(MediaFileType.VIDEO)) {
           continue;
         }
 
@@ -482,8 +484,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
       }
-      if (file.isDirectory() && !"sample".equalsIgnoreCase(file.getName()) && !file.getName().startsWith(".")
-          && !skipFolders.contains(file.getName().toUpperCase())) {
+      if (file.isDirectory() && !file.getName().startsWith(".") && !skipFolders.contains(file.getName().toUpperCase())) {
         // dig deeper
         if (file.getName().toUpperCase().equals("VIDEO_TS")) {
           findTvEpisodesAsDisc(tvShow, file);
@@ -618,7 +619,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   }
 
   /**
-   * Find additional episode files.
+   * Find additional episode files.<br>
+   * adds everything which starts with "videoFile name"<br>
+   * scans subs/sample/subtitle directories aswell
    * 
    * @param episode
    *          the episode
@@ -628,34 +631,24 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    *          the directory contents
    */
   private void findAdditionalEpisodeFiles(TvShowEpisode episode, File videoFile, File[] directoryContents) {
-    // there are much different ways the files could be stored; we only will try to find the files with the corresponding names (and sample)
-    // 1st find all files/directories with videofilename*
-    Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(FilenameUtils.getBaseName(videoFile.getName())) + ".*");
-    // 2nd find thumbs <episodename>-thumb.jpg/png
-    Pattern thumbPattern = Pattern.compile("(?i)" + Pattern.quote(episode.getTitle()) + "-thumb\\..{2,4}");
-
     for (File file : directoryContents) {
-      if (file.equals(videoFile)) {
-        continue;
-      }
-
-      Matcher matcher = pattern.matcher(file.getName());
-      Matcher thumbMatcher = thumbPattern.matcher(file.getName());
-      if (matcher.matches() || thumbMatcher.matches()) {
-        // add this file to the episode
+      if (file.isFile()) {
+        MediaFile mf = new MediaFile(file);
+        if (mf.getType().equals(MediaFileType.VIDEO) || !mf.getBasename().startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {
+          continue;
+        }
         episode.addToMediaFiles(new MediaFile(file));
-        continue;
       }
-
-      // FIXME: to every episode file in dir, the same single SUB gets added!!! - detect S/EP from file!!!!
-      // and last but not least we add a directory called sample/subs/subtitle
-      // if (file.isDirectory()
-      // && ("sample".equalsIgnoreCase(file.getName()) || "subs".equalsIgnoreCase(file.getName()) || "subtitle".equalsIgnoreCase(file.getName()))) {
-      // File[] subDirContent = file.listFiles();
-      // for (File subDirFile : subDirContent) {
-      // episode.addToMediaFiles(new MediaFile(subDirFile));
-      // }
-      // }
+      else {
+        if (file.getName().equalsIgnoreCase("sample") || file.getName().equalsIgnoreCase("subs") || file.getName().equalsIgnoreCase("subtitle")) {
+          File[] subDirContent = file.listFiles();
+          for (File subDirFile : subDirContent) {
+            if (FilenameUtils.getBaseName(subDirFile.getName()).startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {
+              episode.addToMediaFiles(new MediaFile(subDirFile));
+            }
+          }
+        }
+      }
     }
   }
 
