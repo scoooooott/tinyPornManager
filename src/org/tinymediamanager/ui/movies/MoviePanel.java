@@ -19,8 +19,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -41,6 +39,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -410,6 +410,29 @@ public class MoviePanel extends JPanel {
   private void buildMenu() {
     // menu items
     menu.add(actionUpdateDataSources2);
+    final JMenu menuUpdateDatasources = new JMenu(BUNDLE.getString("update.datasource")); //$NON-NLS-1$
+    menuUpdateDatasources.addMenuListener(new MenuListener() {
+      @Override
+      public void menuCanceled(MenuEvent arg0) {
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent arg0) {
+      }
+
+      @Override
+      public void menuSelected(MenuEvent arg0) {
+        menuUpdateDatasources.removeAll();
+        for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
+          JMenuItem item = new JMenuItem(new MovieUpdateSingleDatasourceAction(ds));
+
+          menuUpdateDatasources.add(item);
+        }
+      }
+    });
+    menu.add(menuUpdateDatasources);
+
+    menu.addSeparator();
 
     JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape"));
     menuScrape.add(actionScrape2);
@@ -449,7 +472,7 @@ public class MoviePanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
 
-    MouseListener popupListener = new PopupListener(popupMenu);
+    MouseListener popupListener = new MovieTablePopupListener(popupMenu, table);
     table.addMouseListener(popupListener);
   }
 
@@ -514,79 +537,6 @@ public class MoviePanel extends JPanel {
 
     // initialize filteredCount
     lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
-  }
-
-  /**
-   * The listener interface for receiving popup events. The class that is interested in processing a popup event implements this interface, and the
-   * object created with that class is registered with a component using the component's <code>addPopupListener<code> method. When
-   * the popup event occurs, that object's appropriate
-   * method is invoked.
-   * 
-   * @see PopupEvent
-   */
-  private class PopupListener extends MouseAdapter {
-
-    /** The popup. */
-    private JPopupMenu popup;
-
-    /**
-     * Instantiates a new popup listener.
-     * 
-     * @param popupMenu
-     *          the popup menu
-     */
-    PopupListener(JPopupMenu popupMenu) {
-      popup = popupMenu;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.MouseAdapter#mousePressed(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mousePressed(MouseEvent e) {
-      maybeShowPopup(e);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.MouseAdapter#mouseReleased(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseReleased(MouseEvent e) {
-      // if (table.getSelectedRow() != -1) {
-      maybeShowPopup(e);
-      // }
-    }
-
-    /**
-     * Maybe show popup.
-     * 
-     * @param e
-     *          the e
-     */
-    private void maybeShowPopup(MouseEvent e) {
-      if (e.isPopupTrigger()) {
-        boolean selected = false;
-        // check the selected rows
-        int row = table.rowAtPoint(e.getPoint());
-        int[] selectedRows = table.getSelectedRows();
-        for (int selectedRow : selectedRows) {
-          if (selectedRow == row) {
-            selected = true;
-          }
-        }
-
-        // if the row, which has been right clicked is not selected - select it
-        if (!selected) {
-          table.getSelectionModel().setSelectionInterval(row, row);
-        }
-
-        popup.show(e.getComponent(), e.getX(), e.getY());
-      }
-    }
   }
 
   /**
