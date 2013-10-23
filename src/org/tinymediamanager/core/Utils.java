@@ -114,7 +114,12 @@ public class Utils {
     for (Locale locale : locales) {
       langArray.put(locale.getDisplayLanguage(intl), locale);
       langArray.put(locale.getDisplayLanguage(), locale);
-      langArray.put(locale.getDisplayLanguage(intl).substring(0, 3), locale); // eg German -> Ger, where iso3=deu
+      try {
+        langArray.put(locale.getDisplayLanguage(intl).substring(0, 3), locale); // eg German -> Ger, where iso3=deu
+      }
+      catch (Exception e) {
+        // ignore
+      }
       langArray.put(locale.getISO3Language(), locale);
       langArray.put(locale.getCountry(), locale);
       try {
