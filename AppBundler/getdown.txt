@@ -72,7 +72,7 @@ resource = getdown-new.jar
 resource = version
 resource = splashscreen.png
 resource = objectdb.conf
-resource = [mac os x] env.txt
+resource = [!windows] env.txt
 
 # translations
 resource = locale/messages_cs.properties
