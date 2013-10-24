@@ -77,14 +77,6 @@ public class MediaInfo implements Closeable {
    * Instantiates a new media info.
    */
   public MediaInfo() {
-    try {
-      handle = MediaInfoLibrary.INSTANCE.New();
-    }
-    catch (LinkageError e) {
-      // throw new MediaInfoException(e);
-      LOGGER.error("Failed to load mediainfo", e);
-      handle = null;
-    }
   }
 
   /**
@@ -94,7 +86,21 @@ public class MediaInfo implements Closeable {
    *          the file
    * @return true, if successful
    */
-  public synchronized boolean open(File file) {
+  public boolean open(File file) throws MediaInfoException {
+    // maybe delete old handle
+    if (handle != null) {
+      dispose();
+    }
+
+    // create handle
+    try {
+      handle = MediaInfoLibrary.INSTANCE.New();
+    }
+    catch (LinkageError e) {
+      LOGGER.error("Failed to load mediainfo", e);
+      throw new MediaInfoException(e);
+    }
+
     if (file != null && isLoaded()) {
       return file.isFile() && MediaInfoLibrary.INSTANCE.Open(handle, new WString(file.getAbsolutePath())) > 0;
     }
@@ -339,29 +345,20 @@ public class MediaInfo implements Closeable {
   public synchronized void close() {
     if (isLoaded()) {
       MediaInfoLibrary.INSTANCE.Close(handle);
+      dispose();
     }
   }
 
   /**
    * Dispose.
    */
-  public synchronized void dispose() {
+  public void dispose() {
     if (handle == null)
       return;
 
     // delete handle
     MediaInfoLibrary.INSTANCE.Delete(handle);
     handle = null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#finalize()
-   */
-  @Override
-  protected void finalize() {
-    dispose();
   }
 
   /**

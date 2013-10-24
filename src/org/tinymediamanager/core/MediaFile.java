@@ -557,9 +557,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private synchronized MediaInfo getMediaInfo() {
     if (mediaInfo == null) {
       mediaInfo = new MediaInfo();
-      if (!mediaInfo.open(this.getFile())) {
+
+      try {
+        if (!mediaInfo.open(this.getFile())) {
+          LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename());
+        }
+      }
+      catch (Exception e) {
         LOGGER.error("Mediainfo could not open file: " + this.getPath() + File.separator + this.getFilename());
       }
+
       miSnapshot = mediaInfo.snapshot();
     }
     return mediaInfo;
