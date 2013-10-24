@@ -88,6 +88,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   @Override
   public Void doInBackground() {
     try {
+      long start = System.currentTimeMillis();
       for (String ds : dataSources) {
 
         startProgressBar("prepare scan '" + ds + "'");
@@ -193,7 +194,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
 
       } // END datasource loop
-      LOGGER.info("Done updating datasource :)");
+      long end = System.currentTimeMillis();
+      LOGGER.info("Done updating datasource :) - took " + Utils.MSECtoHHMMSS(end - start));
 
       if (cancel) {
         cancel(false);// swing cancel

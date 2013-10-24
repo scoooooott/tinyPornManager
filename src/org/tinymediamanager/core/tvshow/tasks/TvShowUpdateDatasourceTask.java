@@ -33,6 +33,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
@@ -97,6 +98,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   @Override
   public Void doInBackground() {
     try {
+      long start = System.currentTimeMillis();
       startProgressBar("prepare scan...");
       // here we have 2 ways of updateing:
       // - per datasource -> update ds / remove orphaned / update MFs
@@ -110,6 +112,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         // update TV show
         updateTvShows();
       }
+      long end = System.currentTimeMillis();
+      LOGGER.info("Done updating datasource :) - took " + Utils.MSECtoHHMMSS(end - start));
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
@@ -226,7 +230,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         Globals.executor.execute(task);
       }
     }
-    LOGGER.info("Done updating datasource :)");
 
     if (cancel) {
       cancel(false);// swing cancel
@@ -276,8 +279,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       submitTask(new MediaFileInformationFetcherTask(tvShow.getMediaFiles(), tvShow, false));
     }
     waitForCompletionOrCancel();
-
-    LOGGER.info("Done updating datasource :)");
 
     if (cancel) {
       cancel(false);// swing cancel
