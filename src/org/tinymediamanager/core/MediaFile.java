@@ -554,7 +554,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * 
    * @return MediaInfo object
    */
-  private synchronized MediaInfo getMediaInfo() {
+  private MediaInfo getMediaInfo() {
     if (mediaInfo == null) {
       mediaInfo = new MediaInfo();
 
@@ -575,7 +575,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /**
    * Closes the connection to the mediainfo lib.
    */
-  private synchronized void closeMediaInfo() {
+  private void closeMediaInfo() {
     if (mediaInfo != null) {
       mediaInfo.close();
       mediaInfo = null;
@@ -1072,7 +1072,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     // do not work further on 0 byte files
     if (getFilesize() == 0) {
       LOGGER.warn("0 Byte file detected: " + this.filename);
-      closeMediaInfo();
+      // closeMediaInfo();
       return;
     }
 
@@ -1355,7 +1355,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     // close mediainfo lib
-    closeMediaInfo();
+    // closeMediaInfo();
   }
 
   /**

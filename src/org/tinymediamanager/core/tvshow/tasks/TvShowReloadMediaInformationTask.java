@@ -25,6 +25,7 @@ import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 
@@ -58,6 +59,7 @@ public class TvShowReloadMediaInformationTask extends TmmThreadPool {
   @Override
   protected Void doInBackground() throws Exception {
     try {
+      long start = System.currentTimeMillis();
       LOGGER.info("get MediaInfo...");
       // update MediaInfo
       startProgressBar("getting Mediainfo...");
@@ -76,7 +78,8 @@ public class TvShowReloadMediaInformationTask extends TmmThreadPool {
       }
 
       waitForCompletionOrCancel();
-      LOGGER.info("Done getting MediaInfo)");
+      long end = System.currentTimeMillis();
+      LOGGER.info("Done getting MediaInfo - took " + Utils.MSECtoHHMMSS(end - start));
       if (cancel) {
         cancel(false);// swing cancel
       }
