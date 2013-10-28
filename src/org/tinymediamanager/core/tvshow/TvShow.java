@@ -1645,4 +1645,22 @@ public class TvShow extends MediaEntity {
     }
     return false;
   }
+
+  /**
+   * checks if this TV show has been scraped.<br>
+   * On a fresh DB, just reading local files, everything is again "unscraped". <br>
+   * detect minimum of filled values as "scraped"
+   * 
+   * @return isScraped
+   */
+  @Override
+  public boolean isScraped() {
+    if (!scraped) {
+      if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
+          && !(actors == null || actors.size() == 0)) {
+        setScraped(true);
+      }
+    }
+    return scraped;
+  }
 }

@@ -452,6 +452,7 @@ public class TvShowPanel extends JPanel {
     JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape")); //$NON-NLS-1$
     menuScrape.add(actionScrape2);
     menuScrape.add(actionScrapeSelected);
+    menuScrape.add(actionScrapeNewItems);
     menu.add(menuScrape);
 
     JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
@@ -479,6 +480,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionScrape2);
     popupMenu.add(actionScrapeSelected);
     popupMenu.add(actionScrapeEpisodes);
+    popupMenu.add(actionScrapeNewItems);
     // popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.addSeparator();
     popupMenu.add(actionUpdateTvShow);
