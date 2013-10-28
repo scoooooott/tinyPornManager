@@ -241,8 +241,9 @@ public class MovieExporter {
       for (Movie movie : movies) {
         LOGGER.debug("processing movie " + movie.getTitle());
         // get preferred movie name like set up in movie renamer
-        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(),
-            movie) + "." + fileExtension);
+        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings()
+            .getMovieRenamerFilename(), movie)
+            + "." + fileExtension);
 
         root = new HashMap<String, Object>();
         root.put("movie", movie);
@@ -417,7 +418,7 @@ public class MovieExporter {
     public String render(Object o, String pattern, Locale locale) {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
-        return MovieRenamer.createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
+        return MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
       }
       return null;
     }

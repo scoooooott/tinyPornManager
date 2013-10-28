@@ -344,7 +344,7 @@ public class Movie extends MediaEntity {
   public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
     try {
       // get trailer filename from first mediafile
-      String tfile = MovieRenamer.createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), this) + "-trailer.";
+      String tfile = MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), this) + "-trailer.";
       String ext = UrlUtil.getFileExtension(trailerToDownload.getUrl());
       if (ext.isEmpty()) {
         ext = "unknown";

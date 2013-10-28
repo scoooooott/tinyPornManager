@@ -376,7 +376,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
       String path = "";
       String filename = "";
       if (StringUtils.isNotBlank(tfMoviePath.getText())) {
-        path = MovieRenamer.createDestination(tfMoviePath.getText(), movie);
+        path = MovieRenamer.createDestinationForFoldername(tfMoviePath.getText(), movie);
       }
       else {
         path = movie.getPath();
@@ -386,7 +386,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
         List<MediaFile> mediaFiles = movie.getMediaFiles(MediaFileType.VIDEO);
         if (mediaFiles.size() > 0) {
           String extension = FilenameUtils.getExtension(mediaFiles.get(0).getFilename());
-          filename = MovieRenamer.createDestination(tfMovieFilename.getText(), movie) + "." + extension;
+          filename = MovieRenamer.createDestinationForFilename(tfMovieFilename.getText(), movie) + "." + extension;
         }
       }
       else {

@@ -180,7 +180,7 @@ public class MovieRenamer {
     LOGGER.debug("path expression: " + Globals.settings.getMovieSettings().getMovieRenamerPathname());
     LOGGER.debug("file expression: " + Globals.settings.getMovieSettings().getMovieRenamerFilename());
 
-    String newPathname = createDestination(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
+    String newPathname = createDestinationForFoldername(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
     String oldPathname = movie.getPath();
     boolean resetMultidir = false;
 
@@ -286,7 +286,7 @@ public class MovieRenamer {
           cleanup.add(new MediaFile(vid)); // mark old file for cleanup (clone current)
           if (renameFiles) {
             // create new filename according to template
-            newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
+            newFilename = createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
             // is there any stacking information in the filename?
             // use vid.getStacking() != 0 for custom stacking format?
             String stacking = Utils.getStackingMarker(vid.getFilename());
@@ -506,7 +506,7 @@ public class MovieRenamer {
       String newFilename = mf.getFilename();
       // String newPath = movie.getPath() + File.separator;
       String fileExtension = FilenameUtils.getExtension(mf.getFilename());
-      newFilename = createDestination(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie) + "-trailer." + fileExtension;
+      newFilename = createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie) + "-trailer." + fileExtension;
       MediaFile newMF = new MediaFile(mf);
       if (renameFiles) { // renamer template was not empty
         File newFile = new File(newPathname, newFilename);
@@ -640,7 +640,7 @@ public class MovieRenamer {
   }
 
   /**
-   * Creates the new file/folder name according to template string
+   * Creates the new filename according to template string
    * 
    * @param template
    *          the template
@@ -648,7 +648,35 @@ public class MovieRenamer {
    *          the movie
    * @return the string
    */
-  public static String createDestination(String template, Movie movie) {
+  public static String createDestinationForFilename(String template, Movie movie) {
+    return createDestination(template, movie, true);
+  }
+
+  /**
+   * Creates the new filename according to template string
+   * 
+   * @param template
+   *          the template
+   * @param movie
+   *          the movie
+   * @return the string
+   */
+  public static String createDestinationForFoldername(String template, Movie movie) {
+    return createDestination(template, movie, false);
+  }
+
+  /**
+   * Creates the new file/folder name according to template string
+   * 
+   * @param template
+   *          the template
+   * @param movie
+   *          the movie
+   * @param forFilename
+   *          replace for filename (=true)? or for a foldername (=false)
+   * @return the string
+   */
+  private static String createDestination(String template, Movie movie, boolean forFilename) {
     String newDestination = template;
 
     // replace token title ($T)
@@ -752,6 +780,7 @@ public class MovieRenamer {
       newDestination = newDestination.replace("$R", "");
       newDestination = newDestination.replace("$A", "");
       newDestination = newDestination.replace("$V", "");
+      newDestination = newDestination.replace("$F", "");
     }
 
     // replace token media source (BluRay|DVD|TV|...) ($S)
@@ -777,6 +806,12 @@ public class MovieRenamer {
 
     // trim out unnecessary whitespaces
     newDestination = newDestination.trim();
+
+    // replace ALL directory separators, if we generate this for filenames!
+    if (forFilename) {
+      newDestination = newDestination.replaceAll("\\/", " ");
+      newDestination = newDestination.replaceAll("\\\\", " ");
+    }
 
     // replace spaces with underscores if needed
     if (Globals.settings.getMovieSettings().isMovieRenamerSpaceSubstitution()) {
