@@ -188,14 +188,17 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           tvShowList.removeTvShow(tvShow);
         }
         else {
-          // check and delete all not found MediaFiles
-          List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
-          for (MediaFile mf : mediaFiles) {
-            if (!mf.getFile().exists()) {
-              tvShow.removeFromMediaFiles(mf);
+          // have a look if that TV show has just been added -> so we don't need any cleanup
+          if (!tvShow.justAdded) {
+            // check and delete all not found MediaFiles
+            List<MediaFile> mediaFiles = new ArrayList<MediaFile>(tvShow.getMediaFiles());
+            for (MediaFile mf : mediaFiles) {
+              if (!mf.getFile().exists()) {
+                tvShow.removeFromMediaFiles(mf);
+              }
             }
+            tvShow.saveToDb();
           }
-          tvShow.saveToDb();
 
           // get mediainfo for tv show (fanart/poster..)
           submitTask(new MediaFileInformationFetcherTask(tvShow.getMediaFiles(), tvShow, false));
@@ -269,10 +272,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         break;
       }
       TvShow tvShow = tvShowList.getTvShows().get(i);
-      // have a look if that TV show has just been added -> so we don't need any cleanup
-      if (tvShow.justAdded) {
-        continue;
-      }
 
       // check only Tv shows matching datasource
       if (!tvShowFolders.contains(tvShow.getPath())) {

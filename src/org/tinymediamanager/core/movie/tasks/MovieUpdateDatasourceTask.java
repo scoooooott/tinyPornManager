@@ -156,10 +156,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             break;
           }
           Movie movie = movieList.getMovies().get(i);
-          // have a look if that movie has just been added -> so we don't need any cleanup
-          if (movie.justAdded) {
-            continue;
-          }
 
           // check only movies matching datasource
           if (!ds.equals(movie.getDataSource())) {
@@ -172,14 +168,17 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movieList.removeMovie(movie);
           }
           else {
-            // check and delete all not found MediaFiles
-            List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
-            for (MediaFile mf : mediaFiles) {
-              if (!mf.exists()) {
-                movie.removeFromMediaFiles(mf);
+            // have a look if that movie has just been added -> so we don't need any cleanup
+            if (!movie.justAdded) {
+              // check and delete all not found MediaFiles
+              List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
+              for (MediaFile mf : mediaFiles) {
+                if (!mf.exists()) {
+                  movie.removeFromMediaFiles(mf);
+                }
               }
+              movie.saveToDb();
             }
-            movie.saveToDb();
             submitTask(new MediaFileInformationFetcherTask(movie.getMediaFiles(), movie, false));
           }
         } // end movie loop
