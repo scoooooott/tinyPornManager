@@ -100,6 +100,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     try {
       long start = System.currentTimeMillis();
       startProgressBar("prepare scan...");
+
+      // cleanup just added for a new UDS run
+      for (TvShow tvShow : tvShowList.getTvShows()) {
+        tvShow.justAdded = false;
+      }
+
       // here we have 2 ways of updateing:
       // - per datasource -> update ds / remove orphaned / update MFs
       // - per TV show -> udpate TV show / update MFs
@@ -263,8 +269,13 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         break;
       }
       TvShow tvShow = tvShowList.getTvShows().get(i);
+      // have a look if that TV show has just been added -> so we don't need any cleanup
+      if (tvShow.justAdded) {
+        continue;
+      }
+
+      // check only Tv shows matching datasource
       if (!tvShowFolders.contains(tvShow.getPath())) {
-        // check only Tv shows matching datasource
         continue;
       }
 
@@ -350,6 +361,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         tvShow.setDataSource(datasource);
         findAdditionalTvShowFiles(tvShow, dir);
         tvShow.saveToDb();
+        tvShow.justAdded = true;
         tvShowList.addTvShow(tvShow);
       }
     }

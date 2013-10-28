@@ -89,6 +89,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   public Void doInBackground() {
     try {
       long start = System.currentTimeMillis();
+      // cleanup just added for a new UDS run
+      for (Movie movie : movieList.getMovies()) {
+        movie.justAdded = false;
+      }
+
       for (String ds : dataSources) {
 
         startProgressBar("prepare scan '" + ds + "'");
@@ -151,8 +156,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             break;
           }
           Movie movie = movieList.getMovies().get(i);
+          // have a look if that movie has just been added -> so we don't need any cleanup
+          if (movie.justAdded) {
+            continue;
+          }
+
+          // check only movies matching datasource
           if (!ds.equals(movie.getDataSource())) {
-            // check only movies matching datasource
             continue;
           }
 
@@ -324,6 +334,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         movie.getMovieSet().saveToDb();
         movie.saveToDb();
       }
+      movie.justAdded = true;
       movieList.addMovie(movie);
     }
   }
@@ -576,6 +587,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
 
         movie.saveToDb();
+        movie.justAdded = true;
         movieList.addMovie(movie);
       }
     }

@@ -79,6 +79,9 @@ public abstract class MediaEntity extends AbstractModelObject {
   @Transient
   protected volatile ObservableList<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
 
+  @Transient
+  public boolean                               justAdded            = false;
+
   /**
    * Initialize after loading from database.
    */
