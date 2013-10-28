@@ -54,7 +54,6 @@ public class MovieScrapeTask extends TmmThreadPool {
   private List<Movie>                 moviesToScrape;
   private boolean                     doSearch;
   private MovieSearchAndScrapeOptions options;
-  private int                         movieCount;
 
   /**
    * Instantiates a new movie scrape task.
@@ -70,7 +69,6 @@ public class MovieScrapeTask extends TmmThreadPool {
     this.moviesToScrape = moviesToScrape;
     this.doSearch = doSearch;
     this.options = options;
-    this.movieCount = moviesToScrape.size();
   }
 
   /*
@@ -157,8 +155,9 @@ public class MovieScrapeTask extends TmmThreadPool {
               }
             }
 
-            // create a treshold of 0.75 - to minimize false positives
-            if (result1.getScore() < 0.75) {
+            // if there is only one result - we assume it is THE right movie
+            // else: create a treshold of 0.75 - to minimize false positives
+            if (results.size() > 1 && result1.getScore() < 0.75) {
               LOGGER.info("score is lower than 0.75 (" + result1.getScore() + ") - ignore result");
               MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.toolowscore"));
               return;
