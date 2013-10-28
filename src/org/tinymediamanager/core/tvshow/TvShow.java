@@ -1239,6 +1239,7 @@ public class TvShow extends MediaEntity {
   private void findPoster() {
     boolean found = false;
 
+    // FIXME rework that with regexp and only 1 dir.listfiles
     File posterFile = new File(path, "poster.jpg");
     if (posterFile.exists()) {
       setPoster(posterFile);
@@ -1248,6 +1249,15 @@ public class TvShow extends MediaEntity {
 
     if (!found) {
       posterFile = new File(path, "poster.png");
+      if (posterFile.exists()) {
+        setPoster(posterFile);
+        found = true;
+        LOGGER.debug("found poster " + posterFile.getPath());
+      }
+    }
+
+    if (!found) {
+      posterFile = new File(path, "poster.tbn");
       if (posterFile.exists()) {
         setPoster(posterFile);
         found = true;
@@ -1288,6 +1298,7 @@ public class TvShow extends MediaEntity {
   private void findFanart() {
     boolean found = false;
 
+    // FIXME rework that with regexp and only 1 dir.listfiles
     File fanartFile = new File(path, "fanart.jpg");
     if (fanartFile.exists()) {
       setFanart(fanartFile);
@@ -1297,6 +1308,15 @@ public class TvShow extends MediaEntity {
 
     if (!found) {
       fanartFile = new File(path, "fanart.png");
+      if (fanartFile.exists()) {
+        setFanart(fanartFile);
+        found = true;
+        LOGGER.debug("found fanart " + fanartFile.getPath());
+      }
+    }
+
+    if (!found) {
+      fanartFile = new File(path, "fanart.tbn");
       if (fanartFile.exists()) {
         setFanart(fanartFile);
         found = true;
@@ -1337,6 +1357,7 @@ public class TvShow extends MediaEntity {
   private void findBanner() {
     boolean found = false;
 
+    // FIXME rework that with regexp and only 1 dir.listfiles
     File bannerFile = new File(path, "banner.jpg");
     if (bannerFile.exists()) {
       setBanner(bannerFile);
@@ -1346,6 +1367,15 @@ public class TvShow extends MediaEntity {
 
     if (!found) {
       bannerFile = new File(path, "banner.png");
+      if (bannerFile.exists()) {
+        setBanner(bannerFile);
+        found = true;
+        LOGGER.debug("found banner " + bannerFile.getPath());
+      }
+    }
+
+    if (!found) {
+      bannerFile = new File(path, "banner.tbn");
       if (bannerFile.exists()) {
         setBanner(bannerFile);
         found = true;
