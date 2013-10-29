@@ -253,10 +253,12 @@ public class ImageLabel extends JLabel {
     }
     else {
       // draw border and background
-      g.setColor(Color.BLACK);
-      g.drawRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
-      g.setColor(getParent().getBackground());
-      g.fillRect(1, 1, this.getWidth() - 2, this.getHeight() - 2);
+      if (drawBorder) {
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
+        g.setColor(getParent().getBackground());
+        g.fillRect(1, 1, this.getWidth() - 2, this.getHeight() - 2);
+      }
 
       // calculate diagonal
       int diagonalSize = (int) Math.sqrt(this.getWidth() * this.getWidth() + this.getHeight() * this.getHeight());

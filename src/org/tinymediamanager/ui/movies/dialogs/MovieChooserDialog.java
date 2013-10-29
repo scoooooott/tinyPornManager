@@ -128,7 +128,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   public MovieChooserDialog(Movie movie, boolean inQueue) {
     setTitle(BUNDLE.getString("moviechooser.search")); //$NON-NLS-1$
     setName("movieChooser");
-    setBounds(5, 5, 1111, 643);
+    setBounds(5, 5, 953, 704);
     TmmWindowSaver.loadSettings(this);
     setIconImage(Globals.logo);
     setModal(true);
@@ -156,21 +156,22 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:403px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("900px:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, RowSpec.decode("fill:403px:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
     {
       lblPath = new JLabel("");
-      contentPanel.add(lblPath, "1, 2");
+      contentPanel.add(lblPath, "2, 2");
     }
     {
       JPanel panelSearchField = new JPanel();
-      contentPanel.add(panelSearchField, "1, 4, fill, fill");
+      contentPanel.add(panelSearchField, "2, 4, fill, fill");
       panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-          FormFactory.DEFAULT_ROWSPEC, }));
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:max(100px;default)"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
       {
         JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "2, 1, right, default");
@@ -190,7 +191,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
 
       {
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-        panelSearchField.add(btnSearch, "7, 3");
+        panelSearchField.add(btnSearch, "8, 3, fill, default");
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
             searchMovie(textFieldSearchString.getText(), null);
@@ -202,12 +203,12 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     {
       JSplitPane splitPane = new JSplitPane();
       splitPane.setContinuousLayout(true);
-      contentPanel.add(splitPane, "1, 6, fill, fill");
+      contentPanel.add(splitPane, "2, 6, fill, fill");
       {
         JPanel panelSearchResults = new JPanel();
         splitPane.setLeftComponent(panelSearchResults);
         panelSearchResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("350px:grow"), },
-            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:max(212px;default):grow"), }));
+            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:150px:grow"), }));
         {
           {
             JScrollPane scrollPane = new JScrollPane();
@@ -246,10 +247,9 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
-        panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("250px"),
-            FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
+        panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px:grow"),
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("fill:150px:grow"), }));
         {
           lblMovieName = new JTextArea("");
           lblMovieName.setLineWrap(true);
@@ -264,25 +264,20 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           lblTagline.setOpaque(false);
           lblTagline.setWrapStyleWord(true);
           lblTagline.setEditable(false);
-          panelSearchDetail.add(lblTagline, "2, 2, 3, 1");
+          panelSearchDetail.add(lblTagline, "2, 2, 3, 1, fill, top");
         }
         {
-          lblMoviePoster = new ImageLabel();
-          lblMoviePoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
+          lblMoviePoster = new ImageLabel(false);
+          lblMoviePoster.setAlternativeText("");
           panelSearchDetail.add(lblMoviePoster, "2, 4, fill, fill");
         }
         {
-          JPanel panel = new JPanel();
-          panelSearchDetail.add(panel, "4, 4, fill, fill");
-          panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-              FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-              FormFactory.DEFAULT_ROWSPEC, }));
-        }
-        {
           JScrollPane scrollPane = new JScrollPane();
-          panelSearchDetail.add(scrollPane, "2, 6, 3, 1, fill, fill");
+          scrollPane.setBorder(null);
+          panelSearchDetail.add(scrollPane, "4, 4, fill, fill");
           {
             tpMovieDescription = new JTextPane();
+            tpMovieDescription.setOpaque(false);
             scrollPane.setViewportView(tpMovieDescription);
           }
         }
@@ -290,16 +285,16 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     }
     {
       JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
-      contentPanel.add(lblScrapeFollowingItems, "1, 8");
+      contentPanel.add(lblScrapeFollowingItems, "2, 8");
     }
     {
       JPanel panelScraperMetadataSetting = new MovieScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "1, 9, fill, fill");
+      contentPanel.add(panelScraperMetadataSetting, "2, 9, fill, fill");
     }
 
     {
       JPanel bottomPane = new JPanel();
-      contentPanel.add(bottomPane, "1, 11");
+      contentPanel.add(bottomPane, "2, 11");
       {
         bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
