@@ -535,7 +535,7 @@ public class MovieList extends AbstractModelObject {
 
       case IMDB:
         LOGGER.debug("get instance of ImdbMetadataProvider");
-        metadataProvider = new ImdbMetadataProvider(Globals.settings.getMovieSettings().getImdbSite());
+        metadataProvider = new ImdbMetadataProvider();
         break;
 
       case TMDB:

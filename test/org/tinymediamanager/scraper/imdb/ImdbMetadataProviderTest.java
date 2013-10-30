@@ -36,7 +36,7 @@ public class ImdbMetadataProviderTest {
      */
     results = null;
     try {
-      mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
+      mp = new ImdbMetadataProvider();
       results = mp.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "9"));
     }
     catch (Exception e) {
@@ -73,7 +73,7 @@ public class ImdbMetadataProviderTest {
      */
     results = null;
     try {
-      mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
+      mp = new ImdbMetadataProvider();
       results = mp.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "Inglorious Basterds"));
     }
     catch (Exception e) {
@@ -103,26 +103,26 @@ public class ImdbMetadataProviderTest {
     result = results.get(3);
     checkSearchResult("Quel maledetto treno blindato", "1978", "tt0076584", result);
 
-    /*
-     * test on www.imdb.de - "#9" - redirect to page
-     */
-    results = null;
-    try {
-      mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
-      results = mp.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "#9"));
-    }
-    catch (Exception e) {
-    }
-
-    // did we get a result?
-    assertNotNull("Result", results);
-
-    // result count
-    assertEquals("Result count", 1, results.size());
-
-    // check first result (#9 - 2009 - tt0472033)
-    result = results.get(0);
-    checkSearchResult("#9", "2009", "tt0472033", result);
+    // /*
+    // * test on www.imdb.de - "#9" - redirect to page
+    // */
+    // results = null;
+    // try {
+    // mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
+    // results = mp.search(new MediaSearchOptions(MediaType.MOVIE, MediaSearchOptions.SearchParam.QUERY, "#9"));
+    // }
+    // catch (Exception e) {
+    // }
+    //
+    // // did we get a result?
+    // assertNotNull("Result", results);
+    //
+    // // result count
+    // assertEquals("Result count", 1, results.size());
+    //
+    // // check first result (#9 - 2009 - tt0472033)
+    // result = results.get(0);
+    // checkSearchResult("#9", "2009", "tt0472033", result);
 
   }
 
@@ -144,7 +144,7 @@ public class ImdbMetadataProviderTest {
     /*
      * scrape akas.imdb.com - 9 - tt0472033
      */
-    mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
+    mp = new ImdbMetadataProvider();
     options = new MediaScrapeOptions();
     options.setImdbId("tt0472033");
 
@@ -206,7 +206,7 @@ public class ImdbMetadataProviderTest {
     /*
      * scrape akas.imdb.com - 12 Monkeys - tt0114746
      */
-    mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
+    mp = new ImdbMetadataProvider();
     options = new MediaScrapeOptions();
     options.setImdbId("tt0114746");
 
@@ -265,7 +265,7 @@ public class ImdbMetadataProviderTest {
     /*
      * scrape akas.imdb.com - Brave - tt1217209
      */
-    mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_COM);
+    mp = new ImdbMetadataProvider();
     options = new MediaScrapeOptions();
     options.setImdbId("tt1217209");
 
@@ -323,68 +323,68 @@ public class ImdbMetadataProviderTest {
 
     // check production company
     checkProductionCompany("Walt Disney Pictures, Pixar Animation Studios", md);
-
-    /*
-     * scrape www.imdb.de - 9 - tt0472033
-     */
-    mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
-    options = new MediaScrapeOptions();
-    options.setImdbId("tt0472033");
-
-    md = null;
-    try {
-      Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.US);
-      md = mp.getMetadata(options);
-    }
-    catch (Exception e) {
-    }
-
-    // did we get metadata?
-    assertNotNull("MediaMetadata", md);
-
-    // check moviedetails
-    checkMovieDetails("#9", "2009", "9", 7.0, 63365, "", 79, "Shane Acker", "Pamela Pettler, Shane Acker", "PG-13", md);
-
-    // check poster
-    // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg",
+    //
+    // /*
+    // * scrape www.imdb.de - 9 - tt0472033
+    // */
+    // mp = new ImdbMetadataProvider(ImdbSiteDefinition.IMDB_DE);
+    // options = new MediaScrapeOptions();
+    // options.setImdbId("tt0472033");
+    //
+    // md = null;
+    // try {
+    // Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.US);
+    // md = mp.getMetadata(options);
+    // }
+    // catch (Exception e) {
+    // }
+    //
+    // // did we get metadata?
+    // assertNotNull("MediaMetadata", md);
+    //
+    // // check moviedetails
+    // checkMovieDetails("#9", "2009", "9", 7.0, 63365, "", 79, "Shane Acker", "Pamela Pettler, Shane Acker", "PG-13", md);
+    //
+    // // check poster
+    // // checkMoviePoster("http://ia.media-imdb.com/images/M/MV5BMTY2ODE1MTgxMV5BMl5BanBnXkFtZTcwNTM1NTM2Mg@@._V1._SX195_SY195_.jpg",
+    // // md);
+    //
+    // // check genres
+    // genres = new ArrayList<MediaGenres>();
+    // genres.add(MediaGenres.ANIMATION);
+    // genres.add(MediaGenres.ACTION);
+    // genres.add(MediaGenres.ADVENTURE);
+    // genres.add(MediaGenres.FANTASY);
+    // genres.add(MediaGenres.MYSTERY);
+    // genres.add(MediaGenres.SCIENCE_FICTION);
+    // genres.add(MediaGenres.THRILLER);
+    // checkGenres(genres, md);
+    //
+    // // check plot
+    // checkPlot(
+    // "Schauplatz Zukunft: Eine übergreifende Maschine, bekannt unter dem Namen \"Die große Maschine\", hat sich zusammen mit allen anderen Maschinen der Menschheit bemächtigt und diese restlos ausgelöscht. Doch unscheinbare kleine Wesen aus Stoff, erfunden von einem Wissenschaftler in den letzten Tage der menschlichen Existenz, haben sich zu einer Mission zusammengeschlossen: in der Postapokalypse zu überleben. Nur eines von Ihnen, Nummer 9, hat die notwendigen Führungsqualitäten, um alle gemeinsam gegen die Maschinen aufzubringen.",
     // md);
-
-    // check genres
-    genres = new ArrayList<MediaGenres>();
-    genres.add(MediaGenres.ANIMATION);
-    genres.add(MediaGenres.ACTION);
-    genres.add(MediaGenres.ADVENTURE);
-    genres.add(MediaGenres.FANTASY);
-    genres.add(MediaGenres.MYSTERY);
-    genres.add(MediaGenres.SCIENCE_FICTION);
-    genres.add(MediaGenres.THRILLER);
-    checkGenres(genres, md);
-
-    // check plot
-    checkPlot(
-        "Schauplatz Zukunft: Eine übergreifende Maschine, bekannt unter dem Namen \"Die große Maschine\", hat sich zusammen mit allen anderen Maschinen der Menschheit bemächtigt und diese restlos ausgelöscht. Doch unscheinbare kleine Wesen aus Stoff, erfunden von einem Wissenschaftler in den letzten Tage der menschlichen Existenz, haben sich zu einer Mission zusammengeschlossen: in der Postapokalypse zu überleben. Nur eines von Ihnen, Nummer 9, hat die notwendigen Führungsqualitäten, um alle gemeinsam gegen die Maschinen aufzubringen.",
-        md);
-
-    // check cast
-    castMembers = new ArrayList<MediaCastMember>();
-    cm = new MediaCastMember();
-    cm.setName("Christopher Plummer");
-    cm.setCharacter("#1 (voice)");
-    cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTU5MzQ5MDY3NF5BMl5BanBnXkFtZTcwNzMxOTU5Ng@@._V1._SY125_SX100_.jpg");
-    cm.setType(CastType.ACTOR);
-    castMembers.add(cm);
-
-    cm = new MediaCastMember();
-    cm.setName("Martin Landau");
-    cm.setCharacter("#2 (voice)");
-    cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTI0MzkxNzg0OF5BMl5BanBnXkFtZTcwNDUzOTc5MQ@@._V1._SY125_SX100_.jpg");
-    cm.setType(CastType.ACTOR);
-    castMembers.add(cm);
-
-    checkCastMembers(castMembers, 10, md);
-
-    // check production company
-    checkProductionCompany("Focus Features, Relativity Media, Arc Productions, Starz Animation, Tim Burton Productions", md);
+    //
+    // // check cast
+    // castMembers = new ArrayList<MediaCastMember>();
+    // cm = new MediaCastMember();
+    // cm.setName("Christopher Plummer");
+    // cm.setCharacter("#1 (voice)");
+    // cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTU5MzQ5MDY3NF5BMl5BanBnXkFtZTcwNzMxOTU5Ng@@._V1._SY125_SX100_.jpg");
+    // cm.setType(CastType.ACTOR);
+    // castMembers.add(cm);
+    //
+    // cm = new MediaCastMember();
+    // cm.setName("Martin Landau");
+    // cm.setCharacter("#2 (voice)");
+    // cm.setImageUrl("http://ia.media-imdb.com/images/M/MV5BMTI0MzkxNzg0OF5BMl5BanBnXkFtZTcwNDUzOTc5MQ@@._V1._SY125_SX100_.jpg");
+    // cm.setType(CastType.ACTOR);
+    // castMembers.add(cm);
+    //
+    // checkCastMembers(castMembers, 10, md);
+    //
+    // // check production company
+    // checkProductionCompany("Focus Features, Relativity Media, Arc Productions, Starz Animation, Tim Burton Productions", md);
 
   }
 

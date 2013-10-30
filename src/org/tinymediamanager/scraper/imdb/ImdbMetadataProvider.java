@@ -81,16 +81,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     imdbSite = ImdbSiteDefinition.IMDB_COM;
   }
 
-  /**
-   * Instantiates a new imdb metadata provider.
-   * 
-   * @param site
-   *          the site
-   */
-  public ImdbMetadataProvider(ImdbSiteDefinition site) {
-    imdbSite = site;
-  }
-
   /*
    * (non-Javadoc)
    * 

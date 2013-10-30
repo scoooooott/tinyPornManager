@@ -29,7 +29,6 @@ import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.MediaLanguages;
-import org.tinymediamanager.scraper.imdb.ImdbSiteDefinition;
 
 /**
  * The Class MovieSettings.
@@ -68,7 +67,6 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           TRAILER_SCRAPER_OFDB                     = "trailerScraperOfdb";
   private final static String           WRITE_ACTOR_IMAGES                       = "writeActorImages";
   private final static String           IMDB_SCRAPE_FOREIGN_LANGU                = "imdbScrapeForeignLanguage";
-  private final static String           IMDB_SITE                                = "imdbSite";
   private final static String           SCRAPER_LANGU                            = "scraperLanguage";
   private final static String           CERTIFICATION_COUNTRY                    = "certificationCountry";
   private final static String           DETECT_MOVIE_MULTI_DIR                   = "detectMovieMultiDir";
@@ -110,7 +108,6 @@ public class MovieSettings extends AbstractModelObject {
   private int                           imageExtraFanartCount                    = 5;
   private boolean                       enableMovieSetArtworkFolder              = false;
   private String                        movieSetArtworkFolder                    = "MoviesetArtwork";
-  private ImdbSiteDefinition            imdbSite                                 = ImdbSiteDefinition.IMDB_COM;
   private boolean                       scrapeBestImage                          = true;
   private boolean                       trailerScraperTmdb                       = true;
   private boolean                       trailerScraperHdTrailers                 = true;
@@ -386,16 +383,6 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.imdbScrapeForeignLanguage;
     this.imdbScrapeForeignLanguage = newValue;
     firePropertyChange(IMDB_SCRAPE_FOREIGN_LANGU, oldValue, newValue);
-  }
-
-  public ImdbSiteDefinition getImdbSite() {
-    return imdbSite;
-  }
-
-  public void setImdbSite(ImdbSiteDefinition newValue) {
-    ImdbSiteDefinition oldValue = this.imdbSite;
-    this.imdbSite = newValue;
-    firePropertyChange(IMDB_SITE, oldValue, newValue);
   }
 
   public boolean isImageScraperTmdb() {

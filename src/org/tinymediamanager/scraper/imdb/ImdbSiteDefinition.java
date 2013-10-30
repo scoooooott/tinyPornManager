@@ -27,9 +27,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum ImdbSiteDefinition {
   // www.imdb.com - international site
-  IMDB_COM("http://www.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification", "Release Date"),
-  // www.imdb.de - german site
-  IMDB_DE("http://www.imdb.de/", "iso-8859-1", "", "", "", "", "", "", "");
+  IMDB_COM("http://www.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification", "Release Date");
 
   private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies,
       String writers, String certification, String releaseDate) {

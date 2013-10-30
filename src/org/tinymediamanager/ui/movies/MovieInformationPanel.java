@@ -288,9 +288,11 @@ public class MovieInformationPanel extends JPanel {
     // panelMovieDetails.add(tabbedPaneMovieDetails, "2, 3, fill, fill");
 
     JScrollPane scrollPaneOverview = new JScrollPane();
+    scrollPaneOverview.setBorder(null);
     panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
 
     tpOverview = new JTextPane();
+    tpOverview.setOpaque(false);
     tpOverview.setEditable(false);
     scrollPaneOverview.setViewportView(tpOverview);
 
