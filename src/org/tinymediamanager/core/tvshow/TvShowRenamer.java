@@ -322,6 +322,11 @@ public class TvShowRenamer {
           e = lz(ep.getEpisode());
           delim = "x";
           break;
+        case WITH_0X:
+          s = lz(ep.getSeason());
+          e = lz(ep.getEpisode());
+          delim = "x";
+          break;
         case NUMBER:
           s = String.valueOf(ep.getSeason());
           e = lz(ep.getEpisode());

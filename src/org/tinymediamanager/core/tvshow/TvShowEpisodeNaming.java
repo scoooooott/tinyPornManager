@@ -27,5 +27,7 @@ public enum TvShowEpisodeNaming {
   /** name.1x02.ext */
   WITH_X,
   /** name.102.ext */
-  NUMBER
+  NUMBER,
+  /** name.01x02.ext */
+  WITH_0X
 }
