@@ -21,6 +21,7 @@
     <maxHeapSize>512</maxHeapSize>
     <opt>-Xss512k</opt>
     <opt>-Djava.awt.headless=true</opt>
+    <opt>-Djava.net.preferIPv4Stack=true</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.0.0.0</fileVersion>

@@ -20,6 +20,7 @@
     <jdkPreference>preferJre</jdkPreference>
     <initialHeapSize>128</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
+    <opt>-Djava.net.preferIPv4Stack=true</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.0.0.0</fileVersion>

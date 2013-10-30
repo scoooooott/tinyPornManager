@@ -122,6 +122,7 @@ jvmarg = -Xms64m
 jvmarg = -Xmx512m
 jvmarg = -Xss512k
 jvmarg = -splash:splashscreen.png
+jvmarg = -Djava.net.preferIPv4Stack=true
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
 jvmarg = [linux] -Djna.nosys=true
 #jvmarg = [linux] -Djava.ext.dirs=/usr/share/java

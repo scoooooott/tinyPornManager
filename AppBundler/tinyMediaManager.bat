@@ -1,1 +1,1 @@
-java -jar getdown.jar .
+java -Djava.net.preferIPv4Stack=true -jar getdown.jar .
