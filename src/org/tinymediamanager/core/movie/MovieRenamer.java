@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
@@ -649,6 +650,12 @@ public class MovieRenamer {
    * @return the string
    */
   public static String createDestinationForFilename(String template, Movie movie) {
+    // replace optional group first
+    Pattern regex = Pattern.compile("\\{(.*?)\\}");
+    Matcher mat = regex.matcher(template);
+    while (mat.find()) {
+      template = template.replace(mat.group(0), replaceOptionalVariable(mat.group(1), movie, true));
+    }
     return createDestination(template, movie, true);
   }
 
@@ -662,7 +669,40 @@ public class MovieRenamer {
    * @return the string
    */
   public static String createDestinationForFoldername(String template, Movie movie) {
+    // replace optional group first
+    Pattern regex = Pattern.compile("\\{(.*?)\\}");
+    Matcher mat = regex.matcher(template);
+    while (mat.find()) {
+      template = template.replace(mat.group(0), replaceOptionalVariable(mat.group(1), movie, false));
+    }
     return createDestination(template, movie, false);
+  }
+
+  /**
+   * replaces an optional variable, eg "{ Year $Y }"<br>
+   * if we have a year, "Year 2013" will be returned<br>
+   * if $Y replacement was empty, the complete optional tag will be empty.
+   * 
+   * @param s
+   * @param movie
+   * @param forFilename
+   * @return
+   */
+  private static String replaceOptionalVariable(String s, Movie movie, boolean forFilename) {
+    Pattern regex = Pattern.compile("\\$.{1}");
+    Matcher mat = regex.matcher(s);
+    if (mat.find()) {
+      String rep = createDestination(mat.group(), movie, true);
+      if (rep.isEmpty()) {
+        return "";
+      }
+      else {
+        return s.replace(mat.group(), rep);
+      }
+    }
+    else {
+      return "";
+    }
   }
 
   /**
