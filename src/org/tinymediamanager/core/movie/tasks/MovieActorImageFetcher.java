@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -29,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 
 /**
  * The Class MovieActorImageFetcher.
@@ -65,13 +67,16 @@ public class MovieActorImageFetcher implements Runnable {
 
       // first check which actors images can be deleted
       FilenameFilter filter = new FilenameFilter() {
+        Pattern pattern = Pattern.compile("(?i).*\\.(tbn|png|jpg)");
+
         public boolean accept(File dir, String name) {
           // do not start with .
           if (name.toLowerCase().startsWith("."))
             return false;
 
           // check if filetype is in our settings
-          if (name.toLowerCase().endsWith("tbn")) {
+          Matcher matcher = pattern.matcher(name);
+          if (matcher.matches()) {
             return true;
           }
 
@@ -87,6 +92,11 @@ public class MovieActorImageFetcher implements Runnable {
         for (MovieActor actor : movie.getActors()) {
           if (actor.getName().equals(name)) {
             found = true;
+
+            // trick it to get rid of wrong extensions
+            if (!FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(FilenameUtils.getExtension(actor.getThumb()))) {
+              found = false;
+            }
             break;
           }
         }
@@ -100,16 +110,25 @@ public class MovieActorImageFetcher implements Runnable {
       // second download missing images
       for (MovieActor actor : movie.getActors()) {
         String actorName = actor.getName().replace(" ", "_");
-        File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
+
+        String providedFiletype = FilenameUtils.getExtension(actor.getThumb());
+        File actorImage = new File(actorsDirPath + File.separator + actorName + "." + providedFiletype);
         if (!actorImage.exists() && StringUtils.isNotEmpty(actor.getThumb())) {
           try {
-            CachedUrl cachedUrl = new CachedUrl(actor.getThumb());
+            Url url = new Url(actor.getThumb());
             FileOutputStream outputStream = new FileOutputStream(actorImage);
-            InputStream is = cachedUrl.getInputStream();
+            InputStream is = url.getInputStream();
             IOUtils.copy(is, outputStream);
+            outputStream.flush();
+            try {
+              outputStream.getFD().sync();
+            }
+            catch (Exception e) {
+            }
             outputStream.close();
             is.close();
-            actor.setThumbPath(MovieActor.ACTOR_DIR + File.separator + actorName + ".tbn");
+
+            actor.setThumbPath(actorsDirPath + File.separator + actorName + "." + providedFiletype);
           }
           catch (IOException e) {
             LOGGER.warn("Problem getting actor image: " + e.getMessage());
@@ -118,7 +137,7 @@ public class MovieActorImageFetcher implements Runnable {
 
         // set path if it is empty and an image exists
         if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
-          actor.setThumbPath(MovieActor.ACTOR_DIR + File.separator + actorName + ".tbn");
+          actor.setThumbPath(actorsDirPath + File.separator + actorName + "." + providedFiletype);
         }
       }
     }

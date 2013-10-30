@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -33,21 +32,16 @@ public class ActorImageLabel extends ImageLabel {
 
   private static final long           serialVersionUID = -1768796209645569296L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private Movie                       movie;
 
   public ActorImageLabel() {
     super();
     setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
   }
 
-  public void setMovie(Movie movie) {
-    this.movie = movie;
-  }
-
   public void setActor(MovieActor actor) {
     if (actor != null) {
-      if (movie != null && StringUtils.isNotEmpty(actor.getThumbPath())) {
-        File actorThumb = new File(movie.getPath() + File.separator + actor.getThumbPath());
+      if (StringUtils.isNotBlank(actor.getThumbPath())) {
+        File actorThumb = new File(actor.getThumbPath());
         if (actorThumb.exists()) {
           setImagePath(actorThumb.getPath());
           return;

@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -509,13 +511,24 @@ public class Movie extends MediaEntity {
   public void findActorImages() {
     if (Globals.settings.getMovieSettings().isWriteActorImages()) {
       String actorsDirPath = getPath() + File.separator + MovieActor.ACTOR_DIR;
-      // second download missing images
-      for (MovieActor actor : getActors()) {
-        String actorName = actor.getName().replace(" ", "_");
-        File actorImage = new File(actorsDirPath + File.separator + actorName + ".tbn");
-        // set path if it is empty and an image exists
-        if (actorImage.exists() && StringUtils.isEmpty(actor.getThumbPath())) {
-          actor.setThumbPath(MovieActor.ACTOR_DIR + File.separator + actorName + ".tbn");
+      // get all files from the actors path
+      File[] actorImages = new File(actorsDirPath).listFiles();
+      if (actorImages != null && actorImages.length > 0) {
+        // search all local actor images
+        for (MovieActor actor : getActors()) {
+          if (StringUtils.isNotBlank(actor.getThumbPath())) {
+            continue;
+          }
+
+          String actorName = actor.getName().replace(" ", "_");
+
+          Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(actorName) + "\\.(tbn|jpg|png)");
+          for (File file : actorImages) {
+            Matcher matcher = pattern.matcher(file.getName());
+            if (matcher.matches()) {
+              actor.setThumbPath(file.getAbsolutePath());
+            }
+          }
         }
       }
     }
