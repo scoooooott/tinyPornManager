@@ -16,6 +16,8 @@
 package org.tinymediamanager.scraper.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -152,6 +154,13 @@ public class Url {
    *           Signals that an I/O exception has occurred.
    */
   public InputStream getInputStream() throws IOException {
+    // workaround for local files
+    if (url.startsWith("file:")) {
+      String newUrl = url.replace("file:", "");
+      File file = new File(newUrl);
+      return new FileInputStream(file);
+    }
+
     DefaultHttpClient httpclient = getHttpClient();
     BasicHttpContext localContext = new BasicHttpContext();
 

@@ -84,70 +84,33 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class ImageChooserDialog extends JDialog {
-
   private static final long           serialVersionUID = 8193355920006275933L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
 
   public enum ImageType {
-
-    /** The poster. */
-    POSTER,
-    /** The fanart. */
-    FANART,
-    /** The banner. */
-    BANNER,
-    /** The season. */
-    SEASON;
+    POSTER, FANART, BANNER, SEASON;
   }
 
-  /** The content panel. */
-  private final JPanel                contentPanel   = new JPanel();
-
-  /** The progress bar. */
-  private JProgressBar                progressBar;
-
-  /** The lbl progress action. */
-  private JLabel                      lblProgressAction;
-
-  /** The panel images. */
-  private JPanel                      panelImages;
-
-  /** The image label. */
-  private ImageLabel                  imageLabel;
-
-  /** The type. */
-  private ImageType                   type;
-
-  /** The button group. */
-  private ButtonGroup                 buttonGroup    = new ButtonGroup();
-
-  /** The buttons. */
-  private List<JToggleButton>         buttons        = new ArrayList<JToggleButton>();
-
-  /** The task. */
   private DownloadTask                task;
-
-  /** The action ok. */
-  private final Action                actionOK       = new SwingAction();
-
-  /** The action cancel. */
-  private final Action                actionCancel   = new SwingAction_1();
-
-  /** The toggle button ui. */
-  private final ToggleButtonUI        toggleButtonUI = new ToggleButtonUI();
-
-  /** The extra thumbs. */
+  private List<IMediaArtworkProvider> artworkProviders;
   private List<String>                extraThumbs;
-
-  /** The extra fanarts. */
   private List<String>                extraFanarts;
 
-  /** The action. */
-  private final Action                action         = new SwingAction_2();
+  /** UI components */
+  private final JPanel                contentPanel    = new JPanel();
+  private JProgressBar                progressBar;
+  private JLabel                      lblProgressAction;
+  private JPanel                      panelImages;
+  private ImageLabel                  imageLabel;
+  private ImageType                   type;
+  private ButtonGroup                 buttonGroup     = new ButtonGroup();
+  private List<JToggleButton>         buttons         = new ArrayList<JToggleButton>();
 
-  /** The artwork providers. */
-  private List<IMediaArtworkProvider> artworkProviders;
+  private final Action                actionOK        = new SwingAction();
+  private final Action                actionCancel    = new SwingAction_1();
+  private final ToggleButtonUI        toggleButtonUI  = new ToggleButtonUI();
+  private final Action                actionLocalFile = new LocalFileChooseAction();
 
   /**
    * Instantiates a new image chooser dialog.
@@ -199,8 +162,8 @@ public class ImageChooserDialog extends JDialog {
 
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"), },
-        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"),
+        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
     {
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -327,7 +290,7 @@ public class ImageChooserDialog extends JDialog {
         getRootPane().setDefaultButton(okButton);
 
         JButton btnAddFile = new JButton(BUNDLE.getString("Button.addfile")); //$NON-NLS-1$
-        btnAddFile.setAction(action);
+        btnAddFile.setAction(actionLocalFile);
         buttonPane.add(btnAddFile);
 
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
@@ -770,29 +733,14 @@ public class ImageChooserDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class SwingAction_2.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SwingAction_2 extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
+  private class LocalFileChooseAction extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Instantiates a new swing action_2.
-     */
-    public SwingAction_2() {
+    public LocalFileChooseAction() {
       putValue(NAME, BUNDLE.getString("image.choose.file")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("image.choose.file")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     public void actionPerformed(ActionEvent e) {
       File file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
       if (file != null && file.exists() && file.isFile()) {
@@ -802,7 +750,6 @@ public class ImageChooserDialog extends JDialog {
         setVisible(false);
         dispose();
       }
-
     }
   }
 }
