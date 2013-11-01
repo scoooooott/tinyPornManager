@@ -156,4 +156,21 @@ public class Globals {
   private static boolean isEmpty(CharSequence cs) {
     return cs == null || cs.length() == 0;
   }
+
+  /**
+   * Are we running from a webstart instance?
+   * 
+   * @return true/false
+   */
+  public static boolean isRunningJavaWebStart() {
+    boolean hasJNLP = false;
+    try {
+      Class.forName("javax.jnlp.ServiceManager");
+      hasJNLP = true;
+    }
+    catch (ClassNotFoundException ex) {
+      hasJNLP = false;
+    }
+    return hasJNLP;
+  }
 }

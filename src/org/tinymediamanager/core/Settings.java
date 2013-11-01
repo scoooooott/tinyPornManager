@@ -132,6 +132,7 @@ public class Settings extends AbstractModelObject {
   private boolean                     clearCacheShutdown          = false;
   private MovieSettings               movieSettings               = null;
   private TvShowSettings              tvShowSettings              = null;
+  private FeatureSettings             featureSettings             = null;
   private MovieScraperMetadataConfig  movieScraperMetadataConfig  = null;
   private TvShowScraperMetadataConfig tvShowScraperMetadataConfig = null;
   private WindowConfig                windowConfig                = null;
@@ -157,6 +158,8 @@ public class Settings extends AbstractModelObject {
     movieSettings.addPropertyChangeListener(propertyChangeListener);
     tvShowSettings = new TvShowSettings();
     tvShowSettings.addPropertyChangeListener(propertyChangeListener);
+    featureSettings = new FeatureSettings();
+    featureSettings.addPropertyChangeListener(propertyChangeListener);
     movieScraperMetadataConfig = new MovieScraperMetadataConfig();
     movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     tvShowScraperMetadataConfig = new TvShowScraperMetadataConfig();
@@ -758,6 +761,26 @@ public class Settings extends AbstractModelObject {
    */
   public TvShowSettings getTvShowSettings() {
     return this.tvShowSettings;
+  }
+
+  /**
+   * Sets the tv show settings.
+   * 
+   * @param tvShowSettings
+   *          the new tv show settings
+   */
+  public void setFeatureSettings(FeatureSettings featureSettings) {
+    this.featureSettings = featureSettings;
+    this.featureSettings.addPropertyChangeListener(propertyChangeListener);
+  }
+
+  /**
+   * Gets the tv show settings.
+   * 
+   * @return the tv show settings
+   */
+  public FeatureSettings getFeatureSettings() {
+    return this.featureSettings;
   }
 
   /**

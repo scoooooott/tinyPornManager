@@ -211,11 +211,18 @@ public class TinyMediaManager {
     LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
     LOGGER.info("=====================================================");
     LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
+    Globals.settings.getFeatureSettings().setFeatures();
+    if (Globals.settings.getFeatureSettings().isDonator()) {
+      LOGGER.info("tmm.supporter    : THANKS FOR DONATING - ALL FEATURES UNLOCKED :)");
+    }
 
     LOGGER.info("os.name          : " + System.getProperty("os.name"));
     LOGGER.info("os.version       : " + System.getProperty("os.version"));
     LOGGER.info("os.arch          : " + System.getProperty("os.arch"));
     LOGGER.info("java.version     : " + System.getProperty("java.version"));
+    if (Globals.isRunningJavaWebStart()) {
+      LOGGER.info("java.webstart    : true");
+    }
 
     // initialize SWT if needed
     TmmUIHelper.init();
