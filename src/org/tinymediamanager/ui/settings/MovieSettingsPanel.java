@@ -260,7 +260,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
     txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
-    panelRenamer.add(txtpntTitle, "10, 2, 1, 9, fill, fill");
+    panelRenamer.add(txtpntTitle, "10, 2, 1, 12, fill, fill");
 
     JLabel lblMovieFilename = new JLabel(BUNDLE.getString("Settings.renamer.file")); //$NON-NLS-1$
     panelRenamer.add(lblMovieFilename, "2, 4, right, fill");
