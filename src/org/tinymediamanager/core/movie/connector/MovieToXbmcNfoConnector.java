@@ -368,6 +368,9 @@ public class MovieToXbmcNfoConnector {
       MovieSet movieSet = movie.getMovieSet();
       xbmc.set = movieSet.getTitle();
     }
+    else {
+      xbmc.set = "";
+    }
 
     xbmc.sorttitle = movie.getSortTitle();
 
