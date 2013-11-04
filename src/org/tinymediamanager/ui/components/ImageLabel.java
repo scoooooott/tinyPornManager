@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.components;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -51,6 +52,8 @@ public class ImageLabel extends JLabel {
   protected static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   protected BufferedImage                    originalImage;
+  protected BufferedImage                    scaledImage;
+  protected Dimension                        size;
   protected String                           imageUrl;
   protected String                           imagePath;
   protected Position                         position         = Position.TOP_LEFT;
@@ -122,6 +125,7 @@ public class ImageLabel extends JLabel {
 
     if (StringUtils.isBlank(newValue)) {
       originalImage = null;
+      size = null;
       this.repaint();
       return;
     }
@@ -140,6 +144,7 @@ public class ImageLabel extends JLabel {
     imagePath = "";
     imageUrl = "";
     originalImage = null;
+    size = null;
     this.repaint();
   }
 
@@ -165,6 +170,7 @@ public class ImageLabel extends JLabel {
 
     if (StringUtils.isEmpty(newValue)) {
       originalImage = null;
+      size = null;
       this.repaint();
       return;
     }
@@ -177,6 +183,16 @@ public class ImageLabel extends JLabel {
     // fetch image in separate worker -> performance
     worker = new ImageFetcher();
     worker.execute();
+  }
+
+  private BufferedImage getScaledImage(Dimension size) {
+    if (!size.equals(this.size)) {
+      // rescale the image
+      System.out.println("rescaling: " + imagePath + " " + imageUrl);
+      scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.width, size.height, Scalr.OP_ANTIALIAS);
+      this.size = size;
+    }
+    return this.scaledImage;
   }
 
   /*
@@ -219,8 +235,7 @@ public class ImageLabel extends JLabel {
         g.setColor(Color.WHITE);
         g.fillRect(offsetX + 1, offsetY + 1, size.x + 6, size.y + 6);
         // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
-        g.drawImage(Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newWidth, newHeight, Scalr.OP_ANTIALIAS), offsetX + 4,
-            offsetY + 4, newWidth, newHeight, this);
+        g.drawImage(getScaledImage(new Dimension(newWidth, newHeight)), offsetX + 4, offsetY + 4, newWidth, newHeight, this);
       }
       else {
         Point size = null;
@@ -243,8 +258,7 @@ public class ImageLabel extends JLabel {
         newWidth = size.x;
         newHeight = size.y;
         // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
-        g.drawImage(Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, newWidth, newHeight, Scalr.OP_ANTIALIAS), offsetX,
-            offsetY, newWidth, newHeight, this);
+        g.drawImage(getScaledImage(new Dimension(newWidth, newHeight)), offsetX, offsetY, newWidth, newHeight, this);
       }
 
     }
@@ -384,6 +398,9 @@ public class ImageLabel extends JLabel {
       catch (Exception e) {
         originalImage = null;
       }
+      finally {
+        size = null;
+      }
       repaint();
     }
   }
@@ -440,6 +457,9 @@ public class ImageLabel extends JLabel {
       }
       catch (Exception e) {
         originalImage = null;
+      }
+      finally {
+        size = null;
       }
       repaint();
     }
