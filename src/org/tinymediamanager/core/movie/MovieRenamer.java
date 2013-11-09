@@ -550,6 +550,13 @@ public class MovieRenamer {
     }
 
     // ######################################################################
+    // ## rename THUMBNAILS
+    // ######################################################################
+    for (MediaFile unk : movie.getMediaFiles(MediaFileType.THUMB)) {
+      needed.add(unk); // keep all unknown
+    }
+
+    // ######################################################################
     // ## rename UNKNOWN
     // ######################################################################
     for (MediaFile unk : movie.getMediaFiles(MediaFileType.UNKNOWN)) {
