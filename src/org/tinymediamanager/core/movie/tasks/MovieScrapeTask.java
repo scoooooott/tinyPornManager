@@ -156,11 +156,15 @@ public class MovieScrapeTask extends TmmThreadPool {
             }
 
             // if there is only one result - we assume it is THE right movie
-            // else: create a treshold of 0.75 - to minimize false positives
-            if (results.size() > 1 && result1.getScore() < 0.75) {
-              LOGGER.info("score is lower than 0.75 (" + result1.getScore() + ") - ignore result");
-              MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.toolowscore"));
-              return;
+            // else: get treshold from settings (default 0.75) - to minimize false positives
+            if (results.size() > 1) {
+              final double scraperTreshold = Globals.settings.getMovieSettings().getScraperThreshold();
+              LOGGER.info("using treshold from settings of {}", scraperTreshold);
+              if (result1.getScore() < scraperTreshold) {
+                LOGGER.info("score is lower than " + scraperTreshold + " (" + result1.getScore() + ") - ignore result");
+                MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.toolowscore"));
+                return;
+              }
             }
           }
           else {

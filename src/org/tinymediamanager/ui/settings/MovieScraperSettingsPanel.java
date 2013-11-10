@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
@@ -26,8 +27,12 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
+import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -75,14 +80,17 @@ public class MovieScraperSettingsPanel extends JPanel {
   private JCheckBox                   cbOfdbde;
   private JCheckBox                   cbZelluloidde;
   private JCheckBox                   cbMoviemeternl;
+  private JTextPane                   lblScraperThresholdHint;
+  private JPanel                      panelAutomaticScraper;
+  private JSlider                     sliderThreshold;
 
   /**
    * Instantiates a new movie scraper settings panel.
    */
   public MovieScraperSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
     JPanel panelMovieScrapers = new JPanel();
     panelMovieScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.metadata.defaults"),
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -91,8 +99,7 @@ public class MovieScraperSettingsPanel extends JPanel {
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     cbScraperTmdb = new JCheckBox("The Movie Database");
     buttonGroupScraper = new ButtonGroup();
@@ -163,6 +170,43 @@ public class MovieScraperSettingsPanel extends JPanel {
 
     cbOfdbde = new JCheckBox("OFDb.de");
     panel.add(cbOfdbde, "1, 6");
+
+    panelAutomaticScraper = new JPanel();
+    panelAutomaticScraper.setBorder(new TitledBorder(null, "Automatic scraper", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    add(panelAutomaticScraper, "4, 4, fill, fill");
+    panelAutomaticScraper.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    JLabel lblScraperTreshold = new JLabel(BUNDLE.getString("Settings.scraperTreshold"));
+    panelAutomaticScraper.add(lblScraperTreshold, "1, 2, default, top");
+
+    sliderThreshold = new JSlider();
+    sliderThreshold.setMinorTickSpacing(5);
+    sliderThreshold.setMajorTickSpacing(10);
+    sliderThreshold.setPaintTicks(true);
+    sliderThreshold.setPaintLabels(true);
+    sliderThreshold.setValue((int) (settings.getMovieSettings().getScraperThreshold() * 100));
+    java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
+    labelTable.put(new Integer(100), new JLabel("1.0"));
+    labelTable.put(new Integer(75), new JLabel("0.75"));
+    labelTable.put(new Integer(50), new JLabel("0.50"));
+    labelTable.put(new Integer(25), new JLabel("0.25"));
+    labelTable.put(new Integer(0), new JLabel("0.0"));
+    sliderThreshold.setLabelTable(labelTable);
+    sliderThreshold.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent arg0) {
+        settings.getMovieSettings().setScraperThreshold(sliderThreshold.getValue() / 100.0);
+      }
+    });
+    panelAutomaticScraper.add(sliderThreshold, "3, 2");
+
+    lblScraperThresholdHint = new JTextPane();
+    panelAutomaticScraper.add(lblScraperThresholdHint, "1, 6, 3, 1");
+    lblScraperThresholdHint.setOpaque(false);
+    lblScraperThresholdHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    lblScraperThresholdHint.setText(BUNDLE.getString("Settings.scraperTreshold.hint"));
 
     initDataBindings();
 

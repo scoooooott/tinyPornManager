@@ -69,6 +69,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           IMDB_SCRAPE_FOREIGN_LANGU                = "imdbScrapeForeignLanguage";
   private final static String           SCRAPER_LANGU                            = "scraperLanguage";
   private final static String           CERTIFICATION_COUNTRY                    = "certificationCountry";
+  private final static String           SCRAPER_THRESHOLD                        = "scraperThreshold";
   private final static String           DETECT_MOVIE_MULTI_DIR                   = "detectMovieMultiDir";
   private final static String           BUILD_IMAGE_CACHE_ON_IMPORT              = "buildImageCacheOnImport";
 
@@ -115,6 +116,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       writeActorImages                         = false;
   private MediaLanguages                scraperLanguage                          = MediaLanguages.en;
   private CountryCode                   certificationCountry                     = CountryCode.US;
+  private double                        scraperThreshold                         = 0.75;
   private boolean                       detectMovieMultiDir                      = false;
   private boolean                       buildImageCacheOnImport                  = false;
   private boolean                       movieRenamerCreateMoviesetForSingleMovie = false;
@@ -475,6 +477,17 @@ public class MovieSettings extends AbstractModelObject {
     CountryCode oldValue = this.certificationCountry;
     certificationCountry = newValue;
     firePropertyChange(CERTIFICATION_COUNTRY, oldValue, newValue);
+  }
+
+  @XmlElement(name = SCRAPER_THRESHOLD)
+  public double getScraperThreshold() {
+    return scraperThreshold;
+  }
+
+  public void setScraperThreshold(double newValue) {
+    double oldValue = this.scraperThreshold;
+    scraperThreshold = newValue;
+    firePropertyChange(SCRAPER_THRESHOLD, oldValue, newValue);
   }
 
   @XmlElement(name = MOVIE_RENAMER_NFO_CLEANUP)
