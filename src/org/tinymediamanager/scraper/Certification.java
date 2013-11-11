@@ -612,6 +612,10 @@ public enum Certification {
    */
   public static Certification findCertification(String name) {
     for (Certification cert : Certification.values()) {
+      // check if the ENUM name matches
+      if (cert.name().equalsIgnoreCase(name)) {
+        return cert;
+      }
       // check if the name matches
       if (cert.getName().equalsIgnoreCase(name)) {
         return cert;
@@ -638,6 +642,10 @@ public enum Certification {
   public static Certification getCertification(CountryCode country, String name) {
     // try to find the certification
     for (Certification cert : Certification.getCertificationsforCountry(country)) {
+      // check if the ENUM name matches
+      if (cert.name().equalsIgnoreCase(name)) {
+        return cert;
+      }
       // check if the name matches
       if (cert.getName().equalsIgnoreCase(name)) {
         return cert;
