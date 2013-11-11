@@ -64,6 +64,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
   private List<String>              dataSources;
   private MovieList                 movieList;
+  private HashSet<File>             filesFound  = new HashSet<File>();
 
   /**
    * Instantiates a new scrape task.
@@ -163,9 +164,15 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
 
           File movieDir = new File(movie.getPath());
-          if (!movieDir.exists()) {
-            LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
-            movieList.removeMovie(movie);
+          if (!filesFound.contains(movieDir)) {
+            // dir is not in hashset - check with exit to be sure it is not here
+            if (!movieDir.exists()) {
+              LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
+              movieList.removeMovie(movie);
+            }
+            else {
+              LOGGER.warn("dir " + movie.getPath() + " not in hashset, but on hdd!");
+            }
           }
           else {
             // have a look if that movie has just been added -> so we don't need any cleanup
@@ -173,8 +180,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               // check and delete all not found MediaFiles
               List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
               for (MediaFile mf : mediaFiles) {
-                if (!mf.exists()) {
-                  movie.removeFromMediaFiles(mf);
+                if (!filesFound.contains(mf.getFile())) {
+                  if (!mf.exists()) {
+                    movie.removeFromMediaFiles(mf);
+                  }
+                  else {
+                    LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+                  }
                 }
               }
               movie.saveToDb();
@@ -299,30 +311,23 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       // 3) find named fanart files
       File gfx = new File(mf.getPath(), movie.getFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG, file.getName()));
-      if (gfx.exists()) {
-        movie.addToMediaFiles(new MediaFile(gfx, MediaFileType.FANART));
-      }
+      addFileToMovie(movie, gfx, MediaFileType.FANART);
+
       gfx = new File(mf.getPath(), movie.getFanartFilename(MovieFanartNaming.FILENAME_FANART_PNG, file.getName()));
-      if (gfx.exists()) {
-        movie.addToMediaFiles(new MediaFile(gfx, MediaFileType.FANART));
-      }
+      addFileToMovie(movie, gfx, MediaFileType.FANART);
+
       gfx = new File(mf.getPath(), movie.getFanartFilename(MovieFanartNaming.FILENAME_FANART2_JPG, file.getName()));
-      if (gfx.exists()) {
-        movie.addToMediaFiles(new MediaFile(gfx, MediaFileType.FANART));
-      }
+      addFileToMovie(movie, gfx, MediaFileType.FANART);
+
       gfx = new File(mf.getPath(), movie.getFanartFilename(MovieFanartNaming.FILENAME_FANART2_PNG, file.getName()));
-      if (gfx.exists()) {
-        movie.addToMediaFiles(new MediaFile(gfx, MediaFileType.FANART));
-      }
-      // 3) find named poster files
+      addFileToMovie(movie, gfx, MediaFileType.FANART);
+
+      // 4) find named poster files
       gfx = new File(mf.getPath(), movie.getPosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG, file.getName()));
-      if (gfx.exists()) {
-        movie.addToMediaFiles(new MediaFile(gfx, MediaFileType.POSTER));
-      }
+      addFileToMovie(movie, gfx, MediaFileType.POSTER);
+
       gfx = new File(mf.getPath(), movie.getPosterFilename(MoviePosterNaming.FILENAME_POSTER_PNG, file.getName()));
-      if (gfx.exists()) {
-        movie.addToMediaFiles(new MediaFile(gfx, MediaFileType.POSTER));
-      }
+      addFileToMovie(movie, gfx, MediaFileType.POSTER);
 
       movie.saveToDb();
       if (movie.getMovieSet() != null) {
@@ -335,6 +340,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       movie.justAdded = true;
       movieList.addMovie(movie);
+    }
+  }
+
+  private void addFileToMovie(Movie movie, File file, MediaFileType type) {
+    if (file.exists()) {
+      // store file for faster cleanup
+      synchronized (filesFound) {
+        filesFound.add(file);
+      }
+      movie.addToMediaFiles(new MediaFile(file, type));
     }
   }
 
@@ -379,6 +394,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    */
   private void parseMovieDirectory(File movieDir, String dataSource) {
     try {
+      // store dir for faster cleanup
+      synchronized (filesFound) {
+        filesFound.add(movieDir);
+      }
+
       // list all type VIDEO files
       File[] files = movieDir.listFiles(new FilenameFilter() {
         @Override
@@ -386,6 +406,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           return new MediaFile(new File(dir, name)).getType().equals(MediaFileType.VIDEO); // no trailer or extra vids!
         }
       });
+
       // check if we have more than one movie in dir
       HashSet<String> h = new HashSet<String>();
       for (File file : files) {
@@ -690,6 +711,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     for (File file : list) {
       if (file.isFile()) {
         mv.add(new MediaFile(file));
+        // store dir for faster cleanup
+        synchronized (filesFound) {
+          filesFound.add(file);
+        }
       }
       else {
         // ignore .folders and others
