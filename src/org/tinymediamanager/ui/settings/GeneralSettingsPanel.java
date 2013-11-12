@@ -108,7 +108,7 @@ public class GeneralSettingsPanel extends JPanel {
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default):grow"),
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min)"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
@@ -338,7 +338,7 @@ public class GeneralSettingsPanel extends JPanel {
 
     panelCache = new JPanel();
     panelCache.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.cache"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-    add(panelCache, "2, 6, fill, fill");
+    add(panelCache, "2, 6, 3, 1, fill, fill");
     panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -360,25 +360,9 @@ public class GeneralSettingsPanel extends JPanel {
     chckbxBuildImageCache.setVisible(false);
     panelCache.add(chckbxBuildImageCache, "2, 8, 3, 1");
 
-    panelLogger = new JPanel();
-    add(panelLogger, "2, 8, fill, fill");
-    panelLogger.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
-
-    lblLoglevel = new JLabel(BUNDLE.getString("Settings.loglevel"));//$NON-NLS-1$
-    panelLogger.add(lblLoglevel, "2, 2");
-
-    Level[] levels = new Level[] { Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
-    Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
-    cbLogLevel = new JComboBox(levels);
-    panelLogger.add(cbLogLevel, "4, 2");
-    cbLogLevel.addItemListener(listener);
-    cbLogLevel.setSelectedItem(actualLevel);
-
     panelProxySettings = new JPanel();
     panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelProxySettings, "2, 10, fill, top");
+    add(panelProxySettings, "6, 6, 3, 1, fill, top");
     panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -414,6 +398,22 @@ public class GeneralSettingsPanel extends JPanel {
     tfProxyPassword = new JPasswordField();
     lblProxyPassword.setLabelFor(tfProxyPassword);
     panelProxySettings.add(tfProxyPassword, "4, 8, fill, default");
+
+    panelLogger = new JPanel();
+    add(panelLogger, "2, 8, 3, 1, fill, fill");
+    panelLogger.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
+
+    lblLoglevel = new JLabel(BUNDLE.getString("Settings.loglevel"));//$NON-NLS-1$
+    panelLogger.add(lblLoglevel, "2, 2");
+
+    Level[] levels = new Level[] { Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR };
+    Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
+    cbLogLevel = new JComboBox(levels);
+    panelLogger.add(cbLogLevel, "4, 2");
+    cbLogLevel.addItemListener(listener);
+    cbLogLevel.setSelectedItem(actualLevel);
 
     initDataBindings();
   }
