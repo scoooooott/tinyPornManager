@@ -188,7 +188,7 @@ public class ImageLabel extends JLabel {
   private BufferedImage getScaledImage(Dimension size) {
     if (!size.equals(this.size)) {
       // rescale the image
-      System.out.println("rescaling: " + imagePath + " " + imageUrl);
+      // System.out.println("rescaling: " + imagePath + " " + imageUrl);
       scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.width, size.height, Scalr.OP_ANTIALIAS);
       this.size = size;
     }
