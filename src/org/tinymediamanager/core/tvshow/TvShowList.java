@@ -135,7 +135,7 @@ public class TvShowList extends AbstractModelObject {
 
     for (int i = tvShowList.size() - 1; i >= 0; i--) {
       TvShow tvShow = tvShowList.get(i);
-      if (path.equals(tvShow.getDataSource())) {
+      if (!new File(path).equals(new File(tvShow.getDataSource()))) {
         removeTvShow(tvShow);
       }
     }

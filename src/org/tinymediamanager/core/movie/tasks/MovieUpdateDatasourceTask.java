@@ -159,7 +159,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           Movie movie = movieList.getMovies().get(i);
 
           // check only movies matching datasource
-          if (!ds.equals(movie.getDataSource())) {
+          if (!new File(ds).equals(new File(movie.getDataSource()))) {
             continue;
           }
 
@@ -203,7 +203,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         if (Globals.settings.getMovieSettings().isBuildImageCacheOnImport()) {
           List<File> imageFiles = new ArrayList<File>();
           for (Movie movie : movieList.getMovies()) {
-            if (!ds.equals(movie.getDataSource())) {
+            if (!new File(ds).equals(new File(movie.getDataSource()))) {
               // check only movies matching datasource
               continue;
             }

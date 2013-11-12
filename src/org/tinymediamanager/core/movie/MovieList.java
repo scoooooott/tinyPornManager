@@ -19,6 +19,7 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -143,7 +144,7 @@ public class MovieList extends AbstractModelObject {
 
     for (int i = movieList.size() - 1; i >= 0; i--) {
       Movie movie = movieList.get(i);
-      if (path.equals(movie.getDataSource())) {
+      if (new File(path).equals(new File(movie.getDataSource()))) {
         removeMovie(movie);
       }
     }
