@@ -37,6 +37,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -935,6 +936,15 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       languageString.add(combined.toLowerCase());
     }
 
+    // also build langu & default country
+    Locale localeFromLanguage = Utils.getLocaleFromLanguage(language);
+    if (localeFromLanguage != null) {
+      String combined = language + "-" + localeFromLanguage.getCountry().toLowerCase();
+      if (!languageString.contains(combined)) {
+        languageString.add(combined);
+      }
+    }
+
     if (StringUtils.isNotBlank(language)) {
       languageString.add(language.toLowerCase());
     }
@@ -951,6 +961,9 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
 
     // third: fallback to en
+    if (!languageString.contains("en-us")) {
+      languageString.add("en-us");
+    }
     if (!languageString.contains("en")) {
       languageString.add("en");
     }
