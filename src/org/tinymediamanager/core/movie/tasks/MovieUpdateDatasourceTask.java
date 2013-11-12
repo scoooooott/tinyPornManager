@@ -248,7 +248,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       String basename = Utils.cleanStackingMarkers(mf.getBasename());
 
       // 1) check if MF is already assigned to a movie within path
-      for (Movie m : movieList.getMoviesByPath(mf.getPath())) {
+      for (Movie m : movieList.getMoviesByPath(mf.getFile().getParentFile())) {
         if (m.getMediaFiles(MediaFileType.VIDEO).contains(mf)) {
           // ok, our MF is already in an movie
           LOGGER.debug("found movie from MediaFIle");
@@ -431,7 +431,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       else {
         LOGGER.debug("PAH - normal movie directory: " + movieDir);
 
-        Movie movie = movieList.getMovieByPath(movieDir.getPath());
+        Movie movie = movieList.getMovieByPath(movieDir);
         ArrayList<MediaFile> mfs = getAllMediaFilesRecursive(movieDir);
 
         if (movie == null) {

@@ -342,7 +342,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    */
   private void createTvShowFromDirectory(File dir, String datasource) {
     // search for this tvshow folder in database
-    TvShow tvShow = tvShowList.getTvShowByPath(dir.getPath());
+    TvShow tvShow = tvShowList.getTvShowByPath(dir);
     if (tvShow == null) {
       // tvShow did not exist - try to parse a NFO file in parent folder
       tvShow = TvShow.parseNFO(dir);

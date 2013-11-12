@@ -313,10 +313,10 @@ public class MovieList extends AbstractModelObject {
    *          the path
    * @return the movie by path
    */
-  public synchronized Movie getMovieByPath(String path) {
+  public synchronized Movie getMovieByPath(File path) {
 
     for (Movie movie : movieList) {
-      if (movie.getPath().compareTo(path) == 0) {
+      if (new File(movie.getPath()).compareTo(path) == 0) {
         return movie;
       }
     }
@@ -331,10 +331,10 @@ public class MovieList extends AbstractModelObject {
    *          the path
    * @return the movie list
    */
-  public synchronized List<Movie> getMoviesByPath(String path) {
+  public synchronized List<Movie> getMoviesByPath(File path) {
     ArrayList<Movie> movies = new ArrayList<Movie>();
     for (Movie movie : movieList) {
-      if (movie.getPath().compareTo(path) == 0) {
+      if (new File(movie.getPath()).compareTo(path) == 0) {
         movies.add(movie);
       }
     }

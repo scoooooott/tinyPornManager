@@ -375,10 +375,10 @@ public class TvShowList extends AbstractModelObject {
    *          the path
    * @return the movie by path
    */
-  public synchronized TvShow getTvShowByPath(String path) {
+  public synchronized TvShow getTvShowByPath(File path) {
     // iterate over all tv shows and check whether this path is being owned by one
     for (TvShow tvShow : getTvShows()) {
-      if (tvShow.getPath().compareTo(path) == 0) {
+      if (new File(tvShow.getPath()).compareTo(path) == 0) {
         return tvShow;
       }
     }
