@@ -1290,6 +1290,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
       // get first extension
       setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
+
+      // if container format is still empty -> insert the extension
+      if (StringUtils.isBlank(containerFormat)) {
+        setContainerFormat(getExtension());
+      }
     }
 
     if (height.isEmpty() || scanType.isEmpty()) {
