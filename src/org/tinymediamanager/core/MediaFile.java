@@ -1128,7 +1128,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           catch (Exception e) {
           }
           String language = getMediaInfo(StreamKind.Audio, i, "Language");
-          if (language.isEmpty()) {
+          if (language.isEmpty() && !isDiscFile()) { // video_ts parsed 'ts' as Tsonga
             // try to parse from filename
             String shortname = getBasename().toLowerCase();
             Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
