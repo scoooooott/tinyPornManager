@@ -1197,7 +1197,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         break;
 
       case SUBTITLE:
-        if (subtitles == null || subtitles.size() == 0) {
+        if (subtitles == null || subtitles.size() == 0 || force) {
+          subtitles.clear();
           MediaFileSubtitle sub = new MediaFileSubtitle();
           String shortname = getBasename().toLowerCase();
           if (shortname.contains("forced")) {
