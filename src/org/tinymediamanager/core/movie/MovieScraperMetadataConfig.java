@@ -47,6 +47,10 @@ public class MovieScraperMetadataConfig extends AbstractModelObject {
   public MovieScraperMetadataConfig() {
   }
 
+  public boolean isMetadata() {
+    return title || originalTitle || tagline || plot || rating || runtime || year || certification || cast || genres || collection;
+  }
+
   /**
    * Checks if is title.
    * 

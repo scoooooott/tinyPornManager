@@ -192,11 +192,9 @@ public class MovieScrapeTask extends TmmThreadPool {
             // scrape metadata if wanted
             MediaMetadata md = null;
 
-            if (scraperMetadataConfig.isCast() || scraperMetadataConfig.isCertification() || scraperMetadataConfig.isGenres()
-                || scraperMetadataConfig.isOriginalTitle() || scraperMetadataConfig.isPlot() || scraperMetadataConfig.isRating()
-                || scraperMetadataConfig.isRuntime() || scraperMetadataConfig.isTagline() || scraperMetadataConfig.isTitle()
-                || scraperMetadataConfig.isYear()) {
-              md = mediaMetadataProvider.getMetadata(options);
+            md = mediaMetadataProvider.getMetadata(options);
+
+            if (scraperMetadataConfig.isMetadata()) {
               movie.setMetadata(md, scraperMetadataConfig);
             }
 
