@@ -396,6 +396,7 @@ public class MovieToXbmcNfoConnector {
         info.streamdetails.audio.add(audio);
       }
       xbmc.fileinfo = info;
+      break;
       // }
     }
 
