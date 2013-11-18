@@ -494,7 +494,7 @@ public class MoviePanel extends JPanel {
     // NFO column
     table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer("NFO"));
     table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
-    URL imageURL = MainWindow.class.getResource("images/File.png");
+    URL imageURL = MainWindow.class.getResource("images/Info.png");
     if (imageURL != null) {
       table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
     }
