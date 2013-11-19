@@ -120,7 +120,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
    * 
    * @param propName
    *          the property
-   * @return
+   * @return array of alternate names
    */
   public static String[] loadAlternateNames(String propName) {
     ArrayList<String> alt = new ArrayList<String>();

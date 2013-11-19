@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.DownloadWorker.ProgressType;
 /**
  * DownloadWorker for bigger downloads with progressbar
  * 
- * @author Myron
+ * @author Myron Boyle
  */
 public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
   private String              url;
@@ -127,7 +127,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
   /**
    * our progressbar result type
    * 
-   * @author Markus
+   * @author Myron Boyle
    * 
    */
   protected static class ProgressType {

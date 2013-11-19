@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Class UrlUtil.
  * 
- * @author Manuel Laggner
+ * @author Manuel Laggner / Myron Boyle
  */
 public class UrlUtil {
 
@@ -44,7 +44,6 @@ public class UrlUtil {
    * @return URI object
    * @throws URISyntaxException
    *           if url could not be parsed / invalid
-   * @author Myron Boyle
    */
   public static URI getURIEncoded(String url) throws URISyntaxException {
     String[] trArr = url.split("://");
@@ -59,7 +58,6 @@ public class UrlUtil {
    * @return file extension or empty string
    * @throws URISyntaxException
    *           if url is not valid
-   * @author Myron Boyle
    */
   public static String getFileExtension(String url) throws URISyntaxException {
     String ext = getURIEncoded(url).getPath();

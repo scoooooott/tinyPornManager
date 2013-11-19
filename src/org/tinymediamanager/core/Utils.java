@@ -239,7 +239,6 @@ public class Utils {
    * @param title
    *          the title
    * @return the title/originaltitle in its sortable format
-   * @author Myron Boyle
    */
   public static String getSortableName(String title) {
     if (title == null || title.isEmpty()) {
@@ -261,7 +260,6 @@ public class Utils {
    * @param title
    *          the title
    * @return the original title
-   * @author Myron Boyle
    */
   public static String removeSortableName(String title) {
     if (title == null || title.isEmpty()) {
@@ -674,7 +672,6 @@ public class Utils {
    * @return true, if successful
    * @throws IOException
    *           if an IO error occurs moving the file
-   * @author Myron Boyle
    */
   public static boolean moveDirectorySafe(File srcDir, File destDir) throws IOException {
     // rip-off from

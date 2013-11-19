@@ -51,7 +51,6 @@ public class ParserUtils {
    * @param filename
    *          the filename to get the title from
    * @return the (hopefully) correct parsed movie name
-   * @author Myron Boyle
    */
   public static String detectCleanMoviename(String filename) {
     return detectCleanMovienameAndYear(filename)[0];
@@ -67,7 +66,6 @@ public class ParserUtils {
    * @param filename
    *          the filename to get the title from
    * @return title/year string (year can be empty)
-   * @author Myron Boyle
    */
   public static String[] detectCleanMovienameAndYear(String filename) {
     String[] ret = { "", "" };

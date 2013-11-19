@@ -764,10 +764,10 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Sets the tv show settings.
+   * Sets the feature settings.
    * 
-   * @param tvShowSettings
-   *          the new tv show settings
+   * @param featureSettings
+   *          the new feature settings
    */
   public void setFeatureSettings(FeatureSettings featureSettings) {
     this.featureSettings = featureSettings;

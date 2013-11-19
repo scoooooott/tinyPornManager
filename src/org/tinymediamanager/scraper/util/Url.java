@@ -45,7 +45,7 @@ import org.tinymediamanager.core.Utils;
 /**
  * The Class Url.
  * 
- * @author Manuel Laggner
+ * @author Manuel Laggner / Myron Boyle
  */
 public class Url {
   /** The log. */
@@ -75,7 +75,6 @@ public class Url {
    * @param header
    *          the header you want to know (like Content-Length)
    * @return the header value
-   * @author Myron Boyle
    */
   public String getHeader(String header) {
     if (headersResponse == null) {

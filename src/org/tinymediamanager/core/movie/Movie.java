@@ -341,7 +341,6 @@ public class Movie extends MediaEntity {
    * @param trailerToDownload
    *          the MediaTrailer object to download
    * @return true/false if successful
-   * @author Myron Boyle
    */
   public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
     try {

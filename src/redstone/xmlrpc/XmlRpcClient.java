@@ -236,7 +236,7 @@ public class XmlRpcClient extends XmlRpcParser implements XmlRpcInvocationHandle
     /**
      *  A asynchronous version of invoke performing the call in a separate thread and
      *  reporting responses, faults, and exceptions through the supplied XmlRpcCallback.
-     *  TODO Determine on proper strategy for instantiating Threads.
+     *  ToDo Determine on proper strategy for instantiating Threads.
      *
      *  @param method The name of the method at the server.
      *
