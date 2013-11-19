@@ -136,6 +136,7 @@ public class MovieEditorDialog extends JDialog {
   private JTextField                  tfSpokenLanguages;
   private JTextField                  tfCountry;
   private JSpinner                    spReleaseDate;
+  private JSpinner                    spTop250;
 
   private final Action                actionOK             = new SwingAction();
   private final Action                actionCancel         = new SwingAction_1();
@@ -285,6 +286,14 @@ public class MovieEditorDialog extends JDialog {
       details1Panel.add(spReleaseDate, "4, 14");
     }
     {
+      JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+      details1Panel.add(lblCertification, "8, 14, right, default");
+    }
+    cbCertification = new JComboBox();
+    details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");
+
+    cbCertification.setSelectedItem(movie.getCertification());
+    {
       JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
       details1Panel.add(lblRating, "2, 16, right, default");
     }
@@ -293,18 +302,20 @@ public class MovieEditorDialog extends JDialog {
       details1Panel.add(spRating, "4, 16");
     }
     {
-      JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-      details1Panel.add(lblCertification, "8, 16, right, default");
-    }
-    {
-      cbCertification = new JComboBox();
       for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getMovieSettings().getCertificationCountry())) {
         cbCertification.addItem(cert);
       }
-      details1Panel.add(cbCertification, "10, 16, 3, 1, fill, default");
     }
     {
-      JLabel lblMovieSet = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$"Movie set");
+      JLabel lblTop = new JLabel(BUNDLE.getString("metatag.top250")); //$NON-NLS-1$
+      details1Panel.add(lblTop, "8, 16, right, default");
+    }
+    {
+      spTop250 = new JSpinner();
+      details1Panel.add(spTop250, "10, 16");
+    }
+    {
+      JLabel lblMovieSet = new JLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
       details1Panel.add(lblMovieSet, "2, 18, right, default");
     }
     {
@@ -606,6 +617,7 @@ public class MovieEditorDialog extends JDialog {
       lblPoster.setImagePath(movie.getPoster());
       tfProductionCompanies.setText(movie.getProductionCompany());
       spRuntime.setValue(Integer.valueOf(movie.getRuntime()));
+      spTop250.setValue(Integer.valueOf(movie.getTop250()));
       cbWatched.setSelected(movie.isWatched());
       spDateAdded.setValue(movie.getDateAdded());
       if (movie.getReleaseDate() != null) {
@@ -654,8 +666,6 @@ public class MovieEditorDialog extends JDialog {
 
       extrathumbs.addAll(movieToEdit.getExtraThumbs());
       extrafanarts.addAll(movieToEdit.getExtraFanarts());
-
-      cbCertification.setSelectedItem(movie.getCertification());
 
       cbMovieSet.addItem("");
       for (MovieSet movieSet : movieList.getMovieSetList()) {
@@ -749,6 +759,7 @@ public class MovieEditorDialog extends JDialog {
         movieToEdit.setReleaseDate(releaseDate);
       }
       movieToEdit.setRuntime((Integer) spRuntime.getValue());
+      movieToEdit.setTop250((Integer) spTop250.getValue());
       movieToEdit.setImdbId(tfImdbId.getText());
       movieToEdit.setWatched(cbWatched.isSelected());
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());

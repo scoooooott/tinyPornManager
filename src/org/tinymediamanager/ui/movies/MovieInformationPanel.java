@@ -166,6 +166,7 @@ public class MovieInformationPanel extends JPanel {
 
   /** The lbl media logo audio. */
   private JLabel                      lblMediaLogoAudio;
+  private JLabel                      lblTop250;
 
   /**
    * Instantiates a new movie information panel.
@@ -215,7 +216,8 @@ public class MovieInformationPanel extends JPanel {
     JPanel panelRatingTagline = new JPanel();
     panelMovieHeader.add(panelRatingTagline, BorderLayout.CENTER);
     panelRatingTagline.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("24px"), FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("24px"), FormFactory.DEFAULT_ROWSPEC, }));
 
     lblRating = new JLabel("");
     panelRatingTagline.add(lblRating, "2, 2, left, center");
@@ -227,8 +229,11 @@ public class MovieInformationPanel extends JPanel {
     panelRatingTagline.add(panelRatingStars, "1, 2, left, top");
     panelRatingStars.setEnabled(false);
 
+    lblTop250 = new JLabel("");
+    panelRatingTagline.add(lblTop250, "5, 2");
+
     lblTagline = new JLabel();
-    panelRatingTagline.add(lblTagline, "1, 3, 3, 1, default, center");
+    panelRatingTagline.add(lblTagline, "1, 3, 5, 1, default, center");
 
     panelMovieLogos = new JPanel();
     panelMovieHeader.add(panelMovieLogos, BorderLayout.EAST);
@@ -331,6 +336,12 @@ public class MovieInformationPanel extends JPanel {
           }
 
           if (movie != null) {
+            if (movie.getTop250() > 0) {
+              lblTop250.setText("Top 250: #" + movie.getTop250());
+            }
+            else {
+              lblTop250.setText("");
+            }
             lblMovieBackground.setImagePath(movie.getFanart());
             lblMoviePoster.setImagePath(movie.getPoster());
 
@@ -364,6 +375,15 @@ public class MovieInformationPanel extends JPanel {
           Movie movie = (Movie) source;
           lblMoviePoster.clearImage();
           lblMoviePoster.setImagePath(movie.getPoster());
+        }
+        if ((source.getClass() == Movie.class && TOP250.equals(property))) {
+          Movie movie = (Movie) source;
+          if (movie.getTop250() > 0) {
+            lblTop250.setText(BUNDLE.getString("metatag.top250") + ": #" + movie.getTop250()); //$NON-NLS-1$
+          }
+          else {
+            lblTop250.setText("");
+          }
         }
       }
     };

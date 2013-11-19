@@ -52,6 +52,7 @@ public class MediaMetadata {
   private String                  status            = "";
   private String                  studio            = "";
   private String                  collectionName    = "";
+  private int                     top250            = 0;
 
   private List<MediaCastMember>   castMembers       = new ArrayList<MediaCastMember>();
   private List<MediaArtwork>      fanart            = new ArrayList<MediaArtwork>();
@@ -692,5 +693,13 @@ public class MediaMetadata {
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+  }
+
+  public int getTop250() {
+    return top250;
+  }
+
+  public void setTop250(int top250) {
+    this.top250 = top250;
   }
 }

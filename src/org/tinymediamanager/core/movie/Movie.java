@@ -104,6 +104,7 @@ public class Movie extends MediaEntity {
   private String              country           = "";
   private Date                releaseDate       = null;
   private boolean             multiMovieDir     = false;                                        // we detected more movies in same folder
+  private int                 top250            = 0;
 
   private List<String>        genres            = new ArrayList<String>();
   private List<String>        tags              = new ArrayList<String>();
@@ -923,6 +924,7 @@ public class Movie extends MediaEntity {
     if (config.isRating()) {
       setRating((float) metadata.getRating());
       setVotes(metadata.getVoteCount());
+      setTop250(metadata.getTop250());
     }
 
     if (config.isRuntime()) {
@@ -2090,5 +2092,15 @@ public class Movie extends MediaEntity {
 
   public List<MediaFile> getVideoFiles() {
     return getMediaFiles(MediaFileType.VIDEO);
+  }
+
+  public int getTop250() {
+    return top250;
+  }
+
+  public void setTop250(int newValue) {
+    int oldValue = this.top250;
+    this.top250 = newValue;
+    firePropertyChange(TOP250, oldValue, newValue);
   }
 }

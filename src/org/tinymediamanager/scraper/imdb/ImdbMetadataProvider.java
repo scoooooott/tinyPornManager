@@ -196,24 +196,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
             break;
           }
         }
-
-        // original title
-        // if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
-        // original title = title
         md.setOriginalTitle(md.getTitle());
-        // } else {
-        // // try to parse the title out of "title-extra"
-        // Elements span = element.getElementsByClass("title-extra");
-        // if (span.size() > 0) {
-        // Element titleExtra = span.first();
-        // String originalTitle = titleExtra.ownText();
-        // if (!StringUtils.isEmpty(originalTitle)) {
-        // md.setOriginalTitle(originalTitle);
-        // }
-        // }
-        // }
       }
-
     }
 
     // poster
@@ -270,26 +254,27 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         }
       }
 
-      // // top250
-      // elements = ratingElement.getElementsByClass("starbar-special");
-      // if (elements.size() > 0) {
-      // Elements a = elements.get(0).getElementsByTag("a");
-      // if(a.size() > 0){
-      // Element anchor = a.get(0);
-      // Pattern topPattern = Pattern.compile("Top 250: #([0-9]{1,3})");
-      // Matcher matcher = topPattern.matcher(anchor.ownText());
-      // while(matcher.find()){
-      // if(matcher.group(1) != null){
-      // int top250 = 0;
-      // try{
-      // top250 = Integer.parseInt(matcher.group(1));
-      // } catch(Exception e){
-      // }
-      // //
-      // }
-      // }
-      // }
-      // }
+      // top250
+      elements = ratingElement.getElementsByClass("starbar-special");
+      if (elements.size() > 0) {
+        Elements a = elements.get(0).getElementsByTag("a");
+        if (a.size() > 0) {
+          Element anchor = a.get(0);
+          Pattern topPattern = Pattern.compile("Top 250: #([0-9]{1,3})");
+          Matcher matcher = topPattern.matcher(anchor.ownText());
+          while (matcher.find()) {
+            if (matcher.group(1) != null) {
+              int top250 = 0;
+              try {
+                top250 = Integer.parseInt(matcher.group(1));
+              }
+              catch (Exception e) {
+              }
+              md.setTop250(top250);
+            }
+          }
+        }
+      }
     }
 
     // parse all items coming by <div class="info">

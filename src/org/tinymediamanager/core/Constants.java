@@ -79,6 +79,7 @@ public final class Constants {
   public final static String TITLE_FOR_UI           = "titleForUi";
   public final static String TITLE_SORTABLE         = "titleSortable";
   public final static String TMDBID                 = "tmdbId";
+  public final static String TOP250                 = "top250";
   public final static String TRAILER                = "trailer";
   public final static String TV_SHOW                = "tvShow";
   public final static String TV_SHOW_COUNT          = "tvShowCount";
