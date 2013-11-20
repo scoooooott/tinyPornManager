@@ -87,70 +87,30 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowChooserDialog extends JDialog implements ActionListener {
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID      = 2371518113606870230L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
-
-  /** The static LOGGER. */
   private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowChooserDialog.class);
 
-  /** The content panel. */
-  private final JPanel                contentPanel          = new JPanel();
-
-  /** The tv show list. */
   private TvShowList                  tvShowList            = TvShowList.getInstance();
-
-  /** The tv show to scrape. */
   private TvShow                      tvShowToScrape;
-
-  /** The text field search string. */
-  private JTextField                  textFieldSearchString;
-
-  /** The cb scraper. */
-  private JComboBox                   cbScraper;
-
-  /** The table. */
-  private JTable                      table;
-
-  /** The lbl tv show name. */
-  private JTextArea                   lblTvShowName;
-
-  /** The tp tv show overview. */
-  private JTextPane                   tpTvShowOverview;
-
-  /** The lbl tv show poster. */
-  private ImageLabel                  lblTvShowPoster;
-
-  /** The lbl progress action. */
-  private JLabel                      lblProgressAction;
-
-  /** The progress bar. */
-  private JProgressBar                progressBar;
-
-  /** The tv shows found. */
   private List<TvShowChooserModel>    tvShowsFound          = ObservableCollections.observableList(new ArrayList<TvShowChooserModel>());
-
-  /** The scraper metadata config. */
   private TvShowScraperMetadataConfig scraperMetadataConfig = new TvShowScraperMetadataConfig();
-
-  /** The metadata provider. */
   private ITvShowMetadataProvider     metadataProvider;
-
-  /** The artwork providers. */
   private List<IMediaArtworkProvider> artworkProviders;
-
-  /** The trailer providers. */
   private List<IMediaTrailerProvider> trailerProviders;
-
-  /** The continue queue. */
   private boolean                     continueQueue         = true;
 
-  /** The ok button. */
+  /** UI components */
+  private final JPanel                contentPanel          = new JPanel();
+  private JTextField                  textFieldSearchString;
+  private JComboBox                   cbScraper;
+  private JTable                      table;
+  private JTextArea                   lblTvShowName;
+  private JTextPane                   tpTvShowOverview;
+  private ImageLabel                  lblTvShowPoster;
+  private JLabel                      lblProgressAction;
+  private JProgressBar                progressBar;
   private JButton                     okButton;
-
   private JLabel                      lblPath;
 
   /**
@@ -319,7 +279,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     }
     {
       JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "1, 9, fill, fill");
+      contentPanel.add(panelScraperMetadataSetting, "1, 9, default, fill");
     }
 
     {

@@ -548,7 +548,9 @@ public class TvShow extends MediaEntity {
     }
 
     if (config.isCertification()) {
-      setCertification(metadata.getCertifications().get(0));
+      if (metadata.getCertifications().size() > 0) {
+        setCertification(metadata.getCertifications().get(0));
+      }
     }
 
     if (config.isGenres()) {

@@ -33,8 +33,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
@@ -49,24 +50,24 @@ import org.tinymediamanager.core.Utils;
  */
 public class Url {
   /** The log. */
-  private static final Logger      LOGGER          = LoggerFactory.getLogger(Url.class);
+  private static final Logger LOGGER          = LoggerFactory.getLogger(Url.class);
 
   /** The client. */
-  private static DefaultHttpClient client;
+  private static HttpClient   client;
 
-  protected int                    responseCode    = 0;
+  protected int               responseCode    = 0;
 
   /** The url. */
-  protected String                 url             = null;
+  protected String            url             = null;
 
   /** the headers sent from server. */
-  protected Header[]               headersResponse = null;
+  protected Header[]          headersResponse = null;
 
   /** The headers request. */
-  protected List<Header>           headersRequest  = new ArrayList<Header>();
+  protected List<Header>      headersRequest  = new ArrayList<Header>();
 
   /** The entity sent from server. */
-  protected HttpEntity             entity          = null;
+  protected HttpEntity        entity          = null;
 
   /**
    * gets the specified header value from this connection<br>
@@ -96,7 +97,7 @@ public class Url {
    */
   public Url(String url) {
     if (client == null) {
-      client = Utils.getHttpClient();
+      client = new DecompressingHttpClient(Utils.getHttpClient());
     }
     this.url = url;
   }
@@ -160,7 +161,7 @@ public class Url {
       return new FileInputStream(file);
     }
 
-    DefaultHttpClient httpclient = getHttpClient();
+    HttpClient httpclient = getHttpClient();
     BasicHttpContext localContext = new BasicHttpContext();
 
     ByteArrayInputStream is = null;
@@ -224,7 +225,7 @@ public class Url {
    * 
    * @return the http client
    */
-  protected DefaultHttpClient getHttpClient() {
+  protected HttpClient getHttpClient() {
     return client;
   }
 

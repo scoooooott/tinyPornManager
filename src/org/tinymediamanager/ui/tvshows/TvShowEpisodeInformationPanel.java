@@ -154,7 +154,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
    */
   public TvShowEpisodeInformationPanel(TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel) {
     this.tvShowEpisodeSelectionModel = tvShowEpisodeSelectionModel;
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("650px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("350px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     splitPaneVertical = new JSplitPane();
     splitPaneVertical.setBorder(null);

@@ -103,7 +103,7 @@ public class TvShowBatchEditorDialog extends JDialog {
   public TvShowBatchEditorDialog(final List<TvShow> tvShows, final List<TvShowEpisode> episodes) {
     setModal(true);
     setIconImage(Globals.logo);
-    setTitle(BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+    setTitle(BUNDLE.getString("tvshow.bulkedit")); //$NON-NLS-1$
     setName("movieBatchEditor");
     setBounds(5, 5, 350, 286);
     TmmWindowSaver.loadSettings(this);

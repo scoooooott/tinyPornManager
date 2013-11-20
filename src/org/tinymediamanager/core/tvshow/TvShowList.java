@@ -40,6 +40,7 @@ import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.anidb.AniDBMetadataProvider;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
 
 /**
@@ -241,6 +242,10 @@ public class TvShowList extends AbstractModelObject {
   public ITvShowMetadataProvider getMetadataProvider(TvShowScrapers scraper) {
     ITvShowMetadataProvider metadataProvider = null;
     switch (scraper) {
+      case ANIDB:
+        LOGGER.debug("get instance of AniDbMetadataProvider");
+        metadataProvider = new AniDBMetadataProvider();
+        break;
       case TVDB:
       default:
         LOGGER.debug("get instance of TheTvDbMetadataProvider");
@@ -260,7 +265,7 @@ public class TvShowList extends AbstractModelObject {
   public List<IMediaArtworkProvider> getArtworkProviders() {
     List<TvShowArtworkScrapers> scrapers = new ArrayList<TvShowArtworkScrapers>();
     scrapers.add(TvShowArtworkScrapers.TVDB);
-
+    scrapers.add(TvShowArtworkScrapers.ANIDB);
     return getArtworkProviders(scrapers);
   }
 
@@ -287,6 +292,11 @@ public class TvShowList extends AbstractModelObject {
       catch (Exception e) {
         LOGGER.warn("failed to get instance of TheTvDbMetadataProvider", e);
       }
+    }
+
+    // anidb
+    if (scrapers.contains(TvShowArtworkScrapers.ANIDB)) {
+      artworkProviders.add(new AniDBMetadataProvider());
     }
 
     return artworkProviders;

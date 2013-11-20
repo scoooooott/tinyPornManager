@@ -26,13 +26,8 @@ import org.tinymediamanager.Globals;
  * @author Manuel Laggner
  */
 public class TvShowSearchAndScrapeOptions {
-  /** The scraper metadata config. */
   private TvShowScraperMetadataConfig scraperMetadataConfig;
-
-  /** The media metadata provider. */
   private TvShowScrapers              metadataScraper;
-
-  /** The artwork providers. */
   private List<TvShowArtworkScrapers> artworkScrapers = new ArrayList<TvShowArtworkScrapers>();
 
   /** The trailer providers. */

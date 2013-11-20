@@ -13,38 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.tvshow;
+package org.tinymediamanager.scraper.anidb;
 
 /**
- * The Enum TvShowArtworkScrapers.
+ * The class AniDBShow - to buffer search results from AniDB
  * 
  * @author Manuel Laggner
  */
-public enum TvShowArtworkScrapers {
-
-  /** The tmdb. */
-  TVDB("The TV Database"), ANIDB("AniDB");
-
-  /** The title. */
-  private String title;
-
-  /**
-   * Instantiates a new movie scrapers.
-   * 
-   * @param title
-   *          the title
-   */
-  private TvShowArtworkScrapers(String title) {
-    this.title = title;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Enum#toString()
-   */
-  @Override
-  public String toString() {
-    return this.title;
-  }
+class AniDBShow {
+  int    aniDbId;
+  String language;
+  String title;
 }

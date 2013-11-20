@@ -36,6 +36,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public final static MediaGenres ACTION          = new MediaGenres("ACTION", 0, "Action");
   public final static MediaGenres ADVENTURE       = new MediaGenres("ADVENTURE", 1, "Adventure");
   public final static MediaGenres ANIMATION       = new MediaGenres("ANIMATION", 2, "Animation");
+  public final static MediaGenres ANIME           = new MediaGenres("ANIME", -1, "Anime");
   public final static MediaGenres ANIMAL          = new MediaGenres("ANIMAL", 3, "Animal");
   public final static MediaGenres BIOGRAPHY       = new MediaGenres("BIOGRAPHY", 4, "Biography");
   public final static MediaGenres COMEDY          = new MediaGenres("COMEDY", 5, "Comedy");

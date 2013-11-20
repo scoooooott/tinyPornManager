@@ -155,9 +155,8 @@ public class TvShowPanel extends JPanel {
     JMenuBar menuBar = mainFrame.getJMenuBar();
     menuBar.add(menu);
 
-    setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("850px:grow"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     JSplitPane splitPane = new JSplitPane();
     splitPane.setContinuousLayout(true);

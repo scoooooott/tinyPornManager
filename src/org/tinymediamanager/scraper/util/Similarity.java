@@ -90,10 +90,38 @@ public class Similarity {
    * @return lexical similarity value in the range [0,1]
    */
   public static float compareStrings(String str1, String str2) {
+    return compareStrings(str1, str2, false);
+  }
+
+  /**
+   * Compare strings and disable logger output (performance).
+   * 
+   * @param str1
+   *          the str1
+   * @param str2
+   *          the str2
+   * @return lexical similarity value in the range [0,1]
+   */
+  public static float compareStringsWithoutLog(String str1, String str2) {
+    return compareStrings(str1, str2, true);
+  }
+
+  /**
+   * Compare strings.
+   * 
+   * @param str1
+   *          the str1
+   * @param str2
+   *          the str2
+   * @return lexical similarity value in the range [0,1]
+   */
+  private static float compareStrings(String str1, String str2, boolean suppressLogOutput) {
     if (str1 == null || str2 == null)
       return 0.0f;
     if (str1.equalsIgnoreCase(str2)) {
-      LOGGER.debug(String.format("Similarity Score: [%s][%s]=[%s]", str1, str2, 1.0f));
+      if (!suppressLogOutput) {
+        LOGGER.debug(String.format("Similarity Score: [%s][%s]=[%s]", str1, str2, 1.0f));
+      }
       return 1.0f;
     }
 
@@ -136,7 +164,7 @@ public class Similarity {
       // score = 0.90f;
       // }
       // }
-      if (LOGGER.isDebugEnabled()) {
+      if (LOGGER.isDebugEnabled() && !suppressLogOutput) {
         LOGGER.debug(String.format("Similarity Score: [%s][%s]=[%s]", str1, str2, score));
       }
       return score;
@@ -146,5 +174,4 @@ public class Similarity {
       return (float) 0.0;
     }
   }
-
 }

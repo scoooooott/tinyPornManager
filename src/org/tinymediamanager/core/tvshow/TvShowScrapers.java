@@ -21,11 +21,8 @@ package org.tinymediamanager.core.tvshow;
  * @author Manuel Laggner
  */
 public enum TvShowScrapers {
+  TVDB("The TV Database"), ANIDB("AniDB");
 
-  /** The tmdb. */
-  TVDB("The TV Database");
-
-  /** The title. */
   private String title;
 
   /**
@@ -46,5 +43,4 @@ public enum TvShowScrapers {
   public String toString() {
     return this.title;
   }
-
 }

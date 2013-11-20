@@ -183,7 +183,13 @@ public class TvShowChooserModel extends AbstractModelObject {
    */
   public void setCombinedName() {
     String oldValue = this.combinedName;
-    this.combinedName = getName() + " (" + getYear() + ")";
+
+    if (StringUtils.isNotBlank(getYear())) {
+      this.combinedName = getName() + " (" + getYear() + ")";
+    }
+    else {
+      this.combinedName = getName();
+    }
     firePropertyChange("combinedName", oldValue, this.combinedName);
   }
 

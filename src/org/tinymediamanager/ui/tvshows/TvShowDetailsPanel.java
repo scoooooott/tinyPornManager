@@ -48,47 +48,22 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowDetailsPanel extends JPanel {
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = -1569492065407109019L;
-
-  /** The Constant LOGGER. */
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowDetailsPanel.class);
-
-  /** The Constant BUNDLE. */
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowDetailsPanel.class);
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The selection model. */
   private final TvShowSelectionModel  selectionModel;
 
-  /** The lbl genres. */
+  /** UI components */
   private JLabel                      lblGenres;
-
-  /** The lbl certification. */
   private JLabel                      lblCertification;
-
-  /** The lbl thetvdb id. */
   private LinkLabel                   lblThetvdbId;
-
-  /** The lbl imdb id. */
   private LinkLabel                   lblImdbId;
-
-  /** The lbl path. */
   private LinkLabel                   lblPath;
-
-  /** The lbl premiered. */
   private JLabel                      lblPremiered;
-
-  /** The lbl studio. */
   private JLabel                      lblStudio;
-
-  /** The lbl status. */
   private JLabel                      lblStatus;
-
-  /** The lbl year t. */
   private JLabel                      lblYearT;
-
-  /** The lbl year. */
   private JLabel                      lblYear;
 
   /**

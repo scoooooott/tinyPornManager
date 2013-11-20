@@ -72,9 +72,6 @@ public class TvShowMediaInformationPanel extends JPanel {
   /** The selection model. */
   private TvShowSelectionModel        selectionModel;
 
-  /** The lbl files t. */
-  private JLabel                      lblFilesT;
-
   /** The lbl path. */
   private LinkLabel                   lblTvShowPath;
 
@@ -223,11 +220,8 @@ public class TvShowMediaInformationPanel extends JPanel {
     lblTvShowPathT.setLabelFor(lblTvShowPath);
     add(lblTvShowPath, "4, 4, 5, 1");
 
-    lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
-    add(lblFilesT, "2, 6, default, top");
-
     panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
-    add(panelMediaFiles, "4, 6, 7, 1, fill, fill");
+    add(panelMediaFiles, "2, 6, 9, 1, fill, fill");
 
     initDataBindings();
 
