@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -63,7 +64,6 @@ public class TvShowDetailsPanel extends JPanel {
   private JLabel                      lblPremiered;
   private JLabel                      lblStudio;
   private JLabel                      lblStatus;
-  private JLabel                      lblYearT;
   private JLabel                      lblYear;
 
   /**
@@ -74,77 +74,40 @@ public class TvShowDetailsPanel extends JPanel {
    */
   public TvShowDetailsPanel(TvShowSelectionModel selectionModel) {
     this.selectionModel = selectionModel;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow(3)"), },
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow(2)"), },
         new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-
-    JLabel lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-    add(lblGenresT, "2, 2");
-
-    lblGenres = new JLabel("");
-    lblGenresT.setLabelFor(lblGenres);
-    add(lblGenres, "6, 2, 5, 1");
-
-    JLabel lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
-    add(lblCertificationT, "2, 4");
-
-    lblCertification = new JLabel("");
-    lblCertificationT.setLabelFor(lblCertification);
-    add(lblCertification, "6, 4");
-
-    JLabel lblStudioT = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
-    add(lblStudioT, "2, 6");
-
-    lblStudio = new JLabel("");
-    add(lblStudio, "6, 6, 5, 1");
+            FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblPremieredT = new JLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
-    add(lblPremieredT, "2, 8");
+    setBoldLabel(lblPremieredT);
+    add(lblPremieredT, "1, 2");
 
     lblPremiered = new JLabel("");
-    add(lblPremiered, "6, 8");
+    add(lblPremiered, "5, 2");
 
-    lblYearT = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
-    add(lblYearT, "8, 8");
+    JLabel lblYearT = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+    setBoldLabel(lblYearT);
+    add(lblYearT, "7, 2");
 
     lblYear = new JLabel("");
-    add(lblYear, "10, 8");
+    add(lblYear, "11, 2");
 
     JLabel lblStatusT = new JLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
-    add(lblStatusT, "2, 10");
+    setBoldLabel(lblStatusT);
+    add(lblStatusT, "1, 4");
 
     lblStatus = new JLabel("");
-    add(lblStatus, "6, 10, 5, 1");
-
-    JLabel lblThetvdbIdT = new JLabel("TheTVDB Id");
-    add(lblThetvdbIdT, "2, 12");
-
-    lblThetvdbId = new LinkLabel("");
-    lblThetvdbIdT.setLabelFor(lblThetvdbId);
-    lblThetvdbId.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getNormalText();
-        try {
-          TmmUIHelper.browseUrl(url);
-        }
-        catch (Exception e) {
-          LOGGER.error("browse to thetvdb", e);
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
-              e.getLocalizedMessage() }));
-        }
-      }
-    });
-    add(lblThetvdbId, "6, 12");
+    add(lblStatus, "5, 4");
 
     JLabel lblImdbIdT = new JLabel("IMDB Id");
-    add(lblImdbIdT, "8, 12");
+    setBoldLabel(lblImdbIdT);
+    add(lblImdbIdT, "7, 4");
 
     lblImdbId = new LinkLabel("");
-    lblImdbIdT.setLabelFor(lblImdbId);
     lblImdbId.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         String url = "http://www.imdb.com/title/" + lblImdbId.getNormalText();
@@ -158,10 +121,56 @@ public class TvShowDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblImdbId, "10, 12");
+    add(lblImdbId, "11, 4");
+    lblImdbIdT.setLabelFor(lblImdbId);
+
+    JLabel lblStudioT = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
+    setBoldLabel(lblStudioT);
+    add(lblStudioT, "1, 6");
+
+    lblStudio = new JLabel("");
+    add(lblStudio, "5, 6");
+
+    JLabel lblThetvdbIdT = new JLabel("TheTVDB Id");
+    setBoldLabel(lblThetvdbIdT);
+    add(lblThetvdbIdT, "7, 6");
+
+    lblThetvdbId = new LinkLabel("");
+    lblThetvdbId.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getNormalText();
+        try {
+          TmmUIHelper.browseUrl(url);
+        }
+        catch (Exception e) {
+          LOGGER.error("browse to thetvdb", e);
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":",
+              e.getLocalizedMessage() }));
+        }
+      }
+    });
+    add(lblThetvdbId, "11, 6");
+    lblThetvdbIdT.setLabelFor(lblThetvdbId);
+
+    JLabel lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+    setBoldLabel(lblCertificationT);
+    add(lblCertificationT, "1, 8");
+    lblCertificationT.setLabelFor(lblCertification);
+
+    lblCertification = new JLabel("");
+    add(lblCertification, "5, 8, 7, 1");
+
+    JLabel lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+    setBoldLabel(lblGenresT);
+    add(lblGenresT, "1, 10");
+    lblGenresT.setLabelFor(lblGenres);
+
+    lblGenres = new JLabel("");
+    add(lblGenres, "5, 10, 7, 1");
 
     JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
-    add(lblPathT, "2, 14");
+    setBoldLabel(lblPathT);
+    add(lblPathT, "1, 12");
 
     lblPath = new LinkLabel("");
     lblPathT.setLabelFor(lblPath);
@@ -184,7 +193,7 @@ public class TvShowDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblPath, "6, 14, 5, 1");
+    add(lblPath, "5, 12, 7, 1");
     initDataBindings();
   }
 
@@ -234,5 +243,9 @@ public class TvShowDetailsPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_8, lblYear, jLabelBeanProperty);
     autoBinding_8.bind();
+  }
+
+  private void setBoldLabel(JLabel label) {
+    label.setFont(label.getFont().deriveFont(Font.BOLD));
   }
 }

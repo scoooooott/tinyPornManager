@@ -460,6 +460,7 @@ public class ImageLabel extends JLabel {
       finally {
         size = null;
       }
+      revalidate();
       repaint();
     }
   }
