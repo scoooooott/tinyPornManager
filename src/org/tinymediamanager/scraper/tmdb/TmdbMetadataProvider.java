@@ -304,8 +304,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       baseUrl = tmdb.getConfiguration().getBaseUrl();
 
       if (movie.getBelongsToCollection() != null) {
-        md.setTmdbIdSet(movie.getBelongsToCollection().getId());
-        md.setCollectionName(movie.getBelongsToCollection().getName());
+        md.storeMetadata(MediaMetadata.TMDBID_SET, movie.getBelongsToCollection().getId());
+        md.storeMetadata(MediaMetadata.COLLECTION_NAME, movie.getBelongsToCollection().getName());
         // CollectionInfo info = tmdb.getCollectionInfo(md.getTmdbIdSet(), options.getLanguage().name());
         // if (info != null) {
         // md.setCollectionName(info.getName());
@@ -328,15 +328,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
     }
 
-    md.setTmdbId(movie.getId());
-    md.setPlot(movie.getOverview());
-    md.setTitle(movie.getTitle());
-    md.setOriginalTitle(movie.getOriginalTitle());
-    md.setTagline(movie.getTagline());
+    md.setId(MediaMetadata.TMDBID, movie.getId());
+    md.storeMetadata(MediaMetadata.PLOT, movie.getOverview());
+    md.storeMetadata(MediaMetadata.TITLE, movie.getTitle());
+    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, movie.getOriginalTitle());
+    md.storeMetadata(MediaMetadata.TAGLINE, movie.getTagline());
 
-    md.setRating(movie.getVoteAverage());
-    md.setRuntime(movie.getRuntime());
-    md.setVoteCount(movie.getVoteCount());
+    md.storeMetadata(MediaMetadata.RATING, movie.getVoteAverage());
+    md.storeMetadata(MediaMetadata.RUNTIME, movie.getRuntime());
+    md.storeMetadata(MediaMetadata.VOTE_COUNT, movie.getVoteCount());
 
     String spokenLanguages = "";
     for (Language lang : movie.getSpokenLanguages()) {
@@ -346,7 +346,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
       spokenLanguages += lang.getIsoCode();
     }
-    md.setSpokenLanguages(spokenLanguages);
+    md.storeMetadata(MediaMetadata.SPOKEN_LANGUAGES, spokenLanguages);
 
     String countries = "";
     for (ProductionCountry country : movie.getProductionCountries()) {
@@ -355,10 +355,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       countries += country.getIsoCode();
     }
-    md.setCountry(countries);
+    md.storeMetadata(MediaMetadata.COUNTRY, countries);
 
     if (movie.getImdbID() != null && MetadataUtil.isValidImdbId(movie.getImdbID())) {
-      md.setImdbId(movie.getImdbID());
+      md.setId(MediaMetadata.IMDBID, movie.getImdbID());
     }
 
     // production companies
@@ -370,14 +370,14 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       productionCompanies.append(company.getName().trim());
     }
-    md.setProductionCompany(productionCompanies.toString());
+    md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, productionCompanies.toString());
 
     // parse release date to year
     String releaseDate = movie.getReleaseDate();
     if (!StringUtils.isEmpty(releaseDate) && releaseDate.length() > 3) {
-      md.setYear(releaseDate.substring(0, 4));
+      md.storeMetadata(MediaMetadata.YEAR, releaseDate.substring(0, 4));
     }
-    md.setReleaseDate(releaseDate);
+    md.storeMetadata(MediaMetadata.RELEASE_DATE, releaseDate);
 
     // get certification
     List<ReleaseInfo> releaseInfo = null;
@@ -504,15 +504,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       return md;
     }
 
-    md.setTmdbId(movie.getId());
-    md.setPlot(movie.getOverview());
-    md.setTitle(movie.getTitle());
-    md.setOriginalTitle(movie.getOriginalTitle());
-    md.setTagline(movie.getTagline());
+    md.setId(MediaMetadata.TMDBID, movie.getId());
+    md.storeMetadata(MediaMetadata.PLOT, movie.getOverview());
+    md.storeMetadata(MediaMetadata.TITLE, movie.getTitle());
+    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, movie.getOriginalTitle());
+    md.storeMetadata(MediaMetadata.TAGLINE, movie.getTagline());
 
     if (movie.getBelongsToCollection() != null) {
-      md.setTmdbIdSet(movie.getBelongsToCollection().getId());
-      md.setCollectionName(movie.getBelongsToCollection().getName());
+      md.storeMetadata(MediaMetadata.TMDBID_SET, movie.getBelongsToCollection().getId());
+      md.storeMetadata(MediaMetadata.COLLECTION_NAME, movie.getBelongsToCollection().getName());
       // CollectionInfo info = tmdb.getCollectionInfo(md.getTmdbIdSet(), options.getLanguage().name());
       // if (info != null) {
       // md.setCollectionName(info.getName());

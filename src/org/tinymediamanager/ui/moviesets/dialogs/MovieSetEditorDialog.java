@@ -575,8 +575,8 @@ public class MovieSetEditorDialog extends JDialog {
             options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
             options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
             MediaMetadata md = tmdb.getMetadata(options);
-            if (md.getTmdbIdSet() > 0) {
-              tfTmdbId.setText(String.valueOf(md.getTmdbIdSet()));
+            if (md.getIntegerValue(MediaMetadata.TMDBID_SET) > 0) {
+              tfTmdbId.setText(String.valueOf(md.getIntegerValue(MediaMetadata.TMDBID_SET)));
               break;
             }
           }

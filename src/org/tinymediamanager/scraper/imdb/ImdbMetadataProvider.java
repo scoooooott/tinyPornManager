@@ -124,7 +124,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
 
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
-    md.setImdbId(imdbId);
+    md.storeMetadata(MediaMetadata.IMDBID, imdbId);
 
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(Globals.executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(Globals.executor);
@@ -177,7 +177,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       if (elements.size() > 0) {
         element = elements.first();
         String movieTitle = cleanString(element.ownText());
-        md.setTitle(movieTitle);
+        md.storeMetadata(MediaMetadata.TITLE, movieTitle);
       }
 
       // year and original title
@@ -192,11 +192,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         while (matcher.find()) {
           if (matcher.group(1) != null) {
             String movieYear = matcher.group(1);
-            md.setYear(movieYear);
+            md.storeMetadata(MediaMetadata.YEAR, movieYear);
             break;
           }
         }
-        md.setOriginalTitle(md.getTitle());
+        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, md.getStringValue(MediaMetadata.TITLE));
       }
     }
 
@@ -234,7 +234,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
               }
               catch (Exception e) {
               }
-              md.setRating(rating);
+              md.storeMetadata(MediaMetadata.RATING, rating);
               break;
             }
           }
@@ -250,7 +250,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           }
           catch (Exception e) {
           }
-          md.setVoteCount(voteCount);
+          md.storeMetadata(MediaMetadata.VOTE_COUNT, voteCount);
         }
       }
 
@@ -270,7 +270,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
               }
               catch (Exception e) {
               }
-              md.setTop250(top250);
+              md.storeMetadata(MediaMetadata.TOP_250, top250);
             }
           }
         }
@@ -309,10 +309,9 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
                 SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy");
                 Date parsedDate = sdf.parse(matcher.group(1));
                 sdf = new SimpleDateFormat("dd-MM-yyyy");
-                md.setReleaseDate(sdf.format(parsedDate));
+                md.storeMetadata(MediaMetadata.RELEASE_DATE, sdf.format(parsedDate));
               }
               catch (Exception e) {
-                md.setReleaseDate("");
               }
             }
           }
@@ -332,7 +331,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           if (div.size() > 0) {
             Element taglineElement = div.first();
             String tagline = cleanString(taglineElement.ownText().replaceAll("»", ""));
-            md.setTagline(tagline);
+            md.storeMetadata(MediaMetadata.TAGLINE, tagline);
           }
         }
 
@@ -381,7 +380,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
                 runtime = Integer.parseInt(matcher.group(0));
               }
             }
-            md.setRuntime(runtime);
+            md.storeMetadata(MediaMetadata.RUNTIME, runtime);
           }
         }
 
@@ -404,7 +403,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
               countries += country.toUpperCase();
             }
           }
-          md.setCountry(countries);
+          md.storeMetadata(MediaMetadata.COUNTRY, countries);
         }
 
         /*
@@ -426,7 +425,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
               spokenLanguages += langu;
             }
           }
-          md.setSpokenLanguages(spokenLanguages);
+          md.storeMetadata(MediaMetadata.SPOKEN_LANGUAGES, spokenLanguages);
         }
 
         /*
@@ -567,7 +566,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           }
           productionCompanies.append(anchor.ownText());
         }
-        md.setProductionCompany(productionCompanies.toString());
+        md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, productionCompanies.toString());
         break;
       }
     }
@@ -587,7 +586,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         Elements p = odd.get(0).getElementsByTag("p");
         if (p.size() > 0) {
           String plot = cleanString(p.get(0).ownText());
-          md.setPlot(plot);
+          md.storeMetadata(MediaMetadata.PLOT, plot);
         }
       }
     }
@@ -595,7 +594,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       Element wiki = doc.getElementById("swiki.2.1");
       if (wiki != null) {
         String plot = cleanString(wiki.ownText());
-        md.setPlot(plot);
+        md.storeMetadata(MediaMetadata.PLOT, plot);
       }
     }
 
@@ -609,26 +608,27 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         if (elements.size() > 0) {
           element = elements.first();
           String movieTitle = cleanString(element.ownText());
-          md.setTitle(movieTitle);
+          md.storeMetadata(MediaMetadata.TITLE, movieTitle);
         }
       }
-      md.setTagline("");
     }
     // }
 
     // get data from tmdb?
     if (Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage()) {
       MediaMetadata tmdbMd = futureTmdb.get();
-      if (tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getPlot())) {
+      if (tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
+        // tmdbid
+        md.setId(MediaMetadata.TMDBID, tmdbMd.getId(MediaMetadata.TMDBID));
         // title
-        md.setTitle(tmdbMd.getTitle());
+        md.storeMetadata(MediaMetadata.TITLE, tmdbMd.getStringValue(MediaMetadata.TITLE));
         // tagline
-        md.setTagline(tmdbMd.getTagline());
+        md.storeMetadata(MediaMetadata.TAGLINE, tmdbMd.getStringValue(MediaMetadata.TAGLINE));
         // plot
-        md.setPlot(tmdbMd.getPlot());
+        md.storeMetadata(MediaMetadata.PLOT, tmdbMd.getStringValue(MediaMetadata.PLOT));
         // collection info
-        md.setCollectionName(tmdbMd.getCollectionName());
-        md.setTmdbIdSet(tmdbMd.getTmdbIdSet());
+        md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
+        md.storeMetadata(MediaMetadata.TMDBID_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDBID_SET));
       }
     }
 
@@ -744,8 +744,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
         options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
         md = getMetadata(options);
-        if (!StringUtils.isEmpty(md.getTitle())) {
-          movieName = md.getTitle();
+        if (!StringUtils.isEmpty(md.getStringValue(MediaMetadata.TITLE))) {
+          movieName = md.getStringValue(MediaMetadata.TITLE);
         }
       }
 
@@ -754,7 +754,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
         sr.setTitle(movieName);
         sr.setIMDBId(movieId);
-        sr.setYear(md.getYear());
+        sr.setYear(md.getStringValue(MediaMetadata.YEAR));
         sr.setMetadata(md);
         sr.setScore(1);
 

@@ -16,6 +16,7 @@
 package org.tinymediamanager.scraper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,43 +32,49 @@ import org.tinymediamanager.scraper.MediaCastMember.CastType;
  * @author Manuel Laggner
  */
 public class MediaMetadata {
+  public static String            PROVIDER_ID        = "providerId";
+  public static String            IMDBID             = "imdbId";
+  public static String            TMDBID             = "tmdbId";
+  public static String            TMDBID_SET         = "tmdbIdSet";
+  public static String            COLLECTION_NAME    = "collectionName";
+  public static String            TITLE              = "title";
+  public static String            ORIGINAL_TITLE     = "originalTitle";
+  public static String            PLOT               = "plot";
+  public static String            RATING             = "rating";
+  public static String            VOTE_COUNT         = "voteCount";
+  public static String            TOP_250            = "top250";
+  public static String            RUNTIME            = "runtime";
+  public static String            TAGLINE            = "tagline";
+  public static String            PRODUCTION_COMPANY = "productionCompany";
+  public static String            YEAR               = "year";
+  public static String            RELEASE_DATE       = "releaseDate";
+  public static String            SPOKEN_LANGUAGES   = "spokenLanguages";
+  public static String            COUNTRY            = "country";
+  public static String            POSTER_URL         = "posterUrl";
+  public static String            STATUS             = "status";
 
-  private String                  providerId;
-  /** a hashmap storing other ids. */
-  private HashMap<String, Object> ids               = new HashMap<String, Object>();
-  private String                  plot              = "";
-  private String                  title             = "";
-  private String                  originalTitle     = "";
-  private double                  rating            = 0.0;
-  private int                     voteCount         = 0;
-  private int                     runtime           = 0;
-  private String                  tagline           = "";
-  private String                  productionCompany = "";
-  private String                  year              = "";
-  private String                  releaseDate       = "";
-  private String                  spokenLanguages   = "";
-  private String                  country           = "";
-  private String                  posterUrl         = "";
-  private String                  firstAired        = "";
-  private String                  status            = "";
-  private String                  studio            = "";
-  private String                  collectionName    = "";
-  private int                     top250            = 0;
+  public static Date              INITIAL_DATE       = new Date(0);
 
-  private List<MediaCastMember>   castMembers       = new ArrayList<MediaCastMember>();
-  private List<MediaArtwork>      fanart            = new ArrayList<MediaArtwork>();
-  private List<MediaGenres>       genres            = new ArrayList<MediaGenres>();
-  private List<Certification>     certifications    = new ArrayList<Certification>();
-  private List<MediaTrailer>      trailers          = new ArrayList<MediaTrailer>();
+  private List<MediaCastMember>   castMembers        = new ArrayList<MediaCastMember>();
+  private List<MediaArtwork>      fanart             = new ArrayList<MediaArtwork>();
+  private List<MediaGenres>       genres             = new ArrayList<MediaGenres>();
+  private List<Certification>     certifications     = new ArrayList<Certification>();
+  private List<MediaTrailer>      trailers           = new ArrayList<MediaTrailer>();
 
   /**
-   * Instantiates a new media metadata.
+   * new infrastructure
+   */
+  private HashMap<String, Object> ids                = new HashMap<String, Object>();
+  private HashMap<String, Object> metadata           = new HashMap<String, Object>();
+
+  /**
+   * Instantiates a new media metadata for the given provider.
    * 
    * @param providerId
    *          the provider id
    */
   public MediaMetadata(String providerId) {
-    this.providerId = providerId;
+    storeMetadata(PROVIDER_ID, providerId);
   }
 
   /**
@@ -76,315 +83,124 @@ public class MediaMetadata {
    * @return the provider id
    */
   public String getProviderId() {
-    return providerId;
+    return getStringValue(PROVIDER_ID);
   }
 
   /**
-   * Gets the tmdb id.
+   * Stores a metadata in the internal map. Do not store IDs here. Use the ID map
    * 
-   * @return the tmdb id
+   * @param key
+   *          the key
+   * @param value
+   *          the metadata
    */
-  public int getTmdbId() {
-    int id = 0;
-    try {
-      id = (Integer) ids.get("tmdbId");
+  public void storeMetadata(String key, Object value) {
+    metadata.put(key, value);
+  }
+
+  /**
+   * Gets the String value for a given key
+   * 
+   * @param key
+   *          the key
+   * @return value the value
+   */
+  public String getStringValue(String key) {
+    Object data = metadata.get(key);
+    if (data != null) {
+      return String.valueOf(data);
     }
-    catch (Exception e) {
-      return 0;
+    return "";
+  }
+
+  /**
+   * Gets the Integer value for a given key. Integer are passed right thru, whilst other type are casted to an Integer
+   * 
+   * @param key
+   *          the key
+   * @return value the value
+   */
+  public Integer getIntegerValue(String key) {
+    Object data = metadata.get(key);
+    if (data != null && data instanceof Integer) {
+      // return the int
+      return (Integer) data;
     }
-    return id;
-  }
-
-  /**
-   * Gets the tmdb id set.
-   * 
-   * @return the tmdb id set
-   */
-  public int getTmdbIdSet() {
-    int id = 0;
-    try {
-      id = (Integer) ids.get("tmdbIdSet");
+    else if (data != null) {
+      // try to parse out the int
+      try {
+        return Integer.parseInt(String.valueOf(data));
+      }
+      catch (Exception e) {
+      }
     }
-    catch (Exception e) {
-      return 0;
+
+    return 0;
+  }
+
+  /**
+   * Gets the Float value for a given key. Float are passed right thru, whilst other type are casted to an Float
+   * 
+   * @param key
+   *          the key
+   * @return value the value
+   */
+  public Float getFloatValue(String key) {
+    Object data = metadata.get(key);
+    if (data != null && data instanceof Float) {
+      // return the float
+      return (Float) data;
     }
-    return id;
+    else if (data != null) {
+      // try to parse out the float
+      try {
+        return Float.parseFloat(String.valueOf(data));
+      }
+      catch (Exception e) {
+      }
+    }
+
+    return 0f;
   }
 
   /**
-   * Sets the tmdb id set.
+   * Gets the Double value for a given key. Double are passed right thru, whilst other type are casted to an Double
    * 
-   * @param tmdbIdSet
-   *          the new tmdb id set
+   * @param key
+   *          the key
+   * @return value the value
    */
-  public void setTmdbIdSet(int tmdbIdSet) {
-    ids.put("tmdbIdSet", tmdbIdSet);
+  public Double getDoubleValue(String key) {
+    Object data = metadata.get(key);
+    if (data != null && data instanceof Double) {
+      // return the float
+      return (Double) data;
+    }
+    else if (data != null) {
+      // try to parse out the float
+      try {
+        return Double.parseDouble(String.valueOf(data));
+      }
+      catch (Exception e) {
+      }
+    }
+
+    return 0d;
   }
 
   /**
-   * Gets the plot.
+   * Gets the Date value for a given key. Date are passed right thru, whilst other type are returned with an initial value
    * 
-   * @return the plot
+   * @param key
+   *          the key
+   * @return value the value
    */
-  public String getPlot() {
-    return plot;
-  }
-
-  /**
-   * Gets the title.
-   * 
-   * @return the title
-   */
-  public String getTitle() {
-    return title;
-  }
-
-  /**
-   * Gets the studio.
-   * 
-   * @return the studio
-   */
-  public String getStudio() {
-    return studio;
-  }
-
-  /**
-   * Sets the studio.
-   * 
-   * @param studio
-   *          the new studio
-   */
-  public void setStudio(String studio) {
-    if (studio != null)
-      this.studio = studio;
-  }
-
-  /**
-   * Gets the first aired.
-   * 
-   * @return the first aired
-   */
-  public String getFirstAired() {
-    return firstAired;
-  }
-
-  /**
-   * Sets the first aired.
-   * 
-   * @param firstAired
-   *          the new first aired
-   */
-  public void setFirstAired(String firstAired) {
-    if (firstAired != null)
-      this.firstAired = firstAired;
-  }
-
-  /**
-   * Gets the status.
-   * 
-   * @return the status
-   */
-  public String getStatus() {
-    return status;
-  }
-
-  /**
-   * Sets the status.
-   * 
-   * @param status
-   *          the new status
-   */
-  public void setStatus(String status) {
-    if (status != null)
-      this.status = status;
-  }
-
-  /**
-   * Gets the original title.
-   * 
-   * @return the original title
-   */
-  public String getOriginalTitle() {
-    return originalTitle;
-  }
-
-  /**
-   * Gets the rating.
-   * 
-   * @return the rating
-   */
-  public double getRating() {
-    return rating;
-  }
-
-  /**
-   * Gets the runtime.
-   * 
-   * @return the runtime
-   */
-  public int getRuntime() {
-    return runtime;
-  }
-
-  /**
-   * Gets the tagline.
-   * 
-   * @return the tagline
-   */
-  public String getTagline() {
-    return tagline;
-  }
-
-  /**
-   * Sets the tmdb id.
-   * 
-   * @param tmdbId
-   *          the new tmdb id
-   */
-  public void setTmdbId(int tmdbId) {
-    ids.put("tmdbId", tmdbId);
-  }
-
-  /**
-   * Gets the imdb id.
-   * 
-   * @return the imdb id
-   */
-  public String getImdbId() {
-    return (String) ids.get("imdbId");
-  }
-
-  /**
-   * Sets the imdb id.
-   * 
-   * @param imdbId
-   *          the new imdb id
-   */
-  public void setImdbId(String imdbId) {
-    ids.put("imdbId", imdbId);
-  }
-
-  /**
-   * Sets the plot.
-   * 
-   * @param plot
-   *          the new plot
-   */
-  public void setPlot(String plot) {
-    if (plot != null)
-      this.plot = plot;
-  }
-
-  /**
-   * Sets the title.
-   * 
-   * @param title
-   *          the new title
-   */
-  public void setTitle(String title) {
-    if (title != null)
-      this.title = title;
-  }
-
-  /**
-   * Sets the original title.
-   * 
-   * @param originalTitle
-   *          the new original title
-   */
-  public void setOriginalTitle(String originalTitle) {
-    if (originalTitle != null)
-      this.originalTitle = originalTitle;
-  }
-
-  /**
-   * Sets the rating (range 0-10).
-   * 
-   * @param rating
-   *          the new rating
-   */
-  public void setRating(double rating) {
-    this.rating = rating;
-  }
-
-  /**
-   * Gets the vote count.
-   * 
-   * @return the vote count
-   */
-  public int getVoteCount() {
-    return voteCount;
-  }
-
-  /**
-   * Sets the vote count.
-   * 
-   * @param voteCount
-   *          the new vote count
-   */
-  public void setVoteCount(int voteCount) {
-    this.voteCount = voteCount;
-  }
-
-  /**
-   * Sets the runtime.
-   * 
-   * @param runtime
-   *          the new runtime
-   */
-  public void setRuntime(int runtime) {
-    this.runtime = runtime;
-  }
-
-  /**
-   * Sets the tagline.
-   * 
-   * @param tagline
-   *          the new tagline
-   */
-  public void setTagline(String tagline) {
-    if (tagline != null)
-      this.tagline = tagline;
-  }
-
-  /**
-   * Gets the year.
-   * 
-   * @return the year
-   */
-  public String getYear() {
-    return year;
-  }
-
-  /**
-   * Gets the release date.
-   * 
-   * @return the release date
-   */
-  public String getReleaseDate() {
-    return releaseDate;
-  }
-
-  /**
-   * Sets the year.
-   * 
-   * @param year
-   *          the new year
-   */
-  public void setYear(String year) {
-    if (year != null)
-      this.year = year;
-  }
-
-  /**
-   * Sets the release date.
-   * 
-   * @param releaseDate
-   *          the new release date
-   */
-  public void setReleaseDate(String releaseDate) {
-    if (releaseDate != null)
-      this.releaseDate = releaseDate;
+  public Date getDateValue(String key) {
+    Object data = metadata.get(key);
+    if (data != null && data instanceof Date) {
+      return (Date) data;
+    }
+    return INITIAL_DATE;
   }
 
   /**
@@ -439,61 +255,6 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the production company.
-   * 
-   * @return the production company
-   */
-  public String getProductionCompany() {
-    return productionCompany;
-  }
-
-  /**
-   * Sets the production company.
-   * 
-   * @param productionCompany
-   *          the new production company
-   */
-  public void setProductionCompany(String productionCompany) {
-    if (productionCompany != null)
-      this.productionCompany = productionCompany;
-  }
-
-  /**
-   * Sets the spoken languages.
-   * 
-   * @param spokenLanguages
-   *          the new spoken languages
-   */
-  public void setSpokenLanguages(String spokenLanguages) {
-    if (spokenLanguages != null)
-      this.spokenLanguages = spokenLanguages;
-  }
-
-  /**
-   * Gets the spoken languages.
-   * 
-   * @return the spoken languages
-   */
-  public String getSpokenLanguages() {
-    return this.spokenLanguages;
-  }
-
-  /**
-   * @return the country
-   */
-  public String getCountry() {
-    return country;
-  }
-
-  /**
-   * @param country
-   *          the country to set
-   */
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  /**
    * Adds the genre.
    * 
    * @param genre
@@ -509,7 +270,7 @@ public class MediaMetadata {
    * Adds the cast member.
    * 
    * @param cm
-   *          the cm
+   *          the cast member
    */
   public void addCastMember(MediaCastMember cm) {
     if (containsCastMember(cm))
@@ -623,10 +384,10 @@ public class MediaMetadata {
   }
 
   /**
-   * Sets the id.
+   * Sets an ID.
    * 
    * @param key
-   *          the key
+   *          the ID-key
    * @param object
    *          the id
    */
@@ -635,51 +396,27 @@ public class MediaMetadata {
   }
 
   /**
-   * Gets the id.
+   * Gets an ID.
    * 
    * @param key
-   *          the key
+   *          the ID-key
    * @return the id
    */
   public Object getId(String key) {
-    return ids.get(key);
+    Object id = ids.get(key);
+    if (id == null) {
+      return "";
+    }
+    return id;
   }
 
   /**
-   * Gets the ids.
+   * Gets all IDs.
    * 
-   * @return the ids
+   * @return the IDs
    */
   public HashMap<String, Object> getIds() {
     return ids;
-  }
-
-  /**
-   * Gets the poster url.
-   * 
-   * @return the poster url
-   */
-  public String getPosterUrl() {
-    return posterUrl;
-  }
-
-  /**
-   * Sets the poster url. To Use if a search result does not provide a link to the poster
-   * 
-   * @param posterUrl
-   *          the new poster url
-   */
-  public void setPosterUrl(String posterUrl) {
-    if (posterUrl != null)
-      this.posterUrl = posterUrl;
-  }
-
-  public String getCollectionName() {
-    return this.collectionName;
-  }
-
-  public void setCollectionName(String collectionName) {
-    this.collectionName = collectionName;
   }
 
   /**
@@ -695,11 +432,4 @@ public class MediaMetadata {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
-  public int getTop250() {
-    return top250;
-  }
-
-  public void setTop250(int top250) {
-    this.top250 = top250;
-  }
 }

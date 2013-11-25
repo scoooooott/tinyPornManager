@@ -391,22 +391,22 @@ public class ImdbMetadataProviderTest {
   private void checkMovieDetails(String title, String year, String originalTitle, double rating, int voteCount, String tagline, int runtime,
       String director, String writer, String certification, MediaMetadata md) {
     // title
-    assertEquals("title ", title, md.getTitle());
+    assertEquals("title ", title, md.getStringValue(MediaMetadata.TITLE));
     // year
-    assertEquals("year", year, md.getYear());
+    assertEquals("year", year, md.getStringValue(MediaMetadata.YEAR));
     // original title
-    assertEquals("originalTitle", originalTitle, md.getOriginalTitle());
+    assertEquals("originalTitle", originalTitle, md.getStringValue(MediaMetadata.ORIGINAL_TITLE));
     // rating
-    assertEquals("rating", rating, md.getRating(), 0.01);
+    assertEquals("rating", rating, md.getDoubleValue(MediaMetadata.RATING), 0.01);
     // count (only check if parsed cout count is smaller than the given
     // votecount)
-    if (voteCount > md.getVoteCount()) {
-      assertEquals("count", voteCount, md.getVoteCount());
+    if (voteCount > md.getIntegerValue(MediaMetadata.VOTE_COUNT)) {
+      assertEquals("count", voteCount, (int) md.getIntegerValue(MediaMetadata.VOTE_COUNT));
     }
     // tagline
-    assertEquals("tagline", tagline, md.getTagline());
+    assertEquals("tagline", tagline, md.getStringValue(MediaMetadata.TAGLINE));
     // runtime
-    assertEquals("runtime", runtime, md.getRuntime());
+    assertEquals("runtime", runtime, (int) md.getIntegerValue(MediaMetadata.RUNTIME));
     // director
     StringBuilder sb = new StringBuilder();
     for (MediaCastMember cm : md.getCastMembers(CastType.DIRECTOR)) {
@@ -453,7 +453,7 @@ public class ImdbMetadataProviderTest {
 
   private void checkPlot(String plot, MediaMetadata md) {
     // plot
-    assertEquals("plot", plot, md.getPlot());
+    assertEquals("plot", plot, md.getStringValue(MediaMetadata.PLOT));
   }
 
   private void checkCastMembers(List<MediaCastMember> castMembers, int count, MediaMetadata md) {
@@ -478,7 +478,7 @@ public class ImdbMetadataProviderTest {
   }
 
   private void checkProductionCompany(String company, MediaMetadata md) {
-    assertEquals("production company", company, md.getProductionCompany());
+    assertEquals("production company", company, md.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
   }
 
   @Test

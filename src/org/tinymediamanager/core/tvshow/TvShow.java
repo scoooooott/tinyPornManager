@@ -453,7 +453,7 @@ public class TvShow extends MediaEntity {
    */
   public void setMetadata(MediaMetadata metadata, TvShowScraperMetadataConfig config) {
     // check if metadata has at least a name
-    if (StringUtils.isEmpty(metadata.getTitle())) {
+    if (StringUtils.isEmpty(metadata.getStringValue(MediaMetadata.TITLE))) {
       LOGGER.warn("wanted to save empty metadata for " + getTitle());
       return;
     }
@@ -469,25 +469,25 @@ public class TvShow extends MediaEntity {
     }
 
     if (config.isTitle()) {
-      setTitle(metadata.getTitle());
+      setTitle(metadata.getStringValue(MediaMetadata.TITLE));
     }
 
     if (config.isPlot()) {
-      setPlot(metadata.getPlot());
+      setPlot(metadata.getStringValue(MediaMetadata.PLOT));
     }
 
     if (config.isYear()) {
-      setYear(metadata.getYear());
+      setYear(metadata.getStringValue(MediaMetadata.YEAR));
     }
 
     if (config.isRating()) {
-      setRating((float) metadata.getRating());
-      setVotes(metadata.getVoteCount());
+      setRating(metadata.getFloatValue(MediaMetadata.RATING));
+      setVotes(metadata.getIntegerValue(MediaMetadata.VOTE_COUNT));
     }
 
     if (config.isAired()) {
       try {
-        setFirstAired(metadata.getFirstAired());
+        setFirstAired(metadata.getStringValue(MediaMetadata.RELEASE_DATE));
       }
       catch (ParseException e) {
 
@@ -495,19 +495,15 @@ public class TvShow extends MediaEntity {
     }
 
     if (config.isStatus()) {
-      setStatus(metadata.getStatus());
+      setStatus(metadata.getStringValue(MediaMetadata.STATUS));
     }
 
     if (config.isRuntime()) {
-      setRuntime(metadata.getRuntime());
-    }
-
-    if (config.isYear()) {
-      setYear(metadata.getYear());
+      setRuntime(metadata.getIntegerValue(MediaMetadata.RUNTIME));
     }
 
     if (config.isCast()) {
-      setStudio(metadata.getStudio());
+      setStudio(metadata.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
       List<TvShowActor> actors = new ArrayList<TvShowActor>();
       String director = "";
       String writer = "";

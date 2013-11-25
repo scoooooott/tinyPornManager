@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 package org.tinymediamanager.scraper.hdtrailersnet;
-import java.io.IOException;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,18 +35,13 @@ import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.Url;
 
-
 /**
  * The Class HDTrailersNet.
  * 
  * @author Myron Boyle
  */
 public class HDTrailersNet implements IMediaTrailerProvider {
-
-  /** The Constant logger. */
   private static final Logger      LOGGER       = LoggerFactory.getLogger(HDTrailersNet.class);
-
-  /** The provider info. */
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("hdtrailersnet", "hd-trailers.net",
                                                     "Scraper for hd-trailers.net which is able to scrape trailers");
 
@@ -66,12 +62,12 @@ public class HDTrailersNet implements IMediaTrailerProvider {
     List<MediaTrailer> trailers = new ArrayList<MediaTrailer>();
     MediaMetadata md = options.getMetadata();
 
-    if (md == null || StringUtils.isEmpty(md.getOriginalTitle())) {
+    if (md == null || StringUtils.isEmpty(md.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
       LOGGER.warn("no originalTitle served");
       return trailers;
     }
 
-    String ot = md.getOriginalTitle();
+    String ot = md.getStringValue(MediaMetadata.ORIGINAL_TITLE);
 
     // check if the original title is not empty
     if (StringUtils.isEmpty(ot)) {

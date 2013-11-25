@@ -882,39 +882,39 @@ public class Movie extends MediaEntity {
    */
   public void setMetadata(MediaMetadata metadata, MovieScraperMetadataConfig config) {
     // check if metadata has at least a name
-    if (StringUtils.isEmpty(metadata.getTitle())) {
+    if (StringUtils.isEmpty(metadata.getStringValue(MediaMetadata.TITLE))) {
       LOGGER.warn("wanted to save empty metadata for " + getTitle());
       return;
     }
 
-    if (StringUtils.isNotBlank(metadata.getImdbId())) {
-      setImdbId(metadata.getImdbId());
+    if (StringUtils.isNotBlank(metadata.getStringValue(MediaMetadata.IMDBID))) {
+      setImdbId(metadata.getStringValue(MediaMetadata.IMDBID));
     }
-    if (metadata.getTmdbId() > 0) {
-      setTmdbId(metadata.getTmdbId());
+    if (metadata.getIntegerValue(MediaMetadata.TMDBID) > 0) {
+      setTmdbId(metadata.getIntegerValue(MediaMetadata.TMDBID));
     }
 
     // set chosen metadata
     if (config.isTitle()) {
-      setTitle(metadata.getTitle());
+      setTitle(metadata.getStringValue(MediaMetadata.TITLE));
     }
 
     if (config.isOriginalTitle()) {
-      setOriginalTitle(metadata.getOriginalTitle());
+      setOriginalTitle(metadata.getStringValue(MediaMetadata.ORIGINAL_TITLE));
     }
 
     if (config.isTagline()) {
-      setTagline(metadata.getTagline());
+      setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
     }
 
     if (config.isPlot()) {
-      setPlot(metadata.getPlot());
+      setPlot(metadata.getStringValue(MediaMetadata.PLOT));
     }
 
     if (config.isYear()) {
-      setYear(metadata.getYear());
+      setYear(metadata.getStringValue(MediaMetadata.YEAR));
       try {
-        setReleaseDate(metadata.getReleaseDate());
+        setReleaseDate(metadata.getStringValue(MediaMetadata.RELEASE_DATE));
       }
       catch (ParseException e) {
         LOGGER.warn(e.getMessage());
@@ -922,17 +922,17 @@ public class Movie extends MediaEntity {
     }
 
     if (config.isRating()) {
-      setRating((float) metadata.getRating());
-      setVotes(metadata.getVoteCount());
-      setTop250(metadata.getTop250());
+      setRating(metadata.getFloatValue(MediaMetadata.RATING));
+      setVotes(metadata.getIntegerValue(MediaMetadata.VOTE_COUNT));
+      setTop250(metadata.getIntegerValue(MediaMetadata.TOP_250));
     }
 
     if (config.isRuntime()) {
-      setRuntime(metadata.getRuntime());
+      setRuntime(metadata.getIntegerValue(MediaMetadata.RUNTIME));
     }
 
-    setSpokenLanguages(metadata.getSpokenLanguages());
-    setCountry(metadata.getCountry());
+    setSpokenLanguages(metadata.getStringValue(MediaMetadata.SPOKEN_LANGUAGES));
+    setCountry(metadata.getStringValue(MediaMetadata.COUNTRY));
 
     // certifications
     if (config.isCertification()) {
@@ -943,7 +943,7 @@ public class Movie extends MediaEntity {
 
     // cast
     if (config.isCast()) {
-      setProductionCompany(metadata.getProductionCompany());
+      setProductionCompany(metadata.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
       List<MovieActor> actors = new ArrayList<MovieActor>();
       String director = "";
       String writer = "";
@@ -994,9 +994,10 @@ public class Movie extends MediaEntity {
 
     // create MovieSet
     if (config.isCollection()) {
-      int col = metadata.getTmdbIdSet();
+      int col = metadata.getIntegerValue(MediaMetadata.TMDBID_SET);
       if (col != 0) {
-        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getCollectionName(), metadata.getTmdbIdSet());
+        MovieSet movieSet = MovieList.getInstance().getMovieSet(metadata.getStringValue(MediaMetadata.COLLECTION_NAME),
+            metadata.getIntegerValue(MediaMetadata.TMDBID));
         if (movieSet.getTmdbId() == 0) {
           movieSet.setTmdbId(col);
           // get movieset metadata
@@ -1070,14 +1071,14 @@ public class Movie extends MediaEntity {
       md.setId(entry.getKey(), entry.getValue());
     }
 
-    md.setTitle(title);
-    md.setOriginalTitle(originalTitle);
-    md.setTagline(tagline);
-    md.setPlot(plot);
-    md.setYear(year);
-    md.setRating(rating);
-    md.setVoteCount(votes);
-    md.setRuntime(runtime);
+    md.storeMetadata(MediaMetadata.TITLE, title);
+    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, originalTitle);
+    md.storeMetadata(MediaMetadata.TAGLINE, tagline);
+    md.storeMetadata(MediaMetadata.PLOT, plot);
+    md.storeMetadata(MediaMetadata.YEAR, year);
+    md.storeMetadata(MediaMetadata.RATING, rating);
+    md.storeMetadata(MediaMetadata.VOTE_COUNT, votes);
+    md.storeMetadata(MediaMetadata.RUNTIME, runtime);
     md.addCertification(certification);
 
     return md;

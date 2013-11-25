@@ -220,7 +220,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
             options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
             try {
               MediaMetadata md = mp.getMetadata(options);
-              mis.imdbId = md.getImdbId();
+              mis.imdbId = String.valueOf(md.getId(MediaMetadata.IMDBID));
             }
             catch (Exception e) {
               LOGGER.warn(e.getMessage());

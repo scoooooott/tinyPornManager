@@ -476,13 +476,13 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         MediaMetadata metadata = mp.getEpisodeMetadata(options);
 
         // if nothing has been found -> open the search box
-        if (metadata == null || StringUtils.isBlank(metadata.getTitle())) {
+        if (metadata == null || StringUtils.isBlank(metadata.getStringValue(MediaMetadata.TITLE))) {
           // message
           JOptionPane.showMessageDialog(TvShowEpisodeEditorDialog.this, BUNDLE.getString("message.scrape.tvshowepisodefailed")); //$NON-NLS-1$    
         }
         else {
-          tfTitle.setText(metadata.getTitle());
-          taPlot.setText(metadata.getPlot());
+          tfTitle.setText(metadata.getStringValue(MediaMetadata.TITLE));
+          taPlot.setText(metadata.getStringValue(MediaMetadata.PLOT));
           for (MediaArtwork ma : metadata.getFanart()) {
             if (ma.getType() == MediaArtworkType.THUMB) {
               lblThumb.setImageUrl(ma.getDefaultUrl());

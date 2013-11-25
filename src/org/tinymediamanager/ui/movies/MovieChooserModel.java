@@ -242,11 +242,11 @@ public class MovieChooserModel extends AbstractModelObject {
       options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
       metadata = metadataProvider.getMetadata(options);
-      setOverview(metadata.getPlot());
-      setTagline(metadata.getTagline());
+      setOverview(metadata.getStringValue(MediaMetadata.PLOT));
+      setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
 
-      if (StringUtils.isBlank(posterUrl) && StringUtils.isNotBlank(metadata.getPosterUrl())) {
-        setPosterUrl(metadata.getPosterUrl());
+      if (StringUtils.isBlank(posterUrl) && StringUtils.isNotBlank(metadata.getStringValue(MediaMetadata.POSTER_URL))) {
+        setPosterUrl(metadata.getStringValue(MediaMetadata.POSTER_URL));
       }
 
       scraped = true;
@@ -271,8 +271,13 @@ public class MovieChooserModel extends AbstractModelObject {
     MediaScrapeOptions options = new MediaScrapeOptions();
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
-    options.setImdbId(metadata.getImdbId());
-    options.setTmdbId(metadata.getTmdbId());
+    options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
+    try {
+      options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDBID))));
+    }
+    catch (Exception e) {
+      options.setTmdbId(0);
+    }
     options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
     options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 
@@ -308,8 +313,13 @@ public class MovieChooserModel extends AbstractModelObject {
 
     MediaScrapeOptions options = new MediaScrapeOptions();
     options.setMetadata(metadata);
-    options.setImdbId(metadata.getImdbId());
-    options.setTmdbId(metadata.getTmdbId());
+    options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
+    try {
+      options.setTmdbId(Integer.parseInt(String.valueOf(metadata.getId(MediaMetadata.TMDBID))));
+    }
+    catch (Exception e) {
+      options.setTmdbId(0);
+    }
     options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
     options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
 

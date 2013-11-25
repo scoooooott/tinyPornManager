@@ -78,7 +78,7 @@ public class TvShowEpisodeScrapeTask implements Runnable {
 
       try {
         MediaMetadata metadata = metadataProvider.getEpisodeMetadata(options);
-        if (StringUtils.isNotBlank(metadata.getTitle())) {
+        if (StringUtils.isNotBlank(metadata.getStringValue(MediaMetadata.TITLE))) {
           episode.setMetadata(metadata);
         }
       }

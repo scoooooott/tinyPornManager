@@ -363,19 +363,18 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the new metadata
    */
   public void setMetadata(MediaMetadata metadata) {
-
-    setTitle(metadata.getTitle());
-    setPlot(metadata.getPlot());
+    setTitle(metadata.getStringValue(MediaMetadata.TITLE));
+    setPlot(metadata.getStringValue(MediaMetadata.PLOT));
     setIds(metadata.getIds());
 
     try {
-      setFirstAired(metadata.getFirstAired());
+      setFirstAired(metadata.getStringValue(MediaMetadata.RELEASE_DATE));
     }
     catch (ParseException e) {
       LOGGER.warn(e.getMessage());
     }
 
-    setRating((float) metadata.getRating());
+    setRating(metadata.getFloatValue(MediaMetadata.RATING));
 
     List<TvShowActor> actors = new ArrayList<TvShowActor>();
     String director = "";

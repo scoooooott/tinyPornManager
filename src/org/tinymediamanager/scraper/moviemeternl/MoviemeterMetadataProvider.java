@@ -104,35 +104,35 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
       fd = mmapi.filmDetail(mmId);
     }
 
-    md.setTitle(fd.getTitle());
-    md.setImdbId("tt" + fd.getImdb());
-    md.setYear(fd.getYear());
-    md.setPlot(fd.getPlot());
-    md.setTagline(fd.getPlot().length() > 150 ? fd.getPlot().substring(0, 150) : fd.getPlot());
+    md.setId(MediaMetadata.IMDBID, "tt" + fd.getImdb());
+    md.storeMetadata(MediaMetadata.TITLE, fd.getTitle());
+    md.storeMetadata(MediaMetadata.YEAR, fd.getYear());
+    md.storeMetadata(MediaMetadata.PLOT, fd.getPlot());
+    md.storeMetadata(MediaMetadata.TAGLINE, fd.getPlot().length() > 150 ? fd.getPlot().substring(0, 150) : fd.getPlot());
     // md.setOriginalTitle(fd.getAlternative_titles());
     try {
-      md.setRating(Double.parseDouble(fd.getAverage()));
+      md.storeMetadata(MediaMetadata.RATING, Double.parseDouble(fd.getAverage()));
     }
     catch (Exception e) {
-      md.setRating(0);
+      md.storeMetadata(MediaMetadata.RATING, 0);
     }
     md.setId("moviemeter", fd.getFilmId());
     try {
-      md.setRuntime(Integer.valueOf(fd.getDurations().get(0).duration));
+      md.storeMetadata(MediaMetadata.RUNTIME, Integer.valueOf(fd.getDurations().get(0).duration));
     }
     catch (Exception e) {
-      md.setRuntime(0);
+      md.storeMetadata(MediaMetadata.RUNTIME, 0);
     }
-    md.setVoteCount(Integer.valueOf(fd.getVotes_count()));
+    md.storeMetadata(MediaMetadata.VOTE_COUNT, Integer.valueOf(fd.getVotes_count()));
     for (Genre g : fd.getGenres()) {
       md.addGenre(getTmmGenre(g.getName()));
     }
-    md.setPosterUrl(fd.getThumbnail().replace(".50.jpg", ".jpg")); // full res
+    md.storeMetadata(MediaMetadata.POSTER_URL, fd.getThumbnail().replace(".50.jpg", ".jpg")); // full res
     ArrayList<Date> dateList = fd.getDates_cinema();
     if (dateList != null && dateList.size() > 0) {
-      md.setReleaseDate(dateList.get(0).getDate());
+      md.storeMetadata(MediaMetadata.RELEASE_DATE, dateList.get(0).getDate());
     }
-    md.setCountry(fd.getCountries_text());
+    md.storeMetadata(MediaMetadata.COUNTRY, fd.getCountries_text());
     for (Actor a : fd.getActors()) {
       MediaCastMember cm = new MediaCastMember();
       cm.setName(a.getName());

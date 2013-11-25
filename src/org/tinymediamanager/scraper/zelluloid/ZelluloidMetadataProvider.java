@@ -115,10 +115,10 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     // generic Elements used all over
     Elements el = null;
     // preset values from searchresult (if we have them)
-    md.setOriginalTitle(Utils.removeSortableName(options.getResult().getOriginalTitle()));
-    md.setTitle(Utils.removeSortableName(options.getResult().getTitle()));
-    md.setYear(options.getResult().getYear());
-    md.setOriginalTitle(options.getResult().getOriginalTitle());
+    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, Utils.removeSortableName(options.getResult().getOriginalTitle()));
+    md.storeMetadata(MediaMetadata.TITLE, Utils.removeSortableName(options.getResult().getTitle()));
+    md.storeMetadata(MediaMetadata.YEAR, options.getResult().getYear());
+    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, options.getResult().getOriginalTitle());
 
     String id = "";
     if (StringUtils.isEmpty(options.getResult().getId())) {
@@ -143,20 +143,20 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
 
       // parse plot
       String plot = doc.getElementsByAttributeValue("class", "bigtext").text();
-      md.setPlot(plot);
-      md.setTagline(plot.length() > 150 ? plot.substring(0, 150) : plot);
+      md.storeMetadata(MediaMetadata.PLOT, plot);
+      md.storeMetadata(MediaMetadata.TAGLINE, plot.length() > 150 ? plot.substring(0, 150) : plot);
 
       // parse poster
       el = doc.getElementsByAttributeValueStarting("pic", "/images/poster");
       if (el.size() == 1) {
-        md.setPosterUrl(BASE_URL + el.get(0).attr("pic"));
+        md.storeMetadata(MediaMetadata.POSTER_URL, BASE_URL + el.get(0).attr("pic"));
       }
 
       // parse year
-      if (StringUtils.isEmpty(md.getYear())) {
+      if (StringUtils.isEmpty(md.getStringValue(MediaMetadata.YEAR))) {
         el = doc.getElementsByAttributeValueContaining("href", "az.php3?j=");
         if (el.size() == 1) {
-          md.setYear(el.get(0).text());
+          md.storeMetadata(MediaMetadata.YEAR, el.get(0).text());
         }
       }
 
@@ -167,7 +167,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
           SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
           Date d = sdf.parse(el.get(0).text());
           sdf = new SimpleDateFormat("yyyy-MM-dd");
-          md.setReleaseDate(sdf.format(d));
+          md.storeMetadata(MediaMetadata.RELEASE_DATE, sdf.format(d));
         }
         catch (Exception e) {
           LOGGER.warn("cannot parse cinema release date: " + el.get(0).text());
@@ -175,18 +175,18 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       }
 
       // parse original title
-      if (StringUtils.isEmpty(md.getOriginalTitle())) {
-        md.setOriginalTitle(StrgUtils.substr(doc.toString(), "Originaltitel: (.*?)\\<"));
+      if (StringUtils.isEmpty(md.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
+        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, StrgUtils.substr(doc.toString(), "Originaltitel: (.*?)\\<"));
       }
-      if (StringUtils.isEmpty(md.getOriginalTitle())) {
-        md.setOriginalTitle(md.getTitle());
+      if (StringUtils.isEmpty(md.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
+        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, md.getStringValue(MediaMetadata.TITLE));
       }
 
       // parse runtime
       String rt = (StrgUtils.substr(doc.toString(), "ca.&nbsp;(.*?)&nbsp;min"));
       if (!rt.isEmpty()) {
         try {
-          md.setRuntime(Integer.valueOf(rt));
+          md.storeMetadata(MediaMetadata.RUNTIME, Integer.valueOf(rt));
         }
         catch (Exception e2) {
           LOGGER.warn("cannot convert runtime: " + rt);
@@ -214,7 +214,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
         // <div>87%</div>
         String r = e.getElementsByTag("div").text().replace("%", "");
         try {
-          md.setRating(Double.valueOf(r) / 10); // only 0-10
+          md.storeMetadata(MediaMetadata.RATING, Double.valueOf(r) / 10); // only 0-10
         }
         catch (Exception e2) {
           LOGGER.warn("cannot convert rating: " + r);
@@ -295,7 +295,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
           }
           else if (header == 3) {
             // production
-            md.setProductionCompany(el.get(0).text());
+            md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, el.get(0).text());
           }
         }
       }
@@ -312,7 +312,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
         if (imdb.isEmpty()) {
           imdb = "tt" + StrgUtils.substr(el.get(0).attr("href"), "\\?(\\d+)");
         }
-        md.setImdbId(imdb);
+        md.setId(MediaMetadata.IMDBID, imdb);
       }
     }
     catch (IOException e) {

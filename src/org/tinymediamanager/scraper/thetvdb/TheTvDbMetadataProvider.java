@@ -217,35 +217,35 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
 
     // populate metadata
     md.setId(providerInfo.getId(), show.getId());
-    md.setTitle(show.getSeriesName());
-    md.setImdbId(show.getImdbId());
-    md.setPlot(show.getOverview());
+    md.storeMetadata(MediaMetadata.TITLE, show.getSeriesName());
+    md.setId(MediaMetadata.IMDBID, show.getImdbId());
+    md.storeMetadata(MediaMetadata.PLOT, show.getOverview());
 
     try {
-      md.setRuntime(Integer.valueOf(show.getRuntime()));
+      md.storeMetadata(MediaMetadata.RUNTIME, Integer.valueOf(show.getRuntime()));
     }
     catch (NumberFormatException e) {
-      md.setRuntime(0);
+      md.storeMetadata(MediaMetadata.RUNTIME, 0);
     }
-    md.setPosterUrl(show.getPoster());
+    md.storeMetadata(MediaMetadata.POSTER_URL, show.getPoster());
 
     try {
-      md.setRating(Double.parseDouble(show.getRating()));
+      md.storeMetadata(MediaMetadata.RATING, Double.parseDouble(show.getRating()));
     }
     catch (NumberFormatException e) {
-      md.setRating(0);
+      md.storeMetadata(MediaMetadata.RATING, 0);
     }
-    md.setFirstAired(show.getFirstAired());
+    md.storeMetadata(MediaMetadata.RELEASE_DATE, show.getFirstAired());
 
     try {
       Date date = org.tinymediamanager.scraper.util.StrgUtils.parseDate(show.getFirstAired());
-      md.setYear(new SimpleDateFormat("yyyy").format(date));
+      md.storeMetadata(MediaMetadata.YEAR, new SimpleDateFormat("yyyy").format(date));
     }
     catch (Exception e) {
     }
 
-    md.setStatus(show.getStatus());
-    md.setStudio(show.getNetwork());
+    md.storeMetadata(MediaMetadata.STATUS, show.getStatus());
+    md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, show.getNetwork());
 
     // actors
     List<Actor> actors = new ArrayList<Actor>();
@@ -336,15 +336,15 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       return md;
     }
 
-    md.setTitle(episode.getEpisodeName());
-    md.setPlot(episode.getOverview());
+    md.storeMetadata(MediaMetadata.TITLE, episode.getEpisodeName());
+    md.storeMetadata(MediaMetadata.PLOT, episode.getOverview());
     try {
-      md.setRating(Float.parseFloat(episode.getRating()));
+      md.storeMetadata(MediaMetadata.RATING, Float.parseFloat(episode.getRating()));
     }
     catch (NumberFormatException e) {
-      md.setRating(0);
+      md.storeMetadata(MediaMetadata.RATING, 0);
     }
-    md.setFirstAired(episode.getFirstAired());
+    md.storeMetadata(MediaMetadata.RELEASE_DATE, episode.getFirstAired());
     md.setId(providerInfo.getId(), episode.getId());
 
     // directors

@@ -108,9 +108,9 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     // generic Elements used all over
     Elements el = null;
     // preset values from searchresult (if we have them)
-    md.setOriginalTitle(Utils.removeSortableName(options.getResult().getOriginalTitle()));
-    md.setTitle(Utils.removeSortableName(options.getResult().getTitle()));
-    md.setYear(options.getResult().getYear());
+    md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, Utils.removeSortableName(options.getResult().getOriginalTitle()));
+    md.storeMetadata(MediaMetadata.TITLE, Utils.removeSortableName(options.getResult().getTitle()));
+    md.storeMetadata(MediaMetadata.YEAR, options.getResult().getYear());
 
     String ofdbId = StrgUtils.substr(options.getResult().getUrl(), "film\\/(\\d+),");
 
@@ -127,24 +127,24 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       // IMDB ID "http://www.imdb.com/Title?1194173"
       el = doc.getElementsByAttributeValueContaining("href", "imdb.com");
       if (!el.isEmpty()) {
-        md.setImdbId("tt" + StrgUtils.substr(el.first().attr("href"), "\\?(\\d+)"));
+        md.setId(MediaMetadata.IMDBID, "tt" + StrgUtils.substr(el.first().attr("href"), "\\?(\\d+)"));
       }
 
       // Title Year
-      if (StringUtils.isEmpty(md.getYear()) || StringUtils.isEmpty(md.getTitle())) {
+      if (StringUtils.isEmpty(md.getStringValue(MediaMetadata.YEAR)) || StringUtils.isEmpty(md.getStringValue(MediaMetadata.TITLE))) {
         // <meta property="og:title" content="Bourne Vermächtnis, Das (2012)" />
         el = doc.getElementsByAttributeValue("property", "og:title");
         if (!el.isEmpty()) {
           String[] ty = ParserUtils.parseTitle(el.first().attr("content"));
-          md.setTitle(ty[0]);
-          md.setYear(ty[1]);
+          md.storeMetadata(MediaMetadata.TITLE, ty[0]);
+          md.storeMetadata(MediaMetadata.YEAR, ty[1]);
         }
       }
       // another year position
-      if (StringUtils.isEmpty(md.getYear())) {
+      if (StringUtils.isEmpty(md.getStringValue(MediaMetadata.YEAR))) {
         // <a href="view.php?page=blaettern&Kat=Jahr&Text=2012">2012</a>
         el = doc.getElementsByAttributeValueContaining("href", "Kat=Jahr");
-        md.setYear(el.first().text());
+        md.storeMetadata(MediaMetadata.YEAR, el.first().text());
       }
 
       // Genre: <a href="view.php?page=genre&Genre=Action">Action</a>
@@ -161,7 +161,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       if (!r.isEmpty()) {
         try {
           double rating = Double.parseDouble(r);
-          md.setRating(rating);
+          md.storeMetadata(MediaMetadata.RATING, rating);
         }
         catch (Exception e) {
           LOGGER.debug("could not parse rating");
@@ -184,8 +184,8 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         String p = block.first().text(); // remove all html stuff
         p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
         // LOGGER.info(p);
-        md.setPlot(p);
-        md.setTagline(p.length() > 150 ? p.substring(0, 150) : p);
+        md.storeMetadata(MediaMetadata.PLOT, p);
+        md.storeMetadata(MediaMetadata.TAGLINE, p.length() > 150 ? p.substring(0, 150) : p);
       }
 
       // http://www.ofdb.de/view.php?page=film_detail&fid=226745
