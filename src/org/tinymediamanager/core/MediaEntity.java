@@ -17,6 +17,7 @@ package org.tinymediamanager.core;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -74,7 +75,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected boolean                            duplicate            = false;
 
   @OneToMany(cascade = CascadeType.ALL)
-  protected List<MediaFile>                    mediaFiles           = new ArrayList<MediaFile>();
+  private List<MediaFile>                      mediaFiles           = new ArrayList<MediaFile>();
 
   @Transient
   protected volatile ObservableList<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
@@ -124,6 +125,10 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
+  public Dimension getFanartSize() {
+    return getImageSize(MediaFileType.FANART);
+  }
+
   public String getTitle() {
     return title;
   }
@@ -152,6 +157,10 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
+  public Dimension getPosterSize() {
+    return getImageSize(MediaFileType.POSTER);
+  }
+
   public String getBannerUrl() {
     return bannerUrl;
   }
@@ -164,12 +173,29 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
+  public Dimension getBannerSize() {
+    return getImageSize(MediaFileType.BANNER);
+  }
+
   public String getThumb() {
     List<MediaFile> thumbs = getMediaFiles(MediaFileType.THUMB);
     if (thumbs.size() > 0) {
       return thumbs.get(0).getFile().getPath();
     }
     return "";
+  }
+
+  public Dimension getThumbSize() {
+    return getImageSize(MediaFileType.THUMB);
+  }
+
+  private Dimension getImageSize(MediaFileType type) {
+    List<MediaFile> mediaFiles = getMediaFiles(type);
+    if (mediaFiles.size() > 0) {
+      MediaFile mediaFile = mediaFiles.get(0);
+      return new Dimension(mediaFile.getVideoWidth(), mediaFile.getVideoHeight());
+    }
+    return new Dimension(0, 0);
   }
 
   public float getRating() {

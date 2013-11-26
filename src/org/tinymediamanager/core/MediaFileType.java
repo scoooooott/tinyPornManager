@@ -33,6 +33,7 @@ public enum MediaFileType {
   POSTER, 
   FANART, 
   BANNER, 
+  SEASON_POSTER,
   EXTRAFANART, 
   THUMB, 
   GRAPHIC, 

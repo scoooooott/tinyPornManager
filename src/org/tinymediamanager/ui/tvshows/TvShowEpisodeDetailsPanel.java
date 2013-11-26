@@ -94,11 +94,11 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
-    lblSeasonT.setFont(new Font("Dialog", Font.PLAIN, 14));
+    lblSeasonT.setFont(lblSeasonT.getFont().deriveFont(14f).deriveFont(Font.BOLD));
     add(lblSeasonT, "2, 2");
 
     lblSeason = new JLabel("");
-    lblSeason.setFont(new Font("Dialog", Font.PLAIN, 14));
+    lblSeason.setFont(lblSeason.getFont().deriveFont(14f));
     add(lblSeason, "6, 2");
 
     btnPlay = new JButton("");
@@ -120,20 +120,22 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     add(btnPlay, "8, 2, 1, 5");
 
     JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-    lblEpisodeT.setFont(new Font("Dialog", Font.PLAIN, 14));
+    lblEpisodeT.setFont(lblEpisodeT.getFont().deriveFont(14f).deriveFont(Font.BOLD));
     add(lblEpisodeT, "2, 4");
 
     lblEpisode = new JLabel("");
-    lblEpisode.setFont(new Font("Dialog", Font.PLAIN, 14));
+    lblEpisode.setFont(lblEpisode.getFont().deriveFont(14f));
     add(lblEpisode, "6, 4");
 
     JLabel lblAiredT = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
+    lblAiredT.setFont(lblAiredT.getFont().deriveFont(Font.BOLD));
     add(lblAiredT, "2, 6");
 
     lblAired = new JLabel("");
     add(lblAired, "6, 6");
 
     JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+    lblPathT.setFont(lblPathT.getFont().deriveFont(Font.BOLD));
     add(lblPathT, "2, 8");
 
     lblPath = new LinkLabel("");

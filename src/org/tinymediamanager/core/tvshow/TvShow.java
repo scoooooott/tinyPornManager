@@ -17,6 +17,7 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -81,55 +82,59 @@ import org.tinymediamanager.scraper.util.Url;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShow extends MediaEntity {
-  private static final Logger      LOGGER             = LoggerFactory.getLogger(TvShow.class);
+  private static final Logger         LOGGER             = LoggerFactory.getLogger(TvShow.class);
 
-  private String                   dataSource         = "";
-  private String                   director           = "";
-  private String                   writer             = "";
-  private int                      runtime            = 0;
-  private int                      votes              = 0;
-  private Date                     firstAired         = null;
-  private String                   status             = "";
-  private String                   studio             = "";
-  private boolean                  watched            = false;
-  private String                   sortTitle          = "";
+  private String                      dataSource         = "";
+  private String                      director           = "";
+  private String                      writer             = "";
+  private int                         runtime            = 0;
+  private int                         votes              = 0;
+  private Date                        firstAired         = null;
+  private String                      status             = "";
+  private String                      studio             = "";
+  private boolean                     watched            = false;
+  private String                      sortTitle          = "";
 
-  private List<TvShowEpisode>      episodes           = new ArrayList<TvShowEpisode>();
-  private List<String>             tags               = new ArrayList<String>();
-  private HashMap<Integer, String> seasonPosterUrlMap = new HashMap<Integer, String>();
-  private HashMap<Integer, String> seasonPosterMap    = new HashMap<Integer, String>();
-
-  @Transient
-  private List<TvShowEpisode>      episodesObservable = ObservableCollections.observableList(episodes);
+  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
+  private List<String>                tags               = new ArrayList<String>();
+  private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>();
+  @Deprecated
+  private HashMap<Integer, String>    seasonPosterMap    = new HashMap<Integer, String>();
 
   @Transient
-  private List<TvShowSeason>       seasons            = ObservableCollections.observableList(new ArrayList<TvShowSeason>());
+  private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>();
+
+  @Transient
+  private List<TvShowEpisode>         episodesObservable = ObservableCollections.observableList(episodes);
+
+  @Transient
+  private List<TvShowSeason>          seasons            = ObservableCollections.observableList(new ArrayList<TvShowSeason>());
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>        actors             = new ArrayList<TvShowActor>();
+  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
 
   @Transient
-  private List<TvShowActor>        actorsObservables  = ObservableCollections.observableList(actors);
+  private List<TvShowActor>           actorsObservables  = ObservableCollections.observableList(actors);
 
-  private List<String>             genres             = new ArrayList<String>();
-
-  @Transient
-  private List<MediaGenres>        genresForAccess    = new ArrayList<MediaGenres>();
+  private List<String>                genres             = new ArrayList<String>();
 
   @Transient
-  private List<String>             tagsObservable     = ObservableCollections.observableList(tags);
+  private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>();
+
+  @Transient
+  private List<String>                tagsObservable     = ObservableCollections.observableList(tags);
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>       trailer            = new ArrayList<MediaTrailer>();
+  private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>();
 
   @Transient
-  private List<MediaTrailer>       trailerObservable  = ObservableCollections.observableList(trailer);
+  private List<MediaTrailer>          trailerObservable  = ObservableCollections.observableList(trailer);
 
   @Enumerated(EnumType.STRING)
-  private Certification            certification      = Certification.NOT_RATED;
+  private Certification               certification      = Certification.NOT_RATED;
 
   @Transient
-  private String                   titleSortable      = "";
+  private String                      titleSortable      = "";
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -280,6 +285,35 @@ public class TvShow extends MediaEntity {
     // create the seasons structure
     for (TvShowEpisode episode : episodes) {
       addToSeason(episode);
+    }
+
+    // migration from old structure
+    if (!seasonPosterMap.isEmpty()) {
+      for (Entry<Integer, String> entry : seasonPosterMap.entrySet()) {
+        setSeasonPoster(entry.getKey(), new File(path, entry.getValue()));
+      }
+      seasonPosterMap.clear();
+      saveToDb();
+    }
+
+    // create season poster map
+    Pattern pattern = Pattern.compile("(?i)season([0-9]{1,2})-poster\\..{2,4}");
+    for (MediaFile mf : getMediaFiles(MediaFileType.SEASON_POSTER)) {
+      if (mf.getFilename().startsWith("season-special-poster")) {
+        seasonPosters.put(-1, mf);
+      }
+      else {
+        // parse out the season from the name
+        Matcher matcher = pattern.matcher(mf.getFilename());
+        if (matcher.matches()) {
+          try {
+            int season = Integer.parseInt(matcher.group(1));
+            seasonPosters.put(season, mf);
+          }
+          catch (Exception e) {
+          }
+        }
+      }
     }
   }
 
@@ -1414,14 +1448,17 @@ public class TvShow extends MediaEntity {
     for (File file : files) {
       Matcher matcher = pattern.matcher(file.getName());
       if (matcher.matches()) {
-        // setBanner(FilenameUtils.getName(file.getName()));
         LOGGER.debug("found season poster " + file.getPath());
         try {
           int season = Integer.parseInt(matcher.group(1));
-          setSeasonPoster(season, FilenameUtils.getName(file.getName()));
+          setSeasonPoster(season, file);
         }
         catch (Exception e) {
         }
+      }
+      else if (file.getName().startsWith("season-specials-poster")) {
+        LOGGER.debug("found season specials poster " + file.getPath());
+        setSeasonPoster(-1, file);
       }
     }
   }
@@ -1498,11 +1535,20 @@ public class TvShow extends MediaEntity {
    * @return the season poster
    */
   String getSeasonPoster(int season) {
-    String poster = seasonPosterMap.get(season);
-    if (StringUtils.isBlank(poster)) {
+    MediaFile poster = seasonPosters.get(season);
+    if (poster == null) {
       return "";
     }
-    return path + File.separator + poster;
+    return poster.getFile().getAbsolutePath();
+  }
+
+  Dimension getSeasonPosterSize(int season) {
+    MediaFile seasonPoster = seasonPosters.get(season);
+    if (seasonPoster != null) {
+      return new Dimension(seasonPoster.getVideoWidth(), seasonPoster.getVideoHeight());
+    }
+
+    return new Dimension(0, 0);
   }
 
   /**
@@ -1513,8 +1559,25 @@ public class TvShow extends MediaEntity {
    * @param path
    *          the path
    */
-  void setSeasonPoster(int season, String path) {
-    seasonPosterMap.put(season, path);
+  void setSeasonPoster(int season, File file) {
+    seasonPosterMap.put(season, FilenameUtils.getName(file.getName()));
+
+    MediaFile mf = new MediaFile(file, MediaFileType.SEASON_POSTER);
+    mf.gatherMediaInformation();
+    addToMediaFiles(mf);
+
+    if (seasonPosters.containsKey(season)) {
+      seasonPosters.remove(season);
+    }
+    seasonPosters.put(season, mf);
+  }
+
+  void clearSeasonPoster(int season) {
+    MediaFile mf = seasonPosters.get(season);
+    if (mf != null) {
+      removeFromMediaFiles(mf);
+    }
+    seasonPosters.remove(season);
   }
 
   /**
@@ -1564,14 +1627,8 @@ public class TvShow extends MediaEntity {
    * @author Manuel Laggner
    */
   private class SeasonPosterImageFetcher implements Runnable {
-
-    /** The filename. */
     private String       filename;
-
-    /** The tv show season. */
     private TvShowSeason tvShowSeason;
-
-    /** The url. */
     private String       url;
 
     /**
@@ -1601,7 +1658,7 @@ public class TvShow extends MediaEntity {
       try {
         if (tvShowSeason != null) {
           oldFilename = tvShowSeason.getPoster();
-          tvShowSeason.setPoster("");
+          tvShowSeason.clearPoster();
         }
 
         // debug message
@@ -1624,14 +1681,14 @@ public class TvShow extends MediaEntity {
 
         ImageCache.invalidateCachedImage(filename);
         if (tvShowSeason != null) {
-          tvShowSeason.setPoster(FilenameUtils.getName(filename));
+          tvShowSeason.setPoster(new File(filename));
         }
       }
       catch (IOException e) {
         LOGGER.debug("fetch image", e);
         // fallback
         if (tvShowSeason != null) {
-          tvShowSeason.setPoster(oldFilename);
+          tvShowSeason.setPoster(new File(oldFilename));
         }
       }
       catch (Exception e) {

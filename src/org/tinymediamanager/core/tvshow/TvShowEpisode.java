@@ -678,8 +678,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the media info video format
    */
   public String getMediaInfoVideoFormat() {
-    if (mediaFiles.size() > 0) {
-      MediaFile mediaFile = getMediaFiles(MediaFileType.VIDEO).get(0);
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
       return mediaFile.getVideoFormat();
     }
 
@@ -692,8 +693,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the media info video codec
    */
   public String getMediaInfoVideoCodec() {
-    if (mediaFiles.size() > 0) {
-      MediaFile mediaFile = getMediaFiles(MediaFileType.VIDEO).get(0);
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
       return mediaFile.getVideoCodec();
     }
 
@@ -706,8 +708,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    * @return the media info audio codec
    */
   public String getMediaInfoAudioCodecAndChannels() {
-    if (mediaFiles.size() > 0) {
-      MediaFile mediaFile = getMediaFiles(MediaFileType.VIDEO).get(0);
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
       return mediaFile.getAudioCodec() + "_" + mediaFile.getAudioChannels();
     }
 
@@ -839,5 +842,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public void setNewlyAdded(boolean newlyAdded) {
     this.newlyAdded = newlyAdded;
+  }
+
+  /**
+   * Event to trigger a season poster changed for the UI
+   */
+  void setPosterChanged() {
+    firePropertyChange(SEASON_POSTER, null, "");
   }
 }

@@ -322,12 +322,12 @@ public class ImageLabel extends JLabel {
     if (respectFactor) {
       // calculate on available height
       size.y = maxHeight;
-      size.x = size.y * originalWidth / originalHeight;
+      size.x = (int) (size.y * (double) originalWidth / (double) originalHeight);
 
       if (size.x > maxWidth) {
         // calculate on available height
         size.x = maxWidth;
-        size.y = size.x * originalHeight / originalWidth;
+        size.y = (int) (size.x * (double) originalHeight / (double) originalWidth);
       }
     }
     else {

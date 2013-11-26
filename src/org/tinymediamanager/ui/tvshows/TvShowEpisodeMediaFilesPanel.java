@@ -59,46 +59,19 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeMediaFilesPanel extends JPanel {
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 6409916197348303643L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());    //$NON-NLS-1$
-
-  /** The logger. */
   private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeMediaFilesPanel.class);
-
-  /** The selection model. */
-  private TvShowEpisodeSelectionModel selectionModel;
-
-  /** The lbl files t. */
-  private JLabel                      lblFilesT;
-
-  /** The lbl path. */
   private LinkLabel                   lblEpisodePath;
-
-  /** The lbl date added t. */
   private JLabel                      lblDateAddedT;
-
-  /** The lbl date added. */
   private JLabel                      lblDateAdded;
-
-  /** The cb watched. */
   private JCheckBox                   cbWatched;
-
-  /** The lbl watched t. */
   private JLabel                      lblWatchedT;
-
-  /** The lbl path t. */
   private JLabel                      lblEpisodePathT;
-
-  // /** The btn play. */
-  // private JButton btnPlay;
-
-  /** The media file event list. */
-  private EventList<MediaFile>        mediaFileEventList;
   private MediaFilesPanel             panelMediaFiles;
+
+  private EventList<MediaFile>        mediaFileEventList;
+  private TvShowEpisodeSelectionModel selectionModel;
 
   /**
    * Instantiates a new tv show media information panel.
@@ -223,11 +196,8 @@ public class TvShowEpisodeMediaFilesPanel extends JPanel {
     lblEpisodePathT.setLabelFor(lblEpisodePath);
     add(lblEpisodePath, "4, 4, 5, 1");
 
-    lblFilesT = new JLabel(BUNDLE.getString("metatag.files")); //$NON-NLS-1$
-    add(lblFilesT, "2, 6, default, top");
-
     panelMediaFiles = new MediaFilesPanel(mediaFileEventList);
-    add(panelMediaFiles, "4, 6, 5, 1, fill, fill");
+    add(panelMediaFiles, "2, 6, 9, 1, fill, fill");
 
     initDataBindings();
 

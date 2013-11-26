@@ -653,7 +653,7 @@ public class Movie extends MediaEntity {
       return false;
     }
 
-    for (MediaFile file : mediaFiles) {
+    for (MediaFile file : new ArrayList<MediaFile>(getMediaFiles())) {
       if (filename.compareTo(file.getFilename()) == 0) {
         return true;
       }

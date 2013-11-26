@@ -27,17 +27,10 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeSelectionModel extends AbstractModelObject {
-
-  /** The Constant SELECTED_TV_SHOW_EPISODE. */
   private static final String    SELECTED_TV_SHOW_EPISODE = "selectedTvShowEpisode";
 
-  /** The selected tv show episode. */
   private TvShowEpisode          selectedTvShowEpisode;
-
-  /** The inital tv show episode. */
   private TvShowEpisode          initalTvShowEpisode      = new TvShowEpisode();
-
-  /** The property change listener. */
   private PropertyChangeListener propertyChangeListener;
 
   /**

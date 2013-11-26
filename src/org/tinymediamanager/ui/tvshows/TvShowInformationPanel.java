@@ -24,6 +24,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -70,18 +71,21 @@ public class TvShowInformationPanel extends JPanel {
   private JLabel                      lblVoteCount;
   private JLabel                      lblCertificationImage;
   private ImageLabel                  lblTvShowBackground;
+  private JLabel                      lblFanartSize;
   private ImageLabel                  lblTvShowPoster;
+  private JLabel                      lblPosterSize;
   private ImageLabel                  lblTvShowBanner;
+  private JLabel                      lblBannerSize;
   private JPanel                      panelBottom;
   private JTextPane                   tpOverview;
   private JPanel                      panelMediaInformation;
-
-  private TvShowSelectionModel        tvShowSelectionModel;
   private JPanel                      panelRight;
   private JPanel                      panelLeft;
   private JLabel                      lblPlot;
   private JSeparator                  separator;
   private JSeparator                  separator_1;
+
+  private TvShowSelectionModel        tvShowSelectionModel;
 
   /**
    * Instantiates a new tv show information panel.
@@ -102,47 +106,55 @@ public class TvShowInformationPanel extends JPanel {
     lblTvShowPoster = new ImageLabel(false) {
       private static final long serialVersionUID = -4774846565578766742L;
 
+      @Override
       public Dimension getPreferredSize() {
         if (originalImage != null) {
           return new Dimension(getParent().getWidth(),
               (int) (getParent().getWidth() / (float) originalImage.getWidth() * (float) originalImage.getHeight()));
         }
-        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 2d * 3d));
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 2d * 3d) + 1);
       }
     };
     panelLeft.add(lblTvShowPoster);
     lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
-    panelLeft.add(new JLabel("Poster - 1500x1000 - dummy"));
+    lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+    panelLeft.add(lblPosterSize);
+    panelLeft.add(Box.createVerticalStrut(20));
 
     lblTvShowBackground = new ImageLabel(false) {
       private static final long serialVersionUID = -4774846565578766742L;
 
+      @Override
       public Dimension getPreferredSize() {
         if (originalImage != null) {
           return new Dimension(getParent().getWidth(),
               (int) (getParent().getWidth() / (float) originalImage.getWidth() * (float) originalImage.getHeight()));
         }
-        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 16d * 9d));
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 16d * 9d) + 1);
       }
     };
     panelLeft.add(lblTvShowBackground);
     lblTvShowBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart"));
-    panelLeft.add(new JLabel("Fanart - 1920x1080 - dummy"));
+    lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+    panelLeft.add(lblFanartSize);
+    panelLeft.add(Box.createVerticalStrut(20));
 
     lblTvShowBanner = new ImageLabel(false) {
       private static final long serialVersionUID = -4774846565578766742L;
 
+      @Override
       public Dimension getPreferredSize() {
         if (originalImage != null) {
           return new Dimension(getParent().getWidth(),
               (int) (getParent().getWidth() / (float) originalImage.getWidth() * (float) originalImage.getHeight()));
         }
-        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 25d * 9d));
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 25d * 6d) + 1);
       }
     };
     panelLeft.add(lblTvShowBanner);
     lblTvShowBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
-    panelLeft.add(new JLabel("Banner - 758x140 - dummy"));
+    lblBannerSize = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+    panelLeft.add(lblBannerSize);
 
     panelRight = new JPanel();
     add(panelRight, "3, 1, fill, fill");
@@ -255,29 +267,29 @@ public class TvShowInformationPanel extends JPanel {
         // react on selection of a movie and change of a tv show
         if (source instanceof TvShowSelectionModel) {
           TvShowSelectionModel model = (TvShowSelectionModel) source;
-          lblTvShowBackground.setImagePath(model.getSelectedTvShow().getFanart());
-          lblTvShowPoster.setImagePath(model.getSelectedTvShow().getPoster());
-          lblTvShowBanner.setImagePath(model.getSelectedTvShow().getBanner());
+          setFanart(model.getSelectedTvShow());
+          setPoster(model.getSelectedTvShow());
+          setBanner(model.getSelectedTvShow());
         }
         if ((source.getClass() == TvShow.class && FANART.equals(property))) {
           TvShow tvShow = (TvShow) source;
-          lblTvShowBackground.clearImage();
-          lblTvShowBackground.setImagePath(tvShow.getFanart());
+          setFanart(tvShow);
         }
         if ((source.getClass() == TvShow.class && POSTER.equals(property))) {
           TvShow tvShow = (TvShow) source;
-          lblTvShowPoster.clearImage();
-          lblTvShowPoster.setImagePath(tvShow.getPoster());
+          setPoster(tvShow);
         }
         if ((source.getClass() == TvShow.class && BANNER.equals(property))) {
           TvShow tvShow = (TvShow) source;
-          lblTvShowBanner.clearImage();
-          lblTvShowBanner.setImagePath(tvShow.getBanner());
+          setBanner(tvShow);
         }
       }
     };
 
     tvShowSelectionModel.addPropertyChangeListener(propertyChangeListener);
+
+    // select first entry
+
   }
 
   protected void initDataBindings() {
@@ -302,22 +314,6 @@ public class TvShowInformationPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, Float, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, tvShowSelectionModel,
         tvShowSelectionModelBeanProperty_2, lblRating, jLabelBeanProperty);
     autoBinding_3.bind();
-    // //
-    // BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_5 = BeanProperty.create("selectedTvShow.fanart");
-    // BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imagePath");
-    // AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
-    // tvShowSelectionModel, tvShowSelectionModelBeanProperty_5, lblTvShowBackground, imageLabelBeanProperty);
-    // autoBinding_6.bind();
-    // //
-    // BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_6 = BeanProperty.create("selectedTvShow.poster");
-    // AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ,
-    // tvShowSelectionModel, tvShowSelectionModelBeanProperty_6, lblTvShowPoster, imageLabelBeanProperty);
-    // autoBinding_7.bind();
-    // //
-    // BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_7 = BeanProperty.create("selectedTvShow.banner");
-    // AutoBinding<TvShowSelectionModel, String, ImageLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ,
-    // tvShowSelectionModel, tvShowSelectionModelBeanProperty_7, lblTvShowBanner, imageLabelBeanProperty);
-    // autoBinding_8.bind();
     //
     BeanProperty<TvShowSelectionModel, Certification> tvShowSelectionModelBeanProperty_8 = BeanProperty.create("selectedTvShow.certification");
     BeanProperty<JLabel, Icon> jLabelBeanProperty_2 = BeanProperty.create("icon");
@@ -325,5 +321,41 @@ public class TvShowInformationPanel extends JPanel {
         tvShowSelectionModel, tvShowSelectionModelBeanProperty_8, lblCertificationImage, jLabelBeanProperty_2);
     autoBinding_9.setConverter(new CertificationImageConverter());
     autoBinding_9.bind();
+  }
+
+  private void setPoster(TvShow tvShow) {
+    lblTvShowPoster.clearImage();
+    lblTvShowPoster.setImagePath(tvShow.getPoster());
+    Dimension posterSize = tvShow.getPosterSize();
+    if (posterSize.width > 0 && posterSize.height > 0) {
+      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
+    }
+    else {
+      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+    }
+  }
+
+  private void setFanart(TvShow tvShow) {
+    lblTvShowBackground.clearImage();
+    lblTvShowBackground.setImagePath(tvShow.getFanart());
+    Dimension fanartSize = tvShow.getFanartSize();
+    if (fanartSize.width > 0 && fanartSize.height > 0) {
+      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height); //$NON-NLS-1$
+    }
+    else {
+      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+    }
+  }
+
+  private void setBanner(TvShow tvShow) {
+    lblTvShowBanner.clearImage();
+    lblTvShowBanner.setImagePath(tvShow.getBanner());
+    Dimension bannerSize = tvShow.getBannerSize();
+    if (bannerSize.width > 0 && bannerSize.height > 0) {
+      lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner") + " - " + bannerSize.width + "x" + bannerSize.height); //$NON-NLS-1$
+    }
+    else {
+      lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+    }
   }
 }

@@ -429,6 +429,14 @@ public class TvShowPanel extends JPanel {
     // further initializations
     init();
     initDataBindings();
+
+    // selecting first TV show at startup
+    if (tvShowList.getTvShows() != null && tvShowList.getTvShows().size() > 0) {
+      if (tree.getLastSelectedPathComponent() == null) {
+        DefaultMutableTreeNode firstLeaf = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) tree.getModel().getRoot()).getFirstChild();
+        tree.setSelectionPath(new TreePath(firstLeaf.getPath()));
+      }
+    }
   }
 
   /**

@@ -20,6 +20,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager2;
 
+import org.tinymediamanager.ui.components.ImageLabel;
+
 /**
  * Class ColumnLayout - used to layout all components in a single column with a fixed width
  * 
@@ -40,7 +42,10 @@ public class ColumnLayout implements LayoutManager2 {
 
     for (Component component : components) {
       Dimension preferredSize = component.getPreferredSize();
-      int height = (int) (preferredSize.getHeight() * width / preferredSize.getWidth());
+      int height = preferredSize.height;
+      if (component instanceof ImageLabel) {
+        height = (int) (preferredSize.getHeight() * width / preferredSize.getWidth());
+      }
       component.setBounds(0, y, width, height);
       y += height;
     }
@@ -61,8 +66,13 @@ public class ColumnLayout implements LayoutManager2 {
 
     for (Component component : components) {
       Dimension preferredSize = component.getPreferredSize();
-      int proportionalHeight = (int) (preferredSize.getHeight() * width / preferredSize.getWidth());
-      height += proportionalHeight;
+      if (component instanceof ImageLabel) {
+        int proportionalHeight = (int) (preferredSize.getHeight() * width / preferredSize.getWidth());
+        height += proportionalHeight;
+      }
+      else {
+        height += preferredSize.height;
+      }
     }
 
     return new Dimension(width, height);

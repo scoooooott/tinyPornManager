@@ -17,6 +17,8 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.awt.Dimension;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,113 +35,64 @@ import org.tinymediamanager.core.MediaFileType;
  * @author Manuel Laggner
  */
 public class TvShowSeason extends AbstractModelObject {
-  /** The season. */
   private int                 season   = -1;
-
-  /** The tv show. */
   private TvShow              tvShow;
-
-  /** The episodes. */
   private List<TvShowEpisode> episodes = ObservableCollections.observableList(new ArrayList<TvShowEpisode>());
 
-  /**
-   * Instantiates a new tv show season.
-   * 
-   * @param season
-   *          the season
-   * @param tvShow
-   *          the tv show
-   */
   public TvShowSeason(int season, TvShow tvShow) {
     this.season = season;
     this.tvShow = tvShow;
   }
 
-  /**
-   * Gets the season.
-   * 
-   * @return the season
-   */
   public int getSeason() {
     return season;
   }
 
-  /**
-   * Gets the tv show.
-   * 
-   * @return the tv show
-   */
   public TvShow getTvShow() {
     return tvShow;
   }
 
-  /**
-   * Adds the episode.
-   * 
-   * @param episode
-   *          the episode
-   */
   public void addEpisode(TvShowEpisode episode) {
     episodes.add(episode);
     firePropertyChange(ADDED_EPISODE, null, episodes);
   }
 
-  /**
-   * Gets the episodes.
-   * 
-   * @return the episodes
-   */
   public List<TvShowEpisode> getEpisodes() {
     return episodes;
   }
 
-  /**
-   * Sets the poster.
-   * 
-   * @param newValue
-   *          the new poster
-   */
-  public void setPoster(String newValue) {
+  public void setPoster(File newValue) {
     String oldValue = tvShow.getSeasonPoster(season);
     tvShow.setSeasonPoster(season, newValue);
     firePropertyChange(POSTER, oldValue, newValue);
+    for (TvShowEpisode episode : episodes) {
+      episode.setPosterChanged();
+    }
   }
 
-  /**
-   * Gets the poster.
-   * 
-   * @return the poster
-   */
+  public void clearPoster() {
+    tvShow.clearSeasonPoster(season);
+    firePropertyChange(POSTER, null, "");
+  }
+
   public String getPoster() {
     return tvShow.getSeasonPoster(season);
   }
 
-  /**
-   * Sets the poster url.
-   * 
-   * @param newValue
-   *          the new poster url
-   */
+  public Dimension getPosterSize() {
+    return tvShow.getSeasonPosterSize(season);
+  }
+
   public void setPosterUrl(String newValue) {
     String oldValue = tvShow.getSeasonPosterUrl(season);
     tvShow.setSeasonPosterUrl(season, newValue);
     firePropertyChange(POSTER_URL, oldValue, newValue);
   }
 
-  /**
-   * Gets the poster url.
-   * 
-   * @return the poster url
-   */
   public String getPosterUrl() {
     return tvShow.getSeasonPosterUrl(season);
   }
 
-  /**
-   * return ALL MediaFiles for Season
-   * 
-   * @return list of MediaFiles (w/o dupes)
-   */
   public List<MediaFile> getMediaFiles() {
     ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
     Set<MediaFile> unique = new LinkedHashSet<MediaFile>(mfs);
@@ -150,11 +103,6 @@ public class TvShowSeason extends AbstractModelObject {
     return mfs;
   }
 
-  /**
-   * return ALL MediaFiles for Season, for specific type
-   * 
-   * @return List of MediaFiles (w/o dupes)
-   */
   public List<MediaFile> getMediaFiles(MediaFileType type) {
     ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
     Set<MediaFile> unique = new LinkedHashSet<MediaFile>(mfs);
@@ -165,11 +113,6 @@ public class TvShowSeason extends AbstractModelObject {
     return mfs;
   }
 
-  /**
-   * check if one of the seasons episode is newly added
-   * 
-   * @return true/false
-   */
   public boolean isNewlyAdded() {
     for (TvShowEpisode episode : episodes) {
       if (episode.isNewlyAdded()) {
