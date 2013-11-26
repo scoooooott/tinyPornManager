@@ -343,7 +343,7 @@ public class Movie extends MediaEntity {
    *          the MediaTrailer object to download
    * @return true/false if successful
    */
-  public Boolean downladTtrailer(MediaTrailer trailerToDownload) {
+  public Boolean downloadTtrailer(MediaTrailer trailerToDownload) {
     try {
       // get trailer filename from first mediafile
       String tfile = MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), this) + "-trailer.";
@@ -1388,6 +1388,7 @@ public class Movie extends MediaEntity {
         filename = "";
         break;
     }
+
     return filename;
   }
 
@@ -1535,6 +1536,11 @@ public class Movie extends MediaEntity {
         posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
         posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
       }
+      else if (isDisc()) {
+        // override poster naming for disc files
+        posternames.add(MoviePosterNaming.POSTER_JPG);
+        posternames.add(MoviePosterNaming.POSTER_PNG);
+      }
       else {
         posternames = Globals.settings.getMovieSettings().getMoviePosterFilenames();
       }
@@ -1567,6 +1573,11 @@ public class Movie extends MediaEntity {
         // Fixate the name regardless of setting
         fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
         fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
+      }
+      else if (isDisc()) {
+        // override fanart naming for disc files
+        fanartnames.add(MovieFanartNaming.FANART_JPG);
+        fanartnames.add(MovieFanartNaming.FANART_PNG);
       }
       else {
         fanartnames = Globals.settings.getMovieSettings().getMovieFanartFilenames();
