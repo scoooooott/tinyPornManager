@@ -15,9 +15,11 @@
  */
 package org.tinymediamanager.scraper.util;
 
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -29,13 +31,24 @@ import java.util.regex.Pattern;
  * @author Manuel Laggner
  */
 public class StrgUtils {
+  private static Map<Integer, Replacement> REPLACEMENTS = buildReplacementMap();
 
-  public static String padRight(String s, int n) {
-    return String.format("%1$-" + n + "s", s);
-  }
-
-  public static String padLeft(String s, int n) {
-    return String.format("%1$" + n + "s", s);
+  /*
+   * build a replacement map of characters, which are not handled right by the normalizer method
+   */
+  private static Map<Integer, Replacement> buildReplacementMap() {
+    Map<Integer, Replacement> replacements = new HashMap<Integer, Replacement>();
+    replacements.put(0xc6, new Replacement("AE", "Ae"));
+    replacements.put(0xe6, new Replacement("ae"));
+    replacements.put(0xd0, new Replacement("D"));
+    replacements.put(0x111, new Replacement("d"));
+    replacements.put(0xd8, new Replacement("O"));
+    replacements.put(0xf8, new Replacement("o"));
+    replacements.put(0x152, new Replacement("OE", "Oe"));
+    replacements.put(0x153, new Replacement("oe"));
+    replacements.put(0x166, new Replacement("T"));
+    replacements.put(0x167, new Replacement("t"));
+    return replacements;
   }
 
   /**
@@ -164,7 +177,6 @@ public class StrgUtils {
    * @param s
    *          a not null String
    * @return a string with unique whitespace.
-   * @since 1.5.7
    */
   public static String removeDuplicateWhitespace(String s) {
     StringBuffer result = new StringBuffer();
@@ -179,5 +191,100 @@ public class StrgUtils {
       isPreviousWhiteSpace = thisCharWhiteSpace;
     }
     return result.toString();
+  }
+
+  /**
+   * This method takes an input String and replaces all special characters like umlauts, accented or other letter with diacritical marks with their
+   * basic ascii eqivalents. Originally written by Jens Hausherr (https://github.com/jabbrwcky), modified by Manuel Laggner
+   * 
+   * @param input
+   *          String to convert
+   * @param replaceAllCapitalLetters
+   *          <code>true</code> causes uppercase special chars that are replaced by more than one character to be replaced by all-uppercase
+   *          replacements; <code>false</code> will cause only the initial character of the replacements to be in uppercase and all subsequent
+   *          replacement characters will be in lowercase.
+   * @return Input string reduced to ASCII-safe characters.
+   */
+  public static String convertToAscii(String input, boolean replaceAllCapitalLetters) {
+    String result = null;
+    if (null != input) {
+      String normalized = Normalizer.normalize(input, Normalizer.Form.NFKD);
+
+      int len = normalized.length();
+      result = processSpecialChars(normalized.toCharArray(), 0, len, replaceAllCapitalLetters);
+    }
+
+    return result;
+  }
+
+  /*
+   * replace special characters
+   */
+  private static String processSpecialChars(char[] target, int offset, int len, boolean uppercase) {
+    StringBuilder result = new StringBuilder();
+    boolean skip = false;
+
+    for (int i = 0; i < len; i++) {
+      if (skip) {
+        skip = false;
+      }
+      else {
+        char c = target[i];
+        if ((c > 0x20 && c < 0x40) || (c > 0x7a && c < 0xc0) || (c > 0x5a && c < 0x61) || (c > 0x79 && c < 0xc0) || c == 0xd7 || c == 0xf7) {
+          result.append(c);
+        }
+        else if (Character.isDigit(c) || Character.isISOControl(c)) {
+          result.append(c);
+        }
+        else if (Character.isWhitespace(c) || Character.isLetter(c)) {
+          boolean isUpper = false;
+
+          switch (c) {
+            case '\u00df':
+              result.append("ss");
+              break;
+            /* Handling of capital and lowercase umlauts */
+            case 'A':
+            case 'O':
+            case 'U':
+              isUpper = true;
+            case 'a':
+            case 'o':
+            case 'u':
+              result.append(c);
+              if (i + 1 < target.length && target[i + 1] == 0x308) {
+                result.append(isUpper && uppercase ? 'E' : 'e');
+                skip = true;
+              }
+              break;
+            default:
+              Replacement rep = REPLACEMENTS.get(Integer.valueOf(c));
+              if (rep != null) {
+                result.append(uppercase ? rep.UPPER : rep.LOWER);
+              }
+              else
+                result.append(c);
+          }
+        }
+      }
+    }
+    return result.toString();
+  }
+
+  /**
+   * Combination of replacements for upper- and lowercase mode.
+   */
+  private static class Replacement {
+    private final String UPPER;
+    private final String LOWER;
+
+    Replacement(String ucReplacement, String lcReplacement) {
+      this.UPPER = ucReplacement;
+      this.LOWER = lcReplacement;
+    }
+
+    Replacement(String caseInsensitiveReplacement) {
+      this(caseInsensitiveReplacement, caseInsensitiveReplacement);
+    }
   }
 }
