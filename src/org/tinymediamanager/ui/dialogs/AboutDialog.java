@@ -127,7 +127,7 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblThanksTo, "2, 16, right, default");
     }
     {
-      JLabel lblMyronForHelping = new JLabel("Myron for helping me with coding, scrapers, localization, setup, builds...");
+      JLabel lblMyronForHelping = new JLabel("Myron for helping me with coding, scrapers, localization, setup, everything...");
       contentPanel.add(lblMyronForHelping, "6, 16");
     }
     {
@@ -143,16 +143,20 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblMatthewSandersFor, "6, 22");
     }
     {
-      JLabel lblXzener = new JLabel("Our translators: xsintive, kriss1981, Joostzilla, zbynek.fiala, carlosmarchi");
+      JLabel lblXzener = new JLabel("Our translators: xsintive, kriss1981, Joostzilla, zbynek.fiala, carlosmarchi,");
       contentPanel.add(lblXzener, "6, 24");
     }
     {
+      JLabel lblXzener = new JLabel("                              zagoslav, piodio, roliverosc, Peppe_sr");
+      contentPanel.add(lblXzener, "6, 26");
+    }
+    {
       JLabel lblLibs = new JLabel("The creators of all libs I've used");
-      contentPanel.add(lblLibs, "6, 26");
+      contentPanel.add(lblLibs, "6, 28");
     }
     {
       JLabel lblTester = new JLabel("Everyone who tested and provided feedback");
-      contentPanel.add(lblTester, "6, 28");
+      contentPanel.add(lblTester, "6, 30");
     }
     {
       JPanel buttonPane = new JPanel();
