@@ -27,6 +27,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -56,7 +57,6 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
-
   private static final Logger       LOGGER      = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
 
   // skip well-known, but unneeded BD & DVD folders
@@ -66,10 +66,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private MovieList                 movieList;
   private HashSet<File>             filesFound  = new HashSet<File>();
 
-  /**
-   * Instantiates a new scrape task.
-   * 
-   */
   public MovieUpdateDatasourceTask() {
     movieList = MovieList.getInstance();
     dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
@@ -96,7 +92,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
 
       for (String ds : dataSources) {
-
         startProgressBar("prepare scan '" + ds + "'");
         if (Globals.settings.getMovieSettings().isDetectMovieMultiDir()) {
           initThreadPool(1, "update"); // use only one, since the multiDir detection relies on accurate values...
@@ -111,6 +106,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               new String[] { ds }));
           continue;
         }
+
         boolean parseDsRoot = false;
         for (File file : dirs) {
           if (!cancel) {
@@ -139,61 +135,24 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
           }
         }
+
         if (parseDsRoot) {
           LOGGER.debug("parsing datasource root for movies...");
           parseMovieDirectory(new File(ds), ds);
         }
+
         waitForCompletionOrCancel();
 
         if (cancel) {
           break;
         }
 
-        startProgressBar("getting Mediainfo & cleanup...");
-        initThreadPool(1, "mediainfo");
-        LOGGER.info("removing orphaned movies/files...");
-        for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
-          if (cancel) {
-            break;
-          }
-          Movie movie = movieList.getMovies().get(i);
+        // cleanup
+        cleanup(ds);
 
-          // check only movies matching datasource
-          if (!new File(ds).equals(new File(movie.getDataSource()))) {
-            continue;
-          }
+        // mediainfo
+        gatherMediainfo(ds);
 
-          File movieDir = new File(movie.getPath());
-          if (!filesFound.contains(movieDir)) {
-            // dir is not in hashset - check with exit to be sure it is not here
-            if (!movieDir.exists()) {
-              LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
-              movieList.removeMovie(movie);
-            }
-            else {
-              LOGGER.warn("dir " + movie.getPath() + " not in hashset, but on hdd!");
-            }
-          }
-          else {
-            // have a look if that movie has just been added -> so we don't need any cleanup
-            if (!movie.justAdded) {
-              // check and delete all not found MediaFiles
-              List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
-              for (MediaFile mf : mediaFiles) {
-                if (!filesFound.contains(mf.getFile())) {
-                  if (!mf.exists()) {
-                    movie.removeFromMediaFiles(mf);
-                  }
-                  else {
-                    LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
-                  }
-                }
-              }
-              movie.saveToDb();
-            }
-            submitTask(new MediaFileInformationFetcherTask(movie.getMediaFiles(), movie, false));
-          }
-        } // end movie loop
         waitForCompletionOrCancel();
         if (cancel) {
           break;
@@ -229,15 +188,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     return null;
   }
 
-  /**
+  /*
    * parses a list of VIDEO files in a dir and creates movies out of it
-   * 
-   * @param files
-   *          list of video files
-   * @param datasource
-   *          our root datasource
    */
-  public void parseMultiMovieDir(File[] files, String datasource) {
+  private void parseMultiMovieDir(File[] files, String datasource) {
     if (files == null) {
       return;
     }
@@ -353,44 +307,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
   }
 
-  /**
-   * ThreadpoolWorker to work off ONE possible movie from root datasource directory
-   * 
-   * @author Myron Boyle
-   * @version 1.0
-   */
-  private class FindMovieTask implements Callable<Object> {
-
-    private File   subdir     = null;
-    private String datasource = "";
-
-    public FindMovieTask(File subdir, String datasource) {
-      this.subdir = subdir;
-      this.datasource = datasource;
-    }
-
-    @Override
-    public String call() throws Exception {
-      // find all possible movie folders recursive
-      ArrayList<File> mov = getRootMovieDirs(subdir, 1);
-      // remove dupe movie dirs
-      HashSet<File> h = new HashSet<File>(mov);
-      mov.clear();
-      mov.addAll(h);
-      for (File movieDir : mov) {
-        // check if multiple movies or a single one
-        parseMovieDirectory(movieDir, datasource);
-      }
-      // return first level folder name... uhm. yeah
-      return subdir.getName();
-    }
-  }
-
-  /**
+  /*
    * parses the complete movie directory, and adds a movie with all found MediaFiles
-   * 
-   * @param movieDir
-   * @param dataSource
    */
   private void parseMovieDirectory(File movieDir, String dataSource) {
     try {
@@ -504,9 +422,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
         // second round - now add all the other known files
         for (MediaFile mf : mfs) {
-
           if (!current.contains(mf)) { // a new mediafile was found!
-
             if (mf.getPath().toUpperCase().contains("BDMV") || mf.getPath().toUpperCase().contains("VIDEO_TS") || mf.isDiscFile()) {
               movie.setDisc(true);
             }
@@ -631,7 +547,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    *          the level how deep we are (level 0 = datasource root)
    * @return arraylist of abolute movie dirs
    */
-  public ArrayList<File> getRootMovieDirs(File directory, int level) {
+  private ArrayList<File> getRootMovieDirs(File directory, int level) {
     ArrayList<File> ar = new ArrayList<File>();
 
     // separate files & dirs
@@ -676,8 +592,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
         // ok, regular structure
         if (dirs.isEmpty() && level > 1 && !Utils.getStackingMarker(moviedir.getName()).isEmpty()) {
-          // no more dirs in that directory
-          // and at least 2 levels deep
+          // no more dirs in that directory and at least 2 levels deep
           // stacking found (either on file or parent dir)
           // -> assume parent as movie dir"
           moviedir = moviedir.getParentFile();
@@ -697,14 +612,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     return ar;
   }
 
-  /**
+  /*
    * recursively gets all MediaFiles from a moviedir
-   * 
-   * @param dir
-   *          the movie root dir
-   * @return list of files
    */
-  public ArrayList<MediaFile> getAllMediaFilesRecursive(File dir) {
+  private ArrayList<MediaFile> getAllMediaFilesRecursive(File dir) {
     ArrayList<MediaFile> mv = new ArrayList<MediaFile>();
 
     File[] list = dir.listFiles();
@@ -728,31 +639,135 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   }
 
   /*
-   * Executed in event dispatching thread
+   * cleanup database - remove orphaned movies/files
    */
+  private void cleanup(String datasource) {
+    startProgressBar("database cleanup...");
+    LOGGER.info("removing orphaned movies/files...");
+    for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
+      if (cancel) {
+        break;
+      }
+      Movie movie = movieList.getMovies().get(i);
+
+      // check only movies matching datasource
+      if (!new File(datasource).equals(new File(movie.getDataSource()))) {
+        continue;
+      }
+
+      File movieDir = new File(movie.getPath());
+      if (!filesFound.contains(movieDir)) {
+        // dir is not in hashset - check with exists to be sure it is not here
+        if (!movieDir.exists()) {
+          LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
+          movieList.removeMovie(movie);
+        }
+        else {
+          LOGGER.warn("dir " + movie.getPath() + " not in hashset, but on hdd!");
+        }
+      }
+      else {
+        // have a look if that movie has just been added -> so we don't need any cleanup
+        if (!movie.justAdded) {
+          // check and delete all not found MediaFiles
+          List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
+          for (MediaFile mf : mediaFiles) {
+            if (!filesFound.contains(mf.getFile())) {
+              if (!mf.exists()) {
+                movie.removeFromMediaFiles(mf);
+              }
+              else {
+                LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
+              }
+            }
+          }
+          movie.saveToDb();
+        }
+      }
+    }
+  }
+
   /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#done()
+   * gather mediainfo for ungathered movies
+   */
+  private void gatherMediainfo(String datasource) {
+    // start MI
+    initThreadPool(1, "mediainfo");
+    startProgressBar("getting Mediainfo");
+    for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
+      if (cancel) {
+        break;
+      }
+      Movie movie = movieList.getMovies().get(i);
+
+      // check only movies matching datasource
+      if (!new File(datasource).equals(new File(movie.getDataSource()))) {
+        continue;
+      }
+
+      ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<MediaFile>();
+      for (MediaFile mf : movie.getMediaFiles()) {
+        if (StringUtils.isBlank(mf.getContainerFormat())) {
+          ungatheredMediaFiles.add(mf);
+        }
+      }
+
+      if (ungatheredMediaFiles.size() > 0) {
+        submitTask(new MediaFileInformationFetcherTask(ungatheredMediaFiles, movie, false));
+      }
+    }
+  }
+
+  /*
+   * Executed in event dispatching thread
    */
   @Override
   public void done() {
     stopProgressBar();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.TmmSwingWorker#cancel()
-   */
   @Override
   public void cancel() {
     cancel = true;
-    // cancel(false);
   }
 
   @Override
   public void callback(Object obj) {
     startProgressBar((String) obj, getTaskcount(), getTaskdone());
+  }
+
+  /**
+   * ThreadpoolWorker to work off ONE possible movie from root datasource directory
+   * 
+   * @author Myron Boyle
+   * @version 1.0
+   */
+  private class FindMovieTask implements Callable<Object> {
+
+    private File   subdir     = null;
+    private String datasource = "";
+
+    public FindMovieTask(File subdir, String datasource) {
+      this.subdir = subdir;
+      this.datasource = datasource;
+    }
+
+    @Override
+    public String call() throws Exception {
+      // find all possible movie folders recursive
+      ArrayList<File> mov = getRootMovieDirs(subdir, 1);
+
+      // remove dupe movie dirs
+      HashSet<File> h = new HashSet<File>(mov);
+      mov.clear();
+      mov.addAll(h);
+      for (File movieDir : mov) {
+        // check if multiple movies or a single one
+        parseMovieDirectory(movieDir, datasource);
+      }
+
+      // return first level folder name... uhm. yeah
+      return subdir.getName();
+    }
   }
 }
