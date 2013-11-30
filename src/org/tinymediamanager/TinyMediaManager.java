@@ -211,8 +211,8 @@ public class TinyMediaManager {
     LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
     LOGGER.info("=====================================================");
     LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
-    Globals.settings.getFeatureSettings().setFeatures();
-    if (Globals.settings.getFeatureSettings().isDonator()) {
+
+    if (Globals.isDonator()) {
       LOGGER.info("tmm.supporter    : THANKS FOR DONATING - ALL FEATURES UNLOCKED :)");
     }
 

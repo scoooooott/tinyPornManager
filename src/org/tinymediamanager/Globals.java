@@ -30,6 +30,7 @@ import javax.persistence.PersistenceException;
 import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.License;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.MainWindow;
 
@@ -57,6 +58,17 @@ public class Globals {
                                                       2, TimeUnit.SECONDS, // time to wait before closing idle workers
                                                       new LinkedBlockingQueue<Runnable>(), // our queue
                                                       new TmmThreadFactory("global"));
+
+  private static final boolean           donator  = License.isValid();
+
+  /**
+   * Have we donated?
+   * 
+   * @return true/false
+   */
+  public static boolean isDonator() {
+    return donator;
+  }
 
   /**
    * Start database.
