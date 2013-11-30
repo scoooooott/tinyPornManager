@@ -100,7 +100,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           initThreadPool(3, "update");
         }
         File[] dirs = new File(ds).listFiles();
-        if (dirs == null) {
+        if (dirs == null || dirs.length == 0) {
           // error - continue with next datasource
           MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
               new String[] { ds }));
@@ -670,18 +670,22 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         // have a look if that movie has just been added -> so we don't need any cleanup
         if (!movie.justAdded) {
           // check and delete all not found MediaFiles
+          boolean dirty = false;
           List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
           for (MediaFile mf : mediaFiles) {
             if (!filesFound.contains(mf.getFile())) {
               if (!mf.exists()) {
                 movie.removeFromMediaFiles(mf);
+                dirty = true;
               }
               else {
                 LOGGER.warn("file " + mf.getFile().getAbsolutePath() + " not in hashset, but on hdd!");
               }
             }
           }
-          movie.saveToDb();
+          if (dirty) {
+            movie.saveToDb();
+          }
         }
       }
     }
@@ -694,6 +698,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     // start MI
     initThreadPool(1, "mediainfo");
     startProgressBar("getting Mediainfo");
+    LOGGER.info("getting Mediainfo...");
     for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
       if (cancel) {
         break;

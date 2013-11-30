@@ -549,7 +549,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(MEDIA_INFORMATION, false, true);
   }
 
-  public synchronized void saveToDb() {
+  public void saveToDb() {
     // update DB
     synchronized (Globals.entityManager) {
       Globals.entityManager.getTransaction().begin();

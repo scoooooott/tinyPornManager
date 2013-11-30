@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseListener;
@@ -60,6 +61,7 @@ import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JSearchTextField;
+import org.tinymediamanager.ui.components.PopupWindow;
 import org.tinymediamanager.ui.components.ZebraJTable;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
@@ -210,6 +212,7 @@ public class MoviePanel extends JPanel {
   private final Action                  actionBatchEdit              = new MovieBatchEditAction();
 
   private final Action                  actionClearImageCache        = new MovieClearImageCacheAction();
+  private JButton                       btnNewButton;
 
   /**
    * Create the panel.
@@ -238,11 +241,10 @@ public class MoviePanel extends JPanel {
 
     JPanel panelMovieList = new JPanel();
     splitPaneHorizontal.setLeftComponent(panelMovieList);
-    panelMovieList
-        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
-            ColumnSpec.decode("150px:grow"), }, new RowSpec[] { RowSpec.decode("26px"), FormFactory.RELATED_GAP_ROWSPEC,
-            RowSpec.decode("fill:max(200px;default):grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
+    panelMovieList.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
+        ColumnSpec.decode("150px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("26px"),
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:max(200px;default):grow"), FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JToolBar toolBar = new JToolBar();
     toolBar.setRollover(true);
@@ -356,10 +358,21 @@ public class MoviePanel extends JPanel {
 
     // JScrollPane scrollPane = new JScrollPane(table);
     JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(table);
-    panelMovieList.add(scrollPane, "2, 3, 2, 1, fill, fill");
+    panelMovieList.add(scrollPane, "2, 3, 4, 1, fill, fill");
+
+    btnNewButton = new JButton("filter");
+    panelMovieList.add(btnNewButton, "5, 1");
 
     panelExtendedSearch = new MovieExtendedSearchPanel(movieSelectionModel);
-    panelMovieList.add(panelExtendedSearch, "2, 5, 2, 1, fill, fill");
+    // panelMovieList.add(panelExtendedSearch, "2, 5, 2, 1, fill, fill");
+    final PopupWindow filterWindow = new PopupWindow();
+    btnNewButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        filterWindow.makeUI(panelExtendedSearch, btnNewButton);
+
+      }
+    });
 
     JPanel panelStatus = new JPanel();
     panelMovieList.add(panelStatus, "2, 6, 2, 1");

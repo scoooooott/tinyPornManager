@@ -96,16 +96,16 @@ public class TvShowTest {
     Globals.settings.getTvShowSettings().setRenamerSeparator(".");
 
     // display renamed EP name :)
-    System.out.println(TvShowRenamer.generateFilename(dmf));
+    System.out.println(TvShowRenamer.generateFilename(show, dmf));
 
     Globals.settings.getTvShowSettings().setRenamerAddTitle(false);
-    System.out.println(TvShowRenamer.generateFilename(dmf));
+    System.out.println(TvShowRenamer.generateFilename(show, dmf));
 
     Globals.settings.getTvShowSettings().setRenamerAddShow(false);
-    System.out.println(TvShowRenamer.generateFilename(dmf));
+    System.out.println(TvShowRenamer.generateFilename(show, dmf));
 
     Globals.settings.getTvShowSettings().setRenamerAddSeason(false);
-    System.out.println(TvShowRenamer.generateFilename(dmf));
+    System.out.println(TvShowRenamer.generateFilename(show, dmf));
   }
 
   /**

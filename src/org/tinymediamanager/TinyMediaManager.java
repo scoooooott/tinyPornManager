@@ -345,6 +345,11 @@ public class TinyMediaManager {
           MovieList movieList = MovieList.getInstance();
           movieList.loadMoviesFromDatabase();
 
+          if (g2 != null) {
+            updateProgress(g2, "loading TV shows", 40);
+            splash.update();
+          }
+
           TvShowList tvShowList = TvShowList.getInstance();
           tvShowList.loadTvShowsFromDatabase();
 

@@ -49,21 +49,12 @@ import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
  * @author Manuel Laggner
  */
 public class TvShowList extends AbstractModelObject {
-
-  /** The Constant logger. */
   private static final Logger    LOGGER         = LoggerFactory.getLogger(TvShowList.class);
-
-  /** The instance. */
   private static TvShowList      instance       = null;
 
-  /** The tv show list. */
   private List<TvShow>           tvShowList     = ObservableCollections.observableList(new ArrayList<TvShow>());
-
-  /** The tag listener. */
-  private PropertyChangeListener tagListener;
-
-  /** The tags observable. */
   private List<String>           tagsObservable = ObservableCollections.observableList(new ArrayList<String>());
+  private PropertyChangeListener tagListener;
 
   /**
    * Instantiates a new TvShowList.
@@ -136,7 +127,7 @@ public class TvShowList extends AbstractModelObject {
 
     for (int i = tvShowList.size() - 1; i >= 0; i--) {
       TvShow tvShow = tvShowList.get(i);
-      if (!new File(path).equals(new File(tvShow.getDataSource()))) {
+      if (new File(path).equals(new File(tvShow.getDataSource()))) {
         removeTvShow(tvShow);
       }
     }
@@ -379,15 +370,16 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
-   * Gets the movie by path.
+   * Gets the TV show by path.
    * 
    * @param path
    *          the path
    * @return the movie by path
    */
-  public synchronized TvShow getTvShowByPath(File path) {
+  public TvShow getTvShowByPath(File path) {
+    ArrayList<TvShow> tvShows = new ArrayList<TvShow>(tvShowList);
     // iterate over all tv shows and check whether this path is being owned by one
-    for (TvShow tvShow : getTvShows()) {
+    for (TvShow tvShow : tvShows) {
       if (new File(tvShow.getPath()).compareTo(path) == 0) {
         return tvShow;
       }
@@ -397,58 +389,26 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
-   * Gets the tv episode by file.
-   * 
-   * @param file
-   *          the file
-   * @return the tv episode by file
-   */
-  public synchronized TvShowEpisode getTvEpisodeByFile(File file) {
-    // validy check
-    if (file == null) {
-      return null;
-    }
-
-    // check if that file is in any tv show/episode (iterating thread safe)
-    for (int i = 0; i < getTvShows().size(); i++) {
-      TvShow show = getTvShows().get(i);
-      for (int j = 0; j < show.getEpisodes().size(); j++) {
-        TvShowEpisode episode = show.getEpisodes().get(j);
-        for (int k = 0; k < episode.getMediaFiles().size(); k++) {
-          MediaFile mediaFile = episode.getMediaFiles().get(k);
-          if (file.equals(mediaFile.getFile())) {
-            return episode;
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Gets the tv episodes by file.
+   * Gets the episodes by file. Filter out all episodes from the Database which are part of this file
    * 
    * @param file
    *          the file
    * @return the tv episodes by file
    */
-  public synchronized List<TvShowEpisode> getTvEpisodesByFile(File file) {
+  public List<TvShowEpisode> getTvEpisodesByFile(TvShow tvShow, File file) {
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(1);
     // validy check
     if (file == null) {
       return episodes;
     }
 
-    // check if that file is in any tv show/episode (iterating thread safe)
-    for (int i = 0; i < getTvShows().size(); i++) {
-      TvShow show = getTvShows().get(i);
-      for (int j = 0; j < show.getEpisodes().size(); j++) {
-        TvShowEpisode episode = show.getEpisodes().get(j);
-        for (int k = 0; k < episode.getMediaFiles().size(); k++) {
-          MediaFile mediaFile = episode.getMediaFiles().get(k);
-          if (file.equals(mediaFile.getFile())) {
-            episodes.add(episode);
-          }
+    // check if that file is in this tv show/episode (iterating thread safe)
+    for (int j = 0; j < tvShow.getEpisodes().size(); j++) {
+      TvShowEpisode episode = tvShow.getEpisodes().get(j);
+      for (int k = 0; k < episode.getMediaFiles().size(); k++) {
+        MediaFile mediaFile = episode.getMediaFiles().get(k);
+        if (file.equals(mediaFile.getFile())) {
+          episodes.add(episode);
         }
       }
     }

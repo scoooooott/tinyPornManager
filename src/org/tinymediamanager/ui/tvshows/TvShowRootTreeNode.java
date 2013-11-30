@@ -87,7 +87,7 @@ public class TvShowRootTreeNode extends DefaultMutableTreeNode {
    */
   @SuppressWarnings("unchecked")
   @Override
-  public void insert(MutableTreeNode newChild, int childIndex) {
+  public synchronized void insert(MutableTreeNode newChild, int childIndex) {
     if (this.children != null) {
       int index = Collections.binarySearch(this.children, newChild, nodeComparator);
       if (index < 0) {

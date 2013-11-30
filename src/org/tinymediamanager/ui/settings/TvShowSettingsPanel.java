@@ -387,7 +387,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
 
     if (tvShow != null && tvShow.getEpisodes().size() > 0 && tvShow.getEpisodes().get(0) != null) {
       TvShowEpisode episode = tvShow.getEpisodes().get(0);
-      String filename = TvShowRenamer.generateFilename(episode.getMediaFiles(MediaFileType.VIDEO).get(0));
+      String filename = TvShowRenamer.generateFilename(tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0));
       String seasonDir = TvShowRenamer.generateSeasonDir(tfSeasonFoldername.getText(), episode);
       lblExample.setText(seasonDir + File.separator + filename);
     }

@@ -95,6 +95,7 @@ public class TvShow extends MediaEntity {
   private boolean                     watched            = false;
   private String                      sortTitle          = "";
 
+  @OneToMany(cascade = { CascadeType.ALL })
   private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
   private List<String>                tags               = new ArrayList<String>();
   private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>();
@@ -1560,7 +1561,7 @@ public class TvShow extends MediaEntity {
    *          the path
    */
   void setSeasonPoster(int season, File file) {
-    seasonPosterMap.put(season, FilenameUtils.getName(file.getName()));
+    // seasonPosterMap.put(season, FilenameUtils.getName(file.getName()));
 
     MediaFile mf = new MediaFile(file, MediaFileType.SEASON_POSTER);
     mf.gatherMediaInformation();

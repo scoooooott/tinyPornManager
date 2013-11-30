@@ -143,7 +143,7 @@ public class TvShowRenamer {
     // Assumption: all multi-episodes share the same season!!!
     // #######################################################
 
-    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(mf.getFile());
+    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(show, mf.getFile());
     if (eps == null || eps.size() == 0) {
       LOGGER.warn("No episodes found for file '" + mf.getFilename() + "' - skipping");
       return;
@@ -196,7 +196,7 @@ public class TvShowRenamer {
         return;
       }
 
-      String newFoldername = FilenameUtils.getBaseName(generateFilename(mf)); // w/o extension
+      String newFoldername = FilenameUtils.getBaseName(generateFilename(show, mf)); // w/o extension
       if (newFoldername != null && !newFoldername.isEmpty()) {
         File newEpFolder = new File(seasonDir + File.separator + newFoldername);
         File newDisc = new File(newEpFolder + File.separator + disc.getName()); // old disc name
@@ -237,7 +237,7 @@ public class TvShowRenamer {
         }
         seasonDir = sample; // change directory storage
       }
-      String filename = generateFilename(mf);
+      String filename = generateFilename(show, mf);
       if (filename != null && !filename.isEmpty()) {
         File newFile = new File(seasonDir, filename);
 
@@ -285,7 +285,7 @@ public class TvShowRenamer {
    * @param mf
    *          the MediaFile
    */
-  public static String generateFilename(MediaFile mf) {
+  public static String generateFilename(TvShow tvShow, MediaFile mf) {
     String filename = "";
     String s = "";
     String e = "";
@@ -297,7 +297,7 @@ public class TvShowRenamer {
       separator = "_";
     }
 
-    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(mf.getFile());
+    List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
     if (eps == null || eps.size() == 0) {
       return "";
     }
