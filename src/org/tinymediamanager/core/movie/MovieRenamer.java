@@ -262,6 +262,13 @@ public class MovieRenamer {
           break; // ok it worked, step out
         }
         try {
+          if (!f.exists()) {
+            LOGGER.debug("Hmmm... file " + f + " does not even exists; delete from DB");
+            // delete from MF or ignore for later cleanup (but better now!)
+            movie.removeFromMediaFiles(vid);
+            testRenameOk = true; // we "tested" this ok
+            break;
+          }
           LOGGER.debug("rename did not work - sleep a while and try again...");
           Thread.sleep(1000);
         }
