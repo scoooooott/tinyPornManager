@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.junit.Test;
 import org.tinymediamanager.core.Utils;
 
@@ -23,9 +26,49 @@ import org.tinymediamanager.core.Utils;
  * 
  */
 public class MovieTest {
+  private Movie m = new Movie();
 
   @Test
   public void testCleanStackingMarkers() {
     System.out.println(Utils.cleanStackingMarkers("Movie Name (2013)-cd1.mkv"));
+  }
+
+  @Test
+  public void renamerPattern() {
+    m.setTitle(" Abraham Lincoln - Vapire Hunter");
+    m.setYear("");
+    m.setOriginalTitle("OrigTit");
+
+    String str = "$T {($Y)}      {$F} $M   $O ";
+    System.out.println(str);
+
+    // replace optional group
+    Pattern regex = Pattern.compile("\\{(.*?)\\}");
+    Matcher mat = regex.matcher(str);
+    while (mat.find()) {
+      str = str.replace(mat.group(0), replaceVariable(mat.group(1)));
+    }
+
+    // replace normal vars
+    str = MovieRenamer.createDestinationForFilename(str, m);
+
+    System.out.println(str);
+  }
+
+  private String replaceVariable(String s) {
+    Pattern regex = Pattern.compile("\\$.{1}"); // $x
+    Matcher mat = regex.matcher(s);
+    if (mat.find()) {
+      String rep = MovieRenamer.createDestinationForFilename(mat.group(), m);
+      if (rep.isEmpty()) {
+        return "";
+      }
+      else {
+        return s.replace(mat.group(), rep);
+      }
+    }
+    else {
+      return "";
+    }
   }
 }

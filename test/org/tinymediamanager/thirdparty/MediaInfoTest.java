@@ -16,7 +16,7 @@ public class MediaInfoTest {
   @Before
   public void setUp() throws Exception {
     // set native dir (needs to be absolute)
-    String path = MediaInfoTest.class.getClassLoader().getResource(".").getPath() + "native/";
+    String path = "native/";
     if (Platform.isWindows()) {
       path += "windows-";
     }
@@ -95,7 +95,7 @@ public class MediaInfoTest {
    */
   @Test
   public void testDirect() throws Exception {
-    String FileName = "Example.ogg";
+    String FileName = "F:\\_neu\\_NEU Filme SD\\Broken City (2013)\\extrathumbs\\thumb8.jpg";
     String To_Display = "";
 
     // Info about the library

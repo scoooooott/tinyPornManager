@@ -1,6 +1,9 @@
 package org.tinymediamanager.core;
 
 import java.io.File;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -40,6 +43,21 @@ public class UtilsTest {
   public void backup() {
     Utils.createBackupFile(new File("tmm.odb"));
     Utils.deleteOldBackupFile(new File("tmm.odb"), 15);
+  }
+
+  @Test
+  public void env() {
+    Map<String, String> env = System.getenv();
+    for (String envName : env.keySet()) {
+      System.out.format("%s=%s%n", envName, env.get(envName));
+    }
+    Properties props = System.getProperties();
+    Enumeration e = props.propertyNames();
+
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      System.out.println(key + " -- " + props.getProperty(key));
+    }
   }
 
   @Test
