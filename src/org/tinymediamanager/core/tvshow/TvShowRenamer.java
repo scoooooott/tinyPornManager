@@ -163,6 +163,15 @@ public class TvShowRenamer {
         break; // ok it worked, step out
       }
       try {
+        if (!f.exists()) {
+          LOGGER.debug("Hmmm... file " + f + " does not even exists; delete from DB");
+          // delete from MF
+          for (TvShowEpisode e : eps) {
+            e.removeFromMediaFiles(mf);
+            e.saveToDb();
+          }
+          return;
+        }
         LOGGER.debug("rename did not work - sleep a while and try again...");
         Thread.sleep(1000);
       }
