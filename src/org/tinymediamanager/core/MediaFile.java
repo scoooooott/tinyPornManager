@@ -1372,18 +1372,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
-   * Save to db.
-   */
-  public synchronized void saveToDb() {
-    // update DB
-    synchronized (Globals.entityManager) {
-      Globals.entityManager.getTransaction().begin();
-      Globals.entityManager.persist(this);
-      Globals.entityManager.getTransaction().commit();
-    }
-  }
-
-  /**
    * Checks if is valid mediainfo format.
    * 
    * @return true, if is valid mediainfo format

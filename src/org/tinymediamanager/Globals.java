@@ -40,14 +40,8 @@ import org.tinymediamanager.ui.MainWindow;
  * @author Manuel Laggner
  */
 public class Globals {
-
-  /** The settings. */
   public static final Settings           settings = Settings.getInstance();
-
-  /** The emf. */
-  private static EntityManagerFactory    emf;
-
-  /** The entity manager. */
+  public static EntityManagerFactory     entityManagerFactory;
   public static EntityManager            entityManager;
 
   // public static final ExecutorService executor2 = Executors.newFixedThreadPool(10);
@@ -77,15 +71,15 @@ public class Globals {
    *           the exception
    */
   public static void startDatabase() throws Exception {
-    emf = Persistence.createEntityManagerFactory(Constants.DB);
+    entityManagerFactory = Persistence.createEntityManagerFactory(Constants.DB);
     try {
-      entityManager = emf.createEntityManager();
+      entityManager = entityManagerFactory.createEntityManager();
     }
     catch (PersistenceException e) {
       if (e.getCause().getMessage().contains("does not match db file")) {
         // happens when there's a recovery file which does not match (cannot be recovered) - just delete and try again
         FileUtils.deleteQuietly(new File(Constants.DB + "$"));
-        entityManager = emf.createEntityManager();
+        entityManager = entityManagerFactory.createEntityManager();
       }
       else {
         // unknown
@@ -102,7 +96,7 @@ public class Globals {
    */
   public static void shutdownDatabase() throws Exception {
     entityManager.close();
-    emf.close();
+    entityManagerFactory.close();
   }
 
   /** The logo. */

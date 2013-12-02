@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
@@ -556,6 +557,10 @@ public abstract class MediaEntity extends AbstractModelObject {
       Globals.entityManager.persist(this);
       Globals.entityManager.getTransaction().commit();
     }
+  }
+
+  public void saveToDb(EntityManager entityManager) {
+    entityManager.merge(this);
   }
 
   abstract public void callbackForWrittenArtwork(MediaArtworkType type);
