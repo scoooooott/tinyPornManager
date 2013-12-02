@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -38,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.MenuEvent;
@@ -61,7 +63,6 @@ import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JSearchTextField;
-import org.tinymediamanager.ui.components.PopupWindow;
 import org.tinymediamanager.ui.components.ZebraJTable;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
@@ -212,7 +213,6 @@ public class MoviePanel extends JPanel {
   private final Action                  actionBatchEdit              = new MovieBatchEditAction();
 
   private final Action                  actionClearImageCache        = new MovieClearImageCacheAction();
-  private JButton                       btnNewButton;
 
   /**
    * Create the panel.
@@ -360,17 +360,21 @@ public class MoviePanel extends JPanel {
     JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(table);
     panelMovieList.add(scrollPane, "2, 3, 4, 1, fill, fill");
 
-    btnNewButton = new JButton("filter");
-    panelMovieList.add(btnNewButton, "5, 1");
+    JToggleButton filterButton = new JToggleButton("filter");
+    panelMovieList.add(filterButton, "5, 1");
 
     panelExtendedSearch = new MovieExtendedSearchPanel(movieSelectionModel);
+    panelExtendedSearch.setVisible(false);
     // panelMovieList.add(panelExtendedSearch, "2, 5, 2, 1, fill, fill");
-    final PopupWindow filterWindow = new PopupWindow();
-    btnNewButton.addActionListener(new ActionListener() {
+    filterButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        filterWindow.makeUI(panelExtendedSearch, btnNewButton);
-
+        if (panelExtendedSearch.isVisible() == true) {
+          panelExtendedSearch.setVisible(false);
+        }
+        else {
+          panelExtendedSearch.setVisible(true);
+        }
       }
     });
 
@@ -395,8 +399,18 @@ public class MoviePanel extends JPanel {
     lblMovieCountTotal = new JLabel("");
     panelMovieCount.add(lblMovieCountTotal);
 
+    JLayeredPane layeredPaneRight = new JLayeredPane();
+    layeredPaneRight.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default"), ColumnSpec.decode("default:grow") }, new RowSpec[] {
+        RowSpec.decode("default"), RowSpec.decode("default:grow") }));
     panelRight = new MovieInformationPanel(movieSelectionModel);
-    splitPaneHorizontal.setRightComponent(panelRight);
+    layeredPaneRight.add(panelRight, "1, 1, 2, 2, fill, fill");
+    layeredPaneRight.setLayer(panelRight, 0);
+
+    // glass pane
+    layeredPaneRight.add(panelExtendedSearch, "1, 1, fill, fill");
+    layeredPaneRight.setLayer(panelExtendedSearch, 1);
+
+    splitPaneHorizontal.setRightComponent(layeredPaneRight);
     splitPaneHorizontal.setContinuousLayout(true);
 
     // beansbinding init
