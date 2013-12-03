@@ -22,7 +22,6 @@ import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -79,22 +78,19 @@ public class TvShowCastPanel extends JPanel {
         .beanConnector(TvShowActor.class)));
     actorTableModel = new DefaultEventTableModel<TvShowActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        ColumnSpec.decode("125px"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:max(125px;default):grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("125px"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        RowSpec.decode("fill:max(125px;default):grow"), }));
 
     lblActorImage = new ImageLabel();
     lblActorImage.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
-    add(lblActorImage, "6, 2");
-
-    JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors"));//$NON-NLS-1$
-    add(lblActorsT, "2, 2, left, top");
+    add(lblActorImage, "4, 2");
 
     tableActors = new ZebraJTable(actorTableModel);
 
     JScrollPane scrollPaneActors = ZebraJTable.createStripedJScrollPane(tableActors);
     scrollPaneActors.setViewportView(tableActors);
-    add(scrollPaneActors, "4, 2, fill, fill");
+    add(scrollPaneActors, "2, 2, fill, fill");
 
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {

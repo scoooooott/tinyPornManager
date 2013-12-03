@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -68,7 +67,7 @@ public class TvShowEpisodeCastPanel extends JPanel {
   /**
    * UI elements
    */
-  private JTable                              tableActors;
+  private ZebraJTable                         tableActors;
   private ImageLabel                          lblActorImage;
   private JLabel                              lblDirector;
   private JLabel                              lblWriter;
@@ -110,7 +109,7 @@ public class TvShowEpisodeCastPanel extends JPanel {
     JLabel lblActorsT = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
     add(lblActorsT, "2, 6, left, top");
 
-    tableActors = new JTable(actorTableModel);
+    tableActors = new ZebraJTable(actorTableModel);
     JScrollPane scrollPaneActors = ZebraJTable.createStripedJScrollPane(tableActors);
     scrollPaneActors.setViewportView(tableActors);
     add(scrollPaneActors, "4, 6, fill, fill");

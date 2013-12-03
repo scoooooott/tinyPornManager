@@ -164,12 +164,12 @@ public class TvShowPanel extends JPanel {
 
     JPanel panelTvShowTree = new JPanel();
     splitPane.setLeftComponent(panelTvShowTree);
-    panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
-        ColumnSpec.decode("150px:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     textField = new JSearchTextField();
-    panelTvShowTree.add(textField, "3, 1, right, bottom");
+    panelTvShowTree.add(textField, "4, 1, right, bottom");
     textField.setColumns(10);
     textField.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -200,7 +200,7 @@ public class TvShowPanel extends JPanel {
 
     JScrollPane scrollPane = new JScrollPane();
     scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    panelTvShowTree.add(scrollPane, "2, 3, 2, 1, fill, fill");
+    panelTvShowTree.add(scrollPane, "2, 3, 3, 1, fill, fill");
 
     JToolBar toolBar = new JToolBar();
     toolBar.setRollover(true);
@@ -337,7 +337,7 @@ public class TvShowPanel extends JPanel {
     panelHeader.add(lblSubtitleColumn, "6, 1");
 
     JPanel panel = new JPanel();
-    panelTvShowTree.add(panel, "2, 5, 2, 1, fill, fill");
+    panelTvShowTree.add(panel, "2, 5, 3, 1, fill, fill");
     panel
         .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
             FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
