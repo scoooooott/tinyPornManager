@@ -46,15 +46,26 @@ public class SmallComboBox extends JComboBox {
 
   public SmallComboBox() {
     super();
-    init();
+    // try catch block for safety reasons (and WBPro)
+    try {
+      init();
+    }
+    catch (Exception e) {
+    }
   }
 
   public SmallComboBox(Object[] items) {
     super(items);
-    init();
+
+    // try catch block for safety reasons (and WBPro)
+    try {
+      init();
+    }
+    catch (Exception e) {
+    }
   }
 
-  private void init() {
+  private void init() throws Exception {
     setRenderer(new SmallComboBoxRenderer());
     setEditor(new SmallComboBoxEditor());
     setUI(new SmallComboBoxUI());

@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -42,7 +43,7 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
    * @author Manuel Laggner
    */
   public enum SearchOptions {
-    DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC
+    DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE
   }
 
   /** The search options. */
@@ -148,6 +149,14 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     if (searchOptions.containsKey(SearchOptions.AUDIO_CODEC)) {
       String audioCodec = (String) searchOptions.get(SearchOptions.AUDIO_CODEC);
       if (!containsAudioCodec(movie, audioCodec)) {
+        return false;
+      }
+    }
+
+    // check against datasource
+    if (searchOptions.containsKey(SearchOptions.DATASOURCE)) {
+      String datasource = (String) searchOptions.get(SearchOptions.DATASOURCE);
+      if (!new File(datasource).equals(new File(movie.getDataSource()))) {
         return false;
       }
     }
