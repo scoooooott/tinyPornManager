@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -30,10 +31,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -46,6 +45,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.SmallCheckBoxUI;
 import org.tinymediamanager.ui.SmallTextFieldBorder;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.RoundedPanel;
 import org.tinymediamanager.ui.components.SmallComboBox;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.MovieInMovieSet;
 import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
@@ -57,17 +57,18 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.jtattoo.plaf.AbstractLookAndFeel;
 
 /**
  * The Class MovieExtendedSearchPanel.
  * 
  * @author Manuel Laggner
  */
-public class MovieExtendedSearchPanel extends JPanel {
+public class MovieExtendedSearchPanel extends RoundedPanel {
   private static final long            serialVersionUID = -4170930017190753789L;
-  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
   private static final float           FONT_SIZE        = 11f;
-  private static final SmallCheckBoxUI CHECKBOX_UI      = new SmallCheckBoxUI();
+  private static final SmallCheckBoxUI CHECKBOX_UI      = AbstractLookAndFeel.getTheme() != null ? new SmallCheckBoxUI() : null; // hint for WBPro
 
   private MovieList                    movieList        = MovieList.getInstance();
   private MovieSelectionModel          movieSelectionModel;
@@ -110,6 +111,7 @@ public class MovieExtendedSearchPanel extends JPanel {
   private JCheckBox                    cbFilterDatasource;
   private JLabel                       lblDatasource;
   private JComboBox                    cbDatasource;
+  private JLabel                       lblFilterBy;
 
   /**
    * Instantiates a new movie extended search
@@ -118,67 +120,76 @@ public class MovieExtendedSearchPanel extends JPanel {
    *          the model
    */
   public MovieExtendedSearchPanel(MovieSelectionModel model) {
+    super();
+    setOpaque(false);
+    shadowAlpha = 100;
+    arcs = new Dimension(10, 10);
+
     this.movieSelectionModel = model;
-    setBorder(new TitledBorder(BUNDLE.getString("movieextendedsearch.filterby"))); //$NON-NLS-1$
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.UNRELATED_GAP_ROWSPEC, }));
+
+    lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
+    setComponentFont(lblFilterBy);
+    add(lblFilterBy, "2, 2, 3, 1");
 
     cbFilterDuplicates = new JCheckBox("");
     cbFilterDuplicates.setUI(CHECKBOX_UI); // $hide$
     cbFilterDuplicates.setAction(actionFilter);
-    add(cbFilterDuplicates, "2, 3");
+    add(cbFilterDuplicates, "2, 4");
 
     lblShowDuplicates = new JLabel(BUNDLE.getString("movieextendedsearch.duplicates")); //$NON-NLS-1$
     setComponentFont(lblShowDuplicates);
-    add(lblShowDuplicates, "4, 3, right, default");
+    add(lblShowDuplicates, "4, 4, right, default");
 
     cbFilterWatched = new JCheckBox("");
     cbFilterWatched.setUI(CHECKBOX_UI); // $hide$
     cbFilterWatched.setAction(actionFilter);
-    add(cbFilterWatched, "2, 4");
+    add(cbFilterWatched, "2, 5");
 
     lblWatchedFlag = new JLabel(BUNDLE.getString("movieextendedsearch.watched")); //$NON-NLS-1$
     setComponentFont(lblWatchedFlag);
-    add(lblWatchedFlag, "4, 4, right, default");
+    add(lblWatchedFlag, "4, 5, right, default");
 
     cbWatched = new SmallComboBox(WatchedFlag.values());
     setComponentFont(cbWatched);
     cbWatched.setAction(actionFilter);
-    add(cbWatched, "6, 4, fill, default");
+    add(cbWatched, "6, 5, fill, default");
 
     cbFilterGenre = new JCheckBox("");
     cbFilterGenre.setUI(CHECKBOX_UI); // $hide$
     cbFilterGenre.setAction(actionFilter);
-    add(cbFilterGenre, "2, 5");
+    add(cbFilterGenre, "2, 6");
 
     lblGenre = new JLabel(BUNDLE.getString("movieextendedsearch.genre")); //$NON-NLS-1$
     setComponentFont(lblGenre);
-    add(lblGenre, "4, 5, right, default");
+    add(lblGenre, "4, 6, right, default");
 
     cbGenre = new SmallComboBox(MediaGenres.values());
     setComponentFont(cbGenre);
     cbGenre.setAction(actionFilter);
-    add(cbGenre, "6, 5, fill, default");
+    add(cbGenre, "6, 6, fill, default");
 
     cbFilterCast = new JCheckBox("");
     cbFilterCast.setUI(CHECKBOX_UI); // $hide$
     cbFilterCast.setAction(actionFilter);
-    add(cbFilterCast, "2, 6");
+    add(cbFilterCast, "2, 7");
 
     lblCastMember = new JLabel(BUNDLE.getString("movieextendedsearch.cast")); //$NON-NLS-1$
     setComponentFont(lblCastMember);
-    add(lblCastMember, "4, 6, right, default");
+    add(lblCastMember, "4, 7, right, default");
 
     tfCastMember = new JTextField();
     setComponentFont(tfCastMember);
     tfCastMember.setBorder(new SmallTextFieldBorder());
-    add(tfCastMember, "6, 6, fill, default");
+    add(tfCastMember, "6, 7, fill, default");
     tfCastMember.setColumns(10);
     tfCastMember.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
@@ -197,104 +208,104 @@ public class MovieExtendedSearchPanel extends JPanel {
     cbFilterTag = new JCheckBox("");
     cbFilterTag.setUI(CHECKBOX_UI); // $hide$
     cbFilterTag.setAction(actionFilter);
-    add(cbFilterTag, "2, 7");
+    add(cbFilterTag, "2, 8");
 
     lblTag = new JLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
     setComponentFont(lblTag);
-    add(lblTag, "4, 7, right, default");
+    add(lblTag, "4, 8, right, default");
 
     cbTag = new SmallComboBox();
     setComponentFont(cbTag);
     cbTag.setAction(actionFilter);
 
-    add(cbTag, "6, 7, fill, default");
+    add(cbTag, "6, 8, fill, default");
 
     cbFilterMovieset = new JCheckBox("");
     cbFilterMovieset.setUI(CHECKBOX_UI); // $hide$
     cbFilterMovieset.setAction(actionFilter);
-    add(cbFilterMovieset, "2, 8");
+    add(cbFilterMovieset, "2, 9");
 
     lblMoviesInMovieset = new JLabel(BUNDLE.getString("movieextendedsearch.movieset")); //$NON-NLS-1$
     setComponentFont(lblMoviesInMovieset);
-    add(lblMoviesInMovieset, "4, 8, right, default");
+    add(lblMoviesInMovieset, "4, 9, right, default");
 
     cbMovieset = new SmallComboBox(MovieInMovieSet.values());
     setComponentFont(cbMovieset);
     cbMovieset.setAction(actionFilter);
-    add(cbMovieset, "6, 8, fill, default");
+    add(cbMovieset, "6, 9, fill, default");
 
     cbFilterVideoFormat = new JCheckBox("");
     cbFilterVideoFormat.setUI(CHECKBOX_UI); // $hide$
     cbFilterVideoFormat.setAction(actionFilter);
-    add(cbFilterVideoFormat, "2, 9");
+    add(cbFilterVideoFormat, "2, 10");
 
     lblVideoFormat = new JLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
     setComponentFont(lblVideoFormat);
-    add(lblVideoFormat, "4, 9, right, default");
+    add(lblVideoFormat, "4, 10, right, default");
 
     cbVideoFormat = new SmallComboBox(getVideoFormats());
     setComponentFont(cbVideoFormat);
     cbVideoFormat.setAction(actionFilter);
-    add(cbVideoFormat, "6, 9, fill, default");
+    add(cbVideoFormat, "6, 10, fill, default");
 
     cbFilterVideoCodec = new JCheckBox("");
     cbFilterVideoCodec.setUI(CHECKBOX_UI); // $hide$
     cbFilterVideoCodec.setAction(actionFilter);
-    add(cbFilterVideoCodec, "2, 10");
+    add(cbFilterVideoCodec, "2, 11");
 
     lblVideoCodec = new JLabel(BUNDLE.getString("metatag.videocodec")); //$NON-NLS-1$
     setComponentFont(lblVideoCodec);
-    add(lblVideoCodec, "4, 10, right, default");
+    add(lblVideoCodec, "4, 11, right, default");
 
     cbVideoCodec = new SmallComboBox();
     setComponentFont(cbVideoCodec);
     cbVideoCodec.setAction(actionFilter);
-    add(cbVideoCodec, "6, 10, fill, default");
+    add(cbVideoCodec, "6, 11, fill, default");
 
     cbFilterAudioCodec = new JCheckBox("");
     cbFilterAudioCodec.setUI(CHECKBOX_UI); // $hide$
     cbFilterAudioCodec.setAction(actionFilter);
-    add(cbFilterAudioCodec, "2, 11");
+    add(cbFilterAudioCodec, "2, 12");
 
     lblAudioCodec = new JLabel(BUNDLE.getString("metatag.audiocodec")); //$NON-NLS-1$
     setComponentFont(lblAudioCodec);
-    add(lblAudioCodec, "4, 11, right, default");
+    add(lblAudioCodec, "4, 12, right, default");
 
     cbAudioCodec = new SmallComboBox();
     setComponentFont(cbAudioCodec);
     cbAudioCodec.setAction(actionFilter);
-    add(cbAudioCodec, "6, 11, fill, default");
+    add(cbAudioCodec, "6, 12, fill, default");
 
     cbFilterDatasource = new JCheckBox("");
     cbFilterDatasource.setUI(CHECKBOX_UI); // $hide$
     cbFilterDatasource.setAction(actionFilter);
-    add(cbFilterDatasource, "2, 12");
+    add(cbFilterDatasource, "2, 13");
 
     lblDatasource = new JLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
     setComponentFont(lblDatasource);
-    add(lblDatasource, "4, 12, right, default");
+    add(lblDatasource, "4, 13, right, default");
 
     cbDatasource = new SmallComboBox();
     setComponentFont(cbDatasource);
     cbDatasource.setAction(actionFilter);
-    add(cbDatasource, "6, 12, fill, default");
+    add(cbDatasource, "6, 13, fill, default");
 
     JSeparator separator = new JSeparator();
-    add(separator, "2, 14, 5, 1");
+    add(separator, "2, 15, 5, 1");
 
     lblSortBy = new JLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
     setComponentFont(lblSortBy);
-    add(lblSortBy, "2, 16, 3, 1");
+    add(lblSortBy, "2, 17, 3, 1");
 
     cbSortColumn = new SmallComboBox(SortColumn.values());
     setComponentFont(cbSortColumn);
     cbSortColumn.setAction(actionSort);
-    add(cbSortColumn, "2, 18, 3, 1, fill, default");
+    add(cbSortColumn, "2, 19, 3, 1, fill, default");
 
     cbSortOrder = new SmallComboBox(SortOrder.values());
     setComponentFont(cbSortOrder);
     cbSortOrder.setAction(actionSort);
-    add(cbSortOrder, "6, 18, fill, default");
+    add(cbSortOrder, "6, 19, fill, default");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override

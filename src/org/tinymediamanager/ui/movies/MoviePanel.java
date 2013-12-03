@@ -324,7 +324,7 @@ public class MoviePanel extends JPanel {
     // textField = new JTextField();
     textField = new JSearchTextField();
     panelMovieList.add(textField, "3, 1, right, bottom");
-    textField.setColumns(10);
+    textField.setColumns(13);
 
     // table = new JTable();
     // build JTable
@@ -360,8 +360,9 @@ public class MoviePanel extends JPanel {
     JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(table);
     panelMovieList.add(scrollPane, "2, 3, 4, 1, fill, fill");
 
-    JToggleButton filterButton = new JToggleButton("filter");
-    panelMovieList.add(filterButton, "5, 1");
+    JToggleButton filterButton = new JToggleButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
+    filterButton.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
+    panelMovieList.add(filterButton, "5, 1, right, bottom");
 
     panelExtendedSearch = new MovieExtendedSearchPanel(movieSelectionModel);
     panelExtendedSearch.setVisible(false);
