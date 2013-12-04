@@ -17,7 +17,6 @@
 	<classpathentry kind="lib" path="lib/JSplitButton.jar"/>
 	<classpathentry kind="lib" path="lib/themoviedbapi.jar"/>
 	<classpathentry kind="lib" path="lib/thetvdbapi.jar"/>
-	<classpathentry kind="lib" path="lib/JTattoo.jar"/>
 	<classpathentry kind="lib" path="lib/jsoup.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/tinyMediaManager/buildsupport/jsoup-1.7.1-javadoc.jar!/"/>
@@ -50,5 +49,6 @@
 	<classpathentry kind="lib" path="lib/imgscalr-lib.jar"/>
 	<classpathentry kind="lib" path="lib/core.jar"/>
 	<classpathentry kind="lib" path="lib/twinkle.jar"/>
+	<classpathentry kind="lib" path="lib/JTattoo.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
