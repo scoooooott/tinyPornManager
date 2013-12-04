@@ -583,6 +583,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       mediaInfo.close();
       mediaInfo = null;
     }
+    miSnapshot = null;
   }
 
   /**
