@@ -165,12 +165,12 @@ public class TvShowPanel extends JPanel {
     JPanel panelTvShowTree = new JPanel();
     splitPane.setLeftComponent(panelTvShowTree);
     panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("150px:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     textField = new JSearchTextField();
     panelTvShowTree.add(textField, "4, 1, right, bottom");
-    textField.setColumns(10);
+    textField.setColumns(12);
     textField.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void insertUpdate(final DocumentEvent e) {
@@ -217,10 +217,12 @@ public class TvShowPanel extends JPanel {
     // buttonScrape.setMargin(new Insets(2, 2, 2, 24));
     buttonUpdateDatasource.setSplitWidth(18);
     buttonUpdateDatasource.addSplitButtonActionListener(new SplitButtonActionListener() {
+      @Override
       public void buttonClicked(ActionEvent e) {
         actionUpdateDatasources.actionPerformed(e);
       }
 
+      @Override
       public void splitButtonClicked(ActionEvent e) {
         // build the popupmenu on the fly
         buttonUpdateDatasource.getPopupMenu().removeAll();

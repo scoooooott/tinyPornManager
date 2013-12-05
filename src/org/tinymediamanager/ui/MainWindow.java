@@ -161,7 +161,7 @@ public class MainWindow extends JFrame {
   public MainWindow(String name) {
     super(name);
     setName("mainWindow");
-    setMinimumSize(new Dimension(1100, 700));
+    setMinimumSize(new Dimension(1000, 700));
 
     instance = this;
 

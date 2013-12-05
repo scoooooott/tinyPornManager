@@ -96,7 +96,7 @@ public class TvShowInformationPanel extends JPanel {
   public TvShowInformationPanel(TvShowSelectionModel tvShowSelectionModel) {
     this.tvShowSelectionModel = tvShowSelectionModel;
     setLayout(new FormLayout(
-        new ColumnSpec[] { ColumnSpec.decode("150:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow(5)"), },
+        new ColumnSpec[] { ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow(4)"), },
         new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     panelLeft = new JPanel();
@@ -159,7 +159,7 @@ public class TvShowInformationPanel extends JPanel {
     panelRight = new JPanel();
     add(panelRight, "3, 1, fill, fill");
     panelRight
-        .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("300px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+        .setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     splitPaneVertical = new JSplitPane();
     panelRight.add(splitPaneVertical, "1, 1, fill, fill");
@@ -240,7 +240,7 @@ public class TvShowInformationPanel extends JPanel {
     scrollPaneOverview.setViewportView(tpOverview);
 
     JPanel panelGenres = new TvShowGenresPanel(tvShowSelectionModel);
-    panelTop.add(panelGenres, "2, 13, 3, 1, right, bottom");
+    // panelTop.add(panelGenres, "2, 13, 3, 1, right, bottom");
 
     panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,

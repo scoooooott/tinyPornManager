@@ -108,7 +108,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
   public TvShowEpisodeInformationPanel(TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel) {
     this.tvShowEpisodeSelectionModel = tvShowEpisodeSelectionModel;
     setLayout(new FormLayout(
-        new ColumnSpec[] { ColumnSpec.decode("150px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow(5)"), },
+        new ColumnSpec[] { ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow(4)"), },
         new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     panelLeft = new JPanel();
@@ -165,7 +165,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelTop = new JPanel();
     panelTop.setBorder(null);
     splitPaneVertical.setTopComponent(panelTop);
-    panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"),
+    panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"), FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:36px"),
@@ -251,7 +251,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
 
     JPanel panelOverview = new JPanel();
     panelTop.add(panelOverview, "2, 15, 3, 1, fill, fill");
-    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:default:grow"), }));
     panelOverview.add(scrollPaneOverview, "1, 2, fill, fill");
 

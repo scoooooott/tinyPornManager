@@ -137,7 +137,7 @@ public class MovieSetInformationPanel extends JPanel {
     layeredPane = new JLayeredPane();
     panel.add(layeredPane, "1, 3, 2, 1, fill, fill");
     layeredPane.setLayout(new FormLayout(
-        new ColumnSpec[] { ColumnSpec.decode("10px"), ColumnSpec.decode("120px"), ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+        new ColumnSpec[] { ColumnSpec.decode("10px"), ColumnSpec.decode("120px"), ColumnSpec.decode("200px:grow"), }, new RowSpec[] {
             RowSpec.decode("10px"), RowSpec.decode("180px"), RowSpec.decode("default:grow"), }));
 
     lblMovieSetPoster = new ImageLabel();
@@ -156,7 +156,7 @@ public class MovieSetInformationPanel extends JPanel {
 
     panelOverview = new JPanel();
     panelSouth.setLeftComponent(panelOverview);
-    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("250px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("100px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("24px:grow"), }));
 
     lblOverview = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
@@ -171,7 +171,7 @@ public class MovieSetInformationPanel extends JPanel {
 
     JPanel panelMovies = new JPanel();
     panelSouth.setRightComponent(panelMovies);
-    panelMovies.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("453px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+    panelMovies.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow(3)"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("203px:grow"), }));
 
     movieTableModel = new DefaultEventTableModel<Movie>(GlazedListsSwing.swingThreadProxyList(movieEventList), new MovieInMovieSetTableFormat());

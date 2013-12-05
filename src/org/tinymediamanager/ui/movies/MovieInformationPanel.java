@@ -177,7 +177,7 @@ public class MovieInformationPanel extends JPanel {
   public MovieInformationPanel(MovieSelectionModel movieSelectionModel) {
     this.movieSelectionModel = movieSelectionModel;
 
-    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("650px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
+    setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("450px:grow"), }, new RowSpec[] { RowSpec.decode("fill:default:grow"), }));
 
     splitPaneVertical = new JSplitPane();
     splitPaneVertical.setBorder(null);
@@ -190,7 +190,7 @@ public class MovieInformationPanel extends JPanel {
     panelTop = new JPanel();
     panelTop.setBorder(null);
     splitPaneVertical.setTopComponent(panelTop);
-    panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"),
+    panelTop.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"),
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"),
         RowSpec.decode("top:pref:grow"), }));
 
@@ -216,7 +216,7 @@ public class MovieInformationPanel extends JPanel {
     JPanel panelRatingTagline = new JPanel();
     panelMovieHeader.add(panelRatingTagline, BorderLayout.CENTER);
     panelRatingTagline.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+        FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px:grow"), }, new RowSpec[] {
         FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("24px"), FormFactory.DEFAULT_ROWSPEC, }));
 
     lblRating = new JLabel("");
@@ -230,7 +230,7 @@ public class MovieInformationPanel extends JPanel {
     panelRatingStars.setEnabled(false);
 
     lblTop250 = new JLabel("");
-    panelRatingTagline.add(lblTop250, "5, 2");
+    panelRatingTagline.add(lblTop250, "5, 2, left, default");
 
     lblTagline = new JLabel();
     panelRatingTagline.add(lblTagline, "1, 3, 5, 1, default, center");
@@ -276,7 +276,7 @@ public class MovieInformationPanel extends JPanel {
     panelLogos.add(lblMediaLogoAudio);
 
     JPanel panelBottom = new JPanel();
-    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("496px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+    panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("300px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:min:grow"), }));
 
     tabbedPaneMovieDetails = new JTabbedPane(JTabbedPane.TOP);
@@ -288,7 +288,7 @@ public class MovieInformationPanel extends JPanel {
 
     panelOverview = new JPanel();
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.plot"), null, panelOverview, null); //$NON-NLS-1$
-    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("241px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
+    panelOverview.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
         RowSpec.decode("fill:default:grow"), }));
     // panelMovieDetails.add(tabbedPaneMovieDetails, "2, 3, fill, fill");
 
