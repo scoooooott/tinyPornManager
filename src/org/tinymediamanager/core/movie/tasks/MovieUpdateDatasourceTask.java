@@ -86,6 +86,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   public Void doInBackground() {
     try {
       long start = System.currentTimeMillis();
+      List<File> imageFiles = new ArrayList<File>();
+
       // cleanup just added for a new UDS run
       for (Movie movie : movieList.getMovies()) {
         movie.justAdded = false;
@@ -160,7 +162,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
         // build image cache on import
         if (Globals.settings.getMovieSettings().isBuildImageCacheOnImport()) {
-          List<File> imageFiles = new ArrayList<File>();
           for (Movie movie : movieList.getMovies()) {
             if (!new File(ds).equals(new File(movie.getDataSource()))) {
               // check only movies matching datasource
@@ -168,12 +169,15 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
             imageFiles.addAll(movie.getImagesToCache());
           }
-
-          ImageCacheTask task = new ImageCacheTask(imageFiles);
-          Globals.executor.execute(task);
         }
 
       } // END datasource loop
+
+      if (imageFiles.size() > 0) {
+        ImageCacheTask task = new ImageCacheTask(imageFiles);
+        Globals.executor.execute(task);
+      }
+
       long end = System.currentTimeMillis();
       LOGGER.info("Done updating datasource :) - took " + Utils.MSECtoHHMMSS(end - start));
 

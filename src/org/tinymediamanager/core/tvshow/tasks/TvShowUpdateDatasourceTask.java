@@ -134,6 +134,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * update one or more datasources
    */
   private void updateDatasource() {
+    List<File> imageFiles = new ArrayList<File>();
+
     for (String path : dataSources) {
       File[] dirs = new File(path).listFiles();
       // check whether the path is accessible (eg disconnected shares)
@@ -224,7 +226,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
       // build image cache on import
       if (Globals.settings.getTvShowSettings().isBuildImageCacheOnImport()) {
-        List<File> imageFiles = new ArrayList<File>();
         for (TvShow tvShow : new ArrayList<TvShow>(tvShowList.getTvShows())) {
           if (!new File(path).equals(new File(tvShow.getDataSource()))) {
             continue;
@@ -242,14 +243,16 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             }
           }
         }
-
-        ImageCacheTask task = new ImageCacheTask(imageFiles);
-        Globals.executor.execute(task);
       }
     }
 
     if (cancel) {
       cancel(false);// swing cancel
+    }
+
+    if (imageFiles.size() > 0) {
+      ImageCacheTask task = new ImageCacheTask(imageFiles);
+      Globals.executor.execute(task);
     }
   }
 
