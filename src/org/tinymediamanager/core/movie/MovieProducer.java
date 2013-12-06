@@ -26,29 +26,29 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
 
 /**
- * The Class MovieCast.
+ * The Class MovieProducer.
  * 
  * @author Manuel Laggner
  */
 @Embeddable
-public class MovieActor extends AbstractModelObject {
+public class MovieProducer extends AbstractModelObject {
   public static final String ACTOR_DIR = ".actors";
 
   private String             name      = "";
-  private String             character = "";
+  private String             role      = "";
   private String             thumbUrl  = "";
   private String             thumbPath = "";
 
-  public MovieActor() {
+  public MovieProducer() {
   }
 
-  public MovieActor(String name) {
+  public MovieProducer(String name) {
     this.name = name;
   }
 
-  public MovieActor(String name, String character) {
+  public MovieProducer(String name, String character) {
     this.name = name;
-    this.character = character;
+    this.role = character;
   }
 
   public void setName(String newValue) {
@@ -61,14 +61,14 @@ public class MovieActor extends AbstractModelObject {
     return name;
   }
 
-  public String getCharacter() {
-    return character;
+  public String getRole() {
+    return role;
   }
 
-  public void setCharacter(String newValue) {
-    String oldValue = character;
-    character = newValue;
-    firePropertyChange(CHARACTER, oldValue, newValue);
+  public void setRole(String newValue) {
+    String oldValue = role;
+    role = newValue;
+    firePropertyChange(ROLE, oldValue, newValue);
   }
 
   public String getThumbUrl() {
@@ -78,7 +78,7 @@ public class MovieActor extends AbstractModelObject {
   public void setThumbUrl(String newValue) {
     String oldValue = this.thumbUrl;
     thumbUrl = newValue;
-    firePropertyChange(THUMB, oldValue, newValue);
+    firePropertyChange(THUMB_URL, oldValue, newValue);
   }
 
   public String getThumbPath() {
@@ -106,14 +106,14 @@ public class MovieActor extends AbstractModelObject {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof MovieActor)) {
+    if (!(obj instanceof MovieProducer)) {
       return false;
     }
 
-    MovieActor cast = (MovieActor) obj;
+    MovieProducer cast = (MovieProducer) obj;
 
     // checks of equality
-    if (StringUtils.equals(name, cast.name) && StringUtils.equals(character, cast.character) && StringUtils.equals(thumbUrl, cast.thumbUrl)) {
+    if (StringUtils.equals(name, cast.name) && StringUtils.equals(role, cast.role) && StringUtils.equals(thumbUrl, cast.thumbUrl)) {
       return true;
     }
 

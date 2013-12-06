@@ -48,7 +48,7 @@ public class ActorImageLabel extends ImageLabel {
         }
       }
 
-      setImageUrl(actor.getThumb());
+      setImageUrl(actor.getThumbUrl());
     }
   }
 

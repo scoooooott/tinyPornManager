@@ -94,7 +94,7 @@ public class MovieActorImageFetcher implements Runnable {
             found = true;
 
             // trick it to get rid of wrong extensions
-            if (!FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(FilenameUtils.getExtension(actor.getThumb()))) {
+            if (!FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(FilenameUtils.getExtension(actor.getThumbUrl()))) {
               found = false;
             }
             break;
@@ -111,11 +111,11 @@ public class MovieActorImageFetcher implements Runnable {
       for (MovieActor actor : movie.getActors()) {
         String actorName = actor.getName().replace(" ", "_");
 
-        String providedFiletype = FilenameUtils.getExtension(actor.getThumb());
+        String providedFiletype = FilenameUtils.getExtension(actor.getThumbUrl());
         File actorImage = new File(actorsDirPath + File.separator + actorName + "." + providedFiletype);
-        if (!actorImage.exists() && StringUtils.isNotEmpty(actor.getThumb())) {
+        if (!actorImage.exists() && StringUtils.isNotEmpty(actor.getThumbUrl())) {
           try {
-            Url url = new Url(actor.getThumb());
+            Url url = new Url(actor.getThumbUrl());
             FileOutputStream outputStream = new FileOutputStream(actorImage);
             InputStream is = url.getInputStream();
             IOUtils.copy(is, outputStream);

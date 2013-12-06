@@ -344,7 +344,7 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.actors.clear();
     for (MovieActor cast : movie.getActors()) {
-      xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
+      xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
     }
 
     xbmc.genres.clear();
@@ -569,7 +569,7 @@ public class MovieToXbmcNfoConnector {
 
       for (Actor actor : xbmc.getActors()) {
         MovieActor cast = new MovieActor(actor.name, actor.role);
-        cast.setThumb(actor.thumb);
+        cast.setThumbUrl(actor.thumb);
         movie.addActor(cast);
       }
 

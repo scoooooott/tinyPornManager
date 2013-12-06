@@ -646,7 +646,7 @@ public class MovieEditorDialog extends JDialog {
         MovieActor actor = new MovieActor();
         actor.setName(origCast.getName());
         actor.setCharacter(origCast.getCharacter());
-        actor.setThumb(origCast.getThumb());
+        actor.setThumbUrl(origCast.getThumbUrl());
         cast.add(actor);
       }
 

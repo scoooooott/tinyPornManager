@@ -215,7 +215,7 @@ public class MovieToMpNfoConnector {
     mp.setDirector(movie.getDirector());
     mp.setCredits(movie.getWriter());
     for (MovieActor cast : movie.getActors()) {
-      mp.addActor(cast.getName(), cast.getCharacter(), cast.getThumb());
+      mp.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
     }
 
     for (MediaGenres genre : movie.getGenres()) {
@@ -340,7 +340,7 @@ public class MovieToMpNfoConnector {
 
       for (Actor actor : mp.getActors()) {
         MovieActor cast = new MovieActor(actor.getName(), actor.getRole());
-        cast.setThumb(actor.getThumb());
+        cast.setThumbUrl(actor.getThumb());
         movie.addActor(cast);
       }
 

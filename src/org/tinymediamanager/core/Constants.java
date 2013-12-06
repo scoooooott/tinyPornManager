@@ -31,6 +31,7 @@ public final class Constants {
   public final static String BANNER                 = "banner";
   public final static String BANNER_URL             = "bannerUrl";
   public final static String CAST                   = "cast";
+  public final static String CHARACTER              = "character";
   public final static String CERTIFICATION          = "certification";
   public final static String COUNTRY                = "country";
   public final static String DATA_SOURCE            = "dataSource";
@@ -52,18 +53,21 @@ public final class Constants {
   public final static String MEDIA_INFORMATION      = "mediaInformation";
   public final static String MOVIESET               = "movieset";
   public final static String MOVIESET_TITLE         = "movieSetTitle";
+  public final static String NAME                   = "name";
   public final static String NFO_FILENAME           = "nfoFilename";
   public final static String ORIGINAL_TITLE         = "originalTitle";
   public final static String PATH                   = "path";
   public final static String PLOT                   = "plot";
   public final static String POSTER                 = "poster";
   public final static String POSTER_URL             = "posterUrl";
+  public final static String PRODUCERS              = "producers";
   public final static String PRODUCTION_COMPANY     = "productionCompany";
   public final static String RATING                 = "rating";
   public final static String RELEASE_DATE           = "releaseDate";
   public final static String RELEASE_DATE_AS_STRING = "releaseDateAsString";
   public final static String REMOVED_EPISODE        = "removedEpisode";
   public final static String REMOVED_TV_SHOW        = "removedTvShow";
+  public final static String ROLE                   = "role";
   public final static String RUNTIME                = "runtime";
   public final static String SCRAPED                = "scraped";
   public final static String SEASON                 = "season";
@@ -76,6 +80,7 @@ public final class Constants {
   public final static String TAGS_AS_STRING         = "tagAsString";
   public final static String THUMB                  = "thumb";
   public final static String THUMB_URL              = "thumbUrl";
+  public final static String THUMB_PATH             = "thumbPath";
   public final static String TITLE                  = "title";
   public final static String TITLE_FOR_UI           = "titleForUi";
   public final static String TITLE_SORTABLE         = "titleSortable";
