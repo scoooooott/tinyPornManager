@@ -21,6 +21,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseListener;
@@ -35,6 +36,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -83,6 +85,7 @@ import org.tinymediamanager.ui.components.JSearchTextField;
 import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowBatchEditorDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
@@ -165,8 +168,9 @@ public class TvShowPanel extends JPanel {
     JPanel panelTvShowTree = new JPanel();
     splitPane.setLeftComponent(panelTvShowTree);
     panelTvShowTree.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.UNRELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
+        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("3px:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, }));
 
     textField = new JSearchTextField();
     panelTvShowTree.add(textField, "4, 1, right, bottom");
@@ -189,8 +193,14 @@ public class TvShowPanel extends JPanel {
 
       public void applyFilter() {
         TvShowTreeModel filteredModel = (TvShowTreeModel) tree.getModel();
-        filteredModel.setFilter(textField.getText());
-        filteredModel.reload();
+        if (StringUtils.isNotBlank(textField.getText())) {
+          filteredModel.setFilter(SearchOptions.TEXT, textField.getText());
+        }
+        else {
+          filteredModel.removeFilter(SearchOptions.TEXT);
+        }
+
+        filteredModel.filter(tree);
 
         for (int i = 0; i < tree.getRowCount(); i++) {
           tree.expandRow(i);
@@ -198,9 +208,12 @@ public class TvShowPanel extends JPanel {
       }
     });
 
+    JButton btnFilter = new JButton("Filter");
+    panelTvShowTree.add(btnFilter, "6, 1, default, bottom");
+
     JScrollPane scrollPane = new JScrollPane();
     scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    panelTvShowTree.add(scrollPane, "2, 3, 3, 1, fill, fill");
+    panelTvShowTree.add(scrollPane, "2, 3, 5, 1, fill, fill");
 
     JToolBar toolBar = new JToolBar();
     toolBar.setRollover(true);
@@ -217,12 +230,10 @@ public class TvShowPanel extends JPanel {
     // buttonScrape.setMargin(new Insets(2, 2, 2, 24));
     buttonUpdateDatasource.setSplitWidth(18);
     buttonUpdateDatasource.addSplitButtonActionListener(new SplitButtonActionListener() {
-      @Override
       public void buttonClicked(ActionEvent e) {
         actionUpdateDatasources.actionPerformed(e);
       }
 
-      @Override
       public void splitButtonClicked(ActionEvent e) {
         // build the popupmenu on the fly
         buttonUpdateDatasource.getPopupMenu().removeAll();
@@ -361,8 +372,32 @@ public class TvShowPanel extends JPanel {
     lblEpisodes = new JLabel("");
     panel.add(lblEpisodes, "9, 2");
 
+    JLayeredPane layeredPaneRight = new JLayeredPane();
+    layeredPaneRight.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default"), ColumnSpec.decode("default:grow") }, new RowSpec[] {
+        RowSpec.decode("default"), RowSpec.decode("default:grow") }));
     panelRight = new JPanel();
-    splitPane.setRightComponent(panelRight);
+    layeredPaneRight.add(panelRight, "1, 1, 2, 2, fill, fill");
+    layeredPaneRight.setLayer(panelRight, 0);
+
+    // glass pane
+    final TvShowExtendedSearchPanel panelExtendedSearch = new TvShowExtendedSearchPanel(treeModel, tree);
+    panelExtendedSearch.setVisible(false);
+    // panelMovieList.add(panelExtendedSearch, "2, 5, 2, 1, fill, fill");
+    btnFilter.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        if (panelExtendedSearch.isVisible() == true) {
+          panelExtendedSearch.setVisible(false);
+        }
+        else {
+          panelExtendedSearch.setVisible(true);
+        }
+      }
+    });
+    layeredPaneRight.add(panelExtendedSearch, "1, 1, fill, fill");
+    layeredPaneRight.setLayer(panelExtendedSearch, 1);
+
+    splitPane.setRightComponent(layeredPaneRight);
     panelRight.setLayout(new CardLayout(0, 0));
 
     JPanel panelTvShow = new TvShowInformationPanel(tvShowSelectionModel);
@@ -404,7 +439,12 @@ public class TvShowPanel extends JPanel {
           }
         }
         else {
-          tvShowSelectionModel.setSelectedTvShow(null);
+          // check if there is at least one tv show in the model
+          TvShowRootTreeNode root = (TvShowRootTreeNode) tree.getModel().getRoot();
+          if (root.getChildCount() == 0) {
+            // sets an inital show
+            tvShowSelectionModel.setSelectedTvShow(null);
+          }
         }
       }
     });
@@ -416,11 +456,6 @@ public class TvShowPanel extends JPanel {
         super.componentHidden(e);
       }
 
-      /*
-       * (non-Javadoc)
-       * 
-       * @see java.awt.event.ComponentAdapter#componentShown(java.awt.event.ComponentEvent)
-       */
       @Override
       public void componentShown(ComponentEvent e) {
         menu.setVisible(true);
@@ -434,10 +469,9 @@ public class TvShowPanel extends JPanel {
 
     // selecting first TV show at startup
     if (tvShowList.getTvShows() != null && tvShowList.getTvShows().size() > 0) {
-      if (tree.getLastSelectedPathComponent() == null) {
-        DefaultMutableTreeNode firstLeaf = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) tree.getModel().getRoot()).getFirstChild();
-        tree.setSelectionPath(new TreePath(firstLeaf.getPath()));
-      }
+      DefaultMutableTreeNode firstLeaf = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) tree.getModel().getRoot()).getFirstChild();
+      tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode) firstLeaf.getParent()).getPath()));
+      tree.setSelectionPath(new TreePath(firstLeaf.getPath()));
     }
   }
 
@@ -1244,6 +1278,5 @@ public class TvShowPanel extends JPanel {
       }
       MainWindow.getActiveInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
-
   }
 }

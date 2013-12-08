@@ -36,17 +36,10 @@ import ca.odell.glazedlists.matchers.Matcher;
  * @author Manuel Laggner
  */
 public class MoviesExtendedMatcher implements Matcher<Movie> {
-
-  /**
-   * The Enum SearchOptions.
-   * 
-   * @author Manuel Laggner
-   */
   public enum SearchOptions {
     DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE
   }
 
-  /** The search options. */
   private HashMap<SearchOptions, Object> searchOptions;
 
   /**

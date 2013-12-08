@@ -536,6 +536,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     return allActors;
   }
 
+  public List<TvShowActor> getGuests() {
+    List<TvShowActor> allActors = new ArrayList<TvShowActor>();
+    allActors.addAll(actorsObservables);
+    return allActors;
+  }
+
   /**
    * Removes the actor.
    * 

@@ -27,14 +27,9 @@ import org.tinymediamanager.core.tvshow.TvShow;
  * @author Manuel Laggner
  */
 public class TvShowSelectionModel extends AbstractModelObject {
-
-  /** The Constant SELECTED_TV_SHOW. */
   private static final String    SELECTED_TV_SHOW = "selectedTvShow";
 
-  /** The selected tv show. */
   private TvShow                 selectedTvShow;
-
-  /** The inital tv show. */
   private TvShow                 initalTvShow     = new TvShow();
 
   /** The property change listener. */

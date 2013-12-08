@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -33,11 +34,11 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 
 /**
  * The Class TvShowTreeModel.
@@ -50,8 +51,7 @@ public class TvShowTreeModel implements TreeModel {
   private Map<Object, TreeNode>   nodeMap    = Collections.synchronizedMap(new HashMap<Object, TreeNode>());
   private TvShowList              tvShowList = TvShowList.getInstance();
   private PropertyChangeListener  propertyChangeListener;
-
-  private String                  filter     = "";
+  private TvShowExtendedMatcher   matcher    = new TvShowExtendedMatcher();
 
   /**
    * Instantiates a new tv show tree model.
@@ -359,7 +359,7 @@ public class TvShowTreeModel implements TreeModel {
     int childCount = getChildCountInternal(parent);
     for (int i = 0; i < childCount; i++) {
       Object child = getChildInternal(parent, i);
-      if (filterMatch(child, filter)) {
+      if (matches(child)) {
         if (count == index) {
           return child;
         }
@@ -375,7 +375,7 @@ public class TvShowTreeModel implements TreeModel {
     int childCount = getChildCountInternal(parent);
     for (int i = 0; i < childCount; i++) {
       Object child = getChildInternal(parent, i);
-      if (filterMatch(child, filter)) {
+      if (matches(child)) {
         count++;
       }
     }
@@ -387,13 +387,36 @@ public class TvShowTreeModel implements TreeModel {
     int childCount = getChildCountInternal(parent);
     for (int i = 0; i < childCount; i++) {
       Object child = getChildInternal(parent, i);
-      if (filterMatch(child, filter)) {
+      if (matches(child)) {
         if (childToFind.equals(child)) {
           return i;
         }
       }
     }
     return -1;
+  }
+
+  private boolean matches(Object node) {
+    Object bean = null;
+    if (node instanceof TvShowTreeNode) {
+      bean = (TvShow) ((TvShowTreeNode) node).getUserObject();
+    }
+
+    // if the node is a TvShowSeasonNode, we have to check the parent TV show and its episodes
+    if (node instanceof TvShowSeasonTreeNode) {
+      bean = (TvShowSeason) ((TvShowSeasonTreeNode) node).getUserObject();
+    }
+
+    // if the node is a TvShowEpisodeNode, we have to check the parent TV show and the episode
+    if (node instanceof TvShowEpisodeTreeNode) {
+      bean = (TvShowEpisode) ((TvShowEpisodeTreeNode) node).getUserObject();
+    }
+
+    if (bean == null) {
+      return true;
+    }
+
+    return matcher.matches(bean);
   }
 
   @Override
@@ -428,83 +451,6 @@ public class TvShowTreeModel implements TreeModel {
   public void valueForPathChanged(TreePath arg0, Object arg1) {
   }
 
-  private boolean filterMatch(final Object node, final String filter) {
-    // do nothing if there's nothing to filter
-    if (StringUtils.isBlank(filter)) {
-      return true;
-    }
-
-    // if the node is a TvShowNode, we have to check the TvShow and all episodes within it
-    if (node instanceof TvShowTreeNode) {
-      TvShow show = (TvShow) ((TvShowTreeNode) node).getUserObject();
-      return tvShowFilterMatch(show, filter);
-    }
-
-    // if the node is a TvShowSeasonNode, we have to check the parent TV show and its episodes
-    if (node instanceof TvShowSeasonTreeNode) {
-      TvShowSeason season = (TvShowSeason) ((TvShowSeasonTreeNode) node).getUserObject();
-      return tvShowSeasonFilterMatch(season, filter);
-    }
-
-    // if the node is a TvShowEpisodeNode, we have to check the parent TV show and the episode
-    if (node instanceof TvShowEpisodeTreeNode) {
-      TvShowEpisode episode = (TvShowEpisode) ((TvShowEpisodeTreeNode) node).getUserObject();
-      return tvShowEpisodeFilterMatch(episode, filter);
-    }
-
-    // fallback
-    return true;
-  }
-
-  private boolean tvShowFilterMatch(TvShow tvShow, String filter) {
-    // first: filter on the TV show title
-    if (tvShow.getTitle().matches(filter)) {
-      return true;
-    }
-
-    // filter all episodes
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
-      if (episode.getTitle().matches(filter)) {
-        return true;
-      }
-    }
-
-    // fallback
-    return false;
-  }
-
-  private boolean tvShowSeasonFilterMatch(TvShowSeason season, String filter) {
-    // first: filter on the TV show title
-    if (season.getTvShow().getTitle().matches(filter)) {
-      return true;
-    }
-
-    // filter all episodes
-    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(season.getEpisodes())) {
-      if (episode.getTitle().matches(filter)) {
-        return true;
-      }
-    }
-
-    // fallback
-    return false;
-  }
-
-  private boolean tvShowEpisodeFilterMatch(TvShowEpisode episode, String filter) {
-    // first: filter on the TV show title
-    if (episode.getTvShow().getTitle().matches(filter)) {
-      return true;
-    }
-
-    // second: filter the episode title
-    if (episode.getTitle().matches(filter)) {
-      return true;
-    }
-
-    // fallback
-    return false;
-  }
-
   private int getChildCountInternal(Object node) {
     return ((TreeNode) node).getChildCount();
   }
@@ -513,17 +459,50 @@ public class TvShowTreeModel implements TreeModel {
     return ((TreeNode) parent).getChildAt(index);
   }
 
-  public void setFilter(String filter) {
-    if (StringUtils.isBlank(filter)) {
-      this.filter = "";
+  public void setFilter(SearchOptions option, Object filterArg) {
+    if (matcher.searchOptions.containsKey(option)) {
+      matcher.searchOptions.remove(option);
     }
-    this.filter = "(?i).*" + filter + ".*";
+    matcher.searchOptions.put(option, filterArg);
   }
 
-  public void reload() {
+  public void removeFilter(SearchOptions option) {
+    if (matcher.searchOptions.containsKey(option)) {
+      matcher.searchOptions.remove(option);
+    }
+  }
+
+  public void filter(JTree tree) {
+    TreePath selection = tree.getSelectionPath();
+    reload();
+    restoreSelection(selection, tree);
+  }
+
+  private void reload() {
     TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
     for (TreeModelListener listener : listeners) {
       listener.treeStructureChanged(event);
+    }
+  }
+
+  private void restoreSelection(TreePath path, JTree tree) {
+    if (path != null) {
+      DefaultMutableTreeNode child = (DefaultMutableTreeNode) path.getLastPathComponent();
+      DefaultMutableTreeNode parent = (DefaultMutableTreeNode) child.getParent();
+      if (getIndexOfChild(parent, child) > -1) {
+        tree.setSelectionPath(path);
+        return;
+      }
+    }
+
+    // search first valid node to select
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode) getRoot();
+    for (int i = 0; i < root.getChildCount(); i++) {
+      DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+      if (getIndexOfChild(root, child) > -1) {
+        tree.setSelectionPath(new TreePath(child.getPath()));
+        break;
+      }
     }
   }
 }

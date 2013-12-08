@@ -105,13 +105,13 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   private JCheckBox                    cbFilterAudioCodec;
   private JLabel                       lblAudioCodec;
   private JComboBox                    cbAudioCodec;
-
-  private final Action                 actionSort       = new SortAction();
-  private final Action                 actionFilter     = new FilterAction();
   private JCheckBox                    cbFilterDatasource;
   private JLabel                       lblDatasource;
   private JComboBox                    cbDatasource;
   private JLabel                       lblFilterBy;
+
+  private final Action                 actionSort       = new SortAction();
+  private final Action                 actionFilter     = new FilterAction();
 
   /**
    * Instantiates a new movie extended search
