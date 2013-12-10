@@ -37,7 +37,7 @@ import ca.odell.glazedlists.matchers.Matcher;
  */
 public class MoviesExtendedMatcher implements Matcher<Movie> {
   public enum SearchOptions {
-    DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE
+    DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA, MISSING_ARTWORK
   }
 
   private HashMap<SearchOptions, Object> searchOptions;
@@ -150,6 +150,20 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     if (searchOptions.containsKey(SearchOptions.DATASOURCE)) {
       String datasource = (String) searchOptions.get(SearchOptions.DATASOURCE);
       if (!new File(datasource).equals(new File(movie.getDataSource()))) {
+        return false;
+      }
+    }
+
+    // check against missing metadata
+    if (searchOptions.containsKey(SearchOptions.MISSING_METADATA)) {
+      if (movie.isScraped()) {
+        return false;
+      }
+    }
+
+    // check against missing artwork
+    if (searchOptions.containsKey(SearchOptions.MISSING_ARTWORK)) {
+      if (movie.getHasImages()) {
         return false;
       }
     }
