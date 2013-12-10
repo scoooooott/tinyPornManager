@@ -46,6 +46,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
@@ -208,7 +209,7 @@ public class TvShowPanel extends JPanel {
       }
     });
 
-    JButton btnFilter = new JButton("Filter");
+    JToggleButton btnFilter = new JToggleButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
     panelTvShowTree.add(btnFilter, "6, 1, default, bottom");
 
     JScrollPane scrollPane = new JScrollPane();

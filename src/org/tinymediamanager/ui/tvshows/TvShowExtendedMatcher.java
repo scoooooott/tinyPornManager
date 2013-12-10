@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +39,7 @@ import org.tinymediamanager.core.tvshow.TvShowSeason;
 class TvShowExtendedMatcher {
 
   public enum SearchOptions {
-    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE
+    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA, MISSING_ARTWORK
   }
 
   Map<SearchOptions, Object> searchOptions = Collections.synchronizedMap(new HashMap<SearchOptions, Object>());
@@ -78,8 +79,26 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.DATASOURCE)) {
+      if (!filterDatasource(tvShow, (String) searchOptions.get(SearchOptions.DATASOURCE))) {
+        return false;
+      }
+    }
+
     if (searchOptions.containsKey(SearchOptions.CAST)) {
       if (!filterCrew(tvShow, (String) searchOptions.get(SearchOptions.CAST))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.MISSING_METADATA)) {
+      if (!filterMissingMetadata(tvShow)) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.MISSING_ARTWORK)) {
+      if (!filterMissingArtwork(tvShow)) {
         return false;
       }
     }
@@ -101,6 +120,18 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.MISSING_METADATA)) {
+      if (!filterMissingMetadata(season)) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.MISSING_ARTWORK)) {
+      if (!filterMissingArtwork(season)) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -114,6 +145,18 @@ class TvShowExtendedMatcher {
 
     if (searchOptions.containsKey(SearchOptions.CAST)) {
       if (!filterCrew(episode, (String) searchOptions.get(SearchOptions.CAST))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.MISSING_METADATA)) {
+      if (!filterMissingMetadata(episode)) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.MISSING_ARTWORK)) {
+      if (!filterMissingArtwork(episode)) {
         return false;
       }
     }
@@ -134,6 +177,13 @@ class TvShowExtendedMatcher {
     return matchesText(episode.getTvShow(), Arrays.asList(episode), filterText);
   }
 
+  private boolean filterDatasource(TvShow tvShow, String datasource) {
+    if (new File(tvShow.getDataSource()).equals(new File(datasource))) {
+      return true;
+    }
+    return false;
+  }
+
   private boolean filterCrew(TvShow tvShow, String filterText) {
     return matchesCrew(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), filterText);
   }
@@ -144,6 +194,30 @@ class TvShowExtendedMatcher {
 
   private boolean filterCrew(TvShowEpisode episode, String filterText) {
     return matchesCrew(episode.getTvShow(), Arrays.asList(episode), filterText);
+  }
+
+  private boolean filterMissingMetadata(TvShow tvShow) {
+    return matchesMissingMetadata(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()));
+  }
+
+  private boolean filterMissingMetadata(TvShowSeason season) {
+    return matchesMissingMetadata(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()));
+  }
+
+  private boolean filterMissingMetadata(TvShowEpisode episode) {
+    return matchesMissingMetadata(episode.getTvShow(), Arrays.asList(episode));
+  }
+
+  private boolean filterMissingArtwork(TvShow tvShow) {
+    return matchesMissingArtwork(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()));
+  }
+
+  private boolean filterMissingArtwork(TvShowSeason season) {
+    return matchesMissingArtwork(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()));
+  }
+
+  private boolean filterMissingArtwork(TvShowEpisode episode) {
+    return matchesMissingArtwork(episode.getTvShow(), Arrays.asList(episode));
   }
 
   private boolean matchesText(TvShow tvShow, List<TvShowEpisode> episodes, String filterText) {
@@ -203,6 +277,34 @@ class TvShowExtendedMatcher {
         }
       }
     }
+    return false;
+  }
+
+  private boolean matchesMissingMetadata(TvShow tvShow, List<TvShowEpisode> episodes) {
+    if (!tvShow.isScraped()) {
+      return true;
+    }
+
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.isScraped()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean matchesMissingArtwork(TvShow tvShow, List<TvShowEpisode> episodes) {
+    if (!tvShow.getHasImages()) {
+      return true;
+    }
+
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.getHasImages()) {
+        return true;
+      }
+    }
+
     return false;
   }
 }

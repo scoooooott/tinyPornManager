@@ -1744,7 +1744,7 @@ public class TvShow extends MediaEntity {
     if (!scraped) {
       if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
           && !(actors == null || actors.size() == 0)) {
-        setScraped(true);
+        return true;
       }
     }
     return scraped;

@@ -856,4 +856,21 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   void setPosterChanged() {
     firePropertyChange(SEASON_POSTER, null, "");
   }
+
+  /**
+   * checks if this TV show has been scraped.<br>
+   * On a fresh DB, just reading local files, everything is again "unscraped". <br>
+   * detect minimum of filled values as "scraped"
+   * 
+   * @return isScraped
+   */
+  @Override
+  public boolean isScraped() {
+    if (!scraped) {
+      if (!plot.isEmpty() && firstAired != null && season > -1 && episode > -1) {
+        return true;
+      }
+    }
+    return scraped;
+  }
 }

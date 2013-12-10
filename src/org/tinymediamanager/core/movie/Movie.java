@@ -311,7 +311,6 @@ public class Movie extends MediaEntity {
   public void addActor(MovieActor obj) {
     actorsObservable.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
-
   }
 
   /**
@@ -952,6 +951,7 @@ public class Movie extends MediaEntity {
     if (config.isCast()) {
       setProductionCompany(metadata.getStringValue(MediaMetadata.PRODUCTION_COMPANY));
       List<MovieActor> actors = new ArrayList<MovieActor>();
+      List<MovieProducer> producers = new ArrayList<MovieProducer>();
       String director = "";
       String writer = "";
       for (MediaCastMember member : metadata.getCastMembers()) {
@@ -978,6 +978,14 @@ public class Movie extends MediaEntity {
             writer += member.getName();
             break;
 
+          case PRODUCER:
+            MovieProducer producer = new MovieProducer();
+            producer.setName(member.getName());
+            producer.setRole(member.getPart());
+            producer.setThumbUrl(member.getImageUrl());
+            producers.add(producer);
+            break;
+
           default:
             break;
         }
@@ -985,6 +993,7 @@ public class Movie extends MediaEntity {
       setActors(actors);
       setDirector(director);
       setWriter(writer);
+      setProducers(producers);
       writeActorImages();
     }
 

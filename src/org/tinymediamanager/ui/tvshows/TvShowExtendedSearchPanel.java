@@ -69,6 +69,8 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private JComboBox                    cbDatasource;
   private JCheckBox                    cbFilterCast;
   private JTextField                   tfCastMember;
+  private JCheckBox                    cbFilterMissingMetadata;
+  private JCheckBox                    cbFilterMissingArtwork;
 
   private final Action                 actionFilter     = new FilterAction();
 
@@ -109,18 +111,18 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     add(cbDatasource, "6, 4, fill, default");
 
     cbFilterCast = new JCheckBox("");
-    cbFilterCast.setUI(CHECKBOX_UI); // $hide$
     cbFilterCast.setAction(actionFilter);
-    add(cbFilterCast, "2, 7");
+    add(cbFilterCast, "2, 5");
+    cbFilterCast.setUI(CHECKBOX_UI); // $hide$
 
     JLabel lblCastMember = new JLabel(BUNDLE.getString("movieextendedsearch.cast")); //$NON-NLS-1$
     setComponentFont(lblCastMember);
-    add(lblCastMember, "4, 7, right, default");
+    add(lblCastMember, "4, 5, right, default");
 
     tfCastMember = new JTextField();
     setComponentFont(tfCastMember);
     tfCastMember.setBorder(new SmallTextFieldBorder());
-    add(tfCastMember, "6, 7, fill, default");
+    add(tfCastMember, "6, 5, fill, default");
     tfCastMember.setColumns(10);
     tfCastMember.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -138,6 +140,24 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
         actionFilter.actionPerformed(null);
       }
     });
+
+    cbFilterMissingMetadata = new JCheckBox("");
+    cbFilterMissingMetadata.setAction(actionFilter);
+    cbFilterMissingMetadata.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterMissingMetadata, "2, 6");
+
+    JLabel lblMissingMetadata = new JLabel(BUNDLE.getString("movieextendedsearch.missingmetadata")); //$NON-NLS-1$
+    setComponentFont(lblMissingMetadata);
+    add(lblMissingMetadata, "4, 6, right, default");
+
+    cbFilterMissingArtwork = new JCheckBox("");
+    cbFilterMissingArtwork.setAction(actionFilter);
+    cbFilterMissingArtwork.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterMissingArtwork, "2, 7");
+
+    JLabel lblMissingArtwork = new JLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
+    setComponentFont(lblMissingArtwork);
+    add(lblMissingArtwork, "4, 7, right, default");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -171,12 +191,39 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+      // filter by datasource
+      if (cbFilterDatasource.isSelected()) {
+        String datasource = (String) cbDatasource.getSelectedItem();
+        if (StringUtils.isNotBlank(datasource)) {
+          tvShowTreeModel.setFilter(SearchOptions.DATASOURCE, datasource);
+        }
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.DATASOURCE);
+      }
+
       // filter by cast
       if (cbFilterCast.isSelected() && StringUtils.isNotBlank(tfCastMember.getText())) {
         tvShowTreeModel.setFilter(SearchOptions.CAST, tfCastMember.getText());
       }
       else {
         tvShowTreeModel.removeFilter(SearchOptions.CAST);
+      }
+
+      // filter by missing metadata
+      if (cbFilterMissingMetadata.isSelected()) {
+        tvShowTreeModel.setFilter(SearchOptions.MISSING_METADATA, Boolean.TRUE);
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.MISSING_METADATA);
+      }
+
+      // filter by missing artwork
+      if (cbFilterMissingArtwork.isSelected()) {
+        tvShowTreeModel.setFilter(SearchOptions.MISSING_ARTWORK, Boolean.TRUE);
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.MISSING_ARTWORK);
       }
 
       // apply the filter
