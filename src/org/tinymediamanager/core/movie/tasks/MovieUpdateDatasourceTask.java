@@ -272,8 +272,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       movie.setMultiMovieDir(true);
 
       // 3) find additional files
-      String cleanFileName = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(file.getName()));
-      Pattern pattern = Pattern.compile(Pattern.quote(cleanFileName) + ".*\\.[a-zA-Z]*$");
+      Pattern pattern = Pattern.compile(Pattern.quote(basename) + ".*");
       List<MediaFile> foundMediaFiles = new ArrayList<MediaFile>();
       for (File fileInDir : completeDirContents) {
         Matcher matcher = pattern.matcher(fileInDir.getName());
