@@ -38,41 +38,16 @@ public class MediaCastMember {
    * @author Manuel Laggner
    */
   public enum CastType {
-
-    /** The actor. */
-    ACTOR,
-    /** The writer. */
-    WRITER,
-    /** The director. */
-    DIRECTOR,
-    /** The other. */
-    OTHER,
-    /** The all. */
-    ALL
+    ACTOR, WRITER, DIRECTOR, OTHER, ALL, PRODUCER
   }
 
-  /** The id. */
   private String       id;
-
-  /** The name. */
   private String       name;
-
-  /** The character. */
   private String       character;
-
-  /** The part. */
   private String       part;
-
-  /** The provider data url. */
   private String       providerDataUrl;
-
-  /** The image url. */
   private String       imageUrl;
-
-  /** The type. */
   private CastType     type;
-
-  /** The fanart. */
   private List<String> fanart = new LinkedList<String>();
 
   /**

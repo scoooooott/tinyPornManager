@@ -39,7 +39,7 @@ import org.tinymediamanager.core.tvshow.TvShowSeason;
 class TvShowExtendedMatcher {
 
   public enum SearchOptions {
-    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA, MISSING_ARTWORK
+    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA, MISSING_ARTWORK, MISSING_SUBTITLES
   }
 
   Map<SearchOptions, Object> searchOptions = Collections.synchronizedMap(new HashMap<SearchOptions, Object>());
@@ -103,6 +103,12 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.MISSING_SUBTITLES)) {
+      if (!filterMissingSubtitles(tvShow)) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -132,6 +138,12 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.MISSING_SUBTITLES)) {
+      if (!filterMissingSubtitles(season)) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -157,6 +169,12 @@ class TvShowExtendedMatcher {
 
     if (searchOptions.containsKey(SearchOptions.MISSING_ARTWORK)) {
       if (!filterMissingArtwork(episode)) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.MISSING_SUBTITLES)) {
+      if (!filterMissingSubtitles(episode)) {
         return false;
       }
     }
@@ -218,6 +236,18 @@ class TvShowExtendedMatcher {
 
   private boolean filterMissingArtwork(TvShowEpisode episode) {
     return matchesMissingArtwork(episode.getTvShow(), Arrays.asList(episode));
+  }
+
+  private boolean filterMissingSubtitles(TvShow tvShow) {
+    return matchesMissingSubtitles(new ArrayList<TvShowEpisode>(tvShow.getEpisodes()));
+  }
+
+  private boolean filterMissingSubtitles(TvShowSeason season) {
+    return matchesMissingSubtitles(new ArrayList<TvShowEpisode>(season.getEpisodes()));
+  }
+
+  private boolean filterMissingSubtitles(TvShowEpisode episode) {
+    return matchesMissingSubtitles(Arrays.asList(episode));
   }
 
   private boolean matchesText(TvShow tvShow, List<TvShowEpisode> episodes, String filterText) {
@@ -301,6 +331,16 @@ class TvShowExtendedMatcher {
 
     for (TvShowEpisode episode : episodes) {
       if (!episode.getHasImages()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean matchesMissingSubtitles(List<TvShowEpisode> episodes) {
+    for (TvShowEpisode episode : episodes) {
+      if (!episode.hasSubtitles()) {
         return true;
       }
     }

@@ -71,6 +71,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private JTextField                   tfCastMember;
   private JCheckBox                    cbFilterMissingMetadata;
   private JCheckBox                    cbFilterMissingArtwork;
+  private JCheckBox                    cbFilterMissingSubtitles;
 
   private final Action                 actionFilter     = new FilterAction();
 
@@ -159,6 +160,15 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblMissingArtwork);
     add(lblMissingArtwork, "4, 7, right, default");
 
+    cbFilterMissingSubtitles = new JCheckBox("");
+    cbFilterMissingSubtitles.setAction(actionFilter);
+    cbFilterMissingSubtitles.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterMissingSubtitles, "2, 8");
+
+    JLabel lblMissingSubtitles = new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
+    setComponentFont(lblMissingSubtitles);
+    add(lblMissingSubtitles, "4, 8, right, default");
+
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
@@ -224,6 +234,14 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
       }
       else {
         tvShowTreeModel.removeFilter(SearchOptions.MISSING_ARTWORK);
+      }
+
+      // filter by missing subtitles
+      if (cbFilterMissingSubtitles.isSelected()) {
+        tvShowTreeModel.setFilter(SearchOptions.MISSING_SUBTITLES, Boolean.TRUE);
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.MISSING_SUBTITLES);
       }
 
       // apply the filter

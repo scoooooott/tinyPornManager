@@ -771,14 +771,21 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (mf.getType().equals(MediaFileType.VIDEO) || !mf.getBasename().startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {
           continue;
         }
-        episode.addToMediaFiles(new MediaFile(file));
+        if (mf.getType() == MediaFileType.SUBTITLE) {
+          episode.setSubtitles(true);
+        }
+        episode.addToMediaFiles(mf);
       }
       else {
         if (file.getName().equalsIgnoreCase("sample") || file.getName().equalsIgnoreCase("subs") || file.getName().equalsIgnoreCase("subtitle")) {
           File[] subDirContent = file.listFiles();
           for (File subDirFile : subDirContent) {
             if (FilenameUtils.getBaseName(subDirFile.getName()).startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {
-              episode.addToMediaFiles(new MediaFile(subDirFile));
+              MediaFile mf = new MediaFile(subDirFile);
+              if (mf.getType() == MediaFileType.SUBTITLE) {
+                episode.setSubtitles(true);
+              }
+              episode.addToMediaFiles(mf);
             }
           }
         }
