@@ -126,8 +126,9 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
   public static String[] loadAlternateNames(String propName) {
     ArrayList<String> alt = new ArrayList<String>();
     for (Locale loc : Utils.getLanguages()) {
-      if (loc.getLanguage().equals("en")) {
-        // FIXME: all english is translated to german? wtf? but not needed, since EN has the name set...
+      if (loc == null || loc.getLanguage().equals("en")) {
+        // English not needed, since it's in default properties
+        // and for invalid languages (like NB) it will be null
         continue;
       }
       ResourceBundle b = ResourceBundle.getBundle("messages", loc, new UTF8Control()); //$NON-NLS-1$

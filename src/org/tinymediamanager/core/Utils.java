@@ -817,7 +817,7 @@ public class Utils {
       for (File file : props) {
         String l = file.getName().substring(9, 11); // messages_XX.properties
         Locale myloc = getLocaleFromLanguage(l);
-        if (!loc.contains(myloc)) {
+        if (myloc != null && !loc.contains(myloc)) {
           loc.add(myloc);
         }
       }
