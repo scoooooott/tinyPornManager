@@ -20,12 +20,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -192,15 +191,21 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     return null;
   }
 
-  /*
+  /**
    * parses a list of VIDEO files in a dir and creates movies out of it
    */
   private void parseMultiMovieDir(File[] files, File parentDir, String datasource) {
     if (files == null || files.length == 0) {
       return;
     }
-    List<File> completeDirContents = Arrays.asList(parentDir.listFiles());
+    List<File> completeDirContents = new ArrayList<File>(Arrays.asList(parentDir.listFiles()));
 
+    // just compare filename length, to start with longest
+    Arrays.sort(files, new Comparator<File>() {
+      public int compare(File file1, File file2) {
+        return file2.getName().length() - file1.getName().length();
+      }
+    });
     for (File file : files) {
 
       Movie movie = null;
@@ -271,12 +276,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       movie.addToMediaFiles(mf);
       movie.setMultiMovieDir(true);
 
-      // 3) find additional files
-      Pattern pattern = Pattern.compile(Pattern.quote(basename) + ".*");
+      // 3) find additional files, which start with videoFileName
       List<MediaFile> foundMediaFiles = new ArrayList<MediaFile>();
-      for (File fileInDir : completeDirContents) {
-        Matcher matcher = pattern.matcher(fileInDir.getName());
-        if (matcher.find()) {
+      for (int i = completeDirContents.size() - 1; i >= 0; i--) {
+        File fileInDir = completeDirContents.get(i);
+        if (fileInDir.getName().startsWith(basename)) {
           MediaFile mediaFile = new MediaFile(fileInDir);
           if (!movie.getMediaFiles().contains(mediaFile)) {
             // store file for faster cleanup
@@ -285,6 +289,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
             foundMediaFiles.add(mediaFile);
           }
+          // started with basename, so remove it for others
+          completeDirContents.remove(i);
         }
       }
       addMediafilesToMovie(movie, foundMediaFiles);
@@ -300,10 +306,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       movie.justAdded = true;
       movieList.addMovie(movie);
-    }
+    } // end for every file
   }
 
-  /*
+  /**
    * parses the complete movie directory, and adds a movie with all found MediaFiles
    */
   private void parseMovieDirectory(File movieDir, String dataSource) {
