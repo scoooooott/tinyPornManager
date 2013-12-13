@@ -425,9 +425,15 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       else if (castMember.getPersonType() == PersonType.CREW) {
         if ("Director".equals(castMember.getJob())) {
           cm.setType(MediaCastMember.CastType.DIRECTOR);
+          cm.setPart(castMember.getDepartment());
         }
         else if ("Writing".equals(castMember.getDepartment())) {
           cm.setType(MediaCastMember.CastType.WRITER);
+          cm.setPart(castMember.getDepartment());
+        }
+        else if ("Production".equals(castMember.getDepartment())) {
+          cm.setType(MediaCastMember.CastType.PRODUCER);
+          cm.setPart(castMember.getJob());
         }
         else {
           continue;
@@ -438,7 +444,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
 
       cm.setName(castMember.getName());
-      cm.setPart(castMember.getDepartment());
+
       if (!StringUtils.isEmpty(castMember.getProfilePath())) {
         cm.setImageUrl(baseUrl + "w185" + castMember.getProfilePath());
       }

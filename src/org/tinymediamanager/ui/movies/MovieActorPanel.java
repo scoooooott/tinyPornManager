@@ -22,17 +22,12 @@ import java.beans.PropertyChangeListener;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.ui.UTF8Control;
@@ -57,62 +52,33 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieCastPanel extends JPanel {
+public class MovieActorPanel extends JPanel {
   private static final long                  serialVersionUID = 2972207353452870494L;
   private static final ResourceBundle        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSelectionModel                selectionModel;
   private EventList<MovieActor>              actorEventList   = null;
   private DefaultEventTableModel<MovieActor> actorTableModel  = null;
-
-  /**
-   * UI elements
-   */
-  private JLabel                             lblDirectorT;
-  private JLabel                             lblDirector;
-  private JLabel                             lblWriterT;
-  private JLabel                             lblWriter;
-  private JLabel                             lblActors;
   private ActorImageLabel                    lblActorThumb;
   private JTable                             tableCast;
 
-  public MovieCastPanel(MovieSelectionModel model) {
+  public MovieActorPanel(MovieSelectionModel model) {
     selectionModel = model;
     actorEventList = GlazedLists.threadSafeList(new ObservableElementList<MovieActor>(new BasicEventList<MovieActor>(), GlazedLists
         .beanConnector(MovieActor.class)));
     actorTableModel = new DefaultEventTableModel<MovieActor>(GlazedListsSwing.swingThreadProxyList(actorEventList), new ActorTableFormat());
 
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.MIN_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("125px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("80px"),
-        RowSpec.decode("default:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
-
-    lblDirectorT = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-    add(lblDirectorT, "2, 2");
-
-    lblDirector = new JLabel("");
-    lblDirectorT.setLabelFor(lblDirector);
-    add(lblDirector, "4, 2, 3, 1");
-
-    lblWriterT = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-    add(lblWriterT, "2, 4");
-
-    lblWriter = new JLabel("");
-    lblWriterT.setLabelFor(lblWriter);
-    add(lblWriter, "4, 4, 3, 1");
-
-    lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
-    add(lblActors, "2, 6, default, top");
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        ColumnSpec.decode("125px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        RowSpec.decode("fill:80px:grow"), FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
 
     tableCast = new ZebraJTable(actorTableModel);
     JScrollPane scrollPaneMovieCast = ZebraJTable.createStripedJScrollPane(tableCast);
-    lblActors.setLabelFor(scrollPaneMovieCast);
-    add(scrollPaneMovieCast, "4, 6, 3, 2");
+    add(scrollPaneMovieCast, "2, 2, 1, 1");
     scrollPaneMovieCast.setViewportView(tableCast);
 
     lblActorThumb = new ActorImageLabel();
-    add(lblActorThumb, "8, 2, 1, 6, fill, fill");
+    add(lblActorThumb, "4, 2, fill, fill");
 
     initDataBindings();
 
@@ -202,15 +168,5 @@ public class MovieCastPanel extends JPanel {
   }
 
   protected void initDataBindings() {
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty = BeanProperty.create("selectedMovie.director");
-    BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        movieSelectionModelBeanProperty, lblDirector, jLabelBeanProperty);
-    autoBinding.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.writer");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        movieSelectionModelBeanProperty_1, lblWriter, jLabelBeanProperty);
-    autoBinding_1.bind();
   }
 }

@@ -27,10 +27,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum ImdbSiteDefinition {
   // www.imdb.com - international site
-  IMDB_COM("http://www.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writer|Writers", "Certification", "Release Date");
+  IMDB_COM("http://www.imdb.com/", "UTF-8", "Tagline", "Genre", "Runtime", "Production Companies", "Writing credits", "Certification",
+      "Release Date", "Produced by");
 
   private ImdbSiteDefinition(String site, String charsetName, String tagline, String genre, String runtime, String productionCompanies,
-      String writers, String certification, String releaseDate) {
+      String writers, String certification, String releaseDate, String producers) {
     this.site = site;
     if (StringUtils.isBlank(charsetName)) {
       this.charset = Charset.defaultCharset();
@@ -45,6 +46,7 @@ public enum ImdbSiteDefinition {
     this.writer = writers;
     this.certification = certification;
     this.releaseDate = releaseDate;
+    this.producers = producers;
   }
 
   private String  site;
@@ -56,6 +58,7 @@ public enum ImdbSiteDefinition {
   private String  writer;
   private String  certification;
   private String  releaseDate;
+  private String  producers;
 
   public String getSite() {
     return site;
@@ -91,6 +94,10 @@ public enum ImdbSiteDefinition {
 
   public String getReleaseDate() {
     return releaseDate;
+  }
+
+  public String getProducers() {
+    return producers;
   }
 
   /*

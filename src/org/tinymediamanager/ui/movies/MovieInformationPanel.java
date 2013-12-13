@@ -120,7 +120,7 @@ public class MovieInformationPanel extends JPanel {
   private JPanel                      panelOverview;
 
   /** The panel movie cast. */
-  private MovieCastPanel              panelMovieCast;
+  private MovieCrewPanel              panelMovieCrew;
 
   /** The panel details. */
   private JPanel                      panelDetails;
@@ -301,8 +301,11 @@ public class MovieInformationPanel extends JPanel {
     tpOverview.setEditable(false);
     scrollPaneOverview.setViewportView(tpOverview);
 
-    panelMovieCast = new MovieCastPanel(movieSelectionModel);
-    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelMovieCast, null); //$NON-NLS-1$
+    panelMovieCrew = new MovieCrewPanel(movieSelectionModel);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.crew"), null, panelMovieCrew, null); //$NON-NLS-1$
+
+    MovieActorPanel panelMovieActors = new MovieActorPanel(movieSelectionModel);
+    tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.cast"), null, panelMovieActors, null); //$NON-NLS-1$
 
     panelMediaInformation = new MovieMediaInformationPanel(movieSelectionModel);
     tabbedPaneMovieDetails.addTab(BUNDLE.getString("metatag.mediainformation"), null, panelMediaInformation, null); //$NON-NLS-1$

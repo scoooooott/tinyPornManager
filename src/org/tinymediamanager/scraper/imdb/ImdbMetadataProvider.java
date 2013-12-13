@@ -428,24 +428,24 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
           md.storeMetadata(MediaMetadata.SPOKEN_LANGUAGES, spokenLanguages);
         }
 
-        /*
-         * <div class="info"> <h5>Writers:</h5> <div class="info-content"> <a href="/name/nm0152312/" onclick=
-         * "(new Image()).src='/rg/writerlist/position-1/images/b.gif?link=name/nm0152312/';" >Brenda Chapman</a> (story)<br/> <a
-         * href="/name/nm0028764/" onclick= "(new Image()).src='/rg/writerlist/position-2/images/b.gif?link=name/nm0028764/';" >Mark Andrews</a>
-         * (screenplay) ...<br/> <a href="fullcredits#writers">(more)</a> </div> </div>
-         */
-        // writer
-        // if (h5Title.matches("(?i)" + imdbSite.getWriter() + ".*")) {
-        if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getWriter() + ".*")) {
-          Elements a = element.getElementsByTag("a");
-          for (Element anchor : a) {
-            if (anchor.attr("href").matches("/name/nm.*")) {
-              MediaCastMember cm = new MediaCastMember(CastType.WRITER);
-              cm.setName(anchor.ownText());
-              md.addCastMember(cm);
-            }
-          }
-        }
+        // /*
+        // * <div class="info"> <h5>Writers:</h5> <div class="info-content"> <a href="/name/nm0152312/" onclick=
+        // * "(new Image()).src='/rg/writerlist/position-1/images/b.gif?link=name/nm0152312/';" >Brenda Chapman</a> (story)<br/> <a
+        // * href="/name/nm0028764/" onclick= "(new Image()).src='/rg/writerlist/position-2/images/b.gif?link=name/nm0028764/';" >Mark Andrews</a>
+        // * (screenplay) ...<br/> <a href="fullcredits#writers">(more)</a> </div> </div>
+        // */
+        // // writer
+        // // if (h5Title.matches("(?i)" + imdbSite.getWriter() + ".*")) {
+        // if (h5Title.matches("(?i)" + ImdbSiteDefinition.IMDB_COM.getWriter() + ".*")) {
+        // Elements a = element.getElementsByTag("a");
+        // for (Element anchor : a) {
+        // if (anchor.attr("href").matches("/name/nm.*")) {
+        // MediaCastMember cm = new MediaCastMember(CastType.WRITER);
+        // cm.setName(anchor.ownText());
+        // md.addCastMember(cm);
+        // }
+        // }
+        // }
 
         /*
          * <div class="info"><h5>Certification:</h5><div class="info-content"><a href="/search/title?certificates=us:pg">USA:PG</a> <i>(certificate
@@ -547,6 +547,46 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         }
         if (StringUtils.isNotEmpty(cm.getName()) && StringUtils.isNotEmpty(cm.getCharacter())) {
           cm.setType(CastType.ACTOR);
+          md.addCastMember(cm);
+        }
+      }
+    }
+
+    Element content = doc.getElementById("tn15content");
+    elements = content.getElementsByTag("table");
+    for (Element table : elements) {
+      // writers
+      if (table.text().contains(ImdbSiteDefinition.IMDB_COM.getWriter())) {
+        Elements anchors = table.getElementsByTag("a");
+        for (Element anchor : anchors) {
+          if (anchor.attr("href").matches("/name/nm.*")) {
+            MediaCastMember cm = new MediaCastMember(CastType.WRITER);
+            cm.setName(anchor.ownText());
+            md.addCastMember(cm);
+          }
+        }
+      }
+
+      // producers
+      if (table.text().contains(ImdbSiteDefinition.IMDB_COM.getProducers())) {
+        Elements rows = table.getElementsByTag("tr");
+        for (Element row : rows) {
+          if (row.text().contains(ImdbSiteDefinition.IMDB_COM.getProducers())) {
+            continue;
+          }
+          Elements columns = row.children();
+          if (columns.size() == 0) {
+            continue;
+          }
+          MediaCastMember cm = new MediaCastMember(CastType.PRODUCER);
+          String name = cleanString(columns.get(0).text());
+          if (StringUtils.isBlank(name)) {
+            continue;
+          }
+          cm.setName(name);
+          if (columns.size() >= 3) {
+            cm.setPart(cleanString(columns.get(2).text()));
+          }
           md.addCastMember(cm);
         }
       }

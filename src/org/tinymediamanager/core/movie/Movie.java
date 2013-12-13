@@ -1251,18 +1251,19 @@ public class Movie extends MediaEntity {
   public void setActors(List<MovieActor> newActors) {
     // two way sync of actors
 
-    // first add the new ones
-    for (MovieActor actor : newActors) {
-      if (!actorsObservable.contains(actor)) {
-        actorsObservable.add(actor);
-      }
-    }
-
-    // second remove unused
+    // first remove unused
     for (int i = actorsObservable.size() - 1; i >= 0; i--) {
       MovieActor actor = actorsObservable.get(i);
       if (!newActors.contains(actor)) {
         actorsObservable.remove(actor);
+      }
+    }
+
+    // second add the new ones
+    for (int i = 0; i < newActors.size(); i++) {
+      MovieActor actor = newActors.get(i);
+      if (!actorsObservable.contains(actor)) {
+        actorsObservable.add(i, actor);
       }
     }
 
@@ -2138,18 +2139,19 @@ public class Movie extends MediaEntity {
   public void setProducers(List<MovieProducer> newProducers) {
     // two way sync of producers
 
-    // first add the new ones
-    for (MovieProducer producer : newProducers) {
-      if (!producersObservable.contains(producer)) {
-        producersObservable.add(producer);
-      }
-    }
-
-    // second remove unused
+    // first remove unused
     for (int i = producersObservable.size() - 1; i >= 0; i--) {
       MovieProducer producer = producersObservable.get(i);
       if (!newProducers.contains(producer)) {
         producersObservable.remove(producer);
+      }
+    }
+
+    // second add the new ones
+    for (int i = 0; i < newProducers.size(); i++) {
+      MovieProducer producer = newProducers.get(i);
+      if (!producersObservable.contains(producer)) {
+        producersObservable.add(i, producer);
       }
     }
 
@@ -2159,5 +2161,4 @@ public class Movie extends MediaEntity {
   public List<MovieProducer> getProducers() {
     return this.producersObservable;
   }
-
 }
