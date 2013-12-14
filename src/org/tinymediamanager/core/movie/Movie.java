@@ -1265,6 +1265,13 @@ public class Movie extends MediaEntity {
       if (!actorsObservable.contains(actor)) {
         actorsObservable.add(i, actor);
       }
+      else {
+        int indexOldList = actorsObservable.indexOf(actor);
+        if (i != indexOldList) {
+          MovieActor oldActor = actorsObservable.remove(indexOldList);
+          actorsObservable.add(i, oldActor);
+        }
+      }
     }
 
     firePropertyChange(ACTORS, null, this.getActors());
@@ -2151,7 +2158,15 @@ public class Movie extends MediaEntity {
     for (int i = 0; i < newProducers.size(); i++) {
       MovieProducer producer = newProducers.get(i);
       if (!producersObservable.contains(producer)) {
+        // new producer
         producersObservable.add(i, producer);
+      }
+      else {
+        int indexOldList = producersObservable.indexOf(producer);
+        if (i != indexOldList) {
+          MovieProducer oldProducer = producersObservable.remove(indexOldList);
+          producersObservable.add(i, oldProducer);
+        }
       }
     }
 

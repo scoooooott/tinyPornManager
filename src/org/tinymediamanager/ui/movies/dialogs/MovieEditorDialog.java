@@ -25,6 +25,7 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -427,7 +428,8 @@ public class MovieEditorDialog extends JDialog {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -439,7 +441,7 @@ public class MovieEditorDialog extends JDialog {
     }
     {
       JScrollPane scrollPane = new JScrollPane();
-      details2Panel.add(scrollPane, "4, 2, 1, 7");
+      details2Panel.add(scrollPane, "4, 2, 1, 11");
       tableActors = new JTable();
       scrollPane.setViewportView(tableActors);
     }
@@ -449,7 +451,7 @@ public class MovieEditorDialog extends JDialog {
     }
     {
       JScrollPane scrollPane = new JScrollPane();
-      details2Panel.add(scrollPane, "8, 2, 1, 7");
+      details2Panel.add(scrollPane, "8, 2, 1, 11");
       tableProducers = new JTable();
       scrollPane.setViewportView(tableProducers);
     }
@@ -482,12 +484,40 @@ public class MovieEditorDialog extends JDialog {
       details2Panel.add(btnRemoveProducer, "6, 6, right, top");
     }
     {
+      JButton btnMoveActorUp = new JButton((String) null);
+      btnMoveActorUp.setMargin(new Insets(2, 2, 2, 2));
+      btnMoveActorUp.setAction(new MoveActorUpAction());
+      btnMoveActorUp.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Button_Up.png")));
+      details2Panel.add(btnMoveActorUp, "2, 8, right, top");
+    }
+    {
+      JButton btnMoveProducerUp = new JButton((String) null);
+      btnMoveProducerUp.setMargin(new Insets(2, 2, 2, 2));
+      btnMoveProducerUp.setAction(new MoveProducerUpAction());
+      btnMoveProducerUp.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Button_Up.png")));
+      details2Panel.add(btnMoveProducerUp, "6, 8, right, top");
+    }
+    {
+      JButton btnMoveActorDown = new JButton((String) null);
+      btnMoveActorDown.setMargin(new Insets(2, 2, 2, 2));
+      btnMoveActorDown.setAction(new MoveActorDownAction());
+      btnMoveActorDown.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Button_Down.png")));
+      details2Panel.add(btnMoveActorDown, "2, 10, right, top");
+    }
+    {
+      JButton btnMoveProducerDown = new JButton((String) null);
+      btnMoveProducerDown.setMargin(new Insets(2, 2, 2, 2));
+      btnMoveProducerDown.setAction(new MoveProducerDownAction());
+      btnMoveProducerDown.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Button_Down.png")));
+      details2Panel.add(btnMoveProducerDown, "6, 10, right, top");
+    }
+    {
       JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
-      details2Panel.add(lblGenres, "2, 10, right, default");
+      details2Panel.add(lblGenres, "2, 14, right, default");
     }
     {
       JScrollPane scrollPaneGenres = new JScrollPane();
-      details2Panel.add(scrollPaneGenres, "4, 10, 1, 5");
+      details2Panel.add(scrollPaneGenres, "4, 14, 1, 5");
       {
         listGenres = new JList();
         scrollPaneGenres.setViewportView(listGenres);
@@ -495,11 +525,11 @@ public class MovieEditorDialog extends JDialog {
     }
     {
       JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      details2Panel.add(lblTags, "6, 10, right, default");
+      details2Panel.add(lblTags, "6, 14, right, default");
     }
     {
       JScrollPane scrollPaneTags = new JScrollPane();
-      details2Panel.add(scrollPaneTags, "8, 10, 1, 5");
+      details2Panel.add(scrollPaneTags, "8, 14, 1, 5");
       listTags = new JList();
       scrollPaneTags.setViewportView(listTags);
     }
@@ -508,14 +538,14 @@ public class MovieEditorDialog extends JDialog {
       btnAddGenre.setAction(new AddGenreAction());
       btnAddGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnAddGenre, "2, 12, right, top");
+      details2Panel.add(btnAddGenre, "2, 16, right, top");
     }
     {
       JButton btnAddTag = new JButton("");
       btnAddTag.setAction(new AddTagAction());
       btnAddTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnAddTag, "6, 12, right, top");
+      details2Panel.add(btnAddTag, "6, 16, right, top");
     }
 
     {
@@ -523,34 +553,34 @@ public class MovieEditorDialog extends JDialog {
       btnRemoveGenre.setAction(new RemoveGenreAction());
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
-      details2Panel.add(btnRemoveGenre, "2, 14, right, top");
+      details2Panel.add(btnRemoveGenre, "2, 18, right, top");
     }
     {
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setAction(new RemoveTagAction());
       btnRemoveTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnRemoveTag, "6, 14, right, top");
+      details2Panel.add(btnRemoveTag, "6, 18, right, top");
     }
     {
       // cbGenres = new JComboBox(MediaGenres2.values());
       cbGenres = new AutocompleteComboBox(MediaGenres.values());
       cbGenres.setEditable(true);
-      details2Panel.add(cbGenres, "4, 16");
+      details2Panel.add(cbGenres, "4, 20");
     }
     {
       cbTags = new AutocompleteComboBox(movieList.getTagsInMovies().toArray());
       cbTags.setEditable(true);
-      details2Panel.add(cbTags, "8, 16");
+      details2Panel.add(cbTags, "8, 20");
     }
 
     {
       JLabel lblTrailer = new JLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-      details2Panel.add(lblTrailer, "2, 18, right, default");
+      details2Panel.add(lblTrailer, "2, 22, right, default");
     }
     {
       JScrollPane scrollPaneTrailer = new JScrollPane();
-      details2Panel.add(scrollPaneTrailer, "4, 18, 5, 5");
+      details2Panel.add(scrollPaneTrailer, "4, 22, 5, 5");
       tableTrailer = new JTable();
       scrollPaneTrailer.setViewportView(tableTrailer);
     }
@@ -559,14 +589,14 @@ public class MovieEditorDialog extends JDialog {
       btnAddTrailer.setAction(new AddTrailerAction());
       btnAddTrailer.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnAddTrailer, "2, 20, right, top");
+      details2Panel.add(btnAddTrailer, "2, 24, right, top");
     }
     {
       JButton btnRemoveTrailer = new JButton("");
       btnRemoveTrailer.setAction(new RemoveTrailerAction());
       btnRemoveTrailer.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnRemoveTrailer, "2, 22, right, top");
+      details2Panel.add(btnRemoveTrailer, "2, 26, right, top");
     }
 
     /**
@@ -1097,6 +1127,74 @@ public class MovieEditorDialog extends JDialog {
       continueQueue = false;
       setVisible(false);
       dispose();
+    }
+  }
+
+  private class MoveActorUpAction extends AbstractAction {
+    private static final long serialVersionUID = 5775423424097844658L;
+
+    public MoveActorUpAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveactorup")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableActors.getSelectedRow();
+      if (row > 0) {
+        Collections.rotate(cast.subList(row - 1, row + 1), 1);
+        tableActors.getSelectionModel().setSelectionInterval(row - 1, row - 1);
+      }
+    }
+  }
+
+  private class MoveActorDownAction extends AbstractAction {
+    private static final long serialVersionUID = -6564146895819191932L;
+
+    public MoveActorDownAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveactordown")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableActors.getSelectedRow();
+      if (row < cast.size() - 1) {
+        Collections.rotate(cast.subList(row, row + 2), -1);
+        tableActors.getSelectionModel().setSelectionInterval(row + 1, row + 1);
+      }
+    }
+  }
+
+  private class MoveProducerUpAction extends AbstractAction {
+    private static final long serialVersionUID = -6855661707692602266L;
+
+    public MoveProducerUpAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveproducerup")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableProducers.getSelectedRow();
+      if (row > 0) {
+        Collections.rotate(producers.subList(row - 1, row + 1), 1);
+        tableProducers.getSelectionModel().setSelectionInterval(row - 1, row - 1);
+      }
+    }
+  }
+
+  private class MoveProducerDownAction extends AbstractAction {
+    private static final long serialVersionUID = -1135108943010008069L;
+
+    public MoveProducerDownAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveproducerdown")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableProducers.getSelectedRow();
+      if (row < producers.size() - 1) {
+        Collections.rotate(producers.subList(row, row + 2), -1);
+        tableProducers.getSelectionModel().setSelectionInterval(row + 1, row + 1);
+      }
     }
   }
 
