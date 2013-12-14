@@ -552,11 +552,11 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void saveToDb() {
     // update DB
-    synchronized (Globals.entityManager) {
-      Globals.entityManager.getTransaction().begin();
-      Globals.entityManager.persist(this);
-      Globals.entityManager.getTransaction().commit();
-    }
+    // synchronized (Globals.entityManager) {
+    Globals.entityManager.getTransaction().begin();
+    Globals.entityManager.merge(this);
+    Globals.entityManager.getTransaction().commit();
+    // }
   }
 
   public void saveToDb(EntityManager entityManager) {
