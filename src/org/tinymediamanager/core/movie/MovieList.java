@@ -285,7 +285,6 @@ public class MovieList extends AbstractModelObject {
         for (Object obj : movieSets) {
           if (obj instanceof MovieSet) {
             MovieSet movieSet = (MovieSet) obj;
-            movieSet.setObservables();
 
             // for performance reasons we add moviesets directly
             // addMovieSet(movieSet);

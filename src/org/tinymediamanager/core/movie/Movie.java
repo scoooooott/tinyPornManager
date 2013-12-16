@@ -49,7 +49,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -58,6 +57,7 @@ import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.ObservableArrayList;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
@@ -87,62 +87,50 @@ import com.omertron.themoviedbapi.model.CollectionInfo;
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class Movie extends MediaEntity {
   @XmlTransient
-  private static final Logger LOGGER              = LoggerFactory.getLogger(Movie.class);
+  private static final Logger LOGGER          = LoggerFactory.getLogger(Movie.class);
 
-  private String              sortTitle           = "";
-  private String              tagline             = "";
-  private int                 votes               = 0;
-  private int                 runtime             = 0;
-  private String              director            = "";
-  private String              writer              = "";
-  private String              dataSource          = "";
-  private boolean             watched             = false;
+  private String              sortTitle       = "";
+  private String              tagline         = "";
+  private int                 votes           = 0;
+  private int                 runtime         = 0;
+  private String              director        = "";
+  private String              writer          = "";
+  private String              dataSource      = "";
+  private boolean             watched         = false;
   private MovieSet            movieSet;
-  private boolean             isDisc              = false;
-  private String              spokenLanguages     = "";
-  private boolean             subtitles           = false;
-  private String              country             = "";
-  private Date                releaseDate         = null;
-  private boolean             multiMovieDir       = false;                                          // we detected more movies in same folder
-  private int                 top250              = 0;
+  private boolean             isDisc          = false;
+  private String              spokenLanguages = "";
+  private boolean             subtitles       = false;
+  private String              country         = "";
+  private Date                releaseDate     = null;
+  private boolean             multiMovieDir   = false;                                // we detected more movies in same folder
+  private int                 top250          = 0;
 
-  private List<String>        genres              = new ArrayList<String>();
-  private List<String>        tags                = new ArrayList<String>();
-  private List<String>        extraThumbs         = new ArrayList<String>();
-  private List<String>        extraFanarts        = new ArrayList<String>();
+  private List<String>        genres          = new ArrayList<String>();
+  private List<String>        tags            = new ObservableArrayList<String>();
+  private List<String>        extraThumbs     = new ObservableArrayList<String>();
+  private List<String>        extraFanarts    = new ObservableArrayList<String>();
 
   @Enumerated(EnumType.STRING)
-  private Certification       certification       = Certification.NOT_RATED;
+  private Certification       certification   = Certification.NOT_RATED;
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieActor>    actors              = new ArrayList<MovieActor>();
+  private List<MovieActor>    actors          = new ObservableArrayList<MovieActor>();
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieProducer> producers           = new ArrayList<MovieProducer>();
+  private List<MovieProducer> producers       = new ArrayList<MovieProducer>();
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>  trailer             = new ArrayList<MediaTrailer>();
+  private List<MediaTrailer>  trailer         = new ArrayList<MediaTrailer>();
 
   @Transient
-  private String              titleSortable       = "";
+  private String              titleSortable   = "";
 
   @Transient
-  private boolean             newlyAdded          = false;
+  private boolean             newlyAdded      = false;
 
   @Transient
-  private List<MediaGenres>   genresForAccess     = new ArrayList<MediaGenres>();
-
-  @Transient
-  private List<MovieActor>    actorsObservable    = ObservableCollections.observableList(actors);
-
-  @Transient
-  private List<MovieProducer> producersObservable = ObservableCollections.observableList(producers);
-
-  @Transient
-  private List<MediaTrailer>  trailerObservable   = ObservableCollections.observableList(trailer);
-
-  @Transient
-  private List<String>        tagsObservable      = ObservableCollections.observableList(tags);
+  private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>();
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();
@@ -274,16 +262,6 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Sets the observables.
-   */
-  private void setObservables() {
-    actorsObservable = ObservableCollections.observableList(actors);
-    producersObservable = ObservableCollections.observableList(producers);
-    trailerObservable = ObservableCollections.observableList(trailer);
-    tagsObservable = ObservableCollections.observableList(tags);
-  }
-
-  /**
    * Initialize after loading.
    */
   public void initializeAfterLoading() {
@@ -292,9 +270,6 @@ public class Movie extends MediaEntity {
     // remove empty tag and null values
     Utils.removeEmptyStringsFromList(tags);
     Utils.removeEmptyStringsFromList(genres);
-
-    // set observables
-    setObservables();
 
     // load genres
     for (String genre : new ArrayList<String>(genres)) {
@@ -309,7 +284,7 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void addActor(MovieActor obj) {
-    actorsObservable.add(obj);
+    actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -319,7 +294,7 @@ public class Movie extends MediaEntity {
    * @return the trailers
    */
   public List<MediaTrailer> getTrailers() {
-    return this.trailerObservable;
+    return this.trailer;
   }
 
   /**
@@ -329,16 +304,16 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void addTrailer(MediaTrailer obj) {
-    trailerObservable.add(obj);
-    firePropertyChange(TRAILER, null, trailerObservable);
+    trailer.add(obj);
+    firePropertyChange(TRAILER, null, trailer);
   }
 
   /**
    * Removes the all trailers.
    */
   public void removeAllTrailers() {
-    trailerObservable.clear();
-    firePropertyChange(TRAILER, null, trailerObservable);
+    trailer.clear();
+    firePropertyChange(TRAILER, null, trailer);
   }
 
   /**
@@ -392,14 +367,14 @@ public class Movie extends MediaEntity {
       return;
     }
 
-    for (String tag : tagsObservable) {
+    for (String tag : tags) {
       if (tag.equals(newTag)) {
         return;
       }
     }
 
-    tagsObservable.add(newTag);
-    firePropertyChange(TAG, null, tagsObservable);
+    tags.add(newTag);
+    firePropertyChange(TAG, null, tags);
     firePropertyChange(TAGS_AS_STRING, null, newTag);
   }
 
@@ -410,8 +385,8 @@ public class Movie extends MediaEntity {
    *          the remove tag
    */
   public void removeFromTags(String removeTag) {
-    tagsObservable.remove(removeTag);
-    firePropertyChange(TAG, null, tagsObservable);
+    tags.remove(removeTag);
+    firePropertyChange(TAG, null, tags);
     firePropertyChange(TAGS_AS_STRING, null, removeTag);
   }
 
@@ -426,23 +401,23 @@ public class Movie extends MediaEntity {
 
     // first, add new ones
     for (String tag : newTags) {
-      if (!this.tagsObservable.contains(tag)) {
-        this.tagsObservable.add(tag);
+      if (!this.tags.contains(tag)) {
+        this.tags.add(tag);
       }
     }
 
     // second remove old ones
-    for (int i = this.tagsObservable.size() - 1; i >= 0; i--) {
-      String tag = this.tagsObservable.get(i);
+    for (int i = this.tags.size() - 1; i >= 0; i--) {
+      String tag = this.tags.get(i);
       if (!newTags.contains(tag)) {
-        this.tagsObservable.remove(tag);
+        this.tags.remove(tag);
       }
     }
 
-    Utils.removeEmptyStringsFromList(tagsObservable);
+    Utils.removeEmptyStringsFromList(tags);
 
-    firePropertyChange(TAG, null, tagsObservable);
-    firePropertyChange(TAGS_AS_STRING, null, tagsObservable);
+    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAGS_AS_STRING, null, tags);
   }
 
   /**
@@ -467,7 +442,7 @@ public class Movie extends MediaEntity {
    * @return the tags
    */
   public List<String> getTags() {
-    return this.tagsObservable;
+    return this.tags;
   }
 
   /**
@@ -546,7 +521,7 @@ public class Movie extends MediaEntity {
    * @return the actors
    */
   public List<MovieActor> getActors() {
-    return this.actorsObservable;
+    return this.actors;
   }
 
   /**
@@ -675,7 +650,7 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void removeActor(MovieActor obj) {
-    actorsObservable.remove(obj);
+    actors.remove(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1252,24 +1227,24 @@ public class Movie extends MediaEntity {
     // two way sync of actors
 
     // first remove unused
-    for (int i = actorsObservable.size() - 1; i >= 0; i--) {
-      MovieActor actor = actorsObservable.get(i);
+    for (int i = actors.size() - 1; i >= 0; i--) {
+      MovieActor actor = actors.get(i);
       if (!newActors.contains(actor)) {
-        actorsObservable.remove(actor);
+        actors.remove(actor);
       }
     }
 
     // second add the new ones
     for (int i = 0; i < newActors.size(); i++) {
       MovieActor actor = newActors.get(i);
-      if (!actorsObservable.contains(actor)) {
-        actorsObservable.add(i, actor);
+      if (!actors.contains(actor)) {
+        actors.add(i, actor);
       }
       else {
-        int indexOldList = actorsObservable.indexOf(actor);
+        int indexOldList = actors.indexOf(actor);
         if (i != indexOldList) {
-          MovieActor oldActor = actorsObservable.remove(indexOldList);
-          actorsObservable.add(i, oldActor);
+          MovieActor oldActor = actors.remove(indexOldList);
+          actors.add(i, oldActor);
         }
       }
     }
@@ -2133,47 +2108,47 @@ public class Movie extends MediaEntity {
   }
 
   public void addProducer(MovieProducer obj) {
-    producersObservable.add(obj);
-    firePropertyChange(PRODUCERS, null, producersObservable);
+    producers.add(obj);
+    firePropertyChange(PRODUCERS, null, producers);
 
   }
 
   public void removeProducer(MovieProducer obj) {
-    producersObservable.remove(obj);
-    firePropertyChange(PRODUCERS, null, producersObservable);
+    producers.remove(obj);
+    firePropertyChange(PRODUCERS, null, producers);
   }
 
   public void setProducers(List<MovieProducer> newProducers) {
     // two way sync of producers
 
     // first remove unused
-    for (int i = producersObservable.size() - 1; i >= 0; i--) {
-      MovieProducer producer = producersObservable.get(i);
+    for (int i = producers.size() - 1; i >= 0; i--) {
+      MovieProducer producer = producers.get(i);
       if (!newProducers.contains(producer)) {
-        producersObservable.remove(producer);
+        producers.remove(producer);
       }
     }
 
     // second add the new ones
     for (int i = 0; i < newProducers.size(); i++) {
       MovieProducer producer = newProducers.get(i);
-      if (!producersObservable.contains(producer)) {
+      if (!producers.contains(producer)) {
         // new producer
-        producersObservable.add(i, producer);
+        producers.add(i, producer);
       }
       else {
-        int indexOldList = producersObservable.indexOf(producer);
+        int indexOldList = producers.indexOf(producer);
         if (i != indexOldList) {
-          MovieProducer oldProducer = producersObservable.remove(indexOldList);
-          producersObservable.add(i, oldProducer);
+          MovieProducer oldProducer = producers.remove(indexOldList);
+          producers.add(i, oldProducer);
         }
       }
     }
 
-    firePropertyChange(PRODUCERS, null, producersObservable);
+    firePropertyChange(PRODUCERS, null, producers);
   }
 
   public List<MovieProducer> getProducers() {
-    return this.producersObservable;
+    return this.producers;
   }
 }

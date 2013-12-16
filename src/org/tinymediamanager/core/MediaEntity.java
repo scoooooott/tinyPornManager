@@ -31,14 +31,12 @@ import java.util.Locale;
 import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
-import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.observablecollections.ObservableList;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
@@ -49,55 +47,52 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
  */
 @MappedSuperclass
 public abstract class MediaEntity extends AbstractModelObject {
-  protected static Comparator<MediaFile>       mediaFileComparator  = null;
+  protected static Comparator<MediaFile> mediaFileComparator = null;
 
   /** The id for the database. */
   @GeneratedValue
-  protected int                                id;
+  protected int                          id;
 
   /** The ids to store the ID from several metadataproviders. */
-  protected HashMap<String, Object>            ids                  = new HashMap<String, Object>();
+  @OneToMany(fetch = FetchType.EAGER)
+  protected HashMap<String, Object>      ids                 = new HashMap<String, Object>();
 
-  protected String                             title                = "";
-  protected String                             originalTitle        = "";
-  protected String                             year                 = "";
-  protected String                             plot                 = "";
-  protected float                              rating               = 0f;
-  protected String                             path                 = "";
-  protected String                             fanartUrl            = "";
-  protected String                             posterUrl            = "";
-  protected String                             bannerUrl            = "";
-  protected String                             thumbUrl             = "";
-  protected Date                               dateAdded            = new Date();
-  protected String                             productionCompany    = "";
-  protected boolean                            scraped              = false;
-
-  @Transient
-  protected boolean                            duplicate            = false;
-
-  @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaFile>                      mediaFiles           = new ArrayList<MediaFile>();
+  protected String                       title               = "";
+  protected String                       originalTitle       = "";
+  protected String                       year                = "";
+  protected String                       plot                = "";
+  protected float                        rating              = 0f;
+  protected String                       path                = "";
+  protected String                       fanartUrl           = "";
+  protected String                       posterUrl           = "";
+  protected String                       bannerUrl           = "";
+  protected String                       thumbUrl            = "";
+  protected Date                         dateAdded           = new Date();
+  protected String                       productionCompany   = "";
+  protected boolean                      scraped             = false;
 
   @Transient
-  protected volatile ObservableList<MediaFile> mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
+  protected boolean                      duplicate           = false;
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private List<MediaFile>                mediaFiles          = new ObservableArrayList<MediaFile>();
 
   @Transient
-  public boolean                               justAdded            = false;
+  public boolean                         justAdded           = false;
 
   /**
    * Initialize after loading from database.
    */
   public void initializeAfterLoading() {
-    mediaFilesObservable = ObservableCollections.observableList(mediaFiles);
     sortMediaFiles();
   }
 
   protected void sortMediaFiles() {
     if (mediaFileComparator != null) {
-      Collections.sort(mediaFilesObservable, mediaFileComparator);
+      Collections.sort(mediaFiles, mediaFileComparator);
     }
     else {
-      Collections.sort(mediaFilesObservable);
+      Collections.sort(mediaFiles);
     }
   }
 
@@ -387,20 +382,20 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void addToMediaFiles(MediaFile mediaFile) {
-    synchronized (mediaFilesObservable) {
-      if (!mediaFilesObservable.contains(mediaFile)) {
-        mediaFilesObservable.add(mediaFile);
+    synchronized (mediaFiles) {
+      if (!mediaFiles.contains(mediaFile)) {
+        mediaFiles.add(mediaFile);
         sortMediaFiles();
       }
     }
 
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
+    firePropertyChange(MEDIA_FILES, null, mediaFiles);
     fireAddedEventForMediaFile(mediaFile);
   }
 
   public void addToMediaFiles(List<MediaFile> mediaFiles) {
-    synchronized (mediaFilesObservable) {
-      mediaFilesObservable.addAll(mediaFiles);
+    synchronized (mediaFiles) {
+      mediaFiles.addAll(mediaFiles);
       sortMediaFiles();
     }
 
@@ -409,7 +404,7 @@ public abstract class MediaEntity extends AbstractModelObject {
       fireAddedEventForMediaFile(mediaFile);
     }
 
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
+    firePropertyChange(MEDIA_FILES, null, mediaFiles);
   }
 
   private void fireAddedEventForMediaFile(MediaFile mediaFile) {
@@ -467,26 +462,24 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public List<MediaFile> getMediaFiles() {
-    return mediaFilesObservable;
+    return mediaFiles;
   }
 
   public List<MediaFile> getMediaFiles(MediaFileType type) {
     List<MediaFile> mf = new ArrayList<MediaFile>();
-    // synchronized (mediaFilesObservable) {
-    for (MediaFile mediaFile : new ArrayList<MediaFile>(mediaFilesObservable)) {
+    for (MediaFile mediaFile : new ArrayList<MediaFile>(mediaFiles)) {
       if (mediaFile.getType().equals(type)) {
         mf.add(mediaFile);
       }
-      // }
     }
     return mf;
   }
 
   public void removeAllMediaFiles() {
-    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>(mediaFilesObservable);
-    synchronized (mediaFilesObservable) {
-      for (int i = mediaFilesObservable.size() - 1; i >= 0; i--) {
-        mediaFilesObservable.remove(i);
+    List<MediaFile> changedMediafiles = new ArrayList<MediaFile>(mediaFiles);
+    synchronized (mediaFiles) {
+      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+        mediaFiles.remove(i);
       }
     }
     for (MediaFile mediaFile : changedMediafiles) {
@@ -495,21 +488,21 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeFromMediaFiles(MediaFile mediaFile) {
-    synchronized (mediaFilesObservable) {
-      mediaFilesObservable.remove(mediaFile);
+    synchronized (mediaFiles) {
+      mediaFiles.remove(mediaFile);
     }
 
-    firePropertyChange(MEDIA_FILES, null, mediaFilesObservable);
+    firePropertyChange(MEDIA_FILES, null, mediaFiles);
     fireRemoveEventForMediaFile(mediaFile);
   }
 
   public void removeAllMediaFilesExceptType(MediaFileType type) {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
-    synchronized (mediaFilesObservable) {
-      for (int i = mediaFilesObservable.size() - 1; i >= 0; i--) {
-        MediaFile mediaFile = mediaFilesObservable.get(i);
+    synchronized (mediaFiles) {
+      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+        MediaFile mediaFile = mediaFiles.get(i);
         if (!mediaFile.getType().equals(type)) {
-          mediaFilesObservable.remove(i);
+          mediaFiles.remove(i);
           changedMediafiles.add(mediaFile);
         }
       }
@@ -521,11 +514,11 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void removeAllMediaFiles(MediaFileType type) {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
-    synchronized (mediaFilesObservable) {
-      for (int i = mediaFilesObservable.size() - 1; i >= 0; i--) {
-        MediaFile mediaFile = mediaFilesObservable.get(i);
+    synchronized (mediaFiles) {
+      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+        MediaFile mediaFile = mediaFiles.get(i);
         if (mediaFile.getType().equals(type)) {
-          mediaFilesObservable.remove(i);
+          mediaFiles.remove(i);
           changedMediafiles.add(mediaFile);
         }
       }
@@ -536,13 +529,13 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void updateMediaFilePath(File oldPath, File newPath) {
-    for (MediaFile mf : new ArrayList<MediaFile>(mediaFilesObservable)) {
+    for (MediaFile mf : new ArrayList<MediaFile>(mediaFiles)) {
       mf.replacePathForRenamedFolder(oldPath, newPath);
     }
   }
 
   public void gatherMediaFileInformation(boolean force) {
-    List<MediaFile> mediaFiles = new ArrayList<MediaFile>(mediaFilesObservable);
+    List<MediaFile> mediaFiles = new ArrayList<MediaFile>(this.mediaFiles);
     for (MediaFile mediaFile : mediaFiles) {
       mediaFile.gatherMediaInformation(force);
     }
@@ -552,15 +545,11 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void saveToDb() {
     // update DB
-    // synchronized (Globals.entityManager) {
-    Globals.entityManager.getTransaction().begin();
-    Globals.entityManager.merge(this);
-    Globals.entityManager.getTransaction().commit();
-    // }
-  }
-
-  public void saveToDb(EntityManager entityManager) {
-    entityManager.merge(this);
+    synchronized (Globals.entityManager) {
+      Globals.entityManager.getTransaction().begin();
+      Globals.entityManager.merge(this);
+      Globals.entityManager.getTransaction().commit();
+    }
   }
 
   abstract public void callbackForWrittenArtwork(MediaArtworkType type);

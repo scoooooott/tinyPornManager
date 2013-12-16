@@ -84,10 +84,11 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
 
     if (mediaEntity != null) {
       EntityManager em = Globals.entityManagerFactory.createEntityManager();
-      em.getTransaction().begin();
-      mediaEntity.saveToDb(em);
-      em.getTransaction().commit();
-      em.close();
+      // em.getTransaction().begin();
+      // mediaEntity.saveToDb(em);
+      mediaEntity.saveToDb();
+      // em.getTransaction().commit();
+      // em.close();
 
       mediaEntity.firePropertyChange(MEDIA_INFORMATION, false, true);
     }

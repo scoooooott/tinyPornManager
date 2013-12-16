@@ -36,7 +36,6 @@ import javax.persistence.Transient;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -44,6 +43,7 @@ import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.ObservableArrayList;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -58,27 +58,24 @@ import org.tinymediamanager.scraper.MediaMetadata;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
-  private static final Logger LOGGER            = LoggerFactory.getLogger(TvShowEpisode.class);
+  private static final Logger LOGGER     = LoggerFactory.getLogger(TvShowEpisode.class);
 
-  private TvShow              tvShow            = null;
-  private int                 episode           = 0;
-  private int                 season            = -1;
-  private Date                firstAired        = null;
-  private String              director          = "";
-  private String              writer            = "";
-  private boolean             disc              = false;
-  private boolean             watched           = false;
-  private int                 votes             = 0;
-  private boolean             subtitles         = false;
+  private TvShow              tvShow     = null;
+  private int                 episode    = 0;
+  private int                 season     = -1;
+  private Date                firstAired = null;
+  private String              director   = "";
+  private String              writer     = "";
+  private boolean             disc       = false;
+  private boolean             watched    = false;
+  private int                 votes      = 0;
+  private boolean             subtitles  = false;
 
   @Transient
-  private boolean             newlyAdded        = false;
+  private boolean             newlyAdded = false;
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>   actors            = new ArrayList<TvShowActor>();
-
-  @Transient
-  private List<TvShowActor>   actorsObservables = ObservableCollections.observableList(actors);
+  private List<TvShowActor>   actors     = new ObservableArrayList<TvShowActor>();
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -98,7 +95,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public TvShowEpisode(TvShowEpisode source) {
     // the reference to the tv show and the media files are the only things we don't copy
     tvShow = source.tvShow;
-    mediaFilesObservable.addAll(source.mediaFilesObservable);
+    getMediaFiles().addAll(source.getMediaFiles());
 
     // clone the rest
     path = new String(source.path);
@@ -126,7 +123,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     watched = source.watched;
     votes = source.votes;
     subtitles = source.subtitles;
-    actorsObservables.addAll(source.actorsObservables);
+    actors.addAll(source.actors);
   }
 
   /**
@@ -335,8 +332,6 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void initializeAfterLoading() {
     super.initializeAfterLoading();
-
-    actorsObservables = ObservableCollections.observableList(actors);
   }
 
   /**
@@ -518,7 +513,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the obj
    */
   public void addActor(TvShowActor obj) {
-    actorsObservables.add(obj);
+    actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -532,13 +527,13 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     if (tvShow != null) {
       allActors.addAll(tvShow.getActors());
     }
-    allActors.addAll(actorsObservables);
+    allActors.addAll(actors);
     return allActors;
   }
 
   public List<TvShowActor> getGuests() {
     List<TvShowActor> allActors = new ArrayList<TvShowActor>();
-    allActors.addAll(actorsObservables);
+    allActors.addAll(actors);
     return allActors;
   }
 
@@ -549,7 +544,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the obj
    */
   public void removeActor(TvShowActor obj) {
-    actorsObservables.remove(obj);
+    actors.remove(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -564,16 +559,16 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     // first add the new ones
     for (TvShowActor actor : newActors) {
-      if (!actorsObservables.contains(actor)) {
-        actorsObservables.add(actor);
+      if (!actors.contains(actor)) {
+        actors.add(actor);
       }
     }
 
     // second remove unused
-    for (int i = actorsObservables.size() - 1; i >= 0; i--) {
-      TvShowActor actor = actorsObservables.get(i);
+    for (int i = actors.size() - 1; i >= 0; i--) {
+      TvShowActor actor = actors.get(i);
       if (!newActors.contains(actor)) {
-        actorsObservables.remove(actor);
+        actors.remove(actor);
       }
     }
 

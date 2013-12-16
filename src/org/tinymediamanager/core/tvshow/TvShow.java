@@ -50,7 +50,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -62,6 +61,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.ObservableArrayList;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
@@ -96,8 +96,8 @@ public class TvShow extends MediaEntity {
   private String                      sortTitle          = "";
 
   @OneToMany(cascade = { CascadeType.ALL })
-  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
-  private List<String>                tags               = new ArrayList<String>();
+  private List<TvShowEpisode>         episodes           = new ObservableArrayList<TvShowEpisode>();
+  private List<String>                tags               = new ObservableArrayList<String>();
   private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>();
   @Deprecated
   private HashMap<Integer, String>    seasonPosterMap    = new HashMap<Integer, String>();
@@ -106,30 +106,18 @@ public class TvShow extends MediaEntity {
   private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>();
 
   @Transient
-  private List<TvShowEpisode>         episodesObservable = ObservableCollections.observableList(episodes);
-
-  @Transient
-  private List<TvShowSeason>          seasons            = ObservableCollections.observableList(new ArrayList<TvShowSeason>());
+  private List<TvShowSeason>          seasons            = new ObservableArrayList<TvShowSeason>();
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
-
-  @Transient
-  private List<TvShowActor>           actorsObservables  = ObservableCollections.observableList(actors);
+  private List<TvShowActor>           actors             = new ObservableArrayList<TvShowActor>();
 
   private List<String>                genres             = new ArrayList<String>();
 
   @Transient
   private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>();
 
-  @Transient
-  private List<String>                tagsObservable     = ObservableCollections.observableList(tags);
-
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>();
-
-  @Transient
-  private List<MediaTrailer>          trailerObservable  = ObservableCollections.observableList(trailer);
+  private List<MediaTrailer>          trailer            = new ObservableArrayList<MediaTrailer>();
 
   @Enumerated(EnumType.STRING)
   private Certification               certification      = Certification.NOT_RATED;
@@ -195,7 +183,7 @@ public class TvShow extends MediaEntity {
    * @return the episodes
    */
   public List<TvShowEpisode> getEpisodes() {
-    return episodesObservable;
+    return episodes;
   }
 
   /**
@@ -205,14 +193,14 @@ public class TvShow extends MediaEntity {
    *          the episode
    */
   public void addEpisode(TvShowEpisode episode) {
-    int oldValue = episodesObservable.size();
-    episodesObservable.add(episode);
+    int oldValue = episodes.size();
+    episodes.add(episode);
     addToSeason(episode);
 
-    Collections.sort(episodesObservable);
+    Collections.sort(episodes);
 
     firePropertyChange(ADDED_EPISODE, null, episode);
-    firePropertyChange(EPISODE_COUNT, oldValue, episodesObservable.size());
+    firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
   }
 
   /**
@@ -221,7 +209,7 @@ public class TvShow extends MediaEntity {
    * @return the episode count
    */
   public int getEpisodeCount() {
-    return episodesObservable.size();
+    return episodes.size();
   }
 
   /**
@@ -272,11 +260,6 @@ public class TvShow extends MediaEntity {
     // remove empty tag and null values
     Utils.removeEmptyStringsFromList(tags);
     Utils.removeEmptyStringsFromList(genres);
-
-    actorsObservables = ObservableCollections.observableList(actors);
-    episodesObservable = ObservableCollections.observableList(episodes);
-    tagsObservable = ObservableCollections.observableList(tags);
-    trailerObservable = ObservableCollections.observableList(trailer);
 
     // load genres
     for (String genre : new ArrayList<String>(genres)) {
@@ -343,18 +326,18 @@ public class TvShow extends MediaEntity {
    * remove all episodes from this tv show.
    */
   public void removeAllEpisodes() {
-    int oldValue = episodesObservable.size();
-    if (episodesObservable.size() > 0) {
+    int oldValue = episodes.size();
+    if (episodes.size() > 0) {
       Globals.entityManager.getTransaction().begin();
-      for (int i = episodesObservable.size() - 1; i >= 0; i--) {
-        TvShowEpisode episode = episodesObservable.get(i);
-        episodesObservable.remove(episode);
+      for (int i = episodes.size() - 1; i >= 0; i--) {
+        TvShowEpisode episode = episodes.get(i);
+        episodes.remove(episode);
         Globals.entityManager.remove(episode);
       }
       Globals.entityManager.getTransaction().commit();
     }
 
-    firePropertyChange(EPISODE_COUNT, oldValue, episodesObservable.size());
+    firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
   }
 
   /**
@@ -364,19 +347,19 @@ public class TvShow extends MediaEntity {
    *          the episode
    */
   public void removeEpisode(TvShowEpisode episode) {
-    if (episodesObservable.contains(episode)) {
-      int oldValue = episodesObservable.size();
+    if (episodes.contains(episode)) {
+      int oldValue = episodes.size();
 
       synchronized (Globals.entityManager) {
         Globals.entityManager.getTransaction().begin();
-        episodesObservable.remove(episode);
+        episodes.remove(episode);
         Globals.entityManager.remove(episode);
         Globals.entityManager.persist(this);
         Globals.entityManager.getTransaction().commit();
       }
 
       firePropertyChange(REMOVED_EPISODE, null, episode);
-      firePropertyChange(EPISODE_COUNT, oldValue, episodesObservable.size());
+      firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
     }
   }
 
@@ -926,14 +909,14 @@ public class TvShow extends MediaEntity {
       return;
     }
 
-    for (String tag : tagsObservable) {
+    for (String tag : tags) {
       if (tag.equals(newTag)) {
         return;
       }
     }
 
-    tagsObservable.add(newTag);
-    firePropertyChange(TAG, null, tagsObservable);
+    tags.add(newTag);
+    firePropertyChange(TAG, null, tags);
     firePropertyChange(TAGS_AS_STRING, null, newTag);
   }
 
@@ -944,8 +927,8 @@ public class TvShow extends MediaEntity {
    *          the remove tag
    */
   public void removeFromTags(String removeTag) {
-    tagsObservable.remove(removeTag);
-    firePropertyChange(TAG, null, tagsObservable);
+    tags.remove(removeTag);
+    firePropertyChange(TAG, null, tags);
     firePropertyChange(TAGS_AS_STRING, null, removeTag);
   }
 
@@ -960,21 +943,21 @@ public class TvShow extends MediaEntity {
 
     // first, add new ones
     for (String tag : newTags) {
-      if (!this.tagsObservable.contains(tag)) {
-        this.tagsObservable.add(tag);
+      if (!this.tags.contains(tag)) {
+        this.tags.add(tag);
       }
     }
 
     // second remove old ones
-    for (int i = this.tagsObservable.size() - 1; i >= 0; i--) {
-      String tag = this.tagsObservable.get(i);
+    for (int i = this.tags.size() - 1; i >= 0; i--) {
+      String tag = this.tags.get(i);
       if (!newTags.contains(tag)) {
-        this.tagsObservable.remove(tag);
+        this.tags.remove(tag);
       }
     }
 
-    firePropertyChange(TAG, null, tagsObservable);
-    firePropertyChange(TAGS_AS_STRING, null, tagsObservable);
+    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAGS_AS_STRING, null, tags);
   }
 
   /**
@@ -999,7 +982,7 @@ public class TvShow extends MediaEntity {
    * @return the tags
    */
   public List<String> getTags() {
-    return this.tagsObservable;
+    return this.tags;
   }
 
   /**
@@ -1072,7 +1055,7 @@ public class TvShow extends MediaEntity {
    *          the obj
    */
   public void addActor(TvShowActor obj) {
-    actorsObservables.add(obj);
+    actors.add(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1082,7 +1065,7 @@ public class TvShow extends MediaEntity {
    * @return the actors
    */
   public List<TvShowActor> getActors() {
-    return this.actorsObservables;
+    return this.actors;
   }
 
   /**
@@ -1092,7 +1075,7 @@ public class TvShow extends MediaEntity {
    *          the obj
    */
   public void removeActor(TvShowActor obj) {
-    actorsObservables.remove(obj);
+    actors.remove(obj);
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1107,16 +1090,16 @@ public class TvShow extends MediaEntity {
 
     // first add the new ones
     for (TvShowActor actor : newActors) {
-      if (!actorsObservables.contains(actor)) {
-        actorsObservables.add(actor);
+      if (!actors.contains(actor)) {
+        actors.add(actor);
       }
     }
 
     // second remove unused
-    for (int i = actorsObservables.size() - 1; i >= 0; i--) {
-      TvShowActor actor = actorsObservables.get(i);
+    for (int i = actors.size() - 1; i >= 0; i--) {
+      TvShowActor actor = actors.get(i);
       if (!newActors.contains(actor)) {
-        actorsObservables.remove(actor);
+        actors.remove(actor);
       }
     }
 
@@ -1129,7 +1112,7 @@ public class TvShow extends MediaEntity {
    * @return the trailers
    */
   public List<MediaTrailer> getTrailers() {
-    return this.trailerObservable;
+    return this.trailer;
   }
 
   /**
@@ -1139,16 +1122,16 @@ public class TvShow extends MediaEntity {
    *          the obj
    */
   public void addTrailer(MediaTrailer obj) {
-    trailerObservable.add(obj);
-    firePropertyChange(TRAILER, null, trailerObservable);
+    trailer.add(obj);
+    firePropertyChange(TRAILER, null, trailer);
   }
 
   /**
    * Removes the all trailers.
    */
   public void removeAllTrailers() {
-    trailerObservable.clear();
-    firePropertyChange(TRAILER, null, trailerObservable);
+    trailer.clear();
+    firePropertyChange(TRAILER, null, trailer);
   }
 
   /**
@@ -1469,7 +1452,7 @@ public class TvShow extends MediaEntity {
    */
   public void scrapeAllEpisodes() {
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
-    for (TvShowEpisode episode : episodesObservable) {
+    for (TvShowEpisode episode : episodes) {
       if (episode.getSeason() > -1 && episode.getEpisode() > -1) {
         episodes.add(episode);
       }

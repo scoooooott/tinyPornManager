@@ -33,12 +33,12 @@ import javax.persistence.Transient;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
+import org.tinymediamanager.core.ObservableArrayList;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.Url;
@@ -54,9 +54,8 @@ public class MovieSet extends MediaEntity {
   private static final Logger            LOGGER               = LoggerFactory.getLogger(MovieSet.class);
   private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
 
-  private List<Movie>                    movies               = new ArrayList<Movie>();
-  @Transient
-  private List<Movie>                    moviesObservable     = ObservableCollections.observableList(movies);
+  private List<Movie>                    movies               = new ObservableArrayList<Movie>();
+
   @Transient
   private String                         titleSortable        = "";
 
@@ -65,7 +64,8 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
-   * Instantiates a new movieset. To initialize the propertychangesupport after loading
+   * Instantiates a new movieset. To initialize the propertychangesupport after
+   * loading
    */
   public MovieSet() {
   }
@@ -74,7 +74,7 @@ public class MovieSet extends MediaEntity {
   public void setTitle(String newValue) {
     super.setTitle(newValue);
 
-    for (Movie movie : moviesObservable) {
+    for (Movie movie : movies) {
       movie.movieSetTitleChanged();
     }
   }
@@ -100,13 +100,6 @@ public class MovieSet extends MediaEntity {
    */
   public MovieSet(String title) {
     setTitle(title);
-  }
-
-  /**
-   * Sets the observable cast list.
-   */
-  public void setObservables() {
-    moviesObservable = ObservableCollections.observableList(movies);
   }
 
   /**
@@ -150,8 +143,8 @@ public class MovieSet extends MediaEntity {
     String posterFilename = "movieset-poster.jpg";
 
     // write new poster
-    writeImageToMovieFolder(moviesObservable, posterFilename, posterUrl);
-    if (moviesObservable.size() > 0) {
+    writeImageToMovieFolder(movies, posterFilename, posterUrl);
+    if (movies.size() > 0) {
       written = true;
     }
 
@@ -167,7 +160,7 @@ public class MovieSet extends MediaEntity {
     }
     else {
       // at least cache it
-      if (StringUtils.isNotEmpty(posterUrl) && moviesObservable.size() == 0) {
+      if (StringUtils.isNotEmpty(posterUrl) && movies.size() == 0) {
         ImageFetcher task = new ImageFetcher("poster", posterUrl);
         Globals.executor.execute(task);
       }
@@ -188,8 +181,8 @@ public class MovieSet extends MediaEntity {
     String fanartFilename = "movieset-fanart.jpg";
 
     // write new fanart
-    writeImageToMovieFolder(moviesObservable, fanartFilename, fanartUrl);
-    if (moviesObservable.size() > 0) {
+    writeImageToMovieFolder(movies, fanartFilename, fanartUrl);
+    if (movies.size() > 0) {
       written = true;
     }
 
@@ -205,7 +198,7 @@ public class MovieSet extends MediaEntity {
     }
     else {
       // at least cache it
-      if (StringUtils.isNotEmpty(fanartUrl) && moviesObservable.size() == 0) {
+      if (StringUtils.isNotEmpty(fanartUrl) && movies.size() == 0) {
         ImageFetcher task = new ImageFetcher("fanart", fanartUrl);
         Globals.executor.execute(task);
       }
@@ -231,7 +224,7 @@ public class MovieSet extends MediaEntity {
     }
 
     // try to get a fanart from one movie
-    for (Movie movie : moviesObservable) {
+    for (Movie movie : movies) {
       String filename = movie.getPath() + File.separator + "movieset-fanart.jpg";
       File fanartFile = new File(filename);
       if (fanartFile.exists()) {
@@ -267,7 +260,7 @@ public class MovieSet extends MediaEntity {
     }
 
     // try to get a fanart from one movie
-    List<Movie> movies = new ArrayList<Movie>(moviesObservable);
+    List<Movie> movies = new ArrayList<Movie>(this.movies);
     for (Movie movie : movies) {
       String filename = movie.getPath() + File.separator + "movieset-poster.jpg";
       File posterFile = new File(filename);
@@ -292,10 +285,10 @@ public class MovieSet extends MediaEntity {
    *          the movie
    */
   public void addMovie(Movie movie) {
-    if (moviesObservable.contains(movie)) {
+    if (movies.contains(movie)) {
       return;
     }
-    moviesObservable.add(movie);
+    movies.add(movie);
     saveToDb();
 
     // // look for an tmdbid if no one available
@@ -310,7 +303,7 @@ public class MovieSet extends MediaEntity {
     writeImageToMovieFolder(movies, "movieset-poster.jpg", posterUrl);
 
     firePropertyChange("addedMovie", null, movie);
-    firePropertyChange("movies", null, moviesObservable);
+    firePropertyChange("movies", null, movies);
   }
 
   /**
@@ -319,16 +312,16 @@ public class MovieSet extends MediaEntity {
    * @param movie
    */
   public void insertMovie(Movie movie) {
-    if (moviesObservable.contains(movie)) {
+    if (movies.contains(movie)) {
       return;
     }
 
-    int index = Collections.binarySearch(moviesObservable, movie, MOVIE_SET_COMPARATOR);
+    int index = Collections.binarySearch(movies, movie, MOVIE_SET_COMPARATOR);
     if (index < 0) {
-      moviesObservable.add(-index - 1, movie);
+      movies.add(-index - 1, movie);
     }
     else if (index >= 0) {
-      moviesObservable.add(index, movie);
+      movies.add(index, movie);
     }
 
     saveToDb();
@@ -345,7 +338,7 @@ public class MovieSet extends MediaEntity {
     writeImageToMovieFolder(movies, "movieset-poster.jpg", posterUrl);
 
     firePropertyChange("addedMovie", null, movie);
-    firePropertyChange("movies", null, moviesObservable);
+    firePropertyChange("movies", null, movies);
   }
 
   /**
@@ -369,10 +362,10 @@ public class MovieSet extends MediaEntity {
       movie.saveToDb();
     }
 
-    moviesObservable.remove(movie);
+    movies.remove(movie);
     saveToDb();
 
-    firePropertyChange("movies", null, moviesObservable);
+    firePropertyChange("movies", null, movies);
     firePropertyChange("removedMovie", null, movie);
   }
 
@@ -382,15 +375,15 @@ public class MovieSet extends MediaEntity {
    * @return the movies
    */
   public List<Movie> getMovies() {
-    return moviesObservable;
+    return movies;
   }
 
   /**
    * Sort movies.
    */
   public void sortMovies() {
-    Collections.sort(moviesObservable, MOVIE_SET_COMPARATOR);
-    firePropertyChange("movies", null, moviesObservable);
+    Collections.sort(movies, MOVIE_SET_COMPARATOR);
+    firePropertyChange("movies", null, movies);
   }
 
   /**
@@ -398,7 +391,7 @@ public class MovieSet extends MediaEntity {
    */
   public void removeAllMovies() {
     // remove images from movie folder
-    for (Movie movie : moviesObservable) {
+    for (Movie movie : movies) {
       File imageFile = new File(movie.getPath() + File.separator + "movieset-fanart.jpg");
       if (imageFile.exists()) {
         imageFile.delete();
@@ -415,25 +408,13 @@ public class MovieSet extends MediaEntity {
     }
 
     // store all old movies to remove the nodes in the tree
-    List<Movie> oldValue = new ArrayList<Movie>(moviesObservable.size());
-    oldValue.addAll(moviesObservable);
-    moviesObservable.clear();
+    List<Movie> oldValue = new ArrayList<Movie>(movies.size());
+    oldValue.addAll(movies);
+    movies.clear();
     saveToDb();
 
-    firePropertyChange("movies", null, moviesObservable);
-    firePropertyChange("removedAllMovies", oldValue, moviesObservable);
-  }
-
-  /**
-   * Save to db.
-   */
-  public synchronized void saveToDb() {
-    // update DB
-    synchronized (Globals.entityManager) {
-      Globals.entityManager.getTransaction().begin();
-      Globals.entityManager.persist(this);
-      Globals.entityManager.getTransaction().commit();
-    }
+    firePropertyChange("movies", null, movies);
+    firePropertyChange("removedAllMovies", oldValue, movies);
   }
 
   /**
@@ -490,8 +471,8 @@ public class MovieSet extends MediaEntity {
    * Rewrite all images.
    */
   public void rewriteAllImages() {
-    writeImageToMovieFolder(moviesObservable, "movieset-fanart.jpg", fanartUrl);
-    writeImageToMovieFolder(moviesObservable, "movieset-poster.jpg", posterUrl);
+    writeImageToMovieFolder(movies, "movieset-fanart.jpg", fanartUrl);
+    writeImageToMovieFolder(movies, "movieset-poster.jpg", posterUrl);
 
     // write to artwork folder
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
@@ -558,7 +539,8 @@ public class MovieSet extends MediaEntity {
     IOUtils.copy(is, outputStream);
     outputStream.flush();
     try {
-      outputStream.getFD().sync(); // wait until file has been completely written
+      outputStream.getFD().sync(); // wait until file has been completely
+                                   // written
     }
     catch (Exception e) {
       // empty here -> just not let the thread crash
@@ -638,7 +620,8 @@ public class MovieSet extends MediaEntity {
         outputStream.close();
         outputStream.flush();
         try {
-          outputStream.getFD().sync(); // wait until file has been completely written
+          outputStream.getFD().sync(); // wait until file has been completely
+                                       // written
         }
         catch (Exception e) {
           // empty here -> just not let the thread crash
@@ -741,7 +724,7 @@ public class MovieSet extends MediaEntity {
    * recalculate all movie sorttitles
    */
   public void updateMovieSorttitle() {
-    for (Movie movie : new ArrayList<Movie>(moviesObservable)) {
+    for (Movie movie : new ArrayList<Movie>(movies)) {
       movie.setSortTitleFromMovieSet();
       movie.saveToDb();
       movie.writeNFO();

@@ -24,10 +24,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.ObservableArrayList;
 
 /**
  * The Class TvShowSeason.
@@ -37,7 +37,7 @@ import org.tinymediamanager.core.MediaFileType;
 public class TvShowSeason extends AbstractModelObject {
   private int                 season   = -1;
   private TvShow              tvShow;
-  private List<TvShowEpisode> episodes = ObservableCollections.observableList(new ArrayList<TvShowEpisode>());
+  private List<TvShowEpisode> episodes = new ObservableArrayList<TvShowEpisode>();
 
   public TvShowSeason(int season, TvShow tvShow) {
     this.season = season;
