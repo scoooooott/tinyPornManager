@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntity;
-import org.tinymediamanager.core.ObservableArrayList;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.Url;
@@ -54,7 +53,7 @@ public class MovieSet extends MediaEntity {
   private static final Logger            LOGGER               = LoggerFactory.getLogger(MovieSet.class);
   private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
 
-  private List<Movie>                    movies               = new ObservableArrayList<Movie>();
+  private List<Movie>                    movies               = new ArrayList<Movie>();
 
   @Transient
   private String                         titleSortable        = "";
@@ -64,8 +63,7 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
-   * Instantiates a new movieset. To initialize the propertychangesupport after
-   * loading
+   * Instantiates a new movieset. To initialize the propertychangesupport after loading
    */
   public MovieSet() {
   }
@@ -74,8 +72,10 @@ public class MovieSet extends MediaEntity {
   public void setTitle(String newValue) {
     super.setTitle(newValue);
 
-    for (Movie movie : movies) {
-      movie.movieSetTitleChanged();
+    synchronized (movies) {
+      for (Movie movie : movies) {
+        movie.movieSetTitleChanged();
+      }
     }
   }
 
@@ -285,16 +285,13 @@ public class MovieSet extends MediaEntity {
    *          the movie
    */
   public void addMovie(Movie movie) {
-    if (movies.contains(movie)) {
-      return;
+    synchronized (movies) {
+      if (movies.contains(movie)) {
+        return;
+      }
+      movies.add(movie);
+      saveToDb();
     }
-    movies.add(movie);
-    saveToDb();
-
-    // // look for an tmdbid if no one available
-    // if (tmdbId == 0) {
-    // searchTmdbId();
-    // }
 
     // write images
     List<Movie> movies = new ArrayList<Movie>(1);
@@ -312,24 +309,21 @@ public class MovieSet extends MediaEntity {
    * @param movie
    */
   public void insertMovie(Movie movie) {
-    if (movies.contains(movie)) {
-      return;
-    }
+    synchronized (movies) {
+      if (movies.contains(movie)) {
+        return;
+      }
 
-    int index = Collections.binarySearch(movies, movie, MOVIE_SET_COMPARATOR);
-    if (index < 0) {
-      movies.add(-index - 1, movie);
-    }
-    else if (index >= 0) {
-      movies.add(index, movie);
-    }
+      int index = Collections.binarySearch(movies, movie, MOVIE_SET_COMPARATOR);
+      if (index < 0) {
+        movies.add(-index - 1, movie);
+      }
+      else if (index >= 0) {
+        movies.add(index, movie);
+      }
 
-    saveToDb();
-
-    // // look for an tmdbid if no one available
-    // if (tmdbId == 0) {
-    // searchTmdbId();
-    // }
+      saveToDb();
+    }
 
     // write images
     List<Movie> movies = new ArrayList<Movie>(1);
@@ -362,8 +356,10 @@ public class MovieSet extends MediaEntity {
       movie.saveToDb();
     }
 
-    movies.remove(movie);
-    saveToDb();
+    synchronized (movies) {
+      movies.remove(movie);
+      saveToDb();
+    }
 
     firePropertyChange("movies", null, movies);
     firePropertyChange("removedMovie", null, movie);
@@ -382,7 +378,9 @@ public class MovieSet extends MediaEntity {
    * Sort movies.
    */
   public void sortMovies() {
-    Collections.sort(movies, MOVIE_SET_COMPARATOR);
+    synchronized (movies) {
+      Collections.sort(movies, MOVIE_SET_COMPARATOR);
+    }
     firePropertyChange("movies", null, movies);
   }
 
@@ -390,28 +388,28 @@ public class MovieSet extends MediaEntity {
    * Removes the all movies.
    */
   public void removeAllMovies() {
-    // remove images from movie folder
-    for (Movie movie : movies) {
-      File imageFile = new File(movie.getPath() + File.separator + "movieset-fanart.jpg");
-      if (imageFile.exists()) {
-        imageFile.delete();
-      }
-      imageFile = new File(movie.getPath() + File.separator + "movieset-poster.jpg");
-      if (imageFile.exists()) {
-        imageFile.delete();
-      }
-
-      if (movie.getMovieSet() != null) {
-        movie.setMovieSet(null);
-        movie.saveToDb();
-      }
-    }
-
     // store all old movies to remove the nodes in the tree
-    List<Movie> oldValue = new ArrayList<Movie>(movies.size());
-    oldValue.addAll(movies);
-    movies.clear();
-    saveToDb();
+    List<Movie> oldValue = new ArrayList<Movie>(movies);
+    // remove images from movie folder
+    synchronized (movies) {
+      for (Movie movie : movies) {
+        File imageFile = new File(movie.getPath() + File.separator + "movieset-fanart.jpg");
+        if (imageFile.exists()) {
+          imageFile.delete();
+        }
+        imageFile = new File(movie.getPath() + File.separator + "movieset-poster.jpg");
+        if (imageFile.exists()) {
+          imageFile.delete();
+        }
+
+        if (movie.getMovieSet() != null) {
+          movie.setMovieSet(null);
+          movie.saveToDb();
+        }
+      }
+      movies.clear();
+      saveToDb();
+    }
 
     firePropertyChange("movies", null, movies);
     firePropertyChange("removedAllMovies", oldValue, movies);

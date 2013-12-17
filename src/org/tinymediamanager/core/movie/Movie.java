@@ -57,7 +57,6 @@ import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.ObservableArrayList;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
@@ -103,19 +102,19 @@ public class Movie extends MediaEntity {
   private boolean             subtitles       = false;
   private String              country         = "";
   private Date                releaseDate     = null;
-  private boolean             multiMovieDir   = false;                                // we detected more movies in same folder
+  private boolean             multiMovieDir   = false;                               // we detected more movies in same folder
   private int                 top250          = 0;
 
   private List<String>        genres          = new ArrayList<String>();
-  private List<String>        tags            = new ObservableArrayList<String>();
-  private List<String>        extraThumbs     = new ObservableArrayList<String>();
-  private List<String>        extraFanarts    = new ObservableArrayList<String>();
+  private List<String>        tags            = new ArrayList<String>();
+  private List<String>        extraThumbs     = new ArrayList<String>();
+  private List<String>        extraFanarts    = new ArrayList<String>();
 
   @Enumerated(EnumType.STRING)
   private Certification       certification   = Certification.NOT_RATED;
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieActor>    actors          = new ObservableArrayList<MovieActor>();
+  private List<MovieActor>    actors          = new ArrayList<MovieActor>();
 
   @OneToMany(cascade = CascadeType.ALL)
   private List<MovieProducer> producers       = new ArrayList<MovieProducer>();

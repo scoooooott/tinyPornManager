@@ -14,7 +14,7 @@ imgscalr-lib-4.2.jar
 jdom.jar
 jmte-unbundled-3.1.jar
 JSplitButton_1.2.jar
-objectdb-2.5.0_05.jar
+objectdb-2.5.3_03.jar
 Scaling-bin.jar
 themoviedbapi-3.5.jar
 thetvdbapi-1.5.jar

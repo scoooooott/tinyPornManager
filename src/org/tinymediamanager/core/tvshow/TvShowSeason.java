@@ -27,7 +27,6 @@ import java.util.Set;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.ObservableArrayList;
 
 /**
  * The Class TvShowSeason.
@@ -37,7 +36,7 @@ import org.tinymediamanager.core.ObservableArrayList;
 public class TvShowSeason extends AbstractModelObject {
   private int                 season   = -1;
   private TvShow              tvShow;
-  private List<TvShowEpisode> episodes = new ObservableArrayList<TvShowEpisode>();
+  private List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
 
   public TvShowSeason(int season, TvShow tvShow) {
     this.season = season;

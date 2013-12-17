@@ -43,7 +43,6 @@ import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.ObservableArrayList;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -75,7 +74,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private boolean             newlyAdded = false;
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>   actors     = new ObservableArrayList<TvShowActor>();
+  private List<TvShowActor>   actors     = new ArrayList<TvShowActor>();
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();

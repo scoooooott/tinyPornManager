@@ -75,7 +75,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected boolean                      duplicate           = false;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MediaFile>                mediaFiles          = new ObservableArrayList<MediaFile>();
+  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>();
 
   @Transient
   public boolean                         justAdded           = false;
@@ -547,7 +547,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     // update DB
     synchronized (Globals.entityManager) {
       Globals.entityManager.getTransaction().begin();
-      Globals.entityManager.merge(this);
+      Globals.entityManager.persist(this);
       Globals.entityManager.getTransaction().commit();
     }
   }

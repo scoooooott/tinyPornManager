@@ -45,6 +45,10 @@
             <src path="src" />
             <classpath refid="classpath.default" />
         </javac>
+    	<!-- enhance several classes for objectdb -->
+    	<java classname="com.objectdb.Enhancer" fork="true" classpathref="classpath.default">
+    	  <arg line="${bin.dir}/org/tinymediamanager/core/*.class ${bin.dir}/org/tinymediamanager/core/movie/*.class ${bin.dir}/org/tinymediamanager/core/tvshow/*.class"/>
+    	</java>
     	<!-- copy non java files -->
         <copy includeemptydirs="false" todir="${bin.dir}">
             <fileset dir="src" excludes="**/*.java" />

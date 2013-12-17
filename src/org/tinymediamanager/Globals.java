@@ -71,9 +71,11 @@ public class Globals {
    *           the exception
    */
   public static void startDatabase() throws Exception {
-    com.objectdb.Enhancer.enhance("org.tinymediamanager.core.*");
-    com.objectdb.Enhancer.enhance("org.tinymediamanager.core.movie.*");
-    com.objectdb.Enhancer.enhance("org.tinymediamanager.core.tvshow.*");
+    if (System.getProperty("tmmenhancer") != null) {
+      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.*");
+      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.movie.*");
+      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.tvshow.*");
+    }
     entityManagerFactory = Persistence.createEntityManagerFactory(Constants.DB);
     try {
       entityManager = entityManagerFactory.createEntityManager();

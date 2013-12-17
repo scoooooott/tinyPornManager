@@ -61,7 +61,6 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.ObservableArrayList;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
@@ -96,8 +95,8 @@ public class TvShow extends MediaEntity {
   private String                      sortTitle          = "";
 
   @OneToMany(cascade = { CascadeType.ALL })
-  private List<TvShowEpisode>         episodes           = new ObservableArrayList<TvShowEpisode>();
-  private List<String>                tags               = new ObservableArrayList<String>();
+  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
+  private List<String>                tags               = new ArrayList<String>();
   private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>();
   @Deprecated
   private HashMap<Integer, String>    seasonPosterMap    = new HashMap<Integer, String>();
@@ -106,10 +105,10 @@ public class TvShow extends MediaEntity {
   private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>();
 
   @Transient
-  private List<TvShowSeason>          seasons            = new ObservableArrayList<TvShowSeason>();
+  private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>();
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>           actors             = new ObservableArrayList<TvShowActor>();
+  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
 
   private List<String>                genres             = new ArrayList<String>();
 
@@ -117,7 +116,7 @@ public class TvShow extends MediaEntity {
   private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>();
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>          trailer            = new ObservableArrayList<MediaTrailer>();
+  private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>();
 
   @Enumerated(EnumType.STRING)
   private Certification               certification      = Certification.NOT_RATED;
