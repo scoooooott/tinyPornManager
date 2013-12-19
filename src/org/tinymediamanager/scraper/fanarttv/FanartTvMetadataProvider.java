@@ -38,7 +38,7 @@ import com.omertron.fanarttvapi.model.FanartTvArtwork;
 /**
  * The Class FanartTvMetadataProvider.
  * 
- * @author Myron Boyle (myron0815@gmx.net)
+ * @author Myron Boyle, Manuel Laggner
  */
 public class FanartTvMetadataProvider implements IMediaArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
@@ -64,24 +64,39 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getProviderInfo()
-   */
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getArtwork(org. tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getArtwork() " + options.toString());
+
+    List<MediaArtwork> artwork = null;
+
+    switch (options.getType()) {
+      case MOVIE:
+        artwork = getMovieArtwork(options);
+        break;
+
+      case TV_SHOW:
+        artwork = getTvShowArtwork(options);
+
+      default:
+        artwork = new ArrayList<MediaArtwork>(1);
+    }
+
+    // buffer the artwork
+    MediaMetadata md = options.getMetadata();
+    if (md != null && artwork.size() > 0) {
+      md.addMediaArt(artwork);
+    }
+
+    return artwork;
+  }
+
+  private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
@@ -107,71 +122,108 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     for (FanartTvArtwork ftvaw : movieImages) {
       // http://fanart.tv/movie-fanart/
 
-      FTArtworkType type = FTArtworkType.fromString(ftvaw.getType());
+      MediaArtwork ma = extractArtwork(artworkType, ftvaw);
 
-      if ((type == FTArtworkType.HDCLEARART || type == FTArtworkType.MOVIEBACKGROUND || type == FTArtworkType.MOVIETHUMB)
-          && (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL)) {
-        MediaArtwork ma = new MediaArtwork();
-        ma.setDefaultUrl(ftvaw.getUrl());
-        ma.setPreviewUrl(ftvaw.getUrl() + "/preview");
-        ma.setProviderId(getProviderInfo().getId());
-        ma.setType(MediaArtworkType.BACKGROUND);
-        ma.setLanguage(ftvaw.getLanguage());
+      if (ma != null) {
         ma.setImdbId(imdbId);
         ma.setTmdbId(tmdbId);
-
-        switch (type) {
-          case HDCLEARART:
-          case MOVIETHUMB:
-            ma.addImageSize(1000, 562, ftvaw.getUrl());
-            ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
-            break;
-
-          case MOVIEBACKGROUND:
-            ma.addImageSize(1920, 1080, ftvaw.getUrl());
-            ma.setSizeOrder(FanartSizes.LARGE.getOrder());
-            break;
-
-          default:
-            continue;
-        }
-
         artwork.add(ma);
       }
+    }
+    return artwork;
+  }
 
-      // if (type == FTArtworkType.MOVIEBANNER && (artworkType ==
-      // MediaArtworkType.BANNER || artworkType == MediaArtworkType.ALL)) {
-      // MediaArtwork ma = new MediaArtwork();
-      // ma.setDefaultUrl(ftvaw.getUrl());
-      // ma.setPreviewUrl(ftvaw.getUrl() + "/preview");
-      // ma.setProviderId(getProviderInfo().getId());
-      // ma.setType(MediaArtworkType.BANNER);
-      // ma.setLanguage(ftvaw.getLanguage());
-      // ma.setImdbId(imdbId);
-      // ma.setTmdbId(tmdbId);
-      //
-      // artwork.add(ma);
-      // }
+  private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws Exception {
+    MediaArtworkType artworkType = options.getArtworkType();
+    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+
+    List<FanartTvArtwork> tvShowImages = null;
+    int tvdbId = 0;
+
+    try {
+      tvdbId = Integer.parseInt(options.getId("tvdb"));
+    }
+    catch (Exception e) {
     }
 
-    // buffer the artwork
-    MediaMetadata md = options.getMetadata();
-    if (md != null) {
-      md.addMediaArt(artwork);
+    if (tvdbId > 0) {
+      tvShowImages = ftv.getTvArtwork(tvdbId);
+    }
+    else {
+      LOGGER.warn("not tvdbId set");
+      return artwork;
+    }
+
+    // sort
+    Collections.sort(tvShowImages, new ArtworkComparator());
+
+    for (FanartTvArtwork ftvaw : tvShowImages) {
+      MediaArtwork ma = extractArtwork(artworkType, ftvaw);
+
+      if (ma != null) {
+        artwork.add(ma);
+      }
     }
 
     return artwork;
   }
 
-  /**
-   * The Class ArtworkComparator.
-   */
+  private MediaArtwork extractArtwork(MediaArtworkType artworkType, FanartTvArtwork ftvaw) {
+    MediaArtwork ma = null;
+    FTArtworkType type = FTArtworkType.fromString(ftvaw.getType());
+
+    // select desired types
+    switch (type) {
+      case HDCLEARART:
+      case MOVIEBACKGROUND:
+      case MOVIETHUMB:
+      case SHOWBACKGROUND:
+      case TVTHUMB:
+        if (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL) {
+          ma = new MediaArtwork();
+          ma.setType(MediaArtworkType.BACKGROUND);
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    // FIXME tv show poster
+
+    // FIXME season poster
+
+    // FIXME Movie Poster
+
+    if (ma != null) {
+      ma.setDefaultUrl(ftvaw.getUrl());
+      ma.setPreviewUrl(ftvaw.getUrl() + "/preview");
+      ma.setProviderId(getProviderInfo().getId());
+      ma.setLanguage(ftvaw.getLanguage());
+
+      // resolution
+      switch (type) {
+        case HDCLEARART:
+        case MOVIETHUMB:
+          ma.addImageSize(1000, 562, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
+          break;
+
+        case MOVIEBACKGROUND:
+          ma.addImageSize(1920, 1080, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.LARGE.getOrder());
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    return ma;
+  }
+
   private static class ArtworkComparator implements Comparator<FanartTvArtwork> {
     /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     * 
      * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
      */
     @Override
@@ -201,6 +253,5 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
       // we did not sort until here; so lets sort with the rating
       return arg0.getLikes() > arg1.getLikes() ? -1 : 1;
     }
-
   }
 }
