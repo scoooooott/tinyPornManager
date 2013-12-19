@@ -266,7 +266,7 @@ public class TvShow extends MediaEntity {
     }
 
     // create the seasons structure
-    for (TvShowEpisode episode : episodes) {
+    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
       addToSeason(episode);
     }
 
@@ -1451,15 +1451,17 @@ public class TvShow extends MediaEntity {
    */
   public void scrapeAllEpisodes() {
     List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
-    for (TvShowEpisode episode : episodes) {
+    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
       if (episode.getSeason() > -1 && episode.getEpisode() > -1) {
         episodes.add(episode);
       }
     }
 
     // scrape episodes in a task
-    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
-    Globals.executor.execute(task);
+    if (episodes.size() > 0) {
+      TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
+      Globals.executor.execute(task);
+    }
   }
 
   /**
@@ -1543,8 +1545,6 @@ public class TvShow extends MediaEntity {
    *          the path
    */
   void setSeasonPoster(int season, File file) {
-    // seasonPosterMap.put(season, FilenameUtils.getName(file.getName()));
-
     MediaFile mf = new MediaFile(file, MediaFileType.SEASON_POSTER);
     mf.gatherMediaInformation();
     addToMediaFiles(mf);
@@ -1571,7 +1571,7 @@ public class TvShow extends MediaEntity {
    */
   public List<MediaFile> getEpisodesMediaFiles() {
     List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
-    for (TvShowEpisode episode : episodes) {
+    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
       for (MediaFile mf : episode.getMediaFiles()) {
 
         if (!mediaFiles.contains(mf)) {
@@ -1597,44 +1597,72 @@ public class TvShow extends MediaEntity {
       }
     }
 
-    for (TvShowEpisode episode : episodes) {
+    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
       filesToCache.addAll(episode.getImagesToCache());
     }
 
     return filesToCache;
   }
 
+  @Override
+  public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
+  }
+
+  public TvShowEpisode getEpisode(int season, int episode) {
+    TvShowEpisode ep = null;
+
+    for (TvShowEpisode e : new ArrayList<TvShowEpisode>(this.episodes)) {
+      if (e.getSeason() == season && e.getEpisode() == episode) {
+        ep = e;
+        break;
+      }
+    }
+    return ep;
+  }
+
   /**
-   * The Class SeasonPosterImageFetcher.
+   * check if one of the tv shows episode is newly added
    * 
-   * @author Manuel Laggner
+   * @return true/false
    */
+  public boolean isNewlyAdded() {
+    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(this.episodes)) {
+      if (episode.isNewlyAdded()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * checks if this TV show has been scraped.<br>
+   * On a fresh DB, just reading local files, everything is again "unscraped". <br>
+   * detect minimum of filled values as "scraped"
+   * 
+   * @return isScraped
+   */
+  @Override
+  public boolean isScraped() {
+    if (!scraped) {
+      if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
+          && !(actors == null || actors.size() == 0)) {
+        return true;
+      }
+    }
+    return scraped;
+  }
+
   private class SeasonPosterImageFetcher implements Runnable {
     private String       filename;
     private TvShowSeason tvShowSeason;
     private String       url;
 
-    /**
-     * Instantiates a new season poster image fetcher.
-     * 
-     * @param filename
-     *          the filename
-     * @param tvShowSeason
-     *          the tv show season
-     * @param url
-     *          the url
-     */
     SeasonPosterImageFetcher(String filename, TvShowSeason tvShowSeason, String url) {
       this.filename = filename;
       this.tvShowSeason = tvShowSeason;
       this.url = url;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Runnable#run()
-     */
     @Override
     public void run() {
       String oldFilename = "";
@@ -1644,7 +1672,6 @@ public class TvShow extends MediaEntity {
           tvShowSeason.clearPoster();
         }
 
-        // debug message
         LOGGER.debug("writing season poster " + filename);
 
         // fetch and store images
@@ -1682,53 +1709,5 @@ public class TvShow extends MediaEntity {
         saveToDb();
       }
     }
-  }
-
-  @Override
-  public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
-  }
-
-  public TvShowEpisode getEpisode(int season, int episode) {
-    TvShowEpisode ep = null;
-
-    for (TvShowEpisode e : new ArrayList<TvShowEpisode>(episodes)) {
-      if (e.getSeason() == season && e.getEpisode() == episode) {
-        ep = e;
-        break;
-      }
-    }
-    return ep;
-  }
-
-  /**
-   * check if one of the tv shows episode is newly added
-   * 
-   * @return true/false
-   */
-  public boolean isNewlyAdded() {
-    for (TvShowEpisode episode : episodes) {
-      if (episode.isNewlyAdded()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * checks if this TV show has been scraped.<br>
-   * On a fresh DB, just reading local files, everything is again "unscraped". <br>
-   * detect minimum of filled values as "scraped"
-   * 
-   * @return isScraped
-   */
-  @Override
-  public boolean isScraped() {
-    if (!scraped) {
-      if (!plot.isEmpty() && !(year.isEmpty() || year.equals("0")) && !(genres == null || genres.size() == 0)
-          && !(actors == null || actors.size() == 0)) {
-        return true;
-      }
-    }
-    return scraped;
   }
 }

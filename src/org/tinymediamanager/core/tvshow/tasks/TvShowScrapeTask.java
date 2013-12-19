@@ -144,32 +144,14 @@ public class TvShowScrapeTask extends TmmSwingWorker {
     stopProgressBar();
   }
 
-  /**
-   * The Class Worker.
-   */
   private class Worker implements Runnable {
-
-    /** The tv show list. */
     private TvShowList       tvShowList;
-
-    /** The scrape task. */
     private TvShowScrapeTask scrapeTask;
 
-    /**
-     * Instantiates a new worker.
-     * 
-     * @param scrapeTask
-     *          the scrape task
-     */
     public Worker(TvShowScrapeTask scrapeTask) {
       this.scrapeTask = scrapeTask;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Runnable#run()
-     */
     @Override
     public void run() {
       try {
