@@ -53,7 +53,7 @@ public class MovieSet extends MediaEntity {
   private static final Logger            LOGGER               = LoggerFactory.getLogger(MovieSet.class);
   private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
 
-  private List<Movie>                    movies               = new ArrayList<Movie>();
+  private List<Movie>                    movies               = new ArrayList<Movie>(0);
 
   @Transient
   private String                         titleSortable        = "";

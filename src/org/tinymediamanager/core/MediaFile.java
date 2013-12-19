@@ -92,8 +92,8 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   @Enumerated(EnumType.STRING)
   private MediaFileType                              type               = MediaFileType.UNKNOWN;
 
-  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>();
-  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<MediaFileSubtitle>();
+  private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>(0);
+  private List<MediaFileSubtitle>                    subtitles          = new ArrayList<MediaFileSubtitle>(0);
 
   @Transient
   private MediaInfo                                  mediaInfo;

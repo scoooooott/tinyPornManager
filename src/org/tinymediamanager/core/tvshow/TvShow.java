@@ -95,28 +95,28 @@ public class TvShow extends MediaEntity {
   private String                      sortTitle          = "";
 
   @OneToMany(cascade = { CascadeType.ALL })
-  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
-  private List<String>                tags               = new ArrayList<String>();
-  private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>();
+  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>(0);
+  private List<String>                tags               = new ArrayList<String>(0);
+  private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>(0);
   @Deprecated
-  private HashMap<Integer, String>    seasonPosterMap    = new HashMap<Integer, String>();
+  private HashMap<Integer, String>    seasonPosterMap    = new HashMap<Integer, String>(0);
 
   @Transient
-  private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>();
+  private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>(0);
 
   @Transient
-  private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>();
+  private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>(0);
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
+  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>(0);
 
-  private List<String>                genres             = new ArrayList<String>();
+  private List<String>                genres             = new ArrayList<String>(0);
 
   @Transient
-  private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>();
+  private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>(0);
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>();
+  private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>(0);
 
   @Enumerated(EnumType.STRING)
   private Certification               certification      = Certification.NOT_RATED;

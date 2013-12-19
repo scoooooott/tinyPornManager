@@ -55,7 +55,7 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   /** The ids to store the ID from several metadataproviders. */
   @OneToMany(fetch = FetchType.EAGER)
-  protected HashMap<String, Object>      ids                 = new HashMap<String, Object>();
+  protected HashMap<String, Object>      ids                 = new HashMap<String, Object>(0);
 
   protected String                       title               = "";
   protected String                       originalTitle       = "";
@@ -74,8 +74,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   @Transient
   protected boolean                      duplicate           = false;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>();
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>(0);
 
   @Transient
   public boolean                         justAdded           = false;

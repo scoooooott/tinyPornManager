@@ -74,7 +74,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   private boolean             newlyAdded = false;
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>   actors     = new ArrayList<TvShowActor>();
+  private List<TvShowActor>   actors     = new ArrayList<TvShowActor>(0);
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();

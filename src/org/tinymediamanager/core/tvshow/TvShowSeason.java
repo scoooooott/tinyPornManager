@@ -36,7 +36,7 @@ import org.tinymediamanager.core.MediaFileType;
 public class TvShowSeason extends AbstractModelObject {
   private int                 season   = -1;
   private TvShow              tvShow;
-  private List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
+  private List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(0);
 
   public TvShowSeason(int season, TvShow tvShow) {
     this.season = season;

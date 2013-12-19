@@ -105,22 +105,22 @@ public class Movie extends MediaEntity {
   private boolean             multiMovieDir   = false;                               // we detected more movies in same folder
   private int                 top250          = 0;
 
-  private List<String>        genres          = new ArrayList<String>();
-  private List<String>        tags            = new ArrayList<String>();
-  private List<String>        extraThumbs     = new ArrayList<String>();
-  private List<String>        extraFanarts    = new ArrayList<String>();
+  private List<String>        genres          = new ArrayList<String>(0);
+  private List<String>        tags            = new ArrayList<String>(0);
+  private List<String>        extraThumbs     = new ArrayList<String>(0);
+  private List<String>        extraFanarts    = new ArrayList<String>(0);
 
   @Enumerated(EnumType.STRING)
   private Certification       certification   = Certification.NOT_RATED;
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieActor>    actors          = new ArrayList<MovieActor>();
+  private List<MovieActor>    actors          = new ArrayList<MovieActor>(0);
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MovieProducer> producers       = new ArrayList<MovieProducer>();
+  private List<MovieProducer> producers       = new ArrayList<MovieProducer>(0);
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>  trailer         = new ArrayList<MediaTrailer>();
+  private List<MediaTrailer>  trailer         = new ArrayList<MediaTrailer>(0);
 
   @Transient
   private String              titleSortable   = "";
@@ -129,7 +129,7 @@ public class Movie extends MediaEntity {
   private boolean             newlyAdded      = false;
 
   @Transient
-  private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>();
+  private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>(0);
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();
