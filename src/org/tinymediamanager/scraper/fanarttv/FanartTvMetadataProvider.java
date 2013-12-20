@@ -185,15 +185,20 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
         }
         break;
 
+      case SEASONTHUMB:
+        if (artworkType == MediaArtworkType.SEASON || artworkType == MediaArtworkType.ALL) {
+          ma = new MediaArtwork();
+          ma.setType(MediaArtworkType.SEASON);
+        }
+        break;
+
       default:
         break;
     }
 
-    // FIXME tv show poster
+    // FIXME tv show poster (need fanarttv lib - snapshot 1.5 for this)
 
-    // FIXME season poster
-
-    // FIXME Movie Poster
+    // FIXME movie poster (need fanarttv lib - snapshot 1.5 for this)
 
     if (ma != null) {
       ma.setDefaultUrl(ftvaw.getUrl());
@@ -206,6 +211,11 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
         case HDCLEARART:
         case MOVIETHUMB:
           ma.addImageSize(1000, 562, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
+          break;
+
+        case SEASONTHUMB:
+          ma.addImageSize(500, 281, ftvaw.getUrl());
           ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
           break;
 
