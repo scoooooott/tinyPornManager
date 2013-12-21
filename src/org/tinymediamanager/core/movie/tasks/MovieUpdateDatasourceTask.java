@@ -58,8 +58,9 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger       LOGGER      = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
 
-  // skip well-known, but unneeded BD & DVD folders
-  private static final List<String> skipFolders = Arrays.asList("CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA", "AUDIO_TS");
+  // skip well-known, but unneeded folders (UPPERCASE)
+  private static final List<String> skipFolders = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+                                                    "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION");
 
   private List<String>              dataSources;
   private MovieList                 movieList;
@@ -114,8 +115,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             if (file.isDirectory()) {
               String directoryName = file.getName();
               // check against unwanted dirs
-              if (directoryName.startsWith(".") || directoryName.equalsIgnoreCase("$RECYCLE.BIN") || directoryName.equalsIgnoreCase("Recycler")
-                  || directoryName.equalsIgnoreCase("System Volume Information")) {
+              if (skipFolders.contains(directoryName.toUpperCase())) {
                 LOGGER.info("ignoring directory " + directoryName);
                 continue;
               }
@@ -484,7 +484,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // ignore .folders and others
-        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().startsWith(".")) {
+        if (!skipFolders.contains(file.getName().toUpperCase())) {
           dirs.add(file);
         }
       }
@@ -549,7 +549,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // ignore .folders and others
-        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().startsWith(".")) {
+        if (!skipFolders.contains(file.getName().toUpperCase())) {
           mv.addAll(getAllMediaFilesRecursive(file));
         }
       }

@@ -52,8 +52,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger       LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
 
   // skip well-known, but unneeded BD & DVD folders
-  private static final List<String> skipFolders   = Arrays.asList("SAMPLE", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-                                                      "AUDIO_TS");
+  private static final List<String> skipFolders   = Arrays.asList(".", "..", "SAMPLE", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
+                                                      "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION");
 
   private List<String>              dataSources;
   private List<File>                tvShowFolders = new ArrayList<File>();
@@ -156,8 +156,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
         String directoryName = subdir.getName();
         // check against unwanted dirs
-        if (directoryName.startsWith(".") || directoryName.equalsIgnoreCase("$RECYCLE.BIN") || directoryName.equalsIgnoreCase("Recycler")
-            || directoryName.equalsIgnoreCase("System Volume Information") || skipFolders.contains(subdir.getName().toUpperCase())) {
+        if (skipFolders.contains(subdir.getName().toUpperCase())) {
           LOGGER.info("ignoring directory " + directoryName);
           continue;
         }
@@ -618,7 +617,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
       }
-      if (file.isDirectory() && !file.getName().startsWith(".") && !skipFolders.contains(file.getName().toUpperCase())) {
+      if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase())) {
         // dig deeper
         if (file.getName().toUpperCase().equals("VIDEO_TS")) {
           findTvEpisodesAsDisc(tvShow, file);
