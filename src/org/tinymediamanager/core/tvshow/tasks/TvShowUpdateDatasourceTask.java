@@ -52,8 +52,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger       LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
 
   // skip well-known, but unneeded BD & DVD folders
-  private static final List<String> skipFolders   = Arrays.asList(".", "..", "SAMPLE", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
-                                                      "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION");
+  private static final List<String> skipFolders   = Arrays.asList(".", "..", ".ACTORS", "SAMPLE", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF",
+                                                      "SSIF", "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION");
 
   private List<String>              dataSources;
   private List<File>                tvShowFolders = new ArrayList<File>();

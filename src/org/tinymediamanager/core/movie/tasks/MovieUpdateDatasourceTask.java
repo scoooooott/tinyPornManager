@@ -59,8 +59,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger       LOGGER      = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String> skipFolders = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-                                                    "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION");
+  private static final List<String> skipFolders = Arrays.asList(".", "..", ".ACTORS", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
+                                                    "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION");
 
   private List<String>              dataSources;
   private MovieList                 movieList;
