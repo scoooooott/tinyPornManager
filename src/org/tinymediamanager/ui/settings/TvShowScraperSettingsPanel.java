@@ -65,50 +65,66 @@ public class TvShowScraperSettingsPanel extends JPanel {
   private JPanel                      panelScraperMetadataContainer;
   private JCheckBox                   cbScraperTvdb;
   private JCheckBox                   chckbxAnidb;
+  private JPanel                      panelArtworkScrapers;
+  private JCheckBox                   chckbxImagesFanartTv;
+  private JCheckBox                   chckbxImagesTvDB;
 
   /**
    * Instantiates a new movie scraper settings panel.
    */
   public TvShowScraperSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-    JPanel panelMovieScrapers = new JPanel();
-    panelMovieScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.metadata.defaults"),
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    JPanel panelTvShowScrapers = new JPanel();
+    panelTvShowScrapers.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.metadata.defaults"),
         TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelMovieScrapers, "2, 2, fill, top");
-    panelMovieScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+    add(panelTvShowScrapers, "2, 2, fill, top");
+    panelTvShowScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     cbScraperTvdb = new JCheckBox("The TV Database");
     buttonGroupScraper = new ButtonGroup();
     buttonGroupScraper.add(cbScraperTvdb);
-    panelMovieScrapers.add(cbScraperTvdb, "1, 2");
+    panelTvShowScrapers.add(cbScraperTvdb, "1, 2");
 
     chckbxAnidb = new JCheckBox("AniDB");
     buttonGroupScraper.add(chckbxAnidb);
-    panelMovieScrapers.add(chckbxAnidb, "1, 4");
+    panelTvShowScrapers.add(chckbxAnidb, "1, 4");
 
     JSeparator separator = new JSeparator();
-    panelMovieScrapers.add(separator, "1, 6, 3, 1");
+    panelTvShowScrapers.add(separator, "1, 6, 3, 1");
 
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
-    panelMovieScrapers.add(lblScraperLanguage, "1, 8, right, default");
+    panelTvShowScrapers.add(lblScraperLanguage, "1, 8, right, default");
 
     cbScraperTmdbLanguage = new JComboBox(MediaLanguages.values());
-    panelMovieScrapers.add(cbScraperTmdbLanguage, "3, 8");
+    panelTvShowScrapers.add(cbScraperTmdbLanguage, "3, 8");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
-    panelMovieScrapers.add(lblCountry, "1, 10, right, default");
+    panelTvShowScrapers.add(lblCountry, "1, 10, right, default");
 
     cbCountry = new JComboBox(CountryCode.values());
-    panelMovieScrapers.add(cbCountry, "3, 10, fill, default");
+    panelTvShowScrapers.add(cbCountry, "3, 10, fill, default");
+
+    panelArtworkScrapers = new JPanel();
+    panelArtworkScrapers.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.images"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
+    add(panelArtworkScrapers, "2, 4, fill, fill");
+    panelArtworkScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+
+    chckbxImagesTvDB = new JCheckBox("The TV Database");
+    panelArtworkScrapers.add(chckbxImagesTvDB, "2, 2");
+
+    chckbxImagesFanartTv = new JCheckBox("Fanart.tv");
+    panelArtworkScrapers.add(chckbxImagesFanartTv, "2, 4");
 
     panelScraperMetadataContainer = new JPanel();
     panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE
         .getString("scraper.metadata.defaults"), TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
-    add(panelScraperMetadataContainer, "2, 4, fill, top");
+    add(panelScraperMetadataContainer, "2, 6, fill, top");
     panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
@@ -157,9 +173,6 @@ public class TvShowScraperSettingsPanel extends JPanel {
     }
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<Settings, MediaLanguages> settingsBeanProperty_8 = BeanProperty.create("tvShowSettings.scraperLanguage");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
@@ -177,5 +190,15 @@ public class TvShowScraperSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("tvShowSettings.imageScraperTvdb");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, chckbxImagesTvDB, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("tvShowSettings.imageScraperFanartTv");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_2, chckbxImagesFanartTv, jCheckBoxBeanProperty);
+    autoBinding_2.bind();
   }
 }

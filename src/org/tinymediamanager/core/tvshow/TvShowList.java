@@ -41,6 +41,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.anidb.AniDBMetadataProvider;
+import org.tinymediamanager.scraper.fanarttv.FanartTvMetadataProvider;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
 
 /**
@@ -257,6 +258,7 @@ public class TvShowList extends AbstractModelObject {
     List<TvShowArtworkScrapers> scrapers = new ArrayList<TvShowArtworkScrapers>();
     scrapers.add(TvShowArtworkScrapers.TVDB);
     scrapers.add(TvShowArtworkScrapers.ANIDB);
+    scrapers.add(TvShowArtworkScrapers.FANART_TV);
     return getArtworkProviders(scrapers);
   }
 
@@ -275,10 +277,11 @@ public class TvShowList extends AbstractModelObject {
     // the tv db
     if (scrapers.contains(TvShowArtworkScrapers.TVDB)) {
       try {
-        LOGGER.debug("get instance of TheTvDbMetadataProvider");
-        artworkProvider = new TheTvDbMetadataProvider();
-        artworkProviders.add(artworkProvider);
-
+        if (Globals.settings.getTvShowSettings().isImageScraperTvdb()) {
+          LOGGER.debug("get instance of TheTvDbMetadataProvider");
+          artworkProvider = new TheTvDbMetadataProvider();
+          artworkProviders.add(artworkProvider);
+        }
       }
       catch (Exception e) {
         LOGGER.warn("failed to get instance of TheTvDbMetadataProvider", e);
@@ -288,6 +291,20 @@ public class TvShowList extends AbstractModelObject {
     // anidb
     if (scrapers.contains(TvShowArtworkScrapers.ANIDB)) {
       artworkProviders.add(new AniDBMetadataProvider());
+    }
+
+    // fanart.tv
+    if (scrapers.contains(TvShowArtworkScrapers.FANART_TV)) {
+      try {
+        if (Globals.settings.getTvShowSettings().isImageScraperFanartTv()) {
+          LOGGER.debug("get instance of FanartTvMetadataProvider");
+          artworkProvider = new FanartTvMetadataProvider();
+          artworkProviders.add(artworkProvider);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("failed to get instance of FanartTvMetadataProvider", e);
+      }
     }
 
     return artworkProviders;

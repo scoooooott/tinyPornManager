@@ -394,8 +394,8 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void addToMediaFiles(List<MediaFile> mediaFiles) {
-    synchronized (mediaFiles) {
-      mediaFiles.addAll(mediaFiles);
+    synchronized (this.mediaFiles) {
+      this.mediaFiles.addAll(mediaFiles);
       sortMediaFiles();
     }
 
@@ -529,7 +529,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void updateMediaFilePath(File oldPath, File newPath) {
-    for (MediaFile mf : new ArrayList<MediaFile>(mediaFiles)) {
+    for (MediaFile mf : new ArrayList<MediaFile>(this.mediaFiles)) {
       mf.replacePathForRenamedFolder(oldPath, newPath);
     }
   }

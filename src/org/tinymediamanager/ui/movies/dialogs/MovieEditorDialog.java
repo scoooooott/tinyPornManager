@@ -69,6 +69,7 @@ import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -208,7 +209,7 @@ public class MovieEditorDialog extends JDialog {
         @Override
         public void mouseClicked(MouseEvent e) {
           ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.POSTER, movieList.getArtworkProviders(), lblPoster,
-              null, null);
+              null, null, MediaType.MOVIE);
           dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
           dialog.setVisible(true);
         }
@@ -391,7 +392,7 @@ public class MovieEditorDialog extends JDialog {
         @Override
         public void mouseClicked(MouseEvent e) {
           ImageChooserDialog dialog = new ImageChooserDialog(movieToEdit.getIds(), ImageType.FANART, movieList.getArtworkProviders(), lblFanart,
-              extrathumbs, extrafanarts);
+              extrathumbs, extrafanarts, MediaType.MOVIE);
           dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
           dialog.setVisible(true);
         }

@@ -54,6 +54,7 @@ import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
@@ -157,7 +158,7 @@ public class MovieSetEditorDialog extends JDialog {
         HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
         ids.put("tmdbId", tmdbId);
         // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.POSTER, lblPoster);
-        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.POSTER, artworkProviders, lblPoster, null, null);
+        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.POSTER, artworkProviders, lblPoster, null, null, MediaType.MOVIE);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
       }
@@ -214,7 +215,7 @@ public class MovieSetEditorDialog extends JDialog {
         }
         HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
         ids.put("tmdbId", tmdbId);
-        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.FANART, artworkProviders, lblFanart, null, null);
+        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.FANART, artworkProviders, lblFanart, null, null, MediaType.MOVIE);
         // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.FANART, lblFanart);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);

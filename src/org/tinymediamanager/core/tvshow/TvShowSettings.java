@@ -49,6 +49,8 @@ public class TvShowSettings extends AbstractModelObject {
   private final static String RENAMER_SEPARATOR           = "renamerSeparator";
   private final static String RENAMER_SEASON_FOLDER       = "renamerSeasonFolder";
   private final static String BUILD_IMAGE_CACHE_ON_IMPORT = "buildImageCacheOnImport";
+  private final static String IMAGE_SCRAPER_TVDB          = "imageScraperTvdb";
+  private final static String IMAGE_SCRAPER_FANART_TV     = "imageScraperFanartTv";
 
   @XmlElementWrapper(name = TV_SHOW_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -63,6 +65,8 @@ public class TvShowSettings extends AbstractModelObject {
   private String              renamerSeparator            = "_";
   private String              renamerSeasonFolder         = "Season $1";
   private boolean             buildImageCacheOnImport     = false;
+  private boolean             imageScraperTvdb            = true;
+  private boolean             imageScraperFanartTv        = true;
 
   @Enumerated(EnumType.STRING)
   private TvShowEpisodeNaming renamerFormat               = TvShowEpisodeNaming.WITH_SE;
@@ -321,5 +325,25 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.buildImageCacheOnImport;
     this.buildImageCacheOnImport = newValue;
     firePropertyChange(BUILD_IMAGE_CACHE_ON_IMPORT, oldValue, newValue);
+  }
+
+  public boolean isImageScraperTvdb() {
+    return imageScraperTvdb;
+  }
+
+  public boolean isImageScraperFanartTv() {
+    return imageScraperFanartTv;
+  }
+
+  public void setImageScraperTvdb(boolean newValue) {
+    boolean oldValue = this.imageScraperTvdb;
+    this.imageScraperTvdb = newValue;
+    firePropertyChange(IMAGE_SCRAPER_TVDB, oldValue, newValue);
+  }
+
+  public void setImageScraperFanartTv(boolean newValue) {
+    boolean oldValue = this.imageScraperFanartTv;
+    this.imageScraperFanartTv = newValue;
+    firePropertyChange(IMAGE_SCRAPER_FANART_TV, oldValue, newValue);
   }
 }

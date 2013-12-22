@@ -76,6 +76,7 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowReloadMediaInformationTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TmmSwingWorker;
@@ -961,7 +962,7 @@ public class TvShowPanel extends JPanel {
           TvShowSeason season = (TvShowSeason) obj;
           ImageLabel imageLabel = new ImageLabel();
           ImageChooserDialog dialog = new ImageChooserDialog(season.getTvShow().getIds(), ImageType.SEASON, tvShowList.getArtworkProviders(),
-              imageLabel, null, null);
+              imageLabel, null, null, MediaType.TV_SHOW);
           dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
           dialog.setVisible(true);
 

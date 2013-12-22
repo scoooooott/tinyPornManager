@@ -22,11 +22,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -82,6 +82,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
 
       case TV_SHOW:
         artwork = getTvShowArtwork(options);
+        break;
 
       default:
         artwork = new ArrayList<MediaArtwork>(1);
@@ -98,6 +99,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
 
   private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
+    MediaLanguages language = options.getLanguage();
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
     List<FanartTvArtwork> movieImages = null;
@@ -117,7 +119,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     }
 
     // sort
-    Collections.sort(movieImages, new ArtworkComparator());
+    Collections.sort(movieImages, new ArtworkComparator(language));
 
     for (FanartTvArtwork ftvaw : movieImages) {
       // http://fanart.tv/movie-fanart/
@@ -135,6 +137,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
 
   private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
+    MediaLanguages language = options.getLanguage();
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
     List<FanartTvArtwork> tvShowImages = null;
@@ -155,7 +158,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     }
 
     // sort
-    Collections.sort(tvShowImages, new ArtworkComparator());
+    Collections.sort(tvShowImages, new ArtworkComparator(language));
 
     for (FanartTvArtwork ftvaw : tvShowImages) {
       MediaArtwork ma = extractArtwork(artworkType, ftvaw);
@@ -185,6 +188,14 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
         }
         break;
 
+      case MOVIEPOSTER:
+      case TVPOSTER:
+        if (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL) {
+          ma = new MediaArtwork();
+          ma.setType(MediaArtworkType.POSTER);
+        }
+        break;
+
       case SEASONTHUMB:
         if (artworkType == MediaArtworkType.SEASON || artworkType == MediaArtworkType.ALL) {
           ma = new MediaArtwork();
@@ -192,13 +203,17 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
         }
         break;
 
+      case TVBANNER:
+      case MOVIEBANNER:
+        if (artworkType == MediaArtworkType.BANNER || artworkType == MediaArtworkType.ALL) {
+          ma = new MediaArtwork();
+          ma.setType(MediaArtworkType.BANNER);
+        }
+        break;
+
       default:
         break;
     }
-
-    // FIXME tv show poster (need fanarttv lib - snapshot 1.5 for this)
-
-    // FIXME movie poster (need fanarttv lib - snapshot 1.5 for this)
 
     if (ma != null) {
       ma.setDefaultUrl(ftvaw.getUrl());
@@ -215,12 +230,26 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
           break;
 
         case SEASONTHUMB:
+        case TVTHUMB:
           ma.addImageSize(500, 281, ftvaw.getUrl());
           ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
           break;
 
         case MOVIEBACKGROUND:
+        case SHOWBACKGROUND:
           ma.addImageSize(1920, 1080, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.LARGE.getOrder());
+          break;
+
+        case MOVIEPOSTER:
+        case TVPOSTER:
+          ma.addImageSize(1000, 1426, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.LARGE.getOrder());
+          break;
+
+        case TVBANNER:
+        case MOVIEBANNER:
+          ma.addImageSize(1000, 185, ftvaw.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
 
@@ -233,12 +262,18 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
   }
 
   private static class ArtworkComparator implements Comparator<FanartTvArtwork> {
+    private MediaLanguages preferredLangu = MediaLanguages.en;
+
+    public ArtworkComparator(MediaLanguages language) {
+      this.preferredLangu = language;
+    }
+
     /*
      * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
      */
     @Override
     public int compare(FanartTvArtwork arg0, FanartTvArtwork arg1) {
-      String preferredLangu = Globals.settings.getMovieSettings().getScraperLanguage().name();
+      String preferredLangu = this.preferredLangu.name();
 
       // check if first image is preferred langu
       if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
@@ -261,7 +296,12 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
       }
 
       // we did not sort until here; so lets sort with the rating
-      return arg0.getLikes() > arg1.getLikes() ? -1 : 1;
+      if (arg0.getLikes() == arg1.getLikes()) {
+        return 0;
+      }
+      else {
+        return arg0.getLikes() > arg1.getLikes() ? -1 : 1;
+      }
     }
   }
 }

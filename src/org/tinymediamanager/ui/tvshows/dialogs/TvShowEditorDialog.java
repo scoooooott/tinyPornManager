@@ -66,6 +66,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
@@ -200,7 +201,7 @@ public class TvShowEditorDialog extends JDialog {
         @Override
         public void mouseClicked(MouseEvent e) {
           ImageChooserDialog dialog = new ImageChooserDialog(tvShowToEdit.getIds(), ImageType.POSTER, tvShowList.getArtworkProviders(), lblPoster,
-              null, null);
+              null, null, MediaType.TV_SHOW);
           dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
           dialog.setVisible(true);
         }
@@ -593,7 +594,7 @@ public class TvShowEditorDialog extends JDialog {
       @Override
       public void mouseClicked(MouseEvent e) {
         ImageChooserDialog dialog = new ImageChooserDialog(tvShowToEdit.getIds(), ImageType.BANNER, tvShowList.getArtworkProviders(), lblBanner,
-            null, null);
+            null, null, MediaType.TV_SHOW);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
       }
@@ -609,7 +610,7 @@ public class TvShowEditorDialog extends JDialog {
         @Override
         public void mouseClicked(MouseEvent e) {
           ImageChooserDialog dialog = new ImageChooserDialog(tvShowToEdit.getIds(), ImageType.FANART, tvShowList.getArtworkProviders(), lblFanart,
-              null, null);
+              null, null, MediaType.TV_SHOW);
           dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
           dialog.setVisible(true);
         }
