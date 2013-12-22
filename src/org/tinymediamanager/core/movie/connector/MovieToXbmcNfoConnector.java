@@ -684,13 +684,13 @@ public class MovieToXbmcNfoConnector {
 
   private static String parseTrailerUrl(String nfoTrailerUrl) {
     // try to parse out youtube trailer plugin
-    Pattern pattern = Pattern.compile("plugin://plugin.video.youtube/?action=play_video&videoid=(.*)$");
+    Pattern pattern = Pattern.compile("plugin://plugin.video.youtube/\\?action=play_video&videoid=(.*)$");
     Matcher matcher = pattern.matcher(nfoTrailerUrl);
     if (matcher.matches()) {
       return "http://www.youtube.com/watch?v=" + matcher.group(1);
     }
 
-    pattern = Pattern.compile("plugin://plugin.video.hdtrailers_net/video/.*?/(.*)$");
+    pattern = Pattern.compile("plugin://plugin.video.hdtrailers_net/video/.*\\?/(.*)$");
     matcher = pattern.matcher(nfoTrailerUrl);
     if (matcher.matches()) {
       try {
