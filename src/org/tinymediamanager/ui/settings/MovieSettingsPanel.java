@@ -363,6 +363,9 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
     if (index >= 0) {
       cbSeparator.setSelectedIndex(index);
     }
+
+    // column headings
+    tableMovieSources.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
   }
 
   private void createRenamerExample() {
@@ -468,7 +471,7 @@ public class MovieSettingsPanel extends JPanel implements HierarchyListener {
         tableMovieSources);
     //
     ObjectProperty<String> stringObjectProperty = ObjectProperty.create();
-    jTableBinding.addColumnBinding(stringObjectProperty).setColumnName("Source");
+    jTableBinding.addColumnBinding(stringObjectProperty);
     //
     jTableBinding.bind();
     //

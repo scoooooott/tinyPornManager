@@ -262,7 +262,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     buttonGroup.add(rdbtnRawNumber);
     panelRenamer.add(rdbtnRawNumber, "6, 8");
 
-    lblSeparator = new JLabel("separator");
+    lblSeparator = new JLabel(BUNDLE.getString("Settings.separator")); //$NON-NLS-1$
     panelRenamer.add(lblSeparator, "2, 10, right, default");
 
     cbSeparator = new JComboBox(separators.toArray());
@@ -352,6 +352,9 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
           break;
       }
     }
+
+    // column headings
+    tableTvShowSources.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
   }
 
   private void checkChanges() {
@@ -447,7 +450,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
         tableTvShowSources);
     //
     ObjectProperty<String> stringObjectProperty = ObjectProperty.create();
-    jTableBinding.addColumnBinding(stringObjectProperty).setColumnName("Source");
+    jTableBinding.addColumnBinding(stringObjectProperty);
     //
     jTableBinding.bind();
     //

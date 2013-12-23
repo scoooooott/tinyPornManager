@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
@@ -172,13 +171,14 @@ public class MovieScraperSettingsPanel extends JPanel {
     panel.add(cbOfdbde, "1, 6");
 
     panelAutomaticScraper = new JPanel();
-    panelAutomaticScraper.setBorder(new TitledBorder(null, "Automatic scraper", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelAutomaticScraper.setBorder(new TitledBorder(null,
+        BUNDLE.getString("Settings.automaticscraper"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelAutomaticScraper, "4, 4, fill, fill");
     panelAutomaticScraper.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblScraperTreshold = new JLabel(BUNDLE.getString("Settings.scraperTreshold"));
+    JLabel lblScraperTreshold = new JLabel(BUNDLE.getString("Settings.scraperTreshold")); //$NON-NLS-1$
     panelAutomaticScraper.add(lblScraperTreshold, "1, 2, default, top");
 
     sliderThreshold = new JSlider();
@@ -205,8 +205,8 @@ public class MovieScraperSettingsPanel extends JPanel {
     lblScraperThresholdHint = new JTextPane();
     panelAutomaticScraper.add(lblScraperThresholdHint, "1, 6, 3, 1");
     lblScraperThresholdHint.setOpaque(false);
-    lblScraperThresholdHint.setFont(new Font("Dialog", Font.PLAIN, 10));
-    lblScraperThresholdHint.setText(BUNDLE.getString("Settings.scraperTreshold.hint"));
+    lblScraperThresholdHint.setFont(lblScraperThresholdHint.getFont().deriveFont(10f));
+    lblScraperThresholdHint.setText(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$
 
     initDataBindings();
 
