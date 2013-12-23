@@ -103,6 +103,8 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
 
   private final Action                 actionSort       = new SortAction();
   private final Action                 actionFilter     = new FilterAction();
+  private JCheckBox                    cbFilterNewMovies;
+  private JLabel                       lblNewMovies;
 
   /**
    * Instantiates a new movie extended search
@@ -124,8 +126,9 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.UNRELATED_GAP_ROWSPEC, }));
 
     JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     setComponentFont(lblFilterBy);
@@ -308,22 +311,31 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblMissingSubtitles);
     add(lblMissingSubtitles, "4, 16, right, default");
 
+    cbFilterNewMovies = new JCheckBox("");
+    cbFilterNewMovies.setAction(actionFilter);
+    cbFilterNewMovies.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterNewMovies, "2, 17");
+
+    lblNewMovies = new JLabel(BUNDLE.getString("movieextendedsearch.newmovies")); //$NON-NLS-1$
+    setComponentFont(lblNewMovies);
+    add(lblNewMovies, "4, 17, right, default");
+
     JSeparator separator = new JSeparator();
-    add(separator, "2, 18, 5, 1");
+    add(separator, "2, 19, 5, 1");
 
     JLabel lblSortBy = new JLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
     setComponentFont(lblSortBy);
-    add(lblSortBy, "2, 20, 3, 1");
+    add(lblSortBy, "2, 21, 3, 1");
 
     cbSortColumn = new SmallComboBox(SortColumn.values());
     setComponentFont(cbSortColumn);
     cbSortColumn.setAction(actionSort);
-    add(cbSortColumn, "2, 22, 3, 1, fill, default");
+    add(cbSortColumn, "2, 23, 3, 1, fill, default");
 
     cbSortOrder = new SmallComboBox(SortOrder.values());
     setComponentFont(cbSortOrder);
     cbSortOrder.setAction(actionSort);
-    add(cbSortOrder, "6, 22, fill, default");
+    add(cbSortOrder, "6, 23, fill, default");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -506,6 +518,11 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       // filer by missing artwork
       if (cbFilterMissingSubtitles.isSelected()) {
         searchOptions.put(SearchOptions.MISSING_SUBTITLES, Boolean.TRUE);
+      }
+
+      // filter by new movies
+      if (cbFilterNewMovies.isSelected()) {
+        searchOptions.put(SearchOptions.NEW_MOVIES, Boolean.TRUE);
       }
 
       // apply the filter

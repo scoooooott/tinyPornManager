@@ -74,6 +74,8 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private JCheckBox                    cbFilterMissingSubtitles;
 
   private final Action                 actionFilter     = new FilterAction();
+  private JCheckBox                    cbFilterNewEpisodes;
+  private JLabel                       lblNewEpisodes;
 
   public TvShowExtendedSearchPanel(TvShowTreeModel model, JTree tree) {
     super();
@@ -169,6 +171,15 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     setComponentFont(lblMissingSubtitles);
     add(lblMissingSubtitles, "4, 8, right, default");
 
+    cbFilterNewEpisodes = new JCheckBox("");
+    cbFilterNewEpisodes.setAction(actionFilter);
+    cbFilterNewEpisodes.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterNewEpisodes, "2, 9");
+
+    lblNewEpisodes = new JLabel(BUNDLE.getString("movieextendedsearch.newepisodes")); //$NON-NLS-1$
+    setComponentFont(lblNewEpisodes);
+    add(lblNewEpisodes, "4, 9, right, default");
+
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
@@ -242,6 +253,14 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
       }
       else {
         tvShowTreeModel.removeFilter(SearchOptions.MISSING_SUBTITLES);
+      }
+
+      // filter by new episodes
+      if (cbFilterNewEpisodes.isSelected()) {
+        tvShowTreeModel.setFilter(SearchOptions.NEW_EPISODES, Boolean.TRUE);
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.NEW_EPISODES);
       }
 
       // apply the filter

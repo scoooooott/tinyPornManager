@@ -39,7 +39,8 @@ import org.tinymediamanager.core.tvshow.TvShowSeason;
 class TvShowExtendedMatcher {
 
   public enum SearchOptions {
-    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA, MISSING_ARTWORK, MISSING_SUBTITLES
+    TEXT, WATCHED, GENRE, CAST, TAG, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA, MISSING_ARTWORK, MISSING_SUBTITLES,
+    NEW_EPISODES
   }
 
   Map<SearchOptions, Object> searchOptions = Collections.synchronizedMap(new HashMap<SearchOptions, Object>());
@@ -109,6 +110,12 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.NEW_EPISODES)) {
+      if (!filterNewEpisodes(tvShow)) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -144,6 +151,12 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.NEW_EPISODES)) {
+      if (!filterNewEpisodes(season)) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -175,6 +188,12 @@ class TvShowExtendedMatcher {
 
     if (searchOptions.containsKey(SearchOptions.MISSING_SUBTITLES)) {
       if (!filterMissingSubtitles(episode)) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.NEW_EPISODES)) {
+      if (!filterNewEpisodes(episode)) {
         return false;
       }
     }
@@ -248,6 +267,18 @@ class TvShowExtendedMatcher {
 
   private boolean filterMissingSubtitles(TvShowEpisode episode) {
     return matchesMissingSubtitles(Arrays.asList(episode));
+  }
+
+  private boolean filterNewEpisodes(TvShow tvShow) {
+    return tvShow.isNewlyAdded();
+  }
+
+  private boolean filterNewEpisodes(TvShowSeason season) {
+    return season.isNewlyAdded();
+  }
+
+  private boolean filterNewEpisodes(TvShowEpisode episode) {
+    return episode.isNewlyAdded();
   }
 
   private boolean matchesText(TvShow tvShow, List<TvShowEpisode> episodes, String filterText) {
