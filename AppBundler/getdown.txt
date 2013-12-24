@@ -13,6 +13,7 @@ ui.mac_dock_icon = ../tmm.icns
 
 # Application jar files, on classpath
 code = tmm.jar
+code = lib/api-common.jar
 code = lib/asm.jar
 code = lib/betterbeansbinding-core.jar
 code = lib/betterbeansbinding-el.jar
