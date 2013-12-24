@@ -200,6 +200,13 @@ public class ImageCache {
           break;
       }
 
+      // special handling for movieset-fanart or movieset-poster
+      if (mf.getFilename().startsWith("movieset-fanart") || mf.getFilename().startsWith("movieset-poster")) {
+        if (originalImage.getWidth() > 1000) {
+          desiredWidth = 1000;
+        }
+      }
+
       Point size = ImageLabel.calculateSize(desiredWidth, (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
           originalImage.getHeight(), true);
       BufferedImage scaledImage = null;

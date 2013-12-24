@@ -180,6 +180,7 @@ public class MovieScrapeTask extends TmmThreadPool {
             options.setResult(result1);
             options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
             options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+            options.setScrapeCollectionInfo(scraperMetadataConfig.isCollection());
 
             // we didn't do a search - pass imdbid and tmdbid from movie
             // object

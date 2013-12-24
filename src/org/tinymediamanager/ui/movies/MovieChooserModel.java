@@ -241,6 +241,7 @@ public class MovieChooserModel extends AbstractModelObject {
       options.setResult(result);
       options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+      options.setScrapeCollectionInfo(Globals.settings.getMovieScraperMetadataConfig().isCollection());
       metadata = metadataProvider.getMetadata(options);
       setOverview(metadata.getStringValue(MediaMetadata.PLOT));
       setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));

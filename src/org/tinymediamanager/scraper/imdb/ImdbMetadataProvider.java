@@ -124,7 +124,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
 
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
-    md.storeMetadata(MediaMetadata.IMDBID, imdbId);
+    md.setId(MediaMetadata.IMDBID, imdbId);
 
     ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(Globals.executor);
     ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(Globals.executor);
@@ -140,7 +140,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
     // worker for imdb request (/plotsummary) (from chosen site)
     Future<Document> futurePlotsummary = null;
-    // if (!Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage()) {
     sb = new StringBuilder(imdbSite.getSite());
     sb.append("title/");
     sb.append(imdbId);
@@ -148,13 +147,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
     worker = new ImdbWorker(sb.toString(), options.getLanguage().name(), options.getCountry().getAlpha2());
     futurePlotsummary = compSvcImdb.submit(worker);
-    // }
 
     // worker for tmdb request
     Future<MediaMetadata> futureTmdb = null;
-    if (Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage()) {
+    if (Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage() || options.isScrapeCollectionInfo()) {
       Callable<MediaMetadata> worker2 = new TmdbWorker(imdbId);
-      // futureTmdb = executor.submit(worker2);
       futureTmdb = compSvcTmdb.submit(worker2);
     }
 
@@ -595,8 +592,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     // Production companies
     elements = doc.getElementsByClass("blackcatheader");
     for (Element blackcatheader : elements) {
-      // if (blackcatheader.ownText().equals(imdbSite.getProductionCompanies()))
-      // {
       if (blackcatheader.ownText().equals(ImdbSiteDefinition.IMDB_COM.getProductionCompanies())) {
         Elements a = blackcatheader.nextElementSibling().getElementsByTag("a");
         StringBuilder productionCompanies = new StringBuilder();
@@ -655,9 +650,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     // }
 
     // get data from tmdb?
-    if (Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage()) {
+    if (Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage() || options.isScrapeCollectionInfo()) {
       MediaMetadata tmdbMd = futureTmdb.get();
-      if (tmdbMd != null && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
+      if (Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage() && tmdbMd != null
+          && StringUtils.isNotBlank(tmdbMd.getStringValue(MediaMetadata.PLOT))) {
         // tmdbid
         md.setId(MediaMetadata.TMDBID, tmdbMd.getId(MediaMetadata.TMDBID));
         // title
@@ -669,6 +665,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         // collection info
         md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
         md.storeMetadata(MediaMetadata.TMDBID_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDBID_SET));
+      }
+      if (options.isScrapeCollectionInfo() && tmdbMd != null) {
+        md.storeMetadata(MediaMetadata.TMDBID_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDBID_SET));
+        md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
       }
     }
 
@@ -783,6 +783,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         options.setImdbId(movieId);
         options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
         options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+        options.setScrapeCollectionInfo(Globals.settings.getMovieScraperMetadataConfig().isCollection());
         md = getMetadata(options);
         if (!StringUtils.isEmpty(md.getStringValue(MediaMetadata.TITLE))) {
           movieName = md.getStringValue(MediaMetadata.TITLE);
@@ -1048,24 +1049,12 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     return StringUtils.trim(newString);
   }
 
-  /**
-   * The Class ImdbWorker.
-   * 
-   * @author Manuel Laggner
-   */
   private class ImdbWorker implements Callable<Document> {
-
     private String   url;
     private String   language;
     private String   country;
     private Document doc = null;
 
-    /**
-     * Instantiates a new imdb worker.
-     * 
-     * @param url
-     *          the url
-     */
     public ImdbWorker(String url, String language, String country) {
       this.url = url;
       this.language = language;
@@ -1092,31 +1081,13 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
   }
 
-  /**
-   * The Class TmdbWorker.
-   * 
-   * @author Manuel Laggner
-   */
   private class TmdbWorker implements Callable<MediaMetadata> {
-
-    /** The imdb id. */
     private String imdbId;
 
-    /**
-     * Instantiates a new tmdb worker.
-     * 
-     * @param imdbId
-     *          the imdb id
-     */
     public TmdbWorker(String imdbId) {
       this.imdbId = imdbId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.concurrent.Callable#call()
-     */
     @Override
     public MediaMetadata call() throws Exception {
       try {
@@ -1125,7 +1096,6 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
         options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
         options.setImdbId(imdbId);
-        // return tmdb.getMetadata(options);
         return tmdb.getLocalizedContent(options, null);
       }
       catch (Exception e) {
@@ -1134,12 +1104,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
   }
 
-  /**
+  /*
    * Maps scraper Genres to internal TMM genres
-   * 
-   * @param genre
-   *          as stinr
-   * @return TMM genre
    */
   private MediaGenres getTmmGenre(String genre) {
     MediaGenres g = null;

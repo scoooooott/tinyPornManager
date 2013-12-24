@@ -28,68 +28,31 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
  * @author Manuel Laggner
  */
 public class MediaScrapeOptions {
-
   private MediaSearchResult       result;
   private MediaMetadata           metadata;
-  private HashMap<String, String> ids         = new HashMap<String, String>();
+  private HashMap<String, String> ids                  = new HashMap<String, String>();
   private MediaType               type;
-  private MediaArtworkType        artworkType = MediaArtworkType.ALL;
-  private MediaLanguages          language    = MediaLanguages.en;
-  private CountryCode             country     = CountryCode.US;
+  private MediaArtworkType        artworkType          = MediaArtworkType.ALL;
+  private MediaLanguages          language             = MediaLanguages.en;
+  private CountryCode             country              = CountryCode.US;
+  private boolean                 scrapeCollectionInfo = false;
 
-  /**
-   * Instantiates a new media scrape options.
-   */
-  public MediaScrapeOptions() {
-  }
-
-  /**
-   * Gets the result.
-   * 
-   * @return the result
-   */
   public MediaSearchResult getResult() {
     return result;
   }
 
-  /**
-   * Sets the result.
-   * 
-   * @param result
-   *          the new result
-   */
   public void setResult(MediaSearchResult result) {
     this.result = result;
   }
 
-  /**
-   * Gets the id.
-   * 
-   * @param key
-   *          the key
-   * @return the id
-   */
   public String getId(String key) {
     return ids.get(key);
   }
 
-  /**
-   * Sets the id.
-   * 
-   * @param key
-   *          the key
-   * @param id
-   *          the new id
-   */
   public void setId(String key, String id) {
     this.ids.put(key, id);
   }
 
-  /**
-   * Gets the imdb id.
-   * 
-   * @return the imdb id
-   */
   public String getImdbId() {
     Object obj = ids.get("imdbId");
     if (obj == null) {
@@ -98,11 +61,6 @@ public class MediaScrapeOptions {
     return obj.toString();
   }
 
-  /**
-   * Gets the tmdb id.
-   * 
-   * @return the tmdb id
-   */
   public int getTmdbId() {
     int id = 0;
     try {
@@ -114,79 +72,34 @@ public class MediaScrapeOptions {
     return id;
   }
 
-  /**
-   * Sets the imdb id.
-   * 
-   * @param imdbId
-   *          the new imdb id
-   */
   public void setImdbId(String imdbId) {
     ids.put("imdbId", imdbId);
   }
 
-  /**
-   * Sets the tmdb id.
-   * 
-   * @param tmdbId
-   *          the new tmdb id
-   */
   public void setTmdbId(int tmdbId) {
     ids.put("tmdbId", String.valueOf(tmdbId));
   }
 
-  /**
-   * Gets the artwork type.
-   * 
-   * @return the artwork type
-   */
   public MediaArtworkType getArtworkType() {
     return artworkType;
   }
 
-  /**
-   * Sets the artwork type.
-   * 
-   * @param artworkType
-   *          the new artwork type
-   */
   public void setArtworkType(MediaArtworkType artworkType) {
     this.artworkType = artworkType;
   }
 
-  /**
-   * Gets the metadata.
-   * 
-   * @return the metadata
-   */
   public MediaMetadata getMetadata() {
     return metadata;
   }
 
-  /**
-   * Sets the metadata.
-   * 
-   * @param metadata
-   *          the new metadata
-   */
   public void setMetadata(MediaMetadata metadata) {
     this.metadata = metadata;
   }
 
-  /**
-   * Gets the type.
-   * 
-   * @return the type
-   */
   public MediaType getType() {
     return type;
   }
 
-  /**
-   * Sets the type.
-   * 
-   * @param type
-   *          the new type
-   */
   public void setType(MediaType type) {
     this.type = type;
   }
@@ -205,6 +118,14 @@ public class MediaScrapeOptions {
 
   public void setCountry(CountryCode country) {
     this.country = country;
+  }
+
+  public boolean isScrapeCollectionInfo() {
+    return scrapeCollectionInfo;
+  }
+
+  public void setScrapeCollectionInfo(boolean scrapeCollectionInfo) {
+    this.scrapeCollectionInfo = scrapeCollectionInfo;
   }
 
   /**
