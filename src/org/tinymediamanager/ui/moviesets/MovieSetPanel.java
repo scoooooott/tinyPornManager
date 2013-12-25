@@ -143,7 +143,7 @@ public class MovieSetPanel extends JPanel {
 
     // tree = new JTree(treeModel);
     tree = new ZebraJTree(treeModel) {
-      private static final long serialVersionUID = 1L;
+      private static final long serialVersionUID = 8881757869311476200L;
 
       @Override
       public void paintComponent(Graphics g) {
@@ -183,18 +183,20 @@ public class MovieSetPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), },
         new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
 
-    JLabel lblMovieSetColumn = new JLabel("Movie set");
+    JLabel lblMovieSetColumn = new JLabel(BUNDLE.getString("tmm.movieset")); //$NON-NLS-1$
     lblMovieSetColumn.setHorizontalAlignment(JLabel.CENTER);
     panelHeader.add(lblMovieSetColumn, "2, 1");
 
     JLabel lblNfoColumn = new JLabel("");
     lblNfoColumn.setHorizontalAlignment(JLabel.CENTER);
     lblNfoColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    lblNfoColumn.setToolTipText(BUNDLE.getString("tmm.nfo")); //$NON-NLS-1$
     panelHeader.add(lblNfoColumn, "4, 1");
 
     JLabel lblImageColumn = new JLabel("");
     lblImageColumn.setHorizontalAlignment(JLabel.CENTER);
     lblImageColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Image.png")));
+    lblImageColumn.setToolTipText(BUNDLE.getString("tmm.images")); //$NON-NLS-1$
     panelHeader.add(lblImageColumn, "5, 1");
 
     final JPanel panelRight = new JPanel();
@@ -202,15 +204,15 @@ public class MovieSetPanel extends JPanel {
     panelRight.setLayout(new CardLayout(0, 0));
 
     JPanel panelSet = new MovieSetInformationPanel(movieSetSelectionModel);
-    panelRight.add(panelSet, "movieSet");
+    panelRight.add(panelSet, "movieSet"); //$NON-NLS-1$
 
     JPanel panelMovie = new MovieInformationPanel(movieSelectionModel);
-    panelRight.add(panelMovie, "movie");
+    panelRight.add(panelMovie, "movie"); //$NON-NLS-1$
 
     JPanel panelMovieSetCount = new JPanel();
     add(panelMovieSetCount, "2, 3, left, fill");
 
-    JLabel lblMovieSets = new JLabel("Moviesets:");
+    JLabel lblMovieSets = new JLabel(BUNDLE.getString("tmm.moviesets")); //$NON-NLS-1$
     panelMovieSetCount.add(lblMovieSets);
 
     lblMovieSetCount = new JLabel("0");
@@ -225,13 +227,13 @@ public class MovieSetPanel extends JPanel {
             MovieSet movieSet = (MovieSet) node.getUserObject();
             movieSetSelectionModel.setSelectedMovieSet(movieSet);
             CardLayout cl = (CardLayout) (panelRight.getLayout());
-            cl.show(panelRight, "movieSet");
+            cl.show(panelRight, "movieSet"); //$NON-NLS-1$
           }
           if (node.getUserObject() instanceof Movie) {
             Movie movie = (Movie) node.getUserObject();
             movieSelectionModel.setSelectedMovie(movie);
             CardLayout cl = (CardLayout) (panelRight.getLayout());
-            cl.show(panelRight, "movie");
+            cl.show(panelRight, "movie"); //$NON-NLS-1$
           }
         }
         else {

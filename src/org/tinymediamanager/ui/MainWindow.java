@@ -264,7 +264,7 @@ public class MainWindow extends JFrame {
     });
 
     tools.addSeparator();
-    final JMenu menuWakeOnLan = new JMenu("Wake on LAN");
+    final JMenu menuWakeOnLan = new JMenu(BUNDLE.getString("tmm.wakeonlan")); //$NON-NLS-1$
     menuWakeOnLan.addMenuListener(new MenuListener() {
       @Override
       public void menuCanceled(MenuEvent arg0) {

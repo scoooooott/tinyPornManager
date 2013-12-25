@@ -86,24 +86,24 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblLogo, "2, 2, 1, 9, default, top");
     }
     {
-      JLabel lblTinymediamanager = new JLabel("tinyMediaManager");
-      lblTinymediamanager.setFont(new Font("Dialog", Font.BOLD, 18));
+      JLabel lblTinymediamanager = new JLabel("tinyMediaManager"); //$NON-NLS-1$
+      lblTinymediamanager.setFont(lblTinymediamanager.getFont().deriveFont(Font.BOLD).deriveFont(18f));
       contentPanel.add(lblTinymediamanager, "4, 2, 3, 1, center, default");
     }
     {
-      JLabel lblByManuel = new JLabel("\u00A9 2012 - 2013 by Manuel Laggner");
+      JLabel lblByManuel = new JLabel("\u00A9 2012 - 2013 by Manuel Laggner"); //$NON-NLS-1$
       contentPanel.add(lblByManuel, "4, 4, 3, 1, center, default");
     }
     {
-      JLabel lblVersion = new JLabel("Version: " + ReleaseInfo.getRealVersion());
+      JLabel lblVersion = new JLabel(BUNDLE.getString("tmm.version") + ": " + ReleaseInfo.getRealVersion()); //$NON-NLS-1$ 
       contentPanel.add(lblVersion, "6, 8, left, top");
     }
     {
-      JLabel lblBuild = new JLabel("Build date: " + ReleaseInfo.getRealBuildDate());
+      JLabel lblBuild = new JLabel(BUNDLE.getString("tmm.builddate") + ": " + ReleaseInfo.getRealBuildDate());//$NON-NLS-1$
       contentPanel.add(lblBuild, "6, 10, left, top");
     }
     {
-      JLabel lblHomepage = new JLabel("Homepage");
+      JLabel lblHomepage = new JLabel(BUNDLE.getString("tmm.homepage")); //$NON-NLS-1$
       contentPanel.add(lblHomepage, "2, 12, right, default");
     }
     {
@@ -123,7 +123,7 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblHomepage, "6, 12");
     }
     {
-      JLabel lblThanksTo = new JLabel("Thanks to");
+      JLabel lblThanksTo = new JLabel(BUNDLE.getString("tmm.thanksto")); //$NON-NLS-1$
       contentPanel.add(lblThanksTo, "2, 16, right, default");
     }
     {

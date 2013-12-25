@@ -387,13 +387,13 @@ public class MoviePanel extends JPanel {
     panelMovieCount = new JPanel();
     panelStatus.add(panelMovieCount, "3, 1, left, fill");
 
-    lblMovieCount = new JLabel("Movies:");
+    lblMovieCount = new JLabel(BUNDLE.getString("tmm.movies") + ":"); //$NON-NLS-1$
     panelMovieCount.add(lblMovieCount);
 
     lblMovieCountFiltered = new JLabel("");
     panelMovieCount.add(lblMovieCountFiltered);
 
-    lblMovieCountOf = new JLabel("of");
+    lblMovieCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
     panelMovieCount.add(lblMovieCountOf);
 
     lblMovieCountTotal = new JLabel("");
@@ -461,14 +461,14 @@ public class MoviePanel extends JPanel {
 
     menu.addSeparator();
 
-    JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape"));
+    JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape")); //$NON-NLS-1$
     menuScrape.add(actionScrape2);
     menuScrape.add(actionScrapeSelected);
     menuScrape.add(actionScrapeUnscraped);
     menuScrape.add(actionScrapeMetadataSelected);
     menu.add(menuScrape);
 
-    JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit"));
+    JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
     menuEdit.add(actionEditMovie2);
     menuEdit.add(actionBatchEdit);
     menuEdit.add(actionRename2);
@@ -519,7 +519,7 @@ public class MoviePanel extends JPanel {
     table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
 
     // NFO column
-    table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer("NFO"));
+    table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.nfo"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
     URL imageURL = MainWindow.class.getResource("images/Info.png");
     if (imageURL != null) {
@@ -527,7 +527,7 @@ public class MoviePanel extends JPanel {
     }
 
     // Images column
-    table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer("Images"));
+    table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
     imageURL = null;
     imageURL = MainWindow.class.getResource("images/Image.png");
@@ -536,7 +536,7 @@ public class MoviePanel extends JPanel {
     }
 
     // trailer column
-    table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer("Trailer"));
+    table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(20);
     imageURL = null;
     imageURL = MainWindow.class.getResource("images/ClapBoard.png");
@@ -545,7 +545,7 @@ public class MoviePanel extends JPanel {
     }
 
     // subtitles column
-    table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer("Subtitles"));
+    table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(20);
     imageURL = null;
     imageURL = MainWindow.class.getResource("images/subtitle.png");

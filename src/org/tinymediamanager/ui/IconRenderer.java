@@ -30,11 +30,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author Manuel Laggner
  */
 public class IconRenderer extends DefaultTableCellRenderer {
+  private static final long serialVersionUID = 400599451709865596L;
 
-  /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
-
-  /** The tooltip. */
   private String            tooltip;
 
   /**
@@ -47,13 +44,6 @@ public class IconRenderer extends DefaultTableCellRenderer {
     this.tooltip = tooltip;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent
-   * (javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
-   */
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     if (value instanceof ImageIcon) {
@@ -72,5 +62,4 @@ public class IconRenderer extends DefaultTableCellRenderer {
 
     return this;
   }
-
 }

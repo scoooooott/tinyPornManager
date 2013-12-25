@@ -18,10 +18,12 @@ package org.tinymediamanager.scraper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class MediaArt.
@@ -29,6 +31,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author Manuel Laggner
  */
 public class MediaArtwork {
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /**
    * The Enum MediaArtworkType.
@@ -59,13 +62,13 @@ public class MediaArtwork {
    */
   public enum PosterSizes {
     /** The large. */
-    LARGE("Large" + ": ~1000x1500px", 8),
+    LARGE(BUNDLE.getString("Settings.image.large") + ": ~1000x1500px", 8), //$NON-NLS-1$
     /** The big. */
-    BIG("Big" + ": ~500x750px", 4),
+    BIG(BUNDLE.getString("Settings.image.big") + ": ~500x750px", 4), //$NON-NLS-1$
     /** The medium. */
-    MEDIUM("Medium" + ": ~342x513px", 2),
+    MEDIUM(BUNDLE.getString("Settings.image.medium") + ": ~342x513px", 2), //$NON-NLS-1$
     /** The small. */
-    SMALL("Small" + ": ~185x277px", 1);
+    SMALL(BUNDLE.getString("Settings.image.small") + ": ~185x277px", 1); //$NON-NLS-1$
 
     /** The text. */
     private String text;
@@ -112,11 +115,11 @@ public class MediaArtwork {
    */
   public enum FanartSizes {
     /** The large. */
-    LARGE("Large" + ": ~1920x1080px", 8),
+    LARGE(BUNDLE.getString("Settings.image.large") + ": ~1920x1080px", 8), //$NON-NLS-1$
     /** The medium. */
-    MEDIUM("Medium" + ": ~1280x720px", 2),
+    MEDIUM(BUNDLE.getString("Settings.image.medium") + ": ~1280x720px", 2), //$NON-NLS-1$
     /** The small. */
-    SMALL("Small" + ": ~300x168px", 1);
+    SMALL(BUNDLE.getString("Settings.image.small") + ": ~300x168px", 1); //$NON-NLS-1$
 
     /** The text. */
     private String text;

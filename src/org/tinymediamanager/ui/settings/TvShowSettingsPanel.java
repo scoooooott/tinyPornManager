@@ -296,7 +296,7 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     txtpnSeasonHint.setText(BUNDLE.getString("Settings.tvshowseasonhint")); //$NON-NLS-1$
     panelRenamer.add(txtpnSeasonHint, "6, 12, fill, fill");
 
-    JLabel lblExampleT = new JLabel("Example");
+    JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
     panelRenamer.add(lblExampleT, "2, 14, right, default");
 
     cbTvShowForPreview = new JComboBox();

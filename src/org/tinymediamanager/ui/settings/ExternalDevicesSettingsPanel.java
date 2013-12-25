@@ -60,7 +60,7 @@ public class ExternalDevicesSettingsPanel extends JPanel {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JPanel panelWol = new JPanel();
-    panelWol.setBorder(new TitledBorder(null, "Wake on LAN", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelWol.setBorder(new TitledBorder(null, BUNDLE.getString("tmm.wakeonlan"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
     add(panelWol, "2, 2, fill, fill");
     panelWol.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(50dlu;default):grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(100px;default)"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
