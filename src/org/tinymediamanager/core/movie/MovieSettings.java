@@ -72,6 +72,8 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           SCRAPER_THRESHOLD                        = "scraperThreshold";
   private final static String           DETECT_MOVIE_MULTI_DIR                   = "detectMovieMultiDir";
   private final static String           BUILD_IMAGE_CACHE_ON_IMPORT              = "buildImageCacheOnImport";
+  private final static String           BAD_WORDS                                = "badWords";
+  private final static String           ENTRY                                    = "entry";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -88,6 +90,10 @@ public class MovieSettings extends AbstractModelObject {
   @XmlElementWrapper(name = MOVIE_FANART_FILENAME)
   @XmlElement(name = FILENAME)
   private final List<MovieFanartNaming> movieFanartFilenames                     = new ArrayList<MovieFanartNaming>();
+
+  @XmlElementWrapper(name = BAD_WORDS)
+  @XmlElement(name = ENTRY)
+  private final List<String>            badWords                                 = ObservableCollections.observableList(new ArrayList<String>());
 
   private MovieConnectors               movieConnector                           = MovieConnectors.XBMC;
   private String                        movieRenamerPathname                     = "$T ($Y)";
@@ -538,5 +544,21 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.movieRenamerCreateMoviesetForSingleMovie;
     this.movieRenamerCreateMoviesetForSingleMovie = newValue;
     firePropertyChange(MOVIE_RENAMER_MOVIESET_SINGLE_MOVIE, oldValue, newValue);
+  }
+
+  public void addBadWord(String badWord) {
+    if (!badWords.contains(badWord)) {
+      badWords.add(badWord);
+      firePropertyChange(BAD_WORDS, null, badWords);
+    }
+  }
+
+  public void removeBadWord(String badWord) {
+    badWords.remove(badWord);
+    firePropertyChange(BAD_WORDS, null, badWords);
+  }
+
+  public List<String> getBadWords() {
+    return badWords;
   }
 }

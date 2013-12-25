@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
 
 /**
@@ -111,13 +112,17 @@ public class ParserUtils {
       }
     }
 
-    // rebuild string
+    // rebuild string, respecting bad words
     String name = "";
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
-        name = name + s[i] + " ";
+        // check for bad words
+        if (!Globals.settings.getMovieSettings().getBadWords().contains(s[i])) {
+          name = name + s[i] + " ";
+        }
       }
     }
+
     ret[0] = name.trim();
     ret[1] = year.trim();
     LOGGER.debug("Movie title should be: \"" + ret[0] + "\", from " + ret[1]);
