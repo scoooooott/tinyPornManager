@@ -25,6 +25,8 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -576,7 +578,17 @@ public class TvShowEditorDialog extends JDialog {
         tags.add(tag);
       }
 
-      for (TvShowEpisode episode : tvShowToEdit.getEpisodes()) {
+      List<TvShowEpisode> epl = tvShowToEdit.getEpisodes();
+      // custom sort per filename (just this time)
+      // for unknown EPs (-1/-1) this is extremely useful to sort like on filesystem
+      // and for already renamed ones, it makes no difference
+      Collections.sort(epl, new Comparator<TvShowEpisode>() {
+        public int compare(TvShowEpisode s1, TvShowEpisode s2) {
+          return s1.getMediaFiles(MediaFileType.VIDEO).get(0).getFile().compareTo(s2.getMediaFiles(MediaFileType.VIDEO).get(0).getFile());
+        }
+      });
+
+      for (TvShowEpisode episode : epl) {
         TvShowEpisodeEditorContainer container = new TvShowEpisodeEditorContainer();
         container.tvShowEpisode = episode;
         container.season = episode.getSeason();
@@ -998,7 +1010,7 @@ public class TvShowEditorDialog extends JDialog {
     public String getMediaFilename() {
       List<MediaFile> mfs = tvShowEpisode.getMediaFiles(MediaFileType.VIDEO);
       if (mfs != null && mfs.size() > 0) {
-        return mfs.get(0).getFilename();
+        return mfs.get(0).getFile().getAbsolutePath();
       }
       else {
         return "";
