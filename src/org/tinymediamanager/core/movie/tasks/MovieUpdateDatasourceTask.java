@@ -61,7 +61,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   // skip well-known, but unneeded folders (UPPERCASE)
   private static final List<String> skipFolders = Arrays.asList(".", "..", ".ACTORS", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
                                                     "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", ".APPLEDOUBLE",
-                                                    ".APPLEDB", ".TRASHES", ".TEMPORARYITEMS");
+                                                    ".APPLEDB", ".APPLEDESKTOP", ".TRASHES", ".TEMPORARYITEMS");
 
   private List<String>              dataSources;
   private MovieList                 movieList;
