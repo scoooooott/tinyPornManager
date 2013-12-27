@@ -1463,23 +1463,6 @@ public class Movie extends MediaEntity {
    * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo) {
-    if (isDisc) {
-      // detect if this directory is a DVD or BR directory
-      File dir = new File(path, "VIDEO_TS");
-      if (dir.exists()) {
-        // we need to pass the subdir in this case
-        // info for that file naming: http://wiki.xbmc.org/index.php?title=NFO_files/movies
-        return "VIDEO_TS" + File.separator + "VIDEO_TS.nfo";
-      }
-
-      dir = new File(path, "BDMV");
-      if (dir.exists()) {
-        // we need to pass the subdir in this case
-        // info for that file naming: http://forum.xbmc.org/showthread.php?tid=155523
-        return "BDMV" + File.separator + "index.nfo";
-      }
-    }
-
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
       return getNfoFilename(nfo, mfs.get(0).getFilename());
@@ -1499,8 +1482,24 @@ public class Movie extends MediaEntity {
    * @return the nfo filename
    */
   public String getNfoFilename(MovieNfoNaming nfo, String newMovieFilename) {
-    String filename = "";
+    if (isDisc) {
+      // detect if this directory is a DVD or BR directory
+      File dir = new File(path, "VIDEO_TS");
+      if (dir.exists()) {
+        // we need to pass the subdir in this case
+        // info for that file naming: http://wiki.xbmc.org/index.php?title=NFO_files/movies
+        return "VIDEO_TS" + File.separator + "VIDEO_TS.nfo";
+      }
 
+      dir = new File(path, "BDMV");
+      if (dir.exists()) {
+        // we need to pass the subdir in this case
+        // info for that file naming: http://forum.xbmc.org/showthread.php?tid=155523
+        return "BDMV" + File.separator + "index.nfo";
+      }
+    }
+
+    String filename = "";
     switch (nfo) {
       case FILENAME_NFO:
         String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
