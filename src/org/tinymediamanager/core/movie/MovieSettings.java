@@ -74,6 +74,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           BUILD_IMAGE_CACHE_ON_IMPORT              = "buildImageCacheOnImport";
   private final static String           BAD_WORDS                                = "badWords";
   private final static String           ENTRY                                    = "entry";
+  private final static String           RUNTIME_FROM_MI                          = "runtimeFromMediaInfo";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -126,6 +127,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       detectMovieMultiDir                      = false;
   private boolean                       buildImageCacheOnImport                  = false;
   private boolean                       movieRenamerCreateMoviesetForSingleMovie = false;
+  private boolean                       runtimeFromMediaInfo                     = false;
 
   public MovieSettings() {
   }
@@ -544,6 +546,16 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.movieRenamerCreateMoviesetForSingleMovie;
     this.movieRenamerCreateMoviesetForSingleMovie = newValue;
     firePropertyChange(MOVIE_RENAMER_MOVIESET_SINGLE_MOVIE, oldValue, newValue);
+  }
+
+  public boolean isRuntimeFromMediaInfo() {
+    return runtimeFromMediaInfo;
+  }
+
+  public void setRuntimeFromMediaInfo(boolean newValue) {
+    boolean oldValue = this.runtimeFromMediaInfo;
+    this.runtimeFromMediaInfo = newValue;
+    firePropertyChange(RUNTIME_FROM_MI, oldValue, newValue);
   }
 
   public void addBadWord(String badWord) {

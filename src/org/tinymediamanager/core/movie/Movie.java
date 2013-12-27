@@ -600,6 +600,9 @@ public class Movie extends MediaEntity {
    * @return the runtime
    */
   public int getRuntime() {
+    if (Globals.settings.getMovieSettings().isRuntimeFromMediaInfo()) {
+      return getRuntimeFromMediaFilesInMinutes();
+    }
     return runtime == 0 ? getRuntimeFromMediaFilesInMinutes() : runtime;
   }
 
