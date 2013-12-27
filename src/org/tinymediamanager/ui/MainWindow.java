@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -301,15 +302,21 @@ public class MainWindow extends JFrame {
     mntmBugReport.setText(BUNDLE.getString("BugReport")); //$NON-NLS-1$
     menuBar.add(mnTmm);
 
-    mnTmm = new JMenu(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
-    menuBar.add(mnTmm);
-    JMenuItem mntmDonate = mnTmm.add(actionDonate);
-    mntmDonate.setText(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
-
     mnTmm = new JMenu("?");
     menuBar.add(mnTmm);
     JMenuItem mntmAbout = mnTmm.add(actionAbout);
     mntmAbout.setText(BUNDLE.getString("tmm.about")); //$NON-NLS-1$
+
+    menuBar.add(Box.createGlue());
+
+    //    mnTmm = new JMenu(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
+    JButton btnDonate = new JButton(actionDonate);
+    btnDonate.setBorderPainted(false);
+    btnDonate.setFocusPainted(false);
+    btnDonate.setContentAreaFilled(false);
+    menuBar.add(btnDonate);
+    // JMenuItem mntmDonate = mnTmm.add(actionDonate);
+    //    mntmDonate.setText(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
 
     // Globals.executor.execute(new MyStatusbarThread());
     // use a Future to be able to cancel it

@@ -16,8 +16,10 @@
 package org.tinymediamanager.ui.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -26,6 +28,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The DonateAction to redirect to the donate page
@@ -33,8 +36,15 @@ import org.tinymediamanager.ui.TmmUIHelper;
  * @author Manuel Laggner
  */
 public class DonateAction extends AbstractAction {
-  private static final long   serialVersionUID = 1668251251156765161L;
-  private static final Logger LOGGER           = LoggerFactory.getLogger(DonateAction.class);
+  private static final long           serialVersionUID = 1668251251156765161L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(DonateAction.class);
+
+  public DonateAction() {
+    //    putValue(NAME, BUNDLE.getString("Feedback")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/btn_donate_SM.gif")));
+  }
 
   /*
    * (non-Javadoc)
