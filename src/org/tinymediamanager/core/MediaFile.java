@@ -193,21 +193,21 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
-      if (name.contains("sample") || name.contains("trailer") || foldername.contains("sample")) {
+      if (name.contains("trailer") || foldername.contains("trailer")) {
         return MediaFileType.TRAILER;
       }
 
+      if (name.contains("sample") || foldername.contains("sample")) {
+        return MediaFileType.SAMPLE;
+      }
+
       // best approach so far: https://github.com/brentosmith/xbmc-dvdextras
-      if (name.matches("(?i).*[ _.-]extras[ _.-].*") || foldername.equalsIgnoreCase("extras")) {
+      if (name.matches("(?i).*[ _.-]extra[s]?[ _.-].*") || foldername.equalsIgnoreCase("extras")) {
         return MediaFileType.VIDEO_EXTRA;
       }
 
       return MediaFileType.VIDEO;
     }
-
-    // if (name.contains("subs") || name.contains("subtitle") || foldername.contains("subs")) {
-    // return MediaFileType.SUBTITLE;
-    // }
 
     return MediaFileType.UNKNOWN;
   }
@@ -282,6 +282,16 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return (type.equals(MediaFileType.GRAPHIC) || type.equals(MediaFileType.BANNER) || type.equals(MediaFileType.FANART)
         || type.equals(MediaFileType.POSTER) || type.equals(MediaFileType.THUMB) || type.equals(MediaFileType.EXTRAFANART) || type
           .equals(MediaFileType.SEASON_POSTER));
+  }
+
+  /**
+   * Is this a playable video file?.
+   * 
+   * @return true/false
+   */
+  public boolean isVideo() {
+    return (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER) || type
+        .equals(MediaFileType.SAMPLE));
   }
 
   /**
@@ -1089,6 +1099,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     switch (type) {
       case VIDEO:
       case VIDEO_EXTRA:
+      case SAMPLE:
       case TRAILER:
         height = getMediaInfo(StreamKind.Video, 0, "Height");
         scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
@@ -1333,6 +1344,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     switch (type) {
       case VIDEO:
       case VIDEO_EXTRA:
+      case SAMPLE:
       case TRAILER:
       case AUDIO:
         // overall bitrate (OverallBitRate/String)
@@ -1388,7 +1400,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // parse audio, video and graphic files
     if (type.equals(MediaFileType.VIDEO) || type.equals(MediaFileType.VIDEO_EXTRA) || type.equals(MediaFileType.TRAILER)
-        || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO) || isGraphic()) {
+        || type.equals(MediaFileType.SAMPLE) || type.equals(MediaFileType.SUBTITLE) || type.equals(MediaFileType.AUDIO) || isGraphic()) {
       return true;
     }
 

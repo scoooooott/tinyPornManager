@@ -596,6 +596,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.addToMediaFiles(mf);
             break;
 
+          case SAMPLE:
+            LOGGER.debug("parsing sample " + mf.getFilename());
+            movie.addToMediaFiles(mf);
+            break;
+
           case SUBTITLE:
             LOGGER.debug("parsing subtitle " + mf.getFilename());
             if (!mf.isPacked()) {

@@ -23,10 +23,13 @@ package org.tinymediamanager.core;
  */
 public enum MediaFileType {
 
+  // ordering of list = ordering of type in GUI ;)
+
   // @formatter:off
   VIDEO, 
   VIDEO_EXTRA, // bonus/extra videos
   TRAILER, 
+  SAMPLE, // sample != trailer
   AUDIO, 
   SUBTITLE, 
   NFO, 

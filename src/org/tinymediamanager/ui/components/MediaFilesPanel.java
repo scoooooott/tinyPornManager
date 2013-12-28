@@ -96,7 +96,7 @@ public class MediaFilesPanel extends JPanel {
           int row = tableFiles.rowAtPoint(arg0.getPoint());
           row = tableFiles.convertRowIndexToModel(row);
           MediaFile mf = mediaFileEventList.get(row);
-          if (mf.getType() == MediaFileType.VIDEO || mf.getType() == MediaFileType.TRAILER) {
+          if (mf.isVideo()) {
             try {
               TmmUIHelper.openFile(mf.getFile());
             }
@@ -186,7 +186,7 @@ public class MediaFilesPanel extends JPanel {
     public Object getColumnValue(MediaFile mediaFile, int column) {
       switch (column) {
         case 0:
-          if (mediaFile.getType() == MediaFileType.VIDEO || mediaFile.getType() == MediaFileType.TRAILER) {
+          if (mediaFile.isVideo()) {
             return MediaFilesPanel.PLAY_ICON;
           }
           return null;
