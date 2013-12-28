@@ -41,6 +41,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class MovieRenamer.
@@ -877,6 +878,11 @@ public class MovieRenamer {
       // example:
       // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
       newDestination = newDestination.replaceAll(Pattern.quote(replacement) + "+", replacement);
+    }
+
+    // ASCII replacement
+    if (Globals.settings.getMovieSettings().isAsciiReplacement()) {
+      newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
     return newDestination.trim();

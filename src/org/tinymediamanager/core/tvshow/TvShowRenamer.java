@@ -34,6 +34,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The TvShow renamer Works on per MediaFile basis
@@ -397,6 +398,11 @@ public class TvShowRenamer {
       }
     }
 
+    // ASCII replacement
+    if (Globals.settings.getTvShowSettings().isAsciiReplacement()) {
+      filename = StrgUtils.convertToAscii(filename, false);
+    }
+
     filename = filename + "." + mf.getExtension(); // readd original extension
 
     return filename;
@@ -480,6 +486,11 @@ public class TvShowRenamer {
     else {
       newDestination = newDestination.replaceAll(File.separator + "{2,}", File.separator);
       newDestination = newDestination.replaceAll("^" + File.separator, "");
+    }
+
+    // ASCII replacement
+    if (Globals.settings.getTvShowSettings().isAsciiReplacement()) {
+      newDestination = StrgUtils.convertToAscii(newDestination, false);
     }
 
     // trim out unnecessary whitespaces

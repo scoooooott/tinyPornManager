@@ -42,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -103,6 +104,8 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
   private JCheckBox                   chckbxImageCache;
   private JLabel                      lblImageCacheHint;
   private JRadioButton                rdbtn0Sxe;
+  private JCheckBox                   chckbxAsciiReplacement;
+  private JTextPane                   txtpntAsciiHint;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -182,12 +185,14 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
 
     add(panelRenamer, "2, 4, fill, fill");
-    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.MIN_COLSPEC,
+    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-            FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     chckbxAddSeason = new JCheckBox(BUNDLE.getString("Settings.tvshowseasontofilename")); //$NON-NLS-1$
     chckbxAddSeason.addActionListener(new ActionListener() {
@@ -268,11 +273,27 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     cbSeparator = new JComboBox(separators.toArray());
     panelRenamer.add(cbSeparator, "4, 10, fill, default");
 
+    chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
+    chckbxAsciiReplacement.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        checkChanges();
+        createRenamerExample();
+      }
+    });
+    panelRenamer.add(chckbxAsciiReplacement, "2, 12, 5, 1");
+
+    txtpntAsciiHint = new JTextPane();
+    txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
+    txtpntAsciiHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    txtpntAsciiHint.setBackground(UIManager.getColor("Panel.background"));
+    panelRenamer.add(txtpntAsciiHint, "2, 14, 5, 1, fill, fill");
+
     lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
-    panelRenamer.add(lblSeasonFolderName, "2, 12, right, top");
+    panelRenamer.add(lblSeasonFolderName, "2, 16, right, top");
 
     tfSeasonFoldername = new JTextField();
-    panelRenamer.add(tfSeasonFoldername, "4, 12, fill, top");
+    panelRenamer.add(tfSeasonFoldername, "4, 16, fill, top");
     tfSeasonFoldername.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent arg0) {
@@ -294,10 +315,10 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     txtpnSeasonHint.setOpaque(false);
     txtpnSeasonHint.setFont(new Font("Dialog", Font.PLAIN, 10));
     txtpnSeasonHint.setText(BUNDLE.getString("Settings.tvshowseasonhint")); //$NON-NLS-1$
-    panelRenamer.add(txtpnSeasonHint, "6, 12, fill, fill");
+    panelRenamer.add(txtpnSeasonHint, "6, 16, fill, fill");
 
     JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
-    panelRenamer.add(lblExampleT, "2, 14, right, default");
+    panelRenamer.add(lblExampleT, "2, 18, right, default");
 
     cbTvShowForPreview = new JComboBox();
     cbTvShowForPreview.addActionListener(new ActionListener() {
@@ -306,10 +327,10 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
         createRenamerExample();
       }
     });
-    panelRenamer.add(cbTvShowForPreview, "4, 14, 3, 1, fill, default");
+    panelRenamer.add(cbTvShowForPreview, "4, 18, 3, 1, fill, default");
 
     lblExample = new JLabel("");
-    panelRenamer.add(lblExample, "2, 16, 5, 1");
+    panelRenamer.add(lblExample, "2, 20, 5, 1");
 
     initDataBindings();
 
@@ -480,5 +501,10 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_5, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_6 = BeanProperty.create("tvShowSettings.asciiReplacement");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_6, chckbxAsciiReplacement, jCheckBoxBeanProperty);
+    autoBinding_5.bind();
   }
 }
