@@ -159,6 +159,10 @@ public class MovieExporterDialog extends JDialog {
         }
         // check selected template
         int index = list.getSelectedIndex();
+        if (index < 0) {
+          return;
+        }
+
         ExportTemplate selectedTemplate = templatesFound.get(index);
         if (selectedTemplate != null) {
           try {
