@@ -65,6 +65,7 @@ public class TvShowDetailsPanel extends JPanel {
   private JLabel                      lblStudio;
   private JLabel                      lblStatus;
   private JLabel                      lblYear;
+  private JLabel                      lblTags;
 
   /**
    * Instantiates a new tv show details panel.
@@ -74,38 +75,37 @@ public class TvShowDetailsPanel extends JPanel {
    */
   public TvShowDetailsPanel(TvShowSelectionModel selectionModel) {
     this.selectionModel = selectionModel;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow(2)"), },
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"), ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"), ColumnSpec.decode("default:grow(2)"), },
         new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, }));
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblPremieredT = new JLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
     setBoldLabel(lblPremieredT);
     add(lblPremieredT, "1, 2");
 
     lblPremiered = new JLabel("");
-    add(lblPremiered, "5, 2");
+    add(lblPremiered, "3, 2");
 
     JLabel lblYearT = new JLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
     setBoldLabel(lblYearT);
-    add(lblYearT, "7, 2");
+    add(lblYearT, "5, 2");
 
     lblYear = new JLabel("");
-    add(lblYear, "11, 2");
+    add(lblYear, "7, 2");
 
     JLabel lblStatusT = new JLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
     setBoldLabel(lblStatusT);
     add(lblStatusT, "1, 4");
 
     lblStatus = new JLabel("");
-    add(lblStatus, "5, 4");
+    add(lblStatus, "3, 4");
 
     JLabel lblImdbIdT = new JLabel("IMDB Id");
     setBoldLabel(lblImdbIdT);
-    add(lblImdbIdT, "7, 4");
+    add(lblImdbIdT, "5, 4");
 
     lblImdbId = new LinkLabel("");
     lblImdbId.addActionListener(new ActionListener() {
@@ -121,7 +121,7 @@ public class TvShowDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblImdbId, "11, 4");
+    add(lblImdbId, "7, 4");
     lblImdbIdT.setLabelFor(lblImdbId);
 
     JLabel lblStudioT = new JLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
@@ -129,11 +129,11 @@ public class TvShowDetailsPanel extends JPanel {
     add(lblStudioT, "1, 6");
 
     lblStudio = new JLabel("");
-    add(lblStudio, "5, 6");
+    add(lblStudio, "3, 6");
 
     JLabel lblThetvdbIdT = new JLabel("TheTVDB Id");
     setBoldLabel(lblThetvdbIdT);
-    add(lblThetvdbIdT, "7, 6");
+    add(lblThetvdbIdT, "5, 6");
 
     lblThetvdbId = new LinkLabel("");
     lblThetvdbId.addActionListener(new ActionListener() {
@@ -149,7 +149,7 @@ public class TvShowDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblThetvdbId, "11, 6");
+    add(lblThetvdbId, "7, 6");
     lblThetvdbIdT.setLabelFor(lblThetvdbId);
 
     JLabel lblCertificationT = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
@@ -158,7 +158,7 @@ public class TvShowDetailsPanel extends JPanel {
     lblCertificationT.setLabelFor(lblCertification);
 
     lblCertification = new JLabel("");
-    add(lblCertification, "5, 8, 7, 1");
+    add(lblCertification, "3, 8, 5, 1");
 
     JLabel lblGenresT = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     setBoldLabel(lblGenresT);
@@ -166,11 +166,19 @@ public class TvShowDetailsPanel extends JPanel {
     lblGenresT.setLabelFor(lblGenres);
 
     lblGenres = new JLabel("");
-    add(lblGenres, "5, 10, 7, 1");
+    add(lblGenres, "3, 10, 5, 1");
+
+    JLabel lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+    setBoldLabel(lblTagsT);
+    add(lblTagsT, "1, 12");
+    lblGenresT.setLabelFor(lblTags);
+
+    lblTags = new JLabel("");
+    add(lblTags, "3, 12, 5, 1");
 
     JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     setBoldLabel(lblPathT);
-    add(lblPathT, "1, 12");
+    add(lblPathT, "1, 14");
 
     lblPath = new LinkLabel("");
     lblPathT.setLabelFor(lblPath);
@@ -193,8 +201,12 @@ public class TvShowDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblPath, "5, 12, 7, 1");
+    add(lblPath, "3, 14, 5, 1");
     initDataBindings();
+  }
+
+  private void setBoldLabel(JLabel label) {
+    label.setFont(label.getFont().deriveFont(Font.BOLD));
   }
 
   protected void initDataBindings() {
@@ -243,9 +255,10 @@ public class TvShowDetailsPanel extends JPanel {
     AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowSelectionModelBeanProperty_8, lblYear, jLabelBeanProperty);
     autoBinding_8.bind();
-  }
-
-  private void setBoldLabel(JLabel label) {
-    label.setFont(label.getFont().deriveFont(Font.BOLD));
+    //
+    BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_9 = BeanProperty.create("selectedTvShow.tagAsString");
+    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_9, lblTags, jLabelBeanProperty);
+    autoBinding_9.bind();
   }
 }

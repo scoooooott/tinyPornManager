@@ -32,12 +32,14 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -53,6 +55,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
@@ -75,6 +78,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -94,8 +98,10 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
   private static final Date           INITIAL_DATE     = new Date(0);
 
+  private TvShowList                  tvShowList       = TvShowList.getInstance();
   private TvShowEpisode               episodeToEdit;
   private List<TvShowActor>           cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
+  private List<String>                tags             = ObservableCollections.observableList(new ArrayList<String>());
   private boolean                     continueQueue    = true;
 
   private JTextField                  tfTitle;
@@ -111,6 +117,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   private JTextField                  tfDirector;
   private JTextField                  tfWriter;
   private JTable                      tableGuests;
+  private JComboBox                   cbTags;
+  private JList                       listTags;
 
   /**
    * Instantiates a new tv show episode scrape dialog.
@@ -124,7 +132,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     setTitle(BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
     setName("tvShowEpisodeScraper");
     TmmWindowSaver.loadSettings(this);
-    setBounds(5, 5, 800, 500);
+    setBounds(5, 5, 964, 632);
     setIconImage(Globals.logo);
     setModal(true);
 
@@ -135,14 +143,15 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       getContentPane().add(contentPanel, BorderLayout.CENTER);
       contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("120px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] {
           FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblFilenameT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
       contentPanel.add(lblFilenameT, "2, 2, right, default");
@@ -164,10 +173,10 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       contentPanel.add(spSeason, "4, 6");
 
       JLabel lblEpisode = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
-      contentPanel.add(lblEpisode, "8, 6, right, default");
+      contentPanel.add(lblEpisode, "6, 6, right, default");
 
       spEpisode = new JSpinner();
-      contentPanel.add(spEpisode, "10, 6");
+      contentPanel.add(spEpisode, "8, 6");
 
       JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
       contentPanel.add(lblRating, "2, 8, right, default");
@@ -176,10 +185,10 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       contentPanel.add(spRating, "4, 8");
 
       JLabel lblFirstAired = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
-      contentPanel.add(lblFirstAired, "8, 8, right, default");
+      contentPanel.add(lblFirstAired, "6, 8, right, default");
 
       spFirstAired = new JSpinner(new SpinnerDateModel());
-      contentPanel.add(spFirstAired, "10, 8");
+      contentPanel.add(spFirstAired, "8, 8");
 
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       contentPanel.add(lblWatched, "2, 10, right, default");
@@ -188,16 +197,16 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       contentPanel.add(chckbxWatched, "4, 10");
 
       JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      contentPanel.add(lblDateAdded, "8, 10, right, default");
+      contentPanel.add(lblDateAdded, "6, 10, right, default");
 
       spDateAdded = new JSpinner(new SpinnerDateModel());
-      contentPanel.add(spDateAdded, "10, 10");
+      contentPanel.add(spDateAdded, "8, 10");
 
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
       contentPanel.add(lblPlot, "2, 12, right, top");
 
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "4, 12, 7, 1, fill, fill");
+      contentPanel.add(scrollPane, "4, 12, 5, 1, fill, fill");
 
       taPlot = new JTextArea();
       taPlot.setLineWrap(true);
@@ -217,7 +226,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         }
       });
       lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      contentPanel.add(lblThumb, "12, 6, 1, 11");
+      contentPanel.add(lblThumb, "10, 6, 3, 11");
 
       JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
       contentPanel.add(lblDirector, "2, 14, right, default");
@@ -225,7 +234,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       tfDirector = new JTextField();
       tfDirector.setText((String) null);
       tfDirector.setColumns(10);
-      contentPanel.add(tfDirector, "4, 14, 7, 1, fill, default");
+      contentPanel.add(tfDirector, "4, 14, 5, 1, fill, default");
 
       JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
       contentPanel.add(lblWriter, "2, 16, right, default");
@@ -233,27 +242,51 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       tfWriter = new JTextField();
       tfWriter.setText((String) null);
       tfWriter.setColumns(10);
-      contentPanel.add(tfWriter, "4, 16, 7, 1, fill, default");
+      contentPanel.add(tfWriter, "4, 16, 5, 1, fill, default");
 
       JLabel lblGuests = new JLabel(BUNDLE.getString("metatag.guests")); //$NON-NLS-1$
       contentPanel.add(lblGuests, "2, 18, right, top");
 
       JScrollPane scrollPaneGuests = new JScrollPane();
-      contentPanel.add(scrollPaneGuests, "4, 18, 7, 5, fill, fill");
+      contentPanel.add(scrollPaneGuests, "4, 18, 5, 7, fill, fill");
 
       tableGuests = new JTable();
       scrollPaneGuests.setViewportView(tableGuests);
+
+      JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+      contentPanel.add(lblTags, "10, 18, default, top");
+
+      JScrollPane scrollPaneTags = new JScrollPane();
+      contentPanel.add(scrollPaneTags, "12, 18, 1, 5, fill, fill");
+
+      listTags = new JList();
+      scrollPaneTags.setViewportView(listTags);
 
       JButton btnAddActor = new JButton("");
       btnAddActor.setIcon(new ImageIcon(TvShowEpisodeEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       contentPanel.add(btnAddActor, "2, 20, right, top");
 
+      JButton btnAddTag = new JButton("");
+      btnAddTag.setMargin(new Insets(2, 2, 2, 2));
+      btnAddTag.setAction(new AddTagAction());
+      btnAddTag.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      contentPanel.add(btnAddTag, "10, 20, right, top");
+
       JButton btnRemoveActor = new JButton("");
       btnRemoveActor.setIcon(new ImageIcon(TvShowEpisodeEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       contentPanel.add(btnRemoveActor, "2, 22, right, top");
 
+      JButton btnRemoveTag = new JButton("");
+      btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
+      btnRemoveTag.setAction(new RemoveTagAction());
+      btnRemoveTag.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      contentPanel.add(btnRemoveTag, "10, 22, right, top");
+
+      cbTags = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());
+      cbTags.setEditable(true);
+      contentPanel.add(cbTags, "12, 24, fill, default");
     }
 
     {
@@ -348,6 +381,10 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         actor.setThumb(origCast.getThumb());
         cast.add(actor);
       }
+
+      for (String tag : episodeToEdit.getTags()) {
+        tags.add(tag);
+      }
     }
 
     // adjust table columns
@@ -399,6 +436,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         episodeToEdit.setThumbUrl(lblThumb.getImageUrl());
         episodeToEdit.writeThumbImage();
       }
+
+      episodeToEdit.setTags(tags);
 
       episodeToEdit.writeNFO();
       episodeToEdit.saveToDb();
@@ -509,5 +548,50 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     jTableBinding.addColumnBinding(movieCastBeanProperty_1);
     //
     jTableBinding.bind();
+    //
+    JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
+    jListBinding_1.bind();
+    //
+  }
+
+  private class AddTagAction extends AbstractAction {
+    private static final long serialVersionUID = 5968029647764173330L;
+
+    public AddTagAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.add")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      String newTag = (String) cbTags.getSelectedItem();
+      boolean tagFound = false;
+
+      // search if this tag already has been added
+      for (String tag : tags) {
+        if (tag.equals(newTag)) {
+          tagFound = true;
+          break;
+        }
+      }
+
+      // add tag
+      if (!tagFound) {
+        tags.add(newTag);
+      }
+    }
+  }
+
+  private class RemoveTagAction extends AbstractAction {
+    private static final long serialVersionUID = -4799506776650330500L;
+
+    public RemoveTagAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.remove")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      String tag = (String) listTags.getSelectedValue();
+      tags.remove(tag);
+    }
   }
 }

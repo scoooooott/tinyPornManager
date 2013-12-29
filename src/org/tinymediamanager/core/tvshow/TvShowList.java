@@ -50,25 +50,30 @@ import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
  * @author Manuel Laggner
  */
 public class TvShowList extends AbstractModelObject {
-  private static final Logger    LOGGER         = LoggerFactory.getLogger(TvShowList.class);
-  private static TvShowList      instance       = null;
+  private static final Logger    LOGGER                = LoggerFactory.getLogger(TvShowList.class);
+  private static TvShowList      instance              = null;
 
-  private List<TvShow>           tvShowList     = ObservableCollections.observableList(new ArrayList<TvShow>());
-  private List<String>           tagsObservable = ObservableCollections.observableList(new ArrayList<String>());
-  private PropertyChangeListener tagListener;
+  private List<TvShow>           tvShowList            = ObservableCollections.observableList(new ArrayList<TvShow>());
+  private List<String>           tvShowTagsObservable  = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>           episodeTagsObservable = ObservableCollections.observableList(new ArrayList<String>());
+  private PropertyChangeListener propertyChangeListener;
 
   /**
    * Instantiates a new TvShowList.
    */
   private TvShowList() {
     // the tag listener: its used to always have a full list of all tags used in tmm
-    tagListener = new PropertyChangeListener() {
+    propertyChangeListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
         // listen to changes of tags
-        if ("tag".equals(evt.getPropertyName())) {
+        if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShow) {
           TvShow tvShow = (TvShow) evt.getSource();
-          updateTags(tvShow);
+          updateTvShowTags(tvShow);
+        }
+        if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
+          TvShowEpisode episode = (TvShowEpisode) evt.getSource();
+          updateEpisodeTags(episode);
         }
         if (EPISODE_COUNT.equals(evt.getPropertyName())) {
           firePropertyChange(EPISODE_COUNT, 0, 1);
@@ -109,7 +114,7 @@ public class TvShowList extends AbstractModelObject {
     int oldValue = tvShowList.size();
 
     tvShowList.add(newValue);
-    newValue.addPropertyChangeListener(tagListener);
+    newValue.addPropertyChangeListener(propertyChangeListener);
     firePropertyChange(TV_SHOWS, null, tvShowList);
     firePropertyChange(ADDED_TV_SHOW, null, newValue);
     firePropertyChange(TV_SHOW_COUNT, oldValue, tvShowList.size());
@@ -193,10 +198,13 @@ public class TvShowList extends AbstractModelObject {
             tvShow.initializeAfterLoading();
             for (TvShowEpisode episode : tvShow.getEpisodes()) {
               episode.initializeAfterLoading();
+              updateEpisodeTags(episode);
             }
 
             // for performance reasons we add tv shows directly
             tvShowList.add(tvShow);
+            updateTvShowTags(tvShow);
+            tvShow.addPropertyChangeListener(propertyChangeListener);
           }
           else {
             LOGGER.error("retrieved no tv show: " + obj);
@@ -339,51 +347,64 @@ public class TvShowList extends AbstractModelObject {
     return searchResult;
   }
 
-  /**
-   * Update tags.
-   * 
-   * @param tvShow
-   *          the tv show
-   */
-  private void updateTags(TvShow tvShow) {
+  private void updateTvShowTags(TvShow tvShow) {
     for (String tagInTvShow : tvShow.getTags()) {
       boolean tagFound = false;
-      for (String tag : tagsObservable) {
+      for (String tag : tvShowTagsObservable) {
         if (tagInTvShow.equals(tag)) {
           tagFound = true;
           break;
         }
       }
       if (!tagFound) {
-        addTag(tagInTvShow);
+        addTvShowTag(tagInTvShow);
       }
     }
   }
 
-  /**
-   * Adds the tag.
-   * 
-   * @param newTag
-   *          the new tag
-   */
-  private void addTag(String newTag) {
-    for (String tag : tagsObservable) {
+  private void addTvShowTag(String newTag) {
+    for (String tag : tvShowTagsObservable) {
       if (tag.equals(newTag)) {
         return;
       }
     }
 
-    tagsObservable.add(newTag);
-    firePropertyChange("tag", null, tagsObservable);
+    tvShowTagsObservable.add(newTag);
+    firePropertyChange("tag", null, tvShowTagsObservable);
   }
 
-  /**
-   * Gets the tags in tv shows.
-   * 
-   * @return the tags in tv shows
-   */
   public List<String> getTagsInTvShows() {
-    return tagsObservable;
+    return tvShowTagsObservable;
+  }
+
+  private void updateEpisodeTags(TvShowEpisode episode) {
+    for (String tagEpisode : episode.getTags()) {
+      boolean tagFound = false;
+      for (String tag : episodeTagsObservable) {
+        if (tagEpisode.equals(tag)) {
+          tagFound = true;
+          break;
+        }
+      }
+      if (!tagFound) {
+        addEpisodeTag(tagEpisode);
+      }
+    }
+  }
+
+  private void addEpisodeTag(String newTag) {
+    for (String tag : episodeTagsObservable) {
+      if (tag.equals(newTag)) {
+        return;
+      }
+    }
+
+    episodeTagsObservable.add(newTag);
+    firePropertyChange("tag", null, episodeTagsObservable);
+  }
+
+  public List<String> getTagsInEpisodes() {
+    return episodeTagsObservable;
   }
 
   /**

@@ -58,8 +58,8 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "premiered", "status", "studio", "thumb",
-    "actors" })
+@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "tags", "premiered", "status", "studio",
+    "thumb", "actors" })
 public class TvShowToXbmcNfoConnector {
 
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
@@ -83,6 +83,9 @@ public class TvShowToXbmcNfoConnector {
   @XmlElement(name = "genre")
   private List<String>        genres;
 
+  @XmlElement(name = "tag")
+  private List<String>        tags;
+
   /** not supported tags, but used to retrain in NFO. */
 
   @XmlElement
@@ -104,6 +107,7 @@ public class TvShowToXbmcNfoConnector {
   public TvShowToXbmcNfoConnector() {
     genres = new ArrayList<String>();
     actors = new ArrayList<Object>();
+    tags = new ArrayList<String>();
   }
 
   /**
@@ -164,6 +168,11 @@ public class TvShowToXbmcNfoConnector {
     xbmc.actors.clear();
     for (TvShowActor actor : tvShow.getActors()) {
       xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
+    }
+
+    xbmc.tags.clear();
+    for (String tag : tvShow.getTags()) {
+      xbmc.tags.add(tag);
     }
 
     // and marshall it
@@ -238,6 +247,10 @@ public class TvShowToXbmcNfoConnector {
         TvShowActor tvShowActor = new TvShowActor(actor.getName(), actor.getRole());
         tvShowActor.setThumb(actor.getThumb());
         tvShow.addActor(tvShowActor);
+      }
+
+      for (String tag : xbmc.tags) {
+        tvShow.addToTags(tag);
       }
 
       tvShow.addToMediaFiles(new MediaFile(nfo, MediaFileType.NFO));

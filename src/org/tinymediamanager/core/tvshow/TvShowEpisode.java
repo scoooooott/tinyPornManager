@@ -43,6 +43,7 @@ import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeToXbmcNfoConnector;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -75,6 +76,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   @OneToMany(cascade = CascadeType.ALL)
   private List<TvShowActor>   actors     = new ArrayList<TvShowActor>(0);
+  private List<String>        tags       = new ArrayList<String>(0);
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -331,6 +333,9 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void initializeAfterLoading() {
     super.initializeAfterLoading();
+
+    // remove empty tag and null values
+    Utils.removeEmptyStringsFromList(tags);
   }
 
   /**
@@ -866,5 +871,92 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       }
     }
     return scraped;
+  }
+
+  /**
+   * Adds the to tags.
+   * 
+   * @param newTag
+   *          the new tag
+   */
+  public void addToTags(String newTag) {
+    if (StringUtils.isBlank(newTag)) {
+      return;
+    }
+
+    for (String tag : tags) {
+      if (tag.equals(newTag)) {
+        return;
+      }
+    }
+
+    tags.add(newTag);
+    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAGS_AS_STRING, null, newTag);
+  }
+
+  /**
+   * Removes the from tags.
+   * 
+   * @param removeTag
+   *          the remove tag
+   */
+  public void removeFromTags(String removeTag) {
+    tags.remove(removeTag);
+    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAGS_AS_STRING, null, removeTag);
+  }
+
+  /**
+   * Sets the tags.
+   * 
+   * @param newTags
+   *          the new tags
+   */
+  public void setTags(List<String> newTags) {
+    // two way sync of tags
+
+    // first, add new ones
+    for (String tag : newTags) {
+      if (!this.tags.contains(tag)) {
+        this.tags.add(tag);
+      }
+    }
+
+    // second remove old ones
+    for (int i = this.tags.size() - 1; i >= 0; i--) {
+      String tag = this.tags.get(i);
+      if (!newTags.contains(tag)) {
+        this.tags.remove(tag);
+      }
+    }
+
+    firePropertyChange(TAG, null, tags);
+    firePropertyChange(TAGS_AS_STRING, null, tags);
+  }
+
+  /**
+   * Gets the tag as string.
+   * 
+   * @return the tag as string
+   */
+  public String getTagAsString() {
+    StringBuilder sb = new StringBuilder();
+    for (String tag : tags) {
+      if (!StringUtils.isEmpty(sb)) {
+        sb.append(", ");
+      }
+      sb.append(tag);
+    }
+    return sb.toString();
+  }
+
+  /**
+   * Gets the tags.
+   * 
+   * @return the tags
+   */
+  public List<String> getTags() {
+    return this.tags;
   }
 }

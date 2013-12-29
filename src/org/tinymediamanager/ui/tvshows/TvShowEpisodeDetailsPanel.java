@@ -78,6 +78,8 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
   /** The lbl aired. */
   private JLabel                            lblAired;
   private JButton                           btnPlay;
+  private JLabel                            lblTagsT;
+  private JLabel                            lblTags;
 
   /**
    * Instantiates a new tv show episode details panel.
@@ -87,11 +89,11 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
    */
   public TvShowEpisodeDetailsPanel(TvShowEpisodeSelectionModel model) {
     this.selectionModel = model;
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("25px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, ColumnSpec.decode("25px"),
+        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("55px"), FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
     lblSeasonT.setFont(lblSeasonT.getFont().deriveFont(14f).deriveFont(Font.BOLD));
@@ -99,7 +101,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
 
     lblSeason = new JLabel("");
     lblSeason.setFont(lblSeason.getFont().deriveFont(14f));
-    add(lblSeason, "6, 2");
+    add(lblSeason, "4, 2");
 
     btnPlay = new JButton("");
     btnPlay.setIcon(new ImageIcon(TvShowEpisodeDetailsPanel.class.getResource("/org/tinymediamanager/ui/images/Play.png")));
@@ -117,7 +119,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
         }
       }
     });
-    add(btnPlay, "8, 2, 1, 5");
+    add(btnPlay, "6, 2, 1, 5");
 
     JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
     lblEpisodeT.setFont(lblEpisodeT.getFont().deriveFont(14f).deriveFont(Font.BOLD));
@@ -125,18 +127,25 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
 
     lblEpisode = new JLabel("");
     lblEpisode.setFont(lblEpisode.getFont().deriveFont(14f));
-    add(lblEpisode, "6, 4");
+    add(lblEpisode, "4, 4");
 
     JLabel lblAiredT = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
     lblAiredT.setFont(lblAiredT.getFont().deriveFont(Font.BOLD));
     add(lblAiredT, "2, 6");
 
     lblAired = new JLabel("");
-    add(lblAired, "6, 6");
+    add(lblAired, "4, 6");
+
+    lblTagsT = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+    lblTagsT.setFont(lblTagsT.getFont().deriveFont(Font.BOLD));
+    add(lblTagsT, "2, 8");
+
+    lblTags = new JLabel("");
+    add(lblTags, "4, 8");
 
     JLabel lblPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
     lblPathT.setFont(lblPathT.getFont().deriveFont(Font.BOLD));
-    add(lblPathT, "2, 8");
+    add(lblPathT, "2, 10");
 
     lblPath = new LinkLabel("");
     lblPathT.setLabelFor(lblPath);
@@ -159,13 +168,10 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
         }
       }
     });
-    add(lblPath, "6, 8, 3, 1");
+    add(lblPath, "4, 10, 3, 1");
     initDataBindings();
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty = BeanProperty.create("selectedTvShowEpisode.path");
     BeanProperty<LinkLabel, String> linkLabelBeanProperty = BeanProperty.create("text");
@@ -191,5 +197,11 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         tvShowEpisodeSelectionModelBeanProperty_3, lblAired, jLabelBeanProperty);
     autoBinding_3.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_4 = BeanProperty
+        .create("selectedTvShowEpisode.tagAsString");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowEpisodeSelectionModelBeanProperty_4, lblTags, jLabelBeanProperty);
+    autoBinding_4.bind();
   }
 }

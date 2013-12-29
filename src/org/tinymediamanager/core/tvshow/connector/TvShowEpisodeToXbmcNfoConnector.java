@@ -56,8 +56,8 @@ import org.tinymediamanager.core.tvshow.TvShowEpisode;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "episodedetails")
-@XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "playcount", "lastplayed",
-    "credits", "director", "aired", "premiered", "studio", "actors" })
+@XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "tags", "playcount",
+    "lastplayed", "credits", "director", "aired", "premiered", "studio", "actors" })
 public class TvShowEpisodeToXbmcNfoConnector {
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
   private static JAXBContext  context   = initContext();
@@ -72,6 +72,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
   private String              plot      = "";
   private String              studio    = "";
   private String              mpaa      = "";
+  private String              aired     = "";
+  private String              premiered = "";
 
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
@@ -82,9 +84,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
   @XmlElement(name = "director")
   private List<String>        director;
 
-  private String              aired     = "";
-
-  private String              premiered = "";
+  @XmlElement(name = "tag")
+  private List<String>        tags;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
@@ -113,6 +114,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
     actors = new ArrayList<Object>();
     director = new ArrayList<String>();
     credits = new ArrayList<String>();
+    tags = new ArrayList<String>();
   }
 
   /**
@@ -203,6 +205,11 @@ public class TvShowEpisodeToXbmcNfoConnector {
         for (String writer : writers) {
           xbmc.addCredits(writer);
         }
+      }
+
+      xbmc.tags.clear();
+      for (String tag : episode.getTags()) {
+        xbmc.tags.add(tag);
       }
 
       // and marshall it
@@ -321,6 +328,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
         TvShowActor cast = new TvShowActor(actor.getName(), actor.getRole());
         cast.setThumb(actor.getThumb());
         episode.addActor(cast);
+      }
+
+      for (String tag : xbmc.tags) {
+        episode.addToTags(tag);
       }
 
       episode.addToMediaFiles(new MediaFile(nfo, MediaFileType.NFO));

@@ -18,6 +18,8 @@ package org.tinymediamanager.core.tvshow;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -124,6 +126,9 @@ public class TvShow extends MediaEntity {
   @Transient
   private String                      titleSortable      = "";
 
+  @Transient
+  private PropertyChangeListener      propertyChangeListener;
+
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
   }
@@ -132,6 +137,15 @@ public class TvShow extends MediaEntity {
    * Instantiates a tv show. To initialize the propertychangesupport after loading
    */
   public TvShow() {
+    // give tag events from episodes up to the TvShowList
+    propertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
+          firePropertyChange(evt);
+        }
+      }
+    };
   }
 
   /*
@@ -194,6 +208,7 @@ public class TvShow extends MediaEntity {
   public void addEpisode(TvShowEpisode episode) {
     int oldValue = episodes.size();
     episodes.add(episode);
+    episode.addPropertyChangeListener(propertyChangeListener);
     addToSeason(episode);
 
     Collections.sort(episodes);
@@ -298,6 +313,10 @@ public class TvShow extends MediaEntity {
         }
       }
     }
+
+    for (TvShowEpisode episode : episodes) {
+      episode.addPropertyChangeListener(propertyChangeListener);
+    }
   }
 
   /**
@@ -331,6 +350,7 @@ public class TvShow extends MediaEntity {
       for (int i = episodes.size() - 1; i >= 0; i--) {
         TvShowEpisode episode = episodes.get(i);
         episodes.remove(episode);
+        episode.removePropertyChangeListener(propertyChangeListener);
         Globals.entityManager.remove(episode);
       }
       Globals.entityManager.getTransaction().commit();
@@ -352,6 +372,7 @@ public class TvShow extends MediaEntity {
       synchronized (Globals.entityManager) {
         Globals.entityManager.getTransaction().begin();
         episodes.remove(episode);
+        episode.removePropertyChangeListener(propertyChangeListener);
         Globals.entityManager.remove(episode);
         Globals.entityManager.persist(this);
         Globals.entityManager.getTransaction().commit();
