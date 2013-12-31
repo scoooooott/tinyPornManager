@@ -106,8 +106,7 @@ public class CachedUrl extends Url {
     try {
       if (url == null)
         return null;
-      // now uses a simple md5 hash, which should have a fairly low collision
-      // rate, especially for our limited use
+      // now uses a simple md5 hash, which should have a fairly low collision rate, especially for our limited use
       byte[] key = DigestUtils.md5(url);
       return new String(Hex.encodeHex(key));
     }

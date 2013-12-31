@@ -26,6 +26,7 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.Url;
 
 import com.omertron.themoviedbapi.MovieDbException;
@@ -92,7 +93,7 @@ public final class WebBrowser {
       content = new StringWriter();
 
       Url url = null;
-      url = new Url(requestUrl.toString());
+      url = new CachedUrl(requestUrl.toString());
       url.addHeader("Accept", "application/json");
       url.addHeader("Content-Type", "application/json");
 
