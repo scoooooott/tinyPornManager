@@ -21,6 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -474,8 +475,33 @@ public class TvShowTreeModel implements TreeModel {
 
   public void filter(JTree tree) {
     TreePath selection = tree.getSelectionPath();
+    List<TreePath> currOpen = getCurrExpandedPaths(tree);
     reload();
+    reExpandPaths(tree, currOpen);
     restoreSelection(selection, tree);
+  }
+
+  private List<TreePath> getCurrExpandedPaths(JTree tree) {
+    List<TreePath> paths = new ArrayList<TreePath>();
+    Enumeration<TreePath> expandEnum = tree.getExpandedDescendants(new TreePath(root.getPath()));
+    if (expandEnum == null) {
+      return null;
+    }
+
+    while (expandEnum.hasMoreElements()) {
+      paths.add(expandEnum.nextElement());
+    }
+
+    return paths;
+  }
+
+  private void reExpandPaths(JTree tree, List<TreePath> expPaths) {
+    if (expPaths == null) {
+      return;
+    }
+    for (TreePath tp : expPaths) {
+      tree.expandPath(tp);
+    }
   }
 
   private void reload() {

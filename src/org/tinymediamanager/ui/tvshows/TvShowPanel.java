@@ -204,9 +204,9 @@ public class TvShowPanel extends JPanel {
 
         filteredModel.filter(tree);
 
-        for (int i = 0; i < tree.getRowCount(); i++) {
-          tree.expandRow(i);
-        }
+        // for (int i = 0; i < tree.getRowCount(); i++) {
+        // tree.expandRow(i);
+        // }
       }
     });
 

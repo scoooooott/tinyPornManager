@@ -148,7 +148,7 @@ public class TvShowInformationPanel extends JPanel {
           return new Dimension(getParent().getWidth(),
               (int) (getParent().getWidth() / (float) originalImage.getWidth() * (float) originalImage.getHeight()));
         }
-        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 25d * 6d) + 1);
+        return new Dimension(getParent().getWidth(), (int) (getParent().getWidth() / 25d * 8d) + 1);
       }
     };
     panelLeft.add(lblTvShowBanner);
