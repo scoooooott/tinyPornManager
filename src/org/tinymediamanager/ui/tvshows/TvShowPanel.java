@@ -112,6 +112,7 @@ public class TvShowPanel extends JPanel {
 
   private TvShowTreeModel             treeModel;
   private TvShowSelectionModel        tvShowSelectionModel;
+  private TvShowSeasonSelectionModel  tvShowSeasonSelectionModel;
   private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
   private TvShowList                  tvShowList                    = TvShowList.getInstance();
 
@@ -152,6 +153,7 @@ public class TvShowPanel extends JPanel {
 
     treeModel = new TvShowTreeModel(tvShowList.getTvShows());
     tvShowSelectionModel = new TvShowSelectionModel();
+    tvShowSeasonSelectionModel = new TvShowSeasonSelectionModel();
     tvShowEpisodeSelectionModel = new TvShowEpisodeSelectionModel();
 
     // build menu
@@ -203,10 +205,6 @@ public class TvShowPanel extends JPanel {
         }
 
         filteredModel.filter(tree);
-
-        // for (int i = 0; i < tree.getRowCount(); i++) {
-        // tree.expandRow(i);
-        // }
       }
     });
 
@@ -405,6 +403,9 @@ public class TvShowPanel extends JPanel {
     JPanel panelTvShow = new TvShowInformationPanel(tvShowSelectionModel);
     panelRight.add(panelTvShow, "tvShow");
 
+    JPanel panelTvShowSeason = new TvShowSeasonInformationPanel(tvShowSeasonSelectionModel);
+    panelRight.add(panelTvShowSeason, "tvShowSeason");
+
     JPanel panelTvShowEpisode = new TvShowEpisodeInformationPanel(tvShowEpisodeSelectionModel);
     panelRight.add(panelTvShowEpisode, "tvShowEpisode");
 
@@ -424,12 +425,9 @@ public class TvShowPanel extends JPanel {
           // click on a season
           if (node.getUserObject() instanceof TvShowSeason) {
             TvShowSeason tvShowSeason = (TvShowSeason) node.getUserObject();
-            // act as a click on a tv show if a season of an other tv show has been clicked
-            if (tvShowSeason.getTvShow() != tvShowSelectionModel.getSelectedTvShow()) {
-              tvShowSelectionModel.setSelectedTvShow(tvShowSeason.getTvShow());
-              CardLayout cl = (CardLayout) (panelRight.getLayout());
-              cl.show(panelRight, "tvShow");
-            }
+            tvShowSeasonSelectionModel.setSelectedTvShowSeason(tvShowSeason);
+            CardLayout cl = (CardLayout) (panelRight.getLayout());
+            cl.show(panelRight, "tvShowSeason");
           }
 
           // click on an episode
