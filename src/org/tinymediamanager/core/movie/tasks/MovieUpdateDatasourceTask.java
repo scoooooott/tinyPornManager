@@ -16,7 +16,7 @@
 package org.tinymediamanager.core.movie.tasks;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -321,10 +321,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
 
       // list all type VIDEO files
-      File[] files = movieDir.listFiles(new FilenameFilter() {
+      File[] files = movieDir.listFiles(new FileFilter() {
         @Override
-        public boolean accept(File dir, String name) {
-          return new MediaFile(new File(dir, name)).getType().equals(MediaFileType.VIDEO); // no trailer or extra vids!
+        public boolean accept(File file) {
+          if (file.isDirectory()) {
+            return false;
+          }
+          return new MediaFile(file).getType().equals(MediaFileType.VIDEO); // no trailer or extra vids!
         }
       });
 
