@@ -137,13 +137,14 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
           }
         }
+        waitForCompletionOrCancel();
 
         if (parseDsRoot) {
           LOGGER.debug("parsing datasource root for movies...");
-          parseMovieDirectory(new File(ds), ds);
+          initThreadPool(1, "update");
+          submitTask(new FindMovieTask(new File(ds), ds));
+          waitForCompletionOrCancel();
         }
-
-        waitForCompletionOrCancel();
 
         if (cancel) {
           break;
@@ -775,16 +776,24 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
     @Override
     public String call() throws Exception {
-      // find all possible movie folders recursive
-      ArrayList<File> mov = getRootMovieDirs(subdir, 1);
+      // are we parsing the DS root?
+      if (subdir.equals(new File(datasource))) {
+        // just parse, no recursive scanning!
+        LOGGER.debug("Parsing dataSource root folder: " + subdir);
+        parseMovieDirectory(subdir, datasource);
+      }
+      else {
+        // find all possible movie folders recursive
+        ArrayList<File> mov = getRootMovieDirs(subdir, 1);
 
-      // remove dupe movie dirs
-      HashSet<File> h = new HashSet<File>(mov);
-      mov.clear();
-      mov.addAll(h);
-      for (File movieDir : mov) {
-        // check if multiple movies or a single one
-        parseMovieDirectory(movieDir, datasource);
+        // remove dupe movie dirs
+        HashSet<File> h = new HashSet<File>(mov);
+        mov.clear();
+        mov.addAll(h);
+        for (File movieDir : mov) {
+          // check if multiple movies or a single one
+          parseMovieDirectory(movieDir, datasource);
+        }
       }
 
       // return first level folder name... uhm. yeah
