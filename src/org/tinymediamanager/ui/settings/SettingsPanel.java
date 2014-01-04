@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.UTF8Control;
@@ -73,6 +74,7 @@ public class SettingsPanel extends JPanel {
     add("West", toolbar);
 
     scrollPane = new JScrollPane();
+    scrollPane.getVerticalScrollBar().setUnitIncrement(16);
     add("Center", scrollPane);
 
     ButtonGroup group = new ButtonGroup();
@@ -111,6 +113,13 @@ public class SettingsPanel extends JPanel {
       scrollPane.remove(currentComponent);
     }
     scrollPane.setViewportView(component);
+
+    // scroll to top upon changing the panel
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        scrollPane.getVerticalScrollBar().setValue(0);
+      }
+    });
   }
 
   /**
@@ -129,7 +138,7 @@ public class SettingsPanel extends JPanel {
    */
   private void addButton(String title, String iconUrl, final Component component, JButtonBar bar, ButtonGroup group) {
     Action action = new AbstractAction(title, new ImageIcon(SettingsPanel.class.getResource(iconUrl))) {
-      private static final long serialVersionUID = 1L;
+      private static final long serialVersionUID = -5307503386163952433L;
 
       public void actionPerformed(ActionEvent e) {
         show(component);

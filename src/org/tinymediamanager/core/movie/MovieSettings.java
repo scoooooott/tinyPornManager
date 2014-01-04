@@ -76,6 +76,11 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           ENTRY                                    = "entry";
   private final static String           RUNTIME_FROM_MI                          = "runtimeFromMediaInfo";
   private final static String           ASCII_REPLACEMENT                        = "asciiReplacement";
+  private final static String           YEAR_COLUMN_VISIBLE                      = "yearColumnVisible";
+  private final static String           NFO_COLUMN_VISIBLE                       = "nfoColumnVisible";
+  private final static String           IMAGE_COLUMN_VISIBLE                     = "imageColumnVisible";
+  private final static String           TRAILER_COLUMN_VISIBLE                   = "trailerColumnVisible";
+  private final static String           SUBTITLE_COLUMN_VISIBLE                  = "subtitleColumnVisible";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
   @XmlElement(name = PATH)
@@ -130,6 +135,11 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       movieRenamerCreateMoviesetForSingleMovie = false;
   private boolean                       runtimeFromMediaInfo                     = false;
   private boolean                       asciiReplacement                         = false;
+  private boolean                       yearColumnVisible                        = true;
+  private boolean                       nfoColumnVisible                         = true;
+  private boolean                       imageColumnVisible                       = true;
+  private boolean                       trailerColumnVisible                     = true;
+  private boolean                       subtitleColumnVisible                    = true;
 
   public MovieSettings() {
   }
@@ -584,5 +594,55 @@ public class MovieSettings extends AbstractModelObject {
 
   public List<String> getBadWords() {
     return badWords;
+  }
+
+  public boolean isYearColumnVisible() {
+    return yearColumnVisible;
+  }
+
+  public void setYearColumnVisible(boolean newValue) {
+    boolean oldValue = this.yearColumnVisible;
+    this.yearColumnVisible = newValue;
+    firePropertyChange(YEAR_COLUMN_VISIBLE, oldValue, newValue);
+  }
+
+  public boolean isNfoColumnVisible() {
+    return nfoColumnVisible;
+  }
+
+  public void setNfoColumnVisible(boolean newValue) {
+    boolean oldValue = this.nfoColumnVisible;
+    this.nfoColumnVisible = newValue;
+    firePropertyChange(NFO_COLUMN_VISIBLE, oldValue, newValue);
+  }
+
+  public boolean isImageColumnVisible() {
+    return imageColumnVisible;
+  }
+
+  public void setImageColumnVisible(boolean newValue) {
+    boolean oldValue = this.imageColumnVisible;
+    this.imageColumnVisible = newValue;
+    firePropertyChange(IMAGE_COLUMN_VISIBLE, oldValue, newValue);
+  }
+
+  public boolean isTrailerColumnVisible() {
+    return trailerColumnVisible;
+  }
+
+  public void setTrailerColumnVisible(boolean newValue) {
+    boolean oldValue = this.trailerColumnVisible;
+    this.trailerColumnVisible = newValue;
+    firePropertyChange(TRAILER_COLUMN_VISIBLE, oldValue, newValue);
+  }
+
+  public boolean isSubtitleColumnVisible() {
+    return subtitleColumnVisible;
+  }
+
+  public void setSubtitleColumnVisible(boolean newValue) {
+    boolean oldValue = this.subtitleColumnVisible;
+    this.subtitleColumnVisible = newValue;
+    firePropertyChange(SUBTITLE_COLUMN_VISIBLE, oldValue, newValue);
   }
 }

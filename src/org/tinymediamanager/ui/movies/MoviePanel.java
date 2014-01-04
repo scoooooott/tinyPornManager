@@ -21,6 +21,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -37,7 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -58,6 +59,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.ui.BorderCellRenderer;
 import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.MainWindow;
@@ -115,7 +117,7 @@ public class MoviePanel extends JPanel {
   private JTextField                    textField;
 
   /** The table. */
-  private JTable                        table;
+  private ZebraJTable                   table;
 
   /** The action update data sources. */
   private final Action                  actionUpdateDataSources      = new MovieUpdateDatasourceAction(false);
@@ -512,11 +514,13 @@ public class MoviePanel extends JPanel {
 
     // moviename column
     table.getColumnModel().getColumn(0).setCellRenderer(new BorderCellRenderer());
+    table.getColumnModel().getColumn(0).setIdentifier("title"); //$NON-NLS-1$
 
     // year column
     table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
     table.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
     table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
+    table.getTableHeader().getColumnModel().getColumn(1).setIdentifier("year"); //$NON-NLS-1$
 
     // NFO column
     table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.nfo"))); //$NON-NLS-1$
@@ -525,6 +529,7 @@ public class MoviePanel extends JPanel {
     if (imageURL != null) {
       table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
     }
+    table.getTableHeader().getColumnModel().getColumn(2).setIdentifier("nfo"); //$NON-NLS-1$
 
     // Images column
     table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
@@ -534,6 +539,7 @@ public class MoviePanel extends JPanel {
     if (imageURL != null) {
       table.getColumnModel().getColumn(3).setHeaderValue(new ImageIcon(imageURL));
     }
+    table.getTableHeader().getColumnModel().getColumn(3).setIdentifier("images"); //$NON-NLS-1$
 
     // trailer column
     table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
@@ -543,6 +549,7 @@ public class MoviePanel extends JPanel {
     if (imageURL != null) {
       table.getColumnModel().getColumn(4).setHeaderValue(new ImageIcon(imageURL));
     }
+    table.getTableHeader().getColumnModel().getColumn(4).setIdentifier("trailer"); //$NON-NLS-1$
 
     // subtitles column
     table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
@@ -552,6 +559,7 @@ public class MoviePanel extends JPanel {
     if (imageURL != null) {
       table.getColumnModel().getColumn(5).setHeaderValue(new ImageIcon(imageURL));
     }
+    table.getTableHeader().getColumnModel().getColumn(5).setIdentifier("subtitle"); //$NON-NLS-1$
 
     table.setSelectionModel(movieSelectionModel.getSelectionModel());
     // selecting first movie at startup
@@ -561,6 +569,59 @@ public class MoviePanel extends JPanel {
         selectionModel.setSelectionInterval(0, 0);
       }
     }
+
+    // hide columns if needed
+    if (!Globals.settings.getMovieSettings().isYearColumnVisible()) {
+      table.hideColumn("year"); //$NON-NLS-1$
+    }
+    if (!Globals.settings.getMovieSettings().isNfoColumnVisible()) {
+      table.hideColumn("nfo"); //$NON-NLS-1$
+    }
+    if (!Globals.settings.getMovieSettings().isImageColumnVisible()) {
+      table.hideColumn("images"); //$NON-NLS-1$
+    }
+    if (!Globals.settings.getMovieSettings().isTrailerColumnVisible()) {
+      table.hideColumn("trailer"); //$NON-NLS-1$
+    }
+    if (!Globals.settings.getMovieSettings().isSubtitleColumnVisible()) {
+      table.hideColumn("subtitle"); //$NON-NLS-1$
+    }
+
+    // and add a propertychangelistener to the columnhider
+    PropertyChangeListener settingsPropertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() instanceof MovieSettings) {
+          if ("yearColumnVisible".equals(evt.getPropertyName())) {
+            setColumnVisibility("year", (Boolean) evt.getNewValue()); //$NON-NLS-1$
+          }
+          if ("nfoColumnVisible".equals(evt.getPropertyName())) {
+            setColumnVisibility("nfo", (Boolean) evt.getNewValue());
+          }
+          if ("imageColumnVisible".equals(evt.getPropertyName())) {
+            setColumnVisibility("images", (Boolean) evt.getNewValue()); //$NON-NLS-1$
+          }
+          if ("trailerColumnVisible".equals(evt.getPropertyName())) {
+            setColumnVisibility("trailer", (Boolean) evt.getNewValue()); //$NON-NLS-1$
+          }
+          if ("subtitleColumnVisible".equals(evt.getPropertyName())) {
+            setColumnVisibility("subtitle", (Boolean) evt.getNewValue()); //$NON-NLS-1$
+          }
+        }
+      }
+
+      private void setColumnVisibility(Object identifier, Boolean visible) {
+        if (visible) {
+          table.showColumn(identifier);
+        }
+        else {
+          table.hideColumn(identifier);
+        }
+
+      }
+    };
+
+    Globals.settings.getMovieSettings().addPropertyChangeListener(settingsPropertyChangeListener);
 
     // initialize filteredCount
     lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));

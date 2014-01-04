@@ -22,6 +22,10 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.CellRendererPane;
 import javax.swing.JComponent;
@@ -34,23 +38,18 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 /**
- * The Class MyTable.
+ * The Class ZebraTable. This JTable displays the content with alternating colors
  * 
  * @author Manuel Laggner
  */
 public class ZebraJTable extends JTable {
-
-  /** The Constant serialVersionUID. */
-  private static final long             serialVersionUID = 1L;
-
-  /** The Constant EVEN_ROW_COLOR. */
+  private static final long             serialVersionUID = -5461344983450088208L;
   private static final Color            EVEN_ROW_COLOR   = new Color(241, 245, 250);
-
-  /** The Constant TABLE_GRID_COLOR. */
   private static final Color            TABLE_GRID_COLOR = new Color(0xd9d9d9);
-
-  /** The Constant CELL_RENDER_PANE. */
   private static final CellRendererPane CELL_RENDER_PANE = new CellRendererPane();
+
+  private ArrayList<TableColumn>        indexedColumns   = new ArrayList<TableColumn>();
+  private Map<Object, TableColumn>      hiddenColumns    = new HashMap<Object, TableColumn>();
 
   /**
    * Instantiates a new my table.
@@ -67,7 +66,6 @@ public class ZebraJTable extends JTable {
    *          the dm
    */
   public ZebraJTable(TableModel dm) {
-    // super(dm);
     setModel(dm);
     init();
   }
@@ -76,7 +74,6 @@ public class ZebraJTable extends JTable {
    * Inits the table.
    */
   private void init() {
-    // setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
     setTableHeader(createTableHeader());
     getTableHeader().setReorderingAllowed(false);
@@ -87,6 +84,12 @@ public class ZebraJTable extends JTable {
     // turn off grid painting as we'll handle this manually in order to paint
     // grid lines over the entire viewport.
     setShowGrid(false);
+
+    // store columns
+    Enumeration<TableColumn> enumeration = columnModel.getColumns();
+    while (enumeration.hasMoreElements()) {
+      indexedColumns.add((TableColumn) enumeration.nextElement());
+    }
   }
 
   /**
@@ -96,14 +99,12 @@ public class ZebraJTable extends JTable {
    */
   private JTableHeader createTableHeader() {
     return new JTableHeader(getColumnModel()) {
-      private static final long serialVersionUID = 1L;
+      private static final long serialVersionUID = -7676154270682107643L;
 
       @Override
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // if this JTableHEader is parented in a JViewport, then paint the
-        // table header background to the right of the last column if
-        // neccessary.
+        // if this JTableHEader is parented in a JViewport, then paint the table header background to the right of the last column if neccessary.
         JViewport viewport = (JViewport) table.getParent();
         if (viewport != null && table.getWidth() < viewport.getWidth()) {
           int x = table.getWidth();
@@ -155,50 +156,60 @@ public class ZebraJTable extends JTable {
 
   // Stripe painting Viewport. //////////////////////////////////////////////
 
+  public void hideColumn(Object identifier) {
+    int index = columnModel.getColumnIndex(identifier);
+    TableColumn column = columnModel.getColumn(index);
+    if (hiddenColumns.put(identifier, column) != null) {
+      throw new IllegalArgumentException("Duplicate column name.");
+    }
+    columnModel.removeColumn(column);
+  }
+
+  public void showColumn(Object identifier) {
+    TableColumn tableCloumn = hiddenColumns.remove(identifier);
+    if (tableCloumn != null) {
+      // find the new index to insert
+      int originIndex = indexedColumns.indexOf(tableCloumn);
+      int newIndex = 0;
+      Enumeration<TableColumn> enumeration = columnModel.getColumns();
+      while (enumeration.hasMoreElements()) {
+        int index = indexedColumns.indexOf((TableColumn) enumeration.nextElement());
+        if (index > originIndex) {
+          break;
+        }
+        newIndex++;
+      }
+
+      columnModel.addColumn(tableCloumn);
+      int lastColumn = columnModel.getColumnCount() - 1;
+      if (newIndex < lastColumn) {
+        columnModel.moveColumn(lastColumn, newIndex);
+      }
+    }
+  }
+
   /**
-   * Creates a JViewport that draws a striped backgroud corresponding to the row positions of the given JTable.
-   * 
-   * @author Manuel Laggner
+   * Creates a JViewport that draws a striped background corresponding to the row positions of the given JTable.
    */
   private static class StripedViewport extends JViewport {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /** The table. */
+    private static final long serialVersionUID = 7213871940348239879L;
     private final JTable      fTable;
 
-    /**
-     * Instantiates a new striped viewport.
-     * 
-     * @param table
-     *          the table
-     */
-    public StripedViewport(JTable table) {
+    private StripedViewport(JTable table) {
       fTable = table;
       setOpaque(false);
       initListeners();
     }
 
-    /**
-     * Inits the listeners.
-     */
     private void initListeners() {
-      // install a listener to cause the whole table to repaint when
-      // a column is resized. we do this because the extended grid
-      // lines may need to be repainted. this could be cleaned up,
-      // but for now, it works fine.
+      // install a listener to cause the whole table to repaint when a column is resized. we do this because the extended grid
+      // lines may need to be repainted. this could be cleaned up, but for now, it works fine.
       PropertyChangeListener listener = createTableColumnWidthListener();
       for (int i = 0; i < fTable.getColumnModel().getColumnCount(); i++) {
         fTable.getColumnModel().getColumn(i).addPropertyChangeListener(listener);
       }
     }
 
-    /**
-     * Creates the table column width listener.
-     * 
-     * @return the property change listener
-     */
     private PropertyChangeListener createTableColumnWidthListener() {
       return new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
@@ -219,27 +230,17 @@ public class ZebraJTable extends JTable {
       super.paintComponent(g);
     }
 
-    /**
-     * Paint striped background.
-     * 
-     * @param g
-     *          the g
-     */
     private void paintStripedBackground(Graphics g) {
       // get position
       Point viewPosition = getViewPosition();
       g.translate(0, -viewPosition.y);
 
-      // get the row index at the top of the clip bounds (the first row
-      // to paint).
+      // get the row index at the top of the clip bounds (the first row to paint).
       int rowAtPoint = fTable.rowAtPoint(g.getClipBounds().getLocation());
-      // get the y coordinate of the first row to paint. if there are no
-      // rows in the table, start painting at the top of the supplied
-      // clipping bounds.
+      // get the y coordinate of the first row to paint. if there are no rows in the table, start painting at the top of the supplied clipping bounds.
       int topY = rowAtPoint < 0 ? g.getClipBounds().y : fTable.getCellRect(rowAtPoint, 0, true).y;
 
-      // create a counter variable to hold the current row. if there are no
-      // rows in the table, start the counter at 0.
+      // create a counter variable to hold the current row. if there are no rows in the table, start the counter at 0.
       int currentRow = rowAtPoint < 0 ? 0 : rowAtPoint;
       while (topY < g.getClipBounds().y + g.getClipBounds().height) {
         int bottomY = topY + fTable.getRowHeight(currentRow);// fTable.getRowHeight();
@@ -264,27 +265,13 @@ public class ZebraJTable extends JTable {
       repaint();
     }
 
-    /**
-     * Gets the row color.
-     * 
-     * @param row
-     *          the row
-     * @return the row color
-     */
     private Color getRowColor(int row) {
       // return row % 2 == 0 ? EVEN_ROW_COLOR : getBackground();
       return row % 2 == 0 ? EVEN_ROW_COLOR : Color.WHITE;
     }
 
-    /**
-     * Paint vertical grid lines.
-     * 
-     * @param g
-     *          the g
-     */
     private void paintVerticalGridLines(Graphics g) {
       // paint the column grid dividers for the non-existent rows.
-
       int offset = getViewPosition().x;
       int x = -offset;
       for (int i = 0; i < fTable.getColumnCount(); i++) {

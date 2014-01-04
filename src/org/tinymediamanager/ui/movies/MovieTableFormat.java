@@ -91,7 +91,6 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   public Object getColumnValue(Movie movie, int column) {
     switch (column) {
       case 0:
-        // return movie.getTitleSortable();
         return movie;
 
       case 1:
@@ -175,11 +174,6 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
     throw new IllegalStateException();
   }
 
-  /**
-   * The Class StringComparator.
-   * 
-   * @author Manuel Laggner
-   */
   private static class StringComparator implements Comparator<String> {
 
     /*
@@ -199,11 +193,6 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
     }
   }
 
-  /**
-   * The Class ImageComparator.
-   * 
-   * @author Manuel Laggner
-   */
   private static class ImageComparator implements Comparator<ImageIcon> {
 
     /*
