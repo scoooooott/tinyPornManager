@@ -630,12 +630,13 @@ public class MovieRenamer {
       // cleanup files which are not needed
       if (!needed.contains(cleanup.get(i))) {
         MediaFile cl = cleanup.get(i);
-        if (cl.getFile().equals(new File(movie.getDataSource()))) {
-          LOGGER.error("Wohoo! We tried to remove complete datasource. Nooo way...!"); // FIXME: check how this could happen
+        if (cl.getFile().equals(new File(movie.getDataSource())) || cl.getFile().equals(new File(movie.getPath()))
+            || cl.getFile().equals(new File(oldPathname))) {
+          LOGGER.error("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...!"); // FIXME: check how this could happen
           MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, cl.getFile(), "message.renamer.failedrename"));
           return; // rename failed
         }
-        if (cl.getFile().exists()) { // unneded, but for not diplaying wrong deletes in logger...
+        if (cl.getFile().exists()) { // unneeded, but for not displaying wrong deletes in logger...
           LOGGER.debug("Deleting " + cl.getFile());
           FileUtils.deleteQuietly(cl.getFile()); // delete cleanup file
         }
@@ -721,7 +722,7 @@ public class MovieRenamer {
     Pattern regex = Pattern.compile("\\$.{1}");
     Matcher mat = regex.matcher(s);
     if (mat.find()) {
-      String rep = createDestination(mat.group(), movie, true);
+      String rep = createDestination(mat.group(), movie, forFilename);
       if (rep.isEmpty()) {
         return "";
       }
@@ -742,7 +743,8 @@ public class MovieRenamer {
    * @param movie
    *          the movie
    * @param forFilename
-   *          replace for filename (=true)? or for a foldername (=false)
+   *          replace for filename (=true)? or for a foldername (=false)<br>
+   *          Former does replace ALL directory separators
    * @return the string
    */
   private static String createDestination(String template, Movie movie, boolean forFilename) {
