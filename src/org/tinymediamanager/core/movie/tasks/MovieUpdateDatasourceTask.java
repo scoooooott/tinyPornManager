@@ -201,7 +201,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
     List<File> completeDirContents = new ArrayList<File>(Arrays.asList(parentDir.listFiles()));
 
-    // just compare filename length, to start with longest
+    // just compare filename length, start with longest b/c of overlapping names
     Arrays.sort(files, new Comparator<File>() {
       public int compare(File file1, File file2) {
         return file2.getName().length() - file1.getName().length();
@@ -217,7 +217,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       for (Movie m : movieList.getMoviesByPath(mf.getFile().getParentFile())) {
         if (m.getMediaFiles(MediaFileType.VIDEO).contains(mf)) {
           // ok, our MF is already in an movie
-          LOGGER.debug("found movie from MediaFIle");
+          LOGGER.debug("found movie '" + m.getTitle() + "' from MediaFile " + file);
           movie = m;
           break;
         }
@@ -225,7 +225,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           // try to match like if we would create a new movie
           if (ParserUtils.detectCleanMoviename(Utils.cleanStackingMarkers(mfile.getBasename())).equals(
               ParserUtils.detectCleanMoviename(Utils.cleanStackingMarkers(mf.getBasename())))) {
-            LOGGER.debug("found possible movie from filename");
+            LOGGER.debug("found possible movie '" + m.getTitle() + "' from filename " + file);
             movie = m;
             break;
           }
@@ -239,7 +239,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         if (completeDirContents.contains(nfoFile)) {
           MediaFile nfo = new MediaFile(nfoFile, MediaFileType.NFO);
           // from NFO?
-          LOGGER.debug("found NFO - try to parse");
+          LOGGER.debug("found NFO '" + nfo.getFile() + "' - try to parse");
           switch (Globals.settings.getMovieSettings().getMovieConnector()) {
             case XBMC:
               movie = MovieToXbmcNfoConnector.getData(nfo.getFile());
@@ -256,7 +256,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
         if (movie == null) {
           // still NULL, create new movie movie from file
-          LOGGER.debug("create new movie");
+          LOGGER.debug("Create new movie from file: " + file);
           movie = new Movie();
           String[] ty = ParserUtils.detectCleanMovienameAndYear(basename);
           movie.setTitle(ty[0]);
@@ -330,6 +330,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       // check if we have more than one movie in dir
       HashSet<String> h = new HashSet<String>();
+      LOGGER.debug("Checking for multi-movie dir; parsing all video files in " + movieDir);
       for (File file : files) {
         MediaFile mf = new MediaFile(file);
         if (mf.isDiscFile()) {
@@ -356,7 +357,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         ArrayList<MediaFile> mfs = getAllMediaFilesRecursive(movieDir);
 
         if (movie == null) {
-          LOGGER.info("parsing movie " + movieDir);
+          LOGGER.info("Movie not found; parsing directory" + movieDir);
           movie = new Movie();
 
           // first round - try to parse NFO(s) first

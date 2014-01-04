@@ -316,6 +316,7 @@ public class MovieList extends AbstractModelObject {
 
     for (Movie movie : movieList) {
       if (new File(movie.getPath()).compareTo(path) == 0) {
+        LOGGER.debug("Ok, found already existing movie '" + movie.getTitle() + "' in DB (path: " + path + ")");
         return movie;
       }
     }

@@ -70,7 +70,8 @@ public class ParserUtils {
    */
   public static String[] detectCleanMovienameAndYear(String filename) {
     String[] ret = { "", "" };
-    LOGGER.debug("Parse filename for movie title: \"" + filename + "\"");
+    // use trace to not remove logging completely (function called way to often on multi movie dir parsing)
+    LOGGER.trace("Parse filename for movie title: \"" + filename + "\"");
 
     if (filename == null || filename.isEmpty()) {
       LOGGER.warn("Filename empty?!");
@@ -105,7 +106,7 @@ public class ParserUtils {
     String year = "";
     for (int i = s.length - 1; i > 0; i--) {
       if (!s[i].isEmpty() && s[i].matches("\\d{4}")) {
-        LOGGER.debug("removed token '" + s[i] + "'- seems to be year");
+        LOGGER.trace("removed token '" + s[i] + "'- seems to be year");
         year = s[i];
         s[i] = "";
         break;
@@ -125,7 +126,7 @@ public class ParserUtils {
 
     ret[0] = name.trim();
     ret[1] = year.trim();
-    LOGGER.debug("Movie title should be: \"" + ret[0] + "\", from " + ret[1]);
+    LOGGER.trace("Movie title should be: \"" + ret[0] + "\", from " + ret[1]);
     return ret;
   }
 
