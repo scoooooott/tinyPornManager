@@ -176,6 +176,8 @@ public class MovieRenamer {
     LOGGER.info("Renaming movie: " + movie.getTitle());
     LOGGER.debug("movie year: " + movie.getYear());
     LOGGER.debug("movie path: " + movie.getPath());
+    LOGGER.debug("movie isDisc?: " + movie.isDisc());
+    LOGGER.debug("movie isMulti?: " + movie.isMultiMovieDir());
     if (movie.getMovieSet() != null) {
       LOGGER.debug("movieset: " + movie.getMovieSet().getTitle());
     }
@@ -628,14 +630,19 @@ public class MovieRenamer {
       // cleanup files which are not needed
       if (!needed.contains(cleanup.get(i))) {
         MediaFile cl = cleanup.get(i);
+        if (cl.getFile().equals(new File(movie.getDataSource()))) {
+          LOGGER.error("Wohoo! We tried to remove complete datasource. Nooo way...!"); // FIXME: check how this could happen
+          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, cl.getFile(), "message.renamer.failedrename"));
+          return; // rename failed
+        }
         if (cl.getFile().exists()) { // unneded, but for not diplaying wrong deletes in logger...
-          LOGGER.debug("Deleting " + cl.getFilename());
+          LOGGER.debug("Deleting " + cl.getFile());
           FileUtils.deleteQuietly(cl.getFile()); // delete cleanup file
         }
         File[] list = cl.getFile().getParentFile().listFiles();
         if (list != null && list.length == 0) {
           // if directory is empty, delete it as well
-          LOGGER.debug("Deleting empty Directory" + cl.getFile().getParentFile().getAbsolutePath());
+          LOGGER.debug("Deleting empty Directory " + cl.getFile().getParentFile().getAbsolutePath());
           FileUtils.deleteQuietly(cl.getFile().getParentFile());
         }
       }
@@ -654,7 +661,7 @@ public class MovieRenamer {
             }
           }
           if (!supported) {
-            LOGGER.debug("Deleting " + file.getName());
+            LOGGER.debug("Deleting " + file);
             FileUtils.deleteQuietly(file);
           }
         }
