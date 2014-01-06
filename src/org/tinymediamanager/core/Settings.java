@@ -46,6 +46,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.movie.MovieFanartNaming;
@@ -67,14 +68,6 @@ import ch.qos.logback.classic.Level;
 public class Settings extends AbstractModelObject {
   private static final Logger         LOGGER                      = LoggerFactory.getLogger(Settings.class);
   private static Settings             instance;
-
-  /**
-   * the current settings file version<br>
-   * change this when new (default) settings need to be written or on structural changes<br>
-   * 2.0 - initial TV show settings <br>
-   * 2.1 - added audioFileTypes for MediaFile detection
-   */
-  private static final String         SETTINGS_VERSION            = "2.1";
 
   /**
    * Constants mainly for events
@@ -207,7 +200,7 @@ public class Settings extends AbstractModelObject {
    * is our settings file up2date?
    */
   public boolean isCurrentVersion() {
-    return SETTINGS_VERSION.equals(version);
+    return ReleaseInfo.getVersion().equals(version);
   }
 
   /**
@@ -215,6 +208,13 @@ public class Settings extends AbstractModelObject {
    */
   public String getVersion() {
     return version;
+  }
+
+  /**
+   * sets the current version into settings file
+   */
+  public void setCurrentVersion() {
+    version = ReleaseInfo.getVersion();
   }
 
   /**
@@ -420,7 +420,7 @@ public class Settings extends AbstractModelObject {
    * Write default settings.
    */
   public void writeDefaultSettings() {
-    version = SETTINGS_VERSION;
+    version = ReleaseInfo.getVersion();
 
     // default video file types derived from
     // http://wiki.xbmc.org/index.php?title=Advancedsettings.xml#.3Cvideoextensions.3E

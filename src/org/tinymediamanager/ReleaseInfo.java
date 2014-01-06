@@ -79,7 +79,16 @@ public class ReleaseInfo {
    * @return the version
    */
   public static String getVersion() {
-    return version;
+    String v = version;
+    if (v.isEmpty()) {
+      if (isNightly()) {
+        v = "NIGHTLY";
+      }
+      else {
+        v = "SVN";
+      }
+    }
+    return v;
   }
 
   /**

@@ -284,11 +284,7 @@ public class TinyMediaManager {
 
           // upgrade check
           if (!Globals.settings.isCurrentVersion()) {
-            if (!GraphicsEnvironment.isHeadless()) {
-              JOptionPane.showMessageDialog(null, "The configuration format changed in this update.\nPlease check your settings!");
-            }
             doUpgradeTasks(Globals.settings.getVersion()); // do the upgrade tasks for the old version
-            Globals.settings.writeDefaultSettings(); // write current default
           }
 
           // init splash
@@ -528,10 +524,15 @@ public class TinyMediaManager {
 
       /**
        * does upgrade tasks, such as deleting old libs
+       * 
+       * @param version
+       *          application version string like 2.4.3
        */
       private void doUpgradeTasks(String version) {
+        String v = "" + version;
 
-        if (version.isEmpty()) {
+        if (v.isEmpty()) {
+          LOGGER.info("Performing upgrade tasks to version 2.0");
           // upgrade from alpha/beta to "TV Show" 2.0 format
           // happens only once
           JOptionPane
@@ -548,10 +549,22 @@ public class TinyMediaManager {
           // check really old alpha version
           FileUtils.deleteQuietly(new File("lib/beansbinding-1.2.1.jar"));
           FileUtils.deleteQuietly(new File("lib/beansbinding.jar"));
+          v = "2.0"; // set version for other updates
         }
-        else if (version.equals("2.0")) {
-          // do something to upgrade to 2.1/3.0
+
+        if (v.equals("2.0")) {
+          LOGGER.info("Performing upgrade tasks to version 2.1");
+          v = "2.1";
         }
+
+        if (v.equals("2.1")) {
+          LOGGER.info("Performing upgrade tasks to version 2.5");
+          v = "2.5";
+        }
+
+        // last one: set current version and write default settings file
+        Globals.settings.setCurrentVersion();
+        Globals.settings.writeDefaultSettings();
       }
 
       /**

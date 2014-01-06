@@ -171,9 +171,9 @@ public class BugReportDialog extends JDialog {
           message.append("\nEmail:");
           message.append(tfEmail.getText());
           message.append("\n\nVersion: ");
-          message.append(ReleaseInfo.getVersion() + " / " + ReleaseInfo.getRealVersion());
+          message.append(ReleaseInfo.getRealVersion());
           message.append("\nBuild: ");
-          message.append(ReleaseInfo.getBuild() + " / " + ReleaseInfo.getRealBuildDate());
+          message.append(ReleaseInfo.getRealBuildDate());
           message.append("\nOS: ");
           message.append(System.getProperty("os.name"));
           message.append(" ");
