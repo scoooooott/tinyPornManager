@@ -37,34 +37,16 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   private boolean                     sortAscending;
   private RuleBasedCollator           stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
-  /**
-   * The Enum SortColumn.
-   * 
-   * @author Manuel Laggner
-   */
   public enum SortColumn {
-    /** The Title. */
     TITLE(BUNDLE.getString("metatag.title")), //$NON-NLS-1$,
-    /** The Year. */
     YEAR(BUNDLE.getString("metatag.year")), //$NON-NLS-1$,
-    /** The date added. */
     DATE_ADDED(BUNDLE.getString("metatag.dateadded")), //$NON-NLS-1$,
-    /** The watched. */
     WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$,
-    /** The rating. */
     RATING(BUNDLE.getString("metatag.rating")), //$NON-NLS-1$,
-    /** The runtime. */
     RUNTIME(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$,
 
-    /** The title. */
     private String title;
 
-    /**
-     * Instantiates a new sort column.
-     * 
-     * @param title
-     *          the title
-     */
     private SortColumn(String title) {
       this.title = title;
     }
@@ -74,31 +56,18 @@ public class MovieExtendedComparator implements Comparator<Movie> {
      * 
      * @see java.lang.Enum#toString()
      */
+    @Override
     public String toString() {
       return title;
     }
   }
 
-  /**
-   * The Enum WatchedFlag.
-   * 
-   * @author Manuel Laggner
-   */
   public enum WatchedFlag {
-
-    /** The watched. */
     WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$,
-    /** The not watched. */
     NOT_WATCHED(BUNDLE.getString("metatag.notwatched")); //$NON-NLS-1$,
-    /** The title. */
+
     private String title;
 
-    /**
-     * Instantiates a new sort column.
-     * 
-     * @param title
-     *          the title
-     */
     private WatchedFlag(String title) {
       this.title = title;
     }
@@ -108,32 +77,18 @@ public class MovieExtendedComparator implements Comparator<Movie> {
      * 
      * @see java.lang.Enum#toString()
      */
+    @Override
     public String toString() {
       return title;
     }
   }
 
-  /**
-   * The Enum SortOrder.
-   * 
-   * @author Manuel Laggner
-   */
   public enum SortOrder {
-
-    /** The ascending. */
     ASCENDING(BUNDLE.getString("sort.ascending")), //$NON-NLS-1$
-    /** The descending. */
     DESCENDING(BUNDLE.getString("sort.descending")); //$NON-NLS-1$
 
-    /** The title. */
     private String title;
 
-    /**
-     * Instantiates a new sort order.
-     * 
-     * @param title
-     *          the title
-     */
     private SortOrder(String title) {
       this.title = title;
     }
@@ -143,32 +98,18 @@ public class MovieExtendedComparator implements Comparator<Movie> {
      * 
      * @see java.lang.Enum#toString()
      */
+    @Override
     public String toString() {
       return title;
     }
   }
 
-  /**
-   * The Enum MovieInMovieSet.
-   * 
-   * @author Manuel Laggner
-   */
   public enum MovieInMovieSet {
-
-    /** The in movieset. */
     IN_MOVIESET(BUNDLE.getString("movie.inmovieset")), //$NON-NLS-1$
-    /** The not in movieset. */
     NOT_IN_MOVIESET(BUNDLE.getString("movie.notinmovieset")); //$NON-NLS-1$
 
-    /** The title. */
     private String title;
 
-    /**
-     * Instantiates a new sort order.
-     * 
-     * @param title
-     *          the title
-     */
     private MovieInMovieSet(String title) {
       this.title = title;
     }
@@ -178,6 +119,7 @@ public class MovieExtendedComparator implements Comparator<Movie> {
      * 
      * @see java.lang.Enum#toString()
      */
+    @Override
     public String toString() {
       return title;
     }

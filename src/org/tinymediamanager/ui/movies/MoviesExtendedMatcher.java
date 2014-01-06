@@ -26,6 +26,7 @@ import org.tinymediamanager.core.MediaFileAudioStream;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
+import org.tinymediamanager.core.movie.MovieProducer;
 import org.tinymediamanager.scraper.MediaGenres;
 
 import ca.odell.glazedlists.matchers.Matcher;
@@ -254,6 +255,16 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
       for (MovieActor cast : movie.getActors()) {
         if (StringUtils.isNotEmpty(cast.getName())) {
           matcher = pattern.matcher(cast.getName());
+          if (matcher.find()) {
+            return true;
+          }
+        }
+      }
+
+      // producers
+      for (MovieProducer producer : movie.getProducers()) {
+        if (StringUtils.isNotEmpty(producer.getName())) {
+          matcher = pattern.matcher(producer.getName());
           if (matcher.find()) {
             return true;
           }
