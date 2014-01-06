@@ -125,7 +125,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
     setTitle(BUNDLE.getString("tvshowchooser.search")); //$NON-NLS-1$
     setName("tvShowChooser");
-    setBounds(5, 5, 1111, 643);
+    setBounds(5, 5, 800, 500);
     TmmWindowSaver.loadSettings(this);
     setIconImage(Globals.logo);
     setModal(true);
@@ -151,21 +151,21 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC,
-        RowSpec.decode("fill:403px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
     {
       lblPath = new JLabel("");
-      contentPanel.add(lblPath, "1, 2");
+      contentPanel.add(lblPath, "2, 2");
     }
     {
       JPanel panelSearchField = new JPanel();
-      contentPanel.add(panelSearchField, "1, 4, fill, fill");
+      contentPanel.add(panelSearchField, "2, 4, fill, fill");
       panelSearchField.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
-          ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-          FormFactory.DEFAULT_ROWSPEC, }));
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("right:default"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, }));
       {
         JLabel lblScraper = new JLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
         panelSearchField.add(lblScraper, "2, 1, right, default");
@@ -178,13 +178,13 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       }
       {
         textFieldSearchString = new JTextField();
-        panelSearchField.add(textFieldSearchString, "2, 3, 5, 1, fill, default");
+        panelSearchField.add(textFieldSearchString, "6, 1, fill, default");
         textFieldSearchString.setColumns(10);
       }
 
       {
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
-        panelSearchField.add(btnSearch, "7, 3");
+        panelSearchField.add(btnSearch, "8, 1");
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
             searchTvShow(textFieldSearchString.getText());
@@ -195,13 +195,14 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     }
     {
       JSplitPane splitPane = new JSplitPane();
+      splitPane.setResizeWeight(0.5);
       splitPane.setContinuousLayout(true);
-      contentPanel.add(splitPane, "1, 6, fill, fill");
+      contentPanel.add(splitPane, "2, 6, fill, fill");
       {
         JPanel panelSearchResults = new JPanel();
         splitPane.setLeftComponent(panelSearchResults);
-        panelSearchResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("350px:grow"), },
-            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:max(212px;default):grow"), }));
+        panelSearchResults.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), },
+            new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:150px:grow"), }));
         {
           {
             JScrollPane scrollPane = new JScrollPane();
@@ -241,9 +242,8 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
         panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"),
-            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("250px"),
-            FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("top:default:grow"), }));
+            FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("200px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("240px:grow"), }));
         {
           lblTvShowName = new JTextArea("");
           lblTvShowName.setLineWrap(true);
@@ -253,22 +253,18 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           panelSearchDetail.add(lblTvShowName, "2, 1, 3, 1, fill, top");
         }
         {
-          lblTvShowPoster = new ImageLabel();
+          lblTvShowPoster = new ImageLabel(false);
           lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
+          lblTvShowPoster.setAlternativeText("");
           panelSearchDetail.add(lblTvShowPoster, "2, 4, fill, fill");
         }
         {
-          JPanel panel = new JPanel();
-          panelSearchDetail.add(panel, "4, 4, fill, fill");
-          panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-              FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-              FormFactory.DEFAULT_ROWSPEC, }));
-        }
-        {
           JScrollPane scrollPane = new JScrollPane();
-          panelSearchDetail.add(scrollPane, "2, 6, 3, 1, fill, fill");
+          scrollPane.setBorder(null);
+          panelSearchDetail.add(scrollPane, "4, 4, fill, fill");
           {
             tpTvShowOverview = new JTextPane();
+            tpTvShowOverview.setOpaque(false);
             scrollPane.setViewportView(tpTvShowOverview);
           }
         }
@@ -276,16 +272,16 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     }
     {
       JLabel lblScrapeFollowingItems = new JLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
-      contentPanel.add(lblScrapeFollowingItems, "1, 8");
+      contentPanel.add(lblScrapeFollowingItems, "2, 8");
     }
     {
       JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "1, 9, default, fill");
+      contentPanel.add(panelScraperMetadataSetting, "2, 9, default, fill");
     }
 
     {
       JPanel bottomPane = new JPanel();
-      contentPanel.add(bottomPane, "1, 11");
+      contentPanel.add(bottomPane, "2, 11");
       {
         bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
@@ -331,10 +327,9 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
 
       // set column name - windowbuilder pro crashes otherwise
       table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult")); //$NON-NLS-1$
-
+      lblPath.setText(tvShowToScrape.getPath());
       textFieldSearchString.setText(tvShowToScrape.getTitle());
       searchTvShow(textFieldSearchString.getText());
-      lblPath.setText(tvShowToScrape.getPath());
     }
 
   }
@@ -537,12 +532,13 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
         }
       }
 
+      if (tvShowsFound.size() == 1) { // only one result
+        table.setRowSelectionInterval(0, 0); // select first row
+      }
+
       return null;
     }
 
-    /*
-     * Executed in event dispatching thread
-     */
     /*
      * (non-Javadoc)
      * 
@@ -554,22 +550,9 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     }
   }
 
-  /**
-   * The Class ScrapeTask.
-   * 
-   * @author Manuel Laggner
-   */
   private class ScrapeTask extends SwingWorker<Void, Void> {
-
-    /** The model. */
     private TvShowChooserModel model;
 
-    /**
-     * Instantiates a new scrape task.
-     * 
-     * @param model
-     *          the model
-     */
     public ScrapeTask(TvShowChooserModel model) {
       this.model = model;
     }
@@ -591,9 +574,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       return null;
     }
 
-    /*
-     * Executed in event dispatching thread
-     */
     /*
      * (non-Javadoc)
      * 
@@ -648,19 +628,9 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     return continueQueue;
   }
 
-  /**
-   * The Class ChangeScraperAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class ChangeScraperAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3537728352474538431L;
 
-    /**
-     * Instantiates a new sort action.
-     */
     public ChangeScraperAction() {
     }
 
@@ -669,6 +639,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
       TvShowScrapers selectedScraper = (TvShowScrapers) cbScraper.getSelectedItem();
       metadataProvider = TvShowList.getInstance().getMetadataProvider(selectedScraper);

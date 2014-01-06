@@ -244,6 +244,13 @@ public class MovieSetPanel extends JPanel {
     // further initializations
     init();
     initDataBindings();
+
+    // selecting first movie set at startup
+    if (movieList.getMovieSetList() != null && movieList.getMovieSetList().size() > 0) {
+      DefaultMutableTreeNode firstLeaf = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) tree.getModel().getRoot()).getFirstChild();
+      tree.setSelectionPath(new TreePath(((DefaultMutableTreeNode) firstLeaf.getParent()).getPath()));
+      tree.setSelectionPath(new TreePath(firstLeaf.getPath()));
+    }
   }
 
   private void init() {
