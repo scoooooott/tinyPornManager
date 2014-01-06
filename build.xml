@@ -45,11 +45,11 @@
             <src path="src" />
             <classpath refid="classpath.default" />
         </javac>
-    	<!-- enhance several classes for objectdb -->
-    	<java classname="com.objectdb.Enhancer" fork="true" classpathref="classpath.default">
-    	  <arg line="${bin.dir}/org/tinymediamanager/core/*.class ${bin.dir}/org/tinymediamanager/core/movie/*.class ${bin.dir}/org/tinymediamanager/core/tvshow/*.class"/>
-    	</java>
-    	<!-- copy non java files -->
+        <!-- enhance several classes for objectdb -->
+        <java classname="com.objectdb.Enhancer" fork="true" classpathref="classpath.default">
+          <arg line="-S ${bin.dir}/org/tinymediamanager/core/*.class"/>
+        </java>
+        <!-- copy non java files -->
         <copy includeemptydirs="false" todir="${bin.dir}">
             <fileset dir="src" excludes="**/*.java" />
         </copy>
@@ -118,16 +118,23 @@
         </propertyfile>
     </target>
 	
+    <target name="downloadLocale">
+        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/${lang}/?file" 
+             dest="locale/messages_${lang}.properties" username="tmm" password="tmm" ignoreerrors="true"/>
+    </target> 
+
     <target name="downloadLocales">
-        <property name="tfuser" value="" /> <!-- set your transifex username -->
-        <property name="tfpwd" value="" /> <!-- set your transifex password -->
-        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/cs/?file" dest="locale/messages_cs.properties" username="${tfuser}" password="${tfpwd}"/>
-        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/de/?file" dest="locale/messages_de.properties" username="${tfuser}" password="${tfpwd}"/>
-        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/fr/?file" dest="locale/messages_fr.properties" username="${tfuser}" password="${tfpwd}"/>
-        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/nl/?file" dest="locale/messages_nl.properties" username="${tfuser}" password="${tfpwd}"/>
-        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/pt/?file" dest="locale/messages_pt.properties" username="${tfuser}" password="${tfpwd}"/>
-        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/sk/?file" dest="locale/messages_sk.properties" username="${tfuser}" password="${tfpwd}"/>
-        <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/vi/?file" dest="locale/messages_vi.properties" username="${tfuser}" password="${tfpwd}"/>
+        <antcall target="downloadLocale"><param name="lang" value="cs"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="de"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="es"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="fr"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="it"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="ko"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="nl"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="no"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="pt"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="sk"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="vi"/></antcall>
     </target>
 
     <target name='package-app' description="builds the packages" depends='create_tmm_jar'>
@@ -139,9 +146,9 @@
         <copy file="AppBundler/LICENSE" todir="${build.dir}" />
         <copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
         <copy file="AppBundler/tmm.png" todir="${build.dir}" />
-    	  <copy file="AppBundler/env.txt" todir="${build.dir}" />
+        <copy file="AppBundler/env.txt" todir="${build.dir}" />
 
-    	  <!-- Mac OSX -->
+        <!-- Mac OSX -->
         <mkdir dir="${dist.dir}/mac" />
         <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="AppBundler/jarbundler-2.2.0.jar" />
         <jarbundler dir="${dist.dir}/mac" name="tinyMediaManager" icon="AppBundler/tmm.icns" 
