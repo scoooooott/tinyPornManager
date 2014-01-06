@@ -249,7 +249,7 @@ public class TinyMediaManager {
 
     // set GUI default language
     Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
-    LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.language"));
+    LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.country"));
     LOGGER.info("GUI language     : " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
     LOGGER.info("Scraper language : " + Globals.settings.getMovieSettings().getScraperLanguage());
     LOGGER.info("TV Scraper lang  : " + Globals.settings.getTvShowSettings().getScraperLanguage());
