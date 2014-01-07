@@ -21,6 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -142,12 +143,15 @@ public class MovieList extends AbstractModelObject {
       return;
     }
 
+    List<Movie> moviesToRemove = new ArrayList<Movie>();
     for (int i = movieList.size() - 1; i >= 0; i--) {
       Movie movie = movieList.get(i);
       if (new File(path).equals(new File(movie.getDataSource()))) {
-        removeMovie(movie);
+        moviesToRemove.add(movie);
       }
     }
+
+    removeMovies(moviesToRemove);
   }
 
   /**
@@ -180,38 +184,55 @@ public class MovieList extends AbstractModelObject {
     return newMovies;
   }
 
-  /**
-   * Removes the movie.
-   * 
-   * @param movie
-   *          the movie
-   */
-  public void removeMovie(Movie movie) {
-    int oldValue = movieList.size();
-    movieList.remove(movie);
+  // /**
+  // * Removes the movie.
+  // *
+  // * @param movie
+  // * the movie
+  // */
+  // public void removeMovie(Movie movie) {
+  // int oldValue = movieList.size();
+  // movieList.remove(movie);
+  //
+  // // remove movie also from moviesets
+  // if (movie.getMovieSet() != null) {
+  // movie.getMovieSet().removeMovie(movie);
+  // movie.setMovieSet(null);
+  // }
+  //
+  // Globals.entityManager.getTransaction().begin();
+  // Globals.entityManager.remove(movie);
+  // Globals.entityManager.getTransaction().commit();
+  // firePropertyChange("movies", null, movieList);
+  // firePropertyChange("movieCount", oldValue, movieList.size());
+  // }
 
-    // remove movie also from moviesets
-    if (movie.getMovieSet() != null) {
-      movie.getMovieSet().removeMovie(movie);
-      movie.setMovieSet(null);
+  /**
+   * remove given movies from the database
+   * 
+   * @param movies
+   *          list of movies to remove
+   */
+  public void removeMovies(List<Movie> movies) {
+    if (movies == null || movies.size() == 0) {
+      return;
     }
+    int oldValue = movieList.size();
 
     Globals.entityManager.getTransaction().begin();
-    Globals.entityManager.remove(movie);
+
+    for (Movie movie : movies) {
+      movieList.remove(movie);
+      if (movie.getMovieSet() != null) {
+        movie.getMovieSet().removeMovie(movie);
+        movie.setMovieSet(null);
+      }
+      Globals.entityManager.remove(movie);
+    }
+
     Globals.entityManager.getTransaction().commit();
     firePropertyChange("movies", null, movieList);
     firePropertyChange("movieCount", oldValue, movieList.size());
-  }
-
-  /**
-   * Remove all movies.
-   * 
-   */
-  public void removeMovies() {
-    for (int i = movieList.size() - 1; i >= 0; i--) {
-      Movie movie = movieList.get(i);
-      removeMovie(movie);
-    }
   }
 
   /**
@@ -258,7 +279,8 @@ public class MovieList extends AbstractModelObject {
             catch (Exception e) {
               LOGGER.error("error loading movie/dropping it: " + e.getMessage());
               try {
-                removeMovie(movie);
+                List<Movie> moviesToRemove = Arrays.asList(movie);
+                removeMovies(moviesToRemove);
               }
               catch (Exception e1) {
               }

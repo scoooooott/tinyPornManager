@@ -52,10 +52,6 @@ public class MovieRemoveAction extends AbstractAction {
     List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // remove selected movies
-    if (selectedMovies.size() > 0) {
-      for (int i = 0; i < selectedMovies.size(); i++) {
-        MovieList.getInstance().removeMovie(selectedMovies.get(i));
-      }
-    }
+    MovieList.getInstance().removeMovies(selectedMovies);
   }
 }

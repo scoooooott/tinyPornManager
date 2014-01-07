@@ -661,6 +661,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private void cleanup(String datasource) {
     startProgressBar("database cleanup...");
     LOGGER.info("removing orphaned movies/files...");
+    List<Movie> moviesToRemove = new ArrayList<Movie>();
     for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
       if (cancel) {
         break;
@@ -677,7 +678,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         // dir is not in hashset - check with exists to be sure it is not here
         if (!movieDir.exists()) {
           LOGGER.debug("movie directory '" + movieDir + "' not found, removing...");
-          movieList.removeMovie(movie);
+          moviesToRemove.add(movie);
         }
         else {
           LOGGER.warn("dir " + movie.getPath() + " not in hashset, but on hdd!");
@@ -706,6 +707,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
       }
     }
+    movieList.removeMovies(moviesToRemove);
   }
 
   /*
