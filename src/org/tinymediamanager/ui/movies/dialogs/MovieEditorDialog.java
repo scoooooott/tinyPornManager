@@ -277,10 +277,14 @@ public class MovieEditorDialog extends JDialog {
       JLabel lblCertification = new JLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
       details1Panel.add(lblCertification, "8, 14, right, default");
     }
-    cbCertification = new JComboBox();
-    details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");
 
-    cbCertification.setSelectedItem(movie.getCertification());
+    {
+      cbCertification = new JComboBox();
+      details1Panel.add(cbCertification, "10, 14, 3, 1, fill, default");
+      for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getMovieSettings().getCertificationCountry())) {
+        cbCertification.addItem(cert);
+      }
+    }
     {
       JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
       details1Panel.add(lblRating, "2, 16, right, default");
@@ -288,11 +292,6 @@ public class MovieEditorDialog extends JDialog {
     {
       spRating = new JSpinner();
       details1Panel.add(spRating, "4, 16");
-    }
-    {
-      for (Certification cert : Certification.getCertificationsforCountry(Globals.settings.getMovieSettings().getCertificationCountry())) {
-        cbCertification.addItem(cert);
-      }
     }
     {
       JLabel lblTop = new JLabel(BUNDLE.getString("metatag.top250")); //$NON-NLS-1$
@@ -654,6 +653,7 @@ public class MovieEditorDialog extends JDialog {
       spTop250.setValue(Integer.valueOf(movie.getTop250()));
       cbWatched.setSelected(movie.isWatched());
       spDateAdded.setValue(movie.getDateAdded());
+      cbCertification.setSelectedItem(movie.getCertification());
       if (movie.getReleaseDate() != null) {
         spReleaseDate.setValue(movie.getReleaseDate());
       }
