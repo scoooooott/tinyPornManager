@@ -117,6 +117,9 @@ tmm.class = org.tinymediamanager.TinyMediaManager
 # allow offline use
 allow_offline = true
 
+# do not create .v files
+skip_md5_cache = true
+
 # jvm args
 # NOTE: please consider to write fundamental changes to the commandline start scripts too
 jvmarg = -Xms64m 
