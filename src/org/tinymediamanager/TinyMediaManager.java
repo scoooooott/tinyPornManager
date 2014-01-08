@@ -19,6 +19,7 @@ package org.tinymediamanager;
 import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -648,6 +649,7 @@ public class TinyMediaManager {
               WhatsNewDialog dialog = new WhatsNewDialog(changelog);
               dialog.pack();
               dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+              dialog.setModalityType(ModalityType.APPLICATION_MODAL);
               dialog.setVisible(true);
             }
           });

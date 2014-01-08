@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
@@ -56,13 +57,15 @@ public class WhatsNewDialog extends JDialog {
       JTextPane textPane = new JTextPane();
       scrollPane.setViewportView(textPane);
       textPane.setText(textInTextpane);
+      textPane.setCaretPosition(0);
     }
     {
       JPanel panel = new JPanel();
       getContentPane().add(panel, BorderLayout.SOUTH);
       panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+          FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+          FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
       JLabel lblHint = new JLabel(BUNDLE.getString("whatsnew.hint")); //$NON-NLS-1$
       panel.add(lblHint, "2, 2");
@@ -87,7 +90,15 @@ public class WhatsNewDialog extends JDialog {
           WhatsNewDialog.this.dispose();
         }
       });
-      panel.add(btnClose, "6, 2");
+      panel.add(btnClose, "8, 2");
     }
   }
+
+  @Override
+  public Dimension getPreferredSize() {
+    Dimension superPref = super.getPreferredSize();
+    return new Dimension((int) (700 > superPref.getWidth() ? superPref.getWidth() : 700), (int) (500 > superPref.getHeight() ? superPref.getHeight()
+        : 500));
+  }
+
 }
