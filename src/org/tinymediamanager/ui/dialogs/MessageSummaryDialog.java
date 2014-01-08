@@ -43,7 +43,7 @@ public class MessageSummaryDialog extends JDialog {
   private JList                       listMessages;
 
   public MessageSummaryDialog(List<String> messages) {
-    setSize(700, 250);
+    setSize(700, 300);
     setIconImage(Globals.logo);
     setTitle(BUNDLE.getString("summarywindow.title")); //$NON-NLS-1$
 

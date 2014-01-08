@@ -77,6 +77,7 @@ import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 
@@ -257,6 +258,7 @@ public class TinyMediaManager {
     // start EDT
     EventQueue.invokeLater(new Runnable() {
       public void run() {
+        boolean newVersion = !Globals.settings.isCurrentVersion();
         try {
           Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
           if (!GraphicsEnvironment.isHeadless()) {
@@ -283,7 +285,7 @@ public class TinyMediaManager {
           TmmUILogCollector.init();
 
           // upgrade check
-          if (!Globals.settings.isCurrentVersion()) {
+          if (newVersion) {
             doUpgradeTasks(Globals.settings.getVersion()); // do the upgrade tasks for the old version
           }
 
@@ -425,6 +427,11 @@ public class TinyMediaManager {
 
             TmmWindowSaver.loadSettings(window);
             window.setVisible(true);
+
+            // show changelog
+            if (newVersion) {
+              showChangelog();
+            }
           }
           else {
             startCommandLineTasks();
@@ -629,6 +636,26 @@ public class TinyMediaManager {
         File db = new File(Constants.DB);
         Utils.createBackupFile(db);
         Utils.deleteOldBackupFile(db, 15);
+      }
+
+      private void showChangelog() {
+        // read the changelog
+        try {
+          final String changelog = FileUtils.readFileToString(new File("changelog.txt"));
+          EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              WhatsNewDialog dialog = new WhatsNewDialog(changelog);
+              dialog.pack();
+              dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+              dialog.setVisible(true);
+            }
+          });
+        }
+        catch (IOException e) {
+          // no file found
+          LOGGER.warn(e.getMessage());
+        }
       }
     });
 
