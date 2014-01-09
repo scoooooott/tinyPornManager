@@ -93,32 +93,35 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener {
 
-  private static final long           serialVersionUID = 7702248909791283043L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
-  private static final Date           INITIAL_DATE     = new Date(0);
+  private static final long                                     serialVersionUID = 7702248909791283043L;
+  private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
+  private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
+  private static final Date                                     INITIAL_DATE     = new Date(0);
 
-  private TvShowList                  tvShowList       = TvShowList.getInstance();
-  private TvShowEpisode               episodeToEdit;
-  private List<TvShowActor>           cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
-  private List<String>                tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private boolean                     continueQueue    = true;
+  private TvShowList                                            tvShowList       = TvShowList.getInstance();
+  private TvShowEpisode                                         episodeToEdit;
+  private List<TvShowActor>                                     cast             = ObservableCollections.observableList(new ArrayList<TvShowActor>());
+  private List<String>                                          tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private boolean                                               continueQueue    = true;
 
-  private JTextField                  tfTitle;
-  private JLabel                      lblFilename;
-  private JSpinner                    spEpisode;
-  private JSpinner                    spSeason;
-  private JSpinner                    spRating;
-  private JSpinner                    spFirstAired;
-  private JSpinner                    spDateAdded;
-  private JCheckBox                   chckbxWatched;
-  private ImageLabel                  lblThumb;
-  private JTextArea                   taPlot;
-  private JTextField                  tfDirector;
-  private JTextField                  tfWriter;
-  private JTable                      tableGuests;
-  private JComboBox                   cbTags;
-  private JList                       listTags;
+  private JTextField                                            tfTitle;
+  private JLabel                                                lblFilename;
+  private JSpinner                                              spEpisode;
+  private JSpinner                                              spSeason;
+  private JSpinner                                              spRating;
+  private JSpinner                                              spFirstAired;
+  private JSpinner                                              spDateAdded;
+  private JCheckBox                                             chckbxWatched;
+  private ImageLabel                                            lblThumb;
+  private JTextArea                                             taPlot;
+  private JTextField                                            tfDirector;
+  private JTextField                                            tfWriter;
+  private JTable                                                tableGuests;
+  private JComboBox                                             cbTags;
+  private JList                                                 listTags;
+
+  private JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding;
+  private JListBinding<String, List<String>, JList>             jListBinding;
 
   /**
    * Instantiates a new tv show episode scrape dialog.
@@ -539,7 +542,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
   }
 
   protected void initDataBindings() {
-    JTableBinding<TvShowActor, List<TvShowActor>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableGuests);
+    jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableGuests);
     //
     BeanProperty<TvShowActor, String> movieCastBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieCastBeanProperty);
@@ -549,9 +552,16 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     //
     jTableBinding.bind();
     //
-    JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
-    jListBinding_1.bind();
+    jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
+    jListBinding.bind();
     //
+  }
+
+  @Override
+  public void dispose() {
+    super.dispose();
+    jTableBinding.unbind();
+    jListBinding.unbind();
   }
 
   private class AddTagAction extends AbstractAction {

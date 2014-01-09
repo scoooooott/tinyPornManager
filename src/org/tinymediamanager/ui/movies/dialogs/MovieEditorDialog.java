@@ -956,7 +956,7 @@ public class MovieEditorDialog extends JDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MovieProducer producer = new MovieProducer(BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
+      MovieProducer producer = new MovieProducer(BUNDLE.getString("producer.name.unknown"), BUNDLE.getString("producer.role.unknown")); //$NON-NLS-1$
       producers.add(0, producer);
     }
   }
