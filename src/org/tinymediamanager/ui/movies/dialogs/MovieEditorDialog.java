@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.movies.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -90,54 +91,65 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieEditorDialog extends JDialog {
-  private static final long           serialVersionUID = -286251957529920347L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());             //$NON-NLS-1$
-  private static final Date           INITIAL_DATE     = new Date(0);
+  private static final long                                         serialVersionUID = -286251957529920347L;
+  private static final ResourceBundle                               BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
+  private static final Date                                         INITIAL_DATE     = new Date(0);
 
-  private Movie                       movieToEdit;
-  private MovieList                   movieList        = MovieList.getInstance();
-  private List<MovieActor>            cast             = ObservableCollections.observableList(new ArrayList<MovieActor>());
-  private List<MovieProducer>         producers        = ObservableCollections.observableList(new ArrayList<MovieProducer>());
-  private List<MediaGenres>           genres           = ObservableCollections.observableList(new ArrayList<MediaGenres>());
-  private List<MediaTrailer>          trailers         = ObservableCollections.observableList(new ArrayList<MediaTrailer>());
-  private List<String>                tags             = ObservableCollections.observableList(new ArrayList<String>());
-  private List<String>                extrathumbs      = new ArrayList<String>();
-  private List<String>                extrafanarts     = new ArrayList<String>();
-  private boolean                     continueQueue    = true;
+  private Movie                                                     movieToEdit;
+  private MovieList                                                 movieList        = MovieList.getInstance();
+  private List<MovieActor>                                          cast             = ObservableCollections
+                                                                                         .observableList(new ArrayList<MovieActor>());
+  private List<MovieProducer>                                       producers        = ObservableCollections
+                                                                                         .observableList(new ArrayList<MovieProducer>());
+  private List<MediaGenres>                                         genres           = ObservableCollections
+                                                                                         .observableList(new ArrayList<MediaGenres>());
+  private List<MediaTrailer>                                        trailers         = ObservableCollections
+                                                                                         .observableList(new ArrayList<MediaTrailer>());
+  private List<String>                                              tags             = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>                                              extrathumbs      = new ArrayList<String>();
+  private List<String>                                              extrafanarts     = new ArrayList<String>();
+  private boolean                                                   continueQueue    = true;
 
-  private final JPanel                details1Panel    = new JPanel();
-  private final JPanel                details2Panel    = new JPanel();
-  private JTextField                  tfTitle;
-  private JTextField                  tfOriginalTitle;
-  private JSpinner                    spYear;
-  private JTextPane                   tpPlot;
-  private JTextField                  tfDirector;
-  private JTable                      tableActors;
-  private JLabel                      lblMoviePath;
-  private ImageLabel                  lblPoster;
-  private ImageLabel                  lblFanart;
-  private JTextField                  tfWriter;
-  private JSpinner                    spRuntime;
-  private JTextPane                   tfProductionCompanies;
-  private JList                       listGenres;
-  private JComboBox                   cbGenres;
-  private JSpinner                    spRating;
-  private JComboBox                   cbCertification;
-  private JTextField                  tfImdbId;
-  private JTextField                  tfTmdbId;
-  private JCheckBox                   cbWatched;
-  private JTextPane                   tpTagline;
-  private JTable                      tableTrailer;
-  private JTable                      tableProducers;
-  private JComboBox                   cbTags;
-  private JList                       listTags;
-  private JSpinner                    spDateAdded;
-  private JComboBox                   cbMovieSet;
-  private JTextField                  tfSorttitle;
-  private JTextField                  tfSpokenLanguages;
-  private JTextField                  tfCountry;
-  private JSpinner                    spReleaseDate;
-  private JSpinner                    spTop250;
+  private final JPanel                                              details1Panel    = new JPanel();
+  private final JPanel                                              details2Panel    = new JPanel();
+  private JTextField                                                tfTitle;
+  private JTextField                                                tfOriginalTitle;
+  private JSpinner                                                  spYear;
+  private JTextPane                                                 tpPlot;
+  private JTextField                                                tfDirector;
+  private JTable                                                    tableActors;
+  private JLabel                                                    lblMoviePath;
+  private ImageLabel                                                lblPoster;
+  private ImageLabel                                                lblFanart;
+  private JTextField                                                tfWriter;
+  private JSpinner                                                  spRuntime;
+  private JTextPane                                                 tfProductionCompanies;
+  private JList                                                     listGenres;
+  private JComboBox                                                 cbGenres;
+  private JSpinner                                                  spRating;
+  private JComboBox                                                 cbCertification;
+  private JTextField                                                tfImdbId;
+  private JTextField                                                tfTmdbId;
+  private JCheckBox                                                 cbWatched;
+  private JTextPane                                                 tpTagline;
+  private JTable                                                    tableTrailer;
+  private JTable                                                    tableProducers;
+  private JComboBox                                                 cbTags;
+  private JList                                                     listTags;
+  private JSpinner                                                  spDateAdded;
+  private JComboBox                                                 cbMovieSet;
+  private JTextField                                                tfSorttitle;
+  private JTextField                                                tfSpokenLanguages;
+  private JTextField                                                tfCountry;
+  private JSpinner                                                  spReleaseDate;
+  private JSpinner                                                  spTop250;
+
+  private JTableBinding<MovieActor, List<MovieActor>, JTable>       jTableBinding;
+  private JListBinding<MediaGenres, List<MediaGenres>, JList>       jListBinding;
+  private JTableBinding<MediaTrailer, List<MediaTrailer>, JTable>   jTableBinding_1;
+  private JComboBoxBinding<String, MovieList, JComboBox>            jComboBinding;
+  private JListBinding<String, List<String>, JList>                 jListBinding_1;
+  private JTableBinding<MovieProducer, List<MovieProducer>, JTable> jTableBinding_2;
 
   /**
    * Create the dialog.
@@ -148,9 +160,10 @@ public class MovieEditorDialog extends JDialog {
    *          the in queue
    */
   public MovieEditorDialog(Movie movie, boolean inQueue) {
-    setModal(true);
+    super((Frame) null, BUNDLE.getString("movie.edit"), true); //$NON-NLS-1$
+    // setModal(true);
     setIconImage(Globals.logo);
-    setTitle(BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+    //    setTitle(BUNDLE.getString("movie.edit")); //$NON-NLS-1$
     setName("movieEditor");
     setBounds(5, 5, 950, 700);
     TmmWindowSaver.loadSettings(this);
@@ -1200,7 +1213,7 @@ public class MovieEditorDialog extends JDialog {
   }
 
   protected void initDataBindings() {
-    JTableBinding<MovieActor, List<MovieActor>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
+    jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, cast, tableActors);
     //
     BeanProperty<MovieActor, String> movieCastBeanProperty = BeanProperty.create("name");
     jTableBinding.addColumnBinding(movieCastBeanProperty);
@@ -1210,11 +1223,10 @@ public class MovieEditorDialog extends JDialog {
     //
     jTableBinding.bind();
     //
-    JListBinding<MediaGenres, List<MediaGenres>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
+    jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
-    JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers,
-        tableTrailer);
+    jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers, tableTrailer);
     //
     BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
     jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
@@ -1234,15 +1246,13 @@ public class MovieEditorDialog extends JDialog {
     jTableBinding_1.bind();
     //
     BeanProperty<MovieList, List<String>> movieListBeanProperty = BeanProperty.create("tagsInMovies");
-    JComboBoxBinding<String, MovieList, JComboBox> jComboBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, movieList,
-        movieListBeanProperty, cbTags);
+    jComboBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, movieList, movieListBeanProperty, cbTags);
     jComboBinding.bind();
     //
-    JListBinding<String, List<String>, JList> jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
+    jListBinding_1 = SwingBindings.createJListBinding(UpdateStrategy.READ, tags, listTags);
     jListBinding_1.bind();
     //
-    JTableBinding<MovieProducer, List<MovieProducer>, JTable> jTableBinding_2 = SwingBindings.createJTableBinding(UpdateStrategy.READ, producers,
-        tableProducers);
+    jTableBinding_2 = SwingBindings.createJTableBinding(UpdateStrategy.READ, producers, tableProducers);
     //
     BeanProperty<MovieProducer, String> movieProducerBeanProperty = BeanProperty.create("name");
     jTableBinding_2.addColumnBinding(movieProducerBeanProperty);
@@ -1251,5 +1261,17 @@ public class MovieEditorDialog extends JDialog {
     jTableBinding_2.addColumnBinding(movieProducerBeanProperty_1);
     //
     jTableBinding_2.bind();
+
+  }
+
+  @Override
+  public void dispose() {
+    super.dispose();
+    jTableBinding.unbind();
+    jListBinding.unbind();
+    jTableBinding_1.unbind();
+    jComboBinding.unbind();
+    jListBinding_1.unbind();
+    jTableBinding_2.unbind();
   }
 }
