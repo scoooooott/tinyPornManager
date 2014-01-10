@@ -344,6 +344,13 @@ public class TinyMediaManager {
           MovieList movieList = MovieList.getInstance();
           movieList.loadMoviesFromDatabase();
 
+          // upgrade tasks for movies; added with 2.5;
+          if (newVersion) {
+            for (Movie movie : movieList.getMovies()) {
+              movie.findActorImages();
+            }
+          }
+
           if (g2 != null) {
             updateProgress(g2, "loading TV shows", 40);
             splash.update();

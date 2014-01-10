@@ -1251,6 +1251,27 @@ public class Movie extends MediaEntity {
       }
     }
 
+    // third - rename thumbs if needed
+    if (Globals.settings.getMovieSettings().isWriteActorImages()) {
+      for (MovieActor actor : actors) {
+        if (StringUtils.isNotBlank(actor.getThumbPath())) {
+          // build expected filename
+          String actorName = getPath() + File.separator + MovieActor.ACTOR_DIR + File.separator + actor.getName().replace(" ", "_") + "."
+              + FilenameUtils.getExtension(actor.getThumbPath());
+          // check if equal
+          if (!actorName.equals(actor.getThumbPath())) {
+            // rename
+            try {
+              FileUtils.moveFile(new File(actor.getThumbPath()), new File(actorName));
+            }
+            catch (IOException e) {
+              LOGGER.warn("couldn't rename actor thumb (" + actor.getThumbPath() + "): " + e.getMessage());
+            }
+          }
+        }
+      }
+    }
+
     firePropertyChange(ACTORS, null, this.getActors());
   }
 

@@ -694,6 +694,7 @@ public class MovieEditorDialog extends JDialog {
         actor.setName(origCast.getName());
         actor.setCharacter(origCast.getCharacter());
         actor.setThumbUrl(origCast.getThumbUrl());
+        actor.setThumbPath(origCast.getThumbPath());
         cast.add(actor);
       }
 
@@ -702,6 +703,7 @@ public class MovieEditorDialog extends JDialog {
         producer.setName(origProducer.getName());
         producer.setRole(origProducer.getRole());
         producer.setThumbUrl(origProducer.getThumbUrl());
+        producer.setThumbPath(origProducer.getThumbPath());
         producers.add(producer);
       }
 
