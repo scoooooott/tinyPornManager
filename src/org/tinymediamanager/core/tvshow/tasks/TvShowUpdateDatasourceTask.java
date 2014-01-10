@@ -49,15 +49,17 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  */
 
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
-  private static final Logger       LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
+  private static final Logger       LOGGER           = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
 
-  // skip well-known, but unneeded BD & DVD folders
-  private static final List<String> skipFolders   = Arrays.asList(".", "..", ".ACTORS", "SAMPLE", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF",
-                                                      "SSIF", "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION",
-                                                      ".APPLEDOUBLE", ".APPLEDB", ".APPLEDESKTOP", ".TRASHES", ".TEMPORARYITEMS", "@EADIR");
+  // skip well-known, but unneeded folders (UPPERCASE)
+  private static final List<String> skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+                                                         "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+
+  // skip folders starting with a SINGLE "." or "._"
+  private static final String       skipFoldersRegex = "^[.][\\w]+.*";
 
   private List<String>              dataSources;
-  private List<File>                tvShowFolders = new ArrayList<File>();
+  private List<File>                tvShowFolders    = new ArrayList<File>();
   private TvShowList                tvShowList;
 
   /**
@@ -157,7 +159,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
         String directoryName = subdir.getName();
         // check against unwanted dirs
-        if (skipFolders.contains(subdir.getName().toUpperCase())) {
+        if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)) {
           LOGGER.info("ignoring directory " + directoryName);
           continue;
         }
@@ -618,7 +620,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
         }
       }
-      if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase())) {
+      if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)) {
         // dig deeper
         if (file.getName().toUpperCase().equals("VIDEO_TS")) {
           findTvEpisodesAsDisc(tvShow, file);

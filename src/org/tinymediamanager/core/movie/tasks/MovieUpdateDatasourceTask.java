@@ -56,16 +56,18 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
-  private static final Logger       LOGGER      = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
+  private static final Logger       LOGGER           = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String> skipFolders = Arrays.asList(".", "..", ".ACTORS", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
-                                                    "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", ".APPLEDOUBLE",
-                                                    ".APPLEDB", ".APPLEDESKTOP", ".TRASHES", ".TEMPORARYITEMS", "@EADIR");
+  private static final List<String> skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+                                                         "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+
+  // skip folders starting with a SINGLE "." or "._"
+  private static final String       skipFoldersRegex = "^[.][\\w]+.*";
 
   private List<String>              dataSources;
   private MovieList                 movieList;
-  private HashSet<File>             filesFound  = new HashSet<File>();
+  private HashSet<File>             filesFound       = new HashSet<File>();
 
   public MovieUpdateDatasourceTask() {
     movieList = MovieList.getInstance();
@@ -116,7 +118,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             if (file.isDirectory()) {
               String directoryName = file.getName();
               // check against unwanted dirs
-              if (skipFolders.contains(directoryName.toUpperCase())) {
+              if (skipFolders.contains(directoryName.toUpperCase()) || directoryName.matches(skipFoldersRegex)) {
                 LOGGER.info("ignoring directory " + directoryName);
                 continue;
               }
@@ -490,7 +492,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // ignore .folders and others
-        if (!skipFolders.contains(file.getName().toUpperCase())) {
+        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)) {
           dirs.add(file);
         }
       }
@@ -555,7 +557,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       else {
         // ignore .folders and others
-        if (!skipFolders.contains(file.getName().toUpperCase())) {
+        if (!skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)) {
           mv.addAll(getAllMediaFilesRecursive(file));
         }
       }
