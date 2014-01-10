@@ -73,6 +73,7 @@ resource = getdown-new.jar
 resource = version
 resource = splashscreen.png
 resource = objectdb.conf
+resource = changelog.txt
 resource = [!windows] env.txt
 
 # translations

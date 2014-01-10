@@ -650,16 +650,18 @@ public class TinyMediaManager {
         // read the changelog
         try {
           final String changelog = FileUtils.readFileToString(new File("changelog.txt"));
-          EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              WhatsNewDialog dialog = new WhatsNewDialog(changelog);
-              dialog.pack();
-              dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-              dialog.setModalityType(ModalityType.APPLICATION_MODAL);
-              dialog.setVisible(true);
-            }
-          });
+          if (StringUtils.isNotBlank(changelog)) {
+            EventQueue.invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                WhatsNewDialog dialog = new WhatsNewDialog(changelog);
+                dialog.pack();
+                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+                dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+                dialog.setVisible(true);
+              }
+            });
+          }
         }
         catch (IOException e) {
           // no file found
