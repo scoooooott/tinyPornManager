@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -106,6 +107,13 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
   private JRadioButton                rdbtn0Sxe;
   private JCheckBox                   chckbxAsciiReplacement;
   private JTextPane                   txtpntAsciiHint;
+  private JSeparator                  separator_1;
+  private JLabel                      lblTvShow;
+  private JLabel                      lblEpisodes;
+  private JCheckBox                   chckbxTvShowFolder;
+  private JCheckBox                   chckbxYear;
+
+  private ActionListener              renamerActionListener;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -115,222 +123,205 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
         FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
-    JPanel panelTvShowDataSources = new JPanel();
+    {
+      JPanel panelTvShowDataSources = new JPanel();
 
-    panelTvShowDataSources.setBorder(new TitledBorder(null,
-        BUNDLE.getString("Settings.tvshowdatasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelTvShowDataSources, "2, 2, fill, top");
-    panelTvShowDataSources.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(44dlu;default):grow"),
-            FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+      panelTvShowDataSources.setBorder(new TitledBorder(null,
+          BUNDLE.getString("Settings.tvshowdatasource"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+      add(panelTvShowDataSources, "2, 2, fill, top");
+      panelTvShowDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
+          ColumnSpec.decode("max(44dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"),
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JScrollPane scrollPane = new JScrollPane();
-    panelTvShowDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
+      JScrollPane scrollPane = new JScrollPane();
+      panelTvShowDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
 
-    tableTvShowSources = new JTable();
-    scrollPane.setViewportView(tableTvShowSources);
+      tableTvShowSources = new JTable();
+      scrollPane.setViewportView(tableTvShowSources);
 
-    JPanel panelTvShowSourcesButtons = new JPanel();
-    panelTvShowDataSources.add(panelTvShowSourcesButtons, "8, 2, default, top");
-    panelTvShowSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+      JPanel panelTvShowSourcesButtons = new JPanel();
+      panelTvShowDataSources.add(panelTvShowSourcesButtons, "8, 2, default, top");
+      panelTvShowSourcesButtons.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, },
+          new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    JButton btnAdd = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
-    btnAdd.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
-        if (file != null && file.exists() && file.isDirectory()) {
-          settings.getTvShowSettings().addTvShowDataSources(file.getAbsolutePath());
-        }
-      }
-    });
-
-    panelTvShowSourcesButtons.add(btnAdd, "2, 1, fill, top");
-
-    JButton btnRemove = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
-    btnRemove.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        int row = tableTvShowSources.convertRowIndexToModel(tableTvShowSources.getSelectedRow());
-        if (row != -1) { // nothing selected
-          String path = Globals.settings.getTvShowSettings().getTvShowDataSource().get(row);
-          String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
-          int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.tvshowdatasource.remove.info"), path),
-              BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
-              BUNDLE.getString("Button.abort")); //$NON-NLS-1$
-          if (decision == 0) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            Globals.settings.getTvShowSettings().removeTvShowDataSources(path);
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      JButton btnAdd = new JButton(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+      btnAdd.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent arg0) {
+          File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser")); //$NON-NLS-1$
+          if (file != null && file.exists() && file.isDirectory()) {
+            settings.getTvShowSettings().addTvShowDataSources(file.getAbsolutePath());
           }
         }
-      }
-    });
-    panelTvShowSourcesButtons.add(btnRemove, "2, 3, fill, top");
+      });
 
-    lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-    panelTvShowDataSources.add(lblImageCache, "2, 4");
+      panelTvShowSourcesButtons.add(btnAdd, "2, 1, fill, top");
 
-    chckbxImageCache = new JCheckBox("");
-    panelTvShowDataSources.add(chckbxImageCache, "4, 4");
+      JButton btnRemove = new JButton(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+      btnRemove.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          int row = tableTvShowSources.convertRowIndexToModel(tableTvShowSources.getSelectedRow());
+          if (row != -1) { // nothing selected
+            String path = Globals.settings.getTvShowSettings().getTvShowDataSource().get(row);
+            String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
+            int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.tvshowdatasource.remove.info"), path),
+                BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
+                BUNDLE.getString("Button.abort")); //$NON-NLS-1$
+            if (decision == 0) {
+              setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+              Globals.settings.getTvShowSettings().removeTvShowDataSources(path);
+              setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+          }
+        }
+      });
+      panelTvShowSourcesButtons.add(btnRemove, "2, 3, fill, top");
 
-    lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-    lblImageCacheHint.setFont(new Font("Dialog", Font.PLAIN, 10));
-    panelTvShowDataSources.add(lblImageCacheHint, "6, 4, 3, 1");
+      lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
+      panelTvShowDataSources.add(lblImageCache, "2, 4");
 
-    // the panel renamer
-    JPanel panelRenamer = new JPanel();
-    panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
+      chckbxImageCache = new JCheckBox("");
+      panelTvShowDataSources.add(chckbxImageCache, "4, 4");
 
-    add(panelRenamer, "2, 4, fill, fill");
-    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-            FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+      lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+      lblImageCacheHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+      panelTvShowDataSources.add(lblImageCacheHint, "6, 4, 3, 1");
+    }
+    {
+      // the panel renamer
+      renamerActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          checkChanges();
+          createRenamerExample();
+        }
+      };
 
-    chckbxAddSeason = new JCheckBox(BUNDLE.getString("Settings.tvshowseasontofilename")); //$NON-NLS-1$
-    chckbxAddSeason.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        createRenamerExample();
-      }
-    });
-    panelRenamer.add(chckbxAddSeason, "2, 2, 3, 1");
+      JPanel panelRenamer = new JPanel();
+      panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
 
-    rdbtnSeasonEpisode = new JRadioButton("classic - S01E01");
-    rdbtnSeasonEpisode.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        checkChanges();
-        createRenamerExample();
-      }
-    });
-    buttonGroup.add(rdbtnSeasonEpisode);
-    panelRenamer.add(rdbtnSeasonEpisode, "6, 2");
+      add(panelRenamer, "2, 4, fill, fill");
+      panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"),
+          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"),
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    chckbxAddShow = new JCheckBox(BUNDLE.getString("Settings.tvshowtofilename")); //$NON-NLS-1$
-    chckbxAddShow.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        checkChanges();
-        createRenamerExample();
-      }
-    });
-    panelRenamer.add(chckbxAddShow, "2, 4, 3, 1");
+      chckbxAddSeason = new JCheckBox(BUNDLE.getString("Settings.tvshowseasontofilename")); //$NON-NLS-1$
+      chckbxAddSeason.addActionListener(renamerActionListener);
 
-    rdbtnSxe = new JRadioButton("x as separator - 1x01");
-    rdbtnSxe.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        checkChanges();
-        createRenamerExample();
-      }
-    });
-    buttonGroup.add(rdbtnSxe);
-    panelRenamer.add(rdbtnSxe, "6, 4");
+      lblTvShow = new JLabel(BUNDLE.getString("metatag.tvshow")); //$NON-NLS-1$
+      panelRenamer.add(lblTvShow, "2, 2");
 
-    chckbxAddEpisodeTitle = new JCheckBox(BUNDLE.getString("Settings.tvshowepisodetofilename")); //$NON-NLS-1$
-    chckbxAddEpisodeTitle.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        checkChanges();
-        createRenamerExample();
-      }
-    });
-    panelRenamer.add(chckbxAddEpisodeTitle, "2, 6, 3, 1");
+      chckbxTvShowFolder = new JCheckBox(BUNDLE.getString("tvshow.renamer.tvshowfolder")); //$NON-NLS-1$
+      chckbxTvShowFolder.addActionListener(renamerActionListener);
+      panelRenamer.add(chckbxTvShowFolder, "2, 4");
 
-    rdbtn0Sxe = new JRadioButton("x as separator - 01x01");
-    rdbtn0Sxe.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        checkChanges();
-        createRenamerExample();
-      }
-    });
-    buttonGroup.add(rdbtn0Sxe);
-    panelRenamer.add(rdbtn0Sxe, "6, 6");
+      chckbxYear = new JCheckBox(BUNDLE.getString("tvshow.renamer.tvshowfolder.year")); //$NON-NLS-1$
+      chckbxYear.addActionListener(renamerActionListener);
+      panelRenamer.add(chckbxYear, "4, 4, 3, 1");
 
-    rdbtnRawNumber = new JRadioButton("raw number - 101");
-    rdbtnRawNumber.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        checkChanges();
-        createRenamerExample();
-      }
-    });
-    buttonGroup.add(rdbtnRawNumber);
-    panelRenamer.add(rdbtnRawNumber, "6, 8");
+      separator_1 = new JSeparator();
+      panelRenamer.add(separator_1, "2, 6, 5, 1");
 
-    lblSeparator = new JLabel(BUNDLE.getString("Settings.separator")); //$NON-NLS-1$
-    panelRenamer.add(lblSeparator, "2, 10, right, default");
+      lblEpisodes = new JLabel(BUNDLE.getString("metatag.episodes")); //$NON-NLS-1$
+      panelRenamer.add(lblEpisodes, "2, 8");
+      panelRenamer.add(chckbxAddSeason, "2, 10, 3, 1");
 
-    cbSeparator = new JComboBox(separators.toArray());
-    panelRenamer.add(cbSeparator, "4, 10, fill, default");
+      rdbtnSeasonEpisode = new JRadioButton("S01E01");
+      rdbtnSeasonEpisode.addActionListener(renamerActionListener);
+      buttonGroup.add(rdbtnSeasonEpisode);
+      panelRenamer.add(rdbtnSeasonEpisode, "6, 10");
 
-    chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
-    chckbxAsciiReplacement.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        checkChanges();
-        createRenamerExample();
-      }
-    });
-    panelRenamer.add(chckbxAsciiReplacement, "2, 12, 5, 1");
+      chckbxAddShow = new JCheckBox(BUNDLE.getString("Settings.tvshowtofilename")); //$NON-NLS-1$
+      chckbxAddShow.addActionListener(renamerActionListener);
+      panelRenamer.add(chckbxAddShow, "2, 12, 3, 1");
 
-    txtpntAsciiHint = new JTextPane();
-    txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
-    txtpntAsciiHint.setFont(new Font("Dialog", Font.PLAIN, 10));
-    txtpntAsciiHint.setBackground(UIManager.getColor("Panel.background"));
-    panelRenamer.add(txtpntAsciiHint, "2, 14, 5, 1, fill, fill");
+      rdbtnSxe = new JRadioButton("1x01");
+      rdbtnSxe.addActionListener(renamerActionListener);
+      buttonGroup.add(rdbtnSxe);
+      panelRenamer.add(rdbtnSxe, "6, 12");
 
-    lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
-    panelRenamer.add(lblSeasonFolderName, "2, 16, right, top");
+      chckbxAddEpisodeTitle = new JCheckBox(BUNDLE.getString("Settings.tvshowepisodetofilename")); //$NON-NLS-1$
+      chckbxAddEpisodeTitle.addActionListener(renamerActionListener);
+      panelRenamer.add(chckbxAddEpisodeTitle, "2, 14, 3, 1");
 
-    tfSeasonFoldername = new JTextField();
-    panelRenamer.add(tfSeasonFoldername, "4, 16, fill, top");
-    tfSeasonFoldername.getDocument().addDocumentListener(new DocumentListener() {
-      @Override
-      public void removeUpdate(DocumentEvent arg0) {
-        createRenamerExample();
-      }
+      rdbtn0Sxe = new JRadioButton("01x01");
+      rdbtn0Sxe.addActionListener(renamerActionListener);
+      buttonGroup.add(rdbtn0Sxe);
+      panelRenamer.add(rdbtn0Sxe, "6, 14");
 
-      @Override
-      public void insertUpdate(DocumentEvent arg0) {
-        createRenamerExample();
-      }
+      rdbtnRawNumber = new JRadioButton("101");
+      rdbtnRawNumber.addActionListener(renamerActionListener);
+      buttonGroup.add(rdbtnRawNumber);
+      panelRenamer.add(rdbtnRawNumber, "6, 16");
 
-      @Override
-      public void changedUpdate(DocumentEvent arg0) {
-        createRenamerExample();
-      }
-    });
+      lblSeparator = new JLabel(BUNDLE.getString("Settings.separator")); //$NON-NLS-1$
+      panelRenamer.add(lblSeparator, "2, 18, right, default");
 
-    txtpnSeasonHint = new JTextPane();
-    txtpnSeasonHint.setOpaque(false);
-    txtpnSeasonHint.setFont(new Font("Dialog", Font.PLAIN, 10));
-    txtpnSeasonHint.setText(BUNDLE.getString("Settings.tvshowseasonhint")); //$NON-NLS-1$
-    panelRenamer.add(txtpnSeasonHint, "6, 16, fill, fill");
+      cbSeparator = new JComboBox(separators.toArray());
+      panelRenamer.add(cbSeparator, "4, 18, fill, default");
 
-    JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
-    panelRenamer.add(lblExampleT, "2, 18, right, default");
+      chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
+      chckbxAsciiReplacement.addActionListener(renamerActionListener);
+      panelRenamer.add(chckbxAsciiReplacement, "2, 20, 5, 1");
 
-    cbTvShowForPreview = new JComboBox();
-    cbTvShowForPreview.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        createRenamerExample();
-      }
-    });
-    panelRenamer.add(cbTvShowForPreview, "4, 18, 3, 1, fill, default");
+      txtpntAsciiHint = new JTextPane();
+      txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
+      txtpntAsciiHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+      txtpntAsciiHint.setBackground(UIManager.getColor("Panel.background"));
+      panelRenamer.add(txtpntAsciiHint, "2, 22, 5, 1, fill, fill");
 
-    lblExample = new JLabel("");
-    panelRenamer.add(lblExample, "2, 20, 5, 1");
+      lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
+      panelRenamer.add(lblSeasonFolderName, "2, 24, right, top");
+
+      tfSeasonFoldername = new JTextField();
+      panelRenamer.add(tfSeasonFoldername, "4, 24, fill, top");
+      tfSeasonFoldername.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void removeUpdate(DocumentEvent arg0) {
+          createRenamerExample();
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent arg0) {
+          createRenamerExample();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent arg0) {
+          createRenamerExample();
+        }
+      });
+
+      txtpnSeasonHint = new JTextPane();
+      txtpnSeasonHint.setOpaque(false);
+      txtpnSeasonHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+      txtpnSeasonHint.setText(BUNDLE.getString("Settings.tvshowseasonhint")); //$NON-NLS-1$
+      panelRenamer.add(txtpnSeasonHint, "6, 24, fill, fill");
+
+      JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
+      panelRenamer.add(lblExampleT, "2, 26, right, default");
+
+      cbTvShowForPreview = new JComboBox();
+      cbTvShowForPreview.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          createRenamerExample();
+        }
+      });
+      panelRenamer.add(cbTvShowForPreview, "4, 26, 3, 1, fill, default");
+
+      lblExample = new JLabel("");
+      panelRenamer.add(lblExample, "2, 28, 5, 1");
+    }
 
     initDataBindings();
 
@@ -411,9 +402,10 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
 
     if (tvShow != null && tvShow.getEpisodes().size() > 0 && tvShow.getEpisodes().get(0) != null) {
       TvShowEpisode episode = tvShow.getEpisodes().get(0);
+      String tvShowDir = TvShowRenamer.generateTvShowDir(tvShow);
       String filename = TvShowRenamer.generateFilename(tvShow, episode.getMediaFiles(MediaFileType.VIDEO).get(0));
       String seasonDir = TvShowRenamer.generateSeasonDir(tfSeasonFoldername.getText(), episode);
-      lblExample.setText(seasonDir + File.separator + filename);
+      lblExample.setText(tvShowDir + File.separator + seasonDir + File.separator + filename);
     }
     else {
       lblExample.setText("");
@@ -506,5 +498,20 @@ public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, chckbxAsciiReplacement, jCheckBoxBeanProperty);
     autoBinding_5.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_7 = BeanProperty.create("tvShowSettings.renamerTvShowFolder");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_7, chckbxTvShowFolder, jCheckBoxBeanProperty);
+    autoBinding_6.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_8 = BeanProperty.create("tvShowSettings.renamerTvShowFolderYear");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_8, chckbxYear, jCheckBoxBeanProperty);
+    autoBinding_7.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, chckbxTvShowFolder,
+        jCheckBoxBeanProperty, chckbxYear, jCheckBoxBeanProperty_1);
+    autoBinding_8.bind();
   }
 }

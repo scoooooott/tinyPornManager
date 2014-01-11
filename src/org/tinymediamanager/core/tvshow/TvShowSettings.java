@@ -60,6 +60,8 @@ public class TvShowSettings extends AbstractModelObject {
   private boolean             scrapeBestImage             = true;
   private MediaLanguages      scraperLanguage             = MediaLanguages.en;
   private CountryCode         certificationCountry        = CountryCode.US;
+  private boolean             renamerTvShowFolder         = true;
+  private boolean             renamerTvShowFolderYear     = false;
   private boolean             renamerAddShow              = true;
   private boolean             renamerAddSeason            = true;
   private boolean             renamerAddTitle             = true;
@@ -73,18 +75,9 @@ public class TvShowSettings extends AbstractModelObject {
   @Enumerated(EnumType.STRING)
   private TvShowEpisodeNaming renamerFormat               = TvShowEpisodeNaming.WITH_SE;
 
-  /**
-   * Instantiates a new tv show settings.
-   */
   public TvShowSettings() {
   }
 
-  /**
-   * Adds the tv show data sources.
-   * 
-   * @param path
-   *          the path
-   */
   public void addTvShowDataSources(String path) {
     if (!tvShowDataSources.contains(path)) {
       tvShowDataSources.add(path);
@@ -92,12 +85,6 @@ public class TvShowSettings extends AbstractModelObject {
     }
   }
 
-  /**
-   * Removes the tv show data sources.
-   * 
-   * @param path
-   *          the path
-   */
   public void removeTvShowDataSources(String path) {
     TvShowList tvShowList = TvShowList.getInstance();
     tvShowList.removeDatasource(path);
@@ -105,95 +92,44 @@ public class TvShowSettings extends AbstractModelObject {
     firePropertyChange(TV_SHOW_DATA_SOURCE, null, tvShowDataSources);
   }
 
-  /**
-   * Gets the tv show data source.
-   * 
-   * @return the tv show data source
-   */
   public List<String> getTvShowDataSource() {
     return tvShowDataSources;
   }
 
-  /**
-   * Gets the tv show scraper.
-   * 
-   * @return the tv show scraper
-   */
   public TvShowScrapers getTvShowScraper() {
     return tvShowScraper;
   }
 
-  /**
-   * Sets the tv show scraper.
-   * 
-   * @param newValue
-   *          the new tv show scraper
-   */
   public void setTvShowScraper(TvShowScrapers newValue) {
     TvShowScrapers oldValue = this.tvShowScraper;
     this.tvShowScraper = newValue;
     firePropertyChange(TV_SHOW_SCRAPER, oldValue, newValue);
   }
 
-  /**
-   * Checks if is scrape best image.
-   * 
-   * @return true, if is scrape best image
-   */
   public boolean isScrapeBestImage() {
     return scrapeBestImage;
   }
 
-  /**
-   * Sets the scrape best image.
-   * 
-   * @param newValue
-   *          the new scrape best image
-   */
   public void setScrapeBestImage(boolean newValue) {
     boolean oldValue = this.scrapeBestImage;
     this.scrapeBestImage = newValue;
     firePropertyChange(SCRAPE_BEST_IMAGE, oldValue, newValue);
   }
 
-  /**
-   * Gets the scraper language.
-   * 
-   * @return the scraper language
-   */
-  @XmlElement(name = SCRAPER_LANGU)
   public MediaLanguages getScraperLanguage() {
     return scraperLanguage;
   }
 
-  /**
-   * Sets the scraper language.
-   * 
-   * @param newValue
-   *          the new scraper language
-   */
   public void setScraperLanguage(MediaLanguages newValue) {
     MediaLanguages oldValue = this.scraperLanguage;
     this.scraperLanguage = newValue;
     firePropertyChange(SCRAPER_LANGU, oldValue, newValue);
   }
 
-  /**
-   * Gets the certification country.
-   * 
-   * @return the certification country
-   */
-  @XmlElement(name = CERTIFICATION_COUNTRY)
   public CountryCode getCertificationCountry() {
     return certificationCountry;
   }
 
-  /**
-   * Sets the certification country.
-   * 
-   * @param newValue
-   *          the new certification country
-   */
   public void setCertificationCountry(CountryCode newValue) {
     CountryCode oldValue = this.certificationCountry;
     certificationCountry = newValue;
@@ -203,106 +139,50 @@ public class TvShowSettings extends AbstractModelObject {
   /** add TV show name to filename? */
   /** add season number to filename? */
   /** add title (if 1 EP) to filename? */
-
-  /**
-   * Should we add TV show name to filename?
-   * 
-   * @return true/false
-   */
   public boolean getRenamerAddShow() {
     return renamerAddShow;
   }
 
-  /**
-   * Should we add TV show name to filename?
-   * 
-   * @param newValue
-   *          true/false
-   */
   public void setRenamerAddShow(boolean newValue) {
     boolean oldValue = this.renamerAddShow;
     this.renamerAddShow = newValue;
     firePropertyChange(RENAMER_ADD_SHOW, oldValue, newValue);
   }
 
-  /**
-   * Should we add season name to filename?
-   * 
-   * @return true/false
-   */
   public boolean getRenamerAddSeason() {
     return renamerAddSeason;
   }
 
-  /**
-   * Should we add season name to filename?
-   * 
-   * @param newValue
-   *          true/false
-   */
   public void setRenamerAddSeason(boolean newValue) {
     boolean oldValue = this.renamerAddSeason;
     this.renamerAddSeason = newValue;
     firePropertyChange(RENAMER_ADD_SEASON, oldValue, newValue);
   }
 
-  /**
-   * Should we add title to filename?
-   * 
-   * @return true/false
-   */
   public boolean getRenamerAddTitle() {
     return renamerAddTitle;
   }
 
-  /**
-   * Should we add title to filename?
-   * 
-   * @param newValue
-   *          true/false
-   */
   public void setRenamerAddTitle(boolean newValue) {
     boolean oldValue = this.renamerAddTitle;
     this.renamerAddTitle = newValue;
     firePropertyChange(RENAMER_ADD_TITLE, oldValue, newValue);
   }
 
-  /**
-   * gets the renamer format
-   * 
-   * @return TvShowRenamer.Format enum
-   */
   public TvShowEpisodeNaming getRenamerFormat() {
     return renamerFormat;
   }
 
-  /**
-   * sets the renamer format
-   * 
-   * @param newValue
-   *          TvShowRenamer.Format enum
-   */
   public void setRenamerFormat(TvShowEpisodeNaming newValue) {
     TvShowEpisodeNaming oldValue = this.renamerFormat;
     this.renamerFormat = newValue;
     firePropertyChange(RENAMER_FORMAT, oldValue, newValue);
   }
 
-  /**
-   * gets the renamer separator char
-   * 
-   * @return separator
-   */
   public String getRenamerSeparator() {
     return renamerSeparator;
   }
 
-  /**
-   * the renamer separator char to set
-   * 
-   * @param newValue
-   *          a char (or string ;)
-   */
   public void setRenamerSeparator(String newValue) {
     String oldValue = this.renamerSeparator;
     this.renamerSeparator = newValue;
@@ -357,5 +237,25 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.asciiReplacement;
     this.asciiReplacement = newValue;
     firePropertyChange(ASCII_REPLACEMENT, oldValue, newValue);
+  }
+
+  public boolean isRenamerTvShowFolder() {
+    return renamerTvShowFolder;
+  }
+
+  public boolean isRenamerTvShowFolderYear() {
+    return renamerTvShowFolderYear;
+  }
+
+  public void setRenamerTvShowFolder(boolean newValue) {
+    boolean oldValue = this.renamerTvShowFolder;
+    this.renamerTvShowFolder = newValue;
+    firePropertyChange("renamerTvShowFolder", oldValue, newValue);
+  }
+
+  public void setRenamerTvShowFolderYear(boolean newValue) {
+    boolean oldValue = this.renamerTvShowFolderYear;
+    this.renamerTvShowFolderYear = newValue;
+    firePropertyChange("renamerTvShowFolderYear", oldValue, newValue);
   }
 }

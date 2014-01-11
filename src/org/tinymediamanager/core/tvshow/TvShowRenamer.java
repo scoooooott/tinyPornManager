@@ -42,8 +42,6 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Myron Boyle
  */
 public class TvShowRenamer {
-
-  /** The Constant LOGGER. */
   private static final Logger LOGGER = LoggerFactory.getLogger(TvShowRenamer.class);
 
   /**
@@ -77,11 +75,11 @@ public class TvShowRenamer {
   public static void renameTvShowRoot(TvShow show) {
     LOGGER.debug("movie year: " + show.getYear());
     LOGGER.debug("movie path: " + show.getPath());
-    String newPathname = createDestination("$T ($Y)", show); // hardcode for now
+    String newPathname = generateTvShowDir(show);
     String oldPathname = show.getPath();
 
     if (!newPathname.isEmpty()) {
-      newPathname = show.getDataSource() + File.separator + newPathname;
+      // newPathname = show.getDataSource() + File.separator + newPathname;
       File srcDir = new File(oldPathname);
       File destDir = new File(newPathname);
       // move directory if needed
@@ -417,6 +415,23 @@ public class TvShowRenamer {
       seasonDir = "Season " + String.valueOf(episode.getSeason());
     }
     return seasonDir;
+  }
+
+  public static String generateTvShowDir(TvShow tvShow) {
+    String newPathname;
+    if (Globals.settings.getTvShowSettings().isRenamerTvShowFolder()) {
+      if (Globals.settings.getTvShowSettings().isRenamerTvShowFolderYear()) {
+        newPathname = tvShow.getDataSource() + File.separator + createDestination("$T ($Y)", tvShow);
+      }
+      else {
+        newPathname = tvShow.getDataSource() + File.separator + createDestination("$T", tvShow);
+      }
+    }
+    else {
+      newPathname = tvShow.getPath();
+    }
+
+    return newPathname;
   }
 
   /**
