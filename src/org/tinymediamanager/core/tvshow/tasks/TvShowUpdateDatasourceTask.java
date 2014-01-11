@@ -776,6 +776,16 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         if (mf.getType() == MediaFileType.SUBTITLE) {
           episode.setSubtitles(true);
         }
+        // check if it is a poster
+        if (mf.getType() == MediaFileType.GRAPHIC) {
+          LOGGER.debug("parsing unknown graphic " + mf.getFilename());
+          String vfilename = FilenameUtils.getBaseName(videoFile.getName());
+          if (vfilename.equals(FilenameUtils.getBaseName(mf.getFilename())) // basename match
+              || Utils.cleanStackingMarkers(vfilename).trim().equals(FilenameUtils.getBaseName(mf.getFilename())) // basename w/o stacking
+              || episode.getTitle().equals(FilenameUtils.getBaseName(mf.getFilename()))) { // title match
+            mf.setType(MediaFileType.POSTER);
+          }
+        }
         episode.addToMediaFiles(mf);
       }
       else {

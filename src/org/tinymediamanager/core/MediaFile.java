@@ -164,6 +164,30 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       // try to parse from parent directory
       this.stacking = Utils.getStackingNumber(FilenameUtils.getBaseName(getPath()));
     }
+
+    if (this.type == MediaFileType.SUBTITLE) {
+      gatherSubtitleInformation();
+    }
+  }
+
+  private void gatherSubtitleInformation() {
+    MediaFileSubtitle sub = new MediaFileSubtitle();
+    String shortname = getBasename().toLowerCase();
+    if (shortname.contains("forced")) {
+      sub.setForced(true);
+      shortname = shortname.replaceAll("\\p{Punct}*forced", "");
+    }
+    Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
+    for (String l : langArray) {
+      if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
+        String lang = Utils.getDisplayLanguage(l);
+        LOGGER.debug("found language '" + l + "' in subtitle; displaying it as '" + lang + "'");
+        sub.setLanguage(lang);
+        break;
+      }
+    }
+    sub.setCodec(getExtension());
+    subtitles.add(sub);
   }
 
   /**
@@ -1215,24 +1239,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
       case SUBTITLE:
         if (subtitles == null || subtitles.size() == 0 || force) {
-          subtitles.clear();
-          MediaFileSubtitle sub = new MediaFileSubtitle();
-          String shortname = getBasename().toLowerCase();
-          if (shortname.contains("forced")) {
-            sub.setForced(true);
-            shortname = shortname.replaceAll("\\p{Punct}*forced", "");
-          }
-          Set<String> langArray = Utils.KEY_TO_LOCALE_MAP.keySet();
-          for (String l : langArray) {
-            if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
-              String lang = Utils.getDisplayLanguage(l);
-              LOGGER.debug("found language '" + l + "' in subtitle; displaying it as '" + lang + "'");
-              sub.setLanguage(lang);
-              break;
-            }
-          }
-          sub.setCodec(getExtension());
-          subtitles.add(sub);
+          gatherSubtitleInformation();
         }
         break;
 

@@ -300,7 +300,7 @@ public class ImageCache {
       LOGGER.warn(e.getMessage());
     }
     catch (Exception e) {
-      LOGGER.warn("problem caching file: ", e);
+      LOGGER.warn("problem caching file: " + e.getMessage());
     }
 
     // fallback
