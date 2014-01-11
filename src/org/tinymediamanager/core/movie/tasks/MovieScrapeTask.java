@@ -41,6 +41,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.MediaType;
 
 /**
  * The Class MovieScrapeTask.
@@ -237,6 +238,7 @@ public class MovieScrapeTask extends TmmThreadPool {
       List<MediaArtwork> artwork = null;
 
       MediaScrapeOptions options = new MediaScrapeOptions();
+      options.setType(MediaType.MOVIE);
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
       options.setImdbId(movie.getImdbId());

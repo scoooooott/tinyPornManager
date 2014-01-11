@@ -243,6 +243,7 @@ public class TvShowChooserModel extends AbstractModelObject {
     List<MediaArtwork> artwork = null;
 
     MediaScrapeOptions options = new MediaScrapeOptions();
+    options.setType(MediaType.TV_SHOW);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
     options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));

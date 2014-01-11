@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaType;
 
 public class FanartTvTest {
 
@@ -19,6 +20,7 @@ public class FanartTvTest {
   @Test
   public void test() throws Exception {
     MediaScrapeOptions o = new MediaScrapeOptions();
+    o.setType(MediaType.TV_SHOW);
     o.setTmdbId(49040);
     o.setImdbId("tt1194173");
 

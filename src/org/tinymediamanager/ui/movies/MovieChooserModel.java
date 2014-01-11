@@ -29,6 +29,7 @@ import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -270,6 +271,7 @@ public class MovieChooserModel extends AbstractModelObject {
     List<MediaArtwork> artwork = null;
 
     MediaScrapeOptions options = new MediaScrapeOptions();
+    options.setType(MediaType.MOVIE);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
     options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));

@@ -268,6 +268,7 @@ public class TvShowScrapeTask extends TmmSwingWorker {
       List<MediaArtwork> artwork = null;
 
       MediaScrapeOptions options = new MediaScrapeOptions();
+      options.setType(MediaType.TV_SHOW);
       options.setArtworkType(MediaArtworkType.ALL);
       options.setMetadata(metadata);
       options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
