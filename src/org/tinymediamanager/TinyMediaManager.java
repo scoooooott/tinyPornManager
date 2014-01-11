@@ -286,8 +286,9 @@ public class TinyMediaManager {
           TmmUILogCollector.init();
 
           // upgrade check
+          String oldVersion = Globals.settings.getVersion();
           if (newVersion) {
-            doUpgradeTasks(Globals.settings.getVersion()); // do the upgrade tasks for the old version
+            doUpgradeTasks(oldVersion); // do the upgrade tasks for the old version
           }
 
           // init splash
@@ -343,13 +344,6 @@ public class TinyMediaManager {
 
           MovieList movieList = MovieList.getInstance();
           movieList.loadMoviesFromDatabase();
-
-          // upgrade tasks for movies; added with 2.5;
-          if (newVersion) {
-            for (Movie movie : movieList.getMovies()) {
-              movie.findActorImages();
-            }
-          }
 
           if (g2 != null) {
             updateProgress(g2, "loading TV shows", 40);
@@ -408,9 +402,14 @@ public class TinyMediaManager {
           // LOGGER.warn("VLC: " + ule.getMessage().trim());
           // }
 
+          // do upgrade tasks after database loading - starting at 70%
+          if (newVersion) {
+            doUpgradeTasksAfterDatabaseLoading(oldVersion, g2, splash);
+          }
+
           // clean cache ////////////////////////////////////////////////////
           if (g2 != null) {
-            updateProgress(g2, "loading movies", 80);
+            updateProgress(g2, "cleaning cache", 80);
             splash.update();
           }
           CachedUrl.cleanupCache();
@@ -478,6 +477,29 @@ public class TinyMediaManager {
             JOptionPane.showMessageDialog(null, e.getMessage());
           }
           LOGGER.error("start of tmm", e);
+        }
+      }
+
+      private void doUpgradeTasksAfterDatabaseLoading(String version, Graphics2D g2, SplashScreen splash) {
+        MovieList movieList = MovieList.getInstance();
+        List<Movie> movies = movieList.getMovies();
+
+        int updateInterval = movies.size() / 10;
+        int counter = 0;
+        int percentage = 70;
+
+        // upgrade tasks for movies; added with 2.5;
+        if ("2.1".equals(version)) {
+          for (Movie movie : movieList.getMovies()) {
+            movie.findActorImages();
+            counter++;
+            if (counter >= updateInterval) {
+              counter = 0;
+              percentage++;
+              updateProgress(g2, "Performing update tasks", percentage);
+              splash.update();
+            }
+          }
         }
       }
 
