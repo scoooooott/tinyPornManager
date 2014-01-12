@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
@@ -47,7 +48,7 @@ public class WhatsNewDialog extends JDialog {
   private static final long           serialVersionUID = -4071143363981892283L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public WhatsNewDialog(String textInTextpane) {
+  public WhatsNewDialog(String changelog) {
     setSize(500, 250);
     setIconImage(Globals.logo);
     setTitle(BUNDLE.getString("whatsnew.title")); //$NON-NLS-1$
@@ -56,7 +57,9 @@ public class WhatsNewDialog extends JDialog {
       getContentPane().add(scrollPane, BorderLayout.CENTER);
       JTextPane textPane = new JTextPane();
       scrollPane.setViewportView(textPane);
-      textPane.setText(textInTextpane);
+      textPane.setContentType("text/html");
+      textPane.setText(buildHTMLFromChangelog(changelog));
+      textPane.setEditable(false);
       textPane.setCaretPosition(0);
     }
     {
@@ -92,6 +95,21 @@ public class WhatsNewDialog extends JDialog {
       });
       panel.add(btnClose, "8, 2");
     }
+  }
+
+  private String buildHTMLFromChangelog(String changelog) {
+    StringBuilder changelogInHTML = new StringBuilder("<html><body><h1>Version ");
+    changelogInHTML.append(ReleaseInfo.getVersion());
+    changelogInHTML.append("</h1><ul>");
+
+    for (String line : changelog.split("\\r|\\n|\\r\\n")) {
+      changelogInHTML.append("<li>");
+      changelogInHTML.append(line);
+      changelogInHTML.append("</li>");
+    }
+
+    changelogInHTML.append("</ul></body></html>");
+    return changelogInHTML.toString();
   }
 
   @Override
