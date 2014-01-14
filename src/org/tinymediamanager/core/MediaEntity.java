@@ -475,6 +475,16 @@ public abstract class MediaEntity extends AbstractModelObject {
     return mf;
   }
 
+  public List<MediaFile> getMediaFilesExceptType(MediaFileType type) {
+    List<MediaFile> mf = new ArrayList<MediaFile>();
+    for (MediaFile mediaFile : new ArrayList<MediaFile>(mediaFiles)) {
+      if (!mediaFile.getType().equals(type)) {
+        mf.add(mediaFile);
+      }
+    }
+    return mf;
+  }
+
   public void removeAllMediaFiles() {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>(mediaFiles);
     synchronized (mediaFiles) {
