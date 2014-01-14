@@ -320,9 +320,38 @@ public class TinyMediaManager {
           LOGGER.info("=====================================================");
           LOGGER.info("starting tinyMediaManager");
 
+          // set native dir (needs to be absolute)
+          // String nativepath = TinyMediaManager.class.getClassLoader().getResource(".").getPath() + "native/";
+          String nativepath = "native/";
+          if (Platform.isWindows()) {
+            nativepath += "windows-";
+          }
+          else if (Platform.isLinux()) {
+            nativepath += "linux-";
+          }
+          else if (Platform.isMac()) {
+            nativepath += "mac-";
+          }
+          nativepath += System.getProperty("os.arch");
+          System.setProperty("jna.library.path", nativepath);
+          // MediaInfo /////////////////////////////////////////////////////
+          if (g2 != null) {
+            updateProgress(g2, "loading MediaInfo libs", 20);
+            splash.update();
+          }
+          LOGGER.debug("Loading native mediainfo lib from: " + nativepath);
+          // load libMediainfo
+          String miv = MediaInfo.version();
+          if (!StringUtils.isEmpty(miv)) {
+            LOGGER.info("Using " + miv);
+          }
+          else {
+            LOGGER.error("could not load MediaInfo!");
+          }
+
           // initialize database //////////////////////////////////////////////
           if (g2 != null) {
-            updateProgress(g2, "initialize database", 20);
+            updateProgress(g2, "initialize database", 30);
             splash.update();
           }
 
@@ -338,7 +367,7 @@ public class TinyMediaManager {
 
           // load database //////////////////////////////////////////////////
           if (g2 != null) {
-            updateProgress(g2, "loading movies", 30);
+            updateProgress(g2, "loading movies", 40);
             splash.update();
           }
 
@@ -346,44 +375,12 @@ public class TinyMediaManager {
           movieList.loadMoviesFromDatabase();
 
           if (g2 != null) {
-            updateProgress(g2, "loading TV shows", 40);
+            updateProgress(g2, "loading TV shows", 50);
             splash.update();
           }
 
           TvShowList tvShowList = TvShowList.getInstance();
           tvShowList.loadTvShowsFromDatabase();
-
-          // set native dir (needs to be absolute)
-          // String nativepath =
-          // TinyMediaManager.class.getClassLoader().getResource(".").getPath()
-          // + "native/";
-          String nativepath = "native/";
-          if (Platform.isWindows()) {
-            nativepath += "windows-";
-          }
-          else if (Platform.isLinux()) {
-            nativepath += "linux-";
-          }
-          else if (Platform.isMac()) {
-            nativepath += "mac-";
-          }
-          nativepath += System.getProperty("os.arch");
-          System.setProperty("jna.library.path", nativepath);
-
-          // MediaInfo /////////////////////////////////////////////////////
-          if (g2 != null) {
-            updateProgress(g2, "loading MediaInfo libs", 50);
-            splash.update();
-          }
-          LOGGER.debug("Loading native mediainfo lib from: " + nativepath);
-          // load libMediainfo
-          String miv = MediaInfo.version();
-          if (!StringUtils.isEmpty(miv)) {
-            LOGGER.info("Using " + miv);
-          }
-          else {
-            LOGGER.error("could not load MediaInfo!");
-          }
 
           // VLC /////////////////////////////////////////////////////////
           // // try to initialize VLC native libs
