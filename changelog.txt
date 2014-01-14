@@ -1,3 +1,8 @@
+Version 2.5.1
+=======================
+x fixed a problem where mediainfo could not be loaded
+x fixed a database loading problem
+
 Version 2.5
 =======================
 + completely reworked the TV show panel (including a new panel for seasons - http://www.tinymediamanager.org/index.php/reworked-tv-show-section/ )
@@ -12,6 +17,8 @@ Version 2.5
 + added an ASCII cleaner for the renamer
 + added "bad words" to the movie importer
 + possibility to get the runtime from media files rather than scraper
++ added some settings for the TV show renamer
++ translations: spanish (thx to roliverosc), italian (thx to peppe_sr), korean (thx to piodio), norwegian (thx to roandr), french (thx to nerve)
 +/x reworked tagging of TV shows and episodes
 x many enhancements to the "update datasources" and database engine -> tmm is much faster now with large databases
 x some fixes and preventions to the "update datasources" engine
@@ -23,3 +30,4 @@ x crash at startup with invalid locales
 x crash when searching for a movie set is fixed with themoviedbapi 3.9  
 x NFO parsing of xbmc-youtube plugin urls
 x externalized some more string (better translations)
+x several fixes to the TV show renamer

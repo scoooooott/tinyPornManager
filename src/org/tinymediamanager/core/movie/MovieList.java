@@ -1030,5 +1030,10 @@ public class MovieList extends AbstractModelObject {
         }
       }
     }
+
+    // second: check if there are some orphaned movies in moviesets
+    for (MovieSet movieSet : movieSetList) {
+      movieSet.cleanMovieSet();
+    }
   }
 }

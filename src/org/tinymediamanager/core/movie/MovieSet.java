@@ -728,4 +728,23 @@ public class MovieSet extends MediaEntity {
       movie.writeNFO();
     }
   }
+
+  /**
+   * clean movies from this movieset if there are any inconsistances
+   */
+  void cleanMovieSet() {
+    MovieList movieList = MovieList.getInstance();
+    boolean dirty = false;
+
+    for (Movie movie : new ArrayList<Movie>(movies)) {
+      if (!movieList.getMovies().contains(movie)) {
+        movies.remove(movie);
+        dirty = true;
+      }
+    }
+
+    if (dirty) {
+      saveToDb();
+    }
+  }
 }
