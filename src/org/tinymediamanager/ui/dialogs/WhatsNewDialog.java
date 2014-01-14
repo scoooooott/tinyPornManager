@@ -59,9 +59,9 @@ public class WhatsNewDialog extends JDialog {
       textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
       scrollPane.setViewportView(textPane);
 
-      textPane.setContentType("text/html");
-      textPane.setText(buildHTMLFromChangelog(changelog));
-      // textPane.setText(changelog);
+      // textPane.setContentType("text/html");
+      // textPane.setText(buildHTMLFromChangelog(changelog));
+      textPane.setText(changelog);
       textPane.setEditable(false);
       textPane.setCaretPosition(0);
     }
