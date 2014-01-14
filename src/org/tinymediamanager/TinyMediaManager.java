@@ -484,11 +484,22 @@ public class TinyMediaManager {
         int updateInterval = movies.size() / 10;
         int counter = 0;
         int percentage = 70;
+        String v = "" + version;
 
-        // upgrade tasks for movies; added with 2.5;
-        if ("2.1".equals(version)) {
+        if (v.isEmpty()) {
+          v = "2.0"; // set version for other updates
+        }
+
+        if (v.equals("2.0")) {
+          v = "2.1";
+        }
+
+        if (v.equals("2.1")) {
+          // upgrade tasks for movies; added with 2.5;
+          Globals.entityManager.getTransaction().begin();
           for (Movie movie : movieList.getMovies()) {
             movie.findActorImages();
+            movie.saveToDb();
             counter++;
             if (counter >= updateInterval) {
               counter = 0;
@@ -497,6 +508,9 @@ public class TinyMediaManager {
               splash.update();
             }
           }
+          Globals.entityManager.getTransaction().commit();
+
+          v = "2.5";
         }
       }
 
