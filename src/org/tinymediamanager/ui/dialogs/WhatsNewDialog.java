@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
@@ -29,7 +30,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
@@ -56,9 +56,12 @@ public class WhatsNewDialog extends JDialog {
       JScrollPane scrollPane = new JScrollPane();
       getContentPane().add(scrollPane, BorderLayout.CENTER);
       JTextPane textPane = new JTextPane();
+      textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
       scrollPane.setViewportView(textPane);
+
       textPane.setContentType("text/html");
       textPane.setText(buildHTMLFromChangelog(changelog));
+      // textPane.setText(changelog);
       textPane.setEditable(false);
       textPane.setCaretPosition(0);
     }
@@ -98,17 +101,16 @@ public class WhatsNewDialog extends JDialog {
   }
 
   private String buildHTMLFromChangelog(String changelog) {
-    StringBuilder changelogInHTML = new StringBuilder("<html><body><h1>Version ");
-    changelogInHTML.append(ReleaseInfo.getVersion());
-    changelogInHTML.append("</h1><ul>");
+    StringBuilder changelogInHTML = new StringBuilder(
+        "<html><head><style type=\"text/css\">p { text-indent: -10px; padding-left: 10px; margin: 0px; }</style></head><body>");
 
     for (String line : changelog.split("\\r|\\n|\\r\\n")) {
-      changelogInHTML.append("<li>");
+      changelogInHTML.append("<p>");
       changelogInHTML.append(line);
-      changelogInHTML.append("</li>");
+      changelogInHTML.append("</p>");
     }
 
-    changelogInHTML.append("</ul></body></html>");
+    changelogInHTML.append("</body></html>");
     return changelogInHTML.toString();
   }
 
