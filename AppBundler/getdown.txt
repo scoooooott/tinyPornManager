@@ -65,7 +65,7 @@ delete = lib/vlcj.jar
 delete = lib/commons-logging.jar
 delete = lib/log4j.jar
 
-#resource = [windows] tinyMediaManager.exe #not yet - need more testing
+resource = [windows] tinyMediaManager.exe.new #rename to new, for self-update
 resource = [windows] tinyMediaManagerCMD.exe
 resource = [!windows] tinyMediaManagerCMD.sh
 resource = [!windows] tinyMediaManager.sh

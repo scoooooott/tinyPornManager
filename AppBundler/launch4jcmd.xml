@@ -27,7 +27,7 @@
     <fileVersion>2.0.0.0</fileVersion>
     <txtFileVersion>text</txtFileVersion>
     <fileDescription>tinyMediaManager is a media management tool written in Java/Swing. It is written to provide metadata for the XBOX Media Center (XBMC).</fileDescription>
-    <copyright>(c) 2012-2013 Manuel Laggner</copyright>
+    <copyright>(c) 2012-2014 Manuel Laggner</copyright>
     <productVersion>2.0.0.0</productVersion>
     <txtProductVersion>text</txtProductVersion>
     <productName>tinyMediaManager</productName>
