@@ -22,47 +22,29 @@ import org.tinymediamanager.core.Utils;
 public class MovieRenamerTest {
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamerTest.class);
 
-  public enum RenamerStatus {
-    SAME, REMOVED, ADDED, RENAMED;
-  }
-
-  public class FileToRename extends MediaFile {
-    boolean       renameFolder = false;
-    RenamerStatus renameStatus = RenamerStatus.SAME;
-
-    FileToRename(MediaFile mf) {
-      super(mf);
-    }
-  }
-
-  public void checkDiff(Movie m) {
-
-  }
-
   @Test
   public void checkDiff() {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("tmm.odb");
     Globals.entityManager = emf.createEntityManager();
     MovieList instance = MovieList.getInstance();
     instance.loadMoviesFromDatabase();
-
-    List<FileToRename> oldFiles = new ArrayList<FileToRename>();
-    Set<FileToRename> newFiles = new LinkedHashSet<FileToRename>();
-    boolean renameFolder = false;
+    // -------------------------------------------------------------------------------------
 
     LOGGER.debug("path expression: " + Globals.settings.getMovieSettings().getMovieRenamerPathname());
     LOGGER.debug("file expression: " + Globals.settings.getMovieSettings().getMovieRenamerFilename());
+
     for (Movie movie : instance.getMovies()) {
-      oldFiles.clear();
-      newFiles.clear();
       System.out.println(movie.getTitle());
+      List<MediaFile> oldFiles = new ArrayList<MediaFile>();
+      Set<MediaFile> newFiles = new LinkedHashSet<MediaFile>();
+      boolean renameFolder = false;
 
       String newVideoFileName = "";
 
       // VIDEO needs to be renamed first, since all others depend on that name!!!
       for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
-        oldFiles.add(new FileToRename(mf));
-        FileToRename ftr = generateFilename(movie, mf, newVideoFileName).get(0); // there can be only one
+        oldFiles.add(new MediaFile(mf));
+        MediaFile ftr = generateFilename(movie, mf, newVideoFileName).get(0); // there can be only one
         newFiles.add(ftr);
         if (newVideoFileName.isEmpty()) {
           // so remember first renamed video file basename (w/o stacking or extension)
@@ -72,7 +54,7 @@ public class MovieRenamerTest {
 
       // all the other MFs...
       for (MediaFile mf : movie.getMediaFilesExceptType(MediaFileType.VIDEO)) {
-        oldFiles.add(new FileToRename(mf));
+        oldFiles.add(new MediaFile(mf));
         newFiles.addAll(generateFilename(movie, mf, newVideoFileName)); // N:M
       }
 
@@ -88,7 +70,7 @@ public class MovieRenamerTest {
         else {
           System.out.println(" ... is a MultiMovieDir; create FOLDER " + newMovieFolder);
         }
-        // update already the "original" files with new path, so we can check complete MF ;)
+        // update already the "old" files with new path, so we can simply do a contains check ;)
         for (MediaFile omf : oldFiles) {
           omf.replacePathForRenamedFolder(oldMovieFolder, newMovieFolder);
         }
@@ -96,23 +78,28 @@ public class MovieRenamerTest {
 
       // change status of MFs, if they have been added or not
       System.out.println("=============== NEW");
-      for (FileToRename ftr : newFiles) {
-        if (!oldFiles.contains(ftr)) {
-          ftr.renameStatus = RenamerStatus.ADDED;
+      for (MediaFile mf : newFiles) {
+        if (!oldFiles.contains(mf)) {
+          System.out.println(mf.getFilename() + "  -  ADDED");
         }
-        System.out.println(ftr.getFilename() + "  -  " + ftr.renameStatus);
+        else {
+          System.out.println(mf.getFilename() + "  -  SAME");
+        }
       }
       System.out.println("=============== OLD");
-      for (FileToRename mf : oldFiles) {
+      for (MediaFile mf : oldFiles) {
         if (!newFiles.contains(mf)) {
-          mf.renameStatus = RenamerStatus.REMOVED;
+          System.out.println(mf.getFilename() + "  -  REMOVED");
         }
-        System.out.println(mf.getFilename() + "  -  " + mf.renameStatus);
+        else {
+          System.out.println(mf.getFilename() + "  -  SAME");
+        }
       }
       System.out.println("==================");
 
-    }
+    } // end movie loop
 
+    // -------------------------------------------------------------------------------------
     Globals.entityManager.close();
     emf.close();
   }
@@ -128,9 +115,9 @@ public class MovieRenamerTest {
    *          the basename of the renamed videoFileName (saved earlier)
    * @return list of renamed filename
    */
-  public ArrayList<FileToRename> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
+  public ArrayList<MediaFile> generateFilename(Movie movie, MediaFile mf, String videoFileName) {
     // return list of all generated MFs
-    ArrayList<FileToRename> newFiles = new ArrayList<FileToRename>();
+    ArrayList<MediaFile> newFiles = new ArrayList<MediaFile>();
 
     String newPathname = MovieRenamer.createDestinationForFoldername(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
     String movieDir = movie.getDataSource() + File.separatorChar + newPathname + File.separatorChar;
@@ -142,7 +129,7 @@ public class MovieRenamerTest {
 
     switch (mf.getType()) {
       case VIDEO:
-        FileToRename vid = new FileToRename(mf);
+        MediaFile vid = new MediaFile(mf);
         if (movie.isDisc() || mf.isDiscFile()) {
           // just replace new path and return file (do not change names!)
           vid.replacePathForRenamedFolder(new File(movie.getPath()), new File(movieDir));
@@ -156,7 +143,7 @@ public class MovieRenamerTest {
         break;
 
       case TRAILER:
-        FileToRename trail = new FileToRename(mf);
+        MediaFile trail = new MediaFile(mf);
         newFilename += "-trailer." + mf.getExtension();
         trail.setFile(new File(movieDir + newFilename));
         newFiles.add(trail);
@@ -180,7 +167,7 @@ public class MovieRenamerTest {
           newFilename += "." + lang;
         }
         newFilename += "." + mf.getExtension();
-        FileToRename sub = new FileToRename(mf);
+        MediaFile sub = new MediaFile(mf);
         sub.setFile(new File(movieDir + newFilename));
         newFiles.add(sub);
         break;
@@ -196,7 +183,7 @@ public class MovieRenamerTest {
         }
         for (MovieNfoNaming name : nfonames) {
           newFilename = movie.getNfoFilename(name, videoFileName);
-          FileToRename nfo = new FileToRename(mf);
+          MediaFile nfo = new MediaFile(mf);
           nfo.setFile(new File(movieDir + newFilename));
           newFiles.add(nfo);
         }
@@ -230,7 +217,7 @@ public class MovieRenamerTest {
               continue;
             }
           }
-          FileToRename pos = new FileToRename(mf);
+          MediaFile pos = new MediaFile(mf);
           pos.setFile(new File(movieDir + newFilename));
           newFiles.add(pos);
         }
@@ -264,7 +251,7 @@ public class MovieRenamerTest {
               continue;
             }
           }
-          FileToRename fan = new FileToRename(mf);
+          MediaFile fan = new MediaFile(mf);
           fan.setFile(new File(movieDir + newFilename));
           newFiles.add(fan);
         }
@@ -272,7 +259,7 @@ public class MovieRenamerTest {
 
       default:
         // return 1:1, only with renamed path
-        FileToRename def = new FileToRename(mf);
+        MediaFile def = new MediaFile(mf);
         def.replacePathForRenamedFolder(new File(movie.getPath()), new File(movieDir));
         newFiles.add(def);
         break;
