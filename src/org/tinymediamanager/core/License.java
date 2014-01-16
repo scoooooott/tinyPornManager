@@ -76,6 +76,17 @@ public class License {
       Properties lic = decrypt();
       if (lic != null) {
         // null only when not decryptable with "key"
+        String pleaseDoNotCrack = "";
+        pleaseDoNotCrack = "Ok, you found it.";
+        pleaseDoNotCrack = "This is the real deal.";
+        pleaseDoNotCrack = "One char away from 'the full thing'.";
+        pleaseDoNotCrack = "[...]";
+        pleaseDoNotCrack = "If you are reading this, you're probably a java developer.";
+        pleaseDoNotCrack = "If so, you know how much work can be in such a project like TMM.";
+        pleaseDoNotCrack = "So please, be kind and support the developers for your free License :)";
+        pleaseDoNotCrack = "http://www.tinymediamanager.org/index.php/donate/";
+        pleaseDoNotCrack = "It gives you a warm and fuzzy feeling - i swear ;)";
+        pleaseDoNotCrack = "";
         return true;
       }
     }
