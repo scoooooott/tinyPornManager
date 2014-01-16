@@ -92,31 +92,44 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieChooserDialog extends JDialog implements ActionListener {
 
-  private static final long           serialVersionUID      = -3104541519073924724L;
-  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                 //$NON-NLS-1$
-  private static final Logger         LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
+  private static final long                                                 serialVersionUID      = -3104541519073924724L;
+  private static final ResourceBundle                                       BUNDLE                = ResourceBundle.getBundle(
+                                                                                                      "messages", new UTF8Control());                     //$NON-NLS-1$
+  private static final Logger                                               LOGGER                = LoggerFactory.getLogger(MovieChooserDialog.class);
 
-  private MovieList                   movieList             = MovieList.getInstance();
-  private Movie                       movieToScrape;
-  private List<MovieChooserModel>     moviesFound           = ObservableCollections.observableList(new ArrayList<MovieChooserModel>());
-  private MovieScraperMetadataConfig  scraperMetadataConfig = new MovieScraperMetadataConfig();
-  private IMediaMetadataProvider      metadataProvider;
-  private List<IMediaArtworkProvider> artworkProviders;
-  private List<IMediaTrailerProvider> trailerProviders;
-  private boolean                     continueQueue         = true;
+  private MovieList                                                         movieList             = MovieList.getInstance();
+  private Movie                                                             movieToScrape;
+  private List<MovieChooserModel>                                           moviesFound           = ObservableCollections
+                                                                                                      .observableList(new ArrayList<MovieChooserModel>());
+  private MovieScraperMetadataConfig                                        scraperMetadataConfig = new MovieScraperMetadataConfig();
+  private IMediaMetadataProvider                                            metadataProvider;
+  private List<IMediaArtworkProvider>                                       artworkProviders;
+  private List<IMediaTrailerProvider>                                       trailerProviders;
+  private boolean                                                           continueQueue         = true;
 
-  private final JPanel                contentPanel          = new JPanel();
-  private JTextField                  textFieldSearchString;
-  private JComboBox                   cbScraper;
-  private JTable                      table;
-  private JTextArea                   lblMovieName;
-  private JTextPane                   tpMovieDescription;
-  private ImageLabel                  lblMoviePoster;
-  private JLabel                      lblProgressAction;
-  private JProgressBar                progressBar;
-  private JTextArea                   lblTagline;
-  private JButton                     okButton;
-  private JLabel                      lblPath;
+  private SearchTask                                                        activeSearchTask;
+
+  /**
+   * UI components
+   */
+  private final JPanel                                                      contentPanel          = new JPanel();
+  private JTextField                                                        textFieldSearchString;
+  private JComboBox                                                         cbScraper;
+  private JTable                                                            table;
+  private JTextArea                                                         lblMovieName;
+  private JTextPane                                                         tpMovieDescription;
+  private ImageLabel                                                        lblMoviePoster;
+  private JLabel                                                            lblProgressAction;
+  private JProgressBar                                                      progressBar;
+  private JTextArea                                                         lblTagline;
+  private JButton                                                           okButton;
+  private JLabel                                                            lblPath;
+
+  private JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding;
+  private AutoBinding<JTable, String, JTextArea, String>                    autoBinding;
+  private AutoBinding<JTable, String, JTextPane, String>                    autoBinding_1;
+  private AutoBinding<JTable, String, ImageLabel, String>                   autoBinding_2;
+  private AutoBinding<JTable, String, JTextArea, String>                    autoBinding_3;
 
   /**
    * Create the dialog.
@@ -359,12 +372,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
    * 
    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
    */
-  /**
-   * Action performed.
-   * 
-   * @param e
-   *          the e
-   */
+  @Override
   public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
       int row = table.getSelectedRow();
@@ -467,25 +475,14 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
 
   }
 
-  /**
-   * Search movie.
-   * 
-   * @param searchTerm
-   *          the search term
-   * @param Movie
-   *          the movie
-   */
   private void searchMovie(String searchTerm, Movie movie) {
-    SearchTask task = new SearchTask(searchTerm, movie);
-    task.execute();
+    if (activeSearchTask != null && !activeSearchTask.isDone()) {
+      activeSearchTask.cancel();
+    }
+    activeSearchTask = new SearchTask(searchTerm, movie);
+    activeSearchTask.execute();
   }
 
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   */
   private void startProgressBar(final String description) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -497,9 +494,6 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     });
   }
 
-  /**
-   * Stop progress bar.
-   */
   private void stopProgressBar() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -511,95 +505,11 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     });
   }
 
-  private class SearchTask extends SwingWorker<Void, Void> {
-    private String searchTerm;
-    private Movie  movie;
-
-    public SearchTask(String searchTerm, Movie movie) {
-      this.searchTerm = searchTerm;
-      this.movie = movie;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
-    @Override
-    public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
-      List<MediaSearchResult> searchResult = movieList.searchMovie(searchTerm, movie, metadataProvider);
-      moviesFound.clear();
-      if (searchResult.size() == 0) {
-        // display empty result
-        moviesFound.add(MovieChooserModel.emptyResult);
-      }
-      else {
-        for (MediaSearchResult result : searchResult) {
-          moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
-        }
-      }
-      if (moviesFound.size() == 1) { // only one result
-        table.setRowSelectionInterval(0, 0); // select first row
-      }
-
-      return null;
-    }
-
-    /*
-     * Executed in event dispatching thread
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
-    @Override
-    public void done() {
-      stopProgressBar();
-    }
-  }
-
-  private class ScrapeTask extends SwingWorker<Void, Void> {
-    private MovieChooserModel model;
-
-    public ScrapeTask(MovieChooserModel model) {
-      this.model = model;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
-    @Override
-    public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
-
-      // disable button as long as its scraping
-      okButton.setEnabled(false);
-      model.scrapeMetaData();
-      okButton.setEnabled(true);
-      return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
-    @Override
-    public void done() {
-      stopProgressBar();
-    }
-  }
-
   /**
    * Inits the data bindings.
    */
   protected void initDataBindings() {
-    JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ,
-        moviesFound, table);
+    jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, moviesFound, table);
     //
     BeanProperty<MovieChooserModel, String> movieChooserModelBeanProperty = BeanProperty.create("combinedName");
     jTableBinding.addColumnBinding(movieChooserModelBeanProperty).setEditable(false); //$NON-NLS-1$
@@ -608,26 +518,22 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     //
     BeanProperty<JTable, String> jTableBeanProperty_1 = BeanProperty.create("selectedElement.overview");
     BeanProperty<JTextPane, String> jTextPaneBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextPane, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1,
-        tpMovieDescription, jTextPaneBeanProperty);
+    autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_1, tpMovieDescription, jTextPaneBeanProperty);
     autoBinding_1.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_2 = BeanProperty.create("selectedElement.posterUrl");
     BeanProperty<ImageLabel, String> imageLabelBeanProperty = BeanProperty.create("imageUrl");
-    AutoBinding<JTable, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2,
-        lblMoviePoster, imageLabelBeanProperty);
+    autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_2, lblMoviePoster, imageLabelBeanProperty);
     autoBinding_2.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.tagline");
     BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty,
-        lblTagline, jTextAreaBeanProperty);
+    autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty, lblTagline, jTextAreaBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
     BeanProperty<JTextArea, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
-    AutoBinding<JTable, String, JTextArea, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3,
-        lblMovieName, jTextAreaBeanProperty_1);
+    autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3, lblMovieName, jTextAreaBeanProperty_1);
     autoBinding_3.bind();
   }
 
@@ -643,22 +549,97 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     return continueQueue;
   }
 
+  @Override
+  public void dispose() {
+    super.dispose();
+    jTableBinding.unbind();
+    autoBinding.unbind();
+    autoBinding_1.unbind();
+    autoBinding_2.unbind();
+    autoBinding_3.unbind();
+  }
+
+  /******************************************************************************
+   * helper classes
+   ******************************************************************************/
   private class ChangeScraperAction extends AbstractAction {
     private static final long serialVersionUID = -4365761222995534769L;
 
     public ChangeScraperAction() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
       MovieScrapers selectedScraper = (MovieScrapers) cbScraper.getSelectedItem();
       metadataProvider = MovieList.getInstance().getMetadataProvider(selectedScraper);
       searchMovie(textFieldSearchString.getText(), null);
+    }
+  }
+
+  private class SearchTask extends SwingWorker<Void, Void> {
+    private String                  searchTerm;
+    private Movie                   movie;
+    private List<MediaSearchResult> searchResult;
+    boolean                         cancel = false;
+
+    public SearchTask(String searchTerm, Movie movie) {
+      this.searchTerm = searchTerm;
+      this.movie = movie;
+    }
+
+    @Override
+    public Void doInBackground() {
+      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
+      searchResult = movieList.searchMovie(searchTerm, movie, metadataProvider);
+      return null;
+    }
+
+    public void cancel() {
+      cancel = true;
+    }
+
+    @Override
+    public void done() {
+      if (!cancel) {
+        moviesFound.clear();
+        if (searchResult.size() == 0) {
+          // display empty result
+          moviesFound.add(MovieChooserModel.emptyResult);
+        }
+        else {
+          for (MediaSearchResult result : searchResult) {
+            moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
+          }
+        }
+        if (moviesFound.size() == 1) { // only one result
+          table.setRowSelectionInterval(0, 0); // select first row
+        }
+      }
+      stopProgressBar();
+    }
+  }
+
+  private class ScrapeTask extends SwingWorker<Void, Void> {
+    private MovieChooserModel model;
+
+    public ScrapeTask(MovieChooserModel model) {
+      this.model = model;
+    }
+
+    @Override
+    public Void doInBackground() {
+      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
+
+      // disable button as long as its scraping
+      okButton.setEnabled(false);
+      model.scrapeMetaData();
+      okButton.setEnabled(true);
+      return null;
+    }
+
+    @Override
+    public void done() {
+      stopProgressBar();
     }
   }
 }
