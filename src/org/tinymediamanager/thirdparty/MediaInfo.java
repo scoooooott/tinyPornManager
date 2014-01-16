@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 
@@ -39,43 +40,21 @@ import com.sun.jna.WString;
 public class MediaInfo implements Closeable {
 
   /** The Constant LOGGER. */
-  private static final Logger LOGGER      = LoggerFactory.getLogger(MediaInfo.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MediaInfo.class);
 
-  static String               LibraryPath = "mediainfo";
   static {
-    // libmediainfo for linux depends on libzen
     try {
-      // We need to load dependencies first, because we know where our native libs are (e.g. Java Web Start Cache).
-      // If we do not, the system will look for dependencies, but only in the library path.
-      String os = System.getProperty("os.name");
-      if (os != null && !os.toLowerCase().startsWith("windows") && !os.toLowerCase().startsWith("mac")) {
-        final ClassLoader loader = MediaInfo.class.getClassLoader();
-        final String LocalPath;
-        if (loader != null) {
-          LocalPath = loader.getResource(MediaInfo.class.getName().replace('.', '/') + ".class").getPath().replace("MediaInfo.class", "");
-          try {
-            NativeLibrary.getInstance(LocalPath + "libzen.so"); // Local path
-          }
-          catch (LinkageError e) {
-            NativeLibrary.getInstance("zen"); // Default path
-          }
-        }
-        else {
-          LocalPath = "";
-          NativeLibrary.getInstance("zen"); // Default path
-        }
-        if (LocalPath.length() > 0) {
-          try {
-            NativeLibrary.getInstance(LocalPath + "libmediainfo.so"); // Local path
-            LibraryPath = LocalPath + "libmediainfo.so";
-          }
-          catch (LinkageError e) {
-          }
-        }
+      // libmediainfo for linux depends on libzen
+      if (Platform.isLinux()) {
+        // We need to load dependencies first, because we know where our native
+        // libs are (e.g. Java Web Start Cache).
+        // If we do not, the system will look for dependencies, but only in the
+        // library path.
+        NativeLibrary.getInstance("zen");
       }
     }
-    catch (LinkageError e) {
-      LOGGER.warn("Failed to preload libzen");
+    catch (Throwable e) {
+      LOGGER.error("Failed to preload libzen");
     }
   }
 
@@ -402,7 +381,7 @@ public class MediaInfo implements Closeable {
     /** The Text. */
     Text,
     /** The Chapters. */
-    Other,
+    Chapters,
     /** The Image. */
     Image,
     /** The Menu. */
