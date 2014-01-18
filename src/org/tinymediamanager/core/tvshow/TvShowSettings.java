@@ -127,7 +127,9 @@ public class TvShowSettings extends AbstractModelObject {
   }
 
   public CountryCode getCertificationCountry() {
-    return certificationCountry;
+    // FIXME remove when scrapers with another supported certifications find their way to tmm
+    // return certificationCountry;
+    return CountryCode.US;
   }
 
   public void setCertificationCountry(CountryCode newValue) {

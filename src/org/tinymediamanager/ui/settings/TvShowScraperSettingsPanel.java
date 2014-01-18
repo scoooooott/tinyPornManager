@@ -68,6 +68,7 @@ public class TvShowScraperSettingsPanel extends JPanel {
   private JPanel                      panelArtworkScrapers;
   private JCheckBox                   chckbxImagesFanartTv;
   private JCheckBox                   chckbxImagesTvDB;
+  private JLabel                      lblTvShowScraperCountryHint;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -83,7 +84,8 @@ public class TvShowScraperSettingsPanel extends JPanel {
     panelTvShowScrapers.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     cbScraperTvdb = new JCheckBox("The TV Database");
     buttonGroupScraper = new ButtonGroup();
@@ -107,7 +109,12 @@ public class TvShowScraperSettingsPanel extends JPanel {
     panelTvShowScrapers.add(lblCountry, "1, 10, right, default");
 
     cbCountry = new JComboBox(CountryCode.values());
+    cbCountry.setEnabled(false);
     panelTvShowScrapers.add(cbCountry, "3, 10, fill, default");
+
+    lblTvShowScraperCountryHint = new JLabel(BUNDLE.getString("Settings.tvshow.certifactioncountry.hint")); //$NON-NLS-1$
+    lblTvShowScraperCountryHint.setFont(lblTvShowScraperCountryHint.getFont().deriveFont(10f));
+    panelTvShowScrapers.add(lblTvShowScraperCountryHint, "3, 12");
 
     panelArtworkScrapers = new JPanel();
     panelArtworkScrapers.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.images"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
