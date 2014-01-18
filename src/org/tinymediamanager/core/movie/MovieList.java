@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.TypedQuery;
 
@@ -217,6 +219,7 @@ public class MovieList extends AbstractModelObject {
     if (movies == null || movies.size() == 0) {
       return;
     }
+    Set<MovieSet> modifiedMovieSets = new HashSet<MovieSet>();
     int oldValue = movieList.size();
 
     Globals.entityManager.getTransaction().begin();
@@ -224,13 +227,21 @@ public class MovieList extends AbstractModelObject {
     for (Movie movie : movies) {
       movieList.remove(movie);
       if (movie.getMovieSet() != null) {
-        movie.getMovieSet().removeMovie(movie);
+        MovieSet movieSet = movie.getMovieSet();
+        movieSet.removeMovie(movie);
+        modifiedMovieSets.add(movieSet);
         movie.setMovieSet(null);
       }
       Globals.entityManager.remove(movie);
     }
 
     Globals.entityManager.getTransaction().commit();
+
+    // and now check if any of the modified moviesets are worth for deleting
+    for (MovieSet movieSet : modifiedMovieSets) {
+      removeMovieSet(movieSet);
+    }
+
     firePropertyChange("movies", null, movieList);
     firePropertyChange("movieCount", oldValue, movieList.size());
   }
