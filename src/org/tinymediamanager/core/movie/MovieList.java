@@ -224,7 +224,9 @@ public class MovieList extends AbstractModelObject {
 
     Globals.entityManager.getTransaction().begin();
 
-    for (Movie movie : movies) {
+    // remove in inverse order => performance
+    for (int i = movies.size() - 1; i >= 0; i--) {
+      Movie movie = movies.get(i);
       movieList.remove(movie);
       if (movie.getMovieSet() != null) {
         MovieSet movieSet = movie.getMovieSet();

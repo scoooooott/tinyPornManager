@@ -108,7 +108,12 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    */
   public void setSelectedMovie(Movie movie) {
     Movie oldValue = this.selectedMovie;
-    this.selectedMovie = movie;
+    if (movie == null) {
+      this.selectedMovie = initialMovie;
+    }
+    else {
+      this.selectedMovie = movie;
+    }
 
     if (oldValue != null) {
       oldValue.removePropertyChangeListener(propertyChangeListener);
@@ -118,7 +123,7 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
       selectedMovie.addPropertyChangeListener(propertyChangeListener);
     }
 
-    firePropertyChange(SELECTED_MOVIE, oldValue, movie);
+    firePropertyChange(SELECTED_MOVIE, oldValue, selectedMovie);
   }
 
   /**

@@ -347,6 +347,9 @@ public class MoviePanel extends JPanel {
         if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() > 0) {
           selectionModel.setSelectionInterval(0, 0);
         }
+        if (selectionModel.isSelectionEmpty() && movieTableModel.getRowCount() == 0) {
+          movieSelectionModel.setSelectedMovie(null);
+        }
       }
     });
 

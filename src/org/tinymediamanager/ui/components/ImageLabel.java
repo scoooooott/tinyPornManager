@@ -123,16 +123,16 @@ public class ImageLabel extends JLabel {
     this.imagePath = newValue;
     firePropertyChange("imagePath", oldValue, newValue);
 
+    // stop previous worker
+    if (worker != null && !worker.isDone()) {
+      worker.cancel(true);
+    }
+
     if (StringUtils.isBlank(newValue)) {
       originalImage = null;
       size = null;
       this.repaint();
       return;
-    }
-
-    // stop previous worker
-    if (worker != null && !worker.isDone()) {
-      worker.cancel(true);
     }
 
     // load image in separate worker -> performance
@@ -168,16 +168,16 @@ public class ImageLabel extends JLabel {
     this.imageUrl = newValue;
     firePropertyChange("imageUrl", oldValue, newValue);
 
+    // stop previous worker
+    if (worker != null && !worker.isDone()) {
+      worker.cancel(true);
+    }
+
     if (StringUtils.isEmpty(newValue)) {
       originalImage = null;
       size = null;
       this.repaint();
       return;
-    }
-
-    // stop previous worker
-    if (worker != null && !worker.isDone()) {
-      worker.cancel(true);
     }
 
     // fetch image in separate worker -> performance
@@ -450,6 +450,9 @@ public class ImageLabel extends JLabel {
      */
     @Override
     protected void done() {
+      if (isCancelled()) {
+        return;
+      }
       try {
         // get fetched image
         originalImage = get();
