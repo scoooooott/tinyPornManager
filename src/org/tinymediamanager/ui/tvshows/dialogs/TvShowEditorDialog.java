@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -609,6 +610,9 @@ public class TvShowEditorDialog extends JDialog {
         episodes.add(container);
       }
 
+      if (((DefaultComboBoxModel) cbCertification.getModel()).getIndexOf(tvShow.getCertification()) == -1) {
+        cbCertification.addItem(tvShow.getCertification());
+      }
       cbCertification.setSelectedItem(tvShow.getCertification());
 
     }

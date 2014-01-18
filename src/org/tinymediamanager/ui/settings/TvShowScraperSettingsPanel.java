@@ -26,6 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
@@ -68,7 +69,7 @@ public class TvShowScraperSettingsPanel extends JPanel {
   private JPanel                      panelArtworkScrapers;
   private JCheckBox                   chckbxImagesFanartTv;
   private JCheckBox                   chckbxImagesTvDB;
-  private JLabel                      lblTvShowScraperCountryHint;
+  private JTextPane                   lblTvShowScraperCountryHint;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -109,11 +110,12 @@ public class TvShowScraperSettingsPanel extends JPanel {
     panelTvShowScrapers.add(lblCountry, "1, 10, right, default");
 
     cbCountry = new JComboBox(CountryCode.values());
-    cbCountry.setEnabled(false);
     panelTvShowScrapers.add(cbCountry, "3, 10, fill, default");
 
-    lblTvShowScraperCountryHint = new JLabel(BUNDLE.getString("Settings.tvshow.certifactioncountry.hint")); //$NON-NLS-1$
-    lblTvShowScraperCountryHint.setFont(lblTvShowScraperCountryHint.getFont().deriveFont(10f));
+    lblTvShowScraperCountryHint = new JTextPane();
+    lblTvShowScraperCountryHint.setEditable(false);
+    lblTvShowScraperCountryHint.setOpaque(false);
+    lblTvShowScraperCountryHint.setText(BUNDLE.getString("Settings.tvshow.certifactioncountry.hint")); //$NON-NLS-1$
     panelTvShowScrapers.add(lblTvShowScraperCountryHint, "3, 12");
 
     panelArtworkScrapers = new JPanel();
