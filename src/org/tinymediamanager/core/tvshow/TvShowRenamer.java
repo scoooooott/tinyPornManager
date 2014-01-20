@@ -91,6 +91,7 @@ public class TvShowRenamer {
             show.updateMediaFilePath(srcDir, destDir); // TvShow MFs
             show.setPath(newPathname);
             for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(show.getEpisodes())) {
+              episode.replacePathForRenamedFolder(srcDir, destDir);
               episode.updateMediaFilePath(srcDir, destDir);
             }
             show.saveToDb();

@@ -89,6 +89,16 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   /**
+   * (re)sets the path (when renaming tv show/season folder).<br>
+   * Exchanges the beginning path from oldPath with newPath<br>
+   */
+  public void replacePathForRenamedFolder(File oldPath, File newPath) {
+    String p = getPath();
+    p = p.replace(oldPath.getAbsolutePath(), newPath.getAbsolutePath());
+    setPath(p);
+  }
+
+  /**
    * create a deep copy of this episode
    * 
    * @param source
