@@ -30,6 +30,7 @@ import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowActor;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.scraper.MediaGenres;
 
 /**
  * The class TvShowExtendedMatcher. For search&filter TV shows
@@ -116,6 +117,24 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.WATCHED)) {
+      if (!filterWatched(tvShow, (Boolean) searchOptions.get(SearchOptions.WATCHED))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.GENRE)) {
+      if (!filterGenre(tvShow, (MediaGenres) searchOptions.get(SearchOptions.GENRE))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.TAG)) {
+      if (!filterTag(tvShow, (String) searchOptions.get(SearchOptions.TAG))) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -157,6 +176,24 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.WATCHED)) {
+      if (!filterWatched(season, (Boolean) searchOptions.get(SearchOptions.WATCHED))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.GENRE)) {
+      if (!filterGenre(season, (MediaGenres) searchOptions.get(SearchOptions.GENRE))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.TAG)) {
+      if (!filterTag(season, (String) searchOptions.get(SearchOptions.TAG))) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -194,6 +231,24 @@ class TvShowExtendedMatcher {
 
     if (searchOptions.containsKey(SearchOptions.NEW_EPISODES)) {
       if (!filterNewEpisodes(episode)) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.WATCHED)) {
+      if (!filterWatched(episode, (Boolean) searchOptions.get(SearchOptions.WATCHED))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.GENRE)) {
+      if (!filterGenre(episode, (MediaGenres) searchOptions.get(SearchOptions.GENRE))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.TAG)) {
+      if (!filterTag(episode, (String) searchOptions.get(SearchOptions.TAG))) {
         return false;
       }
     }
@@ -279,6 +334,42 @@ class TvShowExtendedMatcher {
 
   private boolean filterNewEpisodes(TvShowEpisode episode) {
     return episode.isNewlyAdded();
+  }
+
+  private boolean filterWatched(TvShow tvShow, Boolean watched) {
+    return matchesWatched(new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), watched);
+  }
+
+  private boolean filterWatched(TvShowSeason season, Boolean watched) {
+    return matchesWatched(new ArrayList<TvShowEpisode>(season.getEpisodes()), watched);
+  }
+
+  private boolean filterWatched(TvShowEpisode episode, Boolean watched) {
+    return matchesWatched(Arrays.asList(episode), watched);
+  }
+
+  private boolean filterGenre(TvShow tvShow, MediaGenres genre) {
+    return matchesGenre(tvShow, genre);
+  }
+
+  private boolean filterGenre(TvShowSeason season, MediaGenres genre) {
+    return matchesGenre(season.getTvShow(), genre);
+  }
+
+  private boolean filterGenre(TvShowEpisode episode, MediaGenres genre) {
+    return matchesGenre(episode.getTvShow(), genre);
+  }
+
+  private boolean filterTag(TvShow tvShow, String tag) {
+    return matchesTag(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), tag);
+  }
+
+  private boolean filterTag(TvShowSeason season, String tag) {
+    return matchesTag(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), tag);
+  }
+
+  private boolean filterTag(TvShowEpisode episode, String tag) {
+    return matchesTag(episode.getTvShow(), Arrays.asList(episode), tag);
   }
 
   private boolean matchesText(TvShow tvShow, List<TvShowEpisode> episodes, String filterText) {
@@ -372,6 +463,40 @@ class TvShowExtendedMatcher {
   private boolean matchesMissingSubtitles(List<TvShowEpisode> episodes) {
     for (TvShowEpisode episode : episodes) {
       if (!episode.hasSubtitles()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean matchesWatched(List<TvShowEpisode> episodes, boolean watched) {
+    for (TvShowEpisode episode : episodes) {
+      if (episode.isWatched() == watched) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean matchesGenre(TvShow tvShow, MediaGenres genre) {
+    if (tvShow.getGenres().contains(genre)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean matchesTag(TvShow tvShow, List<TvShowEpisode> episodes, String tag) {
+    // search tag in the TV show
+    if (tvShow.getTags().contains(tag)) {
+      return true;
+    }
+
+    // search tag in the episodes
+    for (TvShowEpisode episode : episodes) {
+      if (episode.getTags().contains(tag)) {
         return true;
       }
     }
