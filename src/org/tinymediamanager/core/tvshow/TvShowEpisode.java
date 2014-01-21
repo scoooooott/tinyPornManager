@@ -372,6 +372,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the new metadata
    */
   public void setMetadata(MediaMetadata metadata) {
+    boolean writeNewThumb = false;
+
     setTitle(metadata.getStringValue(MediaMetadata.TITLE));
     setPlot(metadata.getStringValue(MediaMetadata.PLOT));
     setIds(metadata.getIds());
@@ -423,7 +425,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     for (MediaArtwork ma : metadata.getFanart()) {
       if (ma.getType() == MediaArtworkType.THUMB) {
         setThumbUrl(ma.getDefaultUrl());
-        writeThumbImage();
+        writeNewThumb = true;
         break;
       }
     }
@@ -433,6 +435,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     // update DB
     saveToDb();
+
+    // should we write a new thumb?
+    if (writeNewThumb) {
+      writeThumbImage();
+    }
   }
 
   /**
