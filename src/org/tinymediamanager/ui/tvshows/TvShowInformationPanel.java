@@ -176,7 +176,7 @@ public class TvShowInformationPanel extends JPanel {
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { RowSpec.decode("fill:default"), FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        RowSpec.decode("top:50px:grow(2)"), FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("bottom:pref:grow"), }));
+        RowSpec.decode("top:50px:grow(2)"), }));
 
     JPanel panelTvShowHeader = new JPanel();
     panelTop.add(panelTvShowHeader, "2, 1, 3, 1, fill, top");
@@ -238,9 +238,6 @@ public class TvShowInformationPanel extends JPanel {
     tpOverview.setOpaque(false);
     tpOverview.setEditable(false);
     scrollPaneOverview.setViewportView(tpOverview);
-
-    JPanel panelGenres = new TvShowGenresPanel(tvShowSelectionModel);
-    // panelTop.add(panelGenres, "2, 13, 3, 1, right, bottom");
 
     panelBottom = new JPanel();
     panelBottom.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("200px:grow"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
