@@ -118,10 +118,17 @@ public class TvShowTreeModel implements TreeModel {
           if (node != null) {
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
             int index = parent.getIndex(node);
-            TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { node });
-            for (TreeModelListener listener : listeners) {
-              listener.treeNodesChanged(event);
+            if (index >= 0) {
+              TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { node });
+              for (TreeModelListener listener : listeners) {
+                try {
+                  listener.treeNodesChanged(event);
+                }
+                catch (Exception e) {
+                }
+              }
             }
+
           }
         }
       }
