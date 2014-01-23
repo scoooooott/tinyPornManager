@@ -44,6 +44,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -69,19 +70,20 @@ import ca.odell.glazedlists.ObservableElementList;
  * @author Manuel Laggner
  */
 public class MovieList extends AbstractModelObject {
-  private static final Logger          LOGGER                = LoggerFactory.getLogger(MovieList.class);
+  private static final Logger          LOGGER                   = LoggerFactory.getLogger(MovieList.class);
   private static MovieList             instance;
 
   private ObservableElementList<Movie> movieList;
   private List<MovieSet>               movieSetList;
   private PropertyChangeListener       tagListener;
-  private List<String>                 tagsObservable        = ObservableCollections.observableList(Collections
-                                                                 .synchronizedList(new ArrayList<String>()));
-  private List<String>                 videoCodecsObservable = ObservableCollections.observableList(Collections
-                                                                 .synchronizedList(new ArrayList<String>()));
-
-  private List<String>                 audioCodecsObservable = ObservableCollections.observableList(Collections
-                                                                 .synchronizedList(new ArrayList<String>()));
+  private List<String>                 tagsObservable           = ObservableCollections.observableList(Collections
+                                                                    .synchronizedList(new ArrayList<String>()));
+  private List<String>                 videoCodecsObservable    = ObservableCollections.observableList(Collections
+                                                                    .synchronizedList(new ArrayList<String>()));
+  private List<String>                 audioCodecsObservable    = ObservableCollections.observableList(Collections
+                                                                    .synchronizedList(new ArrayList<String>()));
+  private List<Certification>          certificationsObservable = ObservableCollections.observableList(Collections
+                                                                    .synchronizedList(new ArrayList<Certification>()));
 
   /**
    * Instantiates a new movie list.
@@ -99,6 +101,10 @@ public class MovieList extends AbstractModelObject {
         if (MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName())) {
           Movie movie = (Movie) evt.getSource();
           updateMediaInformationLists(movie);
+        }
+        if (CERTIFICATION.equals(evt.getPropertyName())) {
+          Movie movie = (Movie) evt.getSource();
+          updateCertifications(movie);
         }
       }
     };
@@ -287,6 +293,7 @@ public class MovieList extends AbstractModelObject {
               movieList.add(movie);
               updateTags(movie);
               updateMediaInformationLists(movie);
+              updateCertifications(movie);
               movie.addPropertyChangeListener(tagListener);
             }
             catch (Exception e) {
@@ -813,7 +820,12 @@ public class MovieList extends AbstractModelObject {
         }
       }
     }
+  }
 
+  private void updateCertifications(Movie movie) {
+    if (!certificationsObservable.contains(movie.getCertification())) {
+      addCertification(movie.getCertification());
+    }
   }
 
   public List<String> getVideoCodecsInMovies() {
@@ -822,6 +834,10 @@ public class MovieList extends AbstractModelObject {
 
   public List<String> getAudioCodecsInMovies() {
     return audioCodecsObservable;
+  }
+
+  public List<Certification> getCertificationsInMovies() {
+    return certificationsObservable;
   }
 
   /**
@@ -873,6 +889,17 @@ public class MovieList extends AbstractModelObject {
 
     audioCodecsObservable.add(newCodec);
     firePropertyChange("audioCodec", null, audioCodecsObservable);
+  }
+
+  private void addCertification(Certification newCert) {
+    if (newCert == null) {
+      return;
+    }
+
+    if (!certificationsObservable.contains(newCert)) {
+      certificationsObservable.add(newCert);
+      firePropertyChange("certification", null, certificationsObservable);
+    }
   }
 
   /**

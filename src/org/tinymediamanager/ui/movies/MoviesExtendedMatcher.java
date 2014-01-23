@@ -27,6 +27,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.core.movie.MovieProducer;
+import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 
 import ca.odell.glazedlists.matchers.Matcher;
@@ -38,8 +39,8 @@ import ca.odell.glazedlists.matchers.Matcher;
  */
 public class MoviesExtendedMatcher implements Matcher<Movie> {
   public enum SearchOptions {
-    DUPLICATES, WATCHED, GENRE, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA, MISSING_ARTWORK,
-    MISSING_SUBTITLES, NEW_MOVIES
+    DUPLICATES, WATCHED, GENRE, CERTIFICATION, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA,
+    MISSING_ARTWORK, MISSING_SUBTITLES, NEW_MOVIES
   }
 
   private HashMap<SearchOptions, Object> searchOptions;
@@ -86,6 +87,14 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     if (searchOptions.containsKey(SearchOptions.GENRE)) {
       MediaGenres genre = (MediaGenres) searchOptions.get(SearchOptions.GENRE);
       if (!movie.getGenres().contains(genre)) {
+        return false;
+      }
+    }
+
+    // check against certification
+    if (searchOptions.containsKey(SearchOptions.CERTIFICATION)) {
+      Certification cert = (Certification) searchOptions.get(SearchOptions.CERTIFICATION);
+      if (cert != movie.getCertification()) {
         return false;
       }
     }
