@@ -45,7 +45,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class ImageLabel extends JLabel {
   public enum Position {
-    TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+    TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
   }
 
   private static final long                  serialVersionUID = -2524445544386464158L;
@@ -226,6 +226,11 @@ public class ImageLabel extends JLabel {
           offsetY = this.getHeight() - size.y - 8;
         }
 
+        if (position == Position.CENTER) {
+          offsetX = (this.getWidth() - size.x - 8) / 2;
+          offsetY = (this.getHeight() - size.y - 8) / 2;
+        }
+
         newWidth = size.x;
         newHeight = size.y;
 
@@ -252,6 +257,11 @@ public class ImageLabel extends JLabel {
 
         if (position == Position.BOTTOM_LEFT || position == Position.BOTTOM_RIGHT) {
           offsetY = this.getHeight() - size.y;
+        }
+
+        if (position == Position.CENTER) {
+          offsetX = (this.getWidth() - size.x) / 2;
+          offsetY = (this.getHeight() - size.y) / 2;
         }
 
         newWidth = size.x;

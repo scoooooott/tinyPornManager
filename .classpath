@@ -51,5 +51,6 @@
 	<classpathentry kind="lib" path="lib/twinkle.jar"/>
 	<classpathentry kind="lib" path="lib/JTattoo.jar"/>
 	<classpathentry kind="lib" path="lib/api-common.jar"/>
+	<classpathentry kind="lib" path="lib/LightBox.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

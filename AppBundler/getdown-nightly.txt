@@ -43,6 +43,7 @@ code = lib/JSplitButton.jar
 code = lib/JTattoo.jar
 code = lib/l2fprod-common-buttonbar.jar 
 code = lib/l2fprod-common-shared.jar
+code = lib/LightBox.jar
 code = lib/log4j-over-slf4j.jar 
 code = lib/logback-classic.jar
 code = lib/logback-core.jar

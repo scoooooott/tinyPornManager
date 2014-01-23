@@ -159,6 +159,7 @@ public class MainWindow extends JFrame {
   private List<String>                messagesList;
 
   private JPopupMenu                  taskPopup;
+  private LightBoxPanel               lightBoxPanel;
 
   /**
    * Create the application.
@@ -172,6 +173,7 @@ public class MainWindow extends JFrame {
     setMinimumSize(new Dimension(1000, 700));
 
     instance = this;
+    lightBoxPanel = new LightBoxPanel();
 
     JMenuBar menuBar = new JMenuBar();
     setJMenuBar(menuBar);
@@ -741,5 +743,10 @@ public class MainWindow extends JFrame {
     taskPopup.setLayout(new BorderLayout());
     taskPopup.add(panel, BorderLayout.CENTER);
     taskPopup.show(lblLoadingImg, x, y);
+  }
+
+  public void createLightbox(String pathToFile, String urlToFile) {
+    lightBoxPanel.setImageLocation(pathToFile, urlToFile);
+    lightBoxPanel.showLightBox(instance);
   }
 }

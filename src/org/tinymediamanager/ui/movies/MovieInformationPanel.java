@@ -20,6 +20,8 @@ import static org.tinymediamanager.core.Constants.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.CertificationImageConverter;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.MediaInfoAudioCodecConverter;
 import org.tinymediamanager.ui.MediaInfoVideoCodecConverter;
 import org.tinymediamanager.ui.MediaInfoVideoFormatConverter;
@@ -249,10 +252,12 @@ public class MovieInformationPanel extends JPanel {
 
     lblMovieBackground = new ImageLabel(false, true);
     lblMovieBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
+    lblMovieBackground.addMouseListener(new ImageLabelClickListener(lblMovieBackground));
     layeredPaneImages.add(lblMovieBackground, "1, 1, 3, 3, fill, fill");
 
     lblMoviePoster = new ImageLabel();
     lblMoviePoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
+    lblMoviePoster.addMouseListener(new ImageLabelClickListener(lblMoviePoster));
     layeredPaneImages.setLayer(lblMoviePoster, 1);
     layeredPaneImages.add(lblMoviePoster, "2, 2, fill, fill");
 
@@ -468,5 +473,34 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModelBeanProperty_11, lblMediaLogoAudio, jLabelBeanProperty_2);
     autoBinding_13.setConverter(new MediaInfoAudioCodecConverter());
     autoBinding_13.bind();
+  }
+
+  private class ImageLabelClickListener implements MouseListener {
+    private ImageLabel label;
+
+    public ImageLabelClickListener(ImageLabel label) {
+      this.label = label;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent arg0) {
+      MainWindow.getActiveInstance().createLightbox(label.getImagePath(), label.getImageUrl());
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
   }
 }
