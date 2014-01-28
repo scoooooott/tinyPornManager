@@ -25,16 +25,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -102,9 +103,8 @@ public class MovieChooserModel extends AbstractModelObject {
    * @param result
    *          the result
    */
-  public MovieChooserModel(IMediaMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
-      List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
-    this.metadataProvider = metadataProvider;
+  public MovieChooserModel(List<IMediaArtworkProvider> artworkProviders, List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
+    this.metadataProvider = MovieList.getInstance().getMetadataProvider(result.getProviderId());
     this.artworkProviders = artworkProviders;
     this.trailerProviders = trailerProviders;
     this.result = result;

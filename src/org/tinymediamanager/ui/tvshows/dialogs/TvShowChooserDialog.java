@@ -528,7 +528,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       }
       else {
         for (MediaSearchResult result : searchResult) {
-          tvShowsFound.add(new TvShowChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
+          tvShowsFound.add(new TvShowChooserModel(artworkProviders, trailerProviders, result));
         }
       }
 

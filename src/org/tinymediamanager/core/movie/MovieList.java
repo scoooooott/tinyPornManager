@@ -435,6 +435,17 @@ public class MovieList extends AbstractModelObject {
       }
 
       sr = provider.search(options);
+      // if result is empty, try all scrapers
+      for (MovieScrapers ms : MovieScrapers.values()) {
+        IMediaMetadataProvider provider2 = getMetadataProvider(ms);
+        if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
+          continue;
+        }
+        if (sr.isEmpty()) {
+          LOGGER.debug("no result yet - trying alternate scraper: " + ms.name());
+          sr = provider2.search(options);
+        }
+      }
     }
     catch (Exception e) {
       LOGGER.error("searchMovie", e);
@@ -607,6 +618,40 @@ public class MovieList extends AbstractModelObject {
     // }
 
     return metadataProvider;
+  }
+
+  /**
+   * Gets the metadata provider from a searchresult's providerId.
+   * 
+   * @param providerId
+   *          the scraper
+   * @return the metadata provider
+   */
+  public IMediaMetadataProvider getMetadataProvider(String providerId) {
+    // FIXME: rework scrapers/providerInfo to contain Movie(Tv)Scrapers enums
+    if (providerId == null || providerId.isEmpty()) {
+      // default
+      return getMetadataProvider(MovieScrapers.TMDB);
+    }
+    if (providerId.equals("tmdb")) {
+      return getMetadataProvider(MovieScrapers.TMDB);
+    }
+    else if (providerId.equals("imdb")) {
+      return getMetadataProvider(MovieScrapers.IMDB);
+    }
+    else if (providerId.equals("moviemeter")) {
+      return getMetadataProvider(MovieScrapers.MOVIEMETER);
+    }
+    else if (providerId.equals("ofdb")) {
+      return getMetadataProvider(MovieScrapers.OFDB);
+    }
+    else if (providerId.equals("zelluloid")) {
+      return getMetadataProvider(MovieScrapers.ZELLULOID);
+    }
+    else {
+      // default
+      return getMetadataProvider(MovieScrapers.TMDB);
+    }
   }
 
   /**

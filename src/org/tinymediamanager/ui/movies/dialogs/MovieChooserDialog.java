@@ -608,7 +608,9 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         }
         else {
           for (MediaSearchResult result : searchResult) {
-            moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
+            // moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
+            // get metadataProvider from searchresult
+            moviesFound.add(new MovieChooserModel(artworkProviders, trailerProviders, result));
           }
         }
         if (moviesFound.size() == 1) { // only one result

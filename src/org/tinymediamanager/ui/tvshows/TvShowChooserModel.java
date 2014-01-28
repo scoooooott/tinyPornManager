@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
@@ -71,9 +72,8 @@ public class TvShowChooserModel extends AbstractModelObject {
    * @param result
    *          the result
    */
-  public TvShowChooserModel(ITvShowMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
-      List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
-    this.metadataProvider = metadataProvider;
+  public TvShowChooserModel(List<IMediaArtworkProvider> artworkProviders, List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
+    this.metadataProvider = TvShowList.getInstance().getMetadataProvider(result.getProviderId());
     this.artworkProviders = artworkProviders;
     // this.trailerProviders = trailerProviders;
     this.result = result;
@@ -212,8 +212,8 @@ public class TvShowChooserModel extends AbstractModelObject {
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setResult(result);
-      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+      options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       options.setType(MediaType.TV_SHOW);
       metadata = metadataProvider.getTvShowMetadata(options);
       setOverview(metadata.getStringValue(MediaMetadata.PLOT));
@@ -247,8 +247,8 @@ public class TvShowChooserModel extends AbstractModelObject {
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
     options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
-    options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-    options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+    options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+    options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 
     // scrape providers till one artwork has been found
     for (IMediaArtworkProvider artworkProvider : artworkProviders) {

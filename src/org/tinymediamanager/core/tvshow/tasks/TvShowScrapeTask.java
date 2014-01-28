@@ -217,6 +217,8 @@ public class TvShowScrapeTask extends TmmSwingWorker {
                 }
               }
 
+              // override scraper with one from search result
+              mediaMetadataProvider = tvShowList.getMetadataProvider(result1.getProviderId());
               // scrape metadata if wanted
               MediaMetadata md = null;
 

@@ -191,6 +191,8 @@ public class MovieScrapeTask extends TmmThreadPool {
               }
             }
 
+            // override scraper with one from search result
+            mediaMetadataProvider = movieList.getMetadataProvider(result1.getProviderId());
             // scrape metadata if wanted
             MediaMetadata md = null;
 

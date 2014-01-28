@@ -258,6 +258,31 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
+   * Gets the metadata provider from a searchresult's providerId.
+   * 
+   * @param providerId
+   *          the scraper
+   * @return the metadata provider
+   */
+  public ITvShowMetadataProvider getMetadataProvider(String providerId) {
+    // FIXME: rework scrapers/providerInfo to contain Movie(Tv)Scrapers enums
+    if (providerId == null || providerId.isEmpty()) {
+      // default
+      return getMetadataProvider(TvShowScrapers.TVDB);
+    }
+    if (providerId.equals("anidb")) {
+      return getMetadataProvider(TvShowScrapers.ANIDB);
+    }
+    else if (providerId.equals("tvdb")) {
+      return getMetadataProvider(TvShowScrapers.TVDB);
+    }
+    else {
+      // default
+      return getMetadataProvider(TvShowScrapers.TVDB);
+    }
+  }
+
+  /**
    * Gets the artwork provider.
    * 
    * @return the artwork provider
@@ -338,7 +363,20 @@ public class TvShowList extends AbstractModelObject {
       if (provider == null) {
         provider = getMetadataProvider();
       }
-      searchResult = provider.search(new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm));
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm);
+      searchResult = provider.search(options);
+
+      // if result is empty, try all scrapers
+      for (TvShowScrapers ts : TvShowScrapers.values()) {
+        ITvShowMetadataProvider provider2 = getMetadataProvider(ts);
+        if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
+          continue;
+        }
+        if (searchResult.isEmpty()) {
+          LOGGER.debug("no result yet - trying alternate scraper: " + ts.name());
+          searchResult = provider2.search(options);
+        }
+      }
     }
     catch (Exception e) {
       LOGGER.error("searchMovie", e);
