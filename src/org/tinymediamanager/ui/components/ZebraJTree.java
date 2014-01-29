@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.components;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -137,7 +138,8 @@ public class ZebraJTree extends JTree {
       final int nItems = getRowCount();
       rowHeight = 17; // A default for empty trees
       for (int i = 0; i < nItems; i++, y += rowHeight) {
-        rowHeight = getRowBounds(i).height;
+        Rectangle rect = getRowBounds(i);
+        rowHeight = rect != null ? rect.height : rowHeight;
         g.setColor(getSelectionModel().isRowSelected(i) ? defaultRenderer.getBackgroundSelectionColor() : rowColors[i & 1]);
         g.fillRect(x, y, w, rowHeight);
       }
