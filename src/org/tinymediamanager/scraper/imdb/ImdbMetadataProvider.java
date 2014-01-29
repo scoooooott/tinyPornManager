@@ -177,7 +177,7 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         md.storeMetadata(MediaMetadata.TITLE, movieTitle);
       }
 
-      // year and original title
+      // year
       elements = title.getElementsByTag("span");
       if (elements.size() > 0) {
         element = elements.first();
@@ -193,7 +193,15 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
             break;
           }
         }
-        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, md.getStringValue(MediaMetadata.TITLE));
+      }
+
+      // original title
+      elements = title.getElementsByAttributeValue("class", "title-extra");
+      if (elements.size() > 0) {
+        element = elements.first();
+        String content = element.text();
+        content = content.replaceAll("\\(original title\\)", "").trim();
+        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, content);
       }
     }
 
