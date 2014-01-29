@@ -142,11 +142,13 @@ public class MovieSetInformationPanel extends JPanel {
 
     lblMovieSetPoster = new ImageLabel();
     lblMovieSetPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
+    lblMovieSetPoster.enableLightbox();
     layeredPane.setLayer(lblMovieSetPoster, 1);
     layeredPane.add(lblMovieSetPoster, "2, 2, fill, fill");
 
     lblMovieSetFanart = new ImageLabel(false, true);
     lblMovieSetFanart.setAlternativeText(BUNDLE.getString("image.notfound.fanart")); //$NON-NLS-1$
+    lblMovieSetFanart.enableLightbox();
     layeredPane.add(lblMovieSetFanart, "1, 1, 3, 3, fill, fill");
 
     panelSouth = new JSplitPane();

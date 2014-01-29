@@ -130,6 +130,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelLeft.add(lblSeasonPoster);
     lblSeasonPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
     lblSeasonPoster.setPosition(Position.BOTTOM_LEFT);
+    lblSeasonPoster.enableLightbox();
 
     lblSeasonPosterSize = new JLabel(BUNDLE.getString("mediafiletype.season_poster")); //$NON-NLS-1$
     panelLeft.add(lblSeasonPosterSize);
@@ -150,6 +151,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelLeft.add(lblEpisodeThumb);
     lblEpisodeThumb.setAlternativeText(BUNDLE.getString("image.notfound.thumb")); //$NON-NLS-1$
     lblEpisodeThumb.setPosition(Position.BOTTOM_LEFT);
+    lblEpisodeThumb.enableLightbox();
 
     lblEpisodeThumbSize = new JLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
     panelLeft.add(lblEpisodeThumbSize);

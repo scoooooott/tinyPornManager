@@ -125,6 +125,7 @@ public class TvShowSeasonInformationPanel extends JPanel {
     };
     panelLeft.add(lblTvShowPoster);
     lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
+    lblTvShowPoster.enableLightbox();
     lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
     panelLeft.add(lblPosterSize);
 

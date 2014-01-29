@@ -19,6 +19,8 @@ import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
@@ -29,11 +31,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
+import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.WrapLayout;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -110,11 +114,11 @@ public class ImagePanel extends JPanel implements HierarchyListener {
   /**
    * worker to load the images asynchrony
    */
-  protected class ImageLoader extends SwingWorker<Void, BufferedImage> {
-    private List<MediaFile> mediaFile;
+  protected class ImageLoader extends SwingWorker<Void, ImageChunk> {
+    private List<MediaFile> mediaFiles;
 
     private ImageLoader(List<MediaFile> mediaFiles) {
-      this.mediaFile = mediaFiles;
+      this.mediaFiles = mediaFiles;
     }
 
     @Override
@@ -137,7 +141,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
               return null;
             }
 
-            publish(img);
+            publish(new ImageChunk(mediaFile.getFile().getAbsolutePath(), img));
             img = null;
           }
           catch (Exception e) {
@@ -148,14 +152,15 @@ public class ImagePanel extends JPanel implements HierarchyListener {
     }
 
     @Override
-    protected void process(List<BufferedImage> chunks) {
-      for (BufferedImage image : chunks) {
+    protected void process(List<ImageChunk> chunks) {
+      for (ImageChunk chunk : chunks) {
         try {
           if (isCancelled()) {
             return;
           }
 
-          JLabel lblImageJLabel = new JLabel(new ImageIcon(image));
+          JLabel lblImageJLabel = new JLabel(new ImageIcon(chunk.image));
+          lblImageJLabel.addMouseListener(new ImageLabelClickListener(chunk.pathToImage));
           panelImages.add(lblImageJLabel);
           panelImages.revalidate();
           scrollPane.repaint();
@@ -163,6 +168,50 @@ public class ImagePanel extends JPanel implements HierarchyListener {
         catch (Exception e) {
         }
       }
+    }
+  }
+
+  protected class ImageChunk {
+    private String        pathToImage;
+    private BufferedImage image;
+
+    private ImageChunk(String path, BufferedImage image) {
+      this.pathToImage = path;
+      this.image = image;
+    }
+  }
+
+  /*
+   * click listener for creating a lightbox effect
+   */
+  private class ImageLabelClickListener implements MouseListener {
+    private String pathToFile;
+
+    private ImageLabelClickListener(String path) {
+      this.pathToFile = path;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent arg0) {
+      if (StringUtils.isNotBlank(pathToFile)) {
+        MainWindow.getActiveInstance().createLightbox(pathToFile, "");
+      }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
     }
   }
 }

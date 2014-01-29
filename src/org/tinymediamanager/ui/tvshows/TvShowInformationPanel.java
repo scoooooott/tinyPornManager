@@ -117,6 +117,7 @@ public class TvShowInformationPanel extends JPanel {
     };
     panelLeft.add(lblTvShowPoster);
     lblTvShowPoster.setAlternativeText(BUNDLE.getString("image.notfound.poster")); //$NON-NLS-1$
+    lblTvShowPoster.enableLightbox();
     lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
     panelLeft.add(lblPosterSize);
     panelLeft.add(Box.createVerticalStrut(20));
@@ -135,6 +136,7 @@ public class TvShowInformationPanel extends JPanel {
     };
     panelLeft.add(lblTvShowBackground);
     lblTvShowBackground.setAlternativeText(BUNDLE.getString("image.notfound.fanart"));
+    lblTvShowBackground.enableLightbox();
     lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
     panelLeft.add(lblFanartSize);
     panelLeft.add(Box.createVerticalStrut(20));
@@ -153,6 +155,7 @@ public class TvShowInformationPanel extends JPanel {
     };
     panelLeft.add(lblTvShowBanner);
     lblTvShowBanner.setAlternativeText(BUNDLE.getString("image.notfound.banner")); //$NON-NLS-1$
+    lblTvShowBanner.enableLightbox();
     lblBannerSize = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
     panelLeft.add(lblBannerSize);
 

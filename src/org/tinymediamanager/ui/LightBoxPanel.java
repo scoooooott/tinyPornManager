@@ -35,6 +35,7 @@ public class LightBoxPanel extends JPanel {
       panel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("75px:grow"), }, new RowSpec[] { RowSpec.decode("fill:75px:grow"), }));
       {
         image = new ImageLabel(true);
+        image.setUseCache(false);
         image.setPosition(Position.CENTER);
         panel.add(image, "1, 1, fill, fill");
       }

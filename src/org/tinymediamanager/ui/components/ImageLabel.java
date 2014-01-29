@@ -24,6 +24,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -36,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -60,59 +63,34 @@ public class ImageLabel extends JLabel {
   protected String                           alternativeText  = null;
   protected boolean                          drawBorder;
   protected boolean                          drawFullWidth;
+  protected boolean                          enabledLightbox  = false;
+  protected boolean                          useCache         = true;
 
   protected SwingWorker<BufferedImage, Void> worker           = null;
+  protected MouseListener                    lightboxListener = null;
 
-  /**
-   * Instantiates a new image label.
-   */
   public ImageLabel() {
     super("");
     this.drawBorder = true;
     this.drawFullWidth = false;
   }
 
-  /**
-   * Instantiates a new image label.
-   * 
-   * @param drawBorder
-   *          the draw border
-   */
   public ImageLabel(boolean drawBorder) {
     super("");
     this.drawBorder = drawBorder;
     this.drawFullWidth = false;
   }
 
-  /**
-   * Instantiates a new image label.
-   * 
-   * @param drawBorder
-   *          the draw border
-   * @param drawFullWidth
-   *          the draw full width
-   */
   public ImageLabel(boolean drawBorder, boolean drawFullWidth) {
     super("");
     this.drawBorder = drawBorder;
     this.drawFullWidth = drawFullWidth;
   }
 
-  /**
-   * Gets the image path.
-   * 
-   * @return the image path
-   */
   public String getImagePath() {
     return imagePath;
   }
 
-  /**
-   * Sets the image path.
-   * 
-   * @param newValue
-   *          the new image path
-   */
   public void setImagePath(String newValue) {
     String oldValue = this.imagePath;
 
@@ -148,21 +126,10 @@ public class ImageLabel extends JLabel {
     this.repaint();
   }
 
-  /**
-   * Gets the image url.
-   * 
-   * @return the image url
-   */
   public String getImageUrl() {
     return imageUrl;
   }
 
-  /**
-   * Sets the image url.
-   * 
-   * @param newValue
-   *          the new image url
-   */
   public void setImageUrl(String newValue) {
     String oldValue = this.imageUrl;
     this.imageUrl = newValue;
@@ -194,11 +161,6 @@ public class ImageLabel extends JLabel {
     return this.scaledImage;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-   */
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
@@ -269,15 +231,16 @@ public class ImageLabel extends JLabel {
         // g.drawImage(Scaling.scale(originalImage, newWidth, newHeight), offsetX, offsetY, newWidth, newHeight, this);
         g.drawImage(getScaledImage(new Dimension(newWidth, newHeight)), offsetX, offsetY, newWidth, newHeight, this);
       }
-
     }
     else {
       // draw border and background
       if (drawBorder) {
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
-        g.setColor(getParent().getBackground());
-        g.fillRect(1, 1, this.getWidth() - 2, this.getHeight() - 2);
+        if (getParent().isOpaque()) {
+          g.setColor(getParent().getBackground());
+          g.fillRect(1, 1, this.getWidth() - 2, this.getHeight() - 2);
+        }
       }
 
       // calculate diagonal
@@ -290,6 +253,9 @@ public class ImageLabel extends JLabel {
       }
       else {
         text = BUNDLE.getString("image.nonefound"); //$NON-NLS-1$
+      }
+      if (getParent().isOpaque()) {
+        text = "";
       }
       Graphics2D g2 = (Graphics2D) g;
       AffineTransform orig = g2.getTransform();
@@ -312,21 +278,6 @@ public class ImageLabel extends JLabel {
     }
   }
 
-  /**
-   * Calculate size.
-   * 
-   * @param maxWidth
-   *          the max width
-   * @param maxHeight
-   *          the max height
-   * @param originalWidth
-   *          the original width
-   * @param originalHeight
-   *          the original height
-   * @param respectFactor
-   *          the respect factor
-   * @return the point
-   */
   public static Point calculateSize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, boolean respectFactor) {
     Point size = new Point();
     if (respectFactor) {
@@ -347,38 +298,38 @@ public class ImageLabel extends JLabel {
     return size;
   }
 
-  /**
-   * Sets the position.
-   * 
-   * @param position
-   *          the new position
-   */
   public void setPosition(Position position) {
     this.position = position;
   }
 
-  /**
-   * Sets the alternative text.
-   * 
-   * @param text
-   *          the new alternative text
-   */
   public void setAlternativeText(String text) {
     this.alternativeText = text;
   }
 
-  /**
-   * The Class ImageFetcher.
-   * 
-   * @author Manuel Laggner
+  public void enableLightbox() {
+    this.enabledLightbox = true;
+    if (lightboxListener == null) {
+      lightboxListener = new ImageLabelClickListener();
+      addMouseListener(lightboxListener);
+    }
+  }
+
+  public void disableLightbox() {
+    this.enabledLightbox = false;
+    if (lightboxListener != null) {
+      removeMouseListener(lightboxListener);
+      lightboxListener = null;
+    }
+  }
+
+  public void setUseCache(boolean useCache) {
+    this.useCache = useCache;
+  }
+
+  /*
+   * inner class for downloading online images
    */
   protected class ImageFetcher extends SwingWorker<BufferedImage, Void> {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
     @Override
     protected BufferedImage doInBackground() throws Exception {
       try {
@@ -393,11 +344,6 @@ public class ImageLabel extends JLabel {
       }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
     @Override
     protected void done() {
       try {
@@ -414,32 +360,26 @@ public class ImageLabel extends JLabel {
     }
   }
 
-  /**
-   * The Class ImageLoader.
+  /*
+   * inner class for loading local images
    */
   protected class ImageLoader extends SwingWorker<BufferedImage, Void> {
-
-    /** The image path. */
     private String imagePath;
 
-    /**
-     * Instantiates a new image loader.
-     * 
-     * @param imagePath
-     *          the image path
-     */
     public ImageLoader(String imagePath) {
       this.imagePath = imagePath;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
     @Override
     protected BufferedImage doInBackground() throws Exception {
-      File file = ImageCache.getCachedFile(imagePath);
+      File file = null;
+      if (useCache) {
+        file = ImageCache.getCachedFile(imagePath);
+      }
+      else {
+        file = new File(imagePath);
+      }
+
       if (file != null && file.exists()) {
         try {
           return com.bric.image.ImageLoader.createImage(file);
@@ -453,11 +393,6 @@ public class ImageLabel extends JLabel {
       }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
     @Override
     protected void done() {
       if (isCancelled()) {
@@ -475,6 +410,34 @@ public class ImageLabel extends JLabel {
       }
       revalidate();
       repaint();
+    }
+  }
+
+  /*
+   * click listener for creating a lightbox effect
+   */
+  private class ImageLabelClickListener implements MouseListener {
+    @Override
+    public void mouseClicked(MouseEvent arg0) {
+      if (originalImage != null) {
+        MainWindow.getActiveInstance().createLightbox(getImagePath(), getImageUrl());
+      }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
     }
   }
 }
