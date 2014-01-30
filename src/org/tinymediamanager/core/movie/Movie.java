@@ -553,7 +553,7 @@ public class Movie extends MediaEntity {
   public int getTmdbId() {
     int id = 0;
     try {
-      id = (Integer) ids.get("tmdbId");
+      id = Integer.valueOf(String.valueOf(ids.get("tmdbId")));
     }
     catch (Exception e) {
       return 0;
