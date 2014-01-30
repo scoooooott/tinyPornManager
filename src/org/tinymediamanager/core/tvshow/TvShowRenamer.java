@@ -191,9 +191,10 @@ public class TvShowRenamer {
       seasonDir.mkdir();
     }
 
+    // rename epFolder accordingly
     if (ep.isDisc() || mf.isDiscFile()) {
       // \Season 1\S01E02E03\VIDEO_TS\VIDEO_TS.VOB
-      // ......... \epFolder \disc... \ file
+      // ........ \epFolder \disc... \ file
       File disc = mf.getFile().getParentFile();
       File epFolder = disc.getParentFile();
 
@@ -203,7 +204,7 @@ public class TvShowRenamer {
         return;
       }
 
-      String newFoldername = FilenameUtils.getBaseName(generateFilename(show, mf)); // w/o extension
+      String newFoldername = FilenameUtils.getBaseName(generateFolderename(show, mf)); // w/o extension
       if (newFoldername != null && !newFoldername.isEmpty()) {
         File newEpFolder = new File(seasonDir + File.separator + newFoldername);
         File newDisc = new File(newEpFolder + File.separator + disc.getName()); // old disc name
@@ -305,10 +306,31 @@ public class TvShowRenamer {
   /**
    * generates the filename of a TvShow MediaFile according to settings <b>(without path)</b>
    * 
+   * @param tvShow
+   *          the tvShow
    * @param mf
-   *          the MediaFile
+   *          the MF for multiepisode
+   * @return
    */
   public static String generateFilename(TvShow tvShow, MediaFile mf) {
+    return generateName(tvShow, mf, true);
+  }
+
+  /**
+   * generates the foldername of a TvShow MediaFile according to settings <b>(without path)</b><br>
+   * Mainly for DISC files
+   * 
+   * @param tvShow
+   *          the tvShow
+   * @param mf
+   *          the MF for multiepisode
+   * @return
+   */
+  public static String generateFolderename(TvShow tvShow, MediaFile mf) {
+    return generateName(tvShow, mf, false);
+  }
+
+  private static String generateName(TvShow tvShow, MediaFile mf, boolean forFile) {
     String filename = "";
     String s = "";
     String e = "";
@@ -379,43 +401,47 @@ public class TvShowRenamer {
     if (filename.startsWith(separator)) {
       filename = filename.substring(separator.length());
     }
-    if (mf.getType().equals(MediaFileType.THUMB)) {
-      filename = filename + "-thumb";
-    }
-    if (mf.getType().equals(MediaFileType.FANART)) {
-      filename = filename + "-fanart";
-    }
-    if (mf.getType().equals(MediaFileType.TRAILER)) {
-      filename = filename + "-trailer";
-    }
-    if (mf.getType().equals(MediaFileType.VIDEO_EXTRA)) {
-      String name = mf.getBasename();
-      Pattern p = Pattern.compile("(?i).*([ _.-]extras[ _.-]).*");
-      Matcher m = p.matcher(name);
-      if (m.matches()) {
-        name = name.substring(m.end(1)); // everything behind
+
+    // since we can use this method for folders too, use the next options solely for files
+    if (forFile) {
+      if (mf.getType().equals(MediaFileType.THUMB)) {
+        filename = filename + "-thumb";
       }
-      // if not, MF must be within /extras/ folder - use name 1:1
-      filename = filename + "-extras-" + name;
-    }
-    if (mf.getType().equals(MediaFileType.SUBTITLE)) {
-      List<MediaFileSubtitle> subtitles = mf.getSubtitles();
-      if (subtitles != null && subtitles.size() > 0) {
-        MediaFileSubtitle mfs = mf.getSubtitles().get(0);
-        if (mfs != null) {
-          if (!mfs.getLanguage().isEmpty()) {
-            filename = filename + "." + mfs.getLanguage();
+      if (mf.getType().equals(MediaFileType.FANART)) {
+        filename = filename + "-fanart";
+      }
+      if (mf.getType().equals(MediaFileType.TRAILER)) {
+        filename = filename + "-trailer";
+      }
+      if (mf.getType().equals(MediaFileType.VIDEO_EXTRA)) {
+        String name = mf.getBasename();
+        Pattern p = Pattern.compile("(?i).*([ _.-]extras[ _.-]).*");
+        Matcher m = p.matcher(name);
+        if (m.matches()) {
+          name = name.substring(m.end(1)); // everything behind
+        }
+        // if not, MF must be within /extras/ folder - use name 1:1
+        filename = filename + "-extras-" + name;
+      }
+      if (mf.getType().equals(MediaFileType.SUBTITLE)) {
+        List<MediaFileSubtitle> subtitles = mf.getSubtitles();
+        if (subtitles != null && subtitles.size() > 0) {
+          MediaFileSubtitle mfs = mf.getSubtitles().get(0);
+          if (mfs != null) {
+            if (!mfs.getLanguage().isEmpty()) {
+              filename = filename + "." + mfs.getLanguage();
+            }
+            if (mfs.isForced()) {
+              filename = filename + ".forced";
+            }
           }
-          if (mfs.isForced()) {
-            filename = filename + ".forced";
+          else {
+            // TODO: meh, we didn't have an actual MF yet - need to parse filename ourselves (like movie). But with a recent scan of files/DB this
+            // should not occur.
           }
         }
-        else {
-          // TODO: meh, we didn't have an actual MF yet - need to parse filename ourselves (like movie). But with a recent scan of files/DB this
-          // should not occur.
-        }
       }
-    }
+    } // end forFile
 
     // ASCII replacement
     if (Globals.settings.getTvShowSettings().isAsciiReplacement()) {
