@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
@@ -37,6 +38,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
@@ -202,10 +204,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     return year;
   }
 
-  public void setIds(HashMap<String, Object> ids) {
+  public void setIds(Map<String, Object> ids) {
     for (Entry<String, Object> entry : ids.entrySet()) {
-      setId((String) entry.getKey(), entry.getValue().toString());
-      firePropertyChange(entry.getKey(), null, entry.getValue());
+      if (StringUtils.isNotBlank(entry.getKey()) && entry.getValue() != null) {
+        setId(entry.getKey(), entry.getValue());
+        firePropertyChange(entry.getKey(), null, entry.getValue());
+      }
     }
   }
 
