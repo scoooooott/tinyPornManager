@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
@@ -58,8 +59,8 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 @XmlRootElement(name = "tvshow")
-@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "id", "genres", "tags", "premiered", "status", "studio",
-    "thumb", "actors" })
+@XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "episodeguide", "id", "genres", "tags", "premiered",
+    "status", "studio", "thumb", "actors" })
 public class TvShowToXbmcNfoConnector {
 
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
@@ -76,6 +77,7 @@ public class TvShowToXbmcNfoConnector {
   private String              premiered = "";
   private String              studio    = "";
   private String              status    = "";
+  private EpisodeGuide        episodeguide;
 
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
@@ -87,7 +89,6 @@ public class TvShowToXbmcNfoConnector {
   private List<String>        tags;
 
   /** not supported tags, but used to retrain in NFO. */
-
   @XmlElement
   List<Thumb>                 thumb;
 
@@ -108,14 +109,9 @@ public class TvShowToXbmcNfoConnector {
     genres = new ArrayList<String>();
     actors = new ArrayList<Object>();
     tags = new ArrayList<String>();
+    episodeguide = new EpisodeGuide();
   }
 
-  /**
-   * Sets the data.
-   * 
-   * @param tvShow
-   *          the tv show
-   */
   public static void setData(TvShow tvShow) {
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":", "Context is null" }));
@@ -145,7 +141,11 @@ public class TvShowToXbmcNfoConnector {
 
     // set data
     if (tvShow.getId("tvdb") != null) {
-      xbmc.setId(tvShow.getId("tvdb").toString());
+      String tvdbid = tvShow.getId("tvdb").toString();
+      xbmc.setId(tvdbid);
+      xbmc.episodeguide.url.cache = tvdbid + ".xml";
+      xbmc.episodeguide.url.url = "http://www.thetvdb.com/api/1D62F2F90030C444/series/" + tvdbid + "/all/"
+          + Globals.settings.getTvShowSettings().getScraperLanguage().name() + ".xml";
     }
     xbmc.setTitle(tvShow.getTitle());
     xbmc.setSorttitle(tvShow.getSortTitle());
@@ -202,13 +202,6 @@ public class TvShowToXbmcNfoConnector {
     }
   }
 
-  /**
-   * Gets the data.
-   * 
-   * @param nfo
-   *          the nfo filename
-   * @return the data
-   */
   public static TvShow getData(File nfo) {
     if (context == null) {
       return null;
@@ -294,22 +287,11 @@ public class TvShowToXbmcNfoConnector {
     return (TvShowToXbmcNfoConnector) um.unmarshal(in);
   }
 
-  /**
-   * Gets the title.
-   * 
-   * @return the title
-   */
   @XmlElement(name = "title")
   public String getTitle() {
     return title;
   }
 
-  /**
-   * Sets the title.
-   * 
-   * @param title
-   *          the new title
-   */
   public void setTitle(String title) {
     this.title = title;
   }
@@ -323,225 +305,100 @@ public class TvShowToXbmcNfoConnector {
     this.sorttitle = sorttitle;
   }
 
-  /**
-   * Gets the rating.
-   * 
-   * @return the rating
-   */
   @XmlElement(name = "rating")
   public float getRating() {
     return rating;
   }
 
-  /**
-   * Gets the plot.
-   * 
-   * @return the plot
-   */
   @XmlElement(name = "plot")
   public String getPlot() {
     return plot;
   }
 
-  /**
-   * Sets the rating.
-   * 
-   * @param rating
-   *          the new rating
-   */
   public void setRating(float rating) {
     this.rating = rating;
   }
 
-  /**
-   * Gets the votes.
-   * 
-   * @return the votes
-   */
   @XmlElement(name = "votes")
   public int getVotes() {
     return votes;
   }
 
-  /**
-   * Sets the votes.
-   * 
-   * @param votes
-   *          the new votes
-   */
   public void setVotes(int votes) {
     this.votes = votes;
   }
 
-  /**
-   * Gets the year.
-   * 
-   * @return the year
-   */
   @XmlElement(name = "year")
   public String getYear() {
     return year;
   }
 
-  /**
-   * Sets the year.
-   * 
-   * @param year
-   *          the new year
-   */
   public void setYear(String year) {
     this.year = year;
   }
 
-  /**
-   * Gets the premiered.
-   * 
-   * @return the premiered
-   */
   @XmlElement(name = "premiered")
   public String getPremiered() {
     return premiered;
   }
 
-  /**
-   * Sets the premiered.
-   * 
-   * @param premiered
-   *          the new premiered
-   */
   public void setPremiered(String premiered) {
     this.premiered = premiered;
   }
 
-  /**
-   * Sets the plot.
-   * 
-   * @param plot
-   *          the new plot
-   */
   public void setPlot(String plot) {
     this.plot = plot;
   }
 
-  /**
-   * Adds the genre.
-   * 
-   * @param genre
-   *          the genre
-   */
   public void addGenre(String genre) {
     genres.add(genre);
   }
 
-  /**
-   * Gets the genres.
-   * 
-   * @return the genres
-   */
   public List<String> getGenres() {
     return this.genres;
   }
 
-  /**
-   * Gets the id.
-   * 
-   * @return the id
-   */
   @XmlElement(name = "id")
   public String getId() {
     return id;
   }
 
-  /**
-   * Sets the id.
-   * 
-   * @param id
-   *          the new id
-   */
   public void setId(String id) {
     this.id = id;
   }
 
-  /**
-   * Gets the mpaa.
-   * 
-   * @return the mpaa
-   */
   @XmlElement(name = "mpaa")
   public String getMpaa() {
     return this.mpaa;
   }
 
-  /**
-   * Sets the mpaa.
-   * 
-   * @param mpaa
-   *          the new mpaa
-   */
   public void setMpaa(String mpaa) {
     this.mpaa = mpaa;
   }
 
-  /**
-   * Gets the studio.
-   * 
-   * @return the studio
-   */
   @XmlElement(name = "studio")
   public String getStudio() {
     return studio;
   }
 
-  /**
-   * Sets the studio.
-   * 
-   * @param studio
-   *          the new studio
-   */
   public void setStudio(String studio) {
     this.studio = studio;
   }
 
-  /**
-   * Gets the status.
-   * 
-   * @return the status
-   */
   @XmlElement(name = "status")
   public String getStatus() {
     return status;
   }
 
-  /**
-   * Sets the status.
-   * 
-   * @param status
-   *          the new status
-   */
   public void setStatus(String status) {
     this.status = status;
   }
 
-  /**
-   * Adds the actor.
-   * 
-   * @param name
-   *          the name
-   * @param role
-   *          the role
-   * @param thumb
-   *          the thumb
-   */
   public void addActor(String name, String role, String thumb) {
     Actor actor = new Actor(name, role, thumb);
     actors.add(actor);
   }
 
-  /**
-   * Gets the actors.
-   * 
-   * @return the actors
-   */
   public List<Actor> getActors() {
     // @XmlAnyElement(lax = true) causes all unsupported tags to be in actors;
     // filter Actors out
@@ -555,122 +412,79 @@ public class TvShowToXbmcNfoConnector {
     return pureActors;
   }
 
+  public EpisodeGuide getEpisodeguide() {
+    return episodeguide;
+  }
+
+  public void setEpisodeguide(EpisodeGuide episodeguide) {
+    this.episodeguide = episodeguide;
+  }
+
   // inner class actor to represent actors
-  /**
-   * The Class Actor.
-   * 
-   * @author Manuel Laggner
-   */
   @XmlRootElement(name = "actor")
   public static class Actor {
-
-    /** The name. */
     private String name;
-
-    /** The role. */
     private String role;
-
-    /** The thumb. */
     private String thumb;
 
-    /**
-     * Instantiates a new actor.
-     */
     public Actor() {
     }
 
-    /**
-     * Instantiates a new actor.
-     * 
-     * @param name
-     *          the name
-     * @param role
-     *          the role
-     * @param thumb
-     *          the thumb
-     */
     public Actor(String name, String role, String thumb) {
       this.name = name;
       this.role = role;
       this.thumb = thumb;
     }
 
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
     @XmlElement(name = "name")
     public String getName() {
       return name;
     }
 
-    /**
-     * Sets the name.
-     * 
-     * @param name
-     *          the new name
-     */
     public void setName(String name) {
       this.name = name;
     }
 
-    /**
-     * Gets the role.
-     * 
-     * @return the role
-     */
     @XmlElement(name = "role")
     public String getRole() {
       return role;
     }
 
-    /**
-     * Sets the role.
-     * 
-     * @param role
-     *          the new role
-     */
     public void setRole(String role) {
       this.role = role;
     }
 
-    /**
-     * Gets the thumb.
-     * 
-     * @return the thumb
-     */
     @XmlElement(name = "thumb")
     public String getThumb() {
       return thumb;
     }
 
-    /**
-     * Sets the thumb.
-     * 
-     * @param thumb
-     *          the new thumb
-     */
     public void setThumb(String thumb) {
       this.thumb = thumb;
     }
   }
 
-  /**
-   * The Class Thumb.
-   */
-  public static class Thumb {
-
-    /** The type. */
+  static class Thumb {
     @XmlAttribute
     String type;
 
-    /** The season. */
     @XmlAttribute
     String season;
 
-    /** The thumb. */
     @XmlValue
     String thumb;
+  }
+
+  static class EpisodeGuide {
+    @XmlElement(name = "url")
+    EpisodeGuideUrl url = new EpisodeGuideUrl();
+  }
+
+  static class EpisodeGuideUrl {
+    @XmlAttribute
+    String cache;
+
+    @XmlValue
+    String url;
   }
 }
