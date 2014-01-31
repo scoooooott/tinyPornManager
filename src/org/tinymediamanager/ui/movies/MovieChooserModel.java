@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -103,8 +102,9 @@ public class MovieChooserModel extends AbstractModelObject {
    * @param result
    *          the result
    */
-  public MovieChooserModel(List<IMediaArtworkProvider> artworkProviders, List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
-    this.metadataProvider = MovieList.getInstance().getMetadataProvider(result.getProviderId());
+  public MovieChooserModel(IMediaMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
+      List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
+    this.metadataProvider = metadataProvider;
     this.artworkProviders = artworkProviders;
     this.trailerProviders = trailerProviders;
     this.result = result;

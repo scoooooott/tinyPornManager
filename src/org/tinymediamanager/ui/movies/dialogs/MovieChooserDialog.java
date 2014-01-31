@@ -607,10 +607,13 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           moviesFound.add(MovieChooserModel.emptyResult);
         }
         else {
+          IMediaMetadataProvider mpFromResult = null;
           for (MediaSearchResult result : searchResult) {
-            // moviesFound.add(new MovieChooserModel(metadataProvider, artworkProviders, trailerProviders, result));
+            if (mpFromResult == null) {
+              mpFromResult = MovieList.getInstance().getMetadataProvider(result.getProviderId());
+            }
+            moviesFound.add(new MovieChooserModel(mpFromResult, artworkProviders, trailerProviders, result));
             // get metadataProvider from searchresult
-            moviesFound.add(new MovieChooserModel(artworkProviders, trailerProviders, result));
           }
         }
         if (moviesFound.size() == 1) { // only one result

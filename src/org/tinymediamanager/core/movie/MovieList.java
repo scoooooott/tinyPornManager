@@ -436,14 +436,18 @@ public class MovieList extends AbstractModelObject {
 
       sr = provider.search(options);
       // if result is empty, try all scrapers
-      for (MovieScrapers ms : MovieScrapers.values()) {
-        IMediaMetadataProvider provider2 = getMetadataProvider(ms);
-        if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
-          continue;
-        }
-        if (sr.isEmpty()) {
-          LOGGER.debug("no result yet - trying alternate scraper: " + ms.name());
+      if (sr.isEmpty()) {
+        LOGGER.debug("no result yet - trying alternate scrapers");
+
+        for (MovieScrapers ms : MovieScrapers.values()) {
+          IMediaMetadataProvider provider2 = getMetadataProvider(ms);
+          if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
+            continue;
+          }
           sr = provider2.search(options);
+          if (!sr.isEmpty()) {
+            break;
+          }
         }
       }
     }

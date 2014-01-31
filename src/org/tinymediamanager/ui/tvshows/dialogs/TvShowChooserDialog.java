@@ -527,8 +527,12 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
         tvShowsFound.add(TvShowChooserModel.emptyResult);
       }
       else {
+        ITvShowMetadataProvider mpFromResult = null;
         for (MediaSearchResult result : searchResult) {
-          tvShowsFound.add(new TvShowChooserModel(artworkProviders, trailerProviders, result));
+          if (mpFromResult == null) {
+            mpFromResult = TvShowList.getInstance().getMetadataProvider(result.getProviderId());
+          }
+          tvShowsFound.add(new TvShowChooserModel(mpFromResult, artworkProviders, trailerProviders, result));
         }
       }
 

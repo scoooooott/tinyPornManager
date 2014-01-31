@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
@@ -72,8 +71,9 @@ public class TvShowChooserModel extends AbstractModelObject {
    * @param result
    *          the result
    */
-  public TvShowChooserModel(List<IMediaArtworkProvider> artworkProviders, List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
-    this.metadataProvider = TvShowList.getInstance().getMetadataProvider(result.getProviderId());
+  public TvShowChooserModel(ITvShowMetadataProvider metadataProvider, List<IMediaArtworkProvider> artworkProviders,
+      List<IMediaTrailerProvider> trailerProviders, MediaSearchResult result) {
+    this.metadataProvider = metadataProvider;
     this.artworkProviders = artworkProviders;
     // this.trailerProviders = trailerProviders;
     this.result = result;

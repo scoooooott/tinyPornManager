@@ -367,14 +367,17 @@ public class TvShowList extends AbstractModelObject {
       searchResult = provider.search(options);
 
       // if result is empty, try all scrapers
-      for (TvShowScrapers ts : TvShowScrapers.values()) {
-        ITvShowMetadataProvider provider2 = getMetadataProvider(ts);
-        if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
-          continue;
-        }
-        if (searchResult.isEmpty()) {
-          LOGGER.debug("no result yet - trying alternate scraper: " + ts.name());
+      if (searchResult.isEmpty()) {
+        LOGGER.debug("no result yet - trying alternate scrapers");
+        for (TvShowScrapers ts : TvShowScrapers.values()) {
+          ITvShowMetadataProvider provider2 = getMetadataProvider(ts);
+          if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
+            continue;
+          }
           searchResult = provider2.search(options);
+          if (!searchResult.isEmpty()) {
+            break;
+          }
         }
       }
     }
