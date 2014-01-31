@@ -76,7 +76,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
     "runtime", "thumb", "fanart", "mpaa", "certifications", "id", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired", "fileinfo",
     "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed", "dateadded",
-    "keywords", "poster", "url" })
+    "keywords", "poster", "url", "languages" })
 public class MovieToXbmcNfoConnector {
   private static final Logger LOGGER         = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
   private static JAXBContext  context        = initContext();
@@ -173,6 +173,9 @@ public class MovieToXbmcNfoConnector {
 
   @XmlElement
   private String              top250;
+
+  @XmlElement
+  private String              languages;
 
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
@@ -317,6 +320,8 @@ public class MovieToXbmcNfoConnector {
     if (xbmc.watched) {
       xbmc.playcount = 1;
     }
+
+    xbmc.languages = movie.getSpokenLanguages();
 
     // certifications
     if (movie.getCertification() != null) {
@@ -556,6 +561,7 @@ public class MovieToXbmcNfoConnector {
         movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.mpaa));
       }
       movie.setWatched(xbmc.watched);
+      movie.setSpokenLanguages(xbmc.languages);
 
       // movieset
       if (StringUtils.isNotEmpty(xbmc.set)) {
