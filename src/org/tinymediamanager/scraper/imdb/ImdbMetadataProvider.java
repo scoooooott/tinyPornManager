@@ -558,41 +558,43 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
 
     Element content = doc.getElementById("tn15content");
-    elements = content.getElementsByTag("table");
-    for (Element table : elements) {
-      // writers
-      if (table.text().contains(ImdbSiteDefinition.IMDB_COM.getWriter())) {
-        Elements anchors = table.getElementsByTag("a");
-        for (Element anchor : anchors) {
-          if (anchor.attr("href").matches("/name/nm.*")) {
-            MediaCastMember cm = new MediaCastMember(CastType.WRITER);
-            cm.setName(anchor.ownText());
-            md.addCastMember(cm);
+    if (content != null) {
+      elements = content.getElementsByTag("table");
+      for (Element table : elements) {
+        // writers
+        if (table.text().contains(ImdbSiteDefinition.IMDB_COM.getWriter())) {
+          Elements anchors = table.getElementsByTag("a");
+          for (Element anchor : anchors) {
+            if (anchor.attr("href").matches("/name/nm.*")) {
+              MediaCastMember cm = new MediaCastMember(CastType.WRITER);
+              cm.setName(anchor.ownText());
+              md.addCastMember(cm);
+            }
           }
         }
-      }
 
-      // producers
-      if (table.text().contains(ImdbSiteDefinition.IMDB_COM.getProducers())) {
-        Elements rows = table.getElementsByTag("tr");
-        for (Element row : rows) {
-          if (row.text().contains(ImdbSiteDefinition.IMDB_COM.getProducers())) {
-            continue;
+        // producers
+        if (table.text().contains(ImdbSiteDefinition.IMDB_COM.getProducers())) {
+          Elements rows = table.getElementsByTag("tr");
+          for (Element row : rows) {
+            if (row.text().contains(ImdbSiteDefinition.IMDB_COM.getProducers())) {
+              continue;
+            }
+            Elements columns = row.children();
+            if (columns.size() == 0) {
+              continue;
+            }
+            MediaCastMember cm = new MediaCastMember(CastType.PRODUCER);
+            String name = cleanString(columns.get(0).text());
+            if (StringUtils.isBlank(name)) {
+              continue;
+            }
+            cm.setName(name);
+            if (columns.size() >= 3) {
+              cm.setPart(cleanString(columns.get(2).text()));
+            }
+            md.addCastMember(cm);
           }
-          Elements columns = row.children();
-          if (columns.size() == 0) {
-            continue;
-          }
-          MediaCastMember cm = new MediaCastMember(CastType.PRODUCER);
-          String name = cleanString(columns.get(0).text());
-          if (StringUtils.isBlank(name)) {
-            continue;
-          }
-          cm.setName(name);
-          if (columns.size() >= 3) {
-            cm.setPart(cleanString(columns.get(2).text()));
-          }
-          md.addCastMember(cm);
         }
       }
     }
