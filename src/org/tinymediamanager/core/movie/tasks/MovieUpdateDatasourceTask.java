@@ -238,7 +238,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (movie == null) {
         // 2) create if not found
         // check for NFO
-        File nfoFile = new File(datasource, basename + ".nfo");
+        File nfoFile = new File(parentDir, basename + ".nfo");
         if (completeDirContents.contains(nfoFile)) {
           MediaFile nfo = new MediaFile(nfoFile, MediaFileType.NFO);
           // from NFO?
