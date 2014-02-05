@@ -436,7 +436,7 @@ public class MovieList extends AbstractModelObject {
 
       sr = provider.search(options);
       // if result is empty, try all scrapers
-      if (sr.isEmpty()) {
+      if (sr.isEmpty() && Globals.settings.getMovieSettings().isScraperFallback()) {
         LOGGER.debug("no result yet - trying alternate scrapers");
 
         for (MovieScrapers ms : MovieScrapers.values()) {

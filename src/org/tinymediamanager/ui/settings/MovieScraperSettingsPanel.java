@@ -82,6 +82,8 @@ public class MovieScraperSettingsPanel extends JPanel {
   private JTextPane                   lblScraperThresholdHint;
   private JPanel                      panelAutomaticScraper;
   private JSlider                     sliderThreshold;
+  private JSeparator                  separator_1;
+  private JCheckBox                   chckbxScraperFallback;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -98,7 +100,8 @@ public class MovieScraperSettingsPanel extends JPanel {
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     cbScraperTmdb = new JCheckBox("The Movie Database");
     buttonGroupScraper = new ButtonGroup();
@@ -139,6 +142,12 @@ public class MovieScraperSettingsPanel extends JPanel {
 
     cbCertificationCountry = new JComboBox(CountryCode.values());
     panelMovieScrapers.add(cbCertificationCountry, "3, 14, fill, default");
+
+    separator_1 = new JSeparator();
+    panelMovieScrapers.add(separator_1, "1, 15, 3, 1");
+
+    chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback")); //$NON-NLS-1$
+    panelMovieScrapers.add(chckbxScraperFallback, "1, 16, 3, 1");
 
     panelTrailer = new JPanel();
     panelTrailer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.trailer"), TitledBorder.LEADING,
@@ -320,5 +329,10 @@ public class MovieScraperSettingsPanel extends JPanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_4, cbOfdbde, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("movieSettings.scraperFallback");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, chckbxScraperFallback, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
   }
 }

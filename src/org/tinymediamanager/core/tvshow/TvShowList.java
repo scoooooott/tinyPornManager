@@ -367,19 +367,20 @@ public class TvShowList extends AbstractModelObject {
       searchResult = provider.search(options);
 
       // if result is empty, try all scrapers
-      if (searchResult.isEmpty()) {
-        LOGGER.debug("no result yet - trying alternate scrapers");
-        for (TvShowScrapers ts : TvShowScrapers.values()) {
-          ITvShowMetadataProvider provider2 = getMetadataProvider(ts);
-          if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
-            continue;
-          }
-          searchResult = provider2.search(options);
-          if (!searchResult.isEmpty()) {
-            break;
-          }
-        }
-      }
+      // FIXME only needed if we have more "true" scrapers
+      // if (searchResult.isEmpty()) {
+      // LOGGER.debug("no result yet - trying alternate scrapers");
+      // for (TvShowScrapers ts : TvShowScrapers.values()) {
+      // ITvShowMetadataProvider provider2 = getMetadataProvider(ts);
+      // if (provider.getProviderInfo().equals(provider2.getProviderInfo())) {
+      // continue;
+      // }
+      // searchResult = provider2.search(options);
+      // if (!searchResult.isEmpty()) {
+      // break;
+      // }
+      // }
+      // }
     }
     catch (Exception e) {
       LOGGER.error("searchMovie", e);
