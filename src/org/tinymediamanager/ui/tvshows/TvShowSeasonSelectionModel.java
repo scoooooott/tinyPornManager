@@ -15,6 +15,9 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
 
@@ -24,14 +27,21 @@ import org.tinymediamanager.core.tvshow.TvShowSeason;
  * @author Manuel Laggner
  */
 public class TvShowSeasonSelectionModel extends AbstractModelObject {
-  private static final String SELECTED_TV_SHOW_SEASON = "selectedTvShowSeason";
+  private static final String    SELECTED_TV_SHOW_SEASON = "selectedTvShowSeason";
 
-  private TvShowSeason        selectedTvShowSeason;
+  private TvShowSeason           selectedTvShowSeason;
+  private PropertyChangeListener propertyChangeListener;
 
   /**
    * Instantiates a new tv show season selection model. Usage in TvShowPanel
    */
   public TvShowSeasonSelectionModel() {
+    propertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        firePropertyChange(evt);
+      }
+    };
   }
 
   /**
@@ -48,6 +58,14 @@ public class TvShowSeasonSelectionModel extends AbstractModelObject {
     }
     else {
       this.selectedTvShowSeason = null;
+    }
+
+    if (oldValue != null) {
+      oldValue.removePropertyChangeListener(propertyChangeListener);
+    }
+
+    if (this.selectedTvShowSeason != null) {
+      this.selectedTvShowSeason.addPropertyChangeListener(propertyChangeListener);
     }
 
     firePropertyChange(SELECTED_TV_SHOW_SEASON, oldValue, this.selectedTvShowSeason);

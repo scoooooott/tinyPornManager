@@ -70,15 +70,17 @@ public class TvShowRenameTask extends TmmThreadPool {
           submitTask(new RenameEpisodeTask(episode));
         }
       }
-      // rename episodes
+      // rename single episodes
       for (int i = 0; i < episodesToRename.size(); i++) {
         TvShowEpisode episode = episodesToRename.get(i);
         submitTask(new RenameEpisodeTask(episode));
       }
+
       waitForCompletionOrCancel();
       if (cancel) {
         cancel(false);// swing cancel
       }
+
       // rename TvShowRoot and update all MFs in DB to new path
       if (renameRoot) {
         for (int i = 0; i < tvShowsToRename.size(); i++) {
@@ -97,9 +99,6 @@ public class TvShowRenameTask extends TmmThreadPool {
 
   /**
    * ThreadpoolWorker to work off ONE episode
-   * 
-   * @author Manuel Laggner
-   * @version 1.0
    */
   private class RenameEpisodeTask implements Callable<Object> {
 

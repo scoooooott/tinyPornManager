@@ -18,6 +18,8 @@ package org.tinymediamanager.core.tvshow;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -34,13 +36,22 @@ import org.tinymediamanager.core.MediaFileType;
  * @author Manuel Laggner
  */
 public class TvShowSeason extends AbstractModelObject {
-  private int                 season   = -1;
-  private TvShow              tvShow;
-  private List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(0);
+  private int                    season   = -1;
+  private TvShow                 tvShow;
+  private List<TvShowEpisode>    episodes = new ArrayList<TvShowEpisode>(0);
+  private PropertyChangeListener listener;
 
   public TvShowSeason(int season, TvShow tvShow) {
     this.season = season;
     this.tvShow = tvShow;
+    listener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() instanceof TvShowEpisode && MEDIA_FILES.equals(evt.getPropertyName())) {
+          firePropertyChange(MEDIA_FILES, null, evt.getNewValue());
+        }
+      }
+    };
   }
 
   public int getSeason() {
@@ -53,6 +64,7 @@ public class TvShowSeason extends AbstractModelObject {
 
   public void addEpisode(TvShowEpisode episode) {
     episodes.add(episode);
+    episode.addPropertyChangeListener(listener);
     firePropertyChange(ADDED_EPISODE, null, episodes);
   }
 
@@ -96,7 +108,7 @@ public class TvShowSeason extends AbstractModelObject {
     ArrayList<MediaFile> mfs = new ArrayList<MediaFile>();
     Set<MediaFile> unique = new LinkedHashSet<MediaFile>(mfs);
     for (int i = 0; i < episodes.size(); i++) {
-      unique.addAll(episodes.get(i).getMediaFiles());
+      unique.addAll(new ArrayList<MediaFile>(episodes.get(i).getMediaFiles()));
     }
     mfs.addAll(unique);
     return mfs;

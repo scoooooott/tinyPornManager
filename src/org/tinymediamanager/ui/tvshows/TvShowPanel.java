@@ -27,8 +27,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -1126,7 +1128,7 @@ public class TvShowPanel extends JPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
       List<TvShow> selectedTvShows = getSelectedTvShows();
-      List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+      Set<TvShowEpisode> selectedEpisodes = new HashSet<TvShowEpisode>();
 
       // add all episodes which are not part of a selected tv show
       for (Object obj : getSelectedObjects()) {
@@ -1136,11 +1138,17 @@ public class TvShowPanel extends JPanel {
             selectedEpisodes.add(episode);
           }
         }
+        if (obj instanceof TvShowSeason) {
+          TvShowSeason season = (TvShowSeason) obj;
+          for (TvShowEpisode episode : season.getEpisodes()) {
+            selectedEpisodes.add(episode);
+          }
+        }
       }
 
       // rename
       @SuppressWarnings("rawtypes")
-      TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows, selectedEpisodes, true);
+      TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows, new ArrayList<TvShowEpisode>(selectedEpisodes), true);
       if (!MainWindow.executeMainTask(renameTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }

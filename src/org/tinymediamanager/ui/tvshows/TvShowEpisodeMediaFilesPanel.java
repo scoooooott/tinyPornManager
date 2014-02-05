@@ -17,15 +17,11 @@ package org.tinymediamanager.ui.tvshows;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ResourceBundle;
 
 import javax.swing.JPanel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.MediaFilesPanel;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -45,8 +41,6 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowEpisodeMediaFilesPanel extends JPanel {
   private static final long           serialVersionUID = 6409916197348303643L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());    //$NON-NLS-1$
-  private final static Logger         LOGGER           = LoggerFactory.getLogger(TvShowEpisodeMediaFilesPanel.class);
   private MediaFilesPanel             panelMediaFiles;
 
   private EventList<MediaFile>        mediaFileEventList;
