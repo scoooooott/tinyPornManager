@@ -288,7 +288,9 @@ public class TinyMediaManager {
           // upgrade check
           String oldVersion = Globals.settings.getVersion();
           if (newVersion) {
-            doUpgradeTasks(oldVersion); // do the upgrade tasks for the old version
+            UpgradeTasks.performUpgradeTasksBeforeDatabaseLoading(oldVersion); // do the upgrade tasks for the old version
+            Globals.settings.setCurrentVersion();
+            Globals.settings.writeDefaultSettings();
           }
 
           // init splash
@@ -399,9 +401,9 @@ public class TinyMediaManager {
           // LOGGER.warn("VLC: " + ule.getMessage().trim());
           // }
 
-          // do upgrade tasks after database loading - starting at 70%
+          // do upgrade tasks after database loading
           if (newVersion) {
-            doUpgradeTasksAfterDatabaseLoading(oldVersion, g2, splash);
+            UpgradeTasks.performUpgradeTasksAfterDatabaseLoading(oldVersion);
           }
 
           // clean cache ////////////////////////////////////////////////////
@@ -477,43 +479,6 @@ public class TinyMediaManager {
         }
       }
 
-      private void doUpgradeTasksAfterDatabaseLoading(String version, Graphics2D g2, SplashScreen splash) {
-        MovieList movieList = MovieList.getInstance();
-        List<Movie> movies = movieList.getMovies();
-
-        int updateInterval = movies.size() / 10;
-        int counter = 0;
-        int percentage = 70;
-        String v = "" + version;
-
-        if (v.isEmpty()) {
-          v = "2.0"; // set version for other updates
-        }
-
-        if (v.equals("2.0")) {
-          v = "2.1";
-        }
-
-        if (v.equals("2.1")) {
-          // upgrade tasks for movies; added with 2.5;
-          Globals.entityManager.getTransaction().begin();
-          for (Movie movie : movieList.getMovies()) {
-            movie.findActorImages();
-            movie.saveToDb();
-            counter++;
-            if (counter >= updateInterval) {
-              counter = 0;
-              percentage++;
-              updateProgress(g2, "Performing update tasks", percentage);
-              splash.update();
-            }
-          }
-          Globals.entityManager.getTransaction().commit();
-
-          v = "2.5";
-        }
-      }
-
       /**
        * Update progress on splash screen.
        * 
@@ -568,51 +533,6 @@ public class TinyMediaManager {
 
         // Install the look and feel
         UIManager.setLookAndFeel(laf);
-      }
-
-      /**
-       * does upgrade tasks, such as deleting old libs
-       * 
-       * @param version
-       *          application version string like 2.4.3
-       */
-      private void doUpgradeTasks(String version) {
-        String v = "" + version;
-
-        if (v.isEmpty()) {
-          LOGGER.info("Performing upgrade tasks to version 2.0");
-          // upgrade from alpha/beta to "TV Show" 2.0 format
-          // happens only once
-          JOptionPane
-              .showMessageDialog(null,
-                  "And since you are upgrading to a complete new version, we need to cleanup/delete the complete database this time.\nWe're sorry for that.");
-          FileUtils.deleteQuietly(new File(Constants.DB));
-
-          // upgrade from alpha - delete unneeded files
-          FileUtils.deleteQuietly(new File("lib/jackson-core-lgpl.jar"));
-          FileUtils.deleteQuietly(new File("lib/jackson-core-lgpl.jarv"));
-          FileUtils.deleteQuietly(new File("lib/jackson-mapper-lgpl.jar"));
-          FileUtils.deleteQuietly(new File("lib/jackson-mapper-lgpl.jarv"));
-
-          // check really old alpha version
-          FileUtils.deleteQuietly(new File("lib/beansbinding-1.2.1.jar"));
-          FileUtils.deleteQuietly(new File("lib/beansbinding.jar"));
-          v = "2.0"; // set version for other updates
-        }
-
-        if (v.equals("2.0")) {
-          LOGGER.info("Performing upgrade tasks to version 2.1");
-          v = "2.1";
-        }
-
-        if (v.equals("2.1")) {
-          LOGGER.info("Performing upgrade tasks to version 2.5");
-          v = "2.5";
-        }
-
-        // last one: set current version and write default settings file
-        Globals.settings.setCurrentVersion();
-        Globals.settings.writeDefaultSettings();
       }
 
       /**
