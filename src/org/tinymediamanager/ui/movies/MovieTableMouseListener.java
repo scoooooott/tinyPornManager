@@ -3,38 +3,39 @@ package org.tinymediamanager.ui.movies;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Action;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
+import org.tinymediamanager.ui.movies.actions.MovieEditAction;
+
 /**
- * The class MovieTablePopupListener - to handle popups in the movie table
+ * The class MovieTableMouseListener - to handle clicks in the movie table
  * 
  * @author Manuel Laggner
  */
-public class MovieTablePopupListener extends MouseAdapter {
+public class MovieTableMouseListener extends MouseAdapter {
   private JPopupMenu popup;
   private JTable     table;
 
-  MovieTablePopupListener(JPopupMenu popupMenu, JTable table) {
+  MovieTableMouseListener(JPopupMenu popupMenu, JTable table) {
     this.popup = popupMenu;
     this.table = table;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.MouseAdapter#mousePressed(java.awt.event.MouseEvent)
-   */
+  @Override
+  public void mouseClicked(MouseEvent e) {
+    if (e.getClickCount() >= 2) {
+      Action editAction = new MovieEditAction(false);
+      editAction.actionPerformed(null);
+    }
+  }
+
   @Override
   public void mousePressed(MouseEvent e) {
     maybeShowPopup(e);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.MouseAdapter#mouseReleased(java.awt.event.MouseEvent)
-   */
   @Override
   public void mouseReleased(MouseEvent e) {
     maybeShowPopup(e);

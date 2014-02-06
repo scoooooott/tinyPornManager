@@ -504,8 +504,8 @@ public class MoviePanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
 
-    MouseListener popupListener = new MovieTablePopupListener(popupMenu, table);
-    table.addMouseListener(popupListener);
+    MouseListener mouseListener = new MovieTableMouseListener(popupMenu, table);
+    table.addMouseListener(mouseListener);
   }
 
   /**

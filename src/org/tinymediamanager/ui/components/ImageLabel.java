@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
@@ -416,28 +417,12 @@ public class ImageLabel extends JLabel {
   /*
    * click listener for creating a lightbox effect
    */
-  private class ImageLabelClickListener implements MouseListener {
+  private class ImageLabelClickListener extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent arg0) {
-      if (originalImage != null) {
+      if (arg0.getClickCount() == 1 && originalImage != null) {
         MainWindow.getActiveInstance().createLightbox(getImagePath(), getImageUrl());
       }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
     }
   }
 }
