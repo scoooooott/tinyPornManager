@@ -25,7 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.scraper.util.CachedUrl;
+import org.tinymediamanager.scraper.util.Url;
 
 /**
  * UpdaterTasks checks if there's a new update for TMM
@@ -60,7 +60,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       prop.clear();
 
       // download checksum file and compare with local
-      CachedUrl upd = new CachedUrl(updateUrl + "/digest.txt");
+      Url upd = new Url(updateUrl + "/digest.txt");
       String online = IOUtils.toString(upd.getInputStream(), "UTF-8");
       String local = FileUtils.readFileToString(new File("digest.txt"), "UTF-8");
       if (!local.equals(online)) {
