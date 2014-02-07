@@ -21,6 +21,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -360,7 +361,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
 
       // adjust column name
       table.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
-      lblPath.setText(movieToScrape.getPath());
+      lblPath.setText(movieToScrape.getPath() + File.separatorChar + movieToScrape.getMediaFiles(MediaFileType.VIDEO).get(0).getFilename());
       textFieldSearchString.setText(movieToScrape.getTitle());
       searchMovie(textFieldSearchString.getText(), movieToScrape);
     }
