@@ -357,10 +357,10 @@ public class MovieInformationPanel extends JPanel {
               for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.BANNER)) {
                 mediaFiles.add(mediafile);
               }
-              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.THUMB)) {
+              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.EXTRAFANART)) {
                 mediaFiles.add(mediafile);
               }
-              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.EXTRAFANART)) {
+              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.THUMB)) {
                 mediaFiles.add(mediafile);
               }
               panelArtwork.rebuildPanel();
