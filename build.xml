@@ -133,6 +133,7 @@
         <antcall target="downloadLocale"><param name="lang" value="nl"/></antcall>
         <antcall target="downloadLocale"><param name="lang" value="no"/></antcall>
         <antcall target="downloadLocale"><param name="lang" value="pt"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="ru"/></antcall>
         <antcall target="downloadLocale"><param name="lang" value="sk"/></antcall>
         <antcall target="downloadLocale"><param name="lang" value="vi"/></antcall>
     </target>
