@@ -83,6 +83,9 @@ public class MovieExtraImageFetcher implements Runnable {
         movie.saveToDb();
         movie.callbackForWrittenArtwork(MediaArtworkType.ALL);
       }
+      else {
+        LOGGER.info("Movie '" + movie.getTitle() + "' is within a multi-movie-directory - skip downloading of additional images.");
+      }
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed: ", e);
