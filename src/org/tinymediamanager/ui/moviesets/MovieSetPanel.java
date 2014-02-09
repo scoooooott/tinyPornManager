@@ -166,6 +166,7 @@ public class MovieSetPanel extends JPanel {
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     tree.setCellRenderer(new MovieSetTreeCellRenderer());
+    tree.setRowHeight(0);
     scrollPane.setViewportView(tree);
 
     JPanel panelHeader = new JPanel() {

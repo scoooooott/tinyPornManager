@@ -313,6 +313,7 @@ public class TvShowPanel extends JPanel {
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     tree.setCellRenderer(new TvShowTreeCellRenderer());
+    tree.setRowHeight(0);
     scrollPane.setViewportView(tree);
 
     JPanel panelHeader = new JPanel() {
