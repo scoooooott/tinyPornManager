@@ -224,6 +224,7 @@ public class MovieSet extends MediaEntity {
     }
 
     // try to get a fanart from one movie
+    List<Movie> movies = new ArrayList<Movie>(this.movies);
     for (Movie movie : movies) {
       String filename = movie.getPath() + File.separator + "movieset-fanart.jpg";
       File fanartFile = new File(filename);
@@ -253,8 +254,13 @@ public class MovieSet extends MediaEntity {
     // try to get from the artwork folder if enabled
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()) {
       String filename = Globals.settings.getMovieSettings().getMovieSetArtworkFolder() + File.separator + getTitle() + "-poster.jpg";
-      File fanartFile = new File(filename);
-      if (fanartFile.exists()) {
+      File posterFile = new File(filename);
+      if (posterFile.exists()) {
+        return filename;
+      }
+      filename = Globals.settings.getMovieSettings().getMovieSetArtworkFolder() + File.separator + getTitle() + "-folder.jpg";
+      posterFile = new File(filename);
+      if (posterFile.exists()) {
         return filename;
       }
     }
@@ -615,7 +621,6 @@ public class MovieSet extends MediaEntity {
         FileOutputStream outputStream = new FileOutputStream(outputFile);
         InputStream is = url.getInputStream();
         IOUtils.copy(is, outputStream);
-        outputStream.close();
         outputStream.flush();
         try {
           outputStream.getFD().sync(); // wait until file has been completely
@@ -624,6 +629,7 @@ public class MovieSet extends MediaEntity {
         catch (Exception e) {
           // empty here -> just not let the thread crash
         }
+        outputStream.close();
         is.close();
 
         firePropertyChange(propertyName, "", outputFile);

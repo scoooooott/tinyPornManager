@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies;
+package org.tinymediamanager.ui.moviesets;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -29,8 +29,6 @@ import javax.swing.tree.TreeCellRenderer;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.ui.ImageIconConverter;
-import org.tinymediamanager.ui.moviesets.MovieSetTreeNode;
-import org.tinymediamanager.ui.moviesets.MovieTreeNode;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;

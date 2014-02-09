@@ -50,7 +50,6 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.movies.MovieInformationPanel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
-import org.tinymediamanager.ui.movies.MovieSetTreeCellRenderer;
 import org.tinymediamanager.ui.moviesets.actions.MovieEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
