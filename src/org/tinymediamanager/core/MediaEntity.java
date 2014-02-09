@@ -86,6 +86,7 @@ public abstract class MediaEntity extends AbstractModelObject {
    * Initialize after loading from database.
    */
   public void initializeAfterLoading() {
+    mediaFiles = Collections.synchronizedList(mediaFiles);
     sortMediaFiles();
   }
 
