@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class CachedUrl extends Url {
   private static final Logger  LOGGER       = LoggerFactory.getLogger(CachedUrl.class);
   public static final String   CACHE_DIR    = "cache/url";
-  private static final int     CACHE_EXPIRY = 3600;
+  private static final int     CACHE_EXPIRY = 300;
   private static final int     IMAGE_FACTOR = 48;
   private static final Pattern pattern      = Pattern.compile("([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)");
 

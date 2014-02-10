@@ -603,7 +603,7 @@ public class Utils {
     }
 
     // @formatter:off
-    String ua = String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:19.0) Gecko/20100101 Firefox/19.0", 
+    String ua = String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:26.0) Gecko/20100101 Firefox/26.0", 
         hardcodeOS,
         System.getProperty("os.name", ""),
         System.getProperty("os.version", ""),
