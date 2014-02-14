@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -245,12 +246,14 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
           btnOk = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
           btnOk.setActionCommand("Save");
           btnOk.setToolTipText(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+          btnOk.setIcon(IconManager.APPLY);
           btnOk.addActionListener(this);
           buttonPane.add(btnOk);
 
           JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           btnCancel.setActionCommand("Cancel");
           btnCancel.setToolTipText(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+          btnCancel.setIcon(IconManager.CANCEL);
           btnCancel.addActionListener(this);
           buttonPane.add(btnCancel);
 
@@ -258,7 +261,8 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
             JButton btnAbort = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
             btnAbort.setActionCommand("Abort");
             btnAbort.setToolTipText(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-            btnCancel.addActionListener(this);
+            btnAbort.setIcon(IconManager.PROCESS_STOP);
+            btnAbort.addActionListener(this);
             buttonPane.add(btnAbort, "6, 1, fill, top");
           }
         }
@@ -278,40 +282,18 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
 
   }
 
-  /**
-   * Search movie.
-   * 
-   */
   private void searchMovie() {
     SearchTask task = new SearchTask(tfMovieSetName.getText());
     task.execute();
   }
 
-  /**
-   * The Class SearchTask.
-   * 
-   * @author Manuel Laggner
-   */
   private class SearchTask extends SwingWorker<Void, Void> {
-
-    /** The search term. */
     private String searchTerm;
 
-    /**
-     * Instantiates a new search task.
-     * 
-     * @param searchTerm
-     *          the search term
-     */
     public SearchTask(String searchTerm) {
       this.searchTerm = searchTerm;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
@@ -337,53 +319,28 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
       return null;
     }
 
-    /*
-     * Executed in event dispatching thread
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
     @Override
     public void done() {
       stopProgressBar();
     }
   }
 
-  /**
-   * The Class SearchAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class SearchAction extends AbstractAction {
+    private static final long serialVersionUID = -6561883838396668177L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new search action.
-     */
     public SearchAction() {
       putValue(NAME, BUNDLE.getString("Button.search")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.SEARCH);
+      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       searchMovie();
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent arg0) {
     if ("Cancel".equals(arg0.getActionCommand())) {
@@ -454,31 +411,13 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     }
   }
 
-  /**
-   * The Class ScrapeTask.
-   * 
-   * @author Manuel Laggner
-   */
   private class ScrapeTask extends SwingWorker<Void, Void> {
-
-    /** The model. */
     private MovieSetChooserModel model;
 
-    /**
-     * Instantiates a new scrape task.
-     * 
-     * @param model
-     *          the model
-     */
     public ScrapeTask(MovieSetChooserModel model) {
       this.model = model;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
@@ -505,12 +444,6 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     }
   }
 
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   */
   private void startProgressBar(final String description) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -522,9 +455,6 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     });
   }
 
-  /**
-   * Stop progress bar.
-   */
   private void stopProgressBar() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override

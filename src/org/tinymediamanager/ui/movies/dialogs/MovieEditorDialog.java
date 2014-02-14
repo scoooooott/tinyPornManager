@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -790,6 +790,8 @@ public class MovieEditorDialog extends JDialog {
     public ChangeMovieAction() {
       putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.change")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.APPLY);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY);
     }
 
     @Override
@@ -910,6 +912,8 @@ public class MovieEditorDialog extends JDialog {
     public DiscardAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.CANCEL);
+      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
     }
 
     @Override

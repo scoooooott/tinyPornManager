@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,40 +16,27 @@
 package org.tinymediamanager.ui;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import org.jdesktop.beansbinding.Converter;
 
 /**
- * The Class WatchedIconConverter.
+ * The Class WatchedIconConverter2. To Display the unwatched icon
  * 
  * @author Manuel Laggner
  */
 public class WatchedIconConverter2 extends Converter<Boolean, Icon> {
-  public final static ImageIcon notWatchedIcon = new ImageIcon(WatchedIconConverter2.class.getResource("images/unwatched.png"));
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertForward(java.lang.Object)
-   */
   @Override
   public Icon convertForward(Boolean arg0) {
     if (arg0.equals(Boolean.TRUE)) {
       return null;
     }
 
-    return notWatchedIcon;
+    return IconManager.UNWATCHED;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertReverse(java.lang.Object)
-   */
   @Override
   public Boolean convertReverse(Icon arg0) {
     return null;
   }
-
 }

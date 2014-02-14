@@ -36,6 +36,7 @@ import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
@@ -51,33 +52,15 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowScrapeMetadataDialog extends JDialog {
-
-  /** The Constant serialVersionUID. */
   private static final long            serialVersionUID            = 6120530120703772160L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle  BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The tv show search and scrape config. */
   private TvShowSearchAndScrapeOptions tvShowSearchAndScrapeConfig = new TvShowSearchAndScrapeOptions();
-
-  /** The cb metadata scraper. */
-  private JComboBox                    cbMetadataScraper;
-
-  /** The chckbx the movie db. */
-  private JCheckBox                    chckbxTheTVDb;
-
-  // /** The chckbx the movie db_1. */
-  // private JCheckBox chckbxTheMovieDb_1;
-  //
-  // /** The chckbx hdtrailernet. */
-  // private JCheckBox chckbxHdtrailernet;
-  //
-  // /** The chckbx ofdbde. */
-  // private JCheckBox chckbxOfdbde;
-
-  /** The start scrape. */
   private boolean                      startScrape                 = true;
+
+  /** UI components */
+  private JComboBox                    cbMetadataScraper;
+  private JCheckBox                    chckbxTheTVDb;
 
   /**
    * Instantiates a new movie scrape metadata.
@@ -134,18 +117,6 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     chckbxTheTVDb = new JCheckBox("The TV DB");
     panelScraper.add(chckbxTheTVDb, "4, 3");
 
-    //    JLabel lblTrailerScraper = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
-    // panelScraper.add(lblTrailerScraper, "2, 5, right, default");
-    //
-    // chckbxTheMovieDb_1 = new JCheckBox("The Movie DB");
-    // panelScraper.add(chckbxTheMovieDb_1, "4, 5");
-    //
-    // chckbxHdtrailernet = new JCheckBox("HD-Trailer.net");
-    // panelScraper.add(chckbxHdtrailernet, "6, 5");
-    //
-    // chckbxOfdbde = new JCheckBox("OFDb.de");
-    // panelScraper.add(chckbxOfdbde, "8, 5");
-
     {
       JPanel panelCenter = new JPanel();
       panelContent.add(panelCenter, BorderLayout.CENTER);
@@ -163,6 +134,7 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     panelContent.add(panelButtons, BorderLayout.SOUTH);
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
+    btnStart.setIcon(IconManager.APPLY);
     btnStart.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -173,6 +145,7 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     panelButtons.add(btnStart);
 
     JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+    btnCancel.setIcon(IconManager.CANCEL);
     btnCancel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -191,19 +164,6 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     // artwork provider
     chckbxTheTVDb.setSelected(true);
     chckbxTheTVDb.setEnabled(false);
-
-    // // trailer provider
-    // if (Globals.settings.getMovieSettings().isTrailerScraperTmdb()) {
-    // chckbxTheMovieDb_1.setSelected(true);
-    // }
-    //
-    // if (Globals.settings.getMovieSettings().isTrailerScraperHdTrailers()) {
-    // chckbxHdtrailernet.setSelected(true);
-    // }
-    //
-    // if (Globals.settings.getMovieSettings().isTrailerScraperOfdb()) {
-    // chckbxOfdbde.setSelected(true);
-    // }
   }
 
   /**
@@ -219,19 +179,6 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     if (chckbxTheTVDb.isSelected()) {
       tvShowSearchAndScrapeConfig.addArtworkScraper(TvShowArtworkScrapers.TVDB);
     }
-
-    // // tailer provider
-    // if (chckbxTheMovieDb_1.isSelected()) {
-    // tvShowSearchAndScrapeConfig.addTrailerScraper(MovieTrailerScrapers.TMDB);
-    // }
-    //
-    // if (chckbxHdtrailernet.isSelected()) {
-    // tvShowSearchAndScrapeConfig.addTrailerScraper(MovieTrailerScrapers.HDTRAILERS);
-    // }
-    //
-    // if (chckbxOfdbde.isSelected()) {
-    // tvShowSearchAndScrapeConfig.addTrailerScraper(MovieTrailerScrapers.OFDB);
-    // }
 
     return tvShowSearchAndScrapeConfig;
   }

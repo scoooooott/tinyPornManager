@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -132,12 +133,11 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
    *          the in queue
    */
   public TvShowEpisodeEditorDialog(TvShowEpisode episode, boolean inQueue) {
-    setTitle(BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
+    super((Frame) null, BUNDLE.getString("tvshowepisode.scrape"), true); //$NON-NLS-1$
     setName("tvShowEpisodeScraper");
     TmmWindowSaver.loadSettings(this);
     setBounds(5, 5, 964, 632);
     setIconImage(Globals.logo);
-    setModal(true);
 
     this.episodeToEdit = episode;
     getContentPane().setLayout(new BorderLayout());
@@ -318,6 +318,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       btnSearch.setMaximumSize(new Dimension(0, 0));
       btnSearch.setActionCommand("Search");
       btnSearch.addActionListener(this);
+      btnSearch.setIcon(IconManager.SEARCH);
       bottomPanel.add(btnSearch, "6, 2, left, default");
       {
         JPanel buttonPane = new JPanel();
@@ -327,12 +328,14 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         buttonPane.setLayout(layout);
         JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
         okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
+        okButton.setIcon(IconManager.APPLY);
         buttonPane.add(okButton);
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
 
         JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
         cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
+        cancelButton.setIcon(IconManager.CANCEL);
         buttonPane.add(cancelButton);
         cancelButton.setActionCommand("Cancel");
         cancelButton.addActionListener(this);
@@ -340,6 +343,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
         if (inQueue) {
           JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
           abortButton.setToolTipText(BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
+          abortButton.setIcon(IconManager.PROCESS_STOP);
           buttonPane.add(abortButton);
           abortButton.setActionCommand("Abort");
           abortButton.addActionListener(this);
@@ -489,11 +493,6 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     }
   }
 
-  /**
-   * The Class ScrapeTask.
-   * 
-   * @author Manuel Laggner
-   */
   private class ScrapeTask extends SwingWorker<Void, Void> {
     ITvShowMetadataProvider mp;
 

@@ -59,8 +59,6 @@ public class WhatsNewDialog extends JDialog {
       textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
       scrollPane.setViewportView(textPane);
 
-      // textPane.setContentType("text/html");
-      // textPane.setText(buildHTMLFromChangelog(changelog));
       textPane.setText(changelog);
       textPane.setEditable(false);
       textPane.setCaretPosition(0);
@@ -78,6 +76,7 @@ public class WhatsNewDialog extends JDialog {
 
       LinkLabel lblLink = new LinkLabel("http://www.tinymediamanager.org");
       lblLink.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent arg0) {
           try {
             TmmUIHelper.browseUrl("http://www.tinymediamanager.org/index.php/changelog/");
@@ -100,25 +99,10 @@ public class WhatsNewDialog extends JDialog {
     }
   }
 
-  private String buildHTMLFromChangelog(String changelog) {
-    StringBuilder changelogInHTML = new StringBuilder(
-        "<html><head><style type=\"text/css\">p { text-indent: -10px; padding-left: 10px; margin: 0px; }</style></head><body>");
-
-    for (String line : changelog.split("\\r|\\n|\\r\\n")) {
-      changelogInHTML.append("<p>");
-      changelogInHTML.append(line);
-      changelogInHTML.append("</p>");
-    }
-
-    changelogInHTML.append("</body></html>");
-    return changelogInHTML.toString();
-  }
-
   @Override
   public Dimension getPreferredSize() {
     Dimension superPref = super.getPreferredSize();
     return new Dimension((int) (700 > superPref.getWidth() ? superPref.getWidth() : 700), (int) (500 > superPref.getHeight() ? superPref.getHeight()
         : 500));
   }
-
 }

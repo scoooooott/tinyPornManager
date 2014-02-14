@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.tinymediamanager.core.ExportTemplate;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -152,6 +153,7 @@ public class MovieExporterDialog extends JDialog {
     getContentPane().add(panelButtons, "2, 6, 3, 1, fill, fill");
 
     JButton btnExport = new JButton("Export");
+    btnExport.setIcon(IconManager.EXPORT);
     btnExport.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         if (StringUtils.isBlank(tfExportDir.getText())) {
@@ -179,6 +181,7 @@ public class MovieExporterDialog extends JDialog {
     panelButtons.add(btnExport);
 
     JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+    btnCancel.setIcon(IconManager.CANCEL);
     btnCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         MovieExporterDialog.this.setVisible(false);

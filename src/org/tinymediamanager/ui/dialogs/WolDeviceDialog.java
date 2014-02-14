@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.WolDevice;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -107,8 +108,11 @@ public class WolDeviceDialog extends JDialog {
 
     public SaveAction() {
       putValue(NAME, BUNDLE.getString("Button.save")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.APPLY);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       // check whether both fields are filled
       if (StringUtils.isBlank(tfName.getText()) || StringUtils.isBlank(tfMacAddress.getText())) {
@@ -143,8 +147,11 @@ public class WolDeviceDialog extends JDialog {
 
     public CancelAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.CANCEL);
+      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
       dispose();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,38 +57,19 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowBatchEditorDialog extends JDialog {
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 3527478264068979388L;
-
-  /** The Constant BUNDLE. */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The tv show list. */
   private TvShowList                  tvShowList       = TvShowList.getInstance();
-
-  /** The tv shows to edit. */
   private List<TvShow>                tvShowsToEdit;
-
-  /** The tv show episodes to edit. */
   private List<TvShowEpisode>         tvShowEpisodesToEdit;
-
-  /** The episodes changed. */
   private boolean                     episodesChanged  = false;
-
-  /** The tv shows changed. */
   private boolean                     tvShowsChanged   = false;
 
-  /** The cb genres. */
+  /** UI components */
   private JComboBox                   cbGenres;
-
-  /** The cb tags. */
   private JComboBox                   cbTags;
-
-  /** The chckbx watched. */
   private JCheckBox                   chckbxWatched;
-
-  /** The sp season. */
   private JSpinner                    spSeason;
 
   /**
@@ -280,6 +261,7 @@ public class TvShowBatchEditorDialog extends JDialog {
       getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
       JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      btnClose.setIcon(IconManager.APPLY);
       btnClose.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {
@@ -335,6 +317,5 @@ public class TvShowBatchEditorDialog extends JDialog {
         }
       });
     }
-
   }
 }

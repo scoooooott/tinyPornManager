@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -184,6 +185,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
 
       {
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
+        btnSearch.setIcon(IconManager.SEARCH);
         panelSearchField.add(btnSearch, "8, 1");
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
@@ -303,11 +305,13 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
           buttonPane.add(okButton);
           okButton.setActionCommand("OK");
+          okButton.setIcon(IconManager.APPLY);
           okButton.addActionListener(this);
 
           JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
           buttonPane.add(cancelButton);
           cancelButton.setActionCommand("Cancel");
+          cancelButton.setIcon(IconManager.CANCEL);
           cancelButton.addActionListener(this);
 
           if (inQueue) {
@@ -315,6 +319,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
             buttonPane.add(abortButton);
             abortButton.setActionCommand("Abort");
             abortButton.addActionListener(this);
+            abortButton.setIcon(IconManager.PROCESS_STOP);
           }
         }
       }
@@ -334,17 +339,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
-  /**
-   * Action performed.
-   * 
-   * @param e
-   *          the e
-   */
+  @Override
   public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
       int row = table.getSelectedRow();
@@ -450,23 +445,11 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
 
   }
 
-  /**
-   * Search tv show.
-   * 
-   * @param searchTerm
-   *          the search term
-   */
   private void searchTvShow(String searchTerm) {
     SearchTask task = new SearchTask(searchTerm);
     task.execute();
   }
 
-  /**
-   * Start progress bar.
-   * 
-   * @param description
-   *          the description
-   */
   private void startProgressBar(final String description) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -478,9 +461,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     });
   }
 
-  /**
-   * Stop progress bar.
-   */
   private void stopProgressBar() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -492,31 +472,13 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     });
   }
 
-  /**
-   * The Class SearchTask.
-   * 
-   * @author Manuel Laggner
-   */
   private class SearchTask extends SwingWorker<Void, Void> {
-
-    /** The search term. */
     private String searchTerm;
 
-    /**
-     * Instantiates a new search task.
-     * 
-     * @param searchTerm
-     *          the search term
-     */
     public SearchTask(String searchTerm) {
       this.searchTerm = searchTerm;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
@@ -543,11 +505,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
     @Override
     public void done() {
       stopProgressBar();
@@ -561,11 +518,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       this.model = model;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
     @Override
     public Void doInBackground() {
       startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getName()); //$NON-NLS-1$
@@ -578,11 +530,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
     @Override
     public void done() {
       stopProgressBar();
@@ -638,11 +585,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     public ChangeScraperAction() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
       TvShowScrapers selectedScraper = (TvShowScrapers) cbScraper.getSelectedItem();

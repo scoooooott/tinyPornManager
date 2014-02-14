@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeChooserModel;
@@ -99,14 +100,17 @@ public class TvShowEpisodeChooserDialog extends JDialog implements ActionListene
       buttonPane.setLayout(layout);
       JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
       okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
+      okButton.setIcon(IconManager.APPLY);
       buttonPane.add(okButton);
       okButton.setActionCommand("OK");
       okButton.addActionListener(this);
 
       JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
+      cancelButton.setIcon(IconManager.CANCEL);
       buttonPane.add(cancelButton);
       cancelButton.setActionCommand("Cancel");
+      cancelButton.addActionListener(this);
 
       JSplitPane splitPane = new JSplitPane();
       getContentPane().add(splitPane, BorderLayout.CENTER);
@@ -126,7 +130,7 @@ public class TvShowEpisodeChooserDialog extends JDialog implements ActionListene
       taPlot.setWrapStyleWord(true);
       taPlot.setLineWrap(true);
       scrollPane_1.setViewportView(taPlot);
-      cancelButton.addActionListener(this);
+
     }
 
     initDataBindings();

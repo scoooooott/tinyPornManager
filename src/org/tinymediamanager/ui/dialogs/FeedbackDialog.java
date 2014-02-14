@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -123,6 +124,7 @@ public class FeedbackDialog extends JDialog {
     getContentPane().add(panelButtons, "2, 4, fill, fill");
 
     JButton btnSend = new JButton(BUNDLE.getString("Feedback")); //$NON-NLS-1$
+    btnSend.setIcon(IconManager.APPLY);
     btnSend.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -137,10 +139,6 @@ public class FeedbackDialog extends JDialog {
         HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbxTIhI58gwy0UJ0Z1CdmZDdHlwBDU_vugBmQxcKN9aug4nfgrgZ/exec");
         try {
           List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-
-          // String message = new String("Feedback from " + tfName.getText() + "\nEmail: " + tfEmail.getText() + "\nUUID: "
-          // + System.getProperty("tmm.uuid") + "\n\n");
-          // message += textArea.getText();
 
           StringBuilder message = new StringBuilder("Feedback from ");
           message.append(tfName.getText());
@@ -182,6 +180,7 @@ public class FeedbackDialog extends JDialog {
     panelButtons.add(btnSend);
 
     JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+    btnCacnel.setIcon(IconManager.CANCEL);
     btnCacnel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

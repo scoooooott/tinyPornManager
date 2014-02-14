@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -92,7 +93,6 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieChooserDialog extends JDialog implements ActionListener {
-
   private static final long                                                 serialVersionUID      = -3104541519073924724L;
   private static final ResourceBundle                                       BUNDLE                = ResourceBundle.getBundle(
                                                                                                       "messages", new UTF8Control());                     //$NON-NLS-1$
@@ -206,6 +206,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       {
         JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
         panelSearchField.add(btnSearch, "8, 1, fill, default");
+        btnSearch.setIcon(IconManager.SEARCH);
         btnSearch.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg0) {
             searchMovie(textFieldSearchString.getText(), null);
@@ -335,17 +336,20 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           layout.setMinWidth(100);
           buttonPane.setLayout(layout);
           okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+          okButton.setIcon(IconManager.APPLY);
           buttonPane.add(okButton);
           okButton.setActionCommand("OK");
           okButton.addActionListener(this);
 
           JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+          cancelButton.setIcon(IconManager.CANCEL);
           buttonPane.add(cancelButton);
           cancelButton.setActionCommand("Cancel");
           cancelButton.addActionListener(this);
 
           if (inQueue) {
             JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+            abortButton.setIcon(IconManager.PROCESS_STOP);
             buttonPane.add(abortButton);
             abortButton.setActionCommand("Abort");
             abortButton.addActionListener(this);

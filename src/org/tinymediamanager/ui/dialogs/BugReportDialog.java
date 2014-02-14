@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -80,7 +81,6 @@ public class BugReportDialog extends JDialog {
   private JTextField                  tfEmail;
   private JCheckBox                   chckbxLogs;
   private JCheckBox                   chckbxConfigxml;
-  private JCheckBox                   chckbxDatabase;
 
   /**
    * Instantiates a new feedback dialog.
@@ -145,14 +145,12 @@ public class BugReportDialog extends JDialog {
     chckbxConfigxml = new JCheckBox("config.xml");
     panelContent.add(chckbxConfigxml, "4, 10");
 
-    // chckbxDatabase = new JCheckBox("Database");
-    // panelContent.add(chckbxDatabase, "4, 8");
-
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));
     getContentPane().add(panelButtons, "2, 4, fill, fill");
 
     JButton btnSend = new JButton(BUNDLE.getString("BugReport.send")); //$NON-NLS-1$
+    btnSend.setIcon(IconManager.APPLY);
     btnSend.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -183,10 +181,6 @@ public class BugReportDialog extends JDialog {
           message.append("\n\n");
           message.append(textArea.getText());
 
-          // String message = new String("Bug report from " +
-          // textField.getText() + "\n\n");
-          // message += textArea.getText();
-
           BugReportDialog.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
           MultipartEntity mpEntity = new MultipartEntity(HttpMultipartMode.STRICT);
@@ -197,8 +191,6 @@ public class BugReportDialog extends JDialog {
                                                                        * || chckbxDatabase . isSelected ()
                                                                        */) {
             try {
-              // byte[] buffer = new byte[1024];
-
               // build zip with selected files in it
               ByteArrayOutputStream os = new ByteArrayOutputStream();
               ZipOutputStream zos = new ZipOutputStream(os);
@@ -241,18 +233,6 @@ public class BugReportDialog extends JDialog {
                 zos.closeEntry();
               }
 
-              // // attach database
-              // ToDo
-              // if (chckbxDatabase.isSelected()) {
-              // ZipEntry ze = new ZipEntry(Constants.DB);
-              // zos.putNextEntry(ze);
-              // FileInputStream in = new FileInputStream(Constants.DB);
-              //
-              // IOUtils.copy(in, zos);
-              // in.close();
-              // zos.closeEntry();
-              // }
-
               zos.close();
 
               byte[] data = os.toByteArray();
@@ -290,6 +270,7 @@ public class BugReportDialog extends JDialog {
     panelButtons.add(btnSend);
 
     JButton btnCacnel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+    btnCacnel.setIcon(IconManager.CANCEL);
     btnCacnel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

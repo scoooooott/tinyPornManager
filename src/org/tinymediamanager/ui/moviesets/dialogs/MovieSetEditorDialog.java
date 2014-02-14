@@ -70,7 +70,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class MovieSetEditor.
+ * The Class MovieSetEditorDialog. Edit movie sets
  * 
  * @author Manuel Laggner
  */
@@ -284,29 +284,15 @@ public class MovieSetEditorDialog extends JDialog {
     tableMovies.getTableHeader().getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.watched"));
   }
 
-  /**
-   * The Class RemoveMovieAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class RemoveMovieAction extends AbstractAction {
+    private static final long serialVersionUID = 8013039811395731218L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new removes the movie action.
-     */
     public RemoveMovieAction() {
       putValue(LARGE_ICON_KEY, IconManager.LIST_REMOVE);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.remove")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       int row = tableMovies.getSelectedRow();
       if (row > -1) {
@@ -317,29 +303,15 @@ public class MovieSetEditorDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class MoveUpAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class MoveUpAction extends AbstractAction {
+    private static final long serialVersionUID = -4620223948432713667L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new move up action.
-     */
     public MoveUpAction() {
       putValue(LARGE_ICON_KEY, IconManager.ARROW_UP);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.moveup")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       int row = tableMovies.getSelectedRow();
       if (row > 0) {
@@ -349,29 +321,15 @@ public class MovieSetEditorDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class MoveDownAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class MoveDownAction extends AbstractAction {
+    private static final long serialVersionUID = 8986131051527422410L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new move down action.
-     */
     public MoveDownAction() {
       putValue(LARGE_ICON_KEY, IconManager.ARROW_DOWN);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.movedown")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       int row = tableMovies.getSelectedRow();
       if (row < moviesInSet.size() - 1) {
@@ -381,29 +339,17 @@ public class MovieSetEditorDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class OkAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class OkAction extends AbstractAction {
+    private static final long serialVersionUID = -7322270015667230646L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new ok action.
-     */
     public OkAction() {
       putValue(NAME, BUNDLE.getString("Button.save")); //$NON-NLS-1$);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.save")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.APPLY);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       movieSetToEdit.setTitle(tfName.getText());
       movieSetToEdit.setPlot(tpOverview.getText());
@@ -463,58 +409,34 @@ public class MovieSetEditorDialog extends JDialog {
     }
   }
 
-  /**
-   * The Class CancelAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class CancelAction extends AbstractAction {
+    private static final long serialVersionUID = -6214112833170817002L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new cancel action.
-     */
     public CancelAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.CANCEL);
+      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
       dispose();
     }
   }
 
-  /**
-   * The Class AbortAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class AbortAction extends AbstractAction {
+    private static final long serialVersionUID = 1215596133205394653L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new cancel action.
-     */
     public AbortAction() {
       putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.PROCESS_STOP);
+      putValue(LARGE_ICON_KEY, IconManager.PROCESS_STOP);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       continueQueue = false;
       setVisible(false);
@@ -541,29 +463,15 @@ public class MovieSetEditorDialog extends JDialog {
     jTableBinding.bind();
   }
 
-  /**
-   * The Class SwingAction.
-   * 
-   * @author Manuel Laggner
-   */
   private class SwingAction extends AbstractAction {
+    private static final long serialVersionUID = -8980803676368394987L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new swing action.
-     */
     public SwingAction() {
       putValue(NAME, BUNDLE.getString("movieset.tmdb.find")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.tmdb.desc")); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
+    @Override
     public void actionPerformed(ActionEvent e) {
       // search for a tmdbId
       try {

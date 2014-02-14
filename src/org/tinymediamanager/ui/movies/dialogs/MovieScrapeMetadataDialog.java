@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieTrailerScrapers;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
@@ -48,40 +49,21 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * The Class MovieScrapeMetadataDialog.
+ * The Class MovieScrapeMetadataDialog. Rescrape metadata
  * 
  * @author Manuel Laggner
  */
 public class MovieScrapeMetadataDialog extends JDialog {
-
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID           = 3826984454317979241L;
   private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID           = 3826984454317979241L;
-
-  /** The movie search and scrape config. */
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();
-
-  /** The cb metadata scraper. */
   private JComboBox                   cbMetadataScraper;
-
-  /** The chckbx the movie db. */
   private JCheckBox                   chckbxTheMovieDb;
-
-  /** The chckbx fanarttv. */
   private JCheckBox                   chckbxFanarttv;
-
-  /** The chckbx the movie db_1. */
   private JCheckBox                   chckbxTheMovieDb_1;
-
-  /** The chckbx hdtrailernet. */
   private JCheckBox                   chckbxHdtrailernet;
-
-  /** The chckbx ofdbde. */
   private JCheckBox                   chckbxOfdbde;
-
-  /** The start scrape. */
   private boolean                     startScrape                = false;
 
   /**
@@ -174,6 +156,7 @@ public class MovieScrapeMetadataDialog extends JDialog {
     panelContent.add(panelButtons, BorderLayout.SOUTH);
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
+    btnStart.setIcon(IconManager.APPLY);
     btnStart.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -184,6 +167,7 @@ public class MovieScrapeMetadataDialog extends JDialog {
     panelButtons.add(btnStart);
 
     JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+    btnCancel.setIcon(IconManager.CANCEL);
     btnCancel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

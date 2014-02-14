@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -33,7 +34,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -161,9 +161,8 @@ public class TvShowEditorDialog extends JDialog {
    *          the in queue
    */
   public TvShowEditorDialog(TvShow tvShow, boolean inQueue) {
-    setModal(true);
+    super((Frame) null, BUNDLE.getString("tvshow.edit"), true); //$NON-NLS-1$
     setIconImage(Globals.logo);
-    setTitle(BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
     setName("tvShowEditor");
     setBounds(5, 5, 950, 700);
     TmmWindowSaver.loadSettings(this);
@@ -478,7 +477,6 @@ public class TvShowEditorDialog extends JDialog {
     {
       JButton btnCloneEpisode = new JButton("");
       btnCloneEpisode.setAction(new CloneEpisodeAction());
-      btnCloneEpisode.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Clone.png")));
       episodesPanel.add(btnCloneEpisode, "2, 2");
     }
     {
@@ -700,6 +698,8 @@ public class TvShowEditorDialog extends JDialog {
     public OKAction() {
       putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.change")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.APPLY);
+      putValue(LARGE_ICON_KEY, IconManager.APPLY);
     }
 
     @Override
@@ -828,6 +828,8 @@ public class TvShowEditorDialog extends JDialog {
     public CancelAction() {
       putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.CANCEL);
+      putValue(LARGE_ICON_KEY, IconManager.CANCEL);
     }
 
     @Override
@@ -1006,6 +1008,8 @@ public class TvShowEditorDialog extends JDialog {
     public AbortAction() {
       putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.PROCESS_STOP);
+      putValue(LARGE_ICON_KEY, IconManager.PROCESS_STOP);
     }
 
     @Override
@@ -1125,6 +1129,8 @@ public class TvShowEditorDialog extends JDialog {
 
     public CloneEpisodeAction() {
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshowepisode.clone")); //$NON-NLS-1$
+      putValue(SMALL_ICON, IconManager.COPY);
+      putValue(LARGE_ICON_KEY, IconManager.COPY);
     }
 
     @Override
