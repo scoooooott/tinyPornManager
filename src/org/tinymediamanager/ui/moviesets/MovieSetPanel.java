@@ -23,7 +23,6 @@ import java.awt.event.MouseListener;
 import java.util.ResourceBundle;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,6 +43,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
@@ -56,7 +56,6 @@ import org.tinymediamanager.ui.moviesets.actions.MovieSetEditAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetRemoveAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetRenameAction;
 import org.tinymediamanager.ui.moviesets.actions.MovieSetSearchAction;
-import org.tinymediamanager.ui.tvshows.TvShowPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -189,13 +188,13 @@ public class MovieSetPanel extends JPanel {
 
     JLabel lblNfoColumn = new JLabel("");
     lblNfoColumn.setHorizontalAlignment(JLabel.CENTER);
-    lblNfoColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    lblNfoColumn.setIcon(IconManager.INFO);
     lblNfoColumn.setToolTipText(BUNDLE.getString("tmm.nfo")); //$NON-NLS-1$
     panelHeader.add(lblNfoColumn, "4, 1");
 
     JLabel lblImageColumn = new JLabel("");
     lblImageColumn.setHorizontalAlignment(JLabel.CENTER);
-    lblImageColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Image.png")));
+    lblImageColumn.setIcon(IconManager.IMAGE);
     lblImageColumn.setToolTipText(BUNDLE.getString("tmm.images")); //$NON-NLS-1$
     panelHeader.add(lblImageColumn, "5, 1");
 

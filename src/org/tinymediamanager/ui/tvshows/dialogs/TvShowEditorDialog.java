@@ -71,6 +71,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TableSpinnerEditor;
@@ -374,7 +375,7 @@ public class TvShowEditorDialog extends JDialog {
       JButton btnAddActor = new JButton("Add Actor");
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(new AddActorAction());
-      btnAddActor.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddActor.setIcon(IconManager.LIST_ADD);
       details2Panel.add(btnAddActor, "2, 4, right, top");
     }
     {
@@ -388,7 +389,7 @@ public class TvShowEditorDialog extends JDialog {
     {
       JButton btnAddGenre = new JButton("");
       btnAddGenre.setAction(new AddGenreAction());
-      btnAddGenre.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddGenre.setIcon(IconManager.LIST_ADD);
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddGenre, "6, 4, right, top");
     }
@@ -396,7 +397,7 @@ public class TvShowEditorDialog extends JDialog {
       JButton btnRemoveActor = new JButton(BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(new RemoveActorAction());
-      btnRemoveActor.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
       details2Panel.add(btnRemoveActor, "2,6, right, top");
     }
 
@@ -404,7 +405,7 @@ public class TvShowEditorDialog extends JDialog {
       JButton btnRemoveGenre = new JButton("");
       btnRemoveGenre.setAction(new RemoveGenreAction());
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveGenre.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveGenre.setIcon(IconManager.LIST_REMOVE);
       details2Panel.add(btnRemoveGenre, "6, 6, right, top");
     }
     {
@@ -426,14 +427,14 @@ public class TvShowEditorDialog extends JDialog {
     {
       JButton btnAddTrailer = new JButton("");
       btnAddTrailer.setAction(new AddTrailerAction());
-      btnAddTrailer.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTrailer.setIcon(IconManager.LIST_ADD);
       btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTrailer, "2, 12, right, top");
     }
     {
       JButton btnRemoveTrailer = new JButton("");
       btnRemoveTrailer.setAction(new RemoveTrailerAction());
-      btnRemoveTrailer.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTrailer.setIcon(IconManager.LIST_REMOVE);
       btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTrailer, "2, 14, right, top");
     }
@@ -450,14 +451,14 @@ public class TvShowEditorDialog extends JDialog {
     {
       JButton btnAddTag = new JButton("");
       btnAddTag.setAction(new AddTagAction());
-      btnAddTag.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTag.setIcon(IconManager.LIST_ADD);
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTag, "2, 18, right, top");
     }
     {
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setAction(new RemoveTagAction());
-      btnRemoveTag.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTag, "2, 20, right, top");
     }
@@ -491,7 +492,7 @@ public class TvShowEditorDialog extends JDialog {
     {
       JButton btnRemoveEpisode = new JButton("");
       btnRemoveEpisode.setAction(new RemoveEpisodeAction());
-      btnRemoveEpisode.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveEpisode.setIcon(IconManager.LIST_REMOVE);
       episodesPanel.add(btnRemoveEpisode, "2, 4, default, top");
     }
 

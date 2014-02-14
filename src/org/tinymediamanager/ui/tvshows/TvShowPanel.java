@@ -79,6 +79,7 @@ import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.PopupListener;
 import org.tinymediamanager.ui.TmmSwingWorker;
@@ -224,8 +225,7 @@ public class TvShowPanel extends JPanel {
     panelTvShowTree.add(toolBar, "2, 1");
 
     // toolBar.add(actionUpdateDatasources);
-    final JSplitButton buttonUpdateDatasource = new JSplitButton(new ImageIcon(getClass().getResource(
-        "/org/tinymediamanager/ui/images/Folder-Sync.png")));
+    final JSplitButton buttonUpdateDatasource = new JSplitButton(IconManager.REFRESH);
     // temp fix for size of the button
     buttonUpdateDatasource.setText("   ");
     buttonUpdateDatasource.setHorizontalAlignment(JButton.LEFT);
@@ -254,7 +254,7 @@ public class TvShowPanel extends JPanel {
     buttonUpdateDatasource.setPopupMenu(popup);
     toolBar.add(buttonUpdateDatasource);
 
-    JSplitButton buttonScrape = new JSplitButton(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    JSplitButton buttonScrape = new JSplitButton(IconManager.SEARCH);
     // temp fix for size of the button
     buttonScrape.setText("   ");
     buttonScrape.setHorizontalAlignment(JButton.LEFT);
@@ -336,19 +336,19 @@ public class TvShowPanel extends JPanel {
 
     JLabel lblNfoColumn = new JLabel("");
     lblNfoColumn.setHorizontalAlignment(JLabel.CENTER);
-    lblNfoColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Info.png")));
+    lblNfoColumn.setIcon(IconManager.INFO);
     lblNfoColumn.setToolTipText(BUNDLE.getString("metatag.nfo"));//$NON-NLS-1$
     panelHeader.add(lblNfoColumn, "4, 1");
 
     JLabel lblImageColumn = new JLabel("");
     lblImageColumn.setHorizontalAlignment(JLabel.CENTER);
-    lblImageColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/Image.png")));
+    lblImageColumn.setIcon(IconManager.IMAGE);
     lblImageColumn.setToolTipText(BUNDLE.getString("metatag.images"));//$NON-NLS-1$
     panelHeader.add(lblImageColumn, "5, 1");
 
     JLabel lblSubtitleColumn = new JLabel("");
     lblSubtitleColumn.setHorizontalAlignment(JLabel.CENTER);
-    lblSubtitleColumn.setIcon(new ImageIcon(TvShowPanel.class.getResource("/org/tinymediamanager/ui/images/subtitle.png")));
+    lblSubtitleColumn.setIcon(IconManager.SUBTITLE);
     lblSubtitleColumn.setToolTipText(BUNDLE.getString("metatag.subtitles"));//$NON-NLS-1$
     panelHeader.add(lblSubtitleColumn, "6, 1");
 
@@ -651,8 +651,8 @@ public class TvShowPanel extends JPanel {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
       }
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
+      putValue(LARGE_ICON_KEY, IconManager.REFRESH);
+      putValue(SMALL_ICON, IconManager.REFRESH);
     }
 
     /*
@@ -699,8 +699,8 @@ public class TvShowPanel extends JPanel {
 
     public UpdateTvShowAction() {
       putValue(NAME, BUNDLE.getString("tvshow.update")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
+      putValue(LARGE_ICON_KEY, IconManager.REFRESH);
+      putValue(SMALL_ICON, IconManager.REFRESH);
     }
 
     /*
@@ -749,8 +749,8 @@ public class TvShowPanel extends JPanel {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
       }
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+      putValue(SMALL_ICON, IconManager.SEARCH);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
     }
 
@@ -778,8 +778,8 @@ public class TvShowPanel extends JPanel {
 
     public ScrapeEpisodesAction() {
       putValue(NAME, BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+      putValue(SMALL_ICON, IconManager.SEARCH);
     }
 
     @Override
@@ -796,8 +796,8 @@ public class TvShowPanel extends JPanel {
 
     public ScrapeNewItemsAction() {
       putValue(NAME, BUNDLE.getString("tvshow.scrape.newitems")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+      putValue(SMALL_ICON, IconManager.SEARCH);
     }
 
     @Override
@@ -854,8 +854,8 @@ public class TvShowPanel extends JPanel {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
       }
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(LARGE_ICON_KEY, IconManager.EDIT);
+      putValue(SMALL_ICON, IconManager.EDIT);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
     }
 
@@ -896,8 +896,8 @@ public class TvShowPanel extends JPanel {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
       }
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Cross.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Cross.png")));
+      putValue(LARGE_ICON_KEY, IconManager.CROSS);
+      putValue(SMALL_ICON, IconManager.CROSS);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
     }
 
@@ -943,8 +943,8 @@ public class TvShowPanel extends JPanel {
       if (withTitle) {
         putValue(NAME, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
       }
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(LARGE_ICON_KEY, IconManager.EDIT);
+      putValue(SMALL_ICON, IconManager.EDIT);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
     }
 
@@ -985,8 +985,8 @@ public class TvShowPanel extends JPanel {
     public BatchEditAction() {
       putValue(NAME, BUNDLE.getString("tvshow.bulkedit")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.bulkedit.desc")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+      putValue(LARGE_ICON_KEY, IconManager.EDIT);
+      putValue(SMALL_ICON, IconManager.EDIT);
     }
 
     @Override
@@ -1023,8 +1023,8 @@ public class TvShowPanel extends JPanel {
     public SelectedScrapeAction() {
       putValue(NAME, BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected.force.desc")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+      putValue(SMALL_ICON, IconManager.SEARCH);
     }
 
     /*

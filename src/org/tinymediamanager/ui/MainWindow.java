@@ -38,10 +38,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -79,6 +77,7 @@ import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.ClearUrlCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
+import org.tinymediamanager.ui.actions.ExitAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
@@ -106,13 +105,12 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MainWindow extends JFrame {
 
   /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                                 //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   /** The logger. */
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
-  public static final ImageIcon       IMAGE_ERROR      = new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/Error.png"));
 
   /** The action exit. */
   private final Action                actionExit       = new ExitAction();
@@ -182,7 +180,6 @@ public class MainWindow extends JFrame {
     menuBar.add(mnTmm);
 
     JMenuItem mntmExit = mnTmm.add(actionExit);
-    mntmExit.setText(BUNDLE.getString("tmm.exit")); //$NON-NLS-1$
     initialize();
 
     // tools menu
@@ -432,7 +429,7 @@ public class MainWindow extends JFrame {
     btnCancelTask.setBorderPainted(false);
     btnCancelTask.setBorder(null);
     btnCancelTask.setMargin(new Insets(0, 0, 0, 0));
-    btnCancelTask.setIcon(new ImageIcon(MoviePanel.class.getResource("/org/tinymediamanager/ui/images/Button_Stop.png")));
+    btnCancelTask.setIcon(IconManager.PROCESS_STOP);
     btnCancelTask.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -488,7 +485,7 @@ public class MainWindow extends JFrame {
     }, AWTEvent.MOUSE_EVENT_MASK);
   }
 
-  private void closeTmm() {
+  public void closeTmm() {
     closeTmmAndStart(null);
   }
 
@@ -563,10 +560,6 @@ public class MainWindow extends JFrame {
    * @author Manuel Laggner
    */
   private class StatusbarThread extends SwingWorker<Void, Void> {
-
-    /** The loading. */
-    private final ImageIcon    loading;
-
     /** The ex. */
     private ThreadPoolExecutor ex = Globals.executor;
 
@@ -574,7 +567,6 @@ public class MainWindow extends JFrame {
      * Instantiates a new statusbar thread.
      */
     public StatusbarThread() {
-      loading = new ImageIcon(MainWindow.class.getResource("/org/tinymediamanager/ui/images/loading.gif"));
     }
 
     /*
@@ -588,11 +580,11 @@ public class MainWindow extends JFrame {
       try {
         while (!Thread.interrupted()) {
           if (Globals.poolRunning() || (activeTask != null && !activeTask.isDone())) {
-            if (lblLoadingImg.getIcon() != loading) {
-              lblLoadingImg.setIcon(loading);
+            if (lblLoadingImg.getIcon() != IconManager.LOADING) {
+              lblLoadingImg.setIcon(IconManager.LOADING);
             }
           }
-          else if (lblLoadingImg.getIcon() == loading) {
+          else if (lblLoadingImg.getIcon() == IconManager.LOADING) {
             lblLoadingImg.setIcon(null);
           }
 
@@ -621,35 +613,6 @@ public class MainWindow extends JFrame {
         // LOGGER.debug("statusBar thread shutdown");
       }
       return null;
-    }
-  }
-
-  /**
-   * The Class ExitAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class ExitAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new exit action.
-     */
-    public ExitAction() {
-      // putValue(NAME, "SwingAction");
-      // putValue(SHORT_DESCRIPTION, "Some short description");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-      TmmWindowSaver.getInstance().saveSettings(MainWindow.this);
-      closeTmm();
     }
   }
 
@@ -709,7 +672,7 @@ public class MainWindow extends JFrame {
     // JPanel msg = new NotificationMessage(level, title, message);
     // messagePanel.add(msg);
     NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
-        .withPosition(Positions.SOUTH_EAST).withIcon(IMAGE_ERROR);
+        .withPosition(Positions.SOUTH_EAST).withIcon(IconManager.ERROR);
     builder.showNotification();
 
     if (messagesList != null) {
@@ -724,7 +687,7 @@ public class MainWindow extends JFrame {
     do {
       JPanel subPanel = new JPanel();
       subPanel.setLayout(new BorderLayout());
-      JButton btnCancel = new JButton(new ImageIcon(MoviePanel.class.getResource("/org/tinymediamanager/ui/images/Button_Stop.png")));
+      JButton btnCancel = new JButton(IconManager.PROCESS_STOP);
       btnCancel.setContentAreaFilled(false);
       btnCancel.setBorderPainted(false);
       btnCancel.setBorder(null);

@@ -22,8 +22,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.ui.ImageIconConverter;
-import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
@@ -34,9 +33,7 @@ import ca.odell.glazedlists.gui.AdvancedTableFormat;
  * @author Manuel Laggner
  */
 public class MovieTableFormat implements AdvancedTableFormat<Movie> {
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
-  private final static ImageIcon      checkIcon        = new ImageIcon(MainWindow.class.getResource("images/Checkmark.png"));
-  private final static ImageIcon      crossIcon        = new ImageIcon(MainWindow.class.getResource("images/Cross.png"));
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Comparator<Movie>           movieComparator  = new MovieComparator();
   private Comparator<String>          stringComparator = new StringComparator();
@@ -98,27 +95,27 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
       case 2:
         if (movie.getHasNfoFile()) {
-          return checkIcon;
+          return IconManager.CHECKMARK;
         }
-        return crossIcon;
+        return IconManager.CROSS;
 
       case 3:
         if (movie.getHasImages()) {
-          return checkIcon;
+          return IconManager.CHECKMARK;
         }
-        return crossIcon;
+        return IconManager.CROSS;
 
       case 4:
         if (movie.getHasTrailer()) {
-          return checkIcon;
+          return IconManager.CHECKMARK;
         }
-        return crossIcon;
+        return IconManager.CROSS;
 
       case 5:
         if (movie.hasSubtitles()) {
-          return checkIcon;
+          return IconManager.CHECKMARK;
         }
-        return crossIcon;
+        return IconManager.CROSS;
     }
 
     throw new IllegalStateException();
@@ -205,7 +202,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       if (arg0 == arg1) {
         return 0;
       }
-      if (arg0 == ImageIconConverter.checkIcon) {
+      if (arg0 == IconManager.CHECKMARK) {
         return 1;
       }
       return -1;

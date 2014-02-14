@@ -21,7 +21,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ResourceBundle;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,6 +37,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
@@ -91,7 +91,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
     add(lblSeason, "4, 1");
 
     btnPlay = new JButton("");
-    btnPlay.setIcon(new ImageIcon(TvShowEpisodeDetailsPanel.class.getResource("/org/tinymediamanager/ui/images/Play.png")));
+    btnPlay.setIcon(IconManager.PLAY);
     btnPlay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {

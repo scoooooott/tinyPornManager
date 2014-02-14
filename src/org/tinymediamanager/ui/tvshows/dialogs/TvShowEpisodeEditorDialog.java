@@ -33,7 +33,6 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -74,6 +73,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -266,25 +266,25 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       scrollPaneTags.setViewportView(listTags);
 
       JButton btnAddActor = new JButton("");
-      btnAddActor.setIcon(new ImageIcon(TvShowEpisodeEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddActor.setIcon(IconManager.LIST_ADD);
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       contentPanel.add(btnAddActor, "2, 20, right, top");
 
       JButton btnAddTag = new JButton("");
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       btnAddTag.setAction(new AddTagAction());
-      btnAddTag.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTag.setIcon(IconManager.LIST_ADD);
       contentPanel.add(btnAddTag, "10, 20, right, top");
 
       JButton btnRemoveActor = new JButton("");
-      btnRemoveActor.setIcon(new ImageIcon(TvShowEpisodeEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       contentPanel.add(btnRemoveActor, "2, 22, right, top");
 
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTag.setAction(new RemoveTagAction());
-      btnRemoveTag.setIcon(new ImageIcon(TvShowEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
       contentPanel.add(btnRemoveTag, "10, 22, right, top");
 
       cbTags = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());

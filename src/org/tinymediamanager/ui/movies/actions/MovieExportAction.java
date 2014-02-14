@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
@@ -38,7 +39,8 @@ public class MovieExportAction extends AbstractAction {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public MovieExportAction() {
-    putValue(LARGE_ICON_KEY, "");
+    putValue(LARGE_ICON_KEY, IconManager.EXPORT);
+    putValue(SMALL_ICON, IconManager.EXPORT);
     putValue(NAME, BUNDLE.getString("movie.export")); //$NON-NLS-1$
   }
 

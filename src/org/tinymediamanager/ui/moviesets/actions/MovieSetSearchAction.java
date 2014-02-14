@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetChooserDialog;
@@ -43,8 +43,8 @@ public class MovieSetSearchAction extends AbstractAction {
       putValue(NAME, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
     }
 
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+    putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.search")); //$NON-NLS-1$
   }
 

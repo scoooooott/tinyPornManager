@@ -19,10 +19,10 @@ import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
@@ -41,8 +41,8 @@ public class MovieUpdateSingleDatasourceAction extends AbstractAction {
   public MovieUpdateSingleDatasourceAction(String datasource) {
     putValue(NAME, datasource);
     this.datasource = datasource;
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Folder-Sync.png")));
+    putValue(SMALL_ICON, IconManager.REFRESH);
+    putValue(LARGE_ICON_KEY, IconManager.REFRESH);
   }
 
   /*
@@ -52,6 +52,7 @@ public class MovieUpdateSingleDatasourceAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+    @SuppressWarnings("rawtypes")
     TmmSwingWorker task = new MovieUpdateDatasourceTask(datasource);
     if (!MainWindow.executeMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$

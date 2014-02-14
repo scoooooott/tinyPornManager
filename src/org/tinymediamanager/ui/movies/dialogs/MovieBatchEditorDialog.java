@@ -26,7 +26,6 @@ import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -39,6 +38,7 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -99,7 +99,7 @@ public class MovieBatchEditorDialog extends JDialog {
       panelContent.add(cbGenres, "4, 2, fill, default");
 
       JButton btnAddGenre = new JButton("");
-      btnAddGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddGenre.setIcon(IconManager.LIST_ADD);
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
       btnAddGenre.addActionListener(new ActionListener() {
         @Override
@@ -130,7 +130,7 @@ public class MovieBatchEditorDialog extends JDialog {
       panelContent.add(btnAddGenre, "6, 2");
 
       JButton btnRemoveGenre = new JButton("");
-      btnRemoveGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveGenre.setIcon(IconManager.LIST_REMOVE);
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveGenre.addActionListener(new ActionListener() {
         @Override
@@ -154,7 +154,7 @@ public class MovieBatchEditorDialog extends JDialog {
       panelContent.add(cbTags, "4, 4, fill, default");
 
       JButton btnAddTag = new JButton("");
-      btnAddTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTag.setIcon(IconManager.LIST_ADD);
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       btnAddTag.addActionListener(new ActionListener() {
         @Override
@@ -171,7 +171,7 @@ public class MovieBatchEditorDialog extends JDialog {
       panelContent.add(btnAddTag, "6, 4");
 
       JButton btnRemoveTag = new JButton("");
-      btnRemoveTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTag.addActionListener(new ActionListener() {
         @Override
@@ -195,7 +195,7 @@ public class MovieBatchEditorDialog extends JDialog {
 
       JButton btnSetMovieSet = new JButton("");
       btnSetMovieSet.setMargin(new Insets(2, 2, 2, 2));
-      btnSetMovieSet.setIcon(new ImageIcon(MovieBatchEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Checkmark_big.png")));
+      btnSetMovieSet.setIcon(IconManager.APPLY);
       btnSetMovieSet.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -236,7 +236,7 @@ public class MovieBatchEditorDialog extends JDialog {
 
       JButton btnWatched = new JButton("");
       btnWatched.setMargin(new Insets(2, 2, 2, 2));
-      btnWatched.setIcon(new ImageIcon(MovieBatchEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Checkmark_big.png")));
+      btnWatched.setIcon(IconManager.APPLY);
       btnWatched.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {

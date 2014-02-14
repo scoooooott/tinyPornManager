@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -57,6 +56,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -298,7 +298,7 @@ public class MovieSetEditorDialog extends JDialog {
      * Instantiates a new removes the movie action.
      */
     public RemoveMovieAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      putValue(LARGE_ICON_KEY, IconManager.LIST_REMOVE);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.remove")); //$NON-NLS-1$
     }
 
@@ -331,7 +331,7 @@ public class MovieSetEditorDialog extends JDialog {
      * Instantiates a new move up action.
      */
     public MoveUpAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Button_Up.png")));
+      putValue(LARGE_ICON_KEY, IconManager.ARROW_UP);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.moveup")); //$NON-NLS-1$
     }
 
@@ -363,7 +363,7 @@ public class MovieSetEditorDialog extends JDialog {
      * Instantiates a new move down action.
      */
     public MoveDownAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Button_Down.png")));
+      putValue(LARGE_ICON_KEY, IconManager.ARROW_DOWN);
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.movie.movedown")); //$NON-NLS-1$
     }
 

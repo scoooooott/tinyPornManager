@@ -23,11 +23,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URL;
 import java.util.ResourceBundle;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,6 +59,7 @@ import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.ui.BorderCellRenderer;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.IconRenderer;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
@@ -255,8 +254,7 @@ public class MoviePanel extends JPanel {
 
     // udpate datasource
     // toolBar.add(actionUpdateDataSources);
-    final JSplitButton buttonUpdateDatasource = new JSplitButton(new ImageIcon(getClass().getResource(
-        "/org/tinymediamanager/ui/images/Folder-Sync.png")));
+    final JSplitButton buttonUpdateDatasource = new JSplitButton(IconManager.REFRESH);
     // temp fix for size of the button
     buttonUpdateDatasource.setText("   ");
     buttonUpdateDatasource.setHorizontalAlignment(JButton.LEFT);
@@ -285,7 +283,7 @@ public class MoviePanel extends JPanel {
     buttonUpdateDatasource.setPopupMenu(popup);
     toolBar.add(buttonUpdateDatasource);
 
-    JSplitButton buttonScrape = new JSplitButton(new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    JSplitButton buttonScrape = new JSplitButton(IconManager.SEARCH);
     // temp fix for size of the button
     buttonScrape.setText("   ");
     buttonScrape.setHorizontalAlignment(JButton.LEFT);
@@ -528,40 +526,25 @@ public class MoviePanel extends JPanel {
     // NFO column
     table.getTableHeader().getColumnModel().getColumn(2).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.nfo"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(20);
-    URL imageURL = MainWindow.class.getResource("images/Info.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(2).setHeaderValue(new ImageIcon(imageURL));
-    }
+    table.getColumnModel().getColumn(2).setHeaderValue(IconManager.INFO);
     table.getTableHeader().getColumnModel().getColumn(2).setIdentifier("nfo"); //$NON-NLS-1$
 
     // Images column
     table.getTableHeader().getColumnModel().getColumn(3).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.images"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(3).setMaxWidth(20);
-    imageURL = null;
-    imageURL = MainWindow.class.getResource("images/Image.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(3).setHeaderValue(new ImageIcon(imageURL));
-    }
+    table.getColumnModel().getColumn(3).setHeaderValue(IconManager.IMAGE);
     table.getTableHeader().getColumnModel().getColumn(3).setIdentifier("images"); //$NON-NLS-1$
 
     // trailer column
     table.getTableHeader().getColumnModel().getColumn(4).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.trailer"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(20);
-    imageURL = null;
-    imageURL = MainWindow.class.getResource("images/ClapBoard.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(4).setHeaderValue(new ImageIcon(imageURL));
-    }
+    table.getColumnModel().getColumn(4).setHeaderValue(IconManager.CLAPBOARD);
     table.getTableHeader().getColumnModel().getColumn(4).setIdentifier("trailer"); //$NON-NLS-1$
 
     // subtitles column
     table.getTableHeader().getColumnModel().getColumn(5).setHeaderRenderer(new IconRenderer(BUNDLE.getString("tmm.subtitles"))); //$NON-NLS-1$
     table.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(20);
-    imageURL = null;
-    imageURL = MainWindow.class.getResource("images/subtitle.png");
-    if (imageURL != null) {
-      table.getColumnModel().getColumn(5).setHeaderValue(new ImageIcon(imageURL));
-    }
+    table.getColumnModel().getColumn(5).setHeaderValue(IconManager.SUBTITLE);
     table.getTableHeader().getColumnModel().getColumn(5).setIdentifier("subtitle"); //$NON-NLS-1$
 
     table.setSelectionModel(movieSelectionModel.getSelectionModel());

@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
@@ -44,8 +44,8 @@ public class MovieUnscrapedScrapeAction extends AbstractAction {
   public MovieUnscrapedScrapeAction() {
     putValue(NAME, BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.unscraped.desc")); //$NON-NLS-1$
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    putValue(SMALL_ICON, IconManager.SEARCH);
+    putValue(LARGE_ICON_KEY, IconManager.SEARCH);
   }
 
   /*

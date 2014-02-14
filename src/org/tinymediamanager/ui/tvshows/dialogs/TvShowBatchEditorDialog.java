@@ -27,7 +27,6 @@ import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -42,10 +41,10 @@ import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
-import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -130,12 +129,12 @@ public class TvShowBatchEditorDialog extends JDialog {
 
     JButton btnAddGenre = new JButton("");
     panelTvShows.add(btnAddGenre, "6, 2");
-    btnAddGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+    btnAddGenre.setIcon(IconManager.LIST_ADD);
     btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
 
     JButton btnRemoveGenre = new JButton("");
     panelTvShows.add(btnRemoveGenre, "8, 2");
-    btnRemoveGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+    btnRemoveGenre.setIcon(IconManager.LIST_REMOVE);
     btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
 
     JLabel lblTags = new JLabel("Tag");
@@ -147,12 +146,12 @@ public class TvShowBatchEditorDialog extends JDialog {
 
     JButton btnAddTag = new JButton("");
     panelTvShows.add(btnAddTag, "6, 4");
-    btnAddTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+    btnAddTag.setIcon(IconManager.LIST_ADD);
     btnAddTag.setMargin(new Insets(2, 2, 2, 2));
 
     JButton btnRemoveTag = new JButton("");
     panelTvShows.add(btnRemoveTag, "8, 4");
-    btnRemoveTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+    btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
     btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
     btnRemoveTag.addActionListener(new ActionListener() {
       @Override
@@ -234,7 +233,7 @@ public class TvShowBatchEditorDialog extends JDialog {
 
       JButton btnWatched = new JButton("");
       btnWatched.setMargin(new Insets(2, 2, 2, 2));
-      btnWatched.setIcon(new ImageIcon(TvShowBatchEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Checkmark_big.png")));
+      btnWatched.setIcon(IconManager.APPLY);
       btnWatched.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -257,7 +256,7 @@ public class TvShowBatchEditorDialog extends JDialog {
       panelTvShowEpisodes.add(spSeason, "4, 4, left, default");
 
       JButton btnSeason = new JButton("");
-      btnSeason.setIcon(new ImageIcon(TvShowBatchEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Checkmark_big.png")));
+      btnSeason.setIcon(IconManager.APPLY);
       btnSeason.setMargin(new Insets(2, 2, 2, 2));
       btnSeason.addActionListener(new ActionListener() {
         @Override

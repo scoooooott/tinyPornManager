@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.IconManager;
 
 /**
  * The star rater panel.
@@ -35,30 +35,14 @@ import org.tinymediamanager.ui.MainWindow;
  * @since August 30, 2010
  */
 public class StarRater extends JPanel {
-
-  /** The Constant serialVersionUID. */
-  private static final long  serialVersionUID      = 1L;
-
-  /** The Constant STAR_BACKGROUND_IMAGE. */
-  private static final Image STAR_BACKGROUND_IMAGE = com.bric.image.ImageLoader.createImage(MainWindow.class
-                                                       .getResource("/org/tinymediamanager/ui/images/24.png"));
-
-  /** The Constant STAR_FOREGROUND_IMAGE. */
-  private static final Image STAR_FOREGROUND_IMAGE = com.bric.image.ImageLoader.createImage(MainWindow.class
-                                                       .getResource("/org/tinymediamanager/ui/images/mark24.png"));
+  private static final long  serialVersionUID      = -5601531605019166004L;
+  private static final Image STAR_BACKGROUND_IMAGE = com.bric.image.ImageLoader.createImage(IconManager.STAR_EMPTY.getImage());
+  private static final Image STAR_FOREGROUND_IMAGE = com.bric.image.ImageLoader.createImage(IconManager.STAR_FILLED.getImage());
 
   public static interface StarListener {
-
-    /**
-     * Called result.
-     * 
-     * @param selection
-     *          The selection.
-     */
     void handleSelection(int selection);
   }
 
-  /** Listeners. */
   private List<StarListener> listeners = new ArrayList<StarListener>();
 
   /** The number of stars n. */

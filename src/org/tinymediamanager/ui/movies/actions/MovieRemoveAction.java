@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
@@ -38,7 +38,7 @@ public class MovieRemoveAction extends AbstractAction {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public MovieRemoveAction() {
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Cross.png")));
+    putValue(SMALL_ICON, IconManager.CROSS);
     putValue(NAME, BUNDLE.getString("movie.remove")); //$NON-NLS-1$
   }
 

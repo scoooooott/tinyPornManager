@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 
@@ -42,8 +42,8 @@ public class MovieSetRemoveAction extends AbstractAction {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
     }
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Remove.png")));
+    putValue(LARGE_ICON_KEY, IconManager.LIST_REMOVE);
+    putValue(SMALL_ICON, IconManager.LIST_REMOVE);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
   }
 

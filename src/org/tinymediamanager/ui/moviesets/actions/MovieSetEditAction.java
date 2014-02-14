@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
 import org.tinymediamanager.ui.moviesets.dialogs.MovieSetEditorDialog;
@@ -40,8 +40,8 @@ public class MovieSetEditAction extends AbstractAction {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
     }
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Pencil.png")));
+    putValue(LARGE_ICON_KEY, IconManager.EDIT);
+    putValue(SMALL_ICON, IconManager.EDIT);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
   }
 

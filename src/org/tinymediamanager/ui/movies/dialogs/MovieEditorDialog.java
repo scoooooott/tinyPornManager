@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -72,6 +71,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -473,56 +473,56 @@ public class MovieEditorDialog extends JDialog {
       JButton btnAddActor = new JButton(BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(new AddActorAction());
-      btnAddActor.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddActor.setIcon(IconManager.LIST_ADD);
       details2Panel.add(btnAddActor, "2, 4, right, top");
     }
     {
       JButton btnAddProducer = new JButton((String) null);
       btnAddProducer.setMargin(new Insets(2, 2, 2, 2));
       btnAddProducer.setAction(new AddProducerAction());
-      btnAddProducer.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddProducer.setIcon(IconManager.LIST_ADD);
       details2Panel.add(btnAddProducer, "6, 4, right, top");
     }
     {
       JButton btnRemoveActor = new JButton(BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(new RemoveActorAction());
-      btnRemoveActor.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
       details2Panel.add(btnRemoveActor, "2,6, right, top");
     }
     {
       JButton btnRemoveProducer = new JButton((String) null);
       btnRemoveProducer.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveProducer.setAction(new RemoveProducerAction());
-      btnRemoveProducer.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveProducer.setIcon(IconManager.LIST_REMOVE);
       details2Panel.add(btnRemoveProducer, "6, 6, right, top");
     }
     {
       JButton btnMoveActorUp = new JButton((String) null);
       btnMoveActorUp.setMargin(new Insets(2, 2, 2, 2));
       btnMoveActorUp.setAction(new MoveActorUpAction());
-      btnMoveActorUp.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Button_Up.png")));
+      btnMoveActorUp.setIcon(IconManager.ARROW_UP);
       details2Panel.add(btnMoveActorUp, "2, 8, right, top");
     }
     {
       JButton btnMoveProducerUp = new JButton((String) null);
       btnMoveProducerUp.setMargin(new Insets(2, 2, 2, 2));
       btnMoveProducerUp.setAction(new MoveProducerUpAction());
-      btnMoveProducerUp.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Button_Up.png")));
+      btnMoveProducerUp.setIcon(IconManager.ARROW_UP);
       details2Panel.add(btnMoveProducerUp, "6, 8, right, top");
     }
     {
       JButton btnMoveActorDown = new JButton((String) null);
       btnMoveActorDown.setMargin(new Insets(2, 2, 2, 2));
       btnMoveActorDown.setAction(new MoveActorDownAction());
-      btnMoveActorDown.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Button_Down.png")));
+      btnMoveActorDown.setIcon(IconManager.ARROW_DOWN);
       details2Panel.add(btnMoveActorDown, "2, 10, right, top");
     }
     {
       JButton btnMoveProducerDown = new JButton((String) null);
       btnMoveProducerDown.setMargin(new Insets(2, 2, 2, 2));
       btnMoveProducerDown.setAction(new MoveProducerDownAction());
-      btnMoveProducerDown.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Button_Down.png")));
+      btnMoveProducerDown.setIcon(IconManager.ARROW_DOWN);
       details2Panel.add(btnMoveProducerDown, "6, 10, right, top");
     }
     {
@@ -550,14 +550,14 @@ public class MovieEditorDialog extends JDialog {
     {
       JButton btnAddGenre = new JButton("");
       btnAddGenre.setAction(new AddGenreAction());
-      btnAddGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddGenre.setIcon(IconManager.LIST_ADD);
       btnAddGenre.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddGenre, "2, 16, right, top");
     }
     {
       JButton btnAddTag = new JButton("");
       btnAddTag.setAction(new AddTagAction());
-      btnAddTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTag.setIcon(IconManager.LIST_ADD);
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTag, "6, 16, right, top");
     }
@@ -566,13 +566,13 @@ public class MovieEditorDialog extends JDialog {
       JButton btnRemoveGenre = new JButton("");
       btnRemoveGenre.setAction(new RemoveGenreAction());
       btnRemoveGenre.setMargin(new Insets(2, 2, 2, 2));
-      btnRemoveGenre.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveGenre.setIcon(IconManager.LIST_REMOVE);
       details2Panel.add(btnRemoveGenre, "2, 18, right, top");
     }
     {
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setAction(new RemoveTagAction());
-      btnRemoveTag.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTag, "6, 18, right, top");
     }
@@ -601,14 +601,14 @@ public class MovieEditorDialog extends JDialog {
     {
       JButton btnAddTrailer = new JButton("");
       btnAddTrailer.setAction(new AddTrailerAction());
-      btnAddTrailer.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Add.png")));
+      btnAddTrailer.setIcon(IconManager.LIST_ADD);
       btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnAddTrailer, "2, 24, right, top");
     }
     {
       JButton btnRemoveTrailer = new JButton("");
       btnRemoveTrailer.setAction(new RemoveTrailerAction());
-      btnRemoveTrailer.setIcon(new ImageIcon(MovieEditorDialog.class.getResource("/org/tinymediamanager/ui/images/Remove.png")));
+      btnRemoveTrailer.setIcon(IconManager.LIST_REMOVE);
       btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
       details2Panel.add(btnRemoveTrailer, "2, 26, right, top");
     }

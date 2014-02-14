@@ -28,7 +28,7 @@ import javax.swing.tree.TreeCellRenderer;
 
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSet;
-import org.tinymediamanager.ui.ImageIconConverter;
+import org.tinymediamanager.ui.IconManager;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -117,7 +117,7 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
 
         movieSetTitle.setText(movieSet.getTitle());
         movieSetInfo.setText(movieSet.getMovies().size() + " Movies");
-        movieSetImageLabel.setIcon(movieSet.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
+        movieSetImageLabel.setIcon(movieSet.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
 
         movieSetPanel.setEnabled(tree.isEnabled());
         returnValue = movieSetPanel;
@@ -131,8 +131,8 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
         Movie movie = (Movie) userObject;
 
         movieTitle.setText(movie.getTitle());
-        movieNfoLabel.setIcon(movie.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
-        movieImageLabel.setIcon(movie.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
+        movieNfoLabel.setIcon(movie.getHasNfoFile() ? IconManager.CHECKMARK : IconManager.CROSS);
+        movieImageLabel.setIcon(movie.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
 
         moviePanel.setEnabled(tree.isEnabled());
         returnValue = moviePanel;

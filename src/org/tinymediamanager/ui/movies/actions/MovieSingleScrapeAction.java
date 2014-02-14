@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
@@ -47,8 +47,8 @@ public class MovieSingleScrapeAction extends AbstractAction {
     if (withTitle) {
       putValue(NAME, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
     }
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
-    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/Search.png")));
+    putValue(SMALL_ICON, IconManager.SEARCH);
+    putValue(LARGE_ICON_KEY, IconManager.SEARCH);
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
   }
 

@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
-import org.tinymediamanager.ui.ImageIconConverter;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -132,8 +132,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
         tvShowInfo.setText(tvShow.getSeasons().size()
             + " " + BUNDLE.getString("metatag.seasons") + " - " + tvShow.getEpisodes().size() + " " + BUNDLE.getString("metatag.episodes")); //$NON-NLS-1$
-        tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
-        tvShowImageLabel.setIcon(tvShow.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
+        tvShowNfoLabel.setIcon(tvShow.getHasNfoFile() ? IconManager.CHECKMARK : IconManager.CROSS);
+        tvShowImageLabel.setIcon(tvShow.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
 
         tvShowPanel.setEnabled(tree.isEnabled());
         returnValue = tvShowPanel;
@@ -179,9 +179,9 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
 
         tvShowEpisodePanel.setEnabled(tree.isEnabled());
 
-        tvShowEpisodeNfoLabel.setIcon(episode.getHasNfoFile() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
-        tvShowEpisodeImageLabel.setIcon(episode.getHasImages() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
-        tvShowEpisodeSubtitleLabel.setIcon(episode.hasSubtitles() ? ImageIconConverter.checkIcon : ImageIconConverter.crossIcon);
+        tvShowEpisodeNfoLabel.setIcon(episode.getHasNfoFile() ? IconManager.CHECKMARK : IconManager.CROSS);
+        tvShowEpisodeImageLabel.setIcon(episode.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
+        tvShowEpisodeSubtitleLabel.setIcon(episode.hasSubtitles() ? IconManager.CHECKMARK : IconManager.CROSS);
         returnValue = tvShowEpisodePanel;
       }
     }
