@@ -43,6 +43,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -157,7 +158,7 @@ public class MovieTrailerPanel extends JPanel {
           return BUNDLE.getString("metatag.quality"); //$NON-NLS-1$
 
         case 5:
-          return BUNDLE.getString("metatag.url"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.format"); //$NON-NLS-1$
       }
 
       throw new IllegalStateException();
@@ -186,7 +187,7 @@ public class MovieTrailerPanel extends JPanel {
           return trailer.getQuality();
 
         case 5:
-          return trailer.getUrl();
+          return UrlUtil.getExtension(trailer.getUrl());
       }
 
       throw new IllegalStateException();
@@ -250,6 +251,10 @@ public class MovieTrailerPanel extends JPanel {
         MediaTrailer trailer = trailerEventList.get(row);
         // FIXME start download
         JOptionPane.showMessageDialog(null, "DL of " + trailer.getUrl() + " started");
+
+        // DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(path, "trailer" + UrlUtil.getExtension(url)));
+        // TmmTaskManager.addDownloadTask(task);
+
       }
 
       // click on the url

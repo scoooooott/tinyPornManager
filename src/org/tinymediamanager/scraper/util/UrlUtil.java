@@ -66,9 +66,42 @@ public class UrlUtil {
       return "";
     }
     else {
-      ext = ext.substring(ext.lastIndexOf('.') + 1);
+      ext = getFileNameArray(url)[1];
       return ext;
     }
+  }
+
+  /**
+   * gets the BaseName (w/o extension) of an URL (better than commons-io)
+   * 
+   * @param url
+   * @return BaseName
+   * @throws URISyntaxException
+   */
+  public static String getBasename(String url) {
+    return getFileNameArray(url)[0];
+  }
+
+  /**
+   * gets the Extension of an URL (better than commons-io)
+   * 
+   * @param url
+   * @return BaseName
+   * @throws URISyntaxException
+   */
+  public static String getExtension(String url) {
+    return getFileNameArray(url)[1];
+  }
+
+  /**
+   * gets the FileName (with extension) of an URL (better than commons-io)
+   * 
+   * @param url
+   * @return BaseName
+   * @throws URISyntaxException
+   */
+  public static String getFilename(String url) {
+    return getFileNameArray(url)[2];
   }
 
   /**
@@ -141,6 +174,74 @@ public class UrlUtil {
       LOGGER.error("getPathName() Failed! " + url, e);
     }
     return null;
+  }
+
+  /**
+   * get the correct name/extension/filename of url (even with parameters! - commons-io CANNOT)
+   * 
+   * @param url
+   *          the url
+   * @return basename/ext/filename array
+   */
+  public static String[] getFileNameArray(String url) {
+    String[] ret = new String[] { "", "", "" };
+
+    // URL: "http://photosaaaaa.net/photos-ak-snc1/v315/224/13/659629384/s659629384_752969_4472.jpg?asdf=jklo"
+    String filename = "";
+    String path = "";
+    // PATH: /photos-ak-snc1/v315/224/13/659629384/s659629384_752969_4472.jpg?asdf=jklo
+    try {
+      url = getURIEncoded(url).toString();
+      path = new URL(url).getPath();
+    }
+    catch (Exception e) {
+      return ret;
+    }
+    // Checks for both forward and/or backslash
+    // NOTE:**While backslashes are not supported in URL's
+    // most browsers will autoreplace them with forward slashes
+    // So technically if you're parsing an html page you could run into
+    // a backslash , so i'm accounting for them here;
+    String[] pathContents = path.split("[\\\\/]");
+    if (pathContents != null) {
+      int pathContentsLength = pathContents.length;
+      // System.out.println("Path Contents Length: " + pathContentsLength);
+      // for (int i = 0; i < pathContents.length; i++) {
+      // System.out.println("Path " + i + ": " + pathContents[i]);
+      // }
+      // // lastPart: s659629384_752969_4472.jpg
+      String lastPart = pathContents[pathContentsLength - 1];
+      String[] lastPartContents = lastPart.split("\\.");
+      if (lastPartContents != null && lastPartContents.length > 1) {
+        int lastPartContentLength = lastPartContents.length;
+        // System.out.println("Last Part Length: " + lastPartContentLength);
+        // filenames can contain . , so we assume everything before
+        // the last . is the name, everything after the last . is the
+        // extension
+        String name = "";
+        for (int i = 0; i < lastPartContentLength; i++) {
+          // System.out.println("Last Part " + i + ": " + lastPartContents[i]);
+          if (i < (lastPartContents.length - 1)) {
+            name += lastPartContents[i];
+            if (i < (lastPartContentLength - 2)) {
+              name += ".";
+            }
+          }
+        }
+        String extension = lastPartContents[lastPartContentLength - 1];
+        filename = name + "." + extension;
+        // System.out.println("Name: " + name);
+        // System.out.println("Extension: " + extension);
+        // System.out.println("Filename: " + filename);
+        ret = new String[] { name, extension, filename };
+      }
+      else {
+        // no extension (eg youtube)
+        String name = lastPartContents[0];
+        ret = new String[] { name, "", name };
+      }
+    }
+    return ret;
   }
 
   /**

@@ -513,10 +513,11 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         Matcher lm = lr.matcher(s);
         while (lm.find()) {
           String turl = lm.group(1);
-          String tformat = lm.group(2);
+          // String tformat = lm.group(2);
           MediaTrailer trailer = new MediaTrailer();
           trailer.setName(tname);
-          trailer.setQuality(tpix + " (" + tformat + ")");
+          // trailer.setQuality(tpix + " (" + tformat + ")");
+          trailer.setQuality(tpix);
           trailer.setProvider("filmtrailer");
           trailer.setUrl(turl);
           LOGGER.debug(trailer.toString());

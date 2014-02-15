@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
  * The class UpdateTasks. To perform needed update tasks
@@ -68,7 +69,7 @@ public class UpgradeTasks {
       v = "2.0"; // set version for other updates
     }
 
-    if (compareVersion("2.5", v) > 0) {
+    if (compareVersion(v, "2.5") < 0) {
       // upgrade tasks for movies; added with 2.5;
       Globals.entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
@@ -78,7 +79,7 @@ public class UpgradeTasks {
       Globals.entityManager.getTransaction().commit();
     }
 
-    if (compareVersion("2.5.2", v) > 0) {
+    if (compareVersion(v, "2.5.2") < 0) {
       // clean tmdb id
       Globals.entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
@@ -94,6 +95,20 @@ public class UpgradeTasks {
       }
       Globals.entityManager.getTransaction().commit();
     }
+
+    if (compareVersion(v, "2.5.3") < 0) {
+      // upgrade tasks for trailers; remove extension from quality
+      Globals.entityManager.getTransaction().begin();
+      for (Movie movie : movieList.getMovies()) {
+        for (MediaTrailer trailer : movie.getTrailers()) {
+          // 720p (mp4)
+          String quality = trailer.getQuality().split(" ")[0];
+          trailer.setQuality(quality);
+        }
+        movie.saveToDb();
+      }
+      Globals.entityManager.getTransaction().commit();
+    }
   }
 
   /**
@@ -101,7 +116,9 @@ public class UpgradeTasks {
    * 
    * @param v1
    * @param v2
-   * @return < 0 if v1 is lower, > 0 if v1 is higher, == 0 if equal
+   * @return < 0 if v1 is lower<br>
+   *         > 0 if v1 is higher<br>
+   *         = 0 if equal
    */
   private static int compareVersion(String v1, String v2) {
     String s1 = normalisedVersion(v1);
