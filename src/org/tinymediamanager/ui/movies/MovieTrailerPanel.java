@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -28,16 +27,15 @@ import java.util.ResourceBundle;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -100,10 +98,7 @@ public class MovieTrailerPanel extends JPanel {
     add(scrollPane, "2, 2, fill, fill");
     scrollPane.setViewportView(table);
 
-    // make the url clickable & install download button
-    URLRenderer renderer = new URLRenderer(table);
     LinkListener linkListener = new LinkListener();
-    table.getColumnModel().getColumn(4).setCellRenderer(renderer);
     table.addMouseListener(linkListener);
     table.addMouseMotionListener(linkListener);
 
@@ -118,7 +113,7 @@ public class MovieTrailerPanel extends JPanel {
           trailerEventList.clear();
           trailerEventList.addAll(movieSelectionModel.getSelectedMovie().getTrailers());
           try {
-            TableColumnResizer.adjustColumnPreferredWidths(table, 6);
+            TableColumnResizer.adjustColumnPreferredWidths(table, 7);
           }
           catch (Exception e) {
           }
@@ -136,28 +131,29 @@ public class MovieTrailerPanel extends JPanel {
 
     @Override
     public int getColumnCount() {
-      return 6;
+      return 7;
     }
 
     @Override
     public String getColumnName(int column) {
       switch (column) {
         case 0:
+        case 1:
           return "";
 
-        case 1:
+        case 2:
           return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
 
-        case 2:
+        case 3:
           return BUNDLE.getString("metatag.name"); //$NON-NLS-1$
 
-        case 3:
+        case 4:
           return BUNDLE.getString("metatag.source"); //$NON-NLS-1$
 
-        case 4:
+        case 5:
           return BUNDLE.getString("metatag.quality"); //$NON-NLS-1$
 
-        case 5:
+        case 6:
           return BUNDLE.getString("metatag.format"); //$NON-NLS-1$
       }
 
@@ -175,19 +171,27 @@ public class MovieTrailerPanel extends JPanel {
           return IconManager.DOWNLOAD;
 
         case 1:
-          return trailer.getInNfo();
+          return IconManager.PLAY_SMALL;
 
         case 2:
-          return trailer.getName();
+          return trailer.getInNfo();
 
         case 3:
-          return trailer.getProvider();
+          return trailer.getName();
 
         case 4:
-          return trailer.getQuality();
+          return trailer.getProvider();
 
         case 5:
-          return UrlUtil.getExtension(trailer.getUrl());
+          return trailer.getQuality();
+
+        case 6:
+          String ext = UrlUtil.getExtension(trailer.getUrl()).toLowerCase();
+          if (!Globals.settings.getVideoFileType().contains("." + ext)) {
+            // .php redirection scripts et all
+            ext = "";
+          }
+          return ext;
       }
 
       throw new IllegalStateException();
@@ -198,15 +202,16 @@ public class MovieTrailerPanel extends JPanel {
     public Class getColumnClass(int column) {
       switch (column) {
         case 0:
+        case 1:
           return ImageIcon.class;
 
-        case 1:
+        case 2:
           return Boolean.class;
 
-        case 2:
         case 3:
         case 4:
         case 5:
+        case 6:
           return String.class;
       }
 
@@ -222,19 +227,6 @@ public class MovieTrailerPanel extends JPanel {
     @Override
     public Comparator getColumnComparator(int arg0) {
       return null;
-    }
-  }
-
-  private static class URLRenderer extends DefaultTableCellRenderer {
-    private static final long serialVersionUID = 2420975916111149621L;
-
-    public URLRenderer(JTable table) {
-    }
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, final Object value, boolean arg2, boolean arg3, int arg4, int arg5) {
-      final JLabel lab = new JLabel("<html><font color=\"#0000CF\"><u>" + value + "</u></font></html>");
-      return lab;
     }
   }
 
@@ -257,10 +249,12 @@ public class MovieTrailerPanel extends JPanel {
 
       }
 
-      // click on the url
-      if (col == 5) {
+      // click on the play button
+      if (col == 1) {
         // try to open the browser
-        String url = (String) table.getModel().getValueAt(row, col);
+        row = table.convertRowIndexToModel(row);
+        MediaTrailer trailer = trailerEventList.get(row);
+        String url = trailer.getUrl();
         try {
           TmmUIHelper.browseUrl(url);
         }
@@ -276,7 +270,7 @@ public class MovieTrailerPanel extends JPanel {
     public void mouseEntered(MouseEvent e) {
       JTable table = (JTable) e.getSource();
       int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      if (col == 0 || col == 5) {
+      if (col == 0 || col == 1) {
         table.setCursor(new Cursor(Cursor.HAND_CURSOR));
       }
     }
@@ -285,7 +279,7 @@ public class MovieTrailerPanel extends JPanel {
     public void mouseExited(MouseEvent e) {
       JTable table = (JTable) e.getSource();
       int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      if (col != 0 && col != 4) {
+      if (col != 0 && col != 1) {
         table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     }
@@ -294,10 +288,10 @@ public class MovieTrailerPanel extends JPanel {
     public void mouseMoved(MouseEvent e) {
       JTable table = (JTable) e.getSource();
       int col = table.columnAtPoint(new Point(e.getX(), e.getY()));
-      if (col != 0 && col != 5 && table.getCursor().getType() == Cursor.HAND_CURSOR) {
+      if (col != 0 && col != 1 && table.getCursor().getType() == Cursor.HAND_CURSOR) {
         table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
-      if ((col == 0 || col == 4) && table.getCursor().getType() == Cursor.DEFAULT_CURSOR) {
+      if ((col == 0 || col == 1) && table.getCursor().getType() == Cursor.DEFAULT_CURSOR) {
         table.setCursor(new Cursor(Cursor.HAND_CURSOR));
       }
     }
