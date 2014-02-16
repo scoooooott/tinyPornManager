@@ -32,6 +32,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -226,7 +228,7 @@ public class MainWindow extends JFrame {
                 ex.getLocalizedMessage() }));
           }
         }
-        System.exit(0);
+        closeTmmAndStart(getPBforTMMrestart());
       }
     });
 
@@ -350,10 +352,7 @@ public class MainWindow extends JFrame {
                   LOGGER.info("Updating...");
 
                   // spawn getdown and exit TMM
-                  ProcessBuilder pb = new ProcessBuilder(LaunchUtil.getJVMPath(), "-Djava.net.preferIPv4Stack=true", "-jar", "getdown.jar", ".");
-                  pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
-                  closeTmmAndStart(pb);
-
+                  closeTmmAndStart(getPBforTMMupdate());
                 }
               }
             }
@@ -483,6 +482,47 @@ public class MainWindow extends JFrame {
         }
       }
     }, AWTEvent.MOUSE_EVENT_MASK);
+  }
+
+  /**
+   * gets all the JVM parameters used for starting TMM<br>
+   * like -Dfile.encoding=UTF8 or others<br>
+   * needed for restarting tmm :)
+   * 
+   * @return list of jvm parameters
+   */
+  private List<String> getJVMArguments() {
+    RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+    List<String> arguments = new ArrayList<String>(runtimeMxBean.getInputArguments());
+    // fixtate some
+    if (!arguments.contains("-Djava.net.preferIPv4Stack=true")) {
+      arguments.add("-Djava.net.preferIPv4Stack=true");
+    }
+    if (!arguments.contains("-Dfile.encoding=UTF-8")) {
+      arguments.add("-Dfile.encoding=UTF-8");
+    }
+    return arguments;
+  }
+
+  private ProcessBuilder getPBforTMMrestart() {
+    List<String> arguments = getJVMArguments();
+    arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
+    arguments.add("-jar");
+    arguments.add("tmm.jar");
+    ProcessBuilder pb = new ProcessBuilder(arguments);
+    pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
+    return pb;
+  }
+
+  private ProcessBuilder getPBforTMMupdate() {
+    List<String> arguments = getJVMArguments();
+    arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
+    arguments.add("-jar");
+    arguments.add("getdown.jar");
+    arguments.add(".");
+    ProcessBuilder pb = new ProcessBuilder(arguments);
+    pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
+    return pb;
   }
 
   public void closeTmm() {
