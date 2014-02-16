@@ -80,13 +80,14 @@ import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExitAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
+import org.tinymediamanager.ui.actions.SettingsAction;
+import org.tinymediamanager.ui.components.LightBoxPanel;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 import org.tinymediamanager.ui.dialogs.MessageSummaryDialog;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
-import org.tinymediamanager.ui.settings.SettingsPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
 
 import ch.swingfx.twinkle.NotificationBuilder;
@@ -112,9 +113,6 @@ public class MainWindow extends JFrame {
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
 
-  /** The action exit. */
-  private final Action                actionExit       = new ExitAction();
-
   /** The action about. */
   private final Action                actionAbout      = new AboutAction();
 
@@ -133,6 +131,7 @@ public class MainWindow extends JFrame {
   /** The panel movies. */
   private JPanel                      panelMovies;
   private JPanel                      panelMovieSets;
+  private JPanel                      panelTvShows;
 
   /** The panel status bar. */
   private JPanel                      panelStatusBar;
@@ -159,6 +158,8 @@ public class MainWindow extends JFrame {
   private JPopupMenu                  taskPopup;
   private LightBoxPanel               lightBoxPanel;
 
+  private JDialog                     settingsDialog;
+
   /**
    * Create the application.
    * 
@@ -179,7 +180,9 @@ public class MainWindow extends JFrame {
     JMenu mnTmm = new JMenu("tinyMediaManager");
     menuBar.add(mnTmm);
 
-    JMenuItem mntmExit = mnTmm.add(actionExit);
+    mnTmm.add(new SettingsAction());
+    mnTmm.addSeparator();
+    mnTmm.add(new ExitAction());
     initialize();
 
     // tools menu
@@ -455,11 +458,8 @@ public class MainWindow extends JFrame {
     panelMovieSets = new MovieSetPanel();
     VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.moviesets"), panelMovieSets); //$NON-NLS-1$
 
-    JPanel panelTvShows = new TvShowPanel();
+    panelTvShows = new TvShowPanel();
     VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.tvshows"), panelTvShows); //$NON-NLS-1$
-
-    JPanel panelSettings = new SettingsPanel();
-    VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.settings"), panelSettings); //$NON-NLS-1$
 
     // shutdown listener - to clean database connections safely
     addWindowListener(new WindowAdapter() {
@@ -627,6 +627,10 @@ public class MainWindow extends JFrame {
 
   public MovieSetPanel getMovieSetPanel() {
     return (MovieSetPanel) panelMovieSets;
+  }
+
+  public TvShowPanel getTvShowPanel() {
+    return (TvShowPanel) panelTvShows;
   }
 
   /**

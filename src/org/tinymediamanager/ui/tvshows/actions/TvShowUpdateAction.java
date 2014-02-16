@@ -13,43 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies.actions;
+package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
+import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 /**
- * MovieUpdateSingleDatasourceAction - update all movies from a single data source
+ * The class TvShowUpdateAction. Update a single TV show rather than the whole data source
  * 
  * @author Manuel Laggner
  */
-public class MovieUpdateSingleDatasourceAction extends AbstractAction {
-  private static final long           serialVersionUID = 6885253964781733478L;
+public class TvShowUpdateAction extends AbstractAction {
+  private static final long           serialVersionUID = 7216738427209633666L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String                      datasource;
-
-  public MovieUpdateSingleDatasourceAction(String datasource) {
-    this.datasource = datasource;
-
-    putValue(NAME, datasource);
-    putValue(SMALL_ICON, IconManager.REFRESH);
+  public TvShowUpdateAction() {
+    putValue(NAME, BUNDLE.getString("tvshow.update")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, IconManager.REFRESH);
+    putValue(SMALL_ICON, IconManager.REFRESH);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
+    List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
+    List<File> tvShowFolders = new ArrayList<File>();
+
+    if (selectedTvShows.isEmpty()) {
+      return;
+    }
+
+    for (TvShow tvShow : selectedTvShows) {
+      tvShowFolders.add(new File(tvShow.getPath()));
+    }
+
     @SuppressWarnings("rawtypes")
-    TmmSwingWorker task = new MovieUpdateDatasourceTask(datasource);
+    TmmSwingWorker task = new TvShowUpdateDatasourceTask(tvShowFolders);
     if (!MainWindow.executeMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }

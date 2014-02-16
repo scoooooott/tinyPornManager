@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.moviesets;
+package org.tinymediamanager.ui.tvshows;
 
 import javax.swing.Action;
 import javax.swing.JPanel;
@@ -21,14 +21,16 @@ import javax.swing.JPopupMenu;
 
 import org.tinymediamanager.ui.ITmmUIModule;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.tvshows.settings.TvShowSettingsContainerPanel;
 
-public class MovieSetUIModule implements ITmmUIModule {
-  private final static String          ID       = "movieSets";
-  private static MovieSetUIModule      instance = null;
+public class TvShowUIModule implements ITmmUIModule {
+  private final static String        ID       = "tvShows";
+  private static TvShowUIModule      instance = null;
 
-  private final MovieSetSelectionModel selectionModel;
+  private final TvShowSelectionModel selectionModel;
+  private final JPanel               settingsPanel;
 
-  private MovieSetUIModule() {
+  private TvShowUIModule() {
     // this will be used in v3
     // listPanel = new MoviePanel();
     // selectionModel = listPanel.movieSelectionModel;
@@ -37,12 +39,13 @@ public class MovieSetUIModule implements ITmmUIModule {
     // createActions();
     // createPopupMenu();
 
-    selectionModel = MainWindow.getActiveInstance().getMovieSetPanel().movieSetSelectionModel;
+    selectionModel = MainWindow.getActiveInstance().getTvShowPanel().tvShowSelectionModel;
+    settingsPanel = new TvShowSettingsContainerPanel();
   }
 
-  public static MovieSetUIModule getInstance() {
+  public static TvShowUIModule getInstance() {
     if (instance == null) {
-      instance = new MovieSetUIModule();
+      instance = new TvShowUIModule();
     }
     return instance;
   }
@@ -118,12 +121,12 @@ public class MovieSetUIModule implements ITmmUIModule {
     return null;
   }
 
-  public MovieSetSelectionModel getSelectionModel() {
+  public TvShowSelectionModel getSelectionModel() {
     return selectionModel;
   }
 
   @Override
   public JPanel getSettingsPanel() {
-    return null;
+    return settingsPanel;
   }
 }

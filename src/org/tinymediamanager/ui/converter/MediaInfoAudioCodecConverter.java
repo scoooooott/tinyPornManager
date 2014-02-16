@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.converter;
 
 import java.net.URL;
 
@@ -30,10 +30,10 @@ import org.jdesktop.beansbinding.Converter;
  * 
  * @author Manuel Laggner
  */
-public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
+public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
 
   /** The Constant LOGGER. */
-  private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoVideoCodecConverter.class);
+  private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoAudioCodecConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();
@@ -53,11 +53,20 @@ public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
     }
 
     try {
-      StringBuilder sb = new StringBuilder("/images/mediainfo/video/");
+      StringBuilder sb = new StringBuilder("/images/mediainfo/audio/");
       sb.append(arg0.toLowerCase());
       sb.append(".png");
 
-      URL file = MediaInfoVideoCodecConverter.class.getResource(sb.toString());
+      URL file = MediaInfoAudioCodecConverter.class.getResource(sb.toString());
+      if (file == null) {
+        // strip out channels info
+        String codec = arg0.replaceFirst("_.*ch", "");
+        sb = new StringBuilder("/images/mediainfo/audio/");
+        sb.append(codec.toLowerCase());
+        sb.append(".png");
+        file = MediaInfoAudioCodecConverter.class.getResource(sb.toString());
+      }
+
       if (file != null) {
         return new ImageIcon(file);
       }

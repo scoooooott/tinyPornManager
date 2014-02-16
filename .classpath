@@ -24,8 +24,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/glazedlists.jar" sourcepath="buildsupport/glazedlists_java15-1.9.0-sources.jar"/>
-	<classpathentry kind="lib" path="lib/l2fprod-common-buttonbar.jar"/>
-	<classpathentry kind="lib" path="lib/l2fprod-common-shared.jar"/>
 	<classpathentry kind="lib" path="lib/resources.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core.jar"/>

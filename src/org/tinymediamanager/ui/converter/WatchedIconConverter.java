@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.converter;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -26,18 +26,10 @@ import org.jdesktop.beansbinding.Converter;
  * @author Manuel Laggner
  */
 public class WatchedIconConverter extends Converter<Boolean, Icon> {
+  public final static ImageIcon watchedIcon    = new ImageIcon(WatchedIconConverter.class.getResource("/org/tinymediamanager/ui/images/watched.png"));
+  public final static ImageIcon notWatchedIcon = new ImageIcon(
+                                                   WatchedIconConverter.class.getResource("/org/tinymediamanager/ui/images/not_watched.png"));
 
-  /** The Constant watchedIcon. */
-  public final static ImageIcon watchedIcon    = new ImageIcon(WatchedIconConverter.class.getResource("images/watched.png"));
-
-  /** The Constant notWatchedIcon. */
-  public final static ImageIcon notWatchedIcon = new ImageIcon(WatchedIconConverter.class.getResource("images/not_watched.png"));
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertForward(java.lang.Object)
-   */
   @Override
   public Icon convertForward(Boolean arg0) {
     if (arg0.equals(Boolean.TRUE)) {
@@ -47,14 +39,8 @@ public class WatchedIconConverter extends Converter<Boolean, Icon> {
     return notWatchedIcon;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertReverse(java.lang.Object)
-   */
   @Override
   public Boolean convertReverse(Icon arg0) {
     return null;
   }
-
 }

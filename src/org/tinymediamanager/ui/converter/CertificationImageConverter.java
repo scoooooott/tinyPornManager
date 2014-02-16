@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.converter;
 
 import java.net.URL;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.Converter;
+import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.ui.movies.MovieGenresPanel;
 
 /**
- * The Class ImageIconConverter.
+ * The Class CertificationImageConverter.
  * 
  * @author Manuel Laggner
  */
-public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
+public class CertificationImageConverter extends Converter<Certification, Icon> {
 
   /** The Constant LOGGER. */
-  private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoAudioCodecConverter.class);
+  private static final Logger   LOGGER     = LoggerFactory.getLogger(CertificationImageConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();
@@ -44,39 +45,31 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
    * @see org.jdesktop.beansbinding.Converter#convertForward(java.lang.Object)
    */
   @Override
-  public Icon convertForward(String arg0) {
-    // try to get the image file
-
-    // a) return null if the Format is empty
-    if (StringUtils.isEmpty(arg0)) {
-      return null;
-    }
-
+  public Icon convertForward(Certification cert) {
+    // try to find an image for this genre
     try {
-      StringBuilder sb = new StringBuilder("/images/mediainfo/audio/");
-      sb.append(arg0.toLowerCase());
+      StringBuilder sb = new StringBuilder("/images/certifications/");
+      sb.append(cert.name().toLowerCase());
       sb.append(".png");
 
-      URL file = MediaInfoAudioCodecConverter.class.getResource(sb.toString());
+      URL file = MovieGenresPanel.class.getResource(sb.toString());
       if (file == null) {
-        // strip out channels info
-        String codec = arg0.replaceFirst("_.*ch", "");
-        sb = new StringBuilder("/images/mediainfo/audio/");
-        sb.append(codec.toLowerCase());
+        // try to find the image without the country name in path
+        sb = new StringBuilder("/images/certifications/");
+        String certName = cert.name();
+        sb.append(certName.replace(cert.getCountry().getAlpha2() + "_", "").toLowerCase());
         sb.append(".png");
-        file = MediaInfoAudioCodecConverter.class.getResource(sb.toString());
+        file = MovieGenresPanel.class.getResource(sb.toString());
       }
 
       if (file != null) {
         return new ImageIcon(file);
       }
-
     }
     catch (Exception e) {
-      LOGGER.warn(e.getMessage());
+      LOGGER.warn("cannot convert certification", e);
     }
 
-    // we did not get any file: return the empty
     return emptyImage;
   }
 
@@ -86,7 +79,7 @@ public class MediaInfoAudioCodecConverter extends Converter<String, Icon> {
    * @see org.jdesktop.beansbinding.Converter#convertReverse(java.lang.Object)
    */
   @Override
-  public String convertReverse(Icon arg0) {
+  public Certification convertReverse(Icon arg0) {
     return null;
   }
 

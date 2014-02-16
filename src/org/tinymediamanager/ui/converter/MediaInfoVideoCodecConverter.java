@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.converter;
 
 import java.net.URL;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jdesktop.beansbinding.Converter;
-import org.tinymediamanager.scraper.Certification;
-import org.tinymediamanager.ui.movies.MovieGenresPanel;
 
 /**
- * The Class CertificationImageConverter.
+ * The Class ImageIconConverter.
  * 
  * @author Manuel Laggner
  */
-public class CertificationImageConverter extends Converter<Certification, Icon> {
+public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
 
   /** The Constant LOGGER. */
-  private static final Logger   LOGGER     = LoggerFactory.getLogger(CertificationImageConverter.class);
+  private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoVideoCodecConverter.class);
 
   /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();
@@ -45,31 +44,30 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
    * @see org.jdesktop.beansbinding.Converter#convertForward(java.lang.Object)
    */
   @Override
-  public Icon convertForward(Certification cert) {
-    // try to find an image for this genre
+  public Icon convertForward(String arg0) {
+    // try to get the image file
+
+    // a) return null if the Format is empty
+    if (StringUtils.isEmpty(arg0)) {
+      return null;
+    }
+
     try {
-      StringBuilder sb = new StringBuilder("/images/certifications/");
-      sb.append(cert.name().toLowerCase());
+      StringBuilder sb = new StringBuilder("/images/mediainfo/video/");
+      sb.append(arg0.toLowerCase());
       sb.append(".png");
 
-      URL file = MovieGenresPanel.class.getResource(sb.toString());
-      if (file == null) {
-        // try to find the image without the country name in path
-        sb = new StringBuilder("/images/certifications/");
-        String certName = cert.name();
-        sb.append(certName.replace(cert.getCountry().getAlpha2() + "_", "").toLowerCase());
-        sb.append(".png");
-        file = MovieGenresPanel.class.getResource(sb.toString());
-      }
-
+      URL file = MediaInfoVideoCodecConverter.class.getResource(sb.toString());
       if (file != null) {
         return new ImageIcon(file);
       }
+
     }
     catch (Exception e) {
-      LOGGER.warn("cannot convert certification", e);
+      LOGGER.warn(e.getMessage());
     }
 
+    // we did not get any file: return the empty
     return emptyImage;
   }
 
@@ -79,7 +77,7 @@ public class CertificationImageConverter extends Converter<Certification, Icon> 
    * @see org.jdesktop.beansbinding.Converter#convertReverse(java.lang.Object)
    */
   @Override
-  public Certification convertReverse(Icon arg0) {
+  public String convertReverse(Icon arg0) {
     return null;
   }
 

@@ -13,45 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.movies.actions;
+package org.tinymediamanager.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
+import javax.swing.JDialog;
 
-import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.dialogs.SettingsDialog;
 
 /**
- * MovieUpdateSingleDatasourceAction - update all movies from a single data source
+ * The class SettingsAction. To display the settings dialog
  * 
  * @author Manuel Laggner
  */
-public class MovieUpdateSingleDatasourceAction extends AbstractAction {
-  private static final long           serialVersionUID = 6885253964781733478L;
+public class SettingsAction extends AbstractAction {
+  private static final long           serialVersionUID = 8930602755330446751L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private String                      datasource;
-
-  public MovieUpdateSingleDatasourceAction(String datasource) {
-    this.datasource = datasource;
-
-    putValue(NAME, datasource);
-    putValue(SMALL_ICON, IconManager.REFRESH);
-    putValue(LARGE_ICON_KEY, IconManager.REFRESH);
+  public SettingsAction() {
+    putValue(NAME, BUNDLE.getString("tmm.settings")); //$NON-NLS-1$
+    putValue(SMALL_ICON, IconManager.SETTINGS_SMALL);
+    putValue(LARGE_ICON_KEY, IconManager.SETTINGS_SMALL);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    @SuppressWarnings("rawtypes")
-    TmmSwingWorker task = new MovieUpdateDatasourceTask(datasource);
-    if (!MainWindow.executeMainTask(task)) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-    }
+    JDialog settingsDialog = SettingsDialog.getInstance();
+    settingsDialog.setVisible(true);
   }
 }

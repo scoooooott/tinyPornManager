@@ -17,9 +17,17 @@ package org.tinymediamanager.ui.tvshows;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.TvShowSeason;
 
 /**
  * The Class TvShowSelectionModel.
@@ -31,15 +39,15 @@ public class TvShowSelectionModel extends AbstractModelObject {
 
   private TvShow                 selectedTvShow;
   private TvShow                 initalTvShow     = new TvShow();
-
-  /** The property change listener. */
   private PropertyChangeListener propertyChangeListener;
+  private JTree                  tree;
 
   /**
    * Instantiates a new tv show selection model. Usage in TvShowPanel
    */
-  public TvShowSelectionModel() {
+  public TvShowSelectionModel(JTree tree) {
     selectedTvShow = initalTvShow;
+    this.tree = tree;
 
     propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -83,5 +91,90 @@ public class TvShowSelectionModel extends AbstractModelObject {
    */
   public TvShow getSelectedTvShow() {
     return selectedTvShow;
+  }
+
+  /**
+   * Gets the selected TV shows
+   * 
+   * @return the selected TV shows
+   */
+  public List<TvShow> getSelectedTvShows() {
+    List<TvShow> selectedTvShows = new ArrayList<TvShow>();
+
+    TreePath[] paths = tree.getSelectionPaths();
+
+    // filter out all tv shows from the selection
+    if (paths != null) {
+      for (TreePath path : paths) {
+        if (path.getPathCount() > 1) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+          if (node.getUserObject() instanceof TvShow) {
+            TvShow tvShow = (TvShow) node.getUserObject();
+            selectedTvShows.add(tvShow);
+          }
+        }
+      }
+    }
+
+    return selectedTvShows;
+  }
+
+  /**
+   * Get the selected episodes
+   * 
+   * @return the selected episodes
+   */
+  public List<TvShowEpisode> getSelectedEpisodes() {
+    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
+
+    for (Object obj : getSelectedObjects()) {
+      if (obj instanceof TvShowEpisode) {
+        TvShowEpisode episode = (TvShowEpisode) obj;
+        if (!episodes.contains(episode)) {
+          episodes.add(episode);
+        }
+      }
+      else if (obj instanceof TvShowSeason) {
+        TvShowSeason season = (TvShowSeason) obj;
+        for (TvShowEpisode episode : season.getEpisodes()) {
+          if (!episodes.contains(episode)) {
+            episodes.add(episode);
+          }
+        }
+      }
+      else if (obj instanceof TvShow) {
+        TvShow tvShow = (TvShow) obj;
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          if (!episodes.contains(episode)) {
+            episodes.add(episode);
+          }
+        }
+      }
+    }
+
+    return episodes;
+  }
+
+  /**
+   * Get all selected objects from the tree
+   * 
+   * @return the selected objects
+   */
+  public List<Object> getSelectedObjects() {
+    List<Object> selectedObjects = new ArrayList<Object>();
+
+    TreePath[] paths = tree.getSelectionPaths();
+
+    // filter out all objects from the selection
+    if (paths != null) {
+      for (TreePath path : paths) {
+        if (path.getPathCount() > 1) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+          selectedObjects.add(node.getUserObject());
+        }
+      }
+    }
+
+    return selectedObjects;
   }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.settings;
+package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -48,6 +48,7 @@ import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ScrollablePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -59,7 +60,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieImageSettingsPanel extends JPanel {
+public class MovieImageSettingsPanel extends ScrollablePanel {
 
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 7312645402037806284L;

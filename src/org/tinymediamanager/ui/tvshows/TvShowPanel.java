@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.tvshows;
 
 import java.awt.CardLayout;
-import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -25,16 +24,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -42,7 +35,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -67,35 +59,34 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.TvShowSeason;
-import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
-import org.tinymediamanager.core.tvshow.tasks.TvShowReloadMediaInformationTask;
-import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
-import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
-import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
-import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.PopupListener;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.TreeUI;
 import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.JSearchTextField;
 import org.tinymediamanager.ui.components.ZebraJTree;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
-import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
-import org.tinymediamanager.ui.tvshows.dialogs.TvShowBatchEditorDialog;
-import org.tinymediamanager.ui.tvshows.dialogs.TvShowChooserDialog;
-import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
-import org.tinymediamanager.ui.tvshows.dialogs.TvShowEpisodeEditorDialog;
-import org.tinymediamanager.ui.tvshows.dialogs.TvShowScrapeMetadataDialog;
+import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonPosterAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowMediaInformationAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowRemoveAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowRenameAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteEpisodeNfoAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteNfoAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSingleScrapeAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateDatasourcesAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateSingleDatasourceAction;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -113,10 +104,10 @@ public class TvShowPanel extends JPanel {
   private static final long           serialVersionUID              = -1923811385292825136L;
   private static final ResourceBundle BUNDLE                        = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
+  TvShowSelectionModel                tvShowSelectionModel;
+  TvShowSeasonSelectionModel          tvShowSeasonSelectionModel;
+  TvShowEpisodeSelectionModel         tvShowEpisodeSelectionModel;
   private TvShowTreeModel             treeModel;
-  private TvShowSelectionModel        tvShowSelectionModel;
-  private TvShowSeasonSelectionModel  tvShowSeasonSelectionModel;
-  private TvShowEpisodeSelectionModel tvShowEpisodeSelectionModel;
   private TvShowList                  tvShowList                    = TvShowList.getInstance();
 
   private JTree                       tree;
@@ -125,24 +116,24 @@ public class TvShowPanel extends JPanel {
   private JLabel                      lblTvShows;
   private JLabel                      lblEpisodes;
 
-  private final Action                actionUpdateDatasources       = new UpdateDatasourcesAction(false);
-  private final Action                actionUpdateDatasources2      = new UpdateDatasourcesAction(true);
-  private final Action                actionUpdateTvShow            = new UpdateTvShowAction();
-  private final Action                actionScrape                  = new SingleScrapeAction(false);
-  private final Action                actionScrape2                 = new SingleScrapeAction(true);
-  private final Action                actionScrapeSelected          = new SelectedScrapeAction();
-  private final Action                actionScrapeNewItems          = new ScrapeNewItemsAction();
-  private final Action                actionEdit                    = new EditAction(false);
-  private final Action                actionEdit2                   = new EditAction(true);
-  private final Action                actionRemove2                 = new RemoveAction(true);
-  private final Action                actionChangeSeasonPoster2     = new ChangeSeasonPosterAction(true);
-  private final Action                actionBatchEdit               = new BatchEditAction();
-  private final Action                actionScrapeEpisodes          = new ScrapeEpisodesAction();
-  private final Action                actionRewriteTvShowNfo        = new RewriteTvShowNfoAction();
-  private final Action                actionRewriteTvShowEpisodeNfo = new RewriteTvShowEpisodeNfoAction();
-  private final Action                actionRename                  = new RenameAction();
-  private final Action                actionMediaInformation        = new MediaInformationAction(false);
-  private final Action                actionMediaInformation2       = new MediaInformationAction(true);
+  private final Action                actionUpdateDatasources       = new TvShowUpdateDatasourcesAction(false);
+  private final Action                actionUpdateDatasources2      = new TvShowUpdateDatasourcesAction(true);
+  private final Action                actionUpdateTvShow            = new TvShowUpdateAction();
+  private final Action                actionScrape                  = new TvShowSingleScrapeAction(false);
+  private final Action                actionScrape2                 = new TvShowSingleScrapeAction(true);
+  private final Action                actionScrapeSelected          = new TvShowSelectedScrapeAction();
+  private final Action                actionScrapeNewItems          = new TvShowScrapeNewItemsAction();
+  private final Action                actionEdit                    = new TvShowEditAction(false);
+  private final Action                actionEdit2                   = new TvShowEditAction(true);
+  private final Action                actionRemove2                 = new TvShowRemoveAction(true);
+  private final Action                actionChangeSeasonPoster2     = new TvShowChangeSeasonPosterAction(true);
+  private final Action                actionBatchEdit               = new TvShowBulkEditAction();
+  private final Action                actionScrapeEpisodes          = new TvShowScrapeEpisodesAction();
+  private final Action                actionRewriteTvShowNfo        = new TvShowRewriteNfoAction();
+  private final Action                actionRewriteTvShowEpisodeNfo = new TvShowRewriteEpisodeNfoAction();
+  private final Action                actionRename                  = new TvShowRenameAction();
+  private final Action                actionMediaInformation        = new TvShowMediaInformationAction(false);
+  private final Action                actionMediaInformation2       = new TvShowMediaInformationAction(true);
   private final Action                actionClearImageCache         = new TvShowClearImageCacheAction();
 
   private int                         width                         = 0;
@@ -155,7 +146,6 @@ public class TvShowPanel extends JPanel {
     super();
 
     treeModel = new TvShowTreeModel(tvShowList.getTvShows());
-    tvShowSelectionModel = new TvShowSelectionModel();
     tvShowSeasonSelectionModel = new TvShowSeasonSelectionModel();
     tvShowEpisodeSelectionModel = new TvShowEpisodeSelectionModel();
 
@@ -242,7 +232,7 @@ public class TvShowPanel extends JPanel {
         buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateDatasources2));
         buttonUpdateDatasource.getPopupMenu().addSeparator();
         for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
-          buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new UpdateSingleDatasourceAction(ds)));
+          buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(new TvShowUpdateSingleDatasourceAction(ds)));
         }
         buttonUpdateDatasource.getPopupMenu().addSeparator();
         buttonUpdateDatasource.getPopupMenu().add(new JMenuItem(actionUpdateTvShow));
@@ -291,7 +281,7 @@ public class TvShowPanel extends JPanel {
 
     // install drawing of full with
     tree = new ZebraJTree(treeModel) {
-      private static final long serialVersionUID = 1L;
+      private static final long serialVersionUID = 2422163883324014637L;
 
       @Override
       public void paintComponent(Graphics g) {
@@ -299,6 +289,7 @@ public class TvShowPanel extends JPanel {
         super.paintComponent(g);
       }
     };
+    tvShowSelectionModel = new TvShowSelectionModel(tree);
 
     TreeUI ui = new TreeUI() {
       @Override
@@ -544,616 +535,11 @@ public class TvShowPanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
     popupMenu.addSeparator();
-    popupMenu.add(new ExpandAllAction(tree));
-    popupMenu.add(new CollapseAllAction(tree));
+    popupMenu.add(new ExpandAllAction());
+    popupMenu.add(new CollapseAllAction());
 
     MouseListener popupListener = new PopupListener(popupMenu, tree);
     tree.addMouseListener(popupListener);
-  }
-
-  /**
-   * Gets the selected tv shows.
-   * 
-   * @return the selected tv shows
-   */
-  private List<TvShow> getSelectedTvShows() {
-    List<TvShow> selectedTvShows = new ArrayList<TvShow>();
-
-    TreePath[] paths = tree.getSelectionPaths();
-
-    // filter out all tv shows from the selection
-    if (paths != null) {
-      for (TreePath path : paths) {
-        if (path.getPathCount() > 1) {
-          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-          if (node.getUserObject() instanceof TvShow) {
-            TvShow tvShow = (TvShow) node.getUserObject();
-            selectedTvShows.add(tvShow);
-          }
-        }
-      }
-    }
-
-    return selectedTvShows;
-  }
-
-  private List<TvShowEpisode> getSelectedEpisodes() {
-    List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
-
-    for (Object obj : getSelectedObjects()) {
-      if (obj instanceof TvShowEpisode) {
-        TvShowEpisode episode = (TvShowEpisode) obj;
-        if (!episodes.contains(episode)) {
-          episodes.add(episode);
-        }
-      }
-      else if (obj instanceof TvShowSeason) {
-        TvShowSeason season = (TvShowSeason) obj;
-        for (TvShowEpisode episode : season.getEpisodes()) {
-          if (!episodes.contains(episode)) {
-            episodes.add(episode);
-          }
-        }
-      }
-      else if (obj instanceof TvShow) {
-        TvShow tvShow = (TvShow) obj;
-        for (TvShowEpisode episode : tvShow.getEpisodes()) {
-          if (!episodes.contains(episode)) {
-            episodes.add(episode);
-          }
-        }
-      }
-    }
-
-    return episodes;
-  }
-
-  /**
-   * Gets the selected objects.
-   * 
-   * @return the selected objects
-   */
-  private List<Object> getSelectedObjects() {
-    List<Object> selectedObjects = new ArrayList<Object>();
-
-    TreePath[] paths = tree.getSelectionPaths();
-
-    // filter out all objects from the selection
-    if (paths != null) {
-      for (TreePath path : paths) {
-        if (path.getPathCount() > 1) {
-          DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-          selectedObjects.add(node.getUserObject());
-        }
-      }
-    }
-
-    return selectedObjects;
-  }
-
-  /**
-   * The Class UpdateDatasourcesAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class UpdateDatasourcesAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 5704371143505653741L;
-
-    /**
-     * Instantiates a new update datasources action.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public UpdateDatasourcesAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
-      }
-      putValue(LARGE_ICON_KEY, IconManager.REFRESH);
-      putValue(SMALL_ICON, IconManager.REFRESH);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      @SuppressWarnings("rawtypes")
-      TmmSwingWorker task = new TvShowUpdateDatasourceTask();
-      if (!MainWindow.executeMainTask(task)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
-    }
-  }
-
-  private class UpdateSingleDatasourceAction extends AbstractAction {
-    private static final long serialVersionUID = 1520541175183435685L;
-    private String            datasource;
-
-    public UpdateSingleDatasourceAction(String datasource) {
-      putValue(NAME, datasource);
-      this.datasource = datasource;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      @SuppressWarnings("rawtypes")
-      TmmSwingWorker task = new TvShowUpdateDatasourceTask(datasource);
-      if (!MainWindow.executeMainTask(task)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
-    }
-  }
-
-  private class UpdateTvShowAction extends AbstractAction {
-    private static final long serialVersionUID = 7216738427209633666L;
-
-    public UpdateTvShowAction() {
-      putValue(NAME, BUNDLE.getString("tvshow.update")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, IconManager.REFRESH);
-      putValue(SMALL_ICON, IconManager.REFRESH);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<TvShow> selectedTvShows = getSelectedTvShows();
-      List<File> tvShowFolders = new ArrayList<File>();
-
-      if (selectedTvShows.isEmpty()) {
-        return;
-      }
-
-      for (TvShow tvShow : selectedTvShows) {
-        tvShowFolders.add(new File(tvShow.getPath()));
-      }
-
-      @SuppressWarnings("rawtypes")
-      TmmSwingWorker task = new TvShowUpdateDatasourceTask(tvShowFolders);
-      if (!MainWindow.executeMainTask(task)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
-    }
-  }
-
-  /**
-   * The Class SingleScrapeAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class SingleScrapeAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 641704453374845709L;
-
-    /**
-     * Instantiates a new SingleScrapeAction.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public SingleScrapeAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
-      }
-      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
-      putValue(SMALL_ICON, IconManager.SEARCH);
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<TvShow> selectedTvShows = getSelectedTvShows();
-
-      for (TvShow tvShow : selectedTvShows) {
-        // display tv show chooser
-        TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, selectedTvShows.size() > 1 ? true : false);
-        if (!chooser.showDialog()) {
-          break;
-        }
-      }
-    }
-  }
-
-  private class ScrapeEpisodesAction extends AbstractAction {
-    private static final long serialVersionUID = -75916665265142730L;
-
-    public ScrapeEpisodesAction() {
-      putValue(NAME, BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
-      putValue(SMALL_ICON, IconManager.SEARCH);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-      List<TvShowEpisode> episodes = getSelectedEpisodes();
-
-      TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
-      Globals.executor.execute(task);
-    }
-  }
-
-  private class ScrapeNewItemsAction extends AbstractAction {
-    private static final long serialVersionUID = -3365542777082781952L;
-
-    public ScrapeNewItemsAction() {
-      putValue(NAME, BUNDLE.getString("tvshow.scrape.newitems")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
-      putValue(SMALL_ICON, IconManager.SEARCH);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<TvShow> newTvShows = new ArrayList<TvShow>();
-      List<TvShowEpisode> newEpisodes = new ArrayList<TvShowEpisode>();
-
-      for (TvShow tvShow : new ArrayList<TvShow>(tvShowList.getTvShows())) {
-        // if there is at least one new episode and no scraper id we assume the TV show is new
-        if (tvShow.isNewlyAdded() && !tvShow.isScraped()) {
-          newTvShows.add(tvShow);
-          continue;
-        }
-        // else: check every episode if there is a new episode
-        for (TvShowEpisode episode : tvShow.getEpisodes()) {
-          if (episode.isNewlyAdded() && !episode.isScraped()) {
-            newEpisodes.add(episode);
-          }
-        }
-      }
-
-      // now start the scrape tasks
-      // epsiode scraping can run in background
-      TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(newEpisodes);
-      Globals.executor.execute(task);
-
-      // whereas tv show scraping has to run in foreground
-      for (TvShow tvShow : newTvShows) {
-        TvShowChooserDialog chooser = new TvShowChooserDialog(tvShow, newTvShows.size() > 1 ? true : false);
-        if (!chooser.showDialog()) {
-          break;
-        }
-      }
-    }
-  }
-
-  /**
-   * The Class EditAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class EditAction extends AbstractAction {
-
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -3911290901017607679L;
-
-    /**
-     * Instantiates a new edits the action.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public EditAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
-      }
-      putValue(LARGE_ICON_KEY, IconManager.EDIT);
-      putValue(SMALL_ICON, IconManager.EDIT);
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<Object> selectedObjects = getSelectedObjects();
-
-      for (Object obj : selectedObjects) {
-        // display tv show editor
-        if (obj instanceof TvShow) {
-          TvShow tvShow = (TvShow) obj;
-          TvShowEditorDialog editor = new TvShowEditorDialog(tvShow, selectedObjects.size() > 1 ? true : false);
-          if (!editor.showDialog()) {
-            break;
-          }
-        }
-        // display tv episode editor
-        if (obj instanceof TvShowEpisode) {
-          TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
-          TvShowEpisodeEditorDialog editor = new TvShowEpisodeEditorDialog(tvShowEpisode, selectedObjects.size() > 1 ? true : false);
-          if (!editor.showDialog()) {
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  private class RemoveAction extends AbstractAction {
-    private static final long serialVersionUID = -2355545751433709417L;
-
-    public RemoveAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
-      }
-      putValue(LARGE_ICON_KEY, IconManager.CROSS);
-      putValue(SMALL_ICON, IconManager.CROSS);
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.remove")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<Object> selectedObjects = getSelectedObjects();
-
-      for (Object obj : selectedObjects) {
-        // display tv show editor
-        if (obj instanceof TvShow) {
-          TvShow tvShow = (TvShow) obj;
-          TvShowList.getInstance().removeTvShow(tvShow);
-        }
-        // display tv episode editor
-        if (obj instanceof TvShowEpisode) {
-          TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
-          tvShowEpisode.getTvShow().removeEpisode(tvShowEpisode);
-        }
-      }
-    }
-  }
-
-  /**
-   * The Class ChangeSeasonPosterAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class ChangeSeasonPosterAction extends AbstractAction {
-    private static final long serialVersionUID = 8356413227405772558L;
-
-    /**
-     * Instantiates a new change season poster action.
-     * 
-     * @param withTitle
-     *          the with title
-     */
-    public ChangeSeasonPosterAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
-      }
-      putValue(LARGE_ICON_KEY, IconManager.EDIT);
-      putValue(SMALL_ICON, IconManager.EDIT);
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeseasonposter")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<Object> selectedObjects = getSelectedObjects();
-
-      for (Object obj : selectedObjects) {
-        // display image chooser
-        if (obj instanceof TvShowSeason) {
-          TvShowSeason season = (TvShowSeason) obj;
-          ImageLabel imageLabel = new ImageLabel();
-          ImageChooserDialog dialog = new ImageChooserDialog(season.getTvShow().getIds(), ImageType.SEASON, tvShowList.getArtworkProviders(),
-              imageLabel, null, null, MediaType.TV_SHOW);
-          dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-          dialog.setVisible(true);
-
-          if (StringUtils.isNotBlank(imageLabel.getImageUrl())) {
-            season.setPosterUrl(imageLabel.getImageUrl());
-            season.getTvShow().writeSeasonPoster(season.getSeason());
-          }
-        }
-      }
-    }
-  }
-
-  private class BatchEditAction extends AbstractAction {
-    private static final long serialVersionUID = -1193886444149690516L;
-
-    /**
-     * Instantiates a new batch edit action.
-     */
-    public BatchEditAction() {
-      putValue(NAME, BUNDLE.getString("tvshow.bulkedit")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.bulkedit.desc")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, IconManager.EDIT);
-      putValue(SMALL_ICON, IconManager.EDIT);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-      List<Object> selectedObjects = getSelectedObjects();
-      List<TvShow> selectedTvShows = new ArrayList<TvShow>();
-      List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
-
-      for (Object obj : selectedObjects) {
-        // display tv show editor
-        if (obj instanceof TvShow) {
-          TvShow tvShow = (TvShow) obj;
-          selectedTvShows.add(tvShow);
-        }
-        // display tv episode editor
-        if (obj instanceof TvShowEpisode) {
-          TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
-          selectedEpisodes.add(tvShowEpisode);
-        }
-      }
-
-      TvShowBatchEditorDialog dialog = new TvShowBatchEditorDialog(selectedTvShows, selectedEpisodes);
-      dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-      dialog.setVisible(true);
-    }
-  }
-
-  private class SelectedScrapeAction extends AbstractAction {
-    private static final long serialVersionUID = 699165862194137592L;
-
-    /**
-     * Instantiates a new UnscrapedScrapeAction.
-     */
-    public SelectedScrapeAction() {
-      putValue(NAME, BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.scrape.selected.force.desc")); //$NON-NLS-1$
-      putValue(LARGE_ICON_KEY, IconManager.SEARCH);
-      putValue(SMALL_ICON, IconManager.SEARCH);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<TvShow> selectedTvShows = getSelectedTvShows();
-
-      if (selectedTvShows.size() > 0) {
-        // scrapeTask = new ScrapeTask(selectedMovies);
-        TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.scrape.selected.force")); //$NON-NLS-1$
-        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        dialog.setVisible(true);
-        // get options from dialog
-        TvShowSearchAndScrapeOptions options = dialog.getTvShowSearchAndScrapeConfig();
-        // do we want to scrape?
-        if (dialog.shouldStartScrape()) {
-          // scrape
-          @SuppressWarnings("rawtypes")
-          TmmSwingWorker scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
-          if (!MainWindow.executeMainTask(scrapeTask)) {
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-          }
-        }
-        dialog.dispose();
-      }
-    }
-  }
-
-  private class RewriteTvShowNfoAction extends AbstractAction {
-    private static final long serialVersionUID = -6575156436788397648L;
-
-    public RewriteTvShowNfoAction() {
-      putValue(NAME, BUNDLE.getString("tvshow.rewritenfo")); //$NON-NLS-1$
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      final List<TvShow> selectedTvShows = getSelectedTvShows();
-
-      // rewrite selected NFOs
-      Globals.executor.execute(new Runnable() {
-        @Override
-        public void run() {
-          for (TvShow tvShow : selectedTvShows) {
-            tvShow.writeNFO();
-          }
-        }
-      });
-    }
-  }
-
-  private class RewriteTvShowEpisodeNfoAction extends AbstractAction {
-    private static final long serialVersionUID = 5762347331284295996L;
-
-    public RewriteTvShowEpisodeNfoAction() {
-      putValue(NAME, BUNDLE.getString("tvshowepisode.rewritenfo")); //$NON-NLS-1$
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      final List<TvShowEpisode> selectedEpisodes = getSelectedEpisodes();
-
-      // rewrite selected NFOs
-      Globals.executor.execute(new Runnable() {
-        @Override
-        public void run() {
-          for (TvShowEpisode episode : selectedEpisodes) {
-            episode.writeNFO();
-          }
-        }
-      });
-    }
-  }
-
-  /**
-   * The Class RenameAction.
-   * 
-   * @author Manuel Laggner
-   */
-  private class RenameAction extends AbstractAction {
-    private static final long serialVersionUID = -8988748633666277616L;
-
-    /**
-     * Instantiates a new rename action.
-     */
-    public RenameAction() {
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
-      putValue(NAME, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<TvShow> selectedTvShows = getSelectedTvShows();
-      Set<TvShowEpisode> selectedEpisodes = new HashSet<TvShowEpisode>();
-
-      // add all episodes which are not part of a selected tv show
-      for (Object obj : getSelectedObjects()) {
-        if (obj instanceof TvShowEpisode) {
-          TvShowEpisode episode = (TvShowEpisode) obj;
-          if (!selectedTvShows.contains(episode.getTvShow())) {
-            selectedEpisodes.add(episode);
-          }
-        }
-        if (obj instanceof TvShowSeason) {
-          TvShowSeason season = (TvShowSeason) obj;
-          for (TvShowEpisode episode : season.getEpisodes()) {
-            selectedEpisodes.add(episode);
-          }
-        }
-      }
-
-      // rename
-      @SuppressWarnings("rawtypes")
-      TmmSwingWorker renameTask = new TvShowRenameTask(selectedTvShows, new ArrayList<TvShowEpisode>(selectedEpisodes), true);
-      if (!MainWindow.executeMainTask(renameTask)) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-      }
-    }
   }
 
   protected void initDataBindings() {
@@ -1169,74 +555,30 @@ public class TvShowPanel extends JPanel {
     autoBinding_1.bind();
   }
 
-  public class MediaInformationAction extends AbstractAction {
-    private static final long serialVersionUID = -1274423130095036944L;
-
-    public MediaInformationAction(boolean withTitle) {
-      if (withTitle) {
-        putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-      }
-      putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-      putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      List<TvShow> selectedTvShows = getSelectedTvShows();
-      List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
-
-      // add all episodes which are not part of a selected tv show
-      for (Object obj : getSelectedObjects()) {
-        if (obj instanceof TvShowEpisode) {
-          TvShowEpisode episode = (TvShowEpisode) obj;
-          if (!selectedTvShows.contains(episode.getTvShow())) {
-            selectedEpisodes.add(episode);
-          }
-        }
-      }
-
-      // get data of all files within all selected movies
-      if (selectedTvShows.size() > 0 || selectedEpisodes.size() > 0) {
-        @SuppressWarnings("rawtypes")
-        TmmSwingWorker task = new TvShowReloadMediaInformationTask(selectedTvShows, selectedEpisodes);
-        if (!MainWindow.executeMainTask(task)) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
-        }
-      }
-    }
-  }
-
-  public class CollapseAllAction extends AbstractAction {
+  /**************************************************************************
+   * local helper classes
+   **************************************************************************/
+  private class CollapseAllAction extends AbstractAction {
     private static final long serialVersionUID = -1444530142931061317L;
 
-    private JTree             tree;
-
-    public CollapseAllAction(JTree tree) {
-      this.tree = tree;
+    public CollapseAllAction() {
       putValue(NAME, BUNDLE.getString("tree.collapseall")); //$NON-NLS-1$  
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      for (int i = this.tree.getRowCount() - 1; i >= 0; i--) {
-        this.tree.collapseRow(i);
+      for (int i = tree.getRowCount() - 1; i >= 0; i--) {
+        tree.collapseRow(i);
       }
     }
   }
 
-  public class ExpandAllAction extends AbstractAction {
+  private class ExpandAllAction extends AbstractAction {
     private static final long serialVersionUID = 6191727607109012198L;
 
     private JTree             tree;
 
-    public ExpandAllAction(JTree tree) {
-      this.tree = tree;
+    public ExpandAllAction() {
       putValue(NAME, BUNDLE.getString("tree.expandall")); //$NON-NLS-1$  
     }
 
@@ -1244,48 +586,8 @@ public class TvShowPanel extends JPanel {
     public void actionPerformed(ActionEvent e) {
       int i = 0;
       do {
-        this.tree.expandRow(i++);
-      } while (i < this.tree.getRowCount());
-    }
-  }
-
-  public class TvShowClearImageCacheAction extends AbstractAction {
-    private static final long serialVersionUID = 3452373237085274937L;
-
-    public TvShowClearImageCacheAction() {
-      putValue(NAME, BUNDLE.getString("tvshow.clearimagecache")); //$NON-NLS-1$
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-      List<TvShow> selectedTvShows = getSelectedTvShows();
-      List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
-
-      // add all episodes which are not part of a selected tv show
-      for (Object obj : getSelectedObjects()) {
-        if (obj instanceof TvShowEpisode) {
-          TvShowEpisode episode = (TvShowEpisode) obj;
-          if (!selectedTvShows.contains(episode.getTvShow())) {
-            selectedEpisodes.add(episode);
-          }
-        }
-      }
-
-      // clear the cache
-      MainWindow.getActiveInstance().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      for (TvShow tvShow : selectedTvShows) {
-        ImageCache.clearImageCacheForMediaEntity(tvShow);
-      }
-
-      for (TvShowEpisode episode : selectedEpisodes) {
-        ImageCache.clearImageCacheForMediaEntity(episode);
-      }
-      MainWindow.getActiveInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        tree.expandRow(i++);
+      } while (i < tree.getRowCount());
     }
   }
 }

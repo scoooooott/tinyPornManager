@@ -1,4 +1,4 @@
-package org.tinymediamanager.ui;
+package org.tinymediamanager.ui.components;
 
 import harsh.p.raval.lightbox.LightBox;
 
@@ -10,7 +10,6 @@ import java.awt.event.MouseListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
 
 import com.jgoodies.forms.layout.ColumnSpec;

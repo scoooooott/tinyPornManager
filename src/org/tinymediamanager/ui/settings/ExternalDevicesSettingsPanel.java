@@ -35,6 +35,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.dialogs.WolDeviceDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -47,7 +48,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class ExternalDevicesSettingsPanel extends JPanel {
+public class ExternalDevicesSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 8176824801347872222L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 

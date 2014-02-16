@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,15 +28,15 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.ui.ButtonBarButtonUI;
+import org.tinymediamanager.ui.ButtonBarUI;
+import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.UTF8Control;
-
-import com.l2fprod.common.swing.JButtonBar;
-import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
+import org.tinymediamanager.ui.movies.MovieUIModule;
+import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 /**
  * The Class SettingsPanel.
@@ -44,55 +44,54 @@ import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
  * @author Manuel Laggner
  */
 public class SettingsPanel extends JPanel {
-  private static final long            serialVersionUID = -3509434882626534578L;
-  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID = -3509434882626534578L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private Settings                     settings         = Settings.getInstance();
+  private Settings                    settings         = Settings.getInstance();
 
   /**
    * UI components
    */
-  private Component                    currentComponent;
-  private JButtonBar                   toolbar;
-  private GeneralSettingsPanel         panelGeneralSettings;
-  private MovieSettingsPanel           panelMovieSettings;
-  private MovieScraperSettingsPanel    panelScraperMovieSettings;
-  private MovieImageSettingsPanel      panelImageMovieSettings;
-  private TvShowSettingsPanel          panelTvShowSettings;
-  private TvShowScraperSettingsPanel   panelTvShowScraperSettings;
-  private ExternalDevicesSettingsPanel panelExternalDevicesSettings;
-  private JScrollPane                  scrollPane;
+  private JPanel                      buttonBar;
+  private ButtonGroup                 buttonGroup;
+  private Component                   currentComponent;
+  private JPanel                      panelTmmSettings;
+  private JPanel                      panelMovieSettings;
+  private JPanel                      panelTvShowSettings;
 
   /**
    * Create the panel.
    */
   public SettingsPanel() {
-    toolbar = new JButtonBar(JButtonBar.VERTICAL);
-    toolbar.setUI(new BlueishButtonBarUI());
     setLayout(new BorderLayout());
 
-    add("West", toolbar);
+    buttonBar = new JPanel();
+    buttonBar.setUI(new ButtonBarUI());
+    EqualsLayout layout = new EqualsLayout(EqualsLayout.LEFT, 0);
+    buttonBar.setLayout(layout);
+    add("North", buttonBar);
+    buttonGroup = new ButtonGroup();
 
-    scrollPane = new JScrollPane();
-    scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-    add("Center", scrollPane);
-
-    ButtonGroup group = new ButtonGroup();
-    panelMovieSettings = new MovieSettingsPanel();
-    addButton(BUNDLE.getString("Settings.movies"), "/org/tinymediamanager/ui/images/show_reel.png", panelMovieSettings, toolbar, group); //$NON-NLS-1$
-    panelScraperMovieSettings = new MovieScraperSettingsPanel();
-    addButton(BUNDLE.getString("Settings.scraper"), "/org/tinymediamanager/ui/images/show_reel.png", panelScraperMovieSettings, toolbar, group); //$NON-NLS-1$
-    panelImageMovieSettings = new MovieImageSettingsPanel();
-    addButton(BUNDLE.getString("Settings.images"), "/org/tinymediamanager/ui/images/show_reel.png", panelImageMovieSettings, toolbar, group); //$NON-NLS-1$
-    panelTvShowSettings = new TvShowSettingsPanel();
-    addButton(BUNDLE.getString("Settings.tvshow"), "/org/tinymediamanager/ui/images/tv_show.png", panelTvShowSettings, toolbar, group); //$NON-NLS-1$
-    panelTvShowScraperSettings = new TvShowScraperSettingsPanel();
-    addButton(BUNDLE.getString("Settings.tvshowscraper"), "/org/tinymediamanager/ui/images/tv_show.png", panelTvShowScraperSettings, toolbar, group); //$NON-NLS-1$
-    panelGeneralSettings = new GeneralSettingsPanel();
-    addButton(BUNDLE.getString("Settings.general"), "/org/tinymediamanager/ui/images/Action-configure-icon.png", panelGeneralSettings, toolbar, group); //$NON-NLS-1$
-    panelExternalDevicesSettings = new ExternalDevicesSettingsPanel();
+    /*
+     * General settings
+     */
+    panelTmmSettings = new TmmSettingsContainerPanel();
     addButton(
-        BUNDLE.getString("Settings.externaldevices"), "/org/tinymediamanager/ui/images/devices.png", panelExternalDevicesSettings, toolbar, group); //$NON-NLS-1$
+        BUNDLE.getString("Settings.general"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/Action-configure-icon.png")), panelTmmSettings); //$NON-NLS-1$
+
+    /*
+     * Movie settings
+     */
+    panelMovieSettings = MovieUIModule.getInstance().getSettingsPanel();
+    addButton(
+        BUNDLE.getString("Settings.movies"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/show_reel.png")), panelMovieSettings); //$NON-NLS-1$
+
+    /*
+     * TV show settings
+     */
+    panelTvShowSettings = TvShowUIModule.getInstance().getSettingsPanel();
+    addButton(
+        BUNDLE.getString("Settings.tvshow"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/tv_show.png")), panelTvShowSettings); //$NON-NLS-1$
 
     addComponentListener(new ComponentAdapter() {
       @Override
@@ -102,44 +101,11 @@ public class SettingsPanel extends JPanel {
     });
   }
 
-  /**
-   * Show.
-   * 
-   * @param component
-   *          the component
-   */
-  private void show(Component component) {
-    if (currentComponent != null) {
-      scrollPane.remove(currentComponent);
-    }
-    scrollPane.setViewportView(component);
-
-    // scroll to top upon changing the panel
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        scrollPane.getVerticalScrollBar().setValue(0);
-      }
-    });
-  }
-
-  /**
-   * Adds the button.
-   * 
-   * @param title
-   *          the title
-   * @param iconUrl
-   *          the icon url
-   * @param component
-   *          the component
-   * @param bar
-   *          the bar
-   * @param group
-   *          the group
-   */
-  private void addButton(String title, String iconUrl, final Component component, JButtonBar bar, ButtonGroup group) {
-    Action action = new AbstractAction(title, new ImageIcon(SettingsPanel.class.getResource(iconUrl))) {
+  private void addButton(String title, ImageIcon icon, final Component component) {
+    Action action = new AbstractAction(title, icon) {
       private static final long serialVersionUID = -5307503386163952433L;
 
+      @Override
       public void actionPerformed(ActionEvent e) {
         show(component);
       }
@@ -147,13 +113,23 @@ public class SettingsPanel extends JPanel {
 
     JToggleButton button = new JToggleButton(action);
     button.setHorizontalTextPosition(JButton.CENTER);
-    bar.add(button);
+    button.setVerticalTextPosition(JButton.BOTTOM);
+    button.setUI(new ButtonBarButtonUI());
+    buttonBar.add(button);
+    buttonGroup.add(button);
 
-    group.add(button);
-
-    if (group.getSelection() == null) {
+    if (buttonGroup.getSelection() == null) {
       button.setSelected(true);
       show(component);
     }
+  }
+
+  private void show(Component component) {
+    if (currentComponent != null) {
+      remove(currentComponent);
+    }
+    add("Center", currentComponent = component);
+    revalidate();
+    repaint();
   }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.settings;
+package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Cursor;
 import java.awt.Font;
@@ -69,6 +69,7 @@ import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ScrollablePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -80,7 +81,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieSettingsPanel extends JPanel implements HierarchyListener {
+public class MovieSettingsPanel extends ScrollablePanel implements HierarchyListener {
   private static final long           serialVersionUID           = -7580437046944123496L;
   private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 

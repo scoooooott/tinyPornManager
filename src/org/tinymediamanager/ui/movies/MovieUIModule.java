@@ -27,6 +27,7 @@ import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
+import org.tinymediamanager.ui.movies.settings.MovieSettingsContainerPanel;
 
 /**
  * @author Manuel Laggner
@@ -39,6 +40,7 @@ public class MovieUIModule implements ITmmUIModule {
 
   private MoviePanel                  listPanel;
   private JPanel                      detailPanel;
+  private final JPanel                settingsPanel;
 
   private final MovieSelectionModel   selectionModel;
 
@@ -58,6 +60,7 @@ public class MovieUIModule implements ITmmUIModule {
     // createActions();
     // createPopupMenu();
 
+    settingsPanel = new MovieSettingsContainerPanel();
     selectionModel = MainWindow.getActiveInstance().getMoviePanel().movieSelectionModel;
   }
 
@@ -104,114 +107,63 @@ public class MovieUIModule implements ITmmUIModule {
     return ID;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getTabPanel()
-   */
   @Override
   public JPanel getTabPanel() {
     return listPanel;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getTabTitle()
-   */
   @Override
   public String getTabTitle() {
     return BUNDLE.getString("tmm.movies"); //$NON-NLS-1$)
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getDetailPanel()
-   */
   @Override
   public JPanel getDetailPanel() {
     return detailPanel;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getSearchAction()
-   */
   @Override
   public Action getSearchAction() {
     return searchAction;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getSearchMenu()
-   */
   @Override
   public JPopupMenu getSearchMenu() {
     return searchPopupMenu;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getEditAction()
-   */
   @Override
   public Action getEditAction() {
     return editAction;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getEditMenu()
-   */
   @Override
   public JPopupMenu getEditMenu() {
     return editPopupMenu;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getUpdateAction()
-   */
   @Override
   public Action getUpdateAction() {
     return updateAction;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getUpdateMenu()
-   */
   @Override
   public JPopupMenu getUpdateMenu() {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getExportAction()
-   */
   @Override
   public Action getExportAction() {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.ITmmUIModule#getExportMenu()
-   */
   @Override
   public JPopupMenu getExportMenu() {
     return null;
   }
 
+  @Override
+  public JPanel getSettingsPanel() {
+    return settingsPanel;
+  }
 }

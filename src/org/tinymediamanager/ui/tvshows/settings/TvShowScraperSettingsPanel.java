@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui.settings;
+package org.tinymediamanager.ui.tvshows.settings;
 
 import java.awt.Color;
 import java.awt.event.ItemEvent;
@@ -39,6 +39,7 @@ import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -51,7 +52,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowScraperSettingsPanel extends JPanel {
+public class TvShowScraperSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 4999827736720726395L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 

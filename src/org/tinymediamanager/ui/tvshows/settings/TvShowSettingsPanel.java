@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tinymediamanager.ui.settings;
+package org.tinymediamanager.ui.tvshows.settings;
 
 import java.awt.Cursor;
 import java.awt.Font;
@@ -65,6 +65,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ScrollablePanel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -78,7 +79,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowSettingsPanel extends JPanel implements HierarchyListener {
+public class TvShowSettingsPanel extends ScrollablePanel implements HierarchyListener {
   private static final long           serialVersionUID = -675729644848101096L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
   private static final String         SPACE            = "<space>";

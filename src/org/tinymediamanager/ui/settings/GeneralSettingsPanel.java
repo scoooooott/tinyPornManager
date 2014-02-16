@@ -53,6 +53,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ScrollablePanel;
 
 import ch.qos.logback.classic.Level;
 
@@ -66,7 +67,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class GeneralSettingsPanel extends JPanel {
+public class GeneralSettingsPanel extends ScrollablePanel {
 
   private static final long           serialVersionUID = 500841588272296493L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
