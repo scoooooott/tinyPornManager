@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Class CachedUrl.
+ * The Class CachedUrl. Used for caching URL requests. The requests will get cached into the cache folder for a short period (making recurring calls
+ * faster).
  * 
  * @author Manuel Laggner
  */

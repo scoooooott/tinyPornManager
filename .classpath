@@ -11,8 +11,8 @@
 	<classpathentry kind="lib" path="lib/commons-io.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3.jar"/>
 	<classpathentry kind="lib" path="lib/forms.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient.jar"/>
-	<classpathentry kind="lib" path="lib/httpcore.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient.jar" sourcepath="buildsupport/httpclient-4.3.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore.jar" sourcepath="buildsupport/httpcore-4.3.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/httpmime.jar"/>
 	<classpathentry kind="lib" path="lib/JSplitButton.jar"/>
 	<classpathentry kind="lib" path="lib/themoviedbapi.jar"/>

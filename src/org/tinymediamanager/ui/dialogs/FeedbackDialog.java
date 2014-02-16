@@ -35,16 +35,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
-import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.util.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -135,7 +135,7 @@ public class FeedbackDialog extends JDialog {
         }
 
         // send feedback
-        DefaultHttpClient client = Utils.getHttpClient();
+        HttpClient client = TmmHttpClient.getHttpClient();
         HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbxTIhI58gwy0UJ0Z1CdmZDdHlwBDU_vugBmQxcKN9aug4nfgrgZ/exec");
         try {
           List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);

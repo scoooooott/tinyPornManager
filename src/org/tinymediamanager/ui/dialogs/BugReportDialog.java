@@ -45,17 +45,17 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
-import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.util.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -161,7 +161,7 @@ public class BugReportDialog extends JDialog {
         }
 
         // send bug report
-        DefaultHttpClient client = Utils.getHttpClient();
+        HttpClient client = TmmHttpClient.getHttpClient();
         HttpPost post = new HttpPost("https://script.google.com/macros/s/AKfycbzrhTmZiHJb1bdCqyeiVOqLup8zK4Dbx6kAtHYsgzBVqHTaNJqj/exec");
         try {
           StringBuilder message = new StringBuilder("Bug report from ");

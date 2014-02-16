@@ -25,7 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.scraper.util.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.DownloadWorker.ProgressType;
 
@@ -61,7 +61,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
     long bytesDone = 0;
     try {
       LOGGER.info("Downloading " + url + " to " + file);
-      Url u = new Url(UrlUtil.getURIEncoded(url).toASCIIString());
+      StreamingUrl u = new StreamingUrl(UrlUtil.getURIEncoded(url).toASCIIString());
       File tempFile = new File(file.getAbsolutePath() + ".part");
 
       InputStream is = u.getInputStream();
@@ -97,6 +97,11 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
         else {
           // TODO: well, yes, what to do? Download was ok, but moving failed...
         }
+      }
+
+      // close the url connections
+      if (u != null) {
+        u.closeConnection();
       }
     }
     catch (Exception e) {
