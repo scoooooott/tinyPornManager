@@ -157,11 +157,12 @@ public class TmmHttpClient {
     DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
     httpClientBuilder.setRoutePlanner(routePlanner);
 
-    // try to get proxy settings from JRE - is probably added in HttpClient 4.3
-    // SystemDefaultRoutePlanner routePlanner = new
-    // ProxySelectorRoutePlanner(httpClient.getConnectionManager().getSchemeRegistry(),
-    // ProxySelector.getDefault());
-    // httpClient.setRoutePlanner(routePlanner);
+    // try to get proxy settings from JRE - is probably added in HttpClient 4.3; fixed with 4.3.3
+    // (https://issues.apache.org/jira/browse/HTTPCLIENT-1457)
+    // SystemDefaultCredentialsProvider credentialsProvider = new SystemDefaultCredentialsProvider();
+    // httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+    // SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+    // httpClientBuilder.setRoutePlanner(routePlanner);
   }
 
   protected static String generateUA() {
