@@ -16,6 +16,7 @@
 package org.tinymediamanager;
 
 import java.io.File;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
@@ -25,8 +26,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
@@ -63,6 +69,7 @@ public class UpgradeTasks {
 
   public static void performUpgradeTasksAfterDatabaseLoading(String oldVersion) {
     MovieList movieList = MovieList.getInstance();
+    TvShowList tvShowList = TvShowList.getInstance();
     String v = "" + oldVersion;
 
     if (StringUtils.isBlank(v)) {
@@ -106,6 +113,22 @@ public class UpgradeTasks {
           trailer.setQuality(quality);
         }
         movie.saveToDb();
+      }
+      Globals.entityManager.getTransaction().commit();
+
+      // upgrade tasks for tv show episodes -> clean the path
+      Globals.entityManager.getTransaction().begin();
+      for (TvShow tvShow : tvShowList.getTvShows()) {
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          List<MediaFile> videos = episode.getMediaFiles(MediaFileType.VIDEO);
+          if (videos.size() > 0) {
+            MediaFile mf = videos.get(0);
+            if (!mf.getPath().equals(episode.getPath())) {
+              episode.setPath(mf.getPath());
+              episode.saveToDb();
+            }
+          }
+        }
       }
       Globals.entityManager.getTransaction().commit();
     }
