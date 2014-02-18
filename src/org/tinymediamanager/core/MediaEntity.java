@@ -76,7 +76,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   @Transient
   protected boolean                      duplicate           = false;
 
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>(0);
 
   @Transient
@@ -86,7 +86,6 @@ public abstract class MediaEntity extends AbstractModelObject {
    * Initialize after loading from database.
    */
   public void initializeAfterLoading() {
-    mediaFiles = Collections.synchronizedList(mediaFiles);
     sortMediaFiles();
   }
 
