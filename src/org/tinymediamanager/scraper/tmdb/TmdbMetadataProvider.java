@@ -259,6 +259,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
    * @throws Exception
    *           the exception
    */
+  @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
     // check if there is a md in the result
@@ -510,10 +511,18 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     synchronized (tmdb) {
       trackConnections();
       if (tmdbId == 0 && Utils.isValidImdbId(imdbId)) {
-        movie = tmdb.getMovieInfoImdb(imdbId, options.getLanguage().name());
+        try {
+          movie = tmdb.getMovieInfoImdb(imdbId, options.getLanguage().name());
+        }
+        catch (MovieDbException e) {
+        }
       }
       if (movie == null && tmdbId != 0) {
-        movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
+        try {
+          movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
+        }
+        catch (MovieDbException e) {
+        }
       }
     }
 
@@ -646,7 +655,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     MovieDb movieInfo = null;
     synchronized (tmdb) {
       trackConnections();
-      movieInfo = tmdb.getMovieInfoImdb(imdbId, "en");
+      try {
+        movieInfo = tmdb.getMovieInfoImdb(imdbId, "en");
+      }
+      catch (MovieDbException e) {
+      }
     }
 
     if (movieInfo != null) {
@@ -655,11 +668,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return 0;
   }
 
-  /**
-   * The Class ArtworkComparator.
-   * 
-   * @author Manuel Laggner
-   */
   private static class ArtworkComparator implements Comparator<Artwork> {
     /*
      * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
@@ -696,7 +704,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       // we did not sort until here; so lets sort with the rating
       return arg0.getVoteAverage() > arg1.getVoteAverage() ? -1 : 1;
     }
-
   }
 
   /**
@@ -923,12 +930,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return artwork;
   }
 
-  /**
-   * Prepare default poster.
-   * 
-   * @param ma
-   *          the ma
-   */
   private void prepareDefaultPoster(MediaArtwork ma) {
     for (ImageSizeAndUrl image : ma.getImageSizes()) {
       // LARGE
@@ -970,12 +971,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
   }
 
-  /**
-   * Prepare default fanart.
-   * 
-   * @param ma
-   *          the ma
-   */
   private void prepareDefaultFanart(MediaArtwork ma) {
     for (ImageSizeAndUrl image : ma.getImageSizes()) {
       // LARGE
@@ -1008,9 +1003,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
   }
 
-  /**
-   * Track connections and throttle if needed.
-   */
   private void trackConnections() {
     Long currentTime = System.currentTimeMillis();
     if (connectionCounter.count() == connectionCounter.maxSize()) {

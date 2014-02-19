@@ -139,6 +139,7 @@ public class MediaScrapeOptions {
   @Override
   public String toString() {
     return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
+      @Override
       protected boolean accept(Field f) {
         return super.accept(f) && !f.getName().equals("metadata");
       }
