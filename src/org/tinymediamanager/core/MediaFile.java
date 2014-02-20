@@ -80,6 +80,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String                                     path               = "";
   private String                                     filename           = "";
   private long                                       filesize           = 0;
+  private long                                       filedate           = 0;
   private String                                     videoCodec         = "";
   private String                                     containerFormat    = "";
   private String                                     exactVideoFormat   = "";
@@ -110,6 +111,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.path = clone.path;
     this.filename = clone.filename;
     this.filesize = clone.filesize;
+    this.filedate = clone.filedate;
     this.videoCodec = clone.videoCodec;
     this.containerFormat = clone.containerFormat;
     this.exactVideoFormat = clone.exactVideoFormat;
@@ -152,6 +154,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public MediaFile(File f, MediaFileType type) {
     this.path = f.getParent(); // just path w/o filename
     this.filename = f.getName();
+    this.filedate = f.lastModified();
     this.file = f;
     if (type == null) {
       this.type = parseType();
@@ -329,11 +332,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     name.matches("(index\\.bdmv|movieobject\\.bdmv|\\d{5}\\.m2ts)")); // bluray
   }
 
-  /**
-   * gets the file handle.
-   * 
-   * @return the file handle or NULL if file does not exits
-   */
   public File getFile() {
     if (file == null) {
       File f = new File(this.path, this.filename);
@@ -342,12 +340,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return file;
   }
 
-  /**
-   * Sets the file.
-   * 
-   * @param file
-   *          the new file
-   */
   public void setFile(File file) {
     setFilename(file.getName());
     setPath(file.getParent());
@@ -406,21 +398,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     setPath(p);
   }
 
-  /**
-   * Gets the filename.
-   * 
-   * @return the filename
-   */
   public String getFilename() {
     return filename;
   }
 
-  /**
-   * Sets the filename.
-   * 
-   * @param newValue
-   *          the new filename
-   */
   public void setFilename(String newValue) {
     String oldValue = this.filename;
     this.filename = newValue;
@@ -428,11 +409,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     firePropertyChange(FILENAME, oldValue, newValue);
   }
 
-  /**
-   * Gets the extension.
-   * 
-   * @return the extension
-   */
   public String getExtension() {
     return FilenameUtils.getExtension(filename);
   }
@@ -446,21 +422,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return FilenameUtils.getBaseName(filename);
   }
 
-  /**
-   * Gets the filesize.
-   * 
-   * @return the filesize
-   */
+  public long getFiledate() {
+    return filedate;
+  }
+
   public long getFilesize() {
     return filesize;
   }
 
-  /**
-   * Sets the filesize.
-   * 
-   * @param newValue
-   *          the new filesize
-   */
   public void setFilesize(long newValue) {
     long oldValue = this.filesize;
     this.filesize = newValue;
@@ -468,59 +437,27 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     firePropertyChange(FILESIZE_IN_MB, oldValue, newValue);
   }
 
-  /**
-   * Gets the filesize in megabytes.
-   * 
-   * @return the filesize in megabytes
-   */
   public String getFilesizeInMegabytes() {
     DecimalFormat df = new DecimalFormat("#0.00");
     return df.format(filesize / (1024.0 * 1024.0)) + " M";
   }
 
-  /**
-   * gets the MediaFile type.
-   * 
-   * @return the type
-   */
   public MediaFileType getType() {
     return type;
   }
 
-  /**
-   * sets the MediaFile type.
-   * 
-   * @param type
-   *          the new type
-   */
   public void setType(MediaFileType type) {
     this.type = type;
   }
 
-  /**
-   * gets the stacking information.
-   * 
-   * @return the stacking
-   */
   public int getStacking() {
     return stacking;
   }
 
-  /**
-   * gets the stacking information.
-   * 
-   * @param stacking
-   *          the new stacking
-   */
   public void setStacking(int stacking) {
     this.stacking = stacking;
   }
 
-  /**
-   * get parsed subtitles.
-   * 
-   * @return the subtitles
-   */
   public List<MediaFileSubtitle> getSubtitles() {
     return subtitles;
   }
@@ -539,20 +476,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return sb.toString();
   }
 
-  /**
-   * sets the subtitle object
-   * 
-   * @param subtitles
-   */
   public void setSubtitles(List<MediaFileSubtitle> subtitles) {
     this.subtitles = subtitles;
   }
 
-  /**
-   * sets ONE subtitle
-   * 
-   * @param subtitle
-   */
   public void addSubtitle(MediaFileSubtitle subtitle) {
     this.subtitles.add(subtitle);
   }
@@ -564,11 +491,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.subtitles.clear();
   }
 
-  /**
-   * dies his mediafile has subtitles.
-   * 
-   * @return true, if successful
-   */
   public boolean hasSubtitles() {
     return (subtitles != null && subtitles.size() > 0);
   }
@@ -706,11 +628,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return "";
   }
 
-  /**
-   * gets the audio language<br>
-   * 
-   * @return the audio language
-   */
   public String getAudioLanguage() {
     if (audioStreams.size() > 0) {
       return audioStreams.get(0).getLanguage();
@@ -809,11 +726,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     firePropertyChange("exactVideoFormat", oldValue, newValue);
   }
 
-  /**
-   * returns the amount of audio channels.
-   * 
-   * @return the amount of audio channels (eg. 6ch)
-   */
   public String getAudioChannels() {
     if (audioStreams.size() > 0) {
       return audioStreams.get(0).getChannels();
@@ -845,30 +757,14 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return this.videoWidth + "x" + this.videoHeight;
   }
 
-  /**
-   * Gets the video width.
-   * 
-   * @return the video width
-   */
   public int getVideoWidth() {
     return videoWidth;
   }
 
-  /**
-   * Gets the video height.
-   * 
-   * @return the video height
-   */
   public int getVideoHeight() {
     return videoHeight;
   }
 
-  /**
-   * Sets the video width.
-   * 
-   * @param newValue
-   *          the new video width
-   */
   public void setVideoWidth(int newValue) {
     int oldValue = this.videoWidth;
     this.videoWidth = newValue;
@@ -876,12 +772,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     firePropertyChange("videoFormat", oldValue, newValue);
   }
 
-  /**
-   * Sets the video height.
-   * 
-   * @param newValue
-   *          the new video height
-   */
   public void setVideoHeight(int newValue) {
     int oldValue = this.videoHeight;
     this.videoHeight = newValue;
@@ -901,11 +791,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return ((float) this.videoWidth) / ((float) this.videoHeight) > 1.37f ? true : false;
   }
 
-  /**
-   * returns the aspect ratio.
-   * 
-   * @return the aspect ratio
-   */
   public Float getAspectRatio() {
     Float ret = 0F;
     if (this.videoWidth == 0 || this.videoHeight == 0) {
@@ -1423,11 +1308,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return getFile().exists();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object mf2) {
     if ((mf2 != null) && (mf2 instanceof MediaFile)) {
@@ -1436,11 +1316,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Comparable#compareTo(java.lang.Object)
-   */
   @Override
   public int compareTo(MediaFile mf2) {
     return this.getFile().compareTo(mf2.getFile());

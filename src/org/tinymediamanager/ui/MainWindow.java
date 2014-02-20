@@ -505,6 +505,11 @@ public class MainWindow extends JFrame {
   }
 
   private ProcessBuilder getPBforTMMrestart() {
+    File f = new File("tmm.jar");
+    if (!f.exists()) {
+      LOGGER.error("cannot restart TMM - tmm.jar not found.");
+      return null; // when we are in SVN, return null = normal close
+    }
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
     arguments.add("-jar");
@@ -515,6 +520,11 @@ public class MainWindow extends JFrame {
   }
 
   private ProcessBuilder getPBforTMMupdate() {
+    File f = new File("getdown.jar");
+    if (!f.exists()) {
+      LOGGER.error("cannot start updater - getdown.jar not found.");
+      return null; // when we are in SVN, return null = normal close
+    }
     List<String> arguments = getJVMArguments();
     arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
     arguments.add("-jar");

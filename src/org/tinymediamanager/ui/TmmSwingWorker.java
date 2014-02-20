@@ -23,17 +23,15 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * The Class TmmSwingWorker.
  * 
  * @author Manuel Laggner
  */
 public abstract class TmmSwingWorker<T, V> extends SwingWorker<T, V> {
-  private JLabel       lblProgressAction;
-  private JProgressBar progressBar;
-  private JButton      btnCancelTask;
+  private JLabel       lblProgressAction = null;
+  private JProgressBar progressBar       = null;
+  private JButton      btnCancelTask     = null;
 
   /**
    * Sets the references to the ui elements.
@@ -67,12 +65,16 @@ public abstract class TmmSwingWorker<T, V> extends SwingWorker<T, V> {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          if (!StringUtils.isEmpty(description)) {
+          if (lblProgressAction != null && description != null) {
             lblProgressAction.setText(description);
           }
-          progressBar.setVisible(true);
-          progressBar.setIndeterminate(true);
-          btnCancelTask.setVisible(true);
+          if (progressBar != null) {
+            progressBar.setVisible(true);
+            progressBar.setIndeterminate(true);
+          }
+          if (btnCancelTask != null) {
+            btnCancelTask.setVisible(true);
+          }
         }
       });
     }
@@ -89,15 +91,18 @@ public abstract class TmmSwingWorker<T, V> extends SwingWorker<T, V> {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          if (!StringUtils.isEmpty(description)) {
+          if (lblProgressAction != null && description != null) {
             lblProgressAction.setText(description);
           }
-
-          progressBar.setVisible(true);
-          progressBar.setIndeterminate(false);
-          progressBar.setMaximum(max);
-          progressBar.setValue(progress);
-          btnCancelTask.setVisible(true);
+          if (progressBar != null) {
+            progressBar.setVisible(true);
+            progressBar.setIndeterminate(false);
+            progressBar.setMaximum(max);
+            progressBar.setValue(progress);
+          }
+          if (btnCancelTask != null) {
+            btnCancelTask.setVisible(true);
+          }
         }
       });
     }
@@ -116,10 +121,16 @@ public abstract class TmmSwingWorker<T, V> extends SwingWorker<T, V> {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          lblProgressAction.setText(description);
-          progressBar.setVisible(true);
-          progressBar.setValue(value);
-          btnCancelTask.setVisible(true);
+          if (lblProgressAction != null && description != null) {
+            lblProgressAction.setText(description);
+          }
+          if (progressBar != null) {
+            progressBar.setVisible(true);
+            progressBar.setValue(value);
+          }
+          if (btnCancelTask != null) {
+            btnCancelTask.setVisible(true);
+          }
         }
       });
     }
@@ -133,12 +144,30 @@ public abstract class TmmSwingWorker<T, V> extends SwingWorker<T, V> {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          lblProgressAction.setText("");
-          progressBar.setIndeterminate(false);
-          progressBar.setVisible(false);
-          btnCancelTask.setVisible(false);
+          if (lblProgressAction != null) {
+            lblProgressAction.setText("");
+          }
+          if (progressBar != null) {
+            progressBar.setIndeterminate(false);
+            progressBar.setVisible(false);
+          }
+          if (btnCancelTask != null) {
+            btnCancelTask.setVisible(false);
+          }
         }
       });
     }
+  }
+
+  public JLabel getProgressActionLabel() {
+    return lblProgressAction;
+  }
+
+  public JProgressBar getProgressBar() {
+    return progressBar;
+  }
+
+  public JButton getActionButton() {
+    return btnCancelTask;
   }
 }

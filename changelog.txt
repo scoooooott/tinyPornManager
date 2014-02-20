@@ -1,3 +1,40 @@
+Version 2.5.3
+=======================
++ activated SWT loading for all platforms (put a proper swt.jar from the eclipse project in the lib folder to access native file dialogs)
++ translations: added russian (incomplete)
+x ArtworkPanel: change ordering (highres before thumbs)
+x fix some artwork failures with movie sets
+x fix errors on metadata scraping
+x catch some errors from tmdb
+x houskeeping: correct tv episodes with wrong path (if you still have some weird behavior with TV shows, try to remove and readd the TV shows)
+x some other minor improvements and stabilization fixes
+
+Version 2.5.2
+=======================
++ added a lightbox effect, when clicking on an artwork in the movie/movie set/tv show panel (see http://www.tinymediamanager.org/index.php/image-preview-lightbox/)
++ updated mediainfo libs
++ (movie) when removing the last movie from a movie set, the movie set is also removed
++ (movie) added filter for certifications 
++ (movie) added option to fall back to another scraper when not search result has been found
++ (TV show) added episodeguide to the TV show nfo
++ (movie) added languages (spoken languages) to the nfo
++ (TV show) added function to rename complete seasons
++ (movie) added double click event (in the table) to open the movie editor
++ (movie) added a better unwatched logo
++ added comments to the NFO
++ added movie filename to the movie chooser dialog (for better support of multi movie dirs)
+x when renaming TV shows, some episode paths still pointed to the old path
+x sometimes changing movie/TV show artwork wasn't updated internally
+x better renaming of TV show disc images
+x improved performance when removing multiple movies
+x some inconsistances with linking of movies and moviesets
+x in movie/TV show chooser - prevent strange behaviour when changing the scraper while another search is active
+x added producers also to the nfo
+x changed TV show - certification settings (thetvdb only provides US certs..)
+x prevent some exceptions when renaming/filtering TV shows
+x parsing of multi movie dirs
+x wrong saving of the tmdb id since 2.5.1
+
 Version 2.5.1
 =======================
 x fixed a problem where mediainfo could not be loaded

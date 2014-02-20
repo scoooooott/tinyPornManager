@@ -1,10 +1,14 @@
 eclipse.preferences.version=1
 encoding//locale/messages_cs.properties=UTF-8
 encoding//locale/messages_de.properties=UTF-8
+encoding//locale/messages_es.properties=UTF-8
 encoding//locale/messages_fr.properties=UTF-8
+encoding//locale/messages_it.properties=UTF-8
 encoding//locale/messages_ko.properties=UTF-8
 encoding//locale/messages_nl.properties=UTF-8
+encoding//locale/messages_no.properties=UTF-8
 encoding//locale/messages_pt.properties=UTF-8
+encoding//locale/messages_ru.properties=UTF-8
 encoding//locale/messages_sk.properties=UTF-8
 encoding//locale/messages_vi.properties=UTF-8
 encoding//src/messages.properties=UTF-8

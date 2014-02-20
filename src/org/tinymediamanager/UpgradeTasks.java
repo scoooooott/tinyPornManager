@@ -77,6 +77,7 @@ public class UpgradeTasks {
     }
 
     if (compareVersion(v, "2.5") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.5");
       // upgrade tasks for movies; added with 2.5;
       Globals.entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
@@ -87,6 +88,7 @@ public class UpgradeTasks {
     }
 
     if (compareVersion(v, "2.5.2") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.5.2");
       // clean tmdb id
       Globals.entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
@@ -104,6 +106,7 @@ public class UpgradeTasks {
     }
 
     if (compareVersion(v, "2.5.3") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.5.3");
       // upgrade tasks for trailers; remove extension from quality
       Globals.entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
