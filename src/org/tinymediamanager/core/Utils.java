@@ -22,6 +22,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -50,6 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.LaunchUtil;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.util.StrgUtils;
@@ -788,6 +791,67 @@ public class Utils {
     int minutes = (int) (sec / 60) % 60;
     int hours = (int) (sec / (60 * 60)) % 24;
     return String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+  }
+
+  /**
+   * create a ProcessBuilder for restarting TMM
+   * 
+   * @return the process builder
+   */
+  public static ProcessBuilder getPBforTMMrestart() {
+    File f = new File("tmm.jar");
+    if (!f.exists()) {
+      LOGGER.error("cannot restart TMM - tmm.jar not found.");
+      return null; // when we are in SVN, return null = normal close
+    }
+    List<String> arguments = getJVMArguments();
+    arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
+    arguments.add("-jar");
+    arguments.add("tmm.jar");
+    ProcessBuilder pb = new ProcessBuilder(arguments);
+    pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
+    return pb;
+  }
+
+  /**
+   * create a ProcessBuilder for restarting TMM to the updater
+   * 
+   * @return the process builder
+   */
+  public static ProcessBuilder getPBforTMMupdate() {
+    File f = new File("getdown.jar");
+    if (!f.exists()) {
+      LOGGER.error("cannot start updater - getdown.jar not found.");
+      return null; // when we are in SVN, return null = normal close
+    }
+    List<String> arguments = getJVMArguments();
+    arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
+    arguments.add("-jar");
+    arguments.add("getdown.jar");
+    arguments.add(".");
+    ProcessBuilder pb = new ProcessBuilder(arguments);
+    pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
+    return pb;
+  }
+
+  /**
+   * gets all the JVM parameters used for starting TMM<br>
+   * like -Dfile.encoding=UTF8 or others<br>
+   * needed for restarting tmm :)
+   * 
+   * @return list of jvm parameters
+   */
+  private static List<String> getJVMArguments() {
+    RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+    List<String> arguments = new ArrayList<String>(runtimeMxBean.getInputArguments());
+    // fixtate some
+    if (!arguments.contains("-Djava.net.preferIPv4Stack=true")) {
+      arguments.add("-Djava.net.preferIPv4Stack=true");
+    }
+    if (!arguments.contains("-Dfile.encoding=UTF-8")) {
+      arguments.add("-Dfile.encoding=UTF-8");
+    }
+    return arguments;
   }
 
 }

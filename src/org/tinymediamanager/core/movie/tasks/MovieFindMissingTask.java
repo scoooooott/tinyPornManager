@@ -15,6 +15,21 @@
  */
 package org.tinymediamanager.core.movie.tasks;
 
+/*
+ * Copyright 2012 - 2014 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,28 +52,23 @@ import org.tinymediamanager.core.movie.MovieList;
  * @author Myron Boyle
  */
 
-public class MissingMovieTask extends TmmThreadPool {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MissingMovieTask.class);
+public class MovieFindMissingTask extends TmmThreadPool {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieFindMissingTask.class);
 
   private List<String>        dataSources;
   private MovieList           movieList;
 
-  public MissingMovieTask() {
+  public MovieFindMissingTask() {
     movieList = MovieList.getInstance();
     dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
   }
 
-  public MissingMovieTask(String datasource) {
+  public MovieFindMissingTask(String datasource) {
     movieList = MovieList.getInstance();
     dataSources = new ArrayList<String>(1);
     dataSources.add(datasource);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#doInBackground()
-   */
   @Override
   public Void doInBackground() {
     try {
@@ -124,9 +134,6 @@ public class MissingMovieTask extends TmmThreadPool {
     return mv;
   }
 
-  /*
-   * Executed in event dispatching thread
-   */
   @Override
   public void done() {
     stopProgressBar();
@@ -141,5 +148,4 @@ public class MissingMovieTask extends TmmThreadPool {
   public void callback(Object obj) {
     startProgressBar((String) obj, getTaskcount(), getTaskdone());
   }
-
 }

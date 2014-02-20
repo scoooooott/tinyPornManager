@@ -69,6 +69,7 @@ import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieExportAction;
+import org.tinymediamanager.ui.movies.actions.MovieFindMissingAction;
 import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
 import org.tinymediamanager.ui.movies.actions.MovieRemoveAction;
 import org.tinymediamanager.ui.movies.actions.MovieRenameAction;
@@ -441,6 +442,7 @@ public class MoviePanel extends JPanel {
     // menu items
     menu.add(actionUpdateDataSources2);
     final JMenu menuUpdateDatasources = new JMenu(BUNDLE.getString("update.datasource")); //$NON-NLS-1$
+    final JMenu menuFindMissingMovies = new JMenu(BUNDLE.getString("movie.findmissing")); //$NON-NLS-1$
     menuUpdateDatasources.addMenuListener(new MenuListener() {
       @Override
       public void menuCanceled(MenuEvent arg0) {
@@ -455,12 +457,18 @@ public class MoviePanel extends JPanel {
         menuUpdateDatasources.removeAll();
         for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
           JMenuItem item = new JMenuItem(new MovieUpdateSingleDatasourceAction(ds));
-
           menuUpdateDatasources.add(item);
+
+          item = new JMenuItem(new MovieFindMissingAction(ds));
+          menuFindMissingMovies.add(item);
+
         }
       }
     });
     menu.add(menuUpdateDatasources);
+
+    menu.add(new MovieFindMissingAction());
+    menu.add(menuFindMissingMovies);
 
     menu.addSeparator();
 

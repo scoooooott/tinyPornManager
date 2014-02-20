@@ -17,7 +17,6 @@ package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -32,8 +31,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -66,8 +63,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.LaunchUtil;
-import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -76,12 +71,14 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
+import org.tinymediamanager.ui.actions.ClearDatabaseAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.ClearUrlCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExitAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
+import org.tinymediamanager.ui.actions.RegisterDonatorVersionAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.components.LightBoxPanel;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
@@ -182,6 +179,7 @@ public class MainWindow extends JFrame {
     JMenu mnTmm = new JMenu("tinyMediaManager");
     menuBar.add(mnTmm);
 
+    mnTmm.add(new RegisterDonatorVersionAction());
     mnTmm.add(new SettingsAction());
     mnTmm.addSeparator();
     mnTmm.add(new ExitAction());
@@ -189,48 +187,7 @@ public class MainWindow extends JFrame {
 
     // tools menu
     JMenu tools = new JMenu(BUNDLE.getString("tmm.tools")); //$NON-NLS-1$
-    JMenuItem clearDatabase = new JMenuItem(BUNDLE.getString("tmm.cleardatabase")); //$NON-NLS-1$
-    tools.add(clearDatabase);
-    clearDatabase.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        // display warning popup
-        int answer = JOptionPane.showConfirmDialog(MainWindow.this, BUNDLE.getString("tmm.cleardatabase.hint"),
-            BUNDLE.getString("tmm.cleardatabase"), JOptionPane.YES_NO_OPTION);
-        if (answer != JOptionPane.OK_OPTION) {
-          return;
-        }
-
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        // delete the database
-        try {
-          Globals.shutdownDatabase();
-          File db = new File(Constants.DB);
-          if (db.exists()) {
-            db.delete();
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.cleardatabase.info")); //$NON-NLS-1$
-        }
-        catch (Exception e) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.cleardatabase.error")); //$NON-NLS-1$
-          // open the tmm folder
-          File path = new File(".");
-          try {
-            // check whether this location exists
-            if (path.exists()) {
-              TmmUIHelper.openFile(path);
-            }
-          }
-          catch (Exception ex) {
-            LOGGER.warn(ex.getMessage());
-            MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":",
-                ex.getLocalizedMessage() }));
-          }
-        }
-        closeTmmAndStart(getPBforTMMrestart());
-      }
-    });
+    tools.add(new ClearDatabaseAction());
 
     JMenu cache = new JMenu(BUNDLE.getString("tmm.cache")); //$NON-NLS-1$
     tools.add(cache);
@@ -352,7 +309,7 @@ public class MainWindow extends JFrame {
                   LOGGER.info("Updating...");
 
                   // spawn getdown and exit TMM
-                  closeTmmAndStart(getPBforTMMupdate());
+                  closeTmmAndStart(Utils.getPBforTMMupdate());
                 }
               }
             }
@@ -484,62 +441,11 @@ public class MainWindow extends JFrame {
     }, AWTEvent.MOUSE_EVENT_MASK);
   }
 
-  /**
-   * gets all the JVM parameters used for starting TMM<br>
-   * like -Dfile.encoding=UTF8 or others<br>
-   * needed for restarting tmm :)
-   * 
-   * @return list of jvm parameters
-   */
-  private List<String> getJVMArguments() {
-    RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-    List<String> arguments = new ArrayList<String>(runtimeMxBean.getInputArguments());
-    // fixtate some
-    if (!arguments.contains("-Djava.net.preferIPv4Stack=true")) {
-      arguments.add("-Djava.net.preferIPv4Stack=true");
-    }
-    if (!arguments.contains("-Dfile.encoding=UTF-8")) {
-      arguments.add("-Dfile.encoding=UTF-8");
-    }
-    return arguments;
-  }
-
-  private ProcessBuilder getPBforTMMrestart() {
-    File f = new File("tmm.jar");
-    if (!f.exists()) {
-      LOGGER.error("cannot restart TMM - tmm.jar not found.");
-      return null; // when we are in SVN, return null = normal close
-    }
-    List<String> arguments = getJVMArguments();
-    arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
-    arguments.add("-jar");
-    arguments.add("tmm.jar");
-    ProcessBuilder pb = new ProcessBuilder(arguments);
-    pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
-    return pb;
-  }
-
-  private ProcessBuilder getPBforTMMupdate() {
-    File f = new File("getdown.jar");
-    if (!f.exists()) {
-      LOGGER.error("cannot start updater - getdown.jar not found.");
-      return null; // when we are in SVN, return null = normal close
-    }
-    List<String> arguments = getJVMArguments();
-    arguments.add(0, LaunchUtil.getJVMPath()); // java exe before JVM args
-    arguments.add("-jar");
-    arguments.add("getdown.jar");
-    arguments.add(".");
-    ProcessBuilder pb = new ProcessBuilder(arguments);
-    pb.directory(new File("").getAbsoluteFile()); // set working directory (current TMM dir)
-    return pb;
-  }
-
   public void closeTmm() {
     closeTmmAndStart(null);
   }
 
-  private void closeTmmAndStart(ProcessBuilder pb) {
+  public void closeTmmAndStart(ProcessBuilder pb) {
     int confirm = 0;
     // if there are some threads running, display exit confirmation
     if (Globals.poolRunning()) {
