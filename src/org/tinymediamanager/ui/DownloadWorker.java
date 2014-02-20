@@ -15,15 +15,26 @@
  */
 package org.tinymediamanager.ui;
 
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.TmmTaskManager;
+import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.util.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
@@ -38,6 +49,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
   private String              url;
   private File                file;
   private static final Logger LOGGER = LoggerFactory.getLogger(DownloadWorker.class);
+  private boolean             cancel = false;
 
   /**
    * Downloads an url to a file, and does correct http encoding on querystring.<br>
@@ -51,6 +63,20 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
   public DownloadWorker(String url, File toFile) {
     this.url = url;
     this.file = toFile;
+    if (!GraphicsEnvironment.isHeadless()) {
+      JButton btnCancel = new JButton(IconManager.PROCESS_STOP);
+      btnCancel.setContentAreaFilled(false);
+      btnCancel.setBorderPainted(false);
+      btnCancel.setBorder(null);
+      btnCancel.setMargin(new Insets(0, 2, 0, 2));
+      btnCancel.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          DownloadWorker.this.cancel();
+        }
+      });
+      setUIElements(new JLabel("Download queued"), new JProgressBar(0, 0), btnCancel);
+    }
   }
 
   // http://docs.oracle.com/javase/6/docs/api/javax/swing/SwingWorker.html
@@ -59,15 +85,25 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
   @Override
   protected Void doInBackground() {
     long bytesDone = 0;
+
     try {
-      LOGGER.info("Downloading " + url + " to " + file);
+      // if we can detect the extension frum url, set it already
+      String ext = UrlUtil.getExtension(url);
+      if (!ext.isEmpty()) {
+        file = new File(file.getParent(), file.getName() + "." + ext);
+      }
+
+      LOGGER.info("Downloading " + url + " to " + file + ext);
       StreamingUrl u = new StreamingUrl(UrlUtil.getURIEncoded(url).toASCIIString());
       File tempFile = new File(file.getAbsolutePath() + ".part");
 
-      InputStream is = u.getInputStream();
+      URLConnection connection = u.getUrl().openConnection();
+      connection.connect();
 
-      long length = u.getContentLength();
+      long length = connection.getContentLength();
       LOGGER.debug("Content length: " + length);
+
+      InputStream is = u.getInputStream();
 
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
       FileOutputStream outputStream = new FileOutputStream(tempFile);
@@ -90,9 +126,17 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
         FileUtils.deleteQuietly(tempFile);
       }
       else {
+        // generate MF + MI
+        MediaFile mf = new MediaFile(tempFile);
+        mf.gatherMediaInformation();
+        if (ext.isEmpty()) { // no extension from url? take from MI (hopefully it is a supported file ;)
+          file = new File(file.getParent(), file.getName() + "." + mf.getContainerFormat());
+        }
+
         boolean ok = Utils.moveFileSafe(tempFile, file);
         if (ok) {
           FileUtils.deleteQuietly(tempFile);
+          mf.setFile(file); // set object to final file, and add to .. uhm.. yes, what? movies? tv?...?
         }
         else {
           // TODO: well, yes, what to do? Download was ok, but moving failed...
@@ -106,6 +150,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
     }
     catch (Exception e) {
       // muh
+      stopProgressBar();
     }
     return null;
   }
@@ -114,6 +159,15 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
   protected void process(List<ProgressType> chunks) {
     // just get last - always cumulative
     ProgressType p = chunks.get(chunks.size() - 1);
+
+    if (p.total == 0) {
+      // we don't have the size of the download; setIndeterminate
+      startProgressBar("downloaded " + p.total / 1024 + "k");
+    }
+    else {
+      startProgressBar("Download " + p.percent + "%", 100, p.percent);
+    }
+
     System.out.println(p.done);
     System.out.println(p.total); // if total = 0, we don't have the size of the download; setIndeterminate
     System.out.println(p.percent);
@@ -121,12 +175,15 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
 
   @Override
   public void cancel() {
-    // TODO Auto-generated method stub
+    this.cancel = true;
+    stopProgressBar();
+    TmmTaskManager.removeDownloadTask(this);
   }
 
   @Override
   public void done() {
-    // TODO Auto-generated method stub
+    stopProgressBar();
+    TmmTaskManager.removeDownloadTask(this);
   }
 
   /**

@@ -22,6 +22,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -36,12 +37,15 @@ import javax.swing.event.ListSelectionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.TmmTaskManager;
+import org.tinymediamanager.core.License;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.UrlUtil;
+import org.tinymediamanager.ui.DownloadWorker;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -168,7 +172,12 @@ public class MovieTrailerPanel extends JPanel {
 
       switch (column) {
         case 0:
-          return IconManager.DOWNLOAD;
+          if (License.isValid()) {
+            return IconManager.DOWNLOAD;
+          }
+          else {
+            return IconManager.DOWNLOAD_DISABLED;
+          }
 
         case 1:
           return IconManager.PLAY_SMALL;
@@ -241,12 +250,15 @@ public class MovieTrailerPanel extends JPanel {
       if (col == 0) {
         row = table.convertRowIndexToModel(row);
         MediaTrailer trailer = trailerEventList.get(row);
-        // FIXME start download
-        JOptionPane.showMessageDialog(null, "DL of " + trailer.getUrl() + " started");
 
-        // DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(path, "trailer" + UrlUtil.getExtension(url)));
-        // TmmTaskManager.addDownloadTask(task);
-
+        if (License.isValid()) {
+          Movie m = movieSelectionModel.getSelectedMovie();
+          DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(m.getPath(), m.getTrailerBasename() + "-trailer"));
+          TmmTaskManager.addDownloadTask(task);
+        }
+        else {
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.donatorfunction.hint"));
+        }
       }
 
       // click on the play button

@@ -1532,6 +1532,22 @@ public class Movie extends MediaEntity {
   }
 
   /**
+   * get trailer name (w/o extension)<br>
+   * &lt;moviefile&gt;-trailer.ext
+   * 
+   * @param nfo
+   *          the nfo
+   * @return the nfo filename
+   */
+  public String getTrailerBasename() {
+    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
+    if (mfs != null && mfs.size() > 0) {
+      return mfs.get(0).getBasename();
+    }
+    return null;
+  }
+
+  /**
    * Write images.
    * 
    * @param poster
