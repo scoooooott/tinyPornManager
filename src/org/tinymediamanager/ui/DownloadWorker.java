@@ -34,6 +34,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.TmmTaskManager;
+import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.util.StreamingUrl;
@@ -48,6 +49,7 @@ import org.tinymediamanager.ui.DownloadWorker.ProgressType;
 public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
   private String              url;
   private File                file;
+  private MediaEntity         media;
   private static final Logger LOGGER = LoggerFactory.getLogger(DownloadWorker.class);
   private boolean             cancel = false;
 
@@ -61,8 +63,25 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
    *          the file to save to
    */
   public DownloadWorker(String url, File toFile) {
+    this(url, toFile, null);
+  }
+
+  /**
+   * Downloads an url to a file, and does correct http encoding on querystring.<br>
+   * Adds file as new MediaFile to submitted MediaEntity<br>
+   * Downloads to cache file first, and does then the renaming.
+   * 
+   * @param url
+   *          the http url as string
+   * @param toFile
+   *          the file to save to
+   * @param addToMe
+   *          the MediaEntity (like movie) where to add this file
+   */
+  public DownloadWorker(String url, File toFile, MediaEntity addToMe) {
     this.url = url;
     this.file = toFile;
+    this.media = addToMe;
     if (!GraphicsEnvironment.isHeadless()) {
       JButton btnCancel = new JButton(IconManager.PROCESS_STOP);
       btnCancel.setContentAreaFilled(false);
@@ -136,7 +155,12 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
         boolean ok = Utils.moveFileSafe(tempFile, file);
         if (ok) {
           FileUtils.deleteQuietly(tempFile);
-          mf.setFile(file); // set object to final file, and add to .. uhm.. yes, what? movies? tv?...?
+          if (media != null) {
+            mf.setFile(file);
+            mf.setType(mf.parseType()); // reparse with actual file
+            media.addToMediaFiles(mf);
+            media.saveToDb();
+          }
         }
         else {
           // TODO: well, yes, what to do? Download was ok, but moving failed...

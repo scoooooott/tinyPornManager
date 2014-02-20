@@ -253,7 +253,7 @@ public class MovieTrailerPanel extends JPanel {
 
         if (License.isValid()) {
           Movie m = movieSelectionModel.getSelectedMovie();
-          DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(m.getPath(), m.getTrailerBasename() + "-trailer"));
+          DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(m.getPath(), m.getTrailerBasename() + "-trailer"), m);
           TmmTaskManager.addDownloadTask(task);
         }
         else {
