@@ -170,7 +170,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       FileOutputStream outputStream = new FileOutputStream(tempFile);
       int count = 0;
       int percent = 0;
-      byte buffer[] = new byte[1024]; // 10kb
+      byte buffer[] = new byte[1024];
 
       while ((count = bufferedInputStream.read(buffer, 0, buffer.length)) != -1 && !isCancelled()) {
         outputStream.write(buffer, 0, count);
@@ -208,6 +208,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
           FileUtils.deleteQuietly(tempFile);
           if (media != null) {
             MediaFile mf = new MediaFile(file, fileType);
+            mf.gatherMediaInformation();
             media.removeFromMediaFiles(mf); // remove old (possibly same) file
             media.addToMediaFiles(mf); // add file, but maybe with other MI values
             media.saveToDb();
