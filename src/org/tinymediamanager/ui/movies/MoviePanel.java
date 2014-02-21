@@ -80,6 +80,7 @@ import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
+import org.tinymediamanager.ui.movies.actions.RenamePreviewAction;
 
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
@@ -503,6 +504,7 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionBatchEdit);
     popupMenu.add(actionRewriteNfo);
     popupMenu.add(actionRename2);
+    popupMenu.add(new RenamePreviewAction());
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
     popupMenu.addSeparator();
