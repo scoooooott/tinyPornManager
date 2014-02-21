@@ -180,7 +180,9 @@ public class MainWindow extends JFrame {
     JMenu mnTmm = new JMenu("tinyMediaManager");
     menuBar.add(mnTmm);
 
-    mnTmm.add(new RegisterDonatorVersionAction());
+    if (!Globals.isDonator()) {
+      mnTmm.add(new RegisterDonatorVersionAction());
+    }
     mnTmm.add(new SettingsAction());
     mnTmm.addSeparator();
     mnTmm.add(new ExitAction());

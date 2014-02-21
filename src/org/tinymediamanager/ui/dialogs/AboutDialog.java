@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -32,7 +33,9 @@ import javax.swing.border.EmptyBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.core.License;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -67,7 +70,7 @@ public class AboutDialog extends JDialog {
     setName("aboutDialog");
     setResizable(false);
     setModal(true);
-    setBounds(100, 100, 643, 431);
+    setBounds(100, 100, 544, 408);
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -94,6 +97,15 @@ public class AboutDialog extends JDialog {
     {
       JLabel lblByManuel = new JLabel("\u00A9 2012 - 2013 by Manuel Laggner"); //$NON-NLS-1$
       contentPanel.add(lblByManuel, "4, 4, 3, 1, center, default");
+    }
+    {
+      if (Globals.isDonator()) {
+        Properties p = License.decrypt();
+        // p.list(System.out);
+        JLabel lblRegged = new JLabel(BUNDLE.getString("tmm.registeredto") + " " + p.getProperty("user") + " (" + p.getProperty("email") + ")"); //$NON-NLS-1$
+        lblRegged.setFont(lblRegged.getFont().deriveFont(Font.BOLD).deriveFont(14f));
+        contentPanel.add(lblRegged, "4, 6, 3, 1, center, default");
+      }
     }
     {
       JLabel lblVersion = new JLabel(BUNDLE.getString("tmm.version") + ": " + ReleaseInfo.getRealVersion()); //$NON-NLS-1$ 
