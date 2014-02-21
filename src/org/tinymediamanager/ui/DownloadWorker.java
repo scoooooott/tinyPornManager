@@ -24,18 +24,25 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmTaskManager;
 import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.util.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
@@ -50,6 +57,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
   private String              url;
   private File                file;
   private MediaEntity         media;
+  private MediaFileType       fileType;
   private static final Logger LOGGER = LoggerFactory.getLogger(DownloadWorker.class);
   private boolean             cancel = false;
 
@@ -63,7 +71,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
    *          the file to save to
    */
   public DownloadWorker(String url, File toFile) {
-    this(url, toFile, null);
+    this(url, toFile, null, null);
   }
 
   /**
@@ -77,11 +85,14 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
    *          the file to save to
    * @param addToMe
    *          the MediaEntity (like movie) where to add this file
+   * @param expectedFiletype
+   *          the MediaFileType what we expect (video, trailer, graphic), so we can react on it
    */
-  public DownloadWorker(String url, File toFile, MediaEntity addToMe) {
+  public DownloadWorker(String url, File toFile, MediaEntity addToMe, MediaFileType expectedFiletype) {
     this.url = url;
     this.file = toFile;
     this.media = addToMe;
+    this.fileType = expectedFiletype;
     if (!GraphicsEnvironment.isHeadless()) {
       JButton btnCancel = new JButton(IconManager.PROCESS_STOP);
       btnCancel.setContentAreaFilled(false);
@@ -106,13 +117,25 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
     long bytesDone = 0;
 
     try {
-      // if we can detect the extension frum url, set it already
-      String ext = UrlUtil.getExtension(url);
-      if (!ext.isEmpty()) {
-        file = new File(file.getParent(), file.getName() + "." + ext);
+      // if file extension is empty, detect from url, or content type
+      String ext = FilenameUtils.getExtension(file.getName());
+      if (ext != null && ext.length() > 4) {
+        ext = ""; // no extension when longer than 4 chars!
+      }
+      if (ext.isEmpty()) {
+        ext = UrlUtil.getExtension(url);
+        if (!ext.isEmpty()) {
+          if (Globals.settings.getAllSupportedFileTypes().contains("." + ext)) {
+            file = new File(file.getParent(), file.getName() + "." + ext);
+          }
+          else {
+            // unsupported filetype, eg php/asp/cgi script
+            ext = "";
+          }
+        }
       }
 
-      LOGGER.info("Downloading " + url + " to " + file + ext);
+      LOGGER.info("Downloading " + url + " to " + file);
       StreamingUrl u = new StreamingUrl(UrlUtil.getURIEncoded(url).toASCIIString());
       File tempFile = new File(file.getAbsolutePath() + ".part");
 
@@ -121,6 +144,25 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
 
       long length = connection.getContentLength();
       LOGGER.debug("Content length: " + length);
+      String type = connection.getContentType();
+      LOGGER.debug("Content type: " + type);
+      if (ext.isEmpty()) {
+        // still empty? try to parse from mime header
+        if (type.startsWith("video/")) {
+          ext = type.split("/")[1];
+          file = new File(file.getParent(), file.getName() + "." + ext);
+        }
+      }
+
+      // trace server headers - config.xml loglevel=5000
+      if (LOGGER.isTraceEnabled()) {
+        Map<String, List<String>> headerfields = connection.getHeaderFields();
+        Set<Entry<String, List<String>>> headers = headerfields.entrySet();
+        for (Iterator<Entry<String, List<String>>> i = headers.iterator(); i.hasNext();) {
+          Entry<String, List<String>> map = i.next();
+          LOGGER.trace(map.getKey() + " : " + map.getValue());
+        }
+      }
 
       InputStream is = u.getInputStream();
 
@@ -128,7 +170,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       FileOutputStream outputStream = new FileOutputStream(tempFile);
       int count = 0;
       int percent = 0;
-      byte buffer[] = new byte[1024];
+      byte buffer[] = new byte[1024]; // 10kb
 
       while ((count = bufferedInputStream.read(buffer, 0, buffer.length)) != -1 && !isCancelled()) {
         outputStream.write(buffer, 0, count);
@@ -140,32 +182,41 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       }
       outputStream.close();
       is.close();
+
       if (isCancelled()) {
         // delete half downloaded file
         FileUtils.deleteQuietly(tempFile);
       }
       else {
-        // generate MF + MI
-        MediaFile mf = new MediaFile(tempFile);
-        mf.gatherMediaInformation();
-        if (ext.isEmpty()) { // no extension from url? take from MI (hopefully it is a supported file ;)
-          file = new File(file.getParent(), file.getName() + "." + mf.getContainerFormat());
+        if (ext.isEmpty()) {
+          // STILL empty? hmpf...
+          // now we have a chicken-egg problem:
+          // MediaInfo needs MF type to correctly fetch extension
+          // to detect MF type, we need the extension
+          // so we are forcing to read the container type direct on tempFile
+          MediaFile mf = new MediaFile(tempFile);
+          mf.setContainerFormatDirect(); // force direct read of mediainfo - regardless of filename!!!
+          ext = mf.getContainerFormat();
+          if (!ext.isEmpty()) {
+            file = new File(file.getParent(), file.getName() + "." + ext);
+          }
         }
 
+        FileUtils.deleteQuietly(file); // delete existing file
         boolean ok = Utils.moveFileSafe(tempFile, file);
         if (ok) {
           FileUtils.deleteQuietly(tempFile);
           if (media != null) {
-            mf.setFile(file);
-            mf.setType(mf.parseType()); // reparse with actual file
-            media.addToMediaFiles(mf);
+            MediaFile mf = new MediaFile(file, fileType);
+            media.removeFromMediaFiles(mf); // remove old (possibly same) file
+            media.addToMediaFiles(mf); // add file, but maybe with other MI values
             media.saveToDb();
           }
         }
         else {
-          // TODO: well, yes, what to do? Download was ok, but moving failed...
+          LOGGER.warn("Download to '" + tempFile + "' was ok, but couldn't move to '" + file + "'");
         }
-      }
+      } // end isCancelled
 
       // close the url connections
       if (u != null) {
@@ -192,9 +243,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       startProgressBar("Download " + p.percent + "%", 100, p.percent);
     }
 
-    System.out.println(p.done);
-    System.out.println(p.total); // if total = 0, we don't have the size of the download; setIndeterminate
-    System.out.println(p.percent);
+    System.out.println(p.done + "/" + p.total + " (" + p.percent + "%)");
   }
 
   @Override

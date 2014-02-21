@@ -555,6 +555,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    *         <b>OR AN EMPTY STRING IF MEDIAINFO COULD NOT BE LOADED</b> (never NULL)
    */
   private String getMediaInfo(StreamKind streamKind, int streamNumber, String... keys) {
+    if (miSnapshot == null) {
+      getMediaInfo(); // load snapshot
+    }
     for (String key : keys) {
       List<Map<String, String>> stream = miSnapshot.get(streamKind);
       if (stream != null) {
@@ -654,6 +657,17 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    */
   public String getContainerFormat() {
     return this.containerFormat;
+  }
+
+  /**
+   * sets the container format (e.g. avi, mkv mka mks, OGG, etc.)<br>
+   * <b>DOES A DIRECT CALL TO MEDIAINFO</b>
+   * 
+   * @return the container format
+   */
+  public void setContainerFormatDirect() {
+    String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
+    setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
   }
 
   /**

@@ -271,6 +271,9 @@ public class Settings extends AbstractModelObject {
    *          the type
    */
   public void addVideoFileTypes(String type) {
+    if (!type.startsWith(".")) {
+      type = "." + type;
+    }
     if (!videoFileTypes.contains(type)) {
       videoFileTypes.add(type);
       firePropertyChange(VIDEO_FILE_TYPE, null, videoFileTypes);
@@ -304,6 +307,9 @@ public class Settings extends AbstractModelObject {
    *          the type
    */
   public void addAudioFileTypes(String type) {
+    if (!type.startsWith(".")) {
+      type = "." + type;
+    }
     if (!audioFileTypes.contains(type)) {
       audioFileTypes.add(type);
       firePropertyChange(AUDIO_FILE_TYPE, null, audioFileTypes);
@@ -337,6 +343,9 @@ public class Settings extends AbstractModelObject {
    *          the type
    */
   public void addSubtitleFileTypes(String type) {
+    if (!type.startsWith(".")) {
+      type = "." + type;
+    }
     if (!subtitleFileTypes.contains(type)) {
       subtitleFileTypes.add(type);
       firePropertyChange(SUBTITLE_FILE_TYPE, null, subtitleFileTypes);
@@ -361,6 +370,20 @@ public class Settings extends AbstractModelObject {
    */
   public List<String> getSubtitleFileType() {
     return subtitleFileTypes;
+  }
+
+  /**
+   * Convenience method to get all supported file extensions
+   * 
+   * @return list
+   */
+  public List<String> getAllSupportedFileTypes() {
+    List<String> list = new ArrayList<String>();
+    list.addAll(getAudioFileType());
+    list.addAll(getVideoFileType());
+    list.addAll(getSubtitleFileType());
+    list.add(".nfo");
+    return list;
   }
 
   /**

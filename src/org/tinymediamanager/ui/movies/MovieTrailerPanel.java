@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmTaskManager;
-import org.tinymediamanager.core.License;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -172,7 +172,7 @@ public class MovieTrailerPanel extends JPanel {
 
       switch (column) {
         case 0:
-          if (License.isValid()) {
+          if (Globals.isDonator()) {
             return IconManager.DOWNLOAD;
           }
           else {
@@ -251,9 +251,10 @@ public class MovieTrailerPanel extends JPanel {
         row = table.convertRowIndexToModel(row);
         MediaTrailer trailer = trailerEventList.get(row);
 
-        if (License.isValid()) {
-          Movie m = movieSelectionModel.getSelectedMovie();
-          DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(m.getPath(), m.getTrailerBasename() + "-trailer"), m);
+        if (Globals.isDonator()) {
+          Movie movie = movieSelectionModel.getSelectedMovie();
+          DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(movie.getPath(), movie.getTrailerBasename() + "-trailer"), movie,
+              MediaFileType.TRAILER);
           TmmTaskManager.addDownloadTask(task);
         }
         else {
