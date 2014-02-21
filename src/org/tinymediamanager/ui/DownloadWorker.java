@@ -148,8 +148,9 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       LOGGER.debug("Content type: " + type);
       if (ext.isEmpty()) {
         // still empty? try to parse from mime header
-        if (type.startsWith("video/")) {
+        if (type.startsWith("video/") || type.startsWith("audio/") || type.startsWith("image/")) {
           ext = type.split("/")[1];
+          ext.replaceAll("x-", ""); // x-wmf and others
           file = new File(file.getParent(), file.getName() + "." + ext);
         }
       }
