@@ -571,5 +571,18 @@ public abstract class MediaEntity extends AbstractModelObject {
     }
   }
 
+  public void deleteFromDb() {
+    synchronized (Globals.entityManager) {
+      if (!Globals.entityManager.getTransaction().isActive()) {
+        Globals.entityManager.getTransaction().begin();
+        Globals.entityManager.remove(this);
+        Globals.entityManager.getTransaction().commit();
+      }
+      else {
+        Globals.entityManager.remove(this);
+      }
+    }
+  }
+
   abstract public void callbackForWrittenArtwork(MediaArtworkType type);
 }

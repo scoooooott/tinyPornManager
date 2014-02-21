@@ -2184,4 +2184,67 @@ public class Movie extends MediaEntity {
   public List<MovieProducer> getProducers() {
     return this.producers;
   }
+
+  /**
+   * <b>PHYSICALLY</b> Deletes a file by moving it to datasource backup folder<br>
+   * DS\.backup\&lt;moviename&gt;\mediafile.ext
+   * 
+   * @param mf
+   *          the mediafile to delete
+   */
+  public void deleteSafely(MediaFile mf) {
+    String fn = mf.getFile().getAbsolutePath();
+    // inject backup path
+    fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".backup");
+
+    // create path
+    File backup = new File(fn);
+    if (!backup.getParentFile().exists()) {
+      backup.getParentFile().mkdirs();
+    }
+
+    // backup
+    try {
+      // overwrite backup file by deletion prior
+      FileUtils.deleteQuietly(backup);
+      boolean ok = Utils.moveFileSafe(mf.getFile(), backup);
+      if (ok) {
+        removeFromMediaFiles(mf);
+        saveToDb();
+      }
+    }
+    catch (IOException e) {
+      // TODO:
+    }
+  }
+
+  /**
+   * <b>PHYSICALLY</b> deletes a complete Movie by moving it to datasource backup folder<br>
+   * DS\.backup\&lt;moviename&gt;
+   */
+  public void deleteSafely() {
+    String fn = getPath();
+    // inject backup path
+    fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".backup");
+
+    // create path
+    File backup = new File(fn);
+    if (!backup.getParentFile().exists()) {
+      backup.getParentFile().mkdirs();
+    }
+
+    // backup
+    try {
+      // overwrite backup file by deletion prior
+      FileUtils.deleteQuietly(backup);
+      boolean ok = Utils.moveDirectorySafe(new File(getPath()), backup);
+      if (ok) {
+        removeFromMovieSet();
+        deleteFromDb();
+      }
+    }
+    catch (IOException e) {
+      // TODO:
+    }
+  }
 }
