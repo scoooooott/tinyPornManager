@@ -105,7 +105,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
           DownloadWorker.this.cancel();
         }
       });
-      setUIElements(new JLabel("Download queued"), new JProgressBar(0, 0), btnCancel);
+      setUIElements(new JLabel("<html>Download queued<br>" + file.getName()), new JProgressBar(0, 0), btnCancel);
     }
   }
 
@@ -114,10 +114,9 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
 
   @Override
   protected Void doInBackground() {
-    long bytesDone = 0;
-
     try {
       // if file extension is empty, detect from url, or content type
+      String filename = file.getName();
       String ext = FilenameUtils.getExtension(file.getName());
       if (ext != null && ext.length() > 4) {
         ext = ""; // no extension when longer than 4 chars!
@@ -171,20 +170,46 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       FileOutputStream outputStream = new FileOutputStream(tempFile);
       int count = 0;
       int percent = 0;
-      byte buffer[] = new byte[1024];
+      byte buffer[] = new byte[2048];
+      Long timestamp1 = System.nanoTime();
+      Long timestamp2;
+      long bytesDone = 0;
+      long bytesDonePrevious = 0;
+      double speed = 0;
 
       while ((count = bufferedInputStream.read(buffer, 0, buffer.length)) != -1 && !isCancelled()) {
+        if (cancel) {
+          break;
+        }
+
         outputStream.write(buffer, 0, count);
         bytesDone += count;
-        if (length > 0) {
-          percent = Math.round(bytesDone * 100 / length);
-        }
-        publish(new ProgressType(length, bytesDone, percent)); // publish to EDT for async GUI update
-      }
-      outputStream.close();
-      is.close();
 
-      if (isCancelled()) {
+        // we push the progress only once per 250ms (to use less performance and get a better download speed)
+        timestamp2 = System.nanoTime();
+        if (timestamp2 - timestamp1 > 250000000) {
+          // avg. speed between the actual and the previous
+          speed = (speed + (bytesDone - bytesDonePrevious) / ((double) (timestamp2 - timestamp1) / 1000000000)) / 2;
+
+          timestamp1 = timestamp2;
+          bytesDonePrevious = bytesDone;
+
+          if (length > 0) {
+            percent = Math.round(bytesDone * 100 / length);
+          }
+
+          publish(new ProgressType(filename, length, bytesDone, percent, speed)); // publish to EDT for async GUI update
+        }
+      }
+
+      outputStream.close();
+
+      // we must not close the input stream on cancel(the rest will be downloaded if we close it on cancel)
+      if (!cancel) {
+        is.close();
+      }
+
+      if (cancel) {
         // delete half downloaded file
         FileUtils.deleteQuietly(tempFile);
       }
@@ -239,13 +264,20 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
 
     if (p.total == 0) {
       // we don't have the size of the download; setIndeterminate
-      startProgressBar("downloaded " + p.total / 1024 + "k");
+      startProgressBar("<html>Downloading " + p.filename + "<br>" + formatBytesForOutput(p.done) + " @" + formatSpeedForOutput(p.speed) + "</html>");
     }
     else {
-      startProgressBar("Download " + p.percent + "%", 100, p.percent);
+      startProgressBar("<html>Downloading " + p.filename + "<br>" + formatBytesForOutput(p.done) + "/" + formatBytesForOutput(p.total) + " @"
+          + formatSpeedForOutput(p.speed) + "</html>", 100, p.percent);
     }
+  }
 
-    System.out.println(p.done + "/" + p.total + " (" + p.percent + "%)");
+  private String formatBytesForOutput(long bytes) {
+    return String.format("%.2fM", (double) bytes / (1024d * 1024d));
+  }
+
+  private String formatSpeedForOutput(double speed) {
+    return String.format("%.2fkB/s", speed / 1024d);
   }
 
   @Override
@@ -261,21 +293,19 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
     TmmTaskManager.removeDownloadTask(this);
   }
 
-  /**
-   * our progressbar result type
-   * 
-   * @author Myron Boyle
-   * 
-   */
-  protected static class ProgressType {
-    long total;
-    long done;
-    int  percent;
+  protected class ProgressType {
+    String filename;
+    long   total;
+    long   done;
+    int    percent;
+    double speed;
 
-    public ProgressType(long total, long done, int percent) {
+    public ProgressType(String filename, long total, long done, int percent, double speed) {
+      this.filename = filename;
       this.done = done;
       this.total = total;
       this.percent = percent;
+      this.speed = speed;
     }
   }
 }

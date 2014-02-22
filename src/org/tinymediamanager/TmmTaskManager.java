@@ -41,21 +41,23 @@ public class TmmTaskManager {
 
   // main tasks (update datasource, scraping, renaming) are queueable tasks, but only one at a time can run; they can be cancelled individually
   private final static ThreadPoolExecutor            mainTaskExecutor      = new ThreadPoolExecutor(1, 1, // max threads
-                                                                               2, TimeUnit.SECONDS, // time to wait before closing idle workers
+                                                                               1, TimeUnit.SECONDS, // time to wait before closing idle workers
                                                                                new LinkedBlockingQueue<Runnable>(), // our queue
                                                                                new TmmThreadFactory("main-task"));
 
   public static void addImageDownloadTask(Runnable task) {
     if (imageDownloadExecutor == null || imageDownloadExecutor.isShutdown()) {
-      imageDownloadExecutor = new ThreadPoolExecutor(3, 3, 2, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new TmmThreadFactory(
-          "imageDownload-task"));
+      imageDownloadExecutor = new ThreadPoolExecutor(3, 3, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new TmmThreadFactory(
+          "image-download-task"));
+      imageDownloadExecutor.allowCoreThreadTimeOut(true);
     }
     imageDownloadExecutor.execute(task);
   }
 
   public static void addDownloadTask(TmmSwingWorker<?, ?> task) {
     if (downloadExecutor == null) {
-      downloadExecutor = new ThreadPoolExecutor(1, 1, 2, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new TmmThreadFactory("download-task"));
+      downloadExecutor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new TmmThreadFactory("download-task"));
+      downloadExecutor.allowCoreThreadTimeOut(true);
     }
     ACTIVE_DOWNLOAD_TASKS.add(task);
     downloadExecutor.execute(task);

@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -56,6 +57,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
@@ -64,6 +66,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.TmmTaskManager;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -538,7 +541,7 @@ public class MainWindow extends JFrame {
       Thread.currentThread().setName("statusBar thread");
       try {
         while (!Thread.interrupted()) {
-          if (Globals.poolRunning() || (activeTask != null && !activeTask.isDone())) {
+          if (Globals.poolRunning() || (activeTask != null && !activeTask.isDone()) || !TmmTaskManager.getActiveDownloadTasks().isEmpty()) {
             if (lblLoadingImg.getIcon() != IconManager.LOADING) {
               lblLoadingImg.setIcon(IconManager.LOADING);
             }
@@ -564,7 +567,7 @@ public class MainWindow extends JFrame {
                   + " %d </body></html>", this.ex.getActiveCount(), this.ex.getMaximumPoolSize(), this.ex.getQueue().size()); //$NON-NLS-1$
           // LOGGER.debug(text);
           lblLoadingImg.setToolTipText(text);
-          Thread.sleep(1000);
+          Thread.sleep(250);
         }
       }
       catch (InterruptedException e) {
@@ -599,7 +602,7 @@ public class MainWindow extends JFrame {
    *          the task
    * @return true, if successful
    */
-  public static boolean executeMainTask(TmmSwingWorker task) {
+  public static boolean executeMainTask(TmmSwingWorker<?, ?> task) {
     if (instance == null) {
       return false;
     }
@@ -645,22 +648,19 @@ public class MainWindow extends JFrame {
 
   private void createTaskPopup(MouseEvent arg0) {
     JPanel panel = new JPanel();
-    panel.setLayout(new GridLayout(5, 1));
+    panel.setBorder(new EmptyBorder(5, 10, 5, 10));
 
-    do {
+    Queue<TmmSwingWorker<?, ?>> activeTasks = TmmTaskManager.getActiveDownloadTasks();
+    panel.setLayout(new GridLayout(activeTasks.size(), 1));
+    for (TmmSwingWorker<?, ?> task : activeTasks) {
       JPanel subPanel = new JPanel();
-      subPanel.setLayout(new BorderLayout());
-      JButton btnCancel = new JButton(IconManager.PROCESS_STOP);
-      btnCancel.setContentAreaFilled(false);
-      btnCancel.setBorderPainted(false);
-      btnCancel.setBorder(null);
-      btnCancel.setMargin(new Insets(0, 2, 0, 2));
 
-      subPanel.add(btnCancel, BorderLayout.EAST);
-      subPanel.add(new JLabel("Task status " + panel.getComponentCount()), BorderLayout.CENTER);
+      subPanel.setLayout(new BorderLayout(5, 0));
+      subPanel.add(task.getProgressActionLabel(), BorderLayout.NORTH);
+      subPanel.add(task.getActionButton(), BorderLayout.EAST);
+      subPanel.add(task.getProgressBar(), BorderLayout.CENTER);
       panel.add(subPanel);
-
-    } while (panel.getComponentCount() < 5);
+    }
 
     int x = -panel.getPreferredSize().width - 5;
     int y = -panel.getPreferredSize().height - 5;
