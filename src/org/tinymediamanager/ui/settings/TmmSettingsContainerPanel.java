@@ -40,14 +40,16 @@ public class TmmSettingsContainerPanel extends JPanel {
       add(tabbedPanePages, BorderLayout.CENTER);
       {
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setViewportView(new GeneralSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.general"), null, scrollPane, null); //$NON-NLS-1$
       }
-
       {
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setViewportView(new FileTypesSettingsPanel());
+        tabbedPanePages.addTab(BUNDLE.getString("Settings.filetypes"), null, scrollPane, null); //$NON-NLS-1$
+      }
+      {
+        JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(new ExternalDevicesSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.externaldevices"), null, scrollPane, null); //$NON-NLS-1$
       }
