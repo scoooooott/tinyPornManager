@@ -2195,7 +2195,7 @@ public class Movie extends MediaEntity {
   public void deleteSafely(MediaFile mf) {
     String fn = mf.getFile().getAbsolutePath();
     // inject backup path
-    fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".backup");
+    fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".deletedByTMM");
 
     // create path
     File backup = new File(fn);

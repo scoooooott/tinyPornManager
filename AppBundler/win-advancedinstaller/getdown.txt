@@ -1,0 +1,32 @@
+# The URL from which the client is downloaded
+appbase = http://tinymediamanager.googlecode.com/svn/dist
+
+# UI Configuration
+ui.name = tinyMediaManager
+ui.background_image = splashscreen.png
+ui.icon = tmm.png
+ui.progress = 20, 300, 460, 25
+ui.progress_text = FFFFFF
+ui.status = 40, 260, 440, 30
+ui.status_text = FFFFFF
+ui.mac_dock_icon = ../tmm.icns
+
+# The main entry point for the application (prefix needed for GD params)
+class = org.tinymediamanager.TinyMediaManager
+tmm.class = org.tinymediamanager.TinyMediaManager
+
+# allow offline use
+allow_offline = false
+
+# do not create .v files
+skip_md5_cache = true
+
+# jvm args
+# NOTE: please consider to write fundamental changes to the commandline start scripts too 
+jvmarg = -Xms64m 
+jvmarg = -Xmx512m
+jvmarg = -Xss512k
+jvmarg = -splash:splashscreen.png
+jvmarg = -Djava.net.preferIPv4Stack=true
+jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
+jvmarg = [linux] -Djna.nosys=true
