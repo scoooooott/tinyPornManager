@@ -357,21 +357,21 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.actors.clear();
-    for (MovieActor cast : movie.getActors()) {
+    for (MovieActor cast : new ArrayList<MovieActor>(movie.getActors())) {
       xbmc.addActor(cast.getName(), cast.getCharacter(), cast.getThumbUrl());
     }
 
     xbmc.producers.clear();
-    for (MovieProducer producer : movie.getProducers()) {
+    for (MovieProducer producer : new ArrayList<MovieProducer>(movie.getProducers())) {
       xbmc.addProducer(producer.getName(), producer.getRole(), producer.getThumbUrl());
     }
 
     xbmc.genres.clear();
-    for (MediaGenres genre : movie.getGenres()) {
+    for (MediaGenres genre : new ArrayList<MediaGenres>(movie.getGenres())) {
       xbmc.genres.add(genre.toString());
     }
 
-    for (MediaTrailer trailer : movie.getTrailers()) {
+    for (MediaTrailer trailer : new ArrayList<MediaTrailer>(movie.getTrailers())) {
       if (trailer.getInNfo() && !trailer.getUrl().startsWith("file")) {
         // parse internet trailer url for nfo (do not add local one)
         xbmc.trailer = prepareTrailerForXbmc(trailer);
@@ -384,7 +384,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     xbmc.tags.clear();
-    for (String tag : movie.getTags()) {
+    for (String tag : new ArrayList<String>(movie.getTags())) {
       xbmc.tags.add(tag);
     }
 
