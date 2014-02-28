@@ -242,6 +242,12 @@ public class Movie extends MediaEntity {
     if (trailer != null && trailer.size() > 0) {
       return true;
     }
+
+    // check if there is a mediafile (trailer)
+    if (!getMediaFiles(MediaFileType.TRAILER).isEmpty()) {
+      return true;
+    }
+
     return false;
   }
 
