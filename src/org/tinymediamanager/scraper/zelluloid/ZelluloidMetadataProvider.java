@@ -57,28 +57,14 @@ import org.tinymediamanager.scraper.util.Url;
  * @author Myron Boyle (myron0815@gmx.net)
  */
 public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider {
-
-  /** The Constant LOGGER. */
   private static final Logger              LOGGER        = LoggerFactory.getLogger(ZelluloidMetadataProvider.class);
-
-  /** The Constant BASE_URL. */
   private static final String              BASE_URL      = "http://www.zelluloid.de";
-
-  /** The Constant PAGE_ENCODING. */
   private static final String              PAGE_ENCODING = "ISO-8859-1";
 
-  /** The Constant instance. */
   private static ZelluloidMetadataProvider instance;
-
-  /** The provider info. */
   private static MediaProviderInfo         providerInfo  = new MediaProviderInfo("zelluloid", "zelluloid.de",
                                                              "Scraper for german zelluloid.de which is able to scrape movie metadata");
 
-  /**
-   * Gets the single instance of OfdbMetadataProvider.
-   * 
-   * @return single instance of OfdbMetadataProvider
-   */
   public static synchronized ZelluloidMetadataProvider getInstance() {
     if (instance == null) {
       instance = new ZelluloidMetadataProvider();
@@ -86,27 +72,14 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     return instance;
   }
 
-  /**
-   * Instantiates a new ofdb metadata provider.
-   */
   public ZelluloidMetadataProvider() {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getProviderInfo()
-   */
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getMetadata(org. tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
@@ -147,9 +120,9 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       md.storeMetadata(MediaMetadata.TAGLINE, plot.length() > 150 ? plot.substring(0, 150) : plot);
 
       // parse poster
-      el = doc.getElementsByAttributeValueStarting("pic", "/images/poster");
+      el = doc.getElementsByAttributeValueStarting("src", "/images/poster");
       if (el.size() == 1) {
-        md.storeMetadata(MediaMetadata.POSTER_URL, BASE_URL + el.get(0).attr("pic"));
+        md.storeMetadata(MediaMetadata.POSTER_URL, BASE_URL + el.get(0).attr("src"));
       }
 
       // parse year
@@ -323,13 +296,6 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     return md;
   }
 
-  /**
-   * Removes all weird characters from search as well some "stopwords" as der|die|das|the|a.
-   * 
-   * @param q
-   *          the query string to clean
-   * @return the string
-   */
   private String cleanSearch(String q) {
     q = " " + q.toLowerCase() + " "; // easier regex
     // TODO: doppelte hintereinander funzen so nicht
@@ -339,11 +305,6 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     return q.trim();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#search(org.tinymediamanager .scraper.MediaSearchOptions)
-   */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     LOGGER.debug("search() " + options.toString());
@@ -467,24 +428,12 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     return resultList;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaTrailerProvider#getTrailers(org. tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     // http://www.zelluloid.de/filme/trailer.php3?id=7614
     return null;
   }
 
-  /**
-   * Maps scraper Genres to internal TMM genres
-   * 
-   * @param genre
-   *          as stinr
-   * @return TMM genre
-   */
   private MediaGenres getTmmGenre(String genre) {
     MediaGenres g = null;
     if (genre.isEmpty()) {

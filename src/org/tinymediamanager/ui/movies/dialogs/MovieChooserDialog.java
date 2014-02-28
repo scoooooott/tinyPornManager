@@ -36,7 +36,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
@@ -117,20 +116,20 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   private JTextField                                                        textFieldSearchString;
   private JComboBox                                                         cbScraper;
   private JTable                                                            table;
-  private JTextArea                                                         lblMovieName;
+  private JLabel                                                            lblMovieName;
   private JTextPane                                                         tpMovieDescription;
   private ImageLabel                                                        lblMoviePoster;
   private JLabel                                                            lblProgressAction;
   private JProgressBar                                                      progressBar;
-  private JTextArea                                                         lblTagline;
+  private JLabel                                                            lblTagline;
   private JButton                                                           okButton;
   private JLabel                                                            lblPath;
 
   private JTableBinding<MovieChooserModel, List<MovieChooserModel>, JTable> jTableBinding;
-  private AutoBinding<JTable, String, JTextArea, String>                    autoBinding;
+  private AutoBinding<JTable, String, JLabel, String>                       autoBinding;
   private AutoBinding<JTable, String, JTextPane, String>                    autoBinding_1;
   private AutoBinding<JTable, String, ImageLabel, String>                   autoBinding_2;
-  private AutoBinding<JTable, String, JTextArea, String>                    autoBinding_3;
+  private AutoBinding<JTable, String, JLabel, String>                       autoBinding_3;
 
   /**
    * Create the dialog.
@@ -173,7 +172,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("800px:grow"),
         FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"),
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:300px:grow"),
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
     {
@@ -264,22 +263,15 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         JPanel panelSearchDetail = new JPanel();
         splitPane.setRightComponent(panelSearchDetail);
         panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("350px:grow"),
-            FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, RowSpec.decode("20px"),
             FormFactory.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("fill:default:grow"), }));
         {
-          lblMovieName = new JTextArea("");
-          lblMovieName.setLineWrap(true);
-          lblMovieName.setOpaque(false);
-          lblMovieName.setWrapStyleWord(true);
-          lblMovieName.setFont(new Font("Dialog", Font.BOLD, 14));
+          lblMovieName = new JLabel("");
+          lblMovieName.setFont(lblMovieName.getFont().deriveFont(Font.BOLD).deriveFont(14f));
           panelSearchDetail.add(lblMovieName, "2, 1, default, top");
         }
         {
-          lblTagline = new JTextArea("");
-          lblTagline.setLineWrap(true);
-          lblTagline.setOpaque(false);
-          lblTagline.setWrapStyleWord(true);
-          lblTagline.setEditable(false);
+          lblTagline = new JLabel("");
           panelSearchDetail.add(lblTagline, "2, 2, default, top");
         }
         {
@@ -299,6 +291,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
             {
               tpMovieDescription = new JTextPane();
               tpMovieDescription.setOpaque(false);
+              tpMovieDescription.setEditable(false);
               scrollPane.setViewportView(tpMovieDescription);
             }
           }
@@ -532,12 +525,12 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     autoBinding_2.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty = BeanProperty.create("selectedElement.tagline");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
+    BeanProperty<JLabel, String> jTextAreaBeanProperty = BeanProperty.create("text");
     autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty, lblTagline, jTextAreaBeanProperty);
     autoBinding.bind();
     //
     BeanProperty<JTable, String> jTableBeanProperty_3 = BeanProperty.create("selectedElement.combinedName");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
+    BeanProperty<JLabel, String> jTextAreaBeanProperty_1 = BeanProperty.create("text");
     autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, table, jTableBeanProperty_3, lblMovieName, jTextAreaBeanProperty_1);
     autoBinding_3.bind();
   }
