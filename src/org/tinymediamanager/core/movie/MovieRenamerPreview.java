@@ -62,9 +62,9 @@ public class MovieRenamerPreview {
 
     // movie folder needs a rename?
     File oldMovieFolder = new File(movie.getPath());
-    container.newPath = movie.getDataSource() + File.separator
-        + MovieRenamer.createDestinationForFoldername(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
-    File newMovieFolder = new File(container.newPath);
+    container.newPath = MovieRenamer.createDestinationForFoldername(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie)
+        + File.separator;
+    File newMovieFolder = new File(movie.getDataSource(), container.newPath);
 
     if (!oldMovieFolder.equals(newMovieFolder)) {
       container.needsRename = true;

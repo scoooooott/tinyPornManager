@@ -16,24 +16,28 @@
 package org.tinymediamanager.ui.movies.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
-import org.tinymediamanager.ui.movies.dialogs.RenamerPreviewDialog;
+import org.tinymediamanager.ui.movies.dialogs.MovieRenamerPreviewDialog;
 
 /**
  * @author Manuel Laggner
  * 
  */
 public class RenamePreviewAction extends AbstractAction {
-  private static final long serialVersionUID = 5158514686702295145L;
+  private static final long           serialVersionUID = 5158514686702295145L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public RenamePreviewAction() {
-    putValue(NAME, "rename preview");
-    // putValue(LARGE_ICON_KEY, IconManager.EDIT);
-    // putValue(SMALL_ICON, IconManager.EDIT);
-    putValue(SHORT_DESCRIPTION, "create a preview of the renamer");
+    putValue(NAME, BUNDLE.getString("movie.renamepreview")); //$NON-NLS-1$
+    putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
+    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.renamepreview.hint")); //$NON-NLS-1$
   }
 
   /*
@@ -43,7 +47,7 @@ public class RenamePreviewAction extends AbstractAction {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    RenamerPreviewDialog dialog = new RenamerPreviewDialog(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
+    MovieRenamerPreviewDialog dialog = new MovieRenamerPreviewDialog(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
     dialog.setVisible(true);
   }
 

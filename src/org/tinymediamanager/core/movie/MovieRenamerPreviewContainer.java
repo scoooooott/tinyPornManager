@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +29,14 @@ import org.tinymediamanager.core.MediaFile;
 public class MovieRenamerPreviewContainer {
 
   Movie           movie;
+  String          oldPath       = "";
   String          newPath       = "";
   List<MediaFile> newMediaFiles = new ArrayList<MediaFile>();
   boolean         needsRename   = false;
 
   public MovieRenamerPreviewContainer(Movie movie) {
     this.movie = movie;
+    this.oldPath = new File(movie.getDataSource()).toURI().relativize(new File(movie.getPath()).toURI()).getPath();
   }
 
   public Movie getMovie() {
@@ -41,7 +44,7 @@ public class MovieRenamerPreviewContainer {
   }
 
   public String getOldPath() {
-    return movie.getPath();
+    return oldPath;
   }
 
   public String getNewPath() {
