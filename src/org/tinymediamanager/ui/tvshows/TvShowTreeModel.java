@@ -155,7 +155,7 @@ public class TvShowTreeModel implements TreeModel {
       root.add(tvShowNode);
       nodeMap.put(tvShow, tvShowNode);
 
-      for (TvShowSeason season : tvShow.getSeasons()) {
+      for (TvShowSeason season : new ArrayList<TvShowSeason>(tvShow.getSeasons())) {
         // check if there is a node for its season
         TvShowSeasonTreeNode seasonNode = (TvShowSeasonTreeNode) nodeMap.get(season);
         if (seasonNode == null) {
@@ -194,7 +194,7 @@ public class TvShowTreeModel implements TreeModel {
         int index = parent.getIndex(child);
 
         nodeMap.remove(tvShow);
-        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+        for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
           nodeMap.remove(episode);
           episode.removePropertyChangeListener(propertyChangeListener);
         }
