@@ -549,6 +549,9 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
 
   @Override
   public void dispose() {
+    if (activeSearchTask != null && !activeSearchTask.isDone()) {
+      activeSearchTask.cancel();
+    }
     super.dispose();
     jTableBinding.unbind();
     autoBinding.unbind();

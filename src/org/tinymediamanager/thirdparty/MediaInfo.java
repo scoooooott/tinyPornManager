@@ -94,8 +94,7 @@ public class MediaInfo implements Closeable {
       }
     }
     catch (LinkageError e) {
-      LOGGER.error("Failed to load mediainfo", e);
-      throw new MediaInfoException(e);
+      return false;
     }
 
     if (file != null && isLoaded()) {
