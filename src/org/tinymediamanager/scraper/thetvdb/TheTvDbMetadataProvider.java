@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ import org.tinymediamanager.scraper.MediaSearchOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
-import org.tinymediamanager.scraper.util.StrgUtils;
 
 import com.omertron.thetvdbapi.TheTVDBApi;
 import com.omertron.thetvdbapi.model.Actor;
@@ -65,30 +64,17 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("tvdb", "thetvdb.com",
                                                     "Scraper for thetvdb.com which is able to scrape tv series metadata and artwork");
 
-  /**
-   * Instantiates a new the tv db metadata provider.
-   */
   public TheTvDbMetadataProvider() {
     if (tvdb == null) {
       tvdb = new TheTVDBApi("1A4971671264D790");
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getProviderInfo()
-   */
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#search(org.tinymediamanager .scraper.MediaSearchOptions)
-   */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     LOGGER.debug("search() " + options.toString());
@@ -113,17 +99,13 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       return results;
     }
 
-    // trim out extra spaces
-    searchString = MetadataUtil.removeNonSearchCharacters(searchString);
-    searchString = StrgUtils.removeDuplicateWhitespace(searchString);
-
     // search via the api
     List<Series> series = null;
     synchronized (tvdb) {
       series = tvdb.searchSeries(searchString, Globals.settings.getTvShowSettings().getScraperLanguage().name());
     }
 
-    // first add all tv shows in the preferred langu
+    // first add all tv shows in the preferred language
     HashMap<String, MediaSearchResult> storedResults = new HashMap<String, MediaSearchResult>();
     for (Series show : series) {
       if (show.getLanguage().equalsIgnoreCase(Globals.settings.getTvShowSettings().getScraperLanguage().name())
@@ -147,6 +129,25 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       }
     }
 
+    // if there weren't any result AND the searchstring consist only of digits, we try to scrape it directly
+    if (results.isEmpty() && searchString.matches("^[0-9]+$")) {
+      MediaScrapeOptions scrapeOptions = new MediaScrapeOptions();
+      scrapeOptions.setId(providerInfo.getId(), searchString);
+      scrapeOptions.setType(MediaType.TV_SHOW);
+      scrapeOptions.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
+      scrapeOptions.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+
+      MediaMetadata md = getTvShowMetadata(scrapeOptions);
+
+      if (md != null && StringUtils.isNotBlank(md.getStringValue(MediaMetadata.TITLE))) {
+        MediaSearchResult result = new MediaSearchResult(providerInfo.getId());
+        result.setId((String) md.getId(providerInfo.getId()));
+        result.setTitle(md.getStringValue(MediaMetadata.TITLE));
+        result.setPosterUrl(md.getStringValue(MediaMetadata.POSTER_URL));
+        results.add(result);
+      }
+    }
+
     // sort
     Collections.sort(results);
     Collections.reverse(results);
@@ -154,17 +155,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return results;
   }
 
-  /**
-   * Creates the search result from the given input.
-   * 
-   * @param show
-   *          the show
-   * @param options
-   *          the options
-   * @param searchString
-   *          the search string
-   * @return the media search result
-   */
   private MediaSearchResult createSearchResult(Series show, MediaSearchOptions options, String searchString) {
     MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
     sr.setId(show.getId());
@@ -184,13 +174,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return sr;
   }
 
-  /**
-   * Gets the tv show metadata.
-   * 
-   * @param options
-   *          the options
-   * @return the tv show metadata
-   */
   @Override
   public MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
@@ -272,13 +255,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return md;
   }
 
-  /**
-   * Gets the tv show episode metadata.
-   * 
-   * @param options
-   *          the options
-   * @return the tv show episode metadata
-   */
   @Override
   public MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
@@ -498,17 +474,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return artwork;
   }
 
-  /**
-   * The Class ArtworkComparator.
-   * 
-   * @author Manuel Laggner
-   */
   private static class BannerComparator implements Comparator<Banner> {
     /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     * 
      * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
      */
     @Override
@@ -622,12 +589,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return episodes;
   }
 
-  /**
+  /*
    * Maps scraper Genres to internal TMM genres
-   * 
-   * @param genre
-   *          as stinr
-   * @return TMM genre
    */
   private MediaGenres getTmmGenre(String genre) {
     MediaGenres g = null;
