@@ -49,17 +49,21 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  */
 
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
-  private static final Logger       LOGGER           = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
+  private static final Logger       LOGGER                = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String> skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-                                                         "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+  private static final List<String> skipFolders           = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
+                                                              "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION",
+                                                              "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String       skipFoldersRegex = "^[.][\\w]+.*";
+  private static final String       skipFoldersRegex      = "^[.][\\w]+.*";
+
+  // MacOS ignore
+  private static final String       skipFilesStartingWith = "._";
 
   private List<String>              dataSources;
-  private List<File>                tvShowFolders    = new ArrayList<File>();
+  private List<File>                tvShowFolders         = new ArrayList<File>();
   private TvShowList                tvShowList;
 
   /**
@@ -524,77 +528,94 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     Arrays.sort(content);
     for (File file : content) {
       if (file.isFile()) {
-
-        MediaFile mf = new MediaFile(file);
-        // check filetype - we only proceed here if it's a video file
-        if (!mf.getType().equals(MediaFileType.VIDEO)) {
-          continue;
-        }
-
-        // is this file already assigned to another episode?
-        List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, file);
-        if (episodes.size() == 0) {
-          // try to check what episode//season
-          EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(file);
-
-          // second check: is the detected episode (>-1; season >-1) already in tmm and any valid stacking markers found?
-          if (result.episodes.size() == 1 && result.season > -1 && result.stackingMarkerFound) {
-            // get any assigned episode
-            TvShowEpisode ep = tvShow.getEpisode(result.season, result.episodes.get(0));
-            if (ep != null) {
-              ep.setNewlyAdded(true);
-              ep.addToMediaFiles(new MediaFile(file));
-              continue;
-            }
+        if (!file.getName().startsWith(skipFilesStartingWith)) {
+          MediaFile mf = new MediaFile(file);
+          // check filetype - we only proceed here if it's a video file
+          if (!mf.getType().equals(MediaFileType.VIDEO)) {
+            continue;
           }
 
-          if (result.episodes.size() == 0) {
-            // try to parse out episodes/season from parent directory
-            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir, tvShow.getPath());
-          }
+          // is this file already assigned to another episode?
+          List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, file);
+          if (episodes.size() == 0) {
+            // try to check what episode//season
+            EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(file);
 
-          if (result.season == -1) {
-            // did the search find a season?
-            // no -> search for it in the folder name (relative path between tv show root and the current dir)
-            result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath());
-          }
-
-          if (result.episodes.size() == 0) {
-            // if episode STILL empty, try Myron's way of parsing - lol
-            result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(file.getName(), tvShow.getTitle());
-            LOGGER.debug(file.getName() + " - " + result.toString());
-          }
-
-          List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(file);
-
-          // did we find any episodes in the NFO?
-          if (episodesInNfo.size() > 0) {
-            // these have priority!
-            for (TvShowEpisode e : episodesInNfo) {
-              e.setPath(dir.getPath());
-              e.setTvShow(tvShow);
-              e.addToMediaFiles(new MediaFile(file));
-              findAdditionalEpisodeFiles(e, file, content);
-              e.setNewlyAdded(true);
-              // e.saveToDb();
-              tvShow.addEpisode(e);
-            }
-          }
-          else if (result.episodes.size() > 0) {
-            // something found with the season detection?
-            for (int ep : result.episodes) {
-              TvShowEpisode episode = new TvShowEpisode();
-              episode.setEpisode(ep);
-              episode.setSeason(result.season);
-              episode.setFirstAired(result.date);
-
-              if (result.name.isEmpty()) {
-                result.name = FilenameUtils.getBaseName(file.getName());
+            // second check: is the detected episode (>-1; season >-1) already in tmm and any valid stacking markers found?
+            if (result.episodes.size() == 1 && result.season > -1 && result.stackingMarkerFound) {
+              // get any assigned episode
+              TvShowEpisode ep = tvShow.getEpisode(result.season, result.episodes.get(0));
+              if (ep != null) {
+                ep.setNewlyAdded(true);
+                ep.addToMediaFiles(new MediaFile(file));
+                continue;
               }
-              episode.setTitle(result.name);
+            }
 
+            if (result.episodes.size() == 0) {
+              // try to parse out episodes/season from parent directory
+              result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir, tvShow.getPath());
+            }
+
+            if (result.season == -1) {
+              // did the search find a season?
+              // no -> search for it in the folder name (relative path between tv show root and the current dir)
+              result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath());
+            }
+
+            if (result.episodes.size() == 0) {
+              // if episode STILL empty, try Myron's way of parsing - lol
+              result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(file.getName(), tvShow.getTitle());
+              LOGGER.debug(file.getName() + " - " + result.toString());
+            }
+
+            List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(file);
+
+            // did we find any episodes in the NFO?
+            if (episodesInNfo.size() > 0) {
+              // these have priority!
+              for (TvShowEpisode e : episodesInNfo) {
+                e.setPath(dir.getPath());
+                e.setTvShow(tvShow);
+                e.addToMediaFiles(new MediaFile(file));
+                findAdditionalEpisodeFiles(e, file, content);
+                e.setNewlyAdded(true);
+                // e.saveToDb();
+                tvShow.addEpisode(e);
+              }
+            }
+            else if (result.episodes.size() > 0) {
+              // something found with the season detection?
+              for (int ep : result.episodes) {
+                TvShowEpisode episode = new TvShowEpisode();
+                episode.setEpisode(ep);
+                episode.setSeason(result.season);
+                episode.setFirstAired(result.date);
+
+                if (result.name.isEmpty()) {
+                  result.name = FilenameUtils.getBaseName(file.getName());
+                }
+                episode.setTitle(result.name);
+
+                episode.setPath(dir.getPath());
+                episode.setTvShow(tvShow);
+                episode.addToMediaFiles(new MediaFile(file));
+                findAdditionalEpisodeFiles(episode, file, content);
+                episode.setNewlyAdded(true);
+                // episode.saveToDb();
+                tvShow.addEpisode(episode);
+              }
+            }
+            else {
+              // episode detection found nothing - simply add this file
+              TvShowEpisode episode = new TvShowEpisode();
+              episode.setEpisode(-1);
+              episode.setSeason(-1);
               episode.setPath(dir.getPath());
+
+              episode.setTitle(FilenameUtils.getBaseName(file.getName()));
               episode.setTvShow(tvShow);
+              episode.setFirstAired(result.date);
               episode.addToMediaFiles(new MediaFile(file));
               findAdditionalEpisodeFiles(episode, file, content);
               episode.setNewlyAdded(true);
@@ -602,24 +623,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               tvShow.addEpisode(episode);
             }
           }
-          else {
-            // episode detection found nothing - simply add this file
-            TvShowEpisode episode = new TvShowEpisode();
-            episode.setEpisode(-1);
-            episode.setSeason(-1);
-            episode.setPath(dir.getPath());
+        }// end skipFilesStartingWith
+      } // end isFile
 
-            episode.setTitle(FilenameUtils.getBaseName(file.getName()));
-            episode.setTvShow(tvShow);
-            episode.setFirstAired(result.date);
-            episode.addToMediaFiles(new MediaFile(file));
-            findAdditionalEpisodeFiles(episode, file, content);
-            episode.setNewlyAdded(true);
-            // episode.saveToDb();
-            tvShow.addEpisode(episode);
-          }
-        }
-      }
       if (file.isDirectory() && !skipFolders.contains(file.getName().toUpperCase()) && !file.getName().matches(skipFoldersRegex)) {
         // dig deeper
         if (file.getName().toUpperCase().equals("VIDEO_TS")) {
@@ -655,7 +661,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     for (File file : content) {
       if (file.isFile()) {
         // check filetype
-        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()).toLowerCase())) {
+        if (!Globals.settings.getVideoFileType().contains("." + FilenameUtils.getExtension(file.getName()).toLowerCase())
+            || file.getName().startsWith(skipFilesStartingWith)) { // MacOS ignore
           continue;
         }
 
@@ -770,7 +777,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     for (File file : directoryContents) {
       if (file.isFile()) {
         MediaFile mf = new MediaFile(file);
-        if (mf.getType().equals(MediaFileType.VIDEO) || !mf.getBasename().startsWith(FilenameUtils.getBaseName(videoFile.getName()))) {
+        if (mf.getType().equals(MediaFileType.VIDEO) || !mf.getBasename().startsWith(FilenameUtils.getBaseName(videoFile.getName()))
+            || file.getName().startsWith(skipFilesStartingWith)) { // MacOS ignore)
           continue;
         }
         if (mf.getType() == MediaFileType.SUBTITLE) {

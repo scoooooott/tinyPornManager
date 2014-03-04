@@ -46,6 +46,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1313,7 +1314,7 @@ public class TvShow extends MediaEntity {
       File[] files = new File(path).listFiles();
       for (File file : files) {
         Matcher matcher = pattern.matcher(file.getName());
-        if (matcher.matches()) {
+        if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
           setPoster(file);
           LOGGER.debug("found poster " + file.getPath());
           found = true;
@@ -1372,7 +1373,7 @@ public class TvShow extends MediaEntity {
       File[] files = new File(path).listFiles();
       for (File file : files) {
         Matcher matcher = pattern.matcher(file.getName());
-        if (matcher.matches()) {
+        if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
           setFanart(file);
           LOGGER.debug("found fanart " + file.getPath());
           found = true;
@@ -1431,7 +1432,7 @@ public class TvShow extends MediaEntity {
       File[] files = new File(path).listFiles();
       for (File file : files) {
         Matcher matcher = pattern.matcher(file.getName());
-        if (matcher.matches()) {
+        if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
           setBanner(file);
           LOGGER.debug("found banner " + file.getPath());
           found = true;
@@ -1457,7 +1458,7 @@ public class TvShow extends MediaEntity {
     File[] files = new File(path).listFiles();
     for (File file : files) {
       Matcher matcher = pattern.matcher(file.getName());
-      if (matcher.matches()) {
+      if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
         LOGGER.debug("found season poster " + file.getPath());
         try {
           int season = Integer.parseInt(matcher.group(1));
@@ -1735,6 +1736,35 @@ public class TvShow extends MediaEntity {
       finally {
         saveToDb();
       }
+    }
+  }
+
+  /**
+   * <b>PHYSICALLY</b> deletes a complete Movie by moving it to datasource backup folder<br>
+   * DS\.backup\&lt;moviename&gt;
+   */
+  public void deleteSafely() {
+    String fn = getPath();
+    // inject backup path
+    fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".deletedByTMM");
+
+    // create path
+    File backup = new File(fn);
+    if (!backup.getParentFile().exists()) {
+      backup.getParentFile().mkdirs();
+    }
+
+    // backup
+    try {
+      // overwrite backup file by deletion prior
+      FileUtils.deleteQuietly(backup);
+      boolean ok = Utils.moveDirectorySafe(new File(getPath()), backup);
+      if (ok) {
+        deleteFromDb();
+      }
+    }
+    catch (IOException e) {
+      // TODO:
     }
   }
 }

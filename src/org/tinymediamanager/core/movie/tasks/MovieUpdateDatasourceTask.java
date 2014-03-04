@@ -327,7 +327,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       File[] files = movieDir.listFiles(new FileFilter() {
         @Override
         public boolean accept(File file) {
-          if (file.isDirectory()) {
+          if (file.isDirectory() || file.getName().startsWith("._")) { // MacOS ignore
             return false;
           }
           return new MediaFile(file).getType().equals(MediaFileType.VIDEO); // no trailer or extra vids!
@@ -339,7 +339,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       LOGGER.debug("Checking for multi-movie dir; parsing all video files in " + movieDir);
       for (File file : files) {
         MediaFile mf = new MediaFile(file);
-        if (mf.isDiscFile()) {
+        if (mf.isDiscFile() || file.getName().startsWith("._")) { // MacOS ignore
           // ignore disc files when trying to detect multi movie dir!
           continue;
         }
@@ -549,10 +549,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     File[] list = dir.listFiles();
     for (File file : list) {
       if (file.isFile()) {
-        mv.add(new MediaFile(file));
-        // store dir for faster cleanup
-        synchronized (filesFound) {
-          filesFound.add(file);
+        if (!file.getName().startsWith("._")) { // MacOS ignore
+          mv.add(new MediaFile(file));
+          // store dir for faster cleanup
+          synchronized (filesFound) {
+            filesFound.add(file);
+          }
         }
       }
       else {
