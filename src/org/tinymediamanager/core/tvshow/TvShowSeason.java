@@ -68,6 +68,12 @@ public class TvShowSeason extends AbstractModelObject {
     firePropertyChange(ADDED_EPISODE, null, episodes);
   }
 
+  public void removeEpisode(TvShowEpisode episode) {
+    episodes.remove(episode);
+    episode.removePropertyChangeListener(listener);
+    firePropertyChange(REMOVED_EPISODE, null, episodes);
+  }
+
   public List<TvShowEpisode> getEpisodes() {
     return episodes;
   }

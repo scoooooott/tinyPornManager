@@ -196,7 +196,8 @@ public class TvShowSeasonInformationPanel extends JPanel {
         Object source = propertyChangeEvent.getSource();
         // react on selection of a movie and change of a tv show
         if (source instanceof TvShowSeasonSelectionModel
-            || (source instanceof TvShowSeason && MEDIA_FILES.equals(propertyChangeEvent.getPropertyName()))) {
+            || (source instanceof TvShowSeason && (MEDIA_FILES.equals(propertyChangeEvent.getPropertyName())
+                || ADDED_EPISODE.equals(propertyChangeEvent.getPropertyName()) || REMOVED_EPISODE.equals(propertyChangeEvent.getPropertyName())))) {
           TvShowSeason selectedSeason;
           if (source instanceof TvShowSeasonSelectionModel) {
             TvShowSeasonSelectionModel model = (TvShowSeasonSelectionModel) source;

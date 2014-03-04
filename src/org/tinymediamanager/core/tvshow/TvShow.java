@@ -237,6 +237,11 @@ public class TvShow extends MediaEntity {
     season.addEpisode(episode);
   }
 
+  private void removeFromSeason(TvShowEpisode episode) {
+    TvShowSeason season = getSeasonForEpisode(episode);
+    season.removeEpisode(episode);
+  }
+
   /**
    * Gets the season for episode.
    * 
@@ -373,6 +378,7 @@ public class TvShow extends MediaEntity {
         Globals.entityManager.getTransaction().begin();
         episodes.remove(episode);
         episode.removePropertyChangeListener(propertyChangeListener);
+        removeFromSeason(episode);
         Globals.entityManager.remove(episode);
         Globals.entityManager.persist(this);
         Globals.entityManager.getTransaction().commit();
