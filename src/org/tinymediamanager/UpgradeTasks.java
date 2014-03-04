@@ -135,6 +135,32 @@ public class UpgradeTasks {
       }
       Globals.entityManager.getTransaction().commit();
     }
+
+    if (compareVersion(v, "2.5.4") < 0) {
+      // repair missing datasources
+      Globals.entityManager.getTransaction().begin();
+      for (Movie movie : movieList.getMovies()) {
+        if (StringUtils.isBlank(movie.getDataSource())) {
+          for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
+            if (movie.getPath().startsWith(ds)) {
+              movie.setDataSource(ds);
+              break;
+            }
+          }
+        }
+      }
+      for (TvShow show : tvShowList.getTvShows()) {
+        if (StringUtils.isBlank(show.getDataSource())) {
+          for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
+            if (show.getPath().startsWith(ds)) {
+              show.setDataSource(ds);
+              break;
+            }
+          }
+        }
+      }
+      Globals.entityManager.getTransaction().commit();
+    }
   }
 
   /**
