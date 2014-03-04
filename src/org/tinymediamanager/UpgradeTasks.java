@@ -16,6 +16,7 @@
 package org.tinymediamanager;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -148,7 +149,15 @@ public class UpgradeTasks {
             }
           }
         }
+        // remove MacOS ingore MFs (borrowed from UDS)
+        List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
+        for (MediaFile mf : mediaFiles) {
+          if (mf.getFilename().startsWith("._")) { // remove MacOS ignore files
+            movie.removeFromMediaFiles(mf);
+          }
+        }
       }
+
       for (TvShow show : tvShowList.getTvShows()) {
         if (StringUtils.isBlank(show.getDataSource())) {
           for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
@@ -156,6 +165,27 @@ public class UpgradeTasks {
               show.setDataSource(ds);
               break;
             }
+          }
+        }
+        // remove MacOS ingore MFs (borrowed from UDS)
+        List<MediaFile> mediaFiles = new ArrayList<MediaFile>(show.getMediaFiles());
+        for (MediaFile mf : mediaFiles) {
+          if (mf.getFilename().startsWith("._")) { // remove MacOS ignore files
+            show.removeFromMediaFiles(mf);
+          }
+        }
+        List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(show.getEpisodes());
+        for (TvShowEpisode episode : episodes) {
+          mediaFiles = new ArrayList<MediaFile>(episode.getMediaFiles());
+          for (MediaFile mf : mediaFiles) {
+            if (mf.getFilename().startsWith("._")) { // remove MacOS ignore files
+              episode.removeFromMediaFiles(mf);
+            }
+          }
+          // lets have a look if there is at least one video file for this episode
+          List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+          if (mfs.size() == 0) {
+            show.removeEpisode(episode);
           }
         }
       }

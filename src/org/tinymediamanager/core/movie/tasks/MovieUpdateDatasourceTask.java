@@ -339,7 +339,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       LOGGER.debug("Checking for multi-movie dir; parsing all video files in " + movieDir);
       for (File file : files) {
         MediaFile mf = new MediaFile(file);
-        if (mf.isDiscFile() || file.getName().startsWith("._")) { // MacOS ignore
+        if (mf.isDiscFile()) { // MacOS ignore
           // ignore disc files when trying to detect multi movie dir!
           continue;
         }
