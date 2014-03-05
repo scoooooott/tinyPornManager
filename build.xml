@@ -47,7 +47,8 @@
         </javac>
         <!-- enhance several classes for objectdb -->
         <java classname="com.objectdb.Enhancer" fork="true" classpathref="classpath.default">
-          <arg line="-S ${bin.dir}/org/tinymediamanager/core/*.class"/>
+            <arg line="-s"/>
+            <arg line="${bin.dir}/org/tinymediamanager/core/*"/>
         </java>
         <!-- copy non java files -->
         <copy includeemptydirs="false" todir="${bin.dir}">
