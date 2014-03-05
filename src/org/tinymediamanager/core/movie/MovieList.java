@@ -228,7 +228,11 @@ public class MovieList extends AbstractModelObject {
     Set<MovieSet> modifiedMovieSets = new HashSet<MovieSet>();
     int oldValue = movieList.size();
 
-    Globals.entityManager.getTransaction().begin();
+    boolean newTransaction = false;
+    if (!Globals.entityManager.getTransaction().isActive()) {
+      Globals.entityManager.getTransaction().begin();
+      newTransaction = true;
+    }
 
     // remove in inverse order => performance
     for (int i = movies.size() - 1; i >= 0; i--) {
@@ -243,7 +247,9 @@ public class MovieList extends AbstractModelObject {
       Globals.entityManager.remove(movie);
     }
 
-    Globals.entityManager.getTransaction().commit();
+    if (newTransaction) {
+      Globals.entityManager.getTransaction().commit();
+    }
 
     // and now check if any of the modified moviesets are worth for deleting
     for (MovieSet movieSet : modifiedMovieSets) {
@@ -1039,9 +1045,19 @@ public class MovieList extends AbstractModelObject {
     movieSet.removeAllMovies();
 
     movieSetList.remove(movieSet);
-    Globals.entityManager.getTransaction().begin();
+
+    boolean newTransaction = false;
+    if (!Globals.entityManager.getTransaction().isActive()) {
+      Globals.entityManager.getTransaction().begin();
+      newTransaction = true;
+    }
+
     Globals.entityManager.remove(movieSet);
-    Globals.entityManager.getTransaction().commit();
+
+    if (newTransaction) {
+      Globals.entityManager.getTransaction().commit();
+    }
+
     firePropertyChange("removedMovieSet", null, movieSet);
     firePropertyChange("movieSetCount", oldValue, movieSetList.size());
   }

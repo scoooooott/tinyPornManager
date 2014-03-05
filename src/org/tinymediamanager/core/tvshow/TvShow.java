@@ -352,14 +352,22 @@ public class TvShow extends MediaEntity {
   public void removeAllEpisodes() {
     int oldValue = episodes.size();
     if (episodes.size() > 0) {
-      Globals.entityManager.getTransaction().begin();
+      boolean newTransaction = false;
+      if (!Globals.entityManager.getTransaction().isActive()) {
+        Globals.entityManager.getTransaction().begin();
+        newTransaction = true;
+      }
+
       for (int i = episodes.size() - 1; i >= 0; i--) {
         TvShowEpisode episode = episodes.get(i);
         episodes.remove(episode);
         episode.removePropertyChangeListener(propertyChangeListener);
         Globals.entityManager.remove(episode);
       }
-      Globals.entityManager.getTransaction().commit();
+
+      if (newTransaction) {
+        Globals.entityManager.getTransaction().commit();
+      }
     }
 
     firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
@@ -376,13 +384,22 @@ public class TvShow extends MediaEntity {
       int oldValue = episodes.size();
 
       synchronized (Globals.entityManager) {
-        Globals.entityManager.getTransaction().begin();
+
+        boolean newTransaction = false;
+        if (!Globals.entityManager.getTransaction().isActive()) {
+          Globals.entityManager.getTransaction().begin();
+          newTransaction = true;
+        }
+
         episodes.remove(episode);
         episode.removePropertyChangeListener(propertyChangeListener);
         removeFromSeason(episode);
         Globals.entityManager.remove(episode);
         Globals.entityManager.persist(this);
-        Globals.entityManager.getTransaction().commit();
+
+        if (newTransaction) {
+          Globals.entityManager.getTransaction().commit();
+        }
       }
 
       firePropertyChange(REMOVED_EPISODE, null, episode);

@@ -149,9 +149,19 @@ public class TvShowList extends AbstractModelObject {
     int oldValue = tvShowList.size();
     tvShow.removeAllEpisodes();
     tvShowList.remove(tvShow);
-    Globals.entityManager.getTransaction().begin();
+
+    boolean newTransaction = false;
+    if (!Globals.entityManager.getTransaction().isActive()) {
+      Globals.entityManager.getTransaction().begin();
+      newTransaction = true;
+    }
+
     Globals.entityManager.remove(tvShow);
-    Globals.entityManager.getTransaction().commit();
+
+    if (newTransaction) {
+      Globals.entityManager.getTransaction().commit();
+    }
+
     firePropertyChange(TV_SHOWS, null, tvShowList);
     firePropertyChange(REMOVED_TV_SHOW, null, tvShow);
     firePropertyChange(TV_SHOW_COUNT, oldValue, tvShowList.size());
