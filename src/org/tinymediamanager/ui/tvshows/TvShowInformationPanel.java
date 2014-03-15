@@ -205,7 +205,7 @@ public class TvShowInformationPanel extends JPanel {
     lblVoteCount = new JLabel("");
     panelRatingTagline.add(lblVoteCount, "3, 2, left, center");
 
-    panelRatingStars = new StarRater(5, 2);
+    panelRatingStars = new StarRater(10, 1);
     panelRatingTagline.add(panelRatingStars, "1, 2, left, top");
     panelRatingStars.setEnabled(false);
 
