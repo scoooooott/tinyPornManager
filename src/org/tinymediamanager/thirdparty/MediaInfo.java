@@ -497,7 +497,7 @@ public class MediaInfo implements Closeable {
     try {
       return MediaInfoLibrary.INSTANCE.Option(null, new WString(option), new WString(value)).toString();
     }
-    catch (LinkageError e) {
+    catch (Error e) {
       // throw new MediaInfoException(e);
       LOGGER.error("Failed to load mediainfo", e);
       return "";
