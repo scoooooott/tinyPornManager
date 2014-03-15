@@ -18,9 +18,7 @@ package org.tinymediamanager.core;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -31,7 +29,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -174,18 +171,12 @@ public class Settings extends AbstractModelObject {
           Reader in = new InputStreamReader(new FileInputStream(CONFIG_FILE), "UTF-8");
           Settings.instance = (Settings) um.unmarshal(in);
         }
-        catch (FileNotFoundException e) {
-          // e.printStackTrace();
-          Settings.instance = new Settings();
-          Settings.instance.writeDefaultSettings();
-        }
-        catch (IOException e) {
-          // e.printStackTrace();
+        catch (Exception e) {
           Settings.instance = new Settings();
           Settings.instance.writeDefaultSettings();
         }
       }
-      catch (JAXBException e) {
+      catch (Exception e) {
         LOGGER.error("getInstance", e);
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "tmm.settings", "message.config.loadsettingserror"));
       }
