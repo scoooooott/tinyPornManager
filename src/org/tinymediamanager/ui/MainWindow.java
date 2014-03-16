@@ -16,9 +16,7 @@
 package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
@@ -34,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.ResourceBundle;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -51,13 +48,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.Timer;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
@@ -85,6 +80,7 @@ import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.RegisterDonatorVersionAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.components.LightBoxPanel;
+import org.tinymediamanager.ui.components.TaskPopupMenu;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.LogDialog;
@@ -158,7 +154,7 @@ public class MainWindow extends JFrame {
   private StatusbarThread             statusTask       = new StatusbarThread();
   private List<String>                messagesList;
 
-  private JPopupMenu                  taskPopup;
+  private TaskPopupMenu               taskPopup        = new TaskPopupMenu();
   private LightBoxPanel               lightBoxPanel;
 
   private JDialog                     settingsDialog;
@@ -647,28 +643,7 @@ public class MainWindow extends JFrame {
   }
 
   private void createTaskPopup(MouseEvent arg0) {
-    JPanel panel = new JPanel();
-    panel.setBorder(new EmptyBorder(5, 10, 5, 10));
-
-    Queue<TmmSwingWorker<?, ?>> activeTasks = TmmTaskManager.getActiveDownloadTasks();
-    panel.setLayout(new GridLayout(activeTasks.size(), 1));
-    for (TmmSwingWorker<?, ?> task : activeTasks) {
-      JPanel subPanel = new JPanel();
-
-      subPanel.setLayout(new BorderLayout(5, 0));
-      subPanel.add(task.getProgressActionLabel(), BorderLayout.NORTH);
-      subPanel.add(task.getActionButton(), BorderLayout.EAST);
-      subPanel.add(task.getProgressBar(), BorderLayout.CENTER);
-      panel.add(subPanel);
-    }
-
-    int x = -panel.getPreferredSize().width - 5;
-    int y = -panel.getPreferredSize().height - 5;
-
-    taskPopup = new JPopupMenu();
-    taskPopup.setLayout(new BorderLayout());
-    taskPopup.add(panel, BorderLayout.CENTER);
-    taskPopup.show(lblLoadingImg, x, y);
+    taskPopup.show(lblLoadingImg);
   }
 
   public void createLightbox(String pathToFile, String urlToFile) {
