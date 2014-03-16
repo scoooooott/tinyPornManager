@@ -162,20 +162,20 @@ public class TvShowTreeModel implements TreeModel {
           addTvShowSeason(season, tvShow);
         }
 
-        for (TvShowEpisode episode : season.getEpisodes()) {
+        for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(season.getEpisodes())) {
           addTvShowEpisode(episode, season);
         }
       }
 
-      int index = root.getIndex(tvShowNode);
+      int index = getIndexOfChild(root, tvShowNode);
 
       // inform listeners
-      TreeModelEvent event = new TreeModelEvent(this, root.getPath(), new int[] { index }, new Object[] { tvShow });
-
-      for (TreeModelListener listener : listeners) {
-        listener.treeNodesInserted(event);
+      if (index > -1) {
+        TreeModelEvent event = new TreeModelEvent(this, root.getPath(), new int[] { index }, new Object[] { tvShow });
+        for (TreeModelListener listener : listeners) {
+          listener.treeNodesInserted(event);
+        }
       }
-
     }
     tvShow.addPropertyChangeListener(propertyChangeListener);
   }
@@ -191,7 +191,7 @@ public class TvShowTreeModel implements TreeModel {
       TvShowTreeNode child = (TvShowTreeNode) nodeMap.get(tvShow);
       DefaultMutableTreeNode parent = root;
       if (parent != null && child != null) {
-        int index = parent.getIndex(child);
+        int index = getIndexOfChild(parent, child);
 
         nodeMap.remove(tvShow);
         for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
@@ -205,9 +205,11 @@ public class TvShowTreeModel implements TreeModel {
         child.removeFromParent();
 
         // inform listeners
-        TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
-        for (TreeModelListener listener : listeners) {
-          listener.treeNodesRemoved(event);
+        if (index > -1) {
+          TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
+          for (TreeModelListener listener : listeners) {
+            listener.treeNodesRemoved(event);
+          }
         }
       }
     }
@@ -230,16 +232,18 @@ public class TvShowTreeModel implements TreeModel {
         parent.add(child);
         nodeMap.put(season, child);
 
-        int index = parent.getIndex(child);
+        int index = getIndexOfChild(parent, child);
 
         // inform listeners (tv show)
-        TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
-        for (TreeModelListener listener : listeners) {
-          listener.treeNodesInserted(event);
+        if (index > -1) {
+          TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
+          for (TreeModelListener listener : listeners) {
+            listener.treeNodesInserted(event);
+          }
         }
 
         // inform listeners (root - to update the sum)
-        event = new TreeModelEvent(this, root.getPath(), null, null);
+        TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
         for (TreeModelListener listener : listeners) {
           listener.treeNodesChanged(event);
         }
@@ -264,21 +268,22 @@ public class TvShowTreeModel implements TreeModel {
         parent.add(child);
         nodeMap.put(episode, child);
 
-        int index = parent.getIndex(child);
+        int index = getIndexOfChild(parent, child);
 
         // inform listeners
-        TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
-        for (TreeModelListener listener : listeners) {
-          listener.treeNodesInserted(event);
+        if (index > -1) {
+          TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
+          for (TreeModelListener listener : listeners) {
+            listener.treeNodesInserted(event);
+          }
         }
 
         // inform listeners (root - to update the sum)
-        event = new TreeModelEvent(this, root.getPath(), null, null);
+        TreeModelEvent event = new TreeModelEvent(this, root.getPath(), null, null);
         for (TreeModelListener listener : listeners) {
           listener.treeNodesChanged(event);
         }
       }
-
     }
     episode.addPropertyChangeListener(propertyChangeListener);
   }
@@ -301,15 +306,17 @@ public class TvShowTreeModel implements TreeModel {
       }
 
       if (parent != null && child != null) {
-        int index = parent.getIndex(child);
+        int index = getIndexOfChild(parent, child);
         parent.remove(child);
         nodeMap.remove(episode);
         episode.removePropertyChangeListener(propertyChangeListener);
 
         // inform listeners
-        TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
-        for (TreeModelListener listener : listeners) {
-          listener.treeNodesRemoved(event);
+        if (index > -1) {
+          TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
+          for (TreeModelListener listener : listeners) {
+            listener.treeNodesRemoved(event);
+          }
         }
 
         // remove tv show if there is no more episode in it
@@ -343,14 +350,16 @@ public class TvShowTreeModel implements TreeModel {
       }
 
       if (parent != null && child != null) {
-        int index = parent.getIndex(child);
+        int index = getIndexOfChild(parent, child);
         parent.remove(child);
         nodeMap.remove(season);
 
         // inform listeners
-        TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
-        for (TreeModelListener listener : listeners) {
-          listener.treeNodesRemoved(event);
+        if (index > -1) {
+          TreeModelEvent event = new TreeModelEvent(this, parent.getPath(), new int[] { index }, new Object[] { child });
+          for (TreeModelListener listener : listeners) {
+            listener.treeNodesRemoved(event);
+          }
         }
       }
     }
