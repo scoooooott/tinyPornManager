@@ -211,26 +211,49 @@ public class BugReportDialog extends JDialog {
                 });
                 if (logs != null) {
                   for (File logFile : logs) {
-                    ZipEntry ze = new ZipEntry(logFile.getName());
-                    zos.putNextEntry(ze);
-                    FileInputStream in = new FileInputStream(logFile);
+                    try {
+                      ZipEntry ze = new ZipEntry(logFile.getName());
+                      zos.putNextEntry(ze);
+                      FileInputStream in = new FileInputStream(logFile);
 
-                    IOUtils.copy(in, zos);
-                    in.close();
-                    zos.closeEntry();
+                      IOUtils.copy(in, zos);
+                      in.close();
+                      zos.closeEntry();
+                    }
+                    catch (Exception e) {
+                      LOGGER.warn("unable to attach " + logFile.getName() + ": " + e.getMessage());
+                    }
                   }
+                }
+
+                try {
+                  ZipEntry ze = new ZipEntry("launcher.log");
+                  zos.putNextEntry(ze);
+                  FileInputStream in = new FileInputStream("launcher.log");
+
+                  IOUtils.copy(in, zos);
+                  in.close();
+                  zos.closeEntry();
+                }
+                catch (Exception e) {
+                  LOGGER.warn("unable to attach launcher.log: " + e.getMessage());
                 }
               }
 
               // attach config file
               if (chckbxConfigxml.isSelected()) {
-                ZipEntry ze = new ZipEntry("config.xml");
-                zos.putNextEntry(ze);
-                FileInputStream in = new FileInputStream("config.xml");
+                try {
+                  ZipEntry ze = new ZipEntry("config.xml");
+                  zos.putNextEntry(ze);
+                  FileInputStream in = new FileInputStream("config.xml");
 
-                IOUtils.copy(in, zos);
-                in.close();
-                zos.closeEntry();
+                  IOUtils.copy(in, zos);
+                  in.close();
+                  zos.closeEntry();
+                }
+                catch (Exception e) {
+                  LOGGER.warn("unable to attach config.xml: " + e.getMessage());
+                }
               }
 
               zos.close();
