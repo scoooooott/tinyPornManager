@@ -221,8 +221,7 @@ public enum Certification {
   TH_Banned(CountryCode.TH, "Banned", new String[] { "Banned" }),
 
   /** initial value. */
-  NOT_RATED(CountryCode.US, "not rated", new String[] { "not rated" });
-  // @formatter:on
+  NOT_RATED(CountryCode.US, "not rated", new String[] { "not rated" });  // @formatter:on
 
   /** The country. */
   private CountryCode country;
@@ -336,10 +335,11 @@ public enum Certification {
     }
     String certstring = "";
     for (Certification c : certs) {
-      certstring += " / " + c.getCountry().getAlpha2() + ":" + c.getName();
       if (c.getCountry() == CountryCode.GB) {
-        // GB is official, but skins often parse UK
         certstring += " / UK:" + c.getName();
+      }
+      else {
+        certstring += " / " + c.getCountry().getAlpha2() + ":" + c.getName();
       }
     }
     return certstring.substring(3).trim(); // strip off first slash
@@ -359,9 +359,11 @@ public enum Certification {
     }
     String certstring = "";
     for (String notation : cert.getPossibleNotations()) {
-      certstring += " / " + cert.getCountry().getAlpha2() + ":" + notation;
       if (cert.getCountry() == CountryCode.GB) {
         certstring += " / UK:" + notation;
+      }
+      else {
+        certstring += " / " + cert.getCountry().getAlpha2() + ":" + notation;
       }
     }
     return certstring.substring(3).trim(); // strip off first slash
@@ -494,5 +496,26 @@ public enum Certification {
       }
     }
     return NOT_RATED;
+  }
+
+  /**
+   * gets the MPAA String from any US (!) movie certification<br>
+   */
+  public static String getMPAAString(Certification cert) {
+    // http://en.wikipedia.org/wiki/Motion_picture_rating_system#Comparison
+    switch (cert) {
+      case US_G:
+        return "Rated G";
+      case US_PG:
+        return "Rated PG";
+      case US_PG13:
+        return "Rated PG-13";
+      case US_R:
+        return "Rated R";
+      case US_NC17:
+        return "Rated NC-17";
+      default:
+        return "";
+    }
   }
 }

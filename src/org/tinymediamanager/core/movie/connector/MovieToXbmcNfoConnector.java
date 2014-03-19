@@ -66,6 +66,7 @@ import org.tinymediamanager.core.movie.MovieSet;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Producer;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 
@@ -328,7 +329,13 @@ public class MovieToXbmcNfoConnector {
 
     // certifications
     if (movie.getCertification() != null) {
-      xbmc.mpaa = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
+      if (Globals.settings.getMovieSettings().getCertificationCountry() == CountryCode.US) {
+        // if we have US verts, write correct "Rated XX" String
+        xbmc.mpaa = Certification.getMPAAString(movie.getCertification());
+      }
+      else {
+        xbmc.mpaa = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
+      }
       xbmc.certifications = Certification.generateCertificationStringWithAlternateNames(movie.getCertification());
     }
 
