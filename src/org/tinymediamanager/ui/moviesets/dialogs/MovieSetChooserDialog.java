@@ -54,9 +54,8 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -110,7 +109,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     setName("movieSetChooser");
     setBounds(5, 5, 865, 578);
     TmmWindowSaver.loadSettings(this);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setModal(true);
 
     movieSetToScrape = movieSet;

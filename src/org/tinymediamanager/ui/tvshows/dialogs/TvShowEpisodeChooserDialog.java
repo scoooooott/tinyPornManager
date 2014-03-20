@@ -41,12 +41,13 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeChooserModel;
@@ -77,7 +78,7 @@ public class TvShowEpisodeChooserDialog extends JDialog implements ActionListene
     setBounds(5, 5, 600, 400);
     TmmWindowSaver.loadSettings(this);
     setModal(true);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setTitle(BUNDLE.getString("tvshowepisode.choose")); //$NON-NLS-1$
 
     this.episode = ep;

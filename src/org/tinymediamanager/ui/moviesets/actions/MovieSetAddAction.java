@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 

@@ -61,11 +61,11 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.tvshow.TvShowActor;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
+import org.tinymediamanager.core.tvshow.entities.TvShowActor;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -137,7 +137,7 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
     setName("tvShowEpisodeScraper");
     TmmWindowSaver.loadSettings(this);
     setBounds(5, 5, 964, 632);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
 
     this.episodeToEdit = episode;
     getContentPane().setLayout(new BorderLayout());

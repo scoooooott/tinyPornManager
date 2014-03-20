@@ -31,10 +31,10 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.MediaFileAudioStream;
-import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;

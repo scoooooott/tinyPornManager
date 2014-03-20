@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,13 +38,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.MediaFileAudioStream;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -229,8 +232,8 @@ public class MovieList extends AbstractModelObject {
     int oldValue = movieList.size();
 
     boolean newTransaction = false;
-    if (!Globals.entityManager.getTransaction().isActive()) {
-      Globals.entityManager.getTransaction().begin();
+    if (!MovieModuleManager.getInstance().getEntityManager().getTransaction().isActive()) {
+      MovieModuleManager.getInstance().getEntityManager().getTransaction().begin();
       newTransaction = true;
     }
 
@@ -244,11 +247,11 @@ public class MovieList extends AbstractModelObject {
         modifiedMovieSets.add(movieSet);
         movie.setMovieSet(null);
       }
-      Globals.entityManager.remove(movie);
+      MovieModuleManager.getInstance().getEntityManager().remove(movie);
     }
 
     if (newTransaction) {
-      Globals.entityManager.getTransaction().commit();
+      MovieModuleManager.getInstance().getEntityManager().getTransaction().commit();
     }
 
     // and now check if any of the modified moviesets are worth for deleting
@@ -275,12 +278,12 @@ public class MovieList extends AbstractModelObject {
   /**
    * Load movies from database.
    */
-  public void loadMoviesFromDatabase() {
+  public void loadMoviesFromDatabase(EntityManager entityManager) {
     List<Movie> movies = null;
     List<MovieSet> movieSets = null;
     try {
       // load movies
-      TypedQuery<Movie> query = Globals.entityManager.createQuery("SELECT movie FROM Movie movie", Movie.class);
+      TypedQuery<Movie> query = entityManager.createQuery("SELECT movie FROM Movie movie", Movie.class);
       movies = query.getResultList();
       if (movies != null) {
         LOGGER.info("found " + movies.size() + " movies in database");
@@ -323,7 +326,7 @@ public class MovieList extends AbstractModelObject {
       }
 
       // load movie sets
-      TypedQuery<MovieSet> querySets = Globals.entityManager.createQuery("SELECT movieSet FROM MovieSet movieSet", MovieSet.class);
+      TypedQuery<MovieSet> querySets = entityManager.createQuery("SELECT movieSet FROM MovieSet movieSet", MovieSet.class);
       movieSets = querySets.getResultList();
       if (movieSets != null) {
         LOGGER.info("found " + movieSets.size() + " movieSets in database");
@@ -1047,15 +1050,15 @@ public class MovieList extends AbstractModelObject {
     movieSetList.remove(movieSet);
 
     boolean newTransaction = false;
-    if (!Globals.entityManager.getTransaction().isActive()) {
-      Globals.entityManager.getTransaction().begin();
+    if (!MovieModuleManager.getInstance().getEntityManager().getTransaction().isActive()) {
+      MovieModuleManager.getInstance().getEntityManager().getTransaction().begin();
       newTransaction = true;
     }
 
-    Globals.entityManager.remove(movieSet);
+    MovieModuleManager.getInstance().getEntityManager().remove(movieSet);
 
     if (newTransaction) {
-      Globals.entityManager.getTransaction().commit();
+      MovieModuleManager.getInstance().getEntityManager().getTransaction().commit();
     }
 
     firePropertyChange("removedMovieSet", null, movieSet);

@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieActor;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.MediaGenres;
 
 /**

@@ -45,6 +45,8 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.components.ImageLabel;
 

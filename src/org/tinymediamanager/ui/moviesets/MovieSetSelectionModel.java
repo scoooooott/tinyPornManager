@@ -25,8 +25,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 
 /**
  * The Class MovieSelectionModel.

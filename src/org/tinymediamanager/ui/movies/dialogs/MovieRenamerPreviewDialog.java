@@ -44,12 +44,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieRenamerPreview;
 import org.tinymediamanager.core.movie.MovieRenamerPreviewContainer;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -103,7 +102,7 @@ public class MovieRenamerPreviewDialog extends JDialog {
 
   public MovieRenamerPreviewDialog(final List<Movie> selectedMovies) {
     super((Frame) null, BUNDLE.getString("movie.renamerpreview"), true); //$NON-NLS-1$
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setName("movieRenamerPreview");
     setBounds(5, 5, 950, 700);
     setLocationRelativeTo(MainWindow.getActiveInstance());

@@ -28,8 +28,8 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieActor;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ActorImageLabel;
 import org.tinymediamanager.ui.components.ZebraJTable;

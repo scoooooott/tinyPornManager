@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.movie.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
 
 /**
- * The Class MovieCast.
+ * The Class MovieActor. This class represents the movie actors
  * 
  * @author Manuel Laggner
  */

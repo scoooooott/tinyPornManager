@@ -26,7 +26,6 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -57,7 +56,7 @@ public class SettingsDialog extends JDialog {
 
   private SettingsDialog() {
     super(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.settings"), true); //$NON-NLS-1$
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     Rectangle bounds = MainWindow.getActiveInstance().getBounds();
     setBounds(bounds.x + (bounds.width / 20), bounds.y + (bounds.height / 20), (int) (bounds.width * 0.90), (int) (bounds.height * 0.90));
 

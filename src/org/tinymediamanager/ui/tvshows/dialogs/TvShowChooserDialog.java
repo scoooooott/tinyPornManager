@@ -56,10 +56,10 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
@@ -128,7 +128,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     setName("tvShowChooser");
     setBounds(5, 5, 800, 500);
     TmmWindowSaver.loadSettings(this);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setModal(true);
 
     // copy the values

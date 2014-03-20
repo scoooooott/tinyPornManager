@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.tvshow;
+package org.tinymediamanager.core.tvshow.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
 
 /**
  * The Class TvShowSeason.

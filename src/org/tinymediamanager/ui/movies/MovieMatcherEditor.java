@@ -17,7 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.util.HashMap;
 
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 import ca.odell.glazedlists.matchers.AbstractMatcherEditor;
 import ca.odell.glazedlists.matchers.Matcher;

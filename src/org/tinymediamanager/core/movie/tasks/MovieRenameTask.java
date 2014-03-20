@@ -24,8 +24,8 @@ import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieRenamer;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * The Class MovieRenameTask.

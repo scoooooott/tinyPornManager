@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.movie.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
@@ -35,8 +35,10 @@ import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -53,11 +55,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieFanartNaming;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaFileComparator;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieNfoNaming;
+import org.tinymediamanager.core.movie.MoviePosterNaming;
+import org.tinymediamanager.core.movie.MovieRenamer;
+import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
@@ -113,13 +123,13 @@ public class Movie extends MediaEntity {
   @Enumerated(EnumType.STRING)
   private Certification       certification   = Certification.NOT_RATED;
 
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MovieActor>    actors          = new ArrayList<MovieActor>(0);
 
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MovieProducer> producers       = new ArrayList<MovieProducer>(0);
 
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MediaTrailer>  trailer         = new ArrayList<MediaTrailer>(0);
 
   @Transient
@@ -2123,6 +2133,38 @@ public class Movie extends MediaEntity {
    */
   public void setReleaseDate(String dateAsString) throws ParseException {
     setReleaseDate(org.tinymediamanager.scraper.util.StrgUtils.parseDate(dateAsString));
+  }
+
+  @Override
+  public void saveToDb() {
+    // update/insert this movie to the database
+    final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    synchronized (entityManager) {
+      if (!entityManager.getTransaction().isActive()) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(this);
+        entityManager.getTransaction().commit();
+      }
+      else {
+        entityManager.persist(this);
+      }
+    }
+  }
+
+  @Override
+  public void deleteFromDb() {
+    // delete this movie from the database
+    final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    synchronized (entityManager) {
+      if (!entityManager.getTransaction().isActive()) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(this);
+        entityManager.getTransaction().commit();
+      }
+      else {
+        entityManager.remove(this);
+      }
+    }
   }
 
   @Override

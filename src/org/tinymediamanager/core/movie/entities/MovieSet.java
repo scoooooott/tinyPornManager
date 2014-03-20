@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.movie.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
@@ -28,6 +28,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.apache.commons.io.FilenameUtils;
@@ -37,13 +40,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaFileComparator;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
- * The Class MovieSet.
+ * The Class MovieSet. This class is used to represent a movie set (which means a "collection" of n movies)
  * 
  * @author Manuel Laggner
  */
@@ -53,6 +59,7 @@ public class MovieSet extends MediaEntity {
   private static final Logger            LOGGER               = LoggerFactory.getLogger(MovieSet.class);
   private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
 
+  @OneToMany(fetch = FetchType.EAGER)
   private List<Movie>                    movies               = new ArrayList<Movie>(0);
 
   @Transient
@@ -92,21 +99,10 @@ public class MovieSet extends MediaEntity {
     return titleSortable;
   }
 
-  /**
-   * Instantiates a new movie set.
-   * 
-   * @param title
-   *          the title
-   */
   public MovieSet(String title) {
     setTitle(title);
   }
 
-  /**
-   * Gets the tmdb id.
-   * 
-   * @return the tmdb id
-   */
   public int getTmdbId() {
     int id = 0;
     try {
@@ -118,24 +114,12 @@ public class MovieSet extends MediaEntity {
     return id;
   }
 
-  /**
-   * Sets the tmdb id.
-   * 
-   * @param newValue
-   *          the new tmdb id
-   */
   public void setTmdbId(int newValue) {
     int oldValue = getTmdbId();
     ids.put("tmdbId", newValue);
     firePropertyChange(TMDBID, oldValue, newValue);
   }
 
-  /**
-   * Sets the poster url.
-   * 
-   * @param newValue
-   *          the new poster url
-   */
   @Override
   public void setPosterUrl(String newValue) {
     super.setPosterUrl(newValue);
@@ -168,12 +152,6 @@ public class MovieSet extends MediaEntity {
 
   }
 
-  /**
-   * Sets the fanart url.
-   * 
-   * @param newValue
-   *          the new fanart url
-   */
   @Override
   public void setFanartUrl(String newValue) {
     super.setFanartUrl(newValue);
@@ -205,11 +183,6 @@ public class MovieSet extends MediaEntity {
     }
   }
 
-  /**
-   * Gets the fanart.
-   * 
-   * @return the fanart
-   */
   @Override
   public String getFanart() {
     String fanart = "";
@@ -242,11 +215,6 @@ public class MovieSet extends MediaEntity {
     return fanart;
   }
 
-  /**
-   * Gets the poster.
-   * 
-   * @return the poster
-   */
   @Override
   public String getPoster() {
     String poster = "";
@@ -342,7 +310,7 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
-   * Removes the movie.
+   * Removes the movie from the list.
    * 
    * @param movie
    *          the movie
@@ -371,17 +339,12 @@ public class MovieSet extends MediaEntity {
     firePropertyChange("removedMovie", null, movie);
   }
 
-  /**
-   * Gets the movies.
-   * 
-   * @return the movies
-   */
   public List<Movie> getMovies() {
     return movies;
   }
 
   /**
-   * Sort movies.
+   * Sort movies inside this movie set by using either the sort title, release date or year.
    */
   public void sortMovies() {
     synchronized (movies) {
@@ -391,7 +354,7 @@ public class MovieSet extends MediaEntity {
   }
 
   /**
-   * Removes the all movies.
+   * Removes the all movies from this movie set.
    */
   public void removeAllMovies() {
     // store all old movies to remove the nodes in the tree
@@ -431,27 +394,10 @@ public class MovieSet extends MediaEntity {
     return getTitle();
   }
 
-  /**
-   * Gets the movie index.
-   * 
-   * @param movie
-   *          the movie
-   * @return the movie index
-   */
   public int getMovieIndex(Movie movie) {
     return movies.indexOf(movie);
   }
 
-  /**
-   * Write image to movie folder.
-   * 
-   * @param movies
-   *          the movies
-   * @param filename
-   *          the filename
-   * @param url
-   *          the url
-   */
   private void writeImageToMovieFolder(List<Movie> movies, String filename, String url) {
     // check for empty strings or movies
     if (movies == null || movies.size() == 0 || StringUtils.isEmpty(filename) || StringUtils.isEmpty(url)) {
@@ -471,9 +417,6 @@ public class MovieSet extends MediaEntity {
     }
   }
 
-  /**
-   * Rewrite all images.
-   */
   public void rewriteAllImages() {
     writeImageToMovieFolder(movies, "movieset-fanart.jpg", fanartUrl);
     writeImageToMovieFolder(movies, "movieset-poster.jpg", posterUrl);
@@ -485,14 +428,6 @@ public class MovieSet extends MediaEntity {
     }
   }
 
-  /**
-   * Write images to artwork folder.
-   * 
-   * @param poster
-   *          the poster
-   * @param fanart
-   *          the fanart
-   */
   private void writeImagesToArtworkFolder(boolean poster, boolean fanart) {
     // write images to artwork folder
     File artworkFolder = new File(Globals.settings.getMovieSettings().getMovieSetArtworkFolder());
@@ -526,16 +461,6 @@ public class MovieSet extends MediaEntity {
     }
   }
 
-  /**
-   * Write image.
-   * 
-   * @param url
-   *          the url
-   * @param pathAndFilename
-   *          the path and filename
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   */
   private void writeImage(String url, String pathAndFilename) throws IOException {
     Url url1 = new Url(url);
     FileOutputStream outputStream = new FileOutputStream(pathAndFilename);
@@ -555,62 +480,106 @@ public class MovieSet extends MediaEntity {
     ImageCache.invalidateCachedImage(pathAndFilename);
   }
 
-  // /**
-  // * Search tmdb id for this movieset.
-  // */
-  // public void searchTmdbId() {
-  // try {
-  // TmdbMetadataProvider tmdb = new TmdbMetadataProvider();
-  // for (Movie movie : moviesObservable) {
-  // MediaScrapeOptions options = new MediaScrapeOptions();
-  // if (Utils.isValidImdbId(movie.getImdbId()) || movie.getTmdbId() > 0) {
-  // options.setTmdbId(movie.getTmdbId());
-  // options.setImdbId(movie.getImdbId());
-  // MediaMetadata md = tmdb.getMetadata(options);
-  // if (md.getTmdbIdSet() > 0) {
-  // setTmdbId(md.getTmdbIdSet());
-  // saveToDb();
-  // break;
-  // }
-  // }
-  // }
-  // }
-  // catch (Exception e) {
-  // LOGGER.warn(e);
-  // }
-  // }
+  public Boolean getHasImages() {
+    if (!StringUtils.isEmpty(getPoster()) && !StringUtils.isEmpty(getFanart())) {
+      return true;
+    }
+    return false;
+  }
+
+  public List<File> getImagesToCache() {
+    // get files to cache
+    List<File> filesToCache = new ArrayList<File>();
+
+    if (StringUtils.isNotBlank(getPoster())) {
+      filesToCache.add(new File(getPoster()));
+    }
+
+    if (StringUtils.isNotBlank(getFanart())) {
+      filesToCache.add(new File(getFanart()));
+    }
+
+    return filesToCache;
+  }
+
+  @Override
+  public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
+  }
+
+  @Override
+  public void saveToDb() {
+    // update/insert this movie set to the database
+    final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    synchronized (entityManager) {
+      if (!entityManager.getTransaction().isActive()) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(this);
+        entityManager.getTransaction().commit();
+      }
+      else {
+        entityManager.persist(this);
+      }
+    }
+  }
+
+  @Override
+  public void deleteFromDb() {
+    // delete this movie set from the database
+    final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    synchronized (entityManager) {
+      if (!entityManager.getTransaction().isActive()) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(this);
+        entityManager.getTransaction().commit();
+      }
+      else {
+        entityManager.remove(this);
+      }
+    }
+  }
 
   /**
-   * The Class ImageFetcher.
-   * 
-   * @author Manuel Laggner
+   * recalculate all movie sorttitles
    */
+  public void updateMovieSorttitle() {
+    for (Movie movie : new ArrayList<Movie>(movies)) {
+      movie.setSortTitleFromMovieSet();
+      movie.saveToDb();
+      movie.writeNFO();
+    }
+  }
+
+  /**
+   * clean movies from this movieset if there are any inconsistances
+   */
+  public void cleanMovieSet() {
+    MovieList movieList = MovieList.getInstance();
+    boolean dirty = false;
+
+    for (Movie movie : new ArrayList<Movie>(movies)) {
+      if (!movieList.getMovies().contains(movie)) {
+        movies.remove(movie);
+        dirty = true;
+      }
+    }
+
+    if (dirty) {
+      saveToDb();
+    }
+  }
+
+  /*******************************************************************************
+   * helper classses
+   *******************************************************************************/
   private class ImageFetcher implements Runnable {
-
-    /** The property name. */
     private String propertyName = "";
-
-    /** The image url. */
     private String imageUrl     = "";
 
-    /**
-     * Instantiates a new image fetcher.
-     * 
-     * @param propertyName
-     *          the property name
-     * @param url
-     *          the url
-     */
     public ImageFetcher(String propertyName, String url) {
       this.propertyName = propertyName;
       this.imageUrl = url;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Runnable#run()
-     */
     @Override
     public void run() {
       String filename = ImageCache.getCachedFileName(imageUrl);
@@ -640,18 +609,7 @@ public class MovieSet extends MediaEntity {
     }
   }
 
-  /**
-   * The Class MovieInMovieSetComparator.
-   * 
-   * @author Manuel Laggner
-   */
   private static class MovieInMovieSetComparator implements Comparator<Movie> {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(Movie o1, Movie o2) {
       Collator collator = null;
@@ -684,73 +642,6 @@ public class MovieSet extends MediaEntity {
 
       // fallback
       return 0;
-    }
-
-  }
-
-  /**
-   * Gets the checks for images.
-   * 
-   * @return the checks for images
-   */
-  public Boolean getHasImages() {
-    if (!StringUtils.isEmpty(getPoster()) && !StringUtils.isEmpty(getFanart())) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Gets the images to cache.
-   * 
-   * @return the images to cache
-   */
-  public List<File> getImagesToCache() {
-    // get files to cache
-    List<File> filesToCache = new ArrayList<File>();
-
-    if (StringUtils.isNotBlank(getPoster())) {
-      filesToCache.add(new File(getPoster()));
-    }
-
-    if (StringUtils.isNotBlank(getFanart())) {
-      filesToCache.add(new File(getFanart()));
-    }
-
-    return filesToCache;
-  }
-
-  @Override
-  public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
-  }
-
-  /**
-   * recalculate all movie sorttitles
-   */
-  public void updateMovieSorttitle() {
-    for (Movie movie : new ArrayList<Movie>(movies)) {
-      movie.setSortTitleFromMovieSet();
-      movie.saveToDb();
-      movie.writeNFO();
-    }
-  }
-
-  /**
-   * clean movies from this movieset if there are any inconsistances
-   */
-  void cleanMovieSet() {
-    MovieList movieList = MovieList.getInstance();
-    boolean dirty = false;
-
-    for (Movie movie : new ArrayList<Movie>(movies)) {
-      if (!movieList.getMovies().contains(movie)) {
-        movies.remove(movie);
-        dirty = true;
-      }
-    }
-
-    if (dirty) {
-      saveToDb();
     }
   }
 }

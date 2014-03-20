@@ -25,7 +25,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.SortedList;

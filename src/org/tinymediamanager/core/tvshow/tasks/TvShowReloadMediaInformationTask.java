@@ -26,8 +26,8 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**
  * The Class TvShowReloadMediaInformationTask, to explicit reload mediainformation.

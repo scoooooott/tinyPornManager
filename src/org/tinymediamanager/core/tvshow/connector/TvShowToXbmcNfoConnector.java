@@ -46,13 +46,13 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowActor;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 

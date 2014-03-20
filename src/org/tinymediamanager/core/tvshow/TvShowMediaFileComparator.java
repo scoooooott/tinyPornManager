@@ -17,7 +17,7 @@ package org.tinymediamanager.core.tvshow;
 
 import java.util.Comparator;
 
-import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.entities.MediaFile;
 
 /**
  * For logical sorting of mediafiles

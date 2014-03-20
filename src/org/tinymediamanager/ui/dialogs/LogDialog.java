@@ -28,7 +28,7 @@ import javax.swing.text.Document;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUILogAppender.LogOutput;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.UTF8Control;
@@ -50,7 +50,7 @@ public class LogDialog extends JDialog implements ActionListener {
   private final Timer                 timerRefresh;
 
   public LogDialog() {
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setTitle(BUNDLE.getString("logwindow.title")); //$NON-NLS-1$
     setSize(600, 250);
 

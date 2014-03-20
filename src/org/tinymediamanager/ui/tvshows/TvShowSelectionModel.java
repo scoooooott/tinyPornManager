@@ -25,9 +25,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
-import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 
 /**
  * The Class TvShowSelectionModel.

@@ -39,7 +39,7 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.UTF8Control;

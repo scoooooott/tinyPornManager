@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 

@@ -37,8 +37,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.Certification;

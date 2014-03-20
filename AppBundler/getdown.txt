@@ -136,6 +136,3 @@ jvmarg = -splash:splashscreen.png
 jvmarg = -Djava.net.preferIPv4Stack=true
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
 jvmarg = [linux] -Djna.nosys=true
-#jvmarg = [linux] -Djava.ext.dirs=/usr/share/java
-#jvmarg = [windows] -Djava.ext.dirs=lib
-#jvmarg = [mac os x] -Djava.ext.dirs=lib

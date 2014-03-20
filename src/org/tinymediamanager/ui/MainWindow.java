@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.tinymediamanager.ui;
 
 import java.awt.AWTEvent;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
@@ -65,6 +66,7 @@ import org.tinymediamanager.TmmTaskManager;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.WolDevice;
@@ -103,14 +105,12 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MainWindow extends JFrame {
-
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  /** The logger. */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                   //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MainWindow.class);
-
-  /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1L;
+
+  public final static Image           LOGO             = Toolkit.getDefaultToolkit().getImage(
+                                                           MainWindow.class.getResource("/org/tinymediamanager/ui/images/tmm.png"));
 
   /** The action about. */
   private final Action                actionAbout      = new AboutAction();
@@ -342,7 +342,7 @@ public class MainWindow extends JFrame {
    */
   private void initialize() {
     // set the logo
-    setIconImage(Globals.logo);
+    setIconImage(LOGO);
     setBounds(5, 5, 1100, 727);
     // do nothing, we have our own windowClosing() listener
     // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -464,7 +464,7 @@ public class MainWindow extends JFrame {
         // save unsaved settings
         Globals.settings.saveSettings();
         // close database connection
-        Globals.shutdownDatabase();
+        TmmModuleManager.getInstance().shutDown();
         // clear cache directory
         if (Globals.settings.isClearCacheShutdown()) {
           File cache = new File("cache" + File.separator + "url");

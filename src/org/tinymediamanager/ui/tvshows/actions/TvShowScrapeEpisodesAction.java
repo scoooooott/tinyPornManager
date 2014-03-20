@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;

@@ -60,12 +60,12 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowActor;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowActor;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
@@ -162,7 +162,7 @@ public class TvShowEditorDialog extends JDialog {
    */
   public TvShowEditorDialog(TvShow tvShow, boolean inQueue) {
     super((Frame) null, BUNDLE.getString("tvshow.edit"), true); //$NON-NLS-1$
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setName("tvShowEditor");
     setBounds(5, 5, 950, 700);
     TmmWindowSaver.loadSettings(this);

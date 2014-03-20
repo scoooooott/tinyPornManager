@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.movie.MovieActor;
+import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**

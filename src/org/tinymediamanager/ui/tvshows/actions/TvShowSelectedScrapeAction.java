@@ -22,8 +22,8 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import org.tinymediamanager.core.tvshow.TvShow;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;

@@ -3,7 +3,8 @@ package org.tinymediamanager.core;
 import java.io.File;
 
 import org.junit.Test;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
 
 public class TrailerDownloadTest {

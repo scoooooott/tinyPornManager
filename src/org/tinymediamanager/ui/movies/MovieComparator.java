@@ -18,7 +18,7 @@ package org.tinymediamanager.ui.movies;
 import java.text.RuleBasedCollator;
 import java.util.Comparator;
 
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * The Class MovieComparator is used to (initial) sort the movies in the moviepanel.

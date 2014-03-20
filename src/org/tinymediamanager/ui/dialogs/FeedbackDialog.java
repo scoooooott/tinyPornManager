@@ -42,11 +42,11 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.scraper.util.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -78,7 +78,7 @@ public class FeedbackDialog extends JDialog {
     setBounds(100, 100, 450, 303);
     TmmWindowSaver.loadSettings(this);
 
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setModal(true);
 
     getContentPane().setLayout(

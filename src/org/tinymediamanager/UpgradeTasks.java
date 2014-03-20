@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
@@ -27,13 +31,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaTrailer;
 
 /**
@@ -80,18 +87,20 @@ public class UpgradeTasks {
     if (compareVersion(v, "2.5") < 0) {
       LOGGER.info("Performing upgrade tasks to version 2.5");
       // upgrade tasks for movies; added with 2.5;
-      Globals.entityManager.getTransaction().begin();
+      EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
         movie.findActorImages();
         movie.saveToDb();
       }
-      Globals.entityManager.getTransaction().commit();
+      entityManager.getTransaction().commit();
     }
 
     if (compareVersion(v, "2.5.2") < 0) {
       LOGGER.info("Performing upgrade tasks to version 2.5.2");
       // clean tmdb id
-      Globals.entityManager.getTransaction().begin();
+      EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
         if (movie.getId("tmdbId") != null && movie.getId("tmdbId") instanceof String) {
           try {
@@ -103,13 +112,14 @@ public class UpgradeTasks {
           }
         }
       }
-      Globals.entityManager.getTransaction().commit();
+      entityManager.getTransaction().commit();
     }
 
     if (compareVersion(v, "2.5.3") < 0) {
       LOGGER.info("Performing upgrade tasks to version 2.5.3");
       // upgrade tasks for trailers; remove extension from quality
-      Globals.entityManager.getTransaction().begin();
+      EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
         for (MediaTrailer trailer : movie.getTrailers()) {
           // 720p (mp4)
@@ -118,10 +128,11 @@ public class UpgradeTasks {
         }
         movie.saveToDb();
       }
-      Globals.entityManager.getTransaction().commit();
+      entityManager.getTransaction().commit();
 
       // upgrade tasks for tv show episodes -> clean the path
-      Globals.entityManager.getTransaction().begin();
+      entityManager = TvShowModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
       for (TvShow tvShow : tvShowList.getTvShows()) {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           List<MediaFile> videos = episode.getMediaFiles(MediaFileType.VIDEO);
@@ -134,12 +145,13 @@ public class UpgradeTasks {
           }
         }
       }
-      Globals.entityManager.getTransaction().commit();
+      entityManager.getTransaction().commit();
     }
 
     if (compareVersion(v, "2.5.4") < 0) {
       // repair missing datasources
-      Globals.entityManager.getTransaction().begin();
+      EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
         if (StringUtils.isBlank(movie.getDataSource())) {
           for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
@@ -157,7 +169,9 @@ public class UpgradeTasks {
           }
         }
       }
+      entityManager.getTransaction().commit();
 
+      entityManager = TvShowModuleManager.getInstance().getEntityManager();
       for (TvShow show : tvShowList.getTvShows()) {
         if (StringUtils.isBlank(show.getDataSource())) {
           for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
@@ -189,7 +203,7 @@ public class UpgradeTasks {
           }
         }
       }
-      Globals.entityManager.getTransaction().commit();
+      entityManager.getTransaction().commit();
     }
   }
 
@@ -219,5 +233,91 @@ public class UpgradeTasks {
       sb.append(String.format("%" + maxWidth + 's', s));
     }
     return sb.toString();
+  }
+
+  /**
+   * Convert the database from the old combined format (tmm.odb) to the module specific parts
+   */
+  public static void convertDatabase() {
+    File oldDb = new File("tmm.odb");
+    if (oldDb.exists()) {
+      try {
+        // convert old Database into the new one
+        // a) start the database connections
+        EntityManager oldEntityManager = startUpOldDatabase();
+        MovieModuleManager.getInstance().startUp();
+        TvShowModuleManager.getInstance().startUp();
+
+        // b) load entities
+        MovieList.getInstance().loadMoviesFromDatabase(oldEntityManager);
+        TvShowList.getInstance().loadTvShowsFromDatabase(oldEntityManager);
+
+        // c) persist entities to the new databases
+        EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+        entityManager.getTransaction().begin();
+        for (Movie movie : MovieList.getInstance().getMovies()) {
+          oldEntityManager.detach(movie);
+          movie.saveToDb();
+        }
+        for (MovieSet movieSet : MovieList.getInstance().getMovieSetList()) {
+          oldEntityManager.detach(movieSet);
+          movieSet.saveToDb();
+        }
+        entityManager.getTransaction().commit();
+
+        entityManager = TvShowModuleManager.getInstance().getEntityManager();
+
+        for (TvShow show : TvShowList.getInstance().getTvShows()) {
+          oldEntityManager.detach(show);
+          entityManager.getTransaction().begin();
+          show.saveToDb();
+          entityManager.getTransaction().commit();
+        }
+
+        // close database connections
+        MovieModuleManager.getInstance().shutDown();
+        TvShowModuleManager.getInstance().shutDown();
+
+        closeOldDatabase(oldEntityManager);
+      }
+      catch (Exception e) {
+        LOGGER.error("could not convert database: ", e);
+      }
+
+      // delete the old database
+      oldDb.deleteOnExit();
+    }
+  }
+
+  private static EntityManager startUpOldDatabase() {
+    if (System.getProperty("tmmenhancer") != null) {
+      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.entities.*");
+      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.movie.entities.*");
+      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.tvshow.entities.*");
+    }
+    // get a connection to the database
+    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("tmm.odb");
+    EntityManager entityManager;
+    try {
+      entityManager = entityManagerFactory.createEntityManager();
+    }
+    catch (PersistenceException e) {
+      if (e.getCause().getMessage().contains("does not match db file")) {
+        // happens when there's a recovery file which does not match (cannot be recovered) - just delete and try again
+        FileUtils.deleteQuietly(new File("tmm.odb$"));
+        entityManager = entityManagerFactory.createEntityManager();
+      }
+      else {
+        // unknown
+        throw (e);
+      }
+    }
+    return entityManager;
+  }
+
+  private static void closeOldDatabase(EntityManager em) {
+    EntityManagerFactory emf = em.getEntityManagerFactory();
+    em.close();
+    emf.close();
   }
 }

@@ -42,7 +42,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.DownloadWorker;

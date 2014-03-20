@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;

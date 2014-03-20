@@ -19,7 +19,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * The class MovieRenamerPreviewContainter. To hold all relevant data for the renamer preview

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.tvshow;
+package org.tinymediamanager.core.tvshow.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
@@ -40,8 +40,10 @@ import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -57,14 +59,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.MediaEntity;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.connector.TvShowToXbmcNfoConnector;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.scraper.Certification;
@@ -97,12 +102,23 @@ public class TvShow extends MediaEntity {
   private boolean                     watched            = false;
   private String                      sortTitle          = "";
 
-  @OneToMany(cascade = { CascadeType.ALL })
-  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>(0);
+  private List<String>                genres             = new ArrayList<String>(0);
   private List<String>                tags               = new ArrayList<String>(0);
   private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>(0);
   @Deprecated
   private HashMap<Integer, String>    seasonPosterMap    = new HashMap<Integer, String>(0);
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "tvShow")
+  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>(0);
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>(0);
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>(0);
+
+  @Enumerated(EnumType.STRING)
+  private Certification               certification      = Certification.NOT_RATED;
 
   @Transient
   private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>(0);
@@ -110,19 +126,8 @@ public class TvShow extends MediaEntity {
   @Transient
   private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>(0);
 
-  @OneToMany(cascade = CascadeType.ALL)
-  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>(0);
-
-  private List<String>                genres             = new ArrayList<String>(0);
-
   @Transient
   private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>(0);
-
-  @OneToMany(cascade = CascadeType.ALL)
-  private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>(0);
-
-  @Enumerated(EnumType.STRING)
-  private Certification               certification      = Certification.NOT_RATED;
 
   @Transient
   private String                      titleSortable      = "";
@@ -291,14 +296,14 @@ public class TvShow extends MediaEntity {
       addToSeason(episode);
     }
 
-    // migration from old structure
-    if (!seasonPosterMap.isEmpty()) {
-      for (Entry<Integer, String> entry : seasonPosterMap.entrySet()) {
-        setSeasonPoster(entry.getKey(), new File(path, entry.getValue()));
-      }
-      seasonPosterMap.clear();
-      saveToDb();
-    }
+    // // migration from old structure
+    // if (!seasonPosterMap.isEmpty()) {
+    // for (Entry<Integer, String> entry : seasonPosterMap.entrySet()) {
+    // setSeasonPoster(entry.getKey(), new File(path, entry.getValue()));
+    // }
+    // seasonPosterMap.clear();
+    // saveToDb();
+    // }
 
     // create season poster map
     Pattern pattern = Pattern.compile("(?i)season([0-9]{1,2})-poster\\..{2,4}");
@@ -352,9 +357,10 @@ public class TvShow extends MediaEntity {
   public void removeAllEpisodes() {
     int oldValue = episodes.size();
     if (episodes.size() > 0) {
+      final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
       boolean newTransaction = false;
-      if (!Globals.entityManager.getTransaction().isActive()) {
-        Globals.entityManager.getTransaction().begin();
+      if (!entityManager.getTransaction().isActive()) {
+        entityManager.getTransaction().begin();
         newTransaction = true;
       }
 
@@ -362,11 +368,11 @@ public class TvShow extends MediaEntity {
         TvShowEpisode episode = episodes.get(i);
         episodes.remove(episode);
         episode.removePropertyChangeListener(propertyChangeListener);
-        Globals.entityManager.remove(episode);
+        entityManager.remove(episode);
       }
 
       if (newTransaction) {
-        Globals.entityManager.getTransaction().commit();
+        entityManager.getTransaction().commit();
       }
     }
 
@@ -382,23 +388,23 @@ public class TvShow extends MediaEntity {
   public void removeEpisode(TvShowEpisode episode) {
     if (episodes.contains(episode)) {
       int oldValue = episodes.size();
-
-      synchronized (Globals.entityManager) {
+      final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+      synchronized (entityManager) {
 
         boolean newTransaction = false;
-        if (!Globals.entityManager.getTransaction().isActive()) {
-          Globals.entityManager.getTransaction().begin();
+        if (!entityManager.getTransaction().isActive()) {
+          entityManager.getTransaction().begin();
           newTransaction = true;
         }
 
         episodes.remove(episode);
         episode.removePropertyChangeListener(propertyChangeListener);
         removeFromSeason(episode);
-        Globals.entityManager.remove(episode);
-        Globals.entityManager.persist(this);
+        entityManager.remove(episode);
+        entityManager.persist(this);
 
         if (newTransaction) {
-          Globals.entityManager.getTransaction().commit();
+          entityManager.getTransaction().commit();
         }
       }
 
@@ -1651,6 +1657,38 @@ public class TvShow extends MediaEntity {
 
   @Override
   public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
+  }
+
+  @Override
+  public void saveToDb() {
+    // update/insert this movie to the database
+    final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+    synchronized (entityManager) {
+      if (!entityManager.getTransaction().isActive()) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(this);
+        entityManager.getTransaction().commit();
+      }
+      else {
+        entityManager.persist(this);
+      }
+    }
+  }
+
+  @Override
+  public void deleteFromDb() {
+    // delete this movie from the database
+    final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+    synchronized (entityManager) {
+      if (!entityManager.getTransaction().isActive()) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(this);
+        entityManager.getTransaction().commit();
+      }
+      else {
+        entityManager.remove(this);
+      }
+    }
   }
 
   public TvShowEpisode getEpisode(int season, int episode) {

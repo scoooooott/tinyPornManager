@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**

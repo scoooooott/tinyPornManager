@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
@@ -50,7 +50,7 @@ public class WhatsNewDialog extends JDialog {
 
   public WhatsNewDialog(String changelog) {
     setSize(500, 250);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setTitle(BUNDLE.getString("whatsnew.title")); //$NON-NLS-1$
     {
       JScrollPane scrollPane = new JScrollPane();

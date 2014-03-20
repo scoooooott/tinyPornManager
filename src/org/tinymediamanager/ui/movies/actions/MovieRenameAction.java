@@ -24,7 +24,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;

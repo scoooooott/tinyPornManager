@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ExportTemplate;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 import com.floreysoft.jmte.Engine;
 import com.floreysoft.jmte.NamedRenderer;

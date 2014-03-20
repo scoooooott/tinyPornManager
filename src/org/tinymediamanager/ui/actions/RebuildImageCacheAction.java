@@ -26,11 +26,11 @@ import javax.swing.JOptionPane;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCacheTask;
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieSet;
-import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**

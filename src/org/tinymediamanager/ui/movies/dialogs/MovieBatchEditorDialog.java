@@ -33,12 +33,12 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -74,7 +74,7 @@ public class MovieBatchEditorDialog extends JDialog {
    */
   public MovieBatchEditorDialog(final List<Movie> movies) {
     setModal(true);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setTitle(BUNDLE.getString("movie.edit")); //$NON-NLS-1$
     setName("movieBatchEditor");
     setBounds(5, 5, 350, 230);

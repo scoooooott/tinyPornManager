@@ -27,10 +27,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.MediaFileAudioStream;
-import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;

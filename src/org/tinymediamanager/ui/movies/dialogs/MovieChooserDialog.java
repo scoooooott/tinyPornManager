@@ -56,12 +56,12 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieScrapers;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -144,7 +144,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     setName("movieChooser");
     setBounds(5, 5, 800, 550);
     TmmWindowSaver.loadSettings(this);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setModal(true);
 
     // copy the values

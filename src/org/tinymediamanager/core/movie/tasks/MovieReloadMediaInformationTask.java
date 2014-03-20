@@ -26,7 +26,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * The Class MovieReloadMediaInformationTask, to explicit reload mediainformation.

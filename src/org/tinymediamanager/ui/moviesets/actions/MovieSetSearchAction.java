@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.moviesets.MovieSetUIModule;

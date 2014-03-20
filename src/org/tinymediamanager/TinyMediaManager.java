@@ -55,18 +55,21 @@ import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
@@ -285,14 +288,6 @@ public class TinyMediaManager {
           // init ui logger
           TmmUILogCollector.init();
 
-          // upgrade check
-          String oldVersion = Globals.settings.getVersion();
-          if (newVersion) {
-            UpgradeTasks.performUpgradeTasksBeforeDatabaseLoading(oldVersion); // do the upgrade tasks for the old version
-            Globals.settings.setCurrentVersion();
-            Globals.settings.writeDefaultSettings();
-          }
-
           // init splash
           SplashScreen splash = null;
           if (!GraphicsEnvironment.isHeadless()) {
@@ -315,12 +310,29 @@ public class TinyMediaManager {
 
           // update check //////////////////////////////////////////////
           if (g2 != null) {
-            updateProgress(g2, "update check", 10);
+            updateProgress(g2, "starting tinyMediaManager", 0);
             splash.update();
           }
 
           LOGGER.info("=====================================================");
           LOGGER.info("starting tinyMediaManager");
+
+          // convert old database
+          // UpgradeTasks.convertDatabase(); // we need to check the exceptions before we can activate this
+
+          // upgrade check
+          String oldVersion = Globals.settings.getVersion();
+          if (newVersion) {
+            UpgradeTasks.performUpgradeTasksBeforeDatabaseLoading(oldVersion); // do the upgrade tasks for the old version
+            Globals.settings.setCurrentVersion();
+            Globals.settings.saveSettings();
+          }
+
+          // proxy settings
+          if (Globals.settings.useProxy()) {
+            LOGGER.info("setting proxy");
+            Globals.settings.setProxy();
+          }
 
           // set native dir (needs to be absolute)
           // String nativepath = TinyMediaManager.class.getClassLoader().getResource(".").getPath() + "native/";
@@ -351,38 +363,22 @@ public class TinyMediaManager {
             LOGGER.error("could not load MediaInfo!");
           }
 
-          // initialize database //////////////////////////////////////////////
+          // load modules //////////////////////////////////////////////////
           if (g2 != null) {
-            updateProgress(g2, "initialize database", 30);
+            updateProgress(g2, "loading movie module", 30);
+            splash.update();
+          }
+          TmmModuleManager.getInstance().startUp();
+          TmmModuleManager.getInstance().registerModule(MovieModuleManager.getInstance());
+          TmmModuleManager.getInstance().enableModule(MovieModuleManager.getInstance());
+
+          if (g2 != null) {
+            updateProgress(g2, "loading TV show module", 40);
             splash.update();
           }
 
-          LOGGER.info("initialize database");
-          Globals.startDatabase();
-          LOGGER.debug("database opened");
-
-          // proxy settings
-          if (Globals.settings.useProxy()) {
-            LOGGER.info("setting proxy");
-            Globals.settings.setProxy();
-          }
-
-          // load database //////////////////////////////////////////////////
-          if (g2 != null) {
-            updateProgress(g2, "loading movies", 40);
-            splash.update();
-          }
-
-          MovieList movieList = MovieList.getInstance();
-          movieList.loadMoviesFromDatabase();
-
-          if (g2 != null) {
-            updateProgress(g2, "loading TV shows", 50);
-            splash.update();
-          }
-
-          TvShowList tvShowList = TvShowList.getInstance();
-          tvShowList.loadTvShowsFromDatabase();
+          TmmModuleManager.getInstance().registerModule(TvShowModuleManager.getInstance());
+          TmmModuleManager.getInstance().enableModule(TvShowModuleManager.getInstance());
 
           // VLC /////////////////////////////////////////////////////////
           // // try to initialize VLC native libs
@@ -454,7 +450,7 @@ public class TinyMediaManager {
               // save unsaved settings
               Globals.settings.saveSettings();
               // close database connection
-              Globals.shutdownDatabase();
+              TmmModuleManager.getInstance().shutDown();
               // wait a bit for threads to finish (if any)
               Globals.executor.awaitTermination(2, TimeUnit.SECONDS);
               // hard kill

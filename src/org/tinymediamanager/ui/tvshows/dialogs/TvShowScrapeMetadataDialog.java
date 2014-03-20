@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
@@ -73,7 +74,7 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     setName("updateMetadata");
     setBounds(5, 5, 533, 257);
     TmmWindowSaver.loadSettings(this);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setModal(true);
 
     // copy the values

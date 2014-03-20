@@ -39,6 +39,7 @@ import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieTrailerScrapers;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
@@ -78,7 +79,7 @@ public class MovieScrapeMetadataDialog extends JDialog {
     setBounds(5, 5, 550, 280);
     setMinimumSize(new Dimension(getWidth(), getHeight()));
     TmmWindowSaver.loadSettings(this);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setModal(true);
 
     // copy the values

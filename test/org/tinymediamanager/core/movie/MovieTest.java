@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * @author Manuel Laggner

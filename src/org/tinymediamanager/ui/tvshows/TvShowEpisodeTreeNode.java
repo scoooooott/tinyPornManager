@@ -17,7 +17,7 @@ package org.tinymediamanager.ui.tvshows;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**
  * The Class TvShowEpisodeTreeNode.

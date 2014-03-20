@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core;
+package org.tinymediamanager.core.entities;
 
 import static org.tinymediamanager.core.Constants.*;
 
@@ -39,11 +39,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
 /**
- * The Class MediaEntity.
+ * The Class MediaEntity. The base class for all entities
  * 
  * @author Manuel Laggner
  */
@@ -557,32 +558,9 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(MEDIA_INFORMATION, false, true);
   }
 
-  public void saveToDb() {
-    // update DB
-    synchronized (Globals.entityManager) {
-      if (!Globals.entityManager.getTransaction().isActive()) {
-        Globals.entityManager.getTransaction().begin();
-        Globals.entityManager.persist(this);
-        Globals.entityManager.getTransaction().commit();
-      }
-      else {
-        Globals.entityManager.persist(this);
-      }
-    }
-  }
+  abstract public void saveToDb();
 
-  public void deleteFromDb() {
-    synchronized (Globals.entityManager) {
-      if (!Globals.entityManager.getTransaction().isActive()) {
-        Globals.entityManager.getTransaction().begin();
-        Globals.entityManager.remove(this);
-        Globals.entityManager.getTransaction().commit();
-      }
-      else {
-        Globals.entityManager.remove(this);
-      }
-    }
-  }
+  abstract public void deleteFromDb();
 
   abstract public void callbackForWrittenArtwork(MediaArtworkType type);
 }

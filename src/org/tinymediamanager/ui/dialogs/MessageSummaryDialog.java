@@ -27,7 +27,7 @@ import javax.swing.JScrollPane;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -44,7 +44,7 @@ public class MessageSummaryDialog extends JDialog {
 
   public MessageSummaryDialog(List<String> messages) {
     setSize(700, 300);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setTitle(BUNDLE.getString("summarywindow.title")); //$NON-NLS-1$
 
     messageList.addAll(messages);

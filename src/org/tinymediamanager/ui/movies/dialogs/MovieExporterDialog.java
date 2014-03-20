@@ -41,12 +41,12 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ExportTemplate;
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieExporter;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
@@ -88,7 +88,7 @@ public class MovieExporterDialog extends JDialog {
     setName("movieExporter");
     setBounds(5, 5, 600, 300);
     TmmWindowSaver.loadSettings(this);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setModal(true);
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
-
-import static org.tinymediamanager.core.Constants.*;
+package org.tinymediamanager.core.tvshow.entities;
 
 import javax.persistence.Embeddable;
 
@@ -26,59 +24,59 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tinymediamanager.core.AbstractModelObject;
 
 /**
- * The Class MovieProducer.
+ * The Class TvShowActor.
  * 
  * @author Manuel Laggner
  */
 @Embeddable
-public class MovieProducer extends AbstractModelObject {
+public class TvShowActor extends AbstractModelObject {
   public static final String ACTOR_DIR = ".actors";
 
   private String             name      = "";
-  private String             role      = "";
-  private String             thumbUrl  = "";
+  private String             character = "";
+  private String             thumb     = "";
   private String             thumbPath = "";
 
-  public MovieProducer() {
+  public TvShowActor() {
   }
 
-  public MovieProducer(String name) {
+  public TvShowActor(String name) {
     this.name = name;
   }
 
-  public MovieProducer(String name, String character) {
+  public TvShowActor(String name, String character) {
     this.name = name;
-    this.role = character;
+    this.character = character;
   }
 
   public void setName(String newValue) {
     String oldValue = name;
     name = newValue;
-    firePropertyChange(NAME, oldValue, newValue);
+    firePropertyChange("name", oldValue, newValue);
   }
 
   public String getName() {
     return name;
   }
 
-  public String getRole() {
-    return role;
+  public String getCharacter() {
+    return character;
   }
 
-  public void setRole(String newValue) {
-    String oldValue = role;
-    role = newValue;
-    firePropertyChange(ROLE, oldValue, newValue);
+  public void setCharacter(String newValue) {
+    String oldValue = character;
+    character = newValue;
+    firePropertyChange("name", oldValue, newValue);
   }
 
-  public String getThumbUrl() {
-    return thumbUrl;
+  public String getThumb() {
+    return thumb;
   }
 
-  public void setThumbUrl(String newValue) {
-    String oldValue = this.thumbUrl;
-    thumbUrl = newValue;
-    firePropertyChange(THUMB_URL, oldValue, newValue);
+  public void setThumb(String newValue) {
+    String oldValue = this.thumb;
+    thumb = newValue;
+    firePropertyChange("thumb", oldValue, newValue);
   }
 
   public String getThumbPath() {
@@ -88,7 +86,7 @@ public class MovieProducer extends AbstractModelObject {
   public void setThumbPath(String newValue) {
     String oldValue = this.thumbPath;
     thumbPath = newValue;
-    firePropertyChange(THUMB_PATH, oldValue, newValue);
+    firePropertyChange("thumbPath", oldValue, newValue);
   }
 
   /**
@@ -106,14 +104,14 @@ public class MovieProducer extends AbstractModelObject {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof MovieProducer)) {
+    if (!(obj instanceof TvShowActor)) {
       return false;
     }
 
-    MovieProducer cast = (MovieProducer) obj;
+    TvShowActor cast = (TvShowActor) obj;
 
     // checks of equality
-    if (StringUtils.equals(name, cast.name) && StringUtils.equals(role, cast.role) && StringUtils.equals(thumbUrl, cast.thumbUrl)) {
+    if (StringUtils.equals(name, cast.name) && StringUtils.equals(character, cast.character) && StringUtils.equals(thumb, cast.thumb)) {
       return true;
     }
 

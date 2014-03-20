@@ -28,8 +28,8 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowActor;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ZebraJTable;

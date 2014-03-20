@@ -21,7 +21,7 @@ import java.util.Comparator;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 
 /**
  * The Class MovieSetRootTreeNode.

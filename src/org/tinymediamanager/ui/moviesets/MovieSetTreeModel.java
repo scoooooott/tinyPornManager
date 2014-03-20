@@ -30,9 +30,9 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 
 /**
  * The Class MovieSetTreeModel.

@@ -3,7 +3,8 @@ package org.tinymediamanager.core.movie;
 import java.io.File;
 
 import org.junit.Test;
-import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 public class MovieMediaFileTest {
 

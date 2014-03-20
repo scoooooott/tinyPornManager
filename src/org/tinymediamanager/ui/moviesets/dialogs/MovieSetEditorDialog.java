@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
@@ -111,7 +111,7 @@ public class MovieSetEditorDialog extends JDialog {
    */
   public MovieSetEditorDialog(MovieSet movieSet, boolean inQueue) {
     setModal(true);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setTitle(BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
     setName("movieSetEditor");
     setBounds(5, 5, 800, 500);

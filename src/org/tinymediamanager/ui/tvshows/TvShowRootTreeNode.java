@@ -24,7 +24,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.tinymediamanager.core.tvshow.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 
 /**
  * The Class TvShowRootTreeNode.

@@ -23,7 +23,7 @@ import javax.swing.AbstractAction;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;

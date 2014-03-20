@@ -68,6 +68,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.ToggleButtonUI;
@@ -134,7 +135,7 @@ public class ImageChooserDialog extends JDialog {
   public ImageChooserDialog(final HashMap<String, Object> ids, ImageType type, List<IMediaArtworkProvider> artworkProviders, ImageLabel imageLabel,
       List<String> extraThumbs, List<String> extraFanarts, MediaType mediaType) {
     setModal(true);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     this.imageLabel = imageLabel;
     this.type = type;
     this.mediaType = mediaType;
@@ -309,8 +310,6 @@ public class ImageChooserDialog extends JDialog {
     task.execute();
   }
 
-  
-
   private void startProgressBar(String description) {
     lblProgressAction.setText(description);
     progressBar.setVisible(true);
@@ -380,7 +379,7 @@ public class ImageChooserDialog extends JDialog {
     gbc.gridy = 1;
     gbc.anchor = GridBagConstraints.LAST_LINE_START;
     gbc.insets = new Insets(0, 5, 0, 0);
-    
+
     JComboBox cb = null;
     if (artwork.getImageSizes().size() > 0) {
       cb = new JComboBox(artwork.getImageSizes().toArray());
@@ -431,7 +430,7 @@ public class ImageChooserDialog extends JDialog {
     panelImages.validate();
     panelImages.getParent().validate();
   }
-  
+
   private class OkAction extends AbstractAction {
     private static final long serialVersionUID = -1255049344169945137L;
 

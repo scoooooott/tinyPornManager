@@ -36,7 +36,7 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.WrapLayout;
 

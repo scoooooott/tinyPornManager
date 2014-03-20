@@ -25,7 +25,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * The Class BorderCellRenderer.

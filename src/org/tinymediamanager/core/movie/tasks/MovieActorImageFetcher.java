@@ -29,8 +29,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieActor;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.scraper.util.Url;
 
 /**

@@ -38,13 +38,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.TmmThreadPool;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.core.movie.Movie;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * The Class MissingMovieTask.

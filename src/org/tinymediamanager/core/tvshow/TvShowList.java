@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,10 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -151,15 +154,15 @@ public class TvShowList extends AbstractModelObject {
     tvShowList.remove(tvShow);
 
     boolean newTransaction = false;
-    if (!Globals.entityManager.getTransaction().isActive()) {
-      Globals.entityManager.getTransaction().begin();
+    if (!TvShowModuleManager.getInstance().getEntityManager().getTransaction().isActive()) {
+      TvShowModuleManager.getInstance().getEntityManager().getTransaction().begin();
       newTransaction = true;
     }
 
-    Globals.entityManager.remove(tvShow);
+    TvShowModuleManager.getInstance().getEntityManager().remove(tvShow);
 
     if (newTransaction) {
-      Globals.entityManager.getTransaction().commit();
+      TvShowModuleManager.getInstance().getEntityManager().getTransaction().commit();
     }
 
     firePropertyChange(TV_SHOWS, null, tvShowList);
@@ -194,11 +197,11 @@ public class TvShowList extends AbstractModelObject {
   /**
    * Load tv shows from database.
    */
-  public void loadTvShowsFromDatabase() {
+  public void loadTvShowsFromDatabase(EntityManager entityManager) {
     List<TvShow> tvShows = null;
     try {
       // load tv shows
-      TypedQuery<TvShow> query = Globals.entityManager.createQuery("SELECT tvShow FROM TvShow tvShow", TvShow.class);
+      TypedQuery<TvShow> query = entityManager.createQuery("SELECT tvShow FROM TvShow tvShow", TvShow.class);
       tvShows = query.getResultList();
       if (tvShows != null) {
         LOGGER.info("found " + tvShows.size() + " tv shows in database");

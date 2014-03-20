@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core;
+package org.tinymediamanager.core.entities;
 
 import javax.persistence.Embeddable;
+
+import org.tinymediamanager.core.AbstractModelObject;
 
 /**
  * The class MediaFileAudioStream

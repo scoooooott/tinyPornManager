@@ -61,11 +61,11 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieActor;
 import org.tinymediamanager.core.movie.MovieList;
-import org.tinymediamanager.core.movie.MovieProducer;
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieActor;
+import org.tinymediamanager.core.movie.entities.MovieProducer;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
@@ -162,7 +162,7 @@ public class MovieEditorDialog extends JDialog {
   public MovieEditorDialog(Movie movie, boolean inQueue) {
     super((Frame) null, BUNDLE.getString("movie.edit"), true); //$NON-NLS-1$
     // setModal(true);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     //    setTitle(BUNDLE.getString("movie.edit")); //$NON-NLS-1$
     setName("movieEditor");
     setBounds(5, 5, 950, 700);

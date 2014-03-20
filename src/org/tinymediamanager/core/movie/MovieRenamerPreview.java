@@ -23,10 +23,11 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 /**
  * The class MovieRenamerPreview. To create a preview of the movie renamer (dry run)

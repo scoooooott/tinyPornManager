@@ -26,8 +26,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieSet;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
 
 import com.jgoodies.forms.factories.FormFactory;

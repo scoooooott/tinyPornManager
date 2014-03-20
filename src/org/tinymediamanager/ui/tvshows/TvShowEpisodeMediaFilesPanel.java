@@ -20,8 +20,8 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.components.MediaFilesPanel;
 
 import ca.odell.glazedlists.BasicEventList;

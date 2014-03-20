@@ -25,9 +25,9 @@ import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowRenamer;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**
  * The Class MovieRenameTask.

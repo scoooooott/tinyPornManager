@@ -19,7 +19,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 /**
  * The Class TvShowEpisodeSelectionModel.

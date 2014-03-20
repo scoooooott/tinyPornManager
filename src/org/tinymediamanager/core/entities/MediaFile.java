@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core;
+package org.tinymediamanager.core.entities;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -27,9 +27,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.apache.commons.io.FilenameUtils;
@@ -40,6 +43,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.thirdparty.MediaInfo.StreamKind;
 
@@ -93,7 +99,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   @Enumerated(EnumType.STRING)
   private MediaFileType                              type               = MediaFileType.UNKNOWN;
 
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MediaFileAudioStream>                 audioStreams       = new ArrayList<MediaFileAudioStream>(0);
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MediaFileSubtitle>                    subtitles          = new ArrayList<MediaFileSubtitle>(0);
 
   @Transient

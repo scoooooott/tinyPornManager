@@ -23,8 +23,8 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import org.tinymediamanager.core.movie.Movie;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
+import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;

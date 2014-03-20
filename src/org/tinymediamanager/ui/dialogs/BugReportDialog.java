@@ -53,11 +53,11 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.scraper.util.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -88,7 +88,7 @@ public class BugReportDialog extends JDialog {
   public BugReportDialog() {
     setTitle(BUNDLE.getString("BugReport")); //$NON-NLS-1$
     setName("bugReport");
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setModal(true);
 
     setBounds(100, 100, 532, 453);

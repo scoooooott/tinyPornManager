@@ -6,102 +6,105 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.MediaFileSubtitle;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileSubtitle;
+import org.tinymediamanager.core.movie.entities.Movie;
 
 public class MovieRenamerTest {
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamerTest.class);
 
   @Test
   public void checkDiff() {
-    EntityManagerFactory emf = Persistence.createEntityManagerFactory("tmm.odb");
-    Globals.entityManager = emf.createEntityManager();
-    MovieList instance = MovieList.getInstance();
-    instance.loadMoviesFromDatabase();
-    // -------------------------------------------------------------------------------------
+    try {
+      TmmModuleManager.getInstance().startUp();
+      MovieModuleManager.getInstance().startUp();
+      MovieList instance = MovieList.getInstance();
+      // -------------------------------------------------------------------------------------
 
-    LOGGER.debug("path expression: " + Globals.settings.getMovieSettings().getMovieRenamerPathname());
-    LOGGER.debug("file expression: " + Globals.settings.getMovieSettings().getMovieRenamerFilename());
+      LOGGER.debug("path expression: " + Globals.settings.getMovieSettings().getMovieRenamerPathname());
+      LOGGER.debug("file expression: " + Globals.settings.getMovieSettings().getMovieRenamerFilename());
 
-    for (Movie movie : instance.getMovies()) {
-      System.out.println(movie.getTitle());
-      List<MediaFile> oldFiles = new ArrayList<MediaFile>();
-      Set<MediaFile> newFiles = new LinkedHashSet<MediaFile>();
-      boolean renameFolder = false;
+      for (Movie movie : instance.getMovies()) {
+        System.out.println(movie.getTitle());
+        List<MediaFile> oldFiles = new ArrayList<MediaFile>();
+        Set<MediaFile> newFiles = new LinkedHashSet<MediaFile>();
+        boolean renameFolder = false;
 
-      String newVideoFileName = "";
+        String newVideoFileName = "";
 
-      // VIDEO needs to be renamed first, since all others depend on that name!!!
-      for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
-        oldFiles.add(new MediaFile(mf));
-        MediaFile ftr = generateFilename(movie, mf, newVideoFileName).get(0); // there can be only one
-        newFiles.add(ftr);
-        if (newVideoFileName.isEmpty()) {
-          // so remember first renamed video file basename (w/o stacking or extension)
-          newVideoFileName = Utils.cleanStackingMarkers(ftr.getBasename());
+        // VIDEO needs to be renamed first, since all others depend on that name!!!
+        for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
+          oldFiles.add(new MediaFile(mf));
+          MediaFile ftr = generateFilename(movie, mf, newVideoFileName).get(0); // there can be only one
+          newFiles.add(ftr);
+          if (newVideoFileName.isEmpty()) {
+            // so remember first renamed video file basename (w/o stacking or extension)
+            newVideoFileName = Utils.cleanStackingMarkers(ftr.getBasename());
+          }
         }
-      }
 
-      // all the other MFs...
-      for (MediaFile mf : movie.getMediaFilesExceptType(MediaFileType.VIDEO)) {
-        oldFiles.add(new MediaFile(mf));
-        newFiles.addAll(generateFilename(movie, mf, newVideoFileName)); // N:M
-      }
+        // all the other MFs...
+        for (MediaFile mf : movie.getMediaFilesExceptType(MediaFileType.VIDEO)) {
+          oldFiles.add(new MediaFile(mf));
+          newFiles.addAll(generateFilename(movie, mf, newVideoFileName)); // N:M
+        }
 
-      // movie folder needs a rename?
-      File oldMovieFolder = new File(movie.getPath());
-      String newPathname = MovieRenamer.createDestinationForFoldername(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
-      File newMovieFolder = new File(movie.getDataSource() + File.separator + newPathname);
-      if (!oldMovieFolder.equals(newMovieFolder)) {
-        renameFolder = true;
-        if (!movie.isMultiMovieDir()) {
-          System.out.println("rename FOLDER " + oldMovieFolder + " -> " + newMovieFolder);
+        // movie folder needs a rename?
+        File oldMovieFolder = new File(movie.getPath());
+        String newPathname = MovieRenamer.createDestinationForFoldername(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
+        File newMovieFolder = new File(movie.getDataSource() + File.separator + newPathname);
+        if (!oldMovieFolder.equals(newMovieFolder)) {
+          renameFolder = true;
+          if (!movie.isMultiMovieDir()) {
+            System.out.println("rename FOLDER " + oldMovieFolder + " -> " + newMovieFolder);
+          }
+          else {
+            System.out.println(" ... is a MultiMovieDir; create FOLDER " + newMovieFolder);
+          }
+          // update already the "old" files with new path, so we can simply do a contains check ;)
+          for (MediaFile omf : oldFiles) {
+            omf.replacePathForRenamedFolder(oldMovieFolder, newMovieFolder);
+          }
         }
-        else {
-          System.out.println(" ... is a MultiMovieDir; create FOLDER " + newMovieFolder);
-        }
-        // update already the "old" files with new path, so we can simply do a contains check ;)
-        for (MediaFile omf : oldFiles) {
-          omf.replacePathForRenamedFolder(oldMovieFolder, newMovieFolder);
-        }
-      }
 
-      // change status of MFs, if they have been added or not
-      System.out.println("=============== NEW");
-      for (MediaFile mf : newFiles) {
-        if (!oldFiles.contains(mf)) {
-          System.out.println(mf.getFilename() + "  -  ADDED");
+        // change status of MFs, if they have been added or not
+        System.out.println("=============== NEW");
+        for (MediaFile mf : newFiles) {
+          if (!oldFiles.contains(mf)) {
+            System.out.println(mf.getFilename() + "  -  ADDED");
+          }
+          else {
+            System.out.println(mf.getFilename() + "  -  SAME");
+          }
         }
-        else {
-          System.out.println(mf.getFilename() + "  -  SAME");
+        System.out.println("=============== OLD");
+        for (MediaFile mf : oldFiles) {
+          if (!newFiles.contains(mf)) {
+            System.out.println(mf.getFilename() + "  -  REMOVED");
+          }
+          else {
+            System.out.println(mf.getFilename() + "  -  SAME");
+          }
         }
-      }
-      System.out.println("=============== OLD");
-      for (MediaFile mf : oldFiles) {
-        if (!newFiles.contains(mf)) {
-          System.out.println(mf.getFilename() + "  -  REMOVED");
-        }
-        else {
-          System.out.println(mf.getFilename() + "  -  SAME");
-        }
-      }
-      System.out.println("==================");
+        System.out.println("==================");
 
-    } // end movie loop
+      } // end movie loop
 
-    // -------------------------------------------------------------------------------------
-    Globals.entityManager.close();
-    emf.close();
+      // -------------------------------------------------------------------------------------
+      MovieModuleManager.getInstance().shutDown();
+      TmmModuleManager.getInstance().shutDown();
+    }
+    catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
   }
 
   /**

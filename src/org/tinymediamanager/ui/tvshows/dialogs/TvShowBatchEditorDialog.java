@@ -36,12 +36,12 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.border.TitledBorder;
 
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -82,7 +82,7 @@ public class TvShowBatchEditorDialog extends JDialog {
    */
   public TvShowBatchEditorDialog(final List<TvShow> tvShows, final List<TvShowEpisode> episodes) {
     setModal(true);
-    setIconImage(Globals.logo);
+    setIconImage(MainWindow.LOGO);
     setTitle(BUNDLE.getString("tvshow.bulkedit")); //$NON-NLS-1$
     setName("movieBatchEditor");
     setBounds(5, 5, 350, 286);

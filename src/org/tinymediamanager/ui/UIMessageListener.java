@@ -20,10 +20,10 @@ import java.util.ResourceBundle;
 import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.IMessageListener;
-import org.tinymediamanager.core.MediaEntity;
-import org.tinymediamanager.core.MediaFile;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.entities.MediaEntity;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.Utils;
 
 /**

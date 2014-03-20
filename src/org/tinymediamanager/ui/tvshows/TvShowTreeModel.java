@@ -35,10 +35,10 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.TvShowList;
-import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 
 /**

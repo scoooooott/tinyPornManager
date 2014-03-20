@@ -17,14 +17,15 @@ package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFile;
+import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 
 /**
  * The Class TvShowTest.
@@ -38,24 +39,27 @@ public class TvShowTest {
    */
   @Test
   public void testTvShows() {
-    EntityManagerFactory emf = Persistence.createEntityManagerFactory("tmm.odb");
-    Globals.entityManager = emf.createEntityManager();
+    try {
+      TmmModuleManager.getInstance().startUp();
+      TvShowModuleManager.getInstance().startUp();
+      TvShowList instance = TvShowList.getInstance();
 
-    TvShowList instance = TvShowList.getInstance();
-    instance.loadTvShowsFromDatabase();
-
-    for (TvShow show : instance.getTvShows()) {
-      System.out.println(show.getTitle());
-      for (TvShowSeason season : show.getSeasons()) {
-        System.out.println("Season " + season.getSeason());
-        for (MediaFile mf : season.getMediaFiles()) {
-          System.out.println(mf.toString());
+      for (TvShow show : instance.getTvShows()) {
+        System.out.println(show.getTitle());
+        for (TvShowSeason season : show.getSeasons()) {
+          System.out.println("Season " + season.getSeason());
+          for (MediaFile mf : season.getMediaFiles()) {
+            System.out.println(mf.toString());
+          }
         }
       }
-    }
 
-    Globals.entityManager.close();
-    emf.close();
+      TvShowModuleManager.getInstance().shutDown();
+      TmmModuleManager.getInstance().shutDown();
+    }
+    catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
   }
 
   /**

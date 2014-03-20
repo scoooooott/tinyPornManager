@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.core.MediaFile;
-import org.tinymediamanager.core.MediaFileAudioStream;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.movie.Movie;
-import org.tinymediamanager.core.movie.MovieActor;
-import org.tinymediamanager.core.movie.MovieProducer;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.movie.entities.MovieActor;
+import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 

@@ -26,9 +26,9 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.tinymediamanager.core.tvshow.TvShow;
-import org.tinymediamanager.core.tvshow.TvShowEpisode;
-import org.tinymediamanager.core.tvshow.TvShowSeason;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowRenameTask;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmSwingWorker;
