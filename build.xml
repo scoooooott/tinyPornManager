@@ -137,6 +137,7 @@
         <antcall target="downloadLocale"><param name="lang" value="ru"/></antcall>
         <antcall target="downloadLocale"><param name="lang" value="sk"/></antcall>
         <antcall target="downloadLocale"><param name="lang" value="vi"/></antcall>
+        <antcall target="downloadLocale"><param name="lang" value="zh"/></antcall>
     </target>
 
     <target name='package-app' description="builds the packages" depends='create_tmm_jar'>

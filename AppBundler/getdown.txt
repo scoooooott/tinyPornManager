@@ -90,6 +90,7 @@ resource = locale/messages_pt.properties
 resource = locale/messages_ru.properties
 resource = locale/messages_sk.properties
 resource = locale/messages_vi.properties
+resource = locale/messages_zh.properties
 
 # mediainfo native libs
 resource = [linux-amd64] native/linux-amd64/libmediainfo.so
