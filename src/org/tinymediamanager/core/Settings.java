@@ -87,6 +87,7 @@ public class Settings extends AbstractModelObject {
   private final static String         IMAGE_CACHE_BACKGROUND      = "imageCacheBackground";
   private final static String         LANGUAGE                    = "language";
   private final static String         WOL_DEVICES                 = "wolDevices";
+  private final static String         SHOW_NOTIFICATIONS          = "showNotifications";
 
   @XmlElementWrapper(name = TITLE_PREFIX)
   @XmlElement(name = PREFIX)
@@ -127,6 +128,7 @@ public class Settings extends AbstractModelObject {
   private WindowConfig                windowConfig                = null;
   // language 2 char - saved to config
   private String                      language;
+  private boolean                     showNotifications           = true;
 
   private PropertyChangeListener      propertyChangeListener;
 
@@ -934,5 +936,15 @@ public class Settings extends AbstractModelObject {
 
   public List<WolDevice> getWolDevices() {
     return wolDevices;
+  }
+
+  public void setShowNotifications(boolean newValue) {
+    boolean oldValue = showNotifications;
+    showNotifications = newValue;
+    firePropertyChange(SHOW_NOTIFICATIONS, oldValue, newValue);
+  }
+
+  public boolean isShowNotifications() {
+    return showNotifications;
   }
 }

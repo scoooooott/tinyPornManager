@@ -623,19 +623,19 @@ public class MainWindow extends JFrame {
   }
 
   public void addMessage(String title, String message) {
-    // JPanel msg = new NotificationMessage(title, message);
-    // messagePanel.add(msg);
-    NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
-        .withPosition(Positions.SOUTH_EAST);
-    builder.showNotification();
+    if (Globals.settings.isShowNotifications()) {
+      NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
+          .withPosition(Positions.SOUTH_EAST);
+      builder.showNotification();
+    }
   }
 
   public void addMessage(MessageLevel level, String title, String message) {
-    // JPanel msg = new NotificationMessage(level, title, message);
-    // messagePanel.add(msg);
-    NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
-        .withPosition(Positions.SOUTH_EAST).withIcon(IconManager.ERROR);
-    builder.showNotification();
+    if (Globals.settings.isShowNotifications()) {
+      NotificationBuilder builder = new NotificationBuilder().withMessage(message).withTitle(title).withStyle(new TmmNotificationStyle())
+          .withPosition(Positions.SOUTH_EAST).withIcon(IconManager.ERROR);
+      builder.showNotification();
+    }
 
     if (messagesList != null) {
       messagesList.add(message + ": " + title);

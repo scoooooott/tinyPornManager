@@ -81,6 +81,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JLabel                      lblUiLanguage;
   private JComboBox                   cbLanguage;
   private JLabel                      lblLanguageHint;
+  private JCheckBox                   chckbxShowNotifications;
 
   /**
    * Instantiates a new general settings panel.
@@ -94,10 +95,10 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     panelLanguage = new JPanel();
     add(panelLanguage, "2, 2, 3, 1, fill, fill");
-    panelLanguage
-        .setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelLanguage.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     lblUiLanguage = new JLabel(BUNDLE.getString("Settings.language")); //$NON-NLS-1$
     panelLanguage.add(lblUiLanguage, "2, 2, right, default");
@@ -130,6 +131,9 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     lblLanguageHint = new JLabel("");
     lblLanguageHint.setFont(lblLanguageHint.getFont().deriveFont(Font.BOLD));
     panelLanguage.add(lblLanguageHint, "2, 4, 5, 1");
+
+    chckbxShowNotifications = new JCheckBox(BUNDLE.getString("Settings.shownotifications")); //$NON-NLS-1$
+    panelLanguage.add(chckbxShowNotifications, "2, 6, 5, 1");
     cbLanguage.addItemListener(listener);
 
     panelCache = new JPanel();
@@ -233,6 +237,18 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     }
   }
 
+  /**
+   * Helper class for customized toString() method, to get the Name in localized language.
+   */
+  private class LocaleComboBox {
+    private Locale loc;
+
+    @Override
+    public String toString() {
+      return loc.getDisplayLanguage(loc);
+    }
+  }
+
   protected void initDataBindings() {
     BeanProperty<Settings, String> settingsBeanProperty = BeanProperty.create("proxyHost");
     BeanProperty<JTextField, String> jTextFieldBeanProperty = BeanProperty.create("text");
@@ -279,17 +295,10 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_9, chckbxImageCache, jCheckBoxBeanProperty);
     autoBinding_7.bind();
-  }
-
-  /**
-   * Helper class for customized toString() method, to get the Name in localized language.
-   */
-  private class LocaleComboBox {
-    private Locale loc;
-
-    @Override
-    public String toString() {
-      return loc.getDisplayLanguage(loc);
-    }
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_5 = BeanProperty.create("showNotifications");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_5, chckbxShowNotifications, jCheckBoxBeanProperty);
+    autoBinding_8.bind();
   }
 }
