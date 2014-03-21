@@ -61,7 +61,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  */
 @XmlRootElement(name = "episodedetails")
 @XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "tags", "playcount",
-    "lastplayed", "credits", "director", "aired", "premiered", "studio", "actors" })
+    "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors" })
 public class TvShowEpisodeToXbmcNfoConnector {
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
   private static JAXBContext  context   = initContext();
@@ -79,6 +79,11 @@ public class TvShowEpisodeToXbmcNfoConnector {
   private String              aired     = "";
   private String              premiered = "";
 
+  @XmlElement
+  private int                 playcount = 0;
+  @XmlElement
+  private boolean             watched   = false;
+
   @XmlAnyElement(lax = true)
   private List<Object>        actors;
 
@@ -94,9 +99,6 @@ public class TvShowEpisodeToXbmcNfoConnector {
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
   String                      thumb;
-
-  @XmlElement
-  String                      playcount;
 
   @XmlElement
   String                      lastplayed;
@@ -181,6 +183,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
         xbmc.setUniqueid(episode.getId("tvdb").toString());
       }
       xbmc.setMpaa(episode.getTvShow().getCertification().getName());
+      xbmc.watched = episode.isWatched();
+      if (xbmc.watched) {
+        xbmc.playcount = 1;
+      }
 
       xbmc.actors.clear();
       // actors for tv show episode (guests?)
@@ -303,6 +309,10 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
 
       episode.setVotes(xbmc.getVotes());
+      episode.setWatched(xbmc.watched);
+      if (xbmc.playcount > 0) {
+        episode.setWatched(true);
+      }
 
       // convert director to internal format
       String director = "";
