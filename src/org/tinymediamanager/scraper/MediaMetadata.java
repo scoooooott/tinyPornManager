@@ -32,40 +32,49 @@ import org.tinymediamanager.scraper.MediaCastMember.CastType;
  * @author Manuel Laggner
  */
 public class MediaMetadata {
-  public static String            PROVIDER_ID        = "providerId";
-  public static String            IMDBID             = "imdbId";
-  public static String            TMDBID             = "tmdbId";
-  public static String            TMDBID_SET         = "tmdbIdSet";
-  public static String            COLLECTION_NAME    = "collectionName";
-  public static String            TITLE              = "title";
-  public static String            ORIGINAL_TITLE     = "originalTitle";
-  public static String            PLOT               = "plot";
-  public static String            RATING             = "rating";
-  public static String            VOTE_COUNT         = "voteCount";
-  public static String            TOP_250            = "top250";
-  public static String            RUNTIME            = "runtime";
-  public static String            TAGLINE            = "tagline";
-  public static String            PRODUCTION_COMPANY = "productionCompany";
-  public static String            YEAR               = "year";
-  public static String            RELEASE_DATE       = "releaseDate";
-  public static String            SPOKEN_LANGUAGES   = "spokenLanguages";
-  public static String            COUNTRY            = "country";
-  public static String            POSTER_URL         = "posterUrl";
-  public static String            STATUS             = "status";
+  public static String            PROVIDER_ID         = "providerId";
+  public static String            IMDBID              = "imdbId";
+  public static String            TMDBID              = "tmdbId";
+  public static String            TMDBID_SET          = "tmdbIdSet";
+  public static String            COLLECTION_NAME     = "collectionName";
+  public static String            TITLE               = "title";
+  public static String            ORIGINAL_TITLE      = "originalTitle";
+  public static String            PLOT                = "plot";
+  public static String            RATING              = "rating";
+  public static String            VOTE_COUNT          = "voteCount";
+  public static String            TOP_250             = "top250";
+  public static String            RUNTIME             = "runtime";
+  public static String            TAGLINE             = "tagline";
+  public static String            PRODUCTION_COMPANY  = "productionCompany";
+  public static String            YEAR                = "year";
+  public static String            RELEASE_DATE        = "releaseDate";
+  public static String            SPOKEN_LANGUAGES    = "spokenLanguages";
+  public static String            COUNTRY             = "country";
+  public static String            POSTER_URL          = "posterUrl";
+  public static String            STATUS              = "status";
 
-  public static Date              INITIAL_DATE       = new Date(0);
+  // TV
+  public static String            EPISODE_NR          = "episodeNr";
+  public static String            SEASON_NR           = "seasonNr";
+  public static String            EPISODE_NR_DVD      = "dvdEpisodeNr";
+  public static String            SEASON_NR_DVD       = "dvdSeasonNr";
+  public static String            EPISODE_NR_COMBINED = "combinedEpisodeNr";
+  public static String            SEASON_NR_COMBINED  = "combinedSeasonNr";
+  public static String            ABSOLUTE_NR         = "absoluteNr";
 
-  private List<MediaCastMember>   castMembers        = new ArrayList<MediaCastMember>();
-  private List<MediaArtwork>      fanart             = new ArrayList<MediaArtwork>();
-  private List<MediaGenres>       genres             = new ArrayList<MediaGenres>();
-  private List<Certification>     certifications     = new ArrayList<Certification>();
-  private List<MediaTrailer>      trailers           = new ArrayList<MediaTrailer>();
+  public static Date              INITIAL_DATE        = new Date(0);
+
+  private List<MediaCastMember>   castMembers         = new ArrayList<MediaCastMember>();
+  private List<MediaArtwork>      fanart              = new ArrayList<MediaArtwork>();
+  private List<MediaGenres>       genres              = new ArrayList<MediaGenres>();
+  private List<Certification>     certifications      = new ArrayList<Certification>();
+  private List<MediaTrailer>      trailers            = new ArrayList<MediaTrailer>();
 
   /**
    * new infrastructure
    */
-  private HashMap<String, Object> ids                = new HashMap<String, Object>();
-  private HashMap<String, Object> metadata           = new HashMap<String, Object>();
+  private HashMap<String, Object> ids                 = new HashMap<String, Object>();
+  private HashMap<String, Object> metadata            = new HashMap<String, Object>();
 
   /**
    * Instantiates a new media metadata for the given provider.

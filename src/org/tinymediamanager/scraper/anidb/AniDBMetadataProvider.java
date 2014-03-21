@@ -269,8 +269,8 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     int episodeNr = -1;
 
     try {
-      seasonNr = Integer.parseInt(options.getId("seasonNr"));
-      episodeNr = Integer.parseInt(options.getId("episodeNr"));
+      seasonNr = Integer.parseInt(options.getId(MediaMetadata.SEASON_NR));
+      episodeNr = Integer.parseInt(options.getId(MediaMetadata.EPISODE_NR));
     }
     catch (Exception e) {
       LOGGER.warn("error parsing season/episode number");

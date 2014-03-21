@@ -510,8 +510,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       }
 
       options.setType(MediaType.TV_EPISODE);
-      options.setId("seasonNr", spSeason.getValue().toString());
-      options.setId("episodeNr", spEpisode.getValue().toString());
+      options.setId(MediaMetadata.SEASON_NR, spSeason.getValue().toString());
+      options.setId(MediaMetadata.EPISODE_NR, spEpisode.getValue().toString());
 
       try {
         MediaMetadata metadata = mp.getEpisodeMetadata(options);

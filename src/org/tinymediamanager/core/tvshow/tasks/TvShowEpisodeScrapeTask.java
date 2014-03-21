@@ -73,8 +73,8 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       }
 
       options.setType(MediaType.TV_EPISODE);
-      options.setId("seasonNr", String.valueOf(episode.getSeason()));
-      options.setId("episodeNr", String.valueOf(episode.getEpisode()));
+      options.setId(MediaMetadata.SEASON_NR, String.valueOf(episode.getSeason()));
+      options.setId(MediaMetadata.EPISODE_NR, String.valueOf(episode.getEpisode()));
 
       try {
         MediaMetadata metadata = metadataProvider.getEpisodeMetadata(options);

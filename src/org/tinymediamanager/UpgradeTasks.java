@@ -149,6 +149,7 @@ public class UpgradeTasks {
     }
 
     if (compareVersion(v, "2.5.4") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.5.4");
       // repair missing datasources
       EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
       entityManager.getTransaction().begin();
@@ -161,7 +162,7 @@ public class UpgradeTasks {
             }
           }
         }
-        // remove MacOS ingore MFs (borrowed from UDS)
+        // remove MacOS ignore MFs (borrowed from UDS)
         List<MediaFile> mediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
         for (MediaFile mf : mediaFiles) {
           if (mf.getFilename().startsWith("._")) { // remove MacOS ignore files
@@ -181,7 +182,7 @@ public class UpgradeTasks {
             }
           }
         }
-        // remove MacOS ingore MFs (borrowed from UDS)
+        // remove MacOS ignore MFs (borrowed from UDS)
         List<MediaFile> mediaFiles = new ArrayList<MediaFile>(show.getMediaFiles());
         for (MediaFile mf : mediaFiles) {
           if (mf.getFilename().startsWith("._")) { // remove MacOS ignore files

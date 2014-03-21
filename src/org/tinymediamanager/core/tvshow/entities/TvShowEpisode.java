@@ -64,26 +64,31 @@ import org.tinymediamanager.scraper.MediaMetadata;
 @Entity
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpisode> {
-  private static final Logger LOGGER     = LoggerFactory.getLogger(TvShowEpisode.class);
+  private static final Logger LOGGER          = LoggerFactory.getLogger(TvShowEpisode.class);
 
   @ManyToOne
-  private TvShow              tvShow     = null;
-  private int                 episode    = 0;
-  private int                 season     = -1;
-  private Date                firstAired = null;
-  private String              director   = "";
-  private String              writer     = "";
-  private boolean             disc       = false;
-  private boolean             watched    = false;
-  private int                 votes      = 0;
-  private boolean             subtitles  = false;
+  private TvShow              tvShow          = null;
+  private int                 episode         = 0;
+  private int                 season          = -1;
+  public String               dvdSeason       = "";
+  public String               dvdEpisode      = "";
+  public String               combinedSeason  = "";                                          // ???
+  public String               combinedEpisode = "";                                          // ???
+  public String               absoluteNumber  = "";
+  private Date                firstAired      = null;
+  private String              director        = "";
+  private String              writer          = "";
+  private boolean             disc            = false;
+  private boolean             watched         = false;
+  private int                 votes           = 0;
+  private boolean             subtitles       = false;
 
   @Transient
-  private boolean             newlyAdded = false;
+  private boolean             newlyAdded      = false;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<TvShowActor>   actors     = new ArrayList<TvShowActor>(0);
-  private List<String>        tags       = new ArrayList<String>(0);
+  private List<TvShowActor>   actors          = new ArrayList<TvShowActor>(0);
+  private List<String>        tags            = new ArrayList<String>(0);
 
   static {
     mediaFileComparator = new TvShowMediaFileComparator();
@@ -384,6 +389,12 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setTitle(metadata.getStringValue(MediaMetadata.TITLE));
     setPlot(metadata.getStringValue(MediaMetadata.PLOT));
     setIds(metadata.getIds());
+
+    setDvdSeason(metadata.getStringValue(MediaMetadata.SEASON_NR_DVD));
+    setDvdEpisode(metadata.getStringValue(MediaMetadata.EPISODE_NR_DVD));
+    setCombinedSeason(metadata.getStringValue(MediaMetadata.SEASON_NR_COMBINED));
+    setCombinedEpisode(metadata.getStringValue(MediaMetadata.EPISODE_NR_COMBINED));
+    setAbsoluteNumber(metadata.getStringValue(MediaMetadata.ABSOLUTE_NR));
 
     try {
       setFirstAired(metadata.getStringValue(MediaMetadata.RELEASE_DATE));
@@ -1007,12 +1018,47 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     return sb.toString();
   }
 
-  /**
-   * Gets the tags.
-   * 
-   * @return the tags
-   */
   public List<String> getTags() {
     return this.tags;
+  }
+
+  public String getDvdSeason() {
+    return dvdSeason;
+  }
+
+  public void setDvdSeason(String dvdSeason) {
+    this.dvdSeason = dvdSeason;
+  }
+
+  public String getDvdEpisode() {
+    return dvdEpisode;
+  }
+
+  public void setDvdEpisode(String dvdEpisode) {
+    this.dvdEpisode = dvdEpisode;
+  }
+
+  public String getCombinedSeason() {
+    return combinedSeason;
+  }
+
+  public void setCombinedSeason(String combinedSeason) {
+    this.combinedSeason = combinedSeason;
+  }
+
+  public String getCombinedEpisode() {
+    return combinedEpisode;
+  }
+
+  public void setCombinedEpisode(String combinedEpisode) {
+    this.combinedEpisode = combinedEpisode;
+  }
+
+  public String getAbsoluteNumber() {
+    return absoluteNumber;
+  }
+
+  public void setAbsoluteNumber(String absoluteNumber) {
+    this.absoluteNumber = absoluteNumber;
   }
 }
