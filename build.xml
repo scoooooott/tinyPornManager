@@ -159,12 +159,12 @@
                     mainclass="com.threerings.getdown.launcher.Getdown" arguments="." 
                     bundleid="org.tinyMediaManager.tinymediamanager" infostring="tinyMediaManager" 
                     jvmversion="1.6+" shortname="tMM" workingdirectory="$JAVAROOT" 
-                    vmoptions="-Dapple.awt.graphics.UseQuartz=true">
+                    vmoptions="">
             <jarfileset dir="${build.dir}">
                 <include name="**/*" />
             </jarfileset>
         </jarbundler>
-        <copy file="AppBundler/JavaApplicationStub" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS" />
+        <copy file="AppBundler/JavaApplicationStub.new" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" />
         <chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx" />
         <zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_mac.zip" level="9">
             <zipfileset filemode="755" dir="${dist.dir}/mac" includes="tinyMediaManager.app/**/*" />

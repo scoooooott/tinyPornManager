@@ -136,4 +136,5 @@ jvmarg = -Xss512k
 jvmarg = -splash:splashscreen.png
 jvmarg = -Djava.net.preferIPv4Stack=true
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
+jvmarg = [mac os x] -Xdock:name=tinyMediaManager
 jvmarg = [linux] -Djna.nosys=true
