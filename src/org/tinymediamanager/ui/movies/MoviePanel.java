@@ -16,10 +16,13 @@
 package org.tinymediamanager.ui.movies;
 
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -45,7 +48,9 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gpl.JSplitButton.JSplitButton;
 import org.gpl.JSplitButton.action.SplitButtonActionListener;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -621,6 +626,8 @@ public class MoviePanel extends JPanel {
 
     // initialize filteredCount
     lblMovieCountFiltered.setText(String.valueOf(movieTableModel.getRowCount()));
+
+    addKeyListener();
   }
 
   /**
@@ -652,5 +659,48 @@ public class MoviePanel extends JPanel {
         movieListBeanProperty, lblMovieCountTotal, jLabelBeanProperty);
     autoBinding_20.bind();
     //
+  }
+
+  private void addKeyListener() {
+    table.addKeyListener(new KeyListener() {
+      private long   lastKeypress = 0;
+      private String searchTerm   = "";
+
+      @Override
+      public void keyTyped(KeyEvent arg0) {
+        long now = System.currentTimeMillis();
+        if (now - lastKeypress > 500) {
+          searchTerm = "";
+        }
+        lastKeypress = now;
+
+        if (arg0.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
+          searchTerm += arg0.getKeyChar();
+        }
+
+        if (StringUtils.isNotBlank(searchTerm)) {
+          TableModel model = table.getModel();
+          for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0) instanceof Movie) {
+              String title = ((Movie) model.getValueAt(i, 0)).getTitleSortable().toLowerCase();
+              if (title.startsWith(searchTerm)) {
+                ListSelectionModel selectionModel = table.getSelectionModel();
+                selectionModel.setSelectionInterval(i, i);
+                table.scrollRectToVisible(new Rectangle(table.getCellRect(i, 0, true)));
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      @Override
+      public void keyReleased(KeyEvent arg0) {
+      }
+
+      @Override
+      public void keyPressed(KeyEvent arg0) {
+      }
+    });
   }
 }

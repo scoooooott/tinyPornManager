@@ -51,28 +51,16 @@ public class ZebraJTable extends JTable {
   private ArrayList<TableColumn>        indexedColumns   = new ArrayList<TableColumn>();
   private Map<Object, TableColumn>      hiddenColumns    = new HashMap<Object, TableColumn>();
 
-  /**
-   * Instantiates a new my table.
-   */
   public ZebraJTable() {
     super();
     init();
   }
 
-  /**
-   * Instantiates a new my table.
-   * 
-   * @param dm
-   *          the dm
-   */
   public ZebraJTable(TableModel dm) {
     setModel(dm);
     init();
   }
 
-  /**
-   * Inits the table.
-   */
   private void init() {
     setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
     setTableHeader(createTableHeader());
@@ -92,11 +80,6 @@ public class ZebraJTable extends JTable {
     }
   }
 
-  /**
-   * Creates a JTableHeader that paints the table header background to the right of the right-most column if neccesasry.
-   * 
-   * @return the j table header
-   */
   private JTableHeader createTableHeader() {
     return new JTableHeader(getColumnModel()) {
       private static final long serialVersionUID = -7676154270682107643L;
@@ -115,18 +98,6 @@ public class ZebraJTable extends JTable {
     };
   }
 
-  /**
-   * Paints the given JTable's table default header background at given x for the given width.
-   * 
-   * @param g
-   *          the g
-   * @param table
-   *          the table
-   * @param x
-   *          the x
-   * @param width
-   *          the width
-   */
   private static void paintHeader(Graphics g, JTable table, int x, int width) {
     TableCellRenderer renderer = table.getTableHeader().getDefaultRenderer();
     Component component = renderer.getTableCellRendererComponent(table, "", false, false, -1, 2);
@@ -137,11 +108,6 @@ public class ZebraJTable extends JTable {
     CELL_RENDER_PANE.paintComponent(g, component, null, x, 0, width, table.getTableHeader().getHeight(), true);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.JTable#prepareRenderer(javax.swing.table.TableCellRenderer, int, int)
-   */
   @Override
   public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
     Component component = super.prepareRenderer(renderer, row, column);
@@ -188,9 +154,6 @@ public class ZebraJTable extends JTable {
     }
   }
 
-  /**
-   * Creates a JViewport that draws a striped background corresponding to the row positions of the given JTable.
-   */
   private static class StripedViewport extends JViewport {
     private static final long serialVersionUID = 7213871940348239879L;
     private final JTable      fTable;
@@ -212,17 +175,13 @@ public class ZebraJTable extends JTable {
 
     private PropertyChangeListener createTableColumnWidthListener() {
       return new PropertyChangeListener() {
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
           repaint();
         }
       };
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-     */
     @Override
     protected void paintComponent(Graphics g) {
       paintStripedBackground(g);
@@ -254,11 +213,6 @@ public class ZebraJTable extends JTable {
       g.translate(0, viewPosition.y);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.JViewport#setViewPosition(java.awt.Point)
-     */
     @Override
     public void setViewPosition(Point p) {
       super.setViewPosition(p);
@@ -289,13 +243,6 @@ public class ZebraJTable extends JTable {
     }
   }
 
-  /**
-   * Creates the striped j scroll pane.
-   * 
-   * @param table
-   *          the table
-   * @return the j scroll pane
-   */
   public static JScrollPane createStripedJScrollPane(JTable table) {
     JScrollPane scrollPane = new JScrollPane(table);
     scrollPane.setViewport(new StripedViewport(table));
@@ -306,16 +253,9 @@ public class ZebraJTable extends JTable {
     return scrollPane;
   }
 
-  /**
-   * Creates a component that paints the header background for use in a JScrollPane corner.
-   * 
-   * @param table
-   *          the table
-   * @return the j component
-   */
   private static JComponent createCornerComponent(final JTable table) {
     return new JComponent() {
-      private static final long serialVersionUID = 1L;
+      private static final long serialVersionUID = -6612112068796852330L;
 
       @Override
       protected void paintComponent(Graphics g) {
