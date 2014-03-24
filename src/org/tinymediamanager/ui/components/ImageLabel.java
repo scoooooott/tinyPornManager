@@ -178,7 +178,7 @@ public class ImageLabel extends JLabel {
       int offsetY = 0;
 
       if (drawBorder && !drawFullWidth) {
-        Point size = calculateSize(this.getWidth() - 8, this.getHeight() - 8, originalWidth, originalHeight, true);
+        Point size = ImageCache.calculateSize(this.getWidth() - 8, this.getHeight() - 8, originalWidth, originalHeight, true);
 
         // calculate offsets
         if (position == Position.TOP_RIGHT || position == Position.BOTTOM_RIGHT) {
@@ -210,7 +210,7 @@ public class ImageLabel extends JLabel {
           size = new Point(this.getWidth(), this.getWidth() * originalHeight / originalWidth);
         }
         else {
-          size = calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
+          size = ImageCache.calculateSize(this.getWidth(), this.getHeight(), originalWidth, originalHeight, true);
         }
 
         // calculate offsets
@@ -277,26 +277,6 @@ public class ImageLabel extends JLabel {
       at.translate(0, -this.getHeight());
       g2.setTransform(orig);
     }
-  }
-
-  public static Point calculateSize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, boolean respectFactor) {
-    Point size = new Point();
-    if (respectFactor) {
-      // calculate on available height
-      size.y = maxHeight;
-      size.x = (int) (size.y * (double) originalWidth / (double) originalHeight);
-
-      if (size.x > maxWidth) {
-        // calculate on available height
-        size.x = maxWidth;
-        size.y = (int) (size.x * (double) originalHeight / (double) originalWidth);
-      }
-    }
-    else {
-      size.x = maxWidth;
-      size.y = maxHeight;
-    }
-    return size;
   }
 
   public void setPosition(Position position) {

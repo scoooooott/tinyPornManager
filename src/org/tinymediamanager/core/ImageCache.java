@@ -48,7 +48,6 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.util.Url;
-import org.tinymediamanager.ui.components.ImageLabel;
 
 /**
  * The Class ImageCache - used to build a local image cache (scaled down versions & thumbnails - also for offline access).
@@ -209,8 +208,7 @@ public class ImageCache {
         }
       }
 
-      Point size = ImageLabel.calculateSize(desiredWidth, (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(),
-          originalImage.getHeight(), true);
+      Point size = calculateSize(desiredWidth, (int) (originalImage.getHeight() / 1.5), originalImage.getWidth(), originalImage.getHeight(), true);
       BufferedImage scaledImage = null;
 
       if (Globals.settings.getImageCacheType() == CacheType.FAST) {
@@ -325,5 +323,25 @@ public class ImageCache {
         }
       }
     }
+  }
+
+  public static Point calculateSize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, boolean respectFactor) {
+    Point size = new Point();
+    if (respectFactor) {
+      // calculate on available height
+      size.y = maxHeight;
+      size.x = (int) (size.y * (double) originalWidth / (double) originalHeight);
+
+      if (size.x > maxWidth) {
+        // calculate on available height
+        size.x = maxWidth;
+        size.y = (int) (size.x * (double) originalHeight / (double) originalWidth);
+      }
+    }
+    else {
+      size.x = maxWidth;
+      size.y = maxHeight;
+    }
+    return size;
   }
 }

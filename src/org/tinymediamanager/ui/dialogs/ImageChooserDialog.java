@@ -59,6 +59,7 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
@@ -332,20 +333,20 @@ public class ImageChooserDialog extends JDialog {
       case FANART:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 180 };
-        size = ImageLabel.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
+        size = ImageCache.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
       case BANNER:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 120 };
-        size = ImageLabel.calculateSize(300, 100, originalImage.getWidth(), originalImage.getHeight(), true);
+        size = ImageCache.calculateSize(300, 100, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
       case POSTER:
       default:
         gbl.columnWidths = new int[] { 180 };
         gbl.rowHeights = new int[] { 270 };
-        size = ImageLabel.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
+        size = ImageCache.calculateSize(150, 250, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
     }
