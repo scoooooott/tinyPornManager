@@ -206,8 +206,8 @@ public class TvShowScrapeTask extends TmmSwingWorker {
               MediaScrapeOptions options = new MediaScrapeOptions();
               options.setType(MediaType.TV_SHOW);
               options.setResult(result1);
-              options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-              options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+              options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+              options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 
               // we didn't do a search - pass imdbid and tmdbid from movie
               // object

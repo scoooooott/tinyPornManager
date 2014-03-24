@@ -30,12 +30,13 @@ import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 public class MediaScrapeOptions {
   private MediaSearchResult       result;
   private MediaMetadata           metadata;
-  private HashMap<String, String> ids                  = new HashMap<String, String>();
+  private HashMap<String, String> ids                       = new HashMap<String, String>();
   private MediaType               type;
-  private MediaArtworkType        artworkType          = MediaArtworkType.ALL;
-  private MediaLanguages          language             = MediaLanguages.en;
-  private CountryCode             country              = CountryCode.US;
-  private boolean                 scrapeCollectionInfo = false;
+  private MediaArtworkType        artworkType               = MediaArtworkType.ALL;
+  private MediaLanguages          language                  = MediaLanguages.en;
+  private CountryCode             country                   = CountryCode.US;
+  private boolean                 scrapeCollectionInfo      = false;
+  private boolean                 scrapeImdbForeignLanguage = false;
 
   public MediaSearchResult getResult() {
     return result;
@@ -126,6 +127,14 @@ public class MediaScrapeOptions {
 
   public void setScrapeCollectionInfo(boolean scrapeCollectionInfo) {
     this.scrapeCollectionInfo = scrapeCollectionInfo;
+  }
+
+  public boolean isScrapeImdbForeignLanguage() {
+    return scrapeImdbForeignLanguage;
+  }
+
+  public void setScrapeImdbForeignLanguage(boolean scrapeImdbForeignLanguage) {
+    this.scrapeImdbForeignLanguage = scrapeImdbForeignLanguage;
   }
 
   /**

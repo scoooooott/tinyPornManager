@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -38,10 +38,12 @@ import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
@@ -99,17 +101,19 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       return results;
     }
 
+    String language = options.get(SearchParam.LANGUAGE);
+    String country = options.get(SearchParam.COUNTRY); // for passing the country to the scrape
+
     // search via the api
     List<Series> series = null;
     synchronized (tvdb) {
-      series = tvdb.searchSeries(searchString, Globals.settings.getTvShowSettings().getScraperLanguage().name());
+      series = tvdb.searchSeries(searchString, language);
     }
 
     // first add all tv shows in the preferred language
     HashMap<String, MediaSearchResult> storedResults = new HashMap<String, MediaSearchResult>();
     for (Series show : series) {
-      if (show.getLanguage().equalsIgnoreCase(Globals.settings.getTvShowSettings().getScraperLanguage().name())
-          && !storedResults.containsKey(show.getId())) {
+      if (show.getLanguage().equalsIgnoreCase(language) && !storedResults.containsKey(show.getId())) {
         MediaSearchResult sr = createSearchResult(show, options, searchString);
         results.add(sr);
 
@@ -134,8 +138,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       MediaScrapeOptions scrapeOptions = new MediaScrapeOptions();
       scrapeOptions.setId(providerInfo.getId(), searchString);
       scrapeOptions.setType(MediaType.TV_SHOW);
-      scrapeOptions.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-      scrapeOptions.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+      scrapeOptions.setLanguage(MediaLanguages.valueOf(language));
+      scrapeOptions.setCountry(CountryCode.valueOf(country));
 
       MediaMetadata md = getTvShowMetadata(scrapeOptions);
 
@@ -195,7 +199,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
 
     Series show = null;
     synchronized (tvdb) {
-      show = tvdb.getSeries(id, Globals.settings.getTvShowSettings().getScraperLanguage().name());
+      show = tvdb.getSeries(id, options.getLanguage().name());
     }
 
     // populate metadata
@@ -294,8 +298,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     List<Episode> episodes = new ArrayList<Episode>();
     synchronized (tvdb) {
       // switched to getAllEpisodes for performance - only 1 request needed for scraping multiple episodes of one tv show
-      // episode = tvdb.getEpisode(id, seasonNr, episodeNr, Globals.settings.getScraperLanguage().name());
-      episodes.addAll(tvdb.getAllEpisodes(id, Globals.settings.getTvShowSettings().getScraperLanguage().name()));
+      episodes.addAll(tvdb.getAllEpisodes(id, options.getLanguage().name()));
     }
 
     Episode episode = null;
@@ -359,11 +362,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return md;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getArtwork(org.tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
@@ -423,7 +421,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     }
 
     // sort bannerlist
-    Collections.sort(bannerList, new BannerComparator());
+    Collections.sort(bannerList, new BannerComparator(options.getLanguage().name()));
 
     // build output
     for (Banner banner : bannerList) {
@@ -480,45 +478,6 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return artwork;
   }
 
-  private static class BannerComparator implements Comparator<Banner> {
-    /*
-     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
-     */
-    @Override
-    public int compare(Banner arg0, Banner arg1) {
-      String preferredLangu = Globals.settings.getTvShowSettings().getScraperLanguage().name();
-
-      // check if first image is preferred langu
-      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
-        return -1;
-      }
-
-      // check if second image is preferred langu
-      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
-        return 1;
-      }
-
-      // check if the first image is en
-      if ("en".equals(arg0.getLanguage()) && !"en".equals(arg1.getLanguage())) {
-        return -1;
-      }
-
-      // check if the second image is en
-      if (!"en".equals(arg0.getLanguage()) && "en".equals(arg1.getLanguage())) {
-        return 1;
-      }
-
-      // if rating is the same, return 0
-      if (arg0.getRating().equals(arg1.getRating())) {
-        return 0;
-      }
-
-      // we did not sort until here; so lets sort with the rating
-      return arg0.getRating() > arg1.getRating() ? -1 : 1;
-    }
-
-  }
-
   @Override
   public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
     List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
@@ -541,8 +500,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     List<Episode> eps = new ArrayList<Episode>();
     synchronized (tvdb) {
       // switched to getAllEpisodes for performance - only 1 request needed for scraping multiple episodes of one tv show
-      // episode = tvdb.getEpisode(id, seasonNr, episodeNr, Globals.settings.getScraperLanguage().name());
-      eps.addAll(tvdb.getAllEpisodes(id, Globals.settings.getTvShowSettings().getScraperLanguage().name()));
+      eps.addAll(tvdb.getAllEpisodes(id, options.getLanguage().name()));
     }
 
     for (Episode ep : eps) {
@@ -640,5 +598,51 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       g = MediaGenres.getGenre(genre);
     }
     return g;
+  }
+
+  /**********************************************************************
+   * local helper classes
+   **********************************************************************/
+  private static class BannerComparator implements Comparator<Banner> {
+    private String preferredLangu;
+
+    private BannerComparator(String language) {
+      this.preferredLangu = language;
+    }
+
+    /*
+     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
+     */
+    @Override
+    public int compare(Banner arg0, Banner arg1) {
+      // check if first image is preferred langu
+      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
+        return -1;
+      }
+
+      // check if second image is preferred langu
+      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // check if the first image is en
+      if ("en".equals(arg0.getLanguage()) && !"en".equals(arg1.getLanguage())) {
+        return -1;
+      }
+
+      // check if the second image is en
+      if (!"en".equals(arg0.getLanguage()) && "en".equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // if rating is the same, return 0
+      if (arg0.getRating().equals(arg1.getRating())) {
+        return 0;
+      }
+
+      // we did not sort until here; so lets sort with the rating
+      return arg0.getRating() > arg1.getRating() ? -1 : 1;
+    }
+
   }
 }

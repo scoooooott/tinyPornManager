@@ -177,8 +177,8 @@ public class TvShowEpisodeChooserDialog extends JDialog implements ActionListene
     @Override
     public Void doInBackground() {
       MediaScrapeOptions options = new MediaScrapeOptions();
-      options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-      options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+      options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
+      options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
       for (Entry<String, Object> entry : episode.getTvShow().getIds().entrySet()) {
         options.setId(entry.getKey(), entry.getValue().toString());
       }

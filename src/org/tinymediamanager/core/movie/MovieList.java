@@ -416,6 +416,9 @@ public class MovieList extends AbstractModelObject {
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
       options.set(SearchParam.LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
+      options.set(SearchParam.COUNTRY, Globals.settings.getMovieSettings().getCertificationCountry().getAlpha2());
+      options.set(SearchParam.COLLECTION_INFO, Boolean.toString(Globals.settings.getMovieScraperMetadataConfig().isCollection()));
+      options.set(SearchParam.IMDB_FOREIGN_LANGUAGE, Boolean.toString(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage()));
       if (movie != null) {
         if (Utils.isValidImdbId(movie.getImdbId())) {
           options.set(SearchParam.IMDBID, movie.getImdbId());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
- * The Class OfdbMetadataProvider.
+ * The Class ZelluloidMetadataProvider. A meta data provider for the site zelluloid.de
  * 
  * @author Myron Boyle (myron0815@gmx.net)
  */

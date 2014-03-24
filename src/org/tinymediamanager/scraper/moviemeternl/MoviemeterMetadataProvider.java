@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,25 +41,17 @@ import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail.Director;
 import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail.Genre;
 
 /**
- * The Class OfdbMetadataProvider.
+ * The Class MoviemeterMetadataProvider. A meta data provider for the site moviemeter.nl
  * 
  * @author Myron Boyle (myron0815@gmx.net)
  */
 public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
-
-  /** The Constant LOGGER. */
   private static final Logger      LOGGER       = LoggerFactory.getLogger(MoviemeterMetadataProvider.class);
 
   private static MoviemeterApi     mmapi;
-
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("moviemeter", "moviemeter.nl",
                                                     "Scraper for moviemeter.nl which is able to scrape movie metadata");
 
-  /**
-   * Instantiates a new ofdb metadata provider.
-   * 
-   * @throws Exception
-   */
   public MoviemeterMetadataProvider() throws Exception {
     if (mmapi == null) {
       try {
@@ -223,12 +215,8 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
     return resultList;
   }
 
-  /**
+  /*
    * Maps scraper Genres to internal TMM genres
-   * 
-   * @param genre
-   *          as stinr
-   * @return TMM genre
    */
   private MediaGenres getTmmGenre(String genre) {
     MediaGenres g = null;

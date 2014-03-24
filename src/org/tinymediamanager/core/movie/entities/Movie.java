@@ -1011,6 +1011,7 @@ public class Movie extends MediaEntity {
             options.setTmdbId(col);
             options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
             options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+            options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
 
             CollectionInfo info = mp.getMovieSetMetadata(options);
             if (info != null) {

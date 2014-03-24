@@ -41,6 +41,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.anidb.AniDBMetadataProvider;
@@ -377,6 +378,8 @@ public class TvShowList extends AbstractModelObject {
         provider = getMetadataProvider();
       }
       MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, MediaSearchOptions.SearchParam.QUERY, searchTerm);
+      options.set(SearchParam.LANGUAGE, Globals.settings.getTvShowSettings().getScraperLanguage().name());
+      options.set(SearchParam.COUNTRY, Globals.settings.getTvShowSettings().getCertificationCountry().getAlpha2());
       searchResult = provider.search(options);
 
       // if result is empty, try all scrapers

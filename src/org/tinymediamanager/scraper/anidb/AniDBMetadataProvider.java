@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -57,40 +56,29 @@ import org.tinymediamanager.thirdparty.RingBuffer;
  * The class AnimeDBMetadataProvider - a metadata provider for ANIME (AniDB)
  * 
  * @author Manuel Laggner
- * 
  */
 public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
-  private static final Logger           LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
-  private static final String           IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
-  private static MediaProviderInfo      providerInfo      = new MediaProviderInfo("anidb", "anidb.net",
-                                                              "Scraper for anidb.net - a big anime database");
-  private static final RingBuffer<Long> connectionCounter = new RingBuffer<Long>(30);
+  private static final Logger              LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
+  private static final String              IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
+  private static MediaProviderInfo         providerInfo      = new MediaProviderInfo("anidb", "anidb.net",
+                                                                 "Scraper for anidb.net - a big anime database");
+  private static final RingBuffer<Long>    connectionCounter = new RingBuffer<Long>(30);
 
-  HashMap<String, List<AniDBShow>>      showsForLookup    = new HashMap<String, List<AniDBShow>>();
+  private HashMap<String, List<AniDBShow>> showsForLookup    = new HashMap<String, List<AniDBShow>>();
 
   public AniDBMetadataProvider() {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.ITvShowMetadataProvider#getProviderInfo()
-   */
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.ITvShowMetadataProvider#getTvShowMetadata(org.tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public MediaMetadata getTvShowMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     String id = "";
-    String langu = Globals.settings.getTvShowSettings().getScraperLanguage().name();
+    String langu = options.getLanguage().name();
 
     // id from result
     if (options.getResult() != null) {
@@ -159,10 +147,6 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     return md;
   }
 
-  /**
-   * @param md
-   * @param e
-   */
   private void getActors(MediaMetadata md, Element e) {
     for (Element character : e.children()) {
       MediaCastMember member = new MediaCastMember(CastType.ACTOR);
@@ -182,10 +166,6 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
   }
 
-  /**
-   * @param md
-   * @param e
-   */
   private void getRating(MediaMetadata md, Element e) {
     for (Element rating : e.children()) {
       if ("temporary".equalsIgnoreCase(rating.tagName())) {
@@ -200,11 +180,6 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
   }
 
-  /**
-   * @param md
-   * @param langu
-   * @param e
-   */
   private void parseTitle(MediaMetadata md, String langu, Element e) {
     String titleEN = "";
     String titleScraperLangu = "";
@@ -238,17 +213,12 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.ITvShowMetadataProvider#getEpisodeMetadata(org.tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public MediaMetadata getEpisodeMetadata(MediaScrapeOptions options) throws Exception {
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
 
     String id = "";
-    String langu = Globals.settings.getTvShowSettings().getScraperLanguage().name().toLowerCase();
+    String langu = options.getLanguage().name();
 
     // id from result
     if (options.getResult() != null) {
@@ -318,15 +288,12 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     md.storeMetadata(MediaMetadata.PLOT, episode.summary);
     md.storeMetadata(MediaMetadata.RATING, episode.rating);
     md.storeMetadata(MediaMetadata.RELEASE_DATE, episode.airdate);
+    md.storeMetadata(MediaMetadata.RUNTIME, episode.runtime);
     md.setId(providerInfo.getId(), episode.id);
 
     return md;
   }
 
-  /**
-   * @param doc
-   * @return
-   */
   private List<Episode> parseEpisodes(Document doc) {
     List<Episode> episodes = new ArrayList<Episode>();
 
@@ -417,11 +384,6 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     return episodes;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.ITvShowMetadataProvider#search(org.tinymediamanager.scraper.MediaSearchOptions)
-   */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions options) throws Exception {
     LOGGER.debug("search() " + options.toString());
@@ -479,18 +441,59 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     return results;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.ITvShowMetadataProvider#getEpisodeList(org.tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public List<MediaEpisode> getEpisodeList(MediaScrapeOptions options) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    List<MediaEpisode> episodes = new ArrayList<MediaEpisode>();
+
+    String id = "";
+    String langu = options.getLanguage().name();
+
+    // id from result
+    if (options.getResult() != null) {
+      id = options.getResult().getId();
+    }
+
+    // do we have an id from the options?
+    if (StringUtils.isEmpty(id)) {
+      id = options.getId(providerInfo.getId());
+    }
+
+    if (StringUtils.isEmpty(id)) {
+      return episodes;
+    }
+
+    trackConnections();
+    CachedUrl cachedUrl = new CachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
+
+    Document doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
+
+    if (doc.children().size() == 0) {
+      return episodes;
+    }
+
+    // filter out the episode
+    for (Episode ep : parseEpisodes(doc)) {
+      MediaEpisode episode = new MediaEpisode(getProviderInfo().getId());
+      episode.title = ep.titles.get(langu);
+      episode.season = ep.season;
+      episode.episode = ep.episode;
+      if (StringUtils.isBlank(episode.title)) {
+        episode.title = ep.titles.get("en");
+      }
+      if (StringUtils.isBlank(episode.title)) {
+        episode.title = ep.titles.get("x-jat");
+      }
+
+      episode.plot = ep.summary;
+      episode.rating = ep.rating;
+      episode.firstAired = ep.airdate;
+      episode.ids.put(providerInfo.getId(), ep.id);
+    }
+
+    return episodes;
   }
 
-  /**
+  /*
    * build up the hashmap for a fast title search
    */
   private void buildTitleHashMap() {
@@ -539,7 +542,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
   }
 
-  /**
+  /*
    * Track connections and throttle if needed.
    */
   private void trackConnections() {
@@ -561,11 +564,6 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     connectionCounter.add(currentTime);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaArtworkProvider#getArtwork(org.tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public List<MediaArtwork> getArtwork(MediaScrapeOptions options) throws Exception {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
@@ -613,6 +611,9 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     return artwork;
   }
 
+  /****************************************************************************
+   * helper class for episode extraction
+   ****************************************************************************/
   private class Episode {
     int                     id      = -1;
     int                     episode = -1;

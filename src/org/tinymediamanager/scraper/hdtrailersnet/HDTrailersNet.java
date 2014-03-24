@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
- * The Class HDTrailersNet.
+ * The Class HDTrailersNet. A trailer provider for the site hd-trailers.net
  * 
  * @author Myron Boyle
  */
@@ -45,17 +45,9 @@ public class HDTrailersNet implements IMediaTrailerProvider {
   private static MediaProviderInfo providerInfo = new MediaProviderInfo("hdtrailersnet", "hd-trailers.net",
                                                     "Scraper for hd-trailers.net which is able to scrape trailers");
 
-  /**
-   * Instantiates a new hD trailers net.
-   */
   public HDTrailersNet() {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaTrailerProvider#getTrailers(org. tinymediamanager.scraper.MediaScrapeOptions)
-   */
   @Override
   public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getTrailers() " + options.toString());
@@ -156,12 +148,8 @@ public class HDTrailersNet implements IMediaTrailerProvider {
     return trailers;
   }
 
-  /**
+  /*
    * Returns the "Source" for this trailer by parsing the URL.
-   * 
-   * @param url
-   *          the url
-   * @return the provider from url
    */
   private static String getProviderFromUrl(String url) {
     url = url.toLowerCase();
@@ -193,11 +181,6 @@ public class HDTrailersNet implements IMediaTrailerProvider {
     return source;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaTrailerProvider#getProviderInfo()
-   */
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;

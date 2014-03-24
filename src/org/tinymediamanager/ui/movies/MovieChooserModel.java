@@ -243,6 +243,7 @@ public class MovieChooserModel extends AbstractModelObject {
       options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
       options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
       options.setScrapeCollectionInfo(Globals.settings.getMovieScraperMetadataConfig().isCollection());
+      options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
       metadata = metadataProvider.getMetadata(options);
       setOverview(metadata.getStringValue(MediaMetadata.PLOT));
       setTagline(metadata.getStringValue(MediaMetadata.TAGLINE));
@@ -283,6 +284,7 @@ public class MovieChooserModel extends AbstractModelObject {
     }
     options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
     options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+    options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
 
     // scrape providers till one artwork has been found
     for (IMediaArtworkProvider artworkProvider : artworkProviders) {
@@ -325,6 +327,7 @@ public class MovieChooserModel extends AbstractModelObject {
     }
     options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
     options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+    options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
 
     // scrape trailers
     for (IMediaTrailerProvider trailerProvider : trailerProviders) {

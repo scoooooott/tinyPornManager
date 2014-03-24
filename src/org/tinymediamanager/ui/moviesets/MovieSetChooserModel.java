@@ -218,6 +218,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
             options.setTmdbId(mis.tmdbId);
             options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
             options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+            options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
             try {
               MediaMetadata md = mp.getMetadata(options);
               mis.imdbId = String.valueOf(md.getId(MediaMetadata.IMDBID));
@@ -250,6 +251,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
         options.setTmdbId(collection.getId());
         options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
         options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+        options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
 
         CollectionInfo info = mp.getMovieSetMetadata(options);
         if (info != null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import com.omertron.fanarttvapi.model.FTArtworkType;
 import com.omertron.fanarttvapi.model.FanartTvArtwork;
 
 /**
- * The Class FanartTvMetadataProvider.
+ * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
  * 
  * @author Myron Boyle, Manuel Laggner
  */
@@ -46,12 +46,6 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
 
   private FanartTvApi              ftv          = null;
 
-  /**
-   * Instantiates a new FanartTv metadata provider.
-   * 
-   * @throws Exception
-   *           the exception
-   */
   public FanartTvMetadataProvider() throws Exception {
     if (ftv == null) {
       try {

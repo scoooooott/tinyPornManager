@@ -600,6 +600,7 @@ public class ImageChooserDialog extends JDialog {
           if (mediaType == MediaType.MOVIE) {
             options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
             options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
+            options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
           }
           else if (mediaType == MediaType.TV_SHOW) {
             options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
@@ -64,7 +65,7 @@ import com.omertron.themoviedbapi.model.ReleaseInfo;
 import com.omertron.themoviedbapi.model.Trailer;
 
 /**
- * The Class TmdbMetadataProvider.
+ * The Class TmdbMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
  * 
  * @author Manuel Laggner
  */
@@ -75,12 +76,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   private static MediaProviderInfo      providerInfo      = new MediaProviderInfo("tmdb", "themoviedb.org",
                                                               "Scraper for themoviedb.org which is able to scrape movie metadata, artwork and trailers");
 
-  /**
-   * Instantiates a new tmdb metadata provider.
-   * 
-   * @throws Exception
-   *           the exception
-   */
   public TmdbMetadataProvider() throws Exception {
     // create a new instance of the tmdb api
     if (tmdb == null) {
@@ -94,21 +89,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#getInfo()
-   */
   @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
 
-  /*
-   * Starts a search for a movie in themoviedb.org
-   * 
-   * @see org.tinymediamanager.scraper.IMediaMetadataProvider#search(org.tinymediamanager .scraper.SearchQuery)
-   */
   @Override
   public List<MediaSearchResult> search(MediaSearchOptions query) throws Exception {
     LOGGER.debug("search() " + query.toString());
@@ -148,9 +133,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     // begin search
     LOGGER.info("========= BEGIN TMDB Scraper Search for: " + searchString);
-    // ApiUrl tmdbSearchMovie = new ApiUrl(tmdb, "search/movie");
-    // tmdbSearchMovie.addArgument(ApiUrl.PARAM_LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
-
     List<MovieDb> moviesFound = new ArrayList<MovieDb>();
 
     String imdbId = "";
@@ -250,15 +232,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return resultList;
   }
 
-  /**
-   * Gets the meta data.
-   * 
-   * @param options
-   *          the scrape options
-   * @return the meta data
-   * @throws Exception
-   *           the exception
-   */
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
@@ -565,7 +538,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       movieImages = tmdb.getMovieImages(tmdbId, "").getResults();
     }
 
-    List<MediaArtwork> artwork = prepareArtwork(movieImages, artworkType, tmdbId);
+    List<MediaArtwork> artwork = prepareArtwork(movieImages, artworkType, tmdbId, options);
 
     // buffer the artwork
     MediaMetadata md = options.getMetadata();
@@ -641,15 +614,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return trailers;
   }
 
-  /**
-   * Converts the imdbId to the tmdbId.
-   * 
-   * @param imdbId
-   *          the imdb id
-   * @return the tmdb id from imdb id
-   * @throws Exception
-   *           the exception
-   */
   public int getTmdbIdFromImdbId(String imdbId) throws Exception {
     // get the tmdbid for this imdbid
     MovieDb movieInfo = null;
@@ -668,50 +632,8 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return 0;
   }
 
-  private static class ArtworkComparator implements Comparator<Artwork> {
-    /*
-     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
-     */
-    @Override
-    public int compare(Artwork arg0, Artwork arg1) {
-      String preferredLangu = Globals.settings.getMovieSettings().getScraperLanguage().name();
-
-      // check if first image is preferred langu
-      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
-        return -1;
-      }
-
-      // check if second image is preferred langu
-      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
-        return 1;
-      }
-
-      // check if the first image is en
-      if ("en".equals(arg0.getLanguage()) && !"en".equals(arg1.getLanguage())) {
-        return -1;
-      }
-
-      // check if the second image is en
-      if (!"en".equals(arg0.getLanguage()) && "en".equals(arg1.getLanguage())) {
-        return 1;
-      }
-
-      // if rating is the same, return 0
-      if (arg0.getVoteAverage() == arg1.getVoteAverage()) {
-        return 0;
-      }
-
-      // we did not sort until here; so lets sort with the rating
-      return arg0.getVoteAverage() > arg1.getVoteAverage() ? -1 : 1;
-    }
-  }
-
-  /**
+  /*
    * Maps scraper Genres to internal TMM genres
-   * 
-   * @param genre
-   *          as stinr
-   * @return TMM genre
    */
   private MediaGenres getTmmGenre(Genre genre) {
     MediaGenres g = null;
@@ -760,19 +682,12 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return g;
   }
 
-  /**
-   * Search for movie sets.
-   * 
-   * @param setName
-   *          the set name
-   * @return the list
-   */
-  public List<Collection> searchMovieSets(String setName) {
+  public List<Collection> searchMovieSets(MediaSearchOptions options) {
     List<Collection> movieSetsFound = null;
     synchronized (tmdb) {
       trackConnections();
       try {
-        movieSetsFound = tmdb.searchCollection(setName, Globals.settings.getMovieSettings().getScraperLanguage().name(), 0).getResults();
+        movieSetsFound = tmdb.searchCollection(options.get(SearchParam.TITLE), options.get(SearchParam.LANGUAGE), 0).getResults();
         String baseUrl = tmdb.getConfiguration().getBaseUrl();
         for (Collection collection : movieSetsFound) {
           collection.setPosterPath(baseUrl + "w342" + collection.getPosterPath());
@@ -792,15 +707,6 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return movieSetsFound;
   }
 
-  /**
-   * Gets the movie set metadata.
-   * 
-   * @param options
-   *          the options
-   * @return the movie set metadata
-   * @throws Exception
-   *           the exception
-   */
   public CollectionInfo getMovieSetMetadata(MediaScrapeOptions options) throws Exception {
     CollectionInfo info = null;
     int tmdbId = 0;
@@ -814,7 +720,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     synchronized (tmdb) {
       trackConnections();
-      info = tmdb.getCollectionInfo(tmdbId, Globals.settings.getMovieSettings().getScraperLanguage().name());
+      info = tmdb.getCollectionInfo(tmdbId, options.getLanguage().name());
       if (StringUtils.isBlank(info.getOverview())) {
         // fallback to en
         info = tmdb.getCollectionInfo(tmdbId, "en");
@@ -827,46 +733,23 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     return info;
   }
 
-  /**
-   * Gets the movie set artwork.
-   * 
-   * @param tmdbId
-   *          the tmdb id
-   * @param type
-   *          the type
-   * @return the movie set artwork
-   * @throws Exception
-   *           the exception
-   */
-  public List<MediaArtwork> getMovieSetArtwork(int tmdbId, MediaArtworkType type) throws Exception {
+  public List<MediaArtwork> getMovieSetArtwork(int tmdbId, MediaArtworkType type, MediaScrapeOptions options) throws Exception {
     List<Artwork> tmdbArtwork = null;
     synchronized (tmdb) {
       trackConnections();
       tmdbArtwork = tmdb.getCollectionImages(tmdbId, "").getResults();
     }
 
-    List<MediaArtwork> artwork = prepareArtwork(tmdbArtwork, type, tmdbId);
-
+    List<MediaArtwork> artwork = prepareArtwork(tmdbArtwork, type, tmdbId, options);
     return artwork;
   }
 
-  /**
-   * Prepare different sizes of the artwork.
-   * 
-   * @param tmdbArtwork
-   *          the tmdb artwork
-   * @param artworkType
-   *          the artwork type
-   * @param tmdbId
-   *          the tmdb id
-   * @return the list
-   */
-  public List<MediaArtwork> prepareArtwork(List<Artwork> tmdbArtwork, MediaArtworkType artworkType, int tmdbId) {
+  public List<MediaArtwork> prepareArtwork(List<Artwork> tmdbArtwork, MediaArtworkType artworkType, int tmdbId, MediaScrapeOptions options) {
     List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
     String baseUrl = tmdb.getConfiguration().getBaseUrl();
 
     // first sort the artwork
-    Collections.sort(tmdbArtwork, new ArtworkComparator());
+    Collections.sort(tmdbArtwork, new ArtworkComparator(options.getLanguage().name()));
 
     // prepare all sizes
     for (Artwork image : tmdbArtwork) {
@@ -1020,5 +903,50 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     currentTime = System.currentTimeMillis();
     connectionCounter.add(currentTime);
+  }
+
+  /*******************************************************************************************
+   * local helper classes
+   *******************************************************************************************/
+  private static class ArtworkComparator implements Comparator<Artwork> {
+    private String preferredLangu;
+
+    private ArtworkComparator(String language) {
+      this.preferredLangu = language;
+    }
+
+    /*
+     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
+     */
+    @Override
+    public int compare(Artwork arg0, Artwork arg1) {
+      // check if first image is preferred langu
+      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
+        return -1;
+      }
+
+      // check if second image is preferred langu
+      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // check if the first image is en
+      if ("en".equals(arg0.getLanguage()) && !"en".equals(arg1.getLanguage())) {
+        return -1;
+      }
+
+      // check if the second image is en
+      if (!"en".equals(arg0.getLanguage()) && "en".equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // if rating is the same, return 0
+      if (arg0.getVoteAverage() == arg1.getVoteAverage()) {
+        return 0;
+      }
+
+      // we did not sort until here; so lets sort with the rating
+      return arg0.getVoteAverage() > arg1.getVoteAverage() ? -1 : 1;
+    }
   }
 }

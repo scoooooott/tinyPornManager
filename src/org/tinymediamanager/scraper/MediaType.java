@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,23 +21,8 @@ package org.tinymediamanager.scraper;
  * @author Manuel Laggner
  */
 public enum MediaType {
+  TV_SHOW, TV_EPISODE, MOVIE, MOVIE_SET;
 
-  /** The tv show. */
-  TV_SHOW,
-
-  /** The tv episode. */
-  TV_EPISODE,
-
-  /** The movie. */
-  MOVIE;
-
-  /**
-   * To media type.
-   * 
-   * @param id
-   *          the id
-   * @return the media type
-   */
   public static MediaType toMediaType(String id) {
     if (id == null)
       return null;
@@ -45,6 +30,9 @@ public enum MediaType {
     id = id.toLowerCase();
     if ("movie".equalsIgnoreCase(id) || "movies".equalsIgnoreCase(id)) {
       return MOVIE;
+    }
+    if ("movieSet".equalsIgnoreCase(id) || "set".equalsIgnoreCase(id)) {
+      return MOVIE_SET;
     }
 
     if ("tv".equalsIgnoreCase(id) || "tvShow".equalsIgnoreCase(id)) {

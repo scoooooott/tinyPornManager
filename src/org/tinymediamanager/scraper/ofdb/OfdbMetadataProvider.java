@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,29 +52,18 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
- * The Class OfdbMetadataProvider.
+ * The Class OfdbMetadataProvider. A meta data provider for the site ofdb.de
  * 
  * @author Myron Boyle (myron0815@gmx.net)
  */
 public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrailerProvider {
-
-  /** The Constant LOGGER. */
   private static final Logger         LOGGER       = LoggerFactory.getLogger(OfdbMetadataProvider.class);
-
   private static final String         BASE_URL     = "http://www.ofdb.de";
 
-  /** The Constant instance. */
   private static OfdbMetadataProvider instance;
-
-  /** The provider info. */
   private static MediaProviderInfo    providerInfo = new MediaProviderInfo("ofdb", "ofdb.de",
                                                        "Scraper for german ofdb.de which is able to scrape movie metadata");
 
-  /**
-   * Gets the single instance of OfdbMetadataProvider.
-   * 
-   * @return single instance of OfdbMetadataProvider
-   */
   public static synchronized OfdbMetadataProvider getInstance() {
     if (instance == null) {
       instance = new OfdbMetadataProvider();
@@ -82,9 +71,6 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     return instance;
   }
 
-  /**
-   * Instantiates a new ofdb metadata provider.
-   */
   public OfdbMetadataProvider() {
   }
 
@@ -246,12 +232,8 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     return md;
   }
 
-  /**
+  /*
    * Maps scraper Genres to internal TMM genres
-   * 
-   * @param genre
-   *          as stinr
-   * @return TMM genre
    */
   private MediaGenres getTmmGenre(String genre) {
     MediaGenres g = null;
@@ -309,12 +291,8 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     return g;
   }
 
-  /**
+  /*
    * Removes all weird characters from search as well some "stopwords" as der|die|das|the|a
-   * 
-   * @param q
-   *          the query string to clean
-   * @return
    */
   private String cleanSearch(String q) {
     q = " " + q + " "; // easier regex
