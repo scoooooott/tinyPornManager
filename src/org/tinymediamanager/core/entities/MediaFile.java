@@ -1308,7 +1308,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
     // check unsupported extensions
     if ("iso".equals(extension) || "bin".equals(extension) || "dat".equals(extension) || "iso".equals(extension) || "img".equals(extension)
-        || "nrg".equals(extension)) {
+        || "nrg".equals(extension) || "disc".equals(extension)) {
       return false;
     }
 
