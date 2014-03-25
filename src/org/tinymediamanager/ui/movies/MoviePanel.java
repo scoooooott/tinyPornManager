@@ -70,6 +70,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JSearchTextField;
 import org.tinymediamanager.ui.components.ZebraJTable;
+import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
@@ -78,6 +79,7 @@ import org.tinymediamanager.ui.movies.actions.MovieFindMissingAction;
 import org.tinymediamanager.ui.movies.actions.MovieMediaInformationAction;
 import org.tinymediamanager.ui.movies.actions.MovieRemoveAction;
 import org.tinymediamanager.ui.movies.actions.MovieRenameAction;
+import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
 import org.tinymediamanager.ui.movies.actions.MovieRewriteNfoAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
@@ -85,7 +87,6 @@ import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
-import org.tinymediamanager.ui.movies.actions.RenamePreviewAction;
 
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.SortedList;
@@ -151,6 +152,8 @@ public class MoviePanel extends JPanel {
 
   /** The action scrape metadata selected. */
   private final Action                  actionScrapeMetadataSelected = new MovieSelectedScrapeMetadataAction();
+  private final Action                  actionAssignMovieSets        = new MovieAssignMovieSetAction();
+  private final Action                  actionRenamerPreview         = new MovieRenamePreviewAction();
 
   /** The action rename. */
   private final Action                  actionRename                 = new MovieRenameAction(false);
@@ -445,6 +448,11 @@ public class MoviePanel extends JPanel {
   }
 
   private void buildMenu() {
+    // disable donator functions
+    if (!Globals.isDonator()) {
+      actionRenamerPreview.setEnabled(false);
+      actionAssignMovieSets.setEnabled(false);
+    }
     // menu items
     menu.add(actionUpdateDataSources2);
     final JMenu menuUpdateDatasources = new JMenu(BUNDLE.getString("update.datasource")); //$NON-NLS-1$
@@ -483,12 +491,14 @@ public class MoviePanel extends JPanel {
     menuScrape.add(actionScrapeSelected);
     menuScrape.add(actionScrapeUnscraped);
     menuScrape.add(actionScrapeMetadataSelected);
+    menuScrape.add(actionAssignMovieSets);
     menu.add(menuScrape);
 
     JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
     menuEdit.add(actionEditMovie2);
     menuEdit.add(actionBatchEdit);
     menuEdit.add(actionRename2);
+    menuEdit.add(actionRenamerPreview);
 
     menu.add(menuEdit);
     menu.add(actionRewriteNfo);
@@ -504,12 +514,13 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionScrape2);
     popupMenu.add(actionScrapeSelected);
     popupMenu.add(actionScrapeMetadataSelected);
+    popupMenu.add(actionAssignMovieSets);
     popupMenu.addSeparator();
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionBatchEdit);
     popupMenu.add(actionRewriteNfo);
     popupMenu.add(actionRename2);
-    popupMenu.add(new RenamePreviewAction());
+    popupMenu.add(actionRenamerPreview);
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
     popupMenu.addSeparator();

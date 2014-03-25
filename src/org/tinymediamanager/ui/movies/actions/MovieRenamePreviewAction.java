@@ -26,25 +26,21 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.dialogs.MovieRenamerPreviewDialog;
 
 /**
- * @author Manuel Laggner
+ * The class MovieRenamePreviewAction. This action is for creating a preview of the renamer
  * 
+ * @author Manuel Laggner
  */
-public class RenamePreviewAction extends AbstractAction {
+public class MovieRenamePreviewAction extends AbstractAction {
   private static final long           serialVersionUID = 5158514686702295145L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public RenamePreviewAction() {
+  public MovieRenamePreviewAction() {
     putValue(NAME, BUNDLE.getString("movie.renamepreview")); //$NON-NLS-1$
     putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
     putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/rename-icon.png")));
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.renamepreview.hint")); //$NON-NLS-1$
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent e) {
     MovieRenamerPreviewDialog dialog = new MovieRenamerPreviewDialog(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
