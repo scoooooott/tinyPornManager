@@ -160,7 +160,7 @@ public class AboutDialog extends JDialog {
       contentPanel.add(lblXzener, "6, 24");
     }
     {
-      JLabel lblXzener = new JLabel("                              zagoslav, piodio, roliverosc, Peppe_sr, roandr");
+      JLabel lblXzener = new JLabel("                              zagoslav, piodio, roliverosc, Peppe_sr, roandr, sxczmnb");
       contentPanel.add(lblXzener, "6, 26");
     }
     {

@@ -79,7 +79,7 @@ public class Url {
   }
 
   /**
-   * Instantiates a new url.
+   * Instantiates a new url / httpclient with default user-agent.
    * 
    * @param url
    *          the url
@@ -89,6 +89,15 @@ public class Url {
       client = TmmHttpClient.getHttpClient();
     }
     this.url = url;
+  }
+
+  /**
+   * re-instantiates client with specified User-Agent
+   * 
+   * @param userAgent
+   */
+  public void setUserAgent(String userAgent) {
+    client = TmmHttpClient.createHttpClient(userAgent);
   }
 
   /**

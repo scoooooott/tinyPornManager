@@ -58,16 +58,29 @@ public class TmmHttpClient {
   private static final Logger        LOGGER = LoggerFactory.getLogger(HttpClient.class);
   private static CloseableHttpClient client = createHttpClient();
 
-  private static CloseableHttpClient createHttpClient() {
+  /**
+   * instantiates a new CloseableHttpClient with default User-Agent
+   * 
+   * @return CloseableHttpClient
+   */
+  public static CloseableHttpClient createHttpClient() {
+    return createHttpClient(generateUA());
+  }
+
+  /**
+   * instantiates a new CloseableHttpClient with custom User-Agent
+   * 
+   * @return CloseableHttpClient
+   */
+  public static CloseableHttpClient createHttpClient(String userAgent) {
     PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
     // Increase default max connection per route to 5
     connectionManager.setMaxTotal(5);
 
     HttpClientBuilder httpClientBuilder = HttpClients.custom().useSystemProperties();
 
-    String userAgent = generateUA();
     LOGGER.debug("setting HTTP user-agent to: " + userAgent);
-    httpClientBuilder = httpClientBuilder.setUserAgent(userAgent);
+    httpClientBuilder.setUserAgent(userAgent);
     httpClientBuilder.setConnectionManager(connectionManager);
 
     // my own retry handler
