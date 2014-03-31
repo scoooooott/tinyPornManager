@@ -54,6 +54,11 @@ public class MovieSettingsContainerPanel extends JPanel {
         scrollPane.setViewportView(new MovieImageSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.images"), null, scrollPane, null); //$NON-NLS-1$
       }
+      {
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(new MovieRenamerSettingsPanel());
+        tabbedPanePages.addTab(BUNDLE.getString("Settings.renamer"), null, scrollPane, null); //$NON-NLS-1$
+      }
     }
   }
 }

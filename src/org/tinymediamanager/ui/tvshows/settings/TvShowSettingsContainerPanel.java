@@ -43,11 +43,15 @@ public class TvShowSettingsContainerPanel extends JPanel {
         scrollPane.setViewportView(new TvShowSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.general"), null, scrollPane, null); //$NON-NLS-1$
       }
-
       {
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(new TvShowScraperSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.scraper"), null, scrollPane, null); //$NON-NLS-1$
+      }
+      {
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(new TvShowRenamerSettingsPanel());
+        tabbedPanePages.addTab(BUNDLE.getString("Settings.renamer"), null, scrollPane, null); //$NON-NLS-1$
       }
     }
   }
