@@ -30,8 +30,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -89,15 +91,18 @@ public class Url {
       client = TmmHttpClient.getHttpClient();
     }
     this.url = url;
+
+    // default user agent
+    addHeader(HttpHeaders.USER_AGENT, TmmHttpClient.generateUA());
   }
 
   /**
-   * re-instantiates client with specified User-Agent
+   * set a specified User-Agent
    * 
    * @param userAgent
    */
   public void setUserAgent(String userAgent) {
-    client = TmmHttpClient.createHttpClient(userAgent);
+    addHeader(HttpHeaders.USER_AGENT, userAgent);
   }
 
   /**
@@ -120,7 +125,21 @@ public class Url {
    *          the value
    */
   public void addHeader(String key, String value) {
+    if (StringUtils.isBlank(key)) {
+      return;
+    }
+
     LOGGER.debug("add HTTP header: " + key + "=" + value);
+
+    // check for duplicates
+    for (int i = headersRequest.size() - 1; i >= 0; i--) {
+      Header header = headersRequest.get(i);
+      if (key.equals(header.getName())) {
+        headersRequest.remove(i);
+      }
+    }
+
+    // and add the new one
     headersRequest.add(new BasicHeader(key, value));
   }
 

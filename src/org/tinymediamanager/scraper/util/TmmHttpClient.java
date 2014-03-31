@@ -30,7 +30,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -41,8 +40,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.MediaLanguages;
@@ -55,7 +52,6 @@ import com.sun.jna.Platform;
  * @author Manuel Laggner
  */
 public class TmmHttpClient {
-  private static final Logger        LOGGER = LoggerFactory.getLogger(HttpClient.class);
   private static CloseableHttpClient client = createHttpClient();
 
   /**
@@ -78,9 +74,6 @@ public class TmmHttpClient {
     connectionManager.setMaxTotal(5);
 
     HttpClientBuilder httpClientBuilder = HttpClients.custom().useSystemProperties();
-
-    LOGGER.debug("setting HTTP user-agent to: " + userAgent);
-    httpClientBuilder.setUserAgent(userAgent);
     httpClientBuilder.setConnectionManager(connectionManager);
 
     // my own retry handler
@@ -178,7 +171,7 @@ public class TmmHttpClient {
     // httpClientBuilder.setRoutePlanner(routePlanner);
   }
 
-  protected static String generateUA() {
+  static String generateUA() {
     // this is due to the fact, that the OS is not correctly recognized (eg Mobile FirefoxOS, where it isn't)
     String hardcodeOS = "";
     if (Platform.isWindows()) {
