@@ -11,49 +11,9 @@ ui.status = 40, 260, 440, 30
 ui.status_text = FFFFFF
 ui.mac_dock_icon = ../tmm.icns
 
-# Application jar files, on classpath
+# Application jar files, on classpath (generated from claspath in build.xml)
 code = tmm.jar
-code = lib/api-common.jar
-code = lib/asm.jar
-code = lib/betterbeansbinding-core.jar
-code = lib/betterbeansbinding-el.jar
-code = lib/betterbeansbinding-swingbinding.jar
-code = lib/commons-codec.jar
-code = lib/commons-io.jar
-code = lib/commons-lang3.jar
-code = lib/core.jar
-code = lib/DJNativeSwing.jar
-code = lib/DJNativeSwing-SWT.jar 
-code = lib/fanarttvapi.jar
-code = lib/forms.jar
-code = lib/glazedlists.jar
-code = lib/httpclient.jar
-code = lib/httpcore.jar
-code = lib/httpmime.jar
-code = lib/imgscalr-lib.jar
-code = lib/jackson-annotations.jar
-code = lib/jackson-core.jar
-code = lib/jackson-databind.jar
-code = lib/jcl-over-slf4j.jar
-code = lib/jdom.jar
-code = lib/jmte-unbundled.jar
-code = lib/jna.jar
-code = lib/jsoup.jar
-code = lib/JSplitButton.jar
-code = lib/JTattoo.jar
-code = lib/LightBox.jar
-code = lib/log4j-over-slf4j.jar 
-code = lib/logback-classic.jar
-code = lib/logback-core.jar
-code = lib/objectdb.jar
-code = lib/platform.jar
-code = lib/resources.jar
-code = lib/Scaling-bin.jar
-code = lib/slf4j-api.jar
-code = lib/themoviedbapi.jar
-code = lib/thetvdbapi.jar
-code = lib/twinkle.jar
-code = lib/xmlrpc-client.jar
+%CODELIBS%
 
 # strings added to classpath
 plugin = lib/swt.jar
@@ -78,19 +38,7 @@ resource = changelog.txt
 resource = [!windows] env.txt
 
 # translations
-resource = locale/messages_cs.properties
-resource = locale/messages_de.properties
-resource = locale/messages_es.properties
-resource = locale/messages_fr.properties
-resource = locale/messages_it.properties
-resource = locale/messages_ko.properties
-resource = locale/messages_nl.properties
-resource = locale/messages_no.properties
-resource = locale/messages_pt.properties
-resource = locale/messages_ru.properties
-resource = locale/messages_sk.properties
-resource = locale/messages_vi.properties
-resource = locale/messages_zh.properties
+%LOCALES%
 
 # mediainfo native libs
 resource = [linux-amd64] native/linux-amd64/libmediainfo.so

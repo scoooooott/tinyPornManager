@@ -143,11 +143,40 @@
     <target name='package-app' description="builds the packages" depends='create_tmm_jar'>
         <!-- default files, to include in dist -->
         <copy file="objectdb.conf" todir="${build.dir}" />
-    	  <copy file="changelog.txt" todir="${build.dir}"/>
+        <copy file="changelog.txt" todir="${build.dir}"/>
         <copy file="AppBundler/getdown.jar" todir="${build.dir}" />
         <copy file="AppBundler/${getdown}" tofile="${build.dir}/getdown.txt" />
         <replace file="${build.dir}/getdown.txt" token="%SVNREV%" value="${svn.info.revision}"/>
-        <copy file="AppBundler/LICENSE" todir="${build.dir}" />
+
+        <pathconvert property="gd.code" refid="classpath.default" pathsep="">
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper /> <!-- remove absolute path -->
+                    <!-- add GD + lib/ prefix + newline ;) -->
+                    <globmapper from="*" to="code = lib/*${line.separator}" />
+                </chainedmapper>
+            </mapper>
+        </pathconvert>
+        <!-- echo message="${gd.code}" /-->
+        <replace file="${build.dir}/getdown.txt" token="%CODELIBS%" value="${gd.code}"/>
+
+        <pathconvert property="gd.locale" pathsep="">
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper />
+                    <globmapper from="*" to="resource = locale/*${line.separator}" />
+                </chainedmapper>
+            </mapper>
+            <path>
+                <fileset dir="locale">
+                    <include name="**/*.properties" />
+                </fileset>
+            </path>
+        </pathconvert>
+        <!-- echo message="${gd.locale}" /-->
+        <replace file="${build.dir}/getdown.txt" token="%LOCALES%" value="${gd.locale}"/>
+
+    	<copy file="AppBundler/LICENSE" todir="${build.dir}" />
         <copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
         <copy file="AppBundler/tmm.png" todir="${build.dir}" />
         <copy file="AppBundler/env.txt" todir="${build.dir}" />
