@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.scraper.moviemeternl.model.ApiStartSession;
 import org.tinymediamanager.scraper.moviemeternl.model.Film;
 import org.tinymediamanager.scraper.moviemeternl.model.FilmDetail;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 import redstone.xmlrpc.XmlRpcArray;
 import redstone.xmlrpc.XmlRpcClient;
@@ -46,6 +47,7 @@ public class MoviemeterApi {
     if (client == null) {
       try {
         client = new XmlRpcClient(SERVICE, false);
+        client.setRequestProperty("User-Agent", UrlUtil.generateUA());
       }
       catch (MalformedURLException e) {
         LOGGER.error("cannot create XmlRpcClient", e);
@@ -80,7 +82,6 @@ public class MoviemeterApi {
   // director.retrieveImage(string sessionkey, int directorId), returns array with information and base64 encoded contents of director image
 
   /**
-   * 
    * calls the specific method with params...
    * 
    * @param method
@@ -94,14 +95,18 @@ public class MoviemeterApi {
   public Object methodCall(String method, Object params) throws XmlRpcException, XmlRpcFault {
     startSession();
     Object token = null;
-    if (params != null) {
-      token = client.invoke(method, new Object[] { session.getSession_key(), params });
+    if (session != null) {
+      if (params != null) {
+        token = client.invoke(method, new Object[] { session.getSession_key(), params });
+      }
+      else {
+        token = client.invoke(method, new Object[] { session.getSession_key() });
+      }
     }
     else {
-      token = client.invoke(method, new Object[] { session.getSession_key() });
+      LOGGER.warn("Have no session - seems the startSession() did not work successfully");
     }
     return token;
-
   }
 
   public ArrayList filmImages(int filmId) {

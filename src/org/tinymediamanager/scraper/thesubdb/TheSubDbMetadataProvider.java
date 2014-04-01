@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.thesubdb;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +28,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.scraper.IMediaSubtitleProvider;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.util.SubtitleUtils;
@@ -39,19 +39,19 @@ import org.tinymediamanager.scraper.util.Url;
  * 
  * @author Manuel Laggner
  */
-public class TheSubDbMetadataProvider {
+public class TheSubDbMetadataProvider implements IMediaSubtitleProvider {
   private static final Logger      LOGGER        = LoggerFactory.getLogger(TheSubDbMetadataProvider.class);
   private static final String      USER_AGENT    = "SubDB/1.0 (tinyMediaManager/" + ReleaseInfo.getVersion() + "; http://www.tinymediamanager.org)";
   // private String API_URL = "http://api.thesubdb.com/";
   private String                   API_URL       = "http://sandbox.thesubdb.com/";
-  private static MediaProviderInfo providerInfo  = new MediaProviderInfo("subdb", "thsubdb.com",
+  private static MediaProviderInfo providerInfo  = new MediaProviderInfo("subdb", "thesubdb.com",
                                                      "Scraper for thesubdb.com which is able to scrape subtitles");
   private static final String      PAGE_ENCODING = "ISO-8859-1";
 
   public TheSubDbMetadataProvider() {
   }
 
-  // @Override
+  @Override
   public MediaProviderInfo getProviderInfo() {
     return providerInfo;
   }
@@ -64,29 +64,18 @@ public class TheSubDbMetadataProvider {
    * @return
    * @throws Exception
    */
+  @Override
   public List<MediaSearchResult> search(MediaFile mf) throws Exception {
-    return search(mf.getFile());
-  }
-
-  /**
-   * searches for SubDB subtitle
-   * 
-   * @param f
-   *          the File
-   * @return
-   * @throws Exception
-   */
-  public List<MediaSearchResult> search(File f) throws Exception {
-    LOGGER.debug("searching subtitle for " + f);
+    LOGGER.debug("searching subtitle for " + mf);
     List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
 
-    String hash = SubtitleUtils.computeSubDBHash(f);
+    String hash = SubtitleUtils.computeSubDBHash(mf.getFile());
     // return an empty search result on hashing error
     if (hash.isEmpty()) {
       return results;
     }
 
-    String desiredLanguage = Globals.settings.getLanguage();
+    String desiredLanguage = Globals.settings.getLanguage(); // just for info logging
 
     // search via the api
     Url url = new Url(API_URL + "?action=search&hash=" + hash);
@@ -98,7 +87,7 @@ public class TheSubDbMetadataProvider {
 
     String result = doc.body().text();
     if (!result.isEmpty()) {
-      System.out.println(result);
+      LOGGER.debug("Found subtitle in following languages: " + result);
 
       String[] lang = result.split(",");
       for (String l : lang) {
@@ -109,7 +98,7 @@ public class TheSubDbMetadataProvider {
       }
 
       if (!result.contains(desiredLanguage)) {
-        LOGGER.info("No subtitle for language " + Utils.getLocaleFromLanguage(desiredLanguage).getDisplayLanguage() + " found :(");
+        LOGGER.info("but no subtitle for language " + Utils.getLocaleFromLanguage(desiredLanguage).getDisplayLanguage() + " found :(");
       }
     }
     return results;
@@ -123,6 +112,7 @@ public class TheSubDbMetadataProvider {
    * @param language
    *          2char language string
    */
+  @Override
   public void download(String hash, String language) {
 
     Url url = new Url(API_URL + "?action=download&hash=" + hash + "&language=" + language);

@@ -21,9 +21,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.scraper.MediaLanguages;
+
+import com.sun.jna.Platform;
 
 /**
  * The Class UrlUtil.
@@ -262,6 +268,53 @@ public class UrlUtil {
       LOGGER.warn("Failed to url encode data: " + data + " as UTF-8; will try again using default encoding", e);
       return URLEncoder.encode(data);
     }
+  }
+
+  /**
+   * generates a valid user-agent <br>
+   * something like:<br>
+   * Mozilla/5.0 (Windows; Windows NT 6.1; Windows 7 6.1; U; amd64; de-DE; rv:26.0) Gecko/20100101 Firefox/26.0<br>
+   * but with correct OS and language values
+   */
+  public static String generateUA() {
+    // this is due to the fact, that the OS is not correctly recognized (eg Mobile FirefoxOS, where it isn't)
+    String hardcodeOS = "";
+    if (Platform.isWindows()) {
+      hardcodeOS = "Windows; Windows NT " + System.getProperty("os.version");
+    }
+    else if (Platform.isMac()) {
+      hardcodeOS = "Macintosh";
+    }
+    else if (Platform.isLinux()) {
+      hardcodeOS = "X11";
+    }
+    else {
+      hardcodeOS = System.getProperty("os.name");
+    }
+
+    // set header according to movie scraper language (or default GUI language as fallback)
+    Locale l = null;
+    MediaLanguages ml = Globals.settings.getMovieSettings().getScraperLanguage();
+    if (ml == null) {
+      ml = Globals.settings.getTvShowSettings().getScraperLanguage();
+    }
+    if (ml != null) {
+      l = Utils.getLocaleFromLanguage(ml.name());
+    }
+    else {
+      l = Utils.getLocaleFromLanguage(Locale.getDefault().getLanguage());
+    }
+
+    // @formatter:off
+    String ua = String.format("Mozilla/5.0 (%1$s; %2$s %3$s; U; %4$s; %5$s-%6$s; rv:26.0) Gecko/20100101 Firefox/26.0", 
+        hardcodeOS,
+        System.getProperty("os.name", ""),
+        System.getProperty("os.version", ""),
+        System.getProperty("os.arch", ""),
+        l.getLanguage(),
+        l.getCountry());
+    // @formatter:on
+    return ua;
   }
 
 }

@@ -93,7 +93,7 @@ public class Url {
     this.url = url;
 
     // default user agent
-    addHeader(HttpHeaders.USER_AGENT, TmmHttpClient.generateUA());
+    addHeader(HttpHeaders.USER_AGENT, UrlUtil.generateUA());
   }
 
   /**

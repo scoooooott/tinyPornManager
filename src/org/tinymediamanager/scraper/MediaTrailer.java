@@ -255,6 +255,19 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
     is.close();
   }
 
+  /**
+   * gets the real download url - provider based implementation
+   * 
+   * @return real url
+   */
+  public String getDownloadUrl() {
+    String url = getUrl();
+    if (provider.equals("apple")) {
+      // return url = url.replace("//trailers.apple.com", "//movietrailers.apple.com");
+    }
+    return url;
+  }
+
   @Override
   public boolean equals(Object mt2) {
     if ((mt2 != null) && (mt2 instanceof MediaTrailer)) {

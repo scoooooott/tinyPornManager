@@ -192,7 +192,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     for (String l : langArray) {
       if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
         String lang = Utils.getDisplayLanguage(l);
-        LOGGER.debug("found language '" + l + "' in subtitle; displaying it as '" + lang + "'");
+        LOGGER.debug("found language '" + l + "' in subtitle '" + this.getFilename() + "'; displaying it as '" + lang + "'");
         sub.setLanguage(lang);
         break;
       }
@@ -1082,7 +1082,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
               for (String l : langArray) {
                 if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
                   String lang = Utils.getDisplayLanguage(l);
-                  LOGGER.debug("found language '" + l + "' in audiofile; displaying it as '" + lang + "'");
+                  LOGGER.debug("found language '" + l + "' in filename '" + this.getFilename() + "'; displaying it as '" + lang + "'");
                   stream.setLanguage(lang);
                   break;
                 }
@@ -1170,7 +1170,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
           for (String l : langArray) {
             if (shortname.equalsIgnoreCase(l) || shortname.matches("(?i).*[ _.-]+" + l + "$")) {// ends with lang + delimiter prefix
               String lang = Utils.getDisplayLanguage(l);
-              LOGGER.debug("found language '" + l + "' in audiofile; displaying it as '" + lang + "'");
+              LOGGER.debug("found language '" + l + "' in audiofile '" + this.getFilename() + "'; displaying it as '" + lang + "'");
               stream.setLanguage(lang);
               break;
             }

@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -116,6 +117,11 @@ public class Settings extends AbstractModelObject {
   private String                      proxyUsername;
   private String                      proxyPassword;
   private int                         logLevel                    = Level.DEBUG_INT;
+
+  private String                      traktUsername               = "";
+  private String                      traktPassword               = "";
+  private String                      traktAPI                    = "";
+
   private boolean                     imageCache                  = true;
   private CacheType                   imageCacheType              = CacheType.SMOOTH;
   private boolean                     imageCacheBackground        = false;
@@ -946,5 +952,47 @@ public class Settings extends AbstractModelObject {
 
   public boolean isShowNotifications() {
     return showNotifications;
+  }
+
+  public String getTraktUsername() {
+    return traktUsername;
+  }
+
+  public void setTraktUsername(String traktUsername) {
+    this.traktUsername = traktUsername;
+  }
+
+  /**
+   * Password is SHA1 encoded!
+   * 
+   * @return trakt sha1 password
+   */
+  public String getTraktPassword() {
+    return traktPassword;
+  }
+
+  /**
+   * sets the password as SHA1
+   * 
+   * @param traktPassword
+   *          the password; either plaintext or already sha1
+   */
+  public void setTraktPassword(String traktPassword) {
+    if (traktPassword != null && !traktPassword.matches("[a-fA-F0-9]{40}")) {
+      // plaintext - convert to sha1
+      this.traktPassword = DigestUtils.shaHex(traktPassword);
+    }
+    else {
+      // already sha1 - set it 1:1
+      this.traktPassword = traktPassword;
+    }
+  }
+
+  public String getTraktAPI() {
+    return traktAPI;
+  }
+
+  public void setTraktAPI(String traktAPI) {
+    this.traktAPI = traktAPI;
   }
 }
