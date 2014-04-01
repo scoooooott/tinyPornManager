@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -172,12 +173,15 @@ public class MovieTrailerPanel extends JPanel {
 
       switch (column) {
         case 0:
-          if (Globals.isDonator()) {
-            return IconManager.DOWNLOAD;
+          if (StringUtils.isNotBlank(trailer.getUrl())) {
+            if (Globals.isDonator()) {
+              return IconManager.DOWNLOAD;
+            }
+            else {
+              return IconManager.DOWNLOAD_DISABLED;
+            }
           }
-          else {
-            return IconManager.DOWNLOAD_DISABLED;
-          }
+          return null;
 
         case 1:
           return IconManager.PLAY_SMALL;
@@ -227,11 +231,6 @@ public class MovieTrailerPanel extends JPanel {
       throw new IllegalStateException();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
-     */
     @SuppressWarnings("rawtypes")
     @Override
     public Comparator getColumnComparator(int arg0) {
