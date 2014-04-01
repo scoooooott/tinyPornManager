@@ -372,7 +372,7 @@ public class MoviePanel extends JPanel {
     JScrollPane scrollPane = ZebraJTable.createStripedJScrollPane(table);
     panelMovieList.add(scrollPane, "2, 3, 4, 1, fill, fill");
 
-    JToggleButton filterButton = new JToggleButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
+    JToggleButton filterButton = new JToggleButton(IconManager.FILTER);
     filterButton.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     panelMovieList.add(filterButton, "5, 1, right, bottom");
 

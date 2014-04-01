@@ -201,7 +201,8 @@ public class TvShowPanel extends JPanel {
       }
     });
 
-    JToggleButton btnFilter = new JToggleButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
+    JToggleButton btnFilter = new JToggleButton(IconManager.FILTER);
+    btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
     panelTvShowTree.add(btnFilter, "6, 1, default, bottom");
 
     JScrollPane scrollPane = new JScrollPane();
