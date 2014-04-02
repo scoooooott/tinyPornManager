@@ -448,13 +448,15 @@ public class MoviePanel extends JPanel {
   }
 
   private void buildMenu() {
+    menu.setMnemonic(KeyEvent.VK_M);
     // disable donator functions
     if (!Globals.isDonator()) {
       actionRenamerPreview.setEnabled(false);
       actionAssignMovieSets.setEnabled(false);
     }
     // menu items
-    menu.add(actionUpdateDataSources2);
+    JMenuItem menuItem = menu.add(actionUpdateDataSources2);
+    menuItem.setMnemonic(KeyEvent.VK_U);
     final JMenu menuUpdateDatasources = new JMenu(BUNDLE.getString("update.datasource")); //$NON-NLS-1$
     final JMenu menuFindMissingMovies = new JMenu(BUNDLE.getString("movie.findmissing")); //$NON-NLS-1$
     menuUpdateDatasources.addMenuListener(new MenuListener() {
@@ -469,6 +471,7 @@ public class MoviePanel extends JPanel {
       @Override
       public void menuSelected(MenuEvent arg0) {
         menuUpdateDatasources.removeAll();
+        menuFindMissingMovies.removeAll();
         for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
           JMenuItem item = new JMenuItem(new MovieUpdateSingleDatasourceAction(ds));
           menuUpdateDatasources.add(item);
@@ -487,27 +490,42 @@ public class MoviePanel extends JPanel {
     menu.addSeparator();
 
     JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape")); //$NON-NLS-1$
-    menuScrape.add(actionScrape2);
-    menuScrape.add(actionScrapeSelected);
-    menuScrape.add(actionScrapeUnscraped);
-    menuScrape.add(actionScrapeMetadataSelected);
+    menuScrape.setMnemonic(KeyEvent.VK_S);
+    menuItem = menuScrape.add(actionScrape2);
+    menuItem.setMnemonic(KeyEvent.VK_S);
+    menuItem = menuScrape.add(actionScrapeSelected);
+    menuItem.setMnemonic(KeyEvent.VK_F);
+    menuItem = menuScrape.add(actionScrapeUnscraped);
+    menuItem.setMnemonic(KeyEvent.VK_U);
+    menuItem = menuScrape.add(actionScrapeMetadataSelected);
+    menuItem.setMnemonic(KeyEvent.VK_M);
     menuScrape.add(actionAssignMovieSets);
     menu.add(menuScrape);
 
     JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
-    menuEdit.add(actionEditMovie2);
-    menuEdit.add(actionBatchEdit);
-    menuEdit.add(actionRename2);
-    menuEdit.add(actionRenamerPreview);
-
+    menuEdit.setMnemonic(KeyEvent.VK_E);
+    menuItem = menuEdit.add(actionEditMovie2);
+    menuItem.setMnemonic(KeyEvent.VK_E);
+    menuItem = menuEdit.add(actionBatchEdit);
+    menuItem.setMnemonic(KeyEvent.VK_B);
+    menuItem = menuEdit.add(actionRename2);
+    menuItem.setMnemonic(KeyEvent.VK_R);
+    menuItem = menuEdit.add(actionRenamerPreview);
+    menuItem.setMnemonic(KeyEvent.VK_P);
     menu.add(menuEdit);
-    menu.add(actionRewriteNfo);
+
+    menuItem = menu.add(actionRewriteNfo);
+    menuItem.setMnemonic(KeyEvent.VK_N);
     menu.addSeparator();
-    menu.add(actionMediaInformation2);
-    menu.add(actionExport);
-    menu.add(actionRemove2);
+    menuItem = menu.add(actionMediaInformation2);
+    menuItem.setMnemonic(KeyEvent.VK_M);
+    menuItem = menu.add(actionExport);
+    menuItem.setMnemonic(KeyEvent.VK_X);
+    menuItem = menu.add(actionRemove2);
+    menuItem.setMnemonic(KeyEvent.VK_R);
     menu.addSeparator();
-    menu.add(actionClearImageCache);
+    menuItem = menu.add(actionClearImageCache);
+    menuItem.setMnemonic(KeyEvent.VK_C);
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();

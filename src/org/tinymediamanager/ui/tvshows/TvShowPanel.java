@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.util.ResourceBundle;
 
@@ -483,33 +484,43 @@ public class TvShowPanel extends JPanel {
    * Builds the menu.
    */
   private void buildMenu() {
+    menu.setMnemonic(KeyEvent.VK_V);
+
     // menu items
-    menu.add(actionUpdateDatasources2);
+    JMenuItem menuItem = menu.add(actionUpdateDatasources2);
+    menuItem.setMnemonic(KeyEvent.VK_U);
     menu.addSeparator();
 
     JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape")); //$NON-NLS-1$
-    menuScrape.add(actionScrape2);
-    menuScrape.add(actionScrapeSelected);
-    menuScrape.add(actionScrapeNewItems);
+    menuScrape.setMnemonic(KeyEvent.VK_S);
+    menuItem = menuScrape.add(actionScrape2);
+    menuItem.setMnemonic(KeyEvent.VK_S);
+    menuItem = menuScrape.add(actionScrapeSelected);
+    menuItem.setMnemonic(KeyEvent.VK_F);
+    menuItem = menuScrape.add(actionScrapeNewItems);
+    menuItem.setMnemonic(KeyEvent.VK_N);
     menu.add(menuScrape);
 
     JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
-    menuEdit.add(actionEdit2);
-    menuEdit.add(actionChangeSeasonPoster2);
-    menu.add(actionBatchEdit);
+    menuEdit.setMnemonic(KeyEvent.VK_E);
+    menuItem = menuEdit.add(actionEdit2);
+    menuItem.setMnemonic(KeyEvent.VK_E);
+    menuItem = menuEdit.add(actionBatchEdit);
+    menuItem.setMnemonic(KeyEvent.VK_B);
+    menuItem = menuEdit.add(actionChangeSeasonPoster2);
+    menuItem.setMnemonic(KeyEvent.VK_S);
+
     menu.add(menuEdit);
     menu.add(actionRewriteTvShowNfo);
     menu.add(actionRewriteTvShowEpisodeNfo);
 
-    // menu.add(actionScrapeUnscraped);
-    // menu.add(actionScrapeMetadataSelected);
-    // menu.addSeparator();
-    // menu.add(actionEditMovie2);
+    menuItem = menu.add(actionRename);
+    menuItem.setMnemonic(KeyEvent.VK_R);
+    menuItem = menu.add(actionMediaInformation2);
+    menuItem.setMnemonic(KeyEvent.VK_I);
+    menuItem = menu.add(actionClearImageCache);
+    menuItem.setMnemonic(KeyEvent.VK_C);
 
-    menu.add(actionRename);
-    menu.add(actionMediaInformation2);
-    menu.add(actionClearImageCache);
-    // menu.add(actionExport);
     menu.addSeparator();
     menu.add(actionRemove2);
 

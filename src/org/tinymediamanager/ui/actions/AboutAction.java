@@ -17,10 +17,12 @@ package org.tinymediamanager.ui.actions;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.AboutDialog;
 
 /**
@@ -29,13 +31,13 @@ import org.tinymediamanager.ui.dialogs.AboutDialog;
  * @author Manuel Laggner
  */
 public class AboutAction extends AbstractAction {
-  private static final long serialVersionUID = -6578562721885387890L;
+  private static final long           serialVersionUID = -6578562721885387890L;
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
+  public AboutAction() {
+    putValue(NAME, BUNDLE.getString("tmm.about")); //$NON-NLS-1$
+  }
+
   @Override
   public void actionPerformed(ActionEvent e) {
     Dialog aboutDialog = new AboutDialog();

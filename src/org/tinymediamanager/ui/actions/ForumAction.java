@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -31,29 +30,27 @@ import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
- * The DonateAction to redirect to the donate page
+ * The ForumAction to redirect to the XBMC forum
  * 
  * @author Manuel Laggner
  */
-public class DonateAction extends AbstractAction {
+public class ForumAction extends AbstractAction {
   private static final long           serialVersionUID = 1668251251156765161L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-  private static final Logger         LOGGER           = LoggerFactory.getLogger(DonateAction.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(ForumAction.class);
 
-  public DonateAction() {
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
-    putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/btn_donate_SM.gif")));
+  public ForumAction() {
+    putValue(NAME, BUNDLE.getString("tmm.forum")); //$NON-NLS-1$
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    String url = StringEscapeUtils
-        .unescapeHtml4("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=manuel%2elaggner%40gmail%2ecom&amp;lc=GB&amp;item_name=tinyMediaManager&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted");
+    String url = StringEscapeUtils.unescapeHtml4("http://forum.xbmc.org/forumdisplay.php?fid=204");
     try {
       TmmUIHelper.browseUrl(url);
     }
     catch (Exception e1) {
-      LOGGER.error("Donate", e1);
+      LOGGER.error("FAQ", e1);
       MessageManager.instance
           .pushMessage(new Message(MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e1.getLocalizedMessage() }));
     }

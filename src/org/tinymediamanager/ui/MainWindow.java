@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -77,7 +78,9 @@ import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.ClearUrlCacheAction;
 import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExitAction;
+import org.tinymediamanager.ui.actions.FaqAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
+import org.tinymediamanager.ui.actions.ForumAction;
 import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.RegisterDonatorVersionAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
@@ -177,6 +180,7 @@ public class MainWindow extends JFrame {
     setJMenuBar(menuBar);
 
     JMenu mnTmm = new JMenu("tinyMediaManager");
+    mnTmm.setMnemonic(KeyEvent.VK_T);
     menuBar.add(mnTmm);
 
     if (!Globals.isDonator()) {
@@ -189,21 +193,27 @@ public class MainWindow extends JFrame {
 
     // tools menu
     JMenu tools = new JMenu(BUNDLE.getString("tmm.tools")); //$NON-NLS-1$
+    tools.setMnemonic(KeyEvent.VK_O);
     tools.add(new ClearDatabaseAction());
 
     JMenu cache = new JMenu(BUNDLE.getString("tmm.cache")); //$NON-NLS-1$
+    cache.setMnemonic(KeyEvent.VK_C);
     tools.add(cache);
 
     JMenuItem clearUrlCache = new JMenuItem(new ClearUrlCacheAction());
+    clearUrlCache.setMnemonic(KeyEvent.VK_U);
     cache.add(clearUrlCache);
     cache.addSeparator();
     JMenuItem clearImageCache = new JMenuItem(new ClearImageCacheAction());
+    clearImageCache.setMnemonic(KeyEvent.VK_I);
     cache.add(clearImageCache);
 
     JMenuItem rebuildImageCache = new JMenuItem(new RebuildImageCacheAction());
+    rebuildImageCache.setMnemonic(KeyEvent.VK_R);
     cache.add(rebuildImageCache);
 
     JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir")); //$NON-NLS-1$
+    tmmFolder.setMnemonic(KeyEvent.VK_I);
     tools.add(tmmFolder);
     tmmFolder.addActionListener(new ActionListener() {
       @Override
@@ -224,6 +234,7 @@ public class MainWindow extends JFrame {
     });
 
     JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs")); //$NON-NLS-1$
+    tmmLogs.setMnemonic(KeyEvent.VK_L);
     tools.add(tmmLogs);
     tmmLogs.addActionListener(new ActionListener() {
       @Override
@@ -236,6 +247,7 @@ public class MainWindow extends JFrame {
 
     tools.addSeparator();
     final JMenu menuWakeOnLan = new JMenu(BUNDLE.getString("tmm.wakeonlan")); //$NON-NLS-1$
+    menuWakeOnLan.setMnemonic(KeyEvent.VK_W);
     menuWakeOnLan.addMenuListener(new MenuListener() {
       @Override
       public void menuCanceled(MenuEvent arg0) {
@@ -265,28 +277,36 @@ public class MainWindow extends JFrame {
     menuBar.add(tools);
 
     mnTmm = new JMenu(BUNDLE.getString("tmm.contact")); //$NON-NLS-1$
+    mnTmm.setMnemonic(KeyEvent.VK_C);
     JMenuItem mntmFeedback = mnTmm.add(actionFeedback);
-    mntmFeedback.setText(BUNDLE.getString("Feedback")); //$NON-NLS-1$
+    mntmFeedback.setMnemonic(KeyEvent.VK_F);
 
     JMenuItem mntmBugReport = mnTmm.add(actionBugReport);
     mntmBugReport.setText(BUNDLE.getString("BugReport")); //$NON-NLS-1$
+    mntmBugReport.setMnemonic(KeyEvent.VK_B);
     menuBar.add(mnTmm);
 
-    mnTmm = new JMenu("?");
+    mnTmm = new JMenu(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
+    mnTmm.setMnemonic(KeyEvent.VK_H);
     menuBar.add(mnTmm);
+
+    JMenuItem mntmFaq = mnTmm.add(new FaqAction());
+    mntmFaq.setMnemonic(KeyEvent.VK_F);
+
+    JMenuItem mntmForum = mnTmm.add(new ForumAction());
+    mntmForum.setMnemonic(KeyEvent.VK_O);
+
+    mnTmm.addSeparator();
     JMenuItem mntmAbout = mnTmm.add(actionAbout);
-    mntmAbout.setText(BUNDLE.getString("tmm.about")); //$NON-NLS-1$
+    mntmAbout.setMnemonic(KeyEvent.VK_A);
 
     menuBar.add(Box.createGlue());
 
-    //    mnTmm = new JMenu(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
     JButton btnDonate = new JButton(actionDonate);
     btnDonate.setBorderPainted(false);
     btnDonate.setFocusPainted(false);
     btnDonate.setContentAreaFilled(false);
     menuBar.add(btnDonate);
-    // JMenuItem mntmDonate = mnTmm.add(actionDonate);
-    //    mntmDonate.setText(BUNDLE.getString("tmm.donate")); //$NON-NLS-1$
 
     // Globals.executor.execute(new MyStatusbarThread());
     // use a Future to be able to cancel it
