@@ -102,10 +102,10 @@ public class UpgradeTasks {
       EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
       entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
-        if (movie.getId("tmdbId") != null && movie.getId("tmdbId") instanceof String) {
+        if (movie.getId(Constants.TMDBID) != null && movie.getId(Constants.TMDBID) instanceof String) {
           try {
-            Integer tmdbid = Integer.parseInt((String) movie.getId("tmdbId"));
-            movie.setId("tmdbId", tmdbid);
+            Integer tmdbid = Integer.parseInt((String) movie.getId(Constants.TMDBID));
+            movie.setTmdbId(tmdbid);
             movie.saveToDb();
           }
           catch (Exception e) {

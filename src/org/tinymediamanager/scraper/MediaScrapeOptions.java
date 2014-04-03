@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 
 /**
@@ -55,7 +56,7 @@ public class MediaScrapeOptions {
   }
 
   public String getImdbId() {
-    Object obj = ids.get("imdbId");
+    Object obj = ids.get(Constants.IMDBID);
     if (obj == null) {
       return "";
     }
@@ -65,7 +66,7 @@ public class MediaScrapeOptions {
   public int getTmdbId() {
     int id = 0;
     try {
-      id = Integer.parseInt(ids.get("tmdbId"));
+      id = Integer.parseInt(ids.get(Constants.TMDBID));
     }
     catch (Exception e) {
       return 0;
@@ -74,11 +75,11 @@ public class MediaScrapeOptions {
   }
 
   public void setImdbId(String imdbId) {
-    ids.put("imdbId", imdbId);
+    ids.put(Constants.IMDBID, imdbId);
   }
 
   public void setTmdbId(int tmdbId) {
-    ids.put("tmdbId", String.valueOf(tmdbId));
+    ids.put(Constants.TMDBID, String.valueOf(tmdbId));
   }
 
   public MediaArtworkType getArtworkType() {

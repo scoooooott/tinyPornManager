@@ -538,7 +538,7 @@ public class TvShowEditorDialog extends JDialog {
       tfSorttitle.setText(tvShow.getSortTitle());
       tfImdbId.setText(tvShow.getImdbId());
 
-      Object obj = tvShow.getId("tvdb");
+      Object obj = tvShow.getTvdbId();
       if (obj == null) {
         tfTvdbId.setText("");
       }

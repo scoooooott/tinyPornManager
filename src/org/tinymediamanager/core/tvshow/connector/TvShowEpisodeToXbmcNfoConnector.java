@@ -179,8 +179,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
       xbmc.setAired(episode.getFirstAiredFormatted());
       xbmc.setPremiered(episode.getFirstAiredFormatted());
       xbmc.setStudio(episode.getTvShow().getStudio());
-      if (episode.getId("tvdb") != null) {
-        xbmc.setUniqueid(episode.getId("tvdb").toString());
+      if (episode.getTvdbId() != null) {
+        xbmc.setUniqueid(episode.getTvdbId().toString());
       }
       xbmc.setMpaa(episode.getTvShow().getCertification().getName());
       xbmc.watched = episode.isWatched();

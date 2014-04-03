@@ -34,6 +34,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -60,7 +61,7 @@ import org.tinymediamanager.thirdparty.RingBuffer;
 public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
   private static final Logger              LOGGER            = LoggerFactory.getLogger(AniDBMetadataProvider.class);
   private static final String              IMAGE_SERVER      = "http://img7.anidb.net/pics/anime/";
-  private static MediaProviderInfo         providerInfo      = new MediaProviderInfo("anidb", "anidb.net",
+  private static MediaProviderInfo         providerInfo      = new MediaProviderInfo(Constants.ANIDBID, "anidb.net",
                                                                  "Scraper for anidb.net - a big anime database");
   private static final RingBuffer<Long>    connectionCounter = new RingBuffer<Long>(30);
 

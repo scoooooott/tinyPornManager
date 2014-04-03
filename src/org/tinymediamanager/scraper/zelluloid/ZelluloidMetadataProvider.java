@@ -33,6 +33,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -62,7 +63,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   private static final String              PAGE_ENCODING = "ISO-8859-1";
 
   private static ZelluloidMetadataProvider instance;
-  private static MediaProviderInfo         providerInfo  = new MediaProviderInfo("zelluloid", "zelluloid.de",
+  private static MediaProviderInfo         providerInfo  = new MediaProviderInfo(Constants.ZELLULOIDID, "zelluloid.de",
                                                              "Scraper for german zelluloid.de which is able to scrape movie metadata");
 
   public static synchronized ZelluloidMetadataProvider getInstance() {

@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
@@ -73,7 +74,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
   private static final Logger           LOGGER            = LoggerFactory.getLogger(TmdbMetadataProvider.class);
   private static final RingBuffer<Long> connectionCounter = new RingBuffer<Long>(30);
   private static TheMovieDbApi          tmdb;
-  private static MediaProviderInfo      providerInfo      = new MediaProviderInfo("tmdb", "themoviedb.org",
+  private static MediaProviderInfo      providerInfo      = new MediaProviderInfo(Constants.TMDBID, "themoviedb.org",
                                                               "Scraper for themoviedb.org which is able to scrape movie metadata, artwork and trailers");
 
   public TmdbMetadataProvider() throws Exception {

@@ -1018,6 +1018,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     return sb.toString();
   }
 
+  /**
+   * Gets the tvdb id.
+   * 
+   * @return the tvdb id
+   */
+  public String getTvdbId() {
+    Object obj = ids.get(TVDBID);
+    if (obj == null) {
+      obj = ids.get("tvdb"); // old id
+      if (obj == null) {
+        return "";
+      }
+    }
+    return obj.toString();
+  }
+
   public List<String> getTags() {
     return this.tags;
   }

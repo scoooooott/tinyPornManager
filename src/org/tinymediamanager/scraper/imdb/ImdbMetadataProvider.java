@@ -37,6 +37,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.CountryCode;
@@ -64,7 +65,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  */
 public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
-  private static MediaProviderInfo providerInfo  = new MediaProviderInfo("imdb", "imdb.com",
+  private static MediaProviderInfo providerInfo  = new MediaProviderInfo(Constants.IMDBID, "imdb.com",
                                                      "Scraper for imdb which is able to scrape movie metadata");
   private static final Logger      LOGGER        = LoggerFactory.getLogger(ImdbMetadataProvider.class);
 

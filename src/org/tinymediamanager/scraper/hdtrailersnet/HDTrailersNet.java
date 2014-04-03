@@ -27,6 +27,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
@@ -42,7 +43,7 @@ import org.tinymediamanager.scraper.util.Url;
  */
 public class HDTrailersNet implements IMediaTrailerProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(HDTrailersNet.class);
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("hdtrailersnet", "hd-trailers.net",
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.HDTRAILERSID, "hd-trailers.net",
                                                     "Scraper for hd-trailers.net which is able to scrape trailers");
 
   public HDTrailersNet() {
@@ -148,8 +149,22 @@ public class HDTrailersNet implements IMediaTrailerProvider {
     return trailers;
   }
 
-  /*
+  public String correctUrlForProvider(String provider, String url) {
+    if (provider.equals("apple")) {
+      // url = url.replace("_h480p", "_480p");
+      // url = url.replace("_h720p", "_720p");
+      // url = url.replace("_h1080p", "_1080p");
+      url = url.replace("//trailers.apple.com", "//movietrailers.apple.com");
+    }
+    return url;
+  }
+
+  /**
    * Returns the "Source" for this trailer by parsing the URL.
+   * 
+   * @param url
+   *          the url
+   * @return the provider from url
    */
   private static String getProviderFromUrl(String url) {
     url = url.toLowerCase();

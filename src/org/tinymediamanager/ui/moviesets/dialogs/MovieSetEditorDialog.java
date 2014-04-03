@@ -46,6 +46,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -156,7 +157,7 @@ public class MovieSetEditorDialog extends JDialog {
         catch (Exception e1) {
         }
         HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
-        ids.put("tmdbId", tmdbId);
+        ids.put(Constants.TMDBID, tmdbId);
         // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.POSTER, lblPoster);
         ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.POSTER, artworkProviders, lblPoster, null, null, MediaType.MOVIE);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
@@ -214,7 +215,7 @@ public class MovieSetEditorDialog extends JDialog {
         catch (Exception e1) {
         }
         HashMap<String, Object> ids = new HashMap<String, Object>(movieSetToEdit.getIds());
-        ids.put("tmdbId", tmdbId);
+        ids.put(Constants.TMDBID, tmdbId);
         ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.FANART, artworkProviders, lblFanart, null, null, MediaType.MOVIE);
         // MovieSetImageChooserDialog dialog = new MovieSetImageChooserDialog(tmdbId, ImageType.FANART, lblFanart);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());

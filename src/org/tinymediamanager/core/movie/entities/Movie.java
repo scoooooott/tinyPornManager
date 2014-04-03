@@ -554,7 +554,7 @@ public class Movie extends MediaEntity {
    * @return the imdb id
    */
   public String getImdbId() {
-    Object obj = ids.get("imdbId");
+    Object obj = ids.get(IMDBID);
     if (obj == null || !Utils.isValidImdbId(obj.toString())) {
       return "";
     }
@@ -569,7 +569,7 @@ public class Movie extends MediaEntity {
   public int getTmdbId() {
     int id = 0;
     try {
-      id = Integer.valueOf(String.valueOf(ids.get("tmdbId")));
+      id = Integer.valueOf(String.valueOf(ids.get(TMDBID)));
     }
     catch (Exception e) {
       return 0;
@@ -585,7 +585,7 @@ public class Movie extends MediaEntity {
    */
   public void setTmdbId(int newValue) {
     int oldValue = getTmdbId();
-    ids.put("tmdbId", newValue);
+    ids.put(TMDBID, newValue);
     firePropertyChange(TMDBID, oldValue, newValue);
   }
 
@@ -864,8 +864,8 @@ public class Movie extends MediaEntity {
       newValue = "";
     }
     String oldValue = getImdbId();
-    ids.put("imdbId", newValue);
-    firePropertyChange("imdbId", oldValue, newValue);
+    ids.put(IMDBID, newValue);
+    firePropertyChange(IMDBID, oldValue, newValue);
   }
 
   /**

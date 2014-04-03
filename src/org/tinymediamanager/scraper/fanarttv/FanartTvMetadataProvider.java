@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
@@ -42,7 +43,7 @@ import com.omertron.fanarttvapi.model.FanartTvArtwork;
  */
 public class FanartTvMetadataProvider implements IMediaArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(FanartTvMetadataProvider.class);
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("fanart", "fanart.tv", "Scraper for fanarts");
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.FANARTTVID, "fanart.tv", "Scraper for fanarts");
 
   private FanartTvApi              ftv          = null;
 
@@ -138,7 +139,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     int tvdbId = 0;
 
     try {
-      tvdbId = Integer.parseInt(options.getId("tvdb"));
+      tvdbId = Integer.parseInt(options.getId(Constants.TVDBID));
     }
     catch (Exception e) {
     }

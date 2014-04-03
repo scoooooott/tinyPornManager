@@ -568,6 +568,8 @@ public class Settings extends AbstractModelObject {
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
     movieSettings.addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
 
+    setProxyFromSystem();
+
     saveSettings();
   }
 
@@ -661,7 +663,34 @@ public class Settings extends AbstractModelObject {
   }
 
   /**
-   * Sets the proxy.
+   * Sets the proxy from system settings, if empty
+   */
+  public void setProxyFromSystem() {
+    String val = "";
+
+    String[] proxyEnvs = { "http.proxyHost", "https.proxyHost", "proxyHost", "socksProxyHost" };
+    for (String pe : proxyEnvs) {
+      if (StringUtils.isEmpty(getProxyHost())) {
+        val = System.getProperty(pe, "");
+        if (!val.isEmpty()) {
+          setProxyHost(val);
+        }
+      }
+    }
+
+    String[] proxyPortEnvs = { "http.proxyPort", "https.proxyPort", "proxyPort", "socksProxyPort" };
+    for (String ppe : proxyPortEnvs) {
+      if (StringUtils.isEmpty(getProxyPort())) {
+        val = System.getProperty(ppe, "");
+        if (!val.isEmpty()) {
+          setProxyPort(val);
+        }
+      }
+    }
+  }
+
+  /**
+   * Sets the TMM proxy.
    */
   public void setProxy() {
     if (useProxy()) {

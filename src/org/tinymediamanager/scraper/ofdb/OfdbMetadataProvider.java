@@ -33,6 +33,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -61,7 +62,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
   private static final String         BASE_URL     = "http://www.ofdb.de";
 
   private static OfdbMetadataProvider instance;
-  private static MediaProviderInfo    providerInfo = new MediaProviderInfo("ofdb", "ofdb.de",
+  private static MediaProviderInfo    providerInfo = new MediaProviderInfo(Constants.OFDBID, "ofdb.de",
                                                        "Scraper for german ofdb.de which is able to scrape movie metadata");
 
   public static synchronized OfdbMetadataProvider getInstance() {

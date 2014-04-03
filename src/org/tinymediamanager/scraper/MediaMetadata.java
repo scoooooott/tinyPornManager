@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
 
@@ -32,35 +33,35 @@ import org.tinymediamanager.scraper.MediaCastMember.CastType;
  * @author Manuel Laggner
  */
 public class MediaMetadata {
-  public static String            PROVIDER_ID         = "providerId";
-  public static String            IMDBID              = "imdbId";
-  public static String            TMDBID              = "tmdbId";
-  public static String            TMDBID_SET          = "tmdbIdSet";
-  public static String            COLLECTION_NAME     = "collectionName";
-  public static String            TITLE               = "title";
-  public static String            ORIGINAL_TITLE      = "originalTitle";
-  public static String            PLOT                = "plot";
-  public static String            RATING              = "rating";
-  public static String            VOTE_COUNT          = "voteCount";
-  public static String            TOP_250             = "top250";
-  public static String            RUNTIME             = "runtime";
-  public static String            TAGLINE             = "tagline";
-  public static String            PRODUCTION_COMPANY  = "productionCompany";
-  public static String            YEAR                = "year";
-  public static String            RELEASE_DATE        = "releaseDate";
-  public static String            SPOKEN_LANGUAGES    = "spokenLanguages";
-  public static String            COUNTRY             = "country";
-  public static String            POSTER_URL          = "posterUrl";
-  public static String            STATUS              = "status";
+  public static final String      PROVIDER_ID         = "providerId";
+  public static final String      IMDBID              = Constants.IMDBID;
+  public static final String      TMDBID              = Constants.TMDBID;
+  public static final String      TMDBID_SET          = "tmdbIdSet";
+  public static final String      COLLECTION_NAME     = "collectionName";
+  public static final String      TITLE               = "title";
+  public static final String      ORIGINAL_TITLE      = "originalTitle";
+  public static final String      PLOT                = "plot";
+  public static final String      RATING              = "rating";
+  public static final String      VOTE_COUNT          = "voteCount";
+  public static final String      TOP_250             = "top250";
+  public static final String      RUNTIME             = "runtime";
+  public static final String      TAGLINE             = "tagline";
+  public static final String      PRODUCTION_COMPANY  = "productionCompany";
+  public static final String      YEAR                = "year";
+  public static final String      RELEASE_DATE        = "releaseDate";
+  public static final String      SPOKEN_LANGUAGES    = "spokenLanguages";
+  public static final String      COUNTRY             = "country";
+  public static final String      POSTER_URL          = "posterUrl";
+  public static final String      STATUS              = "status";
 
   // TV
-  public static String            EPISODE_NR          = "episodeNr";
-  public static String            SEASON_NR           = "seasonNr";
-  public static String            EPISODE_NR_DVD      = "dvdEpisodeNr";
-  public static String            SEASON_NR_DVD       = "dvdSeasonNr";
-  public static String            EPISODE_NR_COMBINED = "combinedEpisodeNr";
-  public static String            SEASON_NR_COMBINED  = "combinedSeasonNr";
-  public static String            ABSOLUTE_NR         = "absoluteNr";
+  public static final String      EPISODE_NR          = "episodeNr";
+  public static final String      SEASON_NR           = "seasonNr";
+  public static final String      EPISODE_NR_DVD      = "dvdEpisodeNr";
+  public static final String      SEASON_NR_DVD       = "dvdSeasonNr";
+  public static final String      EPISODE_NR_COMBINED = "combinedEpisodeNr";
+  public static final String      SEASON_NR_COMBINED  = "combinedSeasonNr";
+  public static final String      ABSOLUTE_NR         = "absoluteNr";
 
   public static Date              INITIAL_DATE        = new Date(0);
 

@@ -143,8 +143,8 @@ public class TvShowToXbmcNfoConnector {
     }
 
     // set data
-    if (tvShow.getId("tvdb") != null) {
-      String tvdbid = tvShow.getId("tvdb").toString();
+    if (tvShow.getTvdbId() != null) {
+      String tvdbid = tvShow.getTvdbId();
       xbmc.setId(tvdbid);
       xbmc.episodeguide.url.cache = tvdbid + ".xml";
       xbmc.episodeguide.url.url = "http://www.thetvdb.com/api/1D62F2F90030C444/series/" + tvdbid + "/all/"
@@ -221,7 +221,7 @@ public class TvShowToXbmcNfoConnector {
       TvShowToXbmcNfoConnector xbmc = parseNFO(nfo);
       tvShow = new TvShow();
       if (StringUtils.isNotBlank(xbmc.getId())) {
-        tvShow.setId("tvdb", xbmc.getId());
+        tvShow.setTvdbId(xbmc.getId());
       }
       tvShow.setTitle(xbmc.getTitle());
       tvShow.setSortTitle(xbmc.getSorttitle());

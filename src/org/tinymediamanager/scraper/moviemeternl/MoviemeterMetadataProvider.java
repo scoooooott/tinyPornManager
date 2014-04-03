@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaCastMember.CastType;
@@ -49,7 +50,7 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(MoviemeterMetadataProvider.class);
 
   private static MoviemeterApi     mmapi;
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("moviemeter", "moviemeter.nl",
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.MOVIEMETERID, "moviemeter.nl",
                                                     "Scraper for moviemeter.nl which is able to scrape movie metadata");
 
   public MoviemeterMetadataProvider() throws Exception {

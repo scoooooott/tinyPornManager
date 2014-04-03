@@ -163,6 +163,15 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           break;
         }
 
+        // sync new movies to trakt
+        if (!Globals.settings.getTraktAPI().isEmpty()) {
+          for (Movie movie : movieList.getMovies()) {
+            if (movie.justAdded) {
+              // sync to trakt
+            }
+          }
+        }
+
         // build image cache on import
         if (Globals.settings.getMovieSettings().isBuildImageCacheOnImport()) {
           for (Movie movie : movieList.getMovies()) {

@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
@@ -63,7 +64,7 @@ import com.omertron.thetvdbapi.model.Series;
 public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaArtworkProvider {
   private static final Logger      LOGGER       = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
   private static TheTVDBApi        tvdb;
-  private static MediaProviderInfo providerInfo = new MediaProviderInfo("tvdb", "thetvdb.com",
+  private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TVDBID, "thetvdb.com",
                                                     "Scraper for thetvdb.com which is able to scrape tv series metadata and artwork");
 
   public TheTvDbMetadataProvider() {
@@ -558,7 +559,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return episodes;
   }
 
-  /*
+  /**
    * Maps scraper Genres to internal TMM genres
    */
   private MediaGenres getTmmGenre(String genre) {

@@ -106,7 +106,7 @@ public class MovieSet extends MediaEntity {
   public int getTmdbId() {
     int id = 0;
     try {
-      id = (Integer) ids.get("tmdbId");
+      id = (Integer) ids.get(TMDBID);
     }
     catch (Exception e) {
       return 0;
@@ -116,7 +116,7 @@ public class MovieSet extends MediaEntity {
 
   public void setTmdbId(int newValue) {
     int oldValue = getTmdbId();
-    ids.put("tmdbId", newValue);
+    ids.put(TMDBID, newValue);
     firePropertyChange(TMDBID, oldValue, newValue);
   }
 

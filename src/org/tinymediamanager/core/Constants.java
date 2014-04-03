@@ -48,7 +48,6 @@ public final class Constants {
   public final static String GENRES_AS_STRING       = "genresAsString";
   public final static String HAS_IMAGES             = "hasImages";
   public final static String HAS_NFO_FILE           = "hasNfoFile";
-  public final static String IMDBID                 = "imdbId";
   public final static String MEDIA_FILES            = "mediaFiles";
   public final static String MEDIA_INFORMATION      = "mediaInformation";
   public final static String MOVIESET               = "movieset";
@@ -84,17 +83,27 @@ public final class Constants {
   public final static String TITLE                  = "title";
   public final static String TITLE_FOR_UI           = "titleForUi";
   public final static String TITLE_SORTABLE         = "titleSortable";
-  public final static String TMDBID                 = "tmdbId";
   public final static String TOP250                 = "top250";
   public final static String TRAILER                = "trailer";
   public final static String TV_SHOW                = "tvShow";
   public final static String TV_SHOW_COUNT          = "tvShowCount";
   public final static String TV_SHOWS               = "tvShows";
-  public final static String TVDBID                 = "tvdbId";
   public final static String VOTES                  = "votes";
   public final static String WATCHED                = "watched";
   public final static String WRITER                 = "writer";
   public final static String YEAR                   = "year";
+
+  // IDs for lookup (MediaMetadata IDs map)
+  public final static String ANIDBID                = "anidb";
+  public final static String FANARTTVID             = "fanart";
+  public final static String HDTRAILERSID           = "hdtrailersnet";
+  public final static String MOVIEMETERID           = "moviemeter";
+  public final static String OFDBID                 = "ofdb";
+  public final static String ZELLULOIDID            = "zelluloid";
+  public final static String TMDBID                 = "tmdbId";
+  public final static String TVDBID                 = "tvdbId";
+  public final static String IMDBID                 = "imdbId";
+  public final static String TVRAGEID               = "tvrageId";
 
   private Constants() {
   }

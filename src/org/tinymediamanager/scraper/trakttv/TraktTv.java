@@ -18,13 +18,19 @@ package org.tinymediamanager.scraper.trakttv;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.scraper.MediaGenres;
 
 import com.jakewharton.trakt.Trakt;
 import com.jakewharton.trakt.entities.ActionResponse;
 import com.jakewharton.trakt.entities.Movie;
+import com.jakewharton.trakt.entities.TvShow;
+import com.jakewharton.trakt.entities.TvShowEpisode;
 import com.jakewharton.trakt.enumerations.Extended;
 import com.jakewharton.trakt.services.MovieService.Movies;
 import com.jakewharton.trakt.services.MovieService.SeenMovie;
@@ -37,17 +43,14 @@ import com.jakewharton.trakt.services.MovieService.SeenMovie;
  */
 public class TraktTv {
 
-  private static final Logger LOGGER       = LoggerFactory.getLogger(TraktTv.class);
-  private static final String DEV_API_KEY  = "";
-  private static String       USER_API_KEY = "";
-  private static String       USER_NAME    = "";
-  private static final Trakt  trakt        = new Trakt();
+  private static final Logger LOGGER   = LoggerFactory.getLogger(TraktTv.class);
+  private static final Trakt  trakt    = new Trakt();
+  private String              userName = "";
 
   public TraktTv(String username, String passwordSha1, String userApiKey) {
     trakt.setApiKey(userApiKey);
-    USER_API_KEY = userApiKey;
     trakt.setAuthentication(username, passwordSha1);
-    USER_NAME = username;
+    userName = username;
     trakt.setIsDebug(true); // testing
   }
 
@@ -61,14 +64,19 @@ public class TraktTv {
     return trakt;
   }
 
+  public String getUserName() {
+    return userName;
+  }
+
   /**
-   * gets all watched movies from Trakt, and sets the "watched" flag on TMM movies (if IMDB matches)
+   * gets ALL watched movies from Trakt, and sets the "watched" flag on TMM movies (if IMDB matches)
    */
   public void updatedWatchedMoviesFromTrakt() {
     MovieList movieList = MovieList.getInstance();
     List<org.tinymediamanager.core.movie.entities.Movie> tmmMovies = movieList.getMovies();
 
-    List<Movie> traktMovies = trakt.userService().libraryMoviesWatched(USER_NAME, Extended.DEFAULT);
+    // get all Trakt watched movies
+    List<Movie> traktMovies = trakt.userService().libraryMoviesWatched(userName, Extended.DEFAULT);
 
     // loop over all watched movies on trakt
     for (Movie watched : traktMovies) {
@@ -89,20 +97,83 @@ public class TraktTv {
   }
 
   /**
-   * adds all TMM movies to Trakt collection<br>
-   * optionally set them as watched, if they are watched in TMM<br>
-   * works only if we have a IMDB id...
-   * 
-   * @param setWatched
-   *          true/false if we want to set all watched TMM movies as "watched" on Trakt
+   * gets ALL watched TvShows from Trakt, and sets the "watched" flag on TMM show/episodes (if TvDB matches)
    */
-  public void sendMyMoviesToTrakt(boolean setWatched) {
+  public void updatedWatchedTvShowsFromTrakt() {
+    TvShowList tvShowList = TvShowList.getInstance();
+    List<org.tinymediamanager.core.tvshow.entities.TvShow> tmmShows = tvShowList.getTvShows();
+
+    // get all Trakt watched TvShows
+    List<TvShow> traktShows = trakt.userService().libraryShowsWatched(userName, Extended.DEFAULT);
+
+    // loop over all watched shows on trakt
+    for (TvShow watched : traktShows) {
+
+      // loop over TMM shows, and check if TvDB match
+      for (org.tinymediamanager.core.tvshow.entities.TvShow tmmShow : tmmShows) {
+        if (watched.tvdb_id.equals(tmmShow.getTvdbId())) {
+
+          // update missing IDs (we get them for free :)
+          if (tmmShow.getImdbId().isEmpty() && !StringUtils.isEmpty(watched.imdb_id)) {
+            tmmShow.setImdbId(watched.imdb_id);
+          }
+          if (tmmShow.getTvdbId().isEmpty() && watched.tvdb_id != null && watched.tvdb_id != 0) {
+            tmmShow.setTvdbId(String.valueOf(watched.tvdb_id));
+          }
+          if (((String) tmmShow.getId(Constants.TVRAGEID)).isEmpty() && watched.tvrage_id != null && watched.tvrage_id != 0) {
+            tmmShow.setId(Constants.TVRAGEID, watched.tvrage_id);
+          }
+
+          // set show watched (only if COMPLETE watched?!)
+          // if (!tmmShow.isWatched()) {
+          // LOGGER.info("Marking TvShow '" + tmmShow.getTitle() + "' as watched");
+          // tmmShow.setWatched(true);
+          // }
+
+          // set episodes watched
+          for (TvShowEpisode ep : watched.episodes) {
+            // loop over TMM episodes, and check if season/episode number match
+            for (org.tinymediamanager.core.tvshow.entities.TvShowEpisode tmmEp : tmmShow.getEpisodes()) {
+              if (ep.season == tmmEp.getSeason() && ep.number == tmmEp.getEpisode() && !tmmEp.isWatched()) {
+                LOGGER.info("Marking TvShowEpisode S:" + tmmEp.getSeason() + " EP:" + tmmEp.getEpisode() + " as watched");
+                tmmEp.setWatched(true);
+              }
+            }
+          }
+
+          tmmShow.saveToDb();
+
+        } // end tvdb_id matches
+      }
+    }
+  }
+
+  private void setIdIfEmpty(String key, String value) {
+
+  }
+
+  /**
+   * adds ALL TMM movies to Trakt collection<br>
+   * works only if we have a IMDB id...
+   */
+  public void sendMyMoviesToTrakt() {
     MovieList movieList = MovieList.getInstance();
     List<org.tinymediamanager.core.movie.entities.Movie> tmmMovies = movieList.getMovies();
+    sendMyMoviesToTrakt(tmmMovies);
+  }
 
+  /**
+   * adds TMM movies to Trakt collection<br>
+   * works only if we have a IMDB id...
+   * 
+   * @param movies
+   *          all the TMM movies to send
+   */
+  public void sendMyMoviesToTrakt(List<org.tinymediamanager.core.movie.entities.Movie> movies) {
     List<SeenMovie> libMovies = new ArrayList<SeenMovie>(); // array for ALL TMM movies
     List<SeenMovie> seenMovies = new ArrayList<SeenMovie>(); // array for "watched" TMM movies
-    for (org.tinymediamanager.core.movie.entities.Movie tmmMovie : tmmMovies) {
+
+    for (org.tinymediamanager.core.movie.entities.Movie tmmMovie : movies) {
       if (tmmMovie.getImdbId().isEmpty() && tmmMovie.getTmdbId() == 0) {
         // do not add to Trakt if we have no IDs
         continue;
@@ -124,7 +195,7 @@ public class TraktTv {
     System.out.println("Already inserted: " + response.already_exist);
     System.out.println("Skipped: " + response.skipped);
 
-    if (setWatched) {
+    if (seenMovies.size() > 0) {
       response = trakt.movieService().seen(new Movies(seenMovies)); // and set seen/watched
       System.out.println("Status: " + response.status);
       System.out.println("Message: " + response.message);
@@ -132,5 +203,54 @@ public class TraktTv {
       System.out.println("Already inserted: " + response.already_exist);
       System.out.println("Skipped: " + response.skipped);
     }
+  }
+
+  /**
+   * Maps scraper Genres to internal TMM genres
+   */
+  private MediaGenres getTmmGenre(String genre) {
+    MediaGenres g = null;
+    if (genre.isEmpty()) {
+      return g;
+    }
+    // @formatter:off
+    else if (genre.equals("Action"))           { g = MediaGenres.ACTION; }
+    else if (genre.equals("Adventure"))        { g = MediaGenres.ADVENTURE; }
+    else if (genre.equals("Animation"))        { g = MediaGenres.ANIMATION; }
+    else if (genre.equals("Comedy"))           { g = MediaGenres.COMEDY; }
+    else if (genre.equals("Children"))         { g = MediaGenres.FAMILY; }
+    else if (genre.equals("Crime"))            { g = MediaGenres.CRIME; }
+    else if (genre.equals("Documentary"))      { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Drama"))            { g = MediaGenres.DRAMA; }
+    else if (genre.equals("Family"))           { g = MediaGenres.FAMILY; }
+    else if (genre.equals("Fantasy"))          { g = MediaGenres.FANTASY; }
+    else if (genre.equals("Film Noir"))        { g = MediaGenres.FILM_NOIR; }
+    else if (genre.equals("History"))          { g = MediaGenres.HISTORY; }
+    else if (genre.equals("Game Show"))        { g = MediaGenres.GAME_SHOW; }
+    else if (genre.equals("Home and Garden"))  { g = MediaGenres.DOCUMENTARY; }
+    else if (genre.equals("Horror"))           { g = MediaGenres.HORROR; }
+    else if (genre.equals("Indie"))            { g = MediaGenres.INDIE; }
+    else if (genre.equals("Music"))            { g = MediaGenres.MUSIC; }
+    else if (genre.equals("Mini Series"))      { g = MediaGenres.SERIES; }
+    else if (genre.equals("Musical"))          { g = MediaGenres.MUSICAL; }
+    else if (genre.equals("Mystery"))          { g = MediaGenres.MYSTERY; }
+    else if (genre.equals("News"))             { g = MediaGenres.NEWS; }
+    else if (genre.equals("Reality"))          { g = MediaGenres.REALITY_TV; }
+    else if (genre.equals("Romance"))          { g = MediaGenres.ROMANCE; }
+    else if (genre.equals("Science Fiction"))  { g = MediaGenres.SCIENCE_FICTION; }
+    else if (genre.equals("Sport"))            { g = MediaGenres.SPORT; }
+    else if (genre.equals("Special Interest")) { g = MediaGenres.INDIE; }
+    else if (genre.equals("Soap"))             { g = MediaGenres.SERIES; }
+    else if (genre.equals("Suspense"))         { g = MediaGenres.SUSPENSE; }
+    else if (genre.equals("Talk Show"))        { g = MediaGenres.TALK_SHOW; }
+    else if (genre.equals("Thriller"))         { g = MediaGenres.THRILLER; }
+    else if (genre.equals("War"))              { g = MediaGenres.WAR; }
+    else if (genre.equals("Western"))          { g = MediaGenres.WESTERN; }
+    else if (genre.equals("No Genre"))         { return null; }
+    // @formatter:on
+    if (g == null) {
+      g = MediaGenres.getGenre(genre);
+    }
+    return g;
   }
 }

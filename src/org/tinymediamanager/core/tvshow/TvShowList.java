@@ -284,10 +284,10 @@ public class TvShowList extends AbstractModelObject {
       // default
       return getMetadataProvider(TvShowScrapers.TVDB);
     }
-    if (providerId.equals("anidb")) {
+    if (providerId.equals(ANIDBID)) {
       return getMetadataProvider(TvShowScrapers.ANIDB);
     }
-    else if (providerId.equals("tvdb")) {
+    else if (providerId.equals(TVDBID) || providerId.equals("tvdb")) {
       return getMetadataProvider(TvShowScrapers.TVDB);
     }
     else {
