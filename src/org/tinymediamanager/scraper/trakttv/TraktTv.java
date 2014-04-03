@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -46,12 +47,24 @@ public class TraktTv {
   private static final Logger LOGGER   = LoggerFactory.getLogger(TraktTv.class);
   private static final Trakt  trakt    = new Trakt();
   private String              userName = "";
+  private ActionResponse      response;
 
+  /**
+   * gets a new Trakt object with settings values (user / pass / apikey)
+   */
+  public TraktTv() {
+    trakt.setApiKey(Globals.settings.getTraktAPI());
+    trakt.setAuthentication(Globals.settings.getTraktUsername(), Globals.settings.getTraktPassword());
+    userName = Globals.settings.getTraktUsername();
+  }
+
+  /**
+   * gets a new Trakt object with custom values (user / passAsSHA1 / apikey)
+   */
   public TraktTv(String username, String passwordSha1, String userApiKey) {
     trakt.setApiKey(userApiKey);
     trakt.setAuthentication(username, passwordSha1);
     userName = username;
-    trakt.setIsDebug(true); // testing
   }
 
   /**
@@ -64,8 +77,29 @@ public class TraktTv {
     return trakt;
   }
 
+  /**
+   * gets the last trakt response (status, message, inserted, skipped, ...)
+   * 
+   * @return response object
+   */
+  public ActionResponse getResponse() {
+    return response;
+  }
+
   public String getUserName() {
     return userName;
+  }
+
+  /**
+   * syncs complete database from/to Trakt<br>
+   * Get first all watched flags from Trakt and submits then all movies/shows to Trakt collection
+   */
+  public void syncAll() {
+    // FIXME: use task queue
+    updatedWatchedMoviesFromTrakt();
+    sendMyMoviesToTrakt();
+    updatedWatchedTvShowsFromTrakt();
+    // sendMyTvShowsToTrakt();
   }
 
   /**
@@ -76,14 +110,14 @@ public class TraktTv {
     List<org.tinymediamanager.core.movie.entities.Movie> tmmMovies = movieList.getMovies();
 
     // get all Trakt watched movies
-    List<Movie> traktMovies = trakt.userService().libraryMoviesWatched(userName, Extended.DEFAULT);
+    List<Movie> traktMovies = trakt.userService().libraryMoviesWatched(userName, Extended.MIN);
 
     // loop over all watched movies on trakt
     for (Movie watched : traktMovies) {
 
       // loop over TMM movies, and check if IMDBID match
       for (org.tinymediamanager.core.movie.entities.Movie tmmMovie : tmmMovies) {
-        if (watched.imdb_id.equals(tmmMovie.getImdbId())) {
+        if (watched.imdb_id.equals(tmmMovie.getImdbId()) || watched.tmdbId == tmmMovie.getTmdbId()) {
 
           if (!tmmMovie.isWatched()) {
             LOGGER.info("Marking movie '" + tmmMovie.getTitle() + "' as watched");
@@ -104,7 +138,9 @@ public class TraktTv {
     List<org.tinymediamanager.core.tvshow.entities.TvShow> tmmShows = tvShowList.getTvShows();
 
     // get all Trakt watched TvShows
-    List<TvShow> traktShows = trakt.userService().libraryShowsWatched(userName, Extended.DEFAULT);
+    List<TvShow> traktShows = trakt.userService().libraryShowsWatched(userName, Extended.MIN);
+    // Extended.DEFAULT adds url, poster, fanart, banner, genres
+    // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
 
     // loop over all watched shows on trakt
     for (TvShow watched : traktShows) {
@@ -135,7 +171,7 @@ public class TraktTv {
             // loop over TMM episodes, and check if season/episode number match
             for (org.tinymediamanager.core.tvshow.entities.TvShowEpisode tmmEp : tmmShow.getEpisodes()) {
               if (ep.season == tmmEp.getSeason() && ep.number == tmmEp.getEpisode() && !tmmEp.isWatched()) {
-                LOGGER.info("Marking TvShowEpisode S:" + tmmEp.getSeason() + " EP:" + tmmEp.getEpisode() + " as watched");
+                LOGGER.info("Marking '" + tmmShow.getTitle() + " S:" + tmmEp.getSeason() + " EP:" + tmmEp.getEpisode() + "' as watched");
                 tmmEp.setWatched(true);
               }
             }
@@ -148,13 +184,9 @@ public class TraktTv {
     }
   }
 
-  private void setIdIfEmpty(String key, String value) {
-
-  }
-
   /**
    * adds ALL TMM movies to Trakt collection<br>
-   * works only if we have a IMDB id...
+   * works only if we have a IMDB or TMDB id...
    */
   public void sendMyMoviesToTrakt() {
     MovieList movieList = MovieList.getInstance();
@@ -164,7 +196,7 @@ public class TraktTv {
 
   /**
    * adds TMM movies to Trakt collection<br>
-   * works only if we have a IMDB id...
+   * works only if we have a IMDB or TMDB id...
    * 
    * @param movies
    *          all the TMM movies to send
@@ -187,7 +219,7 @@ public class TraktTv {
         seenMovies.add(seen); // add to seen
       }
     }
-    ActionResponse response;
+
     response = trakt.movieService().library(new Movies(libMovies)); // add all to collection
     System.out.println("Status: " + response.status);
     System.out.println("Message: " + response.message);
