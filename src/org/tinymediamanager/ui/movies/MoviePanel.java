@@ -43,6 +43,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -83,6 +84,7 @@ import org.tinymediamanager.ui.movies.actions.MovieRenamePreviewAction;
 import org.tinymediamanager.ui.movies.actions.MovieRewriteNfoAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
+import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
@@ -222,6 +224,7 @@ public class MoviePanel extends JPanel {
 
   /** The action batch edit. */
   private final Action                  actionBatchEdit              = new MovieBatchEditAction();
+  private final Action                  actionSetWatchedFlag         = new MovieSetWatchedFlagAction();
 
   private final Action                  actionClearImageCache        = new MovieClearImageCacheAction();
 
@@ -457,6 +460,7 @@ public class MoviePanel extends JPanel {
     // menu items
     JMenuItem menuItem = menu.add(actionUpdateDataSources2);
     menuItem.setMnemonic(KeyEvent.VK_U);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     final JMenu menuUpdateDatasources = new JMenu(BUNDLE.getString("update.datasource")); //$NON-NLS-1$
     final JMenu menuFindMissingMovies = new JMenu(BUNDLE.getString("movie.findmissing")); //$NON-NLS-1$
     menuUpdateDatasources.addMenuListener(new MenuListener() {
@@ -493,10 +497,13 @@ public class MoviePanel extends JPanel {
     menuScrape.setMnemonic(KeyEvent.VK_S);
     menuItem = menuScrape.add(actionScrape2);
     menuItem.setMnemonic(KeyEvent.VK_S);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuScrape.add(actionScrapeSelected);
     menuItem.setMnemonic(KeyEvent.VK_F);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuScrape.add(actionScrapeUnscraped);
     menuItem.setMnemonic(KeyEvent.VK_U);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuScrape.add(actionScrapeMetadataSelected);
     menuItem.setMnemonic(KeyEvent.VK_M);
     menuScrape.add(actionAssignMovieSets);
@@ -506,10 +513,16 @@ public class MoviePanel extends JPanel {
     menuEdit.setMnemonic(KeyEvent.VK_E);
     menuItem = menuEdit.add(actionEditMovie2);
     menuItem.setMnemonic(KeyEvent.VK_E);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuEdit.add(actionBatchEdit);
     menuItem.setMnemonic(KeyEvent.VK_B);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+    menuItem = menuEdit.add(actionSetWatchedFlag);
+    menuItem.setMnemonic(KeyEvent.VK_W);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuEdit.add(actionRename2);
     menuItem.setMnemonic(KeyEvent.VK_R);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuEdit.add(actionRenamerPreview);
     menuItem.setMnemonic(KeyEvent.VK_P);
     menu.add(menuEdit);
@@ -519,8 +532,10 @@ public class MoviePanel extends JPanel {
     menu.addSeparator();
     menuItem = menu.add(actionMediaInformation2);
     menuItem.setMnemonic(KeyEvent.VK_M);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menu.add(actionExport);
     menuItem.setMnemonic(KeyEvent.VK_X);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menu.add(actionRemove2);
     menuItem.setMnemonic(KeyEvent.VK_R);
     menu.addSeparator();
@@ -536,6 +551,7 @@ public class MoviePanel extends JPanel {
     popupMenu.addSeparator();
     popupMenu.add(actionEditMovie2);
     popupMenu.add(actionBatchEdit);
+    popupMenu.add(actionSetWatchedFlag);
     popupMenu.add(actionRewriteNfo);
     popupMenu.add(actionRename2);
     popupMenu.add(actionRenamerPreview);

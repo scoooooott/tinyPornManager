@@ -44,6 +44,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -84,6 +85,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowRewriteNfoAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeEpisodesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSetWatchedFlagAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSingleScrapeAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateDatasourcesAction;
@@ -129,6 +131,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionRemove2                 = new TvShowRemoveAction(true);
   private final Action                actionChangeSeasonPoster2     = new TvShowChangeSeasonPosterAction(true);
   private final Action                actionBatchEdit               = new TvShowBulkEditAction();
+  private final Action                actionSetWatchedFlag          = new TvShowSetWatchedFlagAction();
   private final Action                actionScrapeEpisodes          = new TvShowScrapeEpisodesAction();
   private final Action                actionRewriteTvShowNfo        = new TvShowRewriteNfoAction();
   private final Action                actionRewriteTvShowEpisodeNfo = new TvShowRewriteEpisodeNfoAction();
@@ -489,24 +492,33 @@ public class TvShowPanel extends JPanel {
     // menu items
     JMenuItem menuItem = menu.add(actionUpdateDatasources2);
     menuItem.setMnemonic(KeyEvent.VK_U);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menu.addSeparator();
 
     JMenu menuScrape = new JMenu(BUNDLE.getString("Button.scrape")); //$NON-NLS-1$
     menuScrape.setMnemonic(KeyEvent.VK_S);
     menuItem = menuScrape.add(actionScrape2);
     menuItem.setMnemonic(KeyEvent.VK_S);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuScrape.add(actionScrapeSelected);
     menuItem.setMnemonic(KeyEvent.VK_F);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuScrape.add(actionScrapeNewItems);
     menuItem.setMnemonic(KeyEvent.VK_N);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menu.add(menuScrape);
 
     JMenu menuEdit = new JMenu(BUNDLE.getString("Button.edit")); //$NON-NLS-1$
     menuEdit.setMnemonic(KeyEvent.VK_E);
     menuItem = menuEdit.add(actionEdit2);
     menuItem.setMnemonic(KeyEvent.VK_E);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuEdit.add(actionBatchEdit);
     menuItem.setMnemonic(KeyEvent.VK_B);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+    menuItem = menuEdit.add(actionSetWatchedFlag);
+    menuItem.setMnemonic(KeyEvent.VK_W);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuEdit.add(actionChangeSeasonPoster2);
     menuItem.setMnemonic(KeyEvent.VK_S);
 
@@ -516,8 +528,10 @@ public class TvShowPanel extends JPanel {
 
     menuItem = menu.add(actionRename);
     menuItem.setMnemonic(KeyEvent.VK_R);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menu.add(actionMediaInformation2);
-    menuItem.setMnemonic(KeyEvent.VK_I);
+    menuItem.setMnemonic(KeyEvent.VK_M);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menu.add(actionClearImageCache);
     menuItem.setMnemonic(KeyEvent.VK_C);
 
@@ -537,6 +551,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionEdit2);
     popupMenu.add(actionChangeSeasonPoster2);
     popupMenu.add(actionBatchEdit);
+    popupMenu.add(actionSetWatchedFlag);
     popupMenu.add(actionRewriteTvShowNfo);
     popupMenu.add(actionRewriteTvShowEpisodeNfo);
     // popupMenu.add(actionBatchEdit);
