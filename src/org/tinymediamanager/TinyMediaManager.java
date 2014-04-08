@@ -749,6 +749,7 @@ public class TinyMediaManager {
         }
         List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
         List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
+        LOGGER.info("Commandline - found " + newTv.size() + " new TvShow(s) and " + newEp.size() + " new episode(s)");
 
         if (scrapeNew) {
           LOGGER.info("Commandline - scraping new TvShows...");
@@ -767,7 +768,7 @@ public class TinyMediaManager {
 
         if (renameNew) {
           LOGGER.info("Commandline - rename & cleanup new episodes...");
-          if (newTv.size() > 0 && newEp.size() > 0) {
+          if (newEp.size() > 0) {
             task = new TvShowRenameTask(null, newEp, true); // just rename new EPs AND root folder
             task.execute();
             task.get(); // blocking

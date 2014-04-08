@@ -129,7 +129,7 @@ public class Url {
       return;
     }
 
-    LOGGER.debug("add HTTP header: " + key + "=" + value);
+    // LOGGER.debug("add HTTP header: " + key + "=" + value);
 
     // check for duplicates
     for (int i = headersRequest.size() - 1; i >= 0; i--) {
