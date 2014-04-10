@@ -87,31 +87,6 @@ public class TvShowEpisodeChooserDialog extends JDialog implements ActionListene
 
     getContentPane().setLayout(new BorderLayout(0, 0));
     {
-      JPanel bottomPanel = new JPanel();
-      getContentPane().add(bottomPanel, BorderLayout.SOUTH);
-
-      bottomPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-          FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
-
-      JPanel buttonPane = new JPanel();
-      bottomPanel.add(buttonPane, "5, 2, fill, fill");
-      EqualsLayout layout = new EqualsLayout(5);
-      layout.setMinWidth(100);
-      buttonPane.setLayout(layout);
-      JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
-      okButton.setIcon(IconManager.APPLY);
-      buttonPane.add(okButton);
-      okButton.setActionCommand("OK");
-      okButton.addActionListener(this);
-
-      JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
-      cancelButton.setIcon(IconManager.CANCEL);
-      buttonPane.add(cancelButton);
-      cancelButton.setActionCommand("Cancel");
-      cancelButton.addActionListener(this);
 
       JSplitPane splitPane = new JSplitPane();
       getContentPane().add(splitPane, BorderLayout.CENTER);
@@ -133,6 +108,31 @@ public class TvShowEpisodeChooserDialog extends JDialog implements ActionListene
       scrollPane_1.setViewportView(taPlot);
 
     }
+    JPanel bottomPanel = new JPanel();
+    getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+
+    bottomPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    JPanel buttonPane = new JPanel();
+    bottomPanel.add(buttonPane, "5, 2, fill, fill");
+    EqualsLayout layout = new EqualsLayout(5);
+    layout.setMinWidth(100);
+    buttonPane.setLayout(layout);
+    JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+    okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
+    okButton.setIcon(IconManager.APPLY);
+    buttonPane.add(okButton);
+    okButton.setActionCommand("OK");
+    okButton.addActionListener(this);
+
+    JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+    cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
+    cancelButton.setIcon(IconManager.CANCEL);
+    buttonPane.add(cancelButton);
+    cancelButton.setActionCommand("Cancel");
+    cancelButton.addActionListener(this);
 
     initDataBindings();
 

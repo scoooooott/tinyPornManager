@@ -173,8 +173,8 @@ public class TvShowEditorDialog extends JDialog {
       JPanel panelPath = new JPanel();
       getContentPane().add(panelPath, BorderLayout.NORTH);
       panelPath.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC,
-          RowSpec.decode("15px"), FormFactory.RELATED_GAP_ROWSPEC, }));
+          FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("15px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblTvShowPathT = new JLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
       panelPath.add(lblTvShowPathT, "2, 2, left, top");
@@ -472,8 +472,8 @@ public class TvShowEditorDialog extends JDialog {
      */
     tabbedPane.addTab(BUNDLE.getString("metatag.episodes"), episodesPanel); //$NON-NLS-1$
     episodesPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
     {
       JButton btnCloneEpisode = new JButton("");
       btnCloneEpisode.setAction(new CloneEpisodeAction());
@@ -501,8 +501,8 @@ public class TvShowEditorDialog extends JDialog {
       JPanel bottomPane = new JPanel();
       getContentPane().add(bottomPane, BorderLayout.SOUTH);
       bottomPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("371px:grow"), FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+          FormFactory.RELATED_GAP_COLSPEC, },
+          new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JPanel buttonPane = new JPanel();
       bottomPane.add(buttonPane, "2, 2, left, top");

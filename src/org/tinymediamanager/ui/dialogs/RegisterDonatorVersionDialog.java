@@ -96,7 +96,7 @@ public class RegisterDonatorVersionDialog extends JDialog {
       {
         JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name")); //$NON-NLS-1$
         panelContent.add(lblName, "2, 4, right, default");
-        tfName = new JTextField();
+        tfName = new JTextField("");
         lblName.setLabelFor(tfName);
         panelContent.add(tfName, "4, 4, fill, default");
         tfName.setColumns(10);
@@ -108,7 +108,7 @@ public class RegisterDonatorVersionDialog extends JDialog {
       {
         JLabel lblEmailAddress = new JLabel(BUNDLE.getString("BugReport.email")); //$NON-NLS-1$
         panelContent.add(lblEmailAddress, "2, 6, right, default");
-        tfEmailAddress = new JTextField();
+        tfEmailAddress = new JTextField("");
         lblEmailAddress.setLabelFor(tfEmailAddress);
         panelContent.add(tfEmailAddress, "4, 6, fill, default");
         tfEmailAddress.setColumns(10);

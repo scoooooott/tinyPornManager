@@ -40,6 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -243,6 +244,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
           JPanel buttonPane = new JPanel();
           bottomPane.add(buttonPane, "6, 2, fill, fill");
           EqualsLayout layout = new EqualsLayout(5);
+          buttonPane.setBorder(new EmptyBorder(4, 4, 4, 4));
           layout.setMinWidth(100);
           buttonPane.setLayout(layout);
 

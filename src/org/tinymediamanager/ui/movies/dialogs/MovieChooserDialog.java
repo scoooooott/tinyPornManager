@@ -142,7 +142,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
   public MovieChooserDialog(Movie movie, boolean inQueue) {
     setTitle(BUNDLE.getString("moviechooser.search")); //$NON-NLS-1$
     setName("movieChooser");
-    setBounds(5, 5, 800, 550);
+    setBounds(5, 5, 960, 642);
     TmmWindowSaver.loadSettings(this);
     setIconImage(MainWindow.LOGO);
     setModal(true);
@@ -174,7 +174,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
         FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:300px:grow"),
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
     {
       lblPath = new JLabel("");
       contentPanel.add(lblPath, "2, 2");

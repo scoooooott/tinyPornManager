@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -103,20 +104,21 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     JPanel panelScraper = new JPanel();
     panelContent.add(panelScraper, BorderLayout.NORTH);
     panelScraper.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata")); //$NON-NLS-1$
-    panelScraper.add(lblMetadataScraperT, "2, 1, right, default");
+    panelScraper.add(lblMetadataScraperT, "2, 2, right, default");
 
     cbMetadataScraper = new JComboBox(TvShowScrapers.values());
-    panelScraper.add(cbMetadataScraper, "4, 1, fill, default");
+    panelScraper.add(cbMetadataScraper, "4, 2, fill, default");
 
     JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
-    panelScraper.add(lblArtworkScraper, "2, 3, right, default");
+    panelScraper.add(lblArtworkScraper, "2, 4, right, default");
 
     chckbxTheTVDb = new JCheckBox("The TV DB");
-    panelScraper.add(chckbxTheTVDb, "4, 3");
+    panelScraper.add(chckbxTheTVDb, "4, 4");
 
     {
       JPanel panelCenter = new JPanel();
@@ -132,6 +134,7 @@ public class TvShowScrapeMetadataDialog extends JDialog {
 
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));
+    panelButtons.setBorder(new EmptyBorder(4, 4, 4, 4));
     panelContent.add(panelButtons, BorderLayout.SOUTH);
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$

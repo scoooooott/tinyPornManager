@@ -126,7 +126,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
   public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
     setTitle(BUNDLE.getString("tvshowchooser.search")); //$NON-NLS-1$
     setName("tvShowChooser");
-    setBounds(5, 5, 800, 500);
+    setBounds(5, 5, 985, 586);
     TmmWindowSaver.loadSettings(this);
     setIconImage(MainWindow.LOGO);
     setModal(true);
@@ -287,7 +287,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
       {
         bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("max(82dlu;default)"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-            FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
+            FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.RELATED_GAP_ROWSPEC, }));
         {
           progressBar = new JProgressBar();
           bottomPane.add(progressBar, "2, 2");

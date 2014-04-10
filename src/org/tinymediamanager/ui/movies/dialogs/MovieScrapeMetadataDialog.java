@@ -28,6 +28,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -109,35 +110,36 @@ public class MovieScrapeMetadataDialog extends JDialog {
     panelContent.add(panelScraper, BorderLayout.NORTH);
     panelScraper.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblMetadataScraperT = new JLabel(BUNDLE.getString("scraper.metadata")); //$NON-NLS-1$
-    panelScraper.add(lblMetadataScraperT, "2, 1, right, default");
+    panelScraper.add(lblMetadataScraperT, "2, 2, right, default");
 
     cbMetadataScraper = new JComboBox(MovieScrapers.values());
-    panelScraper.add(cbMetadataScraper, "4, 1, 3, 1, fill, default");
+    panelScraper.add(cbMetadataScraper, "4, 2, 3, 1, fill, default");
 
     JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
-    panelScraper.add(lblArtworkScraper, "2, 3, right, default");
+    panelScraper.add(lblArtworkScraper, "2, 4, right, default");
 
     chckbxTheMovieDb = new JCheckBox("The Movie DB");
-    panelScraper.add(chckbxTheMovieDb, "4, 3");
+    panelScraper.add(chckbxTheMovieDb, "4, 4");
 
     chckbxFanarttv = new JCheckBox("Fanart.tv");
-    panelScraper.add(chckbxFanarttv, "6, 3");
+    panelScraper.add(chckbxFanarttv, "6, 4");
 
     JLabel lblTrailerScraper = new JLabel(BUNDLE.getString("scraper.trailer")); //$NON-NLS-1$
-    panelScraper.add(lblTrailerScraper, "2, 5, right, default");
+    panelScraper.add(lblTrailerScraper, "2, 6, right, default");
 
     chckbxTheMovieDb_1 = new JCheckBox("The Movie DB");
-    panelScraper.add(chckbxTheMovieDb_1, "4, 5");
+    panelScraper.add(chckbxTheMovieDb_1, "4, 6");
 
     chckbxHdtrailernet = new JCheckBox("HD-Trailer.net");
-    panelScraper.add(chckbxHdtrailernet, "6, 5");
+    panelScraper.add(chckbxHdtrailernet, "6, 6");
 
     chckbxOfdbde = new JCheckBox("OFDb.de");
-    panelScraper.add(chckbxOfdbde, "8, 5");
+    panelScraper.add(chckbxOfdbde, "8, 6");
 
     {
       JPanel panelCenter = new JPanel();
@@ -154,6 +156,7 @@ public class MovieScrapeMetadataDialog extends JDialog {
 
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));
+    panelButtons.setBorder(new EmptyBorder(4, 4, 4, 4));
     panelContent.add(panelButtons, BorderLayout.SOUTH);
 
     JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$

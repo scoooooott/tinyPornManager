@@ -187,7 +187,7 @@ public class ImageChooserDialog extends JDialog {
       bottomPane.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), }));
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("23px:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
       {
         if (type == ImageType.FANART && extraFanarts != null && extraThumbs != null) {
           JPanel panelExtraButtons = new JPanel();

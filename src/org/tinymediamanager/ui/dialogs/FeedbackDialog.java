@@ -75,7 +75,7 @@ public class FeedbackDialog extends JDialog {
   public FeedbackDialog() {
     setTitle(BUNDLE.getString("Feedback")); //$NON-NLS-1$
     setName("feedback");
-    setBounds(100, 100, 450, 303);
+    setBounds(100, 100, 450, 320);
     TmmWindowSaver.loadSettings(this);
 
     setIconImage(MainWindow.LOGO);
@@ -90,9 +90,9 @@ public class FeedbackDialog extends JDialog {
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, "2, 2, fill, fill");
     panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-        RowSpec.decode("default:grow"), }));
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     JLabel lblName = new JLabel(BUNDLE.getString("Feedback.name")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");
