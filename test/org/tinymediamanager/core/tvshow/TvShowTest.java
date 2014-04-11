@@ -118,6 +118,7 @@ public class TvShowTest {
   @Test
   public void testEpisodeMatching() {
     Assert.assertEquals("E:1", detectEpisode("AwesomeTvShow.S01E01-480p.mkv"));
+    Assert.assertEquals("E:9 E:10", detectEpisode("stvs7ep9-10.avi"));
 
     // http://wiki.xbmc.org/index.php?title=Video_library/Naming_files/TV_shows
     // with season

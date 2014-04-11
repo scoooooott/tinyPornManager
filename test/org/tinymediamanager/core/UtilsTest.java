@@ -40,6 +40,24 @@ public class UtilsTest {
   }
 
   @Test
+  public void detectStackingMarkers() {
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-PaRt1.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013) DvD1.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013).disk3.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-cd 1.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-PaRt 1.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013) DvD 1.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013).disk 3.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-1of2.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-1 of 2.mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-(1 of 2).mkv"));
+    System.out.println(Utils.getStackingMarker("Movie Name (2013)-(1-2).mkv"));
+    System.out.println("end");
+  }
+
+  @Test
   public void backup() {
     Utils.createBackupFile(new File("tmm.odb"));
     Utils.deleteOldBackupFile(new File("tmm.odb"), 15);

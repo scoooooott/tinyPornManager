@@ -156,7 +156,7 @@ public class TvShowEpisodeAndSeasonParser {
     }
 
     // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
-    Pattern regex = Pattern.compile("(?i)[epx_-]+(\\d{2})"); // episode fixed to 2 chars
+    Pattern regex = Pattern.compile("(?i)[epx_-]+(\\d{1,2})"); // episode fixed to 1-2 chars
     Matcher m = regex.matcher(filename);
     while (m.find()) {
       int ep = 0;
@@ -174,7 +174,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     if (result.episodes.isEmpty()) {
       // alternative episode style; didn't get it working in above regex
-      regex = Pattern.compile("(?i)episode[\\. _-]*(\\d{2})"); // episode fixed to 2 chars
+      regex = Pattern.compile("(?i)episode[\\. _-]*(\\d{1,2})"); // episode fixed to 1-2 chars
       m = regex.matcher(filename);
       while (m.find()) {
         int ep = 0;
