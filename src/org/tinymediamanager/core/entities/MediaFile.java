@@ -83,6 +83,13 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public static final String                         VIDEO_FORMAT_SD    = "SD";
   public static final String                         VIDEO_FORMAT_HD    = "HD";
 
+  // 3D / side-by-side / top-and-bottom / H=half - http://wiki.xbmc.org/index.php?title=3D#Video_filenames_flags
+  public static final String                         VIDEO_3D           = "3D";
+  public static final String                         VIDEO_3D_SBS       = "3D SBS";
+  public static final String                         VIDEO_3D_TAB       = "3D TAB";
+  public static final String                         VIDEO_3D_HSBS      = "3D HSBS";
+  public static final String                         VIDEO_3D_HTAB      = "3D HTAB";
+
   private String                                     path               = "";
   private String                                     filename           = "";
   private long                                       filesize           = 0;
@@ -90,6 +97,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private String                                     videoCodec         = "";
   private String                                     containerFormat    = "";
   private String                                     exactVideoFormat   = "";
+  private String                                     video3DFormat      = "";
   private int                                        videoWidth         = 0;
   private int                                        videoHeight        = 0;
   private int                                        overallBitRate     = 0;
@@ -979,6 +987,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   }
 
   /**
+   * gets the 3D string from former mediainfo<br>
+   * can be 3D / 3D SBS / 3D TAB
+   * 
+   */
+  public String getVideo3DFormat() {
+    return this.video3DFormat;
+  }
+
+  /**
    * Gathers the media information via the native mediainfo lib.<br>
    * If mediafile has already be scanned, it will be skipped.<br>
    * Use gatherMediaInformation(boolean force) to force the execution.
@@ -1142,6 +1159,25 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
 
           subtitles.add(stream);
         }
+
+        // detect 3D video (mainly from MKV files)
+        // sample Mediainfo output:
+        // MultiView_Count : 2
+        // MultiView_Layout : Top-Bottom (left eye first)
+        // MultiView_Layout : Side by Side (left eye first)
+        String mvc = getMediaInfo(StreamKind.Video, 0, "MultiView_Count");
+        if (!StringUtils.isEmpty(mvc) && mvc.equals("2")) {
+          video3DFormat = VIDEO_3D;
+          String mvl = getMediaInfo(StreamKind.Video, 0, "MultiView_Layout").toLowerCase();
+          LOGGER.debug("3D detected :) " + mvl);
+          if (!StringUtils.isEmpty(mvl) && mvl.contains("top") && mvl.contains("bottom")) {
+            video3DFormat = VIDEO_3D_TAB;
+          }
+          if (!StringUtils.isEmpty(mvl) && mvl.contains("side")) {
+            video3DFormat = VIDEO_3D_SBS;
+          }
+        }
+
         break;
 
       case SUBTITLE:

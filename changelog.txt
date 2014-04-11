@@ -1,3 +1,66 @@
+Version 2.x (unreleased)
+=======================
++ new icons
++ able to play trailers
++ Movie renamer preview
++ delete works now with deleteing physical files (moving to backup folder)
++ ignore some Mac specific files on searching hdd
++ language updates
++ hotkeys for menu and other functions
++ (WIP) subtitle searching and downloading
++ (WIP) Trakt.tv integration
++ improved season and episodes parser
+x fix TvShow rename in command line
+x thousands of various fixes and stabilization :)
+
+Version 2.5.5
+=======================
++ enhanced writing of certification to the XBMC NFO
+x fixed media info loading problems for some users (JNA update to 4.1)
+x fixed a bug where an invalid config.xml prevented tmm from starting
+x fixed a bug when building the TV show tree
+x fixed a bug where some settings got lost when updating
+x fixed writing of the watched flag to the XBMC TV show episode NFO 
+
+Version 2.5.4
+=======================
+/!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\
+! There was a nasty bug in an external library with version 2.5.3 which caused !
+! the database to become corrupted. We've added some recovery functions, but   !
+! there could be data which is lost. You can either                            !
+! A) live with that (in some cases the lost data could be gathered with a      !
+!    scrape)                                                                   !
+! B) take a backup file from the backup folder inside tmm (the last one before !
+!    19.02.2014)                                                               !
+! C) start over with a new database by deleting the old one (menu              !
+!    Tools -> initialize database and rescan all your data sources.            !
+!                                                                              !
+! We are very sorry for the inconvenience caused by this bug!                  ! 
+\!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!/
+
+x improved the TVDB scraper: the scraper provides better results and is not searchable with the TVDB id
+x fixed correct loading of swt.jar on all platforms
+x added slovenian language for the scrapers
+x fixed display of trailers in the table (in conjunction with a downloaded trailer)
+x fixed resizing behavior of the movie chooser dialog (buttons disappeared)
+x fixed a crash when writing NFOs
+x fixed a crash when canceling the movie chooser
+x compress database backups (to save space)
+x ignore more special files for Mac OSX (beginning with ._)
+x tweaked our HTTP interface to provide better results for slow conntections
+x removed episodes now also diappear from the season list
+
+Version 2.5.3
+=======================
++ activated SWT loading for all platforms (put a proper swt.jar from the eclipse project in the lib folder to access native file dialogs)
++ translations: added russian (incomplete)
+x ArtworkPanel: change ordering (highres before thumbs)
+x fix some artwork failures with movie sets
+x fix errors on metadata scraping
+x catch some errors from tmdb
+x houskeeping: correct tv episodes with wrong path (if you still have some weird behavior with TV shows, try to remove and readd the TV shows)
+x some other minor improvements and stabilization fixes
+
 Version 2.5.3
 =======================
 + activated SWT loading for all platforms (put a proper swt.jar from the eclipse project in the lib folder to access native file dialogs)
