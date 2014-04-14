@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -651,19 +652,19 @@ public class MovieList extends AbstractModelObject {
       // default
       return getMetadataProvider(MovieScrapers.TMDB);
     }
-    if (providerId.equals("tmdb")) {
+    if (providerId.equals(Constants.TMDBID)) {
       return getMetadataProvider(MovieScrapers.TMDB);
     }
-    else if (providerId.equals("imdb")) {
+    else if (providerId.equals(Constants.IMDBID)) {
       return getMetadataProvider(MovieScrapers.IMDB);
     }
-    else if (providerId.equals("moviemeter")) {
+    else if (providerId.equals(Constants.MOVIEMETERID)) {
       return getMetadataProvider(MovieScrapers.MOVIEMETER);
     }
-    else if (providerId.equals("ofdb")) {
+    else if (providerId.equals(Constants.OFDBID)) {
       return getMetadataProvider(MovieScrapers.OFDB);
     }
-    else if (providerId.equals("zelluloid")) {
+    else if (providerId.equals(Constants.ZELLULOIDID)) {
       return getMetadataProvider(MovieScrapers.ZELLULOID);
     }
     else {
