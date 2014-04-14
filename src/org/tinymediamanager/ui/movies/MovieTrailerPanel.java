@@ -38,15 +38,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.TmmTaskManager;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.DownloadWorker;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.UrlUtil;
-import org.tinymediamanager.ui.DownloadWorker;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -254,7 +254,7 @@ public class MovieTrailerPanel extends JPanel {
           Movie movie = movieSelectionModel.getSelectedMovie();
           DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(movie.getPath(), movie.getTrailerBasename() + "-trailer"), movie,
               MediaFileType.TRAILER);
-          TmmTaskManager.addDownloadTask(task);
+          TmmTaskManager.getInstance().addDownloadTask(task);
         }
         else {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.donatorfunction.hint"));

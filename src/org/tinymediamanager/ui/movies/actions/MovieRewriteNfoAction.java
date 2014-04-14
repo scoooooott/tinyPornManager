@@ -22,8 +22,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
@@ -50,7 +50,7 @@ public class MovieRewriteNfoAction extends AbstractAction {
     final List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // rewrite selected NFOs
-    Globals.executor.execute(new Runnable() {
+    TmmTaskManager.getInstance().addUnnamedTask(new Runnable() {
       @Override
       public void run() {
         for (Movie movie : selectedMovies) {

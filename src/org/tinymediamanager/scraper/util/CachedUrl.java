@@ -232,7 +232,7 @@ public class CachedUrl extends Url {
    * @see org.tinymediamanager.scraper.util.Url#getInputStream()
    */
   @Override
-  public InputStream getInputStream() throws IOException {
+  public InputStream getInputStream() throws IOException, InterruptedException {
     URL u = getUrl();
     return u.openStream();
   }
@@ -242,7 +242,7 @@ public class CachedUrl extends Url {
    * 
    * @see org.tinymediamanager.scraper.util.Url#getUrl()
    */
-  public URL getUrl() throws IOException {
+  public URL getUrl() throws IOException, InterruptedException {
     File f = getCachedFile();
     if (!f.exists() || f.length() == 0) {
       cache();
@@ -263,8 +263,9 @@ public class CachedUrl extends Url {
    * 
    * @throws IOException
    *           Signals that an I/O exception has occurred.
+   * @throws InterruptedException
    */
-  private void cache() throws IOException {
+  private void cache() throws IOException, InterruptedException {
     LOGGER.debug("Caching Url: " + url);
     long sizeHttp = -1;
     // workaround for local files

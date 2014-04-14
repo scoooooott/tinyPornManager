@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.ui;
+package org.tinymediamanager.core.threading;
 
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,38 +24,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 import java.util.Set;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.TmmTaskManager;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.util.StreamingUrl;
 import org.tinymediamanager.scraper.util.UrlUtil;
-import org.tinymediamanager.ui.DownloadWorker.ProgressType;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
- * DownloadWorker for bigger downloads with progressbar
+ * DownloadWorker for bigger downloads with status updates
  * 
- * @author Myron Boyle
+ * @author Myron Boyle, Manuel Laggner
  */
-public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
-  private String              url;
-  private File                file;
-  private MediaEntity         media;
-  private MediaFileType       fileType;
-  private static final Logger LOGGER = LoggerFactory.getLogger(DownloadWorker.class);
-  private boolean             cancel = false;
+public class DownloadWorker extends TmmTask {
+  private static final Logger         LOGGER = LoggerFactory.getLogger(DownloadWorker.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+
+  private String                      url;
+  private File                        file;
+  private MediaEntity                 media;
+  private MediaFileType               fileType;
+
+  private boolean                     cancel = false;
 
   /**
    * Downloads an url to a file, and does correct http encoding on querystring.<br>
@@ -89,34 +84,20 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
    *          the MediaFileType what we expect (video, trailer, graphic), so we can react on it
    */
   public DownloadWorker(String url, File toFile, MediaEntity addToMe, MediaFileType expectedFiletype) {
+    super(BUNDLE.getString("task.download") + " " + toFile.getName(), 100, TaskType.BACKGROUND_TASK);
+
     this.url = url;
     this.file = toFile;
     this.media = addToMe;
     this.fileType = expectedFiletype;
-    if (!GraphicsEnvironment.isHeadless()) {
-      JButton btnCancel = new JButton(IconManager.PROCESS_STOP);
-      btnCancel.setContentAreaFilled(false);
-      btnCancel.setBorderPainted(false);
-      btnCancel.setBorder(null);
-      btnCancel.setMargin(new Insets(0, 2, 0, 2));
-      btnCancel.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-          DownloadWorker.this.cancel();
-        }
-      });
-      setUIElements(new JLabel("<html>Download queued<br>" + file.getName()), new JProgressBar(0, 0), btnCancel);
-    }
+
+    setTaskDescription(file.getName());
   }
 
-  // http://docs.oracle.com/javase/6/docs/api/javax/swing/SwingWorker.html
-  // http://stackoverflow.com/questions/2908306/how-to-delegate-swingworkers-publish-to-other-methods
-
   @Override
-  protected Void doInBackground() {
+  protected void doInBackground() {
     try {
       // if file extension is empty, detect from url, or content type
-      String filename = file.getName();
       String ext = FilenameUtils.getExtension(file.getName());
       if (ext != null && ext.length() > 4) {
         ext = ""; // no extension when longer than 4 chars!
@@ -169,7 +150,6 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
       FileOutputStream outputStream = new FileOutputStream(tempFile);
       int count = 0;
-      int percent = 0;
       byte buffer[] = new byte[2048];
       Long timestamp1 = System.nanoTime();
       Long timestamp2;
@@ -177,7 +157,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       long bytesDonePrevious = 0;
       double speed = 0;
 
-      while ((count = bufferedInputStream.read(buffer, 0, buffer.length)) != -1 && !isCancelled()) {
+      while ((count = bufferedInputStream.read(buffer, 0, buffer.length)) != -1) {
         if (cancel) {
           break;
         }
@@ -195,10 +175,14 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
           bytesDonePrevious = bytesDone;
 
           if (length > 0) {
-            percent = Math.round(bytesDone * 100 / length);
+            publishState(formatBytesForOutput(bytesDone) + "/" + formatBytesForOutput(length) + " @" + formatSpeedForOutput(speed),
+                (int) (bytesDone * 100 / length));
+          }
+          else {
+            setWorkUnits(0);
+            publishState(formatBytesForOutput(bytesDone) + " @" + formatSpeedForOutput(speed), 0);
           }
 
-          publish(new ProgressType(filename, length, bytesDone, percent, speed)); // publish to EDT for async GUI update
         }
       }
 
@@ -251,24 +235,7 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
       }
     }
     catch (Exception e) {
-      // muh
-      stopProgressBar();
-    }
-    return null;
-  }
-
-  @Override
-  protected void process(List<ProgressType> chunks) {
-    // just get last - always cumulative
-    ProgressType p = chunks.get(chunks.size() - 1);
-
-    if (p.total == 0) {
-      // we don't have the size of the download; setIndeterminate
-      startProgressBar("<html>Downloading " + p.filename + "<br>" + formatBytesForOutput(p.done) + " @" + formatSpeedForOutput(p.speed) + "</html>");
-    }
-    else {
-      startProgressBar("<html>Downloading " + p.filename + "<br>" + formatBytesForOutput(p.done) + "/" + formatBytesForOutput(p.total) + " @"
-          + formatSpeedForOutput(p.speed) + "</html>", 100, p.percent);
+      LOGGER.error("problem downloading: ", e.getMessage());
     }
   }
 
@@ -278,34 +245,5 @@ public class DownloadWorker extends TmmSwingWorker<Void, ProgressType> {
 
   private String formatSpeedForOutput(double speed) {
     return String.format("%.2fkB/s", speed / 1024d);
-  }
-
-  @Override
-  public void cancel() {
-    this.cancel = true;
-    stopProgressBar();
-    TmmTaskManager.removeDownloadTask(this);
-  }
-
-  @Override
-  public void done() {
-    stopProgressBar();
-    TmmTaskManager.removeDownloadTask(this);
-  }
-
-  protected class ProgressType {
-    String filename;
-    long   total;
-    long   done;
-    int    percent;
-    double speed;
-
-    public ProgressType(String filename, long total, long done, int percent, double speed) {
-      this.filename = filename;
-      this.done = done;
-      this.total = total;
-      this.percent = percent;
-      this.speed = speed;
-    }
   }
 }

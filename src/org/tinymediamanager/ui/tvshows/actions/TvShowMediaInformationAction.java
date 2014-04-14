@@ -24,11 +24,11 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowReloadMediaInformationTask;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
@@ -43,7 +43,7 @@ public class TvShowMediaInformationAction extends AbstractAction {
 
   public TvShowMediaInformationAction(boolean withTitle) {
     if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
     }
     putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
     putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
@@ -67,8 +67,8 @@ public class TvShowMediaInformationAction extends AbstractAction {
 
     // get data of all files within all selected movies
     if (selectedTvShows.size() > 0 || selectedEpisodes.size() > 0) {
-      TmmSwingWorker<?, ?> task = new TvShowReloadMediaInformationTask(selectedTvShows, selectedEpisodes);
-      if (!MainWindow.executeMainTask(task)) {
+      TmmThreadPool task = new TvShowReloadMediaInformationTask(selectedTvShows, selectedEpisodes);
+      if (TmmTaskManager.getInstance().addMainTask(task)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }
     }

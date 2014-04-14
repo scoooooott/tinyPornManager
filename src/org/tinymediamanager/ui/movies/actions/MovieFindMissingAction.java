@@ -24,9 +24,9 @@ import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.tasks.MovieFindMissingTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -75,14 +75,14 @@ public class MovieFindMissingAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    TmmSwingWorker<?, ?> task = null;
+    TmmThreadPool task = null;
     if (StringUtils.isNotBlank(datasource)) {
       task = new MovieFindMissingTask(datasource);
     }
     else {
       task = new MovieFindMissingTask();
     }
-    if (!MainWindow.executeMainTask(task)) {
+    if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }
   }

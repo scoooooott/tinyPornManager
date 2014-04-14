@@ -22,12 +22,13 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.tasks.TvShowScrapeTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowScrapeMetadataDialog;
@@ -62,8 +63,8 @@ public class TvShowSelectedScrapeAction extends AbstractAction {
       // do we want to scrape?
       if (dialog.shouldStartScrape()) {
         // scrape
-        TmmSwingWorker<?, ?> scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
-        if (!MainWindow.executeMainTask(scrapeTask)) {
+        TmmThreadPool scrapeTask = new TvShowScrapeTask(selectedTvShows, true, options);
+        if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
         }
       }

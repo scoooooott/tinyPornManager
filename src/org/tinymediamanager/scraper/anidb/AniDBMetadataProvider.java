@@ -529,6 +529,9 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         }
       }
     }
+    catch (InterruptedException e) {
+      LOGGER.warn("interrupted image download");
+    }
     catch (IOException e) {
       LOGGER.error("error getting AniDB index");
     }

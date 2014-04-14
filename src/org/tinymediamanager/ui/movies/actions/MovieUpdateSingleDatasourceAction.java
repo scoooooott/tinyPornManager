@@ -22,9 +22,9 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -49,8 +49,8 @@ public class MovieUpdateSingleDatasourceAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent e) {
     @SuppressWarnings("rawtypes")
-    TmmSwingWorker task = new MovieUpdateDatasourceTask(datasource);
-    if (!MainWindow.executeMainTask(task)) {
+    TmmThreadPool task = new MovieUpdateDatasourceTask(datasource);
+    if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
     }
   }

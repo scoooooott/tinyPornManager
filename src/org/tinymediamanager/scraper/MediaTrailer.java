@@ -243,8 +243,9 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
    *           if url is not valid or network error
    * @throws URISyntaxException
    *           if url is not valid
+   * @throws InterruptedException
    */
-  public void downloadTo(String file) throws IOException, URISyntaxException {
+  public void downloadTo(String file) throws IOException, URISyntaxException, InterruptedException {
     LOGGER.info("Downloading " + this.getUrl() + " to " + file);
 
     Url u = new Url(UrlUtil.getURIEncoded(this.getUrl()).toASCIIString());

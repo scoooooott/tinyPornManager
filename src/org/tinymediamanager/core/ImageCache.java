@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,8 +107,9 @@ public class ImageCache {
    * @return the input stream
    * @throws IOException
    *           Signals that an I/O exception has occurred.
+   * @throws InterruptedException
    */
-  public static InputStream scaleImage(String imageUrl, int width) throws IOException {
+  public static InputStream scaleImage(String imageUrl, int width) throws IOException, InterruptedException {
     Url url = new Url(imageUrl);
     Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
     BufferedImage originalImage = com.bric.image.ImageLoader.createImage(image);

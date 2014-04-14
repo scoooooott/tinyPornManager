@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package org.tinymediamanager.core.movie.tasks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -32,6 +32,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -42,6 +43,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class MovieScrapeTask.
@@ -49,8 +51,8 @@ import org.tinymediamanager.scraper.MediaType;
  * @author Manuel Laggner
  */
 public class MovieScrapeTask extends TmmThreadPool {
-
   private final static Logger         LOGGER = LoggerFactory.getLogger(MovieScrapeTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private List<Movie>                 moviesToScrape;
   private boolean                     doSearch;
@@ -67,68 +69,37 @@ public class MovieScrapeTask extends TmmThreadPool {
    *          the options
    */
   public MovieScrapeTask(List<Movie> moviesToScrape, boolean doSearch, MovieSearchAndScrapeOptions options) {
+    super(BUNDLE.getString("movie.scraping"));
     this.moviesToScrape = moviesToScrape;
     this.doSearch = doSearch;
     this.options = options;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#doInBackground()
-   */
   @Override
-  protected Void doInBackground() throws Exception {
+  protected void doInBackground() {
     initThreadPool(3, "scrape");
-    startProgressBar("scraping movies", 0);
+    start();
 
     for (int i = 0; i < moviesToScrape.size(); i++) {
       Movie movie = moviesToScrape.get(i);
       submitTask(new Worker(movie));
     }
     waitForCompletionOrCancel();
-    if (cancel) {
-      cancel(false);// swing cancel
-    }
+
     LOGGER.info("Done scraping movies)");
-
-    return null;
-  }
-
-  /**
-   * Cancel.
-   */
-  public void cancel() {
-    cancel = true;
-    // cancel(false);
-    // moviesToScrape.clear();
-  }
-
-  @Override
-  public void done() {
-    stopProgressBar();
   }
 
   /**
    * The Class Worker.
    */
   private class Worker implements Runnable {
-
     private MovieList movieList;
     private Movie     movie;
 
-    /**
-     * Instantiates a new worker.
-     */
     public Worker(Movie movie) {
       this.movie = movie;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Runnable#run()
-     */
     @Override
     public void run() {
       try {
@@ -328,6 +299,7 @@ public class MovieScrapeTask extends TmmThreadPool {
 
   @Override
   public void callback(Object obj) {
-    startProgressBar((String) obj, getTaskcount(), getTaskdone());
+    // do not publish task description here, because with different workers the text is never right
+    publishState(progressDone);
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,19 @@ package org.tinymediamanager.core.tvshow.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class TvShowReloadMediaInformationTask, to explicit reload mediainformation.
@@ -35,12 +37,14 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  * @author Manuel Laggner
  */
 public class TvShowReloadMediaInformationTask extends TmmThreadPool {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TvShowReloadMediaInformationTask.class);
+  private static final Logger         LOGGER = LoggerFactory.getLogger(TvShowReloadMediaInformationTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());        //$NON-NLS-1$
 
-  private List<TvShow>        tvShows;
-  private List<TvShowEpisode> episodes;
+  private List<TvShow>                tvShows;
+  private List<TvShowEpisode>         episodes;
 
   public TvShowReloadMediaInformationTask(List<TvShow> tvShows, List<TvShowEpisode> episodes) {
+    super(BUNDLE.getString("tvshow.updatemediainfo"));
     this.tvShows = new ArrayList<TvShow>(tvShows);
     this.episodes = new ArrayList<TvShowEpisode>(episodes);
 
@@ -52,17 +56,17 @@ public class TvShowReloadMediaInformationTask extends TmmThreadPool {
         }
       }
     }
-
-    initThreadPool(1, "reloadMI");
   }
 
   @Override
-  protected Void doInBackground() throws Exception {
+  protected void doInBackground() {
     try {
       long start = System.currentTimeMillis();
       LOGGER.info("get MediaInfo...");
       // update MediaInfo
-      startProgressBar("getting Mediainfo...");
+      start();
+
+      initThreadPool(1, "reloadMI");
       for (TvShow show : tvShows) {
         if (cancel) {
           break;
@@ -80,29 +84,15 @@ public class TvShowReloadMediaInformationTask extends TmmThreadPool {
       waitForCompletionOrCancel();
       long end = System.currentTimeMillis();
       LOGGER.info("Done getting MediaInfo - took " + Utils.MSECtoHHMMSS(end - start));
-      if (cancel) {
-        cancel(false);// swing cancel
-      }
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "MediaInfo", "message.mediainfo.threadcrashed"));
     }
-    return null;
   }
 
   @Override
   public void callback(Object obj) {
-    startProgressBar((String) obj, getTaskcount(), getTaskdone());
-  }
-
-  @Override
-  public void cancel() {
-    cancel = true;
-  }
-
-  @Override
-  public void done() {
-    stopProgressBar();
+    publishState((String) obj, progressDone);
   }
 }

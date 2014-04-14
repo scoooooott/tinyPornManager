@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +54,9 @@ public final class WebBrowser {
    * @return the string
    * @throws IOException
    *           Signals that an I/O exception has occurred.
+   * @throws InterruptedException
    */
-  public static String request(String url) throws IOException {
+  public static String request(String url) throws IOException, InterruptedException {
     return request(new URL(url));
   }
 
@@ -67,8 +68,9 @@ public final class WebBrowser {
    * @return the string
    * @throws IOException
    *           Signals that an I/O exception has occurred.
+   * @throws InterruptedException
    */
-  public static String request(URL requestUrl) throws IOException {
+  public static String request(URL requestUrl) throws IOException, InterruptedException {
     StringBuilder content = new StringBuilder();
 
     InputStream is = null;

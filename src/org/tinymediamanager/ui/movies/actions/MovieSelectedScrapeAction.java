@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,10 @@ import javax.swing.JOptionPane;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
@@ -49,11 +50,6 @@ public class MovieSelectedScrapeAction extends AbstractAction {
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent e) {
     List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
@@ -67,8 +63,8 @@ public class MovieSelectedScrapeAction extends AbstractAction {
       // do we want to scrape?
       if (dialog.shouldStartScrape()) {
         // scrape
-        TmmSwingWorker scrapeTask = new MovieScrapeTask(selectedMovies, true, options);
-        if (!MainWindow.executeMainTask(scrapeTask)) {
+        TmmThreadPool scrapeTask = new MovieScrapeTask(selectedMovies, true, options);
+        if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
         }
       }

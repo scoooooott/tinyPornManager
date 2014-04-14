@@ -45,6 +45,7 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.Url;
 
@@ -146,7 +147,7 @@ public class MovieSet extends MediaEntity {
       // at least cache it
       if (StringUtils.isNotEmpty(posterUrl) && movies.size() == 0) {
         ImageFetcher task = new ImageFetcher("poster", posterUrl);
-        Globals.executor.execute(task);
+        TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
     }
 
@@ -178,7 +179,7 @@ public class MovieSet extends MediaEntity {
       // at least cache it
       if (StringUtils.isNotEmpty(fanartUrl) && movies.size() == 0) {
         ImageFetcher task = new ImageFetcher("fanart", fanartUrl);
-        Globals.executor.execute(task);
+        TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
     }
   }
@@ -411,6 +412,9 @@ public class MovieSet extends MediaEntity {
           writeImage(url, movie.getPath() + File.separator + filename);
         }
       }
+      catch (InterruptedException e) {
+        LOGGER.warn("interrupted image download");
+      }
       catch (IOException e) {
         LOGGER.warn("could not write files", e);
       }
@@ -445,6 +449,9 @@ public class MovieSet extends MediaEntity {
         writeImage(posterUrl, artworkFolder.getPath() + File.separator + getTitle() + "-folder." + providedFiletype);
       }
     }
+    catch (InterruptedException e) {
+      LOGGER.warn("interrupted image download");
+    }
     catch (IOException e) {
       LOGGER.warn("could not write files", e);
     }
@@ -456,12 +463,15 @@ public class MovieSet extends MediaEntity {
         writeImage(fanartUrl, artworkFolder.getPath() + File.separator + getTitle() + "-fanart." + providedFiletype);
       }
     }
+    catch (InterruptedException e) {
+      LOGGER.warn("interrupted image download");
+    }
     catch (IOException e) {
       LOGGER.warn("could not write files", e);
     }
   }
 
-  private void writeImage(String url, String pathAndFilename) throws IOException {
+  private void writeImage(String url, String pathAndFilename) throws IOException, InterruptedException {
     Url url1 = new Url(url);
     FileOutputStream outputStream = new FileOutputStream(pathAndFilename);
     InputStream is = url1.getInputStream();
@@ -602,6 +612,9 @@ public class MovieSet extends MediaEntity {
         is.close();
 
         firePropertyChange(propertyName, "", outputFile);
+      }
+      catch (InterruptedException e) {
+        LOGGER.warn("interrupted image download");
       }
       catch (IOException e) {
         LOGGER.warn("error in image fetcher", e);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FileUtils;
@@ -32,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
@@ -45,9 +45,12 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class UpdateDataSourcesTask.
@@ -56,37 +59,35 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  */
 
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
-  private static final Logger       LOGGER           = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                         //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String> skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
-                                                         "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
+  private static final List<String>   skipFolders      = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF", "AUXDATA",
+                                                           "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String       skipFoldersRegex = "^[.][\\w]+.*";
+  private static final String         skipFoldersRegex = "^[.][\\w]+.*";
 
-  private List<String>              dataSources;
-  private MovieList                 movieList;
-  private HashSet<File>             filesFound       = new HashSet<File>();
+  private List<String>                dataSources;
+  private MovieList                   movieList;
+  private HashSet<File>               filesFound       = new HashSet<File>();
 
   public MovieUpdateDatasourceTask() {
+    super(BUNDLE.getString("update.datasource"));
     movieList = MovieList.getInstance();
     dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
   }
 
   public MovieUpdateDatasourceTask(String datasource) {
+    super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
     movieList = MovieList.getInstance();
     dataSources = new ArrayList<String>(1);
     dataSources.add(datasource);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#doInBackground()
-   */
   @Override
-  public Void doInBackground() {
+  public void doInBackground() {
     try {
       long start = System.currentTimeMillis();
       List<File> imageFiles = new ArrayList<File>();
@@ -97,7 +98,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
 
       for (String ds : dataSources) {
-        startProgressBar("prepare scan '" + ds + "'");
+        setTaskName(BUNDLE.getString("update.datasource") + " '" + ds + "'");
+        publishState();
+
         if (Globals.settings.getMovieSettings().isDetectMovieMultiDir()) {
           initThreadPool(1, "update"); // use only one, since the multiDir detection relies on accurate values...
         }
@@ -178,21 +181,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       if (imageFiles.size() > 0) {
         ImageCacheTask task = new ImageCacheTask(imageFiles);
-        Globals.executor.execute(task);
+        TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 
       long end = System.currentTimeMillis();
       LOGGER.info("Done updating datasource :) - took " + Utils.MSECtoHHMMSS(end - start));
-
-      if (cancel) {
-        cancel(false);// swing cancel
-      }
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "message.update.threadcrashed"));
     }
-    return null;
   }
 
   /**
@@ -663,7 +661,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    * cleanup database - remove orphaned movies/files
    */
   private void cleanup(String datasource) {
-    startProgressBar("database cleanup...");
+    setTaskName(BUNDLE.getString("update.cleanup"));
+    setTaskDescription(null);
+    setProgressDone(0);
+    setWorkUnits(0);
+    publishState();
+
     LOGGER.info("removing orphaned movies/files...");
     List<Movie> moviesToRemove = new ArrayList<Movie>();
     for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
@@ -719,8 +722,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
    */
   private void gatherMediainfo(String datasource) {
     // start MI
+    setTaskName(BUNDLE.getString("update.mediainfo"));
+    publishState();
+
     initThreadPool(1, "mediainfo");
-    startProgressBar("getting Mediainfo");
+
     LOGGER.info("getting Mediainfo...");
     for (int i = movieList.getMovies().size() - 1; i >= 0; i--) {
       if (cancel) {
@@ -746,22 +752,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
   }
 
-  /*
-   * Executed in event dispatching thread
-   */
-  @Override
-  public void done() {
-    stopProgressBar();
-  }
-
-  @Override
-  public void cancel() {
-    cancel = true;
-  }
-
   @Override
   public void callback(Object obj) {
-    startProgressBar((String) obj, getTaskcount(), getTaskdone());
+    // do not publish task description here, because with different workers the text is never right
+    publishState(progressDone);
   }
 
   /**

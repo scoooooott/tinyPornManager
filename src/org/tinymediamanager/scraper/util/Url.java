@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
@@ -112,7 +113,7 @@ public class Url {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public URL getUrl() throws IOException {
+  public URL getUrl() throws IOException, InterruptedException {
     return new URL(url);
   }
 
@@ -170,7 +171,7 @@ public class Url {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public InputStream getInputStream() throws IOException {
+  public InputStream getInputStream() throws IOException, InterruptedException {
     // workaround for local files
     if (url.startsWith("file:")) {
       String newUrl = url.replace("file:", "");
@@ -204,6 +205,10 @@ public class Url {
       }
       EntityUtils.consume(entity);
     }
+    catch (InterruptedIOException e) {
+      LOGGER.info("aborted request: " + logUrl);
+      throw new InterruptedException();
+    }
     catch (UnknownHostException e) {
       LOGGER.error("proxy or host not found/reachable", e);
     }
@@ -234,7 +239,7 @@ public class Url {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public byte[] getBytes() throws IOException {
+  public byte[] getBytes() throws IOException, InterruptedException {
     InputStream is = getInputStream();
     byte[] bytes = IOUtils.toByteArray(is);
     is.close();

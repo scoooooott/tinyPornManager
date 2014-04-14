@@ -17,17 +17,19 @@ package org.tinymediamanager.core.movie.tasks;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.omertron.themoviedbapi.model.CollectionInfo;
 
@@ -37,43 +39,27 @@ import com.omertron.themoviedbapi.model.CollectionInfo;
  * @author Manuel Laggner
  */
 public class MovieAssignMovieSetTask extends TmmThreadPool {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieAssignMovieSetTask.class);
+  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieAssignMovieSetTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  private List<Movie>         moviesToScrape;
+  private List<Movie>                 moviesToScrape;
 
   public MovieAssignMovieSetTask(List<Movie> moviesToScrape) {
+    super(BUNDLE.getString("movie.assignmovieset"));
     this.moviesToScrape = moviesToScrape;
   }
 
   @Override
-  protected Void doInBackground() throws Exception {
+  protected void doInBackground() {
     initThreadPool(1, "scrape");
-    startProgressBar("assigning movie sets", 0);
+    start();
 
     for (int i = 0; i < moviesToScrape.size(); i++) {
       Movie movie = moviesToScrape.get(i);
       submitTask(new Worker(movie));
     }
     waitForCompletionOrCancel();
-    if (cancel) {
-      cancel(false);// swing cancel
-    }
     LOGGER.info("Done assigning movies to movie sets");
-
-    return null;
-  }
-
-  /**
-   * Cancel the task.
-   */
-  @Override
-  public void cancel() {
-    cancel = true;
-  }
-
-  @Override
-  public void done() {
-    stopProgressBar();
   }
 
   private class Worker implements Runnable {
@@ -149,6 +135,6 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
 
   @Override
   public void callback(Object obj) {
-    startProgressBar((String) obj, getTaskcount(), getTaskdone());
+    publishState((String) obj, progressDone);
   }
 }

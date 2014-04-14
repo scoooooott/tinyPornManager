@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,18 @@
 package org.tinymediamanager.core.movie.tasks;
 
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmThreadPool;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class MovieRenameTask.
@@ -33,12 +35,10 @@ import org.tinymediamanager.core.movie.entities.Movie;
  * @author Manuel Laggner
  */
 public class MovieRenameTask extends TmmThreadPool {
+  private final static Logger         LOGGER = LoggerFactory.getLogger(MovieRenameTask.class);
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant LOGGER. */
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenameTask.class);
-
-  /** The movies to rename. */
-  private List<Movie>         moviesToRename;
+  private List<Movie>                 moviesToRename;
 
   /**
    * Instantiates a new movie rename task.
@@ -47,35 +47,31 @@ public class MovieRenameTask extends TmmThreadPool {
    *          the movies to rename
    */
   public MovieRenameTask(List<Movie> moviesToRename) {
+    super(BUNDLE.getString("movie.rename"));
     this.moviesToRename = moviesToRename;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#doInBackground()
-   */
   @Override
-  protected Void doInBackground() throws Exception {
+  protected void doInBackground() {
     try {
       initThreadPool(1, "rename");
-      startProgressBar("renaming movies...");
+      start();
       // rename movies
       for (int i = 0; i < moviesToRename.size(); i++) {
+        if (cancel) {
+          break;
+        }
+
         Movie movie = moviesToRename.get(i);
         submitTask(new RenameMovieTask(movie));
       }
       waitForCompletionOrCancel();
-      if (cancel) {
-        cancel(false);// swing cancel
-      }
       LOGGER.info("Done renaming movies)");
     }
     catch (Exception e) {
       LOGGER.error("Thread crashed", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "Settings.renamer", "message.renamer.threadcrashed"));
     }
-    return null;
   }
 
   /**
@@ -99,29 +95,8 @@ public class MovieRenameTask extends TmmThreadPool {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#done()
-   */
-  @Override
-  public void done() {
-    stopProgressBar();
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.TmmSwingWorker#cancel()
-   */
-  @Override
-  public void cancel() {
-    cancel = true;
-    // cancel(false);
-  }
-
   @Override
   public void callback(Object obj) {
-    startProgressBar((String) obj, getTaskcount(), getTaskdone());
+    publishState((String) obj, progressDone);
   }
 }

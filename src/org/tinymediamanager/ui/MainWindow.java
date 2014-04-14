@@ -18,13 +18,11 @@ package org.tinymediamanager.ui;
 import java.awt.AWTEvent;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -32,11 +30,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.Action;
 import javax.swing.Box;
@@ -50,7 +45,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
@@ -63,7 +57,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.TmmTaskManager;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -71,6 +64,7 @@ import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.WolDevice;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.actions.AboutAction;
 import org.tinymediamanager.ui.actions.BugReportAction;
 import org.tinymediamanager.ui.actions.ClearDatabaseAction;
@@ -85,11 +79,10 @@ import org.tinymediamanager.ui.actions.RebuildImageCacheAction;
 import org.tinymediamanager.ui.actions.RegisterDonatorVersionAction;
 import org.tinymediamanager.ui.actions.SettingsAction;
 import org.tinymediamanager.ui.components.LightBoxPanel;
-import org.tinymediamanager.ui.components.TaskPopupMenu;
+import org.tinymediamanager.ui.components.StatusBar;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.LogDialog;
-import org.tinymediamanager.ui.dialogs.MessageSummaryDialog;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
@@ -141,23 +134,10 @@ public class MainWindow extends JFrame {
   /** The lbl loading img. */
   private JLabel                      lblLoadingImg;
 
-  /** The label progressAction. */
-  private JLabel                      lblProgressAction;
-
-  /** The progress bar. */
-  private JProgressBar                progressBar;
-
-  /** The button cancelScraper. */
-  private JButton                     btnCancelTask;
-
-  /** The active task. */
-  private TmmSwingWorker              activeTask;
-
   /** The status task. */
-  private StatusbarThread             statusTask       = new StatusbarThread();
+  // private StatusbarThread statusTask;
   private List<String>                messagesList;
 
-  private TaskPopupMenu               taskPopup        = new TaskPopupMenu();
   private LightBoxPanel               lightBoxPanel;
 
   private JDialog                     settingsDialog;
@@ -310,7 +290,7 @@ public class MainWindow extends JFrame {
 
     // Globals.executor.execute(new MyStatusbarThread());
     // use a Future to be able to cancel it
-    statusTask.execute();
+    // statusTask.execute();
     checkForUpdate();
   }
 
@@ -389,46 +369,8 @@ public class MainWindow extends JFrame {
     mainPanel.add(tabbedPane, "1, 1, fill, fill");
     // getContentPane().add(tabbedPane, "1, 2, fill, fill");
 
-    panelStatusBar = new JPanel();
+    panelStatusBar = new StatusBar();
     getContentPane().add(panelStatusBar, "1, 4");
-    panelStatusBar.setLayout(new FormLayout(
-        new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.DEFAULT_COLSPEC,
-            FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-            FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { RowSpec.decode("20px"), }));
-
-    lblProgressAction = new JLabel("");
-    panelStatusBar.add(lblProgressAction, "3, 1, default, default");
-
-    progressBar = new JProgressBar();
-    panelStatusBar.add(progressBar, "5, 1");
-
-    btnCancelTask = new JButton("");
-    panelStatusBar.add(btnCancelTask, "7, 1");
-    btnCancelTask.setVisible(false);
-    btnCancelTask.setContentAreaFilled(false);
-    btnCancelTask.setBorderPainted(false);
-    btnCancelTask.setBorder(null);
-    btnCancelTask.setMargin(new Insets(0, 0, 0, 0));
-    btnCancelTask.setIcon(IconManager.PROCESS_STOP);
-    btnCancelTask.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        if (activeTask != null && !activeTask.isDone()) {
-          activeTask.cancel();
-        }
-      }
-    });
-    progressBar.setVisible(false);
-
-    lblLoadingImg = new JLabel("");
-    lblLoadingImg.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent arg0) {
-        createTaskPopup(arg0);
-      }
-    });
-    panelStatusBar.add(lblLoadingImg, "9, 1");
 
     panelMovies = new MoviePanel();
     VerticalTextIcon.addTab(tabbedPane, BUNDLE.getString("tmm.movies"), panelMovies); //$NON-NLS-1$
@@ -470,7 +412,7 @@ public class MainWindow extends JFrame {
   public void closeTmmAndStart(ProcessBuilder pb) {
     int confirm = 0;
     // if there are some threads running, display exit confirmation
-    if (Globals.poolRunning()) {
+    if (TmmTaskManager.getInstance().poolRunning()) {
       confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
     }
@@ -478,11 +420,11 @@ public class MainWindow extends JFrame {
       LOGGER.info("bye bye");
       try {
         // send shutdown signal
-        Globals.executor.shutdown();
-        // cancel our status task (send interrupt())
-        statusTask.cancel(true);
+        TmmTaskManager.getInstance().shutdown();
         // save unsaved settings
         Globals.settings.saveSettings();
+        // hard kill
+        TmmTaskManager.getInstance().shutdownNow();
         // close database connection
         TmmModuleManager.getInstance().shutDown();
         // clear cache directory
@@ -494,24 +436,15 @@ public class MainWindow extends JFrame {
         }
       }
       catch (Exception ex) {
-        LOGGER.warn(ex.getMessage());
+        LOGGER.warn("", ex);
       }
       dispose();
-      try {
-        // wait a bit for threads to finish (if any)
-        Globals.executor.awaitTermination(2, TimeUnit.SECONDS);
-        // hard kill
-        Globals.executor.shutdownNow();
-      }
-      catch (InterruptedException e1) {
-        LOGGER.debug("Global thread shutdown");
-      }
 
       // spawn our process
       if (pb != null) {
         try {
           LOGGER.info("Going to execute: " + pb.command());
-          Process p = pb.start();
+          pb.start();
         }
         catch (IOException e) {
           LOGGER.error("Cannot spawn process:", e);
@@ -531,69 +464,6 @@ public class MainWindow extends JFrame {
     return instance;
   }
 
-  // status bar thread
-  /**
-   * The Class StatusbarThread.
-   * 
-   * @author Manuel Laggner
-   */
-  private class StatusbarThread extends SwingWorker<Void, Void> {
-    /** The ex. */
-    private ThreadPoolExecutor ex = Globals.executor;
-
-    /**
-     * Instantiates a new statusbar thread.
-     */
-    public StatusbarThread() {
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#doInBackground()
-     */
-    @Override
-    public Void doInBackground() {
-      Thread.currentThread().setName("statusBar thread");
-      try {
-        while (!Thread.interrupted()) {
-          if (Globals.poolRunning() || (activeTask != null && !activeTask.isDone()) || !TmmTaskManager.getActiveDownloadTasks().isEmpty()) {
-            if (lblLoadingImg.getIcon() != IconManager.LOADING) {
-              lblLoadingImg.setIcon(IconManager.LOADING);
-            }
-          }
-          else if (lblLoadingImg.getIcon() == IconManager.LOADING) {
-            lblLoadingImg.setIcon(null);
-          }
-
-          // lblLoadingImg.setIcon(loading);
-
-          // if a main task is finished and a message collector is alive -> show it with the messages collected
-          if (messagesList != null && activeTask != null && (activeTask.isDone() || activeTask.isCancelled())) {
-            if (messagesList.size() > 0) {
-              MessageSummaryDialog dialog = new MessageSummaryDialog(messagesList);
-              dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-              dialog.setVisible(true);
-            }
-            messagesList = null;
-          }
-
-          String text = String.format(
-              "<html><body>" + BUNDLE.getString("status.activethreads") + " [%d/%d]<br>" + BUNDLE.getString("status.queuesize")
-                  + " %d </body></html>", this.ex.getActiveCount(), this.ex.getMaximumPoolSize(), this.ex.getQueue().size()); //$NON-NLS-1$
-          // LOGGER.debug(text);
-          lblLoadingImg.setToolTipText(text);
-          Thread.sleep(250);
-        }
-      }
-      catch (InterruptedException e) {
-        // called on cancel(), so don't log it
-        // LOGGER.debug("statusBar thread shutdown");
-      }
-      return null;
-    }
-  }
-
   /**
    * Gets the movie panel.
    * 
@@ -609,28 +479,6 @@ public class MainWindow extends JFrame {
 
   public TvShowPanel getTvShowPanel() {
     return (TvShowPanel) panelTvShows;
-  }
-
-  /**
-   * Executes a "main" task. A "main" task is a task which can't be parallelized
-   * 
-   * @param task
-   *          the task
-   * @return true, if successful
-   */
-  public static boolean executeMainTask(TmmSwingWorker<?, ?> task) {
-    if (instance == null) {
-      return false;
-    }
-    if (instance.activeTask == null || instance.activeTask.isDone()) {
-      instance.messagesList = new ArrayList<String>();
-      instance.activeTask = task;
-      instance.activeTask.setUIElements(instance.lblProgressAction, instance.progressBar, instance.btnCancelTask);
-      instance.activeTask.execute();
-      return true;
-    }
-
-    return false;
   }
 
   /**
@@ -660,10 +508,6 @@ public class MainWindow extends JFrame {
     if (messagesList != null) {
       messagesList.add(message + ": " + title);
     }
-  }
-
-  private void createTaskPopup(MouseEvent arg0) {
-    taskPopup.show(lblLoadingImg);
   }
 
   public void createLightbox(String pathToFile, String urlToFile) {

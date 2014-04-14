@@ -25,9 +25,9 @@ import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieAssignMovieSetTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 
@@ -52,8 +52,8 @@ public class MovieAssignMovieSetAction extends AbstractAction {
     List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     if (selectedMovies.size() > 0) {
-      TmmSwingWorker<?, ?> scrapeTask = new MovieAssignMovieSetTask(selectedMovies);
-      if (!MainWindow.executeMainTask(scrapeTask)) {
+      TmmThreadPool scrapeTask = new MovieAssignMovieSetTask(selectedMovies);
+      if (TmmTaskManager.getInstance().addMainTask(scrapeTask)) {
         JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
       }
     }

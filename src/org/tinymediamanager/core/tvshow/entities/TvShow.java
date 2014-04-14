@@ -67,6 +67,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
@@ -703,7 +704,7 @@ public class TvShow extends MediaEntity {
       String filename = "poster." + FilenameUtils.getExtension(getPosterUrl());
       // get image in thread
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
-      Globals.executor.execute(task);
+      TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
   }
 
@@ -717,7 +718,7 @@ public class TvShow extends MediaEntity {
       String filename = "fanart." + FilenameUtils.getExtension(getFanartUrl());
       // get image in thread
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
-      Globals.executor.execute(task);
+      TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
   }
 
@@ -731,7 +732,7 @@ public class TvShow extends MediaEntity {
       String filename = "banner." + FilenameUtils.getExtension(getBannerUrl());
       // get image in thread
       MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getBannerUrl(), MediaArtworkType.BANNER, filename, firstImage);
-      Globals.executor.execute(task);
+      TmmTaskManager.getInstance().addImageDownloadTask(task);
     }
   }
 
@@ -761,7 +762,7 @@ public class TvShow extends MediaEntity {
       filename = path + File.separator + "season-specials-poster." + FilenameUtils.getExtension(seasonPosterUrl);
     }
     SeasonPosterImageFetcher task = new SeasonPosterImageFetcher(filename, tvShowSeason, seasonPosterUrl);
-    Globals.executor.execute(task);
+    TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
   /**
@@ -1514,7 +1515,7 @@ public class TvShow extends MediaEntity {
     // scrape episodes in a task
     if (episodes.size() > 0) {
       TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
-      Globals.executor.execute(task);
+      TmmTaskManager.getInstance().addUnnamedTask(task);
     }
   }
 

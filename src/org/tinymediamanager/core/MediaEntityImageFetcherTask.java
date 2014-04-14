@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ package org.tinymediamanager.core;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message.MessageLevel;
@@ -120,6 +120,11 @@ public class MediaEntityImageFetcherTask implements Runnable {
       outputStream.close();
       is.close();
 
+      // has tmm been shut down?
+      if (Thread.interrupted()) {
+        return;
+      }
+
       // set the new image if its the first image
       if (firstImage) {
         LOGGER.debug("set " + type + " " + FilenameUtils.getName(filename));
@@ -153,10 +158,14 @@ public class MediaEntityImageFetcherTask implements Runnable {
       }
 
     }
-    catch (IOException e) {
+    catch (InterruptedException e) {
+      LOGGER.warn("interrupted image download");
+      return;
+    }
+    catch (Exception e) {
       LOGGER.debug("fetch image", e);
       // fallback
-      if (firstImage) {
+      if (firstImage && StringUtils.isNotBlank(oldFilename)) {
         switch (type) {
           case POSTER:
             entity.setPoster(new File(oldFilename));
@@ -182,9 +191,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
             return;
         }
       }
-    }
-    catch (Exception e) {
-      LOGGER.error("Thread crashed", e);
+
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "ArtworkDownload", "message.artwork.threadcrashed", new String[] { ":",
           e.getLocalizedMessage() }));
     }

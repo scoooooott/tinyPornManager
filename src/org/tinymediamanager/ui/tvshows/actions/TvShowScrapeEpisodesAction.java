@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.tasks.TvShowEpisodeScrapeTask;
 import org.tinymediamanager.ui.IconManager;
@@ -48,6 +48,6 @@ public class TvShowScrapeEpisodesAction extends AbstractAction {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
     TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
-    Globals.executor.execute(task);
+    TmmTaskManager.getInstance().addUnnamedTask(task);
   }
 }

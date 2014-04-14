@@ -73,6 +73,7 @@ import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
 import org.tinymediamanager.core.movie.tasks.MovieExtraImageFetcher;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
@@ -835,6 +836,9 @@ public class Movie extends MediaEntity {
         addToMediaFiles(mf);
       }
     }
+    catch (InterruptedException e) {
+      LOGGER.warn("interrupted download extrafanarts");
+    }
     catch (IOException e) {
       LOGGER.warn("download extrafanarts", e);
     }
@@ -851,7 +855,7 @@ public class Movie extends MediaEntity {
   public void writeExtraImages(boolean extrathumbs, boolean extrafanart) {
     // get images in thread
     MovieExtraImageFetcher task = new MovieExtraImageFetcher(this, extrafanart, extrathumbs);
-    Globals.executor.execute(task);
+    TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
   /**
@@ -1610,7 +1614,7 @@ public class Movie extends MediaEntity {
 
         // get image in thread
         MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
-        Globals.executor.execute(task);
+        TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
     }
 
@@ -1648,7 +1652,7 @@ public class Movie extends MediaEntity {
 
         // get image in thread
         MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
-        Globals.executor.execute(task);
+        TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
     }
   }
@@ -1663,7 +1667,7 @@ public class Movie extends MediaEntity {
     }
 
     MovieActorImageFetcher task = new MovieActorImageFetcher(this);
-    Globals.executor.execute(task);
+    TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
   /**

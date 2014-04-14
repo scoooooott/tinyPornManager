@@ -50,10 +50,11 @@ import org.tinymediamanager.core.movie.MovieRenamerPreview;
 import org.tinymediamanager.core.movie.MovieRenamerPreviewContainer;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
@@ -245,8 +246,8 @@ public class MovieRenamerPreviewDialog extends JDialog {
             }
 
             // rename
-            TmmSwingWorker<?, ?> renameTask = new MovieRenameTask(selectedMovies);
-            if (!MainWindow.executeMainTask(renameTask)) {
+            TmmThreadPool renameTask = new MovieRenameTask(selectedMovies);
+            if (TmmTaskManager.getInstance().addMainTask(renameTask)) {
               JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
             }
             else {

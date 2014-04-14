@@ -117,9 +117,13 @@ public class TmmModuleManager {
       }
     }
 
-    EntityManagerFactory emf = entityManager.getEntityManagerFactory();
-    entityManager.close();
-    emf.close();
+    try {
+      EntityManagerFactory emf = entityManager.getEntityManagerFactory();
+      entityManager.close();
+      emf.close();
+    }
+    catch (Exception e) {
+    }
   }
 
   public EntityManager getEntityManager() {

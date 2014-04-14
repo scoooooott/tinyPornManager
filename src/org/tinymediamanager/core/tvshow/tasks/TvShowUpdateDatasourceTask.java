@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FilenameUtils;
@@ -26,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.TmmThreadPool;
 import org.tinymediamanager.core.ImageCacheTask;
 import org.tinymediamanager.core.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
@@ -35,12 +35,15 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.util.ParserUtils;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class TvShowUpdateDataSourcesTask.
@@ -49,28 +52,30 @@ import org.tinymediamanager.scraper.util.ParserUtils;
  */
 
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
-  private static final Logger       LOGGER                = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
+  private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
-  private static final List<String> skipFolders           = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
-                                                              "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION",
-                                                              "@EADIR");
+  private static final List<String>   skipFolders           = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
+                                                                "AUXDATA", "AUDIO_TS", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION",
+                                                                "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String       skipFoldersRegex      = "^[.][\\w]+.*";
+  private static final String         skipFoldersRegex      = "^[.][\\w]+.*";
 
   // MacOS ignore
-  private static final String       skipFilesStartingWith = "._";
+  private static final String         skipFilesStartingWith = "._";
 
-  private List<String>              dataSources;
-  private List<File>                tvShowFolders         = new ArrayList<File>();
-  private TvShowList                tvShowList;
+  private List<String>                dataSources;
+  private List<File>                  tvShowFolders         = new ArrayList<File>();
+  private TvShowList                  tvShowList;
 
   /**
    * Instantiates a new scrape task - to update all datasources
    * 
    */
   public TvShowUpdateDatasourceTask() {
+    super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
   }
@@ -81,6 +86,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * @param datasource
    */
   public TvShowUpdateDatasourceTask(String datasource) {
+    super(BUNDLE.getString("update.datasource") + " (" + datasource + ")");
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<String>(1);
     dataSources.add(datasource);
@@ -92,21 +98,17 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * @param tvShowFolders
    */
   public TvShowUpdateDatasourceTask(List<File> tvShowFolders) {
+    super(BUNDLE.getString("update.datasource"));
     tvShowList = TvShowList.getInstance();
     dataSources = new ArrayList<String>(0);
     this.tvShowFolders.addAll(tvShowFolders);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#doInBackground()
-   */
   @Override
-  public Void doInBackground() {
+  public void doInBackground() {
     try {
       long start = System.currentTimeMillis();
-      startProgressBar("prepare scan...");
+      start();
 
       // cleanup just added for a new UDS run
       for (TvShow tvShow : tvShowList.getTvShows()) {
@@ -134,7 +136,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       LOGGER.error("Thread crashed", e);
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "message.update.threadcrashed"));
     }
-    return null;
   }
 
   /*
@@ -186,7 +187,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
 
       // cleanup
-      startProgressBar("database cleanup...");
+      setTaskName(BUNDLE.getString("update.cleanup"));
+      setTaskDescription(null);
+      setProgressDone(0);
+      setWorkUnits(0);
+      publishState();
       LOGGER.info("removing orphaned tv shows/files...");
       for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
         if (cancel) {
@@ -209,8 +214,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
 
       // mediainfo
+      setTaskName(BUNDLE.getString("update.mediainfo"));
+      publishState();
+
       initThreadPool(1, "mediainfo");
-      startProgressBar("getting Mediainfo");
       LOGGER.info("getting Mediainfo...");
       for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
         if (cancel) {
@@ -253,12 +260,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     }
 
     if (cancel) {
-      cancel(false);// swing cancel
+      return;
     }
 
     if (imageFiles.size() > 0) {
       ImageCacheTask task = new ImageCacheTask(imageFiles);
-      Globals.executor.execute(task);
+      TmmTaskManager.getInstance().addUnnamedTask(task);
     }
   }
 
@@ -286,7 +293,12 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     waitForCompletionOrCancel();
 
     // cleanup
-    startProgressBar("database cleanup...");
+    setTaskName(BUNDLE.getString("update.cleanup"));
+    setTaskDescription(null);
+    setProgressDone(0);
+    setWorkUnits(0);
+    publishState();
+
     LOGGER.info("removing orphaned movies/files...");
     for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
       if (cancel) {
@@ -304,7 +316,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     }
 
     // start MI
-    startProgressBar("getting Mediainfo & cleanup...");
+    setTaskName(BUNDLE.getString("update.mediainfo"));
+    publishState();
+
     initThreadPool(1, "mediainfo");
     LOGGER.info("getting Mediainfo...");
     for (int i = tvShowList.getTvShows().size() - 1; i >= 0; i--) {
@@ -324,7 +338,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     waitForCompletionOrCancel();
 
     if (cancel) {
-      cancel(false);// swing cancel
+      return;
     }
 
     // build up the image cache
@@ -356,7 +370,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
 
       ImageCacheTask task = new ImageCacheTask(imageFiles);
-      Globals.executor.execute(task);
+      TmmTaskManager.getInstance().addUnnamedTask(task);
     }
   }
 
@@ -813,37 +827,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     }
   }
 
-  /*
-   * Executed in event dispatching thread
-   */
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.SwingWorker#done()
-   */
-  @Override
-  public void done() {
-    stopProgressBar();
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.TmmSwingWorker#cancel()
-   */
-  @Override
-  public void cancel() {
-    cancel = true;
-    // cancel(false);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.TmmThreadPool#callback(java.lang.Object)
-   */
   @Override
   public void callback(Object obj) {
-    startProgressBar((String) obj, getTaskcount(), getTaskdone());
+    // do not publish task description here, because with different workers the text is never right
+    publishState(progressDone);
   }
 }

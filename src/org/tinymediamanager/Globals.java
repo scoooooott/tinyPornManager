@@ -15,11 +15,6 @@
  */
 package org.tinymediamanager;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import org.tinymediamanager.TmmThreadPool.TmmThreadFactory;
 import org.tinymediamanager.core.License;
 import org.tinymediamanager.core.Settings;
 
@@ -29,16 +24,16 @@ import org.tinymediamanager.core.Settings;
  * @author Manuel Laggner
  */
 public class Globals {
-  public static final Settings           settings = Settings.getInstance();
+  public static final Settings settings = Settings.getInstance();
 
-  // see weird logic: http://www.kimchy.org/juc-executorservice-gotcha/
-  /** The Constant executor. */
-  public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, // max threads
-                                                      2, TimeUnit.SECONDS, // time to wait before closing idle workers
-                                                      new LinkedBlockingQueue<Runnable>(), // our queue
-                                                      new TmmThreadFactory("global"));
+  // // see weird logic: http://www.kimchy.org/juc-executorservice-gotcha/
+  // /** The Constant executor. */
+  // public static final ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, // max threads
+  // 2, TimeUnit.SECONDS, // time to wait before closing idle workers
+  // new LinkedBlockingQueue<Runnable>(), // our queue
+  // new TmmThreadFactory("global"));
 
-  private static final boolean           donator  = License.isValid();
+  private static final boolean donator  = License.isValid();
 
   /**
    * Have we donated?
@@ -47,67 +42,6 @@ public class Globals {
    */
   public static boolean isDonator() {
     return donator;
-  }
-
-  /**
-   * is a TMM thread pool running?!
-   */
-  public static boolean poolRunning() {
-    if (checkForThreadAlive("tmmpool")) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Look for a text in name of running threads to check if some threads have not shut down yet
-   * 
-   * @param contains
-   *          the String to look for in thread name
-   * @return true if a running thread's name contains given String
-   */
-  public static boolean checkForThreadAlive(String contains) {
-    for (Thread t : getAllThreads()) {
-      if (t.isAlive() && getThreadName(t).contains(contains)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Get all threads of our own threadgroup (threads started by our webapplication).
-   * 
-   * @return all threads
-   */
-  private static Thread[] getAllThreads() {
-    ThreadGroup root = Thread.currentThread().getThreadGroup();
-
-    int nAlloc = root.activeCount();
-    int n = 0;
-    Thread[] threads;
-    do {
-      nAlloc *= 2;
-      threads = new Thread[nAlloc];
-      n = root.enumerate(threads, true);
-    } while (n == nAlloc);
-
-    return java.util.Arrays.copyOf(threads, n);
-  }
-
-  /**
-   * Get thread's name in lowercase.
-   * 
-   * @param t
-   *          the thread
-   * @return the thread name
-   */
-  private static String getThreadName(Thread t) {
-    return (t != null && !isEmpty(t.getName())) ? t.getName().toLowerCase() : "";
-  }
-
-  private static boolean isEmpty(CharSequence cs) {
-    return cs == null || cs.length() == 0;
   }
 
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
@@ -65,6 +64,8 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieRenameTask;
 import org.tinymediamanager.core.movie.tasks.MovieScrapeTask;
 import org.tinymediamanager.core.movie.tasks.MovieUpdateDatasourceTask;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
@@ -77,7 +78,6 @@ import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.MediaInfo;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmSwingWorker;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.TmmWindowSaver;
@@ -279,9 +279,6 @@ public class TinyMediaManager {
           }
           doStartupTasks();
 
-          // after 5 secs of beeing idle, the threads are removed till 0; see Globals
-          Globals.executor.allowCoreThreadTimeOut(true);
-
           // suppress logging messages from betterbeansbinding
           org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(Level.SEVERE);
 
@@ -438,7 +435,7 @@ public class TinyMediaManager {
           else {
             startCommandLineTasks();
             // wait for other tmm threads (artwork download et all)
-            while (Globals.poolRunning()) {
+            while (TmmTaskManager.getInstance().poolRunning()) {
               Thread.sleep(2000);
             }
 
@@ -446,15 +443,13 @@ public class TinyMediaManager {
             // MainWindows.shutdown()
             try {
               // send shutdown signal
-              Globals.executor.shutdown();
+              TmmTaskManager.getInstance().shutdown();
               // save unsaved settings
               Globals.settings.saveSettings();
+              // hard kill
+              TmmTaskManager.getInstance().shutdownNow();
               // close database connection
               TmmModuleManager.getInstance().shutDown();
-              // wait a bit for threads to finish (if any)
-              Globals.executor.awaitTermination(2, TimeUnit.SECONDS);
-              // hard kill
-              Globals.executor.shutdownNow();
             }
             catch (Exception ex) {
               LOGGER.warn(ex.getMessage());
@@ -654,23 +649,21 @@ public class TinyMediaManager {
    */
   private static void startCommandLineTasks() {
     try {
-      TmmSwingWorker task = null;
+      TmmTask task = null;
 
       // update movies //////////////////////////////////////////////
       if (updateMovies) {
         LOGGER.info("Commandline - updating movies...");
         if (updateMovieDs.isEmpty()) {
           task = new MovieUpdateDatasourceTask();
-          task.execute();
-          task.get(); // blocking
+          task.run(); // blocking
         }
         else {
           List<String> dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
           for (Integer i : updateMovieDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
               task = new MovieUpdateDatasourceTask(dataSources.get(i - 1));
-              task.execute();
-              task.get(); // blocking
+              task.run(); // blocking
             }
           }
         }
@@ -682,11 +675,10 @@ public class TinyMediaManager {
             MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
             options.loadDefaults();
             task = new MovieScrapeTask(newMovies, true, options);
-            task.execute();
-            task.get(); // blocking
+            task.run(); // blocking
 
             // wait for other tmm threads (artwork download et all)
-            while (Globals.poolRunning()) {
+            while (TmmTaskManager.getInstance().poolRunning()) {
               Thread.sleep(2000);
             }
           }
@@ -699,8 +691,7 @@ public class TinyMediaManager {
           LOGGER.info("Commandline - rename & cleanup new movies...");
           if (newMovies.size() > 0) {
             task = new MovieRenameTask(newMovies);
-            task.execute();
-            task.get(); // blocking
+            task.run(); // blocking
           }
         }
       }
@@ -711,11 +702,10 @@ public class TinyMediaManager {
           MovieSearchAndScrapeOptions options = new MovieSearchAndScrapeOptions();
           options.loadDefaults();
           task = new MovieScrapeTask(unscrapedMovies, true, options);
-          task.execute();
-          task.get(); // blocking
+          task.run(); // blocking
 
           // wait for other tmm threads (artwork download et all)
-          while (Globals.poolRunning()) {
+          while (TmmTaskManager.getInstance().poolRunning()) {
             Thread.sleep(2000);
           }
         }
@@ -723,8 +713,7 @@ public class TinyMediaManager {
           LOGGER.info("Commandline - rename & cleanup new movies...");
           if (unscrapedMovies.size() > 0) {
             task = new MovieRenameTask(unscrapedMovies);
-            task.execute();
-            task.get(); // blocking
+            task.run(); // blocking
           }
         }
       }
@@ -734,16 +723,14 @@ public class TinyMediaManager {
         LOGGER.info("Commandline - updating TvShows and episodes...");
         if (updateTvDs.isEmpty()) {
           task = new TvShowUpdateDatasourceTask();
-          task.execute();
-          task.get(); // blocking
+          task.run(); // blocking
         }
         else {
           List<String> dataSources = new ArrayList<String>(Globals.settings.getTvShowSettings().getTvShowDataSource());
           for (Integer i : updateTvDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
               task = new TvShowUpdateDatasourceTask(dataSources.get(i - 1));
-              task.execute();
-              task.get(); // blocking
+              task.run(); // blocking
             }
           }
         }
@@ -758,8 +745,7 @@ public class TinyMediaManager {
             TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
             options.loadDefaults();
             task = new TvShowScrapeTask(newTv, true, options);
-            task.execute();
-            task.get(); // blocking
+            task.run(); // blocking
           }
           else {
             LOGGER.info("No new TvShows/episodes found to scrape - skipping");
@@ -770,8 +756,7 @@ public class TinyMediaManager {
           LOGGER.info("Commandline - rename & cleanup new episodes...");
           if (newEp.size() > 0) {
             task = new TvShowRenameTask(null, newEp, true); // just rename new EPs AND root folder
-            task.execute();
-            task.get(); // blocking
+            task.run(); // blocking
           }
         }
       }

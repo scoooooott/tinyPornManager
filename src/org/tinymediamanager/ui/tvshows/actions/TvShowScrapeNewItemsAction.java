@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -68,7 +68,7 @@ public class TvShowScrapeNewItemsAction extends AbstractAction {
     // now start the scrape tasks
     // epsiode scraping can run in background
     TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(newEpisodes);
-    Globals.executor.execute(task);
+    TmmTaskManager.getInstance().addUnnamedTask(task);
 
     // whereas tv show scraping has to run in foreground
     for (TvShow tvShow : newTvShows) {

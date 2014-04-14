@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager;
+package org.tinymediamanager.core.threading;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -28,36 +28,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.ui.TmmSwingWorker;
 
 /**
  * The Class TmmThreadPool.
  * 
- * @author Myron Boyle
- * @version $Id$
+ * @author Myron Boyle, Manuel Laggner
  */
-public abstract class TmmThreadPool extends TmmSwingWorker {
+public abstract class TmmThreadPool extends TmmTask {
+  private static final Logger       LOGGER  = LoggerFactory.getLogger(TmmThreadPool.class);
 
-  /** The Constant LOGGER. */
-  private static final Logger       LOGGER    = LoggerFactory.getLogger(TmmThreadPool.class);
+  private ThreadPoolExecutor        pool    = null;
+  private CompletionService<Object> service = null;
 
-  /** The pool. */
-  private ThreadPoolExecutor        pool      = null;
+  protected String                  poolname;
 
-  /** The service. */
-  private CompletionService<Object> service   = null;
-
-  /** The cancel. */
-  protected boolean                 cancel    = false;
-
-  /** The taskcount. */
-  private int                       taskcount = 0;
-
-  /** The taskdone. */
-  private int                       taskdone  = 0;
-
-  /** The poolname. */
-  private String                    poolname  = "";
+  protected TmmThreadPool(String taskName) {
+    super(taskName, 0, TaskType.MAIN_TASK);
+  }
 
   /**
    * create new ThreadPool.
@@ -67,9 +54,7 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
    * @param name
    *          a name for the logging
    */
-  public void initThreadPool(int threads, String name) {
-    this.taskcount = 0;
-    this.taskdone = 0;
+  protected void initThreadPool(int threads, String name) {
     this.cancel = false;
     this.poolname = name;
     pool = new ThreadPoolExecutor(threads, threads, // max threads
@@ -87,9 +72,9 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
    * @param task
    *          the callable
    */
-  public void submitTask(Callable<Object> task) {
+  protected void submitTask(Callable<Object> task) {
     if (!cancel) {
-      taskcount++;
+      workUnits++;
       service.submit(task);
     }
   }
@@ -100,9 +85,9 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
    * @param task
    *          the runnable
    */
-  public void submitTask(Runnable task) {
+  protected void submitTask(Runnable task) {
     if (!cancel) {
-      taskcount++;
+      workUnits++;
       service.submit(task, null);
     }
   }
@@ -110,16 +95,16 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
   /**
    * Wait for completion or cancel.
    */
-  public void waitForCompletionOrCancel() {
+  protected void waitForCompletionOrCancel() {
     pool.shutdown();
-    while (!cancel && !pool.isTerminated() && taskdone < taskcount) {
+    while (!cancel && !pool.isTerminated() && progressDone < workUnits) {
       try {
         final Future<Object> future = service.take();
-        taskdone++;
+        progressDone++;
         callback(future.get());
       }
       catch (InterruptedException e) {
-        LOGGER.error("ThreadPool " + this.poolname + " interrupted!", e);
+        LOGGER.error("ThreadPool " + this.poolname + " interrupted!");
       }
       catch (ExecutionException e) {
         LOGGER.error("ThreadPool " + this.poolname + ": Error getting result!", e);
@@ -127,7 +112,7 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
     }
     if (cancel) {
       try {
-        LOGGER.info("Abort queue (discarding " + (getTaskcount() - getTaskdone()) + " tasks)");
+        LOGGER.info("Abort queue (discarding " + (workUnits - progressDone) + " tasks)");
         pool.getQueue().clear();
         pool.awaitTermination(3, TimeUnit.SECONDS);
 
@@ -150,61 +135,20 @@ public abstract class TmmThreadPool extends TmmSwingWorker {
   public abstract void callback(Object obj);
 
   /**
-   * returns the amount of submitted tasks.
-   * 
-   * @return the taskcount
-   */
-  public int getTaskcount() {
-    return taskcount;
-  }
-
-  /**
-   * returns the amount of executed tasks.
-   * 
-   * @return the taskdone
-   */
-  public int getTaskdone() {
-    return taskdone;
-  }
-
-  /**
-   * cancel the pool.
-   */
-  public void cancelThreadPool() {
-    this.cancel = true;
-  }
-
-  /**
    * a copy of the default thread factory, just to set the pool name.
    */
   static class TmmThreadFactory implements ThreadFactory {
-    // static final AtomicInteger poolNumber = new AtomicInteger(1);
-    /** The group. */
     final ThreadGroup   group;
-
-    /** The thread number. */
     final AtomicInteger threadNumber = new AtomicInteger(1);
-
-    /** The name prefix. */
     final String        namePrefix;
 
-    /**
-     * Instantiates a new tmm thread factory.
-     * 
-     * @param poolname
-     *          the poolname
-     */
     TmmThreadFactory(String poolname) {
       SecurityManager s = System.getSecurityManager();
       group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
       namePrefix = "tmmpool-" + poolname + "-thread-";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.concurrent.ThreadFactory#newThread(java.lang.Runnable)
-     */
+    @Override
     public Thread newThread(Runnable r) {
       Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
       if (t.isDaemon()) {

@@ -80,6 +80,11 @@ public class MovieExtraImageFetcher implements Runnable {
           movie.downloadExtraFanarts(new ArrayList<String>(movie.getExtraFanarts()));
         }
 
+        // check if tmm has been shut down
+        if (Thread.interrupted()) {
+          return;
+        }
+
         movie.saveToDb();
         movie.callbackForWrittenArtwork(MediaArtworkType.ALL);
       }

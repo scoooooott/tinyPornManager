@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +38,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.Certification;
@@ -65,18 +66,19 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  */
 public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
-  private static MediaProviderInfo providerInfo  = new MediaProviderInfo(Constants.IMDBID, "imdb.com",
-                                                     "Scraper for imdb which is able to scrape movie metadata");
-  private static final Logger      LOGGER        = LoggerFactory.getLogger(ImdbMetadataProvider.class);
+  private static MediaProviderInfo     providerInfo  = new MediaProviderInfo(Constants.IMDBID, "imdb.com",
+                                                         "Scraper for imdb which is able to scrape movie metadata");
+  private static final Logger          LOGGER        = LoggerFactory.getLogger(ImdbMetadataProvider.class);
+  private static final ExecutorService executor      = Executors.newFixedThreadPool(4);
 
-  public static final String       CAT_ALL       = "&s=all";
-  public static final String       CAT_TITLE     = "&s=tt";
-  public static final String       CAT_MOVIES    = "&s=tt&ttype=ft&ref_=fn_ft";
-  public static final String       CAT_TV        = "&s=tt&ttype=tv&ref_=fn_tv";
-  public static final String       CAT_EPISODE   = "&s=tt&ttype=ep&ref_=fn_ep";
-  public static final String       CAT_VIDEOGAME = "&s=tt&ttype=vg&ref_=fn_vg";
+  public static final String           CAT_ALL       = "&s=all";
+  public static final String           CAT_TITLE     = "&s=tt";
+  public static final String           CAT_MOVIES    = "&s=tt&ttype=ft&ref_=fn_ft";
+  public static final String           CAT_TV        = "&s=tt&ttype=tv&ref_=fn_tv";
+  public static final String           CAT_EPISODE   = "&s=tt&ttype=ep&ref_=fn_ep";
+  public static final String           CAT_VIDEOGAME = "&s=tt&ttype=vg&ref_=fn_vg";
 
-  private ImdbSiteDefinition       imdbSite;
+  private ImdbSiteDefinition           imdbSite;
 
   public ImdbMetadataProvider() {
     imdbSite = ImdbSiteDefinition.IMDB_COM;
@@ -116,8 +118,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     LOGGER.debug("IMDB: getMetadata(imdbId): " + imdbId);
     md.setId(MediaMetadata.IMDBID, imdbId);
 
-    ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(Globals.executor);
-    ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(Globals.executor);
+    ExecutorCompletionService<Document> compSvcImdb = new ExecutorCompletionService<Document>(executor);
+    ExecutorCompletionService<MediaMetadata> compSvcTmdb = new ExecutorCompletionService<MediaMetadata>(executor);
 
     // worker for imdb request (/combined) (everytime from akas.imdb.com)
     // StringBuilder sb = new StringBuilder(imdbSite.getSite());

@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -44,7 +44,7 @@ public class TvShowRewriteEpisodeNfoAction extends AbstractAction {
     final List<TvShowEpisode> selectedEpisodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
     // rewrite selected NFOs
-    Globals.executor.execute(new Runnable() {
+    TmmTaskManager.getInstance().addUnnamedTask(new Runnable() {
       @Override
       public void run() {
         for (TvShowEpisode episode : selectedEpisodes) {
