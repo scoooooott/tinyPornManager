@@ -726,7 +726,7 @@ public class MovieEditorDialog extends JDialog {
       extrafanarts.addAll(movieToEdit.getExtraFanarts());
 
       cbMovieSet.addItem("");
-      for (MovieSet movieSet : movieList.getMovieSetList()) {
+      for (MovieSet movieSet : movieList.getSortedMovieSetList()) {
         cbMovieSet.addItem(movieSet);
         if (movieToEdit.getMovieSet() == movieSet) {
           cbMovieSet.setSelectedItem(movieSet);

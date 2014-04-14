@@ -296,7 +296,7 @@ public class MovieBatchEditorDialog extends JDialog {
     {
       cbMovieSet.addItem("");
 
-      for (MovieSet movieSet : movieList.getMovieSetList()) {
+      for (MovieSet movieSet : movieList.getSortedMovieSetList()) {
         cbMovieSet.addItem(movieSet);
       }
 

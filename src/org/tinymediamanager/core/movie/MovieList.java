@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -87,6 +88,7 @@ public class MovieList extends AbstractModelObject {
                                                                     .synchronizedList(new ArrayList<String>()));
   private List<Certification>          certificationsObservable = ObservableCollections.observableList(Collections
                                                                     .synchronizedList(new ArrayList<Certification>()));
+  private final Comparator<MovieSet>   movieSetComparator       = new MovieSetComparator();
 
   /**
    * Instantiates a new movie list.
@@ -1018,6 +1020,17 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * get the movie set list in a sorted order
+   * 
+   * @return the movie set list (sorted)
+   */
+  public List<MovieSet> getSortedMovieSetList() {
+    List<MovieSet> sortedMovieSets = new ArrayList<MovieSet>(getMovieSetList());
+    Collections.sort(sortedMovieSets, movieSetComparator);
+    return sortedMovieSets;
+  }
+
+  /**
    * Sets the movie set list.
    * 
    * @param movieSetList
@@ -1146,5 +1159,16 @@ public class MovieList extends AbstractModelObject {
     for (MovieSet movieSet : movieSetList) {
       movieSet.cleanMovieSet();
     }
+  }
+
+  private class MovieSetComparator implements Comparator<MovieSet> {
+    @Override
+    public int compare(MovieSet o1, MovieSet o2) {
+      if (o1 == null || o2 == null || o1.getTitleSortable() == null || o2.getTitleSortable() == null) {
+        return 0;
+      }
+      return o1.getTitleSortable().compareToIgnoreCase(o2.getTitleSortable());
+    }
+
   }
 }
