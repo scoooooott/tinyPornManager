@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -121,6 +122,10 @@ public class Settings extends AbstractModelObject {
   private String                      traktUsername               = "";
   private String                      traktPassword               = "";
   private String                      traktAPI                    = "";
+
+  private String                      xbmcHost                    = "";
+  private String                      xbmcUsername                = "";
+  private String                      xbmcPassword                = "";
 
   private boolean                     imageCache                  = true;
   private CacheType                   imageCacheType              = CacheType.SMOOTH;
@@ -645,6 +650,7 @@ public class Settings extends AbstractModelObject {
    * @return the proxy password
    */
   @XmlElement(name = PROXY_PASSWORD)
+  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
   public String getProxyPassword() {
     return StringEscapeUtils.unescapeXml(proxyPassword);
   }
@@ -987,8 +993,10 @@ public class Settings extends AbstractModelObject {
     return traktUsername;
   }
 
-  public void setTraktUsername(String traktUsername) {
-    this.traktUsername = traktUsername;
+  public void setTraktUsername(String newValue) {
+    String oldValue = this.traktUsername;
+    this.traktUsername = newValue;
+    firePropertyChange("traktUsername", oldValue, newValue);
   }
 
   /**
@@ -1003,25 +1011,61 @@ public class Settings extends AbstractModelObject {
   /**
    * sets the password as SHA1
    * 
-   * @param traktPassword
+   * @param newValue
    *          the password; either plaintext or already sha1
    */
-  public void setTraktPassword(String traktPassword) {
-    if (traktPassword != null && !traktPassword.matches("[a-fA-F0-9]{40}")) {
+  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
+  public void setTraktPassword(String newValue) {
+    String oldValue = this.traktPassword;
+    if (newValue != null && !newValue.matches("[a-fA-F0-9]{40}")) {
       // plaintext - convert to sha1
-      this.traktPassword = DigestUtils.shaHex(traktPassword);
+      this.traktPassword = DigestUtils.shaHex(newValue);
     }
     else {
       // already sha1 - set it 1:1
-      this.traktPassword = traktPassword;
+      this.traktPassword = newValue;
     }
+    firePropertyChange("traktPassword", oldValue, newValue);
   }
 
   public String getTraktAPI() {
     return traktAPI;
   }
 
-  public void setTraktAPI(String traktAPI) {
-    this.traktAPI = traktAPI;
+  public void setTraktAPI(String newValue) {
+    String oldValue = this.traktAPI;
+    this.traktAPI = newValue;
+    firePropertyChange("traktAPI", oldValue, newValue);
+  }
+
+  public String getXbmcHost() {
+    return xbmcHost;
+  }
+
+  public void setXbmcHost(String newValue) {
+    String oldValue = this.xbmcHost;
+    this.xbmcHost = newValue;
+    firePropertyChange("xbmcHost", oldValue, newValue);
+  }
+
+  public String getXbmcUsername() {
+    return xbmcUsername;
+  }
+
+  public void setXbmcUsername(String newValue) {
+    String oldValue = this.xbmcUsername;
+    this.xbmcUsername = newValue;
+    firePropertyChange("xbmcUsername", oldValue, newValue);
+  }
+
+  @XmlJavaTypeAdapter(EncryptedStringXmlAdapter.class)
+  public String getXbmcPassword() {
+    return xbmcPassword;
+  }
+
+  public void setXbmcPassword(String newValue) {
+    String oldValue = this.xbmcPassword;
+    this.xbmcPassword = newValue;
+    firePropertyChange("xbmcPassword", oldValue, newValue);
   }
 }

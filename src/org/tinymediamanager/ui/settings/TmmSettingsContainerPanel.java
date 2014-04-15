@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,11 @@ public class TmmSettingsContainerPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(new ExternalDevicesSettingsPanel());
         tabbedPanePages.addTab(BUNDLE.getString("Settings.externaldevices"), null, scrollPane, null); //$NON-NLS-1$
+      }
+      {
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(new ExternalServicesSettingsPanel());
+        tabbedPanePages.addTab(BUNDLE.getString("Settings.externalservices"), null, scrollPane, null); //$NON-NLS-1$
       }
     }
   }
