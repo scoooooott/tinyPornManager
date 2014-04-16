@@ -43,6 +43,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.trakttv.TraktTv;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -85,6 +86,10 @@ public class MovieScrapeTask extends TmmThreadPool {
       submitTask(new Worker(movie));
     }
     waitForCompletionOrCancel();
+
+    // sync new movies to Trakt
+    TraktTv t = new TraktTv();
+    t.sendMyMoviesToTrakt(moviesToScrape);
 
     LOGGER.info("Done scraping movies)");
   }

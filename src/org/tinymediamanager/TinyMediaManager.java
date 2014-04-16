@@ -736,7 +736,7 @@ public class TinyMediaManager {
         }
         List<TvShow> newTv = TvShowList.getInstance().getNewTvShows();
         List<TvShowEpisode> newEp = TvShowList.getInstance().getNewEpisodes();
-        LOGGER.info("Commandline - found " + newTv.size() + " new TvShow(s) and " + newEp.size() + " new episode(s)");
+        LOGGER.info("Commandline - found " + newTv.size() + " TvShow(s) containing " + newEp.size() + " new episode(s)");
 
         if (scrapeNew) {
           LOGGER.info("Commandline - scraping new TvShows...");

@@ -15,17 +15,26 @@
  */
 package org.tinymediamanager.scraper.trakttv;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.scraper.MediaGenres;
+
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import com.jakewharton.trakt.Trakt;
 import com.jakewharton.trakt.entities.ActionResponse;
@@ -33,6 +42,7 @@ import com.jakewharton.trakt.entities.Movie;
 import com.jakewharton.trakt.entities.TvShow;
 import com.jakewharton.trakt.entities.TvShowEpisode;
 import com.jakewharton.trakt.enumerations.Extended;
+import com.jakewharton.trakt.enumerations.Status;
 import com.jakewharton.trakt.services.MovieService.Movies;
 import com.jakewharton.trakt.services.MovieService.SeenMovie;
 
@@ -47,24 +57,36 @@ public class TraktTv {
   private static final Logger LOGGER   = LoggerFactory.getLogger(TraktTv.class);
   private static final Trakt  trakt    = new Trakt();
   private String              userName = "";
+  private String              password = "";
+  private String              apiKey   = "";
   private ActionResponse      response;
 
   /**
    * gets a new Trakt object with settings values (user / pass / apikey)
    */
   public TraktTv() {
-    trakt.setApiKey(Globals.settings.getTraktAPI());
-    trakt.setAuthentication(Globals.settings.getTraktUsername(), Globals.settings.getTraktPassword());
-    userName = Globals.settings.getTraktUsername();
+    this(Globals.settings.getTraktUsername(), Globals.settings.getTraktPassword(), Globals.settings.getTraktAPI());
   }
 
   /**
    * gets a new Trakt object with custom values (user / passAsSHA1 / apikey)
    */
   public TraktTv(String username, String passwordSha1, String userApiKey) {
+    userName = username;
+    password = passwordSha1;
+    apiKey = userApiKey;
+
     trakt.setApiKey(userApiKey);
     trakt.setAuthentication(username, passwordSha1);
-    userName = username;
+  }
+
+  /**
+   * do we have values for user/pass/api ?!
+   * 
+   * @return true/false if trakt could be called
+   */
+  public boolean isEnabled() {
+    return !userName.isEmpty() && !password.isEmpty() && !apiKey.isEmpty();
   }
 
   /**
@@ -95,7 +117,10 @@ public class TraktTv {
    * Get first all watched flags from Trakt and submits then all movies/shows to Trakt collection
    */
   public void syncAll() {
-    // FIXME: use task queue
+    if (!isEnabled()) {
+      return;
+    }
+
     updatedWatchedMoviesFromTrakt();
     sendMyMoviesToTrakt();
     updatedWatchedTvShowsFromTrakt();
@@ -106,11 +131,24 @@ public class TraktTv {
    * gets ALL watched movies from Trakt, and sets the "watched" flag on TMM movies (if IMDB matches)
    */
   public void updatedWatchedMoviesFromTrakt() {
+    if (!isEnabled()) {
+      return;
+    }
+
     MovieList movieList = MovieList.getInstance();
     List<org.tinymediamanager.core.movie.entities.Movie> tmmMovies = movieList.getMovies();
 
     // get all Trakt watched movies
-    List<Movie> traktMovies = trakt.userService().libraryMoviesWatched(userName, Extended.MIN);
+    List<Movie> traktMovies;
+    try {
+      traktMovies = trakt.userService().libraryMoviesWatched(userName, Extended.MIN);
+      // Extended.DEFAULT adds url, poster, fanart, banner, genres
+      // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
+    }
+    catch (RetrofitError e) {
+      handleRetrofitError(e);
+      return;
+    }
 
     // loop over all watched movies on trakt
     for (Movie watched : traktMovies) {
@@ -134,13 +172,24 @@ public class TraktTv {
    * gets ALL watched TvShows from Trakt, and sets the "watched" flag on TMM show/episodes (if TvDB matches)
    */
   public void updatedWatchedTvShowsFromTrakt() {
+    if (!isEnabled()) {
+      return;
+    }
+
     TvShowList tvShowList = TvShowList.getInstance();
     List<org.tinymediamanager.core.tvshow.entities.TvShow> tmmShows = tvShowList.getTvShows();
 
     // get all Trakt watched TvShows
-    List<TvShow> traktShows = trakt.userService().libraryShowsWatched(userName, Extended.MIN);
-    // Extended.DEFAULT adds url, poster, fanart, banner, genres
-    // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
+    List<TvShow> traktShows;
+    try {
+      traktShows = trakt.userService().libraryShowsWatched(userName, Extended.MIN);
+      // Extended.DEFAULT adds url, poster, fanart, banner, genres
+      // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
+    }
+    catch (RetrofitError e) {
+      handleRetrofitError(e);
+      return;
+    }
 
     // loop over all watched shows on trakt
     for (TvShow watched : traktShows) {
@@ -189,9 +238,30 @@ public class TraktTv {
    * works only if we have a IMDB or TMDB id...
    */
   public void sendMyMoviesToTrakt() {
+    if (!isEnabled()) {
+      return;
+    }
+
     MovieList movieList = MovieList.getInstance();
     List<org.tinymediamanager.core.movie.entities.Movie> tmmMovies = movieList.getMovies();
     sendMyMoviesToTrakt(tmmMovies);
+  }
+
+  /**
+   * adds single TMM movie to Trakt collection<br>
+   * works only if we have a IMDB or TMDB id...
+   * 
+   * @param movie
+   *          the movie to send
+   */
+  public void sendMyMoviesToTrakt(org.tinymediamanager.core.movie.entities.Movie movie) {
+    if (!isEnabled()) {
+      return;
+    }
+
+    List<org.tinymediamanager.core.movie.entities.Movie> movies = new ArrayList<org.tinymediamanager.core.movie.entities.Movie>();
+    movies.add(movie);
+    sendMyMoviesToTrakt(movies);
   }
 
   /**
@@ -202,6 +272,10 @@ public class TraktTv {
    *          all the TMM movies to send
    */
   public void sendMyMoviesToTrakt(List<org.tinymediamanager.core.movie.entities.Movie> movies) {
+    if (!isEnabled()) {
+      return;
+    }
+
     List<SeenMovie> libMovies = new ArrayList<SeenMovie>(); // array for ALL TMM movies
     List<SeenMovie> seenMovies = new ArrayList<SeenMovie>(); // array for "watched" TMM movies
 
@@ -212,6 +286,7 @@ public class TraktTv {
       }
       SeenMovie seen = new SeenMovie(tmmMovie.getImdbId());
       seen.title = tmmMovie.getTitle();
+      seen.imdb_id = tmmMovie.getImdbId();
       seen.tmdb_id = tmmMovie.getTmdbId();
       seen.year = Integer.valueOf(tmmMovie.getYear());
       libMovies.add(seen); // add to lib
@@ -220,21 +295,55 @@ public class TraktTv {
       }
     }
 
-    response = trakt.movieService().library(new Movies(libMovies)); // add all to collection
-    System.out.println("Status: " + response.status);
-    System.out.println("Message: " + response.message);
-    System.out.println("Inserted: " + response.inserted);
-    System.out.println("Already inserted: " + response.already_exist);
-    System.out.println("Skipped: " + response.skipped);
-
-    if (seenMovies.size() > 0) {
-      response = trakt.movieService().seen(new Movies(seenMovies)); // and set seen/watched
-      System.out.println("Status: " + response.status);
-      System.out.println("Message: " + response.message);
-      System.out.println("Inserted: " + response.inserted);
-      System.out.println("Already inserted: " + response.already_exist);
-      System.out.println("Skipped: " + response.skipped);
+    try {
+      response = trakt.movieService().library(new Movies(libMovies)); // add all to collection
+      LOGGER.info("Trakt add-to-library status:");
+      printStatus(response);
+      if (seenMovies.size() > 0) {
+        response = trakt.movieService().seen(new Movies(seenMovies)); // and set seen/watched
+        LOGGER.info("Trakt mark-as-watched status:");
+        printStatus(response);
+      }
     }
+    catch (RetrofitError e) {
+      handleRetrofitError(e);
+    }
+  }
+
+  private void printStatus(ActionResponse reponse) {
+    if (response != null) {
+      LOGGER.info("Status           : " + response.status);
+      if (!response.status.equals(Status.SUCCESS)) {
+        LOGGER.error("Error            : " + response.error);
+        LOGGER.error("Message          : " + response.message);
+      }
+      LOGGER.info("Inserted         : " + response.inserted);
+      LOGGER.info("Already inserted : " + response.already_exist);
+      LOGGER.info("Skipped          : " + response.skipped);
+    }
+  }
+
+  private void handleRetrofitError(RetrofitError re) {
+    Response r = re.getResponse();
+    String msg = "";
+    if (r != null) {
+      msg = r.getReason();
+      if (r.getBody() != null) {
+        try {
+          InputStream in = r.getBody().in();
+          msg += " - " + IOUtils.toString(in, "UTF-8");
+          in.close();
+        }
+        catch (IOException e1) {
+          LOGGER.warn("IOException on Trakt error", e1);
+        }
+      }
+    }
+    else {
+      msg = re.getMessage();
+    }
+    LOGGER.error("Trakt error (wrong settings?) " + msg);
+    MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, msg, "Settings.trakttv"));
   }
 
   /**
@@ -242,7 +351,7 @@ public class TraktTv {
    */
   private MediaGenres getTmmGenre(String genre) {
     MediaGenres g = null;
-    if (genre.isEmpty()) {
+    if (genre == null || genre.isEmpty()) {
       return g;
     }
     // @formatter:off
