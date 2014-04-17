@@ -70,7 +70,6 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
-import org.tinymediamanager.scraper.trakttv.TraktTv;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -447,10 +446,6 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
             }
             movieToScrape.setTrailers(trailers);
           }
-
-          // sync movie to Trakt
-          TraktTv t = new TraktTv();
-          t.sendMyMoviesToTrakt(movieToScrape);
 
           // rewrite the complete NFO
           movieToScrape.writeNFO();

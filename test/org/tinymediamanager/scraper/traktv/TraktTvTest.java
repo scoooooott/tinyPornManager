@@ -21,7 +21,7 @@ public class TraktTvTest {
   public static void setUpBeforeClass() throws Exception {
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();
-    t.getManager().setIsDebug(true); // http debug
+    // t.getManager().setIsDebug(true); // http debug
   }
 
   @AfterClass
@@ -31,8 +31,8 @@ public class TraktTvTest {
   }
 
   @Test
-  public void sendMyMoviesToTrakt() {
-    t.sendMyMoviesToTrakt();
+  public void syncTraktMovieCollection() {
+    t.syncTraktMovieCollection();
   }
 
   @Test
@@ -50,8 +50,4 @@ public class TraktTvTest {
     }
   }
 
-  @Test
-  public void updatedWatchedMoviesFromTrakt() {
-    t.updatedWatchedMoviesFromTrakt();
-  }
 }
