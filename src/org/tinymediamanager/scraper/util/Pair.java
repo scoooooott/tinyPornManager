@@ -26,40 +26,30 @@ package org.tinymediamanager.scraper.util;
  */
 public class Pair<First, Second> {
 
-  /** The first. */
   private First  first;
-
-  /** The second. */
   private Second second;
 
-  /**
-   * Instantiates a new pair.
-   * 
-   * @param f
-   *          the f
-   * @param s
-   *          the s
-   */
   public Pair(First f, Second s) {
     this.first = f;
     this.second = s;
   }
 
-  /**
-   * First.
-   * 
-   * @return the first
-   */
   public First first() {
     return first;
   }
 
-  /**
-   * Second.
-   * 
-   * @return the second
-   */
   public Second second() {
     return second;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o != null && o instanceof Pair) {
+      Pair<?, ?> p1 = (Pair<?, ?>) o;
+      if (p1.first().equals(this.first()) && p1.second().equals(this.second())) {
+        return (true);
+      }
+    }
+    return (false);
   }
 }

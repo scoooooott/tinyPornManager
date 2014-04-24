@@ -5,8 +5,10 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.scraper.trakttv.TraktTv;
 
 import com.jakewharton.trakt.entities.Genre;
@@ -21,6 +23,7 @@ public class TraktTvTest {
   public static void setUpBeforeClass() throws Exception {
     TmmModuleManager.getInstance().startUp();
     MovieModuleManager.getInstance().startUp();
+    TvShowModuleManager.getInstance().startUp();
     // t.getManager().setIsDebug(true); // http debug
   }
 
@@ -28,6 +31,7 @@ public class TraktTvTest {
   public static void tearDownAfterClass() throws Exception {
     TmmModuleManager.getInstance().shutDown();
     MovieModuleManager.getInstance().shutDown();
+    TvShowModuleManager.getInstance().shutDown();
   }
 
   @Test
@@ -36,8 +40,23 @@ public class TraktTvTest {
   }
 
   @Test
+  public void syncTraktMovieWatched() {
+    t.syncTraktMovieWatched();
+  }
+
+  @Test
+  public void syncTraktTvShowCollection() {
+    t.syncTraktTvShowCollection();
+  }
+
+  @Test
+  public void syncTraktTvShowWatched() {
+    t.syncTraktTvShowWatched();
+  }
+
+  @Test
   public void getTvLib() {
-    List<TvShow> shows = t.getManager().userService().libraryShowsWatched(t.getUserName(), Extended.MIN);
+    List<TvShow> shows = t.getManager().userService().libraryShowsWatched(Globals.settings.getTraktUsername(), Extended.MIN);
     System.out.println(shows.size());
   }
 
