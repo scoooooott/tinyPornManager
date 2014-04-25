@@ -17,9 +17,12 @@ public class JmteTest {
     MovieModuleManager.getInstance().startUp();
     MovieList ml = MovieList.getInstance();
 
-    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "ListExampleHtml", "export" + File.separator + "ListExampleHtml");
-    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "ListExampleCsv", "export" + File.separator + "ListExampleCsv");
-    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "ListExampleXml", "export" + File.separator + "ListExampleXml");
+    MovieExporter exporter = new MovieExporter("templates" + File.separator + "ListExampleHtml");
+    exporter.export(ml.getMovies(), "export" + File.separator + "ListExampleHtml");
+    exporter = new MovieExporter("templates" + File.separator + "ListExampleCsv");
+    exporter.export(ml.getMovies(), "export" + File.separator + "ListExampleCsv");
+    exporter = new MovieExporter("templates" + File.separator + "ListExampleXml");
+    exporter.export(ml.getMovies(), "export" + File.separator + "ListExampleXml");
 
     MovieModuleManager.getInstance().shutDown();
   }
@@ -29,12 +32,12 @@ public class JmteTest {
 
     MovieModuleManager.getInstance().startUp();
     MovieList ml = MovieList.getInstance();
-
-    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "DetailExampleHtml", "export" + File.separator + "DetailExampleHtml");
-    MovieExporter.export(ml.getMovies(), "templates" + File.separator + "DetailExample2Html", "export" + File.separator + "DetailExample2Html");
+    MovieExporter exporter = new MovieExporter("templates" + File.separator + "DetailExampleHtml");
+    exporter.export(ml.getMovies(), "export" + File.separator + "DetailExampleHtml");
+    exporter = new MovieExporter("templates" + File.separator + "DetailExample2Html");
+    exporter.export(ml.getMovies(), "export" + File.separator + "DetailExample2Html");
 
     MovieModuleManager.getInstance().shutDown();
     TmmModuleManager.getInstance().shutDown();
   }
-
 }

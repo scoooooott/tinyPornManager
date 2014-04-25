@@ -30,12 +30,12 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.core.MessageManager;
-import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
@@ -312,7 +312,7 @@ public class TvShowRenamer {
    *          the tvShow
    * @param mf
    *          the MF for multiepisode
-   * @return
+   * @return the file name for the media file
    */
   public static String generateFilename(TvShow tvShow, MediaFile mf) {
     return generateName(tvShow, mf, true);
@@ -326,7 +326,7 @@ public class TvShowRenamer {
    *          the tvShow
    * @param mf
    *          the MF for multiepisode
-   * @return
+   * @return the file name for media file
    */
   public static String generateFolderename(TvShow tvShow, MediaFile mf) {
     return generateName(tvShow, mf, false);

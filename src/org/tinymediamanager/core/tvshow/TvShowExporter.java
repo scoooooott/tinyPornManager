@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.core.movie;
+package org.tinymediamanager.core.tvshow;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,33 +23,36 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntityExporter;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaEntity;
-import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 
 import com.floreysoft.jmte.NamedRenderer;
 import com.floreysoft.jmte.RenderFormatInfo;
 
 /**
- * This class exports a list of movies to various formats according to templates.
+ * The class TvShowExporter. To export TV shows via templates
  * 
- * @author Myron Boyle / Manuel Laggner
+ * @author Manuel Laggner
  */
-public class MovieExporter extends MediaEntityExporter {
-  private final static Logger LOGGER = LoggerFactory.getLogger(MovieExporter.class);
+public class TvShowExporter extends MediaEntityExporter {
+  private final static Logger LOGGER = LoggerFactory.getLogger(TvShowExporter.class);
 
-  public MovieExporter(String pathToTemplate) throws Exception {
-    super(pathToTemplate, TemplateType.MOVIE);
+  public TvShowExporter(String pathToTemplate) throws Exception {
+    super(pathToTemplate, TemplateType.TV_SHOW);
   }
 
   /**
    * exports movie list according to template file.
    * 
-   * @param moviesToExport
+   * @param tvShowsToExport
    *          list of movies
    * @param pathToExport
    *          the path to export
@@ -57,12 +60,12 @@ public class MovieExporter extends MediaEntityExporter {
    *           the exception
    */
   @Override
-  public <T extends MediaEntity> void export(List<T> moviesToExport, String pathToExport) throws Exception {
-    LOGGER.info("preparing movie export; using " + properties.getProperty("name"));
+  public <T extends MediaEntity> void export(List<T> tvShowsToExport, String pathToExport) throws Exception {
+    LOGGER.info("preparing tv show export; using " + properties.getProperty("name"));
 
     // register own renderers
     engine.registerNamedRenderer(new NamedDateRenderer());
-    engine.registerNamedRenderer(new MovieFilenameRenderer());
+    engine.registerNamedRenderer(new TvShowFilenameRenderer());
 
     // prepare export destination
     File exportDir = new File(pathToExport);
@@ -78,52 +81,68 @@ public class MovieExporter extends MediaEntityExporter {
       listExportFile = new File(exportDir, "index.html");
     }
     if (fileExtension.equalsIgnoreCase("xml")) {
-      listExportFile = new File(exportDir, "movielist.xml");
+      listExportFile = new File(exportDir, "tvshows.xml");
     }
     if (fileExtension.equalsIgnoreCase("csv")) {
-      listExportFile = new File(exportDir, "movielist.csv");
+      listExportFile = new File(exportDir, "tvshows.csv");
     }
     if (listExportFile == null) {
-      throw new Exception("error creating movie list file");
+      throw new Exception("error creating tv show list file");
     }
 
-    // create list
-    LOGGER.info("generating movie list");
+    // load episode template
+    String episodeTemplateFile = properties.getProperty("episode");
+    String episodeTemplate = "";
+    if (StringUtils.isNotBlank(episodeTemplateFile)) {
+      episodeTemplate = FileUtils.readFileToString(new File(templateDir, episodeTemplateFile), "UTF-8");
+    }
+
+    // create the list
+    LOGGER.info("generating tv show list");
     FileUtils.deleteQuietly(listExportFile);
 
     Map<String, Object> root = new HashMap<String, Object>();
-    root.put("movies", new ArrayList<T>(moviesToExport));
-
+    root.put("tvShows", new ArrayList<T>(tvShowsToExport));
     String output = engine.transform(listTemplate, root);
-
     FileUtils.writeStringToFile(listExportFile, output, "UTF-8");
     LOGGER.info("movie list generated: " + listExportFile.getAbsolutePath());
 
-    // create details for
     if (StringUtils.isNotBlank(detailTemplate)) {
-      File detailsDir = new File(exportDir, "movies");
-      if (detailsDir.exists()) {
-        FileUtils.deleteQuietly(detailsDir);
-      }
-      detailsDir.mkdirs();
+      for (MediaEntity me : tvShowsToExport) {
+        TvShow show = (TvShow) me;
+        // create a TV show dir
+        File showDir = new File(pathToExport + File.separator + TvShowRenamer.createDestination("$T ($Y)", show));
+        if (showDir.exists()) {
+          FileUtils.deleteQuietly(showDir);
+        }
+        showDir.mkdirs();
 
-      for (MediaEntity me : moviesToExport) {
-        Movie movie = (Movie) me;
-        LOGGER.debug("processing movie " + movie.getTitle());
-        // get preferred movie name like set up in movie renamer
-        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings()
-            .getMovieRenamerFilename(), movie)
-            + "." + fileExtension);
-
+        File detailsExportFile = new File(showDir, "tvshow." + fileExtension);
         root = new HashMap<String, Object>();
-        root.put("movie", movie);
+        root.put("tvShow", show);
 
         output = engine.transform(detailTemplate, root);
         FileUtils.writeStringToFile(detailsExportFile, output, "UTF-8");
 
-      }
+        if (StringUtils.isNotBlank(episodeTemplate)) {
+          for (TvShowEpisode episode : show.getEpisodes()) {
+            List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+            if (!mfs.isEmpty()) {
+              File seasonDir = new File(showDir, TvShowRenamer.generateSeasonDir("", episode));
+              if (!showDir.exists()) {
+                seasonDir.mkdirs();
+              }
 
-      LOGGER.info("movie detail pages generated: " + exportDir.getAbsolutePath());
+              String episodeFileName = FilenameUtils.getBaseName(TvShowRenamer.generateFilename(show, mfs.get(0))) + "." + fileExtension;
+              File episodeExportFile = new File(seasonDir, episodeFileName);
+              root = new HashMap<String, Object>();
+              root.put("episode", episode);
+              output = engine.transform(episodeTemplate, root);
+              FileUtils.writeStringToFile(episodeExportFile, output, "UTF-8");
+            }
+          }
+        }
+      }
     }
 
     // copy all non .jtme/template.conf files to destination dir
@@ -147,7 +166,7 @@ public class MovieExporter extends MediaEntityExporter {
   /*******************************************************************************
    * helper classes
    *******************************************************************************/
-  public static class MovieFilenameRenderer implements NamedRenderer {
+  public static class TvShowFilenameRenderer implements NamedRenderer {
     @Override
     public RenderFormatInfo getFormatInfo() {
       return null;
@@ -160,14 +179,14 @@ public class MovieExporter extends MediaEntityExporter {
 
     @Override
     public Class<?>[] getSupportedClasses() {
-      return new Class[] { Movie.class };
+      return new Class[] { TvShow.class };
     }
 
     @Override
     public String render(Object o, String pattern, Locale locale) {
-      if (o instanceof Movie) {
-        Movie movie = (Movie) o;
-        return MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
+      if (o instanceof TvShow) {
+        TvShow show = (TvShow) o;
+        return TvShowRenamer.generateTvShowDir(show);
       }
       return null;
     }

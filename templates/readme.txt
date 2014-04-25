@@ -13,9 +13,10 @@ Templates rely on three files to export successfully. All other files you create
 
 Each template must be in its own directory and include a template.conf file. The contents of template.conf must include:
     | name=<name of template>       -> The name that will display to the user when exporting through the UI._ ||
-    | type={movie}                  -> Currently only movie templates are supported._ ||
+    | type={movie, tv_show}         -> Currently only movie/tv show templates are supported._ ||
     | list=<path to list.jmte>      -> (default: list.jmte) This is the template which will be used to build index.html or movielist.xml/csv.
     | detail=<path to detail.jmte>  -> (default: detail.jmte) Remove this line if you do not require individual <movie>.html pages._ ||
+    | episode<path to episode.jmte> -> (default: episode.jmte) Only for TV SHOW exporting! This is the template for episode data export._ ||
     | extension={html|xml|csv}      -> (default: html) This is the format tMM will export.
     | description=<text>            -> Write a short description that will print in the tMM exporter UI. Newlines (\n) should be used to insert paragraph breaks.
     | url=<url to homepage>         -> The URL to the page that hosts this template or to the author's homepage. Remove this line if you have neither.
@@ -53,6 +54,9 @@ In this example we iterated over the movies list array like in the previous exam
 
 Following variables can be used:
 
+***********************************************************************************************************
+* MOVIES
+***********************************************************************************************************
 Movie:
 Date                  dateAdded
 List<MediaFile>       mediaFiles
@@ -93,6 +97,7 @@ int                   votes
 MovieCast:
 String                character
 String                name
+String                thumbUrl
 
 MediaFile:
 String                path
@@ -113,3 +118,7 @@ MediaTrailer:
 String                name
 String                url
 String                provider
+
+***********************************************************************************************************
+* TV SHOWS
+***********************************************************************************************************

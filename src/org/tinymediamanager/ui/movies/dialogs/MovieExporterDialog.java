@@ -42,6 +42,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.ExportTemplate;
+import org.tinymediamanager.core.MediaEntityExporter.TemplateType;
 import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -168,7 +169,8 @@ public class MovieExporterDialog extends JDialog {
         ExportTemplate selectedTemplate = templatesFound.get(index);
         if (selectedTemplate != null) {
           try {
-            MovieExporter.export(movies, selectedTemplate.getPath(), tfExportDir.getText());
+            MovieExporter exporter = new MovieExporter(selectedTemplate.getPath());
+            exporter.export(movies, tfExportDir.getText());
           }
           catch (Exception e) {
             LOGGER.error("Error exporting movies: " + e.getMessage());
@@ -191,7 +193,7 @@ public class MovieExporterDialog extends JDialog {
     panelButtons.add(btnCancel);
 
     movies = moviesToExport;
-    templatesFound = MovieExporter.findTemplates();
+    templatesFound = MovieExporter.findTemplates(TemplateType.MOVIE);
     initDataBindings();
   }
 
