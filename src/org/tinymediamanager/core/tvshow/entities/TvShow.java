@@ -57,7 +57,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
@@ -269,12 +268,18 @@ public class TvShow extends MediaEntity {
 
     // no one found - create one
     if (season == null) {
+      int oldValue = seasons.size();
       season = new TvShowSeason(episode.getSeason(), this);
       seasons.add(season);
       firePropertyChange(ADDED_SEASON, null, season);
+      firePropertyChange(SEASON_COUNT, oldValue, seasons.size());
     }
 
     return season;
+  }
+
+  public int getSeasonCount() {
+    return seasons.size();
   }
 
   /**

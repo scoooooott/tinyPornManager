@@ -77,6 +77,7 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonPosterAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowExportAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowMediaInformationAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRemoveAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowRenameAction;
@@ -139,6 +140,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionMediaInformation        = new TvShowMediaInformationAction(false);
   private final Action                actionMediaInformation2       = new TvShowMediaInformationAction(true);
   private final Action                actionClearImageCache         = new TvShowClearImageCacheAction();
+  private final Action                actionExport                  = new TvShowExportAction();
 
   private int                         width                         = 0;
   private JTextField                  textField;
@@ -532,6 +534,9 @@ public class TvShowPanel extends JPanel {
     menuItem = menu.add(actionMediaInformation2);
     menuItem.setMnemonic(KeyEvent.VK_M);
     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
+    menuItem = menu.add(actionExport);
+    menuItem.setMnemonic(KeyEvent.VK_X);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menu.add(actionClearImageCache);
     menuItem.setMnemonic(KeyEvent.VK_C);
 
@@ -557,7 +562,7 @@ public class TvShowPanel extends JPanel {
     // popupMenu.add(actionBatchEdit);
     popupMenu.add(actionRename);
     popupMenu.add(actionMediaInformation2);
-    // popupMenu.add(actionExport);
+    popupMenu.add(actionExport);
     popupMenu.add(actionClearImageCache);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);

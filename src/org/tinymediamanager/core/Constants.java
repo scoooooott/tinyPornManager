@@ -70,6 +70,7 @@ public final class Constants {
   public final static String RUNTIME                = "runtime";
   public final static String SCRAPED                = "scraped";
   public final static String SEASON                 = "season";
+  public final static String SEASON_COUNT           = "seasonCount";
   public final static String SEASON_POSTER          = "seasonPoster";
   public final static String SORT_TITLE             = "sortTitle";
   public final static String SPOKEN_LANGUAGES       = "spokenLanguages";
