@@ -17,6 +17,7 @@ package org.tinymediamanager.core.movie;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.awt.GraphicsEnvironment;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -28,10 +29,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -64,6 +68,7 @@ import org.tinymediamanager.scraper.moviemeternl.MoviemeterMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.zelluloid.ZelluloidMetadataProvider;
+import org.tinymediamanager.ui.UTF8Control;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.GlazedLists;
@@ -76,6 +81,7 @@ import ca.odell.glazedlists.ObservableElementList;
  */
 public class MovieList extends AbstractModelObject {
   private static final Logger          LOGGER                   = LoggerFactory.getLogger(MovieList.class);
+  private static final ResourceBundle  BUNDLE                   = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static MovieList             instance;
 
   private ObservableElementList<Movie> movieList;
@@ -349,6 +355,9 @@ public class MovieList extends AbstractModelObject {
       else {
         LOGGER.debug("found no movieSets in database");
       }
+
+      // remove invalid movies which have no VIDEO files
+      checkAndCleanupMediaFiles();
 
       // cross check movies and moviesets if linking is "stable"
       checkAndCleanupMovieSets();
@@ -1159,6 +1168,35 @@ public class MovieList extends AbstractModelObject {
     // second: check if there are some orphaned movies in moviesets
     for (MovieSet movieSet : movieSetList) {
       movieSet.cleanMovieSet();
+    }
+  }
+
+  /**
+   * check if there are movies without (at least) one VIDEO mf
+   */
+  private void checkAndCleanupMediaFiles() {
+    List<Movie> moviesToRemove = new ArrayList<Movie>();
+    for (Movie movie : movieList) {
+      List<MediaFile> mfs = movie.getMediaFiles(MediaFileType.VIDEO);
+      if (mfs.isEmpty()) {
+        // mark movie for removal
+        moviesToRemove.add(movie);
+      }
+    }
+
+    if (!moviesToRemove.isEmpty()) {
+      removeMovies(moviesToRemove);
+      LOGGER.warn("movies without VIDEOs detected");
+
+      // since we have no active UI yet, push a popup message in an own window
+      if (!GraphicsEnvironment.isHeadless()) {
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("message.database.corrupteddata"));
+          }
+        });
+      }
     }
   }
 

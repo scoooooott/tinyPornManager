@@ -17,14 +17,18 @@ package org.tinymediamanager.core.tvshow;
 
 import static org.tinymediamanager.core.Constants.*;
 
+import java.awt.GraphicsEnvironment;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -32,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -47,6 +52,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.anidb.AniDBMetadataProvider;
 import org.tinymediamanager.scraper.fanarttv.FanartTvMetadataProvider;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
+import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class TvShowList.
@@ -54,13 +60,14 @@ import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
  * @author Manuel Laggner
  */
 public class TvShowList extends AbstractModelObject {
-  private static final Logger    LOGGER                = LoggerFactory.getLogger(TvShowList.class);
-  private static TvShowList      instance              = null;
+  private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowList.class);
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
+  private static TvShowList           instance              = null;
 
-  private List<TvShow>           tvShowList            = ObservableCollections.observableList(new ArrayList<TvShow>());
-  private List<String>           tvShowTagsObservable  = ObservableCollections.observableList(new ArrayList<String>());
-  private List<String>           episodeTagsObservable = ObservableCollections.observableList(new ArrayList<String>());
-  private PropertyChangeListener propertyChangeListener;
+  private List<TvShow>                tvShowList            = ObservableCollections.observableList(new ArrayList<TvShow>());
+  private List<String>                tvShowTagsObservable  = ObservableCollections.observableList(new ArrayList<String>());
+  private List<String>                episodeTagsObservable = ObservableCollections.observableList(new ArrayList<String>());
+  private PropertyChangeListener      propertyChangeListener;
 
   /**
    * Instantiates a new TvShowList.
@@ -225,6 +232,8 @@ public class TvShowList extends AbstractModelObject {
           }
         }
 
+        // check for corrupted media entities
+        checkAndCleanupMediaFiles();
       }
       else {
         LOGGER.debug("found no movies in database");
@@ -552,4 +561,32 @@ public class TvShowList extends AbstractModelObject {
     return newEp;
   }
 
+  /**
+   * check if there are movies without (at least) one VIDEO mf
+   */
+  private void checkAndCleanupMediaFiles() {
+    boolean problemsDetected = false;
+    for (TvShow tvShow : tvShowList) {
+      for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
+        List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+        if (mfs.isEmpty()) {
+          tvShow.removeEpisode(episode);
+          problemsDetected = true;
+        }
+      }
+    }
+
+    if (problemsDetected) {
+      LOGGER.warn("episodes without VIDEOs detected");
+      // since we have no active UI yet, push a popup message in an own window
+      if (!GraphicsEnvironment.isHeadless()) {
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("message.database.corrupteddata"));
+          }
+        });
+      }
+    }
+  }
 }
