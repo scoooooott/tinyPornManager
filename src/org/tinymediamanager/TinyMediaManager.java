@@ -544,9 +544,23 @@ public class TinyMediaManager {
           }
         }
         if (Platform.isWindows()) {
-          file = new File("tinyMediaManager.exe.new");
+          file = new File("tinyMediaManager.new");
           if (file.exists() && file.length() > 10000 && file.length() < 50000) {
             File cur = new File("tinyMediaManager.exe");
+            if (file.length() != cur.length() || !cur.exists()) {
+              try {
+                FileUtils.copyFile(file, cur);
+              }
+              catch (IOException e) {
+                LOGGER.error("Could not update the updater!");
+              }
+            }
+          }
+        }
+        if (Platform.isWindows()) {
+          file = new File("tinyMediaManagerCMD.new");
+          if (file.exists() && file.length() > 10000 && file.length() < 50000) {
+            File cur = new File("tinyMediaManagerCMD.exe");
             if (file.length() != cur.length() || !cur.exists()) {
               try {
                 FileUtils.copyFile(file, cur);

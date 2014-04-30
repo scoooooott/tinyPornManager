@@ -26,8 +26,8 @@ delete = lib/log4j.jar
 delete = lib/l2fprod-common-buttonbar.jar         
 delete = lib/l2fprod-common-shared.jar
 
-resource = [windows] tinyMediaManager.exe.new #rename to new, for self-update
-resource = [windows] tinyMediaManagerCMD.exe
+resource = [windows] tinyMediaManager.new                   #rename to new, for self-update
+resource = [windows] tinyMediaManagerCMD.new                #rename to new, for self-update
 resource = [!windows] tinyMediaManagerCMD.sh
 resource = [!windows] tinyMediaManager.sh
 resource = getdown-new.jar
@@ -65,6 +65,7 @@ uresource = templates/ListExampleHtml.jar
 uresource = templates/ListExampleXml.jar
 uresource = templates/jQueryliscious.jar
 uresource = templates/SimpleConfluence.jar
+uresource = templates/TvShowDetailExampleXml.jar
 
 # The main entry point for the application (prefix needed for GD params)
 class = org.tinymediamanager.TinyMediaManager

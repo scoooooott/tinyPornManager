@@ -235,8 +235,8 @@
         <copy todir="${build.dir}/locale">
             <fileset dir="locale"/>
         </copy>
-        <copy file="AppBundler/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.exe.new" />
-        <copy file="AppBundler/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.exe" />
+        <copy file="AppBundler/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
+        <copy file="AppBundler/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
         <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
         <copy file="${dist.dir}/tinyMediaManagerCMD.sh" tofile="${build.dir}/tinyMediaManagerCMD.sh" />
         <copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
