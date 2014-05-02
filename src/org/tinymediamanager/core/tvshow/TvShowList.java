@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -41,6 +42,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
@@ -61,12 +63,20 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class TvShowList extends AbstractModelObject {
   private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowList.class);
-  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static TvShowList           instance              = null;
 
-  private List<TvShow>                tvShowList            = ObservableCollections.observableList(new ArrayList<TvShow>());
-  private List<String>                tvShowTagsObservable  = ObservableCollections.observableList(new ArrayList<String>());
-  private List<String>                episodeTagsObservable = ObservableCollections.observableList(new ArrayList<String>());
+  private List<TvShow>                tvShowList            = ObservableCollections.observableList(Collections
+                                                                .synchronizedList(new ArrayList<TvShow>()));
+  private List<String>                tvShowTagsObservable  = ObservableCollections.observableList(Collections
+                                                                .synchronizedList(new ArrayList<String>()));
+  private List<String>                episodeTagsObservable = ObservableCollections.observableList(Collections
+                                                                .synchronizedList(new ArrayList<String>()));
+  private List<String>                videoCodecsObservable = ObservableCollections.observableList(Collections
+                                                                .synchronizedList(new ArrayList<String>()));
+  private List<String>                audioCodecsObservable = ObservableCollections.observableList(Collections
+                                                                .synchronizedList(new ArrayList<String>()));
+
   private PropertyChangeListener      propertyChangeListener;
 
   /**
@@ -85,6 +95,10 @@ public class TvShowList extends AbstractModelObject {
         if ("tag".equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
           TvShowEpisode episode = (TvShowEpisode) evt.getSource();
           updateEpisodeTags(episode);
+        }
+        if (MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
+          TvShowEpisode episode = (TvShowEpisode) evt.getSource();
+          updateMediaInformationLists(episode);
         }
         if (EPISODE_COUNT.equals(evt.getPropertyName())) {
           firePropertyChange(EPISODE_COUNT, 0, 1);
@@ -220,6 +234,7 @@ public class TvShowList extends AbstractModelObject {
             for (TvShowEpisode episode : tvShow.getEpisodes()) {
               episode.initializeAfterLoading();
               updateEpisodeTags(episode);
+              updateMediaInformationLists(episode);
             }
 
             // for performance reasons we add tv shows directly
@@ -472,6 +487,81 @@ public class TvShowList extends AbstractModelObject {
 
   public List<String> getTagsInEpisodes() {
     return episodeTagsObservable;
+  }
+
+  private void updateMediaInformationLists(TvShowEpisode episode) {
+    // video codec
+    for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+      String codec = mf.getVideoCodec();
+      boolean codecFound = false;
+
+      for (String mfCodec : videoCodecsObservable) {
+        if (mfCodec.equals(codec)) {
+          codecFound = true;
+          break;
+        }
+      }
+
+      if (!codecFound) {
+        addVideoCodec(codec);
+      }
+    }
+
+    // audio codec
+    for (MediaFile mf : episode.getMediaFiles(MediaFileType.VIDEO)) {
+      for (MediaFileAudioStream audio : mf.getAudioStreams()) {
+        String codec = audio.getCodec();
+        boolean codecFound = false;
+        for (String mfCodec : audioCodecsObservable) {
+          if (mfCodec.equals(codec)) {
+            codecFound = true;
+            break;
+          }
+        }
+
+        if (!codecFound) {
+          addAudioCodec(codec);
+        }
+      }
+    }
+  }
+
+  private void addVideoCodec(String newCodec) {
+    if (StringUtils.isBlank(newCodec)) {
+      return;
+    }
+
+    for (String codec : videoCodecsObservable) {
+      if (codec.equals(newCodec)) {
+        return;
+      }
+    }
+
+    videoCodecsObservable.add(newCodec);
+    firePropertyChange("videoCodec", null, videoCodecsObservable);
+  }
+
+  private void addAudioCodec(String newCodec) {
+    if (StringUtils.isBlank(newCodec)) {
+      return;
+    }
+
+    for (String codec : audioCodecsObservable) {
+      if (codec.equals(newCodec)) {
+        return;
+      }
+    }
+
+    audioCodecsObservable.add(newCodec);
+    firePropertyChange("audioCodec", null, audioCodecsObservable);
+  }
+
+  public List<String> getVideoCodecsInEpisodes() {
+    return videoCodecsObservable;
+  }
+
+  public List<String> getAudioCodecsInEpisodes() {
+    return audioCodecsObservable;
   }
 
   /**

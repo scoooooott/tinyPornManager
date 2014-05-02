@@ -26,6 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
@@ -135,6 +137,24 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.VIDEO_CODEC)) {
+      if (!filterVideoCodec(tvShow, (String) searchOptions.get(SearchOptions.VIDEO_CODEC))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.AUDIO_CODEC)) {
+      if (!filterAudioCodec(tvShow, (String) searchOptions.get(SearchOptions.AUDIO_CODEC))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.VIDEO_FORMAT)) {
+      if (!filterVideoFormat(tvShow, (String) searchOptions.get(SearchOptions.VIDEO_FORMAT))) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -194,6 +214,24 @@ class TvShowExtendedMatcher {
       }
     }
 
+    if (searchOptions.containsKey(SearchOptions.VIDEO_CODEC)) {
+      if (!filterVideoCodec(season, (String) searchOptions.get(SearchOptions.VIDEO_CODEC))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.AUDIO_CODEC)) {
+      if (!filterAudioCodec(season, (String) searchOptions.get(SearchOptions.AUDIO_CODEC))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.VIDEO_FORMAT)) {
+      if (!filterVideoFormat(season, (String) searchOptions.get(SearchOptions.VIDEO_FORMAT))) {
+        return false;
+      }
+    }
+
     // fallback
     return true;
   }
@@ -249,6 +287,24 @@ class TvShowExtendedMatcher {
 
     if (searchOptions.containsKey(SearchOptions.TAG)) {
       if (!filterTag(episode, (String) searchOptions.get(SearchOptions.TAG))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.VIDEO_CODEC)) {
+      if (!filterVideoCodec(episode, (String) searchOptions.get(SearchOptions.VIDEO_CODEC))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.AUDIO_CODEC)) {
+      if (!filterAudioCodec(episode, (String) searchOptions.get(SearchOptions.AUDIO_CODEC))) {
+        return false;
+      }
+    }
+
+    if (searchOptions.containsKey(SearchOptions.VIDEO_FORMAT)) {
+      if (!filterVideoFormat(episode, (String) searchOptions.get(SearchOptions.VIDEO_FORMAT))) {
         return false;
       }
     }
@@ -370,6 +426,42 @@ class TvShowExtendedMatcher {
 
   private boolean filterTag(TvShowEpisode episode, String tag) {
     return matchesTag(episode.getTvShow(), Arrays.asList(episode), tag);
+  }
+
+  private boolean filterVideoCodec(TvShow tvShow, String codec) {
+    return matchesVideoCodec(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), codec);
+  }
+
+  private boolean filterVideoCodec(TvShowSeason season, String codec) {
+    return matchesVideoCodec(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), codec);
+  }
+
+  private boolean filterVideoCodec(TvShowEpisode episode, String codec) {
+    return matchesVideoCodec(episode.getTvShow(), Arrays.asList(episode), codec);
+  }
+
+  private boolean filterAudioCodec(TvShow tvShow, String codec) {
+    return matchesAudioCodec(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), codec);
+  }
+
+  private boolean filterAudioCodec(TvShowSeason season, String codec) {
+    return matchesAudioCodec(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), codec);
+  }
+
+  private boolean filterAudioCodec(TvShowEpisode episode, String codec) {
+    return matchesAudioCodec(episode.getTvShow(), Arrays.asList(episode), codec);
+  }
+
+  private boolean filterVideoFormat(TvShow tvShow, String format) {
+    return matchesVideoFormat(tvShow, new ArrayList<TvShowEpisode>(tvShow.getEpisodes()), format);
+  }
+
+  private boolean filterVideoFormat(TvShowSeason season, String format) {
+    return matchesVideoFormat(season.getTvShow(), new ArrayList<TvShowEpisode>(season.getEpisodes()), format);
+  }
+
+  private boolean filterVideoFormat(TvShowEpisode episode, String format) {
+    return matchesVideoFormat(episode.getTvShow(), Arrays.asList(episode), format);
   }
 
   private boolean matchesText(TvShow tvShow, List<TvShowEpisode> episodes, String filterText) {
@@ -501,6 +593,78 @@ class TvShowExtendedMatcher {
       }
     }
 
+    return false;
+  }
+
+  private boolean matchesVideoCodec(TvShow tvShow, List<TvShowEpisode> episodes, String codec) {
+    if (StringUtils.isBlank(codec)) {
+      return true;
+    }
+
+    // search codec in the episodes
+    for (TvShowEpisode episode : episodes) {
+      List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+      for (MediaFile mf : mfs) {
+        if (mf.getVideoCodec().equalsIgnoreCase(codec)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private boolean matchesAudioCodec(TvShow tvShow, List<TvShowEpisode> episodes, String codec) {
+    if (StringUtils.isBlank(codec)) {
+      return true;
+    }
+
+    // search codec in the episodes
+    for (TvShowEpisode episode : episodes) {
+      List<MediaFile> mfs = episode.getMediaFiles(MediaFileType.VIDEO);
+      for (MediaFile mf : mfs) {
+        if (mf.getAudioCodec().equalsIgnoreCase(codec)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private boolean matchesVideoFormat(TvShow tvShow, List<TvShowEpisode> episodes, String videoFormat) {
+    if (StringUtils.isBlank(videoFormat)) {
+      return true;
+    }
+    for (TvShowEpisode episode : episodes) {
+      if (videoFormat == MediaFile.VIDEO_FORMAT_HD || videoFormat == MediaFile.VIDEO_FORMAT_SD) {
+        if (videoFormat == MediaFile.VIDEO_FORMAT_HD && isVideoHD(episode.getMediaInfoVideoFormat())) {
+          return true;
+        }
+        if (videoFormat == MediaFile.VIDEO_FORMAT_SD && !isVideoHD(episode.getMediaInfoVideoFormat())) {
+          return true;
+        }
+      }
+      else {
+        if (videoFormat == episode.getMediaInfoVideoFormat()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private boolean isVideoHD(String videoFormat) {
+    if (videoFormat == MediaFile.VIDEO_FORMAT_720P) {
+      return true;
+    }
+    if (videoFormat == MediaFile.VIDEO_FORMAT_1080P) {
+      return true;
+    }
+    if (videoFormat == MediaFile.VIDEO_FORMAT_4K) {
+      return true;
+    }
+    if (videoFormat == MediaFile.VIDEO_FORMAT_8K) {
+      return true;
+    }
     return false;
   }
 }

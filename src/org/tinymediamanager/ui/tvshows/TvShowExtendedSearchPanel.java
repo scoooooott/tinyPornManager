@@ -39,6 +39,7 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -78,19 +79,21 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
   private JCheckBox                    cbFilterMissingMetadata;
   private JCheckBox                    cbFilterMissingArtwork;
   private JCheckBox                    cbFilterMissingSubtitles;
-
-  private final Action                 actionFilter     = new FilterAction();
   private JCheckBox                    cbFilterNewEpisodes;
-  private JLabel                       lblNewEpisodes;
   private JCheckBox                    cbFilterWatched;
-  private JLabel                       lblWatched;
   private JComboBox                    cbWatched;
   private JCheckBox                    cbFilterGenres;
-  private JLabel                       lblGenres;
   private JComboBox                    cbGenres;
   private JCheckBox                    cbFilterTag;
-  private JLabel                       lblTag;
   private JComboBox                    cbTag;
+  private JCheckBox                    cbFilterVideoCodec;
+  private JComboBox                    cbVideoCodec;
+  private JCheckBox                    cbFilterAudioCodec;
+  private JComboBox                    cbAudioCodec;
+  private JCheckBox                    cbFilterVideoFormat;
+  private JComboBox                    cbVideoFormat;
+
+  private final Action                 actionFilter     = new FilterAction();
 
   public TvShowExtendedSearchPanel(TvShowTreeModel model, JTree tree) {
     super();
@@ -106,7 +109,8 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
         new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
 
     JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     setComponentFont(lblFilterBy);
@@ -117,7 +121,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     cbFilterWatched.setUI(CHECKBOX_UI); // $hide$
     add(cbFilterWatched, "2, 4");
 
-    lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+    JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
     setComponentFont(lblWatched);
     add(lblWatched, "4, 4, right, default");
 
@@ -131,7 +135,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     cbFilterGenres.setUI(CHECKBOX_UI); // $hide$
     add(cbFilterGenres, "2, 5");
 
-    lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+    JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
     setComponentFont(lblGenres);
     add(lblGenres, "4, 5, right, default");
 
@@ -176,7 +180,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     cbFilterTag.setUI(CHECKBOX_UI); // $hide$
     add(cbFilterTag, "2, 7");
 
-    lblTag = new JLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
+    JLabel lblTag = new JLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
     setComponentFont(lblTag);
     add(lblTag, "4, 7, right, default");
 
@@ -185,55 +189,97 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     cbTag.setAction(actionFilter);
     add(cbTag, "6, 7, fill, default");
 
+    cbFilterVideoFormat = new JCheckBox("");
+    cbFilterVideoFormat.setUI(CHECKBOX_UI); // $hide$
+    cbFilterVideoFormat.setAction(actionFilter);
+    add(cbFilterVideoFormat, "2, 8");
+
+    JLabel lblVideoFormat = new JLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
+    setComponentFont(lblVideoFormat);
+    add(lblVideoFormat, "4, 8, right, default");
+
+    cbVideoFormat = new SmallComboBox(getVideoFormats());
+    setComponentFont(cbVideoFormat);
+    cbVideoFormat.setAction(actionFilter);
+    add(cbVideoFormat, "6, 8, fill, default");
+
+    cbFilterVideoCodec = new JCheckBox("");
+    cbFilterVideoCodec.setAction(actionFilter);
+    cbFilterVideoCodec.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterVideoCodec, "2, 9");
+
+    JLabel lblVideoCodec = new JLabel(BUNDLE.getString("metatag.videocodec")); //$NON-NLS-1$
+    setComponentFont(lblVideoCodec);
+    add(lblVideoCodec, "4, 9, right, default");
+
+    cbVideoCodec = new SmallComboBox();
+    setComponentFont(cbVideoCodec);
+    cbVideoCodec.setAction(actionFilter);
+    add(cbVideoCodec, "6, 9, fill, default");
+
+    cbFilterAudioCodec = new JCheckBox("");
+    cbFilterAudioCodec.setAction(actionFilter);
+    cbFilterAudioCodec.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterAudioCodec, "2, 10");
+
+    JLabel lblAudioCodec = new JLabel(BUNDLE.getString("metatag.audiocodec")); //$NON-NLS-1$
+    setComponentFont(lblAudioCodec);
+    add(lblAudioCodec, "4, 10, right, default");
+
+    cbAudioCodec = new SmallComboBox();
+    setComponentFont(cbAudioCodec);
+    cbAudioCodec.setAction(actionFilter);
+    add(cbAudioCodec, "6, 10, fill, default");
+
     cbFilterDatasource = new JCheckBox("");
     cbFilterDatasource.setAction(actionFilter);
     cbFilterDatasource.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterDatasource, "2, 8");
+    add(cbFilterDatasource, "2, 11");
 
     JLabel lblDatasource = new JLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
     setComponentFont(lblDatasource);
-    add(lblDatasource, "4, 8, right, default");
+    add(lblDatasource, "4, 11, right, default");
 
     cbDatasource = new SmallComboBox();
     setComponentFont(cbDatasource);
     cbDatasource.setAction(actionFilter);
-    add(cbDatasource, "6, 8, fill, default");
+    add(cbDatasource, "6, 11, fill, default");
 
     cbFilterMissingMetadata = new JCheckBox("");
     cbFilterMissingMetadata.setAction(actionFilter);
     cbFilterMissingMetadata.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingMetadata, "2, 9");
+    add(cbFilterMissingMetadata, "2, 12");
 
     JLabel lblMissingMetadata = new JLabel(BUNDLE.getString("movieextendedsearch.missingmetadata")); //$NON-NLS-1$
     setComponentFont(lblMissingMetadata);
-    add(lblMissingMetadata, "4, 9, right, default");
+    add(lblMissingMetadata, "4, 12, right, default");
 
     cbFilterMissingArtwork = new JCheckBox("");
     cbFilterMissingArtwork.setAction(actionFilter);
     cbFilterMissingArtwork.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingArtwork, "2, 10");
+    add(cbFilterMissingArtwork, "2, 13");
 
     JLabel lblMissingArtwork = new JLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
     setComponentFont(lblMissingArtwork);
-    add(lblMissingArtwork, "4, 10, right, default");
+    add(lblMissingArtwork, "4, 13, right, default");
 
     cbFilterMissingSubtitles = new JCheckBox("");
     cbFilterMissingSubtitles.setAction(actionFilter);
     cbFilterMissingSubtitles.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingSubtitles, "2, 11");
+    add(cbFilterMissingSubtitles, "2, 14");
 
     JLabel lblMissingSubtitles = new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
     setComponentFont(lblMissingSubtitles);
-    add(lblMissingSubtitles, "4, 11, right, default");
+    add(lblMissingSubtitles, "4, 14, right, default");
 
     cbFilterNewEpisodes = new JCheckBox("");
     cbFilterNewEpisodes.setAction(actionFilter);
     cbFilterNewEpisodes.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterNewEpisodes, "2, 12");
+    add(cbFilterNewEpisodes, "2, 15");
 
-    lblNewEpisodes = new JLabel(BUNDLE.getString("movieextendedsearch.newepisodes")); //$NON-NLS-1$
+    JLabel lblNewEpisodes = new JLabel(BUNDLE.getString("movieextendedsearch.newepisodes")); //$NON-NLS-1$
     setComponentFont(lblNewEpisodes);
-    add(lblNewEpisodes, "4, 12, right, default");
+    add(lblNewEpisodes, "4, 15, right, default");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -244,6 +290,9 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
         if (evt.getSource() instanceof TvShowList && "tag".equals(evt.getPropertyName())) {
           buildAndInstallTagsArray();
         }
+        if (evt.getSource() instanceof TvShowList && ("audioCodec".equals(evt.getPropertyName()) || "videoCodec".equals(evt.getPropertyName()))) {
+          buildAndInstallCodecArray();
+        }
       }
     };
     tvShowList.addPropertyChangeListener(propertyChangeListener);
@@ -251,6 +300,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
     buildAndInstallDatasourceArray();
     buildAndInstallTagsArray();
+    buildAndInstallCodecArray();
   }
 
   private void buildAndInstallDatasourceArray() {
@@ -271,14 +321,25 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
     }
   }
 
+  private void buildAndInstallCodecArray() {
+    cbVideoCodec.removeAllItems();
+    List<String> codecs = new ArrayList<String>(tvShowList.getVideoCodecsInEpisodes());
+    Collections.sort(codecs);
+    for (String codec : codecs) {
+      cbVideoCodec.addItem(codec);
+    }
+
+    cbAudioCodec.removeAllItems();
+    codecs = new ArrayList<String>(tvShowList.getAudioCodecsInEpisodes());
+    Collections.sort(codecs);
+    for (String codec : codecs) {
+      cbAudioCodec.addItem(codec);
+    }
+  }
+
   private class FilterAction extends AbstractAction {
     private static final long serialVersionUID = 2680577442970097443L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
       // filter by watched flag
@@ -363,6 +424,39 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
         tvShowTreeModel.removeFilter(SearchOptions.NEW_EPISODES);
       }
 
+      // filter by video codec
+      if (cbFilterVideoCodec.isSelected()) {
+        String videoCodec = (String) cbVideoCodec.getSelectedItem();
+        if (StringUtils.isNotBlank(videoCodec)) {
+          tvShowTreeModel.setFilter(SearchOptions.VIDEO_CODEC, videoCodec);
+        }
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.VIDEO_CODEC);
+      }
+
+      // filter by audio codec
+      if (cbFilterAudioCodec.isSelected()) {
+        String audioCodec = (String) cbAudioCodec.getSelectedItem();
+        if (StringUtils.isNotBlank(audioCodec)) {
+          tvShowTreeModel.setFilter(SearchOptions.AUDIO_CODEC, audioCodec);
+        }
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.AUDIO_CODEC);
+      }
+
+      // filer by video format
+      if (cbFilterVideoFormat.isSelected()) {
+        String videoFormat = (String) cbVideoFormat.getSelectedItem();
+        if (StringUtils.isNotBlank(videoFormat)) {
+          tvShowTreeModel.setFilter(SearchOptions.VIDEO_FORMAT, videoFormat);
+        }
+      }
+      else {
+        tvShowTreeModel.removeFilter(SearchOptions.VIDEO_FORMAT);
+      }
+
       // apply the filter
       tvShowTreeModel.filter(tree);
     }
@@ -370,5 +464,10 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
 
   private void setComponentFont(JComponent comp) {
     comp.setFont(comp.getFont().deriveFont(FONT_SIZE));
+  }
+
+  private String[] getVideoFormats() {
+    return new String[] { MediaFile.VIDEO_FORMAT_480P, MediaFile.VIDEO_FORMAT_540P, MediaFile.VIDEO_FORMAT_576P, MediaFile.VIDEO_FORMAT_720P,
+        MediaFile.VIDEO_FORMAT_1080P, MediaFile.VIDEO_FORMAT_4K, MediaFile.VIDEO_FORMAT_SD, MediaFile.VIDEO_FORMAT_HD }; // MediaFile.VIDEO_FORMAT_8K,
   }
 }
