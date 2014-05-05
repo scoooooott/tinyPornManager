@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -123,6 +124,10 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     arcs = new Dimension(10, 10);
 
     this.movieSelectionModel = model;
+
+    // add a dummy mouse listener to prevent clicking through
+    addMouseListener(new MouseAdapter() {
+    });
 
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.UNRELATED_GAP_COLSPEC, },
