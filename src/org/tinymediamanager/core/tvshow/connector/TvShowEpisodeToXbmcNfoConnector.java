@@ -189,15 +189,15 @@ public class TvShowEpisodeToXbmcNfoConnector {
       }
 
       xbmc.actors.clear();
-      // actors for tv show episode (guests?)
+      // actors for tv show episode (guests and show sctors)
       for (TvShowActor actor : episode.getActors()) {
         xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
       }
 
-      // actors for tv show
-      for (TvShowActor actor : episode.getTvShow().getActors()) {
-        xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
-      }
+      // // actors for tv show
+      // for (TvShowActor actor : episode.getTvShow().getActors()) {
+      // xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
+      // }
 
       // support of frodo director tags
       xbmc.director.clear();
