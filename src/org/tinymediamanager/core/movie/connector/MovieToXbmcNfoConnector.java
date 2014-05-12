@@ -577,6 +577,9 @@ public class MovieToXbmcNfoConnector {
         movie.setCertification(Certification.parseCertificationStringForMovieSetupCountry(xbmc.mpaa));
       }
       movie.setWatched(xbmc.watched);
+      if (xbmc.playcount > 0) {
+        movie.setWatched(true);
+      }
       movie.setSpokenLanguages(xbmc.languages);
 
       // movieset
