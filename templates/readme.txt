@@ -6,17 +6,18 @@ If you want to edit or create a new template make a copy of the template folder 
 If you create a nice template contact tMM and we will check it out for distribution with the program.
 Contact: http://www.tinymediamanager.org/index.php/contact-us/
 
-Templates rely on three files to export successfully. All other files you create will also be exported, retaining their directory structure, when the page is built by tMM; this allows for the inclusion of stylesheets, images and scripts.
+Templates rely on three files to export successfully. All other files you create will also be exported, retaining their directory structure, when the page is built by tMM; this allows for the inclusion of style sheets, images and scripts.
     | template.conf     -> This configuration file tells tMM where to find the other two required files.
     | list.jmte         -> This may be renamed as long as you also reflect the change in template.conf.
-    | detail.jmte       -> This may be renamed as long as you also reflect the change in template.conf. detail.jmte is required only if you want tMM to build individual <movie>.html files for inclusion into index.html either through an .ajax() call or iframe.
+    | detail.jmte       -> This may be renamed as long as you also reflect the change in template.conf. detail.jmte is required only if you want tMM to build individual <movie>.xxx files for inclusion into index.html either through an .ajax() call or iframe.
+    | episode.jmte      -> This may be renamed as long as you also reflect the change in template.conf. episode.jmte is required only if you want tMM to build individual <episode>.xxx files for inclusion into index.html/detail.html either through an .ajax() call or iframe.
 
 Each template must be in its own directory and include a template.conf file. The contents of template.conf must include:
     | name=<name of template>       -> The name that will display to the user when exporting through the UI._ ||
     | type={movie, tv_show}         -> Currently only movie/tv show templates are supported._ ||
     | list=<path to list.jmte>      -> (default: list.jmte) This is the template which will be used to build index.html or movielist.xml/csv.
     | detail=<path to detail.jmte>  -> (default: detail.jmte) Remove this line if you do not require individual <movie>.html pages._ ||
-    | episode<path to episode.jmte> -> (default: episode.jmte) Only for TV SHOW exporting! This is the template for episode data export._ ||
+    | episode<path to episode.jmte> -> (default: episode.jmte) Only for TV show exporting! This is the template for episode data export._ ||
     | extension={html|xml|csv}      -> (default: html) This is the format tMM will export.
     | description=<text>            -> Write a short description that will print in the tMM exporter UI. Newlines (\n) should be used to insert paragraph breaks.
     | url=<url to homepage>         -> The URL to the page that hosts this template or to the author's homepage. Remove this line if you have neither.
@@ -71,11 +72,11 @@ String                director
 String                fanart
 String                fanartUrl
 String                imdbId
-String                name
-String                nameSortable
+String                title
+String                titleSortable
 String                nfoFilename
-String                originalName
-String                overview
+String                originalTitle
+String                plot
 String                path
 String                poster
 String                posterUrl
@@ -122,3 +123,72 @@ String                provider
 ***********************************************************************************************************
 * TV SHOWS
 ***********************************************************************************************************
+TV show:
+Date                  dateAdded
+List<TvShowEpisode>   episodes
+List<TvShowSeason>    seasons
+List<MediaFile>       mediaFiles
+List<MediaGenres>     genres
+List<TvShowActor>     actors        
+List<String>          tags
+String                dataSource
+String                fanart
+String                fanartUrl
+String                tvdbId
+String                title
+String                titleSortable
+String                nfoFilename
+String                originalTitle
+String                plot
+String                path
+String                poster
+String                posterUrl
+String                banner
+String                bannerUrl
+String                studio
+String                sortTitle
+Date                  firstAired
+String                year
+boolean               duplicate
+boolean               scraped
+boolean               watched
+float                 rating
+int                   votes
+
+TvShowSeason:
+int                   season
+List<TvShowEpisode>   episodes
+
+TvShowEpisode:
+List<TvShowActor>     actors
+List<MediaFile>       mediaFiles
+List<String>          tags
+int                   season
+int                   episode
+Date                  firstAired
+String                director
+String                writer 
+boolean               disc   
+boolean               watched 
+float                 rating
+int                   votes    
+     
+TvShowActor:
+String                character
+String                name
+String                thumbUrl
+
+MediaFile:
+String                path
+String                filename
+String                filesize
+String                videoCodec      
+String                audioCodec      
+String                audioChannels   
+String                containerFormat  
+String                videoFormat      
+String                exactVideoFormat 
+int                   videoWidth       
+int                   videoHeight      
+int                   overallBitRate   
+int                   duration         
