@@ -18,9 +18,7 @@ package org.tinymediamanager.core.movie.entities;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -46,7 +44,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -54,25 +51,21 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.movie.MovieFanartNaming;
+import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
-import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.tasks.MovieActorImageFetcher;
-import org.tinymediamanager.core.movie.tasks.MovieExtraImageFetcher;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -83,7 +76,6 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
-import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.scraper.util.UrlUtil;
 
 import com.omertron.themoviedbapi.model.CollectionInfo;
@@ -97,50 +89,52 @@ import com.omertron.themoviedbapi.model.CollectionInfo;
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class Movie extends MediaEntity {
   @XmlTransient
-  private static final Logger LOGGER          = LoggerFactory.getLogger(Movie.class);
+  private static final Logger       LOGGER          = LoggerFactory.getLogger(Movie.class);
 
-  private String              sortTitle       = "";
-  private String              tagline         = "";
-  private int                 votes           = 0;
-  private int                 runtime         = 0;
-  private String              director        = "";
-  private String              writer          = "";
-  private String              dataSource      = "";
-  private boolean             watched         = false;
-  private MovieSet            movieSet;
-  private boolean             isDisc          = false;
-  private String              spokenLanguages = "";
-  private boolean             subtitles       = false;
-  private String              country         = "";
-  private Date                releaseDate     = null;
-  private boolean             multiMovieDir   = false;                               // we detected more movies in same folder
-  private int                 top250          = 0;
+  private static MovieArtworkHelper artworkHelper   = new MovieArtworkHelper();
 
-  private List<String>        genres          = new ArrayList<String>(0);
-  private List<String>        tags            = new ArrayList<String>(0);
-  private List<String>        extraThumbs     = new ArrayList<String>(0);
-  private List<String>        extraFanarts    = new ArrayList<String>(0);
+  private String                    sortTitle       = "";
+  private String                    tagline         = "";
+  private int                       votes           = 0;
+  private int                       runtime         = 0;
+  private String                    director        = "";
+  private String                    writer          = "";
+  private String                    dataSource      = "";
+  private boolean                   watched         = false;
+  private MovieSet                  movieSet;
+  private boolean                   isDisc          = false;
+  private String                    spokenLanguages = "";
+  private boolean                   subtitles       = false;
+  private String                    country         = "";
+  private Date                      releaseDate     = null;
+  private boolean                   multiMovieDir   = false;                               // we detected more movies in same folder
+  private int                       top250          = 0;
+
+  private List<String>              genres          = new ArrayList<String>(0);
+  private List<String>              tags            = new ArrayList<String>(0);
+  private List<String>              extraThumbs     = new ArrayList<String>(0);
+  private List<String>              extraFanarts    = new ArrayList<String>(0);
 
   @Enumerated(EnumType.STRING)
-  private Certification       certification   = Certification.NOT_RATED;
+  private Certification             certification   = Certification.NOT_RATED;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MovieActor>    actors          = new ArrayList<MovieActor>(0);
+  private List<MovieActor>          actors          = new ArrayList<MovieActor>(0);
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MovieProducer> producers       = new ArrayList<MovieProducer>(0);
+  private List<MovieProducer>       producers       = new ArrayList<MovieProducer>(0);
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MediaTrailer>  trailer         = new ArrayList<MediaTrailer>(0);
+  private List<MediaTrailer>        trailer         = new ArrayList<MediaTrailer>(0);
 
   @Transient
-  private String              titleSortable   = "";
+  private String                    titleSortable   = "";
 
   @Transient
-  private boolean             newlyAdded      = false;
+  private boolean                   newlyAdded      = false;
 
   @Transient
-  private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>(0);
+  private List<MediaGenres>         genresForAccess = new ArrayList<MediaGenres>(0);
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();
@@ -694,81 +688,6 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Download extra thumbs.
-   * 
-   * @param thumbs
-   *          the thumbs
-   */
-  public void downloadExtraThumbs(List<String> thumbs) {
-    // init/delete old thumbs
-    extraThumbs.clear();
-
-    // do not create extrathumbs folder, if no extrathumbs are selected
-    if (thumbs.size() == 0) {
-      return;
-    }
-
-    try {
-      String path = getPath() + File.separator + "extrathumbs";
-      File folder = new File(path);
-      if (folder.exists()) {
-        FileUtils.deleteDirectory(folder);
-        removeAllMediaFiles(MediaFileType.THUMB);
-      }
-
-      folder.mkdirs();
-
-      // fetch and store images
-      for (int i = 0; i < thumbs.size(); i++) {
-        String url = thumbs.get(i);
-        String providedFiletype = FilenameUtils.getExtension(url);
-
-        FileOutputStream outputStream = null;
-        InputStream is = null;
-        File file = null;
-        if (Globals.settings.getMovieSettings().isImageExtraThumbsResize() && Globals.settings.getMovieSettings().getImageExtraThumbsSize() > 0) {
-          file = new File(path, "thumb" + (i + 1) + ".jpg");
-          outputStream = new FileOutputStream(file);
-          try {
-            is = ImageCache.scaleImage(url, Globals.settings.getMovieSettings().getImageExtraThumbsSize());
-          }
-          catch (Exception e) {
-            LOGGER.warn("problem with rescaling: " + e.getMessage());
-            continue;
-          }
-        }
-        else {
-          file = new File(path, "thumb" + (i + 1) + "." + providedFiletype);
-          outputStream = new FileOutputStream(file);
-          Url url1 = new Url(url);
-          is = url1.getInputStream();
-        }
-
-        IOUtils.copy(is, outputStream);
-        outputStream.flush();
-        try {
-          outputStream.getFD().sync();
-        }
-        catch (Exception e) {
-          // empty here -> just not let the thread crash
-        }
-        outputStream.close();
-        is.close();
-
-        MediaFile mf = new MediaFile(file, MediaFileType.THUMB);
-        mf.gatherMediaInformation();
-        addToMediaFiles(mf);
-      }
-    }
-    catch (IOException e) {
-      LOGGER.warn("download extrathumbs", e);
-    }
-    catch (Exception e) {
-      LOGGER.error(e.getMessage());
-    }
-  }
-
-  /**
    * Gets the extra fanarts.
    * 
    * @return the extra fanarts
@@ -785,77 +704,6 @@ public class Movie extends MediaEntity {
    */
   public void setExtraFanarts(List<String> extraFanarts) {
     this.extraFanarts = extraFanarts;
-  }
-
-  /**
-   * Download extra thumbs.
-   * 
-   * @param fanarts
-   *          the fanarts
-   */
-  public void downloadExtraFanarts(List<String> fanarts) {
-    // init/delete old fanarts
-    extraFanarts.clear();
-
-    // do not create extrafanarts folder, if no extrafanarts are selected
-    if (fanarts.size() == 0) {
-      return;
-    }
-
-    try {
-      String path = getPath() + File.separator + "extrafanart";
-      File folder = new File(path);
-      if (folder.exists()) {
-        FileUtils.deleteDirectory(folder);
-        removeAllMediaFiles(MediaFileType.EXTRAFANART);
-      }
-
-      folder.mkdirs();
-
-      // fetch and store images
-      for (int i = 0; i < fanarts.size(); i++) {
-        String urlAsString = fanarts.get(i);
-        String providedFiletype = FilenameUtils.getExtension(urlAsString);
-        Url url = new Url(urlAsString);
-        File file = new File(path, "fanart" + (i + 1) + "." + providedFiletype);
-        FileOutputStream outputStream = new FileOutputStream(file);
-        InputStream is = url.getInputStream();
-        IOUtils.copy(is, outputStream);
-        outputStream.flush();
-        try {
-          outputStream.getFD().sync();
-        }
-        catch (Exception e) {
-          // empty here -> just not let the thread crash
-        }
-        outputStream.close();
-
-        is.close();
-        MediaFile mf = new MediaFile(file, MediaFileType.EXTRAFANART);
-        mf.gatherMediaInformation();
-        addToMediaFiles(mf);
-      }
-    }
-    catch (InterruptedException e) {
-      LOGGER.warn("interrupted download extrafanarts");
-    }
-    catch (IOException e) {
-      LOGGER.warn("download extrafanarts", e);
-    }
-  }
-
-  /**
-   * Write extra images.
-   * 
-   * @param extrathumbs
-   *          the extrathumbs
-   * @param extrafanart
-   *          the extrafanart
-   */
-  public void writeExtraImages(boolean extrathumbs, boolean extrafanart) {
-    // get images in thread
-    MovieExtraImageFetcher task = new MovieExtraImageFetcher(this, extrafanart, extrathumbs);
-    TmmTaskManager.getInstance().addImageDownloadTask(task);
   }
 
   /**
@@ -1145,11 +993,13 @@ public class Movie extends MediaEntity {
             // did we get the tmdbid from artwork?
             if (getTmdbId() == 0 && art.getTmdbId() > 0) {
               setTmdbId(art.getTmdbId());
+              posterFound = true;
             }
             break;
           }
         }
       }
+      downloadArtwork(MediaFileType.POSTER);
 
       // fanart
       boolean fanartFound = false;
@@ -1183,13 +1033,66 @@ public class Movie extends MediaEntity {
             // did we get the tmdbid from artwork?
             if (getTmdbId() == 0 && art.getTmdbId() > 0) {
               setTmdbId(art.getTmdbId());
+              fanartFound = true;
             }
             break;
           }
         }
       }
+      downloadArtwork(MediaFileType.FANART);
 
       if (!isMultiMovieDir()) {
+        // logo
+        if (Globals.settings.getMovieSettings().isImageLogo()) {
+          for (MediaArtwork art : artwork) {
+            if (art.getType() == MediaArtworkType.LOGO) {
+              setArtworkUrl(art.getDefaultUrl(), MediaFileType.LOGO);
+              downloadArtwork(MediaFileType.LOGO);
+              break;
+            }
+          }
+        }
+        // clearart
+        if (Globals.settings.getMovieSettings().isImageClearart()) {
+          for (MediaArtwork art : artwork) {
+            if (art.getType() == MediaArtworkType.CLEARART) {
+              setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARART);
+              downloadArtwork(MediaFileType.CLEARART);
+              break;
+            }
+          }
+        }
+        // banner
+        if (Globals.settings.getMovieSettings().isImageBanner()) {
+          for (MediaArtwork art : artwork) {
+            if (art.getType() == MediaArtworkType.BANNER) {
+              setArtworkUrl(art.getDefaultUrl(), MediaFileType.BANNER);
+              downloadArtwork(MediaFileType.BANNER);
+              break;
+            }
+          }
+        }
+        // thumb
+        if (Globals.settings.getMovieSettings().isImageThumb()) {
+          for (MediaArtwork art : artwork) {
+            if (art.getType() == MediaArtworkType.THUMB) {
+              setArtworkUrl(art.getDefaultUrl(), MediaFileType.THUMB);
+              downloadArtwork(MediaFileType.THUMB);
+              break;
+            }
+          }
+        }
+        // disc art
+        if (Globals.settings.getMovieSettings().isImageDiscart()) {
+          for (MediaArtwork art : artwork) {
+            if (art.getType() == MediaArtworkType.DISC) {
+              setArtworkUrl(art.getDefaultUrl(), MediaFileType.DISCART);
+              downloadArtwork(MediaFileType.DISCART);
+              break;
+            }
+          }
+        }
+
         // extrathumbs
         List<String> extrathumbs = new ArrayList<String>();
         if (Globals.settings.getMovieSettings().isImageExtraThumbs() && Globals.settings.getMovieSettings().getImageExtraThumbsCount() > 0) {
@@ -1223,13 +1126,15 @@ public class Movie extends MediaEntity {
         }
 
         // download extra images
-        if (extrathumbs.size() > 0 || extrafanarts.size() > 0) {
-          writeExtraImages(true, true);
+        if (extrathumbs.size() > 0) {
+          artworkHelper.downloadArtwork(this, MediaFileType.EXTRATHUMB);
+        }
+
+        if (extrafanarts.size() > 0) {
+          artworkHelper.downloadArtwork(this, MediaFileType.EXTRAFANART);
         }
       }
 
-      // download images
-      writeImages(true, true);
       // update DB
       saveToDb();
     }
@@ -1347,152 +1252,6 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * all XBMC supported poster names. (without path!)
-   * 
-   * @param poster
-   *          the poster
-   * @return the poster filename
-   */
-  public String getPosterFilename(MoviePosterNaming poster) {
-    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getPosterFilename(poster, mfs.get(0).getFilename());
-    }
-    else {
-      return getPosterFilename(poster, ""); // no video files
-    }
-  }
-
-  public String getPosterFilename(MoviePosterNaming poster, String newMovieFilename) {
-    String filename = "";
-    String mediafile = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(newMovieFilename));
-
-    switch (poster) {
-      case MOVIENAME_POSTER_PNG:
-        filename += getTitle() + ".png";
-        break;
-      case MOVIENAME_POSTER_JPG:
-        filename += getTitle() + ".jpg";
-        break;
-      case MOVIENAME_POSTER_TBN:
-        filename += getTitle() + ".tbn";
-        break;
-      case FILENAME_POSTER_PNG:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.png";
-        break;
-      case FILENAME_POSTER_JPG:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.jpg";
-        break;
-      case FILENAME_POSTER_TBN:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-poster.tbn";
-        break;
-      case FILENAME_PNG:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".png";
-        break;
-      case FILENAME_JPG:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".jpg";
-        break;
-      case FILENAME_TBN:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".tbn";
-        break;
-      case MOVIE_PNG:
-        filename += "movie.png";
-        break;
-      case MOVIE_JPG:
-        filename += "movie.jpg";
-        break;
-      case MOVIE_TBN:
-        filename += "movie.tbn";
-        break;
-      case POSTER_PNG:
-        filename += "poster.png";
-        break;
-      case POSTER_JPG:
-        filename += "poster.jpg";
-        break;
-      case POSTER_TBN:
-        filename += "poster.tbn";
-        break;
-      case FOLDER_PNG:
-        filename += "folder.png";
-        break;
-      case FOLDER_JPG:
-        filename += "folder.jpg";
-        break;
-      case FOLDER_TBN:
-        filename += "folder.tbn";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-
-    return filename;
-  }
-
-  /**
-   * all XBMC supported fanart names. (without path!)
-   * 
-   * @param fanart
-   *          the fanart
-   * @return the fanart filename
-   */
-  public String getFanartFilename(MovieFanartNaming fanart) {
-    List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
-    if (mfs != null && mfs.size() > 0) {
-      return getFanartFilename(fanart, mfs.get(0).getFilename());
-    }
-    else {
-      return getFanartFilename(fanart, ""); // no video files
-    }
-  }
-
-  public String getFanartFilename(MovieFanartNaming fanart, String newMovieFilename) {
-    String filename = "";
-    String mediafile = Utils.cleanStackingMarkers(FilenameUtils.getBaseName(newMovieFilename));
-
-    switch (fanart) {
-      case FANART_PNG:
-        filename += "fanart.png";
-        break;
-      case FANART_JPG:
-        filename += "fanart.jpg";
-        break;
-      case FANART_TBN:
-        filename += "fanart.tbn";
-        break;
-      case FILENAME_FANART_PNG:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.png";
-        break;
-      case FILENAME_FANART_JPG:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.jpg";
-        break;
-      case FILENAME_FANART2_PNG:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".fanart.png";
-        break;
-      case FILENAME_FANART2_JPG:
-        filename += mediafile.isEmpty() ? "" : mediafile + ".fanart.jpg";
-        break;
-      case FILENAME_FANART_TBN:
-        filename += mediafile.isEmpty() ? "" : mediafile + "-fanart.tbn";
-        break;
-      case MOVIENAME_FANART_PNG:
-        filename += getTitle() + "-fanart.png";
-        break;
-      case MOVIENAME_FANART_JPG:
-        filename += getTitle() + "-fanart.jpg";
-        break;
-      case MOVIENAME_FANART_TBN:
-        filename += getTitle() + "-fanart.tbn";
-        break;
-      default:
-        filename = "";
-        break;
-    }
-    return filename;
-  }
-
-  /**
    * all XBMC supported NFO names. (without path!)
    * 
    * @param nfo
@@ -1569,92 +1328,13 @@ public class Movie extends MediaEntity {
   }
 
   /**
-   * Write images.
+   * download the specified type of artwork for this movie
    * 
-   * @param poster
-   *          the poster
-   * @param fanart
-   *          the fanart
+   * @param type
+   *          the chosen artwork type to be downloaded
    */
-  public void writeImages(boolean poster, boolean fanart) {
-    String filename = null;
-
-    // poster
-    if (poster && !StringUtils.isEmpty(getPosterUrl())) {
-      // try {
-      int i = 0;
-      List<MoviePosterNaming> posternames = new ArrayList<MoviePosterNaming>();
-      if (isMultiMovieDir()) {
-        // Fixate the name regardless of setting
-        posternames.add(MoviePosterNaming.FILENAME_POSTER_JPG);
-        posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
-      }
-      else if (isDisc()) {
-        // override poster naming for disc files
-        posternames.add(MoviePosterNaming.POSTER_JPG);
-        posternames.add(MoviePosterNaming.POSTER_PNG);
-      }
-      else {
-        posternames = Globals.settings.getMovieSettings().getMoviePosterFilenames();
-      }
-      for (MoviePosterNaming name : posternames) {
-        boolean firstImage = false;
-        filename = getPosterFilename(name);
-
-        // only store .png as png and .jpg as jpg
-        String generatedFiletype = FilenameUtils.getExtension(filename);
-        String providedFiletype = FilenameUtils.getExtension(getPosterUrl());
-        if (!generatedFiletype.equals(providedFiletype)) {
-          continue;
-        }
-
-        if (++i == 1) {
-          firstImage = true;
-        }
-
-        // get image in thread
-        MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
-        TmmTaskManager.getInstance().addImageDownloadTask(task);
-      }
-    }
-
-    // fanart
-    if (fanart && !StringUtils.isEmpty(getFanartUrl())) {
-      int i = 0;
-      List<MovieFanartNaming> fanartnames = new ArrayList<MovieFanartNaming>();
-      if (isMultiMovieDir()) {
-        // Fixate the name regardless of setting
-        fanartnames.add(MovieFanartNaming.FILENAME_FANART_JPG);
-        fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
-      }
-      else if (isDisc()) {
-        // override fanart naming for disc files
-        fanartnames.add(MovieFanartNaming.FANART_JPG);
-        fanartnames.add(MovieFanartNaming.FANART_PNG);
-      }
-      else {
-        fanartnames = Globals.settings.getMovieSettings().getMovieFanartFilenames();
-      }
-      for (MovieFanartNaming name : fanartnames) {
-        boolean firstImage = false;
-        filename = getFanartFilename(name);
-
-        // only store .png as png and .jpg as jpg
-        String generatedFiletype = FilenameUtils.getExtension(filename);
-        String providedFiletype = FilenameUtils.getExtension(getFanartUrl());
-        if (!generatedFiletype.equals(providedFiletype)) {
-          continue;
-        }
-
-        if (++i == 1) {
-          firstImage = true;
-        }
-
-        // get image in thread
-        MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
-        TmmTaskManager.getInstance().addImageDownloadTask(task);
-      }
-    }
+  public void downloadArtwork(MediaFileType type) {
+    artworkHelper.downloadArtwork(this, type);
   }
 
   /**
@@ -2144,6 +1824,7 @@ public class Movie extends MediaEntity {
   public void saveToDb() {
     // update/insert this movie to the database
     final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    readWriteLock.readLock().lock();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
         entityManager.getTransaction().begin();
@@ -2154,12 +1835,14 @@ public class Movie extends MediaEntity {
         entityManager.persist(this);
       }
     }
+    readWriteLock.readLock().unlock();
   }
 
   @Override
   public void deleteFromDb() {
     // delete this movie from the database
     final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    readWriteLock.readLock().lock();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
         entityManager.getTransaction().begin();
@@ -2170,6 +1853,7 @@ public class Movie extends MediaEntity {
         entityManager.remove(this);
       }
     }
+    readWriteLock.readLock().unlock();
   }
 
   @Override

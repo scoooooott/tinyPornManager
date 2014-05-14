@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,10 +35,14 @@ public enum MediaFileType {
   NFO, 
   POSTER, 
   FANART, 
-  BANNER, 
+  BANNER,
+  CLEARART,
+  DISCART,
+  LOGO,
+  THUMB,   
   SEASON_POSTER,
   EXTRAFANART, 
-  THUMB, 
+  EXTRATHUMB,  
   GRAPHIC, 
   UNKNOWN;
   // @formatter:on

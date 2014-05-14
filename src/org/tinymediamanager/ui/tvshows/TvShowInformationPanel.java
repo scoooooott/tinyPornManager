@@ -22,6 +22,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
@@ -38,11 +40,13 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.ImagePanel;
 import org.tinymediamanager.ui.components.StarRater;
 import org.tinymediamanager.ui.converter.CertificationImageConverter;
 
@@ -256,6 +260,10 @@ public class TvShowInformationPanel extends JPanel {
     panelMediaInformation = new TvShowMediaInformationPanel(tvShowSelectionModel);
     tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.mediafiles"), null, panelMediaInformation, null); //$NON-NLS-1$
 
+    final List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
+    final ImagePanel panelArtwork = new ImagePanel(mediaFiles);
+    tabbedPaneTvShowDetails.addTab(BUNDLE.getString("metatag.artwork"), null, panelArtwork, null); //$NON-NLS-1$
+
     // beansbinding init
     initDataBindings();
 
@@ -270,6 +278,27 @@ public class TvShowInformationPanel extends JPanel {
           setFanart(model.getSelectedTvShow());
           setPoster(model.getSelectedTvShow());
           setBanner(model.getSelectedTvShow());
+          synchronized (mediaFiles) {
+            mediaFiles.clear();
+            for (MediaFile mediafile : model.getSelectedTvShow().getMediaFiles()) {
+              if (mediafile.isGraphic()) {
+                mediaFiles.add(mediafile);
+              }
+            }
+            panelArtwork.rebuildPanel();
+          }
+        }
+        if (source instanceof TvShow && MEDIA_FILES.equals(property)) {
+          TvShow show = (TvShow) source;
+          synchronized (mediaFiles) {
+            mediaFiles.clear();
+            for (MediaFile mediafile : show.getMediaFiles()) {
+              if (mediafile.isGraphic()) {
+                mediaFiles.add(mediafile);
+              }
+            }
+            panelArtwork.rebuildPanel();
+          }
         }
         if ((source.getClass() == TvShow.class && FANART.equals(property))) {
           TvShow tvShow = (TvShow) source;

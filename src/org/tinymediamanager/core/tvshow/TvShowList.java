@@ -96,7 +96,8 @@ public class TvShowList extends AbstractModelObject {
           TvShowEpisode episode = (TvShowEpisode) evt.getSource();
           updateEpisodeTags(episode);
         }
-        if (MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName()) && evt.getSource() instanceof TvShowEpisode) {
+        if ((MEDIA_FILES.equals(evt.getPropertyName()) || MEDIA_INFORMATION.equals(evt.getPropertyName()))
+            && evt.getSource() instanceof TvShowEpisode) {
           TvShowEpisode episode = (TvShowEpisode) evt.getSource();
           updateMediaInformationLists(episode);
         }

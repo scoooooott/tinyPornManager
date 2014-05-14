@@ -210,73 +210,79 @@ public class StatusBar extends JPanel implements TmmTaskListener {
   }
 
   @Override
-  public synchronized void processTaskEvent(TmmTaskHandle task) {
-    if (task.getState() == TaskState.CREATED || task.getState() == TaskState.QUEUED) {
-      createListItem(task);
-    }
-    else if (task.getState() == TaskState.STARTED) {
-      TaskListComponent comp = taskMap.get(task);
-      if (comp == null) {
-        createListItem(task);
-        comp = taskMap.get(task);
-      }
-      comp.updateTaskInformation();
-    }
-    else if (task.getState() == TaskState.CANCELLED || task.getState() == TaskState.FINISHED) {
-      removeListItem(task);
-    }
+  public synchronized void processTaskEvent(final TmmTaskHandle task) {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
 
-    // search for a new activetask to be displayed in the statusbar
-    if (activeTask == null || activeTask.getState() == TaskState.FINISHED || activeTask.getState() == TaskState.CANCELLED) {
-      activeTask = null;
-      for (Entry<TmmTaskHandle, TaskListComponent> entry : taskMap.entrySet()) {
-        TmmTaskHandle handle = entry.getKey();
-        if (handle.getType() == TaskType.MAIN_TASK && handle.getState() == TaskState.STARTED) {
-          activeTask = handle;
-          break;
+        if (task.getState() == TaskState.CREATED || task.getState() == TaskState.QUEUED) {
+          createListItem(task);
         }
-      }
+        else if (task.getState() == TaskState.STARTED) {
+          TaskListComponent comp = taskMap.get(task);
+          if (comp == null) {
+            createListItem(task);
+            comp = taskMap.get(task);
+          }
+          comp.updateTaskInformation();
+        }
+        else if (task.getState() == TaskState.CANCELLED || task.getState() == TaskState.FINISHED) {
+          removeListItem(task);
+        }
 
-      // no active main task found; if there are any BG tasks, display a dummy char to indicate something is working
-      if (activeTask == null) {
-        for (Entry<TmmTaskHandle, TaskListComponent> entry : taskMap.entrySet()) {
-          TmmTaskHandle handle = entry.getKey();
-          if (handle.getState() == TaskState.STARTED) {
-            activeTask = handle;
-            break;
+        // search for a new activetask to be displayed in the statusbar
+        if (activeTask == null || activeTask.getState() == TaskState.FINISHED || activeTask.getState() == TaskState.CANCELLED) {
+          activeTask = null;
+          for (Entry<TmmTaskHandle, TaskListComponent> entry : taskMap.entrySet()) {
+            TmmTaskHandle handle = entry.getKey();
+            if (handle.getType() == TaskType.MAIN_TASK && handle.getState() == TaskState.STARTED) {
+              activeTask = handle;
+              break;
+            }
+          }
+
+          // no active main task found; if there are any BG tasks, display a dummy char to indicate something is working
+          if (activeTask == null) {
+            for (Entry<TmmTaskHandle, TaskListComponent> entry : taskMap.entrySet()) {
+              TmmTaskHandle handle = entry.getKey();
+              if (handle.getState() == TaskState.STARTED) {
+                activeTask = handle;
+                break;
+              }
+            }
+          }
+        }
+
+        // hide components if there is nothing to be displayed
+        if (activeTask == null) {
+          label.setVisible(false);
+          closeButton.setVisible(false);
+          bar.setVisible(false);
+        }
+        else {
+          // ensure everything is visible
+          label.setVisible(true);
+          bar.setVisible(true);
+          if (activeTask.getType() == TaskType.MAIN_TASK) {
+            closeButton.setVisible(true);
+          }
+          else {
+            closeButton.setVisible(false);
+          }
+
+          // and update content
+          label.setText(activeTask.getTaskName());
+          if (activeTask.getWorkUnits() > 0) {
+            bar.setIndeterminate(false);
+            bar.setMaximum(activeTask.getWorkUnits());
+            bar.setValue(activeTask.getProgressDone());
+          }
+          else {
+            bar.setIndeterminate(true);
           }
         }
       }
-    }
-
-    // hide components if there is nothing to be displayed
-    if (activeTask == null) {
-      label.setVisible(false);
-      closeButton.setVisible(false);
-      bar.setVisible(false);
-    }
-    else {
-      // ensure everything is visible
-      label.setVisible(true);
-      bar.setVisible(true);
-      if (activeTask.getType() == TaskType.MAIN_TASK) {
-        closeButton.setVisible(true);
-      }
-      else {
-        closeButton.setVisible(false);
-      }
-
-      // and update content
-      label.setText(activeTask.getTaskName());
-      if (activeTask.getWorkUnits() > 0) {
-        bar.setIndeterminate(false);
-        bar.setMaximum(activeTask.getWorkUnits());
-        bar.setValue(activeTask.getProgressDone());
-      }
-      else {
-        bar.setIndeterminate(true);
-      }
-    }
+    });
   }
 
   private void createListItem(TmmTaskHandle handle) {

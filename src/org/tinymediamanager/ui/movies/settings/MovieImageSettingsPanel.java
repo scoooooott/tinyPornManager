@@ -107,9 +107,6 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   /** The lbl attention fanart tv. */
   private JLabel                      lblAttentionFanartTv;
 
-  /** The panel actor thumbs. */
-  private JPanel                      panelActorThumbs;
-
   /** The cb actor images. */
   private JCheckBox                   cbActorImages;
 
@@ -124,9 +121,6 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
 
   /** The separator. */
   private JSeparator                  separator;
-
-  /** The separator_1. */
-  private JSeparator                  separator_1;
 
   /** The chckbx resize extrathumbs to. */
   private JCheckBox                   chckbxResizeExtrathumbsTo;
@@ -146,9 +140,6 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   /** The sp download count extrafanart. */
   private JSpinner                    spDownloadCountExtrafanart;
 
-  /** The panel. */
-  private JPanel                      panel;
-
   /** The chckbx store movieset artwork. */
   private JCheckBox                   chckbxStoreMoviesetArtwork;
 
@@ -164,28 +155,34 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   /** The separator_2. */
   private JSeparator                  separator_2;
   private JCheckBox                   cbMovieFanartFilename3;
+  private JSeparator                  separator_3;
+  private JCheckBox                   chckbxBanner;
+  private JCheckBox                   chckbxLogo;
+  private JCheckBox                   chckbxThumb;
+  private JCheckBox                   chckbxDiscArt;
+  private JCheckBox                   chckbxClearArt;
+  private JPanel                      panelExtraArtwork;
+  private JSeparator                  separator_1;
+  private JSeparator                  separator_4;
 
   /**
    * Instantiates a new movie image settings panel.
    */
   public MovieImageSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JPanel panelMovieImages = new JPanel();
     panelMovieImages.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.poster"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelMovieImages, "2, 2, left, top");
+    add(panelMovieImages, "2, 2, fill, fill");
     panelMovieImages.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblSource = new JLabel(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
     panelMovieImages.add(lblSource, "2, 2");
@@ -203,7 +200,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelMovieImages.add(lblAttentionFanartTv, "4, 5, 3, 1");
 
     separator = new JSeparator();
-    panelMovieImages.add(separator, "1, 7, 6, 1");
+    panelMovieImages.add(separator, "1, 7, 8, 1");
 
     JLabel lblImageTmdbPosterSize = new JLabel(BUNDLE.getString("image.poster.size"));
     panelMovieImages.add(lblImageTmdbPosterSize, "2, 9");
@@ -218,7 +215,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelMovieImages.add(cbImageFanartSize, "4, 11");
 
     separator_2 = new JSeparator();
-    panelMovieImages.add(separator_2, "1, 13, 6, 1");
+    panelMovieImages.add(separator_2, "2, 13, 7, 1");
 
     JLabel lblPosterFilename = new JLabel(BUNDLE.getString("image.poster.naming")); //$NON-NLS-1$
     panelMovieImages.add(lblPosterFilename, "2, 15");
@@ -229,92 +226,114 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     cbMoviePosterFilename4 = new JCheckBox("poster.ext");
     panelMovieImages.add(cbMoviePosterFilename4, "6, 15");
 
+    cbMoviePosterFilename2 = new JCheckBox("movie.ext");
+    panelMovieImages.add(cbMoviePosterFilename2, "8, 15");
+
     cbMoviePosterFilename8 = new JCheckBox("<dynamic>-poster.ext"); //$NON-NLS-1$
     panelMovieImages.add(cbMoviePosterFilename8, "4, 16");
 
     cbMoviePosterFilename6 = new JCheckBox("folder.ext");
     panelMovieImages.add(cbMoviePosterFilename6, "6, 16");
 
-    cbMoviePosterFilename2 = new JCheckBox("movie.ext");
-    panelMovieImages.add(cbMoviePosterFilename2, "4, 17");
-
     JLabel lblFanartFileNaming = new JLabel(BUNDLE.getString("image.fanart.naming")); //$NON-NLS-1$
-    panelMovieImages.add(lblFanartFileNaming, "2, 19");
+    panelMovieImages.add(lblFanartFileNaming, "2, 17");
 
     cbMovieFanartFilename1 = new JCheckBox("<dynamic>-fanart.ext"); //$NON-NLS-1$
-    panelMovieImages.add(cbMovieFanartFilename1, "4, 19");
+    panelMovieImages.add(cbMovieFanartFilename1, "4, 17");
 
     cbMovieFanartFilename3 = new JCheckBox("<dynamic>.fanart.ext");//$NON-NLS-1$
-    panelMovieImages.add(cbMovieFanartFilename3, "6, 19");
+    panelMovieImages.add(cbMovieFanartFilename3, "6, 17");
 
     cbMovieFanartFilename2 = new JCheckBox("fanart.ext");
-    panelMovieImages.add(cbMovieFanartFilename2, "4, 20");
+    panelMovieImages.add(cbMovieFanartFilename2, "8, 17");
 
     tpFileNamingHint = new JTextPane();
     tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
     tpFileNamingHint.setBackground(UIManager.getColor("Panel.background"));
     tpFileNamingHint.setFont(new Font("Dialog", Font.PLAIN, 10));
-    panelMovieImages.add(tpFileNamingHint, "2, 22, 5, 1, fill, fill");
+    panelMovieImages.add(tpFileNamingHint, "2, 18, 5, 1, fill, fill");
 
-    separator_1 = new JSeparator();
-    panelMovieImages.add(separator_1, "1, 24, 6, 1");
+    panelExtraArtwork = new JPanel();
+    panelExtraArtwork
+        .setBorder(new TitledBorder(null, BUNDLE.getString("Settings.extraartwork"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    add(panelExtraArtwork, "2, 4, fill, fill");
+    panelExtraArtwork.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, }));
 
-    chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs")); //$NON-NLS-1$
-    panelMovieImages.add(chckbxEnableExtrathumbs, "2, 26");
+    chckbxBanner = new JCheckBox(BUNDLE.getString("mediafiletype.banner"));
+    panelExtraArtwork.add(chckbxBanner, "2, 2");
 
-    chckbxResizeExtrathumbsTo = new JCheckBox(BUNDLE.getString("Settings.resize.extrathumbs")); //$NON-NLS-1$
-    panelMovieImages.add(chckbxResizeExtrathumbsTo, "4, 26");
+    chckbxClearArt = new JCheckBox(BUNDLE.getString("mediafiletype.clearart"));
+    panelExtraArtwork.add(chckbxClearArt, "4, 2");
+
+    chckbxThumb = new JCheckBox(BUNDLE.getString("mediafiletype.thumb"));
+    panelExtraArtwork.add(chckbxThumb, "6, 2");
+
+    chckbxLogo = new JCheckBox(BUNDLE.getString("mediafiletype.logo"));
+    panelExtraArtwork.add(chckbxLogo, "8, 2");
+
+    chckbxDiscArt = new JCheckBox(BUNDLE.getString("mediafiletype.discart"));
+    panelExtraArtwork.add(chckbxDiscArt, "10, 2");
+
+    separator_3 = new JSeparator();
+    panelExtraArtwork.add(separator_3, "2, 4, 9, 1");
+
+    chckbxEnableExtrathumbs = new JCheckBox(BUNDLE.getString("Settings.enable.extrathumbs"));
+    panelExtraArtwork.add(chckbxEnableExtrathumbs, "2, 6, 3, 1");
+
+    chckbxResizeExtrathumbsTo = new JCheckBox(BUNDLE.getString("Settings.resize.extrathumbs"));
+    panelExtraArtwork.add(chckbxResizeExtrathumbsTo, "6, 6, 3, 1");
 
     spExtrathumbWidth = new JSpinner();
+    panelExtraArtwork.add(spExtrathumbWidth, "10, 6");
     spExtrathumbWidth.setPreferredSize(new Dimension(49, 20));
-    panelMovieImages.add(spExtrathumbWidth, "6, 26, left, default");
 
-    lblDownload = new JLabel(BUNDLE.getString("Settings.amount.autodownload")); //$NON-NLS-1$
-    panelMovieImages.add(lblDownload, "2, 27, 3, 1, right, default");
+    lblDownload = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
+    panelExtraArtwork.add(lblDownload, "2, 8, 7, 1, right, default");
 
     spDownloadCountExtrathumbs = new JSpinner();
+    panelExtraArtwork.add(spDownloadCountExtrathumbs, "10, 8");
     spDownloadCountExtrathumbs.setPreferredSize(new Dimension(49, 20));
-    panelMovieImages.add(spDownloadCountExtrathumbs, "6, 27, left, default");
 
-    chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart")); //$NON-NLS-1$
-    panelMovieImages.add(chckbxEnableExtrafanart, "2, 29");
+    chckbxEnableExtrafanart = new JCheckBox(BUNDLE.getString("Settings.enable.extrafanart"));
+    panelExtraArtwork.add(chckbxEnableExtrafanart, "2, 10, 9, 1");
 
-    lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload")); //$NON-NLS-1$
-    panelMovieImages.add(lblDownloadCount, "2, 30, 3, 1, right, default");
+    lblDownloadCount = new JLabel(BUNDLE.getString("Settings.amount.autodownload"));
+    panelExtraArtwork.add(lblDownloadCount, "2, 12, 7, 1, right, default");
 
     spDownloadCountExtrafanart = new JSpinner();
+    panelExtraArtwork.add(spDownloadCountExtrafanart, "10, 12");
     spDownloadCountExtrafanart.setPreferredSize(new Dimension(49, 20));
-    panelMovieImages.add(spDownloadCountExtrafanart, "6, 30, left, default");
 
-    panelActorThumbs = new JPanel();
-    panelActorThumbs.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.actor"), TitledBorder.LEADING,
-        TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelActorThumbs, "2, 4");
-    panelActorThumbs.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    separator_1 = new JSeparator();
+    panelExtraArtwork.add(separator_1, "2, 14, 9, 1");
 
-    cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download")); //$NON-NLS-1$
-    panelActorThumbs.add(cbActorImages, "2, 2");
+    cbActorImages = new JCheckBox(BUNDLE.getString("Settings.actor.download"));
+    panelExtraArtwork.add(cbActorImages, "2, 16, 9, 1");
 
-    panel = new JPanel();
-    panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("Settings.movieset"), TitledBorder.LEADING,
-        TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panel, "2, 6, fill, fill");
-    panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] {
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    separator_4 = new JSeparator();
+    panelExtraArtwork.add(separator_4, "2, 18, 9, 1");
 
-    chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store")); //$NON-NLS-1$
-    panel.add(chckbxStoreMoviesetArtwork, "2, 2, 3, 1");
+    chckbxStoreMoviesetArtwork = new JCheckBox(BUNDLE.getString("Settings.movieset.store"));
+    panelExtraArtwork.add(chckbxStoreMoviesetArtwork, "2, 20, 9, 1");
 
-    lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername")); //$NON-NLS-1$
-    panel.add(lblFoldername, "2, 4, right, default");
+    lblFoldername = new JLabel(BUNDLE.getString("Settings.movieset.foldername"));
+    panelExtraArtwork.add(lblFoldername, "2, 22, 3, 1, right, default");
 
     tfMovieSetArtworkFolder = new JTextField();
-    panel.add(tfMovieSetArtworkFolder, "4, 4, fill, default");
+    panelExtraArtwork.add(tfMovieSetArtworkFolder, "6, 22, 3, 1");
     tfMovieSetArtworkFolder.setColumns(10);
 
     btnSelectFolder = new JButton(BUNDLE.getString("Settings.movieset.buttonselect")); //$NON-NLS-1$
+    panelExtraArtwork.add(btnSelectFolder, "10, 22");
     btnSelectFolder.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         File file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser")); //$NON-NLS-1$
@@ -323,7 +342,6 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
         }
       }
     });
-    panel.add(btnSelectFolder, "6, 4");
 
     initDataBindings();
 
@@ -363,20 +381,61 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
         checkChanges();
       }
     };
-    cbMoviePosterFilename2.addItemListener(listener);
     cbMoviePosterFilename4.addItemListener(listener);
     cbMoviePosterFilename6.addItemListener(listener);
     cbMoviePosterFilename7.addItemListener(listener);
     cbMoviePosterFilename8.addItemListener(listener);
+    cbMoviePosterFilename2.addItemListener(listener);
 
     cbMovieFanartFilename1.addItemListener(listener);
-    cbMovieFanartFilename2.addItemListener(listener);
     cbMovieFanartFilename3.addItemListener(listener);
+    cbMovieFanartFilename2.addItemListener(listener);
   }
 
   /**
-   * Inits the data bindings.
+   * Check changes.
    */
+  public void checkChanges() {
+    // set poster filenames
+    settings.getMovieSettings().clearMoviePosterFilenames();
+
+    if (cbMoviePosterFilename2.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.MOVIE_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.MOVIE_PNG);
+    }
+    if (cbMoviePosterFilename4.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
+    }
+    if (cbMoviePosterFilename6.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FOLDER_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FOLDER_PNG);
+    }
+    if (cbMoviePosterFilename7.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_PNG);
+    }
+    if (cbMoviePosterFilename8.isSelected()) {
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
+      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_PNG);
+    }
+
+    // set fanart filenames
+    settings.getMovieSettings().clearMovieFanartFilenames();
+    if (cbMovieFanartFilename1.isSelected()) {
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_PNG);
+    }
+    if (cbMovieFanartFilename2.isSelected()) {
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
+    }
+    if (cbMovieFanartFilename3.isSelected()) {
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_JPG);
+      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_PNG);
+    }
+  }
+
   protected void initDataBindings() {
     BeanProperty<Settings, PosterSizes> settingsBeanProperty_5 = BeanProperty.create("movieSettings.imagePosterSize");
     BeanProperty<JComboBox, Object> jComboBoxBeanProperty = BeanProperty.create("selectedItem");
@@ -464,49 +523,30 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     AutoBinding<JCheckBox, Boolean, JSpinner, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, chckbxEnableExtrathumbs,
         jCheckBoxBeanProperty, spExtrathumbWidth, jSpinnerBeanProperty);
     autoBinding_9.bind();
-  }
-
-  /**
-   * Check changes.
-   */
-  public void checkChanges() {
-    // set poster filenames
-    settings.getMovieSettings().clearMoviePosterFilenames();
-
-    if (cbMoviePosterFilename2.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.MOVIE_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.MOVIE_PNG);
-    }
-    if (cbMoviePosterFilename4.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.POSTER_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.POSTER_PNG);
-    }
-    if (cbMoviePosterFilename6.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FOLDER_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FOLDER_PNG);
-    }
-    if (cbMoviePosterFilename7.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_PNG);
-    }
-    if (cbMoviePosterFilename8.isSelected()) {
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_JPG);
-      settings.getMovieSettings().addMoviePosterFilename(MoviePosterNaming.FILENAME_POSTER_PNG);
-    }
-
-    // set fanart filenames
-    settings.getMovieSettings().clearMovieFanartFilenames();
-    if (cbMovieFanartFilename1.isSelected()) {
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_JPG);
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART_PNG);
-    }
-    if (cbMovieFanartFilename2.isSelected()) {
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_JPG);
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FANART_PNG);
-    }
-    if (cbMovieFanartFilename3.isSelected()) {
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_JPG);
-      settings.getMovieSettings().addMovieFanartFilename(MovieFanartNaming.FILENAME_FANART2_PNG);
-    }
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_7 = BeanProperty.create("movieSettings.imageBanner");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_7, chckbxBanner, jCheckBoxBeanProperty);
+    autoBinding_6.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_14 = BeanProperty.create("movieSettings.imageClearart");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_14, chckbxClearArt, jCheckBoxBeanProperty);
+    autoBinding_18.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_15 = BeanProperty.create("movieSettings.imageThumb");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_15, chckbxThumb, jCheckBoxBeanProperty);
+    autoBinding_19.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_16 = BeanProperty.create("movieSettings.imageLogo");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_16, chckbxLogo, jCheckBoxBeanProperty);
+    autoBinding_20.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_17 = BeanProperty.create("movieSettings.imageDiscart");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_17, chckbxDiscArt, jCheckBoxBeanProperty);
+    autoBinding_21.bind();
   }
 }

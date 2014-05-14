@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.tinymediamanager.core.entities.MediaFile;
@@ -52,5 +53,5 @@ public interface IMediaSubtitleProvider {
    * @param language
    *          2char language string (2-char locale)
    */
-  public void download(String hash, String language);
+  public void download(String hash, String language) throws IOException;
 }

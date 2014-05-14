@@ -56,6 +56,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
@@ -370,7 +371,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
                 tvShowToScrape.setPosterUrl(lblImage.getImageUrl());
-                tvShowToScrape.writePosterImage();
+                tvShowToScrape.downloadArtwork(MediaFileType.POSTER);
               }
 
               // fanart
@@ -382,7 +383,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
                     extrathumbs, extrafanarts, MediaType.TV_SHOW);
                 dialog.setVisible(true);
                 tvShowToScrape.setFanartUrl(lblImage.getImageUrl());
-                tvShowToScrape.writeFanartImage();
+                tvShowToScrape.downloadArtwork(MediaFileType.FANART);
               }
 
               // banner
@@ -392,12 +393,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
                     MediaType.TV_SHOW);
                 dialog.setVisible(true);
                 tvShowToScrape.setBannerUrl(lblImage.getImageUrl());
-                tvShowToScrape.writeBannerImage();
-              }
-
-              // season posters
-              {
-                // FIXME
+                tvShowToScrape.downloadArtwork(MediaFileType.BANNER);
               }
             }
             else {

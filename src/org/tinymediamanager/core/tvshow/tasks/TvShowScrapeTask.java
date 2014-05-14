@@ -200,7 +200,7 @@ public class TvShowScrapeTask extends TmmThreadPool {
      * @return the artwork
      */
     public List<MediaArtwork> getArtwork(TvShow tvShow, MediaMetadata metadata, List<IMediaArtworkProvider> artworkProviders) {
-      List<MediaArtwork> artwork = null;
+      List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setType(MediaType.TV_SHOW);
@@ -215,24 +215,13 @@ public class TvShowScrapeTask extends TmmThreadPool {
       // scrape providers till one artwork has been found
       for (IMediaArtworkProvider artworkProvider : artworkProviders) {
         try {
-          artwork = artworkProvider.getArtwork(options);
+          artwork.addAll(artworkProvider.getArtwork(options));
         }
         catch (Exception e) {
           LOGGER.error("getArtwork", e);
           MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.scrape.tvshowartworkfailed"));
-          artwork = new ArrayList<MediaArtwork>();
-        }
-        // check if at least one artwork has been found
-        if (artwork.size() > 0) {
-          break;
         }
       }
-
-      // initialize if null
-      if (artwork == null) {
-        artwork = new ArrayList<MediaArtwork>();
-      }
-
       return artwork;
     }
   }

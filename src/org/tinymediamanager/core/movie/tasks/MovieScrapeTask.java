@@ -211,7 +211,7 @@ public class MovieScrapeTask extends TmmThreadPool {
      * @return the artwork
      */
     public List<MediaArtwork> getArtwork(Movie movie, MediaMetadata metadata, List<IMediaArtworkProvider> artworkProviders) {
-      List<MediaArtwork> artwork = null;
+      List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
       MediaScrapeOptions options = new MediaScrapeOptions();
       options.setType(MediaType.MOVIE);
@@ -226,22 +226,12 @@ public class MovieScrapeTask extends TmmThreadPool {
       // scrape providers till one artwork has been found
       for (IMediaArtworkProvider artworkProvider : artworkProviders) {
         try {
-          artwork = artworkProvider.getArtwork(options);
+          artwork.addAll(artworkProvider.getArtwork(options));
         }
         catch (Exception e) {
           LOGGER.error("getArtwork", e);
           MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "message.scrape.movieartworkfailed"));
-          artwork = new ArrayList<MediaArtwork>();
         }
-        // check if at least one artwork has been found
-        if (artwork.size() > 0) {
-          break;
-        }
-      }
-
-      // initialize if null
-      if (artwork == null) {
-        artwork = new ArrayList<MediaArtwork>();
       }
 
       return artwork;

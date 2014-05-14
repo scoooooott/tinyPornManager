@@ -39,7 +39,6 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.Certification;
@@ -348,20 +347,10 @@ public class MovieInformationPanel extends JPanel {
 
             synchronized (mediaFiles) {
               mediaFiles.clear();
-              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.POSTER)) {
-                mediaFiles.add(mediafile);
-              }
-              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.FANART)) {
-                mediaFiles.add(mediafile);
-              }
-              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.BANNER)) {
-                mediaFiles.add(mediafile);
-              }
-              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.EXTRAFANART)) {
-                mediaFiles.add(mediafile);
-              }
-              for (MediaFile mediafile : movie.getMediaFiles(MediaFileType.THUMB)) {
-                mediaFiles.add(mediafile);
+              for (MediaFile mediafile : movie.getMediaFiles()) {
+                if (mediafile.isGraphic()) {
+                  mediaFiles.add(mediafile);
+                }
               }
               panelArtwork.rebuildPanel();
             }

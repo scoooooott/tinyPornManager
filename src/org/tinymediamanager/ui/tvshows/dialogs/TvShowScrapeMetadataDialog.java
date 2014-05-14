@@ -63,6 +63,7 @@ public class TvShowScrapeMetadataDialog extends JDialog {
   /** UI components */
   private JComboBox                    cbMetadataScraper;
   private JCheckBox                    chckbxTheTVDb;
+  private JCheckBox                    chckbxFanartTv;
 
   /**
    * Instantiates a new movie scrape metadata.
@@ -117,8 +118,10 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     JLabel lblArtworkScraper = new JLabel(BUNDLE.getString("scraper.artwork")); //$NON-NLS-1$
     panelScraper.add(lblArtworkScraper, "2, 4, right, default");
 
-    chckbxTheTVDb = new JCheckBox("The TV DB");
+    chckbxTheTVDb = new JCheckBox("The TV Database");
     panelScraper.add(chckbxTheTVDb, "4, 4");
+    chckbxFanartTv = new JCheckBox("Fanart.tv");
+    panelScraper.add(chckbxFanartTv, "6, 4");
 
     {
       JPanel panelCenter = new JPanel();
@@ -166,8 +169,12 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
     // artwork provider
-    chckbxTheTVDb.setSelected(true);
-    chckbxTheTVDb.setEnabled(false);
+    if (Globals.settings.getTvShowSettings().isImageScraperTvdb()) {
+      chckbxTheTVDb.setSelected(true);
+    }
+    if (Globals.settings.getTvShowSettings().isImageScraperFanartTv()) {
+      chckbxFanartTv.setSelected(true);
+    }
   }
 
   /**
@@ -182,6 +189,10 @@ public class TvShowScrapeMetadataDialog extends JDialog {
     // artwork provider
     if (chckbxTheTVDb.isSelected()) {
       tvShowSearchAndScrapeConfig.addArtworkScraper(TvShowArtworkScrapers.TVDB);
+    }
+
+    if (chckbxFanartTv.isSelected()) {
+      tvShowSearchAndScrapeConfig.addArtworkScraper(TvShowArtworkScrapers.FANART_TV);
     }
 
     return tvShowSearchAndScrapeConfig;

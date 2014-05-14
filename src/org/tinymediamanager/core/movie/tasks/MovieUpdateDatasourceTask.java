@@ -646,6 +646,14 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             movie.addToMediaFiles(mf);
             break;
 
+          case DISCART:
+          case BANNER:
+          case CLEARART:
+          case LOGO:
+            LOGGER.debug("parsing " + mf.getType().name().toLowerCase() + " " + mf.getFilename());
+            movie.addToMediaFiles(mf);
+            break;
+
           case GRAPHIC:
           case UNKNOWN:
           default:

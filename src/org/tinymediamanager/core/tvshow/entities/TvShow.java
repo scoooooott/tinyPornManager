@@ -21,10 +21,8 @@ import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,24 +47,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.ImageCache;
-import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowMediaFileComparator;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
@@ -79,7 +71,6 @@ import org.tinymediamanager.scraper.MediaCastMember;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaTrailer;
-import org.tinymediamanager.scraper.util.Url;
 
 /**
  * The Class TvShow.
@@ -90,6 +81,7 @@ import org.tinymediamanager.scraper.util.Url;
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class TvShow extends MediaEntity {
   private static final Logger         LOGGER             = LoggerFactory.getLogger(TvShow.class);
+  private static TvShowArtworkHelper  artworkHelper      = new TvShowArtworkHelper();
 
   private String                      dataSource         = "";
   private String                      director           = "";
@@ -653,7 +645,7 @@ public class TvShow extends MediaEntity {
           // set url
           setPosterUrl(art.getDefaultUrl());
           // and download it
-          writePosterImage();
+          artworkHelper.downloadArtwork(this, MediaFileType.POSTER);
           break;
         }
       }
@@ -664,7 +656,7 @@ public class TvShow extends MediaEntity {
           // set url
           setFanartUrl(art.getDefaultUrl());
           // and download it
-          writeFanartImage();
+          artworkHelper.downloadArtwork(this, MediaFileType.FANART);
           break;
         }
       }
@@ -675,7 +667,40 @@ public class TvShow extends MediaEntity {
           // set url
           setBannerUrl(art.getDefaultUrl());
           // and download it
-          writeBannerImage();
+          artworkHelper.downloadArtwork(this, MediaFileType.BANNER);
+          break;
+        }
+      }
+
+      // logo
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.LOGO) {
+          // set url
+          setArtworkUrl(art.getDefaultUrl(), MediaFileType.LOGO);
+          // and download it
+          artworkHelper.downloadArtwork(this, MediaFileType.LOGO);
+          break;
+        }
+      }
+
+      // clearart
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.CLEARART) {
+          // set url
+          setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARART);
+          // and download it
+          artworkHelper.downloadArtwork(this, MediaFileType.CLEARART);
+          break;
+        }
+      }
+
+      // thumb
+      for (MediaArtwork art : artwork) {
+        if (art.getType() == MediaArtworkType.THUMB) {
+          // set url
+          setArtworkUrl(art.getDefaultUrl(), MediaFileType.THUMB);
+          // and download it
+          artworkHelper.downloadArtwork(this, MediaFileType.THUMB);
           break;
         }
       }
@@ -688,7 +713,7 @@ public class TvShow extends MediaEntity {
           String url = seasonPosters.get(art.getSeason());
           if (StringUtils.isBlank(url)) {
             setSeasonPosterUrl(art.getSeason(), art.getDefaultUrl());
-            writeSeasonPoster(art.getSeason());
+            artworkHelper.downloadSeasonPoster(this, art.getSeason());
             seasonPosters.put(art.getSeason(), art.getDefaultUrl());
           }
         }
@@ -700,74 +725,23 @@ public class TvShow extends MediaEntity {
   }
 
   /**
-   * Write poster image.
+   * download the specified type of artwork for this TV show
+   * 
+   * @param type
+   *          the chosen artwork type to be downloaded
    */
-  public void writePosterImage() {
-    if (StringUtils.isNotEmpty(getPosterUrl())) {
-      boolean firstImage = true;
-      // create correct filename
-      String filename = "poster." + FilenameUtils.getExtension(getPosterUrl());
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getPosterUrl(), MediaArtworkType.POSTER, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
+  public void downloadArtwork(MediaFileType type) {
+    artworkHelper.downloadArtwork(this, type);
   }
 
   /**
-   * Write fanart image.
-   */
-  public void writeFanartImage() {
-    if (StringUtils.isNotEmpty(getFanartUrl())) {
-      boolean firstImage = true;
-      // create correct filename
-      String filename = "fanart." + FilenameUtils.getExtension(getFanartUrl());
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getFanartUrl(), MediaArtworkType.BACKGROUND, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
-  }
-
-  /**
-   * Write banner image.
-   */
-  public void writeBannerImage() {
-    if (StringUtils.isNotEmpty(getBannerUrl())) {
-      boolean firstImage = true;
-      // create correct filename
-      String filename = "banner." + FilenameUtils.getExtension(getBannerUrl());
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(this, getBannerUrl(), MediaArtworkType.BANNER, filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
-  }
-
-  /**
-   * Write season poster.
+   * download season poster
    * 
    * @param season
-   *          the season
+   *          the season to download the poster for
    */
-  public void writeSeasonPoster(int season) {
-    String seasonPosterUrl = seasonPosterUrlMap.get(season);
-
-    TvShowSeason tvShowSeason = null;
-    // try to get a season instance
-    for (TvShowSeason s : seasons) {
-      if (s.getSeason() == season) {
-        tvShowSeason = s;
-        break;
-      }
-    }
-
-    String filename = "";
-    if (season > 0) {
-      filename = String.format(path + File.separator + "season%02d-poster." + FilenameUtils.getExtension(seasonPosterUrl), season);
-    }
-    else {
-      filename = path + File.separator + "season-specials-poster." + FilenameUtils.getExtension(seasonPosterUrl);
-    }
-    SeasonPosterImageFetcher task = new SeasonPosterImageFetcher(filename, tvShowSeason, seasonPosterUrl);
-    TmmTaskManager.getInstance().addImageDownloadTask(task);
+  public void downloadSeasonPoster(int season) {
+    artworkHelper.downloadSeasonPoster(this, season);
   }
 
   /**
@@ -1289,222 +1263,222 @@ public class TvShow extends MediaEntity {
     return tvShow;
   }
 
-  /**
-   * Find images.
-   */
-  public void findImages() {
-    // try to find images in tv show root folder
+  // /**
+  // * Find images.
+  // */
+  // public void findImages() {
+  // // try to find images in tv show root folder
+  //
+  // // find poster - poster.jpg/png
+  // findPoster();
+  //
+  // // fanart - fanart.jpg/png
+  // findFanart();
+  //
+  // // banner - banner.jpg/png
+  // findBanner();
+  //
+  // // season posters - seasonXX-poster.jpg/png
+  // findSeasonPosters();
+  // }
 
-    // find poster - poster.jpg/png
-    findPoster();
+  // /**
+  // * Find poster.
+  // */
+  // private void findPoster() {
+  // boolean found = false;
+  //
+  // // FIXME rework that with regexp and only 1 dir.listfiles
+  // File posterFile = new File(path, "poster.jpg");
+  // if (posterFile.exists()) {
+  // setPoster(posterFile);
+  // found = true;
+  // LOGGER.debug("found poster " + posterFile.getPath());
+  // }
+  //
+  // if (!found) {
+  // posterFile = new File(path, "poster.png");
+  // if (posterFile.exists()) {
+  // setPoster(posterFile);
+  // found = true;
+  // LOGGER.debug("found poster " + posterFile.getPath());
+  // }
+  // }
+  //
+  // if (!found) {
+  // posterFile = new File(path, "poster.tbn");
+  // if (posterFile.exists()) {
+  // setPoster(posterFile);
+  // found = true;
+  // LOGGER.debug("found poster " + posterFile.getPath());
+  // }
+  // }
+  //
+  // // still not found anything? try *-poster.*
+  // if (!found) {
+  // Pattern pattern = Pattern.compile("(?i).*-poster\\..{2,4}");
+  // File[] files = new File(path).listFiles();
+  // for (File file : files) {
+  // Matcher matcher = pattern.matcher(file.getName());
+  // if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+  // setPoster(file);
+  // LOGGER.debug("found poster " + file.getPath());
+  // found = true;
+  // break;
+  // }
+  // }
+  // }
+  //
+  // // we did not find a poster, try to get it if an url exists
+  // if (!found && StringUtils.isNotEmpty(posterUrl)) {
+  // artworkHelper.downloadArtwork(this, MediaFileType.POSTER);
+  // found = true;
+  // LOGGER.debug("got poster url: " + posterUrl + " ; try to download this");
+  // }
+  //
+  // if (!found) {
+  // LOGGER.debug("Sorry, could not find poster.");
+  // }
+  // }
 
-    // fanart - fanart.jpg/png
-    findFanart();
+  // /**
+  // * Find fanart.
+  // */
+  // private void findFanart() {
+  // boolean found = false;
+  //
+  // // FIXME rework that with regexp and only 1 dir.listfiles
+  // File fanartFile = new File(path, "fanart.jpg");
+  // if (fanartFile.exists()) {
+  // setFanart(fanartFile);
+  // found = true;
+  // LOGGER.debug("found fanart " + fanartFile.getPath());
+  // }
+  //
+  // if (!found) {
+  // fanartFile = new File(path, "fanart.png");
+  // if (fanartFile.exists()) {
+  // setFanart(fanartFile);
+  // found = true;
+  // LOGGER.debug("found fanart " + fanartFile.getPath());
+  // }
+  // }
+  //
+  // if (!found) {
+  // fanartFile = new File(path, "fanart.tbn");
+  // if (fanartFile.exists()) {
+  // setFanart(fanartFile);
+  // found = true;
+  // LOGGER.debug("found fanart " + fanartFile.getPath());
+  // }
+  // }
+  //
+  // // still not found anything? try *-fanart.*
+  // if (!found) {
+  // Pattern pattern = Pattern.compile("(?i).*-fanart\\..{2,4}");
+  // File[] files = new File(path).listFiles();
+  // for (File file : files) {
+  // Matcher matcher = pattern.matcher(file.getName());
+  // if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+  // setFanart(file);
+  // LOGGER.debug("found fanart " + file.getPath());
+  // found = true;
+  // break;
+  // }
+  // }
+  // }
+  //
+  // // we did not find a fanart, try to get it if an url exists
+  // if (!found && StringUtils.isNotEmpty(fanartUrl)) {
+  // artworkHelper.downloadArtwork(this, MediaFileType.FANART);
+  // found = true;
+  // LOGGER.debug("got fanart url: " + fanartUrl + " ; try to download this");
+  // }
+  //
+  // if (!found) {
+  // LOGGER.debug("Sorry, could not find fanart.");
+  // }
+  // }
 
-    // banner - banner.jpg/png
-    findBanner();
+  // /**
+  // * Find banner.
+  // */
+  // private void findBanner() {
+  // boolean found = false;
+  //
+  // // FIXME rework that with regexp and only 1 dir.listfiles
+  // File bannerFile = new File(path, "banner.jpg");
+  // if (bannerFile.exists()) {
+  // setBanner(bannerFile);
+  // found = true;
+  // LOGGER.debug("found banner " + bannerFile.getPath());
+  // }
+  //
+  // if (!found) {
+  // bannerFile = new File(path, "banner.png");
+  // if (bannerFile.exists()) {
+  // setBanner(bannerFile);
+  // found = true;
+  // LOGGER.debug("found banner " + bannerFile.getPath());
+  // }
+  // }
+  //
+  // if (!found) {
+  // bannerFile = new File(path, "banner.tbn");
+  // if (bannerFile.exists()) {
+  // setBanner(bannerFile);
+  // found = true;
+  // LOGGER.debug("found banner " + bannerFile.getPath());
+  // }
+  // }
+  //
+  // // still not found anything? try *-banner.*
+  // if (!found) {
+  // Pattern pattern = Pattern.compile("(?i).*-banner\\..{2,4}");
+  // File[] files = new File(path).listFiles();
+  // for (File file : files) {
+  // Matcher matcher = pattern.matcher(file.getName());
+  // if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+  // setBanner(file);
+  // LOGGER.debug("found banner " + file.getPath());
+  // found = true;
+  // break;
+  // }
+  // }
+  // }
+  //
+  // // we did not find a banner, try to get it if an url exists
+  // if (!found && StringUtils.isNotEmpty(bannerUrl)) {
+  // artworkHelper.downloadArtwork(this, MediaFileType.BANNER);
+  // found = true;
+  // LOGGER.debug("got banner url: " + bannerUrl + " ; try to download this");
+  // }
+  //
+  // if (!found) {
+  // LOGGER.debug("Sorry, could not find banner.");
+  // }
+  // }
 
-    // season posters - seasonXX-poster.jpg/png
-    findSeasonPosters();
-  }
-
-  /**
-   * Find poster.
-   */
-  private void findPoster() {
-    boolean found = false;
-
-    // FIXME rework that with regexp and only 1 dir.listfiles
-    File posterFile = new File(path, "poster.jpg");
-    if (posterFile.exists()) {
-      setPoster(posterFile);
-      found = true;
-      LOGGER.debug("found poster " + posterFile.getPath());
-    }
-
-    if (!found) {
-      posterFile = new File(path, "poster.png");
-      if (posterFile.exists()) {
-        setPoster(posterFile);
-        found = true;
-        LOGGER.debug("found poster " + posterFile.getPath());
-      }
-    }
-
-    if (!found) {
-      posterFile = new File(path, "poster.tbn");
-      if (posterFile.exists()) {
-        setPoster(posterFile);
-        found = true;
-        LOGGER.debug("found poster " + posterFile.getPath());
-      }
-    }
-
-    // still not found anything? try *-poster.*
-    if (!found) {
-      Pattern pattern = Pattern.compile("(?i).*-poster\\..{2,4}");
-      File[] files = new File(path).listFiles();
-      for (File file : files) {
-        Matcher matcher = pattern.matcher(file.getName());
-        if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
-          setPoster(file);
-          LOGGER.debug("found poster " + file.getPath());
-          found = true;
-          break;
-        }
-      }
-    }
-
-    // we did not find a poster, try to get it if an url exists
-    if (!found && StringUtils.isNotEmpty(posterUrl)) {
-      writePosterImage();
-      found = true;
-      LOGGER.debug("got poster url: " + posterUrl + " ; try to download this");
-    }
-
-    if (!found) {
-      LOGGER.debug("Sorry, could not find poster.");
-    }
-  }
-
-  /**
-   * Find fanart.
-   */
-  private void findFanart() {
-    boolean found = false;
-
-    // FIXME rework that with regexp and only 1 dir.listfiles
-    File fanartFile = new File(path, "fanart.jpg");
-    if (fanartFile.exists()) {
-      setFanart(fanartFile);
-      found = true;
-      LOGGER.debug("found fanart " + fanartFile.getPath());
-    }
-
-    if (!found) {
-      fanartFile = new File(path, "fanart.png");
-      if (fanartFile.exists()) {
-        setFanart(fanartFile);
-        found = true;
-        LOGGER.debug("found fanart " + fanartFile.getPath());
-      }
-    }
-
-    if (!found) {
-      fanartFile = new File(path, "fanart.tbn");
-      if (fanartFile.exists()) {
-        setFanart(fanartFile);
-        found = true;
-        LOGGER.debug("found fanart " + fanartFile.getPath());
-      }
-    }
-
-    // still not found anything? try *-fanart.*
-    if (!found) {
-      Pattern pattern = Pattern.compile("(?i).*-fanart\\..{2,4}");
-      File[] files = new File(path).listFiles();
-      for (File file : files) {
-        Matcher matcher = pattern.matcher(file.getName());
-        if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
-          setFanart(file);
-          LOGGER.debug("found fanart " + file.getPath());
-          found = true;
-          break;
-        }
-      }
-    }
-
-    // we did not find a fanart, try to get it if an url exists
-    if (!found && StringUtils.isNotEmpty(fanartUrl)) {
-      writeFanartImage();
-      found = true;
-      LOGGER.debug("got fanart url: " + fanartUrl + " ; try to download this");
-    }
-
-    if (!found) {
-      LOGGER.debug("Sorry, could not find fanart.");
-    }
-  }
-
-  /**
-   * Find banner.
-   */
-  private void findBanner() {
-    boolean found = false;
-
-    // FIXME rework that with regexp and only 1 dir.listfiles
-    File bannerFile = new File(path, "banner.jpg");
-    if (bannerFile.exists()) {
-      setBanner(bannerFile);
-      found = true;
-      LOGGER.debug("found banner " + bannerFile.getPath());
-    }
-
-    if (!found) {
-      bannerFile = new File(path, "banner.png");
-      if (bannerFile.exists()) {
-        setBanner(bannerFile);
-        found = true;
-        LOGGER.debug("found banner " + bannerFile.getPath());
-      }
-    }
-
-    if (!found) {
-      bannerFile = new File(path, "banner.tbn");
-      if (bannerFile.exists()) {
-        setBanner(bannerFile);
-        found = true;
-        LOGGER.debug("found banner " + bannerFile.getPath());
-      }
-    }
-
-    // still not found anything? try *-banner.*
-    if (!found) {
-      Pattern pattern = Pattern.compile("(?i).*-banner\\..{2,4}");
-      File[] files = new File(path).listFiles();
-      for (File file : files) {
-        Matcher matcher = pattern.matcher(file.getName());
-        if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
-          setBanner(file);
-          LOGGER.debug("found banner " + file.getPath());
-          found = true;
-          break;
-        }
-      }
-    }
-
-    // we did not find a banner, try to get it if an url exists
-    if (!found && StringUtils.isNotEmpty(bannerUrl)) {
-      writeBannerImage();
-      found = true;
-      LOGGER.debug("got banner url: " + bannerUrl + " ; try to download this");
-    }
-
-    if (!found) {
-      LOGGER.debug("Sorry, could not find banner.");
-    }
-  }
-
-  private void findSeasonPosters() {
-    Pattern pattern = Pattern.compile("(?i)season([0-9]{1,2})-poster\\..{2,4}");
-    File[] files = new File(path).listFiles();
-    for (File file : files) {
-      Matcher matcher = pattern.matcher(file.getName());
-      if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
-        LOGGER.debug("found season poster " + file.getPath());
-        try {
-          int season = Integer.parseInt(matcher.group(1));
-          setSeasonPoster(season, file);
-        }
-        catch (Exception e) {
-        }
-      }
-      else if (file.getName().startsWith("season-specials-poster")) {
-        LOGGER.debug("found season specials poster " + file.getPath());
-        setSeasonPoster(-1, file);
-      }
-    }
-  }
+  // private void findSeasonPosters() {
+  // Pattern pattern = Pattern.compile("(?i)season([0-9]{1,2})-poster\\..{2,4}");
+  // File[] files = new File(path).listFiles();
+  // for (File file : files) {
+  // Matcher matcher = pattern.matcher(file.getName());
+  // if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+  // LOGGER.debug("found season poster " + file.getPath());
+  // try {
+  // int season = Integer.parseInt(matcher.group(1));
+  // setSeasonPoster(season, file);
+  // }
+  // catch (Exception e) {
+  // }
+  // }
+  // else if (file.getName().startsWith("season-specials-poster")) {
+  // LOGGER.debug("found season specials poster " + file.getPath());
+  // setSeasonPoster(-1, file);
+  // }
+  // }
+  // }
 
   /**
    * Scrape all episodes.
@@ -1552,7 +1526,7 @@ public class TvShow extends MediaEntity {
    *          the season
    * @return the season poster url
    */
-  String getSeasonPosterUrl(int season) {
+  public String getSeasonPosterUrl(int season) {
     String url = seasonPosterUrlMap.get(season);
     if (StringUtils.isBlank(url)) {
       return "";
@@ -1601,11 +1575,23 @@ public class TvShow extends MediaEntity {
    * 
    * @param season
    *          the season
-   * @param path
-   *          the path
+   * @param file
+   *          the file
    */
-  void setSeasonPoster(int season, File file) {
+  public void setSeasonPoster(int season, File file) {
     MediaFile mf = new MediaFile(file, MediaFileType.SEASON_POSTER);
+    setSeasonPoster(season, mf);
+  }
+
+  /**
+   * Sets the season poster.
+   * 
+   * @param season
+   *          the season
+   * @param mf
+   *          the media file
+   */
+  public void setSeasonPoster(int season, MediaFile mf) {
     mf.gatherMediaInformation();
     addToMediaFiles(mf);
 
@@ -1672,6 +1658,7 @@ public class TvShow extends MediaEntity {
   public void saveToDb() {
     // update/insert this movie to the database
     final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+    readWriteLock.readLock().lock();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
         entityManager.getTransaction().begin();
@@ -1682,6 +1669,7 @@ public class TvShow extends MediaEntity {
         entityManager.persist(this);
       }
     }
+    readWriteLock.readLock().unlock();
   }
 
   @Override
@@ -1742,65 +1730,6 @@ public class TvShow extends MediaEntity {
       }
     }
     return scraped;
-  }
-
-  private class SeasonPosterImageFetcher implements Runnable {
-    private String       filename;
-    private TvShowSeason tvShowSeason;
-    private String       url;
-
-    SeasonPosterImageFetcher(String filename, TvShowSeason tvShowSeason, String url) {
-      this.filename = filename;
-      this.tvShowSeason = tvShowSeason;
-      this.url = url;
-    }
-
-    @Override
-    public void run() {
-      String oldFilename = "";
-      try {
-        if (tvShowSeason != null) {
-          oldFilename = tvShowSeason.getPoster();
-          tvShowSeason.clearPoster();
-        }
-
-        LOGGER.debug("writing season poster " + filename);
-
-        // fetch and store images
-        Url url1 = new Url(url);
-        FileOutputStream outputStream = new FileOutputStream(filename);
-        InputStream is = url1.getInputStream();
-        IOUtils.copy(is, outputStream);
-        outputStream.close();
-        outputStream.flush();
-        try {
-          outputStream.getFD().sync(); // wait until file has been completely written
-        }
-        catch (Exception e) {
-          // empty here -> just not let the thread crash
-        }
-        is.close();
-
-        ImageCache.invalidateCachedImage(filename);
-        if (tvShowSeason != null) {
-          tvShowSeason.setPoster(new File(filename));
-        }
-      }
-      catch (IOException e) {
-        LOGGER.debug("fetch image", e);
-        // fallback
-        if (tvShowSeason != null) {
-          tvShowSeason.setPoster(new File(oldFilename));
-        }
-      }
-      catch (Exception e) {
-        LOGGER.error("Thread crashed", e);
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, this, "message.scrape.tvshowartworkfailed"));
-      }
-      finally {
-        saveToDb();
-      }
-    }
   }
 
   /**

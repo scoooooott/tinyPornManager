@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +55,7 @@ import org.tinymediamanager.ui.UTF8Control;
 
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
-  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());            //$NON-NLS-1$
 
   // skip well-known, but unneeded folders (UPPERCASE)
   private static final List<String>   skipFolders           = Arrays.asList(".", "..", "CERTIFICATE", "BACKUP", "PLAYLIST", "CLPINF", "SSIF",
@@ -65,6 +67,21 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
   // MacOS ignore
   private static final String         skipFilesStartingWith = "._";
+
+  // regexp patterns for artwork search
+  private static Pattern              posterPattern1        = Pattern.compile("(?i)(poster|folder)\\..{2,4}");
+  private static Pattern              posterPattern2        = Pattern.compile("(?i).*-poster\\..{2,4}");
+  private static Pattern              fanartPattern1        = Pattern.compile("(?i)fanart\\..{2,4}");
+  private static Pattern              fanartPattern2        = Pattern.compile("(?i).*(-|.)fanart\\..{2,4}");
+  private static Pattern              bannerPattern1        = Pattern.compile("(?i)banner\\..{2,4}");
+  private static Pattern              bannerPattern2        = Pattern.compile("(?i).*(-|.)banner\\..{2,4}");
+  private static Pattern              clearartPattern1      = Pattern.compile("(?i)clearart\\..{2,4}");
+  private static Pattern              clearartPattern2      = Pattern.compile("(?i).*(-|.)clearart\\..{2,4}");
+  private static Pattern              logoPattern1          = Pattern.compile("(?i)logo\\..{2,4}");
+  private static Pattern              logoPattern2          = Pattern.compile("(?i).*(-|.)logo\\..{2,4}");
+  private static Pattern              thumbPattern1         = Pattern.compile("(?i)thumb\\..{2,4}");
+  private static Pattern              thumbPattern2         = Pattern.compile("(?i).*(-|.)thumb\\..{2,4}");
+  private static Pattern              seasonPattern         = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
 
   private List<String>                dataSources;
   private List<File>                  tvShowFolders         = new ArrayList<File>();
@@ -524,7 +541,74 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    */
   private void findAdditionalTvShowFiles(TvShow tvShow, File directory) {
     // find tv show images for this TV show; NOTE: the NFO has been found in TvShow.parseNFO()
-    tvShow.findImages();
+    List<File> completeDirContents = new ArrayList<File>(Arrays.asList(directory.listFiles()));
+
+    // search for poster or download
+    findArtwork(tvShow, completeDirContents, posterPattern1, MediaFileType.POSTER);
+    findArtwork(tvShow, completeDirContents, posterPattern2, MediaFileType.POSTER);
+    downloadArtwork(tvShow, MediaFileType.POSTER);
+
+    // search fanart or download
+    findArtwork(tvShow, completeDirContents, fanartPattern1, MediaFileType.FANART);
+    findArtwork(tvShow, completeDirContents, fanartPattern2, MediaFileType.FANART);
+    downloadArtwork(tvShow, MediaFileType.FANART);
+
+    // search banner or download
+    findArtwork(tvShow, completeDirContents, bannerPattern1, MediaFileType.BANNER);
+    findArtwork(tvShow, completeDirContents, bannerPattern2, MediaFileType.BANNER);
+    downloadArtwork(tvShow, MediaFileType.BANNER);
+
+    // search logo or download
+    findArtwork(tvShow, completeDirContents, logoPattern1, MediaFileType.LOGO);
+    findArtwork(tvShow, completeDirContents, logoPattern2, MediaFileType.LOGO);
+    downloadArtwork(tvShow, MediaFileType.LOGO);
+
+    // search clearart or download
+    findArtwork(tvShow, completeDirContents, clearartPattern1, MediaFileType.CLEARART);
+    findArtwork(tvShow, completeDirContents, clearartPattern2, MediaFileType.CLEARART);
+    downloadArtwork(tvShow, MediaFileType.CLEARART);
+
+    // search thumb or download
+    findArtwork(tvShow, completeDirContents, thumbPattern1, MediaFileType.THUMB);
+    findArtwork(tvShow, completeDirContents, thumbPattern2, MediaFileType.THUMB);
+    downloadArtwork(tvShow, MediaFileType.THUMB);
+
+    // search season posters
+    for (File file : completeDirContents) {
+      Matcher matcher = seasonPattern.matcher(file.getName());
+      if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+        LOGGER.debug("found season poster " + file.getPath());
+        try {
+          int season = Integer.parseInt(matcher.group(1));
+          tvShow.setSeasonPoster(season, file);
+        }
+        catch (Exception e) {
+        }
+      }
+      else if (file.getName().startsWith("season-specials-poster")) {
+        LOGGER.debug("found season specials poster " + file.getPath());
+        tvShow.setSeasonPoster(-1, file);
+      }
+    }
+  }
+
+  private void findArtwork(TvShow show, List<File> directoryContents, Pattern searchPattern, MediaFileType type) {
+    for (File file : directoryContents) {
+      Matcher matcher = searchPattern.matcher(file.getName());
+      if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+        MediaFile mf = new MediaFile(file, type);
+        show.addToMediaFiles(mf);
+        LOGGER.debug("found " + mf.getType().name().toLowerCase() + ": " + file.getPath());
+        break;
+      }
+    }
+  }
+
+  private void downloadArtwork(TvShow tvShow, MediaFileType type) {
+    if (StringUtils.isBlank(tvShow.getArtworkFilename(type)) && StringUtils.isNotBlank(tvShow.getArtworkUrl(type))) {
+      tvShow.downloadArtwork(type);
+      LOGGER.debug("got " + type.name().toLowerCase() + " url: " + tvShow.getArtworkUrl(type) + " ; try to download this");
+    }
   }
 
   /**

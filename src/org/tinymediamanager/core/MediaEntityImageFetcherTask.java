@@ -43,20 +43,6 @@ public class MediaEntityImageFetcherTask implements Runnable {
   private String              filename;
   private boolean             firstImage;
 
-  /**
-   * Instantiates a new media entity image fetcher.
-   * 
-   * @param entity
-   *          the entity
-   * @param url
-   *          the url
-   * @param type
-   *          the type
-   * @param filename
-   *          the filename
-   * @param firstImage
-   *          the first image
-   */
   public MediaEntityImageFetcherTask(MediaEntity entity, String url, MediaArtworkType type, String filename, boolean firstImage) {
     this.entity = entity;
     this.url = url;
@@ -65,11 +51,6 @@ public class MediaEntityImageFetcherTask implements Runnable {
     this.firstImage = firstImage;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Runnable#run()
-   */
   @Override
   public void run() {
     String oldFilename = null;
@@ -78,23 +59,14 @@ public class MediaEntityImageFetcherTask implements Runnable {
       if (firstImage) {
         switch (type) {
           case POSTER:
-            oldFilename = entity.getPoster();
-            entity.clearPoster();
-            break;
-
           case BACKGROUND:
-            oldFilename = entity.getFanart();
-            entity.clearFanart();
-            break;
-
           case BANNER:
-            oldFilename = entity.getBanner();
-            entity.clearBanner();
-            break;
-
           case THUMB:
-            oldFilename = entity.getThumb();
-            entity.clearThumb();
+          case CLEARART:
+          case DISC:
+          case LOGO:
+            oldFilename = entity.getArtworkFilename(MediaArtworkType.getMediaFileType(type));
+            entity.removeAllMediaFiles(MediaArtworkType.getMediaFileType(type));
             break;
 
           default:
@@ -131,32 +103,21 @@ public class MediaEntityImageFetcherTask implements Runnable {
         ImageCache.invalidateCachedImage(entity.getPath() + File.separator + filename);
         switch (type) {
           case POSTER:
-            entity.setPoster(new File(entity.getPath(), filename));
-            entity.saveToDb();
-            break;
-
           case BACKGROUND:
-            entity.setFanart(new File(entity.getPath(), filename));
-            entity.saveToDb();
-            break;
-
           case BANNER:
-            entity.setBanner(new File(entity.getPath(), filename));
-            entity.saveToDb();
-            break;
-
           case THUMB:
-            entity.setThumb(new File(entity.getPath(), filename));
+          case CLEARART:
+          case DISC:
+          case LOGO:
+            entity.setArtwork(new File(entity.getPath(), filename), MediaArtworkType.getMediaFileType(type));
             entity.saveToDb();
+            entity.callbackForWrittenArtwork(type);
             break;
 
           default:
             return;
         }
-
-        entity.callbackForWrittenArtwork(type);
       }
-
     }
     catch (InterruptedException e) {
       LOGGER.warn("interrupted image download");
@@ -168,23 +129,15 @@ public class MediaEntityImageFetcherTask implements Runnable {
       if (firstImage && StringUtils.isNotBlank(oldFilename)) {
         switch (type) {
           case POSTER:
-            entity.setPoster(new File(oldFilename));
-            entity.saveToDb();
-            break;
-
           case BACKGROUND:
-            entity.setFanart(new File(oldFilename));
-            entity.saveToDb();
-            break;
-
           case BANNER:
-            entity.setBanner(new File(oldFilename));
-            entity.saveToDb();
-            break;
-
           case THUMB:
-            entity.setThumb(new File(oldFilename));
+          case CLEARART:
+          case DISC:
+          case LOGO:
+            entity.setArtwork(new File(oldFilename), MediaArtworkType.getMediaFileType(type));
             entity.saveToDb();
+            entity.callbackForWrittenArtwork(type);
             break;
 
           default:

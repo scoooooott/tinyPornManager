@@ -401,7 +401,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
                 dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
                 dialog.setVisible(true);
                 movieToScrape.setPosterUrl(lblImage.getImageUrl());
-                movieToScrape.writeImages(true, false);
+                movieToScrape.downloadArtwork(MediaFileType.POSTER);
               }
 
               // fanart
@@ -413,13 +413,17 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
                     extrafanarts, MediaType.MOVIE);
                 dialog.setVisible(true);
                 movieToScrape.setFanartUrl(lblImage.getImageUrl());
-                movieToScrape.writeImages(false, true);
+                movieToScrape.downloadArtwork(MediaFileType.FANART);
 
                 // set extrathumbs and extrafanarts
                 movieToScrape.setExtraThumbs(extrathumbs);
                 movieToScrape.setExtraFanarts(extrafanarts);
-                if (extrafanarts.size() > 0 || extrathumbs.size() > 0) {
-                  movieToScrape.writeExtraImages(true, true);
+                if (extrafanarts.size() > 0) {
+                  movieToScrape.downloadArtwork(MediaFileType.EXTRAFANART);
+                }
+
+                if (extrathumbs.size() > 0) {
+                  movieToScrape.downloadArtwork(MediaFileType.EXTRATHUMB);
                 }
               }
             }

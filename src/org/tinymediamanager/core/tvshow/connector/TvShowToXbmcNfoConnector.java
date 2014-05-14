@@ -204,6 +204,7 @@ public class TvShowToXbmcNfoConnector {
       tvShow.addToMediaFiles(new MediaFile(nfoFile));
     }
     catch (Exception e) {
+      e.printStackTrace();
       LOGGER.error(nfoFilename + " " + e.getMessage());
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShow, "message.nfo.writeerror", new String[] { ":",
           e.getLocalizedMessage() }));

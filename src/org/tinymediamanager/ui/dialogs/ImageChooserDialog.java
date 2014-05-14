@@ -93,7 +93,7 @@ public class ImageChooserDialog extends JDialog {
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
 
   public enum ImageType {
-    POSTER, FANART, BANNER, SEASON;
+    POSTER, FANART, BANNER, SEASON, LOGO, CLEARART, DISC, THUMB;
   }
 
   private DownloadTask                task;
@@ -159,6 +159,22 @@ public class ImageChooserDialog extends JDialog {
 
       case SEASON:
         setTitle(BUNDLE.getString("image.choose.season")); //$NON-NLS-1$
+        break;
+
+      case CLEARART:
+        setTitle(BUNDLE.getString("image.choose.clearart")); //$NON-NLS-1$
+        break;
+
+      case DISC:
+        setTitle(BUNDLE.getString("image.choose.disc")); //$NON-NLS-1$
+        break;
+
+      case LOGO:
+        setTitle(BUNDLE.getString("image.choose.logo")); //$NON-NLS-1$
+        break;
+
+      case THUMB:
+        setTitle(BUNDLE.getString("image.choose.thumb")); //$NON-NLS-1$
         break;
     }
 
@@ -331,12 +347,16 @@ public class ImageChooserDialog extends JDialog {
 
     switch (type) {
       case FANART:
+      case CLEARART:
+      case THUMB:
+      case DISC:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 180 };
         size = ImageCache.calculateSize(300, 150, originalImage.getWidth(), originalImage.getHeight(), true);
         break;
 
       case BANNER:
+      case LOGO:
         gbl.columnWidths = new int[] { 130 };
         gbl.rowHeights = new int[] { 120 };
         size = ImageCache.calculateSize(300, 100, originalImage.getWidth(), originalImage.getHeight(), true);
@@ -628,6 +648,21 @@ public class ImageChooserDialog extends JDialog {
               options.setArtworkType(MediaArtworkType.SEASON);
               break;
 
+            case CLEARART:
+              options.setArtworkType(MediaArtworkType.CLEARART);
+              break;
+
+            case DISC:
+              options.setArtworkType(MediaArtworkType.DISC);
+              break;
+
+            case LOGO:
+              options.setArtworkType(MediaArtworkType.LOGO);
+              break;
+
+            case THUMB:
+              options.setArtworkType(MediaArtworkType.THUMB);
+              break;
           }
 
           // populate ids

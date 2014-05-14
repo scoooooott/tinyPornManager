@@ -206,8 +206,35 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
         }
         break;
 
-      default:
+      case HDMOVIELOGO:
+      case HDTVLOGO:
+      case CLEARLOGO:
+      case MOVIELOGO:
+        if (artworkType == MediaArtworkType.LOGO || artworkType == MediaArtworkType.ALL) {
+          ma = new MediaArtwork();
+          ma.setType(MediaArtworkType.LOGO);
+        }
         break;
+
+      case HDMOVIECLEARART:
+      case CLEARART:
+      case MOVIEART:
+        if (artworkType == MediaArtworkType.CLEARART || artworkType == MediaArtworkType.ALL) {
+          ma = new MediaArtwork();
+          ma.setType(MediaArtworkType.CLEARART);
+        }
+        break;
+
+      case CDART:
+      case MOVIEDISC:
+        if (artworkType == MediaArtworkType.DISC || artworkType == MediaArtworkType.ALL) {
+          ma = new MediaArtwork();
+          ma.setType(MediaArtworkType.DISC);
+        }
+        break;
+
+      default:
+        return null;
     }
 
     if (ma != null) {
@@ -218,6 +245,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
 
       // resolution
       switch (type) {
+        case HDMOVIECLEARART:
         case HDCLEARART:
         case MOVIETHUMB:
           ma.addImageSize(1000, 562, ftvaw.getUrl());
@@ -247,6 +275,29 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
           ma.addImageSize(1000, 185, ftvaw.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
+
+        case HDMOVIELOGO:
+        case HDTVLOGO:
+          ma.addImageSize(800, 310, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.LARGE.getOrder());
+          break;
+
+        case CLEARLOGO:
+        case MOVIELOGO:
+          ma.addImageSize(400, 155, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
+          break;
+
+        case CLEARART:
+        case MOVIEART:
+          ma.addImageSize(500, 281, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.LARGE.getOrder());
+          break;
+
+        case CDART:
+        case MOVIEDISC:
+          ma.addImageSize(1000, 1000, ftvaw.getUrl());
+          ma.setSizeOrder(FanartSizes.LARGE.getOrder());
 
         default:
           break;

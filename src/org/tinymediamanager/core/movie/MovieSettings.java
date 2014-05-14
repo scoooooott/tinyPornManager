@@ -124,6 +124,11 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       enableMovieSetArtworkFolder              = false;
   private String                        movieSetArtworkFolder                    = "MoviesetArtwork";
   private boolean                       scrapeBestImage                          = true;
+  private boolean                       imageLogo                                = false;
+  private boolean                       imageBanner                              = false;
+  private boolean                       imageClearart                            = false;
+  private boolean                       imageDiscart                             = false;
+  private boolean                       imageThumb                               = false;
   private boolean                       trailerScraperTmdb                       = true;
   private boolean                       trailerScraperHdTrailers                 = true;
   private boolean                       trailerScraperOfdb                       = true;
@@ -656,5 +661,55 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.scraperFallback;
     this.scraperFallback = newValue;
     firePropertyChange(SCRAPER_FALLBACK, oldValue, newValue);
+  }
+
+  public boolean isImageLogo() {
+    return imageLogo;
+  }
+
+  public boolean isImageBanner() {
+    return imageBanner;
+  }
+
+  public boolean isImageClearart() {
+    return imageClearart;
+  }
+
+  public boolean isImageDiscart() {
+    return imageDiscart;
+  }
+
+  public boolean isImageThumb() {
+    return imageThumb;
+  }
+
+  public void setImageLogo(boolean newValue) {
+    boolean oldValue = this.imageLogo;
+    this.imageLogo = newValue;
+    firePropertyChange("imageLogo", oldValue, newValue);
+  }
+
+  public void setImageBanner(boolean newValue) {
+    boolean oldValue = this.imageBanner;
+    this.imageBanner = newValue;
+    firePropertyChange("imageBanner", oldValue, newValue);
+  }
+
+  public void setImageClearart(boolean newValue) {
+    boolean oldValue = this.imageClearart;
+    this.imageClearart = newValue;
+    firePropertyChange("imageClearart", oldValue, newValue);
+  }
+
+  public void setImageDiscart(boolean newValue) {
+    boolean oldValue = this.imageDiscart;
+    this.imageDiscart = newValue;
+    firePropertyChange("imageDiscart", oldValue, newValue);
+  }
+
+  public void setImageThumb(boolean newValue) {
+    boolean oldValue = this.imageThumb;
+    this.imageThumb = newValue;
+    firePropertyChange("imageThumb", oldValue, newValue);
   }
 }

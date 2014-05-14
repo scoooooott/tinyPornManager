@@ -67,7 +67,7 @@ public class TvShowChangeSeasonPosterAction extends AbstractAction {
 
         if (StringUtils.isNotBlank(imageLabel.getImageUrl())) {
           season.setPosterUrl(imageLabel.getImageUrl());
-          season.getTvShow().writeSeasonPoster(season.getSeason());
+          season.getTvShow().downloadSeasonPoster(season.getSeason());
         }
       }
     }

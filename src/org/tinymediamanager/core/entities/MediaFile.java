@@ -70,6 +70,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private static Pattern                             bannerPattern      = Pattern.compile("(?i)(.*-banner|banner)\\..{2,4}");
   private static Pattern                             thumbPattern       = Pattern.compile("(?i)(.*-thumb|thumb)[0-9]{0,2}\\..{2,4}");
   private static Pattern                             seasonPattern      = Pattern.compile("(?i)season([0-9]{0,2}|-specials)-poster\\..{2,4}");
+  private static Pattern                             logoPattern        = Pattern.compile("(?i)(.*-logo|logo)\\..{2,4}");
+  // be careful: disc.avi would be valid!
+  private static Pattern                             discartPattern     = Pattern.compile("(?i)(.*-discart|discart|.*-disc|disc)\\.(jpg|png|tbn)");
+  private static Pattern                             clearartPattern    = Pattern.compile("(?i)(.*-clearart|clearart)\\..{2,4}");
 
   public static final String                         VIDEO_FORMAT_480P  = "480p";
   public static final String                         VIDEO_FORMAT_576P  = "576p";
@@ -303,6 +307,24 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.THUMB;
     }
 
+    // clearart.*
+    matcher = clearartPattern.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.CLEARART;
+    }
+
+    // logo.*
+    matcher = logoPattern.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.LOGO;
+    }
+
+    // discart.*
+    matcher = discartPattern.matcher(name);
+    if (matcher.matches()) {
+      return MediaFileType.DISCART;
+    }
+
     return MediaFileType.GRAPHIC;
   }
 
@@ -322,9 +344,23 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * @return true/false
    */
   public boolean isGraphic() {
-    return (type.equals(MediaFileType.GRAPHIC) || type.equals(MediaFileType.BANNER) || type.equals(MediaFileType.FANART)
-        || type.equals(MediaFileType.POSTER) || type.equals(MediaFileType.THUMB) || type.equals(MediaFileType.EXTRAFANART) || type
-          .equals(MediaFileType.SEASON_POSTER));
+    switch (type) {
+      case GRAPHIC:
+      case BANNER:
+      case FANART:
+      case POSTER:
+      case THUMB:
+      case LOGO:
+      case CLEARART:
+      case SEASON_POSTER:
+      case EXTRAFANART:
+      case EXTRATHUMB:
+      case DISCART:
+        return true;
+
+      default:
+        return false;
+    }
   }
 
   /**
@@ -1234,6 +1270,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       case EXTRAFANART:
       case GRAPHIC:
       case SEASON_POSTER:
+      case LOGO:
+      case CLEARART:
+      case DISCART:
+      case EXTRATHUMB:
         height = getMediaInfo(StreamKind.Image, 0, "Height");
         // scanType = getMediaInfo(StreamKind.Image, 0, "ScanType"); // no scantype on graphics
         width = getMediaInfo(StreamKind.Image, 0, "Width");

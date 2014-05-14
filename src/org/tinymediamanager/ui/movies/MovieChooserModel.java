@@ -269,7 +269,7 @@ public class MovieChooserModel extends AbstractModelObject {
    * @return the artwork
    */
   public List<MediaArtwork> getArtwork() {
-    List<MediaArtwork> artwork = null;
+    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
     MediaScrapeOptions options = new MediaScrapeOptions();
     options.setType(MediaType.MOVIE);
@@ -289,20 +289,10 @@ public class MovieChooserModel extends AbstractModelObject {
     // scrape providers till one artwork has been found
     for (IMediaArtworkProvider artworkProvider : artworkProviders) {
       try {
-        artwork = artworkProvider.getArtwork(options);
+        artwork.addAll(artworkProvider.getArtwork(options));
       }
       catch (Exception e) {
-        artwork = new ArrayList<MediaArtwork>();
       }
-      // check if at least one artwork has been found
-      if (artwork.size() > 0) {
-        break;
-      }
-    }
-
-    // initialize if null
-    if (artwork == null) {
-      artwork = new ArrayList<MediaArtwork>();
     }
 
     return artwork;

@@ -880,6 +880,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public void saveToDb() {
     // update/insert this movie to the database
     final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+    readWriteLock.readLock().lock();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
         entityManager.getTransaction().begin();
@@ -890,6 +891,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
         entityManager.persist(this);
       }
     }
+    readWriteLock.readLock().unlock();
   }
 
   @Override

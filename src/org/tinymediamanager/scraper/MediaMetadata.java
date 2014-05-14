@@ -36,6 +36,7 @@ public class MediaMetadata {
   public static final String      PROVIDER_ID         = "providerId";
   public static final String      IMDBID              = Constants.IMDBID;
   public static final String      TMDBID              = Constants.TMDBID;
+  public static final String      TVDBID              = Constants.TVDBID;
   public static final String      TMDBID_SET          = "tmdbIdSet";
   public static final String      COLLECTION_NAME     = "collectionName";
   public static final String      TITLE               = "title";

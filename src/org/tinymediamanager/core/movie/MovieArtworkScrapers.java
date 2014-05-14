@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,37 +16,20 @@
 package org.tinymediamanager.core.movie;
 
 /**
- * The Enum MovieScrapers.
+ * The enum MovieArtworkScrapers. The sources where we can scrape our artwork from
  * 
  * @author Manuel Laggner
  */
 public enum MovieArtworkScrapers {
+  TMDB("The Movie Database"), FANART_TV("Fanart.tv");
 
-  /** The tmdb. */
-  TMDB("The Movie Database"),
-  /** The imdb. */
-  FANART_TV("Fanart.tv");
-
-  /** The title. */
   private String title;
 
-  /**
-   * Instantiates a new movie scrapers.
-   * 
-   * @param title
-   *          the title
-   */
   private MovieArtworkScrapers(String title) {
     this.title = title;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Enum#toString()
-   */
   public String toString() {
     return this.title;
   }
-
 }

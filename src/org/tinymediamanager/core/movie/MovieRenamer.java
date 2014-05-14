@@ -243,12 +243,12 @@ public class MovieRenamer {
     }
     for (MoviePosterNaming s : MoviePosterNaming.values()) {
       // mark all known variants for cleanup
-      MediaFile del = new MediaFile(new File(movie.getPath(), movie.getPosterFilename(s)));
+      MediaFile del = new MediaFile(new File(movie.getPath(), MovieArtworkHelper.getPosterFilename(s, movie)));
       cleanup.add(del);
     }
     for (MovieFanartNaming s : MovieFanartNaming.values()) {
       // mark all known variants for cleanup
-      MediaFile del = new MediaFile(new File(movie.getPath(), movie.getFanartFilename(s)));
+      MediaFile del = new MediaFile(new File(movie.getPath(), MovieArtworkHelper.getFanartFilename(s, movie)));
       cleanup.add(del);
     }
 
@@ -413,7 +413,7 @@ public class MovieRenamer {
         posternames = Globals.settings.getMovieSettings().getMoviePosterFilenames();
       }
       for (MoviePosterNaming name : posternames) {
-        newFilename = movie.getPosterFilename(name, newMovieFilename);
+        newFilename = MovieArtworkHelper.getPosterFilename(name, movie, newMovieFilename);
         if (newFilename != null && !newFilename.isEmpty()) {
           String curExt = mf.getExtension();
           if (curExt.equalsIgnoreCase("tbn")) {
@@ -471,7 +471,7 @@ public class MovieRenamer {
         fanartnames = Globals.settings.getMovieSettings().getMovieFanartFilenames();
       }
       for (MovieFanartNaming name : fanartnames) {
-        newFilename = movie.getFanartFilename(name, newMovieFilename);
+        newFilename = MovieArtworkHelper.getFanartFilename(name, movie, newMovieFilename);
         if (newFilename != null && !newFilename.isEmpty()) {
           String curExt = mf.getExtension();
           if (curExt.equalsIgnoreCase("tbn")) {
@@ -506,6 +506,26 @@ public class MovieRenamer {
           needed.add(newMF);
         }
       }
+    }
+
+    // ######################################################################
+    // ## rename extra artwork
+    // ## keep all extra artwork - they don't need to be renamed
+    // ######################################################################
+    for (MediaFile artwork : movie.getMediaFiles(MediaFileType.LOGO)) {
+      needed.add(artwork);
+    }
+    for (MediaFile artwork : movie.getMediaFiles(MediaFileType.CLEARART)) {
+      needed.add(artwork);
+    }
+    for (MediaFile artwork : movie.getMediaFiles(MediaFileType.BANNER)) {
+      needed.add(artwork);
+    }
+    for (MediaFile artwork : movie.getMediaFiles(MediaFileType.DISCART)) {
+      needed.add(artwork);
+    }
+    for (MediaFile artwork : movie.getMediaFiles(MediaFileType.THUMB)) {
+      needed.add(artwork);
     }
 
     // ######################################################################

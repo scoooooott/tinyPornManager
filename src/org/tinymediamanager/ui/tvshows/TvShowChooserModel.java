@@ -240,34 +240,25 @@ public class TvShowChooserModel extends AbstractModelObject {
    * @return the artwork
    */
   public List<MediaArtwork> getArtwork() {
-    List<MediaArtwork> artwork = null;
+    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
 
     MediaScrapeOptions options = new MediaScrapeOptions();
     options.setType(MediaType.TV_SHOW);
     options.setArtworkType(MediaArtworkType.ALL);
     options.setMetadata(metadata);
     options.setId(MediaMetadata.IMDBID, String.valueOf(metadata.getId(MediaMetadata.IMDBID)));
+    options.setId(MediaMetadata.TVDBID, String.valueOf(metadata.getId(MediaMetadata.TVDBID)));
     options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());
     options.setCountry(Globals.settings.getTvShowSettings().getCertificationCountry());
 
     // scrape providers till one artwork has been found
     for (IMediaArtworkProvider artworkProvider : artworkProviders) {
       try {
-        artwork = artworkProvider.getArtwork(options);
+        artwork.addAll(artworkProvider.getArtwork(options));
       }
       catch (Exception e) {
         LOGGER.warn("could not get artwork from " + artworkProvider.getProviderInfo().getName() + ": " + e.getMessage());
-        artwork = new ArrayList<MediaArtwork>();
       }
-      // check if at least one artwork has been found
-      if (artwork.size() > 0) {
-        break;
-      }
-    }
-
-    // initialize if null
-    if (artwork == null) {
-      artwork = new ArrayList<MediaArtwork>();
     }
 
     return artwork;

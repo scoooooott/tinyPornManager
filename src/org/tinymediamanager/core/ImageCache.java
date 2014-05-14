@@ -122,25 +122,39 @@ public class ImageCache {
     BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, size.x, size.y, Scalr.OP_ANTIALIAS);
     originalImage = null;
 
-    // convert to rgb
-    BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+    ImageWriter imgWrtr = null;
+    ImageWriteParam imgWrtrPrm = null;
 
-    ColorConvertOp xformOp = new ColorConvertOp(null);
-    xformOp.filter(scaledImage, rgb);
-    scaledImage = null;
+    // here we have two different ways to create our thumb
+    // a) a scaled down jpg/png (without transparency) which we have to modify since OpenJDK cannot call native jpg encoders
+    // b) a scaled down png (with transparency) which we can store without any more modifying as png
+    if (hasTransparentPixels(scaledImage)) {
+      // transparent image -> png
+      imgWrtr = ImageIO.getImageWritersByFormatName("png").next();
+      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
 
-    ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
-    ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
-    jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-    jpgWrtPrm.setCompressionQuality(0.8f);
+    }
+    else {
+      // non transparent image -> jpg
+      // convert to rgb
+      BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+      ColorConvertOp xformOp = new ColorConvertOp(null);
+      xformOp.filter(scaledImage, rgb);
+      imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+      imgWrtrPrm = imgWrtr.getDefaultWriteParam();
+      imgWrtrPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+      imgWrtrPrm.setCompressionQuality(0.80f);
+
+      scaledImage = rgb;
+    }
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ImageOutputStream output = ImageIO.createImageOutputStream(baos);
     imgWrtr.setOutput(output);
-    IIOImage outputImage = new IIOImage(rgb, null, null);
-    imgWrtr.write(null, outputImage, jpgWrtPrm);
+    IIOImage outputImage = new IIOImage(scaledImage, null, null);
+    imgWrtr.write(null, outputImage, imgWrtrPrm);
     imgWrtr.dispose();
-    rgb = null;
+    scaledImage = null;
 
     byte[] bytes = baos.toByteArray();
 
@@ -214,41 +228,48 @@ public class ImageCache {
 
       if (Globals.settings.getImageCacheType() == CacheType.FAST) {
         // scale fast
-        // scaledImage = Scaling.scale(originalImage, size.x, size.y);
         scaledImage = Scalr.resize(originalImage, Scalr.Method.BALANCED, Scalr.Mode.FIT_EXACT, size.x, size.y);
       }
       else {
         // scale with good quality
-        // scaledImage = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
-        // scaledImage.getGraphics().drawImage(originalImage.getScaledInstance(size.x, size.y, Image.SCALE_SMOOTH), 0, 0, null);
         scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, size.x, size.y);
       }
       originalImage = null;
 
-      // convert to rgb
-      BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+      ImageWriter imgWrtr = null;
+      ImageWriteParam imgWrtrPrm = null;
 
-      ColorConvertOp xformOp = new ColorConvertOp(null);
-      xformOp.filter(scaledImage, rgb);
-      scaledImage = null;
+      // here we have two different ways to create our thumb
+      // a) a scaled down jpg/png (without transparency) which we have to modify since OpenJDK cannot call native jpg encoders
+      // b) a scaled down png (with transparency) which we can store without any more modifying as png
+      if (hasTransparentPixels(scaledImage)) {
+        // transparent image -> png
+        imgWrtr = ImageIO.getImageWritersByFormatName("png").next();
+        imgWrtrPrm = imgWrtr.getDefaultWriteParam();
 
-      ImageWriter imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
-      ImageWriteParam jpgWrtPrm = imgWrtr.getDefaultWriteParam();
-      jpgWrtPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
-      jpgWrtPrm.setCompressionQuality(0.80f);
+      }
+      else {
+        // non transparent image -> jpg
+        // convert to rgb
+        BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+        ColorConvertOp xformOp = new ColorConvertOp(null);
+        xformOp.filter(scaledImage, rgb);
+        imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
+        imgWrtrPrm = imgWrtr.getDefaultWriteParam();
+        imgWrtrPrm.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
+        imgWrtrPrm.setCompressionQuality(0.80f);
+
+        scaledImage = rgb;
+      }
 
       FileImageOutputStream output = new FileImageOutputStream(cachedFile);
       imgWrtr.setOutput(output);
-      IIOImage image = new IIOImage(rgb, null, null);
-      imgWrtr.write(null, image, jpgWrtPrm);
+      IIOImage image = new IIOImage(scaledImage, null, null);
+      imgWrtr.write(null, image, imgWrtrPrm);
       imgWrtr.dispose();
       output.flush();
       output.close();
-      rgb = null;
-      // }
-      // else {
-      // FileUtils.copyFile(originalFile, cachedFile);
-      // }
+      scaledImage = null;
     }
 
     if (!cachedFile.exists()) {
@@ -256,6 +277,18 @@ public class ImageCache {
     }
 
     return cachedFile;
+  }
+
+  private static boolean hasTransparentPixels(BufferedImage image) {
+    for (int x = 0; x < image.getWidth(); x++) {
+      for (int y = 0; y < image.getHeight(); y++) {
+        int pixel = image.getRGB(x, y);
+        if ((pixel >> 24) == 0x00) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**

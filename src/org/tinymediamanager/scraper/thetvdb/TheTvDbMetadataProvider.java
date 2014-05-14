@@ -411,8 +411,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
         break;
 
       case BANNER:
-      default:
         bannerList = banners.getSeriesList();
+        break;
+
+      default:
         break;
 
     }

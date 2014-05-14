@@ -191,7 +191,7 @@ public class MovieRenamerPreview {
           posternames = Globals.settings.getMovieSettings().getMoviePosterFilenames();
         }
         for (MoviePosterNaming name : posternames) {
-          newFilename = movie.getPosterFilename(name, videoFileName);
+          newFilename = MovieArtworkHelper.getPosterFilename(name, movie, videoFileName);
           if (newFilename != null && !newFilename.isEmpty()) {
             String curExt = mf.getExtension();
             if (curExt.equalsIgnoreCase("tbn")) {
@@ -225,7 +225,7 @@ public class MovieRenamerPreview {
           fanartnames = Globals.settings.getMovieSettings().getMovieFanartFilenames();
         }
         for (MovieFanartNaming name : fanartnames) {
-          newFilename = movie.getFanartFilename(name, videoFileName);
+          newFilename = MovieArtworkHelper.getFanartFilename(name, movie, videoFileName);
           if (newFilename != null && !newFilename.isEmpty()) {
             String curExt = mf.getExtension();
             if (curExt.equalsIgnoreCase("tbn")) {

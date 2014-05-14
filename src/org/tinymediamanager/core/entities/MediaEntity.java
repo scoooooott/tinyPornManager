@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
@@ -66,9 +68,13 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected String                       plot                = "";
   protected float                        rating              = 0f;
   protected String                       path                = "";
+  @Deprecated
   protected String                       fanartUrl           = "";
+  @Deprecated
   protected String                       posterUrl           = "";
+  @Deprecated
   protected String                       bannerUrl           = "";
+  @Deprecated
   protected String                       thumbUrl            = "";
   protected Date                         dateAdded           = new Date();
   protected String                       productionCompany   = "";
@@ -80,8 +86,13 @@ public abstract class MediaEntity extends AbstractModelObject {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>(0);
 
+  private Map<MediaFileType, String>     artworkUrlMap       = new HashMap<MediaFileType, String>();
+
   @Transient
   public boolean                         justAdded           = false;
+
+  @Transient
+  protected ReadWriteLock                readWriteLock       = new ReentrantReadWriteLock();
 
   /**
    * Initialize after loading from database.
@@ -112,10 +123,18 @@ public abstract class MediaEntity extends AbstractModelObject {
     return ids;
   }
 
+  @Deprecated
   public String getFanartUrl() {
     return fanartUrl;
   }
 
+  /**
+   * Gets the file name of the fanart
+   * 
+   * @deprecated use {@link MediaEntity#getArtworkFilename(MediaFileType)} instead
+   * @return the file name of the fanart
+   */
+  @Deprecated
   public String getFanart() {
     List<MediaFile> fanarts = getMediaFiles(MediaFileType.FANART);
     if (fanarts.size() > 0) {
@@ -124,8 +143,9 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
+  @Deprecated
   public Dimension getFanartSize() {
-    return getImageSize(MediaFileType.FANART);
+    return getArtworkDimension(MediaFileType.FANART);
   }
 
   public String getTitle() {
@@ -144,10 +164,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     return path;
   }
 
+  @Deprecated
   public String getPosterUrl() {
     return posterUrl;
   }
 
+  @Deprecated
   public String getPoster() {
     List<MediaFile> poster = getMediaFiles(MediaFileType.POSTER);
     if (poster.size() > 0) {
@@ -156,14 +178,17 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
+  @Deprecated
   public Dimension getPosterSize() {
-    return getImageSize(MediaFileType.POSTER);
+    return getArtworkDimension(MediaFileType.POSTER);
   }
 
+  @Deprecated
   public String getBannerUrl() {
     return bannerUrl;
   }
 
+  @Deprecated
   public String getBanner() {
     List<MediaFile> banner = getMediaFiles(MediaFileType.BANNER);
     if (banner.size() > 0) {
@@ -172,10 +197,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
+  @Deprecated
   public Dimension getBannerSize() {
-    return getImageSize(MediaFileType.BANNER);
+    return getArtworkDimension(MediaFileType.BANNER);
   }
 
+  @Deprecated
   public String getThumb() {
     List<MediaFile> thumbs = getMediaFiles(MediaFileType.THUMB);
     if (thumbs.size() > 0) {
@@ -184,17 +211,40 @@ public abstract class MediaEntity extends AbstractModelObject {
     return "";
   }
 
+  @Deprecated
   public Dimension getThumbSize() {
-    return getImageSize(MediaFileType.THUMB);
+    return getArtworkDimension(MediaFileType.THUMB);
   }
 
-  private Dimension getImageSize(MediaFileType type) {
+  /**
+   * Gets the dimension of the (first) artwork of the given type
+   * 
+   * @param type
+   *          the artwork type
+   * @return the dimension of the artwork or a zero dimension if no artwork has been found
+   */
+  public Dimension getArtworkDimension(MediaFileType type) {
     List<MediaFile> mediaFiles = getMediaFiles(type);
     if (mediaFiles.size() > 0) {
       MediaFile mediaFile = mediaFiles.get(0);
       return new Dimension(mediaFile.getVideoWidth(), mediaFile.getVideoHeight());
     }
     return new Dimension(0, 0);
+  }
+
+  /**
+   * Gets the file name of the (first) artwork of the given type
+   * 
+   * @param type
+   *          the artwork type
+   * @return the file name of the artwork or an empty string if nothing has been found
+   */
+  public String getArtworkFilename(MediaFileType type) {
+    List<MediaFile> thumbs = getMediaFiles(type);
+    if (thumbs.size() > 0) {
+      return thumbs.get(0).getFile().getPath();
+    }
+    return "";
   }
 
   public float getRating() {
@@ -250,67 +300,115 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(YEAR, oldValue, newValue);
   }
 
+  @Deprecated
   public void setPosterUrl(String newValue) {
     String oldValue = posterUrl;
     posterUrl = newValue;
     firePropertyChange(POSTER_URL, oldValue, newValue);
   }
 
+  @Deprecated
   public void setPoster(File poster) {
-    setImage(poster, MediaFileType.POSTER);
+    setArtwork(poster, MediaFileType.POSTER);
   }
 
-  public void clearPoster() {
-    removeAllMediaFiles(MediaFileType.POSTER);
-  }
-
+  @Deprecated
   public void setBannerUrl(String newValue) {
     String oldValue = bannerUrl;
     bannerUrl = newValue;
     firePropertyChange(BANNER_URL, oldValue, newValue);
   }
 
+  @Deprecated
   public void setBanner(File banner) {
-    setImage(banner, MediaFileType.BANNER);
+    setArtwork(banner, MediaFileType.BANNER);
   }
 
-  public void clearBanner() {
-    removeAllMediaFiles(MediaFileType.BANNER);
-  }
-
+  @Deprecated
   public void setThumb(File thumb) {
-    setImage(thumb, MediaFileType.THUMB);
+    setArtwork(thumb, MediaFileType.THUMB);
   }
 
-  public void clearThumb() {
-    removeAllMediaFiles(MediaFileType.THUMB);
-  }
-
+  @Deprecated
   public void setFanartUrl(String newValue) {
     String oldValue = fanartUrl;
     fanartUrl = newValue;
     firePropertyChange(FANART_URL, oldValue, newValue);
   }
 
+  @Deprecated
   public void setThumbUrl(String newValue) {
     String oldValue = thumbUrl;
     thumbUrl = newValue;
     firePropertyChange(THUMB_URL, oldValue, newValue);
   }
 
+  @Deprecated
   public String getThumbUrl() {
     return thumbUrl;
   }
 
+  @Deprecated
   public void setFanart(File fanart) {
-    setImage(fanart, MediaFileType.FANART);
+    setArtwork(fanart, MediaFileType.FANART);
   }
 
-  public void clearFanart() {
-    removeAllMediaFiles(MediaFileType.FANART);
+  public void setArtworkUrl(String url, MediaFileType type) {
+    String oldValue = getArtworkFilename(type);
+
+    // TODO drop with v3; only use the map
+    switch (type) {
+      case POSTER:
+        this.posterUrl = url;
+        break;
+
+      case FANART:
+        this.fanartUrl = url;
+        break;
+
+      case BANNER:
+        this.bannerUrl = url;
+        break;
+
+      case THUMB:
+        this.thumbUrl = url;
+        break;
+
+      case CLEARART:
+      case DISCART:
+      case LOGO:
+        artworkUrlMap.put(type, url);
+        break;
+
+      default:
+        return;
+    }
+
+    firePropertyChange(type.name().toLowerCase() + "Url", oldValue, url);
   }
 
-  private void setImage(File file, MediaFileType type) {
+  public String getArtworkUrl(MediaFileType type) {
+    // TODO drop with v3; only use the map
+    switch (type) {
+      case FANART:
+        return fanartUrl;
+
+      case POSTER:
+        return posterUrl;
+
+      case BANNER:
+        return bannerUrl;
+
+      case THUMB:
+        return thumbUrl;
+
+      default:
+        String url = artworkUrlMap.get(type);
+        return url == null ? "" : url;
+    }
+  }
+
+  public void setArtwork(File file, MediaFileType type) {
     List<MediaFile> images = getMediaFiles(type);
     MediaFile mediaFile = null;
     if (images.size() > 0) {
@@ -387,22 +485,26 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void addToMediaFiles(MediaFile mediaFile) {
-    synchronized (mediaFiles) {
-      if (!mediaFiles.contains(mediaFile)) {
-        mediaFiles.add(mediaFile);
-        sortMediaFiles();
-      }
+    // synchronized (mediaFiles) {
+    readWriteLock.writeLock().lock();
+    if (!mediaFiles.contains(mediaFile)) {
+      mediaFiles.add(mediaFile);
+      sortMediaFiles();
     }
+    // }
+    readWriteLock.writeLock().unlock();
 
     firePropertyChange(MEDIA_FILES, null, mediaFiles);
     fireAddedEventForMediaFile(mediaFile);
   }
 
   public void addToMediaFiles(List<MediaFile> mediaFiles) {
-    synchronized (this.mediaFiles) {
-      this.mediaFiles.addAll(mediaFiles);
-      sortMediaFiles();
-    }
+    // synchronized (this.mediaFiles) {
+    readWriteLock.writeLock().lock();
+    this.mediaFiles.addAll(mediaFiles);
+    sortMediaFiles();
+    // }
+    readWriteLock.writeLock().unlock();
 
     // fire the right events
     for (MediaFile mediaFile : mediaFiles) {
@@ -472,40 +574,48 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public List<MediaFile> getMediaFiles(MediaFileType type) {
     List<MediaFile> mf = new ArrayList<MediaFile>();
-    for (MediaFile mediaFile : new ArrayList<MediaFile>(mediaFiles)) {
+    readWriteLock.readLock().lock();
+    for (MediaFile mediaFile : mediaFiles) {
       if (mediaFile.getType().equals(type)) {
         mf.add(mediaFile);
       }
     }
+    readWriteLock.readLock().unlock();
     return mf;
   }
 
   public List<MediaFile> getMediaFilesExceptType(MediaFileType type) {
     List<MediaFile> mf = new ArrayList<MediaFile>();
-    for (MediaFile mediaFile : new ArrayList<MediaFile>(mediaFiles)) {
+    readWriteLock.readLock().lock();
+    for (MediaFile mediaFile : mediaFiles) {
       if (!mediaFile.getType().equals(type)) {
         mf.add(mediaFile);
       }
     }
+    readWriteLock.readLock().unlock();
     return mf;
   }
 
   public void removeAllMediaFiles() {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>(mediaFiles);
-    synchronized (mediaFiles) {
-      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
-        mediaFiles.remove(i);
-      }
+    // synchronized (mediaFiles) {
+    readWriteLock.writeLock().lock();
+    for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+      mediaFiles.remove(i);
     }
+    // }
+    readWriteLock.writeLock().unlock();
     for (MediaFile mediaFile : changedMediafiles) {
       fireRemoveEventForMediaFile(mediaFile);
     }
   }
 
   public void removeFromMediaFiles(MediaFile mediaFile) {
-    synchronized (mediaFiles) {
-      mediaFiles.remove(mediaFile);
-    }
+    // synchronized (mediaFiles) {
+    readWriteLock.writeLock().lock();
+    mediaFiles.remove(mediaFile);
+    // }
+    readWriteLock.writeLock().unlock();
 
     firePropertyChange(MEDIA_FILES, null, mediaFiles);
     fireRemoveEventForMediaFile(mediaFile);
@@ -513,15 +623,17 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void removeAllMediaFilesExceptType(MediaFileType type) {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
-    synchronized (mediaFiles) {
-      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
-        MediaFile mediaFile = mediaFiles.get(i);
-        if (!mediaFile.getType().equals(type)) {
-          mediaFiles.remove(i);
-          changedMediafiles.add(mediaFile);
-        }
+    readWriteLock.writeLock().lock();
+    // synchronized (mediaFiles) {
+    for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+      MediaFile mediaFile = mediaFiles.get(i);
+      if (!mediaFile.getType().equals(type)) {
+        mediaFiles.remove(i);
+        changedMediafiles.add(mediaFile);
       }
     }
+    // }
+    readWriteLock.writeLock().unlock();
     for (MediaFile mediaFile : changedMediafiles) {
       fireRemoveEventForMediaFile(mediaFile);
     }
@@ -529,28 +641,35 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void removeAllMediaFiles(MediaFileType type) {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
-    synchronized (mediaFiles) {
-      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
-        MediaFile mediaFile = mediaFiles.get(i);
-        if (mediaFile.getType().equals(type)) {
-          mediaFiles.remove(i);
-          changedMediafiles.add(mediaFile);
-        }
+    readWriteLock.writeLock().lock();
+    // synchronized (mediaFiles) {
+    for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+      MediaFile mediaFile = mediaFiles.get(i);
+      if (mediaFile.getType().equals(type)) {
+        mediaFiles.remove(i);
+        changedMediafiles.add(mediaFile);
       }
     }
+    // }
+    readWriteLock.writeLock().unlock();
     for (MediaFile mediaFile : changedMediafiles) {
       fireRemoveEventForMediaFile(mediaFile);
     }
   }
 
   public void updateMediaFilePath(File oldPath, File newPath) {
-    for (MediaFile mf : new ArrayList<MediaFile>(this.mediaFiles)) {
+    readWriteLock.readLock().lock();
+    List<MediaFile> mfs = new ArrayList<MediaFile>(this.mediaFiles);
+    readWriteLock.readLock().unlock();
+    for (MediaFile mf : mfs) {
       mf.replacePathForRenamedFolder(oldPath, newPath);
     }
   }
 
   public void gatherMediaFileInformation(boolean force) {
+    readWriteLock.readLock().lock();
     List<MediaFile> mediaFiles = new ArrayList<MediaFile>(this.mediaFiles);
+    readWriteLock.readLock().unlock();
     for (MediaFile mediaFile : mediaFiles) {
       mediaFile.gatherMediaInformation(force);
     }

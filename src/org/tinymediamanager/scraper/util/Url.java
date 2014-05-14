@@ -21,6 +21,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
@@ -60,6 +63,7 @@ public class Url {
   protected Header[]                   headersResponse = null;
   protected List<Header>               headersRequest  = new ArrayList<Header>();
   protected HttpEntity                 entity          = null;
+  protected URI                        uri             = null;
 
   /**
    * gets the specified header value from this connection<br>
@@ -87,14 +91,36 @@ public class Url {
    * @param url
    *          the url
    */
-  public Url(String url) {
+  public Url(String url) throws MalformedURLException {
     if (client == null) {
       client = TmmHttpClient.getHttpClient();
     }
     this.url = url;
 
+    // morph to URI to check syntax of the url
+    try {
+      this.uri = morphStringToUri(url);
+    }
+    catch (URISyntaxException e) {
+      throw new MalformedURLException(url);
+    }
+
     // default user agent
     addHeader(HttpHeaders.USER_AGENT, UrlUtil.generateUA());
+  }
+
+  /**
+   * morph the url (string) to an URI to check the syntax and escape the path
+   * 
+   * @param urlToMorph
+   *          the url to morph
+   * @return the morphed URI
+   * @throws MalformedURLException
+   * @throws URISyntaxException
+   */
+  private URI morphStringToUri(String urlToMorph) throws MalformedURLException, URISyntaxException {
+    URL url = new URL(urlToMorph);
+    return new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
   }
 
   /**
@@ -185,7 +211,7 @@ public class Url {
     // replace our API keys for logging...
     String logUrl = url.replaceAll("api_key=\\w+", "api_key=<API_KEY>").replaceAll("api/\\d+\\w+", "api/<API_KEY>");
     LOGGER.debug("getting " + logUrl);
-    HttpGet httpget = new HttpGet(url);
+    HttpGet httpget = new HttpGet(uri);
     RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();
     httpget.setConfig(requestConfig);
 

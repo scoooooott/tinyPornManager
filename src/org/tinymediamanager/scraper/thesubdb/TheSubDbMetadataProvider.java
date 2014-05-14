@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.thesubdb;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ import org.tinymediamanager.scraper.util.SubtitleUtils;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
- * The Class TheTvDbMetadataProvider.
+ * The Class TheSubDbMetadataProvider.
  * 
  * @author Manuel Laggner
  */
@@ -113,11 +114,9 @@ public class TheSubDbMetadataProvider implements IMediaSubtitleProvider {
    *          2char language string
    */
   @Override
-  public void download(String hash, String language) {
-
+  public void download(String hash, String language) throws IOException {
     Url url = new Url(API_URL + "?action=download&hash=" + hash + "&language=" + language);
     url.setUserAgent(USER_AGENT);
-
   }
 
   /**
