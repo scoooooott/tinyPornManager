@@ -134,7 +134,8 @@ public class MovieScrapeTask extends TmmThreadPool {
               LOGGER.info("using treshold from settings of {}", scraperTreshold);
               if (result1.getScore() < scraperTreshold) {
                 LOGGER.info("score is lower than " + scraperTreshold + " (" + result1.getScore() + ") - ignore result");
-                MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.toolowscore"));
+                MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, movie, "movie.scrape.toolowscore", new String[] { String.format(
+                    "%.2f", scraperTreshold) }));
                 return;
               }
             }
