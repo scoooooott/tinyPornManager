@@ -25,10 +25,12 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.transaction.NotSupportedException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.components.JNativeFileChooser;
 
 import chrriis.dj.nativeswing.swtimpl.components.JDirectoryDialog;
@@ -211,7 +213,11 @@ public class TmmUIHelper {
   }
 
   public static void openFile(File file) throws Exception {
-    if (SystemUtils.IS_OS_WINDOWS) {
+    String fileType = "." + FilenameUtils.getExtension(file.getName());
+    if (StringUtils.isNotBlank(Globals.settings.getMediaPlayer()) && Globals.settings.getAllSupportedFileTypes().contains(fileType)) {
+      Runtime.getRuntime().exec(new String[] { Globals.settings.getMediaPlayer(), file.getAbsolutePath() });
+    }
+    else if (SystemUtils.IS_OS_WINDOWS) {
       // use explorer directly - ship around access exceptions and the unresolved network bug
       // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6780505
       Runtime.getRuntime().exec(new String[] { "explorer", file.getAbsolutePath() });

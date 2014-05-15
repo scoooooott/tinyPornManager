@@ -140,6 +140,7 @@ public class Settings extends AbstractModelObject {
   // language 2 char - saved to config
   private String                      language;
   private boolean                     showNotifications           = true;
+  private String                      mediaPlayer                 = "";
 
   private PropertyChangeListener      propertyChangeListener;
 
@@ -1067,5 +1068,15 @@ public class Settings extends AbstractModelObject {
     String oldValue = this.xbmcPassword;
     this.xbmcPassword = newValue;
     firePropertyChange("xbmcPassword", oldValue, newValue);
+  }
+
+  public void setMediaPlayer(String newValue) {
+    String oldValue = mediaPlayer;
+    mediaPlayer = newValue;
+    firePropertyChange("mediaPlayer", oldValue, newValue);
+  }
+
+  public String getMediaPlayer() {
+    return mediaPlayer;
   }
 }
