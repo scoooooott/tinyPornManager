@@ -206,6 +206,20 @@ public class UpgradeTasks {
       }
       entityManager.getTransaction().commit();
     }
+
+    if (compareVersion(v, "2.6") < 0) {
+      // THUMBS are getting EXTRATHUMBS
+      LOGGER.info("Performing upgrade tasks to version 2.5.4");
+      // repair missing datasources
+      EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
+      for (Movie movie : movieList.getMovies()) {
+        for (MediaFile mf : movie.getMediaFiles(MediaFileType.THUMB)) {
+          mf.setType(MediaFileType.EXTRATHUMB);
+        }
+      }
+      entityManager.getTransaction().commit();
+    }
   }
 
   /**
