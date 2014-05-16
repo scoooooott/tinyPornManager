@@ -276,7 +276,7 @@ public class Utils {
    */
   public static String cleanStackingMarkers(String filename) {
     if (!StringUtils.isEmpty(filename)) {
-      return filename.replaceAll("(?i)([\\( _.-]*(cd|dvd|part|pt|dis[ck])([0-9])[\\) _.-]*)", "").trim();
+      return filename.replaceAll("(?i)([\\( _.-]*(cd|dvd|part|pt|dis[ck])([0-9]{1,2})[\\) _.-]*)", "").trim();
     }
     return filename;
   }
@@ -290,7 +290,7 @@ public class Utils {
    */
   public static String getStackingMarker(String filename) {
     if (!StringUtils.isEmpty(filename)) {
-      return StrgUtils.substr(filename, "(?i)((cd|dvd|part|pt|dis[ck])([0-9]))");
+      return StrgUtils.substr(filename, "(?i)((cd|dvd|part|pt|dis[ck])([0-9]{1,2}))");
     }
     return "";
   }
