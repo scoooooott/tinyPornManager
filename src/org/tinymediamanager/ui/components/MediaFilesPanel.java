@@ -20,6 +20,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -33,9 +34,10 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -131,6 +133,9 @@ public class MediaFilesPanel extends JPanel {
           if (mediaFile.isVideo()) {
             return IconManager.PLAY_SMALL;
           }
+          if (mediaFile.isGraphic()) {
+            return IconManager.SEARCH;
+          }
           return null;
 
         case 1:
@@ -198,6 +203,7 @@ public class MediaFilesPanel extends JPanel {
         int row = tableFiles.rowAtPoint(arg0.getPoint());
         row = tableFiles.convertRowIndexToModel(row);
         MediaFile mf = mediaFileEventList.get(row);
+        // open the video file in the desired player
         if (mf.isVideo()) {
           try {
             TmmUIHelper.openFile(mf.getFile());
@@ -207,6 +213,10 @@ public class MediaFilesPanel extends JPanel {
             MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, mf, "message.erroropenfile", new String[] { ":",
                 e.getLocalizedMessage() }));
           }
+        }
+        // open the graphic in the lightbox
+        if (mf.isGraphic()) {
+          MainWindow.getActiveInstance().createLightbox(mf.getPath() + File.separator + mf.getFilename(), "");
         }
       }
     }
