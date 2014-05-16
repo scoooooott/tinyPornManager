@@ -215,7 +215,12 @@ public class TmmUIHelper {
   public static void openFile(File file) throws Exception {
     String fileType = "." + FilenameUtils.getExtension(file.getName());
     if (StringUtils.isNotBlank(Globals.settings.getMediaPlayer()) && Globals.settings.getAllSupportedFileTypes().contains(fileType)) {
-      Runtime.getRuntime().exec(new String[] { Globals.settings.getMediaPlayer(), file.getAbsolutePath() });
+      if (SystemUtils.IS_OS_MAC_OSX) {
+        Runtime.getRuntime().exec(new String[] { "open", Globals.settings.getMediaPlayer(), file.getAbsolutePath() });
+      }
+      else {
+        Runtime.getRuntime().exec(new String[] { Globals.settings.getMediaPlayer(), file.getAbsolutePath() });
+      }
     }
     else if (SystemUtils.IS_OS_WINDOWS) {
       // use explorer directly - ship around access exceptions and the unresolved network bug
