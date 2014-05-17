@@ -238,6 +238,7 @@ public class TinyMediaManager {
     // START character encoding debug
     debugCharacterEncoding("default encoding : ");
     System.setProperty("file.encoding", "UTF-8");
+    System.setProperty("sun.jnu.encoding", "UTF-8");
     Field charset;
     try {
       // we cannot (re)set the properties while running inside JVM
