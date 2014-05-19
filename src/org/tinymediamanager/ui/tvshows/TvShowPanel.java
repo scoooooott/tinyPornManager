@@ -608,8 +608,6 @@ public class TvShowPanel extends JPanel {
   private class ExpandAllAction extends AbstractAction {
     private static final long serialVersionUID = 6191727607109012198L;
 
-    private JTree             tree;
-
     public ExpandAllAction() {
       putValue(NAME, BUNDLE.getString("tree.expandall")); //$NON-NLS-1$  
     }

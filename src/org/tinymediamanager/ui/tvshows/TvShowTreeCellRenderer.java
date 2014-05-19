@@ -123,6 +123,10 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         else {
           tvShowTitle.setText(tvShow.getTitleSortable() + " (" + tvShow.getYear() + ")");
         }
+        if (StringUtils.isBlank(tvShowTitle.getText())) {
+          tvShowTitle.setText(BUNDLE.getString("tmm.unknowntitle")); //$NON-NLS-1$
+        }
+
         if (tvShow.isNewlyAdded()) {
           tvShowTitle.setForeground(newlyAddedColor);
         }
@@ -136,6 +140,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         tvShowImageLabel.setIcon(tvShow.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
 
         tvShowPanel.setEnabled(tree.isEnabled());
+        tvShowPanel.invalidate();
         returnValue = tvShowPanel;
       }
     }
@@ -155,6 +160,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
           tvShowSeasonTitle.setForeground(defaultColor);
         }
 
+        tvShowSeasonPanel.invalidate();
         returnValue = tvShowSeasonPanel;
       }
     }
@@ -170,6 +176,10 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         else {
           tvShowEpisodeTitle.setText(episode.getTitle());
         }
+        if (StringUtils.isBlank(tvShowTitle.getText())) {
+          tvShowEpisodeTitle.setText(BUNDLE.getString("tmm.unknowntitle")); //$NON-NLS-1$
+        }
+
         if (episode.isNewlyAdded()) {
           tvShowEpisodeTitle.setForeground(newlyAddedColor);
         }
@@ -182,6 +192,8 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         tvShowEpisodeNfoLabel.setIcon(episode.getHasNfoFile() ? IconManager.CHECKMARK : IconManager.CROSS);
         tvShowEpisodeImageLabel.setIcon(episode.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
         tvShowEpisodeSubtitleLabel.setIcon(episode.hasSubtitles() ? IconManager.CHECKMARK : IconManager.CROSS);
+
+        tvShowEpisodePanel.invalidate();
         returnValue = tvShowEpisodePanel;
       }
     }

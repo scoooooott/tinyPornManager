@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,9 +27,11 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -41,36 +44,37 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class MovieSetTreeCellRenderer implements TreeCellRenderer {
+  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The movie set panel. */
-  private JPanel                  movieSetPanel      = new JPanel();
+  private JPanel                      movieSetPanel      = new JPanel();
 
   /** The movie panel. */
-  private JPanel                  moviePanel         = new JPanel();
+  private JPanel                      moviePanel         = new JPanel();
 
   /** The movie set title. */
-  private JLabel                  movieSetTitle      = new JLabel();
+  private JLabel                      movieSetTitle      = new JLabel();
 
   /** The movie title. */
-  private JLabel                  movieTitle         = new JLabel();
+  private JLabel                      movieTitle         = new JLabel();
 
   /** The movie set info. */
-  private JLabel                  movieSetInfo       = new JLabel();
+  private JLabel                      movieSetInfo       = new JLabel();
 
   /** The movie set image label. */
-  private JLabel                  movieSetImageLabel = new JLabel();
+  private JLabel                      movieSetImageLabel = new JLabel();
 
   /** The movie nfo label. */
-  private JLabel                  movieNfoLabel      = new JLabel();
+  private JLabel                      movieNfoLabel      = new JLabel();
 
   /** The movie image label. */
-  private JLabel                  movieImageLabel    = new JLabel();
+  private JLabel                      movieImageLabel    = new JLabel();
 
   /** The default renderer. */
-  private DefaultTreeCellRenderer defaultRenderer    = new DefaultTreeCellRenderer();
+  private DefaultTreeCellRenderer     defaultRenderer    = new DefaultTreeCellRenderer();
 
   /** The Constant EVEN_ROW_COLOR. */
-  private static final Color      EVEN_ROW_COLOR     = new Color(241, 245, 250);
+  private static final Color          EVEN_ROW_COLOR     = new Color(241, 245, 250);
 
   /**
    * Instantiates a new movie set tree cell renderer.
@@ -115,11 +119,17 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
       if (userObject instanceof MovieSet) {
         MovieSet movieSet = (MovieSet) userObject;
 
-        movieSetTitle.setText(movieSet.getTitle());
+        if (StringUtils.isNotBlank(movieSet.getTitle())) {
+          movieSetTitle.setText(movieSet.getTitle());
+        }
+        else {
+          movieSetTitle.setText(BUNDLE.getString("tmm.unknowntitle")); //$NON-NLS-1$
+        }
         movieSetInfo.setText(movieSet.getMovies().size() + " Movies");
         movieSetImageLabel.setIcon(movieSet.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
 
         movieSetPanel.setEnabled(tree.isEnabled());
+        movieSetPanel.invalidate();
         returnValue = movieSetPanel;
       }
     }
@@ -130,11 +140,17 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
       if (userObject instanceof Movie) {
         Movie movie = (Movie) userObject;
 
-        movieTitle.setText(movie.getTitle());
+        if (StringUtils.isNotBlank(movie.getTitle())) {
+          movieTitle.setText(movie.getTitle());
+        }
+        else {
+          movieTitle.setText(BUNDLE.getString("tmm.unknowntitle")); //$NON-NLS-1$
+        }
         movieNfoLabel.setIcon(movie.getHasNfoFile() ? IconManager.CHECKMARK : IconManager.CROSS);
         movieImageLabel.setIcon(movie.getHasImages() ? IconManager.CHECKMARK : IconManager.CROSS);
 
         moviePanel.setEnabled(tree.isEnabled());
+        moviePanel.invalidate();
         returnValue = moviePanel;
       }
     }
