@@ -26,6 +26,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -90,6 +91,7 @@ public class SettingsDialog extends JDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+      Globals.settings.saveSettings();
       setVisible(false);
     }
   }

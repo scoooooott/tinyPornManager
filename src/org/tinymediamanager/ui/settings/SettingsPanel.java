@@ -18,8 +18,6 @@ package org.tinymediamanager.ui.settings;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -30,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.ButtonBarButtonUI;
 import org.tinymediamanager.ui.ButtonBarUI;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -46,8 +43,6 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 public class SettingsPanel extends JPanel {
   private static final long           serialVersionUID = -3509434882626534578L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  private Settings                    settings         = Settings.getInstance();
 
   /**
    * UI components
@@ -93,12 +88,6 @@ public class SettingsPanel extends JPanel {
     addButton(
         BUNDLE.getString("Settings.tvshow"), new ImageIcon(SettingsPanel.class.getResource("/org/tinymediamanager/ui/images/tv_show.png")), panelTvShowSettings); //$NON-NLS-1$
 
-    addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentHidden(ComponentEvent e) {
-        settings.saveSettings();
-      }
-    });
   }
 
   private void addButton(String title, ImageIcon icon, final Component component) {
