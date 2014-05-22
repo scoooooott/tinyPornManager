@@ -1114,7 +1114,7 @@ public class MovieList extends AbstractModelObject {
   public synchronized MovieSet getMovieSet(String title, int tmdbId) {
     MovieSet movieSet = findMovieSet(title, tmdbId);
 
-    if (movieSet == null) {
+    if (movieSet == null && StringUtils.isNotBlank(title)) {
       movieSet = new MovieSet(title);
       movieSet.saveToDb();
       addMovieSet(movieSet);

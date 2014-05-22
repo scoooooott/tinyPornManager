@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -102,7 +103,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
               options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
 
               CollectionInfo info = mp.getMovieSetMetadata(options);
-              if (info != null) {
+              if (info != null && StringUtils.isNotBlank(info.getName())) {
                 movieSet.setTitle(info.getName());
                 movieSet.setPlot(info.getOverview());
                 movieSet.setPosterUrl(info.getPosterPath());

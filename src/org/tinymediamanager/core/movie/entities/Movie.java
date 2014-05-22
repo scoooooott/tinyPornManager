@@ -866,7 +866,7 @@ public class Movie extends MediaEntity {
             options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
 
             CollectionInfo info = mp.getMovieSetMetadata(options);
-            if (info != null) {
+            if (info != null && StringUtils.isNotBlank(info.getName())) {
               movieSet.setTitle(info.getName());
               movieSet.setPlot(info.getOverview());
               movieSet.setPosterUrl(info.getPosterPath());
