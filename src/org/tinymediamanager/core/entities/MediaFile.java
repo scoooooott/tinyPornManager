@@ -210,6 +210,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
     }
     sub.setCodec(getExtension());
+    subtitles.clear();
     subtitles.add(sub);
   }
 
@@ -1260,6 +1261,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
             stream.setLanguage(l);
           }
         }
+        audioStreams.clear();
         audioStreams.add(stream);
         break;
 
