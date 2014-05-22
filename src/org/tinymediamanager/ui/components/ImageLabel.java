@@ -255,7 +255,7 @@ public class ImageLabel extends JLabel {
       else {
         text = BUNDLE.getString("image.nonefound"); //$NON-NLS-1$
       }
-      if (getParent().isOpaque()) {
+      if (!getParent().isOpaque()) {
         text = "";
       }
       Graphics2D g2 = (Graphics2D) g;

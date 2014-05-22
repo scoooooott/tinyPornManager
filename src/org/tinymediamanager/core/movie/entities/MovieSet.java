@@ -19,10 +19,12 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -40,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.movie.MovieList;
@@ -122,13 +125,12 @@ public class MovieSet extends MediaEntity {
   }
 
   @Override
-  public void setPosterUrl(String newValue) {
-    super.setPosterUrl(newValue);
+  public void setArtworkUrl(String url, MediaFileType type) {
+    super.setArtworkUrl(url, type);
     boolean written = false;
-    String posterFilename = "movieset-poster.jpg";
 
-    // write new poster
-    writeImageToMovieFolder(movies, posterFilename, posterUrl);
+    // write new artwork
+    writeImageToMovieFolder(movies, type);
     if (movies.size() > 0) {
       written = true;
     }
@@ -136,121 +138,111 @@ public class MovieSet extends MediaEntity {
     // write to artwork folder
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
-      writeImagesToArtworkFolder(true, false);
+      writeImagesToArtworkFolder(type);
       written = true;
     }
 
     if (written) {
-      firePropertyChange(POSTER, false, true);
+      firePropertyChange(type.name().toLowerCase(), false, true);
     }
     else {
       // at least cache it
-      if (StringUtils.isNotEmpty(posterUrl) && movies.size() == 0) {
-        ImageFetcher task = new ImageFetcher("poster", posterUrl);
-        TmmTaskManager.getInstance().addImageDownloadTask(task);
-      }
-    }
-
-  }
-
-  @Override
-  public void setFanartUrl(String newValue) {
-    super.setFanartUrl(newValue);
-    boolean written = false;
-    String fanartFilename = "movieset-fanart.jpg";
-
-    // write new fanart
-    writeImageToMovieFolder(movies, fanartFilename, fanartUrl);
-    if (movies.size() > 0) {
-      written = true;
-    }
-
-    // write to artwork folder
-    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
-        && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
-      writeImagesToArtworkFolder(false, true);
-      written = true;
-    }
-
-    if (written) {
-      firePropertyChange(FANART, false, true);
-    }
-    else {
-      // at least cache it
-      if (StringUtils.isNotEmpty(fanartUrl) && movies.size() == 0) {
-        ImageFetcher task = new ImageFetcher("fanart", fanartUrl);
+      if (StringUtils.isNotEmpty(url) && movies.size() == 0) {
+        ImageFetcher task = new ImageFetcher(type.name().toLowerCase(), url);
         TmmTaskManager.getInstance().addImageDownloadTask(task);
       }
     }
   }
 
   @Override
+  @Deprecated
   public String getFanart() {
-    String fanart = "";
-
-    // try to get from the artwork folder if enabled
-    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()) {
-      String filename = Globals.settings.getMovieSettings().getMovieSetArtworkFolder() + File.separator + getTitle() + "-fanart.jpg";
-      File fanartFile = new File(filename);
-      if (fanartFile.exists()) {
-        return filename;
-      }
-    }
-
-    // try to get a fanart from one movie
-    List<Movie> movies = new ArrayList<Movie>(this.movies);
-    for (Movie movie : movies) {
-      String filename = movie.getPath() + File.separator + "movieset-fanart.jpg";
-      File fanartFile = new File(filename);
-      if (fanartFile.exists()) {
-        return filename;
-      }
-    }
-
-    // we did not find an image from a movie - get the cached file from the url
-    File cachedFile = new File(ImageCache.getCacheDir() + File.separator + ImageCache.getCachedFileName(fanartUrl) + ".jpg");
-    if (cachedFile.exists()) {
-      return cachedFile.getPath();
-    }
-
-    return fanart;
+    return getArtworkFilename(MediaFileType.FANART);
   }
 
   @Override
+  @Deprecated
   public String getPoster() {
-    String poster = "";
+    return getArtworkFilename(MediaFileType.POSTER);
+  }
 
+  @Override
+  public String getArtworkFilename(final MediaFileType type) {
     // try to get from the artwork folder if enabled
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()) {
-      String filename = Globals.settings.getMovieSettings().getMovieSetArtworkFolder() + File.separator + getTitle() + "-poster.jpg";
-      File posterFile = new File(filename);
-      if (posterFile.exists()) {
-        return filename;
-      }
-      filename = Globals.settings.getMovieSettings().getMovieSetArtworkFolder() + File.separator + getTitle() + "-folder.jpg";
-      posterFile = new File(filename);
-      if (posterFile.exists()) {
-        return filename;
+      File artworkDir = new File(Globals.settings.getMovieSettings().getMovieSetArtworkFolder());
+      if (artworkDir.isDirectory()) {
+        File[] matches = artworkDir.listFiles(new FilenameFilter() {
+          public boolean accept(File dir, String name) {
+            String filenamePrefix = getTitle() + "-" + type.name().toLowerCase();
+            if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
+              return true;
+            }
+
+            if (type == MediaFileType.POSTER) {
+              filenamePrefix = getTitle() + "-folder";
+              if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+        });
+        if (matches.length > 0) {
+          return matches[0].getPath();
+        }
       }
     }
 
-    // try to get a fanart from one movie
+    // try to get the artwork from one movie
     List<Movie> movies = new ArrayList<Movie>(this.movies);
     for (Movie movie : movies) {
-      String filename = movie.getPath() + File.separator + "movieset-poster.jpg";
-      File posterFile = new File(filename);
-      if (posterFile.exists()) {
-        return filename;
+      File movieDir = new File(movie.getPath());
+      if (movieDir.isDirectory()) {
+        File[] matches = movieDir.listFiles(new FilenameFilter() {
+          public boolean accept(File dir, String name) {
+            String filenamePrefix = "movieset-" + type.name().toLowerCase();
+            if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
+              return true;
+            }
+
+            if (type == MediaFileType.POSTER) {
+              filenamePrefix = "movieset-folder";
+              if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+        });
+        if (matches.length > 0) {
+          return matches[0].getPath();
+        }
       }
     }
 
-    // we did not find an image from a movie - get the cached file from the url
-    File cachedFile = new File(ImageCache.getCacheDir() + File.separator + ImageCache.getCachedFileName(posterUrl) + ".jpg");
-    if (cachedFile.exists()) {
-      return cachedFile.getPath();
+    // we did not find an image from any assigned movie - get the cached file from the url
+    final String url = getArtworkUrl(type);
+    if (StringUtils.isNotBlank(url)) {
+      File cacheDir = ImageCache.getCacheDir();
+      File[] matches = cacheDir.listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          String filenamePrefix = ImageCache.getCachedFileName(url);
+          if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
+            return true;
+          }
+
+          return false;
+        }
+      });
+      if (matches.length > 0) {
+        return matches[0].getPath();
+      }
     }
 
-    return poster;
+    return "";
   }
 
   /**
@@ -271,8 +263,7 @@ public class MovieSet extends MediaEntity {
     // write images
     List<Movie> movies = new ArrayList<Movie>(1);
     movies.add(movie);
-    writeImageToMovieFolder(movies, "movieset-fanart.jpg", fanartUrl);
-    writeImageToMovieFolder(movies, "movieset-poster.jpg", posterUrl);
+    writeImagesToMovieFolder(movies);
 
     firePropertyChange("addedMovie", null, movie);
     firePropertyChange("movies", null, movies);
@@ -303,8 +294,7 @@ public class MovieSet extends MediaEntity {
     // write images
     List<Movie> movies = new ArrayList<Movie>(1);
     movies.add(movie);
-    writeImageToMovieFolder(movies, "movieset-fanart.jpg", fanartUrl);
-    writeImageToMovieFolder(movies, "movieset-poster.jpg", posterUrl);
+    writeImagesToMovieFolder(movies);
 
     firePropertyChange("addedMovie", null, movie);
     firePropertyChange("movies", null, movies);
@@ -399,7 +389,10 @@ public class MovieSet extends MediaEntity {
     return movies.indexOf(movie);
   }
 
-  private void writeImageToMovieFolder(List<Movie> movies, String filename, String url) {
+  private void writeImageToMovieFolder(List<Movie> movies, MediaFileType type) {
+    String url = getArtworkUrl(type);
+    String filename = "movieset-" + type.name().toLowerCase() + ".jpg";
+
     // check for empty strings or movies
     if (movies == null || movies.size() == 0 || StringUtils.isEmpty(filename) || StringUtils.isEmpty(url)) {
       return;
@@ -422,18 +415,36 @@ public class MovieSet extends MediaEntity {
   }
 
   public void rewriteAllImages() {
-    writeImageToMovieFolder(movies, "movieset-fanart.jpg", fanartUrl);
-    writeImageToMovieFolder(movies, "movieset-poster.jpg", posterUrl);
+    writeImagesToMovieFolder(movies);
 
     // write to artwork folder
     if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
         && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
-      writeImagesToArtworkFolder(true, true);
+      writeImagesToArtworkFolder(MediaFileType.POSTER);
+      writeImagesToArtworkFolder(MediaFileType.FANART);
+      writeImagesToArtworkFolder(MediaFileType.LOGO);
+      writeImagesToArtworkFolder(MediaFileType.CLEARART);
+      writeImagesToArtworkFolder(MediaFileType.BANNER);
     }
   }
 
-  private void writeImagesToArtworkFolder(boolean poster, boolean fanart) {
+  private void writeImagesToMovieFolder(List<Movie> movies) {
+    List<MediaFileType> types = Arrays.asList(MediaFileType.POSTER, MediaFileType.FANART, MediaFileType.BANNER, MediaFileType.LOGO,
+        MediaFileType.CLEARART);
+
+    for (MediaFileType type : types) {
+      writeImageToMovieFolder(movies, type);
+    }
+
+    // writeImagesToMovieFolder(movies);
+  }
+
+  private void writeImagesToArtworkFolder(MediaFileType type) {
     // write images to artwork folder
+    if (StringUtils.isBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
+      return;
+    }
+
     File artworkFolder = new File(Globals.settings.getMovieSettings().getMovieSetArtworkFolder());
 
     // check if folder exists
@@ -443,24 +454,16 @@ public class MovieSet extends MediaEntity {
 
     // write files
     try {
-      // poster
-      if (poster && StringUtils.isNotBlank(posterUrl)) {
-        String providedFiletype = FilenameUtils.getExtension(posterUrl);
-        writeImage(posterUrl, artworkFolder.getPath() + File.separator + getTitle() + "-folder." + providedFiletype);
-      }
-    }
-    catch (InterruptedException e) {
-      LOGGER.warn("interrupted image download");
-    }
-    catch (IOException e) {
-      LOGGER.warn("could not write files", e);
-    }
-
-    try {
-      // fanart
-      if (fanart && StringUtils.isNotBlank(fanartUrl)) {
-        String providedFiletype = FilenameUtils.getExtension(fanartUrl);
-        writeImage(fanartUrl, artworkFolder.getPath() + File.separator + getTitle() + "-fanart." + providedFiletype);
+      String url = getArtworkUrl(type);
+      if (StringUtils.isNotBlank(url)) {
+        String providedFiletype = FilenameUtils.getExtension(url);
+        if (type == MediaFileType.POSTER) {
+          // poster should be written als "folder"
+          writeImage(url, artworkFolder.getPath() + File.separator + getTitle() + "-folder." + providedFiletype);
+        }
+        else {
+          writeImage(url, artworkFolder.getPath() + File.separator + getTitle() + "-" + type.name().toLowerCase() + "." + providedFiletype);
+        }
       }
     }
     catch (InterruptedException e) {
@@ -478,8 +481,7 @@ public class MovieSet extends MediaEntity {
     IOUtils.copy(is, outputStream);
     outputStream.flush();
     try {
-      outputStream.getFD().sync(); // wait until file has been completely
-                                   // written
+      outputStream.getFD().sync(); // wait until file has been completely written
     }
     catch (Exception e) {
       // empty here -> just not let the thread crash
@@ -520,6 +522,7 @@ public class MovieSet extends MediaEntity {
   public void saveToDb() {
     // update/insert this movie set to the database
     final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    readWriteLock.readLock().lock();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
         entityManager.getTransaction().begin();
@@ -530,6 +533,7 @@ public class MovieSet extends MediaEntity {
         entityManager.persist(this);
       }
     }
+    readWriteLock.readLock().unlock();
   }
 
   @Override

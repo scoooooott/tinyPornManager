@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
@@ -106,8 +107,8 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
               if (info != null && StringUtils.isNotBlank(info.getName())) {
                 movieSet.setTitle(info.getName());
                 movieSet.setPlot(info.getOverview());
-                movieSet.setPosterUrl(info.getPosterPath());
-                movieSet.setFanartUrl(info.getBackdropPath());
+                movieSet.setArtworkUrl(info.getPosterPath(), MediaFileType.POSTER);
+                movieSet.setArtworkUrl(info.getBackdropPath(), MediaFileType.FANART);
               }
             }
             catch (Exception e) {

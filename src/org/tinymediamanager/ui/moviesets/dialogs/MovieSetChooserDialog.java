@@ -56,6 +56,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -186,7 +187,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
         panelSearchDetail.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:150px"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(300px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("250px"), FormFactory.PARAGRAPH_GAP_ROWSPEC,
-            RowSpec.decode("top:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+            RowSpec.decode("top:default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC }));
         {
           lblMovieSetName = new JTextArea("");
           lblMovieSetName.setLineWrap(true);
@@ -231,7 +232,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
       {
         bottomPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("2dlu"), ColumnSpec.decode("185px"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("18px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), }));
+            ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.LINE_GAP_ROWSPEC }));
         {
           progressBar = new JProgressBar();
           bottomPane.add(progressBar, "2, 2, fill, center");
@@ -280,10 +281,8 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     tableMovies.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
     tableMovieSets.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("chooser.searchresult"));
-    {
-      tfMovieSetName.setText(movieSet.getTitle());
-      searchMovie();
-    }
+    tfMovieSetName.setText(movieSet.getTitle());
+    searchMovie();
 
   }
 
@@ -371,8 +370,8 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
           else {
             movieSetToScrape.setPlot("");
           }
-          movieSetToScrape.setPosterUrl(model.getPosterUrl());
-          movieSetToScrape.setFanartUrl(model.getFanartUrl());
+          movieSetToScrape.setArtworkUrl(model.getPosterUrl(), MediaFileType.POSTER);
+          movieSetToScrape.setArtworkUrl(model.getFanartUrl(), MediaFileType.FANART);
           movieSetToScrape.setTmdbId(model.getTmdbId());
           movieSetToScrape.saveToDb();
 
@@ -438,14 +437,6 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
       return null;
     }
 
-    /*
-     * Executed in event dispatching thread
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.SwingWorker#done()
-     */
     @Override
     public void done() {
       stopProgressBar();

@@ -869,8 +869,8 @@ public class Movie extends MediaEntity {
             if (info != null && StringUtils.isNotBlank(info.getName())) {
               movieSet.setTitle(info.getName());
               movieSet.setPlot(info.getOverview());
-              movieSet.setPosterUrl(info.getPosterPath());
-              movieSet.setFanartUrl(info.getBackdropPath());
+              movieSet.setArtworkUrl(info.getPosterPath(), MediaFileType.POSTER);
+              movieSet.setArtworkUrl(info.getBackdropPath(), MediaFileType.FANART);
             }
           }
           catch (Exception e) {

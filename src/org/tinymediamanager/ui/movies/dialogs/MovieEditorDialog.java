@@ -668,7 +668,6 @@ public class MovieEditorDialog extends JDialog {
         lblBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblBanner, "4, 4, 3, 1, fill, fill");
       }
-      lblBanner.setImagePath(movie.getArtworkFilename(MediaFileType.BANNER));
       {
         JLabel lblClearartT = new JLabel("ClearArt");
         artworkPanel.add(lblClearartT, "2, 6");
@@ -726,7 +725,6 @@ public class MovieEditorDialog extends JDialog {
         lblDisc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         artworkPanel.add(lblDisc, "6, 8, fill, fill");
       }
-      lblDisc.setImagePath(movie.getArtworkFilename(MediaFileType.DISCART));
     }
 
     /**
@@ -782,6 +780,8 @@ public class MovieEditorDialog extends JDialog {
       lblLogo.setImagePath(movie.getArtworkFilename(MediaFileType.LOGO));
       lblClearart.setImagePath(movie.getArtworkFilename(MediaFileType.CLEARART));
       lblThumb.setImagePath(movie.getArtworkFilename(MediaFileType.THUMB));
+      lblDisc.setImagePath(movie.getArtworkFilename(MediaFileType.DISCART));
+      lblBanner.setImagePath(movie.getArtworkFilename(MediaFileType.BANNER));
       tfProductionCompanies.setText(movie.getProductionCompany());
       spRuntime.setValue(Integer.valueOf(movie.getRuntime()));
       spTop250.setValue(Integer.valueOf(movie.getTop250()));
