@@ -30,7 +30,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +44,7 @@ import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -78,9 +82,9 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, Producer.class })
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
-    "runtime", "thumb", "fanart", "mpaa", "certifications", "id", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired", "fileinfo",
-    "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed", "dateadded",
-    "keywords", "poster", "url", "languages" })
+    "runtime", "thumb", "fanart", "mpaa", "certifications", "id", "ids", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired",
+    "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed",
+    "dateadded", "keywords", "poster", "url", "languages" })
 public class MovieToXbmcNfoConnector {
   private static final Logger LOGGER         = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
   private static JAXBContext  context        = initContext();
@@ -114,6 +118,9 @@ public class MovieToXbmcNfoConnector {
 
   @XmlElement
   private String              id             = "";
+
+  @XmlElementWrapper(name = "ids")
+  private Map<String, Object> ids;
 
   @XmlElement
   private String              studio         = "";
@@ -236,6 +243,7 @@ public class MovieToXbmcNfoConnector {
     director = new ArrayList<String>();
     credits = new ArrayList<String>();
     producers = new ArrayList();
+    ids = new HashMap<String, Object>();
   }
 
   /**
@@ -310,6 +318,8 @@ public class MovieToXbmcNfoConnector {
     xbmc.fanart = movie.getFanartUrl();
     xbmc.id = movie.getImdbId();
     xbmc.tmdbId = movie.getTmdbId();
+
+    xbmc.ids.putAll(movie.getIds());
 
     // only write first studio
     if (StringUtils.isNotEmpty(movie.getProductionCompany())) {
@@ -545,8 +555,21 @@ public class MovieToXbmcNfoConnector {
         }
       }
 
-      movie.setImdbId(xbmc.id);
-      movie.setTmdbId(xbmc.tmdbId);
+      for (Entry<String, Object> entry : xbmc.ids.entrySet()) {
+        try {
+          movie.setId(entry.getKey(), entry.getValue());
+        }
+        catch (Exception e) {
+          LOGGER.warn("could not set ID: " + entry.getKey() + " ; " + entry.getValue());
+        }
+      }
+
+      if (StringUtils.isBlank(movie.getImdbId())) {
+        movie.setImdbId(xbmc.id);
+      }
+      if (movie.getTmdbId() == 0) {
+        movie.setTmdbId(xbmc.tmdbId);
+      }
 
       // convert director to internal format
       String director = "";

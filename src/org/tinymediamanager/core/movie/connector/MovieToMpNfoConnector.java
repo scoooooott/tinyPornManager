@@ -27,7 +27,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -75,7 +78,7 @@ import org.tinymediamanager.scraper.MediaGenres;
 @XmlRootElement(name = "movie")
 @XmlSeeAlso({ Actor.class, MovieSets.class, Producer.class })
 @XmlType(propOrder = { "title", "originaltitle", "sorttitle", "sets", "rating", "year", "votes", "outline", "plot", "tagline", "runtime", "thumb",
-    "fanart", "mpaa", "id", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers" })
+    "fanart", "mpaa", "id", "ids", "genres", "studio", "country", "premiered", "credits", "director", "actors", "producers" })
 public class MovieToMpNfoConnector {
 
   private static final Logger LOGGER        = LoggerFactory.getLogger(MovieToMpNfoConnector.class);
@@ -118,6 +121,9 @@ public class MovieToMpNfoConnector {
 
   private List<MovieSets>     sets;
 
+  @XmlElementWrapper(name = "ids")
+  private Map<String, Object> ids;
+
   private static JAXBContext initContext() {
     try {
       return JAXBContext.newInstance(MovieToMpNfoConnector.class, Actor.class);
@@ -138,6 +144,7 @@ public class MovieToMpNfoConnector {
     genres = new ArrayList<String>();
     fanart = new ArrayList<String>();
     sets = new ArrayList<MovieSets>();
+    ids = new HashMap<String, Object>();
   }
 
   /**
@@ -208,6 +215,7 @@ public class MovieToMpNfoConnector {
       mp.addFanart(FilenameUtils.getName(movie.getFanart()));
     }
     mp.setId(movie.getImdbId());
+    mp.ids.putAll(movie.getIds());
     mp.setStudio(movie.getProductionCompany());
     mp.setCountry(movie.getCountry());
 
@@ -334,7 +342,19 @@ public class MovieToMpNfoConnector {
         LOGGER.warn("could not parse runtime: " + mp.getRuntime());
       }
 
-      movie.setImdbId(mp.getId());
+      for (Entry<String, Object> entry : mp.ids.entrySet()) {
+        try {
+          movie.setId(entry.getKey(), entry.getValue());
+        }
+        catch (Exception e) {
+          LOGGER.warn("could not set ID: " + entry.getKey() + " ; " + entry.getValue());
+        }
+      }
+
+      if (StringUtils.isBlank(movie.getImdbId())) {
+        movie.setImdbId(mp.id);
+      }
+
       movie.setDirector(mp.getDirector());
       movie.setWriter(mp.getCredits());
       movie.setProductionCompany(mp.getStudio());
