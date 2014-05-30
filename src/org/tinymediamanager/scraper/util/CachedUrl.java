@@ -373,10 +373,11 @@ public class CachedUrl extends Url {
   public Charset getCharset() {
     Charset charset = null;
 
-    // take the charset from the cached file
-    Charset.forName(props.getProperty("encoding"));
-
-    if (charset == null) {
+    try {
+      // take the charset from the cached file
+      charset = Charset.forName(props.getProperty("encoding"));
+    }
+    catch (Exception e) {
       charset = Charset.defaultCharset();
     }
 

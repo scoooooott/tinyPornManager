@@ -379,11 +379,6 @@ public class Utils {
             String uuid = FileUtils.readFileToString(uuidFile);
             System.setProperty("tmm.uuid", uuid);
 
-            // 2013-01-29 10:20:43 | event=startup | os=Windows 7 | arch=amd64 | Java=1.6.0_26 | country=DE
-            // String nfo = "&os=" + getEncProp("os.name") + "&arch=" + getEncProp("os.arch") + "&java=" + getEncProp("java.version") + "&lang="
-            // + getEncProp("user.language") + "_" + getEncProp("user.country");
-            // Url url = new Url("http://tracker.tinymediamanager.org/track.php?uuid=" + uuid + "&event=" + event + nfo);
-
             // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
             // @formatter:off
             String ga = "v=1"
@@ -394,6 +389,7 @@ public class Utils {
                 + "&t=event"
                 + "&ec=" + event
                 + "&ea=" + event 
+                + "&aip=1" 
                 + "&je=1"
                 + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
                 + "&vp=" + Globals.settings.getWindowConfig().getInteger("mainWindowW") + "x" + Globals.settings.getWindowConfig().getInteger("mainWindowH")
