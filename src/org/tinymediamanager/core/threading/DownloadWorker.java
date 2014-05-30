@@ -102,7 +102,7 @@ public class DownloadWorker extends TmmTask {
       if (ext != null && ext.length() > 4) {
         ext = ""; // no extension when longer than 4 chars!
       }
-      if (ext.isEmpty()) {
+      if (ext != null && ext.isEmpty()) {
         ext = UrlUtil.getExtension(url);
         if (!ext.isEmpty()) {
           if (Globals.settings.getAllSupportedFileTypes().contains("." + ext)) {
@@ -130,7 +130,7 @@ public class DownloadWorker extends TmmTask {
         // still empty? try to parse from mime header
         if (type.startsWith("video/") || type.startsWith("audio/") || type.startsWith("image/")) {
           ext = type.split("/")[1];
-          ext.replaceAll("x-", ""); // x-wmf and others
+          ext = ext.replaceAll("x-", ""); // x-wmf and others
           file = new File(file.getParent(), file.getName() + "." + ext);
         }
       }

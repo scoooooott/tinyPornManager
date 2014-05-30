@@ -29,7 +29,6 @@ import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
@@ -351,7 +351,7 @@ public class TinyMediaManager {
             updateProgress(g2, "loading MediaInfo libs", 20);
             splash.update();
           }
-          LOGGER.debug("Loading native mediainfo lib from: " + nativepath);
+          LOGGER.debug("Loading native mediainfo lib from: {}", nativepath);
           // load libMediainfo
           String miv = MediaInfo.version();
           if (!StringUtils.isEmpty(miv)) {
@@ -586,13 +586,15 @@ public class TinyMediaManager {
               path = URLDecoder.decode(path, "UTF-8");
             }
             catch (UnsupportedEncodingException e1) {
+              path = URLDecoder.decode(path);
             }
-            StringBuilder sb = new StringBuilder("[Desktop Entry]\n");
+            StringBuilder sb = new StringBuilder(60);
+            sb.append("[Desktop Entry]\n");
             sb.append("Type=Application\n");
             sb.append("Name=tinyMediaManager\n");
             sb.append("Path=");
             sb.append(path);
-            sb.append("\n");
+            sb.append('\n');
             sb.append("Exec=/bin/sh \"");
             sb.append(path);
             sb.append("/tinyMediaManager.sh\"\n");
@@ -600,9 +602,9 @@ public class TinyMediaManager {
             sb.append(path);
             sb.append("/tmm.png\n");
             sb.append("Categories=Application;Multimedia;");
-            FileWriter writer;
+            FileWriterWithEncoding writer;
             try {
-              writer = new FileWriter(desktop);
+              writer = new FileWriterWithEncoding(desktop, "UTF-8");
               writer.write(sb.toString());
               writer.close();
               desktop.setExecutable(true);

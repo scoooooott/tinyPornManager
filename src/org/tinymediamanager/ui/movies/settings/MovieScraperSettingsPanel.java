@@ -198,11 +198,11 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     sliderThreshold.setPaintLabels(true);
     sliderThreshold.setValue((int) (settings.getMovieSettings().getScraperThreshold() * 100));
     java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
-    labelTable.put(new Integer(100), new JLabel("1.0"));
-    labelTable.put(new Integer(75), new JLabel("0.75"));
-    labelTable.put(new Integer(50), new JLabel("0.50"));
-    labelTable.put(new Integer(25), new JLabel("0.25"));
-    labelTable.put(new Integer(0), new JLabel("0.0"));
+    labelTable.put(Integer.valueOf(100), new JLabel("1.0"));
+    labelTable.put(Integer.valueOf(75), new JLabel("0.75"));
+    labelTable.put(Integer.valueOf(50), new JLabel("0.50"));
+    labelTable.put(Integer.valueOf(25), new JLabel("0.25"));
+    labelTable.put(Integer.valueOf(0), new JLabel("0.0"));
     sliderThreshold.setLabelTable(labelTable);
     sliderThreshold.addChangeListener(new ChangeListener() {
       @Override

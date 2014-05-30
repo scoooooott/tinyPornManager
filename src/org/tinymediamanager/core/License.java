@@ -177,10 +177,10 @@ public class License {
       connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
       connection.setUseCaches(false);
 
-      OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+      OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
       writer.write(urlParameters);
       writer.flush();
-      String response = IOUtils.toString(new InputStreamReader(connection.getInputStream()));
+      String response = IOUtils.toString(new InputStreamReader(connection.getInputStream(), "UTF-8"));
       writer.close();
       if (response != null && response.isEmpty()) {
         return false;

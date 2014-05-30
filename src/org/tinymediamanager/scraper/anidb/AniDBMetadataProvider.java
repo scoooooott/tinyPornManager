@@ -507,7 +507,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       CachedUrl animeList = new CachedUrl("http://anidb.net/api/anime-titles.dat.gz");
       // scanner = new Scanner(new GZIPInputStream(animeList.getInputStream()));
       // DecompressingHttpClient is decompressing the gz from animedb due to wrong http-server configuration
-      scanner = new Scanner(animeList.getInputStream());
+      scanner = new Scanner(animeList.getInputStream(), "UTF-8");
       while (scanner.hasNextLine()) {
         Matcher matcher = pattern.matcher(scanner.nextLine());
 
@@ -618,7 +618,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   /****************************************************************************
    * helper class for episode extraction
    ****************************************************************************/
-  private class Episode {
+  private static class Episode {
     int                     id      = -1;
     int                     episode = -1;
     int                     season  = -1;

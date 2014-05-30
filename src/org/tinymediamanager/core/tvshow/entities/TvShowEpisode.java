@@ -140,8 +140,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     if (source.firstAired != null) {
       firstAired = new Date(source.firstAired.getTime());
     }
-    director = new String(source.director);
-    writer = new String(source.writer);
+    director = source.director;
+    writer = source.writer;
     disc = source.disc;
     watched = source.watched;
     votes = source.votes;
@@ -934,10 +934,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   @Override
   public boolean isScraped() {
-    if (!scraped) {
-      if (!plot.isEmpty() && firstAired != null && season > -1 && episode > -1) {
-        return true;
-      }
+    if (!scraped && !plot.isEmpty() && firstAired != null && season > -1 && episode > -1) {
+      return true;
     }
     return scraped;
   }

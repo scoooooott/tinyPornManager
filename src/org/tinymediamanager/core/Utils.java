@@ -508,7 +508,10 @@ public class Utils {
     }
     if (!destDir.getParentFile().exists()) {
       // create parent folder structure, else renameTo does not work
-      destDir.getParentFile().mkdirs();
+      boolean ok = destDir.getParentFile().mkdirs();
+      if (!ok) {
+        LOGGER.error("could not create directory structure " + destDir.getParentFile());
+      }
     }
 
     // rename folder; try 5 times and wait a sec

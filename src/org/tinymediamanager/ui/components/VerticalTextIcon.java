@@ -103,7 +103,7 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
       Class swingUtilities2Class = Class.forName("sun.swing.SwingUtilities2");
       Class classParams[] = { JComponent.class, Graphics.class, String.class, Integer.TYPE, Integer.TYPE };
       Method m = swingUtilities2Class.getMethod("drawString", classParams);
-      Object methodParams[] = { c, g, text, new Integer(0), new Integer(fm.getLeading() + fm.getAscent()) };
+      Object methodParams[] = { c, g, text, Integer.valueOf(0), Integer.valueOf(fm.getLeading() + fm.getAscent()) };
       m.invoke(null, methodParams);
     }
     catch (Exception ex) {
