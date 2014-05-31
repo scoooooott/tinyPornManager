@@ -127,7 +127,7 @@ public class MovieList extends AbstractModelObject {
    * 
    * @return single instance of MovieList
    */
-  public static MovieList getInstance() {
+  public synchronized static MovieList getInstance() {
     if (MovieList.instance == null) {
       MovieList.instance = new MovieList();
     }

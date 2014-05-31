@@ -174,7 +174,7 @@ public class Settings extends AbstractModelObject {
    * 
    * @return single instance of Settings
    */
-  public static Settings getInstance() {
+  public synchronized static Settings getInstance() {
     if (Settings.instance == null) {
       // try to parse XML
       JAXBContext context;
@@ -189,14 +189,12 @@ public class Settings extends AbstractModelObject {
           Settings.instance = new Settings();
           Settings.instance.writeDefaultSettings();
         }
+        Settings.instance.clearDirty();
       }
       catch (Exception e) {
         LOGGER.error("getInstance", e);
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "tmm.settings", "message.config.loadsettingserror"));
       }
-
-      Settings.instance.clearDirty();
-
     }
     return Settings.instance;
   }

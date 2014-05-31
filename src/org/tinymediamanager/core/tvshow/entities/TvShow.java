@@ -459,7 +459,7 @@ public class TvShow extends MediaEntity {
     for (MediaGenres genre : genres) {
       if (!this.genresForAccess.contains(genre)) {
         this.genresForAccess.add(genre);
-        if (!genres.contains(genre.name())) {
+        if (!this.genres.contains(genre.name())) {
           this.genres.add(genre.name());
         }
       }

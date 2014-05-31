@@ -505,7 +505,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       }
     }
     catch (IOException e) {
-      LOGGER.error("Error parsing " + url.toString());
+      LOGGER.error("Error parsing {}", url.toString());
       throw e;
     }
     return trailers;

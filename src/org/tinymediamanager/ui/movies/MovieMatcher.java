@@ -152,7 +152,7 @@ public class MovieMatcher {
     // check against video format
     if (searchOptions.containsKey(SearchOptions.VIDEO_FORMAT)) {
       String videoFormat = (String) searchOptions.get(SearchOptions.VIDEO_FORMAT);
-      if (videoFormat == movie.getMediaInfoVideoFormat()) {
+      if (videoFormat.equals(movie.getMediaInfoVideoFormat())) {
         return true;
       }
     }

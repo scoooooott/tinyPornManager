@@ -64,6 +64,7 @@ import org.tinymediamanager.scraper.util.CachedUrl;
  * 
  * @author Manuel Laggner
  */
+@SuppressWarnings("PMD")
 public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
   private static MediaProviderInfo     providerInfo  = new MediaProviderInfo(Constants.IMDBID, "imdb.com",

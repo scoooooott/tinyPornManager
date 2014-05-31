@@ -102,7 +102,7 @@ public class DownloadWorker extends TmmTask {
       if (ext != null && ext.length() > 4) {
         ext = ""; // no extension when longer than 4 chars!
       }
-      if (ext != null && ext.isEmpty()) {
+      if (ext == null || ext.isEmpty()) {
         ext = UrlUtil.getExtension(url);
         if (!ext.isEmpty()) {
           if (Globals.settings.getAllSupportedFileTypes().contains("." + ext)) {
