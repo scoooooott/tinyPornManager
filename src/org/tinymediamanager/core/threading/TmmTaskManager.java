@@ -359,8 +359,9 @@ public class TmmTaskManager implements TmmTaskListener {
     private int getOpenTasks() {
       int openTasks = 0;
       if (imageDownloadExecutor != null) {
-        openTasks = imageDownloadExecutor.getQueue().size() + imageDownloadExecutor.getActiveCount() - 1;
+        openTasks = imageDownloadExecutor.getQueue().size() + imageDownloadExecutor.getActiveCount();
       }
+      System.out.println(openTasks);
       return openTasks;
     }
 
@@ -407,7 +408,7 @@ public class TmmTaskManager implements TmmTaskListener {
     private int getOpenTasks() {
       int openTasks = 0;
       if (unnamedTaskExecutor != null) {
-        openTasks = unnamedTaskExecutor.getQueue().size() + unnamedTaskExecutor.getActiveCount() - 1;
+        openTasks = unnamedTaskExecutor.getQueue().size() + unnamedTaskExecutor.getActiveCount();
       }
       return openTasks;
     }
