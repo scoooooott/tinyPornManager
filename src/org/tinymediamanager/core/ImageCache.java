@@ -137,7 +137,7 @@ public class ImageCache {
     else {
       // non transparent image -> jpg
       // convert to rgb
-      BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+      BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
       ColorConvertOp xformOp = new ColorConvertOp(null);
       xformOp.filter(scaledImage, rgb);
       imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
@@ -251,7 +251,7 @@ public class ImageCache {
       else {
         // non transparent image -> jpg
         // convert to rgb
-        BufferedImage rgb = new BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_RGB);
+        BufferedImage rgb = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
         ColorConvertOp xformOp = new ColorConvertOp(null);
         xformOp.filter(scaledImage, rgb);
         imgWrtr = ImageIO.getImageWritersByFormatName("jpg").next();
