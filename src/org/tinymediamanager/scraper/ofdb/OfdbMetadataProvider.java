@@ -309,6 +309,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     LOGGER.debug("search() " + options.toString());
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String searchString = "";
+    String searchQuery = "";
     String imdb = "";
     Elements filme = null;
 
@@ -334,6 +335,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     // 2. search for search string
     if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY)) && (filme == null || filme.isEmpty())) {
       String query = options.get(MediaSearchOptions.SearchParam.QUERY);
+      searchQuery = query;
       query = MetadataUtil.removeNonSearchCharacters(query);
       searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=All&SText=" + URLEncoder.encode(cleanSearch(query), "UTF-8");
       LOGGER.debug("search for everything: " + query);
@@ -350,6 +352,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     // 3. search for title
     if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE)) && (filme == null || filme.isEmpty())) {
       String title = options.get(MediaSearchOptions.SearchParam.TITLE);
+      searchQuery = title;
       title = MetadataUtil.removeNonSearchCharacters(title);
       searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=Titel&SText=" + URLEncoder.encode(cleanSearch(title), "UTF-8");
       LOGGER.debug("search with title: " + title);
@@ -395,7 +398,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         }
         else {
           // compare score based on names
-          sr.setScore(MetadataUtil.calculateScore(searchString, sr.getTitle()));
+          sr.setScore(MetadataUtil.calculateScore(searchQuery, sr.getTitle()));
         }
         resultList.add(sr);
       }
