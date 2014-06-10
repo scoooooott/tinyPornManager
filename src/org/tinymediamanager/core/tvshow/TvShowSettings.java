@@ -71,6 +71,8 @@ public class TvShowSettings extends AbstractModelObject {
   private boolean             imageScraperTvdb            = true;
   private boolean             imageScraperFanartTv        = true;
   private boolean             asciiReplacement            = false;
+  private boolean             renamerSpaceSubstitution    = false;
+  private String              renamerSpaceReplacement     = "_";
 
   @Enumerated(EnumType.STRING)
   private TvShowEpisodeNaming renamerFormat               = TvShowEpisodeNaming.WITH_SE;
@@ -257,5 +259,25 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.renamerTvShowFolderYear;
     this.renamerTvShowFolderYear = newValue;
     firePropertyChange("renamerTvShowFolderYear", oldValue, newValue);
+  }
+
+  public String getRenamerSpaceReplacement() {
+    return renamerSpaceReplacement;
+  }
+
+  public void setRenamerSpaceReplacement(String newValue) {
+    String oldValue = this.renamerSpaceReplacement;
+    this.renamerSpaceReplacement = newValue;
+    firePropertyChange("renamerReplacement", oldValue, newValue);
+  }
+
+  public boolean isRenamerSpaceSubstitution() {
+    return renamerSpaceSubstitution;
+  }
+
+  public void setRenamerSpaceSubstitution(boolean newValue) {
+    boolean oldValue = this.renamerSpaceSubstitution;
+    this.renamerSpaceSubstitution = newValue;
+    firePropertyChange("renamerSpaceSubstitution", oldValue, newValue);
   }
 }

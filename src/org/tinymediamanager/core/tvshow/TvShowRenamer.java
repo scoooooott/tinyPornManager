@@ -65,7 +65,13 @@ public class TvShowRenamer {
    * @return the cleaned string
    */
   private static String cleanForFilename(String name) {
-    return name.replaceAll("([\"\\:<>|/?*])", "");
+    String cleanedName = name.replaceAll("([\"\\:<>|/?*])", "").replaceAll(" +", " ").trim();
+
+    if (Globals.settings.getTvShowSettings().isRenamerSpaceSubstitution()) {
+      cleanedName = cleanedName.replaceAll(" ", Globals.settings.getTvShowSettings().getRenamerSpaceReplacement());
+    }
+
+    return cleanedName;
   }
 
   /**
