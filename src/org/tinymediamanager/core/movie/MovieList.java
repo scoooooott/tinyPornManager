@@ -427,10 +427,10 @@ public class MovieList extends AbstractModelObject {
       boolean idFound = false;
       // set what we have, so the provider could chose from all :)
       MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE);
-      options.set(SearchParam.LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
-      options.set(SearchParam.COUNTRY, Globals.settings.getMovieSettings().getCertificationCountry().getAlpha2());
+      options.set(SearchParam.LANGUAGE, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name());
+      options.set(SearchParam.COUNTRY, MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry().getAlpha2());
       options.set(SearchParam.COLLECTION_INFO, Boolean.toString(Globals.settings.getMovieScraperMetadataConfig().isCollection()));
-      options.set(SearchParam.IMDB_FOREIGN_LANGUAGE, Boolean.toString(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage()));
+      options.set(SearchParam.IMDB_FOREIGN_LANGUAGE, Boolean.toString(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage()));
       if (movie != null) {
         if (Utils.isValidImdbId(movie.getImdbId())) {
           options.set(SearchParam.IMDBID, movie.getImdbId());
@@ -460,7 +460,7 @@ public class MovieList extends AbstractModelObject {
 
       sr = provider.search(options);
       // if result is empty, try all scrapers
-      if (sr.isEmpty() && Globals.settings.getMovieSettings().isScraperFallback()) {
+      if (sr.isEmpty() && MovieModuleManager.MOVIE_SETTINGS.isScraperFallback()) {
         LOGGER.debug("no result yet - trying alternate scrapers");
 
         for (MovieScrapers ms : MovieScrapers.values()) {
@@ -581,7 +581,7 @@ public class MovieList extends AbstractModelObject {
    * @return the metadata provider
    */
   public IMediaMetadataProvider getMetadataProvider() {
-    MovieScrapers scraper = Globals.settings.getMovieSettings().getMovieScraper();
+    MovieScrapers scraper = MovieModuleManager.MOVIE_SETTINGS.getMovieScraper();
     return getMetadataProvider(scraper);
   }
 
@@ -689,11 +689,11 @@ public class MovieList extends AbstractModelObject {
    */
   public List<IMediaArtworkProvider> getArtworkProviders() {
     List<MovieArtworkScrapers> scrapers = new ArrayList<MovieArtworkScrapers>();
-    if (Globals.settings.getMovieSettings().isImageScraperTmdb()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {
       scrapers.add(MovieArtworkScrapers.TMDB);
     }
 
-    if (Globals.settings.getMovieSettings().isImageScraperFanartTv()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperFanartTv()) {
       scrapers.add(MovieArtworkScrapers.FANART_TV);
     }
 
@@ -715,7 +715,7 @@ public class MovieList extends AbstractModelObject {
     // tmdb
     if (scrapers.contains(MovieArtworkScrapers.TMDB)) {
       try {
-        if (Globals.settings.getMovieSettings().isImageScraperTmdb()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {
           LOGGER.debug("get instance of TmdbMetadataProvider");
           artworkProvider = new TmdbMetadataProvider();
           artworkProviders.add(artworkProvider);
@@ -729,7 +729,7 @@ public class MovieList extends AbstractModelObject {
     // fanart.tv
     if (scrapers.contains(MovieArtworkScrapers.FANART_TV)) {
       try {
-        if (Globals.settings.getMovieSettings().isImageScraperFanartTv()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperFanartTv()) {
           LOGGER.debug("get instance of FanartTvMetadataProvider");
           artworkProvider = new FanartTvMetadataProvider();
           artworkProviders.add(artworkProvider);
@@ -751,15 +751,15 @@ public class MovieList extends AbstractModelObject {
   public List<IMediaTrailerProvider> getTrailerProviders() {
     List<MovieTrailerScrapers> scrapers = new ArrayList<MovieTrailerScrapers>();
 
-    if (Globals.settings.getMovieSettings().isTrailerScraperTmdb()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperTmdb()) {
       scrapers.add(MovieTrailerScrapers.TMDB);
     }
 
-    if (Globals.settings.getMovieSettings().isTrailerScraperHdTrailers()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperHdTrailers()) {
       scrapers.add(MovieTrailerScrapers.HDTRAILERS);
     }
 
-    if (Globals.settings.getMovieSettings().isTrailerScraperOfdb()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperOfdb()) {
       scrapers.add(MovieTrailerScrapers.OFDB);
     }
 

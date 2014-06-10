@@ -29,8 +29,8 @@ public class MovieRenamerTest {
       MovieList instance = MovieList.getInstance();
       // -------------------------------------------------------------------------------------
 
-      LOGGER.debug("path expression: " + Globals.settings.getMovieSettings().getMovieRenamerPathname());
-      LOGGER.debug("file expression: " + Globals.settings.getMovieSettings().getMovieRenamerFilename());
+      LOGGER.debug("path expression: " + MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname());
+      LOGGER.debug("file expression: " + MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename());
 
       for (Movie movie : instance.getMovies()) {
         System.out.println(movie.getTitle());
@@ -59,7 +59,7 @@ public class MovieRenamerTest {
 
         // movie folder needs a rename?
         File oldMovieFolder = new File(movie.getPath());
-        String newPathname = MovieRenamer.createDestinationForFoldername(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
+        String newPathname = MovieRenamer.createDestinationForFoldername(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname(), movie);
         File newMovieFolder = new File(movie.getDataSource() + File.separator + newPathname);
         if (!oldMovieFolder.equals(newMovieFolder)) {
           renameFolder = true;
@@ -122,12 +122,12 @@ public class MovieRenamerTest {
     // return list of all generated MFs
     ArrayList<MediaFile> newFiles = new ArrayList<MediaFile>();
 
-    String newPathname = MovieRenamer.createDestinationForFoldername(Globals.settings.getMovieSettings().getMovieRenamerPathname(), movie);
+    String newPathname = MovieRenamer.createDestinationForFoldername(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerPathname(), movie);
     String movieDir = movie.getDataSource() + File.separatorChar + newPathname + File.separatorChar;
 
     String newFilename = videoFileName;
     if (newFilename == null || newFilename.isEmpty()) {
-      newFilename = MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
+      newFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
     }
 
     switch (mf.getType()) {
@@ -182,7 +182,7 @@ public class MovieRenamerTest {
           nfonames.add(MovieNfoNaming.FILENAME_NFO);
         }
         else {
-          nfonames = Globals.settings.getMovieSettings().getMovieNfoFilenames();
+          nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
         }
         for (MovieNfoNaming name : nfonames) {
           newFilename = movie.getNfoFilename(name, videoFileName);
@@ -200,7 +200,7 @@ public class MovieRenamerTest {
           posternames.add(MoviePosterNaming.FILENAME_POSTER_PNG);
         }
         else {
-          posternames = Globals.settings.getMovieSettings().getMoviePosterFilenames();
+          posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
         }
         for (MoviePosterNaming name : posternames) {
           newFilename = MovieArtworkHelper.getPosterFilename(name, movie, videoFileName);
@@ -234,7 +234,7 @@ public class MovieRenamerTest {
           fanartnames.add(MovieFanartNaming.FILENAME_FANART_PNG);
         }
         else {
-          fanartnames = Globals.settings.getMovieSettings().getMovieFanartFilenames();
+          fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
         }
         for (MovieFanartNaming name : fanartnames) {
           newFilename = MovieArtworkHelper.getFanartFilename(name, movie, videoFileName);
@@ -281,8 +281,8 @@ public class MovieRenamerTest {
   private String getStackingString(MediaFile mf) {
     String stacking = Utils.getStackingMarker(mf.getFilename());
     String delimiter = " ";
-    if (Globals.settings.getMovieSettings().isMovieRenamerSpaceSubstitution()) {
-      delimiter = Globals.settings.getMovieSettings().getMovieRenamerSpaceReplacement();
+    if (MovieModuleManager.MOVIE_SETTINGS.isMovieRenamerSpaceSubstitution()) {
+      delimiter = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerSpaceReplacement();
     }
     if (!stacking.isEmpty()) {
       return delimiter + stacking;

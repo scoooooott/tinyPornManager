@@ -55,8 +55,8 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaSearchOptions;
@@ -306,7 +306,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
         mp = new TmdbMetadataProvider();
         MediaSearchOptions options = new MediaSearchOptions(MediaType.MOVIE_SET);
         options.set(SearchParam.TITLE, searchTerm);
-        options.set(SearchParam.LANGUAGE, Globals.settings.getMovieSettings().getScraperLanguage().name());
+        options.set(SearchParam.LANGUAGE, MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage().name());
         List<Collection> movieSets = mp.searchMovieSets(options);
         movieSetsFound.clear();
         if (movieSets.size() == 0) {

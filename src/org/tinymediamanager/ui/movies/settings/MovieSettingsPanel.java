@@ -49,8 +49,8 @@ import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.ui.TmmUIHelper;
@@ -186,14 +186,14 @@ public class MovieSettingsPanel extends ScrollablePanel {
       public void actionPerformed(ActionEvent arg0) {
         int row = tableMovieSources.convertRowIndexToModel(tableMovieSources.getSelectedRow());
         if (row != -1) { // nothing selected
-          String path = Globals.settings.getMovieSettings().getMovieDataSource().get(row);
+          String path = MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource().get(row);
           String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
           int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.movie.datasource.remove.info"), path),
               BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
               BUNDLE.getString("Button.abort")); //$NON-NLS-1$
           if (decision == 0) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            Globals.settings.getMovieSettings().removeMovieDataSources(path);
+            MovieModuleManager.MOVIE_SETTINGS.removeMovieDataSources(path);
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
         }
@@ -258,8 +258,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
       public void actionPerformed(ActionEvent arg0) {
         int row = listBadWords.getSelectedIndex();
         if (row != -1) {
-          String badWord = Globals.settings.getMovieSettings().getBadWords().get(row);
-          Globals.settings.getMovieSettings().removeBadWord(badWord);
+          String badWord = MovieModuleManager.MOVIE_SETTINGS.getBadWords().get(row);
+          MovieModuleManager.MOVIE_SETTINGS.removeBadWord(badWord);
         }
       }
     });
@@ -274,7 +274,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
       @Override
       public void actionPerformed(ActionEvent e) {
         if (StringUtils.isNotEmpty(tfAddBadword.getText())) {
-          Globals.settings.getMovieSettings().addBadWord(tfAddBadword.getText());
+          MovieModuleManager.MOVIE_SETTINGS.addBadWord(tfAddBadword.getText());
           tfAddBadword.setText("");
         }
       }

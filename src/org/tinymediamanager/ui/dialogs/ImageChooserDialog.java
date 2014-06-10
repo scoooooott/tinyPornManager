@@ -60,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaArtwork.ImageSizeAndUrl;
@@ -210,7 +211,7 @@ public class ImageChooserDialog extends JDialog {
           bottomPane.add(panelExtraButtons, "2, 2, fill, bottom");
           panelExtraButtons.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
           {
-            if (mediaType == MediaType.MOVIE && Globals.settings.getMovieSettings().isImageExtraThumbs()) {
+            if (mediaType == MediaType.MOVIE && MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs()) {
               JLabel labelThumbs = new JLabel("Extrathumbs:");
               panelExtraButtons.add(labelThumbs);
               JButton btnMarkExtrathumbs = new JButton("");
@@ -246,13 +247,13 @@ public class ImageChooserDialog extends JDialog {
               });
               panelExtraButtons.add(btnUnMarkExtrathumbs);
             }
-            if (mediaType == MediaType.MOVIE && Globals.settings.getMovieSettings().isImageExtraThumbs()
-                && Globals.settings.getMovieSettings().isImageExtraFanart()) {
+            if (mediaType == MediaType.MOVIE && MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs()
+                && MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart()) {
               JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
               separator.setPreferredSize(new Dimension(2, 16));
               panelExtraButtons.add(separator);
             }
-            if (mediaType == MediaType.MOVIE && Globals.settings.getMovieSettings().isImageExtraFanart()) {
+            if (mediaType == MediaType.MOVIE && MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart()) {
               JLabel labelFanart = new JLabel("Extrafanart:");
               panelExtraButtons.add(labelFanart);
               JButton btnMarkExtrafanart = new JButton("");
@@ -412,7 +413,7 @@ public class ImageChooserDialog extends JDialog {
     imagePanel.add(cb, gbc);
 
     // should we provide an option for extrathumbs
-    if (mediaType == MediaType.MOVIE && type == ImageType.FANART && Globals.settings.getMovieSettings().isImageExtraThumbs()) {
+    if (mediaType == MediaType.MOVIE && type == ImageType.FANART && MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs()) {
       gbc = new GridBagConstraints();
       gbc.gridx = 1;
       gbc.gridy = 1;
@@ -430,17 +431,17 @@ public class ImageChooserDialog extends JDialog {
     }
 
     // should we provide an option for extrafanart
-    if (mediaType == MediaType.MOVIE && type == ImageType.FANART && Globals.settings.getMovieSettings().isImageExtraFanart()) {
+    if (mediaType == MediaType.MOVIE && type == ImageType.FANART && MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart()) {
       gbc = new GridBagConstraints();
       gbc.gridx = 1;
-      gbc.gridy = Globals.settings.getMovieSettings().isImageExtraThumbs() ? 2 : 1;
+      gbc.gridy = MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() ? 2 : 1;
       gbc.anchor = GridBagConstraints.LINE_END;
       JLabel label = new JLabel("Extrafanart");
       imagePanel.add(label, gbc);
 
       gbc = new GridBagConstraints();
       gbc.gridx = 2;
-      gbc.gridy = Globals.settings.getMovieSettings().isImageExtraThumbs() ? 2 : 1;
+      gbc.gridy = MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() ? 2 : 1;
       gbc.anchor = GridBagConstraints.LINE_END;
       JCheckBox chkbx = new JCheckBox();
       button.putClientProperty("MediaArtworkExtrafanart", chkbx);
@@ -503,12 +504,12 @@ public class ImageChooserDialog extends JDialog {
       }
 
       // extrathumbs
-      if (mediaType == MediaType.MOVIE && type == ImageType.FANART && extraThumbs != null && Globals.settings.getMovieSettings().isImageExtraThumbs()) {
+      if (mediaType == MediaType.MOVIE && type == ImageType.FANART && extraThumbs != null && MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs()) {
         processExtraThumbs();
       }
 
       // extrafanart
-      if (mediaType == MediaType.MOVIE && type == ImageType.FANART && extraThumbs != null && Globals.settings.getMovieSettings().isImageExtraFanart()) {
+      if (mediaType == MediaType.MOVIE && type == ImageType.FANART && extraThumbs != null && MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart()) {
         processExtraFanart();
       }
 
@@ -619,9 +620,9 @@ public class ImageChooserDialog extends JDialog {
         for (IMediaArtworkProvider artworkProvider : artworkProviders) {
           MediaScrapeOptions options = new MediaScrapeOptions();
           if (mediaType == MediaType.MOVIE) {
-            options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-            options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
-            options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
+            options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+            options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+            options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
           }
           else if (mediaType == MediaType.TV_SHOW) {
             options.setLanguage(Globals.settings.getTvShowSettings().getScraperLanguage());

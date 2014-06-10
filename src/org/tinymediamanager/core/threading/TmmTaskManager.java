@@ -361,7 +361,6 @@ public class TmmTaskManager implements TmmTaskListener {
       if (imageDownloadExecutor != null) {
         openTasks = imageDownloadExecutor.getQueue().size() + imageDownloadExecutor.getActiveCount();
       }
-      System.out.println(openTasks);
       return openTasks;
     }
 

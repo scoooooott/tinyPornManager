@@ -136,8 +136,8 @@ public class MovieSet extends MediaEntity {
     }
 
     // write to artwork folder
-    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
-        && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder()
+        && StringUtils.isNotBlank(MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(type);
       written = true;
     }
@@ -169,8 +169,8 @@ public class MovieSet extends MediaEntity {
   @Override
   public String getArtworkFilename(final MediaFileType type) {
     // try to get from the artwork folder if enabled
-    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()) {
-      File artworkDir = new File(Globals.settings.getMovieSettings().getMovieSetArtworkFolder());
+    if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder()) {
+      File artworkDir = new File(MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder());
       if (artworkDir.isDirectory()) {
         File[] matches = artworkDir.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
@@ -418,8 +418,8 @@ public class MovieSet extends MediaEntity {
     writeImagesToMovieFolder(movies);
 
     // write to artwork folder
-    if (Globals.settings.getMovieSettings().isEnableMovieSetArtworkFolder()
-        && StringUtils.isNotBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder()
+        && StringUtils.isNotBlank(MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder())) {
       writeImagesToArtworkFolder(MediaFileType.POSTER);
       writeImagesToArtworkFolder(MediaFileType.FANART);
       writeImagesToArtworkFolder(MediaFileType.LOGO);
@@ -441,11 +441,11 @@ public class MovieSet extends MediaEntity {
 
   private void writeImagesToArtworkFolder(MediaFileType type) {
     // write images to artwork folder
-    if (StringUtils.isBlank(Globals.settings.getMovieSettings().getMovieSetArtworkFolder())) {
+    if (StringUtils.isBlank(MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder())) {
       return;
     }
 
-    File artworkFolder = new File(Globals.settings.getMovieSettings().getMovieSetArtworkFolder());
+    File artworkFolder = new File(MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder());
 
     // check if folder exists
     if (!artworkFolder.exists()) {

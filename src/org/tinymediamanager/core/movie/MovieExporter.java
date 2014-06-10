@@ -111,7 +111,7 @@ public class MovieExporter extends MediaEntityExporter {
         Movie movie = (Movie) me;
         LOGGER.debug("processing movie " + movie.getTitle());
         // get preferred movie name like set up in movie renamer
-        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings()
+        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS
             .getMovieRenamerFilename(), movie)
             + "." + fileExtension);
 
@@ -167,7 +167,7 @@ public class MovieExporter extends MediaEntityExporter {
     public String render(Object o, String pattern, Locale locale) {
       if (o instanceof Movie) {
         Movie movie = (Movie) o;
-        return MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), movie);
+        return MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie);
       }
       return null;
     }

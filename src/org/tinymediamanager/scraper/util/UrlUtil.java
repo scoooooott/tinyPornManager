@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.MediaLanguages;
 
 import com.sun.jna.Platform;
@@ -294,7 +295,8 @@ public class UrlUtil {
 
     // set header according to movie scraper language (or default GUI language as fallback)
     Locale l = null;
-    MediaLanguages ml = Globals.settings.getMovieSettings().getScraperLanguage();
+    MediaLanguages ml = MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage();
+
     if (ml == null) {
       ml = Globals.settings.getTvShowSettings().getScraperLanguage();
     }

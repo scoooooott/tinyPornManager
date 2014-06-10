@@ -59,6 +59,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -191,7 +192,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
       }
       {
         cbScraper = new JComboBox(MovieScrapers.values());
-        MovieScrapers defaultScraper = Globals.settings.getMovieSettings().getMovieScraper();
+        MovieScrapers defaultScraper = MovieModuleManager.MOVIE_SETTINGS.getMovieScraper();
         cbScraper.setSelectedItem(defaultScraper);
         cbScraper.setAction(new ChangeScraperAction());
         panelSearchField.add(cbScraper, "4, 1, fill, default");
@@ -380,7 +381,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           MediaMetadata md = model.getMetadata();
 
           // did the user want to choose the images?
-          if (!Globals.settings.getMovieSettings().isScrapeBestImage()) {
+          if (!MovieModuleManager.MOVIE_SETTINGS.isScrapeBestImage()) {
             md.clearMediaArt();
           }
 
@@ -392,7 +393,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
           // get images?
           if (scraperMetadataConfig.isArtwork()) {
             // let the user choose the images
-            if (!Globals.settings.getMovieSettings().isScrapeBestImage()) {
+            if (!MovieModuleManager.MOVIE_SETTINGS.isScrapeBestImage()) {
               // poster
               {
                 ImageLabel lblImage = new ImageLabel();

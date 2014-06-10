@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -150,7 +151,7 @@ public class ImdbMetadataProviderTest {
 
     md = null;
     try {
-      Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.US);
+      MovieModuleManager.MOVIE_SETTINGS.setCertificationCountry(CountryCode.US);
       md = mp.getMetadata(options);
     }
     catch (Exception e) {
@@ -212,7 +213,7 @@ public class ImdbMetadataProviderTest {
 
     md = null;
     try {
-      Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.DE);
+      MovieModuleManager.MOVIE_SETTINGS.setCertificationCountry(CountryCode.DE);
       md = mp.getMetadata(options);
     }
     catch (Exception e) {
@@ -271,7 +272,7 @@ public class ImdbMetadataProviderTest {
 
     md = null;
     try {
-      Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.GB);
+      MovieModuleManager.MOVIE_SETTINGS.setCertificationCountry(CountryCode.GB);
       md = mp.getMetadata(options);
     }
     catch (Exception e) {
@@ -333,7 +334,7 @@ public class ImdbMetadataProviderTest {
     //
     // md = null;
     // try {
-    // Globals.settings.getMovieSettings().setCertificationCountry(CountryCode.US);
+    // MovieModuleManager.MOVIE_SETTINGS.setCertificationCountry(CountryCode.US);
     // md = mp.getMetadata(options);
     // }
     // catch (Exception e) {
@@ -426,7 +427,7 @@ public class ImdbMetadataProviderTest {
     }
     assertEquals("writer", writer, sb.toString());
     // certification
-    assertEquals("certification", Certification.getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), certification), md
+    assertEquals("certification", Certification.getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), certification), md
         .getCertifications().get(0));
   }
 

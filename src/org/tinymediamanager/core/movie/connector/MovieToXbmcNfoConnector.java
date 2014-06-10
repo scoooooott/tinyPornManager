@@ -62,6 +62,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Actor;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector.Producer;
@@ -339,7 +340,7 @@ public class MovieToXbmcNfoConnector {
 
     // certifications
     if (movie.getCertification() != null) {
-      if (Globals.settings.getMovieSettings().getCertificationCountry() == CountryCode.US) {
+      if (MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry() == CountryCode.US) {
         // if we have US verts, write correct "Rated XX" String
         xbmc.mpaa = Certification.getMPAAString(movie.getCertification());
       }
@@ -452,7 +453,7 @@ public class MovieToXbmcNfoConnector {
       nfonames.add(MovieNfoNaming.FILENAME_NFO);
     }
     else {
-      nfonames = Globals.settings.getMovieSettings().getMovieNfoFilenames();
+      nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
     }
     for (MovieNfoNaming name : nfonames) {
       try {

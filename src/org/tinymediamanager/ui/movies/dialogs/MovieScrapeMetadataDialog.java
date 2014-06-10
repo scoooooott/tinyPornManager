@@ -34,6 +34,7 @@ import javax.swing.border.TitledBorder;
 
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieArtworkScrapers;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
@@ -184,28 +185,28 @@ public class MovieScrapeMetadataDialog extends JDialog {
     // set data
 
     // metadataprovider
-    MovieScrapers defaultScraper = Globals.settings.getMovieSettings().getMovieScraper();
+    MovieScrapers defaultScraper = MovieModuleManager.MOVIE_SETTINGS.getMovieScraper();
     cbMetadataScraper.setSelectedItem(defaultScraper);
 
     // artwork provider
-    if (Globals.settings.getMovieSettings().isImageScraperTmdb()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperTmdb()) {
       chckbxTheMovieDb.setSelected(true);
     }
 
-    if (Globals.settings.getMovieSettings().isImageScraperFanartTv()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isImageScraperFanartTv()) {
       chckbxFanarttv.setSelected(true);
     }
 
     // trailer provider
-    if (Globals.settings.getMovieSettings().isTrailerScraperTmdb()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperTmdb()) {
       chckbxTheMovieDb_1.setSelected(true);
     }
 
-    if (Globals.settings.getMovieSettings().isTrailerScraperHdTrailers()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperHdTrailers()) {
       chckbxHdtrailernet.setSelected(true);
     }
 
-    if (Globals.settings.getMovieSettings().isTrailerScraperOfdb()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isTrailerScraperOfdb()) {
       chckbxOfdbde.setSelected(true);
     }
   }

@@ -22,13 +22,13 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.UTF8Control;
@@ -49,7 +49,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
   public MovieFindMissingTask() {
     super(BUNDLE.getString("movie.findmissing"));
     movieList = MovieList.getInstance();
-    dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
+    dataSources = new ArrayList<String>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
   }
 
   public MovieFindMissingTask(String datasource) {

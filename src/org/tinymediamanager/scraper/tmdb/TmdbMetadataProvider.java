@@ -23,9 +23,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -818,7 +818,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     for (ImageSizeAndUrl image : ma.getImageSizes()) {
       // LARGE
       if (image.getWidth() >= 1000) {
-        if (Globals.settings.getMovieSettings().getImagePosterSize().getOrder() >= PosterSizes.LARGE.getOrder()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize().getOrder() >= PosterSizes.LARGE.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(PosterSizes.LARGE.getOrder());
           break;
@@ -827,7 +827,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // BIG
       if (image.getWidth() >= 500) {
-        if (Globals.settings.getMovieSettings().getImagePosterSize().getOrder() >= PosterSizes.BIG.getOrder()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize().getOrder() >= PosterSizes.BIG.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(PosterSizes.BIG.getOrder());
           break;
@@ -836,7 +836,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // MEDIUM
       if (image.getWidth() >= 342) {
-        if (Globals.settings.getMovieSettings().getImagePosterSize().getOrder() >= PosterSizes.MEDIUM.getOrder()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize().getOrder() >= PosterSizes.MEDIUM.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(PosterSizes.MEDIUM.getOrder());
           break;
@@ -845,7 +845,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // SMALL
       if (image.getWidth() >= 185) {
-        if (Globals.settings.getMovieSettings().getImagePosterSize() == PosterSizes.SMALL) {
+        if (MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize() == PosterSizes.SMALL) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(PosterSizes.SMALL.getOrder());
           break;
@@ -859,7 +859,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     for (ImageSizeAndUrl image : ma.getImageSizes()) {
       // LARGE
       if (image.getWidth() >= 1920) {
-        if (Globals.settings.getMovieSettings().getImageFanartSize().getOrder() >= FanartSizes.LARGE.getOrder()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder() >= FanartSizes.LARGE.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
@@ -868,7 +868,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // MEDIUM
       if (image.getWidth() >= 1280) {
-        if (Globals.settings.getMovieSettings().getImageFanartSize().getOrder() >= FanartSizes.MEDIUM.getOrder()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder() >= FanartSizes.MEDIUM.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
           break;
@@ -877,7 +877,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       // SMALL
       if (image.getWidth() >= 300) {
-        if (Globals.settings.getMovieSettings().getImageFanartSize().getOrder() >= FanartSizes.SMALL.getOrder()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder() >= FanartSizes.SMALL.getOrder()) {
           ma.setDefaultUrl(image.getUrl());
           ma.setSizeOrder(FanartSizes.SMALL.getOrder());
           break;

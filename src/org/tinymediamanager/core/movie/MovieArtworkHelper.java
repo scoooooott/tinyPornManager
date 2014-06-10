@@ -89,7 +89,7 @@ public class MovieArtworkHelper {
       fanartnames.add(MovieFanartNaming.FANART_PNG);
     }
     else {
-      fanartnames = Globals.settings.getMovieSettings().getMovieFanartFilenames();
+      fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
     }
     for (MovieFanartNaming name : fanartnames) {
       boolean firstImage = false;
@@ -128,7 +128,7 @@ public class MovieArtworkHelper {
       posternames.add(MoviePosterNaming.POSTER_PNG);
     }
     else {
-      posternames = Globals.settings.getMovieSettings().getMoviePosterFilenames();
+      posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
     }
     for (MoviePosterNaming name : posternames) {
       boolean firstImage = false;

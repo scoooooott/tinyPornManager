@@ -337,7 +337,7 @@ public class Movie extends MediaEntity {
   public Boolean downloadTtrailer(MediaTrailer trailerToDownload) {
     try {
       // get trailer filename from first mediafile
-      String tfile = MovieRenamer.createDestinationForFilename(Globals.settings.getMovieSettings().getMovieRenamerFilename(), this) + "-trailer.";
+      String tfile = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), this) + "-trailer.";
       String ext = UrlUtil.getFileExtension(trailerToDownload.getUrl());
       if (ext.isEmpty()) {
         ext = "unknown";
@@ -500,7 +500,7 @@ public class Movie extends MediaEntity {
    * Find actor images.
    */
   public void findActorImages() {
-    if (Globals.settings.getMovieSettings().isWriteActorImages()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
       String actorsDirPath = getPath() + File.separator + MovieActor.ACTOR_DIR;
       // get all files from the actors path
       File[] actorImages = new File(actorsDirPath).listFiles();
@@ -612,7 +612,7 @@ public class Movie extends MediaEntity {
    */
   public int getRuntime() {
     int runtimeFromMi = getRuntimeFromMediaFilesInMinutes();
-    if (Globals.settings.getMovieSettings().isRuntimeFromMediaInfo() && runtimeFromMi > 0) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isRuntimeFromMediaInfo() && runtimeFromMi > 0) {
       return runtimeFromMi;
     }
     return runtime == 0 ? runtimeFromMi : runtime;
@@ -861,9 +861,9 @@ public class Movie extends MediaEntity {
             TmdbMetadataProvider mp = new TmdbMetadataProvider();
             MediaScrapeOptions options = new MediaScrapeOptions();
             options.setTmdbId(col);
-            options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-            options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
-            options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
+            options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+            options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+            options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
             CollectionInfo info = mp.getMovieSetMetadata(options);
             if (info != null && StringUtils.isNotBlank(info.getName())) {
@@ -967,7 +967,7 @@ public class Movie extends MediaEntity {
       boolean posterFound = false;
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
-        if (art.getType() == MediaArtworkType.POSTER && art.getSizeOrder() == Globals.settings.getMovieSettings().getImagePosterSize().getOrder()) {
+        if (art.getType() == MediaArtworkType.POSTER && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize().getOrder()) {
           setPosterUrl(art.getDefaultUrl());
 
           LOGGER.debug(art.getSmallestArtwork().toString());
@@ -1005,7 +1005,7 @@ public class Movie extends MediaEntity {
       boolean fanartFound = false;
       for (MediaArtwork art : artwork) {
         // only get artwork in desired resolution
-        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
+        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
           setFanartUrl(art.getDefaultUrl());
 
           LOGGER.debug(art.getSmallestArtwork().toString());
@@ -1043,7 +1043,7 @@ public class Movie extends MediaEntity {
 
       if (!isMultiMovieDir()) {
         // logo
-        if (Globals.settings.getMovieSettings().isImageLogo()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
           for (MediaArtwork art : artwork) {
             if (art.getType() == MediaArtworkType.LOGO) {
               setArtworkUrl(art.getDefaultUrl(), MediaFileType.LOGO);
@@ -1053,7 +1053,7 @@ public class Movie extends MediaEntity {
           }
         }
         // clearart
-        if (Globals.settings.getMovieSettings().isImageClearart()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
           for (MediaArtwork art : artwork) {
             if (art.getType() == MediaArtworkType.CLEARART) {
               setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARART);
@@ -1063,7 +1063,7 @@ public class Movie extends MediaEntity {
           }
         }
         // banner
-        if (Globals.settings.getMovieSettings().isImageBanner()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
           for (MediaArtwork art : artwork) {
             if (art.getType() == MediaArtworkType.BANNER) {
               setArtworkUrl(art.getDefaultUrl(), MediaFileType.BANNER);
@@ -1073,7 +1073,7 @@ public class Movie extends MediaEntity {
           }
         }
         // thumb
-        if (Globals.settings.getMovieSettings().isImageThumb()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
           for (MediaArtwork art : artwork) {
             if (art.getType() == MediaArtworkType.THUMB) {
               setArtworkUrl(art.getDefaultUrl(), MediaFileType.THUMB);
@@ -1083,7 +1083,7 @@ public class Movie extends MediaEntity {
           }
         }
         // disc art
-        if (Globals.settings.getMovieSettings().isImageDiscart()) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
           for (MediaArtwork art : artwork) {
             if (art.getType() == MediaArtworkType.DISC) {
               setArtworkUrl(art.getDefaultUrl(), MediaFileType.DISCART);
@@ -1095,13 +1095,13 @@ public class Movie extends MediaEntity {
 
         // extrathumbs
         List<String> extrathumbs = new ArrayList<String>();
-        if (Globals.settings.getMovieSettings().isImageExtraThumbs() && Globals.settings.getMovieSettings().getImageExtraThumbsCount() > 0) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount() > 0) {
           for (MediaArtwork art : artwork) {
             // only get artwork in desired resolution
             if (art.getType() == MediaArtworkType.BACKGROUND
-                && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
+                && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
               extrathumbs.add(art.getDefaultUrl());
-              if (extrathumbs.size() >= Globals.settings.getMovieSettings().getImageExtraThumbsCount()) {
+              if (extrathumbs.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount()) {
                 break;
               }
             }
@@ -1111,13 +1111,13 @@ public class Movie extends MediaEntity {
 
         // extrafanarts
         List<String> extrafanarts = new ArrayList<String>();
-        if (Globals.settings.getMovieSettings().isImageExtraFanart() && Globals.settings.getMovieSettings().getImageExtraFanartCount() > 0) {
+        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount() > 0) {
           for (MediaArtwork art : artwork) {
             // only get artwork in desired resolution
             if (art.getType() == MediaArtworkType.BACKGROUND
-                && art.getSizeOrder() == Globals.settings.getMovieSettings().getImageFanartSize().getOrder()) {
+                && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
               extrafanarts.add(art.getDefaultUrl());
-              if (extrafanarts.size() >= Globals.settings.getMovieSettings().getImageExtraFanartCount()) {
+              if (extrafanarts.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount()) {
                 break;
               }
             }
@@ -1173,7 +1173,7 @@ public class Movie extends MediaEntity {
     }
 
     // third - rename thumbs if needed
-    if (Globals.settings.getMovieSettings().isWriteActorImages()) {
+    if (MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages()) {
       for (MovieActor actor : actors) {
         if (StringUtils.isNotBlank(actor.getThumbPath())) {
           // build expected filename
@@ -1342,7 +1342,7 @@ public class Movie extends MediaEntity {
    */
   public void writeActorImages() {
     // check if actor images shall be written
-    if (!Globals.settings.getMovieSettings().isWriteActorImages() || isMultiMovieDir()) {
+    if (!MovieModuleManager.MOVIE_SETTINGS.isWriteActorImages() || isMultiMovieDir()) {
       return;
     }
 
@@ -1354,7 +1354,7 @@ public class Movie extends MediaEntity {
    * Write nfo.
    */
   public void writeNFO() {
-    if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP) {
+    if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP) {
       MovieToMpNfoConnector.setData(this);
     }
     else {
@@ -1858,7 +1858,7 @@ public class Movie extends MediaEntity {
 
   @Override
   public synchronized void callbackForWrittenArtwork(MediaArtworkType type) {
-    if (Globals.settings.getMovieSettings().getMovieConnector() == MovieConnectors.MP) {
+    if (MovieModuleManager.MOVIE_SETTINGS.getMovieConnector() == MovieConnectors.MP) {
       writeNFO();
     }
   }

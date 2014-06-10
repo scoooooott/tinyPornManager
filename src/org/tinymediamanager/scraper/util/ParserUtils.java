@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 
 /**
  * The Class ParserUtils.
@@ -118,7 +118,7 @@ public class ParserUtils {
     for (int i = 0; i < firstFoundStopwordPosition; i++) {
       if (!s[i].isEmpty()) {
         // check for bad words
-        if (!Globals.settings.getMovieSettings().getBadWords().contains(s[i])) {
+        if (!MovieModuleManager.MOVIE_SETTINGS.getBadWords().contains(s[i])) {
           name = name + s[i] + " ";
         }
       }

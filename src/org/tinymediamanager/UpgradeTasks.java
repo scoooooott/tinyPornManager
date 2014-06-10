@@ -155,7 +155,7 @@ public class UpgradeTasks {
       entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
         if (StringUtils.isBlank(movie.getDataSource())) {
-          for (String ds : Globals.settings.getMovieSettings().getMovieDataSource()) {
+          for (String ds : MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource()) {
             if (movie.getPath().startsWith(ds)) {
               movie.setDataSource(ds);
               break;

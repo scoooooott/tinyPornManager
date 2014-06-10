@@ -22,9 +22,9 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmThreadPool;
@@ -80,9 +80,9 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
       try {
         TmdbMetadataProvider mp = new TmdbMetadataProvider();
         MediaScrapeOptions options = new MediaScrapeOptions();
-        options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-        options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
-        options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
+        options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+        options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+        options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
         options.setScrapeCollectionInfo(true);
         for (Entry<String, Object> entry : movie.getIds().entrySet()) {
           options.setId(entry.getKey(), entry.getValue().toString());
@@ -99,9 +99,9 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
             try {
               options = new MediaScrapeOptions();
               options.setTmdbId(collectionId);
-              options.setLanguage(Globals.settings.getMovieSettings().getScraperLanguage());
-              options.setCountry(Globals.settings.getMovieSettings().getCertificationCountry());
-              options.setScrapeImdbForeignLanguage(Globals.settings.getMovieSettings().isImdbScrapeForeignLanguage());
+              options.setLanguage(MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+              options.setCountry(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry());
+              options.setScrapeImdbForeignLanguage(MovieModuleManager.MOVIE_SETTINGS.isImdbScrapeForeignLanguage());
 
               CollectionInfo info = mp.getMovieSetMetadata(options);
               if (info != null && StringUtils.isNotBlank(info.getName())) {

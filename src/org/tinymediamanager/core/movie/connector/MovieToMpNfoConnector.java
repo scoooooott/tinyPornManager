@@ -59,6 +59,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.Actor;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector.MovieSets;
@@ -260,7 +261,7 @@ public class MovieToMpNfoConnector {
       nfonames.add(MovieNfoNaming.FILENAME_NFO);
     }
     else {
-      nfonames = Globals.settings.getMovieSettings().getMovieNfoFilenames();
+      nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
     }
     for (MovieNfoNaming name : nfonames) {
 

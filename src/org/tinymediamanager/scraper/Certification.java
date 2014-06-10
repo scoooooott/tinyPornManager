@@ -19,7 +19,7 @@ package org.tinymediamanager.scraper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 
 /**
  * The Enum Certification.
@@ -27,6 +27,7 @@ import org.tinymediamanager.Globals;
  * @author Manuel Laggner / Myron Boyle
  */
 public enum Certification {
+
 
   // @formatter:off
   US_G     (CountryCode.US, "G", new String[] { "G", "Rated G" }),
@@ -392,13 +393,13 @@ public enum Certification {
         c = c.trim();
         if (c.contains(":")) {
           String[] cs = c.split(":");
-          cert = getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), cs[1]);
+          cert = getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), cs[1]);
           if (cert != NOT_RATED) {
             return cert;
           }
         }
         else {
-          cert = getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), c);
+          cert = getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), c);
           if (cert != NOT_RATED) {
             return cert;
           }
@@ -427,11 +428,11 @@ public enum Certification {
       // no slash, so only one country
       if (name.contains(":")) {
         String[] cs = name.split(":");
-        cert = getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), cs[1]);
+        cert = getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), cs[1]);
       }
       else {
         // no country? try to find only by name
-        cert = getCertification(Globals.settings.getMovieSettings().getCertificationCountry(), name);
+        cert = getCertification(MovieModuleManager.MOVIE_SETTINGS.getCertificationCountry(), name);
       }
     }
     // still not found localized cert? parse the name to find *ANY* certificate
