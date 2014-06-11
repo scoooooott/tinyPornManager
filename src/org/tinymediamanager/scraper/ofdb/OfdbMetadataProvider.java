@@ -21,6 +21,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -374,7 +375,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     // <a href="film/22523,Die-Bourne-Identität"
     // onmouseover="Tip('<img src=&quot;images/film/22/22523.jpg&quot; width=&quot;120&quot; height=&quot;170&quot;>',SHADOW,true)">Bourne
     // Identität, Die<font size="1"> / Bourne Identity, The</font> (2002)</a>
-
+    HashSet<String> foundResultUrls = new HashSet<String>();
     for (Element a : filme) {
       try {
         MediaSearchResult sr = new MediaSearchResult(providerInfo.getId());
@@ -389,6 +390,13 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         sr.setMediaType(MediaType.MOVIE);
         sr.setUrl(BASE_URL + "/" + StrgUtils.substr(a.toString(), "href=\\\"(.*?)\\\""));
         sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(), "images(.*?)\\&quot"));
+
+        // OFDB could provide linke twice - check if that has been already added
+        if (foundResultUrls.contains(sr.getUrl())) {
+          continue;
+        }
+        foundResultUrls.add(sr.getUrl());
+
         // populate extra args
         MetadataUtil.copySearchQueryToSearchResult(options, sr);
 
