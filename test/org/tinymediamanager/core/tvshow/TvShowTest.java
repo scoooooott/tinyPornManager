@@ -118,16 +118,16 @@ public class TvShowTest {
   @Test
   public void testEpisodeMatching() {
     Assert.assertEquals("E:1", detectEpisode("AwesomeTvShow.S01E01-480p.mkv"));
-    Assert.assertEquals("E:9 E:10", detectEpisode("stvs7ep9-10.avi"));
+    Assert.assertEquals("E:9 E:10", detectEpisode("stvs7ep9-10.avi")); // does not work with NORMAL impl (yet)
 
     // http://wiki.xbmc.org/index.php?title=Video_library/Naming_files/TV_shows
     // with season
     Assert.assertEquals("E:2", detectEpisode("name.s01e02.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.s01.e02.ext"));
-    // Assert.assertEquals("E:2", detectEpisode("name.s1e2.ext"));
+    Assert.assertEquals("E:2", detectEpisode("name.s1e2.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.s01_e02.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.1x02.ext"));
-    // Assert.assertEquals("E:2", detectEpisode("name.102.ext")); // does not work with Myron's alternate detection (yet)
+    Assert.assertEquals("E:2", detectEpisode("name.102.ext")); // does not work with NORMAL impl (yet)
 
     // without season
     Assert.assertEquals("E:2", detectEpisode("name.ep02.ext"));
@@ -141,17 +141,17 @@ public class TvShowTest {
     Assert.assertEquals("E:1 E:2", detectEpisode("name.s01e01.episode1.title.s01e02.episode2.title.ext"));
     Assert.assertEquals("E:1 E:2 E:3", detectEpisode("name.s01e01.s01e02.s01e03.ext"));
     Assert.assertEquals("E:1 E:2", detectEpisode("name.1x01_1x02.ext"));
-
-    Assert.assertEquals("E:1 E:2", detectEpisode("name.s01e01 1x02.ext")); // we won't support this
-
+    Assert.assertEquals("E:1 E:2", detectEpisode("name.s01e01 1x02.ext"));
     Assert.assertEquals("E:1 E:2", detectEpisode("name.ep01.ep02.ext"));
+
     // multi episode short
     Assert.assertEquals("E:1 E:2", detectEpisode("name.s01e01e02.ext"));
-    Assert.assertEquals("E:1 E:2 E:3", detectEpisode("name.s01e01-02-03.ext"));
-    Assert.assertEquals("E:1 E:2", detectEpisode("name.1x01x02.ext"));
-    Assert.assertEquals("E:1 E:2", detectEpisode("name.ep01_02.ext"));
+    Assert.assertEquals("E:1 E:2 E:3", detectEpisode("name.s01e01-02-03.ext")); // does not work with NORMAL impl (yet)
+    Assert.assertEquals("E:1 E:2", detectEpisode("name.1x01x02.ext")); // does not work with NORMAL impl (yet)
+    Assert.assertEquals("E:1 E:2", detectEpisode("name.ep01_02.ext")); // does not work with NORMAL impl (yet)
+
     // multi episode mixed; weird, but valid :p
-    Assert.assertEquals("E:1 E:2 E:3 E:4", detectEpisode("name.1x01e02_03-x-04.ext"));
+    Assert.assertEquals("E:1 E:2 E:3 E:4", detectEpisode("name.1x01e02_03-x-04.ext"));// does not work with NORMAL impl (yet)
 
     // split episode
     // TODO: detect split?
@@ -160,7 +160,7 @@ public class TvShowTest {
     Assert.assertEquals("E:1", detectEpisode("name.1x01.1.ext"));
     Assert.assertEquals("E:1", detectEpisode("name.1x01a.ext"));
     Assert.assertEquals("E:1", detectEpisode("name.ep01.1.ext"));
-    Assert.assertEquals("E:1", detectEpisode("name.101.1.ext"));
+    Assert.assertEquals("E:1", detectEpisode("name.101.1.ext")); // does not work with NORMAL impl (yet)
     Assert.assertEquals("E:1", detectEpisode("name.ep01a_01b.ext"));
     Assert.assertEquals("E:1", detectEpisode("name.s01e01.1.s01e01.2.ext"));
     Assert.assertEquals("E:1", detectEpisode("name.1x01.1x01.2.ext")); // (note this is (1x01.1)x(01.2) not (1x01).(1x01.2))
@@ -171,7 +171,7 @@ public class TvShowTest {
     // detectEpisode("");
 
     // parseInt testing
-    Assert.assertEquals("E:2", detectEpisode("name.s01e02435454715743435435554.ext"));
+    Assert.assertEquals("E:2", detectEpisode("name.s01e02435454715743435435554.ext")); // does not work with NORMAL impl (yet)
   }
 
   /**
