@@ -17,6 +17,7 @@
     <minVersion>1.6.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>32/64</runtimeBits>
     <initialHeapSize>128</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
     <opt>-Xss512k</opt>
