@@ -313,6 +313,7 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
     String searchQuery = "";
     String imdb = "";
     Elements filme = null;
+    String myear = options.get(MediaSearchOptions.SearchParam.YEAR);
 
     /*
      * Kat = All | Titel | Person | DTitel | OTitel | Regie | Darsteller | Song | Rolle | EAN| IMDb | Google
@@ -406,7 +407,14 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         }
         else {
           // compare score based on names
-          sr.setScore(MetadataUtil.calculateScore(searchQuery, sr.getTitle()));
+          float score = MetadataUtil.calculateScore(searchQuery, sr.getTitle());
+
+          if (myear != null && !myear.isEmpty() && !myear.equals("0") && !myear.equals(sr.getYear())) {
+            LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
+            score = score - 0.01f;
+          }
+          sr.setScore(score);
+
         }
         resultList.add(sr);
       }

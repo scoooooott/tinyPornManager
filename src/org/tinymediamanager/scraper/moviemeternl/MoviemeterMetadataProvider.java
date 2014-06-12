@@ -147,6 +147,7 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
     List<MediaSearchResult> resultList = new ArrayList<MediaSearchResult>();
     String imdb = query.get(MediaSearchOptions.SearchParam.IMDBID);
     String searchString = "";
+    String myear = query.get(MediaSearchOptions.SearchParam.YEAR);
 
     // check type
     if (query.getMediaType() != MediaType.MOVIE) {
@@ -207,7 +208,16 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
       sr.setTitle(film.getTitle());
       sr.setUrl(film.getUrl());
       sr.setYear(film.getYear());
-      sr.setScore(MetadataUtil.calculateScore(searchString, film.getTitle()));
+
+      // compare score based on names
+      float score = MetadataUtil.calculateScore(searchString, film.getTitle());
+
+      if (myear != null && !myear.isEmpty() && !myear.equals("0") && !myear.equals(sr.getYear())) {
+        LOGGER.debug("parsed year does not match search result year - downgrading score by 0.01");
+        score = score - 0.01f;
+      }
+      sr.setScore(score);
+
       resultList.add(sr);
     }
     Collections.sort(resultList);
