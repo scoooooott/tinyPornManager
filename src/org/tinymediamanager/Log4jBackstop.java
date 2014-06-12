@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,20 @@
  */
 package org.tinymediamanager;
 
+import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 
-import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ui.MainWindow;
+
+import com.ezware.common.Strings;
+import com.ezware.dialog.task.TaskDialog;
+import com.ezware.dialog.task.TaskDialog.StandardCommand;
 
 /**
  * The Class Log4jBackstop.
@@ -28,23 +36,39 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Laggner
  */
 class Log4jBackstop implements Thread.UncaughtExceptionHandler {
-
-  /** The logger. */
   private static final Logger LOGGER = LoggerFactory.getLogger(Log4jBackstop.class);
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread , java.lang.Throwable)
-   */
   public void uncaughtException(Thread t, Throwable ex) {
     LOGGER.error("Uncaught exception in thread: " + t.getName(), ex);
     if (!GraphicsEnvironment.isHeadless()) {
-      JOptionPane
-          .showMessageDialog(
-              null,
-              "Whoops. Something unforeseen has happened.\nPlease restart TMM and try again.\nIf it happens again, we would kindly ask you to submit a bugreport.\n\n"
-                  + ex.getCause() + ":" + ex.getMessage() + "\n" + ex.getStackTrace()[0].toString() + "\n" + ex.getStackTrace()[1].toString());
+      TaskDialog dlg = new TaskDialog(MainWindow.getActiveInstance(), "Exception");
+
+      String msg = ex.getMessage();
+      String className = ex.getClass().getName();
+      boolean noMessage = Strings.isEmpty(msg);
+
+      dlg.setInstruction("Whoops. Something unforeseen has happened.\nPlease restart TMM and try again.\nIf it happens again, we would kindly ask you to submit a bugreport.\n\n");
+      dlg.setText(noMessage ? "" : className);
+
+      dlg.setIcon(TaskDialog.StandardIcon.ERROR);
+      dlg.setCommands(StandardCommand.CANCEL.derive(TaskDialog.makeKey("Close")));
+
+      JTextArea text = new JTextArea();
+      text.setEditable(false);
+      text.setFont(UIManager.getFont("Label.font"));
+      text.setText(Strings.stackStraceAsString(ex));
+      text.setCaretPosition(0);
+
+      JScrollPane scroller = new JScrollPane(text);
+      scroller.setPreferredSize(new Dimension(400, 200));
+      dlg.getDetails().setExpandableComponent(scroller);
+      dlg.getDetails().setExpanded(noMessage);
+
+      dlg.setResizable(true);
+
+      // Issue 22: Exception can be printed by user if required
+      // ex.printStackTrace();
+      dlg.setVisible(true);
     }
   }
 }
