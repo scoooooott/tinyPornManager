@@ -47,12 +47,15 @@ public class ParserUtils {
    * 1. splits string using common delimiters ".- ()"<br>
    * 2. searches for first occurrence of common stopwords<br>
    * 3. if last token is 4 digits, assume year and remove<br>
-   * 4. everything before the first stopword must be the movie name :p
+   * 4. everything before the first stopword must be the movie name :p<br>
+   * <br>
+   * Deprecated in favor of detectCleanMovienameAndYear (avoid possible dupes)
    * 
    * @param filename
    *          the filename to get the title from
    * @return the (hopefully) correct parsed movie name
    */
+  @Deprecated
   public static String detectCleanMoviename(String filename) {
     return detectCleanMovienameAndYear(filename)[0];
   }

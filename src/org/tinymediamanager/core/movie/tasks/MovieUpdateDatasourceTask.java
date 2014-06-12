@@ -225,8 +225,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
         for (MediaFile mfile : m.getMediaFiles(MediaFileType.VIDEO)) {
           // try to match like if we would create a new movie
-          if (ParserUtils.detectCleanMoviename(Utils.cleanStackingMarkers(mfile.getBasename())).equals(
-              ParserUtils.detectCleanMoviename(Utils.cleanStackingMarkers(mf.getBasename())))) {
+          String[] mfileTY = ParserUtils.detectCleanMovienameAndYear(Utils.cleanStackingMarkers(mfile.getBasename()));
+          String[] mfTY = ParserUtils.detectCleanMovienameAndYear(Utils.cleanStackingMarkers(mf.getBasename()));
+          if (mfileTY[0].equals(mfTY[0]) && mfileTY[1].equals(mfTY[1])) { // title AND year (even empty) match
             LOGGER.debug("found possible movie '" + m.getTitle() + "' from filename " + file);
             movie = m;
             break;
@@ -342,7 +343,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           // ignore disc files when trying to detect multi movie dir!
           continue;
         }
-        h.add(ParserUtils.detectCleanMoviename(Utils.cleanStackingMarkers(FilenameUtils.getBaseName(file.getName()))));
+        String[] ty = ParserUtils.detectCleanMovienameAndYear(Utils.cleanStackingMarkers(FilenameUtils.getBaseName(file.getName())));
+        h.add(ty[0] + ty[1]); // title+year, just temp
       }
       // more than 1, or if DS=dir then assume a multi dir (only second level is a normal movie dir)
       if (h.size() > 1 || movieDir.equals(new File(dataSource))) {
