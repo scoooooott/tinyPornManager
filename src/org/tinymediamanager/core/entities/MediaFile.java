@@ -250,7 +250,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
 
       // best approach so far: https://github.com/brentosmith/xbmc-dvdextras
-      if (name.matches("(?i).*[ _.-]extra[s]?[ _.-].*") || foldername.equalsIgnoreCase("extras")) {
+      // TODO: what about "ET - the extra terrestrial" - remove at least space as delimiter, so scraped files should be fine
+      // if (name.matches("(?i).*[ _.-]extra[s]?[ _.-].*") || foldername.equalsIgnoreCase("extras")) {
+      if (name.matches("(?i).*[_.-]extra[s]?[_.-].*") || foldername.equalsIgnoreCase("extras")) {
         return MediaFileType.VIDEO_EXTRA;
       }
 
