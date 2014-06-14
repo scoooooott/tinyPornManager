@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -369,7 +368,7 @@ public class MoviePanel extends JPanel {
     movieSelectionModel.setTableComparatorChooser(TableComparatorChooser.install(table, sortedMovies, TableComparatorChooser.SINGLE_COLUMN));
 
     // table = new MyTable();
-    table.setFont(new Font("Dialog", Font.PLAIN, 11));
+    table.setNewFontSize((float) Math.round(getFont().getSize() * 0.916));
     // scrollPane.setViewportView(table);
 
     // JScrollPane scrollPane = new JScrollPane(table);
@@ -579,9 +578,14 @@ public class MoviePanel extends JPanel {
     table.getColumnModel().getColumn(0).setIdentifier("title"); //$NON-NLS-1$
 
     // year column
-    table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
-    table.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
-    table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
+    int width = table.getFontMetrics(table.getFont()).stringWidth(" 2000");
+    int titleWidth = table.getFontMetrics(table.getFont()).stringWidth(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+    if (titleWidth > width) {
+      width = titleWidth;
+    }
+    table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(width);
+    table.getTableHeader().getColumnModel().getColumn(1).setMinWidth(width);
+    table.getTableHeader().getColumnModel().getColumn(1).setMaxWidth((int) (width * 1.5));
     table.getTableHeader().getColumnModel().getColumn(1).setIdentifier("year"); //$NON-NLS-1$
 
     // NFO column

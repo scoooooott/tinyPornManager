@@ -71,6 +71,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -252,7 +253,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
           lblTvShowName.setLineWrap(true);
           lblTvShowName.setOpaque(false);
           lblTvShowName.setWrapStyleWord(true);
-          lblTvShowName.setFont(new Font("Dialog", Font.BOLD, 14));
+          TmmFontHelper.changeFont(lblTvShowName, 1.166, Font.BOLD);
           panelSearchDetail.add(lblTvShowName, "2, 1, 3, 1, fill, top");
         }
         {

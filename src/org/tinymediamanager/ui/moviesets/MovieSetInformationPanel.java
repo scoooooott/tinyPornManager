@@ -40,6 +40,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ZebraJTable;
@@ -132,7 +133,7 @@ public class MovieSetInformationPanel extends JPanel {
                 RowSpec.decode("bottom:default"), }));
 
     lblMovieSetName = new JLabel("");
-    lblMovieSetName.setFont(new Font("Dialog", Font.BOLD, 18));
+    TmmFontHelper.changeFont(lblMovieSetName, 1.5, Font.BOLD);
     panel.add(lblMovieSetName, "2,1, fill, fill");
 
     layeredPane = new JLayeredPane();
@@ -191,9 +192,14 @@ public class MovieSetInformationPanel extends JPanel {
 
     // adjust table columns
     // year column
-    tableAssignedMovies.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(35);
-    tableAssignedMovies.getTableHeader().getColumnModel().getColumn(1).setMinWidth(35);
-    tableAssignedMovies.getTableHeader().getColumnModel().getColumn(1).setMaxWidth(50);
+    int width = tableAssignedMovies.getFontMetrics(tableAssignedMovies.getFont()).stringWidth(" 2000");
+    int titleWidth = tableAssignedMovies.getFontMetrics(tableAssignedMovies.getFont()).stringWidth(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+    if (titleWidth > width) {
+      width = titleWidth;
+    }
+    tableAssignedMovies.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(width);
+    tableAssignedMovies.getTableHeader().getColumnModel().getColumn(1).setMinWidth(width);
+    tableAssignedMovies.getTableHeader().getColumnModel().getColumn(1).setMaxWidth((int) (width * 1.5));
 
     // watched column
     tableAssignedMovies.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(70);
@@ -231,28 +237,12 @@ public class MovieSetInformationPanel extends JPanel {
     selectionModel.addPropertyChangeListener(propertyChangeListener);
   }
 
-  /**
-   * The Class MediaTableFormat.
-   * 
-   * @author Manuel Laggner
-   */
   private static class MovieInMovieSetTableFormat implements AdvancedTableFormat<Movie> {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.TableFormat#getColumnCount()
-     */
     @Override
     public int getColumnCount() {
       return 3;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.TableFormat#getColumnName(int)
-     */
     @Override
     public String getColumnName(int column) {
       switch (column) {
@@ -269,11 +259,6 @@ public class MovieSetInformationPanel extends JPanel {
       throw new IllegalStateException();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object, int)
-     */
     @Override
     public Object getColumnValue(Movie movie, int column) {
       switch (column) {
@@ -289,11 +274,6 @@ public class MovieSetInformationPanel extends JPanel {
       throw new IllegalStateException();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
-     */
     @SuppressWarnings("rawtypes")
     @Override
     public Class getColumnClass(int column) {
@@ -308,11 +288,6 @@ public class MovieSetInformationPanel extends JPanel {
       throw new IllegalStateException();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
-     */
     @SuppressWarnings("rawtypes")
     @Override
     public Comparator getColumnComparator(int arg0) {
@@ -321,9 +296,6 @@ public class MovieSetInformationPanel extends JPanel {
 
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty = BeanProperty.create("selectedMovieSet.title");
     BeanProperty<JLabel, String> jLabelBeanProperty = BeanProperty.create("text");
@@ -336,16 +308,5 @@ public class MovieSetInformationPanel extends JPanel {
     AutoBinding<MovieSetSelectionModel, String, JTextPane, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
         movieSetSelectionModelBeanProperty_4, tpOverview, jTextPaneBeanProperty);
     autoBinding_3.bind();
-    //
-    // BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovieSet.fanart");
-    // BeanProperty<ImageLabel, String> imageLabelBeanProperty_1 = BeanProperty.create("imagePath");
-    // AutoBinding<MovieSetSelectionModel, String, ImageLabel, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-    // movieSetSelectionModelBeanProperty_1, lblMovieSetFanart, imageLabelBeanProperty_1);
-    // autoBinding_2.bind();
-    // //
-    // BeanProperty<MovieSetSelectionModel, String> movieSetSelectionModelBeanProperty_2 = BeanProperty.create("selectedMovieSet.poster");
-    // AutoBinding<MovieSetSelectionModel, String, ImageLabel, String> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-    // movieSetSelectionModelBeanProperty_2, lblMovieSetPoster, imageLabelBeanProperty_1);
-    // autoBinding_1.bind();
   }
 }

@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -46,6 +45,7 @@ import org.tinymediamanager.core.movie.MovieFanartNaming;
 import org.tinymediamanager.core.movie.MoviePosterNaming;
 import org.tinymediamanager.scraper.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.MediaArtwork.PosterSizes;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
@@ -196,7 +196,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     panelMovieImages.add(chckbxFanarttv, "4, 4");
 
     lblAttentionFanartTv = new JLabel(BUNDLE.getString("Settings.fanarttv.alert")); //$NON-NLS-1$
-    lblAttentionFanartTv.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(lblAttentionFanartTv, 0.833);
     panelMovieImages.add(lblAttentionFanartTv, "4, 5, 3, 1");
 
     separator = new JSeparator();
@@ -250,7 +250,7 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
     tpFileNamingHint = new JTextPane();
     tpFileNamingHint.setText(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
     tpFileNamingHint.setBackground(UIManager.getColor("Panel.background"));
-    tpFileNamingHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
     panelMovieImages.add(tpFileNamingHint, "2, 18, 5, 1, fill, fill");
 
     panelExtraArtwork = new JPanel();

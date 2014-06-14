@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -56,7 +57,7 @@ public class WhatsNewDialog extends JDialog {
       JScrollPane scrollPane = new JScrollPane();
       getContentPane().add(scrollPane, BorderLayout.CENTER);
       JTextPane textPane = new JTextPane();
-      textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+      textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, Globals.settings.getFontSize() + 1));
       scrollPane.setViewportView(textPane);
 
       textPane.setText(changelog);
@@ -87,7 +88,7 @@ public class WhatsNewDialog extends JDialog {
       });
       panel.add(lblLink, "4, 2");
 
-      JButton btnClose = new JButton("Close");
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
       btnClose.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {

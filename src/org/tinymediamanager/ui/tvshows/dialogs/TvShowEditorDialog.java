@@ -75,6 +75,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TableSpinnerEditor;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -183,7 +184,7 @@ public class TvShowEditorDialog extends JDialog {
       panelPath.add(lblTvShowPathT, "2, 2, left, top");
 
       lvlTvShowPath = new JLabel("");
-      lvlTvShowPath.setFont(new Font("Dialog", Font.BOLD, 14));
+      TmmFontHelper.changeFont(lblTvShowPathT, 1.166, Font.BOLD);
       panelPath.add(lvlTvShowPath, "5, 2, left, top");
     }
 

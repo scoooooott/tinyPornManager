@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.settings;
 
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -32,6 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
@@ -45,6 +47,7 @@ import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.ImageCache.CacheType;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
@@ -63,11 +66,12 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class GeneralSettingsPanel extends ScrollablePanel {
 
-  private static final long           serialVersionUID = 500841588272296493L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final long           serialVersionUID   = 500841588272296493L;
+  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
 
-  private Settings                    settings         = Settings.getInstance();
-  private List<LocaleComboBox>        locales          = new ArrayList<LocaleComboBox>();
+  private Settings                    settings           = Settings.getInstance();
+  private List<LocaleComboBox>        locales            = new ArrayList<LocaleComboBox>();
 
   private JPanel                      panelProxySettings;
   private JTextField                  tfProxyHost;
@@ -83,7 +87,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbImageCacheQuality;
   private JCheckBox                   chckbxBuildImageCache;
   private JCheckBox                   chckbxImageCache;
-  private JPanel                      panelLanguage;
+  private JPanel                      panelUI;
   private JLabel                      lblUiLanguage;
   private JComboBox                   cbLanguage;
   private JLabel                      lblLanguageHint;
@@ -92,27 +96,37 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JTextField                  tfMediaPlayer;
   private JButton                     btnSearchMediaPlayer;
   private JTextPane                   tpMediaPlayer;
+  private JSeparator                  separator;
+  private JTextPane                   tpFontHint;
+  private JLabel                      lblFontFamily;
+  private JLabel                      lblFontSize;
+  private JComboBox                   cbFontSize;
+  private JComboBox                   cbFontFamily;
+  private JLabel                      lblFontChangeHint;
 
   /**
    * Instantiates a new general settings panel.
    */
   public GeneralSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:max(200px;min):grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC,
-        ColumnSpec.decode("max(200px;default)"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default)"), }, new RowSpec[] {
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
 
-    panelLanguage = new JPanel();
-    add(panelLanguage, "2, 2, 3, 1, fill, fill");
-    panelLanguage.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+    panelUI = new JPanel();
+    panelUI.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.ui"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
+    add(panelUI, "2, 2, 3, 1, fill, fill");
+    panelUI.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     lblUiLanguage = new JLabel(BUNDLE.getString("Settings.language")); //$NON-NLS-1$
-    panelLanguage.add(lblUiLanguage, "2, 2, right, default");
+    panelUI.add(lblUiLanguage, "2, 2, right, default");
 
     // listen to changes of the combo box
     ItemListener listener = new ItemListener() {
@@ -137,19 +151,58 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     if (actualLocale != null) {
       cbLanguage.setSelectedItem(actualLocale);
     }
-    panelLanguage.add(cbLanguage, "4, 2, fill, default");
+    panelUI.add(cbLanguage, "4, 2, fill, default");
 
     lblLanguageHint = new JLabel("");
-    lblLanguageHint.setFont(lblLanguageHint.getFont().deriveFont(Font.BOLD));
-    panelLanguage.add(lblLanguageHint, "2, 4, 5, 1");
+    TmmFontHelper.changeFont(lblLanguageHint, Font.BOLD);
+    panelUI.add(lblLanguageHint, "2, 4, 5, 1");
 
     chckbxShowNotifications = new JCheckBox(BUNDLE.getString("Settings.shownotifications")); //$NON-NLS-1$
-    panelLanguage.add(chckbxShowNotifications, "2, 6, 5, 1");
-    cbLanguage.addItemListener(listener);
+    panelUI.add(chckbxShowNotifications, "2, 6, 5, 1");
+
+    separator = new JSeparator();
+    panelUI.add(separator, "2, 8, 5, 1");
+
+    tpFontHint = new JTextPane();
+    tpFontHint.setOpaque(false);
+    TmmFontHelper.changeFont(tpFontHint, 0.833);
+    tpFontHint.setText(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
+    panelUI.add(tpFontHint, "2, 10, 5, 1");
+
+    lblFontFamily = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
+    panelUI.add(lblFontFamily, "2, 12, right, default");
+
+    GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
+    cbFontFamily.setSelectedItem(Globals.settings.getFontFamily());
+    int index = cbFontFamily.getSelectedIndex();
+    if (index < 0) {
+      cbFontFamily.setSelectedItem("Dialog");
+      index = cbFontFamily.getSelectedIndex();
+    }
+    if (index < 0) {
+      cbFontFamily.setSelectedIndex(0);
+    }
+    panelUI.add(cbFontFamily, "4, 12, fill, default");
+
+    lblFontSize = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
+    panelUI.add(lblFontSize, "2, 14, right, default");
+
+    cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
+    cbFontSize.setSelectedItem(Globals.settings.getFontSize());
+    index = cbFontSize.getSelectedIndex();
+    if (index < 0) {
+      cbFontSize.setSelectedIndex(0);
+    }
+    panelUI.add(cbFontSize, "4, 14, fill, default");
+
+    lblFontChangeHint = new JLabel("");
+    TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
+    panelUI.add(lblFontChangeHint, "2, 16, 5, 1");
 
     panelCache = new JPanel();
     panelCache.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.cache"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
-    add(panelCache, "2, 4, 3, 1, fill, fill");
+    add(panelCache, "2, 4, fill, fill");
     panelCache.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -174,7 +227,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     panelProxySettings = new JPanel();
     panelProxySettings.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.proxy"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
-    add(panelProxySettings, "6, 4, 3, 1, fill, fill");
+    add(panelProxySettings, "4, 4, fill, fill");
     panelProxySettings.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
@@ -221,6 +274,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     tpMediaPlayer = new JTextPane();
     tpMediaPlayer.setOpaque(false);
+    TmmFontHelper.changeFont(tpMediaPlayer, 0.833);
     tpMediaPlayer.setText(BUNDLE.getString("Settings.mediaplayer.hint")); //$NON-NLS-1$
     panelMediaPlayer.add(tpMediaPlayer, "2, 2, 3, 1, fill, fill");
 
@@ -241,7 +295,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     panelMediaPlayer.add(btnSearchMediaPlayer, "4, 4");
 
     panelLogger = new JPanel();
-    add(panelLogger, "2, 8, 3, 1, fill, fill");
+    add(panelLogger, "2, 8, fill, fill");
     panelLogger.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
@@ -253,10 +307,14 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     Level actualLevel = Level.toLevel(Globals.settings.getLogLevel());
     cbLogLevel = new JComboBox(levels);
     panelLogger.add(cbLogLevel, "4, 2");
-    cbLogLevel.addItemListener(listener);
     cbLogLevel.setSelectedItem(actualLevel);
 
     initDataBindings();
+
+    cbLanguage.addItemListener(listener);
+    cbLogLevel.addItemListener(listener);
+    cbFontFamily.addItemListener(listener);
+    cbFontSize.addItemListener(listener);
   }
 
   /**
@@ -275,6 +333,19 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     if (!locale.equals(actualLocale)) {
       Globals.settings.setLanguage(locale.getLanguage());
       lblLanguageHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
+    }
+
+    // fonts
+    Integer fontSize = (Integer) cbFontSize.getSelectedItem();
+    if (fontSize != Globals.settings.getFontSize()) {
+      Globals.settings.setFontSize(fontSize);
+      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+    }
+
+    String fontFamily = (String) cbFontFamily.getSelectedItem();
+    if (!fontFamily.equals(Globals.settings.getFontFamily())) {
+      Globals.settings.setFontFamily(fontFamily);
+      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
     }
   }
 

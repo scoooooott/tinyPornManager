@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.movies.settings;
 
 import java.awt.Cursor;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -53,6 +52,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
@@ -134,7 +134,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelGeneral.add(lblImageCache, "2, 8, right, default");
 
     chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-    chckbxImageCache.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(chckbxImageCache, 0.833);
     panelGeneral.add(chckbxImageCache, "4, 8, 5, 1");
 
     JLabel lblRuntimeFromMedia = new JLabel(BUNDLE.getString("Settings.runtimefrommediafile"));
@@ -208,7 +208,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelMovieDataSources.add(chckbxMultipleMoviesPerFolder, "4, 4");
 
     JTextPane tpMultipleMoviesHint = new JTextPane();
-    tpMultipleMoviesHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(tpMultipleMoviesHint, 0.833);
     tpMultipleMoviesHint.setBackground(UIManager.getColor("Panel.background"));
     tpMultipleMoviesHint.setText(BUNDLE.getString("Settings.multipleMovies.hint")); //$NON-NLS-1$
     tpMultipleMoviesHint.setEditable(false);
@@ -243,7 +243,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     JTextPane txtpntBadWordsHint = new JTextPane();
     txtpntBadWordsHint.setBackground(UIManager.getColor("Panel.background"));
     txtpntBadWordsHint.setText(BUNDLE.getString("Settings.movie.badwords.hint")); //$NON-NLS-1$
-    txtpntBadWordsHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(txtpntBadWordsHint, 0.833);
     panelBadWords.add(txtpntBadWordsHint, "2, 2, 3, 1, fill, default");
 
     JScrollPane scpBadWords = new JScrollPane();

@@ -44,6 +44,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.ColumnLayout;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImagePanel;
@@ -196,7 +197,7 @@ public class TvShowInformationPanel extends JPanel {
     panelTvShowTitle.setLayout(new BorderLayout(0, 0));
     lblTvShowName = new JLabel("");
     panelTvShowTitle.add(lblTvShowName);
-    lblTvShowName.setFont(new Font("Dialog", Font.BOLD, 16));
+    TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
 
     JPanel panelRatingTagline = new JPanel();
     panelTvShowHeader.add(panelRatingTagline, "1, 2, fill, top");

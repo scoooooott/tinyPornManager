@@ -40,6 +40,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
@@ -62,9 +63,6 @@ public class AboutDialog extends JDialog {
   private final JPanel                contentPanel     = new JPanel();
   private final Action                action           = new SwingAction();
 
-  /**
-   * Create the dialog.
-   */
   public AboutDialog() {
     setTitle(BUNDLE.getString("tmm.about")); //$NON-NLS-1$
     setName("aboutDialog");
@@ -74,7 +72,7 @@ public class AboutDialog extends JDialog {
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
     getContentPane().add(contentPanel, BorderLayout.CENTER);
-    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("center:89px"),
+    contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
         FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -91,7 +89,7 @@ public class AboutDialog extends JDialog {
     }
     {
       JLabel lblTinymediamanager = new JLabel("tinyMediaManager"); //$NON-NLS-1$
-      lblTinymediamanager.setFont(lblTinymediamanager.getFont().deriveFont(Font.BOLD).deriveFont(18f));
+      TmmFontHelper.changeFont(lblTinymediamanager, 1.5, Font.BOLD);
       contentPanel.add(lblTinymediamanager, "4, 2, 3, 1, center, default");
     }
     {
@@ -103,7 +101,7 @@ public class AboutDialog extends JDialog {
         Properties p = License.decrypt();
         // p.list(System.out);
         JLabel lblRegged = new JLabel(BUNDLE.getString("tmm.registeredto") + " " + p.getProperty("user") + " (" + p.getProperty("email") + ")"); //$NON-NLS-1$
-        lblRegged.setFont(lblRegged.getFont().deriveFont(Font.BOLD).deriveFont(14f));
+        TmmFontHelper.changeFont(lblRegged, 1.66, Font.BOLD);
         contentPanel.add(lblRegged, "4, 6, 3, 1, center, default");
       }
     }

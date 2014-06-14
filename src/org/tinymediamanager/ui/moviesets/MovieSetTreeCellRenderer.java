@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -45,53 +46,32 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSetTreeCellRenderer implements TreeCellRenderer {
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-
-  /** The movie set panel. */
-  private JPanel                      movieSetPanel      = new JPanel();
-
-  /** The movie panel. */
-  private JPanel                      moviePanel         = new JPanel();
-
-  /** The movie set title. */
-  private JLabel                      movieSetTitle      = new JLabel();
-
-  /** The movie title. */
-  private JLabel                      movieTitle         = new JLabel();
-
-  /** The movie set info. */
-  private JLabel                      movieSetInfo       = new JLabel();
-
-  /** The movie set image label. */
-  private JLabel                      movieSetImageLabel = new JLabel();
-
-  /** The movie nfo label. */
-  private JLabel                      movieNfoLabel      = new JLabel();
-
-  /** The movie image label. */
-  private JLabel                      movieImageLabel    = new JLabel();
-
-  /** The default renderer. */
-  private DefaultTreeCellRenderer     defaultRenderer    = new DefaultTreeCellRenderer();
-
-  /** The Constant EVEN_ROW_COLOR. */
   private static final Color          EVEN_ROW_COLOR     = new Color(241, 245, 250);
 
-  /**
-   * Instantiates a new movie set tree cell renderer.
-   */
+  private JPanel                      movieSetPanel      = new JPanel();
+  private JPanel                      moviePanel         = new JPanel();
+  private JLabel                      movieSetTitle      = new JLabel();
+  private JLabel                      movieTitle         = new JLabel();
+  private JLabel                      movieSetInfo       = new JLabel();
+  private JLabel                      movieSetImageLabel = new JLabel();
+  private JLabel                      movieNfoLabel      = new JLabel();
+  private JLabel                      movieImageLabel    = new JLabel();
+
+  private DefaultTreeCellRenderer     defaultRenderer    = new DefaultTreeCellRenderer();
+
   public MovieSetTreeCellRenderer() {
     movieSetPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("min:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
         ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
-    movieSetTitle.setFont(new Font("Dialog", Font.BOLD, 12));
+    TmmFontHelper.changeFont(movieSetTitle, Font.BOLD);
     movieSetTitle.setHorizontalAlignment(JLabel.LEFT);
     movieSetTitle.setMinimumSize(new Dimension(0, 0));
     movieSetPanel.add(movieSetTitle, "1, 1");
 
     movieSetPanel.add(movieSetImageLabel, "4, 1, 1, 2");
 
-    movieSetInfo.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(movieSetInfo, 0.816);
     movieSetInfo.setHorizontalAlignment(JLabel.LEFT);
     movieSetInfo.setMinimumSize(new Dimension(0, 0));
     movieSetPanel.add(movieSetInfo, "1, 2");
@@ -104,11 +84,6 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
     moviePanel.add(movieImageLabel, "4, 1");
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.tree.TreeCellRenderer#getTreeCellRendererComponent(javax.swing.JTree, java.lang.Object, boolean, boolean, boolean, int, boolean)
-   */
   @Override
   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
     Component returnValue = null;
@@ -170,5 +145,4 @@ public class MovieSetTreeCellRenderer implements TreeCellRenderer {
 
     return returnValue;
   }
-
 }

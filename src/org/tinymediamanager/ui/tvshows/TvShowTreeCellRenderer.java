@@ -33,6 +33,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -77,7 +78,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
         ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px"), ColumnSpec.decode("center:20px") }, new RowSpec[] {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
-    tvShowTitle.setFont(new Font("Dialog", Font.BOLD, 12));
+    TmmFontHelper.changeFont(tvShowTitle, Font.BOLD);
     tvShowTitle.setHorizontalAlignment(JLabel.LEFT);
     tvShowTitle.setMinimumSize(new Dimension(0, 0));
     tvShowPanel.add(tvShowTitle, "1, 1");
@@ -85,7 +86,7 @@ public class TvShowTreeCellRenderer implements TreeCellRenderer {
     tvShowPanel.add(tvShowNfoLabel, "3, 1, 1, 2");
     tvShowPanel.add(tvShowImageLabel, "4, 1, 1, 2");
 
-    tvShowInfo.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(tvShowInfo, 0.816);
     tvShowInfo.setHorizontalAlignment(JLabel.LEFT);
     tvShowInfo.setMinimumSize(new Dimension(0, 0));
     tvShowPanel.add(tvShowInfo, "1, 2");

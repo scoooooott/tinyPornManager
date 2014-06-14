@@ -74,6 +74,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -188,7 +189,7 @@ public class MovieEditorDialog extends JDialog {
       panelPath.add(lblMoviePathT, "2, 2, left, top");
 
       lblMoviePath = new JLabel("");
-      lblMoviePath.setFont(new Font("Dialog", Font.BOLD, 14));
+      TmmFontHelper.changeFont(lblMoviePath, 1.166, Font.BOLD);
       panelPath.add(lblMoviePath, "5, 2, left, top");
     }
 
@@ -734,8 +735,8 @@ public class MovieEditorDialog extends JDialog {
       JPanel bottomPane = new JPanel();
       getContentPane().add(bottomPane, BorderLayout.SOUTH);
       bottomPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("371px:grow"), FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, }));
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.LINE_GAP_ROWSPEC, }));
 
       JPanel buttonPane = new JPanel();
       bottomPane.add(buttonPane, "2, 2, left, top");

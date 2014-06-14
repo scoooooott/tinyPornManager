@@ -17,7 +17,6 @@ package org.tinymediamanager.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -65,7 +64,7 @@ public class BorderCellRenderer extends DefaultTableCellRenderer {
       setValue(movie.getTitleSortable());
       if (movie.isNewlyAdded()) {
         setForeground(new Color(76, 143, 72));
-        setFont(new Font("Dialog", Font.BOLD, 11));
+        TmmFontHelper.changeFont(this, 0.916);
       }
     }
     else if (value != null) {

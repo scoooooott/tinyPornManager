@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Manuel Laggner
+ * Copyright 2012 - 2014 Manuel Laggner
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,20 +39,11 @@ import javax.swing.UIManager;
  * @author Santhosh Kumar
  */
 public class VerticalTextIcon extends JComponent implements Icon, SwingConstants {
+  private static final long serialVersionUID = -1386867808010437959L;
 
-  /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1L;
-
-  /** The fm. */
   private FontMetrics       fm;
-
-  /** The text. */
   private String            text;
-
-  /** The height. */
   private int               width, height;
-
-  /** The clockwize. */
   private boolean           clockwize;
 
   /**
@@ -64,7 +55,7 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
    *          the clockwize
    */
   public VerticalTextIcon(String text, boolean clockwize) {
-    Font font = UIManager.getFont("Label.font");
+    Font font = UIManager.getFont("Label.font").deriveFont(Font.BOLD);
     fm = getFontMetrics(font);
 
     this.text = text;
@@ -73,11 +64,6 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     this.clockwize = clockwize;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
-   */
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public void paintIcon(Component c, Graphics g, int x, int y) {
     Graphics2D g2 = (Graphics2D) g;
@@ -87,7 +73,7 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
     // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+    // g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     g.setColor(Color.black);
     if (clockwize) {
       g2.translate(x + getIconWidth(), y);
@@ -99,37 +85,27 @@ public class VerticalTextIcon extends JComponent implements Icon, SwingConstants
     }
 
     // try to paint the text via Swingutilities
+    int offset = (width - getFontMetrics(g2.getFont()).stringWidth(text)) / 2;
     try {
       Class swingUtilities2Class = Class.forName("sun.swing.SwingUtilities2");
       Class classParams[] = { JComponent.class, Graphics.class, String.class, Integer.TYPE, Integer.TYPE };
       Method m = swingUtilities2Class.getMethod("drawString", classParams);
-      Object methodParams[] = { c, g, text, Integer.valueOf(0), Integer.valueOf(fm.getLeading() + fm.getAscent()) };
+      Object methodParams[] = { c, g, text, Integer.valueOf(offset), Integer.valueOf(fm.getLeading() + fm.getAscent()) };
       m.invoke(null, methodParams);
     }
     catch (Exception ex) {
-      g.drawString(text, 0, fm.getLeading() + fm.getAscent());
+      g.drawString(text, offset, fm.getLeading() + fm.getAscent());
     }
-    // g.drawString(text, 0, fm.getLeading() + fm.getAscent());
 
     g.setColor(oldColor);
     g2.setTransform(oldTransform);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.Icon#getIconWidth()
-   */
   public int getIconWidth() {
     return height;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.Icon#getIconHeight()
-   */
   public int getIconHeight() {
     return width;
   }

@@ -257,7 +257,7 @@ public class TinyMediaManager {
     Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
     LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.country"));
     LOGGER.info("GUI language     : " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
-    LOGGER.info("Scraper language : " + Globals.settings.getMovieSettings().getScraperLanguage());
+    LOGGER.info("Scraper language : " + MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
     LOGGER.info("TV Scraper lang  : " + Globals.settings.getTvShowSettings().getScraperLanguage());
 
     // start EDT
@@ -478,16 +478,18 @@ public class TinyMediaManager {
        *          the text
        */
       private void updateProgress(Graphics2D g2, String text, int progress) {
-        // LOGGER.debug("graphics found");
         Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
         g2.setComposite(AlphaComposite.Clear);
         g2.fillRect(20, 200, 480, 305);
         g2.setPaintMode();
-        g2.setColor(Color.WHITE);
-        g2.drawString(text + "...", 20, 295);
-        g2.fillRect(20, 300, 460 * progress / 100, 10);
+
+        g2.setColor(new Color(51, 153, 255));
+        g2.fillRect(22, 272, 452 * progress / 100, 21);
+
+        g2.setColor(Color.black);
+        g2.drawString(text + "...", 23, 310);
         int l = g2.getFontMetrics().stringWidth(ReleaseInfo.getRealVersion()); // bound right
         g2.drawString(ReleaseInfo.getRealVersion(), 480 - l, 325);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
@@ -500,15 +502,36 @@ public class TinyMediaManager {
        *           the exception
        */
       private void setLookAndFeel() throws Exception {
+        // get font settings
+        String fontFamily = Globals.settings.getFontFamily();
+        try {
+          // sanity check
+          fontFamily = Font.decode(fontFamily).getFamily();
+        }
+        catch (Exception e) {
+          fontFamily = "Dialog";
+        }
+
+        int fontSize = Globals.settings.getFontSize();
+        if (fontSize < 12) {
+          fontSize = 12;
+        }
+
+        String fontString = fontFamily + " " + fontSize;
+
         // Get the native look and feel class name
         // String laf = UIManager.getSystemLookAndFeelClassName();
         Properties props = new Properties();
-        props.setProperty("controlTextFont", "Dialog 12");
-        props.setProperty("systemTextFont", "Dialog 12");
-        props.setProperty("userTextFont", "Dialog 12");
-        props.setProperty("menuTextFont", "Dialog 12");
-        props.setProperty("windowTitleFont", "Dialog bold 12");
-        props.setProperty("subTextFont", "Dialog 10");
+        props.setProperty("controlTextFont", fontString);
+        props.setProperty("systemTextFont", fontString);
+        props.setProperty("userTextFont", fontString);
+        props.setProperty("menuTextFont", fontString);
+        // props.setProperty("windowTitleFont", "Dialog bold 20");
+
+        fontSize = Math.round((float) (fontSize * 0.833));
+        fontString = fontFamily + " " + fontSize;
+
+        props.setProperty("subTextFont", fontString);
         props.setProperty("backgroundColor", "237 237 237");
         props.setProperty("menuBackgroundColor", "237 237 237");
         props.setProperty("menuColorLight", "237 237 237");
@@ -676,7 +699,7 @@ public class TinyMediaManager {
           task.run(); // blocking
         }
         else {
-          List<String> dataSources = new ArrayList<String>(Globals.settings.getMovieSettings().getMovieDataSource());
+          List<String> dataSources = new ArrayList<String>(MovieModuleManager.MOVIE_SETTINGS.getMovieDataSource());
           for (Integer i : updateMovieDs) {
             if (dataSources != null && dataSources.size() >= i - 1) {
               task = new MovieUpdateDatasourceTask(dataSources.get(i - 1));

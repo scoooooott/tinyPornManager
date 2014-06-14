@@ -66,6 +66,7 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
@@ -193,7 +194,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
           lblMovieSetName.setLineWrap(true);
           lblMovieSetName.setOpaque(false);
           lblMovieSetName.setWrapStyleWord(true);
-          lblMovieSetName.setFont(new Font("Dialog", Font.BOLD, 14));
+          TmmFontHelper.changeFont(lblMovieSetName, 1.166, Font.BOLD);
           panelSearchDetail.add(lblMovieSetName, "2, 1, 3, 1, fill, top");
         }
         {
@@ -232,7 +233,7 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
       {
         bottomPane.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("2dlu"), ColumnSpec.decode("185px"),
             FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("18px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-            ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"), FormFactory.LINE_GAP_ROWSPEC }));
+            ColumnSpec.decode("2dlu"), }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC }));
         {
           progressBar = new JProgressBar();
           bottomPane.add(progressBar, "2, 2, fill, center");

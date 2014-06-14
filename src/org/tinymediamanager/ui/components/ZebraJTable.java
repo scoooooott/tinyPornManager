@@ -18,6 +18,7 @@ package org.tinymediamanager.ui.components;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.beans.PropertyChangeEvent;
@@ -66,7 +67,8 @@ public class ZebraJTable extends JTable {
     setTableHeader(createTableHeader());
     getTableHeader().setReorderingAllowed(false);
     setOpaque(false);
-    setRowHeight(16);
+
+    setNewFontSize(getFont().getSize());
     setGridColor(TABLE_GRID_COLOR);
     setIntercellSpacing(new Dimension(0, 0));
     // turn off grid painting as we'll handle this manually in order to paint
@@ -78,6 +80,12 @@ public class ZebraJTable extends JTable {
     while (enumeration.hasMoreElements()) {
       indexedColumns.add((TableColumn) enumeration.nextElement());
     }
+  }
+
+  public void setNewFontSize(float size) {
+    setFont(getFont().deriveFont(size));
+    FontMetrics fm = getFontMetrics(getFont());
+    setRowHeight(fm.getHeight() + 4);
   }
 
   private JTableHeader createTableHeader() {

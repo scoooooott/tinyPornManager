@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -40,6 +39,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
@@ -263,7 +263,7 @@ public class FileTypesSettingsPanel extends ScrollablePanel {
     panelSortOptions.add(btnRemoveSortPrefix, "6, 4, default, bottom");
 
     JTextPane tpSortingHints = new JTextPane();
-    tpSortingHints.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(tpSortingHints, 0.833);
     tpSortingHints.setText(BUNDLE.getString("Settings.sorting.info")); //$NON-NLS-1$
     tpSortingHints.setBackground(UIManager.getColor("Panel.background"));
     panelSortOptions.add(tpSortingHints, "2, 6, 3, 1, fill, fill");

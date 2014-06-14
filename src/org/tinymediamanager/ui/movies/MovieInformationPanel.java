@@ -42,6 +42,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.Certification;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImagePanel;
@@ -199,9 +200,8 @@ public class MovieInformationPanel extends JPanel {
     panelMovieHeader.add(panelMovieTitle, BorderLayout.NORTH);
     panelMovieTitle.setLayout(new BorderLayout(0, 0));
     lblMovieName = new JLabel("");
-    // panelMovieHeader.add(lblMovieName, BorderLayout.NORTH);
+    TmmFontHelper.changeFont(lblMovieName, 1.33, Font.BOLD);
     panelMovieTitle.add(lblMovieName);
-    lblMovieName.setFont(new Font("Dialog", Font.BOLD, 16));
 
     JPanel panelRatingTagline = new JPanel();
     panelMovieHeader.add(panelRatingTagline, BorderLayout.CENTER);

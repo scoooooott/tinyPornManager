@@ -40,6 +40,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TableColumnResizer;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.MediaFilesPanel;
@@ -152,15 +153,15 @@ public class TvShowSeasonInformationPanel extends JPanel {
         RowSpec.decode("top:default:grow"), }));
 
     lblTvshowTitle = new JLabel("");
-    lblTvshowTitle.setFont(new Font("Dialog", Font.BOLD, 16));
+    TmmFontHelper.changeFont(lblTvshowTitle, 1.33, Font.BOLD);
     panelTop.add(lblTvshowTitle, "2, 1, 3, 1");
 
     lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
-    lblSeasonT.setFont(new Font("Dialog", Font.BOLD, 14));
+    TmmFontHelper.changeFont(lblSeasonT, 1.166, Font.BOLD);
     panelTop.add(lblSeasonT, "2, 3");
 
     lblSeason = new JLabel("");
-    lblSeason.setFont(new Font("Dialog", Font.BOLD, 14));
+    TmmFontHelper.changeFont(lblSeason, 1.166, Font.BOLD);
     panelTop.add(lblSeason, "4, 3");
 
     separator = new JSeparator();

@@ -41,6 +41,7 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
@@ -215,7 +216,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     lblScraperThresholdHint = new JTextPane();
     panelAutomaticScraper.add(lblScraperThresholdHint, "1, 6, 3, 1");
     lblScraperThresholdHint.setOpaque(false);
-    lblScraperThresholdHint.setFont(lblScraperThresholdHint.getFont().deriveFont(10f));
+    TmmFontHelper.changeFont(lblScraperThresholdHint, 0.833);
     lblScraperThresholdHint.setText(BUNDLE.getString("Settings.scraperTreshold.hint")); //$NON-NLS-1$
 
     initDataBindings();

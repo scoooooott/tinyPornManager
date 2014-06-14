@@ -34,6 +34,8 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 
+import org.tinymediamanager.ui.TmmFontHelper;
+
 import com.jtattoo.plaf.luna.LunaComboBoxUI;
 
 /**
@@ -85,7 +87,7 @@ public class SmallComboBox extends JComboBox {
 
       labelItem.setOpaque(false);
       labelItem.setHorizontalAlignment(JLabel.LEFT);
-      labelItem.setFont(labelItem.getFont().deriveFont(11f));
+      TmmFontHelper.changeFont(labelItem, 0.916);
 
       add(labelItem, constraints);
     }

@@ -38,6 +38,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
@@ -69,7 +70,7 @@ import com.jtattoo.plaf.AbstractLookAndFeel;
 public class MovieExtendedSearchPanel extends RoundedPanel {
   private static final long            serialVersionUID = -4170930017190753789L;
   private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());              //$NON-NLS-1$
-  private static final float           FONT_SIZE        = 11f;
+  private static final float           FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
   private static final SmallCheckBoxUI CHECKBOX_UI      = AbstractLookAndFeel.getTheme() != null ? new SmallCheckBoxUI() : null; // hint for WBPro
 
   private MovieList                    movieList        = MovieList.getInstance();

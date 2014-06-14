@@ -142,6 +142,9 @@ public class Settings extends AbstractModelObject {
   private boolean                     showNotifications           = true;
   private String                      mediaPlayer                 = "";
 
+  private int                         fontSize                    = 12;
+  private String                      fontFamily                  = "Dialog";
+
   private PropertyChangeListener      propertyChangeListener;
 
   /**
@@ -1076,5 +1079,25 @@ public class Settings extends AbstractModelObject {
 
   public String getMediaPlayer() {
     return mediaPlayer;
+  }
+
+  public void setFontSize(int newValue) {
+    int oldValue = this.fontSize;
+    this.fontSize = newValue;
+    firePropertyChange("fontSize", oldValue, newValue);
+  }
+
+  public int getFontSize() {
+    return this.fontSize;
+  }
+
+  public void setFontFamily(String newValue) {
+    String oldValue = this.fontFamily;
+    this.fontFamily = newValue;
+    firePropertyChange("fontFamily", oldValue, newValue);
+  }
+
+  public String getFontFamily() {
+    return this.fontFamily;
   }
 }

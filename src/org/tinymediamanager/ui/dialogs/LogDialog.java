@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -59,7 +60,8 @@ public class LogDialog extends JDialog implements ActionListener {
 
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, },
-            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+            new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JScrollPane scrollPane = new JScrollPane();
     getContentPane().add(scrollPane, "2, 2, fill, fill");
@@ -71,6 +73,17 @@ public class LogDialog extends JDialog implements ActionListener {
     taLogs.setLineWrap(true);
 
     taLogs.setText(TmmUILogCollector.instance.getLogOutput().getContent());
+    {
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      btnClose.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          setVisible(false);
+          dispose();
+        }
+      });
+      getContentPane().add(btnClose, "2, 4, right, default");
+    }
     timerRefresh.start();
   }
 

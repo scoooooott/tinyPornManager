@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.tvshows.settings;
 
 import java.awt.Cursor;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -39,6 +38,7 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
@@ -139,7 +139,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       panelTvShowDataSources.add(chckbxImageCache, "4, 4");
 
       lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
-      lblImageCacheHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+      TmmFontHelper.changeFont(lblImageCacheHint, 0.833);
       panelTvShowDataSources.add(lblImageCacheHint, "6, 4, 3, 1");
     }
 

@@ -42,6 +42,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.ui.ColumnLayout;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.ImageLabel.Position;
@@ -184,7 +185,7 @@ public class TvShowEpisodeInformationPanel extends JPanel {
     panelMovieTitle.setLayout(new BorderLayout(0, 0));
     lblTvShowName = new JLabel("");
     panelMovieTitle.add(lblTvShowName);
-    lblTvShowName.setFont(new Font("Dialog", Font.BOLD, 16));
+    TmmFontHelper.changeFont(lblTvShowName, 1.33, Font.BOLD);
 
     panelWatched = new JPanel();
     panelMovieTitle.add(panelWatched, BorderLayout.EAST);

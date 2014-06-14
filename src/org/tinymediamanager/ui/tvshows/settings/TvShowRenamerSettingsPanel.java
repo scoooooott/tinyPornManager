@@ -16,7 +16,6 @@
 
 package org.tinymediamanager.ui.tvshows.settings;
 
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
@@ -55,6 +54,7 @@ import org.tinymediamanager.core.tvshow.TvShowRenamer;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
@@ -196,7 +196,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     panelRenamer.add(cbSeparator, "4, 18, fill, default");
 
     lblSeparatorHint = new JLabel(BUNDLE.getString("Settings.separator.hint")); //$NON-NLS-1$
-    lblSeparatorHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(lblSeparatorHint, 0.833);
     panelRenamer.add(lblSeparatorHint, "6, 18, 3, 1, fill, default");
 
     chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
@@ -207,7 +207,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     panelRenamer.add(cbSpaceReplacement, "4, 20, fill, default");
 
     lblSpaceReplacementHint = new JLabel(BUNDLE.getString("Settings.tvshowspacereplacement.hint")); //$NON-NLS-1$
-    lblSpaceReplacementHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(lblSpaceReplacementHint, 0.833);
     panelRenamer.add(lblSpaceReplacementHint, "6, 20, 3, 1, fill, default");
 
     lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
@@ -234,7 +234,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
 
     txtpnSeasonHint = new JTextPane();
     txtpnSeasonHint.setOpaque(false);
-    txtpnSeasonHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(txtpnSeasonHint, 0.833);
     txtpnSeasonHint.setText(BUNDLE.getString("Settings.tvshowseasonhint")); //$NON-NLS-1$
     panelRenamer.add(txtpnSeasonHint, "6, 22, 3, 1, fill, fill");
 
@@ -244,7 +244,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
 
     txtpntAsciiHint = new JTextPane();
     txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
-    txtpntAsciiHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(txtpntAsciiHint, 0.833);
     txtpntAsciiHint.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtpntAsciiHint, "2, 26, 5, 1, fill, fill");
 

@@ -55,6 +55,7 @@ import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
@@ -163,7 +164,7 @@ public class MovieRenamerPreviewDialog extends JDialog {
               RowSpec.decode("6dlu"), RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
           {
             lblTitle = new JLabel("");
-            lblTitle.setFont(lblTitle.getFont().deriveFont(16f).deriveFont(Font.BOLD));
+            TmmFontHelper.changeFont(lblTitle, 1.33, Font.BOLD);
             panelDetails.add(lblTitle, "2, 2, 3, 1");
           }
           {

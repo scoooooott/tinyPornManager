@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.ui.movies.settings;
 
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
@@ -53,6 +52,7 @@ import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 
@@ -135,7 +135,7 @@ public class MovieRenamerSettingsPanel extends ScrollablePanel implements Hierar
     tfMoviePath.setColumns(10);
 
     JTextPane txtpntTitle = new JTextPane();
-    txtpntTitle.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(txtpntTitle, 0.833);
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
     txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
@@ -189,12 +189,12 @@ public class MovieRenamerSettingsPanel extends ScrollablePanel implements Hierar
 
     JTextPane txtpntAsciiHint = new JTextPane();
     txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
-    txtpntAsciiHint.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(txtpntAsciiHint, 0.833);
     txtpntAsciiHint.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtpntAsciiHint, "4, 12, 5, 1, fill, fill");
 
     JTextPane txtrChooseAFolder = new JTextPane();
-    txtrChooseAFolder.setFont(new Font("Dialog", Font.PLAIN, 10));
+    TmmFontHelper.changeFont(txtrChooseAFolder, 0.833);
     txtrChooseAFolder.setText(BUNDLE.getString("Settings.movie.renamer.example")); //$NON-NLS-1$
     txtrChooseAFolder.setBackground(UIManager.getColor("Panel.background"));
     panelRenamer.add(txtrChooseAFolder, "2, 14, 3, 1, fill, bottom");
@@ -207,7 +207,7 @@ public class MovieRenamerSettingsPanel extends ScrollablePanel implements Hierar
     panelRenamer.add(cbMovieForPreview, "4, 16, 5, 1, fill, default");
 
     lblExample = new JLabel("");
-    lblExample.setFont(lblExample.getFont().deriveFont(11f));
+    TmmFontHelper.changeFont(lblExample, 0.916);
     panelRenamer.add(lblExample, "2, 18, 9, 1");
 
     JSeparator separator = new JSeparator();

@@ -40,6 +40,7 @@ import org.imgscalr.Scalr;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -54,6 +55,7 @@ public class ImageLabel extends JLabel {
 
   private static final long                  serialVersionUID = -2524445544386464158L;
   protected static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static Font                        FONT;
 
   protected BufferedImage                    originalImage;
   protected BufferedImage                    scaledImage;
@@ -69,6 +71,17 @@ public class ImageLabel extends JLabel {
 
   protected SwingWorker<BufferedImage, Void> worker           = null;
   protected MouseListener                    lightboxListener = null;
+
+  static {
+    try {
+      JLabel fontLabel = new JLabel("");
+      TmmFontHelper.changeFont(fontLabel, 1.5);
+      FONT = fontLabel.getFont();
+    }
+    catch (Exception e) {
+      FONT = Font.getFont("Dialog").deriveFont(18f);
+    }
+  }
 
   public ImageLabel() {
     super("");
@@ -265,8 +278,7 @@ public class ImageLabel extends JLabel {
       at.rotate(this.getWidth(), -this.getHeight());
       g2.setTransform(at);
       g2.setColor(Color.BLACK);
-      Font font = new Font("Arial", Font.PLAIN, 18);
-      g2.setFont(font);
+      g2.setFont(FONT);
 
       FontMetrics fm = g2.getFontMetrics();
       int x = (diagonalSize - fm.stringWidth(text)) / 2;
