@@ -59,7 +59,7 @@ import com.jakewharton.trakt.services.ShowService;
 public class TraktTv {
 
   private static final Logger LOGGER   = LoggerFactory.getLogger(TraktTv.class);
-  private static final Trakt  trakt    = new Trakt();
+  private static final Trakt  TRAKT    = new Trakt();
   private String              userName = "";
   private String              password = "";
   private String              apiKey   = "";
@@ -80,17 +80,25 @@ public class TraktTv {
     password = passwordSha1;
     apiKey = userApiKey;
 
-    trakt.setApiKey(userApiKey);
-    trakt.setAuthentication(username, passwordSha1);
+    TRAKT.setApiKey(userApiKey);
+    TRAKT.setAuthentication(username, passwordSha1);
   }
 
   /**
-   * do we have values for user/pass/api ?!
+   * do we have values for user/pass/api and are we a donator?!
    * 
    * @return true/false if trakt could be called
    */
   private boolean isEnabled() {
-    return !userName.isEmpty() && !password.isEmpty() && !apiKey.isEmpty();
+    if (!Globals.isDonator()) {
+      LOGGER.warn("Won't spawn TRAKT.TV since you are not a donator!");
+      return false;
+    }
+    if (userName.isEmpty() || password.isEmpty() || apiKey.isEmpty()) {
+      LOGGER.warn("Can't spawn TRAKT.TV - Settings empty.");
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -99,7 +107,7 @@ public class TraktTv {
    * @return Trakt()
    */
   public final Trakt getManager() {
-    return trakt;
+    return TRAKT;
   }
 
   /**
@@ -121,7 +129,7 @@ public class TraktTv {
     // get ALL Trakt movies in collection
     List<com.jakewharton.trakt.entities.Movie> traktMovies;
     try {
-      traktMovies = trakt.userService().libraryMoviesCollection(userName, Extended.MIN);
+      traktMovies = TRAKT.userService().libraryMoviesCollection(userName, Extended.MIN);
       LOGGER.info("You have " + traktMovies.size() + " movies in your Trakt.tv collection");
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
@@ -179,7 +187,7 @@ public class TraktTv {
 
     try {
       LOGGER.info("Adding " + tmmMovies.size() + " movies to Trakt.tv collection");
-      response = trakt.movieService().library(new Movies(libMovies));
+      response = TRAKT.movieService().library(new Movies(libMovies));
       LOGGER.info("Trakt add-to-library status:");
       printStatus(response);
     }
@@ -206,7 +214,7 @@ public class TraktTv {
     // *****************************************************************************
     List<com.jakewharton.trakt.entities.Movie> traktMovies;
     try {
-      traktMovies = trakt.userService().libraryMoviesWatched(userName, Extended.MIN);
+      traktMovies = TRAKT.userService().libraryMoviesWatched(userName, Extended.MIN);
       LOGGER.info("You have " + traktMovies.size() + " movies marked as 'seen' in your Trakt.tv collection");
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
@@ -300,7 +308,7 @@ public class TraktTv {
 
     try {
       LOGGER.info("Marking " + seenMovies.size() + " movies as 'seen' to Trakt.tv collection");
-      response = trakt.movieService().seen(new Movies(seenMovies));
+      response = TRAKT.movieService().seen(new Movies(seenMovies));
       LOGGER.info("Trakt mark-as-watched status:");
       printStatus(response);
     }
@@ -391,7 +399,7 @@ public class TraktTv {
     // *****************************************************************************
     List<com.jakewharton.trakt.entities.TvShow> traktShows;
     try {
-      traktShows = trakt.userService().libraryShowsCollection(userName, Extended.MIN);
+      traktShows = TRAKT.userService().libraryShowsCollection(userName, Extended.MIN);
       LOGGER.info("You have " + traktShows.size() + " TvShows in your Trakt.tv collection");
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
@@ -455,7 +463,7 @@ public class TraktTv {
       // phew - we have now our not-yet-in-trakt array, lets do the update :)
       try {
         LOGGER.info("Adding " + traktEpList.size() + " episodes of show '" + tmmShow.title + "' to Trakt.tv collection");
-        com.jakewharton.trakt.entities.Response response = trakt.showService().episodeLibrary(traktObj);
+        com.jakewharton.trakt.entities.Response response = TRAKT.showService().episodeLibrary(traktObj);
         printStatus(response);
       }
       catch (RetrofitError e) {
@@ -484,7 +492,7 @@ public class TraktTv {
     // *****************************************************************************
     List<com.jakewharton.trakt.entities.TvShow> traktShows;
     try {
-      traktShows = trakt.userService().libraryShowsWatched(userName, Extended.MIN);
+      traktShows = TRAKT.userService().libraryShowsWatched(userName, Extended.MIN);
       LOGGER.info("You have " + traktShows.size() + " TvShows marked as 'seen' in your Trakt.tv collection");
       // Extended.DEFAULT adds url, poster, fanart, banner, genres
       // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
@@ -607,7 +615,7 @@ public class TraktTv {
       // phew - we have now our not-yet-in-trakt array, lets do the update :)
       try {
         LOGGER.info("Marking " + traktEpList.size() + " episodes of show '" + tmmShow.title + "' as 'seen' to Trakt.tv collection");
-        com.jakewharton.trakt.entities.Response response = trakt.showService().episodeSeen(traktObj);
+        com.jakewharton.trakt.entities.Response response = TRAKT.showService().episodeSeen(traktObj);
         printStatus(response);
       }
       catch (RetrofitError e) {

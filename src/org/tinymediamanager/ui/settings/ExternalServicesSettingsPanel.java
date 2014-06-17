@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.settings;
 
+import java.awt.Color;
 import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
@@ -27,6 +28,7 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ScrollablePanel;
@@ -61,7 +63,7 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
       panelTrakttv.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(125dlu;default)"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC }));
       {
         JLabel lblTraktUsername = new JLabel(BUNDLE.getString("Settings.proxyuser")); //$NON-NLS-1$
         panelTrakttv.add(lblTraktUsername, "2, 2, right, default");
@@ -88,6 +90,15 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
         tfTraktAPIKey = new JTextField();
         panelTrakttv.add(tfTraktAPIKey, "4, 6, fill, default");
         tfTraktAPIKey.setColumns(10);
+      }
+
+      if (!Globals.isDonator()) {
+        tfTraktUsername.disable();
+        tfTraktPassword.disable();
+        tfTraktAPIKey.disable();
+        JLabel lblTraktDonator = new JLabel("<html><body>" + BUNDLE.getString("tmm.donatorfunction.hint") + "</body></html>"); //$NON-NLS-1$
+        lblTraktDonator.setForeground(Color.RED);
+        panelTrakttv.add(lblTraktDonator, "2, 8, 3, 1, default, default");
       }
     }
     initDataBindings();
