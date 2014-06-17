@@ -5,9 +5,9 @@ appbase = https://myron0815.ci.cloudbees.com/job/tinymediamanager/ws/tinyMediaMa
 ui.name = tinyMediaManager
 ui.background_image = splashscreen.png
 ui.icon = tmm.png
-ui.progress = 20, 300, 460, 25
+ui.progress = 22, 272, 440, 21
 ui.progress_text = FFFFFF
-ui.status = 40, 260, 440, 30
+ui.status = 40, 272, 450, 18
 ui.status_text = FFFFFF
 ui.mac_dock_icon = ../tmm.icns
 
