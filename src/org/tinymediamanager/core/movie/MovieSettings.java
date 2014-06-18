@@ -147,6 +147,9 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       trailerColumnVisible                     = true;
   private boolean                       subtitleColumnVisible                    = true;
   private boolean                       scraperFallback                          = false;
+  private boolean                       useTrailerPreference                     = false;
+  private MovieTrailerQuality           trailerQuality                           = MovieTrailerQuality.HD_720;
+  private MovieTrailerSources           trailerSource                            = MovieTrailerSources.YOUTUBE;
 
   public MovieSettings() {
   }
@@ -711,5 +714,35 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.imageThumb;
     this.imageThumb = newValue;
     firePropertyChange("imageThumb", oldValue, newValue);
+  }
+
+  public boolean isUseTrailerPreference() {
+    return useTrailerPreference;
+  }
+
+  public void setUseTrailerPreference(boolean newValue) {
+    boolean oldValue = this.useTrailerPreference;
+    this.useTrailerPreference = newValue;
+    firePropertyChange("useTrailerPreference", oldValue, newValue);
+  }
+
+  public MovieTrailerQuality getTrailerQuality() {
+    return trailerQuality;
+  }
+
+  public void setTrailerQuality(MovieTrailerQuality newValue) {
+    MovieTrailerQuality oldValue = this.trailerQuality;
+    this.trailerQuality = newValue;
+    firePropertyChange("trailerQuality", oldValue, newValue);
+  }
+
+  public MovieTrailerSources getTrailerSource() {
+    return trailerSource;
+  }
+
+  public void setTrailerSource(MovieTrailerSources newValue) {
+    MovieTrailerSources oldValue = this.trailerSource;
+    this.trailerSource = newValue;
+    firePropertyChange("trailerSource", oldValue, newValue);
   }
 }

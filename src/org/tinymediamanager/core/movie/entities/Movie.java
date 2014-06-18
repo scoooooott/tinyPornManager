@@ -50,7 +50,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
@@ -62,6 +61,8 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
+import org.tinymediamanager.core.movie.MovieTrailerQuality;
+import org.tinymediamanager.core.movie.MovieTrailerSources;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
@@ -904,9 +905,39 @@ public class Movie extends MediaEntity {
    *          the new trailers
    */
   public void setTrailers(List<MediaTrailer> trailers) {
+    boolean preferredTrailerFound = false;
     removeAllTrailers();
+
+    // set preferred trailer
+    if (MovieModuleManager.MOVIE_SETTINGS.isUseTrailerPreference()) {
+      MovieTrailerQuality desiredQuality = MovieModuleManager.MOVIE_SETTINGS.getTrailerQuality();
+      MovieTrailerSources desiredSource = MovieModuleManager.MOVIE_SETTINGS.getTrailerSource();
+
+      // search for quality and provider
+      for (MediaTrailer trailer : trailers) {
+        if (desiredQuality.containsQuality(trailer.getQuality()) && desiredSource.containsSource(trailer.getProvider())) {
+          preferredTrailerFound = true;
+          trailer.setInNfo(Boolean.TRUE);
+          break;
+        }
+      }
+
+      // search for quality
+      if (!preferredTrailerFound) {
+        for (MediaTrailer trailer : trailers) {
+          if (desiredQuality.containsQuality(trailer.getQuality())) {
+            preferredTrailerFound = true;
+            trailer.setInNfo(Boolean.TRUE);
+            break;
+          }
+        }
+      }
+    }
+
+    // add trailers
     for (MediaTrailer trailer : trailers) {
-      if (this.trailer.size() == 0 && !trailer.getUrl().startsWith("file")) {
+      // if still no preferred trailer has been set, then mark the first one
+      if (!preferredTrailerFound && this.trailer.size() == 0 && !trailer.getUrl().startsWith("file")) {
         trailer.setInNfo(Boolean.TRUE);
       }
       addTrailer(trailer);
@@ -1315,9 +1346,7 @@ public class Movie extends MediaEntity {
    * get trailer name (w/o extension)<br>
    * &lt;moviefile&gt;-trailer.ext
    * 
-   * @param nfo
-   *          the nfo
-   * @return the nfo filename
+   * @return the trailer basename
    */
   public String getTrailerBasename() {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
