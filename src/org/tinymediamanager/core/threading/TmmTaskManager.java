@@ -175,14 +175,18 @@ public class TmmTaskManager implements TmmTaskListener {
    * cancel all open and running image downloads
    */
   public void cancelImageDownloads() {
-    imageDownloadExecutor.shutdownNow();
+    if (imageDownloadExecutor != null) {
+      imageDownloadExecutor.shutdownNow();
+    }
   }
 
   /**
    * cancel all open and running unnamed tasks
    */
   public void cancelUnnamedTasks() {
-    unnamedTaskExecutor.shutdownNow();
+    if (unnamedTaskExecutor != null) {
+      unnamedTaskExecutor.shutdownNow();
+    }
   }
 
   /**

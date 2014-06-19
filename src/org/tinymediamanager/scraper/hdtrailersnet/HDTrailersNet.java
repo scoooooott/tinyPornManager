@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.hdtrailersnet;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +66,9 @@ public class HDTrailersNet implements IMediaTrailerProvider {
       return trailers;
     }
 
+    // best guess
+    String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("--", "-").toLowerCase() + "/";
     try {
-      // best guess
-      String search = "http://www.hd-trailers.net/movie/" + ot.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("--", "-").toLowerCase() + "/";
       LOGGER.debug("Guessed HD-Trailers Url: " + search);
 
       Url url = new CachedUrl(search);
@@ -141,8 +140,11 @@ public class HDTrailersNet implements IMediaTrailerProvider {
         }
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOGGER.error("cannot parse HD-Trailers movie: " + ot, e);
+
+      // clear cache
+      CachedUrl.removeCachedFileForUrl(search);
     }
     finally {
     }

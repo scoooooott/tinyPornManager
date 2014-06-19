@@ -34,10 +34,11 @@ public class TvShowScraperTest {
 
   @Test
   public void testSearch() {
-    ITvShowMetadataProvider mp = new TheTvDbMetadataProvider();
-    MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, "Breaking Bad");
-    List<MediaSearchResult> results = null;
     try {
+      ITvShowMetadataProvider mp = new TheTvDbMetadataProvider();
+      MediaSearchOptions options = new MediaSearchOptions(MediaType.TV_SHOW, "Breaking Bad");
+      List<MediaSearchResult> results = null;
+
       results = mp.search(options);
       for (MediaSearchResult result : results) {
         System.out.println(result);
@@ -51,12 +52,12 @@ public class TvShowScraperTest {
 
   @Test
   public void testShowMetadata() {
-    ITvShowMetadataProvider mp = new TheTvDbMetadataProvider();
-    MediaScrapeOptions options = new MediaScrapeOptions();
-    options.setType(MediaType.TV_SHOW);
-    options.setId("tvdb", "81189");
-
     try {
+      ITvShowMetadataProvider mp = new TheTvDbMetadataProvider();
+      MediaScrapeOptions options = new MediaScrapeOptions();
+      options.setType(MediaType.TV_SHOW);
+      options.setId("tvdb", "81189");
+
       MediaMetadata md = mp.getTvShowMetadata(options);
       System.out.println(md);
     }

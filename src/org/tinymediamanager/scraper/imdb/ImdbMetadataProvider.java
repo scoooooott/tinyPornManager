@@ -721,6 +721,10 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
     }
     catch (Exception e) {
       LOGGER.debug("tried to fetch search response", e);
+
+      // clear Cache
+      CachedUrl.removeCachedFileForUrl(sb.toString());
+
       return result;
     }
 
@@ -1017,6 +1021,9 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
       }
       catch (Exception e) {
         LOGGER.debug("tried to fetch imdb movie page " + url, e);
+
+        // clear Cache
+        CachedUrl.removeCachedFileForUrl(url);
       }
       return doc;
     }

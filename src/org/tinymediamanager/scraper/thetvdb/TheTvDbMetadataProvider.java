@@ -48,6 +48,7 @@ import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
+import org.tinymediamanager.scraper.util.CachedUrl;
 
 import com.omertron.thetvdbapi.TheTVDBApi;
 import com.omertron.thetvdbapi.model.Actor;
@@ -67,9 +68,19 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
   private static MediaProviderInfo providerInfo = new MediaProviderInfo(Constants.TVDBID, "thetvdb.com",
                                                     "Scraper for thetvdb.com which is able to scrape tv series metadata and artwork");
 
-  public TheTvDbMetadataProvider() {
+  public TheTvDbMetadataProvider() throws Exception {
     if (tvdb == null) {
-      tvdb = new TheTVDBApi("1A4971671264D790");
+      try {
+        tvdb = new TheTVDBApi("1A4971671264D790");
+      }
+      catch (Exception e) {
+        LOGGER.error("TheTvDbMetadataProvider", e);
+
+        // remove cached request
+        clearTvdbCache();
+
+        throw e;
+      }
     }
   }
 
@@ -109,6 +120,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     List<Series> series = null;
     synchronized (tvdb) {
       series = tvdb.searchSeries(searchString, language);
+    }
+
+    if (series == null || series.isEmpty()) {
+      // maybe broken request - delete cache to be sure
+      clearTvdbCache();
     }
 
     // first add all tv shows in the preferred language
@@ -203,6 +219,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       show = tvdb.getSeries(id, options.getLanguage().name());
     }
 
+    if (show == null) {
+      // maybe broken request - delete cache to be sure
+      clearTvdbCache();
+    }
+
     // populate metadata
     md.setId(providerInfo.getId(), show.getId());
     md.storeMetadata(MediaMetadata.TITLE, show.getSeriesName());
@@ -239,6 +260,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     List<Actor> actors = new ArrayList<Actor>();
     synchronized (tvdb) {
       actors.addAll(tvdb.getActors(id));
+    }
+
+    if (actors == null || actors.isEmpty()) {
+      // maybe broken request - delete cache to be sure
+      clearTvdbCache();
     }
 
     for (Actor actor : actors) {
@@ -300,6 +326,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     synchronized (tvdb) {
       // switched to getAllEpisodes for performance - only 1 request needed for scraping multiple episodes of one tv show
       episodes.addAll(tvdb.getAllEpisodes(id, options.getLanguage().name()));
+    }
+
+    if (episodes.isEmpty()) {
+      // maybe broken request - delete cache to be sure
+      clearTvdbCache();
     }
 
     Episode episode = null;
@@ -386,6 +417,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     Banners banners = null;
     synchronized (tvdb) {
       banners = tvdb.getBanners(id);
+    }
+
+    if (banners == null || banners.getSeriesId() == 0) {
+      // maybe broken request - delete cache to be sure
+      clearTvdbCache();
     }
 
     List<Banner> bannerList = null;
@@ -506,6 +542,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       eps.addAll(tvdb.getAllEpisodes(id, options.getLanguage().name()));
     }
 
+    if (eps.isEmpty()) {
+      // maybe broken request - delete cache to be sure
+      clearTvdbCache();
+    }
+
     for (Episode ep : eps) {
       MediaEpisode episode = new MediaEpisode(providerInfo.getId());
       episode.season = ep.getSeasonNumber();
@@ -601,6 +642,10 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       g = MediaGenres.getGenre(genre);
     }
     return g;
+  }
+
+  private void clearTvdbCache() {
+    CachedUrl.cleanupCacheForSpecificHost("thetvdb.com");
   }
 
   /**********************************************************************

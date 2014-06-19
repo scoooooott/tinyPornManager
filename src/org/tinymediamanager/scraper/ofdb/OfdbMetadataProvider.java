@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.ofdb;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -162,72 +161,95 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       el = doc.getElementsByAttributeValueMatching("href", "plot\\/\\d+,");
       if (!el.isEmpty()) {
         String plotUrl = BASE_URL + "/" + el.first().attr("href");
-        url = new CachedUrl(plotUrl);
-        in = url.getInputStream();
-        Document plot = Jsoup.parse(in, "UTF-8", "");
-        in.close();
-        Elements block = plot.getElementsByClass("Blocksatz"); // first
-                                                               // Blocksatz
-                                                               // is plot
-        String p = block.first().text(); // remove all html stuff
-        p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
-        // LOGGER.info(p);
-        md.storeMetadata(MediaMetadata.PLOT, p);
-        md.storeMetadata(MediaMetadata.TAGLINE, p.length() > 150 ? p.substring(0, 150) : p);
+        try {
+          url = new CachedUrl(plotUrl);
+          in = url.getInputStream();
+          Document plot = Jsoup.parse(in, "UTF-8", "");
+          in.close();
+          Elements block = plot.getElementsByClass("Blocksatz"); // first
+                                                                 // Blocksatz
+                                                                 // is plot
+          String p = block.first().text(); // remove all html stuff
+          p = p.substring(p.indexOf("Mal gelesen") + 12); // remove "header"
+          // LOGGER.info(p);
+          md.storeMetadata(MediaMetadata.PLOT, p);
+          md.storeMetadata(MediaMetadata.TAGLINE, p.length() > 150 ? p.substring(0, 150) : p);
+        }
+        catch (Exception e) {
+          LOGGER.error("failed to get plot page: " + e.getMessage());
+
+          // clear cache
+          CachedUrl.removeCachedFileForUrl(plotUrl);
+        }
       }
 
       // http://www.ofdb.de/view.php?page=film_detail&fid=226745
       LOGGER.debug("parse actor detail");
       String movieDetail = BASE_URL + "/view.php?page=film_detail&fid=" + ofdbId;
-      url = new CachedUrl(movieDetail);
-      in = url.getInputStream();
-      doc = Jsoup.parse(in, "UTF-8", "");
-      in.close();
+      doc = null;
+      try {
+        url = new CachedUrl(movieDetail);
+        in = url.getInputStream();
+        doc = Jsoup.parse(in, "UTF-8", "");
+        in.close();
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to get detail page: " + e.getMessage());
 
-      el = doc.getElementsByAttributeValue("valign", "middle");
-      // <tr valign="middle">
-      // <td nowrap><a href="view.php?page=person&id=7689"><img
-      // src="thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6"
-      // alt="Jeremy Renner" border="0" width="36"></a>&nbsp;&nbsp;</td>
-      // <td nowrap><font face="Arial,Helvetica,sans-serif" size="2"
-      // class="Daten"><a href="view.php?page=person&id=7689"><b>Jeremy
-      // Renner</b></a></font></td>
-      // <td nowrap>&nbsp;&nbsp;</td>
-      // <td><font face="Arial,Helvetica,sans-serif" size="2" class="Normal">...
-      // Aaron Cross</font></td>
-      // </tr>
-      int i = 0;
-      for (Element a : el) {
-        String act = a.toString();
-        String aname = StrgUtils.substr(act, "<b>(.*?)</b>");
-        if (!aname.isEmpty()) {
-          MediaCastMember cm = new MediaCastMember();
-          cm.setName(aname);
-          String id = StrgUtils.substr(act, "id=(.*?)[^\"]\">");
-          if (!id.isEmpty()) {
-            cm.setId(id);
-            // thumb
-            // http://www.ofdb.de/thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6
-            // fullsize ;) http://www.ofdb.de/images/person/7/7689.jpg
-            String imgurl = URLDecoder.decode(StrgUtils.substr(act, "images%2Fperson%2F(.*?)&amp;size"), "UTF-8");
-            if (!imgurl.isEmpty()) {
-              imgurl = BASE_URL + "/images/person/" + imgurl;
+        // clear cache
+        CachedUrl.removeCachedFileForUrl(movieDetail);
+      }
+
+      if (doc != null) {
+        el = doc.getElementsByAttributeValue("valign", "middle");
+        // <tr valign="middle">
+        // <td nowrap><a href="view.php?page=person&id=7689"><img
+        // src="thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6"
+        // alt="Jeremy Renner" border="0" width="36"></a>&nbsp;&nbsp;</td>
+        // <td nowrap><font face="Arial,Helvetica,sans-serif" size="2"
+        // class="Daten"><a href="view.php?page=person&id=7689"><b>Jeremy
+        // Renner</b></a></font></td>
+        // <td nowrap>&nbsp;&nbsp;</td>
+        // <td><font face="Arial,Helvetica,sans-serif" size="2" class="Normal">...
+        // Aaron Cross</font></td>
+        // </tr>
+        int i = 0;
+        for (Element a : el) {
+          String act = a.toString();
+          String aname = StrgUtils.substr(act, "<b>(.*?)</b>");
+          if (!aname.isEmpty()) {
+            MediaCastMember cm = new MediaCastMember();
+            cm.setName(aname);
+            String id = StrgUtils.substr(act, "id=(.*?)[^\"]\">");
+            if (!id.isEmpty()) {
+              cm.setId(id);
+              // thumb
+              // http://www.ofdb.de/thumbnail.php?cover=images%2Fperson%2F7%2F7689.jpg&size=6
+              // fullsize ;) http://www.ofdb.de/images/person/7/7689.jpg
+              String imgurl = URLDecoder.decode(StrgUtils.substr(act, "images%2Fperson%2F(.*?)&amp;size"), "UTF-8");
+              if (!imgurl.isEmpty()) {
+                imgurl = BASE_URL + "/images/person/" + imgurl;
+              }
+              cm.setImageUrl(imgurl);
             }
-            cm.setImageUrl(imgurl);
+            String arole = StrgUtils.substr(act, "\\.\\.\\. (.*?)</font>");
+            cm.setCharacter(arole);
+            cm.setType(MediaCastMember.CastType.ACTOR);
+            if (i == 0) {
+              cm.setType(MediaCastMember.CastType.DIRECTOR);
+            }
+            i++;
+            md.addCastMember(cm);
           }
-          String arole = StrgUtils.substr(act, "\\.\\.\\. (.*?)</font>");
-          cm.setCharacter(arole);
-          cm.setType(MediaCastMember.CastType.ACTOR);
-          if (i == 0) {
-            cm.setType(MediaCastMember.CastType.DIRECTOR);
-          }
-          i++;
-          md.addCastMember(cm);
         }
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOGGER.error("Error parsing " + options.getResult().getUrl());
+
+      // clear cache
+      CachedUrl.removeCachedFileForUrl(options.getResult().getUrl());
+
       throw e;
     }
 
@@ -321,51 +343,75 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
      */
     // 1. search with imdbId
     if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.IMDBID)) && (filme == null || filme.isEmpty())) {
-      imdb = options.get(MediaSearchOptions.SearchParam.IMDBID);
-      searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + imdb;
-      LOGGER.debug("search with imdbId: " + imdb);
+      try {
+        imdb = options.get(MediaSearchOptions.SearchParam.IMDBID);
+        searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + imdb;
+        LOGGER.debug("search with imdbId: " + imdb);
 
-      Url url = new CachedUrl(searchString);
-      InputStream in = url.getInputStream();
-      Document doc = Jsoup.parse(in, "UTF-8", "");
-      in.close();
-      // only look for movie links
-      filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-      LOGGER.debug("found " + filme.size() + " search results");
+        Url url = new CachedUrl(searchString);
+        InputStream in = url.getInputStream();
+        Document doc = Jsoup.parse(in, "UTF-8", "");
+        in.close();
+        // only look for movie links
+        filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
+        LOGGER.debug("found " + filme.size() + " search results");
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to search for imdb Id " + imdb + ": " + e.getMessage());
+
+        // clear cache
+        CachedUrl.removeCachedFileForUrl(searchString);
+      }
     }
 
     // 2. search for search string
     if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.QUERY)) && (filme == null || filme.isEmpty())) {
-      String query = options.get(MediaSearchOptions.SearchParam.QUERY);
-      searchQuery = query;
-      query = MetadataUtil.removeNonSearchCharacters(query);
-      searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=All&SText=" + URLEncoder.encode(cleanSearch(query), "UTF-8");
-      LOGGER.debug("search for everything: " + query);
+      try {
+        String query = options.get(MediaSearchOptions.SearchParam.QUERY);
+        searchQuery = query;
+        query = MetadataUtil.removeNonSearchCharacters(query);
+        searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=All&SText=" + URLEncoder.encode(cleanSearch(query), "UTF-8");
+        LOGGER.debug("search for everything: " + query);
 
-      Url url = new CachedUrl(searchString);
-      InputStream in = url.getInputStream();
-      Document doc = Jsoup.parse(in, "UTF-8", "");
-      in.close();
-      // only look for movie links
-      filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-      LOGGER.debug("found " + filme.size() + " search results");
+        Url url = new CachedUrl(searchString);
+        InputStream in = url.getInputStream();
+        Document doc = Jsoup.parse(in, "UTF-8", "");
+        in.close();
+        // only look for movie links
+        filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
+        LOGGER.debug("found " + filme.size() + " search results");
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to search for " + searchQuery + ": " + e.getMessage());
+
+        // clear cache
+        CachedUrl.removeCachedFileForUrl(searchString);
+      }
     }
 
     // 3. search for title
     if (StringUtils.isNotEmpty(options.get(MediaSearchOptions.SearchParam.TITLE)) && (filme == null || filme.isEmpty())) {
-      String title = options.get(MediaSearchOptions.SearchParam.TITLE);
-      searchQuery = title;
-      title = MetadataUtil.removeNonSearchCharacters(title);
-      searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=Titel&SText=" + URLEncoder.encode(cleanSearch(title), "UTF-8");
-      LOGGER.debug("search with title: " + title);
+      try {
+        String title = options.get(MediaSearchOptions.SearchParam.TITLE);
+        searchQuery = title;
+        title = MetadataUtil.removeNonSearchCharacters(title);
+        searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=Titel&SText=" + URLEncoder.encode(cleanSearch(title), "UTF-8");
+        LOGGER.debug("search with title: " + title);
 
-      Url url = new CachedUrl(searchString);
-      InputStream in = url.getInputStream();
-      Document doc = Jsoup.parse(in, "UTF-8", "");
-      in.close();
-      // only look for movie links
-      filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-      LOGGER.debug("found " + filme.size() + " search results");
+        Url url = new CachedUrl(searchString);
+        InputStream in = url.getInputStream();
+        Document doc = Jsoup.parse(in, "UTF-8", "");
+        in.close();
+        // only look for movie links
+        filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
+        LOGGER.debug("found " + filme.size() + " search results");
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to search for " + searchQuery + ": " + e.getMessage());
+
+        // clear cache
+        CachedUrl.removeCachedFileForUrl(searchString);
+      }
     }
 
     if (filme == null || filme.isEmpty()) {
@@ -391,6 +437,11 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         sr.setMediaType(MediaType.MOVIE);
         sr.setUrl(BASE_URL + "/" + StrgUtils.substr(a.toString(), "href=\\\"(.*?)\\\""));
         sr.setPosterUrl(BASE_URL + "/images" + StrgUtils.substr(a.toString(), "images(.*?)\\&quot"));
+
+        // check if it has at least a title and url
+        if (StringUtils.isBlank(sr.getTitle()) || StringUtils.isBlank(sr.getUrl())) {
+          continue;
+        }
 
         // OFDB could provide linke twice - check if that has been already added
         if (foundResultUrls.contains(sr.getUrl())) {
@@ -472,9 +523,9 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
      * "http://de.clip-1.filmtrailer.com/9507_39003_a_5.webm?log_var=72|491100001-1|-" >webm</a><br>'; } }
      */
     Url url = null;
+    String searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + options.getImdbId();
     try {
       // search with IMDB
-      String searchString = BASE_URL + "/view.php?page=suchergebnis&Kat=IMDb&SText=" + options.getImdbId();
       url = new CachedUrl(searchString);
       InputStream in = url.getInputStream();
       Document doc = Jsoup.parse(in, "UTF-8", "");
@@ -523,8 +574,12 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
         }
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOGGER.error("Error parsing {}", url.toString());
+
+      // clear cache
+      CachedUrl.removeCachedFileForUrl(searchString);
+
       throw e;
     }
     return trailers;

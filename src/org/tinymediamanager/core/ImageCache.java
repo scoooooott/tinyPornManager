@@ -175,6 +175,11 @@ public class ImageCache {
    */
   public static File cacheImage(MediaFile mf) throws Exception {
     File originalFile = mf.getFile();
+
+    if (FileUtils.sizeOf(originalFile) == 0) {
+      throw new EmptyFileException(originalFile);
+    }
+
     String cacheFilename = ImageCache.getCachedFileName(originalFile.getPath());
     File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
     if (!cachedFile.exists()) {
@@ -329,6 +334,9 @@ public class ImageCache {
     try {
       MediaFile mf = new MediaFile(new File(path));
       return ImageCache.cacheImage(mf);
+    }
+    catch (EmptyFileException e) {
+      LOGGER.warn("failed to cache file (file is empty): " + path);
     }
     catch (FileNotFoundException e) {
       LOGGER.warn(e.getMessage());

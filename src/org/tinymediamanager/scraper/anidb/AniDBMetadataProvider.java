@@ -95,13 +95,24 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
       return md;
     }
 
-    // call API http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=4242
     trackConnections();
-    CachedUrl cachedUrl = new CachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
 
-    Document doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
+    // call API http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=4242
+    String url = "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id;
+    Document doc = null;
+    try {
+      CachedUrl cachedUrl = new CachedUrl(url);
 
-    if (doc.children().size() == 0) {
+      doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to get TV show metadata: " + e.getMessage());
+
+      // clear cache
+      CachedUrl.removeCachedFileForUrl(url);
+    }
+
+    if (doc == null || doc.children().size() == 0) {
       return md;
     }
 
@@ -252,11 +263,21 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
 
     trackConnections();
-    CachedUrl cachedUrl = new CachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
 
-    Document doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
+    String url = "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id;
+    Document doc = null;
+    try {
+      CachedUrl cachedUrl = new CachedUrl(url);
+      doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to get episode metadata: " + e.getMessage());
 
-    if (doc.children().size() == 0) {
+      // clear cache
+      CachedUrl.removeCachedFileForUrl(url);
+    }
+
+    if (doc == null || doc.children().size() == 0) {
       return md;
     }
 
@@ -464,11 +485,21 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
 
     trackConnections();
-    CachedUrl cachedUrl = new CachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
 
-    Document doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
+    String url = "http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id;
+    Document doc = null;
+    try {
+      CachedUrl cachedUrl = new CachedUrl(url);
+      doc = Jsoup.parse(cachedUrl.getInputStream(), "UTF-8", "", Parser.xmlParser());
+    }
+    catch (Exception e) {
+      LOGGER.error("error getting episode list: " + e.getMessage());
 
-    if (doc.children().size() == 0) {
+      // clear cache
+      CachedUrl.removeCachedFileForUrl(url);
+    }
+
+    if (doc == null || doc.children().size() == 0) {
       return episodes;
     }
 
@@ -503,8 +534,9 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     // language)
     Pattern pattern = Pattern.compile("^(?!#)(\\d+)[|](\\d)[|]([\\w-]+)[|](.+)$");
     Scanner scanner = null;
+    String url = "http://anidb.net/api/anime-titles.dat.gz";
     try {
-      CachedUrl animeList = new CachedUrl("http://anidb.net/api/anime-titles.dat.gz");
+      CachedUrl animeList = new CachedUrl(url);
       // scanner = new Scanner(new GZIPInputStream(animeList.getInputStream()));
       // DecompressingHttpClient is decompressing the gz from animedb due to wrong http-server configuration
       scanner = new Scanner(animeList.getInputStream(), "UTF-8");
@@ -531,9 +563,15 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
     catch (InterruptedException e) {
       LOGGER.warn("interrupted image download");
+
+      // clear Cache
+      CachedUrl.removeCachedFileForUrl(url);
     }
     catch (IOException e) {
       LOGGER.error("error getting AniDB index");
+
+      // clear Cache
+      CachedUrl.removeCachedFileForUrl(url);
     }
     finally {
       if (scanner != null) {

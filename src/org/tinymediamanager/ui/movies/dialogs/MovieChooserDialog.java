@@ -609,7 +609,7 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     public void done() {
       if (!cancel) {
         moviesFound.clear();
-        if (searchResult.size() == 0) {
+        if (searchResult == null || searchResult.size() == 0) {
           // display empty result
           moviesFound.add(MovieChooserModel.emptyResult);
         }

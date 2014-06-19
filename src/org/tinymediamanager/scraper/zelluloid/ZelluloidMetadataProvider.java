@@ -15,7 +15,6 @@
  */
 package org.tinymediamanager.scraper.zelluloid;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -196,101 +195,129 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
       }
 
       // details page
-      url = new CachedUrl(BASE_URL + "/filme/details.php3?id=" + id);
-      in = url.getInputStream();
-      doc = Jsoup.parse(in, PAGE_ENCODING, "");
-      in.close();
+      doc = null;
+      String detailsUrl = BASE_URL + "/filme/details.php3?id=" + id;
+      try {
+        url = new CachedUrl(detailsUrl);
+        in = url.getInputStream();
+        doc = Jsoup.parse(in, PAGE_ENCODING, "");
+        in.close();
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to get details: " + e.getMessage());
 
-      Element tab = doc.getElementById("ccdetails");
-      int header = 0;
-      String lastRole = "";
-      for (Element tr : tab.getElementsByTag("tr")) {
-        if (tr.toString().contains("dyngfx")) { // header gfx
-          if (tr.toString().contains("Besetzung")) {
-            header = 1;
-          }
-          else if (tr.toString().contains("Crew")) {
-            header = 2;
-          }
-          else if (tr.toString().contains("Produktion")) {
-            header = 3;
-          }
-          else if (tr.toString().contains("Verleih")) {
-            header = 4;
-          }
-          else if (tr.toString().contains("Alternativtitel")) {
-            header = 5;
-          }
-          continue;
-        }
-        else {
-          // no header gfx, so data
-          MediaCastMember mcm = new MediaCastMember();
-          el = tr.getElementsByTag("td");
-          if (header == 1) {
-            // actors
-            if (el.size() == 2) {
-              mcm.setCharacter(el.get(0).text());
-              mcm.setName(el.get(1).getElementsByTag("a").text());
-              mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
-              mcm.setType(MediaCastMember.CastType.ACTOR);
-              // System.out.println("Cast: " + mcm.getCharacter() + " - " +
-              // mcm.getName());
-              md.addCastMember(mcm);
-              // TODO: parse actor detail pages :/
+        // clear cache
+        CachedUrl.removeCachedFileForUrl(detailsUrl);
+      }
+
+      if (doc != null) {
+        Element tab = doc.getElementById("ccdetails");
+        int header = 0;
+        String lastRole = "";
+        for (Element tr : tab.getElementsByTag("tr")) {
+          if (tr.toString().contains("dyngfx")) { // header gfx
+            if (tr.toString().contains("Besetzung")) {
+              header = 1;
             }
-          }
-          else if (header == 2) {
-            // crew
-            if (el.size() == 2) {
-              String crewrole = el.get(0).html().trim();
-              mcm.setName(el.get(1).getElementsByTag("a").text());
-              if (crewrole.equals("&nbsp;")) {
-                mcm.setPart(lastRole);
-              }
-              else {
-                mcm.setPart(crewrole);
-                lastRole = crewrole;
-              }
-              if (crewrole.equals("Regie")) {
-                mcm.setType(MediaCastMember.CastType.DIRECTOR);
-              }
-              else if (crewrole.equals("Drehbuch")) {
-                mcm.setType(MediaCastMember.CastType.WRITER);
-              }
-              else {
-                mcm.setType(MediaCastMember.CastType.OTHER);
-              }
-              mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
-              // System.out.println("Crew: " + mcm.getPart() + " - " +
-              // mcm.getName());
-              md.addCastMember(mcm);
+            else if (tr.toString().contains("Crew")) {
+              header = 2;
             }
+            else if (tr.toString().contains("Produktion")) {
+              header = 3;
+            }
+            else if (tr.toString().contains("Verleih")) {
+              header = 4;
+            }
+            else if (tr.toString().contains("Alternativtitel")) {
+              header = 5;
+            }
+            continue;
           }
-          else if (header == 3) {
-            // production
-            md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, el.get(0).text());
+          else {
+            // no header gfx, so data
+            MediaCastMember mcm = new MediaCastMember();
+            el = tr.getElementsByTag("td");
+            if (header == 1) {
+              // actors
+              if (el.size() == 2) {
+                mcm.setCharacter(el.get(0).text());
+                mcm.setName(el.get(1).getElementsByTag("a").text());
+                mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
+                mcm.setType(MediaCastMember.CastType.ACTOR);
+                // System.out.println("Cast: " + mcm.getCharacter() + " - " +
+                // mcm.getName());
+                md.addCastMember(mcm);
+                // TODO: parse actor detail pages :/
+              }
+            }
+            else if (header == 2) {
+              // crew
+              if (el.size() == 2) {
+                String crewrole = el.get(0).html().trim();
+                mcm.setName(el.get(1).getElementsByTag("a").text());
+                if (crewrole.equals("&nbsp;")) {
+                  mcm.setPart(lastRole);
+                }
+                else {
+                  mcm.setPart(crewrole);
+                  lastRole = crewrole;
+                }
+                if (crewrole.equals("Regie")) {
+                  mcm.setType(MediaCastMember.CastType.DIRECTOR);
+                }
+                else if (crewrole.equals("Drehbuch")) {
+                  mcm.setType(MediaCastMember.CastType.WRITER);
+                }
+                else {
+                  mcm.setType(MediaCastMember.CastType.OTHER);
+                }
+                mcm.setId(StrgUtils.substr(el.get(1).getElementsByTag("a").attr("href"), "id=(\\d+)"));
+                // System.out.println("Crew: " + mcm.getPart() + " - " +
+                // mcm.getName());
+                md.addCastMember(mcm);
+              }
+            }
+            else if (header == 3) {
+              // production
+              md.storeMetadata(MediaMetadata.PRODUCTION_COMPANY, el.get(0).text());
+            }
           }
         }
       }
 
       // get links page
-      url = new CachedUrl(BASE_URL + "/filme/links.php3?id=" + id);
-      in = url.getInputStream();
-      doc = Jsoup.parse(in, PAGE_ENCODING, "");
-      in.close();
+      doc = null;
+      String linksUrl = BASE_URL + "/filme/links.php3?id=" + id;
+      try {
+        url = new CachedUrl(linksUrl);
+        in = url.getInputStream();
+        doc = Jsoup.parse(in, PAGE_ENCODING, "");
+        in.close();
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to get links page: " + e.getMessage());
 
-      el = doc.getElementsByAttributeValueContaining("href", "german.imdb.com");
-      if (el != null && el.size() > 0) {
-        String imdb = StrgUtils.substr(el.get(0).attr("href"), "(tt\\d{7})");
-        if (imdb.isEmpty()) {
-          imdb = "tt" + StrgUtils.substr(el.get(0).attr("href"), "\\?(\\d+)");
+        // clear cache
+        CachedUrl.removeCachedFileForUrl(linksUrl);
+      }
+
+      if (doc != null) {
+        el = doc.getElementsByAttributeValueContaining("href", "german.imdb.com");
+        if (el != null && el.size() > 0) {
+          String imdb = StrgUtils.substr(el.get(0).attr("href"), "(tt\\d{7})");
+          if (imdb.isEmpty()) {
+            imdb = "tt" + StrgUtils.substr(el.get(0).attr("href"), "\\?(\\d+)");
+          }
+          md.setId(MediaMetadata.IMDBID, imdb);
         }
-        md.setId(MediaMetadata.IMDBID, imdb);
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOGGER.error("Error parsing " + options.getResult().getUrl());
+
+      // clear cache
+      CachedUrl.removeCachedFileForUrl(detailurl);
+
       throw e;
     }
 
@@ -332,10 +359,23 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
 
     searchTerm = MetadataUtil.removeNonSearchCharacters(searchTerm);
 
-    Url url = new CachedUrl(searchUrl);
-    InputStream in = url.getInputStream();
-    Document doc = Jsoup.parse(in, PAGE_ENCODING, "");
-    in.close();
+    Document doc = null;
+    try {
+      Url url = new CachedUrl(searchUrl);
+      InputStream in = url.getInputStream();
+      doc = Jsoup.parse(in, PAGE_ENCODING, "");
+      in.close();
+    }
+    catch (Exception e) {
+      LOGGER.error("failed to search for " + searchTerm + ": " + e.getMessage());
+
+      // clear cache
+      CachedUrl.removeCachedFileForUrl(searchUrl);
+    }
+
+    if (doc == null) {
+      return resultList;
+    }
 
     // only look for movie links
     Elements filme = doc.getElementsByAttributeValueStarting("href", "hit.php");

@@ -47,6 +47,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.MetadataUtil;
+import org.tinymediamanager.scraper.util.CachedUrl;
 import org.tinymediamanager.thirdparty.RingBuffer;
 
 import com.omertron.themoviedbapi.MovieDbException;
@@ -73,6 +74,8 @@ import com.omertron.themoviedbapi.model.Trailer;
 public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtworkProvider, IMediaTrailerProvider {
   private static final Logger           LOGGER            = LoggerFactory.getLogger(TmdbMetadataProvider.class);
   private static final RingBuffer<Long> connectionCounter = new RingBuffer<Long>(30);
+  private static final String           apiKey            = "6247670ec93f4495a36297ff88f7cd15";
+
   private static TheMovieDbApi          tmdb;
   private static MediaProviderInfo      providerInfo      = new MediaProviderInfo(Constants.TMDBID, "themoviedb.org",
                                                               "Scraper for themoviedb.org which is able to scrape movie metadata, artwork and trailers");
@@ -81,10 +84,16 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     // create a new instance of the tmdb api
     if (tmdb == null) {
       try {
-        tmdb = new TheMovieDbApi("6247670ec93f4495a36297ff88f7cd15");
+        tmdb = new TheMovieDbApi(apiKey);
+        if (tmdb.getConfiguration() == null) {
+          throw new Exception("Invalid TMDB API key");
+        }
       }
       catch (Exception e) {
         LOGGER.error("TmdbMetadataProvider", e);
+
+        // remove cached request
+        clearTmdbCache();
         throw e;
       }
     }
@@ -149,6 +158,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         }
         catch (MovieDbException e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
+
+          // remove cached request
+          clearTmdbCache();
         }
         LOGGER.debug("found " + moviesFound.size() + " results with TMDB id");
       }
@@ -162,6 +174,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         }
         catch (MovieDbException e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
+
+          // remove cached request
+          clearTmdbCache();
         }
         LOGGER.debug("found " + moviesFound.size() + " results with IMDB id");
       }
@@ -174,6 +189,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         }
         catch (MovieDbException e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
+
+          // remove cached request
+          clearTmdbCache();
         }
         LOGGER.debug("found " + moviesFound.size() + " results with search string");
       }
@@ -187,6 +205,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         }
         catch (MovieDbException e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
+
+          // remove cached request
+          clearTmdbCache();
         }
         LOGGER.debug("found " + moviesFound.size() + " results with search string removed year");
       }
@@ -276,6 +297,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         }
         catch (MovieDbException e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
+
+          // remove cached request
+          clearTmdbCache();
         }
       }
       if (movie == null && tmdbId != 0) {
@@ -284,6 +308,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         }
         catch (MovieDbException e) {
           LOGGER.warn("problem getting data vom tmdb: " + e.getMessage());
+
+          // remove cached request
+          clearTmdbCache();
         }
       }
 
@@ -489,6 +516,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
           movie = tmdb.getMovieInfoImdb(imdbId, options.getLanguage().name());
         }
         catch (MovieDbException e) {
+
+          // remove cached request
+          clearTmdbCache();
         }
       }
       if (movie == null && tmdbId != 0) {
@@ -496,6 +526,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
           movie = tmdb.getMovieInfo(tmdbId, options.getLanguage().name());
         }
         catch (MovieDbException e) {
+
+          // remove cached request
+          clearTmdbCache();
         }
       }
     }
@@ -610,6 +643,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     }
     catch (MovieDbException e) {
       LOGGER.error(e.getMessage());
+
+      // remove cached request
+      clearTmdbCache();
     }
 
     return trailers;
@@ -624,6 +660,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
         movieInfo = tmdb.getMovieInfoImdb(imdbId, "en");
       }
       catch (MovieDbException e) {
+
+        // remove cached request
+        clearTmdbCache();
       }
     }
 
@@ -698,6 +737,9 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
       }
       catch (MovieDbException e) {
         LOGGER.warn("search movieset", e);
+
+        // remove cached request
+        clearTmdbCache();
       }
     }
 
@@ -904,6 +946,10 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
 
     currentTime = System.currentTimeMillis();
     connectionCounter.add(currentTime);
+  }
+
+  private void clearTmdbCache() {
+    CachedUrl.cleanupCacheForSpecificHost("api.themoviedb.org");
   }
 
   /*******************************************************************************************

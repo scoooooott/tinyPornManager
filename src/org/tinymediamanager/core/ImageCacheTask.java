@@ -51,6 +51,9 @@ public class ImageCacheTask implements Runnable {
       try {
         ImageCache.cacheImage(new MediaFile(fileToCache));
       }
+      catch (EmptyFileException e) {
+        LOGGER.warn("failed to cache file (file is empty): " + fileToCache.getPath());
+      }
       catch (Exception e) {
         LOGGER.warn("failed to cache file: " + fileToCache.getPath());
       }

@@ -103,7 +103,7 @@ public class CachedUrl extends Url {
    *          the url
    * @return the cached file name
    */
-  private String getCachedFileName(String url) {
+  private static String getCachedFileName(String url) {
     try {
       if (url == null)
         return null;
@@ -226,36 +226,47 @@ public class CachedUrl extends Url {
     return new File(props.getProperty("file"));
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.util.Url#getInputStream()
-   */
   @Override
   public InputStream getInputStream() throws IOException, InterruptedException {
-    URL u = getUrl();
-    return u.openStream();
+    try {
+      URL u = getUrl();
+      return u.openStream();
+    }
+    catch (IOException e) {
+      removeCachedFile();
+      throw e;
+    }
+    catch (InterruptedException e) {
+      removeCachedFile();
+      throw e;
+    }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.scraper.util.Url#getUrl()
-   */
+  @Override
   public URL getUrl() throws IOException, InterruptedException {
-    File f = getCachedFile();
-    if (!f.exists() || f.length() == 0) {
-      cache();
+    try {
+      File f = getCachedFile();
+      if (!f.exists() || f.length() == 0) {
+        cache();
+      }
+      else {
+        LOGGER.debug("Cached File exists: " + f.getAbsolutePath() + " so we'll just use it.");
+      }
+      // check if its still empty (maybe broken download)
+      if (!f.exists() || f.length() == 0) {
+        // return URI without caching
+        return new URL(url);
+      }
+      return f.toURI().toURL();
     }
-    else {
-      LOGGER.debug("Cached File exists: " + f.getAbsolutePath() + " so we'll just use it.");
+    catch (IOException e) {
+      removeCachedFile();
+      throw e;
     }
-    // check if its still empty (maybe broken download)
-    if (!f.exists() || f.length() == 0) {
-      // return URI without caching
-      return new URL(url);
+    catch (InterruptedException e) {
+      removeCachedFile();
+      throw e;
     }
-    return f.toURI().toURL();
   }
 
   /**
@@ -361,6 +372,77 @@ public class CachedUrl extends Url {
       catch (Exception e) {
         LOGGER.warn(e.getMessage());
       }
+    }
+  }
+
+  /**
+   * Clear the cache for one specific host
+   * 
+   * @param host
+   */
+  public static void cleanupCacheForSpecificHost(String host) {
+    // filter all .properties
+    FilenameFilter filter = new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        // do not start with .
+        if (name.toLowerCase().startsWith("."))
+          return false;
+
+        if (name.toLowerCase().endsWith(".properties")) {
+          return true;
+        }
+
+        return false;
+      }
+    };
+
+    File urlCacheDir = new File(CACHE_DIR);
+    if (!urlCacheDir.exists())
+      return;
+
+    File[] cachedFiles = urlCacheDir.listFiles(filter);
+
+    // check all cached files
+    for (File propFile : cachedFiles) {
+      Properties props = new Properties();
+      try {
+        PropertiesUtils.load(props, propFile);
+        if (props.containsKey("url") && props.getProperty("url").contains(host)) {
+          File f = getCachedFile(props);
+
+          // cleanup expired cache file
+          if (f.exists()) {
+            f.delete();
+            propFile.delete();
+          }
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn(e.getMessage());
+      }
+    }
+  }
+
+  /**
+   * Remove a specific URL from the cache
+   * 
+   * @param url
+   */
+  public static void removeCachedFileForUrl(String url) {
+    try {
+      String cachedFilename = getCachedFileName(url);
+      File propFile = new File(CACHE_DIR, cachedFilename + ".properties");
+      Properties props = new Properties();
+      if (propFile.exists()) {
+        PropertiesUtils.load(props, propFile);
+        File f = getCachedFile(props);
+        if (f.exists()) {
+          f.delete();
+          propFile.delete();
+        }
+      }
+    }
+    catch (Exception e) {
     }
   }
 

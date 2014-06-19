@@ -288,7 +288,12 @@ public class TvShowList extends AbstractModelObject {
       case TVDB:
       default:
         LOGGER.debug("get instance of TheTvDbMetadataProvider");
-        metadataProvider = new TheTvDbMetadataProvider();
+        try {
+          metadataProvider = new TheTvDbMetadataProvider();
+        }
+        catch (Exception e) {
+          LOGGER.warn("failed to get instance of TheTvDbMetadataProvider", e);
+        }
         break;
 
     }
