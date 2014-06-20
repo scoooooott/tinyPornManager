@@ -588,7 +588,7 @@ public class ImageChooserDialog extends JDialog {
     }
   }
 
-  private class DownloadTask extends SwingWorker<Void, Void> {
+  private class DownloadTask extends SwingWorker<Void, DownloadChunk> {
     private HashMap<String, Object>     ids;
     private List<IMediaArtworkProvider> artworkProviders;
 
@@ -691,7 +691,12 @@ public class ImageChooserDialog extends JDialog {
               url = new Url(art.getPreviewUrl());
               Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
               BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
-              addImage(bufferedImage, art);
+
+              DownloadChunk chunk = new DownloadChunk();
+              chunk.artwork = art;
+              chunk.image = bufferedImage;
+              publish(chunk);
+              // addImage(bufferedImage, art);
             }
             catch (Exception e) {
               LOGGER.error("DownloadTask", e);
@@ -708,6 +713,13 @@ public class ImageChooserDialog extends JDialog {
     }
 
     @Override
+    protected void process(List<DownloadChunk> chunks) {
+      for (DownloadChunk chunk : chunks) {
+        addImage(chunk.image, chunk.artwork);
+      }
+    };
+
+    @Override
     public void done() {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
@@ -716,6 +728,11 @@ public class ImageChooserDialog extends JDialog {
         }
       });
     }
+  }
+
+  private class DownloadChunk {
+    private BufferedImage image;
+    private MediaArtwork  artwork;
   }
 
   private class LocalFileChooseAction extends AbstractAction {
