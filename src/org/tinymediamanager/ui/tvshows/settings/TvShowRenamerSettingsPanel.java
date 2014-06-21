@@ -128,9 +128,9 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     panelRenamer.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.renamer"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
 
     add(panelRenamer, "2, 2, fill, fill");
-    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.MIN_COLSPEC,
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("min:grow"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow(3)"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+    panelRenamer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -138,7 +138,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
         FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"),
         FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), RowSpec.decode("40px"), FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     chckbxAddSeason = new JCheckBox(BUNDLE.getString("Settings.tvshowseasontofilename")); //$NON-NLS-1$
     chckbxAddSeason.addActionListener(renamerActionListener);
@@ -152,7 +152,7 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
 
     chckbxYear = new JCheckBox(BUNDLE.getString("tvshow.renamer.tvshowfolder.year")); //$NON-NLS-1$
     chckbxYear.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxYear, "6, 4, 3, 1");
+    panelRenamer.add(chckbxYear, "6, 4");
 
     separator_1 = new JSeparator();
     panelRenamer.add(separator_1, "2, 6, 7, 1");
@@ -197,18 +197,18 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
 
     lblSeparatorHint = new JLabel(BUNDLE.getString("Settings.separator.hint")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblSeparatorHint, 0.833);
-    panelRenamer.add(lblSeparatorHint, "6, 18, 3, 1, fill, default");
+    panelRenamer.add(lblSeparatorHint, "6, 18, fill, default");
 
     chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.movie.renamer.spacesubstitution")); //$NON-NLS-1$
     chckbxSpaceReplacement.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxSpaceReplacement, "2, 20");
+    panelRenamer.add(chckbxSpaceReplacement, "2, 20, fill, default");
 
     cbSpaceReplacement = new JComboBox(spaceReplacement.toArray());
     panelRenamer.add(cbSpaceReplacement, "4, 20, fill, default");
 
     lblSpaceReplacementHint = new JLabel(BUNDLE.getString("Settings.tvshowspacereplacement.hint")); //$NON-NLS-1$
     TmmFontHelper.changeFont(lblSpaceReplacementHint, 0.833);
-    panelRenamer.add(lblSpaceReplacementHint, "6, 20, 3, 1, fill, default");
+    panelRenamer.add(lblSpaceReplacementHint, "6, 20, fill, default");
 
     lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
     panelRenamer.add(lblSeasonFolderName, "2, 22, right, top");
@@ -236,17 +236,17 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     txtpnSeasonHint.setOpaque(false);
     TmmFontHelper.changeFont(txtpnSeasonHint, 0.833);
     txtpnSeasonHint.setText(BUNDLE.getString("Settings.tvshowseasonhint")); //$NON-NLS-1$
-    panelRenamer.add(txtpnSeasonHint, "6, 22, 3, 1, fill, fill");
+    panelRenamer.add(txtpnSeasonHint, "6, 22, fill, fill");
 
     chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement")); //$NON-NLS-1$
     chckbxAsciiReplacement.addActionListener(renamerActionListener);
-    panelRenamer.add(chckbxAsciiReplacement, "2, 24, 3, 1");
+    panelRenamer.add(chckbxAsciiReplacement, "2, 24, 5, 1");
 
     txtpntAsciiHint = new JTextPane();
     txtpntAsciiHint.setText(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
     TmmFontHelper.changeFont(txtpntAsciiHint, 0.833);
     txtpntAsciiHint.setBackground(UIManager.getColor("Panel.background"));
-    panelRenamer.add(txtpntAsciiHint, "2, 26, 5, 1, fill, fill");
+    panelRenamer.add(txtpntAsciiHint, "2, 26, 7, 1, fill, fill");
 
     JLabel lblExampleT = new JLabel(BUNDLE.getString("Settings.example")); //$NON-NLS-1$
     panelRenamer.add(lblExampleT, "2, 28, right, default");

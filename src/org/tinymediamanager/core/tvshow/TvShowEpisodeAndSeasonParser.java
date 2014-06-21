@@ -67,30 +67,6 @@ public class TvShowEpisodeAndSeasonParser {
                                                         Pattern.CASE_INSENSITIVE);
 
   /**
-   * The Class EpisodeMatchingResult.
-   * 
-   * @author Manuel Laggner
-   */
-  public static class EpisodeMatchingResult {
-
-    public int           season              = -1;
-    public List<Integer> episodes            = new ArrayList<Integer>();
-    public String        name                = "";
-    public Date          date                = null;
-    public boolean       stackingMarkerFound = false;
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
-  }
-
-  /**
    * Detect episode from filename.
    * 
    * @param file
@@ -366,6 +342,8 @@ public class TvShowEpisodeAndSeasonParser {
     resultFromParser = parse(stringToParse, pattern7);
     result = combineResults(result, resultFromParser);
 
+    // clean the name
+    result.name = result.name.replaceAll("^[ .\\-_]+", "").trim();
     return result;
   }
 
@@ -539,5 +517,22 @@ public class TvShowEpisodeAndSeasonParser {
     // decode the last character, which is always added
     result += decodeSingleRoman(uRoman.charAt(uRoman.length() - 1));
     return result;
+  }
+
+  /******************************************************************************************
+   * helper classes
+   ******************************************************************************************/
+  public static class EpisodeMatchingResult {
+
+    public int           season              = -1;
+    public List<Integer> episodes            = new ArrayList<Integer>();
+    public String        name                = "";
+    public Date          date                = null;
+    public boolean       stackingMarkerFound = false;
+
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
   }
 }
