@@ -42,7 +42,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -70,9 +69,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.ToggleButtonUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.WrapLayout;
@@ -88,7 +85,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class ImageChooserDialog extends JDialog {
+public class ImageChooserDialog extends TmmDialog {
   private static final long           serialVersionUID = 8193355920006275933L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
@@ -136,8 +133,7 @@ public class ImageChooserDialog extends JDialog {
    */
   public ImageChooserDialog(final HashMap<String, Object> ids, ImageType type, List<IMediaArtworkProvider> artworkProviders, ImageLabel imageLabel,
       List<String> extraThumbs, List<String> extraFanarts, MediaType mediaType) {
-    setModal(true);
-    setIconImage(MainWindow.LOGO);
+    super("", "imageChooser");
     this.imageLabel = imageLabel;
     this.type = type;
     this.mediaType = mediaType;
@@ -179,9 +175,7 @@ public class ImageChooserDialog extends JDialog {
         break;
     }
 
-    setName("imageChooser");
     setBounds(5, 5, 1000, 590);
-    TmmWindowSaver.loadSettings(this);
 
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -515,7 +509,6 @@ public class ImageChooserDialog extends JDialog {
 
       task.cancel(true);
       setVisible(false);
-      dispose();
     }
 
     /**
@@ -581,10 +574,10 @@ public class ImageChooserDialog extends JDialog {
       putValue(LARGE_ICON_KEY, IconManager.CANCEL);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       task.cancel(true);
       setVisible(false);
-      dispose();
     }
   }
 
@@ -730,6 +723,11 @@ public class ImageChooserDialog extends JDialog {
     }
   }
 
+  @Override
+  public void pack() {
+    // do not pack - it would look weird
+  }
+
   private class DownloadChunk {
     private BufferedImage image;
     private MediaArtwork  artwork;
@@ -745,6 +743,7 @@ public class ImageChooserDialog extends JDialog {
       putValue(LARGE_ICON_KEY, IconManager.FILE_OPEN);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       File file = TmmUIHelper.selectFile(BUNDLE.getString("image.choose")); //$NON-NLS-1$
       if (file != null && file.exists() && file.isFile()) {
@@ -752,7 +751,6 @@ public class ImageChooserDialog extends JDialog {
         imageLabel.setImageUrl("file:/" + fileName);
         task.cancel(true);
         setVisible(false);
-        dispose();
       }
     }
   }

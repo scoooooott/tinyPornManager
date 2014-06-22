@@ -30,7 +30,6 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -41,10 +40,9 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -56,7 +54,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowBatchEditorDialog extends JDialog {
+public class TvShowBatchEditorDialog extends TmmDialog {
   private static final long           serialVersionUID = 3527478264068979388L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -81,12 +79,9 @@ public class TvShowBatchEditorDialog extends JDialog {
    *          the episodes
    */
   public TvShowBatchEditorDialog(final List<TvShow> tvShows, final List<TvShowEpisode> episodes) {
-    setModal(true);
-    setIconImage(MainWindow.LOGO);
-    setTitle(BUNDLE.getString("tvshow.bulkedit")); //$NON-NLS-1$
-    setName("movieBatchEditor");
+    super(BUNDLE.getString("tvshow.bulkedit"), "movieBatchEditor"); //$NON-NLS-1$
     setBounds(5, 5, 350, 286);
-    TmmWindowSaver.loadSettings(this);
+
     getContentPane().setLayout(new BorderLayout(0, 0));
 
     tvShowsToEdit = tvShows;
@@ -286,7 +281,6 @@ public class TvShowBatchEditorDialog extends JDialog {
           }
 
           setVisible(false);
-          dispose();
         }
       });
       panelButtons.add(btnClose);

@@ -117,7 +117,6 @@ public class MessageDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent arg0) {
               setVisible(false);
-              dispose();
             }
           });
           panelButtons.add(btnClose);

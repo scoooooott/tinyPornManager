@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.movies.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.RuleBasedCollator;
@@ -29,7 +28,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -54,11 +52,10 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ZebraJTable;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -80,7 +77,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieRenamerPreviewDialog extends JDialog {
+public class MovieRenamerPreviewDialog extends TmmDialog {
   private static final long                                    serialVersionUID = -8162631708278089277L;
   private static final ResourceBundle                          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -103,12 +100,8 @@ public class MovieRenamerPreviewDialog extends JDialog {
   private JTable                                               tableMediaFilesOld;
 
   public MovieRenamerPreviewDialog(final List<Movie> selectedMovies) {
-    super((Frame) null, BUNDLE.getString("movie.renamerpreview"), true); //$NON-NLS-1$
-    setIconImage(MainWindow.LOGO);
-    setName("movieRenamerPreview");
+    super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview"); //$NON-NLS-1$
     setBounds(5, 5, 950, 700);
-    setLocationRelativeTo(MainWindow.getActiveInstance());
-    TmmWindowSaver.loadSettings(this);
 
     results = GlazedLists.threadSafeList(new BasicEventList<MovieRenamerPreviewContainer>());
     sortedResults = new SortedList<MovieRenamerPreviewContainer>(GlazedListsSwing.swingThreadProxyList(results), new ResultComparator());
@@ -267,7 +260,6 @@ public class MovieRenamerPreviewDialog extends JDialog {
           @Override
           public void actionPerformed(ActionEvent arg0) {
             setVisible(false);
-            dispose();
           }
         });
         panelButtons.add(btnClose);

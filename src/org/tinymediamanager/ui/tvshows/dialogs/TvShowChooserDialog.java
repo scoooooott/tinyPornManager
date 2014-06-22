@@ -28,7 +28,6 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -72,11 +71,11 @@ import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowChooserModel;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
@@ -90,7 +89,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowChooserDialog extends JDialog implements ActionListener {
+public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID      = 2371518113606870230L;
   private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
   private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowChooserDialog.class);
@@ -126,12 +125,8 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
    *          the in queue
    */
   public TvShowChooserDialog(TvShow tvShow, boolean inQueue) {
-    setTitle(BUNDLE.getString("tvshowchooser.search")); //$NON-NLS-1$
-    setName("tvShowChooser");
+    super(BUNDLE.getString("tvshowchooser.search"), "tvShowChooser"); //$NON-NLS-1$
     setBounds(5, 5, 985, 586);
-    TmmWindowSaver.loadSettings(this);
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
 
     // copy the values
     TvShowScraperMetadataConfig settings = Globals.settings.getTvShowScraperMetadataConfig();
@@ -280,7 +275,7 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
     }
     {
       JPanel panelScraperMetadataSetting = new TvShowScraperMetadataPanel(scraperMetadataConfig);
-      contentPanel.add(panelScraperMetadataSetting, "2, 9, default, fill");
+      contentPanel.add(panelScraperMetadataSetting, "2, 9, fill, fill");
     }
 
     {
@@ -421,23 +416,20 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
 
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
-          this.setVisible(false);
-          dispose();
+          setVisible(false);
         }
       }
     }
 
     // cancel
     if ("Cancel".equals(e.getActionCommand())) {
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
 
     // Abort queue
     if ("Abort".equals(e.getActionCommand())) {
       continueQueue = false;
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
 
   }
@@ -570,8 +562,6 @@ public class TvShowChooserDialog extends JDialog implements ActionListener {
    * @return true, if successful
    */
   public boolean showDialog() {
-    pack();
-    setLocationRelativeTo(MainWindow.getActiveInstance());
     setVisible(true);
     return continueQueue;
   }

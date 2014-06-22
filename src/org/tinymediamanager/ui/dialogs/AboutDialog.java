@@ -26,7 +26,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -55,7 +54,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class AboutDialog extends JDialog {
+public class AboutDialog extends TmmDialog {
   private static final long           serialVersionUID = 2298570526828925319L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(AboutDialog.class);
@@ -64,10 +63,8 @@ public class AboutDialog extends JDialog {
   private final Action                action           = new SwingAction();
 
   public AboutDialog() {
-    setTitle(BUNDLE.getString("tmm.about")); //$NON-NLS-1$
-    setName("aboutDialog");
+    super(BUNDLE.getString("tmm.about"), "aboutDialog"); //$NON-NLS-1$
     setResizable(false);
-    setModal(true);
     setBounds(100, 100, 544, 408);
     getContentPane().setLayout(new BorderLayout());
     contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -101,7 +98,7 @@ public class AboutDialog extends JDialog {
         Properties p = License.decrypt();
         // p.list(System.out);
         JLabel lblRegged = new JLabel(BUNDLE.getString("tmm.registeredto") + " " + p.getProperty("user") + " (" + p.getProperty("email") + ")"); //$NON-NLS-1$
-        TmmFontHelper.changeFont(lblRegged, 1.66, Font.BOLD);
+        TmmFontHelper.changeFont(lblRegged, 1.166, Font.BOLD);
         contentPanel.add(lblRegged, "4, 6, 3, 1, center, default");
       }
     }

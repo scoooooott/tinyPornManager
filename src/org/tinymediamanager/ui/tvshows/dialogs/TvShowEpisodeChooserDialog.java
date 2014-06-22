@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -47,9 +46,8 @@ import org.tinymediamanager.scraper.MediaEpisode;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeChooserModel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -62,7 +60,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowEpisodeChooserDialog extends JDialog implements ActionListener {
+public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListener {
   private static final long               serialVersionUID = 3317576458848699068L;
   private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                         //$NON-NLS-1$
 
@@ -74,12 +72,8 @@ public class TvShowEpisodeChooserDialog extends JDialog implements ActionListene
   private JTextArea                       taPlot;
 
   public TvShowEpisodeChooserDialog(TvShowEpisode ep, ITvShowMetadataProvider mp) {
-    setName("episodeChooser");
+    super(BUNDLE.getString("tvshowepisode.choose"), "episodeChooser"); //$NON-NLS-1$
     setBounds(5, 5, 600, 400);
-    TmmWindowSaver.loadSettings(this);
-    setModal(true);
-    setIconImage(MainWindow.LOGO);
-    setTitle(BUNDLE.getString("tvshowepisode.choose")); //$NON-NLS-1$
 
     this.episode = ep;
     this.metadataProvider = mp;
@@ -158,14 +152,12 @@ public class TvShowEpisodeChooserDialog extends JDialog implements ActionListene
         metadata = episode.getMediaEpisode();
       }
 
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
 
     // cancel
     if ("Cancel".equals(e.getActionCommand())) {
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
   }
 

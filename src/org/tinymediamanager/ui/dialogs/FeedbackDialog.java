@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,8 +45,6 @@ import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.scraper.util.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -60,7 +57,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class FeedbackDialog extends JDialog {
+public class FeedbackDialog extends TmmDialog {
   private static final long           serialVersionUID = -6659205003576096326L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(FeedbackDialog.class);
@@ -73,13 +70,8 @@ public class FeedbackDialog extends JDialog {
    * Instantiates a new feedback dialog.
    */
   public FeedbackDialog() {
-    setTitle(BUNDLE.getString("Feedback")); //$NON-NLS-1$
-    setName("feedback");
+    super(BUNDLE.getString("Feedback"), "feedback"); //$NON-NLS-1$
     setBounds(100, 100, 450, 320);
-    TmmWindowSaver.loadSettings(this);
-
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
 
     getContentPane().setLayout(
         new FormLayout(
@@ -174,7 +166,6 @@ public class FeedbackDialog extends JDialog {
 
         JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.ok")); //$NON-NLS-1$
         setVisible(false);
-        dispose();
       }
     });
     panelButtons.add(btnSend);
@@ -185,7 +176,6 @@ public class FeedbackDialog extends JDialog {
       @Override
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
-        dispose();
       }
     });
     panelButtons.add(btnCacnel);

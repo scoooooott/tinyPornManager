@@ -19,14 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -39,7 +37,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MessageSummaryDialog extends JDialog {
+public class MessageSummaryDialog extends TmmDialog {
   private static final long           serialVersionUID = -8163687483097098568L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -47,9 +45,8 @@ public class MessageSummaryDialog extends JDialog {
   private JList                       listMessages;
 
   public MessageSummaryDialog(List<String> messages) {
+    super(BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$
     setSize(765, 300);
-    setIconImage(MainWindow.LOGO);
-    setTitle(BUNDLE.getString("summarywindow.title")); //$NON-NLS-1$
 
     messageList.addAll(messages);
     getContentPane().setLayout(

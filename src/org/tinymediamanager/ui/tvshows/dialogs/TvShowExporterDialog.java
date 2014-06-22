@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -47,10 +46,9 @@ import org.tinymediamanager.core.tvshow.TvShowExporter;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -62,7 +60,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowExporterDialog extends JDialog {
+public class TvShowExporterDialog extends TmmDialog {
   private static final long           serialVersionUID = -2197076428245222349L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowExporterDialog.class);
@@ -84,12 +82,9 @@ public class TvShowExporterDialog extends JDialog {
    *          the movies to export
    */
   public TvShowExporterDialog(List<TvShow> tvShowsToExport) {
-    setTitle(BUNDLE.getString("tvshow.export")); //$NON-NLS-1$
-    setName("tvShowExporter");
+    super(BUNDLE.getString("tvshow.export"), "tvShowExporter"); //$NON-NLS-1$
     setBounds(5, 5, 600, 300);
-    TmmWindowSaver.loadSettings(this);
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
+
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
             FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
@@ -174,8 +169,7 @@ public class TvShowExporterDialog extends JDialog {
           catch (Exception e) {
             LOGGER.error("Error exporting tv shows: " + e.getMessage());
           }
-          TvShowExporterDialog.this.setVisible(false);
-          dispose();
+          setVisible(false);
         }
       }
     });
@@ -185,8 +179,7 @@ public class TvShowExporterDialog extends JDialog {
     btnCancel.setIcon(IconManager.CANCEL);
     btnCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        TvShowExporterDialog.this.setVisible(false);
-        dispose();
+        setVisible(false);
       }
     });
     panelButtons.add(btnCancel);

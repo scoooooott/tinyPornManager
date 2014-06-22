@@ -17,7 +17,6 @@ package org.tinymediamanager.ui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -26,7 +25,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -52,7 +50,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class RegisterDonatorVersionDialog extends JDialog {
+public class RegisterDonatorVersionDialog extends TmmDialog {
   private static final long           serialVersionUID = 9111695923659250520L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());    //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(RegisterDonatorVersionDialog.class);
@@ -62,7 +60,7 @@ public class RegisterDonatorVersionDialog extends JDialog {
   private JTextField                  tfEmailAddress;
 
   public RegisterDonatorVersionDialog() {
-    super((Frame) null, BUNDLE.getString("tmm.registerdonator"), true); //$NON-NLS-1$
+    super(BUNDLE.getString("tmm.registerdonator"), "registerDonator"); //$NON-NLS-1$
     setBounds(166, 5, 350, 206);
     boolean isDonator = Globals.isDonator();
     Properties props = null;
@@ -133,7 +131,7 @@ public class RegisterDonatorVersionDialog extends JDialog {
             // get encrypted string and write tmm.lic
             if (License.encrypt(p) && License.isValid()) {
               JOptionPane.showMessageDialog(RegisterDonatorVersionDialog.this, BUNDLE.getString("tmm.registerdonator.success")); //$NON-NLS-1$
-              closeDialog();
+              setVisible(false);
             }
             else {
               JOptionPane.showMessageDialog(RegisterDonatorVersionDialog.this, BUNDLE.getString("tmm.registerdonator.error")); //$NON-NLS-1$
@@ -162,17 +160,12 @@ public class RegisterDonatorVersionDialog extends JDialog {
         btnClose.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent arg0) {
-            closeDialog();
+            setVisible(false);
           }
         });
         panelButtons.add(btnClose);
       }
     }
 
-  }
-
-  private void closeDialog() {
-    setVisible(false);
-    dispose();
   }
 }

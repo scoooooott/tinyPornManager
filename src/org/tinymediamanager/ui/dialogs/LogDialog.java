@@ -20,7 +20,6 @@ import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
@@ -29,7 +28,6 @@ import javax.swing.text.Document;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUILogAppender.LogOutput;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.UTF8Control;
@@ -39,7 +37,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class LogDialog extends JDialog implements ActionListener {
+public class LogDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID = -5054005564554148578L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(LogDialog.class);
@@ -51,8 +49,7 @@ public class LogDialog extends JDialog implements ActionListener {
   private final Timer                 timerRefresh;
 
   public LogDialog() {
-    setIconImage(MainWindow.LOGO);
-    setTitle(BUNDLE.getString("logwindow.title")); //$NON-NLS-1$
+    super(BUNDLE.getString("logwindow.title"), "log"); //$NON-NLS-1$
     setSize(600, 250);
 
     timerRefresh = new Timer(REFRESH_PERIOD, this);
@@ -79,7 +76,6 @@ public class LogDialog extends JDialog implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent arg0) {
           setVisible(false);
-          dispose();
         }
       });
       getContentPane().add(btnClose, "2, 4, right, default");

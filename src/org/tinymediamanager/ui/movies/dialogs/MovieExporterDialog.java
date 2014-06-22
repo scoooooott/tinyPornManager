@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -47,10 +46,9 @@ import org.tinymediamanager.core.movie.MovieExporter;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -62,7 +60,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieExporterDialog extends JDialog {
+public class MovieExporterDialog extends TmmDialog {
 
   private static final long           serialVersionUID = 4085262825778794266L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
@@ -85,12 +83,9 @@ public class MovieExporterDialog extends JDialog {
    *          the movies to export
    */
   public MovieExporterDialog(List<Movie> moviesToExport) {
-    setTitle(BUNDLE.getString("movie.export")); //$NON-NLS-1$
-    setName("movieExporter");
+    super(BUNDLE.getString("movie.export"), "movieExporter"); //$NON-NLS-1$
     setBounds(5, 5, 600, 300);
-    TmmWindowSaver.loadSettings(this);
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
+
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
             FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
@@ -175,8 +170,7 @@ public class MovieExporterDialog extends JDialog {
           catch (Exception e) {
             LOGGER.error("Error exporting movies: " + e.getMessage());
           }
-          MovieExporterDialog.this.setVisible(false);
-          dispose();
+          setVisible(false);
         }
       }
     });
@@ -186,8 +180,7 @@ public class MovieExporterDialog extends JDialog {
     btnCancel.setIcon(IconManager.CANCEL);
     btnCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
-        MovieExporterDialog.this.setVisible(false);
-        dispose();
+        setVisible(false);
       }
     });
     panelButtons.add(btnCancel);

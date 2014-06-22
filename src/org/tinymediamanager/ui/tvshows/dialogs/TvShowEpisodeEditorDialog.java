@@ -18,7 +18,6 @@ package org.tinymediamanager.ui.tvshows.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +36,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -75,12 +73,11 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -92,7 +89,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener {
+public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListener {
 
   private static final long                                     serialVersionUID = 7702248909791283043L;
   private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
@@ -133,11 +130,8 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
    *          the in queue
    */
   public TvShowEpisodeEditorDialog(TvShowEpisode episode, boolean inQueue) {
-    super((Frame) null, BUNDLE.getString("tvshowepisode.scrape"), true); //$NON-NLS-1$
-    setName("tvShowEpisodeScraper");
-    TmmWindowSaver.loadSettings(this);
+    super(BUNDLE.getString("tvshowepisode.scrape"), "tvShowEpisodeScraper"); //$NON-NLS-1$
     setBounds(5, 5, 964, 632);
-    setIconImage(MainWindow.LOGO);
 
     this.episodeToEdit = episode;
     getContentPane().setLayout(new BorderLayout());
@@ -407,7 +401,6 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
    * @return true, if successful
    */
   public boolean showDialog() {
-    setLocationRelativeTo(MainWindow.getActiveInstance());
     setVisible(true);
     return continueQueue;
   }
@@ -450,21 +443,18 @@ public class TvShowEpisodeEditorDialog extends JDialog implements ActionListener
       episodeToEdit.writeNFO();
       episodeToEdit.saveToDb();
 
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
 
     // cancel
     if ("Cancel".equals(e.getActionCommand())) {
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
 
     // Abort queue
     if ("Abort".equals(e.getActionCommand())) {
       continueQueue = false;
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
 
     // scrape

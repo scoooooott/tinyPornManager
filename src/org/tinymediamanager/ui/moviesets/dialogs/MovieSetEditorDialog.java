@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -63,11 +62,11 @@ import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -79,7 +78,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieSetEditorDialog extends JDialog {
+public class MovieSetEditorDialog extends TmmDialog {
   private static final long           serialVersionUID    = -4446433759280691976L;
   private static final Logger         LOGGER              = LoggerFactory.getLogger(MovieSetEditorDialog.class);
   private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
@@ -119,12 +118,8 @@ public class MovieSetEditorDialog extends JDialog {
    *          the in queue
    */
   public MovieSetEditorDialog(MovieSet movieSet, boolean inQueue) {
-    setModal(true);
-    setIconImage(MainWindow.LOGO);
-    setTitle(BUNDLE.getString("movieset.edit")); //$NON-NLS-1$
-    setName("movieSetEditor");
+    super(BUNDLE.getString("movieset.edit"), "movieSetEditor"); //$NON-NLS-1$
     setBounds(5, 5, 800, 500);
-    TmmWindowSaver.loadSettings(this);
 
     movieSetToEdit = movieSet;
     try {
@@ -513,7 +508,6 @@ public class MovieSetEditorDialog extends JDialog {
       movieSetToEdit.saveToDb();
 
       setVisible(false);
-      dispose();
     }
   }
 
@@ -530,7 +524,6 @@ public class MovieSetEditorDialog extends JDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
-      dispose();
     }
   }
 
@@ -548,7 +541,6 @@ public class MovieSetEditorDialog extends JDialog {
     public void actionPerformed(ActionEvent e) {
       continueQueue = false;
       setVisible(false);
-      dispose();
     }
   }
 
@@ -613,8 +605,12 @@ public class MovieSetEditorDialog extends JDialog {
    * @return true, if successful
    */
   public boolean showDialog() {
-    setLocationRelativeTo(MainWindow.getActiveInstance());
     setVisible(true);
     return continueQueue;
+  }
+
+  @Override
+  public void pack() {
+    // do not let it pack - it looks weird
   }
 }

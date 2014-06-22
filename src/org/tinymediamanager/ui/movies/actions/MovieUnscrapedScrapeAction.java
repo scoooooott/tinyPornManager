@@ -67,7 +67,6 @@ public class MovieUnscrapedScrapeAction extends AbstractAction {
           JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$
         }
       }
-      dialog.dispose();
     }
   }
 }

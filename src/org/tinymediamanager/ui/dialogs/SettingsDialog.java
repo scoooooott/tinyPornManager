@@ -38,7 +38,7 @@ import org.tinymediamanager.ui.settings.SettingsPanel;
  * 
  * @author Manuel Laggner
  */
-public class SettingsDialog extends JDialog {
+public class SettingsDialog extends TmmDialog {
   private static final long           serialVersionUID = 2435834806519338339L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static JDialog              instance;
@@ -56,8 +56,8 @@ public class SettingsDialog extends JDialog {
   }
 
   private SettingsDialog() {
-    super(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.settings"), true); //$NON-NLS-1$
-    setIconImage(MainWindow.LOGO);
+    super(BUNDLE.getString("tmm.settings"), "settings"); //$NON-NLS-1$
+
     Rectangle bounds = MainWindow.getActiveInstance().getBounds();
     setBounds(bounds.x + (bounds.width / 20), bounds.y + (bounds.height / 20), (int) (bounds.width * 0.90), (int) (bounds.height * 0.90));
 
@@ -91,8 +91,15 @@ public class SettingsDialog extends JDialog {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      Globals.settings.saveSettings();
       setVisible(false);
     }
+  }
+
+  @Override
+  public void setVisible(boolean visible) {
+    if (!visible) {
+      Globals.settings.saveSettings();
+    }
+    super.setVisible(visible);
   }
 }

@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -41,9 +40,8 @@ import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieTrailerScrapers;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -56,7 +54,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieScrapeMetadataDialog extends JDialog {
+public class MovieScrapeMetadataDialog extends TmmDialog {
   private static final long           serialVersionUID           = 3826984454317979241L;
   private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -76,13 +74,9 @@ public class MovieScrapeMetadataDialog extends JDialog {
    *          the title
    */
   public MovieScrapeMetadataDialog(String title) {
-    setTitle(title);
-    setName("updateMetadata");
+    super(title, "updateMetadata");
     setBounds(5, 5, 550, 280);
     setMinimumSize(new Dimension(getWidth(), getHeight()));
-    TmmWindowSaver.loadSettings(this);
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
 
     // copy the values
     MovieScraperMetadataConfig settings = Globals.settings.getMovieScraperMetadataConfig();

@@ -23,14 +23,12 @@ import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
@@ -45,14 +43,13 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class WhatsNewDialog extends JDialog {
+public class WhatsNewDialog extends TmmDialog {
   private static final long           serialVersionUID = -4071143363981892283L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public WhatsNewDialog(String changelog) {
+    super(BUNDLE.getString("whatsnew.title"), "whatsnew"); //$NON-NLS-1$
     setSize(500, 250);
-    setIconImage(MainWindow.LOGO);
-    setTitle(BUNDLE.getString("whatsnew.title")); //$NON-NLS-1$
     {
       JScrollPane scrollPane = new JScrollPane();
       getContentPane().add(scrollPane, BorderLayout.CENTER);
@@ -92,8 +89,7 @@ public class WhatsNewDialog extends JDialog {
       btnClose.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-          WhatsNewDialog.this.setVisible(false);
-          WhatsNewDialog.this.dispose();
+          setVisible(false);
         }
       });
       panel.add(btnClose, "8, 2");

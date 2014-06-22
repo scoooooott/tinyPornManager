@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -38,9 +37,8 @@ import org.tinymediamanager.core.tvshow.TvShowScrapers;
 import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.TvShowScraperMetadataPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -53,7 +51,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class TvShowScrapeMetadataDialog extends JDialog {
+public class TvShowScrapeMetadataDialog extends TmmDialog {
   private static final long            serialVersionUID            = 6120530120703772160L;
   private static final ResourceBundle  BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -72,12 +70,8 @@ public class TvShowScrapeMetadataDialog extends JDialog {
    *          the title
    */
   public TvShowScrapeMetadataDialog(String title) {
-    setTitle(title);
-    setName("updateMetadata");
+    super(title, "updateMetadata");
     setBounds(5, 5, 533, 257);
-    TmmWindowSaver.loadSettings(this);
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
 
     // copy the values
     TvShowScraperMetadataConfig settings = Globals.settings.getTvShowScraperMetadataConfig();

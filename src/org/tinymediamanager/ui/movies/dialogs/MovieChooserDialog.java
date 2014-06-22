@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -75,11 +74,11 @@ import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
 import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.movies.MovieChooserModel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
@@ -93,7 +92,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieChooserDialog extends JDialog implements ActionListener {
+public class MovieChooserDialog extends TmmDialog implements ActionListener {
   private static final long                                                 serialVersionUID      = -3104541519073924724L;
   private static final ResourceBundle                                       BUNDLE                = ResourceBundle.getBundle(
                                                                                                       "messages", new UTF8Control());                     //$NON-NLS-1$
@@ -142,12 +141,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
    *          the in queue
    */
   public MovieChooserDialog(Movie movie, boolean inQueue) {
-    setTitle(BUNDLE.getString("moviechooser.search")); //$NON-NLS-1$
-    setName("movieChooser");
+    super(BUNDLE.getString("moviechooser.search"), "movieChooser"); //$NON-NLS-1$
     setBounds(5, 5, 960, 642);
-    TmmWindowSaver.loadSettings(this);
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
 
     // copy the values
     MovieScraperMetadataConfig settings = Globals.settings.getMovieScraperMetadataConfig();
@@ -367,11 +362,6 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-   */
   @Override
   public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
@@ -458,23 +448,20 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
 
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
-          this.setVisible(false);
-          dispose();
+          setVisible(false);
         }
       }
     }
 
     // cancel
     if ("Cancel".equals(e.getActionCommand())) {
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
 
     // Abort queue
     if ("Abort".equals(e.getActionCommand())) {
       continueQueue = false;
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
 
   }
@@ -509,9 +496,6 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
     });
   }
 
-  /**
-   * Inits the data bindings.
-   */
   protected void initDataBindings() {
     jTableBinding = SwingBindings.createJTableBinding(UpdateStrategy.READ, moviesFound, table);
     //
@@ -547,8 +531,8 @@ public class MovieChooserDialog extends JDialog implements ActionListener {
    * @return true, if successful
    */
   public boolean showDialog() {
-    pack();
-    setLocationRelativeTo(MainWindow.getActiveInstance());
+    // pack();
+    // setLocationRelativeTo(MainWindow.getActiveInstance());
     setVisible(true);
     return continueQueue;
   }

@@ -32,7 +32,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -57,8 +56,6 @@ import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.scraper.util.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -71,7 +68,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class BugReportDialog extends JDialog {
+public class BugReportDialog extends TmmDialog {
   private static final long           serialVersionUID = 1992385114573899815L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
@@ -86,13 +83,8 @@ public class BugReportDialog extends JDialog {
    * Instantiates a new feedback dialog.
    */
   public BugReportDialog() {
-    setTitle(BUNDLE.getString("BugReport")); //$NON-NLS-1$
-    setName("bugReport");
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
-
+    super(BUNDLE.getString("BugReport"), "bugReport"); //$NON-NLS-1$
     setBounds(100, 100, 532, 453);
-    TmmWindowSaver.loadSettings(this);
 
     getContentPane().setLayout(
         new FormLayout(
@@ -287,7 +279,6 @@ public class BugReportDialog extends JDialog {
 
         JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.ok")); //$NON-NLS-1$
         setVisible(false);
-        dispose();
       }
     });
     panelButtons.add(btnSend);
@@ -298,7 +289,6 @@ public class BugReportDialog extends JDialog {
       @Override
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
-        dispose();
       }
     });
     panelButtons.add(btnCacnel);

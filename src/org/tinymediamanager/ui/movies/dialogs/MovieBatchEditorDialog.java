@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -38,10 +37,9 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -53,7 +51,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class MovieBatchEditorDialog extends JDialog {
+public class MovieBatchEditorDialog extends TmmDialog {
   private static final long           serialVersionUID = -8515248604267310279L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -73,12 +71,8 @@ public class MovieBatchEditorDialog extends JDialog {
    *          the movies
    */
   public MovieBatchEditorDialog(final List<Movie> movies) {
-    setModal(true);
-    setIconImage(MainWindow.LOGO);
-    setTitle(BUNDLE.getString("movie.edit")); //$NON-NLS-1$
-    setName("movieBatchEditor");
+    super(BUNDLE.getString("movie.edit"), "movieBatchEditor"); //$NON-NLS-1$
     setBounds(5, 5, 350, 230);
-    TmmWindowSaver.loadSettings(this);
     getContentPane().setLayout(new BorderLayout(0, 0));
 
     {
@@ -272,7 +266,6 @@ public class MovieBatchEditorDialog extends JDialog {
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
           }
           setVisible(false);
-          dispose();
         }
       });
       panelButtons.add(btnClose);

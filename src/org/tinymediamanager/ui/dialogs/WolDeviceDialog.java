@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -32,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.WolDevice;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -45,7 +43,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * 
  * @author Manuel Laggner
  */
-public class WolDeviceDialog extends JDialog {
+public class WolDeviceDialog extends TmmDialog {
   private static final long           serialVersionUID = -8293021735704401080L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
@@ -60,12 +58,8 @@ public class WolDeviceDialog extends JDialog {
    * constructor for creating a device
    */
   public WolDeviceDialog() {
-    setTitle(BUNDLE.getString("tmm.wakeonlandevice")); //$NON-NLS-1$
-    setName("wolDialog");
+    super(BUNDLE.getString("tmm.wakeonlandevice"), "wolDialog"); //$NON-NLS-1$
     setResizable(false);
-    setModal(true);
-
-    TmmWindowSaver.loadSettings(this);
 
     getContentPane().setLayout(
         new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
@@ -138,7 +132,6 @@ public class WolDeviceDialog extends JDialog {
       device.setMacAddress(tfMacAddress.getText());
 
       setVisible(false);
-      dispose();
     }
   }
 
@@ -154,7 +147,6 @@ public class WolDeviceDialog extends JDialog {
     @Override
     public void actionPerformed(ActionEvent e) {
       setVisible(false);
-      dispose();
     }
   }
 }

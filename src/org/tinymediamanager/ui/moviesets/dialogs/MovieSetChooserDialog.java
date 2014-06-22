@@ -28,7 +28,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -65,11 +64,10 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.TmmWindowSaver;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel;
 import org.tinymediamanager.ui.moviesets.MovieSetChooserModel.MovieInSet;
 
@@ -84,7 +82,7 @@ import com.omertron.themoviedbapi.model.Collection;
  * 
  * @author Manuel Laggner
  */
-public class MovieSetChooserDialog extends JDialog implements ActionListener {
+public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
 
   private static final long           serialVersionUID = -1023959850452480592L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                    //$NON-NLS-1$
@@ -112,12 +110,8 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
    *          the movie set
    */
   public MovieSetChooserDialog(MovieSet movieSet, boolean inQueue) {
-    setTitle(BUNDLE.getString("movieset.search")); //$NON-NLS-1$
-    setName("movieSetChooser");
+    super(BUNDLE.getString("movieset.search"), "movieSetChooser"); //$NON-NLS-1$
     setBounds(5, 5, 865, 578);
-    TmmWindowSaver.loadSettings(this);
-    setIconImage(MainWindow.LOGO);
-    setModal(true);
 
     movieSetToScrape = movieSet;
 
@@ -354,7 +348,6 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
     if ("Cancel".equals(arg0.getActionCommand())) {
       // cancel
       setVisible(false);
-      dispose();
     }
 
     if ("Save".equals(arg0.getActionCommand())) {
@@ -407,15 +400,13 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
 
         }
         setVisible(false);
-        dispose();
       }
     }
 
     // Abort queue
     if ("Abort".equals(arg0.getActionCommand())) {
       continueQueue = false;
-      this.setVisible(false);
-      dispose();
+      setVisible(false);
     }
   }
 
@@ -509,9 +500,12 @@ public class MovieSetChooserDialog extends JDialog implements ActionListener {
    * @return true, if successful
    */
   public boolean showDialog() {
-    // pack();
-    setLocationRelativeTo(MainWindow.getActiveInstance());
     setVisible(true);
     return continueQueue;
+  }
+
+  @Override
+  public void pack() {
+    // do not let it pack - it looks weird
   }
 }
