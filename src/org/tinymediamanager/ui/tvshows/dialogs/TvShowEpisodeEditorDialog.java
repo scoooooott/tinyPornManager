@@ -554,6 +554,11 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     jListBinding.unbind();
   }
 
+  @Override
+  public void pack() {
+    // do not let it pack - it looks weird
+  }
+
   private class AddTagAction extends AbstractAction {
     private static final long serialVersionUID = 5968029647764173330L;
 
