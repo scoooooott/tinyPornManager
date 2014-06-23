@@ -1980,7 +1980,7 @@ public class Movie extends MediaEntity {
       }
     }
     catch (IOException e) {
-      // TODO:
+      LOGGER.warn("could not delete media file: " + e.getMessage());
     }
   }
 
@@ -1988,7 +1988,7 @@ public class Movie extends MediaEntity {
    * <b>PHYSICALLY</b> deletes a complete Movie by moving it to datasource backup folder<br>
    * DS\.backup\&lt;moviename&gt;
    */
-  public void deleteSafely() {
+  public boolean deleteFilesSafely() {
     String fn = getPath();
     // inject backup path
     fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".deletedByTMM");
@@ -2003,14 +2003,11 @@ public class Movie extends MediaEntity {
     try {
       // overwrite backup file by deletion prior
       FileUtils.deleteQuietly(backup);
-      boolean ok = Utils.moveDirectorySafe(new File(getPath()), backup);
-      if (ok) {
-        removeFromMovieSet();
-        deleteFromDb();
-      }
+      return Utils.moveDirectorySafe(new File(getPath()), backup);
     }
     catch (IOException e) {
-      // TODO:
+      LOGGER.warn("could not delete movie files: " + e.getMessage());
+      return false;
     }
   }
 }

@@ -204,29 +204,6 @@ public class MovieList extends AbstractModelObject {
     return newMovies;
   }
 
-  // /**
-  // * Removes the movie.
-  // *
-  // * @param movie
-  // * the movie
-  // */
-  // public void removeMovie(Movie movie) {
-  // int oldValue = movieList.size();
-  // movieList.remove(movie);
-  //
-  // // remove movie also from moviesets
-  // if (movie.getMovieSet() != null) {
-  // movie.getMovieSet().removeMovie(movie);
-  // movie.setMovieSet(null);
-  // }
-  //
-  // Globals.entityManager.getTransaction().begin();
-  // Globals.entityManager.remove(movie);
-  // Globals.entityManager.getTransaction().commit();
-  // firePropertyChange("movies", null, movieList);
-  // firePropertyChange("movieCount", oldValue, movieList.size());
-  // }
-
   /**
    * remove given movies from the database
    * 
@@ -249,6 +226,52 @@ public class MovieList extends AbstractModelObject {
     // remove in inverse order => performance
     for (int i = movies.size() - 1; i >= 0; i--) {
       Movie movie = movies.get(i);
+      movieList.remove(movie);
+      if (movie.getMovieSet() != null) {
+        MovieSet movieSet = movie.getMovieSet();
+        movieSet.removeMovie(movie);
+        modifiedMovieSets.add(movieSet);
+        movie.setMovieSet(null);
+      }
+      MovieModuleManager.getInstance().getEntityManager().remove(movie);
+    }
+
+    if (newTransaction) {
+      MovieModuleManager.getInstance().getEntityManager().getTransaction().commit();
+    }
+
+    // and now check if any of the modified moviesets are worth for deleting
+    for (MovieSet movieSet : modifiedMovieSets) {
+      removeMovieSet(movieSet);
+    }
+
+    firePropertyChange("movies", null, movieList);
+    firePropertyChange("movieCount", oldValue, movieList.size());
+  }
+
+  /**
+   * delete the given movies from the database and physically
+   * 
+   * @param movies
+   *          list of movies to delete
+   */
+  public void deleteMovies(List<Movie> movies) {
+    if (movies == null || movies.size() == 0) {
+      return;
+    }
+    Set<MovieSet> modifiedMovieSets = new HashSet<MovieSet>();
+    int oldValue = movieList.size();
+
+    boolean newTransaction = false;
+    if (!MovieModuleManager.getInstance().getEntityManager().getTransaction().isActive()) {
+      MovieModuleManager.getInstance().getEntityManager().getTransaction().begin();
+      newTransaction = true;
+    }
+
+    // remove in inverse order => performance
+    for (int i = movies.size() - 1; i >= 0; i--) {
+      Movie movie = movies.get(i);
+      movie.deleteFilesSafely();
       movieList.remove(movie);
       if (movie.getMovieSet() != null) {
         MovieSet movieSet = movie.getMovieSet();

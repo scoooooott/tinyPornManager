@@ -541,7 +541,8 @@ public class TvShowPanel extends JPanel {
     menuItem.setMnemonic(KeyEvent.VK_C);
 
     menu.addSeparator();
-    menu.add(actionRemove2);
+    menuItem = menu.add(actionRemove2);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();

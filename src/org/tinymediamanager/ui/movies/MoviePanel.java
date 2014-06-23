@@ -74,6 +74,7 @@ import org.tinymediamanager.ui.components.ZebraJTable;
 import org.tinymediamanager.ui.movies.actions.MovieAssignMovieSetAction;
 import org.tinymediamanager.ui.movies.actions.MovieBatchEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieClearImageCacheAction;
+import org.tinymediamanager.ui.movies.actions.MovieDeleteAction;
 import org.tinymediamanager.ui.movies.actions.MovieEditAction;
 import org.tinymediamanager.ui.movies.actions.MovieExportAction;
 import org.tinymediamanager.ui.movies.actions.MovieFindMissingAction;
@@ -165,6 +166,7 @@ public class MoviePanel extends JPanel {
 
   /** The action remove2. */
   private final Action                  actionRemove2                = new MovieRemoveAction();
+  private final Action                  actionDelete2                = new MovieDeleteAction();
 
   /** The action export. */
   private final Action                  actionExport                 = new MovieExportAction();
@@ -538,6 +540,10 @@ public class MoviePanel extends JPanel {
     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menu.add(actionRemove2);
     menuItem.setMnemonic(KeyEvent.VK_R);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
+    menuItem = menu.add(actionDelete2);
+    menuItem.setMnemonic(KeyEvent.VK_R);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ActionEvent.SHIFT_MASK));
     menu.addSeparator();
     menuItem = menu.add(actionClearImageCache);
     menuItem.setMnemonic(KeyEvent.VK_C);
@@ -561,6 +567,7 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionClearImageCache);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
+    popupMenu.add(actionDelete2);
 
     MouseListener mouseListener = new MovieTableMouseListener(popupMenu, table);
     table.addMouseListener(mouseListener);
