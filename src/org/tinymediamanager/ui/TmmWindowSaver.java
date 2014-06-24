@@ -20,33 +20,57 @@ import java.awt.Rectangle;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.WindowConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.ui.movies.MoviePanel;
 
 /**
- * The Class TmmWindowSaver.
+ * The Class TmmWindowSaver. To save window/dialog settings (like size/position)
  * 
  * @author Manuel Laggner
  */
 public class TmmWindowSaver implements AWTEventListener {
+  private final static Logger   LOGGER          = LoggerFactory.getLogger(MainWindow.class);
+  private final static String   PROPERTIES_FILE = "tmm_ui.prop";
   private static TmmWindowSaver instance;
 
-  /**
-   * Instantiates a new tmm window saver.
-   */
+  private Properties            properties;
+
   private TmmWindowSaver() {
+    properties = new Properties();
+
+    InputStream input = null;
+    try {
+      input = new FileInputStream(PROPERTIES_FILE);
+      properties.load(input);
+    }
+    catch (FileNotFoundException e) {
+    }
+    catch (Exception e) {
+      LOGGER.warn("unable to read window config: " + e.getMessage());
+    }
+    finally {
+      if (input != null) {
+        try {
+          input.close();
+        }
+        catch (IOException e) {
+        }
+      }
+    }
   }
 
-  /**
-   * Gets the single instance of TmmWindowSaver.
-   * 
-   * @return single instance of TmmWindowSaver
-   */
   public static TmmWindowSaver getInstance() {
     if (instance == null) {
       instance = new TmmWindowSaver();
@@ -54,36 +78,29 @@ public class TmmWindowSaver implements AWTEventListener {
     return instance;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.AWTEventListener#eventDispatched(java.awt.AWTEvent)
-   */
+  private void writeProperties() {
+    OutputStream output = null;
+    try {
+      output = new FileOutputStream(PROPERTIES_FILE);
+      properties.store(output, null);
+    }
+    catch (IOException e) {
+      LOGGER.warn("failed to store window config: " + e.getMessage());
+    }
+    finally {
+      if (output != null) {
+        try {
+          output.close();
+        }
+        catch (IOException e) {
+          LOGGER.warn("failed to store window config: " + e.getMessage());
+        }
+      }
+    }
+  }
+
   @Override
   public void eventDispatched(AWTEvent evt) {
-    // // load settings
-    // if (evt.getID() == WindowEvent.WINDOW_OPENED) {
-    // try {
-    // ComponentEvent cev = (ComponentEvent) evt;
-    // // frame = mainWindow
-    // if (cev.getComponent() instanceof JFrame) {
-    // JFrame frame = (JFrame) cev.getComponent();
-    // loadSettings(frame);
-    // }
-    // // popup dialogs
-    // if (cev.getComponent() instanceof JDialog) {
-    // JDialog dialog = (JDialog) cev.getComponent();
-    // loadSettings(dialog);
-    // }
-    // }
-    // catch (Exception ex) {
-    // LOGGER.warn("failed to restore window layout", ex);
-    // }
-    // }
-
-    // save settings
-    // if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
-
     ComponentEvent cev = (ComponentEvent) evt;
     // frame = mainWindow
     if (evt.getID() == WindowEvent.WINDOW_CLOSING && cev.getComponent() instanceof JFrame) {
@@ -98,23 +115,22 @@ public class TmmWindowSaver implements AWTEventListener {
   }
 
   /**
-   * Load settings.
+   * Load settings for a frame
    * 
    * @param frame
    *          the frame
    */
-  public static void loadSettings(JFrame frame) {
-    WindowConfig config = Globals.settings.getWindowConfig();
+  public void loadSettings(JFrame frame) {
     // settings for main window
     if ("mainWindow".equals(frame.getName())) {
       // was the main window maximized?
-      if (config.getBoolean("mainWindowMaximized")) {
+      if (getBoolean("mainWindowMaximized")) {
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.validate();
       }
       else {
         // only set location/size if something was stored
-        Rectangle rect = config.getWindowBounds("mainWindow");
+        Rectangle rect = getWindowBounds("mainWindow");
         if (rect.width > 0) {
           frame.setBounds(rect);
           // frame.validate();
@@ -127,25 +143,24 @@ public class TmmWindowSaver implements AWTEventListener {
       // sliders
       MainWindow mainWindow = (MainWindow) frame;
       MoviePanel moviePanel = mainWindow.getMoviePanel();
-      if (config.getInteger("movieWindowSlider1") > 0) {
-        moviePanel.getSplitPaneVertical().setDividerLocation(config.getInteger("movieWindowSlider1"));
+      if (getInteger("movieWindowSlider1") > 0) {
+        moviePanel.getSplitPaneVertical().setDividerLocation(getInteger("movieWindowSlider1"));
       }
-      if (config.getInteger("movieWindowSlider2") > 0) {
-        moviePanel.getSplitPaneHorizontal().setDividerLocation(config.getInteger("movieWindowSlider2"));
+      if (getInteger("movieWindowSlider2") > 0) {
+        moviePanel.getSplitPaneHorizontal().setDividerLocation(getInteger("movieWindowSlider2"));
       }
     }
   }
 
   /**
-   * Load settings.
+   * Load settings for a dialog
    * 
    * @param dialog
    *          the dialog
    */
-  public static void loadSettings(JDialog dialog) {
-    WindowConfig config = Globals.settings.getWindowConfig();
+  public void loadSettings(JDialog dialog) {
     if (!dialog.getName().contains("dialog")) {
-      Rectangle rect = config.getWindowBounds(dialog.getName());
+      Rectangle rect = getWindowBounds(dialog.getName());
       if (rect.width > 0) {
         dialog.setBounds(rect);
       }
@@ -153,36 +168,101 @@ public class TmmWindowSaver implements AWTEventListener {
   }
 
   /**
-   * Save settings.
+   * Save settings for a frame
    * 
    * @param frame
    *          the frame
    */
   public void saveSettings(JFrame frame) {
-    WindowConfig config = Globals.settings.getWindowConfig();
     // settings for main window
     if ("mainWindow".equals(frame.getName()) && frame instanceof MainWindow) {
-      config.addParam("mainWindowMaximized", (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
-      config.storeWindowBounds("mainWindow", frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
+      addParam("mainWindowMaximized", (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH);
+      storeWindowBounds("mainWindow", frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight());
 
       // sliders
       MainWindow mainWindow = (MainWindow) frame;
       MoviePanel moviePanel = mainWindow.getMoviePanel();
-      config.addParam("movieWindowSlider1", moviePanel.getSplitPaneVertical().getDividerLocation());
-      config.addParam("movieWindowSlider2", moviePanel.getSplitPaneHorizontal().getDividerLocation());
+      addParam("movieWindowSlider1", moviePanel.getSplitPaneVertical().getDividerLocation());
+      addParam("movieWindowSlider2", moviePanel.getSplitPaneHorizontal().getDividerLocation());
+      writeProperties();
     }
   }
 
   /**
-   * Save settings.
+   * Save settings for a dialog
    * 
    * @param dialog
    *          the dialog
    */
   public void saveSettings(JDialog dialog) {
-    WindowConfig config = Globals.settings.getWindowConfig();
     if (!dialog.getName().contains("dialog")) {
-      config.storeWindowBounds(dialog.getName(), dialog.getX(), dialog.getY(), dialog.getWidth(), dialog.getHeight());
+      storeWindowBounds(dialog.getName(), dialog.getX(), dialog.getY(), dialog.getWidth(), dialog.getHeight());
+      writeProperties();
     }
+  }
+
+  public boolean getBoolean(String name) {
+    boolean b = false;
+
+    Object param = properties.get(name);
+
+    if (param != null && param instanceof Boolean) {
+      Boolean bool = (Boolean) param;
+      b = bool;
+    }
+    else if (param != null) {
+      try {
+        b = Boolean.parseBoolean(param.toString());
+      }
+      catch (Exception e) {
+      }
+    }
+
+    return b;
+  }
+
+  public int getInteger(String name) {
+    int i = 0;
+    Object param = properties.get(name);
+
+    if (param != null && param instanceof Integer) {
+      Integer integer = (Integer) param;
+      i = integer;
+    }
+    else if (param != null) {
+      try {
+        i = Integer.parseInt(param.toString());
+      }
+      catch (Exception e) {
+      }
+    }
+
+    return i;
+  }
+
+  private void storeWindowBounds(String name, int x, int y, int width, int height) {
+    addParam(name + "X", x);
+    addParam(name + "Y", y);
+    addParam(name + "W", width);
+    addParam(name + "H", height);
+  }
+
+  private Rectangle getWindowBounds(String name) {
+    Rectangle rect = new Rectangle();
+
+    rect.x = getInteger(name + "X");
+    rect.y = getInteger(name + "Y");
+    rect.width = getInteger(name + "W");
+    rect.height = getInteger(name + "H");
+
+    return rect;
+  }
+
+  private void addParam(String key, Object value) {
+    if (properties.containsKey(key)) {
+      properties.remove(key);
+    }
+
+    properties.put(key, value.toString());
   }
 }

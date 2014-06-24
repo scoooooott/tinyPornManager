@@ -136,7 +136,7 @@ public class Settings extends AbstractModelObject {
   private TvShowSettings              tvShowSettings              = null;
   private MovieScraperMetadataConfig  movieScraperMetadataConfig  = null;
   private TvShowScraperMetadataConfig tvShowScraperMetadataConfig = null;
-  private WindowConfig                windowConfig                = null;
+
   // language 2 char - saved to config
   private String                      language;
   private boolean                     showNotifications           = true;
@@ -168,8 +168,6 @@ public class Settings extends AbstractModelObject {
     movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     tvShowScraperMetadataConfig = new TvShowScraperMetadataConfig();
     tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
-    windowConfig = new WindowConfig();
-    windowConfig.addPropertyChangeListener(propertyChangeListener);
   }
 
   /**
@@ -857,26 +855,6 @@ public class Settings extends AbstractModelObject {
   public void setTvShowScraperMetadataConfig(TvShowScraperMetadataConfig scraperMetadataConfig) {
     this.tvShowScraperMetadataConfig = scraperMetadataConfig;
     this.tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
-  }
-
-  /**
-   * Gets the window config.
-   * 
-   * @return the window config
-   */
-  public WindowConfig getWindowConfig() {
-    return windowConfig;
-  }
-
-  /**
-   * Sets the window config.
-   * 
-   * @param windowConfig
-   *          the new window config
-   */
-  public void setWindowConfig(WindowConfig windowConfig) {
-    this.windowConfig = windowConfig;
-    this.windowConfig.addPropertyChangeListener(propertyChangeListener);
   }
 
   /**

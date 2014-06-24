@@ -67,7 +67,7 @@ public abstract class TmmDialog extends JDialog {
   @Override
   public void setVisible(boolean visible) {
     if (visible) {
-      TmmWindowSaver.loadSettings(this);
+      TmmWindowSaver.getInstance().loadSettings(this);
       pack();
       setLocationRelativeTo(MainWindow.getActiveInstance());
       super.setVisible(true);

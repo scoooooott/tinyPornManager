@@ -56,12 +56,12 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.LaunchUtil;
 import org.tinymediamanager.ReleaseInfo;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.scraper.util.Url;
+import org.tinymediamanager.ui.TmmWindowSaver;
 
 /**
  * The Class Utils.
@@ -392,7 +392,7 @@ public class Utils {
                 + "&aip=1" 
                 + "&je=1"
                 + "&ul=" + getEncProp("user.language") + "-" + getEncProp("user.country")  // use real system language
-                + "&vp=" + Globals.settings.getWindowConfig().getInteger("mainWindowW") + "x" + Globals.settings.getWindowConfig().getInteger("mainWindowH")
+                + "&vp=" + TmmWindowSaver.getInstance().getInteger("mainWindowW") + "x" + TmmWindowSaver.getInstance().getInteger("mainWindowH")
                 + "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height 
                 + "&cd1=" + getEncProp("os.name") 
                 + "&cd2=" + getEncProp("os.arch") 

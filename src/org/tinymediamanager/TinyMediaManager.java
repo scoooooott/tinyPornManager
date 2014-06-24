@@ -425,7 +425,7 @@ public class TinyMediaManager {
             // updater, tracking, whatsoever)
             Utils.trackEvent("startup");
 
-            TmmWindowSaver.loadSettings(window);
+            TmmWindowSaver.getInstance().loadSettings(window);
             window.setVisible(true);
 
             // show changelog
