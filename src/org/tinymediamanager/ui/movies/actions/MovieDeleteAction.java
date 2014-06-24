@@ -40,7 +40,7 @@ public class MovieDeleteAction extends AbstractAction {
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public MovieDeleteAction() {
-    putValue(SMALL_ICON, IconManager.CROSS);
+    putValue(SMALL_ICON, IconManager.DELETE);
     putValue(NAME, BUNDLE.getString("movie.delete")); //$NON-NLS-1$
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.delete.hint")); //$NON-NLS-1$
   }
@@ -50,7 +50,7 @@ public class MovieDeleteAction extends AbstractAction {
     List<Movie> selectedMovies = new ArrayList<Movie>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     // display warning and ask the user again
-    int answer = JOptionPane.showConfirmDialog(MainWindow.getActiveInstance(), BUNDLE.getString("movie.delete.hint") + "?",
+    int answer = JOptionPane.showConfirmDialog(MainWindow.getActiveInstance(), BUNDLE.getString("movie.delete.desc"),
         BUNDLE.getString("movie.delete"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
     if (answer != JOptionPane.OK_OPTION) {
       return;

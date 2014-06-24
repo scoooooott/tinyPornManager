@@ -32,6 +32,7 @@ public class IconManager {
   public final static ImageIcon  CLAPBOARD         = loadImage("clapboard.png");
   public final static ImageIcon  COPY              = loadImage("copy.png");
   public final static ImageIcon  CROSS             = loadImage("cross.png");
+  public final static ImageIcon  DELETE            = loadImage("delete.png");
   public final static ImageIcon  DOWNLOAD          = loadImage("download.png");
   public final static ImageIcon  DOWNLOAD_DISABLED = loadImage("download-disabled.png");
   public final static ImageIcon  EDIT              = loadImage("edit.png");
@@ -50,6 +51,7 @@ public class IconManager {
   public final static ImageIcon  PLAY              = loadImage("play.png");
   public final static ImageIcon  PROCESS_STOP      = loadImage("process-stop.png");
   public final static ImageIcon  REFRESH           = loadImage("refresh.png");
+  public final static ImageIcon  REGISTER          = loadImage("register.png");
   public final static ImageIcon  SEARCH            = loadImage("search.png");
   public final static ImageIcon  SETTINGS_SMALL    = loadImage("settings-small.png");
   public final static ImageIcon  STAR_FILLED       = loadImage("star-filled.png");

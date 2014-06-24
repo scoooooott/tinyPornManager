@@ -412,6 +412,41 @@ public class TvShow extends MediaEntity {
   }
 
   /**
+   * Removes an episode from tmm and deletes it from the data source
+   * 
+   * @param episode
+   *          the episode to be removed
+   */
+  public void deleteEpisode(TvShowEpisode episode) {
+    if (episodes.contains(episode)) {
+      int oldValue = episodes.size();
+      final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+      synchronized (entityManager) {
+
+        boolean newTransaction = false;
+        if (!entityManager.getTransaction().isActive()) {
+          entityManager.getTransaction().begin();
+          newTransaction = true;
+        }
+
+        episode.deleteFilesSafely();
+        episodes.remove(episode);
+        episode.removePropertyChangeListener(propertyChangeListener);
+        removeFromSeason(episode);
+        entityManager.remove(episode);
+        entityManager.persist(this);
+
+        if (newTransaction) {
+          entityManager.getTransaction().commit();
+        }
+      }
+
+      firePropertyChange(REMOVED_EPISODE, null, episode);
+      firePropertyChange(EPISODE_COUNT, oldValue, episodes.size());
+    }
+  }
+
+  /**
    * Gets the seasons.
    * 
    * @return the seasons
@@ -1733,10 +1768,10 @@ public class TvShow extends MediaEntity {
   }
 
   /**
-   * <b>PHYSICALLY</b> deletes a complete Movie by moving it to datasource backup folder<br>
+   * <b>PHYSICALLY</b> deletes a complete TV show by moving it to datasource backup folder<br>
    * DS\.backup\&lt;moviename&gt;
    */
-  public void deleteSafely() {
+  public boolean deleteFilesSafely() {
     String fn = getPath();
     // inject backup path
     fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".deletedByTMM");
@@ -1751,13 +1786,11 @@ public class TvShow extends MediaEntity {
     try {
       // overwrite backup file by deletion prior
       FileUtils.deleteQuietly(backup);
-      boolean ok = Utils.moveDirectorySafe(new File(getPath()), backup);
-      if (ok) {
-        deleteFromDb();
-      }
+      return Utils.moveDirectorySafe(new File(getPath()), backup);
     }
     catch (IOException e) {
-      // TODO:
+      LOGGER.warn("could not delete tv show files: " + e.getMessage());
+      return false;
     }
   }
 }

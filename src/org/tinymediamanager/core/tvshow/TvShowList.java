@@ -194,6 +194,36 @@ public class TvShowList extends AbstractModelObject {
   }
 
   /**
+   * Removes the tv show from tmm and deletes all files from the data source
+   * 
+   * @param tvShow
+   *          the tvShow
+   */
+  public void deleteTvShow(TvShow tvShow) {
+    int oldValue = tvShowList.size();
+
+    tvShow.deleteFilesSafely();
+    tvShow.removeAllEpisodes();
+    tvShowList.remove(tvShow);
+
+    boolean newTransaction = false;
+    if (!TvShowModuleManager.getInstance().getEntityManager().getTransaction().isActive()) {
+      TvShowModuleManager.getInstance().getEntityManager().getTransaction().begin();
+      newTransaction = true;
+    }
+
+    TvShowModuleManager.getInstance().getEntityManager().remove(tvShow);
+
+    if (newTransaction) {
+      TvShowModuleManager.getInstance().getEntityManager().getTransaction().commit();
+    }
+
+    firePropertyChange(TV_SHOWS, null, tvShowList);
+    firePropertyChange(REMOVED_TV_SHOW, null, tvShow);
+    firePropertyChange(TV_SHOW_COUNT, oldValue, tvShowList.size());
+  }
+
+  /**
    * Gets the tv show count.
    * 
    * @return the tv show count

@@ -103,6 +103,8 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbFontSize;
   private JComboBox                   cbFontFamily;
   private JLabel                      lblFontChangeHint;
+  private JPanel                      panelTrash;
+  private JCheckBox                   chckbxDeleteTrash;
 
   /**
    * Instantiates a new general settings panel.
@@ -112,7 +114,8 @@ public class GeneralSettingsPanel extends ScrollablePanel {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(200px;default):grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+        FormFactory.RELATED_GAP_ROWSPEC, }));
 
     panelUI = new JPanel();
     panelUI.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.ui"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
@@ -309,6 +312,15 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     panelLogger.add(cbLogLevel, "4, 2");
     cbLogLevel.setSelectedItem(actualLevel);
 
+    panelTrash = new JPanel();
+    add(panelTrash, "2, 10, fill, fill");
+    panelTrash.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash")); //$NON-NLS-1$
+    panelTrash.add(chckbxDeleteTrash, "2, 2, left, top");
+
     initDataBindings();
 
     cbLanguage.addItemListener(listener);
@@ -418,5 +430,10 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, String, JTextField, String> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_6, tfMediaPlayer, jTextFieldBeanProperty_3);
     autoBinding_9.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_10 = BeanProperty.create("deleteTrashOnExit");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_10, chckbxDeleteTrash, jCheckBoxBeanProperty);
+    autoBinding_10.bind();
   }
 }

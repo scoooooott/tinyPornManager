@@ -76,6 +76,7 @@ import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonPosterAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowDeleteAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowExportAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowMediaInformationAction;
@@ -130,6 +131,7 @@ public class TvShowPanel extends JPanel {
   private final Action                actionEdit                    = new TvShowEditAction(false);
   private final Action                actionEdit2                   = new TvShowEditAction(true);
   private final Action                actionRemove2                 = new TvShowRemoveAction(true);
+  private final Action                actionDelete2                 = new TvShowDeleteAction(true);
   private final Action                actionChangeSeasonPoster2     = new TvShowChangeSeasonPosterAction(true);
   private final Action                actionBatchEdit               = new TvShowBulkEditAction();
   private final Action                actionSetWatchedFlag          = new TvShowSetWatchedFlagAction();
@@ -543,6 +545,8 @@ public class TvShowPanel extends JPanel {
     menu.addSeparator();
     menuItem = menu.add(actionRemove2);
     menuItem.setAccelerator(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
+    menuItem = menu.add(actionDelete2);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ActionEvent.SHIFT_MASK));
 
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
@@ -567,6 +571,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionClearImageCache);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
+    popupMenu.add(actionDelete2);
     popupMenu.addSeparator();
     popupMenu.add(new ExpandAllAction());
     popupMenu.add(new CollapseAllAction());

@@ -18,6 +18,7 @@ package org.tinymediamanager.core.tvshow.entities;
 import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +38,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -1076,5 +1078,40 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
   public void setAbsoluteNumber(String absoluteNumber) {
     this.absoluteNumber = absoluteNumber;
+  }
+
+  /**
+   * <b>PHYSICALLY</b> deletes a complete episode by moving it to datasource backup folder<br>
+   * DS\.backup\&lt;moviename&gt;
+   */
+  public boolean deleteFilesSafely() {
+    String fn = getPath();
+    // inject backup path
+    fn = fn.replace(tvShow.getDataSource(), tvShow.getDataSource() + File.separator + ".deletedByTMM");
+
+    // create path
+    File backup = new File(fn);
+    if (!backup.exists()) {
+      backup.mkdirs();
+    }
+
+    // backup
+    try {
+      boolean result = true;
+
+      List<MediaFile> mediaFiles = getMediaFiles();
+      for (MediaFile mf : mediaFiles) {
+        // overwrite backup file by deletion prior
+        File newFile = new File(backup, mf.getFilename());
+        FileUtils.deleteQuietly(newFile);
+        result = result && Utils.moveFileSafe(mf.getFile(), newFile);
+      }
+
+      return result;
+    }
+    catch (IOException e) {
+      LOGGER.warn("could not delete episode files: " + e.getMessage());
+      return false;
+    }
   }
 }

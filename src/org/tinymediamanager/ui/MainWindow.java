@@ -410,7 +410,7 @@ public class MainWindow extends JFrame {
   }
 
   public void closeTmmAndStart(ProcessBuilder pb) {
-    int confirm = 0;
+    int confirm = JOptionPane.YES_OPTION;
     // if there are some threads running, display exit confirmation
     if (TmmTaskManager.getInstance().poolRunning()) {
       confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("tmm.exit.runningtasks"), BUNDLE.getString("tmm.exit.confirmation"),

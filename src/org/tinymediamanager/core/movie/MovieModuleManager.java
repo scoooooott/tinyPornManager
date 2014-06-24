@@ -15,8 +15,11 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.io.File;
+
 import javax.persistence.EntityManager;
 
+import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ITmmModule;
 import org.tinymediamanager.core.TmmModuleManager;
@@ -92,6 +95,13 @@ public class MovieModuleManager implements ITmmModule {
     // entityManagerFactory.close();
 
     enabled = false;
+
+    if (Globals.settings.isDeleteTrashOnExit()) {
+      for (String ds : MOVIE_SETTINGS.getMovieDataSource()) {
+        File file = new File(ds + File.separator + ".deletedByTMM");
+        FileUtils.deleteQuietly(file);
+      }
+    }
   }
 
   @Override
