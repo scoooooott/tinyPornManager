@@ -85,7 +85,7 @@ import org.tinymediamanager.scraper.MediaTrailer;
 @XmlType(propOrder = { "title", "originaltitle", "set", "sorttitle", "rating", "epbookmark", "year", "top250", "votes", "outline", "plot", "tagline",
     "runtime", "thumb", "fanart", "mpaa", "certifications", "id", "ids", "tmdbId", "trailer", "country", "premiered", "status", "code", "aired",
     "fileinfo", "watched", "playcount", "genres", "studio", "credits", "director", "tags", "actors", "producers", "resume", "lastplayed",
-    "dateadded", "keywords", "poster", "url", "languages" })
+    "dateadded", "keywords", "poster", "url", "languages", "unsupportedElements" })
 public class MovieToXbmcNfoConnector {
   private static final Logger LOGGER         = LoggerFactory.getLogger(MovieToXbmcNfoConnector.class);
   private static JAXBContext  context        = initContext();
@@ -189,6 +189,9 @@ public class MovieToXbmcNfoConnector {
   @XmlElement
   private String              languages;
 
+  @XmlAnyElement(lax = true)
+  private List<Object>        unsupportedElements;
+
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
   private String              epbookmark;
@@ -245,6 +248,7 @@ public class MovieToXbmcNfoConnector {
     credits = new ArrayList<String>();
     producers = new ArrayList();
     ids = new HashMap<String, Object>();
+    unsupportedElements = new ArrayList<Object>();
   }
 
   /**
@@ -260,6 +264,7 @@ public class MovieToXbmcNfoConnector {
     }
 
     MovieToXbmcNfoConnector xbmc = null;
+    List<Object> unsupportedTags = new ArrayList<Object>();
 
     // load existing NFO if possible
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.NFO)) {
@@ -280,6 +285,14 @@ public class MovieToXbmcNfoConnector {
     // create new
     if (xbmc == null) {
       xbmc = new MovieToXbmcNfoConnector();
+    }
+    else {
+      // store all unsupported tags
+      for (Object obj : xbmc.actors) { // ugly hack for invalid xml structure
+        if (!(obj instanceof Producer) && !(obj instanceof Actor)) {
+          unsupportedTags.add(obj);
+        }
+      }
     }
 
     // set data
@@ -442,6 +455,9 @@ public class MovieToXbmcNfoConnector {
       break;
       // }
     }
+
+    // add all unsupported tags again
+    xbmc.unsupportedElements.addAll(unsupportedTags);
 
     // and marshall it
     String nfoFilename = "";

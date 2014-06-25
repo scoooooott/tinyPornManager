@@ -61,7 +61,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
  */
 @XmlRootElement(name = "episodedetails")
 @XmlType(propOrder = { "title", "showtitle", "rating", "votes", "season", "episode", "uniqueid", "plot", "thumb", "mpaa", "tags", "playcount",
-    "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors" })
+    "lastplayed", "watched", "credits", "director", "aired", "premiered", "studio", "actors", "unsupportedElements" })
 public class TvShowEpisodeToXbmcNfoConnector {
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowEpisodeToXbmcNfoConnector.class);
   private static JAXBContext  context   = initContext();
@@ -96,6 +96,9 @@ public class TvShowEpisodeToXbmcNfoConnector {
   @XmlElement(name = "tag")
   private List<String>        tags;
 
+  @XmlAnyElement(lax = true)
+  private List<Object>        unsupportedElements;
+
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
   String                      thumb;
@@ -121,6 +124,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
     director = new ArrayList<String>();
     credits = new ArrayList<String>();
     tags = new ArrayList<String>();
+    unsupportedElements = new ArrayList<Object>();
   }
 
   /**
@@ -155,6 +159,7 @@ public class TvShowEpisodeToXbmcNfoConnector {
     StringBuilder outputXml = new StringBuilder();
     for (int i = 0; i < tvShowEpisodes.size(); i++) {
       episode = tvShowEpisodes.get(i);
+      List<Object> unsupportedTags = new ArrayList<Object>();
 
       // look in all parsed NFOs for this episode
       TvShowEpisodeToXbmcNfoConnector xbmc = null;
@@ -168,6 +173,14 @@ public class TvShowEpisodeToXbmcNfoConnector {
       if (xbmc == null) {
         // create a new connector
         xbmc = new TvShowEpisodeToXbmcNfoConnector();
+      }
+      else {
+        // store all unsupported tags
+        for (Object obj : xbmc.actors) { // ugly hack for invalid xml structure
+          if (!(obj instanceof Actor)) {
+            unsupportedTags.add(obj);
+          }
+        }
       }
 
       xbmc.setTitle(episode.getTitle());
@@ -221,6 +234,9 @@ public class TvShowEpisodeToXbmcNfoConnector {
       for (String tag : episode.getTags()) {
         xbmc.tags.add(tag);
       }
+
+      // add all unsupported tags again
+      xbmc.unsupportedElements.addAll(unsupportedTags);
 
       // and marshall it
       try {

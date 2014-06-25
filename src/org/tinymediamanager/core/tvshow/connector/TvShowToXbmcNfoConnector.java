@@ -63,7 +63,7 @@ import org.tinymediamanager.scraper.MediaGenres;
  */
 @XmlRootElement(name = "tvshow")
 @XmlType(propOrder = { "title", "sorttitle", "year", "rating", "votes", "plot", "mpaa", "episodeguide", "id", "genres", "tags", "premiered",
-    "status", "studio", "thumb", "actors" })
+    "status", "studio", "thumb", "actors", "unsupportedElements" })
 public class TvShowToXbmcNfoConnector {
 
   private static final Logger LOGGER    = LoggerFactory.getLogger(TvShowToXbmcNfoConnector.class);
@@ -91,6 +91,9 @@ public class TvShowToXbmcNfoConnector {
   @XmlElement(name = "tag")
   private List<String>        tags;
 
+  @XmlAnyElement(lax = true)
+  private List<Object>        unsupportedElements;
+
   /** not supported tags, but used to retrain in NFO. */
   @XmlElement
   List<Thumb>                 thumb;
@@ -113,6 +116,7 @@ public class TvShowToXbmcNfoConnector {
     actors = new ArrayList<Object>();
     tags = new ArrayList<String>();
     episodeguide = new EpisodeGuide();
+    unsupportedElements = new ArrayList<Object>();
   }
 
   public static void setData(TvShow tvShow) {
@@ -122,6 +126,8 @@ public class TvShowToXbmcNfoConnector {
     }
 
     TvShowToXbmcNfoConnector xbmc = null;
+    List<Object> unsupportedTags = new ArrayList<Object>();
+
     String nfoFilename = "tvshow.nfo";
     File nfoFile = new File(tvShow.getPath(), nfoFilename);
 
@@ -140,6 +146,14 @@ public class TvShowToXbmcNfoConnector {
     // create new
     if (xbmc == null) {
       xbmc = new TvShowToXbmcNfoConnector();
+    }
+    else {
+      // store all unsupported tags
+      for (Object obj : xbmc.actors) { // ugly hack for invalid xml structure
+        if (!(obj instanceof Actor)) {
+          unsupportedTags.add(obj);
+        }
+      }
     }
 
     // set data
@@ -177,6 +191,9 @@ public class TvShowToXbmcNfoConnector {
     for (String tag : tvShow.getTags()) {
       xbmc.tags.add(tag);
     }
+
+    // add all unsupported tags again
+    xbmc.unsupportedElements.addAll(unsupportedTags);
 
     // and marshall it
     try {
