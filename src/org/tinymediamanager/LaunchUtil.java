@@ -17,7 +17,8 @@ import com.sun.jna.Platform;
  * Useful routines for launching Java applications from within other Java applications.
  */
 public class LaunchUtil {
-  private final static Logger LOGGER = LoggerFactory.getLogger(LaunchUtil.class);
+  private final static Logger LOGGER       = LoggerFactory.getLogger(LaunchUtil.class);
+  private final static String USR_BIN_JAVA = "/usr/bin/java";
 
   /**
    * Reconstructs the path to the JVM used to launch this process.
@@ -48,9 +49,9 @@ public class LaunchUtil {
     // desired jvm is in fact pointed to by /usr/bin/java and, if so, use that instead.
     if (Platform.isMac()) {
       try {
-        File localVM = new File("/usr/bin/java").getCanonicalFile();
+        File localVM = new File(USR_BIN_JAVA).getCanonicalFile();
         if (localVM.equals(new File(vmpath).getCanonicalFile())) {
-          vmpath = "/usr/bin/java";
+          vmpath = USR_BIN_JAVA;
         }
       }
       catch (IOException ioe) {

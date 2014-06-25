@@ -33,7 +33,7 @@
 	
     <target name="findbugs" description="Run findbugs" if="build">
         <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="classpath.findbugs" />
-        <findbugs home="${findbugs.dir}" output="xml" outputFile="reports/findbugs.xml" jvmargs="-Xms256m -Xmx512m">
+        <findbugs home="${findbugs.dir}" output="xml" outputFile="reports/findbugs.xml" jvmargs="-Xms256m -Xmx512m" excludefilter="${findbugs.dir}/findbugs_exclude.xml" >
             <sourcePath path="${source}" />
             <auxClasspath path="${classpath}" />
             <class location="${build}" />

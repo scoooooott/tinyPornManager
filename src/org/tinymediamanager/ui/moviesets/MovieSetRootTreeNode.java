@@ -46,7 +46,7 @@ public class MovieSetRootTreeNode extends DefaultMutableTreeNode {
     nodeComparator = new Comparator<TreeNode>() {
       @Override
       public int compare(TreeNode o1, TreeNode o2) {
-        if (o1 instanceof MovieTreeNode && o2 instanceof MovieTreeNode) {
+        if (o1 instanceof MovieSetTreeNode && o2 instanceof MovieSetTreeNode) {
           MovieSetTreeNode node1 = (MovieSetTreeNode) o1;
           MovieSet movieSet1 = (MovieSet) node1.getUserObject();
           MovieSetTreeNode node2 = (MovieSetTreeNode) o2;

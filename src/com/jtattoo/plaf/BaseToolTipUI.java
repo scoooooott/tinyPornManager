@@ -172,7 +172,7 @@ public class BaseToolTipUI extends MetalToolTipUI {
       // big.setPaint(savedPaint);
 
       if (c instanceof JToolTip) {
-        JToolTip tip = (JToolTip) c;
+        // JToolTip tip = (JToolTip) c;
         // if (tip.getComponent() != null && tip.getComponent().isEnabled()) {
         c.setForeground(AbstractLookAndFeel.getTheme().getTooltipForegroundColor());
         // }
