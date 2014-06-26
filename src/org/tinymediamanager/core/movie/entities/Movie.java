@@ -905,7 +905,7 @@ public class Movie extends MediaEntity {
    *          the new trailers
    */
   public void setTrailers(List<MediaTrailer> trailers) {
-    boolean preferredTrailerFound = false;
+    MediaTrailer preferredTrailer = null;
     removeAllTrailers();
 
     // set preferred trailer
@@ -916,18 +916,18 @@ public class Movie extends MediaEntity {
       // search for quality and provider
       for (MediaTrailer trailer : trailers) {
         if (desiredQuality.containsQuality(trailer.getQuality()) && desiredSource.containsSource(trailer.getProvider())) {
-          preferredTrailerFound = true;
           trailer.setInNfo(Boolean.TRUE);
+          preferredTrailer = trailer;
           break;
         }
       }
 
       // search for quality
-      if (!preferredTrailerFound) {
+      if (preferredTrailer == null) {
         for (MediaTrailer trailer : trailers) {
           if (desiredQuality.containsQuality(trailer.getQuality())) {
-            preferredTrailerFound = true;
             trailer.setInNfo(Boolean.TRUE);
+            preferredTrailer = trailer;
             break;
           }
         }
@@ -935,11 +935,20 @@ public class Movie extends MediaEntity {
     }
 
     // add trailers
+    if (preferredTrailer != null) {
+      addTrailer(preferredTrailer);
+    }
     for (MediaTrailer trailer : trailers) {
+      // preferred trailer has already been added
+      if (preferredTrailer != null && preferredTrailer == trailer) {
+        continue;
+      }
+
       // if still no preferred trailer has been set, then mark the first one
-      if (!preferredTrailerFound && this.trailer.size() == 0 && !trailer.getUrl().startsWith("file")) {
+      if (preferredTrailer == null && this.trailer.size() == 0 && !trailer.getUrl().startsWith("file")) {
         trailer.setInNfo(Boolean.TRUE);
       }
+
       addTrailer(trailer);
     }
 
