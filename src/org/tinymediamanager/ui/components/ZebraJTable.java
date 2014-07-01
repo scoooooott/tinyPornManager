@@ -108,7 +108,8 @@ public class ZebraJTable extends JTable {
 
   private static void paintHeader(Graphics g, JTable table, int x, int width) {
     TableCellRenderer renderer = table.getTableHeader().getDefaultRenderer();
-    Component component = renderer.getTableCellRendererComponent(table, "", false, false, -1, 2);
+    // Component component = renderer.getTableCellRendererComponent(table, "", false, false, -1, 2);
+    Component component = renderer.getTableCellRendererComponent(table, "", false, false, -1, 0);
 
     component.setBounds(0, 0, width, table.getTableHeader().getHeight());
 
