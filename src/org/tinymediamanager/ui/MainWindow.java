@@ -300,7 +300,7 @@ public class MainWindow extends JFrame {
 
       updateWorker.addPropertyChangeListener(new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
-          if (StateValue.DONE == updateWorker.getState()) {
+          if ("state".equals(evt.getPropertyName()) && evt.getNewValue() == StateValue.DONE) {
             try {
               boolean update = updateWorker.get();
               LOGGER.debug("update result was: " + update);
