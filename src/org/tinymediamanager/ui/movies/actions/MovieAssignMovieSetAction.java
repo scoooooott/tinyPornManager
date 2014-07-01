@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieAssignMovieSetTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -45,6 +46,11 @@ public class MovieAssignMovieSetAction extends AbstractAction {
     putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.assignmovieset.desc")); //$NON-NLS-1$
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
+
+    if (!Globals.isDonator()) {
+      setEnabled(false);
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.donatorfunction.hint")); //$NON-NLS-1$
+    }
   }
 
   @Override

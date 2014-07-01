@@ -57,6 +57,7 @@ public class IconManager {
   public final static ImageIcon  STAR_FILLED       = loadImage("star-filled.png");
   public final static ImageIcon  STAR_EMPTY        = loadImage("star-empty.png");
   public final static ImageIcon  SUBTITLE          = loadImage("subtitle.png");
+  public final static ImageIcon  SYNC              = loadImage("sync.png");
   public final static ImageIcon  UNCHECK_ALL       = loadImage("uncheck-all.png");
   public final static ImageIcon  UNWATCHED         = loadImage("unwatched.png");
 

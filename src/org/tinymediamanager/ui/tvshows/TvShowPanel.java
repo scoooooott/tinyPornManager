@@ -89,6 +89,8 @@ import org.tinymediamanager.ui.tvshows.actions.TvShowScrapeNewItemsAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSelectedScrapeAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSetWatchedFlagAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowSingleScrapeAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSyncTraktTvAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowSyncWatchedTraktTvAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateDatasourcesAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowUpdateSingleDatasourceAction;
@@ -143,6 +145,8 @@ public class TvShowPanel extends JPanel {
   private final Action                actionMediaInformation2       = new TvShowMediaInformationAction(true);
   private final Action                actionClearImageCache         = new TvShowClearImageCacheAction();
   private final Action                actionExport                  = new TvShowExportAction();
+  private final Action                actionSyncTrakt               = new TvShowSyncTraktTvAction();
+  private final Action                actionSyncWatchedTrakt        = new TvShowSyncWatchedTraktTvAction();
 
   private int                         width                         = 0;
   private JTextField                  textField;
@@ -548,6 +552,12 @@ public class TvShowPanel extends JPanel {
     menuItem = menu.add(actionDelete2);
     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ActionEvent.SHIFT_MASK));
 
+    menu.addSeparator();
+    menuItem = menu.add(actionSyncTrakt);
+    menuItem.setMnemonic(KeyEvent.VK_T);
+    menuItem = menu.add(actionSyncWatchedTrakt);
+    menuItem.setMnemonic(KeyEvent.VK_W);
+
     // popup menu
     JPopupMenu popupMenu = new JPopupMenu();
     popupMenu.add(actionScrape2);
@@ -569,6 +579,9 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
     popupMenu.add(actionClearImageCache);
+    popupMenu.addSeparator();
+    popupMenu.add(actionSyncTrakt);
+    popupMenu.add(actionSyncWatchedTrakt);
     popupMenu.addSeparator();
     popupMenu.add(actionRemove2);
     popupMenu.add(actionDelete2);

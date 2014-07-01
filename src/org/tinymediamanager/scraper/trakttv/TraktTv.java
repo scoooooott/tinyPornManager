@@ -173,7 +173,12 @@ public class TraktTv {
       seen.title = tmmMovie.getTitle();
       seen.imdb_id = tmmMovie.getImdbId();
       seen.tmdb_id = tmmMovie.getTmdbId();
-      seen.year = Integer.valueOf(tmmMovie.getYear());
+      try {
+        seen.year = Integer.valueOf(tmmMovie.getYear());
+      }
+      catch (Exception e) {
+        seen.year = 0;
+      }
       libMovies.add(seen); // add to lib
     }
     if (nosync > 0) {
@@ -272,6 +277,7 @@ public class TraktTv {
       for (com.jakewharton.trakt.entities.Movie traktWatched : traktMovies) {
         if (traktWatched.imdb_id.equals(tmmWatchedMovies.get(i).getImdbId()) || traktWatched.tmdbId == tmmWatchedMovies.get(i).getTmdbId()) {
           tmmWatchedMovies.remove(i);
+          break;
         }
       }
     }

@@ -59,7 +59,6 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -87,6 +86,8 @@ import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieSelectedScrapeMetadataAction;
 import org.tinymediamanager.ui.movies.actions.MovieSetWatchedFlagAction;
 import org.tinymediamanager.ui.movies.actions.MovieSingleScrapeAction;
+import org.tinymediamanager.ui.movies.actions.MovieSyncTraktTvAction;
+import org.tinymediamanager.ui.movies.actions.MovieSyncWatchedTraktTvAction;
 import org.tinymediamanager.ui.movies.actions.MovieUnscrapedScrapeAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateDatasourceAction;
 import org.tinymediamanager.ui.movies.actions.MovieUpdateSingleDatasourceAction;
@@ -157,6 +158,8 @@ public class MoviePanel extends JPanel {
   private final Action                  actionScrapeMetadataSelected = new MovieSelectedScrapeMetadataAction();
   private final Action                  actionAssignMovieSets        = new MovieAssignMovieSetAction();
   private final Action                  actionRenamerPreview         = new MovieRenamePreviewAction();
+  private final Action                  actionSyncTrakt              = new MovieSyncTraktTvAction();
+  private final Action                  actionSyncWatchedTrakt       = new MovieSyncWatchedTraktTvAction();
 
   /** The action rename. */
   private final Action                  actionRename                 = new MovieRenameAction(false);
@@ -454,11 +457,7 @@ public class MoviePanel extends JPanel {
 
   private void buildMenu() {
     menu.setMnemonic(KeyEvent.VK_M);
-    // disable donator functions
-    if (!Globals.isDonator()) {
-      actionRenamerPreview.setEnabled(false);
-      actionAssignMovieSets.setEnabled(false);
-    }
+
     // menu items
     JMenuItem menuItem = menu.add(actionUpdateDataSources2);
     menuItem.setMnemonic(KeyEvent.VK_U);
@@ -545,6 +544,12 @@ public class MoviePanel extends JPanel {
     menuItem.setMnemonic(KeyEvent.VK_R);
     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ActionEvent.SHIFT_MASK));
     menu.addSeparator();
+    menuItem = menu.add(actionSyncTrakt);
+    menuItem.setMnemonic(KeyEvent.VK_T);
+    menuItem = menu.add(actionSyncWatchedTrakt);
+    menuItem.setMnemonic(KeyEvent.VK_W);
+
+    menu.addSeparator();
     menuItem = menu.add(actionClearImageCache);
     menuItem.setMnemonic(KeyEvent.VK_C);
 
@@ -563,6 +568,9 @@ public class MoviePanel extends JPanel {
     popupMenu.add(actionRenamerPreview);
     popupMenu.add(actionMediaInformation2);
     popupMenu.add(actionExport);
+    popupMenu.addSeparator();
+    popupMenu.add(actionSyncTrakt);
+    popupMenu.add(actionSyncWatchedTrakt);
     popupMenu.addSeparator();
     popupMenu.add(actionClearImageCache);
     popupMenu.addSeparator();
