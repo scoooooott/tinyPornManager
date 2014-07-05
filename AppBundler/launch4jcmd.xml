@@ -5,7 +5,7 @@
   <outfile>../dist/tinyMediaManagerCMD.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
-  <chdir></chdir>
+  <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
@@ -13,13 +13,11 @@
   <manifest></manifest>
   <icon>tmm.ico</icon>
   <jre>
-    <path></path>
     <minVersion>1.6.0</minVersion>
-    <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <runtimeBits>32/64</runtimeBits>
     <initialHeapSize>128</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
+    <opt>-Dfoo=bar</opt>
     <opt>-Xss512k</opt>
     <opt>-Djava.awt.headless=true</opt>
     <opt>-Djava.net.preferIPv4Stack=true</opt>

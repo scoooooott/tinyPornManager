@@ -200,15 +200,12 @@
         </zip>
 
         <!-- Windows -->
-        <!-- do not generate everytime - use exitsing ones
         <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" 
-                 classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/xstream.jar" />
-        <launch4j configFile="AppBundler/launch4j.xml" txtProductVersion="${version}_r${svn.info.revision}"
+                 classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/lib/xstream.jar" />
+        <launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${version}_r${svn.info.revision}"
                   outfile="${dist.dir}/tinyMediaManager.exe"/>
-        <launch4j configFile="AppBundler/launch4jcmd.xml" txtProductVersion="${version}_r${svn.info.revision}"
-                  outfile="${dist.dir}/tinyMediaManagerCMD.exe"/-->
-        <copy file="AppBundler/tinyMediaManager.exe" tofile="${dist.dir}/tinyMediaManager.exe" />
-        <copy file="AppBundler/tinyMediaManagerCMD.exe" tofile="${dist.dir}/tinyMediaManagerCMD.exe" />
+        <launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${version}_r${svn.info.revision}"
+                  outfile="${dist.dir}/tinyMediaManagerCMD.exe"/>
         <zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_win.zip" level="9">
             <zipfileset filemode="755" dir="${build.dir}" excludes="env.txt" />
             <zipfileset filemode="755" dir="${dist.dir}" includes="*.exe"/>
@@ -235,8 +232,8 @@
         <copy todir="${build.dir}/locale">
             <fileset dir="locale"/>
         </copy>
-        <copy file="AppBundler/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
-        <copy file="AppBundler/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
+        <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
+        <copy file="${dist.dir}/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
         <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
         <copy file="${dist.dir}/tinyMediaManagerCMD.sh" tofile="${build.dir}/tinyMediaManagerCMD.sh" />
         <copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
