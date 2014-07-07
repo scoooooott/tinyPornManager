@@ -150,6 +150,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       useTrailerPreference                     = false;
   private MovieTrailerQuality           trailerQuality                           = MovieTrailerQuality.HD_720;
   private MovieTrailerSources           trailerSource                            = MovieTrailerSources.YOUTUBE;
+  private boolean                       syncTrakt                                = false;
 
   public MovieSettings() {
   }
@@ -744,5 +745,15 @@ public class MovieSettings extends AbstractModelObject {
     MovieTrailerSources oldValue = this.trailerSource;
     this.trailerSource = newValue;
     firePropertyChange("trailerSource", oldValue, newValue);
+  }
+
+  public void setSyncTrakt(boolean newValue) {
+    boolean oldValue = this.syncTrakt;
+    this.syncTrakt = newValue;
+    firePropertyChange("syncTrakt", oldValue, newValue);
+  }
+
+  public boolean getSyncTrakt() {
+    return syncTrakt;
   }
 }

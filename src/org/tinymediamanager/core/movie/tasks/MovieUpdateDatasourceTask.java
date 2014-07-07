@@ -46,9 +46,11 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.MediaTrailer;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
@@ -182,6 +184,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
       if (imageFiles.size() > 0) {
         ImageCacheTask task = new ImageCacheTask(imageFiles);
+        TmmTaskManager.getInstance().addUnnamedTask(task);
+      }
+
+      if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+        TmmTask task = new SyncTraktTvTask(true, true, false, false);
         TmmTaskManager.getInstance().addUnnamedTask(task);
       }
 

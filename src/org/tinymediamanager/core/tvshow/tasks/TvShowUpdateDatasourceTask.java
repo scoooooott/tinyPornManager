@@ -37,6 +37,7 @@ import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
@@ -44,6 +45,7 @@ import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatc
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -282,6 +284,11 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     if (imageFiles.size() > 0) {
       ImageCacheTask task = new ImageCacheTask(imageFiles);
+      TmmTaskManager.getInstance().addUnnamedTask(task);
+    }
+
+    if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+      TmmTask task = new SyncTraktTvTask(false, false, true, true);
       TmmTaskManager.getInstance().addUnnamedTask(task);
     }
   }

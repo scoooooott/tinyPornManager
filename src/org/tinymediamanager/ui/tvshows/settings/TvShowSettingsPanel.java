@@ -31,8 +31,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 
+import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
@@ -68,13 +70,15 @@ public class TvShowSettingsPanel extends ScrollablePanel {
   private JLabel                      lblImageCache;
   private JCheckBox                   chckbxImageCache;
   private JLabel                      lblImageCacheHint;
+  private JCheckBox                   chckbxTraktTv;
 
   /**
    * Instantiates a new tv show settings panel.
    */
   public TvShowSettingsPanel() {
-    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC }));
+    setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC,
+        FormFactory.DEFAULT_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     {
       JPanel panelTvShowDataSources = new JPanel();
@@ -143,10 +147,27 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       panelTvShowDataSources.add(lblImageCacheHint, "6, 4, 3, 1");
     }
 
+    JPanel panel = new JPanel();
+    add(panel, "2, 4, fill, fill");
+    panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
+        FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+
+    JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
+    panel.add(lblTraktTv, "2, 2");
+
+    chckbxTraktTv = new JCheckBox("");
+    panel.add(chckbxTraktTv, "4, 2");
+
     initDataBindings();
 
     // column headings
     tableTvShowSources.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
+
+    if (!Globals.isDonator()) {
+      chckbxTraktTv.setSelected(false);
+      chckbxTraktTv.setEnabled(false);
+    }
   }
 
   protected void initDataBindings() {
@@ -159,5 +180,10 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     //
     jTableBinding.bind();
     //
+    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("tvShowSettings.syncTrakt");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty, chckbxTraktTv, jCheckBoxBeanProperty);
+    autoBinding.bind();
   }
 }

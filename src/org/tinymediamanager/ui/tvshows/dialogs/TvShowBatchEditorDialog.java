@@ -24,8 +24,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -35,10 +38,14 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.border.TitledBorder;
 
+import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -278,6 +285,16 @@ public class TvShowBatchEditorDialog extends TmmDialog {
               episode.writeNFO();
             }
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          }
+
+          if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+            Set<TvShow> tvShows = new HashSet<TvShow>();
+            for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+              tvShows.add(episode.getTvShow());
+            }
+            tvShows.addAll(tvShowsToEdit);
+            TmmTask task = new SyncTraktTvTask(null, new ArrayList<TvShow>(tvShows));
+            TmmTaskManager.getInstance().addUnnamedTask(task);
           }
 
           setVisible(false);

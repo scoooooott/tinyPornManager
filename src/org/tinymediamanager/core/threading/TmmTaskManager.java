@@ -140,6 +140,11 @@ public class TmmTaskManager implements TmmTaskListener {
     if (unnamedTaskExecutor == null || unnamedTaskExecutor.isShutdown()) {
       unnamedTaskExecutor = createUnnamedTaskExecutor();
     }
+    if (task instanceof TmmTask) {
+      TmmTask t = (TmmTask) task;
+      t.addListener(this);
+      t.setState(TaskState.QUEUED);
+    }
     unnamedTaskExecutor.execute(task);
   }
 

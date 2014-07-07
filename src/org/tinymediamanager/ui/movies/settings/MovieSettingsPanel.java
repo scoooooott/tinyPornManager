@@ -48,6 +48,7 @@ import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
@@ -90,6 +91,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxImages;
   private JCheckBox                   chckbxNfo;
   private JCheckBox                   chckbxRuntimeFromMf;
+  private JCheckBox                   chckbxTraktTv;
 
   /**
    * Instantiates a new movie settings panel.
@@ -107,7 +109,8 @@ public class MovieSettingsPanel extends ScrollablePanel {
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblVisiblecolumns = new JLabel(BUNDLE.getString("Settings.movie.visiblecolumns")); //$NON-NLS-1$
     panelGeneral.add(lblVisiblecolumns, "2, 2, right, default");
@@ -142,6 +145,15 @@ public class MovieSettingsPanel extends ScrollablePanel {
 
     chckbxRuntimeFromMf = new JCheckBox("");
     panelGeneral.add(chckbxRuntimeFromMf, "4, 10");
+
+    JSeparator separator = new JSeparator();
+    panelGeneral.add(separator, "2, 12, 7, 1");
+
+    JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
+    panelGeneral.add(lblTraktTv, "2, 14");
+
+    chckbxTraktTv = new JCheckBox("");
+    panelGeneral.add(chckbxTraktTv, "4, 14, 5, 1");
 
     JPanel panelMovieDataSources = new JPanel();
 
@@ -307,6 +319,11 @@ public class MovieSettingsPanel extends ScrollablePanel {
       }
     });
 
+    if (!Globals.isDonator()) {
+      chckbxTraktTv.setSelected(false);
+      chckbxTraktTv.setEnabled(false);
+    }
+
     // column headings
     tableMovieSources.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("Settings.source")); //$NON-NLS-1$
   }
@@ -340,10 +357,9 @@ public class MovieSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, MovieConnectors, JComboBox, Object> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_10, cbNfoFormat, jComboBoxBeanProperty);
     autoBinding_9.bind();
-
     //
-    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     BeanProperty<Settings, Boolean> settingsBeanProperty_2 = BeanProperty.create("movieSettings.detectMovieMultiDir");
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty = BeanProperty.create("selected");
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_2, chckbxMultipleMoviesPerFolder, jCheckBoxBeanProperty);
     autoBinding_2.bind();
@@ -387,5 +403,10 @@ public class MovieSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_14 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_16, chckbxNfo, jCheckBoxBeanProperty);
     autoBinding_14.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty = BeanProperty.create("movieSettings.syncTrakt");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty, chckbxTraktTv, jCheckBoxBeanProperty);
+    autoBinding.bind();
   }
 }

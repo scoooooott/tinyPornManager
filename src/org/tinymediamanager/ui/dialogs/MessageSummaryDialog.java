@@ -46,7 +46,7 @@ public class MessageSummaryDialog extends TmmDialog {
 
   public MessageSummaryDialog(List<String> messages) {
     super(BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$
-    setSize(765, 300);
+    setBounds(5, 5, 1000, 590);
 
     messageList.addAll(messages);
     getContentPane().setLayout(
@@ -64,5 +64,10 @@ public class MessageSummaryDialog extends TmmDialog {
   protected void initDataBindings() {
     JListBinding<String, List<String>, JList> jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, messageList, listMessages);
     jListBinding.bind();
+  }
+
+  @Override
+  public void pack() {
+    // do not let it pack - it looks weird
   }
 }

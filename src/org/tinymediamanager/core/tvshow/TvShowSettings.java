@@ -73,6 +73,7 @@ public class TvShowSettings extends AbstractModelObject {
   private boolean             asciiReplacement            = false;
   private boolean             renamerSpaceSubstitution    = false;
   private String              renamerSpaceReplacement     = "_";
+  private boolean             syncTrakt                   = false;
 
   @Enumerated(EnumType.STRING)
   private TvShowEpisodeNaming renamerFormat               = TvShowEpisodeNaming.WITH_SE;
@@ -279,5 +280,15 @@ public class TvShowSettings extends AbstractModelObject {
     boolean oldValue = this.renamerSpaceSubstitution;
     this.renamerSpaceSubstitution = newValue;
     firePropertyChange("renamerSpaceSubstitution", oldValue, newValue);
+  }
+
+  public void setSyncTrakt(boolean newValue) {
+    boolean oldValue = this.syncTrakt;
+    this.syncTrakt = newValue;
+    firePropertyChange("syncTrakt", oldValue, newValue);
+  }
+
+  public boolean getSyncTrakt() {
+    return syncTrakt;
   }
 }

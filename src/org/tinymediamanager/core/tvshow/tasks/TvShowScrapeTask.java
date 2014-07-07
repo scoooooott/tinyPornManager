@@ -26,6 +26,8 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
@@ -39,6 +41,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
@@ -82,6 +85,12 @@ public class TvShowScrapeTask extends TmmThreadPool {
     }
 
     waitForCompletionOrCancel();
+
+    if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+      TmmTask task = new SyncTraktTvTask(null, tvShowsToScrape);
+      TmmTaskManager.getInstance().addUnnamedTask(task);
+    }
+
     LOGGER.debug("done scraping tv shows...");
   }
 

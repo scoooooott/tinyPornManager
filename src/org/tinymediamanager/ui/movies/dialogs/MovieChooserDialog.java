@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -62,6 +63,8 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieScrapers;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
 import org.tinymediamanager.scraper.IMediaTrailerProvider;
@@ -70,6 +73,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -445,6 +449,12 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
           // rewrite the complete NFO
           movieToScrape.writeNFO();
+
+          // if configured - sync with trakt.tv
+          if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+            TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToScrape), null);
+            TmmTaskManager.getInstance().addUnnamedTask(task);
+          }
 
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 

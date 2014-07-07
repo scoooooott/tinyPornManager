@@ -33,9 +33,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaGenres;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
@@ -280,6 +284,11 @@ public class MovieBatchEditorDialog extends TmmDialog {
             for (Movie movie : moviesToEdit) {
               movie.saveToDb();
               movie.writeNFO();
+            }
+            // if configured - sync with trakt.tv
+            if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+              TmmTask task = new SyncTraktTvTask(moviesToEdit, null);
+              TmmTaskManager.getInstance().addUnnamedTask(task);
             }
           }
         }

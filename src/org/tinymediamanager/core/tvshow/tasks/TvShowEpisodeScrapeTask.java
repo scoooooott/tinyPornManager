@@ -15,19 +15,26 @@
  */
 package org.tinymediamanager.core.tvshow.tasks;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
+import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 
 /**
  * The Class TvShowEpisodeScrapeTask.
@@ -50,11 +57,6 @@ public class TvShowEpisodeScrapeTask implements Runnable {
     this.episodes = episodes;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Runnable#run()
-   */
   @Override
   public void run() {
     for (TvShowEpisode episode : episodes) {
@@ -85,6 +87,15 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       catch (Exception e) {
         LOGGER.warn("Error getting metadata " + e.getMessage());
       }
+    }
+
+    if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+      Set<TvShow> tvShows = new HashSet<TvShow>();
+      for (TvShowEpisode episode : episodes) {
+        tvShows.add(episode.getTvShow());
+      }
+      TmmTask task = new SyncTraktTvTask(null, new ArrayList<TvShow>(tvShows));
+      TmmTaskManager.getInstance().addUnnamedTask(task);
     }
   }
 

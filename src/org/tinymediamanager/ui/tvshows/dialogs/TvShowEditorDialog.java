@@ -25,6 +25,7 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -60,6 +61,8 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowActor;
@@ -68,6 +71,7 @@ import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -901,6 +905,12 @@ public class TvShowEditorDialog extends TmmDialog {
 
       tvShowToEdit.saveToDb();
       tvShowToEdit.writeNFO();
+
+      if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+        TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToEdit));
+        TmmTaskManager.getInstance().addUnnamedTask(task);
+      }
+
       setVisible(false);
     }
   }

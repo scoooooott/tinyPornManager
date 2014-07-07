@@ -35,6 +35,8 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.IMediaMetadataProvider;
@@ -46,6 +48,7 @@ import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.movies.dialogs.MovieChooserDialog;
 
@@ -101,6 +104,11 @@ public class MovieScrapeTask extends TmmThreadPool {
       catch (Exception e) {
         LOGGER.error("SmartScrape crashed " + e.getMessage());
       }
+    }
+
+    if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+      TmmTask task = new SyncTraktTvTask(moviesToScrape, null);
+      TmmTaskManager.getInstance().addUnnamedTask(task);
     }
 
     LOGGER.info("Done scraping movies)");

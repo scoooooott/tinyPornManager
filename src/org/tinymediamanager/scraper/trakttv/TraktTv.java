@@ -26,9 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
-import org.tinymediamanager.core.Message;
-import org.tinymediamanager.core.Message.MessageLevel;
-import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -111,19 +108,16 @@ public class TraktTv {
   }
 
   /**
-   * Syncs Trakt.tv collection (all movies you have)<br>
+   * Syncs Trakt.tv collection (specified movies)<br>
    * Gets all Trakt movies from collection, matches them to ours, and sends ONLY the new ones back to Trakt
    */
-  public void syncTraktMovieCollection() {
+  public void syncTraktMovieCollection(List<Movie> tmmMovies) {
     if (!isEnabled()) {
       return;
     }
-
     // *****************************************************************************
     // 1) get diff of TMM <-> Trakt collection
     // *****************************************************************************
-    // our copied list of TMM movies
-    List<Movie> tmmMovies = new ArrayList<Movie>(MovieList.getInstance().getMovies());
     LOGGER.info("You have " + tmmMovies.size() + " movies in your TMM database");
 
     // get ALL Trakt movies in collection
@@ -199,20 +193,29 @@ public class TraktTv {
     catch (RetrofitError e) {
       handleRetrofitError(e);
     }
-
   }
 
   /**
-   * Syncs Trakt.tv "seen" flag (all movies you have already marked as watched)<br>
-   * Gets all watched movies from Trakt, and sets the "watched" flag on TMM movies.<br>
-   * Then update the remaining TMM movies on Trakt as 'seen'.
+   * Syncs Trakt.tv collection (all movies you have)<br>
+   * Gets all Trakt movies from collection, matches them to ours, and sends ONLY the new ones back to Trakt
    */
-  public void syncTraktMovieWatched() {
+  public void syncTraktMovieCollection() {
     if (!isEnabled()) {
       return;
     }
 
-    List<Movie> tmmMovies = MovieList.getInstance().getMovies();
+    syncTraktMovieCollection(new ArrayList<Movie>(MovieList.getInstance().getMovies()));
+  }
+
+  /**
+   * Syncs Trakt.tv "seen" flag (all gives you have already marked as watched)<br>
+   * Gets all watched movies from Trakt, and sets the "watched" flag on TMM movies.<br>
+   * Then update the remaining TMM movies on Trakt as 'seen'.
+   */
+  public void syncTraktMovieWatched(List<Movie> tmmMovies) {
+    if (!isEnabled()) {
+      return;
+    }
 
     // *****************************************************************************
     // 1) get all Trakt watched movies and update our "watched" status
@@ -324,6 +327,18 @@ public class TraktTv {
   }
 
   /**
+   * Syncs Trakt.tv "seen" flag (all movies you have already marked as watched)<br>
+   * Gets all watched movies from Trakt, and sets the "watched" flag on TMM movies.<br>
+   * Then update the remaining TMM movies on Trakt as 'seen'.
+   */
+  public void syncTraktMovieWatched() {
+    if (!isEnabled()) {
+      return;
+    }
+    syncTraktMovieWatched(MovieList.getInstance().getMovies());
+  }
+
+  /**
    * simple class to ease diff
    * 
    * @author Myron Boyle
@@ -386,17 +401,17 @@ public class TraktTv {
   }
 
   /**
-   * Syncs Trakt.tv collection (all TvShows you have)<br>
+   * Syncs Trakt.tv collection (all given TvShows)<br>
    * Gets all Trakt shows/episodes from collection, matches them to ours, and sends ONLY the new ones back to Trakt
    */
-  public void syncTraktTvShowCollection() {
+  public void syncTraktTvShowCollection(List<TvShow> tvShows) {
     if (!isEnabled()) {
       return;
     }
 
     // our simple list of TMM shows
     List<SimpleShow> tmmShows = new ArrayList<SimpleShow>();
-    for (TvShow show : TvShowList.getInstance().getTvShows()) {
+    for (TvShow show : tvShows) {
       tmmShows.add(new SimpleShow(show));
     }
 
@@ -479,19 +494,28 @@ public class TraktTv {
   }
 
   /**
-   * gets ALL watched TvShows from Trakt, and sets the "watched" flag on TMM show/episodes (if TvDB matches)
+   * Syncs Trakt.tv collection (all TvShows you have)<br>
+   * Gets all Trakt shows/episodes from collection, matches them to ours, and sends ONLY the new ones back to Trakt
    */
-  public void syncTraktTvShowWatched() {
+  public void syncTraktTvShowCollection() {
     if (!isEnabled()) {
       return;
     }
 
+    syncTraktTvShowCollection(new ArrayList<TvShow>(TvShowList.getInstance().getTvShows()));
+  }
+
+  /**
+   * gets ALL watched TvShows from Trakt, and sets the "watched" flag on TMM show/episodes (if TvDB matches)
+   */
+  public void syncTraktTvShowWatched(List<TvShow> tmmShows) {
+    if (!isEnabled()) {
+      return;
+    }
     // Call user/library/shows/watched and make sure to send min for the extended parameter. This greatly reduces the data being sent back.
     // Loop over each show and mark it as watched on TMM.
     // Using the same data from step 1 as a baseline, see if there is anything newly watched in the media center. If not, no action needed.
     // If yes, call show/episode/seen for each show to tell trakt they are watched.
-
-    List<TvShow> tmmShows = TvShowList.getInstance().getTvShows();
 
     // *****************************************************************************
     // 1) get all Trakt watched TvShows/episodes and update our "watched" status
@@ -631,6 +655,17 @@ public class TraktTv {
   }
 
   /**
+   * gets ALL watched TvShows from Trakt, and sets the "watched" flag on TMM show/episodes (if TvDB matches)
+   */
+  public void syncTraktTvShowWatched() {
+    if (!isEnabled()) {
+      return;
+    }
+
+    syncTraktTvShowWatched(new ArrayList<TvShow>(TvShowList.getInstance().getTvShows()));
+  }
+
+  /**
    * prints some trakt status
    * 
    * @param reponse
@@ -693,7 +728,7 @@ public class TraktTv {
       msg = re.getMessage();
     }
     LOGGER.error("Trakt error (wrong settings?) " + msg);
-    MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, msg, "Settings.trakttv"));
+    // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, msg, "Settings.trakttv"));
   }
 
   /**

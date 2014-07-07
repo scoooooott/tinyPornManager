@@ -50,7 +50,7 @@ public class LogDialog extends TmmDialog implements ActionListener {
 
   public LogDialog() {
     super(BUNDLE.getString("logwindow.title"), "log"); //$NON-NLS-1$
-    setSize(600, 250);
+    setBounds(5, 5, 1000, 590);
 
     timerRefresh = new Timer(REFRESH_PERIOD, this);
     timerRefresh.setInitialDelay(0);
@@ -88,6 +88,11 @@ public class LogDialog extends TmmDialog implements ActionListener {
     if (ae.getSource() == timerRefresh) {
       updateApplicationLog();
     }
+  }
+
+  @Override
+  public void pack() {
+    // do not let it pack - it looks weird
   }
 
   private void updateApplicationLog() {

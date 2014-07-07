@@ -21,8 +21,9 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
-import org.tinymediamanager.scraper.trakttv.TraktTv;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 
@@ -49,13 +50,7 @@ public class MovieSyncWatchedTraktTvAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    Runnable task = new Runnable() {
-      @Override
-      public void run() {
-        TraktTv trakt = new TraktTv();
-        trakt.syncTraktMovieWatched();
-      }
-    };
+    TmmTask task = new SyncTraktTvTask(false, true, false, false);
     TmmTaskManager.getInstance().addUnnamedTask(task);
   }
 }

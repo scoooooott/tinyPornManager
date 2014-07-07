@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -56,6 +57,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScrapers;
@@ -67,6 +70,7 @@ import org.tinymediamanager.scraper.MediaArtwork;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -415,6 +419,11 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
           }
 
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+          if (Globals.settings.getTvShowSettings().getSyncTrakt()) {
+            TmmTask task = new SyncTraktTvTask(null, Arrays.asList(tvShowToScrape));
+            TmmTaskManager.getInstance().addUnnamedTask(task);
+          }
 
           setVisible(false);
         }

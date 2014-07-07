@@ -25,6 +25,7 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -65,10 +66,13 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
 import org.tinymediamanager.core.movie.entities.MovieSet;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
@@ -1040,6 +1044,13 @@ public class MovieEditorDialog extends TmmDialog {
 
       movieToEdit.saveToDb();
       movieToEdit.writeNFO();
+
+      // if configured - sync with trakt.tv
+      if (MovieModuleManager.MOVIE_SETTINGS.getSyncTrakt()) {
+        TmmTask task = new SyncTraktTvTask(Arrays.asList(movieToEdit), null);
+        TmmTaskManager.getInstance().addUnnamedTask(task);
+      }
+
       setVisible(false);
     }
   }
