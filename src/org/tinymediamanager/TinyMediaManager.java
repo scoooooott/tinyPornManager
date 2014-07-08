@@ -580,11 +580,9 @@ public class TinyMediaManager {
               }
             }
           }
-        }
-        if (Platform.isWindows()) {
-          file = new File("tinyMediaManagerUpdater.new");
+          file = new File("tinyMediaManagerUpd.new");
           if (file.exists() && file.length() > 10000 && file.length() < 50000) {
-            File cur = new File("tinyMediaManagerUpdater.exe");
+            File cur = new File("tinyMediaManagerUpd.exe");
             if (file.length() != cur.length() || !cur.exists()) {
               try {
                 FileUtils.copyFile(file, cur);
@@ -594,8 +592,6 @@ public class TinyMediaManager {
               }
             }
           }
-        }
-        if (Platform.isWindows()) {
           file = new File("tinyMediaManagerCMD.new");
           if (file.exists() && file.length() > 10000 && file.length() < 50000) {
             File cur = new File("tinyMediaManagerCMD.exe");
@@ -604,11 +600,12 @@ public class TinyMediaManager {
                 FileUtils.copyFile(file, cur);
               }
               catch (IOException e) {
-                LOGGER.error("Could not update the updater!");
+                LOGGER.error("Could not update CMD TMM!");
               }
             }
           }
         }
+
         if (Platform.isMac()) {
           file = new File("JavaApplicationStub.new");
           if (file.exists() && file.length() > 0) {

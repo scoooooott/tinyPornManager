@@ -189,6 +189,7 @@ public class Settings extends AbstractModelObject {
           Settings.instance = (Settings) um.unmarshal(in);
         }
         catch (Exception e) {
+          LOGGER.warn("could not load settings - creating default ones...");
           Settings.instance = new Settings();
           Settings.instance.writeDefaultSettings();
         }

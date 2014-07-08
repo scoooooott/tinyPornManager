@@ -87,12 +87,12 @@ public class TraktTv {
    * @return true/false if trakt could be called
    */
   private boolean isEnabled() {
-    if (!Globals.isDonator()) {
-      LOGGER.warn("Won't spawn TRAKT.TV since you are not a donator!");
-      return false;
-    }
     if (userName.isEmpty() || password.isEmpty() || apiKey.isEmpty()) {
       LOGGER.warn("Can't spawn TRAKT.TV - Settings empty.");
+      return false;
+    }
+    if (!Globals.isDonator()) {
+      LOGGER.warn("Won't spawn TRAKT.TV since you are not a donator!");
       return false;
     }
     return true;

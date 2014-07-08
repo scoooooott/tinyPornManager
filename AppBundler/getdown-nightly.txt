@@ -27,13 +27,13 @@ delete = lib/l2fprod-common-buttonbar.jar
 delete = lib/l2fprod-common-shared.jar
 
 resource = [windows] tinyMediaManager.new           #rename to new, for self-update
-resource = [windows] tinyMediaManagerUpd.new                #rename to new, for self-update
+resource = [windows] tinyMediaManagerUpd.new        #rename to new, for self-update
 resource = [windows] tinyMediaManagerCMD.new        #rename to new, for self-update
 resource = [!windows] tinyMediaManagerCMD.sh
 resource = [!windows] tinyMediaManager.sh
 resource = [!windows] tinyMediaManagerUpdater.sh
 resource = [mac os x] tinyMediaManagerOSX.sh
-resource = [mac os x] JavaApplicationStub.new               #rename to new, for self-update
+resource = [mac os x] JavaApplicationStub.new       #rename to new, for self-update
 resource = getdown-new.jar
 resource = version
 resource = splashscreen.png
