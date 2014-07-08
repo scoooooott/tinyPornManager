@@ -22,18 +22,18 @@ fi
 
 # have a look if we need to launch the updater or tmm directly
 if [ -f tmm.jar ]; then
-  JAR = "tmm.jar"
-  ARGS = "-Xdock:name=tinyMediaManager" 
-  ARGS = "$ARGS -Xms64m -Xmx512m -Xss512k -splash:splashscreen.png"
+  JAR="tmm.jar"
+  ARGS="-Xdock:name=tinyMediaManager" 
+  ARGS="$ARGS -Xms64m -Xmx512m -Xss512k -splash:splashscreen.png"
 else
-  JAR = "getdown.jar ."
-  ARGS = "-Xdock:name=tinyMediaManager updater"
+  JAR="getdown.jar ."
+  ARGS="-Xdock:name=tinyMediaManager updater"
 fi
 
-ARGS = "$ARGS -Dapple.laf.useScreenMenuBar=true"
-ARGS = "$ARGS -Dapple.awt.graphics.UseQuartz=true"
-ARGS = "$ARGS -Djava.net.preferIPv4Stack=true"
-ARGS = "$ARGS -Xdock:icon=../tmm.icns"
+ARGS="$ARGS -Dapple.laf.useScreenMenuBar=true"
+ARGS="$ARGS -Dapple.awt.graphics.UseQuartz=true"
+ARGS="$ARGS -Djava.net.preferIPv4Stack=true"
+ARGS="$ARGS -Xdock:icon=../tmm.icns"
 
 # execute it :)
-exec "$JAVACMD" "$ARGS" -jar "$JAR"      
+exec $JAVACMD $ARGS -jar $JAR      
