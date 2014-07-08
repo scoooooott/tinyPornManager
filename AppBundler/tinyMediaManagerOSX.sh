@@ -37,3 +37,4 @@ ARGS="$ARGS -Xdock:icon=../tmm.icns"
 
 # execute it :)
 exec $JAVACMD $ARGS -jar $JAR      
+
