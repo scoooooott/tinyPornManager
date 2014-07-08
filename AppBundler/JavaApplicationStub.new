@@ -17,4 +17,4 @@ done
 
 progdir=`dirname "$PRG"`
 cd "$progdir/../Resources/Java/"
-exec `/bin/sh` `tinyMediaManagerOSX.sh`
+exec `/bin/sh tinyMediaManagerOSX.sh`

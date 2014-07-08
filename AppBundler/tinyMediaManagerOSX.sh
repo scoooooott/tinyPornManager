@@ -27,7 +27,7 @@ if [ -f tmm.jar ]; then
   ARGS="$ARGS -Xms64m -Xmx512m -Xss512k -splash:splashscreen.png"
 else
   JAR="getdown.jar ."
-  ARGS="-Xdock:name=tinyMediaManager updater"
+  ARGS="-Xdock:name=`tinyMediaManager updater`"
 fi
 
 ARGS="$ARGS -Dapple.laf.useScreenMenuBar=true"
