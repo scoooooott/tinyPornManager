@@ -27,9 +27,13 @@ delete = lib/l2fprod-common-buttonbar.jar
 delete = lib/l2fprod-common-shared.jar
 
 resource = [windows] tinyMediaManager.new                   #rename to new, for self-update
+resource = [windows] tinyMediaManagerUpd.new                #rename to new, for self-update
 resource = [windows] tinyMediaManagerCMD.new                #rename to new, for self-update
 resource = [!windows] tinyMediaManagerCMD.sh
 resource = [!windows] tinyMediaManager.sh
+resource = [!windows] tinyMediaManagerUpdater.sh
+resource = [mac os x] tinyMediaManagerOSX.sh
+resource = [mac os x] JavaApplicationStub.new               #rename to new, for self-update
 resource = getdown-new.jar
 resource = version
 resource = splashscreen.png
@@ -78,7 +82,10 @@ allow_offline = true
 skip_md5_cache = true
 
 # jvm args
-# NOTE: please consider to write fundamental changes to the commandline start scripts too 
+#####################################################################################
+# NOTE: please consider to write fundamental changes to the commandline start scripts
+# and all other launchers too
+##################################################################################### 
 jvmarg = -Xms64m 
 jvmarg = -Xmx512m
 jvmarg = -Xss512k

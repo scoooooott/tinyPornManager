@@ -1,10 +1,10 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>tmm.jar</jar>
-  <outfile>../dist/tinyMediaManager.exe</outfile>
+  <jar>getdown.jar</jar>
+  <outfile>../dist/tinyMediaManagerUpd.exe</outfile>
   <errTitle></errTitle>
-  <cmdLine></cmdLine>
+  <cmdLine>.</cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
@@ -19,8 +19,6 @@
     <initialHeapSize>64</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
-    <opt>-Xss512k</opt>
-    <opt>-splash:splashscreen.png</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.0.0.0</fileVersion>
@@ -31,7 +29,7 @@
     <txtProductVersion>text</txtProductVersion>
     <productName>tinyMediaManager</productName>
     <internalName>tmm</internalName>
-    <originalFilename>tmm.exe</originalFilename>
+    <originalFilename>tinyMediaManagerUpd.exe</originalFilename>
   </versionInfo>
   <messages>
     <startupErr>An error occurred while starting the application.</startupErr>

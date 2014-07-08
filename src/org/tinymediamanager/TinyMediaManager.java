@@ -576,6 +576,20 @@ public class TinyMediaManager {
                 FileUtils.copyFile(file, cur);
               }
               catch (IOException e) {
+                LOGGER.error("Could not update tmm!");
+              }
+            }
+          }
+        }
+        if (Platform.isWindows()) {
+          file = new File("tinyMediaManagerUpdater.new");
+          if (file.exists() && file.length() > 10000 && file.length() < 50000) {
+            File cur = new File("tinyMediaManagerUpdater.exe");
+            if (file.length() != cur.length() || !cur.exists()) {
+              try {
+                FileUtils.copyFile(file, cur);
+              }
+              catch (IOException e) {
                 LOGGER.error("Could not update the updater!");
               }
             }
@@ -591,6 +605,20 @@ public class TinyMediaManager {
               }
               catch (IOException e) {
                 LOGGER.error("Could not update the updater!");
+              }
+            }
+          }
+        }
+        if (Platform.isMac()) {
+          file = new File("JavaApplicationStub.new");
+          if (file.exists() && file.length() > 0) {
+            File cur = new File("../../MacOS/JavaApplicationStub");
+            if (file.length() != cur.length() || !cur.exists()) {
+              try {
+                FileUtils.copyFile(file, cur);
+              }
+              catch (IOException e) {
+                LOGGER.error("Could not update JavaApplicationStub");
               }
             }
           }

@@ -1,7 +1,10 @@
 #!/bin/sh
+#####################################################################################
+# Just a kickstarter to launch the real app
+#####################################################################################
 
+# find the path where to execute tmm
 PRG=$0
-
 while [ -h "$PRG" ]; do
     ls=`ls -ld "$PRG"`
     link=`expr "$ls" : '^.*-> \(.*\)$' 2>/dev/null`
@@ -13,16 +16,5 @@ while [ -h "$PRG" ]; do
 done
 
 progdir=`dirname "$PRG"`
-
-if [ -n "$JAVA_HOME" ]; then
-  JAVACMD="$JAVA_HOME/bin/java"
-elif [ -x /usr/libexec/java_home ]; then
-  JAVACMD="`/usr/libexec/java_home`/bin/java"
-else
-  JAVACMD="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java"
-fi
-
 cd "$progdir/../Resources/Java/"
-exec "$JAVACMD" -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Djava.net.preferIPv4Stack=true \
-                -Xdock:icon=../tmm.icns -Xdock:name="tinyMediaManager updater" -jar getdown.jar . 
-       
+exec `/bin/sh` `tinyMediaManagerOSX.sh`
