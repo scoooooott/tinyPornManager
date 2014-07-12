@@ -6,9 +6,9 @@ ui.name = tinyMediaManager
 ui.background_image = splashscreen.png
 ui.icon = tmm.png
 ui.progress = 22, 272, 440, 21
-ui.progress_text = FFFFFF
-ui.status = 40, 272, 450, 18
-ui.status_text = FFFFFF
+ui.progress_text = 000000
+ui.status = 30, 300, 450, 18
+ui.status_text = 000000
 ui.mac_dock_icon = ../tmm.icns
 
 # Application jar files, on classpath (generated from claspath in build.xml)
