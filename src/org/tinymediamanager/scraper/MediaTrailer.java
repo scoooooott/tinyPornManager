@@ -18,13 +18,13 @@ package org.tinymediamanager.scraper;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 
 import javax.persistence.Embeddable;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,7 +231,12 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
    */
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
+      @Override
+      protected boolean accept(Field f) {
+        return super.accept(f) && !f.getName().equals("propertyChangeSupport");
+      }
+    }).toString();
   }
 
   /**
