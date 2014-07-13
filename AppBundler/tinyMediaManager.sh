@@ -13,6 +13,8 @@ fi
 
 ARGS="$ARGS -Djna.nosys=true"
 ARGS="$ARGS -Djava.net.preferIPv4Stack=true"
+ARGS="$ARGS -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches"
+ARGS="$ARGS -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf"
 
 # execute it :)
 java $ARGS -jar $JAR   

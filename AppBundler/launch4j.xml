@@ -21,6 +21,8 @@
     <opt>-Djava.net.preferIPv4Stack=true</opt>
     <opt>-Xss512k</opt>
     <opt>-splash:splashscreen.png</opt>
+    <opt>-XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches</opt>
+    <opt>-XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.0.0.0</fileVersion>

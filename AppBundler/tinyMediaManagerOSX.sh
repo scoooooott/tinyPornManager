@@ -34,6 +34,8 @@ ARGS="$ARGS -Dapple.laf.useScreenMenuBar=true"
 ARGS="$ARGS -Dapple.awt.graphics.UseQuartz=true"
 ARGS="$ARGS -Djava.net.preferIPv4Stack=true"
 ARGS="$ARGS -Xdock:icon=../tmm.icns"
+ARGS="$ARGS -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches"
+ARGS="$ARGS -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf"
 
 # execute it :)
 exec $JAVACMD $ARGS -jar $JAR      
