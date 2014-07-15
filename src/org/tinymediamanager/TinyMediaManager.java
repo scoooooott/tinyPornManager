@@ -112,7 +112,7 @@ public class TinyMediaManager {
     // @formatter:off
     System.out.println("\n" +
         "=====================================================\n" +
-        "=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===\n" +
+        "=== tinyMediaManager (c) 2012-2014 Manuel Laggner ===\n" +
         "=====================================================\n" +
         "\n" +
         "    SYNTAX: java -jar tmm.jar <parameters>\n" +
@@ -213,7 +213,7 @@ public class TinyMediaManager {
     }
 
     LOGGER.info("=====================================================");
-    LOGGER.info("=== tinyMediaManager (c) 2012-2013 Manuel Laggner ===");
+    LOGGER.info("=== tinyMediaManager (c) 2012-2014 Manuel Laggner ===");
     LOGGER.info("=====================================================");
     LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
 
