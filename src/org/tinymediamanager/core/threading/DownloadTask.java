@@ -19,16 +19,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URLConnection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -41,20 +37,19 @@ import org.tinymediamanager.scraper.util.UrlUtil;
 import org.tinymediamanager.ui.UTF8Control;
 
 /**
- * DownloadWorker for bigger downloads with status updates
+ * DownloadTask for bigger downloads with status updates
  * 
  * @author Myron Boyle, Manuel Laggner
  */
-public class DownloadWorker extends TmmTask {
-  private static final Logger         LOGGER = LoggerFactory.getLogger(DownloadWorker.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+public class DownloadTask extends TmmTask {
+  private static final Logger         LOGGER    = LoggerFactory.getLogger(DownloadTask.class);
+  private static final ResourceBundle BUNDLE    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private String                      url;
   private File                        file;
   private MediaEntity                 media;
   private MediaFileType               fileType;
-
-  private boolean                     cancel = false;
+  private String                      userAgent = "";
 
   /**
    * Downloads an url to a file, and does correct http encoding on querystring.<br>
@@ -65,7 +60,7 @@ public class DownloadWorker extends TmmTask {
    * @param toFile
    *          the file to save to
    */
-  public DownloadWorker(String url, File toFile) {
+  public DownloadTask(String url, File toFile) {
     this(url, toFile, null, null);
   }
 
@@ -83,7 +78,7 @@ public class DownloadWorker extends TmmTask {
    * @param expectedFiletype
    *          the MediaFileType what we expect (video, trailer, graphic), so we can react on it
    */
-  public DownloadWorker(String url, File toFile, MediaEntity addToMe, MediaFileType expectedFiletype) {
+  public DownloadTask(String url, File toFile, MediaEntity addToMe, MediaFileType expectedFiletype) {
     super(BUNDLE.getString("task.download") + " " + toFile.getName(), 100, TaskType.BACKGROUND_TASK);
 
     this.url = url;
@@ -92,6 +87,15 @@ public class DownloadWorker extends TmmTask {
     this.fileType = expectedFiletype;
 
     setTaskDescription(file.getName());
+  }
+
+  /**
+   * Set a special user agent which is needed for the download
+   * 
+   * @param userAgent
+   */
+  public void setSpecialUserAgent(String userAgent) {
+    this.userAgent = userAgent;
   }
 
   @Override
@@ -117,14 +121,16 @@ public class DownloadWorker extends TmmTask {
 
       LOGGER.info("Downloading " + url + " to " + file);
       StreamingUrl u = new StreamingUrl(UrlUtil.getURIEncoded(url).toASCIIString());
+      if (StringUtils.isNotBlank(userAgent)) {
+        u.setUserAgent(userAgent);
+      }
       File tempFile = new File(file.getAbsolutePath() + ".part");
 
-      URLConnection connection = u.getUrl().openConnection();
-      connection.connect();
+      InputStream is = u.getInputStream();
 
-      long length = connection.getContentLength();
+      long length = u.getContentLength();
       LOGGER.debug("Content length: " + length);
-      String type = connection.getContentType();
+      String type = u.getContentType();
       LOGGER.debug("Content type: " + type);
       if (ext.isEmpty()) {
         // still empty? try to parse from mime header
@@ -137,15 +143,11 @@ public class DownloadWorker extends TmmTask {
 
       // trace server headers - config.xml loglevel=5000
       if (LOGGER.isTraceEnabled()) {
-        Map<String, List<String>> headerfields = connection.getHeaderFields();
-        Set<Entry<String, List<String>>> headers = headerfields.entrySet();
-        for (Iterator<Entry<String, List<String>>> i = headers.iterator(); i.hasNext();) {
-          Entry<String, List<String>> map = i.next();
-          LOGGER.trace(map.getKey() + " : " + map.getValue());
+        Header[] headers = u.getHeadersResponse();
+        for (Header header : headers) {
+          LOGGER.trace(header.getName() + " : " + header.getValue());
         }
       }
-
-      InputStream is = u.getInputStream();
 
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
       FileOutputStream outputStream = new FileOutputStream(tempFile);

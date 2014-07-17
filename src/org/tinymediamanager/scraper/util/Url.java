@@ -86,6 +86,15 @@ public class Url {
   }
 
   /**
+   * get all response headers
+   * 
+   * @return
+   */
+  public Header[] getHeadersResponse() {
+    return headersResponse;
+  }
+
+  /**
    * Instantiates a new url / httpclient with default user-agent.
    * 
    * @param url

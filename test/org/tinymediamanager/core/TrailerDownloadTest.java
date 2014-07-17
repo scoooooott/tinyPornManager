@@ -19,6 +19,6 @@ public class TrailerDownloadTest {
     t.setUrl("http://de.clip-1.filmtrailer.com/9507_31566_a_1.wmv?log_var=72|491100001-1|-");
     m.addTrailer(t);
 
-    m.downloadTtrailer(t);
+    m.downloadTrailer(t);
   }
 }

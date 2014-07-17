@@ -335,11 +335,11 @@ public class Movie extends MediaEntity {
    *          the MediaTrailer object to download
    * @return true/false if successful
    */
-  public Boolean downloadTtrailer(MediaTrailer trailerToDownload) {
+  public Boolean downloadTrailer(MediaTrailer trailerToDownload) {
     try {
       // get trailer filename from first mediafile
       String tfile = MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), this) + "-trailer.";
-      String ext = UrlUtil.getFileExtension(trailerToDownload.getUrl());
+      String ext = UrlUtil.getFileExtension(trailerToDownload.getDownloadUrl());
       if (ext.isEmpty()) {
         ext = "unknown";
       }

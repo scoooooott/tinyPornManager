@@ -91,6 +91,37 @@ public class StreamingUrl extends Url {
     return new ByteArrayInputStream("".getBytes());
   }
 
+  public long getContentLength() {
+    if (response == null) {
+      return 0;
+    }
+
+    Header headers[] = response.getHeaders("Content-Length");
+    if (headers.length > 0) {
+      try {
+        long size = Long.parseLong(headers[0].getValue());
+        return size;
+      }
+      catch (NumberFormatException e) {
+      }
+    }
+
+    return 0;
+  }
+
+  public String getContentType() {
+    if (response == null) {
+      return "";
+    }
+
+    Header headers[] = response.getHeaders("Content-Type");
+    if (headers.length > 0) {
+      return headers[0].getValue();
+    }
+
+    return "";
+  }
+
   /**
    * Proper closing of the connection and resources
    */

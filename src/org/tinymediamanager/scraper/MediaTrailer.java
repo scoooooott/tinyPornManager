@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.scraper.util.UrlUtil;
+import org.tinymediamanager.scraper.util.YoutubeLinkExtractor;
 
 /**
  * The Class Trailer.
@@ -253,7 +254,10 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
   public void downloadTo(String file) throws IOException, URISyntaxException, InterruptedException {
     LOGGER.info("Downloading " + this.getUrl() + " to " + file);
 
-    Url u = new Url(UrlUtil.getURIEncoded(this.getUrl()).toASCIIString());
+    Url u = new Url(UrlUtil.getURIEncoded(this.getDownloadUrl()).toASCIIString());
+    if ("apple".equalsIgnoreCase(getProvider())) {
+      u.setUserAgent("QuickTime");
+    }
     FileOutputStream outputStream = new FileOutputStream(file);
     InputStream is = u.getInputStream();
     IOUtils.copy(is, outputStream);
@@ -268,9 +272,21 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
    */
   public String getDownloadUrl() {
     String url = getUrl();
-    if (provider.equals("apple")) {
-      // return url = url.replace("//trailers.apple.com", "//movietrailers.apple.com");
+
+    if ("youtube".equalsIgnoreCase(getProvider())) {
+      try {
+        url = YoutubeLinkExtractor.extractVideoUrl(url);
+      }
+      catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
+
     return url;
   }
 
@@ -291,5 +307,4 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
   public int hashCode() {
     return this.getUrl().hashCode();
   }
-
 }

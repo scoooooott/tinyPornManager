@@ -22,7 +22,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -38,12 +37,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.core.threading.DownloadWorker;
+import org.tinymediamanager.core.movie.tasks.MovieTrailerDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.util.UrlUtil;
@@ -252,8 +250,7 @@ public class MovieTrailerPanel extends JPanel {
 
         if (Globals.isDonator()) {
           Movie movie = movieSelectionModel.getSelectedMovie();
-          DownloadWorker task = new DownloadWorker(trailer.getUrl(), new File(movie.getPath(), movie.getTrailerBasename() + "-trailer"), movie,
-              MediaFileType.TRAILER);
+          MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
           TmmTaskManager.getInstance().addDownloadTask(task);
         }
         else {
