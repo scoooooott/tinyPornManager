@@ -635,6 +635,8 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         md.setId(MediaMetadata.TMDBID, tmdbMd.getId(MediaMetadata.TMDBID));
         // title
         md.storeMetadata(MediaMetadata.TITLE, tmdbMd.getStringValue(MediaMetadata.TITLE));
+        // original title
+        md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, tmdbMd.getStringValue(MediaMetadata.ORIGINAL_TITLE));
         // tagline
         md.storeMetadata(MediaMetadata.TAGLINE, tmdbMd.getStringValue(MediaMetadata.TAGLINE));
         // plot
@@ -647,6 +649,11 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
         md.storeMetadata(MediaMetadata.TMDBID_SET, tmdbMd.getIntegerValue(MediaMetadata.TMDBID_SET));
         md.storeMetadata(MediaMetadata.COLLECTION_NAME, tmdbMd.getStringValue(MediaMetadata.COLLECTION_NAME));
       }
+    }
+
+    // if we have still no original title, take the title
+    if (StringUtils.isBlank(md.getStringValue(MediaMetadata.ORIGINAL_TITLE))) {
+      md.storeMetadata(MediaMetadata.ORIGINAL_TITLE, md.getStringValue(MediaMetadata.TITLE));
     }
 
     return md;
