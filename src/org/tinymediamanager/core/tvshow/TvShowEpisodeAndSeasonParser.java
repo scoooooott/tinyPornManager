@@ -236,9 +236,9 @@ public class TvShowEpisodeAndSeasonParser {
       }
     }
 
-    // parse XYY
+    // parse XYY or XX_YY (but no \w at end, so must have a delimiter!)
     if (result.episodes.isEmpty() || result.season == -1) {
-      regex = Pattern.compile("[^\\d](\\d)+[x_-]?(\\d{2})[^\\d]");
+      regex = Pattern.compile("[^\\d](\\d)+[x_-]?(\\d{2})[^a-zA-Z\\d]");
       m = regex.matcher(filename);
       if (m.find()) {
         int ep = -1;

@@ -117,6 +117,11 @@ public class TvShowTest {
    */
   @Test
   public void testEpisodeMatching() {
+    Assert
+        .assertEquals(
+            "E:2",
+            detectEpisode(" \\XBMCBUNTU\\Standaard mnt share\\Disk3TB\\Anime\\Good Luck Girl (1 - 13)\\[CBM]_Good_Luck_Girl!_-_02_-_The_Battle_Between_God_and_Girl_Now_Begins_[720p]_[4A34853E].mkv"));
+
     Assert.assertEquals("E:1", detectEpisode("AwesomeTvShow.S01E01-480p.mkv"));
     Assert.assertEquals("E:9 E:10", detectEpisode("stvs7ep9-10.avi")); // does not work with NORMAL impl (yet)
 
