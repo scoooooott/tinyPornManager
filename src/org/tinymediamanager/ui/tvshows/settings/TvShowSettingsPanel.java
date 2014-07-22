@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -96,6 +97,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       panelTvShowDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
 
       tableTvShowSources = new JTable();
+      tableTvShowSources.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       scrollPane.setViewportView(tableTvShowSources);
 
       JPanel panelTvShowSourcesButtons = new JPanel();

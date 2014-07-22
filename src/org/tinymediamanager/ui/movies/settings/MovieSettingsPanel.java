@@ -36,6 +36,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
@@ -172,6 +173,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelMovieDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
 
     tableMovieSources = new JTable();
+    tableMovieSources.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     scrollPane.setViewportView(tableMovieSources);
 
     JPanel panelMovieSourcesButtons = new JPanel();
