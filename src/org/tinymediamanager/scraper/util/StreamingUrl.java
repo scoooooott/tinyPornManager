@@ -76,7 +76,7 @@ public class StreamingUrl extends Url {
       response = client.execute(httpget, localContext);
       headersResponse = response.getAllHeaders();
       entity = response.getEntity();
-      responseCode = response.getStatusLine().getStatusCode();
+      responseStatus = response.getStatusLine();
       if (entity != null) {
         return entity.getContent();
       }

@@ -29,6 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -119,13 +122,11 @@ public class DownloadTask extends TmmTask {
         }
       }
 
-      LOGGER.info("Downloading " + url + " to " + file);
+      LOGGER.info("Downloading " + url);
       StreamingUrl u = new StreamingUrl(UrlUtil.getURIEncoded(url).toASCIIString());
       if (StringUtils.isNotBlank(userAgent)) {
         u.setUserAgent(userAgent);
       }
-      File tempFile = new File(file.getAbsolutePath() + ".part");
-
       InputStream is = u.getInputStream();
 
       long length = u.getContentLength();
@@ -140,6 +141,13 @@ public class DownloadTask extends TmmTask {
           file = new File(file.getParent(), file.getName() + "." + ext);
         }
       }
+      LOGGER.debug("Server returned: " + u.getStatusLine());
+      if (u.isFault()) {
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, u.getUrl(), u.getStatusLine()));
+        return;
+      }
+
+      LOGGER.info("Downloading to " + file);
 
       // trace server headers - config.xml loglevel=5000
       if (LOGGER.isTraceEnabled()) {
@@ -149,6 +157,7 @@ public class DownloadTask extends TmmTask {
         }
       }
 
+      File tempFile = new File(file.getAbsolutePath() + ".part");
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
       FileOutputStream outputStream = new FileOutputStream(tempFile);
       int count = 0;
@@ -237,7 +246,7 @@ public class DownloadTask extends TmmTask {
       }
     }
     catch (Exception e) {
-      LOGGER.error("problem downloading: ", e.getMessage());
+      LOGGER.error("problem downloading: ", e);
     }
   }
 

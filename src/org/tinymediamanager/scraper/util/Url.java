@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -58,7 +59,7 @@ public class Url {
   private static final Logger          LOGGER          = LoggerFactory.getLogger(Url.class);
   protected static CloseableHttpClient client;
 
-  protected int                        responseCode    = 0;
+  protected StatusLine                 responseStatus  = null;
   protected String                     url             = null;
   protected Header[]                   headersResponse = null;
   protected List<Header>               headersRequest  = new ArrayList<Header>();
@@ -234,7 +235,7 @@ public class Url {
       response = client.execute(httpget, localContext);
       headersResponse = response.getAllHeaders();
       entity = response.getEntity();
-      responseCode = response.getStatusLine().getStatusCode();
+      responseStatus = response.getStatusLine();
       if (entity != null) {
         is = new ByteArrayInputStream(EntityUtils.toByteArray(entity));
       }
@@ -264,7 +265,21 @@ public class Url {
    * @return true/false
    */
   public boolean isFault() {
-    return responseCode >= 400 ? true : false;
+    return responseStatus.getStatusCode() >= 400 ? true : false;
+  }
+
+  /**
+   * http status code
+   */
+  public int getStatusCode() {
+    return responseStatus.getStatusCode();
+  }
+
+  /**
+   * http status string
+   */
+  public String getStatusLine() {
+    return responseStatus.toString();
   }
 
   /**

@@ -173,11 +173,11 @@ public class MovieTrailerPanel extends JPanel {
         case 0:
           if (StringUtils.isNotBlank(trailer.getUrl())) {
             if (Globals.isDonator()) {
-              return IconManager.DOWNLOAD;
+              if (trailer.getUrl().toLowerCase().startsWith("http")) {
+                return IconManager.DOWNLOAD;
+              }
             }
-            else {
-              return IconManager.DOWNLOAD_DISABLED;
-            }
+            return IconManager.DOWNLOAD_DISABLED;
           }
           return null;
 
