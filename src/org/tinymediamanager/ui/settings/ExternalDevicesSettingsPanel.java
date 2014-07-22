@@ -131,6 +131,7 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
     panelWol.add(btnRemoveWolDevice, "4, 6, fill, top");
 
     JPanel panelXBMC = new JPanel();
+    panelXBMC.setVisible(false);
     panelXBMC.setBorder(new TitledBorder(null, "XBMC", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelXBMC, "2, 4, fill, fill");
     panelXBMC.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
