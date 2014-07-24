@@ -19,6 +19,7 @@
     <initialHeapSize>64</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
+    <opt>-Dfile.encoding=UTF-8</opt>
     <opt>-Xss512k</opt>
     <opt>-splash:splashscreen.png</opt>
     <opt>-XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches</opt>

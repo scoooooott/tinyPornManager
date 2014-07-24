@@ -13,6 +13,7 @@ fi
 
 ARGS="$ARGS -Djna.nosys=true"
 ARGS="$ARGS -Djava.net.preferIPv4Stack=true"
+ARGS="$ARGS -Dfile.encoding=UTF-8"
 ARGS="$ARGS -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches"
 ARGS="$ARGS -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf"
 

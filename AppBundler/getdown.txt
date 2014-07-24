@@ -39,7 +39,7 @@ resource = version
 resource = splashscreen.png
 resource = objectdb.conf
 resource = changelog.txt
-resource = [!windows] env.txt
+resource = [!windows] env.txt                               #still distribute an empty env.txt for a while to clean all old installations
 
 # translations
 %LOCALES%
@@ -91,6 +91,7 @@ jvmarg = -Xmx512m
 jvmarg = -Xss512k
 jvmarg = -splash:splashscreen.png
 jvmarg = -Djava.net.preferIPv4Stack=true
+jvmarg = -Dfile.encoding=UTF-8
 jvmarg = -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches
 jvmarg = -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true

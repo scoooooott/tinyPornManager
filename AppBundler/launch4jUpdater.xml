@@ -19,6 +19,7 @@
     <initialHeapSize>64</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
+    <opt>-Dfile.encoding=UTF-8</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.0.0.0</fileVersion>

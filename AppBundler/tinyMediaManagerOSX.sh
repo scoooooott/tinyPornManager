@@ -11,6 +11,9 @@
 #
 #####################################################################################
 
+# By default Mac OS X LC_ALL is set to "C", which means files with special characters will not be found.
+export LC_ALL="en_US.UTF-8"
+
 # search for the right JVM
 if [ -n "$JAVA_HOME" ]; then
   JAVACMD="$JAVA_HOME/bin/java"
@@ -33,6 +36,7 @@ fi
 ARGS="$ARGS -Dapple.laf.useScreenMenuBar=true"
 ARGS="$ARGS -Dapple.awt.graphics.UseQuartz=true"
 ARGS="$ARGS -Djava.net.preferIPv4Stack=true"
+ARGS="$ARGS -Dfile.encoding=UTF-8"
 ARGS="$ARGS -Xdock:icon=../tmm.icns"
 ARGS="$ARGS -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches"
 ARGS="$ARGS -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf"
