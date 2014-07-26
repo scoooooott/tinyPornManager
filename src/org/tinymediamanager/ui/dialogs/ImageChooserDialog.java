@@ -335,7 +335,7 @@ public class ImageChooserDialog extends TmmDialog {
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  private void addImage(BufferedImage originalImage, MediaArtwork artwork) {
+  private void addImage(BufferedImage originalImage, final MediaArtwork artwork) {
     Point size = null;
 
     GridBagLayout gbl = new GridBagLayout();
@@ -441,6 +441,25 @@ public class ImageChooserDialog extends TmmDialog {
       button.putClientProperty("MediaArtworkExtrafanart", chkbx);
       imagePanel.add(chkbx, gbc);
     }
+
+    /* show image button */
+    gbc.gridx = 0;
+    gbc.gridy++;
+    gbc.anchor = GridBagConstraints.LAST_LINE_START;
+    gbc.gridwidth = 3;
+    gbc.insets = new Insets(0, 0, 0, 0);
+    JButton btnShowImage = new JButton("<html><font color=\"#0000CF\"><u>" + BUNDLE.getString("image.showoriginal") + "</u></font></html>");
+    btnShowImage.setBorderPainted(false);
+    btnShowImage.setFocusPainted(false);
+    btnShowImage.setContentAreaFilled(false);
+    btnShowImage.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ImagePreviewDialog dialog = new ImagePreviewDialog(artwork.getDefaultUrl());
+        dialog.setVisible(true);
+      }
+    });
+    imagePanel.add(btnShowImage, gbc);
 
     panelImages.add(imagePanel);
     panelImages.validate();
