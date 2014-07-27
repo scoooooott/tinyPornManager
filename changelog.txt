@@ -30,7 +30,7 @@ Version 2.x (unreleased)
 + show artwork from the media file panel in lightbox
 + export for TV shows basically done
 + more filter options for TV shows 
-+ (WIP) subtitle searching and downloading
++ preview of images in the image chooser
 + (WIP) trailer downloading
 + (WIP) Trakt.tv integration
 x fix occasional database inconsistencies
