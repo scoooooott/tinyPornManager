@@ -265,21 +265,21 @@ public class Url {
    * @return true/false
    */
   public boolean isFault() {
-    return responseStatus.getStatusCode() >= 400 ? true : false;
+    return (responseStatus != null && responseStatus.getStatusCode() >= 400) ? true : false;
   }
 
   /**
    * http status code
    */
   public int getStatusCode() {
-    return responseStatus.getStatusCode();
+    return responseStatus != null ? responseStatus.getStatusCode() : 0;
   }
 
   /**
    * http status string
    */
   public String getStatusLine() {
-    return responseStatus.toString();
+    return responseStatus != null ? responseStatus.toString() : "";
   }
 
   /**
