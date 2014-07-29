@@ -284,6 +284,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (!Utils.isValidImdbId(movie.getImdbId())) {
         movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
       }
+      LOGGER.debug("parsing video file " + mf.getFilename());
       movie.addToMediaFiles(mf);
       movie.setMultiMovieDir(true);
 
