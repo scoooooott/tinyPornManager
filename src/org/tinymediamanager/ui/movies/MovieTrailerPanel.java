@@ -171,13 +171,13 @@ public class MovieTrailerPanel extends JPanel {
 
       switch (column) {
         case 0:
-          if (StringUtils.isNotBlank(trailer.getUrl())) {
+          if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
             if (Globals.isDonator()) {
-              if (trailer.getUrl().toLowerCase().startsWith("http")) {
-                return IconManager.DOWNLOAD;
-              }
+              return IconManager.DOWNLOAD;
             }
-            return IconManager.DOWNLOAD_DISABLED;
+            else {
+              return IconManager.DOWNLOAD_DISABLED;
+            }
           }
           return null;
 
@@ -248,13 +248,15 @@ public class MovieTrailerPanel extends JPanel {
         row = table.convertRowIndexToModel(row);
         MediaTrailer trailer = trailerEventList.get(row);
 
-        if (Globals.isDonator()) {
-          Movie movie = movieSelectionModel.getSelectedMovie();
-          MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
-          TmmTaskManager.getInstance().addDownloadTask(task);
-        }
-        else {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.donatorfunction.hint"));
+        if (StringUtils.isNotBlank(trailer.getUrl()) && trailer.getUrl().toLowerCase().startsWith("http")) {
+          if (Globals.isDonator()) {
+            Movie movie = movieSelectionModel.getSelectedMovie();
+            MovieTrailerDownloadTask task = new MovieTrailerDownloadTask(trailer, movie);
+            TmmTaskManager.getInstance().addDownloadTask(task);
+          }
+          else {
+            JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.donatorfunction.hint"));
+          }
         }
       }
 

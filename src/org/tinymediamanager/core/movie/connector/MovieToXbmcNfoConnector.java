@@ -402,6 +402,7 @@ public class MovieToXbmcNfoConnector {
       xbmc.genres.add(genre.toString());
     }
 
+    xbmc.trailer = "";
     for (MediaTrailer trailer : new ArrayList<MediaTrailer>(movie.getTrailers())) {
       if (trailer.getInNfo() && !trailer.getUrl().startsWith("file")) {
         // parse internet trailer url for nfo (do not add local one)
