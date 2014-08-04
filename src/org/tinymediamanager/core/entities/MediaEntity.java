@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.persistence.CascadeType;
+import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.MappedSuperclass;
@@ -84,7 +85,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected boolean                      duplicate           = false;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>(0);
+  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>(1);
 
   private Map<MediaFileType, String>     artworkUrlMap       = new HashMap<MediaFileType, String>();
 
@@ -486,10 +487,15 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void addToMediaFiles(MediaFile mediaFile) {
     // synchronized (mediaFiles) {
+
+    final EntityManager entityManager = getEntityManager();
     readWriteLock.writeLock().lock();
-    if (!mediaFiles.contains(mediaFile)) {
-      mediaFiles.add(mediaFile);
-      sortMediaFiles();
+    // need to synchronize on the entitymanager :(
+    synchronized (entityManager) {
+      if (!mediaFiles.contains(mediaFile)) {
+        mediaFiles.add(mediaFile);
+        sortMediaFiles();
+      }
     }
     // }
     readWriteLock.writeLock().unlock();
@@ -500,10 +506,15 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void addToMediaFiles(List<MediaFile> mediaFiles) {
     // synchronized (this.mediaFiles) {
+
+    final EntityManager entityManager = getEntityManager();
     readWriteLock.writeLock().lock();
-    this.mediaFiles.addAll(mediaFiles);
-    sortMediaFiles();
-    // }
+    // need to synchronize on the entitymanager :(
+    synchronized (entityManager) {
+      this.mediaFiles.addAll(mediaFiles);
+      sortMediaFiles();
+      // }
+    }
     readWriteLock.writeLock().unlock();
 
     // fire the right events
@@ -517,22 +528,22 @@ public abstract class MediaEntity extends AbstractModelObject {
   private void fireAddedEventForMediaFile(MediaFile mediaFile) {
     switch (mediaFile.getType()) {
       case FANART:
-        firePropertyChange(FANART, null, getFanart());
+        firePropertyChange(FANART, null, mediaFile.getFile().getPath());
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 
       case POSTER:
-        firePropertyChange(POSTER, null, getPoster());
+        firePropertyChange(POSTER, null, mediaFile.getFile().getPath());
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 
       case BANNER:
-        firePropertyChange(BANNER, null, getBanner());
+        firePropertyChange(BANNER, null, mediaFile.getFile().getPath());
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 
       case THUMB:
-        firePropertyChange(THUMB, null, getThumb());
+        firePropertyChange(THUMB, null, mediaFile.getFile().getPath());
         firePropertyChange(HAS_IMAGES, false, true);
         break;
 
@@ -599,11 +610,16 @@ public abstract class MediaEntity extends AbstractModelObject {
   public void removeAllMediaFiles() {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>(mediaFiles);
     // synchronized (mediaFiles) {
+
+    final EntityManager entityManager = getEntityManager();
     readWriteLock.writeLock().lock();
-    for (int i = mediaFiles.size() - 1; i >= 0; i--) {
-      mediaFiles.remove(i);
+    // need to synchronize on the entitymanager :(
+    synchronized (entityManager) {
+      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+        mediaFiles.remove(i);
+      }
+      // }
     }
-    // }
     readWriteLock.writeLock().unlock();
     for (MediaFile mediaFile : changedMediafiles) {
       fireRemoveEventForMediaFile(mediaFile);
@@ -612,8 +628,13 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void removeFromMediaFiles(MediaFile mediaFile) {
     // synchronized (mediaFiles) {
+
+    final EntityManager entityManager = getEntityManager();
     readWriteLock.writeLock().lock();
-    mediaFiles.remove(mediaFile);
+    // need to synchronize on the entitymanager :(
+    synchronized (entityManager) {
+      mediaFiles.remove(mediaFile);
+    }
     // }
     readWriteLock.writeLock().unlock();
 
@@ -623,13 +644,18 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void removeAllMediaFilesExceptType(MediaFileType type) {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
+
+    final EntityManager entityManager = getEntityManager();
     readWriteLock.writeLock().lock();
-    // synchronized (mediaFiles) {
-    for (int i = mediaFiles.size() - 1; i >= 0; i--) {
-      MediaFile mediaFile = mediaFiles.get(i);
-      if (!mediaFile.getType().equals(type)) {
-        mediaFiles.remove(i);
-        changedMediafiles.add(mediaFile);
+    // need to synchronize on the entitymanager :(
+    synchronized (entityManager) {
+      // synchronized (mediaFiles) {
+      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+        MediaFile mediaFile = mediaFiles.get(i);
+        if (!mediaFile.getType().equals(type)) {
+          mediaFiles.remove(i);
+          changedMediafiles.add(mediaFile);
+        }
       }
     }
     // }
@@ -641,13 +667,18 @@ public abstract class MediaEntity extends AbstractModelObject {
 
   public void removeAllMediaFiles(MediaFileType type) {
     List<MediaFile> changedMediafiles = new ArrayList<MediaFile>();
+
+    final EntityManager entityManager = getEntityManager();
     readWriteLock.writeLock().lock();
-    // synchronized (mediaFiles) {
-    for (int i = mediaFiles.size() - 1; i >= 0; i--) {
-      MediaFile mediaFile = mediaFiles.get(i);
-      if (mediaFile.getType().equals(type)) {
-        mediaFiles.remove(i);
-        changedMediafiles.add(mediaFile);
+    // need to synchronize on the entitymanager :(
+    synchronized (entityManager) {
+      // synchronized (mediaFiles) {
+      for (int i = mediaFiles.size() - 1; i >= 0; i--) {
+        MediaFile mediaFile = mediaFiles.get(i);
+        if (mediaFile.getType().equals(type)) {
+          mediaFiles.remove(i);
+          changedMediafiles.add(mediaFile);
+        }
       }
     }
     // }
@@ -676,6 +707,8 @@ public abstract class MediaEntity extends AbstractModelObject {
 
     firePropertyChange(MEDIA_INFORMATION, false, true);
   }
+
+  abstract protected EntityManager getEntityManager();
 
   abstract public void saveToDb();
 

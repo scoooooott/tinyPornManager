@@ -32,7 +32,7 @@ log4j-over-slf4j.jar
 logback-classic-1.0.11.jar
 logback-core-1.0.11.jar
 miglayout-3.7.2-swing.jar
-objectdb-2.5.4.jar
+objectdb-2.5.6_02.jar
 platform-4.1.0.jar (jna-platform)
 retrofit-1.6.0.jar
 Scaling-bin.jar

@@ -40,7 +40,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -521,7 +520,7 @@ public class MovieSet extends MediaEntity {
   @Override
   public void saveToDb() {
     // update/insert this movie set to the database
-    final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    final EntityManager entityManager = getEntityManager();
     readWriteLock.readLock().lock();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
@@ -539,7 +538,7 @@ public class MovieSet extends MediaEntity {
   @Override
   public void deleteFromDb() {
     // delete this movie set from the database
-    final EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
+    final EntityManager entityManager = getEntityManager();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
         entityManager.getTransaction().begin();
@@ -580,6 +579,11 @@ public class MovieSet extends MediaEntity {
     if (dirty) {
       saveToDb();
     }
+  }
+
+  @Override
+  protected EntityManager getEntityManager() {
+    return MovieModuleManager.getInstance().getEntityManager();
   }
 
   /*******************************************************************************

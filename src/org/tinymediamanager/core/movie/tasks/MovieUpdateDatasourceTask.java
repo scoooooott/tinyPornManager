@@ -278,7 +278,10 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
         movie.setDataSource(datasource);
         movie.setNewlyAdded(true);
+        movie.justAdded = true;
         movie.setPath(mf.getPath());
+
+        movieList.addMovie(movie);
       }
 
       if (!Utils.isValidImdbId(movie.getImdbId())) {
@@ -289,12 +292,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       movie.setMultiMovieDir(true);
 
       // 3) find additional files, which start with videoFileName
+      List<MediaFile> existingMediaFiles = new ArrayList<MediaFile>(movie.getMediaFiles());
       List<MediaFile> foundMediaFiles = new ArrayList<MediaFile>();
       for (int i = completeDirContents.size() - 1; i >= 0; i--) {
         File fileInDir = completeDirContents.get(i);
         if (fileInDir.getName().startsWith(basename)) {
           MediaFile mediaFile = new MediaFile(fileInDir);
-          if (!movie.getMediaFiles().contains(mediaFile)) {
+          if (!existingMediaFiles.contains(mediaFile)) {
             // store file for faster cleanup
             synchronized (filesFound) {
               filesFound.add(fileInDir);
@@ -316,8 +320,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         movie.getMovieSet().saveToDb();
         movie.saveToDb();
       }
-      movie.justAdded = true;
-      movieList.addMovie(movie);
     } // end for every file
   }
 
@@ -422,9 +424,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           movie.setDateAdded(new Date());
           movie.setNewlyAdded(true);
 
+          movie.justAdded = true;
+
           movie.findActorImages(); // TODO: find as MediaFIles
           LOGGER.debug("store movie into DB " + movieDir.getName());
           movie.saveToDb(); // savepoint
+
+          movieList.addMovie(movie);
 
           if (movie.getMovieSet() != null) {
             LOGGER.debug("movie is part of a movieset");
@@ -460,8 +466,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         }
 
         movie.saveToDb();
-        movie.justAdded = true;
-        movieList.addMovie(movie);
       }
     }
     catch (NullPointerException e) {
@@ -578,7 +582,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
   }
 
   private void addMediafilesToMovie(Movie movie, List<MediaFile> mediaFiles) {
-    List<MediaFile> current = movie.getMediaFiles();
+    List<MediaFile> current = new ArrayList<MediaFile>(movie.getMediaFiles());
 
     for (MediaFile mf : mediaFiles) {
       if (!current.contains(mf)) { // a new mediafile was found!
@@ -672,6 +676,13 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             // movie.addToMediaFiles(mf); // DO NOT ADD UNKNOWN
             break;
         } // end switch type
+
+        // debug
+        if (mf.getType() != MediaFileType.GRAPHIC && mf.getType() != MediaFileType.UNKNOWN && mf.getType() != MediaFileType.NFO
+            && !movie.getMediaFiles().contains(mf)) {
+          LOGGER.error("Movie not added mf: " + mf.getFile().getPath());
+        }
+
       } // end new MF found
     } // end MF loop
   }
@@ -719,6 +730,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           for (MediaFile mf : mediaFiles) {
             if (!filesFound.contains(mf.getFile())) {
               if (!mf.exists()) {
+                LOGGER.debug("removing orphaned file: " + mf.getPath() + File.separator + mf.getFilename());
                 movie.removeFromMediaFiles(mf);
                 dirty = true;
               }
@@ -759,7 +771,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
 
       ArrayList<MediaFile> ungatheredMediaFiles = new ArrayList<MediaFile>();
-      for (MediaFile mf : movie.getMediaFiles()) {
+      for (MediaFile mf : new ArrayList<MediaFile>(movie.getMediaFiles())) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           ungatheredMediaFiles.add(mf);
         }

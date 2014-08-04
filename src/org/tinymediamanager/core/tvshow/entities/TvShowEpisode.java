@@ -881,7 +881,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @Override
   public void saveToDb() {
     // update/insert this movie to the database
-    final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+    final EntityManager entityManager = getEntityManager();
     readWriteLock.readLock().lock();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
@@ -899,7 +899,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @Override
   public void deleteFromDb() {
     // delete this movie from the database
-    final EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+    final EntityManager entityManager = getEntityManager();
     synchronized (entityManager) {
       if (!entityManager.getTransaction().isActive()) {
         entityManager.getTransaction().begin();
@@ -1113,5 +1113,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       LOGGER.warn("could not delete episode files: " + e.getMessage());
       return false;
     }
+  }
+
+  @Override
+  protected EntityManager getEntityManager() {
+    return TvShowModuleManager.getInstance().getEntityManager();
   }
 }
