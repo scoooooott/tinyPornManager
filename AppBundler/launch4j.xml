@@ -1,7 +1,7 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>tmm.jar</jar>
+  <jar>getdown.jar</jar>
   <outfile>../dist/tinyMediaManager.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
@@ -19,11 +19,8 @@
     <initialHeapSize>64</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
     <opt>-Djava.net.preferIPv4Stack=true</opt>
+    <opt>-Dsilent=noupdate</opt>
     <opt>-Dfile.encoding=UTF-8</opt>
-    <opt>-Xss512k</opt>
-    <opt>-splash:splashscreen.png</opt>
-    <opt>-XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches</opt>
-    <opt>-XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.0.0.0</fileVersion>
