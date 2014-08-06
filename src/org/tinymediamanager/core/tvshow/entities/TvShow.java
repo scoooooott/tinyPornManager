@@ -94,17 +94,17 @@ public class TvShow extends MediaEntity {
   private boolean                     watched            = false;
   private String                      sortTitle          = "";
 
-  private List<String>                genres             = new ArrayList<String>(0);
+  private List<String>                genres             = new ArrayList<String>(1);
   private List<String>                tags               = new ArrayList<String>(0);
   private HashMap<Integer, String>    seasonPosterUrlMap = new HashMap<Integer, String>(0);
   @Deprecated
   private HashMap<Integer, String>    seasonPosterMap    = new HashMap<Integer, String>(0);
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "tvShow")
-  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>(0);
+  private List<TvShowEpisode>         episodes           = new ArrayList<TvShowEpisode>();
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>(0);
+  private List<TvShowActor>           actors             = new ArrayList<TvShowActor>();
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MediaTrailer>          trailer            = new ArrayList<MediaTrailer>(0);
@@ -116,10 +116,10 @@ public class TvShow extends MediaEntity {
   private HashMap<Integer, MediaFile> seasonPosters      = new HashMap<Integer, MediaFile>(0);
 
   @Transient
-  private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>(0);
+  private List<TvShowSeason>          seasons            = new ArrayList<TvShowSeason>(1);
 
   @Transient
-  private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>(0);
+  private List<MediaGenres>           genresForAccess    = new ArrayList<MediaGenres>(1);
 
   @Transient
   private String                      titleSortable      = "";
@@ -1123,7 +1123,11 @@ public class TvShow extends MediaEntity {
    *          the obj
    */
   public void addActor(TvShowActor obj) {
-    actors.add(obj);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      actors.add(obj);
+    }
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1143,7 +1147,11 @@ public class TvShow extends MediaEntity {
    *          the obj
    */
   public void removeActor(TvShowActor obj) {
-    actors.remove(obj);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      actors.remove(obj);
+    }
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1155,19 +1163,22 @@ public class TvShow extends MediaEntity {
    */
   public void setActors(List<TvShowActor> newActors) {
     // two way sync of actors
-
-    // first add the new ones
-    for (TvShowActor actor : newActors) {
-      if (!actors.contains(actor)) {
-        actors.add(actor);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      // first add the new ones
+      for (TvShowActor actor : newActors) {
+        if (!actors.contains(actor)) {
+          actors.add(actor);
+        }
       }
-    }
 
-    // second remove unused
-    for (int i = actors.size() - 1; i >= 0; i--) {
-      TvShowActor actor = actors.get(i);
-      if (!newActors.contains(actor)) {
-        actors.remove(actor);
+      // second remove unused
+      for (int i = actors.size() - 1; i >= 0; i--) {
+        TvShowActor actor = actors.get(i);
+        if (!newActors.contains(actor)) {
+          actors.remove(actor);
+        }
       }
     }
 

@@ -148,7 +148,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     watched = source.watched;
     votes = source.votes;
     subtitles = source.subtitles;
-    actors.addAll(source.actors);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      actors.addAll(source.actors);
+    }
   }
 
   /**
@@ -554,7 +558,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the obj
    */
   public void addActor(TvShowActor obj) {
-    actors.add(obj);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      actors.add(obj);
+    }
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -585,7 +593,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    *          the obj
    */
   public void removeActor(TvShowActor obj) {
-    actors.remove(obj);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      actors.remove(obj);
+    }
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -597,19 +609,22 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public void setActors(List<TvShowActor> newActors) {
     // two way sync of actors
-
-    // first add the new ones
-    for (TvShowActor actor : newActors) {
-      if (!actors.contains(actor)) {
-        actors.add(actor);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      // first add the new ones
+      for (TvShowActor actor : newActors) {
+        if (!actors.contains(actor)) {
+          actors.add(actor);
+        }
       }
-    }
 
-    // second remove unused
-    for (int i = actors.size() - 1; i >= 0; i--) {
-      TvShowActor actor = actors.get(i);
-      if (!newActors.contains(actor)) {
-        actors.remove(actor);
+      // second remove unused
+      for (int i = actors.size() - 1; i >= 0; i--) {
+        TvShowActor actor = actors.get(i);
+        if (!newActors.contains(actor)) {
+          actors.remove(actor);
+        }
       }
     }
 

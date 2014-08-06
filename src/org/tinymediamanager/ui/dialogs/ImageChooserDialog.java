@@ -69,6 +69,7 @@ import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.util.Url;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.ToggleButtonUI;
 import org.tinymediamanager.ui.UTF8Control;
@@ -603,6 +604,7 @@ public class ImageChooserDialog extends TmmDialog {
   private class DownloadTask extends SwingWorker<Void, DownloadChunk> {
     private HashMap<String, Object>     ids;
     private List<IMediaArtworkProvider> artworkProviders;
+    private boolean                     imagesFound = false;
 
     public DownloadTask(HashMap<String, Object> ids, List<IMediaArtworkProvider> artworkProviders) {
       this.ids = ids;
@@ -708,6 +710,7 @@ public class ImageChooserDialog extends TmmDialog {
               chunk.artwork = art;
               chunk.image = bufferedImage;
               publish(chunk);
+              imagesFound = true;
               // addImage(bufferedImage, art);
             }
             catch (Exception e) {
@@ -733,6 +736,13 @@ public class ImageChooserDialog extends TmmDialog {
 
     @Override
     public void done() {
+      if (!imagesFound) {
+        JLabel lblNothingFound = new JLabel(BUNDLE.getString("image.download.nothingfound"));//$NON-NLS-1$
+        TmmFontHelper.changeFont(lblNothingFound, 1.33);
+        panelImages.add(lblNothingFound);
+        panelImages.validate();
+        panelImages.getParent().validate();
+      }
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {

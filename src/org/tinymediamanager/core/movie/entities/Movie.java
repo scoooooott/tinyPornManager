@@ -111,7 +111,7 @@ public class Movie extends MediaEntity {
   private boolean                   multiMovieDir   = false;                               // we detected more movies in same folder
   private int                       top250          = 0;
 
-  private List<String>              genres          = new ArrayList<String>(0);
+  private List<String>              genres          = new ArrayList<String>(1);
   private List<String>              tags            = new ArrayList<String>(0);
   private List<String>              extraThumbs     = new ArrayList<String>(0);
   private List<String>              extraFanarts    = new ArrayList<String>(0);
@@ -120,7 +120,7 @@ public class Movie extends MediaEntity {
   private Certification             certification   = Certification.NOT_RATED;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MovieActor>          actors          = new ArrayList<MovieActor>(0);
+  private List<MovieActor>          actors          = new ArrayList<MovieActor>();
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<MovieProducer>       producers       = new ArrayList<MovieProducer>(0);
@@ -295,7 +295,11 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void addActor(MovieActor obj) {
-    actors.add(obj);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      actors.add(obj);
+    }
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -315,7 +319,11 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void addTrailer(MediaTrailer obj) {
-    trailer.add(obj);
+    // trailers are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      trailer.add(obj);
+    }
     firePropertyChange(TRAILER, null, trailer);
   }
 
@@ -323,7 +331,11 @@ public class Movie extends MediaEntity {
    * Removes the all trailers.
    */
   public void removeAllTrailers() {
-    trailer.clear();
+    // trailers are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      trailer.clear();
+    }
     firePropertyChange(TRAILER, null, trailer);
   }
 
@@ -665,7 +677,11 @@ public class Movie extends MediaEntity {
    *          the obj
    */
   public void removeActor(MovieActor obj) {
-    actors.remove(obj);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      actors.remove(obj);
+    }
     firePropertyChange(ACTORS, null, this.getActors());
   }
 
@@ -1189,25 +1205,29 @@ public class Movie extends MediaEntity {
   public void setActors(List<MovieActor> newActors) {
     // two way sync of actors
 
-    // first remove unused
-    for (int i = actors.size() - 1; i >= 0; i--) {
-      MovieActor actor = actors.get(i);
-      if (!newActors.contains(actor)) {
-        actors.remove(actor);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      // first remove unused
+      for (int i = actors.size() - 1; i >= 0; i--) {
+        MovieActor actor = actors.get(i);
+        if (!newActors.contains(actor)) {
+          actors.remove(actor);
+        }
       }
-    }
 
-    // second add the new ones
-    for (int i = 0; i < newActors.size(); i++) {
-      MovieActor actor = newActors.get(i);
-      if (!actors.contains(actor)) {
-        actors.add(i, actor);
-      }
-      else {
-        int indexOldList = actors.indexOf(actor);
-        if (i != indexOldList) {
-          MovieActor oldActor = actors.remove(indexOldList);
-          actors.add(i, oldActor);
+      // second add the new ones
+      for (int i = 0; i < newActors.size(); i++) {
+        MovieActor actor = newActors.get(i);
+        if (!actors.contains(actor)) {
+          actors.add(i, actor);
+        }
+        else {
+          int indexOldList = actors.indexOf(actor);
+          if (i != indexOldList) {
+            MovieActor oldActor = actors.remove(indexOldList);
+            actors.add(i, oldActor);
+          }
         }
       }
     }
