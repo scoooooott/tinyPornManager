@@ -239,7 +239,8 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
 
     if (ma != null) {
       ma.setDefaultUrl(ftvaw.getUrl());
-      ma.setPreviewUrl(ftvaw.getUrl() + "/preview");
+      ma.setPreviewUrl(ftvaw.getUrl().replace("/fanart/", "/preview/"));
+      // System.out.println("***" + ma.getDefaultUrl() + " -> " + ma.getPreviewUrl());
       ma.setProviderId(getProviderInfo().getId());
       ma.setLanguage(ftvaw.getLanguage());
 
