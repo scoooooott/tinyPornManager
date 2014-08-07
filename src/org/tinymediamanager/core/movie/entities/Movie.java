@@ -1380,7 +1380,7 @@ public class Movie extends MediaEntity {
   public String getTrailerBasename() {
     List<MediaFile> mfs = getMediaFiles(MediaFileType.VIDEO);
     if (mfs != null && mfs.size() > 0) {
-      return mfs.get(0).getBasename();
+      return Utils.cleanStackingMarkers(mfs.get(0).getBasename());
     }
     return null;
   }
