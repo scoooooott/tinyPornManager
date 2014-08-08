@@ -392,7 +392,12 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     }
 
     public void setSelectedResult(MovieRenamerPreviewContainer newValue) {
-      selectedResult = newValue;
+      if (newValue == null) {
+        selectedResult = emptyResult;
+      }
+      else {
+        selectedResult = newValue;
+      }
 
       lblTitle.setText(selectedResult.getMovie().getTitleSortable());
       lblDatasource.setText(selectedResult.getMovie().getDataSource());
