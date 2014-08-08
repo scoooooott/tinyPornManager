@@ -534,6 +534,7 @@ public class TinyMediaManager {
         props.setProperty("subTextFont", fontString);
         props.setProperty("backgroundColor", "237 237 237");
         props.setProperty("menuBackgroundColor", "237 237 237");
+        props.setProperty("controlBackgroundColor", "237 237 237");
         props.setProperty("menuColorLight", "237 237 237");
         props.setProperty("menuColorDark", "237 237 237");
         props.setProperty("toolbarColorLight", "237 237 237");
