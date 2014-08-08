@@ -222,6 +222,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public MediaFileType parseType() {
     String ext = getExtension().toLowerCase();
     String name = getFilename().toLowerCase();
+    String basename = FilenameUtils.getBaseName(getFilename());
     String foldername = FilenameUtils.getBaseName(getPath()).toLowerCase();
 
     if (ext.equals("nfo")) {
@@ -250,9 +251,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       }
 
       // best approach so far: https://github.com/brentosmith/xbmc-dvdextras
-      // TODO: what about "ET - the extra terrestrial" - remove at least space as delimiter, so scraped files should be fine
       // if (name.matches("(?i).*[ _.-]extra[s]?[ _.-].*") || foldername.equalsIgnoreCase("extras")) {
-      if (name.matches("(?i).*[_.-]extra[s]?[_.-].*") || foldername.equalsIgnoreCase("extras")) {
+      // if (name.matches("(?i).*[_.-]extra[s]?[_.-].*") || foldername.equalsIgnoreCase("extras")) {
+      // we check only the base name and it has to end with extra[s]
+      if (basename.matches("(?i).*[ _.-]extra[s]$") || foldername.equalsIgnoreCase("extras")) {
         return MediaFileType.VIDEO_EXTRA;
       }
 
