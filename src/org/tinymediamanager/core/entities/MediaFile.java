@@ -254,7 +254,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       // if (name.matches("(?i).*[ _.-]extra[s]?[ _.-].*") || foldername.equalsIgnoreCase("extras")) {
       // if (name.matches("(?i).*[_.-]extra[s]?[_.-].*") || foldername.equalsIgnoreCase("extras")) {
       // we check only the base name and it has to end with extra[s]
-      if (basename.matches("(?i).*[ _.-]extra[s]$") || foldername.equalsIgnoreCase("extras")) {
+      if (basename.matches("(?i).*[ _.-]extra[s]?$") || foldername.equalsIgnoreCase("extras")) {
         return MediaFileType.VIDEO_EXTRA;
       }
 
