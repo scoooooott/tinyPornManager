@@ -33,5 +33,5 @@ fi
 ARGS="$ARGS -Djava.net.preferIPv4Stack=true"
 
 # execute it :)
-exec $JAVACMD $ARGS -jar getdown.jar .      
+exec "$JAVACMD" $ARGS -jar getdown.jar .      
 
