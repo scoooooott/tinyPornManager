@@ -59,7 +59,7 @@ public class SettingsDialog extends TmmDialog {
     super(BUNDLE.getString("tmm.settings"), "settings"); //$NON-NLS-1$
 
     Rectangle bounds = MainWindow.getActiveInstance().getBounds();
-    setBounds(bounds.x + (bounds.width / 20), bounds.y + (bounds.height / 20), (int) (bounds.width * 0.90), (int) (bounds.height * 0.90));
+    setBounds(bounds.x + (bounds.width / 40), bounds.y + (bounds.height / 20), (int) (bounds.width * 0.95), (int) (bounds.height * 0.90));
 
     {
       JPanel panelSettings = new SettingsPanel();
@@ -101,5 +101,10 @@ public class SettingsDialog extends TmmDialog {
       Globals.settings.saveSettings();
     }
     super.setVisible(visible);
+  }
+
+  @Override
+  public void pack() {
+    // do nothing for better visibility
   }
 }

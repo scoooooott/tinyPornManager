@@ -85,7 +85,7 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected boolean                      duplicate           = false;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>(1);
+  private List<MediaFile>                mediaFiles          = new ArrayList<MediaFile>();
 
   private Map<MediaFileType, String>     artworkUrlMap       = new HashMap<MediaFileType, String>();
 
