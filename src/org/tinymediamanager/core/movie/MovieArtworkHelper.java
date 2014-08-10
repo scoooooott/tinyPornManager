@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -95,9 +94,12 @@ public class MovieArtworkHelper {
       boolean firstImage = false;
       String filename = getFanartFilename(name, movie);
 
-      // only store .png as png and .jpg as jpg
+      // only store .png as png and .jpg as jpg; .tbn will be stored as .jpg
       String generatedFiletype = FilenameUtils.getExtension(filename);
       String providedFiletype = FilenameUtils.getExtension(fanartUrl);
+      if ("tbn".equals(providedFiletype)) {
+        providedFiletype = "jpg";
+      }
       if (!generatedFiletype.equals(providedFiletype)) {
         continue;
       }
