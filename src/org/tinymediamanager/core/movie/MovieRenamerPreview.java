@@ -42,23 +42,23 @@ public class MovieRenamerPreview {
     List<MediaFile> oldFiles = new ArrayList<MediaFile>();
     Set<MediaFile> newFiles = new LinkedHashSet<MediaFile>();
 
-    String newVideoFileName = "";
+    String newVideoBasename = "";
 
     // VIDEO needs to be renamed first, since all others depend on that name!!!
     for (MediaFile mf : movie.getMediaFiles(MediaFileType.VIDEO)) {
       oldFiles.add(new MediaFile(mf));
-      MediaFile ftr = generateFilename(movie, mf, newVideoFileName).get(0); // there can be only one
+      MediaFile ftr = generateFilename(movie, mf, newVideoBasename).get(0); // there can be only one
       newFiles.add(ftr);
-      if (newVideoFileName.isEmpty()) {
+      if (newVideoBasename.isEmpty()) {
         // so remember first renamed video file basename (w/o stacking or extension)
-        newVideoFileName = Utils.cleanStackingMarkers(ftr.getBasename());
+        newVideoBasename = Utils.cleanStackingMarkers(ftr.getBasename());
       }
     }
 
     // all the other MFs...
     for (MediaFile mf : movie.getMediaFilesExceptType(MediaFileType.VIDEO)) {
       oldFiles.add(new MediaFile(mf));
-      newFiles.addAll(generateFilename(movie, mf, newVideoFileName)); // N:M
+      newFiles.addAll(generateFilename(movie, mf, newVideoBasename)); // N:M
     }
 
     // movie folder needs a rename?
