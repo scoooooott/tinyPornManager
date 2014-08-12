@@ -54,5 +54,6 @@
 	<classpathentry kind="lib" path="lib/trakt-java.jar" sourcepath="buildsupport/trakt-java-3.1.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gson.jar"/>
 	<classpathentry kind="lib" path="lib/image-viewer.jar"/>
+	<classpathentry kind="lib" path="lib/jgoodies-common.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
