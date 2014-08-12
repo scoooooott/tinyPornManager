@@ -41,11 +41,11 @@ public class MovieMediaFileTest {
     checkExtra("Extras", mft);
     checkExtra("Extra 2012", mft);
     checkExtra("Extras", mft);
-    // checkExtra("LazyTown Extra", mft); // FIXME: ends with extra :|
+    checkExtra("LazyTown Extra", mft);
     checkExtra("Extra! Extra!", mft);
     checkExtra("Extra.Das.RTL.Magazin.2014-06-02.GERMAN.Doku.WS.dTV.x264", mft);
     checkExtra("Person.of.Interest.S02E14.Extravaganzen.German.DL.720p.BluRay.x264", mft);
-    // checkExtra("The.Client.List.S02E04.Extra.gefaellig.GERMAN.DUBBED.DL.720p.WebHD.h264", mft); // FIXME: no extra :|
+    checkExtra("The.Client.List.S02E04.Extra.gefaellig.GERMAN.DUBBED.DL.720p.WebHD.h264", mft);
     checkExtra("The.Amazing.World.of.Gumball.S03E06.The.Extras.720p.HDTV.x264", mft);
     checkExtra("", mft);
     checkExtra("", mft);
@@ -56,8 +56,10 @@ public class MovieMediaFileTest {
     mft = MediaFileType.VIDEO_EXTRA;
     checkExtra("Red.Shoe.Diaries.S01.EXTRAS.DVDRip.X264", mft);
     checkExtra("extras/someExtForSomeMovie", mft);
-    checkExtra("", mft);
-    checkExtra("", mft);
+    checkExtra("extra/The.Amazing.World.of.Gumball.S03E06.720p.HDTV.x264", mft);
+    checkExtra("bla-blubb-extra", mft);
+    checkExtra("bla-blubb-extra-something", mft);
+    checkExtra("bla-blubb-extra-", mft);
     checkExtra("", mft);
     checkExtra("", mft);
     checkExtra("", mft);
@@ -70,7 +72,7 @@ public class MovieMediaFileTest {
       return;
     }
     File f = new File(".", filename + ".avi");
-    System.out.print("testing " + f);
+    System.out.print("testing " + f + " for " + mft.name());
     MediaFile mf = new MediaFile(f);
     assertEquals(mft, mf.getType());
     System.out.println("  ...ok");

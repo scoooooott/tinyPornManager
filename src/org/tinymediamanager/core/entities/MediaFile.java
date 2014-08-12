@@ -250,13 +250,15 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         return MediaFileType.SAMPLE;
       }
 
-      // https://github.com/brentosmith/xbmc-dvdextras
-      // http://wiki.xbmc.org/index.php?title=Add-on:VideoExtras#File_Naming_Convention
-      // scene releases seem to be pretty clean with ".EXTRAS." in the name
-      if (basename.matches("(?i).*[ _.-]extra[s]?$") // end with "extra[s]"
-          // || getFilename().contains(".EXTRAS.") // scene file naming
-          // || basename.matches("(?i).*([ _.-])extra[s]?\\1.*") // name contains "extra[s]" with same delimiter around (no mixup!)
-          || foldername.equalsIgnoreCase("extras")) // preferred foldername
+      // has to fit TV & Movie naming...
+      // String cleanName = ParserUtils.detectCleanMoviename(name); // tbc if useful...
+      // old impl: https://github.com/brentosmith/xbmc-dvdextras
+      // Official: http://wiki.xbmc.org/index.php?title=Add-on:VideoExtras#File_Naming_Convention
+      if (getFilename().contains(".EXTRAS.") // scene file naming (need to check first! upper case!)
+          || basename.matches("(?i).*[_.-]extra[s]?$") // end with "-extra[s]"
+          || basename.matches("(?i).*[-]extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
+          || foldername.equalsIgnoreCase("extras") // preferred folder name
+          || foldername.equalsIgnoreCase("extra")) // preferred folder name
       {
         return MediaFileType.VIDEO_EXTRA;
       }
