@@ -75,7 +75,7 @@ public class TmmUIHelper {
     }
 
     // on mac try to take the AWT FileDialog
-    if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
+    if ((SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) && SystemUtils.IS_JAVA_1_6) {
       try {
         // open directory chooser
         return openDirectoryDialog(title);
@@ -165,7 +165,7 @@ public class TmmUIHelper {
     }
 
     // try to open AWT dialog on OSX
-    if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
+    if ((SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) && SystemUtils.IS_JAVA_1_6) {
       try {
         // open file chooser
         return openFileDialog(title);
