@@ -16,6 +16,8 @@
 package org.tinymediamanager.ui.components;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
@@ -64,10 +66,19 @@ public class JNativeFileChooser extends JFileChooser {
       // in OSX set the Quaqua laf
       LookAndFeel old = UIManager.getLookAndFeel();
       try {
+        Set includes = new HashSet();
+        includes.add("ColorChooser");
+        includes.add("FileChooser");
+        includes.add("Component");
+        includes.add("Browser");
+        includes.add("Tree");
+        includes.add("SplitPane");
+        // QuaquaManager.setIncludedUIs(includes);
         // call via reflection to get rid of a direct dependency
         Class<?> c = Class.forName("ch.randelshofer.quaqua.QuaquaManager");
-        Method method = c.getDeclaredMethod("getLookAndFeelClassName");
-        UIManager.setLookAndFeel(method.invoke(null).toString());
+        Method method = c.getDeclaredMethod("setIncludedUIs", Set.class);
+        method.invoke(null, includes);
+        UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
       }
       catch (Throwable ex) {
         old = null;
