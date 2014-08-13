@@ -346,6 +346,12 @@ public class TinyMediaManager {
           }
           nativepath += System.getProperty("os.arch");
           System.setProperty("jna.library.path", nativepath);
+
+          if (Platform.isMac()) {
+            String libraryPath = System.getProperty("java.library.path");
+            libraryPath += ":" + nativepath;
+            System.setProperty("jna.library.path", libraryPath);
+          }
           // MediaInfo /////////////////////////////////////////////////////
           if (g2 != null) {
             updateProgress(g2, "loading MediaInfo libs", 20);
