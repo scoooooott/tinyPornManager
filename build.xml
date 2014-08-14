@@ -247,10 +247,6 @@
     	  <copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${build.dir}/tinyMediaManagerOSX.sh" />
     	  <copy file="AppBundler/JavaApplicationStub.new" tofile="${build.dir}/JavaApplicationStub.new" />
         <copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
-    	  <!-- we cannot place the native libs in the native folder because there is no way to change java.library.path at runtime -->
-    	  <copy file="AppBundler/libquaqua.jnilib" tofile="${build.dir}/libquaqua.jnilib" />
-    	  <copy file="AppBundler/libquaqua64.jnilib" tofile="${build.dir}/libquaqua64.jnilib" />
-    	  <copy file="AppBundler/libquaqua64.dylib" tofile="${build.dir}/libquaqua64.dylib" />
 
         <!-- finally create checksums -->
         <taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" 

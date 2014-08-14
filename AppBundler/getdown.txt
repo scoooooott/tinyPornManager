@@ -60,11 +60,11 @@ resource = [windows-x64] native/windows-x64/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/MediaInfo.dll
 resource = [windows-x86] native/windows-x86/mingwm10.dll
 
-# Quauqa native libs
-# we cannot place the native libs in the native folder because there is no way to change java.library.path at runtime 
-resource = [mac os x] libquaqua.jnilib
-resource = [mac os x] libquaqua64.jnilib
-resource = [mac os x] libquaqua64.dylib
+# Quauqa native libs 
+resource = [mac os x-x86_64] native/mac-x86_64/libquaqua.jnilib
+resource = [mac os x-x86_64] native/mac-x86_64/libquaqua64.jnilib
+resource = [mac os x-x86_64] native/mac-x86_64/libquaqua64.dylib
+resource = [mac os x-i386] native/mac-i386/libquaqua.jnilib
 
 # templates
 resource = templates/readme.txt
