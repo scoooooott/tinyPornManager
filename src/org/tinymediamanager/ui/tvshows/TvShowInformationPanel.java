@@ -281,7 +281,7 @@ public class TvShowInformationPanel extends JPanel {
           setBanner(model.getSelectedTvShow());
           synchronized (mediaFiles) {
             mediaFiles.clear();
-            for (MediaFile mediafile : model.getSelectedTvShow().getMediaFiles()) {
+            for (MediaFile mediafile : new ArrayList<MediaFile>(model.getSelectedTvShow().getMediaFiles())) {
               if (mediafile.isGraphic()) {
                 mediaFiles.add(mediafile);
               }
@@ -293,7 +293,7 @@ public class TvShowInformationPanel extends JPanel {
           TvShow show = (TvShow) source;
           synchronized (mediaFiles) {
             mediaFiles.clear();
-            for (MediaFile mediafile : show.getMediaFiles()) {
+            for (MediaFile mediafile : new ArrayList<MediaFile>(show.getMediaFiles())) {
               if (mediafile.isGraphic()) {
                 mediaFiles.add(mediafile);
               }
