@@ -132,7 +132,7 @@ public class ExternalDevicesSettingsPanel extends ScrollablePanel {
 
     JPanel panelXBMC = new JPanel();
     panelXBMC.setVisible(false);
-    panelXBMC.setBorder(new TitledBorder(null, "XBMC", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    panelXBMC.setBorder(new TitledBorder(null, "Kodi / XBMC", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     add(panelXBMC, "2, 4, fill, fill");
     panelXBMC.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {

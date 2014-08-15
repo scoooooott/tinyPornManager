@@ -21,32 +21,16 @@ package org.tinymediamanager.core.movie.connector;
  * @author Manuel Laggner
  */
 public enum MovieConnectors {
+  XBMC("Kodi / XBMC"), MP("MediaPortal");
 
-  /** The xbmc. */
-  XBMC("XBMC"),
-  /** The mp. */
-  MP("MediaPortal");
-
-  /** The title. */
   private String title;
 
-  /**
-   * Instantiates a new movie connectors.
-   * 
-   * @param title
-   *          the title
-   */
   private MovieConnectors(String title) {
     this.title = title;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Enum#toString()
-   */
+  @Override
   public String toString() {
     return this.title;
   }
-
 }
