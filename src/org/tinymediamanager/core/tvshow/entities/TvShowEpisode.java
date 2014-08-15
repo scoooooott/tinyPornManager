@@ -612,9 +612,10 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     // actors are (like media files) proxied by objectdb;
     // this is why we need a lock here
     synchronized (getEntityManager()) {
+      List<TvShowActor> tvShowActors = new ArrayList<TvShowActor>(getTvShow().getActors());
       // first add the new ones
       for (TvShowActor actor : newActors) {
-        if (!actors.contains(actor)) {
+        if (!tvShowActors.contains(actor) && !actors.contains(actor)) {
           actors.add(actor);
         }
       }
@@ -622,7 +623,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
       // second remove unused
       for (int i = actors.size() - 1; i >= 0; i--) {
         TvShowActor actor = actors.get(i);
-        if (!newActors.contains(actor)) {
+        if (!newActors.contains(actor) || tvShowActors.contains(actor)) {
           actors.remove(actor);
         }
       }

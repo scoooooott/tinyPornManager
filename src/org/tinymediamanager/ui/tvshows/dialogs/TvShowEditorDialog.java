@@ -69,7 +69,6 @@ import org.tinymediamanager.core.tvshow.entities.TvShowActor;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
-import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.EqualsLayout;
@@ -107,8 +106,8 @@ public class TvShowEditorDialog extends TmmDialog {
                                                                                                                        .observableList(new ArrayList<TvShowActor>());
   private List<MediaGenres>                                                                       genres           = ObservableCollections
                                                                                                                        .observableList(new ArrayList<MediaGenres>());
-  private List<MediaTrailer>                                                                      trailers         = ObservableCollections
-                                                                                                                       .observableList(new ArrayList<MediaTrailer>());
+  // private List<MediaTrailer> trailers = ObservableCollections
+  // .observableList(new ArrayList<MediaTrailer>());
   private List<String>                                                                            tags             = ObservableCollections
                                                                                                                        .observableList(new ArrayList<String>());
   private List<TvShowEpisodeEditorContainer>                                                      episodes         = ObservableCollections
@@ -140,7 +139,7 @@ public class TvShowEditorDialog extends TmmDialog {
   private JTextField                                                                              tfTvdbId;
   private JLabel                                                                                  lblImdbId;
   private JLabel                                                                                  lblTvdbId;
-  private JTable                                                                                  tableTrailer;
+  // private JTable tableTrailer;
   private JComboBox                                                                               cbTags;
   private JList                                                                                   listTags;
   private JSpinner                                                                                spDateAdded;
@@ -153,7 +152,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
   private JTableBinding<TvShowActor, List<TvShowActor>, JTable>                                   jTableBinding;
   private JListBinding<MediaGenres, List<MediaGenres>, JList>                                     jListBinding;
-  private JTableBinding<MediaTrailer, List<MediaTrailer>, JTable>                                 jTableBinding_1;
+  // private JTableBinding<MediaTrailer, List<MediaTrailer>, JTable> jTableBinding_1;
   private JComboBoxBinding<String, TvShowList, JComboBox>                                         jComboBinding;
   private JListBinding<String, List<String>, JList>                                               jListBinding_1;
   private JTableBinding<TvShowEpisodeEditorContainer, List<TvShowEpisodeEditorContainer>, JTable> jTableBinding_2;
@@ -349,14 +348,13 @@ public class TvShowEditorDialog extends TmmDialog {
     tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
     details2Panel.setBorder(new EmptyBorder(5, 5, 5, 5));
     details2Panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"),
-        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50px:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow(2)"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("100px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"), }));
+        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow(2)"), }));
     {
       JLabel lblActors = new JLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
       details2Panel.add(lblActors, "2, 2, right, default");
@@ -416,37 +414,37 @@ public class TvShowEditorDialog extends TmmDialog {
       details2Panel.add(cbGenres, "8,8");
     }
 
-    {
-      JLabel lblTrailer = new JLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
-      details2Panel.add(lblTrailer, "2, 10, right, default");
-    }
-    {
-      JScrollPane scrollPaneTrailer = new JScrollPane();
-      details2Panel.add(scrollPaneTrailer, "4, 10, 5, 5");
-      tableTrailer = new JTable();
-      scrollPaneTrailer.setViewportView(tableTrailer);
-    }
-    {
-      JButton btnAddTrailer = new JButton("");
-      btnAddTrailer.setAction(new AddTrailerAction());
-      btnAddTrailer.setIcon(IconManager.LIST_ADD);
-      btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnAddTrailer, "2, 12, right, top");
-    }
-    {
-      JButton btnRemoveTrailer = new JButton("");
-      btnRemoveTrailer.setAction(new RemoveTrailerAction());
-      btnRemoveTrailer.setIcon(IconManager.LIST_REMOVE);
-      btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnRemoveTrailer, "2, 14, right, top");
-    }
+    // {
+    //      JLabel lblTrailer = new JLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
+    // details2Panel.add(lblTrailer, "2, 10, right, default");
+    // }
+    // {
+    // JScrollPane scrollPaneTrailer = new JScrollPane();
+    // details2Panel.add(scrollPaneTrailer, "4, 10, 5, 5");
+    // tableTrailer = new JTable();
+    // scrollPaneTrailer.setViewportView(tableTrailer);
+    // }
+    // {
+    // JButton btnAddTrailer = new JButton("");
+    // btnAddTrailer.setAction(new AddTrailerAction());
+    // btnAddTrailer.setIcon(IconManager.LIST_ADD);
+    // btnAddTrailer.setMargin(new Insets(2, 2, 2, 2));
+    // details2Panel.add(btnAddTrailer, "2, 12, right, top");
+    // }
+    // {
+    // JButton btnRemoveTrailer = new JButton("");
+    // btnRemoveTrailer.setAction(new RemoveTrailerAction());
+    // btnRemoveTrailer.setIcon(IconManager.LIST_REMOVE);
+    // btnRemoveTrailer.setMargin(new Insets(2, 2, 2, 2));
+    // details2Panel.add(btnRemoveTrailer, "2, 14, right, top");
+    // }
     {
       JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      details2Panel.add(lblTags, "2, 16, right, default");
+      details2Panel.add(lblTags, "2, 10, right, default");
     }
     {
       JScrollPane scrollPaneTags = new JScrollPane();
-      details2Panel.add(scrollPaneTags, "4, 16, 1, 5");
+      details2Panel.add(scrollPaneTags, "4, 10, 1, 5");
       listTags = new JList();
       scrollPaneTags.setViewportView(listTags);
     }
@@ -455,19 +453,19 @@ public class TvShowEditorDialog extends TmmDialog {
       btnAddTag.setAction(new AddTagAction());
       btnAddTag.setIcon(IconManager.LIST_ADD);
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnAddTag, "2, 18, right, top");
+      details2Panel.add(btnAddTag, "2, 12, right, top");
     }
     {
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setAction(new RemoveTagAction());
       btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
-      details2Panel.add(btnRemoveTag, "2, 20, right, top");
+      details2Panel.add(btnRemoveTag, "2, 14, right, top");
     }
     {
       cbTags = new AutocompleteComboBox(tvShowList.getTagsInTvShows().toArray());
       cbTags.setEditable(true);
-      details2Panel.add(cbTags, "4, 22");
+      details2Panel.add(cbTags, "4, 16");
     }
 
     /**
@@ -656,9 +654,9 @@ public class TvShowEditorDialog extends TmmDialog {
         genres.add(genre);
       }
 
-      for (MediaTrailer trailer : tvShow.getTrailers()) {
-        trailers.add(trailer);
-      }
+      // for (MediaTrailer trailer : tvShow.getTrailers()) {
+      // trailers.add(trailer);
+      // }
 
       for (String tag : tvShowToEdit.getTags()) {
         tags.add(tag);
@@ -724,11 +722,11 @@ public class TvShowEditorDialog extends TmmDialog {
     tableActors.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
     tableActors.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.role")); //$NON-NLS-1$
 
-    tableTrailer.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
-    tableTrailer.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
-    tableTrailer.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-    tableTrailer.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.quality")); //$NON-NLS-1$
-    tableTrailer.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.url")); //$NON-NLS-1$
+    //    tableTrailer.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
+    //    tableTrailer.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
+    //    tableTrailer.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    //    tableTrailer.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.quality")); //$NON-NLS-1$
+    //    tableTrailer.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.url")); //$NON-NLS-1$
 
     tableEpisodes.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
@@ -741,7 +739,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
     // adjust table columns
     TableColumnResizer.adjustColumnPreferredWidths(tableActors, 6);
-    TableColumnResizer.adjustColumnPreferredWidths(tableTrailer, 6);
+    // TableColumnResizer.adjustColumnPreferredWidths(tableTrailer, 6);
     TableColumnResizer.adjustColumnPreferredWidths(tableEpisodes, 6);
 
     // // implement listener to simulate button group
@@ -833,10 +831,10 @@ public class TvShowEditorDialog extends TmmDialog {
       tvShowToEdit.setActors(actors);
       tvShowToEdit.setGenres(genres);
 
-      tvShowToEdit.removeAllTrailers();
-      for (MediaTrailer trailer : trailers) {
-        tvShowToEdit.addTrailer(trailer);
-      }
+      // tvShowToEdit.removeAllTrailers();
+      // for (MediaTrailer trailer : trailers) {
+      // tvShowToEdit.addTrailer(trailer);
+      // }
 
       tvShowToEdit.setTags(tags);
       tvShowToEdit.setDateAdded((Date) spDateAdded.getValue());
@@ -1008,40 +1006,21 @@ public class TvShowEditorDialog extends TmmDialog {
     }
   }
 
-  private class AddTrailerAction extends AbstractAction {
-    private static final long serialVersionUID = 5448745104881472479L;
-
-    public AddTrailerAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.add")); //$NON-NLS-1$
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      MediaTrailer trailer = new MediaTrailer();
-      trailer.setName("unknown");
-      trailer.setProvider("unknown");
-      trailer.setQuality("unknown");
-      trailer.setUrl("http://");
-      trailers.add(0, trailer);
-    }
-  }
-
-  private class RemoveTrailerAction extends AbstractAction {
-    private static final long serialVersionUID = -6956921050689930101L;
-
-    public RemoveTrailerAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.remove")); //$NON-NLS-1$
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      int row = tableTrailer.getSelectedRow();
-      if (row > -1) {
-        row = tableTrailer.convertRowIndexToModel(row);
-        trailers.remove(row);
-      }
-    }
-  }
+  /*
+   * private class AddTrailerAction extends AbstractAction { private static final long serialVersionUID = 5448745104881472479L;
+   * 
+   * public AddTrailerAction() { putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.add")); //$NON-NLS-1$ }
+   * 
+   * @Override public void actionPerformed(ActionEvent e) { MediaTrailer trailer = new MediaTrailer(); trailer.setName("unknown");
+   * trailer.setProvider("unknown"); trailer.setQuality("unknown"); trailer.setUrl("http://"); trailers.add(0, trailer); } }
+   * 
+   * private class RemoveTrailerAction extends AbstractAction { private static final long serialVersionUID = -6956921050689930101L;
+   * 
+   * public RemoveTrailerAction() { putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.remove")); //$NON-NLS-1$ }
+   * 
+   * @Override public void actionPerformed(ActionEvent e) { int row = tableTrailer.getSelectedRow(); if (row > -1) { row =
+   * tableTrailer.convertRowIndexToModel(row); trailers.remove(row); } } }
+   */
 
   /**
    * Shows the dialog and returns whether the work on the queue should be continued.
@@ -1161,24 +1140,24 @@ public class TvShowEditorDialog extends TmmDialog {
     jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ, genres, listGenres);
     jListBinding.bind();
     //
-    jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers, tableTrailer);
+    // jTableBinding_1 = SwingBindings.createJTableBinding(UpdateStrategy.READ, trailers, tableTrailer);
     //
-    BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
+    // BeanProperty<MediaTrailer, Boolean> trailerBeanProperty = BeanProperty.create("inNfo");
+    // jTableBinding_1.addColumnBinding(trailerBeanProperty).setColumnClass(Boolean.class);
     //
-    BeanProperty<MediaTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty_1);
+    // BeanProperty<MediaTrailer, String> trailerBeanProperty_1 = BeanProperty.create("name");
+    // jTableBinding_1.addColumnBinding(trailerBeanProperty_1);
     //
-    BeanProperty<MediaTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty_2);
+    // BeanProperty<MediaTrailer, String> trailerBeanProperty_2 = BeanProperty.create("provider");
+    // jTableBinding_1.addColumnBinding(trailerBeanProperty_2);
     //
-    BeanProperty<MediaTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty_3);
+    // BeanProperty<MediaTrailer, String> trailerBeanProperty_3 = BeanProperty.create("quality");
+    // jTableBinding_1.addColumnBinding(trailerBeanProperty_3);
     //
-    BeanProperty<MediaTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
-    jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
+    // BeanProperty<MediaTrailer, String> trailerBeanProperty_4 = BeanProperty.create("url");
+    // jTableBinding_1.addColumnBinding(trailerBeanProperty_4);
     //
-    jTableBinding_1.bind();
+    // jTableBinding_1.bind();
     //
     BeanProperty<TvShowList, List<String>> tvShowListBeanProperty = BeanProperty.create("tagsInTvShows");
     jComboBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, tvShowList, tvShowListBeanProperty, cbTags);
@@ -1209,7 +1188,7 @@ public class TvShowEditorDialog extends TmmDialog {
     super.dispose();
     jTableBinding.unbind();
     jListBinding.unbind();
-    jTableBinding_1.unbind();
+    // jTableBinding_1.unbind();
     jComboBinding.unbind();
     jListBinding_1.unbind();
     jTableBinding_2.unbind();

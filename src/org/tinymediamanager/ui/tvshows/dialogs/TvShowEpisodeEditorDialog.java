@@ -260,8 +260,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       scrollPaneTags.setViewportView(listTags);
 
       JButton btnAddActor = new JButton("");
-      btnAddActor.setIcon(IconManager.LIST_ADD);
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
+      btnAddActor.setAction(new AddActorAction());
+      btnAddActor.setIcon(IconManager.LIST_ADD);
       contentPanel.add(btnAddActor, "2, 20, right, top");
 
       JButton btnAddTag = new JButton("");
@@ -271,8 +272,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       contentPanel.add(btnAddTag, "10, 20, right, top");
 
       JButton btnRemoveActor = new JButton("");
-      btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
+      btnRemoveActor.setAction(new RemoveActorAction());
+      btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
       contentPanel.add(btnRemoveActor, "2, 22, right, top");
 
       JButton btnRemoveTag = new JButton("");
@@ -376,7 +378,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       tfDirector.setText(episodeToEdit.getDirector());
       tfWriter.setText(episodeToEdit.getWriter());
 
-      for (TvShowActor origCast : episodeToEdit.getActors()) {
+      for (TvShowActor origCast : episodeToEdit.getGuests()) {
         TvShowActor actor = new TvShowActor();
         actor.setName(origCast.getName());
         actor.setCharacter(origCast.getCharacter());
@@ -597,6 +599,37 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     public void actionPerformed(ActionEvent e) {
       String tag = (String) listTags.getSelectedValue();
       tags.remove(tag);
+    }
+  }
+
+  private class AddActorAction extends AbstractAction {
+    private static final long serialVersionUID = -5879601617842300526L;
+
+    public AddActorAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      TvShowActor actor = new TvShowActor(BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
+      cast.add(0, actor);
+    }
+  }
+
+  private class RemoveActorAction extends AbstractAction {
+    private static final long serialVersionUID = 6970920169867315771L;
+
+    public RemoveActorAction() {
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      int row = tableGuests.getSelectedRow();
+      if (row > -1) {
+        row = tableGuests.convertRowIndexToModel(row);
+        cast.remove(row);
+      }
     }
   }
 }
