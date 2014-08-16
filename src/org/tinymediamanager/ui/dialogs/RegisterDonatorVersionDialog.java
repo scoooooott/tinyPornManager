@@ -19,6 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Date;
 import java.util.Properties;
@@ -166,6 +168,11 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
         panelButtons.add(btnClose);
       }
     }
-
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowOpened(WindowEvent e) {
+        tfName.requestFocus();
+      }
+    });
   }
 }
