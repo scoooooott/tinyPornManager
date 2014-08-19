@@ -104,6 +104,11 @@ public class DownloadTask extends TmmTask {
   @Override
   protected void doInBackground() {
     try {
+      // verify the url is not empty and starts with at least
+      if (StringUtils.isBlank(url) || !url.toLowerCase().startsWith("http")) {
+        return;
+      }
+
       // if file extension is empty, detect from url, or content type
       String ext = FilenameUtils.getExtension(file.getName());
       if (ext != null && ext.length() > 4) {

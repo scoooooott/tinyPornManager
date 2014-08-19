@@ -69,7 +69,7 @@ public class PopupPane extends JScrollPane {
     }
     lst.setBorder(BorderFactory.createEmptyBorder());
     view.add(lst);
-    if (listComponents.size() > 3) {
+    if (listComponents.size() > 5) {
       setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     }
     else {
@@ -87,7 +87,7 @@ public class PopupPane extends JScrollPane {
         break;
       }
     }
-    if (listComponents.size() > 3) {
+    if (listComponents.size() > 5) {
       setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     }
     else {
