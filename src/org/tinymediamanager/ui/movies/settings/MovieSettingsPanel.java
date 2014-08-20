@@ -54,6 +54,9 @@ import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -155,7 +158,17 @@ public class MovieSettingsPanel extends ScrollablePanel {
     panelGeneral.add(lblTraktTv, "2, 14");
 
     chckbxTraktTv = new JCheckBox("");
-    panelGeneral.add(chckbxTraktTv, "4, 14, 5, 1");
+    panelGeneral.add(chckbxTraktTv, "4, 14");
+
+    JButton btnClearTraktTvMovies = new JButton(BUNDLE.getString("Settings.trakt.clearmovies"));//$NON-NLS-1$
+    btnClearTraktTvMovies.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        TmmTask task = new ClearTraktTvTask(true, false);
+        TmmTaskManager.getInstance().addUnnamedTask(task);
+      }
+    });
+    panelGeneral.add(btnClearTraktTvMovies, "6, 14, 3, 1, left, default");
 
     JPanel panelMovieDataSources = new JPanel();
 

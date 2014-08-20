@@ -41,6 +41,9 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.threading.TmmTask;
+import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -72,6 +75,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxImageCache;
   private JLabel                      lblImageCacheHint;
   private JCheckBox                   chckbxTraktTv;
+  private final JButton               btnClearTraktTvShows;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -152,14 +156,23 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     JPanel panel = new JPanel();
     add(panel, "2, 4, fill, fill");
     panel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+        FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
     JLabel lblTraktTv = new JLabel(BUNDLE.getString("Settings.trakt"));//$NON-NLS-1$
     panel.add(lblTraktTv, "2, 2");
 
     chckbxTraktTv = new JCheckBox("");
     panel.add(chckbxTraktTv, "4, 2");
+    btnClearTraktTvShows = new JButton(BUNDLE.getString("Settings.trakt.cleartvshows"));//$NON-NLS-1$
+    btnClearTraktTvShows.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        TmmTask task = new ClearTraktTvTask(false, true);
+        TmmTaskManager.getInstance().addUnnamedTask(task);
+      }
+    });
+    panel.add(btnClearTraktTvShows, "6, 2");
 
     initDataBindings();
 

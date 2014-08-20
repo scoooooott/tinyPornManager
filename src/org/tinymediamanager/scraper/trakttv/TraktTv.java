@@ -31,7 +31,6 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
-import org.tinymediamanager.scraper.MediaGenres;
 import org.tinymediamanager.scraper.util.Pair;
 
 import retrofit.RetrofitError;
@@ -41,9 +40,11 @@ import com.jakewharton.trakt.Trakt;
 import com.jakewharton.trakt.entities.ActionResponse;
 import com.jakewharton.trakt.enumerations.Extended;
 import com.jakewharton.trakt.enumerations.Status;
+import com.jakewharton.trakt.services.MovieService;
 import com.jakewharton.trakt.services.MovieService.Movies;
 import com.jakewharton.trakt.services.MovieService.SeenMovie;
 import com.jakewharton.trakt.services.ShowService;
+import com.jakewharton.trakt.services.ShowService.Show;
 
 /**
  * Sync your collection and watched status with Trakt.tv<br>
@@ -205,6 +206,47 @@ public class TraktTv {
     }
 
     syncTraktMovieCollection(new ArrayList<Movie>(MovieList.getInstance().getMovies()));
+  }
+
+  /**
+   * clears the whole Trakt.tv movie collection. Gets all Trakt.tv movies from your collection and removes them from the collection and the watched
+   * state; a little helper to initialize the collection
+   */
+  public void clearTraktMovieCollection() {
+    // *****************************************************************************
+    // 1) get ALL Trakt movies in collection
+    // *****************************************************************************
+    List<com.jakewharton.trakt.entities.Movie> traktMovies;
+    try {
+      traktMovies = TRAKT.userService().libraryMoviesAll(userName, Extended.MIN);
+      LOGGER.info("You have " + traktMovies.size() + " movies in your Trakt.tv collection");
+      // Extended.DEFAULT adds url, poster, fanart, banner, genres
+      // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
+    }
+    catch (RetrofitError e) {
+      handleRetrofitError(e);
+      return;
+    }
+
+    // *****************************************************************************
+    // 2) remove every movie from the collection/watched state
+    // *****************************************************************************
+    List<MovieService.SeenMovie> movies = new ArrayList<MovieService.SeenMovie>();
+    for (com.jakewharton.trakt.entities.Movie traktMovie : traktMovies) {
+      movies.add(new MovieService.SeenMovie(traktMovie.tmdbId));
+    }
+    if (!movies.isEmpty()) {
+      try {
+        MovieService.Movies traktObj = new Movies(movies);
+        TRAKT.movieService().unlibrary(traktObj);
+        TRAKT.movieService().unseen(traktObj);
+        LOGGER.info("removed " + traktMovies.size() + " movies from your trakt.tv account");
+      }
+      catch (RetrofitError e) {
+        handleRetrofitError(e);
+        return;
+      }
+    }
   }
 
   /**
@@ -436,7 +478,7 @@ public class TraktTv {
       // loop over TMM shows, and check if TvDB match
       for (int i = tmmShows.size() - 1; i >= 0; i--) {
         SimpleShow tmmShow = tmmShows.get(i);
-        boolean dirty = false;
+        // boolean dirty = false;
         if (traktShow.tvdb_id.equals(tmmShow.tvdb)) {
 
           // shows matches, so remove episodes already in tmm
@@ -503,6 +545,75 @@ public class TraktTv {
     }
 
     syncTraktTvShowCollection(new ArrayList<TvShow>(TvShowList.getInstance().getTvShows()));
+  }
+
+  /**
+   * clears the whole Trakt.tv TV collection. Gets all Trakt.tv TV shows from your collection and removes them from the collection; a little helper to
+   * initialize the collection
+   */
+  public void clearTraktTvShowCollection() {
+    // *****************************************************************************
+    // 1) get all Trakt TvShows/episodes in collection remove from our temp array
+    // *****************************************************************************
+    List<com.jakewharton.trakt.entities.TvShow> traktShows;
+    try {
+      traktShows = TRAKT.userService().libraryShowsCollection(userName, Extended.MIN);
+      LOGGER.info("You have " + traktShows.size() + " TvShows in your Trakt.tv collection");
+      // Extended.DEFAULT adds url, poster, fanart, banner, genres
+      // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
+    }
+    catch (RetrofitError e) {
+      handleRetrofitError(e);
+      return;
+    }
+
+    // *****************************************************************************
+    // 2) remove every TV show from the collection
+    // *****************************************************************************
+    for (com.jakewharton.trakt.entities.TvShow traktShow : traktShows) {
+      try {
+        Show show = new Show(traktShow.tvdb_id);
+        TRAKT.showService().showUnlibrary(show);
+        LOGGER.info("removed " + traktShow.title + " from your trakt.tv collection");
+      }
+      catch (RetrofitError e) {
+        handleRetrofitError(e);
+      }
+    }
+
+    // *****************************************************************************
+    // 3) get all Trakt TvShows/episodes witch watched state (can differ from the collection)
+    // *****************************************************************************
+    try {
+      traktShows = TRAKT.userService().libraryShowsWatched(userName, Extended.MIN);
+      LOGGER.info("You have " + traktShows.size() + " TvShows in your Trakt.tv with watched state");
+      // Extended.DEFAULT adds url, poster, fanart, banner, genres
+      // Extended.MAX adds certs, runtime, and other stuff (useful for scraper!)
+    }
+    catch (RetrofitError e) {
+      handleRetrofitError(e);
+      return;
+    }
+
+    // *****************************************************************************
+    // 4) remove every TV show watched state
+    // *****************************************************************************
+    for (com.jakewharton.trakt.entities.TvShow traktShow : traktShows) {
+      try {
+        List<ShowService.Episodes.Episode> episodes = new ArrayList<ShowService.Episodes.Episode>();
+        for (com.jakewharton.trakt.entities.TvShowSeason season : traktShow.seasons) {
+          for (int episode : season.episodes.numbers) {
+            episodes.add(new ShowService.Episodes.Episode(season.season, episode));
+          }
+        }
+        ShowService.Episodes traktObj = new ShowService.Episodes(traktShow.tvdb_id, episodes);
+        TRAKT.showService().episodeUnseen(traktObj);
+        LOGGER.info("removed " + traktShow.title + " watched state");
+      }
+      catch (RetrofitError e) {
+        handleRetrofitError(e);
+      }
+    }
   }
 
   /**
@@ -731,52 +842,52 @@ public class TraktTv {
     // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, msg, "Settings.trakttv"));
   }
 
-  /**
-   * Maps scraper Genres to internal TMM genres
-   */
-  private MediaGenres getTmmGenre(String genre) {
-    MediaGenres g = null;
-    if (genre == null || genre.isEmpty()) {
-      return g;
-    }
-    // @formatter:off
-    else if (genre.equals("Action"))           { g = MediaGenres.ACTION; }
-    else if (genre.equals("Adventure"))        { g = MediaGenres.ADVENTURE; }
-    else if (genre.equals("Animation"))        { g = MediaGenres.ANIMATION; }
-    else if (genre.equals("Comedy"))           { g = MediaGenres.COMEDY; }
-    else if (genre.equals("Children"))         { g = MediaGenres.FAMILY; }
-    else if (genre.equals("Crime"))            { g = MediaGenres.CRIME; }
-    else if (genre.equals("Documentary"))      { g = MediaGenres.DOCUMENTARY; }
-    else if (genre.equals("Drama"))            { g = MediaGenres.DRAMA; }
-    else if (genre.equals("Family"))           { g = MediaGenres.FAMILY; }
-    else if (genre.equals("Fantasy"))          { g = MediaGenres.FANTASY; }
-    else if (genre.equals("Film Noir"))        { g = MediaGenres.FILM_NOIR; }
-    else if (genre.equals("History"))          { g = MediaGenres.HISTORY; }
-    else if (genre.equals("Game Show"))        { g = MediaGenres.GAME_SHOW; }
-    else if (genre.equals("Home and Garden"))  { g = MediaGenres.DOCUMENTARY; }
-    else if (genre.equals("Horror"))           { g = MediaGenres.HORROR; }
-    else if (genre.equals("Indie"))            { g = MediaGenres.INDIE; }
-    else if (genre.equals("Music"))            { g = MediaGenres.MUSIC; }
-    else if (genre.equals("Mini Series"))      { g = MediaGenres.SERIES; }
-    else if (genre.equals("Musical"))          { g = MediaGenres.MUSICAL; }
-    else if (genre.equals("Mystery"))          { g = MediaGenres.MYSTERY; }
-    else if (genre.equals("News"))             { g = MediaGenres.NEWS; }
-    else if (genre.equals("Reality"))          { g = MediaGenres.REALITY_TV; }
-    else if (genre.equals("Romance"))          { g = MediaGenres.ROMANCE; }
-    else if (genre.equals("Science Fiction"))  { g = MediaGenres.SCIENCE_FICTION; }
-    else if (genre.equals("Sport"))            { g = MediaGenres.SPORT; }
-    else if (genre.equals("Special Interest")) { g = MediaGenres.INDIE; }
-    else if (genre.equals("Soap"))             { g = MediaGenres.SERIES; }
-    else if (genre.equals("Suspense"))         { g = MediaGenres.SUSPENSE; }
-    else if (genre.equals("Talk Show"))        { g = MediaGenres.TALK_SHOW; }
-    else if (genre.equals("Thriller"))         { g = MediaGenres.THRILLER; }
-    else if (genre.equals("War"))              { g = MediaGenres.WAR; }
-    else if (genre.equals("Western"))          { g = MediaGenres.WESTERN; }
-    else if (genre.equals("No Genre"))         { return null; }
-    // @formatter:on
-    if (g == null) {
-      g = MediaGenres.getGenre(genre);
-    }
-    return g;
-  }
+  // /**
+  // * Maps scraper Genres to internal TMM genres
+  // */
+  // private MediaGenres getTmmGenre(String genre) {
+  // MediaGenres g = null;
+  // if (genre == null || genre.isEmpty()) {
+  // return g;
+  // }
+//    // @formatter:off
+//    else if (genre.equals("Action"))           { g = MediaGenres.ACTION; }
+//    else if (genre.equals("Adventure"))        { g = MediaGenres.ADVENTURE; }
+//    else if (genre.equals("Animation"))        { g = MediaGenres.ANIMATION; }
+//    else if (genre.equals("Comedy"))           { g = MediaGenres.COMEDY; }
+//    else if (genre.equals("Children"))         { g = MediaGenres.FAMILY; }
+//    else if (genre.equals("Crime"))            { g = MediaGenres.CRIME; }
+//    else if (genre.equals("Documentary"))      { g = MediaGenres.DOCUMENTARY; }
+//    else if (genre.equals("Drama"))            { g = MediaGenres.DRAMA; }
+//    else if (genre.equals("Family"))           { g = MediaGenres.FAMILY; }
+//    else if (genre.equals("Fantasy"))          { g = MediaGenres.FANTASY; }
+//    else if (genre.equals("Film Noir"))        { g = MediaGenres.FILM_NOIR; }
+//    else if (genre.equals("History"))          { g = MediaGenres.HISTORY; }
+//    else if (genre.equals("Game Show"))        { g = MediaGenres.GAME_SHOW; }
+//    else if (genre.equals("Home and Garden"))  { g = MediaGenres.DOCUMENTARY; }
+//    else if (genre.equals("Horror"))           { g = MediaGenres.HORROR; }
+//    else if (genre.equals("Indie"))            { g = MediaGenres.INDIE; }
+//    else if (genre.equals("Music"))            { g = MediaGenres.MUSIC; }
+//    else if (genre.equals("Mini Series"))      { g = MediaGenres.SERIES; }
+//    else if (genre.equals("Musical"))          { g = MediaGenres.MUSICAL; }
+//    else if (genre.equals("Mystery"))          { g = MediaGenres.MYSTERY; }
+//    else if (genre.equals("News"))             { g = MediaGenres.NEWS; }
+//    else if (genre.equals("Reality"))          { g = MediaGenres.REALITY_TV; }
+//    else if (genre.equals("Romance"))          { g = MediaGenres.ROMANCE; }
+//    else if (genre.equals("Science Fiction"))  { g = MediaGenres.SCIENCE_FICTION; }
+//    else if (genre.equals("Sport"))            { g = MediaGenres.SPORT; }
+//    else if (genre.equals("Special Interest")) { g = MediaGenres.INDIE; }
+//    else if (genre.equals("Soap"))             { g = MediaGenres.SERIES; }
+//    else if (genre.equals("Suspense"))         { g = MediaGenres.SUSPENSE; }
+//    else if (genre.equals("Talk Show"))        { g = MediaGenres.TALK_SHOW; }
+//    else if (genre.equals("Thriller"))         { g = MediaGenres.THRILLER; }
+//    else if (genre.equals("War"))              { g = MediaGenres.WAR; }
+//    else if (genre.equals("Western"))          { g = MediaGenres.WESTERN; }
+//    else if (genre.equals("No Genre"))         { return null; }
+//    // @formatter:on
+  // if (g == null) {
+  // g = MediaGenres.getGenre(genre);
+  // }
+  // return g;
+  // }
 }

@@ -69,4 +69,14 @@ public class TraktTvTest {
     }
   }
 
+  @Test
+  public void clearTvShows() {
+    t.clearTraktTvShowCollection();
+  }
+
+  @Test
+  public void clearMovies() {
+    t.clearTraktMovieCollection();
+  }
+
 }
