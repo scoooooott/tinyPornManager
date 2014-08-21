@@ -849,6 +849,11 @@ public class MovieRenamer {
         newDestination = replaceToken(newDestination, "$R", mf.getVideoResolution());
       }
 
+      // replace token 3D format ($3)
+      if (newDestination.contains("$3")) {
+        newDestination = replaceToken(newDestination, "$3", mf.getVideo3DFormat());
+      }
+
       // replace token audio codec + channels ($A)
       if (newDestination.contains("$A")) {
         newDestination = replaceToken(newDestination, "$A", mf.getAudioCodec() + (mf.getAudioCodec().isEmpty() ? "" : "-") + mf.getAudioChannels());
@@ -867,16 +872,16 @@ public class MovieRenamer {
     else {
       // no mediafiles; remove at least token (if available)
       newDestination = newDestination.replace("$R", "");
+      newDestination = newDestination.replace("$3", "");
       newDestination = newDestination.replace("$A", "");
       newDestination = newDestination.replace("$V", "");
       newDestination = newDestination.replace("$F", "");
     }
 
     // replace token media source (BluRay|DVD|TV|...) ($S)
-    // if (newDestination.contains("$S")) {
-    // newDestination = newDestination.replaceAll("\\$S",
-    // movie.getMediaSource());
-    // }
+    if (newDestination.contains("$S")) {
+      newDestination = newDestination.replaceAll("\\$S", movie.getMediaSource());
+    }
 
     // replace empty brackets
     newDestination = newDestination.replaceAll("\\(\\)", "");

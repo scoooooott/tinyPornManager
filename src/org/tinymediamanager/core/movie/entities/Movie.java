@@ -110,6 +110,7 @@ public class Movie extends MediaEntity {
   private Date                      releaseDate     = null;
   private boolean                   multiMovieDir   = false;                               // we detected more movies in same folder
   private int                       top250          = 0;
+  private String                    mediaSource     = "";                                  // DVD, Bluray, etc
 
   private List<String>              genres          = new ArrayList<String>(1);
   private List<String>              tags            = new ArrayList<String>(0);
@@ -1770,6 +1771,16 @@ public class Movie extends MediaEntity {
     String oldValue = this.country;
     this.country = newValue;
     firePropertyChange(COUNTRY, oldValue, newValue);
+  }
+
+  public String getMediaSource() {
+    return mediaSource;
+  }
+
+  public void setMediaSource(String newValue) {
+    String oldValue = this.mediaSource;
+    this.mediaSource = newValue;
+    firePropertyChange(MEDIA_SOURCE, oldValue, newValue);
   }
 
   /**

@@ -166,19 +166,19 @@ public class ParserUtils {
    * 
    * @param filename
    *          the filename
-   * @return Bluray Disc | HDDVD | TV | DVD | VHS
+   * @return Bluray | HDDVD | TV | DVD | VHS
    */
   public static String getMediaSource(String filename) {
     String ms = "";
     String fn = filename.toLowerCase();
     // http://wiki.xbmc.org/index.php?title=Media_flags#Media_source
-    if (fn.contains("bluray") || fn.contains("blueray") || fn.contains("bdrip") || fn.contains("bd25") || fn.contains("bd50")) {
+    if (fn.contains("bluray") || fn.contains("blueray") || fn.contains("bdrip") || fn.contains("bd25") || fn.contains("bd50") || fn.contains("bdmv")) {
       ms = "Bluray"; // yes!
     }
     else if (fn.contains("hddvd")) {
       ms = "HDDVD";
     }
-    else if (fn.contains("dvd")) {
+    else if (fn.contains("dvd") || fn.contains("vide_ts")) {
       ms = "DVD";
     }
     else if (fn.contains("hdtv") || fn.contains("pdtv") || fn.contains("dsr") || fn.contains("dtv")) {

@@ -287,6 +287,9 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (!Utils.isValidImdbId(movie.getImdbId())) {
         movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
       }
+      if (movie.getMediaSource().isEmpty()) {
+        movie.setMediaSource(ParserUtils.getMediaSource(mf.getFile().getAbsolutePath()));
+      }
       LOGGER.debug("parsing video file " + mf.getFilename());
       movie.addToMediaFiles(mf);
       movie.setMultiMovieDir(true);
@@ -588,10 +591,16 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (!current.contains(mf)) { // a new mediafile was found!
         if (mf.getPath().toUpperCase().contains("BDMV") || mf.getPath().toUpperCase().contains("VIDEO_TS") || mf.isDiscFile()) {
           movie.setDisc(true);
+          if (movie.getMediaSource().isEmpty()) {
+            movie.setMediaSource(ParserUtils.getMediaSource(mf.getPath()));
+          }
         }
 
         if (!Utils.isValidImdbId(movie.getImdbId())) {
           movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
+        }
+        if (movie.getMediaSource().isEmpty()) {
+          movie.setMediaSource(ParserUtils.getMediaSource(mf.getFile().getAbsolutePath()));
         }
 
         switch (mf.getType()) {

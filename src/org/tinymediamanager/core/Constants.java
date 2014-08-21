@@ -50,6 +50,7 @@ public final class Constants {
   public final static String HAS_NFO_FILE           = "hasNfoFile";
   public final static String MEDIA_FILES            = "mediaFiles";
   public final static String MEDIA_INFORMATION      = "mediaInformation";
+  public final static String MEDIA_SOURCE           = "mediaSource";
   public final static String MOVIESET               = "movieset";
   public final static String MOVIESET_TITLE         = "movieSetTitle";
   public final static String NAME                   = "name";
