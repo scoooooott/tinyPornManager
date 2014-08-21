@@ -164,8 +164,12 @@ public class MovieSettingsPanel extends ScrollablePanel {
     btnClearTraktTvMovies.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        TmmTask task = new ClearTraktTvTask(true, false);
-        TmmTaskManager.getInstance().addUnnamedTask(task);
+        int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.clearmovies.hint"),
+            BUNDLE.getString("Settings.trakt.clearmovies"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
+        if (confirm == JOptionPane.YES_OPTION) {
+          TmmTask task = new ClearTraktTvTask(true, false);
+          TmmTaskManager.getInstance().addUnnamedTask(task);
+        }
       }
     });
     panelGeneral.add(btnClearTraktTvMovies, "6, 14, 3, 1, left, default");
@@ -338,6 +342,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
     if (!Globals.isDonator()) {
       chckbxTraktTv.setSelected(false);
       chckbxTraktTv.setEnabled(false);
+      btnClearTraktTvMovies.setEnabled(false);
     }
 
     // column headings

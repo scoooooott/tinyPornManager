@@ -168,8 +168,12 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     btnClearTraktTvShows.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        TmmTask task = new ClearTraktTvTask(false, true);
-        TmmTaskManager.getInstance().addUnnamedTask(task);
+        int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.cleartvshows.hint"),
+            BUNDLE.getString("Settings.trakt.cleartvshows"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null); //$NON-NLS-1$
+        if (confirm == JOptionPane.YES_OPTION) {
+          TmmTask task = new ClearTraktTvTask(false, true);
+          TmmTaskManager.getInstance().addUnnamedTask(task);
+        }
       }
     });
     panel.add(btnClearTraktTvShows, "6, 2");
@@ -182,6 +186,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     if (!Globals.isDonator()) {
       chckbxTraktTv.setSelected(false);
       chckbxTraktTv.setEnabled(false);
+      btnClearTraktTvShows.setEnabled(false);
     }
   }
 
