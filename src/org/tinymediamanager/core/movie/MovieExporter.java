@@ -26,7 +26,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaEntityExporter;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -111,8 +110,8 @@ public class MovieExporter extends MediaEntityExporter {
         Movie movie = (Movie) me;
         LOGGER.debug("processing movie " + movie.getTitle());
         // get preferred movie name like set up in movie renamer
-        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(MovieModuleManager.MOVIE_SETTINGS
-            .getMovieRenamerFilename(), movie)
+        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(
+            MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie)
             + "." + fileExtension);
 
         root = new HashMap<String, Object>();

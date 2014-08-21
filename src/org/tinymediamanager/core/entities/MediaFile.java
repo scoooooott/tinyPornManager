@@ -724,8 +724,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   /**
    * sets the container format (e.g. avi, mkv mka mks, OGG, etc.)<br>
    * <b>DOES A DIRECT CALL TO MEDIAINFO</b>
-   * 
-   * @return the container format
    */
   public void setContainerFormatDirect() {
     String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");

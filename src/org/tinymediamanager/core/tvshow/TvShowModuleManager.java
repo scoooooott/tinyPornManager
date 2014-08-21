@@ -31,7 +31,7 @@ import org.tinymediamanager.core.TmmModuleManager;
  */
 public class TvShowModuleManager implements ITmmModule {
   private static final String        MODULE_TITLE = "TV show management";
-  private static final String        TV_SHOW_DB   = "tvshow.odb";
+  // private static final String TV_SHOW_DB = "tvshow.odb";
   private static TvShowModuleManager instance;
 
   private boolean                    enabled;

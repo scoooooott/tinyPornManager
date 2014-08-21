@@ -48,7 +48,6 @@ public class MovieUpdateSingleDatasourceAction extends AbstractAction {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    @SuppressWarnings("rawtypes")
     TmmThreadPool task = new MovieUpdateDatasourceTask(datasource);
     if (TmmTaskManager.getInstance().addMainTask(task)) {
       JOptionPane.showMessageDialog(null, BUNDLE.getString("onlyoneoperation")); //$NON-NLS-1$

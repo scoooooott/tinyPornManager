@@ -89,7 +89,7 @@ public class Url {
   /**
    * get all response headers
    * 
-   * @return
+   * @return the response headers
    */
   public Header[] getHeadersResponse() {
     return headersResponse;

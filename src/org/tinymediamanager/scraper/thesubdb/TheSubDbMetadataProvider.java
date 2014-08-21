@@ -62,7 +62,7 @@ public class TheSubDbMetadataProvider implements IMediaSubtitleProvider {
    * 
    * @param mf
    *          the MediaFile
-   * @return
+   * @return the list of search results
    * @throws Exception
    */
   @Override

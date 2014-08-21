@@ -33,7 +33,7 @@ public class MovieModuleManager implements ITmmModule {
   public static final MovieSettings MOVIE_SETTINGS = Globals.settings.getMovieSettings();
 
   private static final String       MODULE_TITLE   = "Movie management";
-  private static final String       MOVIE_DB       = "movie.odb";
+  // private static final String MOVIE_DB = "movie.odb";
   private static MovieModuleManager instance;
 
   private boolean                   enabled;

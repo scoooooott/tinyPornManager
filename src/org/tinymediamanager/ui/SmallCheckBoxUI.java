@@ -57,7 +57,6 @@ public class SmallCheckBoxUI extends BaseCheckBoxUI {
     private static final Color MENU_ITEM_BACKGROUND = new Color(248, 248, 248);
     private static Icon        checkIcon            = new LazyImageIcon("icons/small/check_symbol_10x10.png");
     private static Icon        checkIconDisabled    = new LazyImageIcon("icons/small/check_symbol_disabled_10x10.png");
-    private static Icon        checkPressedIcon     = new LazyImageIcon("icons/CheckPressedSymbol.gif");
     private static final int   WIDTH                = 12;
     private static final int   HEIGHT               = 12;
 

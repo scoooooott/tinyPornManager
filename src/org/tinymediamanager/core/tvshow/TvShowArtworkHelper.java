@@ -48,10 +48,10 @@ public class TvShowArtworkHelper {
   /**
    * Manage downloading of the chosen artwork type
    * 
-   * @param tVshow
+   * @param show
    *          the TV show for which artwork has to be downloaded
    * @param type
-   *          the type of artwork to be downloaded
+   *          the artwork type to be downloaded
    */
   public void downloadArtwork(TvShow show, MediaFileType type) {
     String url = "";
