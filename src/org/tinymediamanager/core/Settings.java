@@ -145,7 +145,7 @@ public class Settings extends AbstractModelObject {
   private int                         fontSize                    = 12;
   private String                      fontFamily                  = "Dialog";
 
-  private boolean                     deleteTrashOnExit           = true;
+  private boolean                     deleteTrashOnExit           = false;
 
   private PropertyChangeListener      propertyChangeListener;
 
