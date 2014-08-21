@@ -47,6 +47,7 @@ import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
 import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieRenamer;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.util.Url;
@@ -173,13 +174,13 @@ public class MovieSet extends MediaEntity {
       if (artworkDir.isDirectory()) {
         File[] matches = artworkDir.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
-            String filenamePrefix = getTitle() + "-" + type.name().toLowerCase();
+            String filenamePrefix = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-" + type.name().toLowerCase();
             if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
               return true;
             }
 
             if (type == MediaFileType.POSTER) {
-              filenamePrefix = getTitle() + "-folder";
+              filenamePrefix = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-folder";
               if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
                 return true;
               }
@@ -458,10 +459,12 @@ public class MovieSet extends MediaEntity {
         String providedFiletype = FilenameUtils.getExtension(url);
         if (type == MediaFileType.POSTER) {
           // poster should be written als "folder"
-          writeImage(url, artworkFolder.getPath() + File.separator + getTitle() + "-folder." + providedFiletype);
+          writeImage(url, artworkFolder.getPath() + File.separator + MovieRenamer.replaceInvalidCharacters(getTitle()) + "-folder."
+              + providedFiletype);
         }
         else {
-          writeImage(url, artworkFolder.getPath() + File.separator + getTitle() + "-" + type.name().toLowerCase() + "." + providedFiletype);
+          writeImage(url, artworkFolder.getPath() + File.separator + MovieRenamer.replaceInvalidCharacters(getTitle()) + "-"
+              + type.name().toLowerCase() + "." + providedFiletype);
         }
       }
     }

@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.ImageCache;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
@@ -50,8 +49,6 @@ import org.tinymediamanager.scraper.util.StrgUtils;
  * @author Manuel Laggner / Myron Boyle
  */
 public class MovieRenamer {
-
-  /** The Constant LOGGER. */
   private final static Logger LOGGER = LoggerFactory.getLogger(MovieRenamer.class);
 
   private static void renameSubtitles(Movie m) {
@@ -930,9 +927,20 @@ public class MovieRenamer {
     if (StringUtils.isNotBlank(replacement)) {
       // replace illegal characters
       // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
-      replacingCleaned = replacement.replaceAll("([\"\\:<>|/?*])", "");
+      replacingCleaned = replaceInvalidCharacters(replacement);
     }
     return destination.replace(token, replacingCleaned);
+  }
+
+  /**
+   * replaces all invalid/illegal characters for filenames with ""
+   * 
+   * @param source
+   *          string to clean
+   * @return cleaned string
+   */
+  public static String replaceInvalidCharacters(String source) {
+    return source.replaceAll("([\"\\:<>|/?*])", "");
   }
 
   /**
