@@ -178,7 +178,7 @@ public class ParserUtils {
     else if (fn.contains("hddvd")) {
       ms = "HDDVD";
     }
-    else if (fn.contains("dvd") || fn.contains("vide_ts")) {
+    else if (fn.contains("dvd") || fn.contains("video_ts")) {
       ms = "DVD";
     }
     else if (fn.contains("hdtv") || fn.contains("pdtv") || fn.contains("dsr") || fn.contains("dtv")) {
