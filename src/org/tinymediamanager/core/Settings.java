@@ -222,6 +222,7 @@ public class Settings extends AbstractModelObject {
    */
   public void setCurrentVersion() {
     version = ReleaseInfo.getVersion();
+    setDirty();
   }
 
   /**
