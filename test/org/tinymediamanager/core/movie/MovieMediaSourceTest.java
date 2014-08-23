@@ -16,11 +16,13 @@ public class MovieMediaSourceTest {
     Assert.assertEquals(MovieMediaSource.DVD, MovieMediaSource.parseMediaSource("DrugStore.Cowboy.1989.German.AC3.DVDRiP.x264"));
     Assert.assertEquals(MovieMediaSource.DVD, MovieMediaSource.parseMediaSource("Hannibal 2001 AC3 German XviD DVDR"));
     Assert.assertEquals(MovieMediaSource.DVD, MovieMediaSource.parseMediaSource("/media/jets/movies/Planes.dvdrip.avi"));
+    Assert.assertEquals(MovieMediaSource.DVD, MovieMediaSource.parseMediaSource("/media/jets/movies/Planes.(dvdrip).avi"));
 
     // TS
     Assert.assertEquals(MovieMediaSource.TS,
         MovieMediaSource.parseMediaSource("Planet.der.Affen.Revolution.2014.German.AC3D.HDTS.720p.NEW.SOURCE.x264"));
     Assert.assertEquals(MovieMediaSource.TS, MovieMediaSource.parseMediaSource("/media/jets/movies/Planes.ts.avi"));
+    Assert.assertEquals(MovieMediaSource.TS, MovieMediaSource.parseMediaSource("/media/jets/movies/Planes.[ts].avi"));
   }
 
 }

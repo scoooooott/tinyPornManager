@@ -42,6 +42,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.scraper.Certification;
 import org.tinymediamanager.scraper.MediaGenres;
@@ -111,6 +112,8 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   private JCheckBox                    cbFilterCertification;
   private JLabel                       lblCertification;
   private JComboBox                    cbCertification;
+  private JCheckBox                    cbFilterMediaSource;
+  private JComboBox                    cbMediaSource;
 
   /**
    * Instantiates a new movie extended search
@@ -136,9 +139,9 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
             FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-            FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
+            FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+            FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
 
     JLabel lblFilterBy = new JLabel(BUNDLE.getString("movieextendedsearch.filterby")); //$NON-NLS-1$
     setComponentFont(lblFilterBy);
@@ -308,58 +311,72 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
     cbDatasource.setAction(actionFilter);
     add(cbDatasource, "6, 14, fill, default");
 
+    cbFilterMediaSource = new JCheckBox("");
+    cbFilterMediaSource.addActionListener(actionFilter);
+    cbFilterMediaSource.setUI(CHECKBOX_UI); // $hide$
+    add(cbFilterMediaSource, "2, 15");
+
+    JLabel lblMediaSource = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    setComponentFont(lblMediaSource);
+    add(lblMediaSource, "4, 15, right, default");
+
+    cbMediaSource = new SmallComboBox(MovieMediaSource.values());
+    setComponentFont(cbMediaSource);
+    cbMediaSource.setAction(actionFilter);
+    add(cbMediaSource, "6, 15, fill, default");
+
     cbFilterMissingMetadata = new JCheckBox("");
     cbFilterMissingMetadata.setAction(actionFilter);
     cbFilterMissingMetadata.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingMetadata, "2, 15");
+    add(cbFilterMissingMetadata, "2, 16");
 
     JLabel lblMissingMetadata = new JLabel(BUNDLE.getString("movieextendedsearch.missingmetadata")); //$NON-NLS-1$
     setComponentFont(lblMissingMetadata);
-    add(lblMissingMetadata, "4, 15, right, default");
+    add(lblMissingMetadata, "4, 16, right, default");
 
     cbFilterMissingArtwork = new JCheckBox("");
     cbFilterMissingArtwork.setAction(actionFilter);
     cbFilterMissingArtwork.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingArtwork, "2, 16");
+    add(cbFilterMissingArtwork, "2, 17");
 
     JLabel lblMissingArtwork = new JLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
     setComponentFont(lblMissingArtwork);
-    add(lblMissingArtwork, "4, 16, right, default");
+    add(lblMissingArtwork, "4, 17, right, default");
 
     cbFilterMissingSubtitles = new JCheckBox("");
     cbFilterMissingSubtitles.setAction(actionFilter);
     cbFilterMissingSubtitles.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterMissingSubtitles, "2, 17");
+    add(cbFilterMissingSubtitles, "2, 18");
 
     JLabel lblMissingSubtitles = new JLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
     setComponentFont(lblMissingSubtitles);
-    add(lblMissingSubtitles, "4, 17, right, default");
+    add(lblMissingSubtitles, "4, 18, right, default");
 
     cbFilterNewMovies = new JCheckBox("");
     cbFilterNewMovies.setAction(actionFilter);
     cbFilterNewMovies.setUI(CHECKBOX_UI); // $hide$
-    add(cbFilterNewMovies, "2, 18");
+    add(cbFilterNewMovies, "2, 19");
 
     lblNewMovies = new JLabel(BUNDLE.getString("movieextendedsearch.newmovies")); //$NON-NLS-1$
     setComponentFont(lblNewMovies);
-    add(lblNewMovies, "4, 18, right, default");
+    add(lblNewMovies, "4, 19, right, default");
 
     JSeparator separator = new JSeparator();
-    add(separator, "2, 20, 5, 1");
+    add(separator, "2, 21, 5, 1");
 
     JLabel lblSortBy = new JLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
     setComponentFont(lblSortBy);
-    add(lblSortBy, "2, 22, 3, 1");
+    add(lblSortBy, "2, 23, 3, 1");
 
     cbSortColumn = new SmallComboBox(SortColumn.values());
     setComponentFont(cbSortColumn);
     cbSortColumn.setAction(actionSort);
-    add(cbSortColumn, "2, 24, 3, 1, fill, default");
+    add(cbSortColumn, "2, 25, 3, 1, fill, default");
 
     cbSortOrder = new SmallComboBox(SortOrder.values());
     setComponentFont(cbSortOrder);
     cbSortOrder.setAction(actionSort);
-    add(cbSortOrder, "6, 24, fill, default");
+    add(cbSortOrder, "6, 25, fill, default");
 
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
       @Override
@@ -435,11 +452,6 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   private class SortAction extends AbstractAction {
     private static final long serialVersionUID = -4057379119252539003L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
       SortColumn column = (SortColumn) cbSortColumn.getSelectedItem();
@@ -454,11 +466,6 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
   private class FilterAction extends AbstractAction {
     private static final long serialVersionUID = 7488733475791640009L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
       HashMap<SearchOptions, Object> searchOptions = new HashMap<SearchOptions, Object>();
@@ -568,6 +575,11 @@ public class MovieExtendedSearchPanel extends RoundedPanel {
       // filter by new movies
       if (cbFilterNewMovies.isSelected()) {
         searchOptions.put(SearchOptions.NEW_MOVIES, Boolean.TRUE);
+      }
+
+      // filter by media source
+      if (cbFilterMediaSource.isSelected()) {
+        searchOptions.put(SearchOptions.MEDIA_SOURCE, cbMediaSource.getSelectedItem());
       }
 
       // apply the filter

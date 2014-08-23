@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
+import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
 import org.tinymediamanager.core.movie.entities.MovieProducer;
@@ -40,7 +41,7 @@ import ca.odell.glazedlists.matchers.Matcher;
 public class MoviesExtendedMatcher implements Matcher<Movie> {
   public enum SearchOptions {
     DUPLICATES, WATCHED, GENRE, CERTIFICATION, CAST, TAG, MOVIESET, VIDEO_FORMAT, VIDEO_CODEC, AUDIO_CODEC, DATASOURCE, MISSING_METADATA,
-    MISSING_ARTWORK, MISSING_SUBTITLES, NEW_MOVIES
+    MISSING_ARTWORK, MISSING_SUBTITLES, NEW_MOVIES, MEDIA_SOURCE
   }
 
   private HashMap<SearchOptions, Object> searchOptions;
@@ -189,6 +190,14 @@ public class MoviesExtendedMatcher implements Matcher<Movie> {
     // check against new movies
     if (searchOptions.containsKey(SearchOptions.NEW_MOVIES)) {
       if (!movie.isNewlyAdded()) {
+        return false;
+      }
+    }
+
+    // check against movie source
+    if (searchOptions.containsKey(SearchOptions.MEDIA_SOURCE)) {
+      MovieMediaSource mediaSource = (MovieMediaSource) searchOptions.get(SearchOptions.MEDIA_SOURCE);
+      if (movie.getMediaSource() != mediaSource) {
         return false;
       }
     }
