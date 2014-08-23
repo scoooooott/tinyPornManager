@@ -61,6 +61,8 @@ public class MovieMediaInformationPanel extends JPanel {
   private JPanel                      panelAudioStreamDetails;
   private JPanel                      panelSubtitleT;
   private JPanel                      panelSubtitleDetails;
+  private JLabel                      lblSourceT;
+  private JLabel                      lblSource;
 
   /**
    * Instantiates a new movie media information panel.
@@ -75,8 +77,8 @@ public class MovieMediaInformationPanel extends JPanel {
         ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("25px"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC,
         ColumnSpec.decode("100px:grow"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblRuntimeT = new JLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
     add(lblRuntimeT, "2, 2");
@@ -113,27 +115,33 @@ public class MovieMediaInformationPanel extends JPanel {
     // to create the same spacing as in audio
     panelVideoStreamDetails.add(new JLabel(""));
 
+    lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    add(lblSourceT, "6, 6");
+
+    lblSource = new JLabel("");
+    add(lblSource, "10, 6");
+
     JLabel lblAudioT = new JLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
-    add(lblAudioT, "2, 6, default, top");
+    add(lblAudioT, "2, 8, default, top");
 
     panelAudioStreamT = new JPanel();
     panelAudioStreamT.setLayout(new GridLayout(0, 1));
-    add(panelAudioStreamT, "6, 6, left, top");
+    add(panelAudioStreamT, "6, 8, left, top");
 
     panelAudioStreamDetails = new JPanel();
     panelAudioStreamDetails.setLayout(new GridLayout(0, 4));
-    add(panelAudioStreamDetails, "10, 6, 7, 1, fill, top");
+    add(panelAudioStreamDetails, "10, 8, 7, 1, fill, top");
 
     JLabel lblSubtitle = new JLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
-    add(lblSubtitle, "2, 8, default, top");
+    add(lblSubtitle, "2, 10, default, top");
 
     panelSubtitleT = new JPanel();
     panelSubtitleT.setLayout(new GridLayout(0, 1));
-    add(panelSubtitleT, "6, 8, left, top");
+    add(panelSubtitleT, "6, 10, left, top");
 
     panelSubtitleDetails = new JPanel();
     panelSubtitleDetails.setLayout(new GridLayout(0, 1));
-    add(panelSubtitleDetails, "10, 8, 5, 1, left, top");
+    add(panelSubtitleDetails, "10, 10, 5, 1, left, top");
 
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
@@ -141,7 +149,8 @@ public class MovieMediaInformationPanel extends JPanel {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
         // react on selection of a movie and change of media files
-        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || MEDIA_INFORMATION.equals(property)) {
+        if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property)) || MEDIA_INFORMATION.equals(property)
+            || MEDIA_SOURCE.equals(property)) {
           fillVideoStreamDetails();
           buildAudioStreamDetails();
           buildSubtitleStreamDetails();
@@ -181,6 +190,7 @@ public class MovieMediaInformationPanel extends JPanel {
     lblVideoCodec.setText(mediaFile.getVideoCodec());
     lblVideoResolution.setText(mediaFile.getVideoResolution());
     lblVideoBitrate.setText(mediaFile.getBiteRateInKbps());
+    lblSource.setText(movieSelectionModel.getSelectedMovie().getMediaSource().toString());
   }
 
   private void buildAudioStreamDetails() {

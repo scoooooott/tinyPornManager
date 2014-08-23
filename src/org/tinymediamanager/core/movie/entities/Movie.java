@@ -57,6 +57,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieMediaFileComparator;
+import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieNfoNaming;
 import org.tinymediamanager.core.movie.MovieRenamer;
@@ -110,7 +111,7 @@ public class Movie extends MediaEntity {
   private Date                      releaseDate     = null;
   private boolean                   multiMovieDir   = false;                               // we detected more movies in same folder
   private int                       top250          = 0;
-  private String                    mediaSource     = "";                                  // DVD, Bluray, etc
+  private MovieMediaSource          mediaSource     = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
 
   private List<String>              genres          = new ArrayList<String>(1);
   private List<String>              tags            = new ArrayList<String>(0);
@@ -1773,12 +1774,12 @@ public class Movie extends MediaEntity {
     firePropertyChange(COUNTRY, oldValue, newValue);
   }
 
-  public String getMediaSource() {
+  public MovieMediaSource getMediaSource() {
     return mediaSource;
   }
 
-  public void setMediaSource(String newValue) {
-    String oldValue = this.mediaSource;
+  public void setMediaSource(MovieMediaSource newValue) {
+    MovieMediaSource oldValue = this.mediaSource;
     this.mediaSource = newValue;
     firePropertyChange(MEDIA_SOURCE, oldValue, newValue);
   }

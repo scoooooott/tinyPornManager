@@ -61,6 +61,7 @@ import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieActor;
@@ -147,6 +148,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JTextField                                                tfCountry;
   private JSpinner                                                  spReleaseDate;
   private JSpinner                                                  spTop250;
+  private JComboBox                                                 cbSource;
 
   private ImageLabel                                                lblLogo;
   private ImageLabel                                                lblBanner;
@@ -171,7 +173,7 @@ public class MovieEditorDialog extends TmmDialog {
    */
   public MovieEditorDialog(Movie movie, boolean inQueue) {
     super(BUNDLE.getString("movie.edit"), "movieEditor"); //$NON-NLS-1$
-    setBounds(5, 5, 950, 700);
+    setBounds(5, 5, 950, 650);
 
     movieToEdit = movie;
     getContentPane().setLayout(new BorderLayout());
@@ -206,10 +208,10 @@ public class MovieEditorDialog extends TmmDialog {
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("top:max(50px;default)"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("50px:grow(2)"), FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("50px"), FormFactory.NARROW_LINE_GAP_ROWSPEC,
-        RowSpec.decode("fill:30px:grow(2)"), }));
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("top:max(50px;default)"),
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("50px:grow(2)"), FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("50px"),
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("fill:30px:grow(2)"), }));
 
     {
       JLabel lblTitle = new JLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
@@ -234,7 +236,7 @@ public class MovieEditorDialog extends TmmDialog {
         }
       });
       lblPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      details1Panel.add(lblPoster, "14, 4, 3, 23, fill, fill");
+      details1Panel.add(lblPoster, "14, 4, 3, 25, fill, fill");
     }
     {
       JLabel lblOriginalTitle = new JLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
@@ -382,12 +384,20 @@ public class MovieEditorDialog extends TmmDialog {
       tfCountry.setColumns(10);
     }
     {
+      JLabel lblSourceT = new JLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+      details1Panel.add(lblSourceT, "2, 26, right, default");
+    }
+    {
+      cbSource = new JComboBox(MovieMediaSource.values());
+      details1Panel.add(cbSource, "4, 26, 4, 1, fill, default");
+    }
+    {
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-      details1Panel.add(lblPlot, "2, 26, right, top");
+      details1Panel.add(lblPlot, "2, 28, right, top");
     }
     {
       JScrollPane scrollPanePlot = new JScrollPane();
-      details1Panel.add(scrollPanePlot, "4, 26, 9, 3, fill, fill");
+      details1Panel.add(scrollPanePlot, "4, 28, 9, 3, fill, fill");
       {
         tpPlot = new JTextPane();
         scrollPanePlot.setViewportView(tpPlot);
@@ -395,11 +405,11 @@ public class MovieEditorDialog extends TmmDialog {
     }
     {
       JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-      details1Panel.add(lblDirector, "2, 30, right, default");
+      details1Panel.add(lblDirector, "2, 32, right, default");
     }
     {
       tfDirector = new JTextField();
-      details1Panel.add(tfDirector, "4, 30, 9, 1, fill, top");
+      details1Panel.add(tfDirector, "4, 32, 9, 1, fill, top");
       tfDirector.setColumns(10);
     }
     {
@@ -415,24 +425,24 @@ public class MovieEditorDialog extends TmmDialog {
           dialog.setVisible(true);
         }
       });
-      details1Panel.add(lblFanart, "14, 28, 3, 7, fill, fill");
+      details1Panel.add(lblFanart, "14, 30, 3, 7, fill, fill");
     }
     {
       JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-      details1Panel.add(lblWriter, "2, 32, right, default");
+      details1Panel.add(lblWriter, "2, 34, right, default");
     }
     {
       tfWriter = new JTextField();
-      details1Panel.add(tfWriter, "4, 32, 9, 1, fill, top");
+      details1Panel.add(tfWriter, "4, 34, 9, 1, fill, top");
       tfWriter.setColumns(10);
     }
     {
       JLabel lblCompany = new JLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
-      details1Panel.add(lblCompany, "2, 34, right, top");
+      details1Panel.add(lblCompany, "2, 36, right, top");
     }
     {
       JScrollPane scrollPaneProduction = new JScrollPane();
-      details1Panel.add(scrollPaneProduction, "4, 34, 9, 1, fill, fill");
+      details1Panel.add(scrollPaneProduction, "4, 36, 9, 1, fill, fill");
       tfProductionCompanies = new JTextPane();
       scrollPaneProduction.setViewportView(tfProductionCompanies);
     }
@@ -771,6 +781,7 @@ public class MovieEditorDialog extends TmmDialog {
       tfImdbId.setText(movie.getImdbId());
       tfTmdbId.setText(String.valueOf(movie.getTmdbId()));
       tpPlot.setText(movie.getPlot());
+      tpPlot.setCaretPosition(0);
       tfDirector.setText(movie.getDirector());
       tfWriter.setText(movie.getWriter());
       lblFanart.setImagePath(movie.getArtworkFilename(MediaFileType.FANART));
@@ -786,6 +797,7 @@ public class MovieEditorDialog extends TmmDialog {
       cbWatched.setSelected(movie.isWatched());
       spDateAdded.setValue(movie.getDateAdded());
       cbCertification.setSelectedItem(movie.getCertification());
+      cbSource.setSelectedItem(movie.getMediaSource());
       if (movie.getReleaseDate() != null) {
         spReleaseDate.setValue(movie.getReleaseDate());
       }
@@ -930,6 +942,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setWatched(cbWatched.isSelected());
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
       movieToEdit.setCountry(tfCountry.getText());
+      movieToEdit.setMediaSource((MovieMediaSource) cbSource.getSelectedItem());
 
       if (StringUtils.isNotBlank(tfTmdbId.getText())) {
         try {

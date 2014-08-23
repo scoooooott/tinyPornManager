@@ -373,7 +373,7 @@ public class MoviePanel extends JPanel {
     movieSelectionModel.setTableComparatorChooser(TableComparatorChooser.install(table, sortedMovies, TableComparatorChooser.SINGLE_COLUMN));
 
     // table = new MyTable();
-    table.setNewFontSize((float) Math.round(getFont().getSize() * 0.916));
+    table.setNewFontSize((float) ((int) Math.round(getFont().getSize() * 0.916)));
     // scrollPane.setViewportView(table);
 
     // JScrollPane scrollPane = new JScrollPane(table);

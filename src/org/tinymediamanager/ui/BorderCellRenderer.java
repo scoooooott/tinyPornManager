@@ -64,7 +64,7 @@ public class BorderCellRenderer extends DefaultTableCellRenderer {
       setValue(movie.getTitleSortable());
       if (movie.isNewlyAdded()) {
         setForeground(new Color(76, 143, 72));
-        TmmFontHelper.changeFont(this, 0.916);
+        // TmmFontHelper.changeFont(this, 0.916);
       }
     }
     else if (value != null) {

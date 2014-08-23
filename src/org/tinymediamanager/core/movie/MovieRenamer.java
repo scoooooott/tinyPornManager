@@ -880,7 +880,12 @@ public class MovieRenamer {
 
     // replace token media source (BluRay|DVD|TV|...) ($S)
     if (newDestination.contains("$S")) {
-      newDestination = newDestination.replaceAll("\\$S", movie.getMediaSource());
+      if (movie.getMediaSource() != MovieMediaSource.UNKNOWN) {
+        newDestination = newDestination.replaceAll("\\$S", movie.getMediaSource().toString());
+      }
+      else {
+        newDestination = newDestination.replaceAll("\\$S", "");
+      }
     }
 
     // replace empty brackets

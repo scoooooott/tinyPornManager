@@ -42,6 +42,7 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
+import org.tinymediamanager.core.movie.MovieMediaSource;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.connector.MovieToMpNfoConnector;
 import org.tinymediamanager.core.movie.connector.MovieToXbmcNfoConnector;
@@ -287,8 +288,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (!Utils.isValidImdbId(movie.getImdbId())) {
         movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
       }
-      if (movie.getMediaSource().isEmpty()) {
-        movie.setMediaSource(ParserUtils.getMediaSource(mf.getFile().getAbsolutePath()));
+      if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
+        movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
       }
       LOGGER.debug("parsing video file " + mf.getFilename());
       movie.addToMediaFiles(mf);
@@ -591,22 +592,22 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (!current.contains(mf)) { // a new mediafile was found!
         if (mf.getPath().toUpperCase().contains("BDMV") || mf.getPath().toUpperCase().contains("VIDEO_TS") || mf.isDiscFile()) {
           movie.setDisc(true);
-          if (movie.getMediaSource().isEmpty()) {
-            movie.setMediaSource(ParserUtils.getMediaSource(mf.getPath()));
+          if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
+            movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getPath()));
           }
         }
 
         if (!Utils.isValidImdbId(movie.getImdbId())) {
           movie.setImdbId(ParserUtils.detectImdbId(mf.getFile().getAbsolutePath()));
         }
-        if (movie.getMediaSource().isEmpty()) {
-          movie.setMediaSource(ParserUtils.getMediaSource(mf.getFile().getAbsolutePath()));
-        }
 
         switch (mf.getType()) {
           case VIDEO:
             LOGGER.debug("parsing video file " + mf.getFilename());
             movie.addToMediaFiles(mf);
+            if (movie.getMediaSource() == MovieMediaSource.UNKNOWN) {
+              movie.setMediaSource(MovieMediaSource.parseMediaSource(mf.getFile().getAbsolutePath()));
+            }
             break;
 
           case VIDEO_EXTRA:
