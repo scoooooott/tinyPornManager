@@ -108,8 +108,14 @@ public class MovieExtraImageFetcher implements Runnable {
     }
 
     try {
-      // we are lucky and have chosen our enums wisely
-      String filename = type.name().toLowerCase() + "." + FilenameUtils.getExtension(artworkUrl);
+      // we are lucky and have chosen our enums wisely - except the discart :(
+      String filename = "";
+      if (type == MediaFileType.DISCART) {
+        filename = "disc." + FilenameUtils.getExtension(artworkUrl);
+      }
+      else {
+        filename = type.name().toLowerCase() + "." + FilenameUtils.getExtension(artworkUrl);
+      }
       movie.removeAllMediaFiles(type);
 
       // debug message
