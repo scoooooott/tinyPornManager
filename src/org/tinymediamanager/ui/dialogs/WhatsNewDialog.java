@@ -21,13 +21,19 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.UTF8Control;
@@ -46,6 +52,7 @@ import com.jgoodies.forms.layout.RowSpec;
 public class WhatsNewDialog extends TmmDialog {
   private static final long           serialVersionUID = -4071143363981892283L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(WhatsNewDialog.class);
 
   public WhatsNewDialog(String changelog) {
     super(BUNDLE.getString("whatsnew.title"), "whatsnew"); //$NON-NLS-1$
@@ -57,9 +64,23 @@ public class WhatsNewDialog extends TmmDialog {
       textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, Globals.settings.getFontSize() + 1));
       scrollPane.setViewportView(textPane);
 
-      textPane.setText(changelog);
+      textPane.setContentType("text/html");
+      textPane.setText(prepareTextAsHtml(changelog));
       textPane.setEditable(false);
       textPane.setCaretPosition(0);
+      textPane.addHyperlinkListener(new HyperlinkListener() {
+        @Override
+        public void hyperlinkUpdate(HyperlinkEvent hle) {
+          if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+            try {
+              TmmUIHelper.browseUrl(hle.getURL().toString());
+            }
+            catch (Exception e) {
+              LOGGER.error("error browsing to " + hle.getURL().toString() + " :" + e.getMessage());
+            }
+          }
+        }
+      });
     }
     {
       JPanel panel = new JPanel();
@@ -101,5 +122,15 @@ public class WhatsNewDialog extends TmmDialog {
     Dimension superPref = super.getPreferredSize();
     return new Dimension((int) (700 > superPref.getWidth() ? superPref.getWidth() : 700), (int) (500 > superPref.getHeight() ? superPref.getHeight()
         : 500));
+  }
+
+  private String prepareTextAsHtml(String originalText) {
+    Pattern pattern = Pattern.compile("(http[s]?://.*?)[ )]");
+    Matcher matcher = pattern.matcher(originalText);
+    while (matcher.find()) {
+      originalText = originalText.replace(matcher.group(1), "<a href=\"" + matcher.group(1) + "\">" + matcher.group(1) + "</a>");
+    }
+
+    return "<html><pre>" + originalText + "</pre><html>";
   }
 }
