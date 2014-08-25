@@ -219,9 +219,13 @@ public class Utils {
       return title;
     }
     for (String prfx : Settings.getInstance().getTitlePrefix()) {
-      title = title.replaceAll("(?i)^" + prfx + " (.*)", "$1, " + prfx);
+      String delim = "\\s+"; // one or more spaces needed
+      if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space might be possible
+        delim = "";
+      }
+      title = title.replaceAll("(?i)^" + prfx + delim + "(.*)", "$1, " + prfx);
     }
-    return title;
+    return title.trim();
   }
 
   /**
@@ -237,9 +241,13 @@ public class Utils {
       return "";
     }
     for (String prfx : Settings.getInstance().getTitlePrefix()) {
-      title = title.replaceAll("(?i)(.*), " + prfx, prfx + " $1");
+      String delim = " "; // one spaces as delim
+      if (prfx.matches(".*['`´]$")) { // ends with hand-picked delim, so no space between prefix and title
+        delim = "";
+      }
+      title = title.replaceAll("(?i)(.*), " + prfx, prfx + delim + "$1");
     }
-    return title;
+    return title.trim();
   }
 
   /**

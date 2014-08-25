@@ -21,6 +21,16 @@ public class UtilsTest {
     Assert.assertEquals("Die Hard: with a", Utils.getSortableName("Die Hard: with a")); // wohoo
     Assert.assertEquals("Good Day to Die Hard, A", Utils.getSortableName("A Good Day to Die Hard")); // wohoo
     Assert.assertEquals("Hardyboys, Die", Utils.getSortableName("Die Hardyboys"));
+    Assert.assertEquals("Team, A", Utils.getSortableName("A Team"));
+    Assert.assertEquals("A-Team", Utils.getSortableName("A-Team"));
+    Assert.assertEquals("A!Team", Utils.getSortableName("A!Team"));
+    Assert.assertEquals("Âge de Glace, L'", Utils.getSortableName("L' Âge de Glace"));
+    Assert.assertEquals("Âge de Glace, L'", Utils.getSortableName("L'Âge de Glace"));
+    Assert.assertEquals("'Âge de Glace, L'", Utils.getSortableName("L''Âge de Glace"));
+    Assert.assertEquals("Âge de Glace, L´", Utils.getSortableName("L´ Âge de Glace"));
+    Assert.assertEquals("Âge de Glace, L`", Utils.getSortableName("L` Âge de Glace"));
+    Assert.assertEquals("Âge de Glace, L´", Utils.getSortableName("L´Âge de Glace"));
+    Assert.assertEquals("Âge de Glace, L`", Utils.getSortableName("L`Âge de Glace"));
   }
 
   @Test
@@ -29,6 +39,9 @@ public class UtilsTest {
     Assert.assertEquals("The Dark Knight", Utils.removeSortableName("Dark Knight, tHE"));
     Assert.assertEquals("A hard days night", Utils.removeSortableName("hard days night, a"));
     Assert.assertEquals("Die Hard", Utils.removeSortableName("Die Hard"));
+    Assert.assertEquals("L'Âge de Glace", Utils.removeSortableName("Âge de Glace, L'"));
+    Assert.assertEquals("L`Âge de Glace", Utils.removeSortableName("Âge de Glace, L`"));
+    Assert.assertEquals("L´Âge de Glace", Utils.removeSortableName("Âge de Glace, L´"));
   }
 
   @Test
