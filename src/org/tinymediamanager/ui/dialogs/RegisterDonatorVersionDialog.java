@@ -63,7 +63,7 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
 
   public RegisterDonatorVersionDialog() {
     super(BUNDLE.getString("tmm.registerdonator"), "registerDonator"); //$NON-NLS-1$
-    setBounds(166, 5, 350, 206);
+    setBounds(166, 5, 400, 300);
     boolean isDonator = Globals.isDonator();
     Properties props = null;
     if (isDonator) {
@@ -75,9 +75,8 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("250px:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("75px:grow"), FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.UNRELATED_GAP_ROWSPEC, }));
+          FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.UNRELATED_GAP_ROWSPEC, }));
 
       {
         JTextArea textArea = new JTextArea();
@@ -117,38 +116,6 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
           tfEmailAddress.setEnabled(false);
         }
       }
-
-      JButton btnRegister = new JButton(BUNDLE.getString("Button.register")); //$NON-NLS-1$
-      btnRegister.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          try {
-            Properties p = new Properties();
-            p.setProperty("user", tfName.getText());
-            p.setProperty("email", tfEmailAddress.getText());
-            p.setProperty("generated", String.valueOf(new Date().getTime()));
-            p.setProperty("uuid", FileUtils.readFileToString(new File("tmm.uuid")));
-
-            // get encrypted string and write tmm.lic
-            if (License.encrypt(p) && License.isValid()) {
-              JOptionPane.showMessageDialog(RegisterDonatorVersionDialog.this, BUNDLE.getString("tmm.registerdonator.success")); //$NON-NLS-1$
-              setVisible(false);
-            }
-            else {
-              JOptionPane.showMessageDialog(RegisterDonatorVersionDialog.this, BUNDLE.getString("tmm.registerdonator.error")); //$NON-NLS-1$
-            }
-          }
-          catch (Exception ex) {
-            LOGGER.error("Error registering donator version: " + ex.getMessage());
-          }
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-      });
-      if (isDonator) {
-        btnRegister.setEnabled(false);
-      }
-      panelContent.add(btnRegister, "4, 8, right, default");
     }
     {
       JPanel panelButtons = new JPanel();
@@ -157,6 +124,39 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
       EqualsLayout layout = new EqualsLayout(5);
       layout.setMinWidth(100);
       panelButtons.setLayout(layout);
+      {
+        JButton btnRegister = new JButton(BUNDLE.getString("Button.register")); //$NON-NLS-1$
+        btnRegister.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            try {
+              Properties p = new Properties();
+              p.setProperty("user", tfName.getText());
+              p.setProperty("email", tfEmailAddress.getText());
+              p.setProperty("generated", String.valueOf(new Date().getTime()));
+              p.setProperty("uuid", FileUtils.readFileToString(new File("tmm.uuid")));
+
+              // get encrypted string and write tmm.lic
+              if (License.encrypt(p) && License.isValid()) {
+                JOptionPane.showMessageDialog(RegisterDonatorVersionDialog.this, BUNDLE.getString("tmm.registerdonator.success")); //$NON-NLS-1$
+                setVisible(false);
+              }
+              else {
+                JOptionPane.showMessageDialog(RegisterDonatorVersionDialog.this, BUNDLE.getString("tmm.registerdonator.error")); //$NON-NLS-1$
+              }
+            }
+            catch (Exception ex) {
+              LOGGER.error("Error registering donator version: " + ex.getMessage());
+            }
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          }
+        });
+        if (isDonator) {
+          btnRegister.setEnabled(false);
+        }
+        panelButtons.add(btnRegister);
+      }
       {
         JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$ 
         btnClose.addActionListener(new ActionListener() {
@@ -174,5 +174,10 @@ public class RegisterDonatorVersionDialog extends TmmDialog {
         tfName.requestFocus();
       }
     });
+  }
+
+  @Override
+  public void pack() {
+    // do nothing
   }
 }
