@@ -644,7 +644,8 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, file);
           if (episodes.size() == 0) {
             // try to check what episode//season
-            EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(file);
+//            EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(file);
+            EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(file.getName(), tvShow.getTitle());
 
             // second check: is the detected episode (>-1; season >-1) already in tmm and any valid stacking markers found?
             if (result.episodes.size() == 1 && result.season > -1 && result.stackingMarkerFound) {

@@ -66,13 +66,24 @@ public class TvShowEpisodeAndSeasonParser {
                                                         "((.*?)[ _.-]*((?:cd|dvd|p(?:ar)?t|dis[ck]|d)[ _.-]*([0-9]|[a-d])+)|^[a-d]{1})(.*?)",
                                                         Pattern.CASE_INSENSITIVE);
 
+  // new parsing logic
+  private static Pattern      alternativePattern1   = Pattern.compile("(?i)[epx_-]+(\\d{1,2})");
+  private static Pattern      alternativePattern2   = Pattern.compile("(?i)episode[\\. _-]*(\\d{1,2})");
+  private static Pattern      alternativePattern3   = Pattern.compile("(?i)(part|pt)[\\._\\s]+([MDCLXVI]+)");
+  private static Pattern      alternativePattern4   = Pattern.compile("(?i)(s|staffel|season)[\\s]*(\\d{1,4})");
+  private static Pattern      alternativePattern5   = Pattern.compile("[^\\d](\\d)+[Xx_-]?(\\d{2})[^a-zA-Z\\d]");
+  private static Pattern      alternativePattern6   = Pattern.compile(".*?([0-9]{1,2}).*");
+
   /**
    * Detect episode from filename.
+   * 
+   * @deprecated
    * 
    * @param file
    *          the file
    * @return the episode matching result
    */
+  @Deprecated
   public static EpisodeMatchingResult detectEpisodeFromFilename(File file) {
     LOGGER.debug("Detect episodes/seasons from file " + file.getName());
     EpisodeMatchingResult result = new EpisodeMatchingResult();
@@ -132,7 +143,7 @@ public class TvShowEpisodeAndSeasonParser {
     }
 
     // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
-    Pattern regex = Pattern.compile("(?i)[epx_-]+(\\d{1,2})"); // episode fixed to 1-2 chars
+    Pattern regex = alternativePattern1; // episode fixed to 1-2 chars
     Matcher m = regex.matcher(filename);
     while (m.find()) {
       int ep = 0;
@@ -150,7 +161,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     if (result.episodes.isEmpty()) {
       // alternative episode style; didn't get it working in above regex
-      regex = Pattern.compile("(?i)episode[\\. _-]*(\\d{1,2})"); // episode fixed to 1-2 chars
+      regex = alternativePattern2; // episode fixed to 1-2 chars
       m = regex.matcher(filename);
       while (m.find()) {
         int ep = 0;
@@ -168,7 +179,7 @@ public class TvShowEpisodeAndSeasonParser {
     }
 
     // parse Roman
-    regex = Pattern.compile("(?i)(part|pt)[\\._\\s]+([MDCLXVI]+)");
+    regex = alternativePattern3;
     m = regex.matcher(filename);
     while (m.find()) {
       int ep = 0;
@@ -181,7 +192,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // season detection
     if (result.season == -1) {
-      regex = Pattern.compile("(?i)(s|staffel|season)[\\s]*(\\d{1,4})");
+      regex = alternativePattern4;
       m = regex.matcher(filename);
       if (m.find()) {
         int s = result.season;
@@ -238,7 +249,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // parse XYY or XX_YY (but no \w at end, so must have a delimiter!)
     if (result.episodes.isEmpty() || result.season == -1) {
-      regex = Pattern.compile("[^\\d](\\d)+[Xx_-]?(\\d{2})[^a-zA-Z\\d]");
+      regex = alternativePattern5;
       m = regex.matcher(filename + " ");// append space to get end working
       if (m.find()) {
         int ep = -1;
@@ -263,7 +274,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // last chance: parse YY or Y
     if (result.episodes.isEmpty()) {
-      regex = Pattern.compile(".*?([0-9]{1,2}).*");
+      regex = alternativePattern6;
       m = regex.matcher(filename);
       if (m.find()) {
         // Filename contains only 1-2 subsequent numbers; parse this as episode
