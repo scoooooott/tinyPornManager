@@ -122,6 +122,10 @@ public class TvShowTest {
             "E:2",
             detectEpisode(" \\XBMCBUNTU\\Standaard mnt share\\Disk3TB\\Anime\\Good Luck Girl (1 - 13)\\[CBM]_Good_Luck_Girl!_-_02_-_The_Battle_Between_God_and_Girl_Now_Begins_[720p]_[4A34853E].mkv"));
 
+    Assert.assertEquals("E:2", detectEpisode("02.ext"));
+    Assert.assertEquals("E:2", detectEpisode("02 second.ext"));
+    Assert.assertEquals("E:2", detectEpisode("02 03 04 05.ext"));
+
     Assert.assertEquals("E:1", detectEpisode("AwesomeTvShow.S01E01-480p.mkv"));
     Assert.assertEquals("E:9 E:10", detectEpisode("stvs7ep9-10.avi")); // does not work with NORMAL impl (yet)
 
@@ -131,6 +135,7 @@ public class TvShowTest {
     Assert.assertEquals("E:2", detectEpisode("name.s01.e02.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.s1e2.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.s01_e02.ext"));
+    Assert.assertEquals("E:2", detectEpisode("name.1x02.blablubb.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.1x02.ext"));
     Assert.assertEquals("E:2", detectEpisode("name.102.ext")); // does not work with NORMAL impl (yet)
 

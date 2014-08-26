@@ -112,7 +112,7 @@ public class TvShowEpisodeAndSeasonParser {
     // try to parse YXX numbers first, and exit
     String numbers = filename.replaceAll("[^0-9]", "");
     if (numbers.length() == 3) {
-      if (filename.matches(".*[0-9]{3}.*")) {
+      if (filename.matches(".*?[0-9]{3}.*")) {
         // Filename contains only 3 subsequent numbers; parse this as SEE
         int s = Integer.parseInt(numbers.substring(0, 1));
         int ep = Integer.parseInt(numbers.substring(1));
@@ -238,8 +238,8 @@ public class TvShowEpisodeAndSeasonParser {
 
     // parse XYY or XX_YY (but no \w at end, so must have a delimiter!)
     if (result.episodes.isEmpty() || result.season == -1) {
-      regex = Pattern.compile("[^\\d](\\d)+[x_-]?(\\d{2})[^a-zA-Z\\d]");
-      m = regex.matcher(filename);
+      regex = Pattern.compile("[^\\d](\\d)+[Xx_-]?(\\d{2})[^a-zA-Z\\d]");
+      m = regex.matcher(filename + " ");// append space to get end working
       if (m.find()) {
         int ep = -1;
         int s = -1;
@@ -258,6 +258,26 @@ public class TvShowEpisodeAndSeasonParser {
           result.season = s;
           LOGGER.trace("add found season " + s);
         }
+      }
+    }
+
+    // last chance: parse YY or Y
+    if (result.episodes.isEmpty()) {
+      regex = Pattern.compile(".*?([0-9]{1,2}).*");
+      m = regex.matcher(filename);
+      if (m.find()) {
+        // Filename contains only 1-2 subsequent numbers; parse this as episode
+        int ep = Integer.parseInt(m.group(1));
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.trace("add found EP " + ep);
+        }
+
+        // finally try to detect a stacking information from the detected name
+        Matcher matcher = stackingMarkerPattern.matcher(result.name);
+        result.stackingMarkerFound = matcher.matches();
+
+        return result;
       }
     }
 
