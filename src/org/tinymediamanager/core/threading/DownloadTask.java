@@ -134,10 +134,22 @@ public class DownloadTask extends TmmTask {
       }
       InputStream is = u.getInputStream();
 
+      // trace server headers
+      LOGGER.debug("Server returned: " + u.getStatusLine());
+      Header[] headers = u.getHeadersResponse();
+      for (Header header : headers) {
+        LOGGER.debug(" < " + header.getName() + ": " + header.getValue());
+      }
+
+      if (u.isFault()) {
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, u.getUrl(), u.getStatusLine()));
+        is.close();
+        u.closeConnection();
+        return;
+      }
+
       long length = u.getContentLength();
-      LOGGER.debug("Content length: " + length);
       String type = u.getContentType();
-      LOGGER.debug("Content type: " + type);
       if (ext.isEmpty()) {
         // still empty? try to parse from mime header
         if (type.startsWith("video/") || type.startsWith("audio/") || type.startsWith("image/")) {
@@ -146,21 +158,8 @@ public class DownloadTask extends TmmTask {
           file = new File(file.getParent(), file.getName() + "." + ext);
         }
       }
-      LOGGER.debug("Server returned: " + u.getStatusLine());
-      if (u.isFault()) {
-        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, u.getUrl(), u.getStatusLine()));
-        return;
-      }
 
       LOGGER.info("Downloading to " + file);
-
-      // trace server headers - config.xml loglevel=5000
-      if (LOGGER.isTraceEnabled()) {
-        Header[] headers = u.getHeadersResponse();
-        for (Header header : headers) {
-          LOGGER.trace(header.getName() + " : " + header.getValue());
-        }
-      }
 
       File tempFile = new File(file.getAbsolutePath() + ".part");
       BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
