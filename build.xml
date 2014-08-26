@@ -6,11 +6,11 @@
     <!-- build directories -->
     <property name="lib.dir" value="lib" />
     <property name="bin.dir" value="bin" />
-    <property name="build.dir" value="build" />
+    <property name="build.dir" value="build-tmp" /><!-- temp dir, will then be moved to /build -->
     <property name="dist.dir" value="dist" />
     <property name="getdown" value="getdown.txt" />  <!-- set as property to override in jenkins --> 
 
-	<tstamp>
+    <tstamp>
         <format property="today" pattern="dd/MM/yyyy" />
     </tstamp>
 
@@ -118,7 +118,7 @@
             <entry key="date" value="${today}" />
         </propertyfile>
     </target>
-	
+    
     <target name="downloadLocale">
         <get src="https://www.transifex.com/api/2/project/tinymediamanager/resource/messagesproperties/translation/${lang}/?file" 
              dest="locale/messages_${lang}.properties" username="tmm" password="tmm" ignoreerrors="true"/>
@@ -176,7 +176,7 @@
         <!-- echo message="${gd.locale}" /-->
         <replace file="${build.dir}/getdown.txt" token="%LOCALES%" value="${gd.locale}"/>
 
-    	<copy file="AppBundler/LICENSE" todir="${build.dir}" />
+        <copy file="AppBundler/LICENSE" todir="${build.dir}" />
         <copy file="AppBundler/splashscreen.png" todir="${build.dir}" />
         <copy file="AppBundler/tmm.png" todir="${build.dir}" />
         <copy file="AppBundler/env.txt" todir="${build.dir}" />
@@ -189,14 +189,14 @@
                     bundleid="org.tinyMediaManager.tinymediamanager" infostring="tinyMediaManager" 
                     jvmversion="1.6+" shortname="tMM" workingdirectory="$JAVAROOT" 
                     vmoptions="">
-            <jarfileset dir="${build.dir}">
-                <include name="**/*" />
-            </jarfileset>
+        <jarfileset dir="${build.dir}">
+            <include name="**/*" />
+        </jarfileset>
         </jarbundler>
         <copy file="AppBundler/JavaApplicationStub.new" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" />
         <chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx" />
-    	<copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" />
-    	<chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" perm="ugo+rx" />
+        <copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" />
+        <chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" perm="ugo+rx" />
         <zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_mac.zip" level="9">
             <zipfileset filemode="755" dir="${dist.dir}/mac" includes="tinyMediaManager.app/**/*" />
         </zip>
@@ -206,8 +206,8 @@
                  classpath="AppBundler/launch4j/launch4j.jar:AppBundler/launch4j/lib/xstream.jar" />
         <launch4j configFile="./AppBundler/launch4j.xml" txtProductVersion="${version}_r${svn.info.revision}"
                   outfile="${dist.dir}/tinyMediaManager.exe"/>
-    	<launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${version}_r${svn.info.revision}"
-    	                  outfile="${dist.dir}/tinyMediaManagerUpd.exe"/>
+        <launch4j configFile="./AppBundler/launch4jUpdater.xml" txtProductVersion="${version}_r${svn.info.revision}"
+                          outfile="${dist.dir}/tinyMediaManagerUpd.exe"/>
         <launch4j configFile="./AppBundler/launch4jcmd.xml" txtProductVersion="${version}_r${svn.info.revision}"
                   outfile="${dist.dir}/tinyMediaManagerCMD.exe"/>
         <zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_win.zip" level="9">
@@ -217,10 +217,10 @@
 
         <!-- Linux -->
         <copy file="AppBundler/tinyMediaManager.sh" todir="${dist.dir}" />
-    	<copy file="AppBundler/tinyMediaManagerUpdater.sh" todir="${dist.dir}" />
+        <copy file="AppBundler/tinyMediaManagerUpdater.sh" todir="${dist.dir}" />
         <copy file="AppBundler/tinyMediaManagerCMD.sh" todir="${dist.dir}" />
         <chmod file="${dist.dir}/tinyMediaManager.sh" perm="ugo+rx" />
-    	<chmod file="${dist.dir}/tinyMediaManagerUpdater.sh" perm="ugo+rx" />
+        <chmod file="${dist.dir}/tinyMediaManagerUpdater.sh" perm="ugo+rx" />
         <chmod file="${dist.dir}/tinyMediaManagerCMD.sh" perm="ugo+rx" />
         <tar destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar" >
             <tarfileset dir="${build.dir}" excludes="env.txt"/>
@@ -239,19 +239,23 @@
             <fileset dir="locale"/>
         </copy>
         <copy file="${dist.dir}/tinyMediaManager.exe" tofile="${build.dir}/tinyMediaManager.new" />
-    	  <copy file="${dist.dir}/tinyMediaManagerUpd.exe" tofile="${build.dir}/tinyMediaManagerUpd.new" />
+        <copy file="${dist.dir}/tinyMediaManagerUpd.exe" tofile="${build.dir}/tinyMediaManagerUpd.new" />
         <copy file="${dist.dir}/tinyMediaManagerCMD.exe" tofile="${build.dir}/tinyMediaManagerCMD.new" />
         <copy file="${dist.dir}/tinyMediaManager.sh" tofile="${build.dir}/tinyMediaManager.sh" />
-    	  <copy file="${dist.dir}/tinyMediaManagerUpdater.sh" tofile="${build.dir}/tinyMediaManagerUpdater.sh" />
+        <copy file="${dist.dir}/tinyMediaManagerUpdater.sh" tofile="${build.dir}/tinyMediaManagerUpdater.sh" />
         <copy file="${dist.dir}/tinyMediaManagerCMD.sh" tofile="${build.dir}/tinyMediaManagerCMD.sh" />
-    	  <copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${build.dir}/tinyMediaManagerOSX.sh" />
-    	  <copy file="AppBundler/JavaApplicationStub.new" tofile="${build.dir}/JavaApplicationStub.new" />
+        <copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${build.dir}/tinyMediaManagerOSX.sh" />
+        <copy file="AppBundler/JavaApplicationStub.new" tofile="${build.dir}/JavaApplicationStub.new" />
         <copy file="AppBundler/getdown.jar" tofile="${build.dir}/getdown-new.jar" />
 
         <!-- finally create checksums -->
         <taskdef name="digest" classname="com.threerings.getdown.tools.DigesterTask" 
                  classpath="AppBundler/getdown.jar" />
         <digest appdir="${build.dir}" />
+
+        <!-- done, move dir -->
+        <delete dir="build" />
+        <move file="${build.dir}" tofile="build"/>
     </target>
 
     <!--target name="analyze" description="Run analyzers" depends="compile"-->
