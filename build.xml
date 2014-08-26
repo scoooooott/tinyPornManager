@@ -106,9 +106,14 @@
             <fileset dir="${lib.dir}"/>
         </copy>
 
+        <property name="rev" value="r${svn.info.revision}" />
         <!-- if nightly is set, set the REVISION to nightly, else use svn rev -->
-        <condition property="rev" value="nightly" else="r${svn.info.revision}">
+        <condition property="rev" value="nightly" else="${rev}">
             <isset property="nightly" />
+        </condition>
+        <!-- if prerelease is set, set the REVISION to nightly, else use svn rev -->
+        <condition property="rev" value="prerelease" else="${rev}">
+            <isset property="prerelease" />
         </condition>
 
         <!-- buildinfo -->

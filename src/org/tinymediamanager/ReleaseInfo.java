@@ -84,6 +84,9 @@ public class ReleaseInfo {
       if (isNightly()) {
         v = "NIGHTLY";
       }
+      else if (isPreRelease()) {
+        v = "PRE-RELEASE";
+      }
       else {
         v = "SVN";
       }
@@ -133,6 +136,15 @@ public class ReleaseInfo {
   }
 
   /**
+   * are we pre-release?
+   * 
+   * @return true/false if nightly dev build
+   */
+  public static boolean isPreRelease() {
+    return getBuild().equalsIgnoreCase("prerelease") ? true : false;
+  }
+
+  /**
    * gets the REAL version string out of the JAR file's manifest<br>
    * eg: 2.4 (r992)
    * 
@@ -146,6 +158,9 @@ public class ReleaseInfo {
     }
     if (isNightly()) {
       v += " - NIGHTLY";
+    }
+    else if (isPreRelease()) {
+      v += " - PRE-RELEASE";
     }
     return v;
   }
