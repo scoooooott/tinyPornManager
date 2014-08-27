@@ -127,7 +127,13 @@ public class ParserUtils {
       }
     }
 
-    ret[0] = name.trim();
+    if (name.isEmpty()) {
+      // started with a badword - return name unchanged
+      ret[0] = fname;
+    }
+    else {
+      ret[0] = name.trim();
+    }
     ret[1] = year.trim();
     LOGGER.trace("Movie title should be: \"" + ret[0] + "\", from " + ret[1]);
     return ret;

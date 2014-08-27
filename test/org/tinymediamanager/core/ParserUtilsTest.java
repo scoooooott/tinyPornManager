@@ -24,4 +24,8 @@ public class ParserUtilsTest {
     System.out.println(ParserUtils.detectCleanMoviename(f.getName()));
   }
 
+  public void testBadword() {
+    File f = new File("/media/Daten/Test_Filme/xxx.avi");
+    System.out.println(ParserUtils.detectCleanMoviename(f.getName()));
+  }
 }
