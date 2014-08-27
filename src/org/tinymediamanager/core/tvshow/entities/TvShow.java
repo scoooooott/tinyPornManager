@@ -247,7 +247,7 @@ public class TvShow extends MediaEntity {
    *          the episode
    * @return the season for episode
    */
-  public TvShowSeason getSeasonForEpisode(TvShowEpisode episode) {
+  public synchronized TvShowSeason getSeasonForEpisode(TvShowEpisode episode) {
     TvShowSeason season = null;
 
     // search for an existing season
