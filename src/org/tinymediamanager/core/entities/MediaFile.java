@@ -758,8 +758,9 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     else if (w <= 720 && h <= 480) {
       return VIDEO_FORMAT_480P;
     }
-    else if (w <= 768 && h <= 576) {
-      // 720x576 (PAL) (768 when rescaled for square pixels)
+    // else if (w <= 768 && h <= 576) {
+    else if (w <= 776 && h <= 592) {
+      // 720x576 (PAL) (handbrake sometimes encode it to a max of 776 x 592)
       return VIDEO_FORMAT_576P;
     }
     else if (w <= 960 && h <= 544) {
