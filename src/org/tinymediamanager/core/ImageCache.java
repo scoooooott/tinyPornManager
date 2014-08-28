@@ -175,17 +175,15 @@ public class ImageCache {
    */
   public static File cacheImage(MediaFile mf) throws Exception {
     File originalFile = mf.getFile();
-
-    if (FileUtils.sizeOf(originalFile) == 0) {
-      throw new EmptyFileException(originalFile);
-    }
-
     String cacheFilename = ImageCache.getCachedFileName(originalFile.getPath());
     File cachedFile = new File(ImageCache.getCacheDir(), cacheFilename + ".jpg");
     if (!cachedFile.exists()) {
-      // check if the original file exists
+      // check if the original file exists && size > 0
       if (!originalFile.exists()) {
         throw new FileNotFoundException("unable to cache file: " + originalFile.getName() + "; file does not exist");
+      }
+      if (FileUtils.sizeOf(originalFile) == 0) {
+        throw new EmptyFileException(originalFile);
       }
 
       // recreate cache dir if needed
