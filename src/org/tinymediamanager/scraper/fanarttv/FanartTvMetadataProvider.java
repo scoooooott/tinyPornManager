@@ -144,6 +144,15 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     catch (Exception e) {
     }
 
+    // no ID found? try the old one
+    if (tvdbId == 0) {
+      try {
+        tvdbId = Integer.parseInt(options.getId("tvdb"));
+      }
+      catch (Exception e) {
+      }
+    }
+
     if (tvdbId > 0) {
       tvShowImages = ftv.getTvArtwork(tvdbId);
     }

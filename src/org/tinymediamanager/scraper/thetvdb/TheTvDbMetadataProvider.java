@@ -302,6 +302,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       id = options.getId(providerInfo.getId());
     }
 
+    // still no ID? try the old one
+    if (StringUtils.isEmpty(id)) {
+      id = options.getId("tvdb");
+    }
+
     if (StringUtils.isEmpty(id)) {
       return md;
     }
