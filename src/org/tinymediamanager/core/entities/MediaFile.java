@@ -675,6 +675,11 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    *          the new video codec
    */
   public void setVideoCodec(String newValue) {
+    // AVC = h264 = x264; display as h264
+    if ("avc".equalsIgnoreCase(newValue) || "x264".equalsIgnoreCase(newValue)) {
+      newValue = "h264";
+    }
+
     String oldValue = this.videoCodec;
     this.videoCodec = newValue;
     firePropertyChange("videoCodec", oldValue, newValue);
@@ -1097,7 +1102,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         height = getMediaInfo(StreamKind.Video, 0, "Height");
         scanType = getMediaInfo(StreamKind.Video, 0, "ScanType");
         width = getMediaInfo(StreamKind.Video, 0, "Width");
-        videoCodec = getMediaInfo(StreamKind.Video, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
+        videoCodec = getMediaInfo(StreamKind.Video, 0, "CodecID/Hint", "Format");
 
         // get audio streams
         // int streams = getMediaInfo().streamCount(StreamKind.Audio);
@@ -1287,7 +1292,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         height = getMediaInfo(StreamKind.Image, 0, "Height");
         // scanType = getMediaInfo(StreamKind.Image, 0, "ScanType"); // no scantype on graphics
         width = getMediaInfo(StreamKind.Image, 0, "Width");
-        videoCodec = getMediaInfo(StreamKind.Image, 0, "Encoded_Library/Name", "CodecID/Hint", "Format");
+        videoCodec = getMediaInfo(StreamKind.Image, 0, "CodecID/Hint", "Format");
         // System.out.println(height + "-" + width + "-" + videoCodec);
         break;
 
