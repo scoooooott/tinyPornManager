@@ -117,18 +117,42 @@ public class TvShowTest {
    */
   @Test
   public void testEpisodeMatching() {
-    Assert
-        .assertEquals(
-            "E:2",
-            detectEpisode(" \\XBMCBUNTU\\Standaard mnt share\\Disk3TB\\Anime\\Good Luck Girl (1 - 13)\\[CBM]_Good_Luck_Girl!_-_02_-_The_Battle_Between_God_and_Girl_Now_Begins_[720p]_[4A34853E].mkv"));
+    // detectEpisode("");
 
-    Assert.assertEquals("E:2", detectEpisode("02.ext"));
-    Assert.assertEquals("E:2", detectEpisode("02 second.ext"));
-    Assert.assertEquals("E:2", detectEpisode("02 03 04 05.ext"));
+    // ************************************************************************
+    // FIXME: do not work yet
+    // Assert.assertEquals("E:5", detectEpisode("vs-once-upon-a-time-_S03XE05_dd51-ded-dl-7p-bd-x264-305.mkv"));
 
+    // ************************************************************************
+    // various real world examples
+    Assert.assertEquals("E:11", detectEpisode("Episode.11.Ocean.Deep.BluRay.720p.x264-x264Crew.mkv"));
+    Assert.assertEquals("E:1", detectEpisode("tvs-castle-dl-ituneshd-xvid-101.avi"));
+    Assert.assertEquals("E:9", detectEpisode("440 - 2x09 - .avi"));
+    Assert.assertEquals("E:2", detectEpisode("\\Good L G (1 - 13)\\[CBM]_Good_L_G!_-_02_-_The_Battle_Begins_[720p]_[4A34853E].mkv"));
+    Assert.assertEquals("E:1", detectEpisode("s8-vierfrauen-s03e01-repack.avi"));
+    Assert.assertEquals("E:3", detectEpisode("tvp-wildesskandinavien-e03-720p.mkv"));
+    Assert.assertEquals("E:13", detectEpisode("s800The Mentalist_S04E13_Die goldene Feder.avi"));
     Assert.assertEquals("E:1", detectEpisode("AwesomeTvShow.S01E01-480p.mkv"));
     Assert.assertEquals("E:9 E:10", detectEpisode("stvs7ep9-10.avi")); // does not work with NORMAL impl (yet)
 
+    // ************************************************************************
+    // 1-3 chars, if they are the ONLY numbers in file
+    Assert.assertEquals("E:2", detectEpisode("2.mkv"));
+    Assert.assertEquals("E:2", detectEpisode("2 name.mkv"));
+    Assert.assertEquals("E:2", detectEpisode("name 2.mkv"));
+
+    Assert.assertEquals("E:2", detectEpisode("02.mkv"));
+    Assert.assertEquals("E:2", detectEpisode("02 name.mkv"));
+    Assert.assertEquals("E:2", detectEpisode("name 02.mkv"));
+
+    Assert.assertEquals("E:2", detectEpisode("102.mkv"));
+    Assert.assertEquals("E:2", detectEpisode("102 name.mkv"));
+    Assert.assertEquals("E:2", detectEpisode("name 102.mkv"));
+
+    Assert.assertEquals("", detectEpisode("2 3 6.mkv")); // ohm... NO we shouldn't not detect this as 3 EPs
+    Assert.assertEquals("", detectEpisode("02 03 04 name.mkv")); // same here
+
+    // ************************************************************************
     // http://wiki.xbmc.org/index.php?title=Video_library/Naming_files/TV_shows
     // with season
     Assert.assertEquals("E:2", detectEpisode("name.s01e02.ext"));
@@ -175,13 +199,6 @@ public class TvShowTest {
     Assert.assertEquals("E:1", detectEpisode("name.s01e01.1.s01e01.2.ext"));
     Assert.assertEquals("E:1", detectEpisode("name.1x01.1x01.2.ext")); // (note this is (1x01.1)x(01.2) not (1x01).(1x01.2))
 
-    detectEpisode("Episode.11.Ocean.Deep.BluRay.720p.x264-x264Crew.mkv");
-    detectEpisode("tvs-castle-dl-ituneshd-xvid-101.avi");
-    detectEpisode("440 - 2x09 - .avi");
-    // detectEpisode("");
-
-    // parseInt testing
-    Assert.assertEquals("E:2", detectEpisode("name.s01e02435454715743435435554.ext")); // does not work with NORMAL impl (yet)
   }
 
   /**

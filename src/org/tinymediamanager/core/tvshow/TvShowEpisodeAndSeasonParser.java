@@ -67,12 +67,14 @@ public class TvShowEpisodeAndSeasonParser {
                                                         Pattern.CASE_INSENSITIVE);
 
   // new parsing logic
-  private static Pattern      alternativePattern1   = Pattern.compile("(?i)[epx_-]+(\\d{1,2})");
-  private static Pattern      alternativePattern2   = Pattern.compile("(?i)episode[\\. _-]*(\\d{1,2})");
-  private static Pattern      alternativePattern3   = Pattern.compile("(?i)(part|pt)[\\._\\s]+([MDCLXVI]+)");
-  private static Pattern      alternativePattern4   = Pattern.compile("(?i)(s|staffel|season)[\\s]*(\\d{1,4})");
-  private static Pattern      alternativePattern5   = Pattern.compile("[^\\d](\\d)+[Xx_-]?(\\d{2})[^a-zA-Z\\d]");
-  private static Pattern      alternativePattern6   = Pattern.compile(".*?([0-9]{1,2}).*");
+  private static Pattern      episodePattern        = Pattern.compile("[epx_-]+(\\d{1,2})", Pattern.CASE_INSENSITIVE);
+  private static Pattern      episodePattern2       = Pattern.compile("episode[\\. _-]*(\\d{1,2})", Pattern.CASE_INSENSITIVE);
+  private static Pattern      romanPattern          = Pattern.compile("(part|pt)[\\._\\s]+([MDCLXVI]+)", Pattern.CASE_INSENSITIVE);
+  private static Pattern      seasonPattern         = Pattern.compile("(s|staffel|season)[\\s]*(\\d{1,4})", Pattern.CASE_INSENSITIVE);
+  private static Pattern      seasonEpisodePattern  = Pattern.compile("[^\\d](\\d)+[Xx_-]?(\\d{2})[^a-zA-Z\\d]", Pattern.CASE_INSENSITIVE);
+  private static Pattern      numbers2Pattern       = Pattern.compile(".*?([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
+  private static Pattern      numbers3Pattern       = Pattern.compile(".*?([0-9])([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
+  private static Pattern      tvMultipartMatching   = Pattern.compile("^[-_ex]+([0-9]+(?:(?:[a-i]|\\.[1-9])(?![0-9]))?)", Pattern.CASE_INSENSITIVE);
 
   /**
    * Detect episode from filename.
@@ -120,48 +122,79 @@ public class TvShowEpisodeAndSeasonParser {
     }
     filename = FilenameUtils.getBaseName(filename); // w/o extension
 
-    // try to parse YXX numbers first, and exit
+    // finally try to detect a stacking information from the detected name
+    Pattern regex = stackingMarkerPattern;
+    Matcher m = regex.matcher(name);
+    result.stackingMarkerFound = m.matches();
+
     String numbers = filename.replaceAll("[^0-9]", "");
-    if (numbers.length() == 3) {
-      if (filename.matches(".*?[0-9]{3}.*")) {
+    // try to parse YXX numbers first, and exit (need to do that per length)
+    if (numbers.length() == 3) { // eg 102
+      regex = numbers3Pattern;
+      m = regex.matcher(filename);
+      if (m.find()) {
         // Filename contains only 3 subsequent numbers; parse this as SEE
-        int s = Integer.parseInt(numbers.substring(0, 1));
-        int ep = Integer.parseInt(numbers.substring(1));
+        int s = Integer.parseInt(m.group(1));
+        int ep = Integer.parseInt(m.group(2));
         if (ep > 0 && !result.episodes.contains(ep)) {
           result.episodes.add(ep);
           LOGGER.trace("add found EP " + ep);
         }
         LOGGER.trace("add found season " + s);
         result.season = s;
-
-        // finally try to detect a stacking information from the detected name
-        Matcher matcher = stackingMarkerPattern.matcher(result.name);
-        result.stackingMarkerFound = matcher.matches();
-
         return result;
       }
     }
-
-    // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
-    Pattern regex = alternativePattern1; // episode fixed to 1-2 chars
-    Matcher m = regex.matcher(filename);
-    while (m.find()) {
-      int ep = 0;
-      try {
-        ep = Integer.parseInt(m.group(1));
+    else if (numbers.length() == 2) { // eg 01
+      regex = numbers2Pattern;
+      m = regex.matcher(filename);
+      if (m.find()) {
+        // Filename contains only 2 subsequent numbers; parse this as SEE
+        int ep = Integer.parseInt(m.group(1));
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.trace("add found EP " + ep);
+        }
+        return result;
       }
-      catch (NumberFormatException nfe) {
-        // can not happen from regex since we only come here with max 2 numeric chars
-      }
+    }
+    else if (numbers.length() == 1) { // eg 1
+      int ep = Integer.parseInt(numbers); // just one :P
       if (ep > 0 && !result.episodes.contains(ep)) {
         result.episodes.add(ep);
         LOGGER.trace("add found EP " + ep);
+      }
+      return result;
+    }
+
+    // parse XYY or XX_YY (but no \w at end, so must have a delimiter!)
+    if (result.episodes.isEmpty() || result.season == -1) {
+      regex = seasonEpisodePattern;
+      m = regex.matcher(filename + " ");// append space to get end working
+      while (m.find()) {
+        int ep = -1;
+        int s = -1;
+        try {
+          s = Integer.parseInt(m.group(1));
+          ep = Integer.parseInt(m.group(2));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.trace("add found EP " + ep);
+        }
+        if (s >= 0) {
+          result.season = s;
+          LOGGER.trace("add found season " + s);
+        }
       }
     }
 
     if (result.episodes.isEmpty()) {
       // alternative episode style; didn't get it working in above regex
-      regex = alternativePattern2; // episode fixed to 1-2 chars
+      regex = episodePattern2; // episode fixed to 1-2 chars
       m = regex.matcher(filename);
       while (m.find()) {
         int ep = 0;
@@ -178,8 +211,25 @@ public class TvShowEpisodeAndSeasonParser {
       }
     }
 
+    // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
+    regex = episodePattern; // episode fixed to 1-2 chars
+    m = regex.matcher(filename);
+    while (m.find()) {
+      int ep = 0;
+      try {
+        ep = Integer.parseInt(m.group(1));
+      }
+      catch (NumberFormatException nfe) {
+        // can not happen from regex since we only come here with max 2 numeric chars
+      }
+      if (ep > 0 && !result.episodes.contains(ep)) {
+        result.episodes.add(ep);
+        LOGGER.trace("add found EP " + ep);
+      }
+    }
+
     // parse Roman
-    regex = alternativePattern3;
+    regex = romanPattern;
     m = regex.matcher(filename);
     while (m.find()) {
       int ep = 0;
@@ -192,7 +242,7 @@ public class TvShowEpisodeAndSeasonParser {
 
     // season detection
     if (result.season == -1) {
-      regex = alternativePattern4;
+      regex = seasonPattern;
       m = regex.matcher(filename);
       if (m.find()) {
         int s = result.season;
@@ -247,57 +297,7 @@ public class TvShowEpisodeAndSeasonParser {
       }
     }
 
-    // parse XYY or XX_YY (but no \w at end, so must have a delimiter!)
-    if (result.episodes.isEmpty() || result.season == -1) {
-      regex = alternativePattern5;
-      m = regex.matcher(filename + " ");// append space to get end working
-      if (m.find()) {
-        int ep = -1;
-        int s = -1;
-        try {
-          s = Integer.parseInt(m.group(1));
-          ep = Integer.parseInt(m.group(2));
-        }
-        catch (NumberFormatException nfe) {
-          // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        if (ep > 0 && !result.episodes.contains(ep)) {
-          result.episodes.add(ep);
-          LOGGER.trace("add found EP " + ep);
-        }
-        if (s >= 0) {
-          result.season = s;
-          LOGGER.trace("add found season " + s);
-        }
-      }
-    }
-
-    // last chance: parse YY or Y
-    if (result.episodes.isEmpty()) {
-      regex = alternativePattern6;
-      m = regex.matcher(filename);
-      if (m.find()) {
-        // Filename contains only 1-2 subsequent numbers; parse this as episode
-        int ep = Integer.parseInt(m.group(1));
-        if (ep > 0 && !result.episodes.contains(ep)) {
-          result.episodes.add(ep);
-          LOGGER.trace("add found EP " + ep);
-        }
-
-        // finally try to detect a stacking information from the detected name
-        Matcher matcher = stackingMarkerPattern.matcher(result.name);
-        result.stackingMarkerFound = matcher.matches();
-
-        return result;
-      }
-    }
-
     Collections.sort(result.episodes);
-
-    // finally try to detect a stacking information from the detected name
-    Matcher matcher = stackingMarkerPattern.matcher(result.name);
-    result.stackingMarkerFound = matcher.matches();
-
     LOGGER.debug("returning result " + result);
     return result;
   }
@@ -330,10 +330,6 @@ public class TvShowEpisodeAndSeasonParser {
     }
 
     Collections.sort(result.episodes);
-
-    // finally try to detect a stacking information from the detected name
-    Matcher matcher = stackingMarkerPattern.matcher(result.name);
-    result.stackingMarkerFound = matcher.matches();
 
     LOGGER.debug("returning result " + result);
     return result;
