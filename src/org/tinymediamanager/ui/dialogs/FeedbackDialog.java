@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -43,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.core.License;
 import org.tinymediamanager.scraper.util.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -100,6 +102,13 @@ public class FeedbackDialog extends TmmDialog {
     tfEmail = new JTextField();
     panelContent.add(tfEmail, "4, 4, fill, default");
     tfEmail.setColumns(10);
+
+    // pre-fill dialog
+    if (Globals.isDonator()) {
+      Properties p = License.decrypt();
+      tfEmail.setText(p.getProperty("email"));
+      tfName.setText(p.getProperty("user"));
+    }
 
     JLabel lblFeedback = new JLabel(BUNDLE.getString("Feedback.message")); //$NON-NLS-1$
     panelContent.add(lblFeedback, "2, 6, right, top");

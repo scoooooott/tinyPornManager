@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.core.License;
 import org.tinymediamanager.scraper.util.TmmHttpClient;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -113,6 +115,13 @@ public class BugReportDialog extends TmmDialog {
 
     tfEmail = new JTextField();
     panelContent.add(tfEmail, "4, 4, fill, default");
+
+    // pre-fill dialog
+    if (Globals.isDonator()) {
+      Properties p = License.decrypt();
+      tfEmail.setText(p.getProperty("email"));
+      tfName.setText(p.getProperty("user"));
+    }
 
     JLabel lblEmaildesc = new JLabel(BUNDLE.getString("BugReport.email.description")); //$NON-NLS-1$
     panelContent.add(lblEmaildesc, "2, 5, 3, 1");

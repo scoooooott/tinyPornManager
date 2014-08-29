@@ -97,7 +97,7 @@ public class AboutDialog extends TmmDialog {
       if (Globals.isDonator()) {
         Properties p = License.decrypt();
         // p.list(System.out);
-        JLabel lblRegged = new JLabel(BUNDLE.getString("tmm.registeredto") + " " + p.getProperty("user") + " (" + p.getProperty("email") + ")"); //$NON-NLS-1$
+        JLabel lblRegged = new JLabel(BUNDLE.getString("tmm.registeredto") + " " + p.getProperty("user")); //$NON-NLS-1$
         TmmFontHelper.changeFont(lblRegged, 1.166, Font.BOLD);
         contentPanel.add(lblRegged, "4, 6, 3, 1, center, default");
       }
