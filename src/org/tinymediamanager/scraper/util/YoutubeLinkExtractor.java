@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 
 /**
@@ -38,6 +40,8 @@ import org.tinymediamanager.core.movie.MovieModuleManager;
  * @author Manuel Laggner
  */
 public class YoutubeLinkExtractor {
+  private static final Logger LOGGER = LoggerFactory.getLogger(YoutubeLinkExtractor.class);
+
   private enum VideoQuality {
     p3072, p2304, p1080, p720, p520, p480, p360, p270, p240, p224, p144
   }
@@ -88,6 +92,7 @@ public class YoutubeLinkExtractor {
     if (StringUtils.isBlank(id)) {
       return "";
     }
+    LOGGER.debug("Parsed youtube id: " + id);
 
     VideoQuality desiredQuality = itagMap.get(extractQuality(url));
     if (desiredQuality == null) {
