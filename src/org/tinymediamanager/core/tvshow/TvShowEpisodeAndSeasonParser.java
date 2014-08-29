@@ -127,6 +127,23 @@ public class TvShowEpisodeAndSeasonParser {
     Matcher m = regex.matcher(name);
     result.stackingMarkerFound = m.matches();
 
+    // season detection
+    if (result.season == -1) {
+      regex = seasonPattern;
+      m = regex.matcher(filename);
+      if (m.find()) {
+        int s = result.season;
+        try {
+          s = Integer.parseInt(m.group(2));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        result.season = s;
+        LOGGER.trace("add found season " + s);
+      }
+    }
+
     String numbers = filename.replaceAll("[^0-9]", "");
     // try to parse YXX numbers first, and exit (need to do that per length)
     if (numbers.length() == 3) { // eg 102
@@ -237,23 +254,6 @@ public class TvShowEpisodeAndSeasonParser {
       if (ep > 0 && !result.episodes.contains(ep)) {
         result.episodes.add(ep);
         LOGGER.trace("add found EP " + ep);
-      }
-    }
-
-    // season detection
-    if (result.season == -1) {
-      regex = seasonPattern;
-      m = regex.matcher(filename);
-      if (m.find()) {
-        int s = result.season;
-        try {
-          s = Integer.parseInt(m.group(2));
-        }
-        catch (NumberFormatException nfe) {
-          // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        result.season = s;
-        LOGGER.trace("add found season " + s);
       }
     }
 
