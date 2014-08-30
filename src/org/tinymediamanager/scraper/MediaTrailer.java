@@ -275,7 +275,8 @@ public class MediaTrailer extends AbstractModelObject implements Comparable<Medi
 
     if ("youtube".equalsIgnoreCase(getProvider())) {
       try {
-        url = YoutubeLinkExtractor.extractVideoUrl(url);
+        YoutubeLinkExtractor yt = new YoutubeLinkExtractor(url);
+        url = yt.extractVideoUrl();
       }
       catch (IOException e) {
         LOGGER.error("Error extracting Youtube url: " + e.getMessage());
