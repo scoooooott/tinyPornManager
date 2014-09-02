@@ -644,8 +644,9 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, file);
           if (episodes.size() == 0) {
             // try to check what episode//season
-//            EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(file);
-            EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(file.getName(), tvShow.getTitle());
+            // EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilename(file);
+            String relativePath = new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath();
+            EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
 
             // second check: is the detected episode (>-1; season >-1) already in tmm and any valid stacking markers found?
             if (result.episodes.size() == 1 && result.season > -1 && result.stackingMarkerFound) {
@@ -666,13 +667,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             if (result.season == -1) {
               // did the search find a season?
               // no -> search for it in the folder name (relative path between tv show root and the current dir)
-              result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(file.toURI()).getPath());
-            }
-
-            if (result.episodes.size() == 0) {
-              // if episode STILL empty, try Myron's way of parsing - lol
-              result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(file.getName(), tvShow.getTitle());
-              LOGGER.debug(file.getName() + " - " + result.toString());
+              result.season = TvShowEpisodeAndSeasonParser.detectSeason(relativePath);
             }
 
             List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(file);
@@ -781,22 +776,21 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     List<TvShowEpisode> episodes = tvShowList.getTvEpisodesByFile(tvShow, firstVideoFile);
     if (episodes.size() == 0) {
-      // try to parse out episodes/season from parent directory
-      EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
-      List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(firstVideoFile);
+      String relativePath = new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath();
+      EpisodeMatchingResult result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(relativePath, tvShow.getTitle());
 
       if (result.season == -1) {
         // did the search find a season?
         // no -> search for it in the folder name (relative path between tv show root and the current dir)
-        result.season = TvShowEpisodeAndSeasonParser.detectSeason(new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath());
+        result.season = TvShowEpisodeAndSeasonParser.detectSeason(relativePath);
       }
 
       if (result.episodes.size() == 0) {
-        // if episode STILL empty, try Myron's way of parsing - lol
-        result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(
-            new File(tvShow.getPath()).toURI().relativize(firstVideoFile.toURI()).getPath(), tvShow.getTitle());
-        LOGGER.debug(firstVideoFile.getName() + " - " + result.toString());
+        // try to parse out episodes/season from parent directory
+        result = TvShowEpisodeAndSeasonParser.detectEpisodeFromDirectory(dir.getParentFile(), tvShow.getPath());
       }
+
+      List<TvShowEpisode> episodesInNfo = TvShowEpisode.parseNFO(firstVideoFile);
 
       // FIXME: Episode root is outside of disc folders ?!
       while (dir.getPath().toUpperCase().contains("BDMV") || dir.getPath().toUpperCase().contains("VIDEO_TS")) {

@@ -209,7 +209,7 @@ public class UpgradeTasks {
 
     if (compareVersion(v, "2.6") < 0) {
       // THUMBS are getting EXTRATHUMBS
-      LOGGER.info("Performing upgrade tasks to version 2.5.4");
+      LOGGER.info("Performing upgrade tasks to version 2.6");
       // repair missing datasources
       EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
       entityManager.getTransaction().begin();
