@@ -267,7 +267,7 @@
         <ant antfile="buildsupport/analyze.xml">
             <property name="source" value="src"/>
             <property name="classpath" refid="classpath.default"/>
-            <property name="${build.dir}" value="${bin.dir}"/>
+            <property name="build" value="${bin.dir}"/>
             <!--property name="testsource" value="test"/-->
         </ant>
     </target>
