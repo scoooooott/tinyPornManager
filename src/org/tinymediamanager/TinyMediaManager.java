@@ -45,6 +45,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.FileUtils;
@@ -55,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.UpdaterTask;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.MovieList;
@@ -467,7 +469,7 @@ public class TinyMediaManager {
           }
         }
         catch (Exception e) {
-          LOGGER.error("Exception while  start of tmm", e);
+          LOGGER.error("Exception while start of tmm", e);
           if (!GraphicsEnvironment.isHeadless()) {
             MessageDialog.showExceptionWindow(e);
             System.exit(1);
@@ -720,6 +722,24 @@ public class TinyMediaManager {
   private static void startCommandLineTasks() {
     try {
       TmmTask task = null;
+      boolean updateAvailable = false;
+
+      if (scrapeNew || scrapeUnscraped) {
+        // only do an update check when we are scraping online
+        // no need for a "forced" check for just updating the datasource
+        final SwingWorker<Boolean, Void> updateWorker = new UpdaterTask();
+        updateWorker.run();
+        updateAvailable = updateWorker.get(); // blocking
+        if (updateAvailable) {
+          LOGGER.warn("There's a new TMM update available!");
+          LOGGER.warn("Please update to remove waiting time ;)");
+          for (int i = 20; i > 0; i--) {
+            System.out.print(i + "..");
+            Thread.sleep(1000);
+          }
+          System.out.println("0");
+        }
+      }
 
       // update movies //////////////////////////////////////////////
       if (updateMovies) {
@@ -868,6 +888,12 @@ public class TinyMediaManager {
         if (allOk) {
           LOGGER.info("no problems found - everything ok :)");
         }
+      }
+
+      if (updateAvailable) {
+        LOGGER.warn("=====================================================");
+        LOGGER.warn("There's a new TMM version available! Please update!");
+        LOGGER.warn("=====================================================");
       }
     }
     catch (Exception e) {
