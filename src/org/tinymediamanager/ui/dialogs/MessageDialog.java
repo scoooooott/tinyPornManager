@@ -59,7 +59,9 @@ public class MessageDialog extends JDialog {
 
   public MessageDialog(Window owner, String title) {
     super(owner, title);
-    setIconImages(owner.getIconImages());
+    if (owner != null) {
+      setIconImages(owner.getIconImages());
+    }
     setMinimumSize(new Dimension(300, 150));
     setResizable(false);
     setModal(true);

@@ -81,6 +81,7 @@ import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.TmmUILogCollector;
 import org.tinymediamanager.ui.TmmWindowSaver;
+import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
@@ -459,16 +460,18 @@ public class TinyMediaManager {
           }
         }
         catch (javax.persistence.PersistenceException e) {
-          if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
-          }
           LOGGER.error("PersistenceException", e);
+          if (!GraphicsEnvironment.isHeadless()) {
+            MessageDialog.showExceptionWindow(e);
+            System.exit(1);
+          }
         }
         catch (Exception e) {
+          LOGGER.error("Exception while  start of tmm", e);
           if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            MessageDialog.showExceptionWindow(e);
+            System.exit(1);
           }
-          LOGGER.error("start of tmm", e);
         }
       }
 
