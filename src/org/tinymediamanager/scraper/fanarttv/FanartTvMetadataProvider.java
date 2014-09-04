@@ -181,7 +181,6 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
 
     // select desired types
     switch (type) {
-      case HDCLEARART:
       case MOVIEBACKGROUND:
       case MOVIETHUMB:
       case SHOWBACKGROUND:
@@ -228,6 +227,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
       case HDMOVIECLEARART:
       case CLEARART:
       case MOVIEART:
+      case HDCLEARART:
         if (artworkType == MediaArtworkType.CLEARART || artworkType == MediaArtworkType.ALL) {
           ma = new MediaArtwork();
           ma.setType(MediaArtworkType.CLEARART);
