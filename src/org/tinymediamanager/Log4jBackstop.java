@@ -30,6 +30,10 @@ class Log4jBackstop implements Thread.UncaughtExceptionHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(Log4jBackstop.class);
 
   public void uncaughtException(Thread t, Throwable ex) {
+    // sometimes we get assertion errors in beansbinding event handling - do not show these
+    if (ex instanceof AssertionError && ex.getStackTrace().length > 0 && "BeanProperty.java".equals(ex.getStackTrace()[0].getFileName())) {
+      return;
+    }
     LOGGER.error("Uncaught exception in thread: " + t.getName(), ex);
     if (!GraphicsEnvironment.isHeadless()) {
       MessageDialog.showExceptionWindow(ex);

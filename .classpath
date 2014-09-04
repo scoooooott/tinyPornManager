@@ -40,9 +40,9 @@
 	<classpathentry kind="lib" path="lib/logback-core.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-over-slf4j.jar"/>
-	<classpathentry kind="lib" path="lib/betterbeansbinding-core.jar"/>
-	<classpathentry kind="lib" path="lib/betterbeansbinding-swingbinding.jar"/>
-	<classpathentry kind="lib" path="lib/betterbeansbinding-el.jar"/>
+	<classpathentry kind="lib" path="lib/betterbeansbinding-core.jar" sourcepath="lib/betterbeansbinding-core.jar"/>
+	<classpathentry kind="lib" path="lib/betterbeansbinding-swingbinding.jar" sourcepath="lib/betterbeansbinding-swingbinding.jar"/>
+	<classpathentry kind="lib" path="lib/betterbeansbinding-el.jar" sourcepath="lib/betterbeansbinding-el.jar"/>
 	<classpathentry kind="lib" path="lib/xmlrpc-client.jar"/>
 	<classpathentry kind="lib" path="lib/imgscalr-lib.jar"/>
 	<classpathentry kind="lib" path="lib/core.jar"/>
