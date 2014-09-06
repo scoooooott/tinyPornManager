@@ -280,7 +280,7 @@ public class TraktTv {
       // loop over TMM movies, and check if IMDBID match
       for (Movie tmmMovie : tmmMovies) {
         boolean dirty = false;
-        if (traktWatched.imdb_id.equals(tmmMovie.getImdbId()) || traktWatched.tmdbId == tmmMovie.getTmdbId()) {
+        if ((traktWatched.imdb_id != null && traktWatched.imdb_id.equals(tmmMovie.getImdbId())) || traktWatched.tmdbId == tmmMovie.getTmdbId()) {
 
           // update missing IDs (we get them for free :)
           if (tmmMovie.getImdbId().isEmpty() && !StringUtils.isEmpty(traktWatched.imdb_id)) {
@@ -320,7 +320,8 @@ public class TraktTv {
     // ...and subtract the already watched from Trakt
     for (int i = tmmWatchedMovies.size() - 1; i >= 0; i--) {
       for (com.jakewharton.trakt.entities.Movie traktWatched : traktMovies) {
-        if (traktWatched.imdb_id.equals(tmmWatchedMovies.get(i).getImdbId()) || traktWatched.tmdbId == tmmWatchedMovies.get(i).getTmdbId()) {
+        if ((traktWatched.imdb_id != null && traktWatched.imdb_id.equals(tmmWatchedMovies.get(i).getImdbId()))
+            || traktWatched.tmdbId == tmmWatchedMovies.get(i).getTmdbId()) {
           tmmWatchedMovies.remove(i);
           break;
         }
@@ -479,7 +480,7 @@ public class TraktTv {
       for (int i = tmmShows.size() - 1; i >= 0; i--) {
         SimpleShow tmmShow = tmmShows.get(i);
         // boolean dirty = false;
-        if (traktShow.tvdb_id.equals(tmmShow.tvdb)) {
+        if ((traktShow.tvdb_id != null && traktShow.tvdb_id.equals(tmmShow.tvdb))) {
 
           // shows matches, so remove episodes already in tmm
           for (com.jakewharton.trakt.entities.TvShowSeason traktSeason : traktShow.seasons) {
@@ -710,7 +711,7 @@ public class TraktTv {
     for (int i = tmmWatchedShows.size() - 1; i >= 0; i--) {
       SimpleShow wShow = tmmWatchedShows.get(i);
       for (com.jakewharton.trakt.entities.TvShow watched : traktShows) {
-        if (watched.tvdb_id.equals(wShow.tvdb)) {
+        if (watched.tvdb_id != null && watched.tvdb_id.equals(wShow.tvdb)) {
 
           // we have a show match - now loop over seasons/episodes and remove already existing in trakt
           for (com.jakewharton.trakt.entities.TvShowSeason traktSeason : watched.seasons) {
