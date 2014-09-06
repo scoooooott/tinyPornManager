@@ -1063,6 +1063,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public void gatherMediaInformation(boolean force) {
     // check for supported filetype
     if (!isValidMediainfoFormat()) {
+      // okay, we have no valid MI file, be sure it will not be triggered any more
+      if (StringUtils.isBlank(getContainerFormat())) {
+        setContainerFormat(getExtension());
+      }
       return;
     }
 
