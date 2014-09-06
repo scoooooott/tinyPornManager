@@ -8,11 +8,16 @@ Version 2.6 (unreleased)
 !                           http://goo.gl/L8G5BB                               !
 \!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!/
 
+! trailer downloading (donator feature) (http://goo.gl/hozk18)
+! Trakt.tv integration (donator feature) (http://goo.gl/WNEzsG)
+! Movie renamer preview (donator feature) (http://goo.gl/PS50MF)
+! automatically add existing movies to movie sets (donator feature)
 + bigger UI rework (http://goo.gl/3wy3gL)
-+ new icons
 + configurable font and font size
++ preserve unsupported XML tags (from other tools) in NFO files
 + extra artwork (banner, CD art, clearart, ..) is now available for movies and movie sets
 + new threading model: you can now queue different tasks; display open tasks (http://goo.gl/yFGtPq)
++ preview of images in the image chooser (http://goo.gl/kIFaKJ)
 + smart scrape: if there is no result from automatic scrape a manual scrape will pop up
 + NFO enhancement: multiple IDs (from several meta data providers) will be stored
 + option to set the preferred media player 
@@ -23,17 +28,11 @@ Version 2.6 (unreleased)
 + language updates
 + hotkeys for menu and other functions
 + improved season and episodes parser
-+ preserve unsupported XML tags (from other tools) in NFO files
 + several enhancements to the TV show renamer
 + show artwork from the media file panel in lightbox
 + export for TV shows basically done
 + more filter options for TV shows 
-+ preview of images in the image chooser (http://goo.gl/kIFaKJ)
 + media source management (http://goo.gl/cE62xb)
-! automatically add existing movies to movie sets (donator feature)
-! Movie renamer preview (donator feature) (http://goo.gl/PS50MF)
-! (WIP) trailer downloading (donator feature) (http://goo.gl/hozk18)
-! (WIP) Trakt.tv integration (donator feature) (http://goo.gl/WNEzsG)
 x fix occasional database inconsistencies
 x fix TvShow rename in command line
 x fix an occasional crash when choosing artwork
@@ -43,4 +42,4 @@ x filter duplicate results from ofdb
 x prevent audio streams from being added multiple times
 x detect stacking markers with leading zeros
 x import of watched state from XBMC NFO 
-x thousands of various fixes and stabilization :)
+x thousands of various fixes and stabilization from past half year :)

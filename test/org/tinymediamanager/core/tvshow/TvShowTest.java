@@ -134,6 +134,7 @@ public class TvShowTest {
     Assert.assertEquals("S:4 E:13", detectEpisode("s800The Mentalist_S04E13_Die goldene Feder.avi"));
     Assert.assertEquals("S:1 E:1", detectEpisode("AwesomeTvShow.S01E01-480p.mkv"));
     Assert.assertEquals("S:7 E:9 E:10", detectEpisode("stvs7ep9-10.avi"));
+    Assert.assertEquals("S:13 E:2", detectEpisode("Doctor.Who.S13.E2.Part4.Planet.of.Evil.DVDRip.XviD-m00tv.avi"));
 
     // ************************************************************************
     // 1-3 chars, if they are the ONLY numbers in file

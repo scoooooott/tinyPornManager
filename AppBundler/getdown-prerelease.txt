@@ -1,0 +1,105 @@
+# The URL from which the client is downloaded
+appbase = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-prerelease/ws/tinyMediaManager/build/
+
+# UI Configuration
+ui.name = tinyMediaManager
+ui.background_image = splashscreen.png
+ui.icon = tmm.png
+ui.progress = 22, 272, 440, 21
+ui.progress_text = 000000
+ui.status = 30, 300, 450, 18
+ui.status_text = 000000
+ui.mac_dock_icon = ../tmm.icns
+
+# Application jar files, on classpath (generated from claspath in build.xml)
+code = tmm.jar
+%CODELIBS%
+
+# strings added to classpath
+plugin = lib/swt.jar
+plugin = locale/*
+
+# files to be deleted
+delete = lib/vlcj.jar
+delete = lib/commons-logging.jar
+delete = lib/log4j.jar
+delete = lib/l2fprod-common-buttonbar.jar         
+delete = lib/l2fprod-common-shared.jar
+
+resource = [windows] tinyMediaManager.new           #rename to new, for self-update
+resource = [windows] tinyMediaManagerUpd.new        #rename to new, for self-update
+resource = [windows] tinyMediaManagerCMD.new        #rename to new, for self-update
+resource = [!windows] tinyMediaManagerCMD.sh
+resource = [!windows] tinyMediaManager.sh
+resource = [!windows] tinyMediaManagerUpdater.sh
+resource = [mac os x] tinyMediaManagerOSX.sh
+resource = [mac os x] JavaApplicationStub.new       #rename to new, for self-update
+resource = getdown-new.jar
+resource = version
+resource = splashscreen.png
+resource = objectdb.conf
+resource = changelog.txt
+resource = [!windows] env.txt                       #still distribute an empty env.txt for a while to clean all old installations
+
+# translations
+%LOCALES%
+
+# mediainfo native libs
+resource = [linux-amd64] native/linux-amd64/libmediainfo.so
+resource = [linux-amd64] native/linux-amd64/libzen.so
+resource = [linux-arm] native/linux-arm/libmediainfo.so
+resource = [linux-arm] native/linux-arm/libzen.so
+resource = [linux-i386] native/linux-i386/libmediainfo.so
+resource = [linux-i386] native/linux-i386/libzen.so
+resource = [linux-i686] native/linux-i686/libmediainfo.so
+resource = [linux-i686] native/linux-i686/libzen.so
+resource = [mac os x-x86_64] native/mac-x86_64/libmediainfo.dylib
+resource = [mac os x-i386] native/mac-i386/libmediainfo.dylib
+resource = [windows-amd64] native/windows-amd64/MediaInfo.dll
+resource = [windows-x64] native/windows-x64/MediaInfo.dll
+resource = [windows-x86] native/windows-x86/MediaInfo.dll
+resource = [windows-x86] native/windows-x86/mingwm10.dll
+
+# Quauqa native libs 
+resource = [mac os x-x86_64] native/mac-x86_64/libquaqua.jnilib
+resource = [mac os x-x86_64] native/mac-x86_64/libquaqua64.jnilib
+resource = [mac os x-x86_64] native/mac-x86_64/libquaqua64.dylib
+resource = [mac os x-i386] native/mac-i386/libquaqua.jnilib
+
+# templates
+resource = templates/readme.txt
+uresource = templates/DetailExampleHtml.jar
+uresource = templates/DetailExample2Html.jar
+uresource = templates/ListExampleCsv.jar
+uresource = templates/ListExampleHtml.jar
+uresource = templates/ListExampleXml.jar
+uresource = templates/jQueryliscious.jar
+uresource = templates/SimpleConfluence.jar
+uresource = templates/TvShowDetailExampleXml.jar
+
+# The main entry point for the application (prefix needed for GD params)
+class = org.tinymediamanager.TinyMediaManager
+tmm.class = org.tinymediamanager.TinyMediaManager
+
+# allow offline use
+allow_offline = true
+
+# do not create .v files
+skip_md5_cache = true
+
+# jvm args
+#####################################################################################
+# NOTE: please consider to write fundamental changes to the commandline start scripts
+# and all other launchers too
+#####################################################################################
+jvmarg = -Xms64m 
+jvmarg = -Xmx512m
+jvmarg = -Xss512k
+jvmarg = -splash:splashscreen.png
+jvmarg = -Djava.net.preferIPv4Stack=true
+jvmarg = -Dfile.encoding=UTF-8
+jvmarg = -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches
+jvmarg = -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf
+jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true
+jvmarg = [mac os x] -Xdock:name=tinyMediaManager
+jvmarg = [linux] -Djna.nosys=true
