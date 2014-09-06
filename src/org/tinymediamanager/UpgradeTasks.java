@@ -173,6 +173,7 @@ public class UpgradeTasks {
       entityManager.getTransaction().commit();
 
       entityManager = TvShowModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
       for (TvShow show : tvShowList.getTvShows()) {
         if (StringUtils.isBlank(show.getDataSource())) {
           for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
