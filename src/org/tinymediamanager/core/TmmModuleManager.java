@@ -78,10 +78,12 @@ public class TmmModuleManager {
   public void startUp() {
     // enhance if needed
     if (System.getProperty("tmmenhancer") != null) {
-      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.entities.*");
-      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.movie.entities.*");
-      com.objectdb.Enhancer.enhance("org.tinymediamanager.core.tvshow.entities.*");
-      com.objectdb.Enhancer.enhance("org.tinymediamanager.scraper.MediaTrailer");
+      // changed enhancer to be in sync with the build.xml
+      com.objectdb.Enhancer.enhance("-s org.tinymediamanager.core.*");
+      // com.objectdb.Enhancer.enhance("org.tinymediamanager.core.entities.*");
+      // com.objectdb.Enhancer.enhance("org.tinymediamanager.core.movie.entities.*");
+      // com.objectdb.Enhancer.enhance("org.tinymediamanager.core.tvshow.entities.*");
+      // com.objectdb.Enhancer.enhance("org.tinymediamanager.scraper.MediaTrailer");
     }
 
     // get a connection to the database
