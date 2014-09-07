@@ -31,6 +31,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.ITvShowMetadataProvider;
+import org.tinymediamanager.scraper.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaType;
@@ -47,6 +48,8 @@ public class TvShowEpisodeScrapeTask implements Runnable {
   private final List<TvShowEpisode>     episodes;
   private final ITvShowMetadataProvider metadataProvider = TvShowList.getInstance().getMetadataProvider();
 
+  private boolean                       scrapeThumb;
+
   /**
    * Instantiates a new tv show episode scrape task.
    * 
@@ -55,6 +58,20 @@ public class TvShowEpisodeScrapeTask implements Runnable {
    */
   public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes) {
     this.episodes = episodes;
+    this.scrapeThumb = true;
+  }
+
+  /**
+   * Instantiates a new tv show episode scrape task.
+   * 
+   * @param episodes
+   *          the episodes
+   * @param scrapeThumb
+   *          should we also scrape thumbs?
+   */
+  public TvShowEpisodeScrapeTask(List<TvShowEpisode> episodes, boolean scrapeThumb) {
+    this.episodes = episodes;
+    this.scrapeThumb = scrapeThumb;
   }
 
   @Override
@@ -77,6 +94,12 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       options.setType(MediaType.TV_EPISODE);
       options.setId(MediaMetadata.SEASON_NR, String.valueOf(episode.getSeason()));
       options.setId(MediaMetadata.EPISODE_NR, String.valueOf(episode.getEpisode()));
+      if (scrapeThumb) {
+        options.setArtworkType(MediaArtworkType.THUMB);
+      }
+      else {
+        options.setArtworkType(null);
+      }
 
       try {
         MediaMetadata metadata = metadataProvider.getEpisodeMetadata(options);

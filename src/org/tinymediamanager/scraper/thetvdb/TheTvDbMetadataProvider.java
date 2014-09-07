@@ -396,10 +396,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     }
 
     // Thumb
-    MediaArtwork ma = new MediaArtwork();
-    ma.setType(MediaArtworkType.THUMB);
-    ma.setDefaultUrl(episode.getFilename());
-    md.addMediaArt(ma);
+    if (options.getArtworkType() == MediaArtworkType.ALL || options.getArtworkType() == MediaArtworkType.THUMB) {
+      MediaArtwork ma = new MediaArtwork();
+      ma.setType(MediaArtworkType.THUMB);
+      ma.setDefaultUrl(episode.getFilename());
+      md.addMediaArt(ma);
+    }
 
     return md;
   }
