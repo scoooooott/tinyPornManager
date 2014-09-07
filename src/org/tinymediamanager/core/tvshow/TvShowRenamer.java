@@ -152,6 +152,15 @@ public class TvShowRenamer {
 
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(show, mf.getFile());
     if (eps == null || eps.size() == 0) {
+      // this should not happen, but unluckily ODB does it sometimes; try a second time to get the episode
+      try {
+        Thread.sleep(250);
+      }
+      catch (Exception e) {
+      }
+      eps = TvShowList.getInstance().getTvEpisodesByFile(show, mf.getFile());
+    }
+    if (eps == null || eps.size() == 0) {
       LOGGER.warn("No episodes found for file '" + mf.getFilename() + "' - skipping");
       return;
     }
@@ -262,6 +271,7 @@ public class TvShowRenamer {
         seasonDir = sample; // change directory storage
       }
       String filename = generateFilename(show, mf);
+      LOGGER.debug("new filename should be " + filename);
       if (filename != null && !filename.isEmpty()) {
         File newFile = new File(seasonDir, filename);
 
@@ -351,6 +361,15 @@ public class TvShowRenamer {
     }
 
     List<TvShowEpisode> eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
+    if (eps == null || eps.size() == 0) {
+      // this should not happen, but unluckily ODB does it sometimes; try a second time to get the episode
+      try {
+        Thread.sleep(250);
+      }
+      catch (Exception ex) {
+      }
+      eps = TvShowList.getInstance().getTvEpisodesByFile(tvShow, mf.getFile());
+    }
     if (eps == null || eps.size() == 0) {
       return "";
     }

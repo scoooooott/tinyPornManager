@@ -587,7 +587,11 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public List<MediaFile> getMediaFiles() {
-    return mediaFiles;
+    List<MediaFile> mf = new ArrayList<MediaFile>();
+    readWriteLock.readLock().lock();
+    mf.addAll(mediaFiles);
+    readWriteLock.readLock().unlock();
+    return mf;
   }
 
   public List<MediaFile> getMediaFiles(MediaFileType type) {

@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -25,6 +26,7 @@ import javax.swing.JOptionPane;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
@@ -60,12 +62,23 @@ public class TvShowDeleteAction extends AbstractAction {
     }
 
     for (Object obj : selectedObjects) {
-      // display tv show editor
+      // delete a whole TV show
       if (obj instanceof TvShow) {
         TvShow tvShow = (TvShow) obj;
         TvShowList.getInstance().deleteTvShow(tvShow);
       }
-      // display tv episode editor
+      // delete a season
+      if (obj instanceof TvShowSeason) {
+        TvShowSeason season = (TvShowSeason) obj;
+        List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>();
+        for (TvShowEpisode episode : season.getEpisodes()) {
+          episodes.add(episode);
+        }
+        for (TvShowEpisode episode : episodes) {
+          season.getTvShow().deleteEpisode(episode);
+        }
+      }
+      // delete episodes
       if (obj instanceof TvShowEpisode) {
         TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
         tvShowEpisode.getTvShow().deleteEpisode(tvShowEpisode);

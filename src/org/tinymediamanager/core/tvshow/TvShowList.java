@@ -634,15 +634,22 @@ public class TvShowList extends AbstractModelObject {
     }
 
     // check if that file is in this tv show/episode (iterating thread safe)
-    for (int j = 0; j < tvShow.getEpisodes().size(); j++) {
-      TvShowEpisode episode = tvShow.getEpisodes().get(j);
-      for (int k = 0; k < episode.getMediaFiles().size(); k++) {
-        MediaFile mediaFile = episode.getMediaFiles().get(k);
+    for (TvShowEpisode episode : new ArrayList<TvShowEpisode>(tvShow.getEpisodes())) {
+      for (MediaFile mediaFile : new ArrayList<MediaFile>(episode.getMediaFiles())) {
         if (file.equals(mediaFile.getFile())) {
           episodes.add(episode);
         }
       }
     }
+    // for (int j = 0; j < tvShow.getEpisodes().size(); j++) {
+    // TvShowEpisode episode = tvShow.getEpisodes().get(j);
+    // for (int k = 0; k < episode.getMediaFiles().size(); k++) {
+    // MediaFile mediaFile = episode.getMediaFiles().get(k);
+    // if (file.equals(mediaFile.getFile())) {
+    // episodes.add(episode);
+    // }
+    // }
+    // }
     return episodes;
   }
 
