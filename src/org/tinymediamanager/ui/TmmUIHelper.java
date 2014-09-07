@@ -19,6 +19,7 @@ import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.Window;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashSet;
@@ -275,11 +276,41 @@ public class TmmUIHelper {
       // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6780505
       Runtime.getRuntime().exec(new String[] { "explorer", file.getAbsolutePath() });
     }
+    else if (SystemUtils.IS_OS_LINUX) {
+      // try all different starters
+      boolean started = false;
+      try {
+        Runtime.getRuntime().exec(new String[] { "gnome-open", file.getAbsolutePath() });
+        started = true;
+      }
+      catch (IOException e) {
+      }
+
+      if (!started) {
+        try {
+          Runtime.getRuntime().exec(new String[] { "kde-open", file.getAbsolutePath() });
+          started = true;
+        }
+        catch (IOException e) {
+        }
+      }
+
+      if (!started) {
+        try {
+          Runtime.getRuntime().exec(new String[] { "xdg-open", file.getAbsolutePath() });
+          started = true;
+        }
+        catch (IOException e) {
+        }
+      }
+
+      if (!started && Desktop.isDesktopSupported()) {
+        Desktop.getDesktop().open(file);
+      }
+    }
     else if (Desktop.isDesktopSupported()) {
       Desktop.getDesktop().open(file);
-    }
-    else if (SystemUtils.IS_OS_LINUX) {
-      Runtime.getRuntime().exec(new String[] { "xdg-open", file.getAbsolutePath() });
+
     }
     else {
       throw new NotSupportedException();
@@ -291,7 +322,32 @@ public class TmmUIHelper {
       Desktop.getDesktop().browse(new URI(url));
     }
     else if (SystemUtils.IS_OS_LINUX) {
-      Runtime.getRuntime().exec(new String[] { "xdg-open", url });
+      // try all different starters
+      boolean started = false;
+      try {
+        Runtime.getRuntime().exec(new String[] { "gnome-open", url });
+        started = true;
+      }
+      catch (IOException e) {
+      }
+
+      if (!started) {
+        try {
+          Runtime.getRuntime().exec(new String[] { "kde-open", url });
+          started = true;
+        }
+        catch (IOException e) {
+        }
+      }
+
+      if (!started) {
+        try {
+          Runtime.getRuntime().exec(new String[] { "xdg-open", url });
+          started = true;
+        }
+        catch (IOException e) {
+        }
+      }
     }
     else {
       throw new NotSupportedException();
