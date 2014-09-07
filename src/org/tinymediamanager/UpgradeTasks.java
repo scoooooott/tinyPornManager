@@ -211,7 +211,6 @@ public class UpgradeTasks {
     if (compareVersion(v, "2.6") < 0) {
       // THUMBS are getting EXTRATHUMBS
       LOGGER.info("Performing upgrade tasks to version 2.6");
-      // repair missing datasources
       EntityManager entityManager = MovieModuleManager.getInstance().getEntityManager();
       entityManager.getTransaction().begin();
       for (Movie movie : movieList.getMovies()) {
@@ -221,6 +220,22 @@ public class UpgradeTasks {
       }
       entityManager.getTransaction().commit();
     }
+
+    if (compareVersion(v, "2.6.1") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 2.6.1");
+      // change the old TVDB Id to the new one
+      EntityManager entityManager = TvShowModuleManager.getInstance().getEntityManager();
+      entityManager.getTransaction().begin();
+      for (TvShow show : tvShowList.getTvShows()) {
+        Object obj = show.getId("tvdb");
+        if (obj != null) {
+          show.setId(Constants.TVDBID, obj);
+          show.removeId("tvdb");
+        }
+      }
+      entityManager.getTransaction().commit();
+    }
+
   }
 
   /**
