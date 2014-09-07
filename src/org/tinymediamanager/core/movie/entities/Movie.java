@@ -752,6 +752,11 @@ public class Movie extends MediaEntity {
    * @param metadata
    */
   public void setMetadata(MediaMetadata metadata, MovieScraperMetadataConfig config) {
+    if (metadata == null) {
+      LOGGER.error("metadata was null");
+      return;
+    }
+
     // check if metadata has at least a name
     if (StringUtils.isEmpty(metadata.getStringValue(MediaMetadata.TITLE))) {
       LOGGER.warn("wanted to save empty metadata for " + getTitle());
