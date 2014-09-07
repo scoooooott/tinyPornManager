@@ -182,9 +182,7 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     // select desired types
     switch (type) {
       case MOVIEBACKGROUND:
-      case MOVIETHUMB:
       case SHOWBACKGROUND:
-      case TVTHUMB:
         if (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL) {
           ma = new MediaArtwork();
           ma.setType(MediaArtworkType.BACKGROUND);
@@ -196,6 +194,14 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
         if (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL) {
           ma = new MediaArtwork();
           ma.setType(MediaArtworkType.POSTER);
+        }
+        break;
+
+      case MOVIETHUMB:
+      case TVTHUMB:
+        if (artworkType == MediaArtworkType.THUMB || artworkType == MediaArtworkType.ALL) {
+          ma = new MediaArtwork();
+          ma.setType(MediaArtworkType.THUMB);
         }
         break;
 
