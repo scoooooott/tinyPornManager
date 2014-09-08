@@ -28,6 +28,8 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.util.Url;
 
@@ -37,7 +39,7 @@ import org.tinymediamanager.scraper.util.Url;
  * @author Myron Boyle
  */
 public class License {
-
+  private static final Logger LOGGER       = LoggerFactory.getLogger(License.class);
   private static final String LICENSE_FILE = "tmm.lic";
 
   /**
@@ -51,6 +53,7 @@ public class License {
         NetworkInterface ni = e.nextElement();
         String macAddress = formatMac(ni.getHardwareAddress());
         if (macAddress != null && !macAddress.isEmpty()) {
+          LOGGER.info("Mac address used for encryption/decryption: " + macAddress);
           return macAddress;
         }
       }
