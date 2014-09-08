@@ -437,5 +437,15 @@ public class TvShowRenamerSettingsPanel extends ScrollablePanel implements Hiera
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty, chckbxSpaceReplacement, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_1 = BeanProperty.create("renamerTvShowFolderYear");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_1, chckbxYear, jCheckBoxBeanProperty);
+    autoBinding_7.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_8 = Bindings.createAutoBinding(UpdateStrategy.READ, settings,
+        settingsBeanProperty_7, chckbxYear, jCheckBoxBeanProperty_1);
+    autoBinding_8.bind();
   }
 }
