@@ -78,30 +78,43 @@ public class MediaEntityImageFetcherTask implements Runnable {
       // debug message
       LOGGER.debug("writing " + type + " " + filename);
 
+      // check if old and new file are the same (possible if you select it in the imagechooser)
+      boolean sameFile = false;
+      if (url.startsWith("file:")) {
+        String newUrl = url.replace("file:/", "");
+        File file = new File(newUrl);
+        File destFile = new File(entity.getPath(), filename);
+        if (file.equals(destFile)) {
+          sameFile = true;
+        }
+      }
+
       // fetch and store images
-      Url url1 = new Url(url);
-      File tempFile = new File(entity.getPath(), filename + ".part");
-      FileOutputStream outputStream = new FileOutputStream(tempFile);
-      InputStream is = url1.getInputStream();
-      IOUtils.copy(is, outputStream);
-      outputStream.flush();
-      try {
-        outputStream.getFD().sync(); // wait until file has been completely written
-      }
-      catch (Exception e) {
-        // empty here -> just not let the thread crash
-      }
-      outputStream.close();
-      is.close();
+      if (!sameFile) {
+        Url url1 = new Url(url);
+        File tempFile = new File(entity.getPath(), filename + ".part");
+        FileOutputStream outputStream = new FileOutputStream(tempFile);
+        InputStream is = url1.getInputStream();
+        IOUtils.copy(is, outputStream);
+        outputStream.flush();
+        try {
+          outputStream.getFD().sync(); // wait until file has been completely written
+        }
+        catch (Exception e) {
+          // empty here -> just not let the thread crash
+        }
+        outputStream.close();
+        is.close();
 
-      // check if the file has been downloaded
-      if (!tempFile.exists() || tempFile.length() == 0) {
-        throw new Exception("0byte file downloaded: " + filename);
-      }
+        // check if the file has been downloaded
+        if (!tempFile.exists() || tempFile.length() == 0) {
+          throw new Exception("0byte file downloaded: " + filename);
+        }
 
-      // move the temp file to the expected filename
-      if (!tempFile.renameTo(new File(entity.getPath(), filename))) {
-        throw new Exception("renaming temp file failed: " + filename);
+        // move the temp file to the expected filename
+        if (!tempFile.renameTo(new File(entity.getPath(), filename))) {
+          throw new Exception("renaming temp file failed: " + filename);
+        }
       }
 
       // has tmm been shut down?

@@ -210,7 +210,7 @@ public class Url {
   public InputStream getInputStream() throws IOException, InterruptedException {
     // workaround for local files
     if (url.startsWith("file:")) {
-      String newUrl = url.replace("file:", "");
+      String newUrl = url.replace("file:/", "");
       File file = new File(newUrl);
       return new FileInputStream(file);
     }
