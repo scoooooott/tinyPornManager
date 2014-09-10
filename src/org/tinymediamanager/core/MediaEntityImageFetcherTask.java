@@ -111,8 +111,12 @@ public class MediaEntityImageFetcherTask implements Runnable {
           throw new Exception("0byte file downloaded: " + filename);
         }
 
+        // delete the old one if exisiting
+        File destinationFile = new File(entity.getPath(), filename);
+        FileUtils.deleteQuietly(destinationFile);
+
         // move the temp file to the expected filename
-        if (!tempFile.renameTo(new File(entity.getPath(), filename))) {
+        if (!tempFile.renameTo(destinationFile)) {
           throw new Exception("renaming temp file failed: " + filename);
         }
       }

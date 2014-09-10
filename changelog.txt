@@ -1,5 +1,18 @@
-Version 2.6 (unreleased)
+Version 2.6.1
 =======================
+x fixed scraping of episode metadata
+x fixed TV show renamer
+x fixed year setting for TV show renamer 
+x fixed image chooser for thumbs (they are no longer be shown as fanarts) 
+x fixed slow performance of image cache with offline data sources
+x fixed crashes with trakt.tv sync
+x fixed opening of movie/TV show folder and playing of videos for linux/kde
+x improved handling of 0byte downloads (artwork) and choosing local artwork files
+
+=============
+ Version 2.6
+=============
+
 /!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\
 !                       D O N A T O R      V E R S I O N                       !
 !                                                                              !
