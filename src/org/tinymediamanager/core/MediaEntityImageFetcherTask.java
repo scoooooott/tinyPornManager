@@ -116,7 +116,7 @@ public class MediaEntityImageFetcherTask implements Runnable {
         FileUtils.deleteQuietly(destinationFile);
 
         // move the temp file to the expected filename
-        if (!tempFile.renameTo(destinationFile)) {
+        if (!Utils.moveFileSafe(tempFile, destinationFile)) {
           throw new Exception("renaming temp file failed: " + filename);
         }
       }
