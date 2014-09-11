@@ -121,7 +121,7 @@ public class TvShowTest {
 
     // ************************************************************************
     // FIXME: do not work yet
-    // Assert.assertEquals("S:3 E:5", detectEpisode("vs-once-upon-a-time-_S03XE05_dd51-ded-dl-7p-bd-x264-305.mkv"));
+    Assert.assertEquals("S:3 E:5", detectEpisode("vs-once-upon-a-time-_S03XE05_dd51-ded-dl-7p-bd-x264-305.mkv"));
 
     // ************************************************************************
     // various real world examples
@@ -134,6 +134,7 @@ public class TvShowTest {
     Assert.assertEquals("S:4 E:13", detectEpisode("s800The Mentalist_S04E13_Die goldene Feder.avi"));
     Assert.assertEquals("S:1 E:1", detectEpisode("AwesomeTvShow.S01E01-480p.mkv"));
     Assert.assertEquals("S:7 E:9 E:10", detectEpisode("stvs7ep9-10.avi"));
+    Assert.assertEquals("S:1 E:545", detectEpisode("s01e545 - Steamtown USA.mkv")); // http://thetvdb.com/?tab=season&seriesid=188331&seasonid=311381&lid=7
     Assert.assertEquals("S:13 E:2", detectEpisode("Doctor.Who.S13.E2.Part4.Planet.of.Evil.DVDRip.XviD-m00tv.avi"));
 
     // ************************************************************************
@@ -182,22 +183,22 @@ public class TvShowTest {
     Assert.assertEquals("S:-1 E:1 E:2", detectEpisode("name.ep01.ep02.ext"));
 
     // multi episode short
-    // Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01e02.ext"));
+    Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.s01e01e02.ext"));
     Assert.assertEquals("S:1 E:1 E:2 E:3", detectEpisode("name.s01e01-02-03.ext"));
     Assert.assertEquals("S:1 E:1 E:2", detectEpisode("name.1x01x02.ext"));
-    // Assert.assertEquals("S:-1 E:1 E:2", detectEpisode("name.ep01_02.ext"));
+    Assert.assertEquals("S:-1 E:1 E:2", detectEpisode("name.ep01_02.ext"));
 
     // multi episode mixed; weird, but valid :p
-    // Assert.assertEquals("S:1 E:1 E:2 E:3 E:4", detectEpisode("name.1x01e02_03-x-04.ext"));
+    Assert.assertEquals("S:1 E:1 E:2 E:3 E:4", detectEpisode("name.1x01e02_03-x-04.ext"));
 
     // split episode
     // TODO: detect split?
     Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01.1.ext"));
-    // Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01a.ext"));
+    Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01a.ext"));
     Assert.assertEquals("S:1 E:1", detectEpisode("name.1x01.1.ext"));
-    // Assert.assertEquals("S:1 E:1", detectEpisode("name.1x01a.ext"));
+    Assert.assertEquals("S:1 E:1", detectEpisode("name.1x01a.ext"));
     Assert.assertEquals("S:-1 E:1", detectEpisode("name.ep01.1.ext"));
-    Assert.assertEquals("S:1 E:1", detectEpisode("name.101.1.ext"));
+    // Assert.assertEquals("S:1 E:1", detectEpisode("name.101.1.ext"));
     Assert.assertEquals("S:-1 E:1", detectEpisode("name.ep01a_01b.ext"));
     Assert.assertEquals("S:1 E:1", detectEpisode("name.s01e01.1.s01e01.2.ext"));
     Assert.assertEquals("S:1 E:1", detectEpisode("name.1x01.1x01.2.ext"));

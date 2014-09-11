@@ -68,12 +68,12 @@ public class TvShowEpisodeAndSeasonParser {
                                                         Pattern.CASE_INSENSITIVE);
 
   // new parsing logic
-  private static Pattern      episodePattern        = Pattern.compile("[epx_-]+(\\d{1,2})", Pattern.CASE_INSENSITIVE);
+  private static Pattern      episodePattern        = Pattern.compile("[epx_-]+(\\d{1,3})", Pattern.CASE_INSENSITIVE);
   private static Pattern      episodePattern2       = Pattern.compile("episode[\\. _-]*(\\d{1,2})", Pattern.CASE_INSENSITIVE);
   private static Pattern      romanPattern          = Pattern.compile("(part|pt)[\\._\\s]+([MDCLXVI]+)", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonPattern         = Pattern.compile("(staffel|season)[\\s]*(\\d{1,4})", Pattern.CASE_INSENSITIVE);
-  private static Pattern      seasonEpisodePattern  = Pattern.compile("[^\\d](\\d)+[Xx_-]?(\\d{2})[^a-zA-Z\\d]", Pattern.CASE_INSENSITIVE);
-  private static Pattern      seasonEpisodePattern2 = Pattern.compile("s(\\d{1,2})+[epx_.-]+(\\d{1,2})[^a-zA-Z\\d]", Pattern.CASE_INSENSITIVE);
+  private static Pattern      seasonMultiEP         = Pattern.compile("s(\\d{1,2})((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
+  private static Pattern      seasonMultiEP2        = Pattern.compile("(\\d)(?=x)((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
   private static Pattern      numbers2Pattern       = Pattern.compile(".*?([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
   private static Pattern      numbers3Pattern       = Pattern.compile(".*?([0-9])([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
   private static Pattern      tvMultipartMatching   = Pattern.compile("^[-_ex]+([0-9]+(?:(?:[a-i]|\\.[1-9])(?![0-9]))?)", Pattern.CASE_INSENSITIVE);
@@ -196,59 +196,77 @@ public class TvShowEpisodeAndSeasonParser {
       return result;
     }
 
-    // parse SxxEPyy
-    if (result.episodes.isEmpty() || result.season == -1) {
-      regex = seasonEpisodePattern2;
-      m = regex.matcher(basename);
-      while (m.find()) {
-        int ep = -1;
-        int s = -1;
-        try {
-          s = Integer.parseInt(m.group(1));
-          ep = Integer.parseInt(m.group(2));
+    // parse SxxEPyy 1-N
+    regex = seasonMultiEP;
+    m = regex.matcher(basename);
+    while (m.find()) {
+      int s = -1;
+      try {
+        s = Integer.parseInt(m.group(1));
+        String eps = m.group(2); // name.s01"ep02-02-04".ext
+        // now we have a string of 1-N episodes - parse them
+        Pattern regex2 = episodePattern; // episode fixed to 1-2 chars
+        Matcher m2 = regex2.matcher(eps);
+        while (m2.find()) {
+          int ep = 0;
+          try {
+            ep = Integer.parseInt(m2.group(1));
+          }
+          catch (NumberFormatException nfe) {
+            // can not happen from regex since we only come here with max 2 numeric chars
+          }
+          if (ep > 0 && !result.episodes.contains(ep)) {
+            result.episodes.add(ep);
+            LOGGER.trace("add found EP " + ep);
+          }
         }
-        catch (NumberFormatException nfe) {
-          // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        if (ep > 0 && !result.episodes.contains(ep)) {
-          result.episodes.add(ep);
-          LOGGER.trace("add found EP " + ep);
-        }
-        if (s >= 0) {
-          result.season = s;
-          LOGGER.trace("add found season " + s);
-        }
+      }
+      catch (NumberFormatException nfe) {
+        // can not happen from regex since we only come here with max 2 numeric chars
+      }
+      if (s >= 0) {
+        result.season = s;
+        LOGGER.trace("add found season " + s);
       }
     }
 
-    // parse XYY or XX_YY (but no \w at end, so must have a delimiter!)
-    if (result.episodes.isEmpty() || result.season == -1) {
-      regex = seasonEpisodePattern;
-      m = regex.matcher(basename);
-      while (m.find()) {
-        int ep = -1;
-        int s = -1;
-        try {
-          s = Integer.parseInt(m.group(1));
-          ep = Integer.parseInt(m.group(2));
+    // parse XYY or XX_YY 1-N
+    regex = seasonMultiEP2;
+    m = regex.matcher(basename);
+    while (m.find()) {
+      int s = -1;
+      try {
+        s = Integer.parseInt(m.group(1));
+        String eps = m.group(2); // name.s01"ep02-02-04".ext
+        // now we have a string of 1-N episodes - parse them
+        Pattern regex2 = episodePattern; // episode fixed to 1-2 chars
+        Matcher m2 = regex2.matcher(eps);
+        while (m2.find()) {
+          int ep = 0;
+          try {
+            ep = Integer.parseInt(m2.group(1));
+          }
+          catch (NumberFormatException nfe) {
+            // can not happen from regex since we only come here with max 2 numeric chars
+          }
+          if (ep > 0 && !result.episodes.contains(ep)) {
+            result.episodes.add(ep);
+            LOGGER.trace("add found EP " + ep);
+          }
         }
-        catch (NumberFormatException nfe) {
-          // can not happen from regex since we only come here with max 2 numeric chars
-        }
-        if (ep > 0 && !result.episodes.contains(ep)) {
-          result.episodes.add(ep);
-          LOGGER.trace("add found EP " + ep);
-        }
-        if (s >= 0) {
-          result.season = s;
-          LOGGER.trace("add found season " + s);
-        }
+      }
+      catch (NumberFormatException nfe) {
+        // can not happen from regex since we only come here with max 2 numeric chars
+      }
+      if (s >= 0) {
+        result.season = s;
+        LOGGER.trace("add found season " + s);
       }
     }
 
+    // Episode-only parsing, when previous styles didn't find anything!
     if (result.episodes.isEmpty()) {
-      // alternative episode style; didn't get it working in above regex
-      regex = episodePattern2; // episode fixed to 1-2 chars
+      regex = episodePattern2;
       m = regex.matcher(basename);
       while (m.find()) {
         int ep = 0;
@@ -265,20 +283,23 @@ public class TvShowEpisodeAndSeasonParser {
       }
     }
 
-    // FIXME: pattern quite fine, but second find should start AFTER complete first match, not inbetween
-    regex = episodePattern; // episode fixed to 1-2 chars
-    m = regex.matcher(basename);
-    while (m.find()) {
-      int ep = 0;
-      try {
-        ep = Integer.parseInt(m.group(1));
-      }
-      catch (NumberFormatException nfe) {
-        // can not happen from regex since we only come here with max 2 numeric chars
-      }
-      if (ep > 0 && !result.episodes.contains(ep)) {
-        result.episodes.add(ep);
-        LOGGER.trace("add found EP " + ep);
+    // Episode-only parsing, when previous styles didn't find anything!
+    // this is a VERY generic pattern!!!
+    if (result.episodes.isEmpty()) {
+      regex = episodePattern;
+      m = regex.matcher(basename);
+      while (m.find()) {
+        int ep = 0;
+        try {
+          ep = Integer.parseInt(m.group(1));
+        }
+        catch (NumberFormatException nfe) {
+          // can not happen from regex since we only come here with max 2 numeric chars
+        }
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.trace("add found EP " + ep);
+        }
       }
     }
 
