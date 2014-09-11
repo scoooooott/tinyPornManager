@@ -120,10 +120,6 @@ public class TvShowTest {
     // detectEpisode("");
 
     // ************************************************************************
-    // FIXME: do not work yet
-    Assert.assertEquals("S:3 E:5", detectEpisode("vs-once-upon-a-time-_S03XE05_dd51-ded-dl-7p-bd-x264-305.mkv"));
-
-    // ************************************************************************
     // various real world examples
     Assert.assertEquals("S:-1 E:11", detectEpisode("Episode.11.Ocean.Deep.BluRay.720p.x264-x264Crew.mkv"));
     Assert.assertEquals("S:1 E:1", detectEpisode("tvs-castle-dl-ituneshd-xvid-101.avi"));
@@ -136,6 +132,8 @@ public class TvShowTest {
     Assert.assertEquals("S:7 E:9 E:10", detectEpisode("stvs7ep9-10.avi"));
     Assert.assertEquals("S:1 E:545", detectEpisode("s01e545 - Steamtown USA.mkv")); // http://thetvdb.com/?tab=season&seriesid=188331&seasonid=311381&lid=7
     Assert.assertEquals("S:13 E:2", detectEpisode("Doctor.Who.S13.E2.Part4.Planet.of.Evil.DVDRip.XviD-m00tv.avi"));
+    Assert.assertEquals("S:3 E:5", detectEpisode("vs-once-upon-a-time-_S03XE05_dd51-ded-dl-7p-bd-x264-305.mkv"));
+    Assert.assertEquals("S:5 E:1", detectEpisode("Live_at_the_Apollo_Series_5_-_Episode_1_b00p86mz_default"));
 
     // ************************************************************************
     // 1-3 chars, if they are the ONLY numbers in file
