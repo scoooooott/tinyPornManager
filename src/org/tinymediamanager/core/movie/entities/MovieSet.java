@@ -171,7 +171,7 @@ public class MovieSet extends MediaEntity {
     // try to get from the artwork folder if enabled
     if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder()) {
       File artworkDir = new File(MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder());
-      if (artworkDir.isDirectory()) {
+      if (artworkDir.exists()) {
         File[] matches = artworkDir.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
             String filenamePrefix = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-" + type.name().toLowerCase();
@@ -189,7 +189,7 @@ public class MovieSet extends MediaEntity {
             return false;
           }
         });
-        if (matches.length > 0) {
+        if (matches != null && matches.length > 0) {
           return matches[0].getPath();
         }
       }
@@ -199,7 +199,7 @@ public class MovieSet extends MediaEntity {
     List<Movie> movies = new ArrayList<Movie>(this.movies);
     for (Movie movie : movies) {
       File movieDir = new File(movie.getPath());
-      if (movieDir.isDirectory()) {
+      if (movieDir.exists()) {
         File[] matches = movieDir.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
             String filenamePrefix = "movieset-" + type.name().toLowerCase();
@@ -217,7 +217,7 @@ public class MovieSet extends MediaEntity {
             return false;
           }
         });
-        if (matches.length > 0) {
+        if (matches != null && matches.length > 0) {
           return matches[0].getPath();
         }
       }
