@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URLEncoder;
 import java.util.Enumeration;
@@ -47,19 +48,38 @@ public class License {
    * 
    * @return MAC or empty string
    */
-  private static String getMac() {
+  public static String getMac() {
+    try {
+      InetAddress ip = InetAddress.getLocalHost();
+      if (ip != null) {
+        // we are connected to Internet/router and have an IP
+        NetworkInterface ni = NetworkInterface.getByInetAddress(ip);
+        String macAddress = formatMac(ni.getHardwareAddress());
+        if (macAddress != null && !macAddress.isEmpty()) {
+          LOGGER.info("Mac address found: " + macAddress);
+          return macAddress;
+        }
+      }
+    }
+    catch (Exception e) {
+      LOGGER.warn("Error getting MAC - not connected to internet/router?");
+    }
+
     try {
       for (Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces(); e.hasMoreElements();) {
         NetworkInterface ni = e.nextElement();
         String macAddress = formatMac(ni.getHardwareAddress());
+
         if (macAddress != null && !macAddress.isEmpty()) {
-          LOGGER.info("Mac address used for encryption/decryption: " + macAddress);
+          // get first
+          LOGGER.info("Mac address found: " + macAddress);
           return macAddress;
         }
       }
       return "";
     }
     catch (Exception e) {
+      LOGGER.warn("Error getting MAC of all interfaces");
       return "";
     }
   }
