@@ -1,5 +1,5 @@
 # The URL from which the client is downloaded
-appbase = https://myron0815.ci.cloudbees.com/job/tinymediamanager/ws/tinyMediaManager/build/
+appbase = https://tinymediamanager.ci.cloudbees.com/job/tinyMediaManager-nightly/ws/tinyMediaManager/build/
 
 # UI Configuration
 ui.name = tinyMediaManager
