@@ -19,7 +19,6 @@ import static org.tinymediamanager.core.Constants.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.Collator;
@@ -59,15 +58,15 @@ import org.tinymediamanager.scraper.util.Url;
  */
 @Entity
 public class MovieSet extends MediaEntity {
-
-  private static final Logger            LOGGER               = LoggerFactory.getLogger(MovieSet.class);
-  private static final Comparator<Movie> MOVIE_SET_COMPARATOR = new MovieInMovieSetComparator();
+  private static final Logger            LOGGER                      = LoggerFactory.getLogger(MovieSet.class);
+  private static final Comparator<Movie> MOVIE_SET_COMPARATOR        = new MovieInMovieSetComparator();
+  private static final String[]          SUPPORTED_ARTWORK_FILETYPES = { "jpg", "png", "tbn" };
 
   @OneToMany(fetch = FetchType.EAGER)
-  private List<Movie>                    movies               = new ArrayList<Movie>(0);
+  private List<Movie>                    movies                      = new ArrayList<Movie>(0);
 
   @Transient
-  private String                         titleSortable        = "";
+  private String                         titleSortable               = "";
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();
@@ -172,25 +171,21 @@ public class MovieSet extends MediaEntity {
     if (MovieModuleManager.MOVIE_SETTINGS.isEnableMovieSetArtworkFolder()) {
       File artworkDir = new File(MovieModuleManager.MOVIE_SETTINGS.getMovieSetArtworkFolder());
       if (artworkDir.exists()) {
-        File[] matches = artworkDir.listFiles(new FilenameFilter() {
-          public boolean accept(File dir, String name) {
-            String filenamePrefix = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-" + type.name().toLowerCase();
-            if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
-              return true;
-            }
-
-            if (type == MediaFileType.POSTER) {
-              filenamePrefix = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-folder";
-              if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
-                return true;
-              }
-            }
-
-            return false;
+        // File.listFiles is really slow on some bigger folders; stick to the old fashioned search
+        for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
+          String artworkFileName = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-" + type.name().toLowerCase() + "." + fileType;
+          File artworkFile = new File(artworkDir, artworkFileName);
+          if (artworkFile.exists()) {
+            return artworkFile.getPath();
           }
-        });
-        if (matches != null && matches.length > 0) {
-          return matches[0].getPath();
+          else if (type == MediaFileType.POSTER) {
+            // for posters there is also -folder possible
+            artworkFileName = MovieRenamer.replaceInvalidCharacters(getTitle()) + "-folder." + fileType;
+            artworkFile = new File(artworkDir, artworkFileName);
+            if (artworkFile.exists()) {
+              return artworkFile.getPath();
+            }
+          }
         }
       }
     }
@@ -200,25 +195,21 @@ public class MovieSet extends MediaEntity {
     for (Movie movie : movies) {
       File movieDir = new File(movie.getPath());
       if (movieDir.exists()) {
-        File[] matches = movieDir.listFiles(new FilenameFilter() {
-          public boolean accept(File dir, String name) {
-            String filenamePrefix = "movieset-" + type.name().toLowerCase();
-            if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
-              return true;
-            }
-
-            if (type == MediaFileType.POSTER) {
-              filenamePrefix = "movieset-folder";
-              if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
-                return true;
-              }
-            }
-
-            return false;
+        // File.listFiles is really slow on some bigger folders; stick to the old fashioned search
+        for (String fileType : SUPPORTED_ARTWORK_FILETYPES) {
+          String artworkFileName = "movieset-" + type.name().toLowerCase() + "." + fileType;
+          File artworkFile = new File(movieDir, artworkFileName);
+          if (artworkFile.exists()) {
+            return artworkFile.getPath();
           }
-        });
-        if (matches != null && matches.length > 0) {
-          return matches[0].getPath();
+          else if (type == MediaFileType.POSTER) {
+            // for posters there is also -folder possible
+            artworkFileName = "movieset-folder." + fileType;
+            artworkFile = new File(movieDir, artworkFileName);
+            if (artworkFile.exists()) {
+              return artworkFile.getPath();
+            }
+          }
         }
       }
     }
@@ -227,18 +218,9 @@ public class MovieSet extends MediaEntity {
     final String url = getArtworkUrl(type);
     if (StringUtils.isNotBlank(url)) {
       File cacheDir = ImageCache.getCacheDir();
-      File[] matches = cacheDir.listFiles(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          String filenamePrefix = ImageCache.getCachedFileName(url);
-          if (name.startsWith(filenamePrefix) && FilenameUtils.getExtension(name).matches("(jpg|png|tbn)")) {
-            return true;
-          }
-
-          return false;
-        }
-      });
-      if (matches.length > 0) {
-        return matches[0].getPath();
+      File artworkFile = new File(cacheDir, ImageCache.getCachedFileName(url));
+      if (artworkFile.exists()) {
+        return artworkFile.getPath();
       }
     }
 
