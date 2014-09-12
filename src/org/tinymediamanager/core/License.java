@@ -58,30 +58,33 @@ public class License {
         NetworkInterface ni = NetworkInterface.getByInetAddress(ip);
         String macAddress = formatMac(ni.getHardwareAddress());
         if (macAddress != null && !macAddress.isEmpty()) {
-          LOGGER.info("Mac address found: " + macAddress);
           return macAddress;
         }
       }
     }
     catch (Exception e) {
-      LOGGER.warn("Error getting MAC - not connected to internet/router?");
+      LOGGER.warn("Error getting MAC from LocalHost IP - not connected to internet/router?");
     }
 
     try {
-      for (Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces(); e.hasMoreElements();) {
-        NetworkInterface ni = e.nextElement();
-        String macAddress = formatMac(ni.getHardwareAddress());
-
-        if (macAddress != null && !macAddress.isEmpty()) {
-          // get first
-          LOGGER.info("Mac address found: " + macAddress);
-          return macAddress;
+      for (Enumeration<NetworkInterface> nif = NetworkInterface.getNetworkInterfaces(); nif.hasMoreElements();) {
+        NetworkInterface ni = null;
+        try {
+          ni = nif.nextElement();
+          String macAddress = formatMac(ni.getHardwareAddress());
+          if (macAddress != null && !macAddress.isEmpty()) {
+            // get first
+            return macAddress;
+          }
+        }
+        catch (Exception e2) {
+          LOGGER.warn("Error getting MAC of " + ni);
         }
       }
       return "";
     }
     catch (Exception e) {
-      LOGGER.warn("Error getting MAC of all interfaces");
+      LOGGER.warn("I/O Error on getting network interfaces");
       return "";
     }
   }
@@ -93,6 +96,7 @@ public class License {
    */
   private static List<String> getAllMacAddresses() {
     List<String> m = new ArrayList<String>();
+    m.add(""); // empty mac possible when we got an exception *grml
     try {
       for (Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces(); e.hasMoreElements();) {
         NetworkInterface ni = e.nextElement();
@@ -196,8 +200,7 @@ public class License {
         prop.load(reader);
       }
       catch (Exception e) {
-        LOGGER.warn("Error reading License: " + getMac());
-        // didn't work? try it with all our found MACs (maybe the first MAC impl did find a wrong one)
+        // didn't work? try it with all our found MACs (+ an empty one of an old impl)
         for (String mac : getAllMacAddresses()) {
           try {
             String decrypt = util.decrypt(salt, iv, mac, lic);
