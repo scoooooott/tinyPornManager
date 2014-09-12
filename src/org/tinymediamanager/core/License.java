@@ -44,6 +44,7 @@ import org.tinymediamanager.scraper.util.Url;
 public class License {
   private static final Logger LOGGER       = LoggerFactory.getLogger(License.class);
   private static final String LICENSE_FILE = "tmm.lic";
+  private static final String UNKNOWN_MAC  = "UNKNOWN_MAC";
 
   /**
    * returns the MAC address of this instance
@@ -81,11 +82,11 @@ public class License {
           LOGGER.warn("Error getting MAC of " + ni);
         }
       }
-      return "";
+      return UNKNOWN_MAC;
     }
     catch (Exception e) {
       LOGGER.warn("I/O Error on getting network interfaces");
-      return "";
+      return UNKNOWN_MAC;
     }
   }
 
@@ -96,7 +97,7 @@ public class License {
    */
   private static List<String> getAllMacAddresses() {
     List<String> m = new ArrayList<String>();
-    m.add(""); // empty mac possible when we got an exception *grml
+    m.add(UNKNOWN_MAC); // lic generated with empty mac, but java cannot handle this :/ use fake mac for further checks
     try {
       for (Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces(); e.hasMoreElements();) {
         NetworkInterface ni = e.nextElement();
