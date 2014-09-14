@@ -1901,6 +1901,11 @@ public class Movie extends MediaEntity {
     final EntityManager entityManager = getEntityManager();
     readWriteLock.readLock().lock();
     synchronized (entityManager) {
+      // hotfix - some moviesets are not in the context
+      if (MovieModuleManager.getInstance().getEntityManager().contains(movieSet)) {
+        MovieModuleManager.getInstance().getEntityManager().merge(movieSet);
+      }
+
       if (!entityManager.getTransaction().isActive()) {
         entityManager.getTransaction().begin();
         entityManager.persist(this);

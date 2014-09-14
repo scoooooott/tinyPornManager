@@ -229,6 +229,12 @@ public class MovieList extends AbstractModelObject {
       movieList.remove(movie);
       if (movie.getMovieSet() != null) {
         MovieSet movieSet = movie.getMovieSet();
+
+        // bring the MS back to the context - hotfix
+        if (MovieModuleManager.getInstance().getEntityManager().contains(movieSet)) {
+          MovieModuleManager.getInstance().getEntityManager().merge(movieSet);
+        }
+
         movieSet.removeMovie(movie);
         modifiedMovieSets.add(movieSet);
         movie.setMovieSet(null);
@@ -242,7 +248,9 @@ public class MovieList extends AbstractModelObject {
 
     // and now check if any of the modified moviesets are worth for deleting
     for (MovieSet movieSet : modifiedMovieSets) {
-      removeMovieSet(movieSet);
+      if (movieSet.getMovies().isEmpty()) {
+        removeMovieSet(movieSet);
+      }
     }
 
     firePropertyChange("movies", null, movieList);
