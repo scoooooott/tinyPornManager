@@ -485,11 +485,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       this.datasource = datasource;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.concurrent.Callable#call()
-     */
     @Override
     public String call() throws Exception {
       // get the TV show from this subdir
@@ -522,7 +517,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       }
       if (tvShow != null) {
         tvShow.setDataSource(datasource);
-        findAdditionalTvShowFiles(tvShow, dir);
         // tvShow.saveToDb();
         tvShow.justAdded = true;
         tvShowList.addTvShow(tvShow);
@@ -531,6 +525,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
 
     // find episodes in this tv show folder
     if (tvShow != null) {
+      findAdditionalTvShowFiles(tvShow, dir);
       findTvEpisodes(tvShow, dir);
       if (tvShow.isNewlyAdded()) {
         tvShow.saveToDb();
@@ -549,6 +544,24 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private void findAdditionalTvShowFiles(TvShow tvShow, File directory) {
     // find tv show images for this TV show; NOTE: the NFO has been found in TvShow.parseNFO()
     List<File> completeDirContents = new ArrayList<File>(Arrays.asList(directory.listFiles()));
+
+    // search season posters first (-poster pattern would find season posters)
+    for (File file : completeDirContents) {
+      Matcher matcher = seasonPattern.matcher(file.getName());
+      if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+        LOGGER.debug("found season poster " + file.getPath());
+        try {
+          int season = Integer.parseInt(matcher.group(1));
+          tvShow.setSeasonPoster(season, file);
+        }
+        catch (Exception e) {
+        }
+      }
+      else if (file.getName().startsWith("season-specials-poster")) {
+        LOGGER.debug("found season specials poster " + file.getPath());
+        tvShow.setSeasonPoster(-1, file);
+      }
+    }
 
     // search for poster or download
     findArtwork(tvShow, completeDirContents, posterPattern1, MediaFileType.POSTER);
@@ -579,30 +592,16 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
     findArtwork(tvShow, completeDirContents, thumbPattern1, MediaFileType.THUMB);
     findArtwork(tvShow, completeDirContents, thumbPattern2, MediaFileType.THUMB);
     downloadArtwork(tvShow, MediaFileType.THUMB);
-
-    // search season posters
-    for (File file : completeDirContents) {
-      Matcher matcher = seasonPattern.matcher(file.getName());
-      if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
-        LOGGER.debug("found season poster " + file.getPath());
-        try {
-          int season = Integer.parseInt(matcher.group(1));
-          tvShow.setSeasonPoster(season, file);
-        }
-        catch (Exception e) {
-        }
-      }
-      else if (file.getName().startsWith("season-specials-poster")) {
-        LOGGER.debug("found season specials poster " + file.getPath());
-        tvShow.setSeasonPoster(-1, file);
-      }
-    }
   }
 
   private void findArtwork(TvShow show, List<File> directoryContents, Pattern searchPattern, MediaFileType type) {
     for (File file : directoryContents) {
       Matcher matcher = searchPattern.matcher(file.getName());
       if (matcher.matches() && !file.getName().startsWith("._")) { // MacOS ignore
+        // false positive exclusion: poster regexp would also find season posters..
+        if (type == MediaFileType.POSTER && file.getName().matches(seasonPattern.pattern())) {
+          continue;
+        }
         MediaFile mf = new MediaFile(file, type);
         show.addToMediaFiles(mf);
         LOGGER.debug("found " + mf.getType().name().toLowerCase() + ": " + file.getPath());

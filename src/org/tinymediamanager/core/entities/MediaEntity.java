@@ -499,6 +499,16 @@ public abstract class MediaEntity extends AbstractModelObject {
     readWriteLock.writeLock().lock();
     // need to synchronize on the entitymanager :(
     synchronized (entityManager) {
+      // only store the MF if it is not in the list or if the type has been changed
+      if (mediaFiles.contains(mediaFile)) {
+        int i = mediaFiles.indexOf(mediaFile);
+        if (i >= 0) {
+          MediaFile oldMf = mediaFiles.get(i);
+          if (oldMf.getType() != mediaFile.getType()) {
+            mediaFiles.remove(i);
+          }
+        }
+      }
       if (!mediaFiles.contains(mediaFile)) {
         mediaFiles.add(mediaFile);
         sortMediaFiles();
