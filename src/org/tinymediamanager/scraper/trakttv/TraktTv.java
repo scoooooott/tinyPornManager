@@ -139,7 +139,7 @@ public class TraktTv {
       // loop over TMM movies, and check if IMDBID match
       for (int i = tmmMovies.size() - 1; i >= 0; i--) {
         Movie tmmMovie = tmmMovies.get(i);
-        if (traktMovie.imdb_id.equals(tmmMovie.getImdbId()) || traktMovie.tmdbId == tmmMovie.getTmdbId()) {
+        if ((traktMovie.imdb_id != null && traktMovie.imdb_id.equals(tmmMovie.getImdbId())) || traktMovie.tmdbId == tmmMovie.getTmdbId()) {
           // we have a match; remove it from our list (no need to add)
           tmmMovies.remove(i);
         }
