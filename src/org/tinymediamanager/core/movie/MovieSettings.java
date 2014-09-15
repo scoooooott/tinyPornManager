@@ -81,6 +81,7 @@ public class MovieSettings extends AbstractModelObject {
   private final static String           IMAGE_COLUMN_VISIBLE                     = "imageColumnVisible";
   private final static String           TRAILER_COLUMN_VISIBLE                   = "trailerColumnVisible";
   private final static String           SUBTITLE_COLUMN_VISIBLE                  = "subtitleColumnVisible";
+  private final static String           WATCHED_COLUMN_VISIBLE                   = "watchedColumnVisible";
   private final static String           SCRAPER_FALLBACK                         = "scraperFallback";
 
   @XmlElementWrapper(name = MOVIE_DATA_SOURCE)
@@ -146,6 +147,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       imageColumnVisible                       = true;
   private boolean                       trailerColumnVisible                     = true;
   private boolean                       subtitleColumnVisible                    = true;
+  private boolean                       watchedColumnVisible                     = true;
   private boolean                       scraperFallback                          = false;
   private boolean                       useTrailerPreference                     = false;
   private MovieTrailerQuality           trailerQuality                           = MovieTrailerQuality.HD_720;
@@ -655,6 +657,16 @@ public class MovieSettings extends AbstractModelObject {
     boolean oldValue = this.subtitleColumnVisible;
     this.subtitleColumnVisible = newValue;
     firePropertyChange(SUBTITLE_COLUMN_VISIBLE, oldValue, newValue);
+  }
+
+  public boolean isWatchedColumnVisible() {
+    return watchedColumnVisible;
+  }
+
+  public void setWatchedColumnVisible(boolean newValue) {
+    boolean oldValue = this.watchedColumnVisible;
+    this.watchedColumnVisible = newValue;
+    firePropertyChange(WATCHED_COLUMN_VISIBLE, oldValue, newValue);
   }
 
   public boolean isScraperFallback() {

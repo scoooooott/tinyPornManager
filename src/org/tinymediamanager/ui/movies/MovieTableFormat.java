@@ -39,21 +39,11 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   private Comparator<String>          stringComparator = new StringComparator();
   private Comparator<ImageIcon>       imageComparator  = new ImageComparator();
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ca.odell.glazedlists.gui.TableFormat#getColumnCount()
-   */
   @Override
   public int getColumnCount() {
-    return 6;
+    return 7;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ca.odell.glazedlists.gui.TableFormat#getColumnName(int)
-   */
   @Override
   public String getColumnName(int column) {
     switch (column) {
@@ -74,16 +64,14 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
 
       case 5:
         return BUNDLE.getString("metatag.subtitles"); //$NON-NLS-1$
+
+      case 6:
+        return BUNDLE.getString("metatag.watched"); //$NON-NLS-1$
     }
 
     throw new IllegalStateException();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ca.odell.glazedlists.gui.TableFormat#getColumnValue(java.lang.Object, int)
-   */
   @Override
   public Object getColumnValue(Movie movie, int column) {
     switch (column) {
@@ -116,16 +104,17 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
           return IconManager.CHECKMARK;
         }
         return IconManager.CROSS;
+
+      case 6:
+        if (movie.isWatched()) {
+          return IconManager.CHECKMARK;
+        }
+        return IconManager.CROSS;
     }
 
     throw new IllegalStateException();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnClass(int)
-   */
   @SuppressWarnings("rawtypes")
   @Override
   public Class getColumnClass(int column) {
@@ -140,17 +129,13 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       case 3:
       case 4:
       case 5:
+      case 6:
         return ImageIcon.class;
     }
 
     throw new IllegalStateException();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see ca.odell.glazedlists.gui.AdvancedTableFormat#getColumnComparator(int)
-   */
   @SuppressWarnings("rawtypes")
   @Override
   public Comparator getColumnComparator(int column) {
@@ -165,6 +150,7 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
       case 3:
       case 4:
       case 5:
+      case 6:
         return imageComparator;
     }
 
@@ -172,12 +158,6 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   }
 
   private static class StringComparator implements Comparator<String> {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(String arg0, String arg1) {
       if (StringUtils.isEmpty(arg0)) {
@@ -191,12 +171,6 @@ public class MovieTableFormat implements AdvancedTableFormat<Movie> {
   }
 
   private static class ImageComparator implements Comparator<ImageIcon> {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(ImageIcon arg0, ImageIcon arg1) {
       if (arg0 == arg1) {

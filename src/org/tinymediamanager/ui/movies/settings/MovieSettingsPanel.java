@@ -96,6 +96,7 @@ public class MovieSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxNfo;
   private JCheckBox                   chckbxRuntimeFromMf;
   private JCheckBox                   chckbxTraktTv;
+  private JCheckBox                   chckbxWatched;
 
   /**
    * Instantiates a new movie settings panel.
@@ -134,6 +135,9 @@ public class MovieSettingsPanel extends ScrollablePanel {
 
     chckbxSubtitles = new JCheckBox(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
     panelGeneral.add(chckbxSubtitles, "6, 4");
+
+    chckbxWatched = new JCheckBox(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+    panelGeneral.add(chckbxWatched, "8, 4");
 
     JSeparator separator_4 = new JSeparator();
     panelGeneral.add(separator_4, "2, 6, 7, 1");
@@ -429,5 +433,10 @@ public class MovieSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxTraktTv, jCheckBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("movieSettings.watchedColumnVisible");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, chckbxWatched, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
   }
 }

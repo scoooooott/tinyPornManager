@@ -627,6 +627,12 @@ public class MoviePanel extends JPanel {
     table.getColumnModel().getColumn(5).setHeaderValue(IconManager.SUBTITLE);
     table.getTableHeader().getColumnModel().getColumn(5).setIdentifier("subtitle"); //$NON-NLS-1$
 
+    // watched column
+    table.getTableHeader().getColumnModel().getColumn(6).setHeaderRenderer(new IconRenderer(BUNDLE.getString("metatag.watched"))); //$NON-NLS-1$
+    table.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(20);
+    table.getColumnModel().getColumn(6).setHeaderValue(IconManager.PLAY_SMALL);
+    table.getTableHeader().getColumnModel().getColumn(6).setIdentifier("watched"); //$NON-NLS-1$
+
     table.setSelectionModel(movieSelectionModel.getSelectionModel());
     // selecting first movie at startup
     if (movieList.getMovies() != null && movieList.getMovies().size() > 0) {
@@ -652,6 +658,9 @@ public class MoviePanel extends JPanel {
     if (!MovieModuleManager.MOVIE_SETTINGS.isSubtitleColumnVisible()) {
       table.hideColumn("subtitle"); //$NON-NLS-1$
     }
+    if (!MovieModuleManager.MOVIE_SETTINGS.isWatchedColumnVisible()) {
+      table.hideColumn("watched"); //$NON-NLS-1$
+    }
 
     // and add a propertychangelistener to the columnhider
     PropertyChangeListener settingsPropertyChangeListener = new PropertyChangeListener() {
@@ -672,6 +681,9 @@ public class MoviePanel extends JPanel {
           }
           if ("subtitleColumnVisible".equals(evt.getPropertyName())) {
             setColumnVisibility("subtitle", (Boolean) evt.getNewValue()); //$NON-NLS-1$
+          }
+          if ("watchedColumnVisible".equals(evt.getPropertyName())) {
+            setColumnVisibility("watched", (Boolean) evt.getNewValue()); //$NON-NLS-1$
           }
         }
       }
