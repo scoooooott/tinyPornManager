@@ -231,7 +231,7 @@ public class MovieList extends AbstractModelObject {
         MovieSet movieSet = movie.getMovieSet();
 
         // bring the MS back to the context - hotfix
-        if (MovieModuleManager.getInstance().getEntityManager().contains(movieSet)) {
+        if (!MovieModuleManager.getInstance().getEntityManager().contains(movieSet)) {
           MovieModuleManager.getInstance().getEntityManager().merge(movieSet);
         }
 
