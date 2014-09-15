@@ -172,7 +172,7 @@ public class MovieRenamerPreview {
           nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
         }
         for (MovieNfoNaming name : nfonames) {
-          newFilename = movie.getNfoFilename(name, videoFileName);
+          newFilename = movie.getNfoFilename(name, newFilename + ".avi");// dirty hack, but full filename needed
           MediaFile nfo = new MediaFile(mf);
           nfo.setFile(new File(movieDir + newFilename));
           newFiles.add(nfo);
@@ -190,7 +190,7 @@ public class MovieRenamerPreview {
           posternames = MovieModuleManager.MOVIE_SETTINGS.getMoviePosterFilenames();
         }
         for (MoviePosterNaming name : posternames) {
-          newFilename = MovieArtworkHelper.getPosterFilename(name, movie, videoFileName);
+          newFilename = MovieArtworkHelper.getPosterFilename(name, movie, newFilename + ".avi"); // dirty hack, but full filename needed
           if (newFilename != null && !newFilename.isEmpty()) {
             String curExt = mf.getExtension();
             if (curExt.equalsIgnoreCase("tbn")) {
@@ -224,7 +224,7 @@ public class MovieRenamerPreview {
           fanartnames = MovieModuleManager.MOVIE_SETTINGS.getMovieFanartFilenames();
         }
         for (MovieFanartNaming name : fanartnames) {
-          newFilename = MovieArtworkHelper.getFanartFilename(name, movie, videoFileName);
+          newFilename = MovieArtworkHelper.getFanartFilename(name, movie, newFilename + ".avi");// dirty hack, but full filename needed
           if (newFilename != null && !newFilename.isEmpty()) {
             String curExt = mf.getExtension();
             if (curExt.equalsIgnoreCase("tbn")) {
