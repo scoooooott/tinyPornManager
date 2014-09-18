@@ -1,3 +1,16 @@
+Version 2.6.2
+=======================
++ added column for watched state to the movie table
+x greatly improved our episode detection engine
+x performance improvements with loading and update datasources
+x fixed season poster detection
+x fixed occasional crashes with trakt.tv
+x fixed wrong filenames in the renamer preview
+x fixed losing donator registration information
+x fixed crashes in ofdb.de, moviemeter.nl and zelluloid.de scraper
+x fixed trailer detection (movies with trailer in their name weren't added) 
+x fixed startup crashes with orphaned movie sets 
+
 Version 2.6.1
 =======================
 x fixed scraping of episode metadata
@@ -9,9 +22,9 @@ x fixed crashes with trakt.tv sync
 x fixed opening of movie/TV show folder and playing of videos for linux/kde
 x improved handling of 0byte downloads (artwork) and choosing local artwork files
 
-=============
+=======================
  Version 2.6
-=============
+=======================
 
 /!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\
 !                       D O N A T O R      V E R S I O N                       !
