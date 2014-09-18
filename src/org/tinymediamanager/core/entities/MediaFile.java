@@ -241,7 +241,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
-      if (name.contains("trailer") || foldername.contains("trailer")) {
+      if (basename.matches("(?i).*[_.-]trailer?$") || foldername.equalsIgnoreCase("trailer")) {
         return MediaFileType.TRAILER;
       }
 
