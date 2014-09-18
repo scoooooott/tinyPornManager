@@ -89,12 +89,29 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
       mmId = Integer.parseInt(options.getResult().getId());
     }
 
-    // scrape
-    LOGGER.debug("MovieMeter: getMetadata(mmId): " + mmId);
+    // imdbid
+    String imdbId = options.getImdbId();
 
+    if (StringUtils.isBlank(imdbId) && mmId == 0) {
+      LOGGER.warn("not possible to scrape from Moviemeter.bl - no mmId/imdbId found");
+      return md;
+    }
+
+    // scrape
     FilmDetail fd = null;
     synchronized (mmapi) {
-      fd = mmapi.filmDetail(mmId);
+      if (mmId != 0) {
+        LOGGER.debug("MovieMeter: getMetadata(mmId): " + mmId);
+        fd = mmapi.filmDetail(mmId);
+      }
+      else if (StringUtils.isNotBlank(imdbId)) {
+        LOGGER.debug("MovieMeter: filmSearchImdb(imdbId): " + imdbId);
+        fd = mmapi.filmSearchImdb(imdbId);
+      }
+    }
+
+    if (fd == null) {
+      return md;
     }
 
     md.setId(MediaMetadata.IMDBID, "tt" + fd.getImdb());

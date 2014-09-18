@@ -43,6 +43,7 @@ import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
 import org.tinymediamanager.scraper.MediaSearchOptions;
+import org.tinymediamanager.scraper.MediaSearchOptions.SearchParam;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaTrailer;
 import org.tinymediamanager.scraper.MediaType;
@@ -90,6 +91,26 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
   @Override
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
+
+    // if we did not have a prior search, fake one
+    if (options.getResult() == null && StringUtils.isNotBlank(options.getId(Constants.IMDBID))) {
+      MediaSearchOptions searchOptions = new MediaSearchOptions(MediaType.MOVIE);
+      searchOptions.set(SearchParam.IMDBID, options.getId(Constants.IMDBID));
+      try {
+        List<MediaSearchResult> results = search(searchOptions);
+        if (results != null && !results.isEmpty()) {
+          options.setResult(results.get(0));
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("failed IMDB search: " + e.getMessage());
+      }
+    }
+
+    // we can only work further if we got a search result on ofdb.de
+    if (options.getResult() == null) {
+      throw new Exception("Scrape with ofdb.de without prior search is not supported");
+    }
 
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     // generic Elements used all over

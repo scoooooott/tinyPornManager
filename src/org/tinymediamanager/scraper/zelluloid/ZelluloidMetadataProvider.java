@@ -84,6 +84,11 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
   public MediaMetadata getMetadata(MediaScrapeOptions options) throws Exception {
     LOGGER.debug("getMetadata() " + options.toString());
 
+    // we can only work further if we got a search result on zelluloid.de
+    if (options.getResult() == null) {
+      throw new Exception("Scrape with Zelluloid.de without prior search is not supported");
+    }
+
     MediaMetadata md = new MediaMetadata(providerInfo.getId());
     // generic Elements used all over
     Elements el = null;
