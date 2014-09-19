@@ -137,6 +137,7 @@ public class TvShowTest {
     Assert.assertEquals("S:6 E:1", detectEpisode("The.League.S06E01.720p.WEB-DL.DD5.1.H.264-pcsyndicate.mkv"));
     Assert.assertEquals("S:2 E:9", detectEpisode("Season 02/CSI.Crime.Scene.Investigation.S02E09.And.Then.There.Were.None.360p.DVDRip.MP3.XviD.avi"));
     Assert.assertEquals("S:7 E:15", detectEpisode("The.Big.Bang.Theory.S07E15.Eisenbahnromantik.German.DD51.Dubbed.DL.1080p.BD.x264-TVS.mkv"));
+    Assert.assertEquals("S:1946 E:5", detectEpisode("S1946E05.mkv"));
 
     // ************************************************************************
     // 1-3 chars, if they are the ONLY numbers in file
