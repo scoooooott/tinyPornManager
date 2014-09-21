@@ -137,7 +137,8 @@ public class TvShowPanel extends JPanel {
   private final Action                actionChangeSeasonPoster2     = new TvShowChangeSeasonPosterAction(true);
   private final Action                actionBatchEdit               = new TvShowBulkEditAction();
   private final Action                actionSetWatchedFlag          = new TvShowSetWatchedFlagAction();
-  private final Action                actionScrapeEpisodes          = new TvShowScrapeEpisodesAction();
+  private final Action                actionScrapeEpisodes          = new TvShowScrapeEpisodesAction(true);
+  private final Action                actionScrapeEpisodes2         = new TvShowScrapeEpisodesAction(false);
   private final Action                actionRewriteTvShowNfo        = new TvShowRewriteNfoAction();
   private final Action                actionRewriteTvShowEpisodeNfo = new TvShowRewriteEpisodeNfoAction();
   private final Action                actionRename                  = new TvShowRenameAction();
@@ -563,6 +564,7 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionScrape2);
     popupMenu.add(actionScrapeSelected);
     popupMenu.add(actionScrapeEpisodes);
+    popupMenu.add(actionScrapeEpisodes2);
     popupMenu.add(actionScrapeNewItems);
     // popupMenu.add(actionScrapeMetadataSelected);
     popupMenu.addSeparator();

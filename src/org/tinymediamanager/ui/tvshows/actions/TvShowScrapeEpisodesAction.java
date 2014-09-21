@@ -37,8 +37,16 @@ public class TvShowScrapeEpisodesAction extends AbstractAction {
   private static final long           serialVersionUID = -75916665265142730L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  public TvShowScrapeEpisodesAction() {
-    putValue(NAME, BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
+  private boolean                     withArtwork;
+
+  public TvShowScrapeEpisodesAction(boolean withArtwork) {
+    this.withArtwork = withArtwork;
+    if (this.withArtwork) {
+      putValue(NAME, BUNDLE.getString("tvshowepisode.scrape")); //$NON-NLS-1$
+    }
+    else {
+      putValue(NAME, BUNDLE.getString("tvshowepisode.scrape.withoutartwork")); //$NON-NLS-1$
+    }
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
     putValue(SMALL_ICON, IconManager.SEARCH);
   }
@@ -47,7 +55,7 @@ public class TvShowScrapeEpisodesAction extends AbstractAction {
   public void actionPerformed(ActionEvent arg0) {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
-    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes);
+    TvShowEpisodeScrapeTask task = new TvShowEpisodeScrapeTask(episodes, withArtwork);
     TmmTaskManager.getInstance().addUnnamedTask(task);
   }
 }
