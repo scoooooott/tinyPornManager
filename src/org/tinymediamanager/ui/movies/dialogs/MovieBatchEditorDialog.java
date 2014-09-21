@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -44,6 +46,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.AutocompleteComboBox;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
+import org.tinymediamanager.ui.moviesets.actions.MovieSetAddAction;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -226,6 +229,11 @@ public class MovieBatchEditorDialog extends TmmDialog {
       });
       panelContent.add(btnSetMovieSet, "6, 6");
 
+      JButton btnNewMovieset = new JButton("");
+      btnNewMovieset.setMargin(new Insets(2, 2, 2, 2));
+      btnNewMovieset.setAction(new MovieSetAddAction(false));
+      panelContent.add(btnNewMovieset, "8, 6");
+
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       panelContent.add(lblWatched, "2, 8, right, default");
 
@@ -296,13 +304,39 @@ public class MovieBatchEditorDialog extends TmmDialog {
     }
 
     {
-      cbMovieSet.addItem("");
-
-      for (MovieSet movieSet : movieList.getSortedMovieSetList()) {
-        cbMovieSet.addItem(movieSet);
-      }
-
+      setMovieSets();
       moviesToEdit = movies;
+
+      PropertyChangeListener listener = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+          if ("addedMovieSet".equals(evt.getPropertyName())) {
+            setMovieSets();
+          }
+        }
+      };
+      movieList.addPropertyChangeListener(listener);
+    }
+  }
+
+  private void setMovieSets() {
+    MovieSet selectedMovieSet = null;
+
+    Object obj = cbMovieSet.getSelectedItem();
+    if (obj instanceof MovieSet) {
+      selectedMovieSet = (MovieSet) obj;
+    }
+
+    cbMovieSet.removeAllItems();
+
+    cbMovieSet.addItem("");
+
+    for (MovieSet movieSet : movieList.getSortedMovieSetList()) {
+      cbMovieSet.addItem(movieSet);
+    }
+
+    if (selectedMovieSet != null) {
+      cbMovieSet.setSelectedItem(selectedMovieSet);
     }
   }
 }
