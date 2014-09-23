@@ -393,7 +393,7 @@ public class Utils {
                 + "&tid=UA-35564534-5"
                 + "&cid=" + uuid 
                 + "&an=tinyMediaManager" 
-                + "&av=" + ReleaseInfo.getBuild() 
+                + "&av=" + ReleaseInfo.getBuild() // svn revision number (or nightly/prerel)
                 + "&t=event"
                 + "&ec=" + event
                 + "&ea=" + event 
@@ -404,7 +404,8 @@ public class Utils {
                 + "&sr=" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().width + "x" + java.awt.Toolkit.getDefaultToolkit().getScreenSize().height 
                 + "&cd1=" + getEncProp("os.name") 
                 + "&cd2=" + getEncProp("os.arch") 
-                + "&cd3=" + getEncProp("java.version") 
+                + "&cd3=" + getEncProp("java.specification.version") // short; eg 1.7
+                + "&cd4=" + ReleaseInfo.getVersion() // TMM version eg 2.5.5
                 + "&z=" + System.currentTimeMillis();
             // @formatter:on
             Url url = new Url("http://www.google-analytics.com/collect?" + ga);
