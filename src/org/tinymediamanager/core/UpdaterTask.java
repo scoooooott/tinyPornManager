@@ -62,8 +62,8 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       // download remote checksum file
       Url upd = new Url(updateUrl + "/digest.txt");
       String online = IOUtils.toString(upd.getInputStream(), "UTF-8");
-      if (online == null || !online.contains("appbase")) {
-        LOGGER.error("Update task failed! Error downloading remote information");
+      if (online == null || !online.contains("tmm.jar")) {
+        LOGGER.error("Update task failed! Error downloading remote checksum information.");
         return false;
       }
 
