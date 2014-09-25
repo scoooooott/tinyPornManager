@@ -128,7 +128,10 @@ public class MovieFindMissingTask extends TmmThreadPool {
         }
       }
       else {
-        mv.addAll(getBigFiles(file));
+        // ignore our backup folder, but include ALL others
+        if (!file.getName().equals(".deletedByTMM")) {
+          mv.addAll(getBigFiles(file));
+        }
       }
     }
     return mv;
