@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
@@ -129,7 +130,7 @@ public class MovieFindMissingTask extends TmmThreadPool {
       }
       else {
         // ignore our backup folder, but include ALL others
-        if (!file.getName().equals(".deletedByTMM")) {
+        if (!file.getName().equals(Constants.BACKUP_FOLDER)) {
           mv.addAll(getBigFiles(file));
         }
       }

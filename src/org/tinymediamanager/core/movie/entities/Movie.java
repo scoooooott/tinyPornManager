@@ -50,6 +50,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
@@ -2012,7 +2013,7 @@ public class Movie extends MediaEntity {
   public void deleteSafely(MediaFile mf) {
     String fn = mf.getFile().getAbsolutePath();
     // inject backup path
-    fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".deletedByTMM");
+    fn = fn.replace(getDataSource(), getDataSource() + File.separator + Constants.BACKUP_FOLDER);
 
     // create path
     File backup = new File(fn);
@@ -2042,7 +2043,7 @@ public class Movie extends MediaEntity {
   public boolean deleteFilesSafely() {
     String fn = getPath();
     // inject backup path
-    fn = fn.replace(getDataSource(), getDataSource() + File.separator + ".deletedByTMM");
+    fn = fn.replace(getDataSource(), getDataSource() + File.separator + Constants.BACKUP_FOLDER);
 
     // create path
     File backup = new File(fn);

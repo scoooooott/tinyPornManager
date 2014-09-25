@@ -43,6 +43,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Utils;
@@ -1103,7 +1104,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public boolean deleteFilesSafely() {
     String fn = getPath();
     // inject backup path
-    fn = fn.replace(tvShow.getDataSource(), tvShow.getDataSource() + File.separator + ".deletedByTMM");
+    fn = fn.replace(tvShow.getDataSource(), tvShow.getDataSource() + File.separator + Constants.BACKUP_FOLDER);
 
     // create path
     File backup = new File(fn);

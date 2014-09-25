@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.io.FileUtils;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.ITmmModule;
 import org.tinymediamanager.core.TmmModuleManager;
 
@@ -96,7 +97,7 @@ public class TvShowModuleManager implements ITmmModule {
 
     if (Globals.settings.isDeleteTrashOnExit()) {
       for (String ds : Globals.settings.getTvShowSettings().getTvShowDataSource()) {
-        File file = new File(ds + File.separator + ".deletedByTMM");
+        File file = new File(ds + File.separator + Constants.BACKUP_FOLDER);
         FileUtils.deleteQuietly(file);
       }
     }
