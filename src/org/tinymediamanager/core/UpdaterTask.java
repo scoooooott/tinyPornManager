@@ -59,9 +59,15 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       String updateUrl = prop.getProperty("appbase");
       prop.clear();
 
-      // download checksum file and compare with local
+      // download remote checksum file
       Url upd = new Url(updateUrl + "/digest.txt");
       String online = IOUtils.toString(upd.getInputStream(), "UTF-8");
+      if (online == null || !online.contains("appbase")) {
+        LOGGER.error("Update task failed! Error downloading remote information");
+        return false;
+      }
+
+      // and compare with our local
       String local = FileUtils.readFileToString(new File("digest.txt"), "UTF-8");
       if (!local.equals(online)) {
         LOGGER.info("Update needed...");
