@@ -68,7 +68,7 @@ public class UIMessageListener implements IMessageListener {
             sender = Utils.replacePlaceholders(BUNDLE.getString(message.getMessageSender().toString()), message.getSenderParams());
           }
           catch (Exception e) {
-            sender = message.getMessageSender().toString();
+            sender = String.valueOf(message.getMessageSender());
           }
         }
 
