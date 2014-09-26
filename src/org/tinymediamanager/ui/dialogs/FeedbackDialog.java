@@ -173,7 +173,7 @@ public class FeedbackDialog extends TmmDialog {
         }
         catch (IOException e) {
           LOGGER.error("failed sending feedback: " + e.getMessage());
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.error")); //$NON-NLS-1$
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("Feedback.send.error") + "\n" + e.getMessage()); //$NON-NLS-1$
           return;
         }
 

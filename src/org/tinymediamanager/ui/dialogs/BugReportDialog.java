@@ -281,8 +281,8 @@ public class BugReportDialog extends TmmDialog {
 
         }
         catch (IOException e) {
-          LOGGER.error("failed sending bug report" + e.getMessage());
-          JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.error")); //$NON-NLS-1$
+          LOGGER.error("failed sending bug report: " + e.getMessage());
+          JOptionPane.showMessageDialog(null, BUNDLE.getObject("BugReport.send.error") + "\n" + e.getMessage()); //$NON-NLS-1$
           return;
         }
         finally {
