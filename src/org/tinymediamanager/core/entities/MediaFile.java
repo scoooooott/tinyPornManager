@@ -1075,7 +1075,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     LOGGER.debug("start MediaInfo for " + this.getFile().getAbsolutePath());
-    this.filedate = file.lastModified();
+    // this.filedate = file.lastModified();
     mediaInfo = getMediaInfo();
     try {
       setFilesize(Long.parseLong(getMediaInfo(StreamKind.General, 0, "FileSize")));
