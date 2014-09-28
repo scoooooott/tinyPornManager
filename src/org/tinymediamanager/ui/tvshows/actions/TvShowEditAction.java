@@ -21,10 +21,18 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.ui.IconManager;
+import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog;
+import org.tinymediamanager.ui.dialogs.ImageChooserDialog.ImageType;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEditorDialog;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowEpisodeEditorDialog;
@@ -60,6 +68,22 @@ public class TvShowEditAction extends AbstractAction {
           break;
         }
       }
+
+      // change season poster
+      if (obj instanceof TvShowSeason) {
+        TvShowSeason season = (TvShowSeason) obj;
+        ImageLabel imageLabel = new ImageLabel();
+        ImageChooserDialog dialog = new ImageChooserDialog(season.getTvShow().getIds(), ImageType.SEASON, TvShowList.getInstance()
+            .getArtworkProviders(), imageLabel, null, null, MediaType.TV_SHOW);
+        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        dialog.setVisible(true);
+
+        if (StringUtils.isNotBlank(imageLabel.getImageUrl())) {
+          season.setPosterUrl(imageLabel.getImageUrl());
+          season.getTvShow().downloadSeasonPoster(season.getSeason());
+        }
+      }
+
       // display tv episode editor
       if (obj instanceof TvShowEpisode) {
         TvShowEpisode tvShowEpisode = (TvShowEpisode) obj;
