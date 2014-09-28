@@ -95,7 +95,7 @@ public class MediaInfoTest {
    */
   @Test
   public void testDirect() throws Exception {
-    String FileName = "F:\\_neu\\_NEU Filme SD\\Broken City (2013)\\extrathumbs\\thumb8.jpg";
+    String FileName = "/home/manuel/Downloads/Modern Family - S01E03 - Come Fly with Me.dutch.srt";
     String To_Display = "";
 
     // Info about the library
@@ -134,6 +134,9 @@ public class MediaInfoTest {
 
     To_Display += "\r\n\r\nGet with Stream=General and Parameter=\"FileSize\"\r\n";
     To_Display += MI.get(MediaInfo.StreamKind.General, 0, "FileSize", MediaInfo.InfoKind.Text, MediaInfo.InfoKind.Name);
+
+    To_Display += "\r\n\r\nGet with Stream=General and Parameter=\"File_Modified_Date_Local\"\r\n";
+    To_Display += MI.get(MediaInfo.StreamKind.General, 0, "File_Modified_Date_Local", MediaInfo.InfoKind.Text, MediaInfo.InfoKind.Name);
 
     To_Display += "\r\n\r\nClose\r\n";
     MI.close();

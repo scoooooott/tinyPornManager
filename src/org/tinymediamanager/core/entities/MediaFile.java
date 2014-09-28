@@ -16,8 +16,11 @@
 package org.tinymediamanager.core.entities;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1075,7 +1078,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     }
 
     LOGGER.debug("start MediaInfo for " + this.getFile().getAbsolutePath());
-    // this.filedate = file.lastModified();
+
     mediaInfo = getMediaInfo();
     try {
       setFilesize(Long.parseLong(getMediaInfo(StreamKind.General, 0, "FileSize")));
@@ -1085,12 +1088,23 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       closeMediaInfo();
       return;
     }
+    LOGGER.trace("got MI");
 
     // do not work further on 0 byte files
     if (getFilesize() == 0) {
       LOGGER.warn("0 Byte file detected: " + this.filename);
       closeMediaInfo();
       return;
+    }
+
+    // parse lastmodified
+    try {
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      Date date = dateFormat.parse(getMediaInfo(StreamKind.General, 0, "File_Modified_Date_Local"));
+      filedate = date.getTime();
+    }
+    catch (Exception e) {
+      filedate = 0;
     }
 
     String height = "";
@@ -1317,7 +1331,7 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     else {
       String extensions = getMediaInfo(StreamKind.General, 0, "Codec/Extensions", "Format");
       // get first extension
-      setContainerFormat(StringUtils.isEmpty(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
+      setContainerFormat(StringUtils.isBlank(extensions) ? "" : new Scanner(extensions).next().toLowerCase());
 
       // if container format is still empty -> insert the extension
       if (StringUtils.isBlank(containerFormat)) {
@@ -1389,8 +1403,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
         break;
     }
 
+    LOGGER.trace("extracted MI");
     // close mediainfo lib
     closeMediaInfo();
+    LOGGER.trace("closed MI");
   }
 
   /**
