@@ -228,7 +228,7 @@ public class TinyMediaManager {
     LOGGER.info("os.name          : " + System.getProperty("os.name"));
     LOGGER.info("os.version       : " + System.getProperty("os.version"));
     LOGGER.info("os.arch          : " + System.getProperty("os.arch"));
-    LOGGER.info("network.id       : " + License.getMac());
+    LOGGER.trace("network.id       : " + License.getMac());
     LOGGER.info("java.version     : " + System.getProperty("java.version"));
     if (Globals.isRunningJavaWebStart()) {
       LOGGER.info("java.webstart    : true");
