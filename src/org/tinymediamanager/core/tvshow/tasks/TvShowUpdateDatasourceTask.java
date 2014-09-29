@@ -168,6 +168,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       // check whether the path is accessible (eg disconnected shares)
       if (dirs == null || dirs.length == 0) {
         // error - continue with next datasource
+        LOGGER.warn("Datasource not available/empty " + path);
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
             new String[] { path }));
         continue;
@@ -304,6 +305,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       // check if the tv show dir is accessible
       File[] filesInDatasourceRoot = tvShowFolder.getParentFile().listFiles();
       if (filesInDatasourceRoot == null || filesInDatasourceRoot.length == 0) {
+        LOGGER.warn("TvShow folder not available/empty " + tvShowFolder);
         MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "update.datasource", "update.datasource.unavailable",
             new String[] { tvShowFolder.getParent() }));
         continue;
