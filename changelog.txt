@@ -1,6 +1,16 @@
+Version 2.6.3
+=======================
+x updated Trakt.tv libs
+x fix release build version info
+x fix some nullpointers
+x added more transifex languages
+x and some more minor internal things... 
+
 Version 2.6.2
 =======================
 + added column for watched state to the movie table
++ added action to scrape episode metadata without thumbs
++ added quick creation of movie sets to the movie bulk editor
 x greatly improved our episode detection engine
 x performance improvements with loading and update datasources
 x fixed season poster detection
