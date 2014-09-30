@@ -10,7 +10,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.TmmModuleManager;
 import org.tinymediamanager.core.Utils;
@@ -183,6 +182,9 @@ public class MovieRenamerTest {
         }
         else {
           nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
+          if (movie.isDisc()) {
+            nfonames.add(MovieNfoNaming.DISC_NFO); // add additionally the NFO at disc style location
+          }
         }
         for (MovieNfoNaming name : nfonames) {
           newFilename = movie.getNfoFilename(name, videoFileName);

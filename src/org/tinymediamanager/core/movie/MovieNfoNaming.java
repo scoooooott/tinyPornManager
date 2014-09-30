@@ -26,5 +26,7 @@ public enum MovieNfoNaming {
   /** [filename].nfo */
   FILENAME_NFO,
   /** movie.nfo */
-  MOVIE_NFO
+  MOVIE_NFO,
+  /** DVD/Bluray style - internally only when isDisc() */
+  DISC_NFO
 }

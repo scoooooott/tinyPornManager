@@ -369,6 +369,9 @@ public class MovieRenamer {
       }
       else {
         nfonames = MovieModuleManager.MOVIE_SETTINGS.getMovieNfoFilenames();
+        if (movie.isDisc()) {
+          nfonames.add(MovieNfoNaming.DISC_NFO); // add additionally the NFO at disc style location
+        }
       }
       for (MovieNfoNaming name : nfonames) {
         MediaFile newMF = new MediaFile(mf);

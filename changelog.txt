@@ -1,9 +1,14 @@
 Version 2.6.3
 =======================
++ added edit button for tv show season 
 x updated Trakt.tv libs
 x fix release build version info
-x fix some nullpointers
+x fix TMM updater in case of error download
+x write additional NFO for DVD/BD folder
+x tweak getting modified date from files (speedup)
+x ignore backup folder when searching for missing movies 
 x added more transifex languages
+x improved some needed debug loggings
 x and some more minor internal things... 
 
 Version 2.6.2
