@@ -974,12 +974,12 @@ public class Settings extends AbstractModelObject {
   }
 
   public String getTraktUsername() {
-    return traktUsername;
+    return traktUsername.trim();
   }
 
   public void setTraktUsername(String newValue) {
     String oldValue = this.traktUsername;
-    this.traktUsername = newValue;
+    this.traktUsername = newValue.trim();
     firePropertyChange("traktUsername", oldValue, newValue);
   }
 
@@ -1003,7 +1003,7 @@ public class Settings extends AbstractModelObject {
     String oldValue = this.traktPassword;
     if (newValue != null && !newValue.matches("[a-fA-F0-9]{40}")) {
       // plaintext - convert to sha1
-      this.traktPassword = DigestUtils.shaHex(newValue);
+      this.traktPassword = DigestUtils.shaHex(newValue.trim());
     }
     else {
       // already sha1 - set it 1:1
@@ -1013,12 +1013,12 @@ public class Settings extends AbstractModelObject {
   }
 
   public String getTraktAPI() {
-    return traktAPI;
+    return traktAPI.trim();
   }
 
   public void setTraktAPI(String newValue) {
     String oldValue = this.traktAPI;
-    this.traktAPI = newValue;
+    this.traktAPI = newValue.trim();
     firePropertyChange("traktAPI", oldValue, newValue);
   }
 

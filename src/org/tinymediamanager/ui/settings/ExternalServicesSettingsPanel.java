@@ -93,9 +93,9 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
       }
 
       if (!Globals.isDonator()) {
-        tfTraktUsername.disable();
-        tfTraktPassword.disable();
-        tfTraktAPIKey.disable();
+        tfTraktUsername.setEnabled(false);
+        tfTraktPassword.setEnabled(false);
+        tfTraktAPIKey.setEnabled(false);
         JLabel lblTraktDonator = new JLabel("<html><body>" + BUNDLE.getString("tmm.donatorfunction.hint") + "</body></html>"); //$NON-NLS-1$
         lblTraktDonator.setForeground(Color.RED);
         panelTrakttv.add(lblTraktDonator, "2, 8, 3, 1, default, default");
