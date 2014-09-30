@@ -89,6 +89,36 @@ public class MediaMetadata {
   }
 
   /**
+   * merges all entries from other MD into ours, IF VALUES ARE EMPTY<br>
+   * <b>needs testing!</b>
+   * 
+   * @param md
+   *          other MediaMetadata
+   * @return MediaMetadata
+   */
+  public void mergeFrom(MediaMetadata md) {
+
+    HashMap<String, Object> delta = md.getIds();
+    delta.keySet().removeAll(ids.keySet()); // remove all remote ones, which we have in our array
+    ids.putAll(delta); // so no dupe on adding while not overwriting
+
+    delta = md.getAllMetadata();
+    delta.keySet().removeAll(metadata.keySet());
+    metadata.putAll(delta);
+
+    castMembers.removeAll(md.getCastMembers()); // remove all local ones, which we have in other array
+    castMembers.addAll(md.getCastMembers()); // so no dupe on adding all ;)
+    fanart.removeAll(md.getFanart());
+    fanart.addAll(md.getFanart());
+    genres.removeAll(md.getGenres());
+    genres.addAll(md.getGenres());
+    certifications.removeAll(md.getCertifications());
+    certifications.addAll(md.getCertifications());
+    trailers.removeAll(md.getTrailers());
+    trailers.addAll(md.getTrailers());
+  }
+
+  /**
    * Gets the provider id.
    * 
    * @return the provider id
@@ -107,6 +137,15 @@ public class MediaMetadata {
    */
   public void storeMetadata(String key, Object value) {
     metadata.put(key, value);
+  }
+
+  /**
+   * Gets all metadata
+   * 
+   * @return the metadata obj
+   */
+  public HashMap<String, Object> getAllMetadata() {
+    return metadata;
   }
 
   /**

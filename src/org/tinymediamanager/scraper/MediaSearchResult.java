@@ -15,11 +15,12 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
@@ -43,6 +44,34 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
 
   public MediaSearchResult(String providerId) {
     this.providerId = providerId;
+  }
+
+  /**
+   * merges all entries from other MSR into ours, IF VALUES ARE EMPTY<br>
+   * <b>needs testing!</b>
+   * 
+   * @param msr
+   *          other MediaSerachResult
+   * @return MediaSerachResult
+   */
+  public void mergeFrom(MediaSearchResult msr) {
+    url = StringUtils.isEmpty(url) ? msr.getUrl() : url;
+    title = StringUtils.isEmpty(title) ? msr.getTitle() : title;
+    year = StringUtils.isEmpty(year) ? msr.getYear() : year;
+    originalTitle = StringUtils.isEmpty(originalTitle) ? msr.getOriginalTitle() : originalTitle;
+    id = StringUtils.isEmpty(id) ? msr.getId() : id;
+    imdbId = StringUtils.isEmpty(imdbId) ? msr.getIMDBId() : imdbId;
+    posterUrl = StringUtils.isEmpty(posterUrl) ? msr.getPosterUrl() : posterUrl;
+
+    extraArgs.putAll(msr.getExtra()); // meh - add all
+
+    if (metadata == null) {
+      metadata = msr.getMediaMetadata();
+    }
+    else {
+      metadata.mergeFrom(msr.getMediaMetadata());
+    }
+
   }
 
   public String getOriginalTitle() {
@@ -140,7 +169,15 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     return extraArgs;
   }
 
+  /**
+   * renamed to getMediaMetadata()
+   */
+  @Deprecated
   public MediaMetadata getMetadata() {
+    return metadata;
+  }
+
+  public MediaMetadata getMediaMetadata() {
     return metadata;
   }
 
@@ -192,11 +229,12 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
    */
   @Override
   public String toString() {
-    return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
-      @Override
-      protected boolean accept(Field f) {
-        return super.accept(f) && !f.getName().equals("metadata");
-      }
-    }).toString();
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    // return (new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) {
+    // @Override
+    // protected boolean accept(Field f) {
+    // return super.accept(f) && !f.getName().equals("metadata");
+    // }
+    // }).toString();
   }
 }
