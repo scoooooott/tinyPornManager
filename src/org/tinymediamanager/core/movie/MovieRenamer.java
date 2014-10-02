@@ -234,18 +234,24 @@ public class MovieRenamer {
 
     // cleanup with old movie name
     for (MovieNfoNaming s : MovieNfoNaming.values()) {
+      if (!movie.isDisc() && s == MovieNfoNaming.DISC_NFO) {
+        // this is a corner case
+        // nfoNaming returns an empty string if no disc, so the filename == movie pathname!!
+        // skip that to not accidently delete the movie dir :p
+        continue;
+      }
       // mark all known variants for cleanup
-      MediaFile del = new MediaFile(new File(movie.getPath(), movie.getNfoFilename(s)));
+      MediaFile del = new MediaFile(new File(movie.getPath(), movie.getNfoFilename(s)), MediaFileType.NFO);
       cleanup.add(del);
     }
     for (MoviePosterNaming s : MoviePosterNaming.values()) {
       // mark all known variants for cleanup
-      MediaFile del = new MediaFile(new File(movie.getPath(), MovieArtworkHelper.getPosterFilename(s, movie)));
+      MediaFile del = new MediaFile(new File(movie.getPath(), MovieArtworkHelper.getPosterFilename(s, movie)), MediaFileType.POSTER);
       cleanup.add(del);
     }
     for (MovieFanartNaming s : MovieFanartNaming.values()) {
       // mark all known variants for cleanup
-      MediaFile del = new MediaFile(new File(movie.getPath(), MovieArtworkHelper.getFanartFilename(s, movie)));
+      MediaFile del = new MediaFile(new File(movie.getPath(), MovieArtworkHelper.getFanartFilename(s, movie)), MediaFileType.FANART);
       cleanup.add(del);
     }
 
@@ -653,9 +659,14 @@ public class MovieRenamer {
         MediaFile cl = cleanup.get(i);
         if (cl.getFile().equals(new File(movie.getDataSource())) || cl.getFile().equals(new File(movie.getPath()))
             || cl.getFile().equals(new File(oldPathname))) {
-          LOGGER.error("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...!"); // FIXME: check how this could happen
-          MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, cl.getFile(), "message.renamer.failedrename"));
-          return; // rename failed
+          LOGGER.warn("Wohoo! We tried to remove complete datasource / movie folder. Nooo way...! " + cl.getType() + ": "
+              + cl.getFile().getAbsolutePath());
+          // happens when iterating eg over the getNFONaming and we return a "" string.
+          // then the path+filename = movie path and we want to delete :/
+          // do not show an error anylonger, just silently ignore...
+          // MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, cl.getFile(), "message.renamer.failedrename"));
+          // return; // rename failed
+          continue;
         }
         if (cl.getFile().exists()) { // unneeded, but for not displaying wrong deletes in logger...
           LOGGER.debug("Deleting " + cl.getFile());
