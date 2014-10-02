@@ -27,6 +27,10 @@ public enum MovieNfoNaming {
   FILENAME_NFO,
   /** movie.nfo */
   MOVIE_NFO,
-  /** DVD/Bluray style - internally only when isDisc() */
+  /**
+   * DVD/Bluray style - used internally only when isDisc()<br>
+   * <b>do not use/present/save that - it's added automatically</b>
+   */
+  @Deprecated
   DISC_NFO
 }
