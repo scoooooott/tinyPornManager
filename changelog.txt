@@ -1,6 +1,7 @@
 Version 2.6.3
 =======================
-+ added edit button for tv show season 
++ added edit button for tv show season
+x fix physically deletion of movies in multiMovieDir
 x updated Trakt.tv libs
 x fix release build version info
 x fix TMM updater in case of error download

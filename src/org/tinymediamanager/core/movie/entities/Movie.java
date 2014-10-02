@@ -2044,17 +2044,34 @@ public class Movie extends MediaEntity {
     // inject backup path
     fn = fn.replace(getDataSource(), getDataSource() + File.separator + Constants.BACKUP_FOLDER);
 
-    // create path
-    File backup = new File(fn);
-    if (!backup.getParentFile().exists()) {
-      backup.getParentFile().mkdirs();
-    }
-
     // backup
     try {
-      // overwrite backup file by deletion prior
-      FileUtils.deleteQuietly(backup);
-      return Utils.moveDirectorySafe(new File(getPath()), backup);
+      if (isMultiMovieDir()) {
+        // create deletedBy folder
+        File backup = new File(fn);
+        if (!backup.exists()) {
+          backup.mkdirs();
+        }
+        boolean ok = true;
+        for (MediaFile mf : getMediaFiles()) {
+          // overwrite backup file by deletion prior
+          FileUtils.deleteQuietly(new File(backup, mf.getFilename()));
+          if (!Utils.moveFileSafe(mf.getFile(), new File(backup, mf.getFilename()))) {
+            ok = false;
+          }
+        }
+        return ok;
+      }
+      else {
+        // create path
+        File backup = new File(fn);
+        if (!backup.getParentFile().exists()) {
+          backup.getParentFile().mkdirs();
+        }
+        // overwrite backup file by deletion prior
+        FileUtils.deleteQuietly(backup);
+        return Utils.moveDirectorySafe(new File(getPath()), backup);
+      }
     }
     catch (IOException e) {
       LOGGER.warn("could not delete movie files: " + e.getMessage());
