@@ -25,14 +25,7 @@ import org.tinymediamanager.core.entities.MediaFile;
  * 
  * @author Myron Boyle
  */
-public interface IMediaSubtitleProvider {
-
-  /**
-   * Gets the info.
-   * 
-   * @return the provider info containing metadata of the provider
-   */
-  public MediaProviderInfo getProviderInfo();
+public interface IMediaSubtitleProvider extends IMediaProvider {
 
   /**
    * searches for subtitles for MediaFile

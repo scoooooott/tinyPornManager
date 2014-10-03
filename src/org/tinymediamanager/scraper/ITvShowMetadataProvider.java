@@ -2,14 +2,7 @@ package org.tinymediamanager.scraper;
 
 import java.util.List;
 
-public interface ITvShowMetadataProvider {
-
-  /**
-   * Gets a general information about this metadata provider
-   * 
-   * @return the provider info containing metadata of the provider
-   */
-  public MediaProviderInfo getProviderInfo();
+public interface ITvShowMetadataProvider extends IMediaProvider {
 
   /**
    * Gets the metadata for the given TV show

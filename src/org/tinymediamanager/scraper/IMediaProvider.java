@@ -15,24 +15,12 @@
  */
 package org.tinymediamanager.scraper;
 
-import java.util.List;
-
-/**
- * The Interface IMediaTrailerProvider.
- * 
- * @author Manuel Laggner
- */
-public interface IMediaTrailerProvider extends IMediaProvider {
-
+public interface IMediaProvider {
   /**
-   * Gets the trailers.
+   * Gets a general information about this metadata provider
    * 
-   * @param options
-   *          the options
-   * @return the trailers
-   * @throws Exception
-   *           the exception
+   * @return the provider info containing metadata of the provider
    */
-  public List<MediaTrailer> getTrailers(MediaScrapeOptions options) throws Exception;
+  public MediaProviderInfo getProviderInfo();
 
 }
