@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.6+" href="launch.jnlp">
+<jnlp spec="6.0" codebase="http://tinymediamanager.googlecode.com/svn/dist/" href="launch.jnlp">
     <information>
         <title>tinyMediaManager</title>
         <vendor>Manuel Laggner</vendor>
@@ -13,7 +13,7 @@
         <all-permissions />
     </security>
     <resources>
-        <j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se"
+        <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"
             java-vm-args="-Xmx250M" />
         <property name="MyApplicationProperty" value="myApplicationPropertyValue" />
         <jar href="tmm.jar" main="true" />
