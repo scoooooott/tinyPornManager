@@ -195,7 +195,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MovieNfoNaming> getMovieNfoFilenames() {
-    return this.movieNfoFilenames;
+    return new ArrayList<MovieNfoNaming>(this.movieNfoFilenames);
   }
 
   public void addMoviePosterFilename(MoviePosterNaming filename) {
@@ -218,7 +218,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MoviePosterNaming> getMoviePosterFilenames() {
-    return this.moviePosterFilenames;
+    return new ArrayList<MoviePosterNaming>(this.moviePosterFilenames);
   }
 
   public void addMovieFanartFilename(MovieFanartNaming filename) {
@@ -241,7 +241,7 @@ public class MovieSettings extends AbstractModelObject {
   }
 
   public List<MovieFanartNaming> getMovieFanartFilenames() {
-    return this.movieFanartFilenames;
+    return new ArrayList<MovieFanartNaming>(this.movieFanartFilenames);
   }
 
   @XmlElement(name = IMAGE_POSTER_SIZE)
