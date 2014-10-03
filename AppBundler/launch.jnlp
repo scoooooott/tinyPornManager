@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.6+" href="launch.jnlp">
+    <information>
+        <title>tinyMediaManager</title>
+        <vendor>Manuel Laggner</vendor>
+        <description>tinyMediaManager is a media management tool written in Java/Swing. It is written to provide metadata for Kodi (XBMC).
+        </description>
+        <description kind="short">TMM - THE MediaManager of your choice :)</description>
+        <icon href="tmm.png" />
+        <icon kind="splash" href="splashscreen.png" />
+    </information>
+    <security>
+        <all-permissions />
+    </security>
+    <resources>
+        <j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se"
+            java-vm-args="-Xmx250M" />
+        <property name="MyApplicationProperty" value="myApplicationPropertyValue" />
+        <jar href="tmm.jar" main="true" />
+%WEBSTARTLIBS%    </resources>
+    <application-desc main-class="org.tinymediamanager.TinyMediaManager" />
+</jnlp> 
