@@ -881,4 +881,25 @@ public class Utils {
     return arguments;
   }
 
+  /**
+   * returns the "addons" folder from a local Kodi/XBMC installation
+   * 
+   * @return File or NULL
+   */
+  public File detectXbmcAddonsFolder() {
+    String[] appFolder = { "Kodi", "kodi", "xbmc", "XMBC" };
+    String[] installFolder = { System.getenv("ProgramFiles(x86)"), System.getenv("ProgramFiles"), System.getenv("ProgramData"), "/usr/share/",
+        "/usr/lib/", "/Applications/XBMC.app/Contents/Resources" };
+
+    for (String i : installFolder) {
+      for (String a : appFolder) {
+        File addons = new File(new File(i, a), "addons"); // yes, secure
+        if (addons.exists()) {
+          return addons;
+        }
+      }
+    }
+
+    return null;
+  }
 }
