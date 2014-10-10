@@ -25,6 +25,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.ReleaseInfo;
+import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.util.Url;
 
 /**
@@ -49,13 +51,24 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
   @Override
   public Boolean doInBackground() {
     try {
+      if (ReleaseInfo.getVersion().equals("SVN")) {
+        return false;
+      }
+
       Thread.currentThread().setName("updateThread");
       LOGGER.info("Checking for updates...");
-      // Thread.sleep(10000);
+      File file = new File("getdown.txt");
+      if (!file.exists()) {
+        // we are a live instance and have no getdown.txt file? WTF?
+        // we _might_ use an fallback here... but for now inform the user
+        LOGGER.warn("getdown.txt not found - please reinstal TMM!");
+        MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, "Please reinstal tinyMediaManager!", "Update check failed badly"));
+        return false;
+      }
 
       // get update url
       Properties prop = new Properties();
-      prop.load(new FileInputStream(new File("getdown.txt")));
+      prop.load(new FileInputStream(file));
       String updateUrl = prop.getProperty("appbase");
       prop.clear();
 
@@ -63,8 +76,7 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       Url upd = new Url(updateUrl + "/digest.txt");
       String online = IOUtils.toString(upd.getInputStream(), "UTF-8");
       if (online == null || !online.contains("tmm.jar")) {
-        LOGGER.error("Update task failed! Error downloading remote checksum information.");
-        return false;
+        throw new Exception("Error downloading remote checksum information."); // for fallback
       }
 
       // and compare with our local
@@ -78,7 +90,35 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       }
     }
     catch (Exception e) {
-      LOGGER.error("Update task failed!" + e.getMessage());
+      LOGGER.error("Update task failed! " + e.getMessage());
+
+      // when eg google shuts down suddenly, or we have a corrupted HTML download,
+      // try a "backup url" for GD.txt, where we could specify a new location :)
+      String fallback = "http://www.tinymediamanager.org/";
+      if (ReleaseInfo.isPreRelease()) {
+        fallback += "getdown_prerelease.txt";
+      }
+      else if (ReleaseInfo.isNightly()) {
+        fallback += "getdown_nightly.txt";
+      }
+      else {
+        fallback += "getdown.txt";
+      }
+
+      try {
+        LOGGER.info("Trying fallback");
+        Url upd = new Url(fallback);
+        String gd = IOUtils.toString(upd.getInputStream(), "UTF-8");
+        if (gd == null || gd.isEmpty() || !gd.contains("appbase")) {
+          // download corrupted; or a 404 html page downloaded (since we do not use that yet :p)
+          return false;
+        }
+        FileUtils.writeStringToFile(new File("getdown.txt"), gd);
+        return true;
+      }
+      catch (Exception e2) {
+        LOGGER.error("Update fallback failed!" + e.getMessage());
+      }
     }
     return false;
   }
