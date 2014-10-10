@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<details>
+   <id>559</id>
+   <id>tt0413300</id>
+   <GetTMDBTitleByIdChain>
+      <details>
+         <details>
+            <title>Spider-Man 3</title>
+         </details>
+      </details>
+   </GetTMDBTitleByIdChain>
+   <originaltitle>Spider-Man 3</originaltitle>
+   <year>2007</year>
+   <runtime>139</runtime>
+   <GetTMDBStudioByIdChain>
+      <details>
+         <details>
+            <studio>Laura Ziskin Productions</studio>
+         </details>
+      </details>
+   </GetTMDBStudioByIdChain>
+   <GetTMDBCountryByIdChain>
+      <details>
+         <details>
+            <country>United States of America</country>
+         </details>
+      </details>
+   </GetTMDBCountryByIdChain>
+   <GetTMDBDirectorsByIdChain>
+      <details>
+         <details>
+            <director>Sam Raimi</director>
+         </details>
+      </details>
+   </GetTMDBDirectorsByIdChain>
+   <GetTMDBWitersByIdChain>
+      <details>
+         <details>
+            <credits>Steve Ditko</credits>
+         </details>
+      </details>
+   </GetTMDBWitersByIdChain>
+   <GetTMDBCertificationsByIdChain>
+      <details>
+         <details />
+      </details>
+   </GetTMDBCertificationsByIdChain>
+   <GetTMDBSetByIdChain>
+      <details>
+         <details>
+            <set>Spider-Man Collection</set>
+         </details>
+      </details>
+   </GetTMDBSetByIdChain>
+   <GetTMDBPlotByIdChain>
+      <details>
+         <details>
+            <plot>The seemingly invincible Spider-Man goes up against an all-new crop of villains -- including the shape-shifting Sandman -- in the third installment of this blockbusting comic book adventure series. While Spidey's superpowers are altered by an alien organism, his alter ego, Peter Parker, deals with nemesis Eddie Brock and gets caught up in a love triangle.</plot>
+         </details>
+      </details>
+   </GetTMDBPlotByIdChain>
+   <GetTMDBTaglineByIdChain>
+      <details>
+         <details>
+            <tagline>The battle within.</tagline>
+         </details>
+      </details>
+   </GetTMDBTaglineByIdChain>
+   <GetTMDBCastByIdChain>
+      <details>
+         <details>http://image.tmdb.org/t/p/</details>
+         <details>
+            <actor>
+               <name>Lucy Gordon</name>
+               <role>Jennifer Dugan</role>
+               <order>30</order>
+               <thumb>original/gNd5p43saMX9VTFVd020RAtm6lV.jpg</thumb>
+            </actor>
+         </details>
+      </details>
+   </GetTMDBCastByIdChain>
+   <GetTMDBGenresByIdChain>
+      <details>
+         <details>
+            <genre>Fantasy</genre>
+         </details>
+      </details>
+   </GetTMDBGenresByIdChain>
+   <GetTMDBThumbsByIdChain>
+      <details>
+         <details>http://image.tmdb.org/t/p/</details>
+         <details>
+            <thumb aspect="poster" preview="w500/jRUEIgUWzMv2ft8G3aric3TEWGj.jpg">original/jRUEIgUWzMv2ft8G3aric3TEWGj.jpg</thumb>
+            <details>
+               <thumb aspect="poster" preview="w500/jRUEIgUWzMv2ft8G3aric3TEWGj.jpg">original/jRUEIgUWzMv2ft8G3aric3TEWGj.jpg</thumb>
+            </details>
+         </details>
+      </details>
+   </GetTMDBThumbsByIdChain>
+   <GetTMDBFanartByIdChain>
+      <details>
+         <details>http://image.tmdb.org/t/p/</details>
+         <details>
+            <fanart>
+               <thumb preview="w780/cXvAXg1eC3spI2Y0qvFWwaXABeN.jpg">original/cXvAXg1eC3spI2Y0qvFWwaXABeN.jpg</thumb>
+            </fanart>
+         </details>
+      </details>
+   </GetTMDBFanartByIdChain>
+   <GetTMDBTrailerByIdChain>
+      <details>
+         <details>
+            <trailer>plugin://plugin.video.youtube/?action=play_video&amp;videoid=qExWP-kZC5Y</trailer>
+         </details>
+      </details>
+   </GetTMDBTrailerByIdChain>
+</details>
