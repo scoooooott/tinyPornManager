@@ -234,10 +234,16 @@ public class TinyMediaManager {
       LOGGER.info("java.webstart    : true");
     }
 
-    // initialize SWT if needed
-    TmmUIHelper.init();
-    if (TmmUIHelper.swt != null) {
-      NativeInterface.open();
+    // initialize SWT if found
+    try {
+      TmmUIHelper.init();
+      LOGGER.info("java.swt         : true");
+      if (TmmUIHelper.swt != null) {
+        NativeInterface.open();
+      }
+    }
+    catch (ClassNotFoundException e2) {
+      LOGGER.info("java.swt         : false");
     }
 
     // START character encoding debug
@@ -311,13 +317,11 @@ public class TinyMediaManager {
             LOGGER.debug("no splash found");
           }
 
-          // update check //////////////////////////////////////////////
+          LOGGER.info("=====================================================");
           if (g2 != null) {
             updateProgress(g2, "starting tinyMediaManager", 0);
             splash.update();
           }
-
-          LOGGER.info("=====================================================");
           LOGGER.info("starting tinyMediaManager");
 
           // convert old database
@@ -384,6 +388,12 @@ public class TinyMediaManager {
           TmmModuleManager.getInstance().registerModule(TvShowModuleManager.getInstance());
           TmmModuleManager.getInstance().enableModule(TvShowModuleManager.getInstance());
 
+          // if (g2 != null) {
+          // updateProgress(g2, "loading plugins", 50);
+          // splash.update();
+          // }
+          // PluginManager.getInstance(); // just instantiate static
+
           // VLC /////////////////////////////////////////////////////////
           // // try to initialize VLC native libs
           // if (g2 != null) {
@@ -403,19 +413,23 @@ public class TinyMediaManager {
 
           // do upgrade tasks after database loading
           if (newVersion) {
+            if (g2 != null) {
+              updateProgress(g2, "upgrading database to new version", 60);
+              splash.update();
+            }
             UpgradeTasks.performUpgradeTasksAfterDatabaseLoading(oldVersion);
           }
 
           // clean cache ////////////////////////////////////////////////////
           if (g2 != null) {
-            updateProgress(g2, "cleaning cache", 80);
+            updateProgress(g2, "cleaning cache", 70);
             splash.update();
           }
           CachedUrl.cleanupCache();
 
           // launch application ////////////////////////////////////////////
           if (g2 != null) {
-            updateProgress(g2, "loading ui", 90);
+            updateProgress(g2, "loading ui", 80);
             splash.update();
           }
           if (!GraphicsEnvironment.isHeadless()) {
@@ -423,7 +437,7 @@ public class TinyMediaManager {
 
             // finished ////////////////////////////////////////////////////
             if (g2 != null) {
-              updateProgress(g2, "finished starting", 100);
+              updateProgress(g2, "finished starting :)", 100);
               splash.update();
             }
 
@@ -501,6 +515,7 @@ public class TinyMediaManager {
         int l = g2.getFontMetrics().stringWidth(ReleaseInfo.getRealVersion()); // bound right
         g2.drawString(ReleaseInfo.getRealVersion(), 480 - l, 325);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
+        LOGGER.debug("Startup (" + progress + "%) " + text);
       }
 
       /**
