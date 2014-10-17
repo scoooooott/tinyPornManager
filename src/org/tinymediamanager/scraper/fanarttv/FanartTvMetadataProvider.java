@@ -17,11 +17,12 @@ package org.tinymediamanager.scraper.fanarttv;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.scraper.IMediaArtworkProvider;
 import org.tinymediamanager.scraper.MediaArtwork;
@@ -31,10 +32,13 @@ import org.tinymediamanager.scraper.MediaLanguages;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaScrapeOptions;
+import org.tinymediamanager.scraper.MediaType;
 
 import com.omertron.fanarttvapi.FanartTvApi;
-import com.omertron.fanarttvapi.model.FTArtworkType;
-import com.omertron.fanarttvapi.model.FanartTvArtwork;
+import com.omertron.fanarttvapi.enumeration.FTArtworkType;
+import com.omertron.fanarttvapi.model.FTArtwork;
+import com.omertron.fanarttvapi.model.FTMovie;
+import com.omertron.fanarttvapi.model.FTSeries;
 
 /**
  * The Class FanartTvMetadataProvider. An artwork provider for the site fanart.tv
@@ -50,7 +54,12 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
   public FanartTvMetadataProvider() throws Exception {
     if (ftv == null) {
       try {
-        ftv = new FanartTvApi("9314fc8f4c7d4a8b80079da114794891");
+        if (Globals.isDonator() && !StringUtils.isEmpty(Globals.settings.getFanartClientKey())) {
+          ftv = new FanartTvApi("9314fc8f4c7d4a8b80079da114794891", Globals.settings.getFanartClientKey());
+        }
+        else {
+          ftv = new FanartTvApi("9314fc8f4c7d4a8b80079da114794891");
+        }
       }
       catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
@@ -92,12 +101,14 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     return artwork;
   }
 
+  // http://webservice.fanart.tv/v3/movies/559?api_key=9314fc8f4c7d4a8b80079da114794891
   private List<MediaArtwork> getMovieArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
     MediaLanguages language = options.getLanguage();
-    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> allArtwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> returnArtwork = new ArrayList<MediaArtwork>();
 
-    List<FanartTvArtwork> movieImages = null;
+    FTMovie movieImages = null;
     String imdbId = options.getImdbId();
     int tmdbId = options.getTmdbId();
     if (imdbId != null && !imdbId.isEmpty()) {
@@ -106,44 +117,46 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     }
     else if (tmdbId != 0) {
       LOGGER.debug("getArtwork with TMDB id: " + tmdbId);
-      movieImages = ftv.getMovieArtwork(tmdbId);
+      movieImages = ftv.getMovieArtwork(String.valueOf(tmdbId));
     }
     else {
       LOGGER.warn("neither imdb/tmdb set");
-      return artwork;
+      return returnArtwork;
     }
 
-    // sort
-    Collections.sort(movieImages, new ArtworkComparator(language));
-
-    for (FanartTvArtwork ftvaw : movieImages) {
-      // http://fanart.tv/movie-fanart/
-
-      MediaArtwork ma = extractArtwork(artworkType, ftvaw);
-
-      if (ma != null) {
-        ma.setImdbId(imdbId);
-        ma.setTmdbId(tmdbId);
-        artwork.add(ma);
+    for (FTArtworkType type : movieImages.getArtwork().keySet()) {
+      // iterate over all types, and create type specific MAs
+      allArtwork.addAll(getMediaArtworkListFromFTArtworkList(movieImages.getArtwork(type), type));
+      Collections.sort(allArtwork, new MediaArtwork.MediaArtworkComparator(language));
+    }
+    if (artworkType == MediaArtworkType.ALL) {
+      return allArtwork;
+    }
+    else {
+      // just copy ours into new array
+      for (MediaArtwork ma : allArtwork) {
+        if (ma.getType() == artworkType) {
+          returnArtwork.add(ma);
+        }
       }
     }
-    return artwork;
+    return returnArtwork;
   }
 
+  // http://webservice.fanart.tv/v3/tv/79349?api_key=9314fc8f4c7d4a8b80079da114794891
   private List<MediaArtwork> getTvShowArtwork(MediaScrapeOptions options) throws Exception {
     MediaArtworkType artworkType = options.getArtworkType();
     MediaLanguages language = options.getLanguage();
-    List<MediaArtwork> artwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> allArtwork = new ArrayList<MediaArtwork>();
+    List<MediaArtwork> returnArtwork = new ArrayList<MediaArtwork>();
 
-    List<FanartTvArtwork> tvShowImages = null;
+    FTSeries tvShowImages = null;
     int tvdbId = 0;
-
     try {
       tvdbId = Integer.parseInt(options.getId(Constants.TVDBID));
     }
     catch (Exception e) {
     }
-
     // no ID found? try the old one
     if (tvdbId == 0) {
       try {
@@ -154,216 +167,221 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
     }
 
     if (tvdbId > 0) {
-      tvShowImages = ftv.getTvArtwork(tvdbId);
+      tvShowImages = ftv.getTvArtwork(String.valueOf(tvdbId));
     }
     else {
       LOGGER.warn("not tvdbId set");
-      return artwork;
+      return returnArtwork;
     }
 
-    // sort
-    Collections.sort(tvShowImages, new ArtworkComparator(language));
-
-    for (FanartTvArtwork ftvaw : tvShowImages) {
-      MediaArtwork ma = extractArtwork(artworkType, ftvaw);
-
-      if (ma != null) {
-        artwork.add(ma);
+    for (FTArtworkType type : tvShowImages.getArtwork().keySet()) {
+      // iterate over all types, and create type specific MAs
+      allArtwork.addAll(getMediaArtworkListFromFTArtworkList(tvShowImages.getArtwork(type), type));
+      Collections.sort(allArtwork, new MediaArtwork.MediaArtworkComparator(language));
+    }
+    if (artworkType == MediaArtworkType.ALL) {
+      return allArtwork;
+    }
+    else {
+      // just copy ours into new array
+      for (MediaArtwork ma : allArtwork) {
+        if (ma.getType() == artworkType) {
+          returnArtwork.add(ma);
+        }
       }
     }
-
-    return artwork;
+    return returnArtwork;
   }
 
-  private MediaArtwork extractArtwork(MediaArtworkType artworkType, FanartTvArtwork ftvaw) {
-    MediaArtwork ma = null;
-    FTArtworkType type = FTArtworkType.fromString(ftvaw.getType());
+  /**
+   * gets a list of Fanarts, and converts that to our type of MediaArtworks
+   * 
+   * @param awl
+   * @param mat
+   * @return
+   */
+  private static List<MediaArtwork> getMediaArtworkListFromFTArtworkList(List<FTArtwork> awl, FTArtworkType fat) {
+    List<MediaArtwork> mal = new ArrayList<MediaArtwork>();
 
-    // select desired types
-    switch (type) {
-      case MOVIEBACKGROUND:
-      case SHOWBACKGROUND:
-        if (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL) {
-          ma = new MediaArtwork();
-          ma.setType(MediaArtworkType.BACKGROUND);
-        }
-        break;
+    for (FTArtwork aw : awl) {
+      MediaArtwork ma = new MediaArtwork();
+      ma.setProviderId(providerInfo.getId());
+      ma.setType(mapFTArtworkTypeToMediaArtworkType(fat));
+      ma.setDefaultUrl(aw.getUrl());
+      ma.setPreviewUrl(aw.getUrl().replace("/fanart/", "/preview/"));
+      ma.setLanguage(aw.getLanguage());
+      ma.setLikes(aw.getLikes());
+      try {
+        ma.setSeason(Integer.valueOf(aw.getSeason()));
+      }
+      catch (Exception e) {
+      }
 
-      case MOVIEPOSTER:
-      case TVPOSTER:
-        if (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL) {
-          ma = new MediaArtwork();
-          ma.setType(MediaArtworkType.POSTER);
-        }
-        break;
-
-      case MOVIETHUMB:
-      case TVTHUMB:
-        if (artworkType == MediaArtworkType.THUMB || artworkType == MediaArtworkType.ALL) {
-          ma = new MediaArtwork();
-          ma.setType(MediaArtworkType.THUMB);
-        }
-        break;
-
-      case SEASONTHUMB:
-        if (artworkType == MediaArtworkType.SEASON || artworkType == MediaArtworkType.ALL) {
-          ma = new MediaArtwork();
-          ma.setType(MediaArtworkType.SEASON);
-        }
-        break;
-
-      case TVBANNER:
-      case MOVIEBANNER:
-        if (artworkType == MediaArtworkType.BANNER || artworkType == MediaArtworkType.ALL) {
-          ma = new MediaArtwork();
-          ma.setType(MediaArtworkType.BANNER);
-        }
-        break;
-
-      case HDMOVIELOGO:
-      case HDTVLOGO:
-      case CLEARLOGO:
-      case MOVIELOGO:
-        if (artworkType == MediaArtworkType.LOGO || artworkType == MediaArtworkType.ALL) {
-          ma = new MediaArtwork();
-          ma.setType(MediaArtworkType.LOGO);
-        }
-        break;
-
-      case HDMOVIECLEARART:
-      case CLEARART:
-      case MOVIEART:
-      case HDCLEARART:
-        if (artworkType == MediaArtworkType.CLEARART || artworkType == MediaArtworkType.ALL) {
-          ma = new MediaArtwork();
-          ma.setType(MediaArtworkType.CLEARART);
-        }
-        break;
-
-      case CDART:
-      case MOVIEDISC:
-        if (artworkType == MediaArtworkType.DISC || artworkType == MediaArtworkType.ALL) {
-          ma = new MediaArtwork();
-          ma.setType(MediaArtworkType.DISC);
-        }
-        break;
-
-      default:
-        return null;
-    }
-
-    if (ma != null) {
-      ma.setDefaultUrl(ftvaw.getUrl());
-      ma.setPreviewUrl(ftvaw.getUrl().replace("/fanart/", "/preview/"));
-      // System.out.println("***" + ma.getDefaultUrl() + " -> " + ma.getPreviewUrl());
-      ma.setProviderId(getProviderInfo().getId());
-      ma.setLanguage(ftvaw.getLanguage());
-
-      // resolution
-      switch (type) {
+      // set resolution
+      switch (fat) {
         case HDMOVIECLEARART:
         case HDCLEARART:
         case MOVIETHUMB:
-          ma.addImageSize(1000, 562, ftvaw.getUrl());
+          ma.addImageSize(1000, 562, aw.getUrl());
           ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
           break;
 
         case SEASONTHUMB:
         case TVTHUMB:
-          ma.addImageSize(500, 281, ftvaw.getUrl());
+          ma.addImageSize(500, 281, aw.getUrl());
           ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
           break;
 
         case MOVIEBACKGROUND:
         case SHOWBACKGROUND:
-          ma.addImageSize(1920, 1080, ftvaw.getUrl());
+          ma.addImageSize(1920, 1080, aw.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
 
         case MOVIEPOSTER:
         case TVPOSTER:
-          ma.addImageSize(1000, 1426, ftvaw.getUrl());
+          ma.addImageSize(1000, 1426, aw.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
 
         case TVBANNER:
         case MOVIEBANNER:
-          ma.addImageSize(1000, 185, ftvaw.getUrl());
+          ma.addImageSize(1000, 185, aw.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
 
         case HDMOVIELOGO:
         case HDTVLOGO:
-          ma.addImageSize(800, 310, ftvaw.getUrl());
+          ma.addImageSize(800, 310, aw.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
 
         case CLEARLOGO:
         case MOVIELOGO:
-          ma.addImageSize(400, 155, ftvaw.getUrl());
+          ma.addImageSize(400, 155, aw.getUrl());
           ma.setSizeOrder(FanartSizes.MEDIUM.getOrder());
           break;
 
         case CLEARART:
         case MOVIEART:
-          ma.addImageSize(500, 281, ftvaw.getUrl());
+          ma.addImageSize(500, 281, aw.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
           break;
 
         case CDART:
         case MOVIEDISC:
-          ma.addImageSize(1000, 1000, ftvaw.getUrl());
+          ma.addImageSize(1000, 1000, aw.getUrl());
           ma.setSizeOrder(FanartSizes.LARGE.getOrder());
 
         default:
           break;
       }
+
+      mal.add(ma);
     }
 
-    return ma;
+    return mal;
   }
 
-  private static class ArtworkComparator implements Comparator<FanartTvArtwork> {
-    private MediaLanguages preferredLangu = MediaLanguages.en;
-
-    public ArtworkComparator(MediaLanguages language) {
-      this.preferredLangu = language;
+  /**
+   * Maps Fanart types to ours
+   * 
+   * @see FTArtworkType
+   * @param fat
+   *          Fanart type
+   * @return MediaArtworkType
+   */
+  private static MediaArtworkType mapFTArtworkTypeToMediaArtworkType(FTArtworkType fat) {
+    MediaArtworkType mat = null;
+    // @formatter:off
+    switch (fat) {
+      // TV Artwork
+      case  CLEARART:          mat = MediaArtworkType.CLEARART; break;
+      case  CLEARLOGO:         mat = MediaArtworkType.LOGO; break;
+      case  SEASONTHUMB:       mat = MediaArtworkType.SEASON; break;
+      case  TVTHUMB:           mat = MediaArtworkType.THUMB; break;
+      case  CHARACTERART:      mat = MediaArtworkType.ACTOR; break;
+      case  SHOWBACKGROUND:    mat = MediaArtworkType.BACKGROUND; break;
+      case  HDTVLOGO:          mat = MediaArtworkType.LOGO; break;
+      case  HDCLEARART:        mat = MediaArtworkType.CLEARART; break;
+      case  TVPOSTER:          mat = MediaArtworkType.POSTER; break;
+      case  TVBANNER:          mat = MediaArtworkType.BANNER; break;
+      case  SEASONPOSTER:      mat = MediaArtworkType.POSTER; break;
+      case  SEASONBANNER:      mat = MediaArtworkType.BANNER; break;
+      // Movie Artwork Types
+      case  MOVIELOGO:         mat = MediaArtworkType.LOGO; break;
+      case  MOVIEDISC:         mat = MediaArtworkType.DISC; break;
+      case  MOVIEART:          mat = MediaArtworkType.CLEARART; break;
+      case  MOVIEBACKGROUND:   mat = MediaArtworkType.BACKGROUND; break;
+      case  MOVIETHUMB:        mat = MediaArtworkType.THUMB; break;
+      case  MOVIEBANNER:       mat = MediaArtworkType.BANNER; break;
+      case  HDMOVIELOGO:       mat = MediaArtworkType.LOGO; break;
+      case  HDMOVIECLEARART:   mat = MediaArtworkType.CLEARART; break;
+      case  MOVIEPOSTER:       mat = MediaArtworkType.POSTER; break;
+      // Music Artwork Types
+      case  CDART:             mat = MediaArtworkType.DISC; break;
+      case  ARTISTBACKGROUND:  mat = MediaArtworkType.BACKGROUND; break;
+      case  ALBUMCOVER:        mat = MediaArtworkType.POSTER; break;
+      case  MUSICLOGO:         mat = MediaArtworkType.LOGO; break;
+      case  ARTISTTHUMB:       mat = MediaArtworkType.ACTOR; break;
+      case  HDMUSICLOGO:       mat = MediaArtworkType.LOGO; break;
+      case  MUSICBANNER:       mat = MediaArtworkType.BANNER; break;
+      default:
+        break;
     }
+    // @formatter:on
+    return mat;
+  }
 
-    /*
-     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
-     */
-    @Override
-    public int compare(FanartTvArtwork arg0, FanartTvArtwork arg1) {
-      String preferredLangu = this.preferredLangu.name();
-
-      // check if first image is preferred langu
-      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
-        return -1;
+  /**
+   * maps our artwork types to Fanart artwork ones<br>
+   * you get multiple ones, b/c our CLERART can map to CLEARART and <b>HD</b>CLEANART
+   * 
+   * @param mt
+   *          our media type (like movie or tv)
+   * @param mat
+   *          our artwork type
+   * @return FTArtworkType fat
+   */
+  private static List<FTArtworkType> mapMediaArtworkTypeToFTArtworkType(MediaType mt, MediaArtworkType mat) {
+    List<FTArtworkType> fat = new ArrayList<FTArtworkType>(1); // usually only one
+    // @formatter:off
+    if (mt == MediaType.MOVIE || mt == MediaType.MOVIE_SET) {
+      switch (mat) {
+        case  LOGO:              fat.add(FTArtworkType.MOVIELOGO);
+                                 fat.add(FTArtworkType.HDMOVIELOGO);       break;
+        case  CLEARART:          fat.add(FTArtworkType.MOVIEART);
+                                 fat.add(FTArtworkType.HDMOVIECLEARART);   break;
+        case  DISC:              fat.add(FTArtworkType.MOVIEDISC);         break;
+        case  BACKGROUND:        fat.add(FTArtworkType.MOVIEBACKGROUND);   break;
+        case  THUMB:             fat.add(FTArtworkType.MOVIETHUMB);        break;
+        case  BANNER:            fat.add(FTArtworkType.MOVIEBANNER);       break;
+        case  POSTER:            fat.add(FTArtworkType.MOVIEPOSTER);       break;
+        case  ACTOR:             fat.add(FTArtworkType.CHARACTERART);      break;
+        default:
+          break;
       }
+    } else if (mt == MediaType.TV_SHOW || mt == MediaType.TV_EPISODE) {
+      switch (mat) {
+        case  CLEARART:          fat.add(FTArtworkType.CLEARART);
+                                 fat.add(FTArtworkType.HDCLEARART);        break;
+        case  LOGO:              fat.add(FTArtworkType.CLEARLOGO);
+                                 fat.add(FTArtworkType.HDTVLOGO);          break;
+        case  POSTER:            fat.add(FTArtworkType.TVPOSTER);
+                                 fat.add(FTArtworkType.SEASONPOSTER);      break;
+        case  BANNER:            fat.add(FTArtworkType.TVBANNER);
+                                 fat.add(FTArtworkType.SEASONBANNER);      break;
+        case  SEASON:            fat.add(FTArtworkType.SEASONTHUMB);       break;
+        case  THUMB:             fat.add(FTArtworkType.TVTHUMB);           break;
+        case  BACKGROUND:        fat.add(FTArtworkType.SHOWBACKGROUND);    break;
+        case  ACTOR:             fat.add(FTArtworkType.CHARACTERART);      break;
 
-      // check if second image is preferred langu
-      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
-        return 1;
-      }
-
-      // check if the first image is en
-      if ("en".equals(arg0.getLanguage()) && !"en".equals(arg1.getLanguage())) {
-        return -1;
-      }
-
-      // check if the second image is en
-      if (!"en".equals(arg0.getLanguage()) && "en".equals(arg1.getLanguage())) {
-        return 1;
-      }
-
-      // we did not sort until here; so lets sort with the rating
-      if (arg0.getLikes() == arg1.getLikes()) {
-        return 0;
-      }
-      else {
-        return arg0.getLikes() > arg1.getLikes() ? -1 : 1;
+        case  DISC:              break; // no DISC for TV on fanart
+        default:
+          break;
       }
     }
+    // @formatter:on
+    return fat;
   }
 }

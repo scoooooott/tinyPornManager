@@ -30,7 +30,7 @@
 	<classpathentry kind="lib" path="lib/jackson-databind.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/platform.jar"/>
-	<classpathentry kind="lib" path="lib/fanarttvapi.jar" sourcepath="buildsupport/fanarttvapi-1.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/fanarttvapi.jar" sourcepath="buildsupport/fanarttvapi-3.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/asm.jar"/>
 	<classpathentry kind="lib" path="lib/jmte-unbundled.jar"/>
 	<classpathentry kind="lib" path="lib/DJNativeSwing-SWT.jar"/>

@@ -52,10 +52,13 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
   private JTextField                  tfTraktUsername;
   private JPasswordField              tfTraktPassword;
   private JTextField                  tfTraktAPIKey;
+  private final JPanel                panelFanartTv    = new JPanel();
+  private JTextField                  tfFanartClientKey;
 
   public ExternalServicesSettingsPanel() {
     setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, },
-        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+        new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
+            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
     {
       JPanel panelTrakttv = new JPanel();
       panelTrakttv.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.trakttv"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -91,14 +94,34 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
         panelTrakttv.add(tfTraktAPIKey, "4, 6, fill, default");
         tfTraktAPIKey.setColumns(10);
       }
+      panelFanartTv.setBorder(new TitledBorder(null, "Fanart.tv", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+      add(panelFanartTv, "2, 5, fill, fill");
+      panelFanartTv.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
+          FormFactory.RELATED_GAP_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] {
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+      {
+        JLabel lblClientKey = new JLabel("client key");
+        panelFanartTv.add(lblClientKey, "2, 2");
+      }
+      {
+        tfFanartClientKey = new JTextField();
+        panelFanartTv.add(tfFanartClientKey, "5, 2, fill, default");
+        tfFanartClientKey.setColumns(10);
+      }
 
       if (!Globals.isDonator()) {
         tfTraktUsername.setEnabled(false);
         tfTraktPassword.setEnabled(false);
         tfTraktAPIKey.setEnabled(false);
-        JLabel lblTraktDonator = new JLabel("<html><body>" + BUNDLE.getString("tmm.donatorfunction.hint") + "</body></html>"); //$NON-NLS-1$
+        tfFanartClientKey.setEnabled(false);
+        String msg = "<html><body>" + BUNDLE.getString("tmm.donatorfunction.hint") + "</body></html>"; //$NON-NLS-1$
+        JLabel lblTraktDonator = new JLabel(msg);
         lblTraktDonator.setForeground(Color.RED);
         panelTrakttv.add(lblTraktDonator, "2, 8, 3, 1, default, default");
+
+        JLabel lblFanartTvDonator = new JLabel(msg);
+        lblFanartTvDonator.setForeground(Color.RED);
+        panelFanartTv.add(lblFanartTvDonator, "2, 4, 4, 1, default, default");
       }
     }
     initDataBindings();
@@ -123,5 +146,11 @@ public class ExternalServicesSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, String, JTextField, String> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_2, tfTraktAPIKey, jTextFieldBeanProperty_1);
     autoBinding_2.bind();
+    //
+    BeanProperty<Settings, String> settingsBeanProperty_3 = BeanProperty.create("fanartClientKey");
+    BeanProperty<JTextField, String> jTextFieldBeanProperty_2 = BeanProperty.create("text");
+    AutoBinding<Settings, String, JTextField, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_3, tfFanartClientKey, jTextFieldBeanProperty_2);
+    autoBinding_3.bind();
   }
 }

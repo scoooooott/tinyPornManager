@@ -17,6 +17,7 @@ package org.tinymediamanager.scraper;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -243,6 +244,7 @@ public class MediaArtwork {
   private String                providerId;
   private MediaArtworkType      type;
   private int                   sizeOrder  = 0;
+  private int                   likes      = 0;
 
   private List<ImageSizeAndUrl> imageSizes = new ArrayList<ImageSizeAndUrl>();
 
@@ -471,6 +473,20 @@ public class MediaArtwork {
   }
 
   /**
+   * amount of likes (or other, for ordering)
+   */
+  public int getLikes() {
+    return likes;
+  }
+
+  /**
+   * amount of likes (or other, for ordering)
+   */
+  public void setLikes(int likes) {
+    this.likes = likes;
+  }
+
+  /**
    * Gets the season.
    * 
    * @return the season
@@ -578,6 +594,51 @@ public class MediaArtwork {
      */
     public String toString() {
       return this.width + "x" + this.height;
+    }
+  }
+
+  public static class MediaArtworkComparator implements Comparator<MediaArtwork> {
+    private MediaLanguages preferredLangu = MediaLanguages.en;
+
+    public MediaArtworkComparator(MediaLanguages language) {
+      this.preferredLangu = language;
+    }
+
+    /*
+     * sort artwork: primary by language: preferred lang (ie de), en, others; then: score
+     */
+    @Override
+    public int compare(MediaArtwork arg0, MediaArtwork arg1) {
+      String preferredLangu = this.preferredLangu.name();
+
+      // check first if is preferred langu
+      if (preferredLangu.equals(arg0.getLanguage()) && !preferredLangu.equals(arg1.getLanguage())) {
+        return -1;
+      }
+      if (!preferredLangu.equals(arg0.getLanguage()) && preferredLangu.equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // not? compare with EN
+      if ("en".equals(arg0.getLanguage()) && !"en".equals(arg1.getLanguage())) {
+        return -1;
+      }
+      if (!"en".equals(arg0.getLanguage()) && "en".equals(arg1.getLanguage())) {
+        return 1;
+      }
+
+      // we did not sort until here; so lets sort with the rating / likes
+      if (arg0.getSizeOrder() == arg1.getSizeOrder()) {
+        if (arg0.getLikes() == arg1.getLikes()) {
+          return 0;
+        }
+        else {
+          return arg0.getLikes() > arg1.getLikes() ? -1 : 1;
+        }
+      }
+      else {
+        return arg0.getSizeOrder() > arg1.getSizeOrder() ? -1 : 1;
+      }
     }
   }
 }

@@ -122,6 +122,7 @@ public class Settings extends AbstractModelObject {
   private String                      traktUsername               = "";
   private String                      traktPassword               = "";
   private String                      traktAPI                    = "";
+  private String                      fanartClientKey             = "";
 
   private String                      xbmcHost                    = "";
   private String                      xbmcUsername                = "";
@@ -1020,6 +1021,16 @@ public class Settings extends AbstractModelObject {
     String oldValue = this.traktAPI;
     this.traktAPI = newValue.trim();
     firePropertyChange("traktAPI", oldValue, newValue);
+  }
+
+  public String getFanartClientKey() {
+    return fanartClientKey;
+  }
+
+  public void setFanartClientKey(String newValue) {
+    String oldValue = this.fanartClientKey;
+    this.fanartClientKey = newValue.trim();
+    firePropertyChange("fanartTv", oldValue, newValue);
   }
 
   public String getXbmcHost() {
