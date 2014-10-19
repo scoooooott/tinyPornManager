@@ -46,7 +46,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.Timer;
 import javax.swing.event.MenuEvent;
@@ -54,6 +53,7 @@ import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
@@ -83,6 +83,7 @@ import org.tinymediamanager.ui.components.StatusBar;
 import org.tinymediamanager.ui.components.TextFieldPopupMenu;
 import org.tinymediamanager.ui.components.VerticalTextIcon;
 import org.tinymediamanager.ui.dialogs.LogDialog;
+import org.tinymediamanager.ui.dialogs.UpdateDialog;
 import org.tinymediamanager.ui.movies.MoviePanel;
 import org.tinymediamanager.ui.moviesets.MovieSetPanel;
 import org.tinymediamanager.ui.tvshows.TvShowPanel;
@@ -296,7 +297,7 @@ public class MainWindow extends JFrame {
 
   private void checkForUpdate() {
     try {
-      final SwingWorker<Boolean, Void> updateWorker = new UpdaterTask();
+      final UpdaterTask updateWorker = new UpdaterTask();
 
       updateWorker.addPropertyChangeListener(new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
@@ -305,13 +306,22 @@ public class MainWindow extends JFrame {
               boolean update = updateWorker.get();
               LOGGER.debug("update result was: " + update);
               if (update) {
-                int answer = JOptionPane.showConfirmDialog(null, BUNDLE.getString("tmm.update.message"), BUNDLE.getString("tmm.update.title"),
-                    JOptionPane.YES_NO_OPTION);
-                if (answer == JOptionPane.OK_OPTION) {
-                  LOGGER.info("Updating...");
+                // show whatsnewdialog with the option to update
+                if (StringUtils.isNotBlank(updateWorker.getChangelog())) {
+                  UpdateDialog dialog = new UpdateDialog(updateWorker.getChangelog());
+                  dialog.setVisible(true);
+                }
+                else {
+                  // do the update without changelog popup
 
-                  // spawn getdown and exit TMM
-                  closeTmmAndStart(Utils.getPBforTMMupdate());
+                  int answer = JOptionPane.showConfirmDialog(null, BUNDLE.getString("tmm.update.message"), BUNDLE.getString("tmm.update.title"),
+                      JOptionPane.YES_NO_OPTION);
+                  if (answer == JOptionPane.OK_OPTION) {
+                    LOGGER.info("Updating...");
+
+                    // spawn getdown and exit TMM
+                    closeTmmAndStart(Utils.getPBforTMMupdate());
+                  }
                 }
               }
             }

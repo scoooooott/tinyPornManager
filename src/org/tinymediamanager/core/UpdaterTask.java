@@ -35,7 +35,9 @@ import org.tinymediamanager.scraper.util.Url;
  * @author Myron BOyle
  */
 public class UpdaterTask extends SwingWorker<Boolean, Void> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(UpdaterTask.class);
+  private static final Logger LOGGER    = LoggerFactory.getLogger(UpdaterTask.class);
+
+  private String              changelog = "";
 
   /**
    * Instantiates a new updater task.
@@ -43,11 +45,6 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
   public UpdaterTask() {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Runnable#run()
-   */
   @Override
   public Boolean doInBackground() {
     try {
@@ -83,6 +80,9 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       String local = FileUtils.readFileToString(new File("digest.txt"), "UTF-8");
       if (!local.equals(online)) {
         LOGGER.info("Update needed...");
+        // download changelog.txt for preview
+        upd = new Url(updateUrl + "/changelog.txt");
+        changelog = IOUtils.toString(upd.getInputStream(), "UTF-8");
         return true;
       }
       else {
@@ -121,5 +121,9 @@ public class UpdaterTask extends SwingWorker<Boolean, Void> {
       }
     }
     return false;
+  }
+
+  public String getChangelog() {
+    return changelog;
   }
 }
