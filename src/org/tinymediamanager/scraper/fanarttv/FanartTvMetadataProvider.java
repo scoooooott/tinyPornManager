@@ -60,6 +60,17 @@ public class FanartTvMetadataProvider implements IMediaArtworkProvider {
         else {
           ftv = new FanartTvApi("9314fc8f4c7d4a8b80079da114794891");
         }
+        // set our proxy
+        if (StringUtils.isNotEmpty(Globals.settings.getProxyPort()) && StringUtils.isNotEmpty(Globals.settings.getProxyHost())) {
+          try {
+            ftv.setProxy(Globals.settings.getProxyHost(), Integer.valueOf(Globals.settings.getProxyPort()), Globals.settings.getProxyUsername(),
+                Globals.settings.getProxyPassword());
+          }
+          catch (Exception e) {
+            LOGGER.error("Failed to set proxy for FanartTvMetadataProvider - using NONE", e);
+          }
+        }
+
       }
       catch (Exception e) {
         LOGGER.error("FanartTvMetadataProvider", e);
