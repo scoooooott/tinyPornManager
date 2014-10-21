@@ -846,6 +846,11 @@ public class MovieRenamer {
       newDestination = replaceToken(newDestination, "$E", movie.getTitleSortable());
     }
 
+    // replace token sort title ($L)
+    if (newDestination.contains("$L")) {
+      newDestination = replaceToken(newDestination, "$L", movie.getSpokenLanguages());
+    }
+
     // replace certification ($C)
     if (newDestination.contains("$C")) {
       if (movie.getCertification() != Certification.NOT_RATED) {

@@ -1,3 +1,9 @@
+Version 2.7 (upcoming)
+=======================
++ changed Fanart.tv to v3 API (with clientKey)
++ added more artwork scraping dialogs
++ added $L language renaming option
+
 Version 2.6.3
 =======================
 + added edit button for tv show season
