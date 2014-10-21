@@ -149,6 +149,7 @@ public class MovieEditorDialog extends TmmDialog {
   private JSpinner                                                  spReleaseDate;
   private JSpinner                                                  spTop250;
   private JComboBox                                                 cbSource;
+  private JCheckBox                                                 chckbxVideo3D;
 
   private ImageLabel                                                lblLogo;
   private ImageLabel                                                lblBanner;
@@ -390,6 +391,14 @@ public class MovieEditorDialog extends TmmDialog {
     {
       cbSource = new JComboBox(MovieMediaSource.values());
       details1Panel.add(cbSource, "4, 26, 4, 1, fill, default");
+    }
+    {
+      JLabel lblVideod = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
+      details1Panel.add(lblVideod, "8, 26, right, default");
+    }
+    {
+      chckbxVideo3D = new JCheckBox("");
+      details1Panel.add(chckbxVideo3D, "10, 26, 3, 1");
     }
     {
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
@@ -798,6 +807,7 @@ public class MovieEditorDialog extends TmmDialog {
       spDateAdded.setValue(movie.getDateAdded());
       cbCertification.setSelectedItem(movie.getCertification());
       cbSource.setSelectedItem(movie.getMediaSource());
+      chckbxVideo3D.setSelected(movie.isVideoIn3D());
       if (movie.getReleaseDate() != null) {
         spReleaseDate.setValue(movie.getReleaseDate());
       }
@@ -943,6 +953,7 @@ public class MovieEditorDialog extends TmmDialog {
       movieToEdit.setSpokenLanguages(tfSpokenLanguages.getText());
       movieToEdit.setCountry(tfCountry.getText());
       movieToEdit.setMediaSource((MovieMediaSource) cbSource.getSelectedItem());
+      movieToEdit.setVideoIn3D(chckbxVideo3D.isSelected());
 
       if (StringUtils.isNotBlank(tfTmdbId.getText())) {
         try {

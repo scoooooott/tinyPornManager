@@ -113,6 +113,7 @@ public class Movie extends MediaEntity {
   private boolean                   multiMovieDir   = false;                               // we detected more movies in same folder
   private int                       top250          = 0;
   private MovieMediaSource          mediaSource     = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
+  private boolean                   videoIn3D       = false;
 
   private List<String>              genres          = new ArrayList<String>(1);
   private List<String>              tags            = new ArrayList<String>(0);
@@ -1956,6 +1957,23 @@ public class Movie extends MediaEntity {
     return top250;
   }
 
+  public void setVideoIn3D(boolean newValue) {
+    boolean oldValue = this.videoIn3D;
+    this.videoIn3D = newValue;
+    firePropertyChange(VIDEO_IN_3D, oldValue, newValue);
+  }
+
+  public boolean isVideoIn3D() {
+    String video3DFormat = "";
+    List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
+    if (videos.size() > 0) {
+      MediaFile mediaFile = videos.get(0);
+      video3DFormat = mediaFile.getVideo3DFormat();
+    }
+
+    return videoIn3D || StringUtils.isNotBlank(video3DFormat);
+  }
+
   public void setTop250(int newValue) {
     int oldValue = this.top250;
     this.top250 = newValue;
@@ -1965,7 +1983,6 @@ public class Movie extends MediaEntity {
   public void addProducer(MovieProducer obj) {
     producers.add(obj);
     firePropertyChange(PRODUCERS, null, producers);
-
   }
 
   public void removeProducer(MovieProducer obj) {

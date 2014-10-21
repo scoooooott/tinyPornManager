@@ -870,7 +870,18 @@ public class MovieRenamer {
 
       // replace token 3D format ($3)
       if (newDestination.contains("$3")) {
-        newDestination = replaceToken(newDestination, "$3", mf.getVideo3DFormat());
+        // if there is 3D info from MI, take this
+        if (StringUtils.isNotBlank(mf.getVideo3DFormat())) {
+          newDestination = replaceToken(newDestination, "$3", mf.getVideo3DFormat());
+        }
+        // no MI info, but flag set from user
+        else if (movie.isVideoIn3D()) {
+          newDestination = replaceToken(newDestination, "$3", "3D");
+        }
+        // strip unneeded token
+        else {
+          newDestination = replaceToken(newDestination, "$3", "");
+        }
       }
 
       // replace token audio codec + channels ($A)

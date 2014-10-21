@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.movies;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -26,6 +27,7 @@ import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.scraper.MediaGenres;
 
@@ -35,35 +37,26 @@ import org.tinymediamanager.scraper.MediaGenres;
  * @author Manuel Laggner
  */
 public class MovieGenresPanel extends JPanel {
-
-  /** The Constant serialVersionUID. */
   private static final long   serialVersionUID = -6585642654072040266L;
-
-  /** The Constant LOGGER. */
   private static final Logger LOGGER           = LoggerFactory.getLogger(MovieGenresPanel.class);
 
-  /** The model. */
   private MovieSelectionModel movieSelectionModel;
 
-  /**
-   * Instantiates a new movie genres panel.
-   * 
-   * @param model
-   *          the model
-   */
   public MovieGenresPanel(MovieSelectionModel model) {
     this.movieSelectionModel = model;
     setOpaque(false);
 
     // install the propertychangelistener
     PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+      @Override
       public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         String property = propertyChangeEvent.getPropertyName();
         Object source = propertyChangeEvent.getSource();
 
         // react on selection of a movie or change of genres
         if ((source.getClass() == MovieSelectionModel.class && "selectedMovie".equals(property))
-            || (source.getClass() == Movie.class && "genre".equals(property))) {
+            || (source.getClass() == Movie.class && "genre".equals(property))
+            || (source.getClass() == Movie.class && Constants.VIDEO_IN_3D.equals(property))) {
           buildImages();
         }
       }
@@ -77,7 +70,14 @@ public class MovieGenresPanel extends JPanel {
    */
   private void buildImages() {
     removeAll();
-    List<MediaGenres> genres = movieSelectionModel.getSelectedMovie().getGenres();
+    List<MediaGenres> genres = new ArrayList<MediaGenres>(movieSelectionModel.getSelectedMovie().getGenres());
+    // first look for 3d
+    if (movieSelectionModel.getSelectedMovie().isVideoIn3D()) {
+      if (!genres.contains("3D")) {
+        genres.add(0, MediaGenres.getGenre("3D"));
+      }
+    }
+
     for (MediaGenres genre : genres) {
       try {
         StringBuilder sb = new StringBuilder("/images/genres/");
