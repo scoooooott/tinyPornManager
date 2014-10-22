@@ -277,6 +277,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           if (!ty[1].isEmpty()) {
             movie.setYear(ty[1]);
           }
+          // if the String 3D is in the movie file name, assume it is a 3D movie
+          Matcher matcher = video3DPattern.matcher(basename);
+          if (matcher.find()) {
+            movie.setVideoIn3D(true);
+          }
           movie.setDateAdded(new Date());
           movie.saveToDb();
         }
