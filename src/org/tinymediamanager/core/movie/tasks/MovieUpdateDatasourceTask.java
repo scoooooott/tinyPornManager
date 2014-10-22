@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -72,6 +74,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
 
   // skip folders starting with a SINGLE "." or "._"
   private static final String         skipFoldersRegex = "^[.][\\w]+.*";
+  private static Pattern              video3DPattern   = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
 
   private List<String>                dataSources;
   private MovieList                   movieList;
@@ -422,6 +425,12 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             if (!ty[1].isEmpty()) {
               movie.setYear(ty[1]);
             }
+          }
+
+          // if the String 3D is in the movie dir, assume it is a 3D movie
+          Matcher matcher = video3DPattern.matcher(movieDir.getName());
+          if (matcher.find()) {
+            movie.setVideoIn3D(true);
           }
           movie.setPath(movieDir.getPath());
           movie.setDataSource(dataSource);

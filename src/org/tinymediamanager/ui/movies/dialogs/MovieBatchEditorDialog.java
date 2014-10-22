@@ -89,7 +89,8 @@ public class MovieBatchEditorDialog extends TmmDialog {
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblGenres = new JLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
       panelContent.add(lblGenres, "2, 2, right, default");
@@ -147,7 +148,7 @@ public class MovieBatchEditorDialog extends TmmDialog {
       });
       panelContent.add(btnRemoveGenre, "8, 2");
 
-      JLabel lblTags = new JLabel("Tag");
+      JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
       panelContent.add(lblTags, "2, 4, right, default");
 
       cbTags = new AutocompleteComboBox(movieList.getTagsInMovies().toArray());
@@ -255,6 +256,28 @@ public class MovieBatchEditorDialog extends TmmDialog {
         }
       });
       panelContent.add(btnWatched, "6, 8");
+
+      JLabel lblVideo3D = new JLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
+      panelContent.add(lblVideo3D, "2, 10, right, default");
+
+      final JCheckBox chckbxVideo3D = new JCheckBox("");
+      panelContent.add(chckbxVideo3D, "4, 10");
+
+      JButton btnVideo3D = new JButton("");
+      btnVideo3D.setMargin(new Insets(2, 2, 2, 2));
+      btnVideo3D.setIcon(IconManager.APPLY);
+      btnVideo3D.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          changed = true;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (Movie movie : moviesToEdit) {
+            movie.setVideoIn3D(chckbxVideo3D.isSelected());
+          }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+      });
+      panelContent.add(btnVideo3D, "6, 10");
     }
 
     {
