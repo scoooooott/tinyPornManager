@@ -26,7 +26,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.TreeSet;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -82,7 +85,17 @@ public class TmmWindowSaver implements AWTEventListener {
     OutputStream output = null;
     try {
       output = new FileOutputStream(PROPERTIES_FILE);
-      properties.store(output, null);
+      Properties tmp = new Properties() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public synchronized Enumeration<Object> keys() {
+          return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+        }
+      };
+      tmp.putAll(properties);
+      tmp.store(output, null);
+      // properties.store(output, null);
     }
     catch (IOException e) {
       LOGGER.warn("failed to store window config: " + e.getMessage());
