@@ -13,21 +13,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.tinymediamanager.scraper.MediaType;
+import org.tinymediamanager.scraper.MediaScraper;
+import org.tinymediamanager.scraper.ScraperType;
 
-public class XbmcScraper {
+public class XbmcScraper extends MediaScraper {
   private Map<String, ScraperFunction> functions = new TreeMap<String, ScraperFunction>();
-  private String                       id;
-  private String                       name;
   private String                       thumb;
   private String                       scraperXml;
   private String                       language;
-  private String                       version;
   private String                       provider;
-  private String                       summary;
-  private String                       description;
+  private File                         folder;
   private String                       settingsPath;
-  private MediaType                    type;
 
   /**
    * instantiates a new scraper and parse info from addon.xml
@@ -35,15 +31,18 @@ public class XbmcScraper {
    * @param scraperFolder
    */
   public XbmcScraper(File scraperFolder) {
+    super(null, null, null); // dummy constructor
+
     try {
       File info = new File(scraperFolder, "addon.xml");
       Document doc = Jsoup.parse(info, "UTF-8", "");
 
       Elements addon = doc.getElementsByTag("addon");
 
-      this.id = addon.attr("id");
-      this.name = addon.attr("name");
-      this.version = addon.attr("version");
+      this.setFolder(scraperFolder);
+      this.setId(addon.attr("id"));
+      this.setName(addon.attr("name"));
+      this.setVersion(addon.attr("version"));
       this.provider = addon.attr("provider-name");
 
       for (Element el : doc.getElementsByAttribute("point")) {
@@ -56,35 +55,35 @@ public class XbmcScraper {
           }
           for (Element d : desc) {
             if (d.nodeName().equals("summary")) {
-              this.summary = d.text();
+              this.setThumb(d.text());
             }
             else {
-              this.description = d.text();
+              this.setDescription(d.text());
             }
           }
         }
         else if (point.contains("metadata.scraper")) {
-          this.setScraperXml(el.attr("library"));
-          this.setLanguage(el.attr("language"));
+          this.scraperXml = el.attr("library");
+          this.language = el.attr("language");
 
-          // TODO: do we have some entity ENUMs ?!?
           // more here http://wiki.xbmc.org/index.php?title=addon.xml#.3Cextension.3E
           if (point.equals("xbmc.metadata.scraper.movies")) {
-            System.out.println("I'm a MOVIE scraper");
-            this.type = MediaType.MOVIE;
+            this.setType(ScraperType.MOVIE);
           }
           else if (point.equals("xbmc.metadata.scraper.tvshows")) {
-            System.out.println("I'm a TV scraper");
-            this.type = MediaType.TV_SHOW;
+            this.setType(ScraperType.TV_SHOW);
           }
           else if (point.equals("xbmc.metadata.scraper.albums")) {
-            System.out.println("I'm a ALBUM scraper");
+            this.setType(ScraperType.ALBUM);
           }
           else if (point.equals("xbmc.metadata.scraper.artists")) {
-            System.out.println("I'm a ARTIST scraper");
+            this.setType(ScraperType.ARTIST);
           }
           else if (point.equals("xbmc.metadata.scraper.musicvideos")) {
-            System.out.println("I'm a MUSIC VIDEO scraper");
+            this.setType(ScraperType.MUSICVIDEO);
+          }
+          else if (point.equals("xbmc.metadata.scraper.library")) {
+            this.setType(ScraperType.LIBRARY);
           }
         }
       }
@@ -107,8 +106,13 @@ public class XbmcScraper {
     this.settingsPath = settingsPath;
   }
 
+  /**
+   * no dupes!
+   */
   public void addFunction(ScraperFunction func) {
-    functions.put(func.getName(), func);
+    if (!functions.containsKey(func.getName())) {
+      functions.put(func.getName(), func);
+    }
   }
 
   public ScraperFunction getFunction(String name) {
@@ -117,14 +121,6 @@ public class XbmcScraper {
 
   public ScraperFunction[] getFunctions() {
     return functions.values().toArray(new ScraperFunction[functions.size()]);
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getThumb() {
@@ -139,30 +135,6 @@ public class XbmcScraper {
     return functions.containsKey(functionName);
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
-  }
-
   public String getProvider() {
     return provider;
   }
@@ -171,12 +143,12 @@ public class XbmcScraper {
     this.provider = provider;
   }
 
-  public String getSummary() {
-    return summary;
+  public File getFolder() {
+    return folder;
   }
 
-  public void setSummary(String summary) {
-    this.summary = summary;
+  public void setFolder(File folder) {
+    this.folder = folder;
   }
 
   public String getScraperXml() {
@@ -193,14 +165,6 @@ public class XbmcScraper {
 
   public void setLanguage(String language) {
     this.language = language;
-  }
-
-  public MediaType getType() {
-    return type;
-  }
-
-  public void setType(MediaType type) {
-    this.type = type;
   }
 
   /**

@@ -1,53 +1,36 @@
 package org.tinymediamanager.scraper.xbmc;
 
 import java.io.File;
-import java.io.FilenameFilter;
 
 import org.junit.Test;
-import org.tinymediamanager.core.Utils;
-import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.MediaType;
 
 public class XbmcMetadataProviderTest {
 
   @Test
+  public void loadXbmcScrapers() {
+    for (XbmcScraper sc : XbmcUtil.getAllScrapers()) {
+      try {
+        XbmcMetadataProvider mp = new XbmcMetadataProvider(sc);
+        System.out.println("SCRAPER: " + mp.scraper.getId());
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  @Test
   public void testXbmcScraper() {
-
-    // ********************************************************************************
-    // detect XBMC folder or use local folder
-    File addons = new File(Utils.detectXbmcUserdataFolder(), "addons");
-    if (addons == null || !addons.exists()) {
-      addons = new File("xbmc_scraper");
-      if (!addons.exists()) {
-        System.out.println("Meh - could not find any scrapers...");
-        System.exit(0);
-      }
-    }
-    System.out.println("Loading scrapers from: " + addons);
-
-    // ********************************************************************************
-    // find scraper XMLs
-    File[] files = addons.listFiles(new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        return new File(dir, name).isDirectory() && name.toLowerCase().startsWith("metadata") && !name.toLowerCase().contains("common");
-      }
-    });
-    if (files.length == 0) {
-      System.out.println("Meh - could not find any scrapers...");
-      System.exit(0);
-    }
-    for (File file : files) {
-      System.out.println("found scraper: " + file);
-    }
-
-    // ********************************************************************************
-    // parse XML and all common ones
-    String providerFolder = "metadata.themoviedb.org";
-    // String providerFolder = "metadata.imdb.com";
-    XbmcMetadataProvider mp = new XbmcMetadataProvider(new File(addons, providerFolder));
-
     try {
+      // ********************************************************************************
+      // parse XML and all common ones
+      String providerFolder = "metadata.themoviedb.org";
+      // String providerFolder = "metadata.imdb.com";
+      XbmcScraper scr = new XbmcScraper(new File(providerFolder));
+      XbmcMetadataProvider mp = new XbmcMetadataProvider(scr);
+
       System.out.println("Pause 5 sec");
       Thread.sleep(5000);
 
@@ -60,13 +43,13 @@ public class XbmcMetadataProviderTest {
 
       // ********************************************************************************
       // do it :)
-      MediaMetadata mm = mp.getMetaData(msr);
+      // MediaMetadata mm = mp.getMetaData(msr);
 
       // TODO: XML quite fine (see ***BEGIN/END XML ***) - todo output parsing; remove "double details"?
-      System.out.println(mm);
+      // System.out.println(mm);
     }
     catch (Exception e) {
-      throw new RuntimeException("Failed to Load XBMC Scraper: " + providerFolder, e);
+      e.printStackTrace();
     }
 
   }

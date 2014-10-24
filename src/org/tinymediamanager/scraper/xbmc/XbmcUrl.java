@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
  * 
  */
 public class XbmcUrl {
-  private static final Logger log = Logger.getLogger(XbmcUrl.class);
+  private static final Logger LOGGER = Logger.getLogger(XbmcUrl.class);
 
   private String              urlString;
   // private URL url;
@@ -50,7 +50,7 @@ public class XbmcUrl {
    * @param url
    */
   public XbmcUrl(String url) {
-    log.debug("Creating XbmcUrl from String url: " + url);
+    LOGGER.debug("Creating XbmcUrl from String url: " + url);
     if (url == null)
       return;
 
@@ -103,7 +103,7 @@ public class XbmcUrl {
     urlString = e.getTextContent();
     if (urlString != null)
       urlString = urlString.trim();
-    log.debug("XbmcUrl using Url from Xml: " + urlString);
+    LOGGER.debug("XbmcUrl using Url from Xml: " + urlString);
     functionName = e.getAttribute("function");
     // TODO: pull in post, spoof, etc.
   }
@@ -122,7 +122,7 @@ public class XbmcUrl {
     // such.
     if (scraper != null && !StringUtils.isEmpty(getFunctionName())) {
       XbmcScraperProcessor processor = new XbmcScraperProcessor(scraper);
-      log.debug("Processing Url Function: " + getFunctionName() + " with Url: " + urlString);
+      LOGGER.debug("Processing Url Function: " + getFunctionName() + " with Url: " + urlString);
       // we have a function to process
       // TODO: Set spoof and post attributes...
       XbmcUrl xurl = new XbmcUrl(urlString);
@@ -136,7 +136,7 @@ public class XbmcUrl {
       Url u = getUrl();
 
       if (urlString.contains(".zip")) {
-        log.debug("Converting ZipFile to Text content for url: " + urlString);
+        LOGGER.debug("Converting ZipFile to Text content for url: " + urlString);
         // turn the zip contents into a text file
         ZipInputStream zis = new ZipInputStream(u.getInputStream());
         ZipEntry ze = null;
@@ -144,7 +144,7 @@ public class XbmcUrl {
         int MAX_LEN = 2048;
         byte buf[] = new byte[MAX_LEN];
         while ((ze = zis.getNextEntry()) != null) {
-          log.debug("Adding Zip Entry: " + ze.getName() + " to Text content");
+          LOGGER.debug("Adding Zip Entry: " + ze.getName() + " to Text content");
           int len = 0;
           while ((len = zis.read(buf)) > 0) {
             baos.write(buf, 0, len);
@@ -152,7 +152,7 @@ public class XbmcUrl {
         }
         baos.flush();
         zis.close();
-        log.debug("Returing Text Context as inputstream...");
+        LOGGER.debug("Returing Text Context as inputstream...");
         return new ByteArrayInputStream(baos.toByteArray());
       }
       else {

@@ -3,6 +3,7 @@ package org.tinymediamanager.scraper.xbmc;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +38,9 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider {
   private static final DocumentBuilderFactory factory                 = DocumentBuilderFactory.newInstance();
 
   private static MediaProviderInfo            providerInfo            = new MediaProviderInfo("xbmc", "xbmc.org", "Generic XBMC type scraper");
-  private XbmcScraper                         scraper;
+  public XbmcScraper                          scraper;
+  // prescan directory for ALL common XMLs
+  private static final ArrayList<File>        commonXmls              = XbmcUtil.getAllCommonXMLs();
   private MediaType[]                         supportedSearchTypes    = null;
 
   private static final String                 IMDB_TITLE_URL          = "http://%s/title/%s/";
@@ -46,14 +49,15 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider {
 
   private static Pattern                      mpaaRatingParser        = Pattern.compile("Rated\\s+([^ ]+).*");
 
-  public XbmcMetadataProvider(File providerFolder) {
+  public XbmcMetadataProvider(XbmcScraper scraper) {
     XbmcScraperParser parser = new XbmcScraperParser();
+    this.scraper = scraper;
     try {
-      scraper = parser.parseScraper(providerFolder);
+      scraper = parser.parseScraper(scraper, commonXmls);
     }
     catch (Exception e) {
-      LOGGER.error("Failed to Load XBMC Scraper: " + providerFolder);
-      throw new RuntimeException("Failed to Load XBMC Scraper: " + providerFolder, e);
+      LOGGER.error("Failed to Load XBMC Scraper: " + scraper);
+      throw new RuntimeException("Failed to Load XBMC Scraper: " + scraper, e);
     }
 
   }
@@ -157,6 +161,9 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider {
         LOGGER.error("Error process an xml node!  Ignoring it from the search results.");
       }
     }
+
+    Collections.sort(l);
+    Collections.reverse(l);
 
     return l;
   }

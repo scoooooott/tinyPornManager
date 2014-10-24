@@ -2,17 +2,13 @@ package org.tinymediamanager.scraper.xbmc;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.log4j.Logger;
-import org.tinymediamanager.core.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -20,15 +16,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XbmcScraperParser {
-  private static final Logger log = Logger.getLogger(XbmcScraperParser.class);
+  private static final Logger LOGGER = Logger.getLogger(XbmcScraperParser.class);
 
-  public XbmcScraper parseScraper(File scraperFolder) throws Exception {
-    XbmcScraper scraper = new XbmcScraper(scraperFolder);
-    System.out.println(scraper);
-
+  public XbmcScraper parseScraper(XbmcScraper scraper, List<File> common) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
-    Document xml = parser.parse(new File(scraperFolder, scraper.getScraperXml()));
+    Document xml = parser.parse(new File(scraper.getFolder(), scraper.getScraperXml()));
 
     // get the first element
     Element element = xml.getDocumentElement();
@@ -61,7 +54,7 @@ public class XbmcScraperParser {
     }
 
     // get all common scraper functions
-    readScraperFunctions(scraper);
+    readScraperFunctions(scraper, common);
 
     return scraper;
   }
@@ -92,13 +85,27 @@ public class XbmcScraperParser {
       }
       else if ("expression".equals(nn.getNodeName())) {
         Element expEl = (Element) nn;
-        RegExp regexp = (RegExp) container;
-        Expression exp = new Expression();
-        exp.setExpression(nn.getTextContent());
-        exp.setNoClean(expEl.getAttribute("noclean"));
-        exp.setRepeat(parseBoolean(expEl.getAttribute("repeat"), false));
-        exp.setClear(parseBoolean(expEl.getAttribute("clear"), false));
-        regexp.setExpression(exp);
+        try {
+          RegExp regexp = (RegExp) container; // cannot cast - exception see below
+          Expression exp = new Expression();
+          exp.setExpression(nn.getTextContent());
+          exp.setNoClean(expEl.getAttribute("noclean"));
+          exp.setRepeat(parseBoolean(expEl.getAttribute("repeat"), false));
+          exp.setClear(parseBoolean(expEl.getAttribute("clear"), false));
+          regexp.setExpression(exp);
+        }
+        catch (Exception e) {
+          LOGGER.warn("unparseable expression! " + container);
+          // happens here (kino.de) - the last empty expression.
+          // maybe no RegExp around?
+          //
+          // <GetTrailer dest="5">
+          // <RegExp input="$$1" output="&lt;details&gt;&lt;trailer urlencoded=&quot;yes&quot;&gt;\1&lt;/trailer&gt;&lt;/details&gt;" dest="5">
+          // <expression noclean="1">&lt;url&gt;([^&lt;]*)&lt;/url&gt;</expression>
+          // </RegExp>
+          // <expression noclean="1"/> <------------------
+          // </GetTrailer>
+        }
       }
       else {
         // skip nodest that we don't know about
@@ -126,42 +133,9 @@ public class XbmcScraperParser {
     return Boolean.parseBoolean(attribute);
   }
 
-  private void readScraperFunctions(XbmcScraper scraper) {
-    File addons = new File(Utils.detectXbmcUserdataFolder(), "addons");
-    if (!addons.exists()) {
-      addons = new File("xbmc_scraper");
-    }
-
-    IOFileFilter dirFilter = new IOFileFilter() {
-      @Override
-      public boolean accept(File arg0, String arg1) {
-        return false;
-      }
-
-      @Override
-      public boolean accept(File arg0) {
-        // all common metadata folders for additional inclusion
-        return arg0.getName().startsWith("metadata") && arg0.getName().contains("common");
-      }
-    };
-
-    IOFileFilter fileFilter = new IOFileFilter() {
-      @Override
-      public boolean accept(File pathname) {
-        // all XML files in scraper folder - but not the addon.xml itself
-        return pathname.getName().endsWith("xml") && !pathname.getName().equals("addon.xml");
-      }
-
-      @Override
-      public boolean accept(File arg0, String arg1) {
-        return false;
-      }
-    };
-
-    Collection<File> files = FileUtils.listFiles(addons, fileFilter, dirFilter);
-    for (Iterator<File> iterator = files.iterator(); iterator.hasNext();) {
-      File file = (File) iterator.next();
-      System.out.println("parsing common file: " + file);
+  private void readScraperFunctions(XbmcScraper scraper, List<File> common) {
+    for (File file : common) {
+      // System.out.println("parsing common file: " + file);
       try {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder parser = factory.newDocumentBuilder();

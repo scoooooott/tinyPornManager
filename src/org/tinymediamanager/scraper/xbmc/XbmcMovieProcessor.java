@@ -16,7 +16,7 @@ import org.tinymediamanager.scraper.util.UrlUtil;
  * 
  */
 public class XbmcMovieProcessor {
-  private static final Logger  log                          = Logger.getLogger(XbmcMovieProcessor.class);
+  private static final Logger  LOGGER                       = Logger.getLogger(XbmcMovieProcessor.class);
 
   public static final String   FUNCTION_SETTINGS            = "GetSettings";
   public static final String   FUNCTION_NFO_URL             = "NfoUrl";
@@ -127,11 +127,11 @@ public class XbmcMovieProcessor {
     String movieId = id;
 
     if (StringUtils.isEmpty(movieId)) {
-      log.debug("getDetails() called with empty id.");
+      LOGGER.debug("getDetails() called with empty id.");
       movieId = parseIdFromUrl(url.toExternalForm());
     }
 
-    log.debug("getDetails() called with id: " + movieId + " and url: " + url.toExternalForm());
+    LOGGER.debug("getDetails() called with id: " + movieId + " and url: " + url.toExternalForm());
     return scraperProcessor.executeFunction(FUNCTION_GET_DETAILS, new String[] { "", contents, movieId, url.toExternalForm() });
   }
 
@@ -143,7 +143,7 @@ public class XbmcMovieProcessor {
       Matcher m = p.matcher(url);
       if (m.find()) {
         movieId = m.group(1);
-        log.debug("Setting IMDB ID: " + movieId);
+        LOGGER.debug("Setting IMDB ID: " + movieId);
       }
     }
     catch (Exception e) {
@@ -155,7 +155,7 @@ public class XbmcMovieProcessor {
         Matcher m = p.matcher(url);
         if (m.find()) {
           movieId = m.group(1);
-          log.debug("Setting TMDB ID: " + movieId);
+          LOGGER.debug("Setting TMDB ID: " + movieId);
         }
       }
       catch (Exception e) {
@@ -168,7 +168,7 @@ public class XbmcMovieProcessor {
         Matcher m = p.matcher(url);
         if (m.find()) {
           movieId = m.group(1);
-          log.debug("Setting TVDB ID: " + movieId);
+          LOGGER.debug("Setting TVDB ID: " + movieId);
         }
       }
       catch (Exception e) {
