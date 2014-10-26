@@ -278,6 +278,7 @@ public class MoviePanel extends JPanel {
     buttonUpdateDatasource.setHorizontalAlignment(JButton.LEFT);
     // buttonScrape.setMargin(new Insets(2, 2, 2, 24));
     buttonUpdateDatasource.setSplitWidth(18);
+    buttonUpdateDatasource.setToolTipText(BUNDLE.getString("update.datasource")); //$NON-NLS-1$
     buttonUpdateDatasource.addSplitButtonActionListener(new SplitButtonActionListener() {
       public void buttonClicked(ActionEvent e) {
         actionUpdateDataSources.actionPerformed(e);
@@ -307,6 +308,7 @@ public class MoviePanel extends JPanel {
     buttonScrape.setHorizontalAlignment(JButton.LEFT);
     // buttonScrape.setMargin(new Insets(2, 2, 2, 24));
     buttonScrape.setSplitWidth(18);
+    buttonScrape.setToolTipText(BUNDLE.getString("movie.scrape.selected")); //$NON-NLS-1$
 
     // register for listener
     buttonScrape.addSplitButtonActionListener(new SplitButtonActionListener() {

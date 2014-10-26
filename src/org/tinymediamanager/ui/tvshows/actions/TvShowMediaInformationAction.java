@@ -47,7 +47,7 @@ public class TvShowMediaInformationAction extends AbstractAction {
     }
     putValue(LARGE_ICON_KEY, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
     putValue(SMALL_ICON, new ImageIcon(getClass().getResource("/org/tinymediamanager/ui/images/mediainfo.png")));
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.updatemediainfo")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
   }
 
   @Override

@@ -42,6 +42,7 @@ public class MovieUpdateDatasourceAction extends AbstractAction {
     }
     putValue(SMALL_ICON, IconManager.REFRESH);
     putValue(LARGE_ICON_KEY, IconManager.REFRESH);
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
   }
 
   @Override
