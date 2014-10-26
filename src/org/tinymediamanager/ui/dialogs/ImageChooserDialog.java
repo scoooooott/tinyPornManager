@@ -131,6 +131,8 @@ public class ImageChooserDialog extends TmmDialog {
    *          the extra thumbs
    * @param extraFanarts
    *          the extra fanarts
+   * @param mediaType
+   *          the media for for which artwork has to be chosen
    */
   public ImageChooserDialog(final HashMap<String, Object> ids, ImageType type, List<IMediaArtworkProvider> artworkProviders, ImageLabel imageLabel,
       List<String> extraThumbs, List<String> extraFanarts, MediaType mediaType) {
@@ -156,7 +158,12 @@ public class ImageChooserDialog extends TmmDialog {
         break;
 
       case SEASON:
-        setTitle(BUNDLE.getString("image.choose.season")); //$NON-NLS-1$
+        Object season = ids.get("tvShowSeason");
+        if (season != null) {
+          setTitle(BUNDLE.getString("image.choose.season") + " - " + BUNDLE.getString("metatag.season") + " " + season); //$NON-NLS-1$
+        } else {
+          setTitle(BUNDLE.getString("image.choose.season")); //$NON-NLS-1$
+        }
         break;
 
       case CLEARART:

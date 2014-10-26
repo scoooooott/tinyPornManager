@@ -16,7 +16,9 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -60,7 +62,9 @@ public class TvShowChangeSeasonPosterAction extends AbstractAction {
       if (obj instanceof TvShowSeason) {
         TvShowSeason season = (TvShowSeason) obj;
         ImageLabel imageLabel = new ImageLabel();
-        ImageChooserDialog dialog = new ImageChooserDialog(season.getTvShow().getIds(), ImageType.SEASON, TvShowList.getInstance()
+        HashMap<String, Object> ids = season.getTvShow().getIds();
+        ids.put("tvShowSeason", season.getSeason());
+        ImageChooserDialog dialog = new ImageChooserDialog(ids, ImageType.SEASON, TvShowList.getInstance()
             .getArtworkProviders(), imageLabel, null, null, MediaType.TV_SHOW);
         dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
         dialog.setVisible(true);
