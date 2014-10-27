@@ -3,6 +3,11 @@ Version 2.7 (upcoming)
 + changed Fanart.tv to v3 API (with clientKey)
 + added more artwork scraping dialogs
 + added $L language renaming option
++ added/improved 3D handling
++ certification bulk edit
++ add season to image chooser title
++ fixed/improved some tooltips
+x fixed MacOS startup; Java detection, executable, ...
 
 Version 2.6.3
 =======================
