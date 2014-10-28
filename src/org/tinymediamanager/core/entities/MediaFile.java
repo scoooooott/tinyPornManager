@@ -131,21 +131,21 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
    * "clones" a new media file.
    */
   public MediaFile(MediaFile clone) {
-    this.path = clone.path;
-    this.filename = clone.filename;
+    this.path = new String(clone.path);
+    this.filename = new String(clone.filename);
     this.filesize = clone.filesize;
     this.filedate = clone.filedate;
-    this.videoCodec = clone.videoCodec;
-    this.containerFormat = clone.containerFormat;
-    this.exactVideoFormat = clone.exactVideoFormat;
+    this.videoCodec = new String(clone.videoCodec);
+    this.containerFormat = new String(clone.containerFormat);
+    this.exactVideoFormat = new String(clone.exactVideoFormat);
     this.videoHeight = clone.videoHeight;
     this.videoWidth = clone.videoWidth;
     this.overallBitRate = clone.overallBitRate;
     this.durationInSecs = clone.durationInSecs;
     this.stacking = clone.stacking;
     this.type = clone.type;
-    this.audioStreams = clone.audioStreams;
-    this.subtitles = clone.subtitles;
+    this.audioStreams.addAll(clone.audioStreams);
+    this.subtitles.addAll(clone.subtitles);
   }
 
   /**

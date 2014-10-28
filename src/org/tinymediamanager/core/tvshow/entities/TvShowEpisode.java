@@ -121,7 +121,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public TvShowEpisode(TvShowEpisode source) {
     // the reference to the tv show and the media files are the only things we don't copy
     tvShow = source.tvShow;
-    getMediaFiles().addAll(source.getMediaFiles());
+
+    // clone media files
+    for (MediaFile mf : source.getMediaFiles()) {
+      addToMediaFiles(new MediaFile(mf));
+    }
 
     // clone the rest
     path = new String(source.path);
