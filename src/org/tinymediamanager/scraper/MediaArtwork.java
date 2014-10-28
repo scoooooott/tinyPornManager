@@ -35,11 +35,6 @@ import org.tinymediamanager.ui.UTF8Control;
 public class MediaArtwork {
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /**
-   * The Enum MediaArtworkType.
-   * 
-   * @author Manuel Laggner
-   */
   public enum MediaArtworkType {
     // @formatter:off
     BACKGROUND,
@@ -131,105 +126,48 @@ public class MediaArtwork {
     }
   }
 
-  /**
-   * The Enum PosterSizes.
-   * 
-   * @author Manuel Laggner
-   */
   public enum PosterSizes {
-    /** The large. */
     LARGE(BUNDLE.getString("Settings.image.large") + ": ~1000x1500px", 8), //$NON-NLS-1$
-    /** The big. */
     BIG(BUNDLE.getString("Settings.image.big") + ": ~500x750px", 4), //$NON-NLS-1$
-    /** The medium. */
     MEDIUM(BUNDLE.getString("Settings.image.medium") + ": ~342x513px", 2), //$NON-NLS-1$
-    /** The small. */
     SMALL(BUNDLE.getString("Settings.image.small") + ": ~185x277px", 1); //$NON-NLS-1$
 
-    /** The text. */
     private String text;
-
-    /** The order. */
     private int    order;
 
-    /**
-     * Instantiates a new poster sizes.
-     * 
-     * @param text
-     *          the text
-     * @param order
-     *          the order
-     */
     private PosterSizes(String text, int order) {
       this.text = text;
       this.order = order;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
-     */
+    @Override
     public String toString() {
       return this.text;
     }
 
-    /**
-     * Gets the order.
-     * 
-     * @return the order
-     */
     public int getOrder() {
       return this.order;
     }
   }
 
-  /**
-   * The Enum FanartSizes.
-   * 
-   * @author Manuel Laggner
-   */
   public enum FanartSizes {
-    /** The large. */
     LARGE(BUNDLE.getString("Settings.image.large") + ": ~1920x1080px", 8), //$NON-NLS-1$
-    /** The medium. */
     MEDIUM(BUNDLE.getString("Settings.image.medium") + ": ~1280x720px", 2), //$NON-NLS-1$
-    /** The small. */
     SMALL(BUNDLE.getString("Settings.image.small") + ": ~300x168px", 1); //$NON-NLS-1$
 
-    /** The text. */
     private String text;
-
-    /** The order. */
     private int    order;
 
-    /**
-     * Instantiates a new fanart sizes.
-     * 
-     * @param text
-     *          the text
-     * @param order
-     *          the order
-     */
     private FanartSizes(String text, int order) {
       this.text = text;
       this.order = order;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
-     */
+    @Override
     public String toString() {
       return this.text;
     }
 
-    /**
-     * Gets the order.
-     * 
-     * @return the order
-     */
     public int getOrder() {
       return order;
     }
@@ -238,9 +176,9 @@ public class MediaArtwork {
   private String                imdbId;
   private int                   tmdbId;
   private int                   season     = -1;
-  private String                previewUrl;
-  private String                defaultUrl;
-  private String                language;
+  private String                previewUrl = "";
+  private String                defaultUrl = "";
+  private String                language   = "";
   private String                providerId;
   private MediaArtworkType      type;
   private int                   sizeOrder  = 0;
@@ -248,164 +186,74 @@ public class MediaArtwork {
 
   private List<ImageSizeAndUrl> imageSizes = new ArrayList<ImageSizeAndUrl>();
 
-  /**
-   * Instantiates a new media art.
-   */
   public MediaArtwork() {
   }
 
-  /**
-   * Gets the preview url.
-   * 
-   * @return the preview url
-   */
   public String getPreviewUrl() {
     return previewUrl;
   }
 
-  /**
-   * Sets the preview url.
-   * 
-   * @param downloadUrl
-   *          the new preview url
-   */
   public void setPreviewUrl(String downloadUrl) {
     this.previewUrl = downloadUrl;
   }
 
-  /**
-   * Gets the default url.
-   * 
-   * @return the default url
-   */
   public String getDefaultUrl() {
     return defaultUrl;
   }
 
-  /**
-   * Sets the default url.
-   * 
-   * @param defaultUrl
-   *          the new default url
-   */
   public void setDefaultUrl(String defaultUrl) {
     this.defaultUrl = defaultUrl;
   }
 
-  /**
-   * Gets the provider id.
-   * 
-   * @return the provider id
-   */
   public String getProviderId() {
     return providerId;
   }
 
-  /**
-   * Sets the provider id.
-   * 
-   * @param providerId
-   *          the new provider id
-   */
   public void setProviderId(String providerId) {
     this.providerId = providerId;
   }
 
-  /**
-   * Gets the type.
-   * 
-   * @return the type
-   */
   public MediaArtworkType getType() {
     return type;
   }
 
-  /**
-   * Sets the type.
-   * 
-   * @param type
-   *          the new type
-   */
   public void setType(MediaArtworkType type) {
     this.type = type;
   }
 
-  /**
-   * Gets the language.
-   * 
-   * @return the language
-   */
   public String getLanguage() {
     return language;
   }
 
-  /**
-   * Sets the language.
-   * 
-   * @param language
-   *          the new language
-   */
   public void setLanguage(String language) {
-    this.language = language;
+    if (language == null) {
+      this.language = "";
+    }
+    else {
+      this.language = language;
+    }
   }
 
-  /**
-   * Gets the tmdb id.
-   * 
-   * @return the tmdb id
-   */
   public int getTmdbId() {
     return tmdbId;
   }
 
-  /**
-   * Sets the tmdb id.
-   * 
-   * @param tmdbId
-   *          the new tmdb id
-   */
   public void setTmdbId(int tmdbId) {
     this.tmdbId = tmdbId;
   }
 
-  /**
-   * Gets the imdb id.
-   * 
-   * @return the imdb id
-   */
   public String getImdbId() {
     return imdbId;
   }
 
-  /**
-   * Sets the imdb id.
-   * 
-   * @param imdbId
-   *          the new imdb id
-   */
   public void setImdbId(String imdbId) {
     this.imdbId = imdbId;
   }
 
-  /**
-   * Adds the image size.
-   * 
-   * @param width
-   *          the width
-   * @param height
-   *          the height
-   * @param url
-   *          the url
-   */
   public void addImageSize(int width, int height, String url) {
     imageSizes.add(new ImageSizeAndUrl(width, height, url));
   }
 
-  /**
-   * Gets the image sizes.
-   * 
-   * @return the image sizes
-   */
   public List<ImageSizeAndUrl> getImageSizes() {
     List<ImageSizeAndUrl> descImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
 
@@ -415,11 +263,6 @@ public class MediaArtwork {
     return descImageSizes;
   }
 
-  /**
-   * gets the Url for the smallest available artwork (most used for previews - imagechooser).
-   * 
-   * @return the url for small artwork
-   */
   public ImageSizeAndUrl getSmallestArtwork() {
     if (imageSizes.size() > 0) {
       List<ImageSizeAndUrl> ascImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
@@ -434,11 +277,6 @@ public class MediaArtwork {
     return null;
   }
 
-  /**
-   * gets the Url for the biggest available artwork (most used for real downloads).
-   * 
-   * @return the url for biggest artwork
-   */
   public ImageSizeAndUrl getBiggestArtwork() {
     if (imageSizes.size() > 0) {
       List<ImageSizeAndUrl> descImageSizes = new ArrayList<MediaArtwork.ImageSizeAndUrl>(imageSizes);
@@ -453,54 +291,31 @@ public class MediaArtwork {
     return null;
   }
 
-  /**
-   * Gets the size order.
-   * 
-   * @return the size order
-   */
   public int getSizeOrder() {
     return sizeOrder;
   }
 
-  /**
-   * Sets the size order.
-   * 
-   * @param sizeOrder
-   *          the new size order
-   */
   public void setSizeOrder(int sizeOrder) {
     this.sizeOrder = sizeOrder;
   }
 
-  /**
-   * amount of likes (or other, for ordering)
-   */
   public int getLikes() {
     return likes;
   }
 
   /**
    * amount of likes (or other, for ordering)
+   * 
+   * @param likes
    */
   public void setLikes(int likes) {
     this.likes = likes;
   }
 
-  /**
-   * Gets the season.
-   * 
-   * @return the season
-   */
   public int getSeason() {
     return season;
   }
 
-  /**
-   * Sets the season.
-   * 
-   * @param season
-   *          the new season
-   */
   public void setSeason(int season) {
     this.season = season;
   }
@@ -518,80 +333,35 @@ public class MediaArtwork {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
-  /**
-   * The Class ImageSizeAndUrl.
-   * 
-   * @author Manuel Laggner
-   */
   public static class ImageSizeAndUrl implements Comparable<ImageSizeAndUrl> {
-
-    /** The width. */
     private int    width  = 0;
-
-    /** The height. */
     private int    height = 0;
-
-    /** The url. */
     private String url    = "";
 
-    /**
-     * Instantiates a new image size and url.
-     * 
-     * @param width
-     *          the width
-     * @param height
-     *          the height
-     * @param url
-     *          the url
-     */
     public ImageSizeAndUrl(int width, int height, String url) {
       this.width = width;
       this.height = height;
       this.url = url;
     }
 
-    /**
-     * Gets the width.
-     * 
-     * @return the width
-     */
     public int getWidth() {
       return width;
     }
 
-    /**
-     * Gets the height.
-     * 
-     * @return the height
-     */
     public int getHeight() {
       return height;
     }
 
-    /**
-     * Gets the url.
-     * 
-     * @return the url
-     */
     public String getUrl() {
       return url;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
     @Override
     public int compareTo(ImageSizeAndUrl obj) {
       return width - obj.width;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+    @Override
     public String toString() {
       return this.width + "x" + this.height;
     }

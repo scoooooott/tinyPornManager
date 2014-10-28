@@ -125,6 +125,7 @@ public class MovieSettings extends AbstractModelObject {
   private boolean                       enableMovieSetArtworkFolder              = false;
   private String                        movieSetArtworkFolder                    = "MoviesetArtwork";
   private boolean                       scrapeBestImage                          = true;
+  private boolean                       imageLanguagePriority                    = true;
   private boolean                       imageLogo                                = false;
   private boolean                       imageBanner                              = false;
   private boolean                       imageClearart                            = false;
@@ -767,5 +768,15 @@ public class MovieSettings extends AbstractModelObject {
 
   public boolean getSyncTrakt() {
     return syncTrakt;
+  }
+
+  public boolean isImageLanguagePriority() {
+    return imageLanguagePriority;
+  }
+
+  public void setImageLanguagePriority(boolean newValue) {
+    boolean oldValue = this.imageLanguagePriority;
+    this.imageLanguagePriority = newValue;
+    firePropertyChange("imageLanguagePriority", oldValue, newValue);
   }
 }

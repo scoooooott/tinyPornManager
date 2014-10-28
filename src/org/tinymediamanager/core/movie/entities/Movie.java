@@ -92,54 +92,52 @@ import com.omertron.themoviedbapi.model.CollectionInfo;
 @Inheritance(strategy = javax.persistence.InheritanceType.JOINED)
 public class Movie extends MediaEntity {
   @XmlTransient
-  private static final Logger       LOGGER          = LoggerFactory.getLogger(Movie.class);
+  private static final Logger LOGGER          = LoggerFactory.getLogger(Movie.class);
 
-  private static MovieArtworkHelper artworkHelper   = new MovieArtworkHelper();
+  private String              sortTitle       = "";
+  private String              tagline         = "";
+  private int                 votes           = 0;
+  private int                 runtime         = 0;
+  private String              director        = "";
+  private String              writer          = "";
+  private String              dataSource      = "";
+  private boolean             watched         = false;
+  private MovieSet            movieSet;
+  private boolean             isDisc          = false;
+  private String              spokenLanguages = "";
+  private boolean             subtitles       = false;
+  private String              country         = "";
+  private Date                releaseDate     = null;
+  private boolean             multiMovieDir   = false;                               // we detected more movies in same folder
+  private int                 top250          = 0;
+  private MovieMediaSource    mediaSource     = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
+  private boolean             videoIn3D       = false;
 
-  private String                    sortTitle       = "";
-  private String                    tagline         = "";
-  private int                       votes           = 0;
-  private int                       runtime         = 0;
-  private String                    director        = "";
-  private String                    writer          = "";
-  private String                    dataSource      = "";
-  private boolean                   watched         = false;
-  private MovieSet                  movieSet;
-  private boolean                   isDisc          = false;
-  private String                    spokenLanguages = "";
-  private boolean                   subtitles       = false;
-  private String                    country         = "";
-  private Date                      releaseDate     = null;
-  private boolean                   multiMovieDir   = false;                               // we detected more movies in same folder
-  private int                       top250          = 0;
-  private MovieMediaSource          mediaSource     = MovieMediaSource.UNKNOWN;            // DVD, Bluray, etc
-  private boolean                   videoIn3D       = false;
-
-  private List<String>              genres          = new ArrayList<String>(1);
-  private List<String>              tags            = new ArrayList<String>(0);
-  private List<String>              extraThumbs     = new ArrayList<String>(0);
-  private List<String>              extraFanarts    = new ArrayList<String>(0);
+  private List<String>        genres          = new ArrayList<String>(1);
+  private List<String>        tags            = new ArrayList<String>(0);
+  private List<String>        extraThumbs     = new ArrayList<String>(0);
+  private List<String>        extraFanarts    = new ArrayList<String>(0);
 
   @Enumerated(EnumType.STRING)
-  private Certification             certification   = Certification.NOT_RATED;
+  private Certification       certification   = Certification.NOT_RATED;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MovieActor>          actors          = new ArrayList<MovieActor>();
+  private List<MovieActor>    actors          = new ArrayList<MovieActor>();
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MovieProducer>       producers       = new ArrayList<MovieProducer>(0);
+  private List<MovieProducer> producers       = new ArrayList<MovieProducer>(0);
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<MediaTrailer>        trailer         = new ArrayList<MediaTrailer>(0);
+  private List<MediaTrailer>  trailer         = new ArrayList<MediaTrailer>(0);
 
   @Transient
-  private String                    titleSortable   = "";
+  private String              titleSortable   = "";
 
   @Transient
-  private boolean                   newlyAdded      = false;
+  private boolean             newlyAdded      = false;
 
   @Transient
-  private List<MediaGenres>         genresForAccess = new ArrayList<MediaGenres>(0);
+  private List<MediaGenres>   genresForAccess = new ArrayList<MediaGenres>(0);
 
   static {
     mediaFileComparator = new MovieMediaFileComparator();
@@ -1028,180 +1026,7 @@ public class Movie extends MediaEntity {
    */
   public void setArtwork(List<MediaArtwork> artwork, MovieScraperMetadataConfig config) {
     if (config.isArtwork()) {
-      // poster
-      boolean posterFound = false;
-      for (MediaArtwork art : artwork) {
-        // only get artwork in desired resolution
-        if (art.getType() == MediaArtworkType.POSTER && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImagePosterSize().getOrder()) {
-          setPosterUrl(art.getDefaultUrl());
-
-          LOGGER.debug(art.getSmallestArtwork().toString());
-          LOGGER.debug(art.getBiggestArtwork().toString());
-
-          // did we get the tmdbid from artwork?
-          if (getTmdbId() == 0 && art.getTmdbId() > 0) {
-            setTmdbId(art.getTmdbId());
-          }
-          posterFound = true;
-          break;
-        }
-      }
-      // if there has nothing been found, do a fallback
-      if (!posterFound) {
-        for (MediaArtwork art : artwork) {
-          if (art.getType() == MediaArtworkType.POSTER) {
-            setPosterUrl(art.getDefaultUrl());
-
-            LOGGER.debug(art.getSmallestArtwork().toString());
-            LOGGER.debug(art.getBiggestArtwork().toString());
-
-            // did we get the tmdbid from artwork?
-            if (getTmdbId() == 0 && art.getTmdbId() > 0) {
-              setTmdbId(art.getTmdbId());
-              posterFound = true;
-            }
-            break;
-          }
-        }
-      }
-      downloadArtwork(MediaFileType.POSTER);
-
-      // fanart
-      boolean fanartFound = false;
-      for (MediaArtwork art : artwork) {
-        // only get artwork in desired resolution
-        if (art.getType() == MediaArtworkType.BACKGROUND && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
-          setFanartUrl(art.getDefaultUrl());
-
-          LOGGER.debug(art.getSmallestArtwork().toString());
-          LOGGER.debug(art.getBiggestArtwork().toString());
-
-          // did we get the tmdbid from artwork?
-          if (getTmdbId() == 0 && art.getTmdbId() > 0) {
-            setTmdbId(art.getTmdbId());
-          }
-          fanartFound = true;
-          break;
-        }
-      }
-
-      // no fanart has been found - do a fallback
-      if (!fanartFound) {
-        for (MediaArtwork art : artwork) {
-          // only get artwork in desired resolution
-          if (art.getType() == MediaArtworkType.BACKGROUND) {
-            setFanartUrl(art.getDefaultUrl());
-
-            LOGGER.debug(art.getSmallestArtwork().toString());
-            LOGGER.debug(art.getBiggestArtwork().toString());
-
-            // did we get the tmdbid from artwork?
-            if (getTmdbId() == 0 && art.getTmdbId() > 0) {
-              setTmdbId(art.getTmdbId());
-              fanartFound = true;
-            }
-            break;
-          }
-        }
-      }
-      downloadArtwork(MediaFileType.FANART);
-
-      if (!isMultiMovieDir()) {
-        // logo
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageLogo()) {
-          for (MediaArtwork art : artwork) {
-            if (art.getType() == MediaArtworkType.LOGO) {
-              setArtworkUrl(art.getDefaultUrl(), MediaFileType.LOGO);
-              downloadArtwork(MediaFileType.LOGO);
-              break;
-            }
-          }
-        }
-        // clearart
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageClearart()) {
-          for (MediaArtwork art : artwork) {
-            if (art.getType() == MediaArtworkType.CLEARART) {
-              setArtworkUrl(art.getDefaultUrl(), MediaFileType.CLEARART);
-              downloadArtwork(MediaFileType.CLEARART);
-              break;
-            }
-          }
-        }
-        // banner
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageBanner()) {
-          for (MediaArtwork art : artwork) {
-            if (art.getType() == MediaArtworkType.BANNER) {
-              setArtworkUrl(art.getDefaultUrl(), MediaFileType.BANNER);
-              downloadArtwork(MediaFileType.BANNER);
-              break;
-            }
-          }
-        }
-        // thumb
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageThumb()) {
-          for (MediaArtwork art : artwork) {
-            if (art.getType() == MediaArtworkType.THUMB) {
-              setArtworkUrl(art.getDefaultUrl(), MediaFileType.THUMB);
-              downloadArtwork(MediaFileType.THUMB);
-              break;
-            }
-          }
-        }
-        // disc art
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageDiscart()) {
-          for (MediaArtwork art : artwork) {
-            if (art.getType() == MediaArtworkType.DISC) {
-              setArtworkUrl(art.getDefaultUrl(), MediaFileType.DISCART);
-              downloadArtwork(MediaFileType.DISCART);
-              break;
-            }
-          }
-        }
-
-        // extrathumbs
-        List<String> extrathumbs = new ArrayList<String>();
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraThumbs() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount() > 0) {
-          for (MediaArtwork art : artwork) {
-            // only get artwork in desired resolution
-            if (art.getType() == MediaArtworkType.BACKGROUND
-                && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
-              extrathumbs.add(art.getDefaultUrl());
-              if (extrathumbs.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraThumbsCount()) {
-                break;
-              }
-            }
-          }
-          setExtraThumbs(extrathumbs);
-        }
-
-        // extrafanarts
-        List<String> extrafanarts = new ArrayList<String>();
-        if (MovieModuleManager.MOVIE_SETTINGS.isImageExtraFanart() && MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount() > 0) {
-          for (MediaArtwork art : artwork) {
-            // only get artwork in desired resolution
-            if (art.getType() == MediaArtworkType.BACKGROUND
-                && art.getSizeOrder() == MovieModuleManager.MOVIE_SETTINGS.getImageFanartSize().getOrder()) {
-              extrafanarts.add(art.getDefaultUrl());
-              if (extrafanarts.size() >= MovieModuleManager.MOVIE_SETTINGS.getImageExtraFanartCount()) {
-                break;
-              }
-            }
-          }
-          setExtraFanarts(extrafanarts);
-        }
-
-        // download extra images
-        if (extrathumbs.size() > 0) {
-          artworkHelper.downloadArtwork(this, MediaFileType.EXTRATHUMB);
-        }
-
-        if (extrafanarts.size() > 0) {
-          artworkHelper.downloadArtwork(this, MediaFileType.EXTRAFANART);
-        }
-      }
-
-      // update DB
-      saveToDb();
+      MovieArtworkHelper.setArtwork(this, artwork);
     }
   }
 
@@ -1400,12 +1225,12 @@ public class Movie extends MediaEntity {
 
   /**
    * download the specified type of artwork for this movie
-   * 
+   *
    * @param type
    *          the chosen artwork type to be downloaded
    */
   public void downloadArtwork(MediaFileType type) {
-    artworkHelper.downloadArtwork(this, type);
+    MovieArtworkHelper.downloadArtwork(this, type);
   }
 
   /**

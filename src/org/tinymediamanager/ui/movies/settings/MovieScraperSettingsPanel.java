@@ -94,6 +94,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbTrailerSource;
   private JComboBox                   cbTrailerQuality;
   private JSeparator                  separator_2;
+  private JCheckBox                   chckbxImageLanguage;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -202,14 +203,19 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     panelScraperMetadataContainer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE
         .getString("scraper.metadata.defaults"), TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51))); //$NON-NLS-1$
     add(panelScraperMetadataContainer, "2, 4, fill, fill");
-    panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+    panelScraperMetadataContainer.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("10dlu"),
+        FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, }));
 
     panelScraperMetadata = new MovieScraperMetadataPanel(settings.getMovieScraperMetadataConfig());
-    panelScraperMetadataContainer.add(panelScraperMetadata, "1, 1, 2, 1, fill, default");
+    panelScraperMetadataContainer.add(panelScraperMetadata, "1, 1, 4, 1, fill, default");
 
     chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
-    panelScraperMetadataContainer.add(chckbxAutomaticallyScrapeImages, "2, 3");
+    panelScraperMetadataContainer.add(chckbxAutomaticallyScrapeImages, "2, 3, 3, 1");
+
+    chckbxImageLanguage = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape.language"));//$NON-NLS-1$
+    panelScraperMetadataContainer.add(chckbxImageLanguage, "4, 5");
 
     panelAutomaticScraper = new JPanel();
     panelAutomaticScraper.setBorder(new TitledBorder(null,
@@ -381,5 +387,15 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, MovieTrailerQuality, JComboBox, Object> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty_7, cbTrailerQuality, jComboBoxBeanProperty);
     autoBinding_9.bind();
+    //
+    BeanProperty<JCheckBox, Boolean> jCheckBoxBeanProperty_1 = BeanProperty.create("enabled");
+    AutoBinding<JCheckBox, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        chckbxAutomaticallyScrapeImages, jCheckBoxBeanProperty, chckbxImageLanguage, jCheckBoxBeanProperty_1);
+    autoBinding_10.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_10 = BeanProperty.create("movieSettings.imageLanguagePriority");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_10, chckbxImageLanguage, jCheckBoxBeanProperty);
+    autoBinding_11.bind();
   }
 }
