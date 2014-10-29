@@ -70,6 +70,7 @@ resource = [mac os x-i386] native/mac-i386/libquaqua.jnilib
 resource = templates/readme.txt
 uresource = templates/DetailExampleHtml.jar
 uresource = templates/DetailExample2Html.jar
+uresource = templates/ExcelXml.jar
 uresource = templates/ListExampleCsv.jar
 uresource = templates/ListExampleHtml.jar
 uresource = templates/ListExampleXml.jar
