@@ -27,9 +27,14 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.scraper.IMediaSubtitleProvider;
+import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.MediaType;
 import org.tinymediamanager.scraper.opensubtitles.model.ApiStartSession;
+import org.tinymediamanager.scraper.opensubtitles.model.Info;
+import org.tinymediamanager.scraper.opensubtitles.model.Info.MovieInfo;
+import org.tinymediamanager.scraper.util.SubtitleUtils;
 
 import redstone.xmlrpc.XmlRpcClient;
 import redstone.xmlrpc.XmlRpcException;
@@ -101,14 +106,39 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
    * @param hashes
    *          1-n Strings of file hashes
    */
-  public void checkMovieHash(String... hashes) {
+  public ArrayList<MovieInfo> checkMovieHash(String... hashes) {
+    ArrayList<MovieInfo> mia = new ArrayList<MovieInfo>();
     try {
       XmlRpcStruct token = (XmlRpcStruct) methodCall("CheckMovieHash", hashes);
-      System.out.println(token);
+      Info mi = new Info(token);
+      mia = mi.getMovieInfo();
     }
     catch (Exception e) {
       LOGGER.error("Cannot fetch CheckMovieHash.", e);
     }
+    return mia;
+  }
+
+  /**
+   * Checks if given video file hashes hashes are already stored in the database.<br>
+   * If found, the server will return basic movie information, including IMDb ID, movie title, release year.<br>
+   * This information can be then used in client application to automatically fill (or verify) movie info.
+   * 
+   * @param hashes
+   *          1-n Strings of file hashes
+   * @return can return possible MULTIPLE movies for a single hash
+   */
+  public ArrayList<MovieInfo> checkMovieHash2(String... hashes) {
+    ArrayList<MovieInfo> mia = new ArrayList<MovieInfo>();
+    try {
+      XmlRpcStruct token = (XmlRpcStruct) methodCall("CheckMovieHash2", hashes);
+      Info mi = new Info(token);
+      mia = mi.getMovieInfo();
+    }
+    catch (Exception e) {
+      LOGGER.error("Cannot fetch CheckMovieHash.", e);
+    }
+    return mia;
   }
 
   public void getServerInfo() {
@@ -119,6 +149,52 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     catch (Exception e) {
       LOGGER.error("Cannot fetch ServerInfo.", e);
     }
+  }
+
+  /**
+   * Identifies a MediaFile via hash, to get some basic movie information (title, year, imdb, ...)
+   * 
+   * @param mf
+   *          the mediafile
+   * @return MediaSearchResult
+   */
+  public List<MediaSearchResult> identify(MediaFile mf) {
+    LOGGER.info("trying to identify " + mf.getFile());
+    List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
+
+    try {
+      String hash = SubtitleUtils.computeOpenSubtitlesHash(mf.getFile());
+      LOGGER.info("identify - computed hash: " + hash);
+      ArrayList<MovieInfo> mi = checkMovieHash2(hash);
+      for (MovieInfo i : mi) {
+        MediaSearchResult msr = new MediaSearchResult(this.getProviderInfo().getId());
+        msr.setIMDBId(i.MovieImdbID);
+        msr.setTitle(i.MovieName);
+        msr.setYear(i.MovieYear);
+        if (i.MovieKind.equals("movie")) {
+          msr.setMediaType(MediaType.MOVIE);
+        }
+        else {
+          msr.setMediaType(MediaType.TV_EPISODE); // what... else...?
+        }
+
+        MediaMetadata md = new MediaMetadata(this.getProviderInfo().getId());
+        md.storeMetadata(MediaMetadata.EPISODE_NR, i.SeriesEpisode);
+        md.storeMetadata(MediaMetadata.SEASON_NR, i.SeriesSeason);
+        md.storeMetadata(MediaMetadata.IMDBID, i.MovieImdbID);
+        md.storeMetadata(MediaMetadata.TITLE, i.MovieName);
+        md.storeMetadata(MediaMetadata.YEAR, i.MovieYear);
+        md.storeMetadata(MediaMetadata.VOTE_COUNT, i.SeenCount); // well...
+        msr.setMetadata(md);
+
+        results.add(msr);
+      }
+    }
+    catch (Exception e) {
+      LOGGER.error("Could not identify " + mf, e);
+    }
+
+    return results;
   }
 
   /**
@@ -134,13 +210,10 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
     List<MediaSearchResult> results = new ArrayList<MediaSearchResult>();
 
     Map<String, Object> mapQuery = new HashMap<String, Object>();
-    // mapQuery.put("sublanguageid", Globals.settings.getLanguage());
-    // mapQuery.put("moviehash", SubtitleUtils.computeOpenSubtitlesHash(mf.getFile()));
-    // mapQuery.put("moviebytesize", mf.getFilesize());
-    // TESTING
-    mapQuery.put("sublanguageid", "cze,eng,ger,slo");
-    mapQuery.put("moviehash", "7d9cd5def91c9432");
-    mapQuery.put("moviebytesize", 735934464);
+    mapQuery.put("sublanguageid", Globals.settings.getLanguage());
+    mapQuery.put("moviehash", SubtitleUtils.computeOpenSubtitlesHash(mf.getFile()));
+    // when MI is not run yet, MF always 0 (b/c of locking) - so get this direct
+    mapQuery.put("moviebytesize", mf.getFilesize() == 0 ? mf.getFile().length() : mf.getFilesize());
 
     try {
       XmlRpcStruct token = (XmlRpcStruct) methodCall("SearchSubtitles", mapQuery);
