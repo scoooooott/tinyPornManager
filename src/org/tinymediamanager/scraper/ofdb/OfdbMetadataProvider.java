@@ -552,11 +552,11 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       Document doc = Jsoup.parse(in, "UTF-8", "");
       in.close();
       Elements filme = doc.getElementsByAttributeValueMatching("href", "film\\/\\d+,");
-      LOGGER.debug("found " + filme.size() + " search results"); // hopefully
-                                                                 // only one
       if (filme == null || filme.isEmpty()) {
+        LOGGER.debug("found no search results");
         return trailers;
       }
+      LOGGER.debug("found " + filme.size() + " search results"); // hopefully only one
 
       LOGGER.debug("get (trailer) details page");
       url = new CachedUrl(BASE_URL + "/" + StrgUtils.substr(filme.first().toString(), "href=\\\"(.*?)\\\""));
@@ -596,7 +596,12 @@ public class OfdbMetadataProvider implements IMediaMetadataProvider, IMediaTrail
       }
     }
     catch (Exception e) {
-      LOGGER.error("Error parsing {}", url.toString());
+      if (url != null) {
+        LOGGER.error("Error parsing {}", url.toString());
+      }
+      else {
+        LOGGER.error("Error parsing {}", searchString);
+      }
 
       // clear cache
       CachedUrl.removeCachedFileForUrl(searchString);

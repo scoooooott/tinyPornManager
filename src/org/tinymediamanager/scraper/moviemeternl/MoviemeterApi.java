@@ -168,7 +168,7 @@ public class MoviemeterApi {
   /**
    * starts a new session, if we don't have any; or if it is expired
    */
-  private void startSession() {
+  private static synchronized void startSession() {
     if (session == null || session.getSession_key().isEmpty() || new Date().compareTo(session.getValid_till()) > 0) {
       Object token = null;
       try {

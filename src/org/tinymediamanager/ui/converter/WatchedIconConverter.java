@@ -41,6 +41,11 @@ public class WatchedIconConverter extends Converter<Boolean, Icon> {
 
   @Override
   public Boolean convertReverse(Icon arg0) {
-    return null;
+    if (arg0 == watchedIcon) {
+      return Boolean.TRUE;
+    }
+    else {
+      return Boolean.FALSE;
+    }
   }
 }

@@ -157,7 +157,7 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
    * This function should be always called when starting communication with OSDb server to identify user, specify application and start a new session
    * (either registered user or anonymous). If user has no account, blank username and password should be used.
    */
-  private void startSession() {
+  private static synchronized void startSession() {
     if (session == null) {
       Object token = null;
       try {

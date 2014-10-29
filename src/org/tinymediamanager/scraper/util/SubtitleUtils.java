@@ -57,7 +57,9 @@ public class SubtitleUtils {
     }
     finally {
       try {
-        fileChannel.close();
+        if (fileChannel != null) {
+          fileChannel.close();
+        }
       }
       catch (IOException e) {
         LOGGER.error("Error closing file stream", e);
@@ -90,7 +92,9 @@ public class SubtitleUtils {
     }
     finally {
       try {
-        fileChannel.close();
+        if (fileChannel != null) {
+          fileChannel.close();
+        }
       }
       catch (IOException e) {
         LOGGER.error("Error closing file stream", e);
