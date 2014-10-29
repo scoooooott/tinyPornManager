@@ -54,9 +54,13 @@ public class MoviemeterMetadataProvider implements IMediaMetadataProvider {
                                                     "Scraper for moviemeter.nl which is able to scrape movie metadata");
 
   public MoviemeterMetadataProvider() throws Exception {
+    initAPI();
+  }
+
+  private static synchronized void initAPI() throws Exception {
     if (mmapi == null) {
       try {
-        mmapi = new MoviemeterApi("ubc7uztcv0hgmsbkuknab0e4k9qmwnfd");
+        mmapi = new MoviemeterApi();
       }
       catch (Exception e) {
         LOGGER.error("MoviemeterMetadataProvider", e);

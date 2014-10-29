@@ -51,7 +51,6 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider {
 
   public XbmcMetadataProvider(XbmcScraper scraper) {
     XbmcScraperParser parser = new XbmcScraperParser();
-    this.scraper = scraper;
     try {
       scraper = parser.parseScraper(scraper, commonXmls);
     }
@@ -59,7 +58,7 @@ public class XbmcMetadataProvider implements IMediaMetadataProvider {
       LOGGER.error("Failed to Load XBMC Scraper: " + scraper);
       throw new RuntimeException("Failed to Load XBMC Scraper: " + scraper, e);
     }
-
+    this.scraper = scraper;
   }
 
   public MediaMetadata getMetaData(MediaSearchResult result) throws Exception {

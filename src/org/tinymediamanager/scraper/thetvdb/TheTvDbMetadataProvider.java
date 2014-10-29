@@ -69,16 +69,18 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
                                                     "Scraper for thetvdb.com which is able to scrape tv series metadata and artwork");
 
   public TheTvDbMetadataProvider() throws Exception {
+    initAPI();
+  }
+
+  private static synchronized void initAPI() throws Exception {
     if (tvdb == null) {
       try {
         tvdb = new TheTVDBApi("1A4971671264D790");
       }
       catch (Exception e) {
         LOGGER.error("TheTvDbMetadataProvider", e);
-
         // remove cached request
         clearTvdbCache();
-
         throw e;
       }
     }
@@ -125,6 +127,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     if (series == null || series.isEmpty()) {
       // maybe broken request - delete cache to be sure
       clearTvdbCache();
+      return results;
     }
 
     // first add all tv shows in the preferred language
@@ -227,6 +230,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     if (show == null) {
       // maybe broken request - delete cache to be sure
       clearTvdbCache();
+      return md;
     }
 
     // populate metadata
@@ -666,7 +670,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     return g;
   }
 
-  private void clearTvdbCache() {
+  private static void clearTvdbCache() {
     CachedUrl.cleanupCacheForSpecificHost("thetvdb.com");
   }
 

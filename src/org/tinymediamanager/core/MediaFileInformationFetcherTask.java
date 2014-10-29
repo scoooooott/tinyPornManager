@@ -47,6 +47,8 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
    *          the media files
    * @param mediaEntity
    *          the media entity
+   * @param forceUpdate
+   *          force an update
    */
   public MediaFileInformationFetcherTask(List<MediaFile> mediaFiles, MediaEntity mediaEntity, boolean forceUpdate) {
     this.mediaFiles = mediaFiles;
@@ -54,11 +56,6 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     this.forceUpdate = forceUpdate;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Callable#call()
-   */
   @Override
   public String call() {
     // try/catch block in the root of the thread to log crashes
@@ -84,8 +81,9 @@ public class MediaFileInformationFetcherTask implements Callable<Object> {
     if (mediaEntity != null) {
       mediaEntity.saveToDb();
       mediaEntity.firePropertyChange(MEDIA_INFORMATION, false, true);
+      return "getting MediaInfo from " + mediaEntity.getTitle();
     }
 
-    return "getting MediaInfo from " + mediaEntity.getTitle();
+    return "getting MediaInfo";
   }
 }

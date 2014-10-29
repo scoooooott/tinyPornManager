@@ -37,13 +37,16 @@ public class MoviemeterApi {
   private static final Logger    LOGGER  = LoggerFactory.getLogger(MoviemeterApi.class); ;
 
   private static final String    SERVICE = "http://www.moviemeter.nl/ws";
-  private static String          APIKEY  = "";
+  private static final String    APIKEY  = "ubc7uztcv0hgmsbkuknab0e4k9qmwnfd";
 
   private static ApiStartSession session = null;
   private static XmlRpcClient    client  = null;
 
-  public MoviemeterApi(String apiKey) {
-    APIKEY = apiKey;
+  public MoviemeterApi() {
+    initAPI();
+  }
+
+  private static synchronized void initAPI() {
     if (client == null) {
       try {
         client = new XmlRpcClient(SERVICE, false);

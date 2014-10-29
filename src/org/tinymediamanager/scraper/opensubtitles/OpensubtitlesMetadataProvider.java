@@ -50,6 +50,10 @@ public class OpensubtitlesMetadataProvider implements IMediaSubtitleProvider {
   private static XmlRpcClient      client       = null;
 
   public OpensubtitlesMetadataProvider() {
+    initAPI();
+  }
+
+  private static synchronized void initAPI() {
     if (client == null) {
       try {
         client = new XmlRpcClient(SERVICE, false);

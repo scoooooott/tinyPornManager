@@ -81,6 +81,11 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
                                                               "Scraper for themoviedb.org which is able to scrape movie metadata, artwork and trailers");
 
   public TmdbMetadataProvider() throws Exception {
+    initAPI();
+  }
+
+  // thread safe initialization of the API
+  private static synchronized void initAPI() throws Exception {
     // create a new instance of the tmdb api
     if (tmdb == null) {
       try {
@@ -948,7 +953,7 @@ public class TmdbMetadataProvider implements IMediaMetadataProvider, IMediaArtwo
     connectionCounter.add(currentTime);
   }
 
-  private void clearTmdbCache() {
+  private static void clearTmdbCache() {
     CachedUrl.cleanupCacheForSpecificHost("api.themoviedb.org");
   }
 
