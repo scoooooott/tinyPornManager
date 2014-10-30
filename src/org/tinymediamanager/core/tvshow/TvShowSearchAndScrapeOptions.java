@@ -46,6 +46,15 @@ public class TvShowSearchAndScrapeOptions {
     scraperMetadataConfig = Globals.settings.getTvShowScraperMetadataConfig();
     // metadata
     metadataScraper = Globals.settings.getTvShowSettings().getTvShowScraper();
+    if (metadataScraper == TvShowScrapers.ANIDB) {
+      artworkScrapers.add(TvShowArtworkScrapers.ANIDB);
+    }
+    if (Globals.settings.getTvShowSettings().isImageScraperTvdb()) {
+      artworkScrapers.add(TvShowArtworkScrapers.TVDB);
+    }
+    if (Globals.settings.getTvShowSettings().isImageScraperFanartTv()) {
+      artworkScrapers.add(TvShowArtworkScrapers.FANART_TV);
+    }
   }
 
   /**
