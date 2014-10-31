@@ -52,6 +52,8 @@ public class TmmUIHelper {
   @SuppressWarnings("rawtypes")
   public static Class         swt    = null;
 
+  private static File         lastDir;
+
   public static void init() throws ClassNotFoundException {
     // if (SystemUtils.IS_OS_LINUX) {
     swt = ClassLoader.getSystemClassLoader().loadClass("org.eclipse.swt.widgets.FileDialog");
@@ -113,6 +115,9 @@ public class TmmUIHelper {
         method.invoke(null, includes);
         UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
         JNativeFileChooser fileChooser = new JNativeFileChooser();
+        if (lastDir != null) {
+          fileChooser.setCurrentDirectory(lastDir);
+        }
         fileChooser.setFileSelectionMode(mode);
         fileChooser.setDialogTitle(dialogTitle);
 
@@ -127,6 +132,12 @@ public class TmmUIHelper {
         }
 
         if (result == JFileChooser.APPROVE_OPTION) {
+          if (mode == JFileChooser.DIRECTORIES_ONLY) {
+            lastDir = fileChooser.getSelectedFile();
+          }
+          else {
+            lastDir = fileChooser.getSelectedFile().getParentFile();
+          }
           return fileChooser.getSelectedFile();
         }
         else {
@@ -140,11 +151,20 @@ public class TmmUIHelper {
     // fallback
     JNativeFileChooser fileChooser = new JNativeFileChooser();
     fileChooser.setFileSelectionMode(mode);
+    if (lastDir != null) {
+      fileChooser.setCurrentDirectory(lastDir);
+    }
     fileChooser.setDialogTitle(dialogTitle);
 
     int result = fileChooser.showOpenDialog(MainWindow.getFrame());
 
     if (result == JFileChooser.APPROVE_OPTION) {
+      if (mode == JFileChooser.DIRECTORIES_ONLY) {
+        lastDir = fileChooser.getSelectedFile();
+      }
+      else {
+        lastDir = fileChooser.getSelectedFile().getParentFile();
+      }
       return fileChooser.getSelectedFile();
     }
 
@@ -156,9 +176,13 @@ public class TmmUIHelper {
       Window window = SwingUtilities.getWindowAncestor(MainWindow.getFrame().getGlassPane());
       JDirectoryDialog directoryDialog = new JDirectoryDialog();
       directoryDialog.setTitle(title);
+      if (lastDir != null) {
+        directoryDialog.setSelectedDirectory(lastDir.getAbsolutePath());
+      }
       directoryDialog.show(window);
 
       if (StringUtils.isNotEmpty(directoryDialog.getSelectedDirectory())) {
+        lastDir = new File(directoryDialog.getSelectedDirectory());
         return new File(directoryDialog.getSelectedDirectory());
       }
       else {
@@ -177,12 +201,16 @@ public class TmmUIHelper {
     System.setProperty("apple.awt.fileDialogForDirectories", "true");
 
     FileDialog chooser = new FileDialog(MainWindow.getFrame(), title);
+    if (lastDir != null) {
+      chooser.setDirectory(lastDir.getAbsolutePath());
+    }
     chooser.setVisible(true);
 
     // reset system property
     System.setProperty("apple.awt.fileDialogForDirectories", "false");
 
     if (StringUtils.isNotEmpty(chooser.getFile())) {
+      lastDir = new File(chooser.getDirectory());
       return new File(chooser.getDirectory() + File.separator + chooser.getFile());
     }
     else {
@@ -229,8 +257,12 @@ public class TmmUIHelper {
       Window window = SwingUtilities.getWindowAncestor(MainWindow.getFrame().getGlassPane());
       JFileDialog fileDialog = new JFileDialog();
       fileDialog.setTitle(title);
+      if (lastDir != null) {
+        fileDialog.setParentDirectory(lastDir.getAbsolutePath());
+      }
       fileDialog.show(window);
       if (StringUtils.isNotEmpty(fileDialog.getSelectedFileName())) {
+        lastDir = new File(fileDialog.getParentDirectory());
         return new File(fileDialog.getParentDirectory() + File.separator + fileDialog.getSelectedFileName());
       }
       else {
@@ -242,9 +274,13 @@ public class TmmUIHelper {
 
   private static File openFileDialog(String title) throws Exception, Error {
     FileDialog chooser = new FileDialog(MainWindow.getFrame(), title);
+    if (lastDir != null) {
+      chooser.setDirectory(lastDir.getAbsolutePath());
+    }
     chooser.setVisible(true);
 
     if (StringUtils.isNotEmpty(chooser.getFile())) {
+      lastDir = new File(chooser.getDirectory());
       return new File(chooser.getDirectory() + File.separator + chooser.getFile());
     }
     else {
