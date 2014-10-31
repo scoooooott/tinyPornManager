@@ -139,6 +139,8 @@ public class TvShowTest {
     Assert.assertEquals("S:7 E:15", detectEpisode("The.Big.Bang.Theory.S07E15.Eisenbahnromantik.German.DD51.Dubbed.DL.1080p.BD.x264-TVS.mkv"));
     Assert.assertEquals("S:1946 E:5", detectEpisode("S1946E05.mkv"));
     Assert.assertEquals("S:3 E:8", detectEpisode("Game of Thrones - 3x08 - Die Zweitgeborenen (Second sons)[1080p AAC-6ch de en].avi"));
+    Assert.assertEquals("S:10 E:5", detectEpisode("Looney Tunes - 10x05 - Episodename"));
+    Assert.assertEquals("S:1960 E:5", detectEpisode("Looney Tunes - 1960x05 - Episodename"));
 
     // ************************************************************************
     // 1-3 chars, if they are the ONLY numbers in file
