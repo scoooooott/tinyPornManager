@@ -100,8 +100,9 @@ public class BugReportDialog extends TmmDialog {
     panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC,
+        RowSpec.decode("default:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     JLabel lblName = new JLabel(BUNDLE.getString("BugReport.name")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");
@@ -127,10 +128,10 @@ public class BugReportDialog extends TmmDialog {
     panelContent.add(lblEmaildesc, "2, 5, 3, 1");
 
     JLabel lblFeedback = new JLabel(BUNDLE.getString("BugReport.description")); //$NON-NLS-1$
-    panelContent.add(lblFeedback, "2, 7, right, top");
+    panelContent.add(lblFeedback, "2, 7, 3, 1");
 
     JScrollPane scrollPane = new JScrollPane();
-    panelContent.add(scrollPane, "4, 7, fill, fill");
+    panelContent.add(scrollPane, "2, 9, 3, 1, fill, fill");
 
     textArea = new JTextArea();
     scrollPane.setViewportView(textArea);
@@ -138,14 +139,14 @@ public class BugReportDialog extends TmmDialog {
     textArea.setWrapStyleWord(true);
 
     JLabel lblAttachments = new JLabel(BUNDLE.getString("BugReport.attachments")); //$NON-NLS-1$
-    panelContent.add(lblAttachments, "2, 9");
+    panelContent.add(lblAttachments, "2, 11");
 
     chckbxLogs = new JCheckBox(BUNDLE.getString("BugReport.logs")); //$NON-NLS-1$
     chckbxLogs.setSelected(true);
-    panelContent.add(chckbxLogs, "4, 9");
+    panelContent.add(chckbxLogs, "4, 11");
 
     chckbxConfigxml = new JCheckBox("config.xml");
-    panelContent.add(chckbxConfigxml, "4, 10");
+    panelContent.add(chckbxConfigxml, "4, 12");
 
     JPanel panelButtons = new JPanel();
     panelButtons.setLayout(new EqualsLayout(5));

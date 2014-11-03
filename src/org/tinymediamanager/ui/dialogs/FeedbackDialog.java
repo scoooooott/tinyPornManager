@@ -87,7 +87,7 @@ public class FeedbackDialog extends TmmDialog {
     panelContent.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
         FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] {
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
+        FormFactory.PARAGRAPH_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
     JLabel lblName = new JLabel(BUNDLE.getString("Feedback.name")); //$NON-NLS-1$
     panelContent.add(lblName, "2, 2, right, default");
@@ -111,10 +111,10 @@ public class FeedbackDialog extends TmmDialog {
     }
 
     JLabel lblFeedback = new JLabel(BUNDLE.getString("Feedback.message")); //$NON-NLS-1$
-    panelContent.add(lblFeedback, "2, 6, right, top");
+    panelContent.add(lblFeedback, "2, 6, 3, 1");
 
     JScrollPane scrollPane = new JScrollPane();
-    panelContent.add(scrollPane, "4, 6, fill, fill");
+    panelContent.add(scrollPane, "2, 8, 3, 1, fill, fill");
 
     textArea = new JTextArea();
     scrollPane.setViewportView(textArea);
