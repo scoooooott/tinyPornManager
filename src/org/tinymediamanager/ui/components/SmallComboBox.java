@@ -121,7 +121,6 @@ public class SmallComboBox extends JComboBox {
   class SmallComboBoxEditor extends BasicComboBoxEditor {
     private JPanel panel     = new JPanel();
     private JLabel labelItem = new JLabel();
-    private String selectedValue;
 
     public SmallComboBoxEditor() {
       panel.setLayout(new GridBagLayout());
@@ -145,7 +144,7 @@ public class SmallComboBox extends JComboBox {
 
     @Override
     public Object getItem() {
-      return this.selectedValue;
+      return null;
     }
   }
 

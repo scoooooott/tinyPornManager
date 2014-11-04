@@ -95,7 +95,7 @@ public class TvShowGenresPanel extends JPanel {
       }
     }
     // add unknown if there is no genre
-    if (genres == null || genres.size() == 0) {
+    if (genres.isEmpty()) {
       try {
         Icon image = new ImageIcon(TvShowGenresPanel.class.getResource("/images/genres/unknown.png"));
         JLabel lblImage = new JLabel(image);

@@ -93,7 +93,7 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
         if (collectionId > 0) {
           String collectionName = md.getStringValue(MediaMetadata.COLLECTION_NAME);
           MovieSet movieSet = movieList.getMovieSet(collectionName, collectionId);
-          if (movieSet.getTmdbId() == 0) {
+          if (movieSet != null && movieSet.getTmdbId() == 0) {
             movieSet.setTmdbId(collectionId);
             // get movieset metadata
             try {

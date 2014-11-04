@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 package org.tinymediamanager.thirdparty;
-import java.util.Iterator;
+
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 
 /**
  * This class implements a fixed-size ring buffer (aka a circular buffer) of objects. Objects are always added to the head of the buffer and removed
@@ -85,12 +85,16 @@ public class RingBuffer<T> {
   public void clear() {
     headLock.writeLock().lock();
     tailLock.writeLock().lock();
-    head = tail = 0;
-    count.set(0);
-    modCount.incrementAndGet();
-    data = (T[]) new Object[maxSize];
-    tailLock.writeLock().unlock();
-    headLock.writeLock().unlock();
+    try {
+      head = tail = 0;
+      count.set(0);
+      modCount.incrementAndGet();
+      data = (T[]) new Object[maxSize];
+    }
+    finally {
+      tailLock.writeLock().unlock();
+      headLock.writeLock().unlock();
+    }
   }
 
   /**
@@ -157,19 +161,23 @@ public class RingBuffer<T> {
    * @return the t
    */
   public T remove() {
-    tailLock.writeLock().lock();
     if (isEmpty()) {
-      tailLock.writeLock().unlock();
       return null;
     }
-    T obj = data[tail++];
-    if (tail == maxSize) {
-      tail = 0;
-      tailWrapCount++;
+    tailLock.writeLock().lock();
+    T obj = null;
+    try {
+      obj = data[tail++];
+      if (tail == maxSize) {
+        tail = 0;
+        tailWrapCount++;
+      }
+      count.decrementAndGet();
+      modCount.incrementAndGet();
     }
-    count.decrementAndGet();
-    modCount.incrementAndGet();
-    tailLock.writeLock().unlock();
+    finally {
+      tailLock.writeLock().unlock();
+    }
     return obj;
   }
 
@@ -180,37 +188,41 @@ public class RingBuffer<T> {
    *          the num to remove
    */
   public void remove(int numToRemove) {
-    tailLock.writeLock().lock();
     if (isEmpty()) {
-      tailLock.writeLock().unlock();
       return;
     }
+
     // don't let head move while we're removing
+    tailLock.writeLock().lock();
     headLock.readLock().lock();
-    if (tail + numToRemove >= maxSize) {
-      int newTail = (tail + numToRemove) - maxSize;
-      if (newTail > head) {
-        newTail = head;
+    try {
+      if (tail + numToRemove >= maxSize) {
+        int newTail = (tail + numToRemove) - maxSize;
+        if (newTail > head) {
+          newTail = head;
+        }
+        tail = newTail;
+        tailWrapCount++;
       }
-      tail = newTail;
-      tailWrapCount++;
+      // check for passing head
+      else if ((tail < head) && (tail + numToRemove >= head)) {
+        tail = head;
+      }
+      // recalc size
+      if (tail == head) {
+        count.set(0);
+      }
+      else {
+        int newCount = count.get();
+        newCount -= numToRemove;
+        count.set(newCount);
+      }
+      modCount.incrementAndGet();
     }
-    // check for passing head
-    else if ((tail < head) && (tail + numToRemove >= head)) {
-      tail = head;
+    finally {
+      headLock.readLock().unlock();
+      tailLock.writeLock().unlock();
     }
-    // recalc size
-    if (tail == head) {
-      count.set(0);
-    }
-    else {
-      int newCount = count.get();
-      newCount -= numToRemove;
-      count.set(newCount);
-    }
-    modCount.incrementAndGet();
-    headLock.readLock().unlock();
-    tailLock.writeLock().unlock();
   }
 
   /**
@@ -222,54 +234,16 @@ public class RingBuffer<T> {
     return new RingBufferIterator<T>(this);
   }
 
-  /**
-   * The Class RingBufferIterator.
-   * 
-   * @param <T>
-   *          the generic type
-   * @author Manuel Laggner
-   */
   private static class RingBufferIterator<T> implements Iterator<T> {
-
-    /** The next. */
     private int                 next;
-
-    /** The next wrap count. */
     private int                 nextWrapCount;
-
-    /** The buffer. */
     private final RingBuffer<T> buffer;
-
-    /** The mode. */
     private Mode                mode;
-
-    /** The has next. */
     private boolean             hasNext;
-
-    /** The expected mod count. */
     private int                 expectedModCount;
 
-    /**
-     * The Enum Mode.
-     * 
-     * @author Manuel Laggner
-     */
     private enum Mode {
-
-      /** The empty. */
-      EMPTY,
-      /** The MOD e1. */
-      MODE1,
-      /** The MOD e2 left. */
-      MODE2LEFT,
-      /** The MOD e2 right. */
-      MODE2RIGHT,
-      /** The start. */
-      START,
-      /** The end. */
-      END,
-      /** The invalid. */
-      INVALID
+      EMPTY, MODE1, MODE2LEFT, MODE2RIGHT, START, END, INVALID
     }
 
     /**
@@ -319,18 +293,17 @@ public class RingBuffer<T> {
       expectedModCount = buffer.modCount.get();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Iterator#hasNext()
-     */
     @Override
     public boolean hasNext() {
       buffer.headLock.readLock().lock();
-      if (expectedModCount != buffer.modCount.get()) {
-        hasNext = calcHasNext();
+      try {
+        if (expectedModCount != buffer.modCount.get()) {
+          hasNext = calcHasNext();
+        }
       }
-      buffer.headLock.readLock().unlock();
+      finally {
+        buffer.headLock.readLock().unlock();
+      }
       return hasNext;
     }
 
@@ -454,33 +427,27 @@ public class RingBuffer<T> {
       return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Iterator#next()
-     */
     @Override
-    // This really should be called atomically with hasNext...
     public T next() {
       if (!hasNext) {
         return null;
       }
-      buffer.headLock.readLock().lock();
-      T item = buffer.data[next++];
-      if (next == buffer.maxSize) {
-        next = 0;
-        nextWrapCount++;
+      T item = null;
+      try {
+        buffer.headLock.readLock().lock();
+        item = buffer.data[next++];
+        if (next == buffer.maxSize) {
+          next = 0;
+          nextWrapCount++;
+        }
+        hasNext = calcHasNext();
       }
-      hasNext = calcHasNext();
-      buffer.headLock.readLock().unlock();
+      finally {
+        buffer.headLock.readLock().unlock();
+      }
       return item;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Iterator#remove()
-     */
     @Override
     public void remove() {
       throw new UnsupportedOperationException();
@@ -511,7 +478,15 @@ public class RingBuffer<T> {
    * @return true, if is empty
    */
   public boolean isEmpty() {
-    return (count.get() == 0);
+    tailLock.writeLock().lock();
+    int count = 0;
+    try {
+      count = this.count.get();
+    }
+    finally {
+      tailLock.writeLock().unlock();
+    }
+    return (count == 0);
   }
 
   /**

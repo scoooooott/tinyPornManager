@@ -599,8 +599,12 @@ public abstract class MediaEntity extends AbstractModelObject {
   public List<MediaFile> getMediaFiles() {
     List<MediaFile> mf = new ArrayList<MediaFile>();
     readWriteLock.readLock().lock();
-    mf.addAll(mediaFiles);
-    readWriteLock.readLock().unlock();
+    try {
+      mf.addAll(mediaFiles);
+    }
+    finally {
+      readWriteLock.readLock().unlock();
+    }
     return mf;
   }
 
@@ -648,16 +652,17 @@ public abstract class MediaEntity extends AbstractModelObject {
   }
 
   public void removeFromMediaFiles(MediaFile mediaFile) {
-    // synchronized (mediaFiles) {
-
     final EntityManager entityManager = getEntityManager();
     readWriteLock.writeLock().lock();
-    // need to synchronize on the entitymanager :(
-    synchronized (entityManager) {
-      mediaFiles.remove(mediaFile);
+    try {
+      // need to synchronize on the entitymanager :(
+      synchronized (entityManager) {
+        mediaFiles.remove(mediaFile);
+      }
     }
-    // }
-    readWriteLock.writeLock().unlock();
+    finally {
+      readWriteLock.writeLock().unlock();
+    }
 
     firePropertyChange(MEDIA_FILES, null, mediaFiles);
     fireRemoveEventForMediaFile(mediaFile);

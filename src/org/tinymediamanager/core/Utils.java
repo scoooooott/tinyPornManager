@@ -678,7 +678,7 @@ public class Utils {
         l = locale;
       }
     }
-    if (l == null && countries != null && countries.size() > 0) {
+    if (l == null && countries.size() > 0) {
       // well, take the first one
       l = countries.get(0);
     }

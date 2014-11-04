@@ -385,7 +385,7 @@ public class ZelluloidMetadataProvider implements IMediaMetadataProvider, IMedia
     // only look for movie links
     Elements filme = doc.getElementsByAttributeValueStarting("href", "hit.php");
     LOGGER.debug("found " + filme.size() + " search results");
-    if (filme == null || filme.isEmpty()) {
+    if (filme.isEmpty()) {
       if (!doc.getElementsByTag("title").text().contains("Suche nach")) {
         // redirected to detail page
         MediaSearchResult msr = new MediaSearchResult(providerInfo.getId());

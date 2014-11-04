@@ -190,7 +190,7 @@ public class TvShowTreeModel implements TreeModel {
     synchronized (root) {
       TvShowTreeNode child = (TvShowTreeNode) nodeMap.get(tvShow);
       DefaultMutableTreeNode parent = root;
-      if (parent != null && child != null) {
+      if (child != null) {
         int index = getIndexOfChild(parent, child);
 
         nodeMap.remove(tvShow);
