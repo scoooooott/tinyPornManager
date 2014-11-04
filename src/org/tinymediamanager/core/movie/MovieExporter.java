@@ -106,13 +106,20 @@ public class MovieExporter extends MediaEntityExporter {
       }
       detailsDir.mkdirs();
 
+      String renamerTemplate = "";
+      if (StringUtils.isNotBlank(MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename())) {
+        renamerTemplate = MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename();
+      }
+      else {
+        // default
+        renamerTemplate = "$T ($Y) $V $A";
+      }
+
       for (MediaEntity me : moviesToExport) {
         Movie movie = (Movie) me;
         LOGGER.debug("processing movie " + movie.getTitle());
         // get preferred movie name like set up in movie renamer
-        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(
-            MovieModuleManager.MOVIE_SETTINGS.getMovieRenamerFilename(), movie)
-            + "." + fileExtension);
+        File detailsExportFile = new File(detailsDir, MovieRenamer.createDestinationForFilename(renamerTemplate, movie) + "." + fileExtension);
 
         root = new HashMap<String, Object>();
         root.put("movie", movie);
