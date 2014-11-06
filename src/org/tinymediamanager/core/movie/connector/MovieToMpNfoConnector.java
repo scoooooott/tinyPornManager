@@ -178,19 +178,17 @@ public class MovieToMpNfoConnector {
     mp.setPlot(movie.getPlot());
 
     // outline is only the first 200 characters of the plot
-    int spaceIndex = 0;
-    if (!StringUtils.isEmpty(mp.getPlot()) && mp.getPlot().length() > 200) {
-      spaceIndex = mp.getPlot().indexOf(" ", 200);
+    if (StringUtils.isNotBlank(mp.getPlot()) && mp.getPlot().length() > 200) {
+      int spaceIndex = mp.getPlot().indexOf(" ", 200);
       if (spaceIndex > 0) {
-        mp.setOutline(mp.getPlot().substring(0, spaceIndex));
+        mp.setOutline(mp.getPlot().substring(0, spaceIndex) + "...");
       }
       else {
         mp.setOutline(mp.getPlot());
       }
     }
-    else if (!StringUtils.isEmpty(mp.getPlot())) {
-      spaceIndex = mp.getPlot().length();
-      mp.setOutline(mp.getPlot().substring(0, spaceIndex));
+    else if (StringUtils.isNotBlank(mp.getPlot())) {
+      mp.setOutline(mp.getPlot());
     }
 
     mp.setTagline(movie.getTagline());

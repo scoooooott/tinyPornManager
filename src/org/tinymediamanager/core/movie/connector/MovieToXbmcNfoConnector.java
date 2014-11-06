@@ -311,19 +311,17 @@ public class MovieToXbmcNfoConnector {
     xbmc.plot = movie.getPlot();
 
     // outline is only the first 200 characters of the plot
-    int spaceIndex = 0;
-    if (!StringUtils.isEmpty(xbmc.plot) && xbmc.plot.length() > 200) {
-      spaceIndex = xbmc.plot.indexOf(" ", 200);
+    if (StringUtils.isNotBlank(xbmc.plot) && xbmc.plot.length() > 200) {
+      int spaceIndex = xbmc.plot.indexOf(" ", 200);
       if (spaceIndex > 0) {
-        xbmc.outline = xbmc.plot.substring(0, spaceIndex);
+        xbmc.outline = xbmc.plot.substring(0, spaceIndex) + "...";
       }
       else {
         xbmc.outline = xbmc.plot;
       }
     }
-    else if (!StringUtils.isEmpty(xbmc.plot)) {
-      spaceIndex = xbmc.plot.length();
-      xbmc.outline = xbmc.plot.substring(0, spaceIndex);
+    else if (StringUtils.isNotBlank(xbmc.plot)) {
+      xbmc.outline = xbmc.plot;
     }
 
     xbmc.tagline = movie.getTagline();
