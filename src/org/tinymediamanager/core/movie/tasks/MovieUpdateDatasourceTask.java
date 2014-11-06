@@ -388,6 +388,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         if (movie == null) {
           LOGGER.info("Movie not found; parsing directory" + movieDir);
           movie = new Movie();
+          String bdinfoTitle = ""; // title parsed out of BDInfo
 
           // first round - try to parse NFO(s) first
           for (MediaFile mf : mfs) {
@@ -405,7 +406,6 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
               }
               if (nfo != null) {
                 movie = nfo;
-                movie.addToMediaFiles(mf);
               }
               else {
                 // is NFO, but parsing exception. try to find at least imdb id within
@@ -422,13 +422,37 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
                 }
               } // end NFO null
             }
+            else if (mf.getType().equals(MediaFileType.TEXT)) {
+              if (mf.getFilename().equalsIgnoreCase("BDInfo.txt")) {
+                String bdinfo = FileUtils.readFileToString(mf.getFile());
+                bdinfo = StrgUtils.substr(bdinfo, ".*Disc Title:\\s+(.*?)[\\n\\r]");
+                if (!bdinfo.isEmpty()) {
+                  LOGGER.debug("Found Disc Title in BDInfo.txt: " + bdinfo);
+                  bdinfoTitle = bdinfo;
+                }
+              }
+            }
           }
 
           if (movie.getTitle().isEmpty()) {
-            String[] ty = ParserUtils.detectCleanMovienameAndYear(movieDir.getName());
-            movie.setTitle(ty[0]);
-            if (!ty[1].isEmpty()) {
-              movie.setYear(ty[1]);
+            // no nfo found
+            String[] folder = ParserUtils.detectCleanMovienameAndYear(movieDir.getName());
+            String[] bdiName = ParserUtils.detectCleanMovienameAndYear(bdinfoTitle);
+
+            // set the longer title / prefer folder name
+            if (folder[0].length() >= bdiName[0].length()) {
+              movie.setTitle(folder[0]);
+            }
+            else {
+              movie.setTitle(bdiName[0]);
+            }
+
+            // set the longer year / prefer folder year
+            if (folder[1].length() >= bdiName[1].length()) {
+              movie.setYear(folder[1]);
+            }
+            else {
+              movie.setYear(bdiName[1]);
             }
           }
 
@@ -655,7 +679,14 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             }
             break;
 
+          case NFO:
+          case TEXT:
+            LOGGER.debug("parsing info/text file " + mf.getFilename());
+            movie.addToMediaFiles(mf);
+            break;
+
           case POSTER:
+          case SEASON_POSTER:
             LOGGER.debug("parsing poster " + mf.getFilename());
             movie.addToMediaFiles(mf);
             break;

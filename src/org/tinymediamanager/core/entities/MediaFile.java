@@ -268,6 +268,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
       return MediaFileType.VIDEO;
     }
 
+    if (ext.equals("txt")) {
+      return MediaFileType.TEXT;
+    }
+
     return MediaFileType.UNKNOWN;
   }
 

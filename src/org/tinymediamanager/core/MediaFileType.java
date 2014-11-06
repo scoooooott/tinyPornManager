@@ -43,7 +43,8 @@ public enum MediaFileType {
   SEASON_POSTER,
   EXTRAFANART, 
   EXTRATHUMB,  
-  GRAPHIC, 
+  GRAPHIC,
+  TEXT, // various text infos, like BDinfo.txt or others...
   UNKNOWN;
   // @formatter:on
 }
