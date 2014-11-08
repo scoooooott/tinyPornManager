@@ -141,6 +141,7 @@ public class TvShowTest {
     Assert.assertEquals("S:3 E:8", detectEpisode("Game of Thrones - 3x08 - Die Zweitgeborenen (Second sons)[1080p AAC-6ch de en].avi"));
     Assert.assertEquals("S:10 E:5", detectEpisode("Looney Tunes - 10x05 - Episodename"));
     Assert.assertEquals("S:1960 E:5", detectEpisode("Looney Tunes - 1960x05 - Episodename"));
+    Assert.assertEquals("S:4 E:1", detectEpisode("The Big Bang Theory_S04E01_31 Liebhaber, aufgerundet.m4v"));
 
     // ************************************************************************
     // 1-3 chars, if they are the ONLY numbers in file
