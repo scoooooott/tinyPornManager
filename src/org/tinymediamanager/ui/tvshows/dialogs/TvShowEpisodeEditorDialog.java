@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -517,6 +519,8 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         else {
           tfTitle.setText(metadata.getStringValue(MediaMetadata.TITLE));
           taPlot.setText(metadata.getStringValue(MediaMetadata.PLOT));
+          spFirstAired.setValue(parseFirstAired(metadata.getStringValue(MediaMetadata.RELEASE_DATE)));
+
           for (MediaArtwork ma : metadata.getFanart()) {
             if (ma.getType() == MediaArtworkType.THUMB) {
               lblThumb.setImageUrl(ma.getDefaultUrl());
@@ -530,6 +534,29 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       }
 
       return null;
+    }
+
+    private Date parseFirstAired(String aired) {
+      try {
+        Pattern date = Pattern.compile("([0-9]{2})[_\\.-]([0-9]{2})[_\\.-]([0-9]{4})");
+        Matcher m = date.matcher(aired);
+        if (m.find()) {
+          return new SimpleDateFormat("dd-MM-yyyy").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+        }
+        else {
+          date = Pattern.compile("([0-9]{4})[_\\.-]([0-9]{2})[_\\.-]([0-9]{2})");
+          m = date.matcher(aired);
+          if (m.find()) {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(m.group(1) + "-" + m.group(2) + "-" + m.group(3));
+          }
+          else {
+            return INITIAL_DATE;
+          }
+        }
+      }
+      catch (Exception e) {
+        return INITIAL_DATE;
+      }
     }
   }
 
