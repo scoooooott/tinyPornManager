@@ -1054,13 +1054,23 @@ public class Movie extends MediaEntity {
       for (int i = 0; i < newActors.size(); i++) {
         MovieActor actor = newActors.get(i);
         if (!actors.contains(actor)) {
-          actors.add(i, actor);
+          try {
+            actors.add(i, actor);
+          }
+          catch (ArrayIndexOutOfBoundsException e) {
+            actors.add(actor);
+          }
         }
         else {
           int indexOldList = actors.indexOf(actor);
           if (i != indexOldList) {
             MovieActor oldActor = actors.remove(indexOldList);
-            actors.add(i, oldActor);
+            try {
+              actors.add(i, oldActor);
+            }
+            catch (ArrayIndexOutOfBoundsException e) {
+              actors.add(oldActor);
+            }
           }
         }
       }
@@ -1831,13 +1841,23 @@ public class Movie extends MediaEntity {
       MovieProducer producer = newProducers.get(i);
       if (!producers.contains(producer)) {
         // new producer
-        producers.add(i, producer);
+        try {
+          producers.add(i, producer);
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+          producers.add(producer);
+        }
       }
       else {
         int indexOldList = producers.indexOf(producer);
         if (i != indexOldList) {
           MovieProducer oldProducer = producers.remove(indexOldList);
-          producers.add(i, oldProducer);
+          try {
+            producers.add(i, oldProducer);
+          }
+          catch (ArrayIndexOutOfBoundsException e) {
+            producers.add(oldProducer);
+          }
         }
       }
     }
