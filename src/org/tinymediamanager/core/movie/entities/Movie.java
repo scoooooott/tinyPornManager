@@ -1828,35 +1828,39 @@ public class Movie extends MediaEntity {
   public void setProducers(List<MovieProducer> newProducers) {
     // two way sync of producers
 
-    // first remove unused
-    for (int i = producers.size() - 1; i >= 0; i--) {
-      MovieProducer producer = producers.get(i);
-      if (!newProducers.contains(producer)) {
-        producers.remove(producer);
+    // actors are (like media files) proxied by objectdb;
+    // this is why we need a lock here
+    synchronized (getEntityManager()) {
+      // first remove unused
+      for (int i = producers.size() - 1; i >= 0; i--) {
+        MovieProducer producer = producers.get(i);
+        if (!newProducers.contains(producer)) {
+          producers.remove(producer);
+        }
       }
-    }
 
-    // second add the new ones
-    for (int i = 0; i < newProducers.size(); i++) {
-      MovieProducer producer = newProducers.get(i);
-      if (!producers.contains(producer)) {
-        // new producer
-        try {
-          producers.add(i, producer);
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
-          producers.add(producer);
-        }
-      }
-      else {
-        int indexOldList = producers.indexOf(producer);
-        if (i != indexOldList) {
-          MovieProducer oldProducer = producers.remove(indexOldList);
+      // second add the new ones
+      for (int i = 0; i < newProducers.size(); i++) {
+        MovieProducer producer = newProducers.get(i);
+        if (!producers.contains(producer)) {
+          // new producer
           try {
-            producers.add(i, oldProducer);
+            producers.add(i, producer);
           }
           catch (ArrayIndexOutOfBoundsException e) {
-            producers.add(oldProducer);
+            producers.add(producer);
+          }
+        }
+        else {
+          int indexOldList = producers.indexOf(producer);
+          if (i != indexOldList) {
+            MovieProducer oldProducer = producers.remove(indexOldList);
+            try {
+              producers.add(i, oldProducer);
+            }
+            catch (ArrayIndexOutOfBoundsException e) {
+              producers.add(oldProducer);
+            }
           }
         }
       }
