@@ -65,7 +65,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
                                                                 "@EADIR");
 
   // skip folders starting with a SINGLE "." or "._"
-  private static final String         skipFoldersRegex      = "^[.][\\w]+.*";
+  private static final String         skipFoldersRegex      = "^[.][\\w@]+.*";
 
   // MacOS ignore
   private static final String         skipFilesStartingWith = "._";
