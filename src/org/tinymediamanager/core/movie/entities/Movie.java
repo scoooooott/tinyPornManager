@@ -1188,7 +1188,13 @@ public class Movie extends MediaEntity {
         if (isDisc()) {
           // if NFO filename is activated, we generate them accordingly MF(1)
           // but if disc, fixtate this
-          return "VIDEO_TS.nfo";
+          if (new File(path, "VIDEO_TS.ifo").exists() || new File(path, "VIDEO_TS").exists()) {
+            return "VIDEO_TS.nfo";
+          }
+          else {
+            // ohm... there is no official naming, lets write an index file...
+            return "index.nfo";
+          }
         }
         String movieFilename = FilenameUtils.getBaseName(newMovieFilename);
         filename += movieFilename.isEmpty() ? "" : Utils.cleanStackingMarkers(movieFilename) + ".nfo"; // w/o stacking information
