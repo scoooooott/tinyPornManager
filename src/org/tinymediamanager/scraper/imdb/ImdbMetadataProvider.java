@@ -594,12 +594,18 @@ public class ImdbMetadataProvider implements IMediaMetadataProvider {
 
     // imdb.com has another site structure
     if (imdbSite == ImdbSiteDefinition.IMDB_COM) {
-      Elements odd = doc.getElementsByClass("odd");
-      if (odd.size() > 0) {
-        Elements p = odd.get(0).getElementsByTag("p");
-        if (p.size() > 0) {
-          String plot = cleanString(p.get(0).ownText());
-          md.storeMetadata(MediaMetadata.PLOT, plot);
+      Elements zebraList = doc.getElementsByClass("zebraList");
+      if (zebraList != null && !zebraList.isEmpty()) {
+        Elements odd = zebraList.get(0).getElementsByClass("odd");
+        if (odd.isEmpty()) {
+          odd = zebraList.get(0).getElementsByClass("even"); // sometimes imdb has even
+        }
+        if (odd.size() > 0) {
+          Elements p = odd.get(0).getElementsByTag("p");
+          if (p.size() > 0) {
+            String plot = cleanString(p.get(0).ownText());
+            md.storeMetadata(MediaMetadata.PLOT, plot);
+          }
         }
       }
     }
