@@ -1,7 +1,7 @@
 <project default="create_tmm_jar" name="Tiny Media Manager">
 
     <!-- software revision number -->
-    <property name="version" value="2.7" />
+    <property name="version" value="2.6.4" />
 
     <!-- build directories -->
     <property name="lib.dir" value="lib" />
@@ -119,7 +119,7 @@
             <entry key="date" value="${today}" />
         </propertyfile>
     </target>
-	
+  
     <target name="setNightly" if="nightly">
         <property name="rev" value="nightly" />
     </target>
@@ -224,8 +224,9 @@
         <copy file="AppBundler/tinyMediaManagerOSX.sh" tofile="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" />
         <chmod file="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/tinyMediaManagerOSX.sh" perm="ugo+rx" />
         <zip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_mac.zip" level="9">
-            <zipfileset filemode="755" dir="${dist.dir}/mac" includes="tinyMediaManager.app/**/*" />
-        </zip>
+            <zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
+            <zipfileset filemode="755" dir="${dist.dir}/mac" includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
+        </zip> 
 
         <!-- Windows -->
         <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" 
@@ -248,11 +249,10 @@
         <chmod file="${dist.dir}/tinyMediaManager.sh" perm="ugo+rx" />
         <chmod file="${dist.dir}/tinyMediaManagerUpdater.sh" perm="ugo+rx" />
         <chmod file="${dist.dir}/tinyMediaManagerCMD.sh" perm="ugo+rx" />
-        <tar destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar" >
+        <tar compression="bzip2" destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar.bz2" >
             <tarfileset dir="${build.dir}" excludes="env.txt"/>
-            <tarfileset dir="${dist.dir}" includes="*.sh"/>
+            <tarfileset filemode="755" dir="${dist.dir}" includes="*.sh"/>
         </tar>
-        <gzip destfile="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar.gz" src="${dist.dir}/tmm_${version}_r${svn.info.revision}_linux.tar" />
 
         <!-- default files, NOT to include in dist, but in getdown updater -->
         <copy todir="${build.dir}/native">
