@@ -46,14 +46,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +78,7 @@ import org.tinymediamanager.ui.ToggleButtonUI;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.WrapLayout;
 import org.tinymediamanager.ui.components.ImageLabel;
+import org.tinymediamanager.ui.components.JPresetTextField;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -106,6 +110,7 @@ public class ImageChooserDialog extends TmmDialog {
   private JLabel                      lblProgressAction;
   private JPanel                      panelImages;
   private ImageLabel                  imageLabel;
+  private JScrollPane                 scrollPane;
   private ImageType                   type;
   private MediaType                   mediaType;
   private ButtonGroup                 buttonGroup     = new ButtonGroup();
@@ -115,6 +120,7 @@ public class ImageChooserDialog extends TmmDialog {
   private final Action                actionCancel    = new CancelAction();
   private final ToggleButtonUI        toggleButtonUI  = new ToggleButtonUI();
   private final Action                actionLocalFile = new LocalFileChooseAction();
+  private JTextField                  tfImageUrl;
 
   /**
    * Instantiates a new image chooser dialog.
@@ -161,7 +167,8 @@ public class ImageChooserDialog extends TmmDialog {
         Object season = ids.get("tvShowSeason");
         if (season != null) {
           setTitle(BUNDLE.getString("image.choose.season") + " - " + BUNDLE.getString("metatag.season") + " " + season); //$NON-NLS-1$
-        } else {
+        }
+        else {
           setTitle(BUNDLE.getString("image.choose.season")); //$NON-NLS-1$
         }
         break;
@@ -188,17 +195,35 @@ public class ImageChooserDialog extends TmmDialog {
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     contentPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("258px:grow"),
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] { FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), }));
+        FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC, FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] {
+        FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("fill:266px:grow"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.RELATED_GAP_ROWSPEC, }));
     {
-      JScrollPane scrollPane = new JScrollPane();
+      scrollPane = new JScrollPane();
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      contentPanel.add(scrollPane, "2, 2, fill, fill");
+      contentPanel.add(scrollPane, "2, 2, 3, 1, fill, fill");
       {
         panelImages = new JPanel();
         scrollPane.setViewportView(panelImages);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         panelImages.setLayout(new WrapLayout(FlowLayout.LEFT));
       }
+    }
+    {
+      tfImageUrl = new JPresetTextField(BUNDLE.getString("image.inserturl")); //$NON-NLS-1$
+      contentPanel.add(tfImageUrl, "2, 4, fill, default");
+      tfImageUrl.setColumns(10);
+      JButton btnAddImage = new JButton(BUNDLE.getString("image.downloadimage")); //$NON-NLS-1$
+      btnAddImage.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          if (StringUtils.isNotBlank(tfImageUrl.getText())) {
+            downloadAndPreviewImage(tfImageUrl.getText());
+          }
+        }
+      });
+      contentPanel.add(btnAddImage, "4, 4");
+
     }
     {
       JPanel bottomPane = new JPanel();
@@ -472,6 +497,67 @@ public class ImageChooserDialog extends TmmDialog {
     panelImages.add(imagePanel);
     panelImages.validate();
     panelImages.getParent().validate();
+  }
+
+  private void downloadAndPreviewImage(String url) {
+    Runnable task = new Runnable() {
+      @Override
+      public void run() {
+        try {
+          final MediaArtwork art = new MediaArtwork();
+          art.setDefaultUrl(tfImageUrl.getText());
+          art.setPreviewUrl(tfImageUrl.getText());
+          switch (type) {
+            case BANNER:
+              art.setType(MediaArtworkType.BANNER);
+              break;
+            case CLEARART:
+              art.setType(MediaArtworkType.CLEARART);
+              break;
+            case DISC:
+              art.setType(MediaArtworkType.DISC);
+              break;
+            case FANART:
+              art.setType(MediaArtworkType.BACKGROUND);
+              break;
+            case LOGO:
+              art.setType(MediaArtworkType.LOGO);
+              break;
+            case POSTER:
+              art.setType(MediaArtworkType.POSTER);
+              break;
+            case SEASON:
+              art.setType(MediaArtworkType.SEASON);
+              break;
+            case THUMB:
+              art.setType(MediaArtworkType.THUMB);
+              break;
+            default:
+              return;
+          }
+
+          Url url = new Url(art.getPreviewUrl());
+          Image image = Toolkit.getDefaultToolkit().createImage(url.getBytes());
+          final BufferedImage bufferedImage = com.bric.image.ImageLoader.createImage(image);
+
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              addImage(bufferedImage, art);
+
+              // scroll down
+              JScrollBar vertical = scrollPane.getVerticalScrollBar();
+              vertical.setValue(vertical.getMaximum());
+            }
+          });
+          tfImageUrl.setText("");
+        }
+        catch (Exception e) {
+          LOGGER.error("could not download manually entered image url: " + tfImageUrl.getText());
+        }
+      }
+    };
+    task.run();
   }
 
   private class OkAction extends AbstractAction {

@@ -34,14 +34,9 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Georgios Migdos <cyberpython@gmail.com>
  */
 public class JSearchTextField extends JIconTextField implements FocusListener {
-
-  /** The Constant BUNDLE. */
+  private static final long           serialVersionUID = 5684796522381134018L;
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
-  /** The Constant serialVersionUID. */
-  private static final long           serialVersionUID = 1L;
-
-  /** The text when not focused. */
   private String                      textWhenNotFocused;
 
   /**
@@ -72,11 +67,6 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
     this.textWhenNotFocused = newText;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.tinymediamanager.ui.JIconTextField#paintComponent(java.awt.Graphics)
-   */
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
@@ -102,22 +92,11 @@ public class JSearchTextField extends JIconTextField implements FocusListener {
 
   }
 
-  // FocusListener implementation:
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
-   */
   @Override
   public void focusGained(FocusEvent e) {
     this.repaint();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
-   */
   @Override
   public void focusLost(FocusEvent e) {
     this.repaint();
