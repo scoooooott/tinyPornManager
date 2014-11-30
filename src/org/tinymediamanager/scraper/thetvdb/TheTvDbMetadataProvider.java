@@ -118,6 +118,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     String language = options.get(SearchParam.LANGUAGE);
     String country = options.get(SearchParam.COUNTRY); // for passing the country to the scrape
 
+    searchString = clearSearchString(searchString);
+
     // search via the api
     List<Series> series = null;
     synchronized (tvdb) {
@@ -177,6 +179,18 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
     Collections.reverse(results);
 
     return results;
+  }
+
+  /*
+   * clear the search string to minimize search problem with the API
+   */
+  private String clearSearchString(String searchString) {
+    String cleanedString = searchString.replace("\'", "");
+    cleanedString = cleanedString.replace(",", "");
+    cleanedString = cleanedString.replace("ä", "a");
+    cleanedString = cleanedString.replace("ö", "o");
+    cleanedString = cleanedString.replace("ü", "u");
+    return cleanedString;
   }
 
   private MediaSearchResult createSearchResult(Series show, MediaSearchOptions options, String searchString) {
