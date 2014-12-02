@@ -151,11 +151,11 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblMatthewSandersFor, "6, 22");
     }
     {
-      JLabel lblXzener = new JLabel("Our translators: xsintive, kriss1981, Joostzilla, zbynek.fiala, carlosmarchi,");
+      JLabel lblXzener = new JLabel("Our translators: Joostzilla, Zagoslav, zbynek.fiala, roliverosc, roandr, julienbloch, nerve, carlosmarchi, ");
       contentPanel.add(lblXzener, "6, 24");
     }
     {
-      JLabel lblXzener = new JLabel("                              zagoslav, piodio, roliverosc, Peppe_sr, roandr, sxczmnb");
+      JLabel lblXzener = new JLabel("                              otefenli, sxczmnb, piodio, peppe_sr, szobidani, kriss1981, mrj, xsintive, Gam, ppanhh");
       contentPanel.add(lblXzener, "6, 26");
     }
     {
