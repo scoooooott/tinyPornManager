@@ -19,7 +19,7 @@ if [ -x "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/ja
   JAVA_HOME="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home"
   export JAVA_HOME
 elif [ -x /usr/libexec/java_home ]; then
-  JAVA_HOME="/usr/libexec/java_home"
+  JAVA_HOME="`/usr/libexec/java_home`"
   export JAVA_HOME  
 fi
 JAVACMD="${JAVA_HOME}/bin/java"
@@ -28,7 +28,7 @@ JAVACMD="${JAVA_HOME}/bin/java"
 if [ -f tmm.jar ]; then
   ARGS="-Dsilent=noupdate"
 else
-  ARGS="-Xdock:name='tinyMediaManager updater'"
+  ARGS="-Xdock:name=`tinyMediaManager updater`"
   ARGS="$ARGS -Xdock:icon=../tmm.icns"
 fi
 
