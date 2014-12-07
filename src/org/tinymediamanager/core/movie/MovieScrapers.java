@@ -22,37 +22,24 @@ package org.tinymediamanager.core.movie;
  */
 public enum MovieScrapers {
 
-  /** The tmdb. */
-  TMDB("The Movie Database"),
-  /** The imdb. */
-  IMDB("IMDb"),
-  /** The zelluloid scraper. */
-  ZELLULOID("Zelluloid.de"),
-  /** The OFDB. */
-  OFDB("OFDb.de Online-Filmdatenbank"),
-  /** Moviemeter. */
-  MOVIEMETER("MovieMeter.nl");
 
-  /** The title. */
+  // @formatter:off
+  TMDB("The Movie Database"),
+  IMDB("IMDb"),
+  ZELLULOID("Zelluloid.de"),
+  OFDB("OFDb.de Online-Filmdatenbank"),
+  MOVIEMETER("MovieMeter.nl"),
+  ROTTENTOMATOES("Rotten Tomatoes");
+  // @formatter:on
+
   private String title;
 
-  /**
-   * Instantiates a new movie scrapers.
-   * 
-   * @param title
-   *          the title
-   */
   private MovieScrapers(String title) {
     this.title = title;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Enum#toString()
-   */
+  @Override
   public String toString() {
     return this.title;
   }
-
 }

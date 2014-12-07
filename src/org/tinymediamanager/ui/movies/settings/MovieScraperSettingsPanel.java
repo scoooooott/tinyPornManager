@@ -95,6 +95,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbTrailerQuality;
   private JSeparator                  separator_2;
   private JCheckBox                   chckbxImageLanguage;
+  private JCheckBox                   cbRottenTomatoes;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -112,8 +113,9 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         ColumnSpec.decode("default:grow"), }, new RowSpec[] { FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+        FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+        FormFactory.DEFAULT_ROWSPEC, }));
 
     cbScraperTmdb = new JCheckBox("The Movie Database");
     buttonGroupScraper = new ButtonGroup();
@@ -140,26 +142,30 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     buttonGroupScraper.add(cbMoviemeternl);
     panelMovieScrapers.add(cbMoviemeternl, "1, 10");
 
+    cbRottenTomatoes = new JCheckBox("Rotten Tomatoes");
+    buttonGroupScraper.add(cbRottenTomatoes);
+    panelMovieScrapers.add(cbRottenTomatoes, "1, 12");
+
     JSeparator separator = new JSeparator();
-    panelMovieScrapers.add(separator, "1, 11, 3, 1");
+    panelMovieScrapers.add(separator, "1, 14, 3, 1");
 
     JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
-    panelMovieScrapers.add(lblScraperLanguage, "1, 12, right, default");
+    panelMovieScrapers.add(lblScraperLanguage, "1, 15, right, default");
 
     cbScraperLanguage = new JComboBox(MediaLanguages.values());
-    panelMovieScrapers.add(cbScraperLanguage, "3, 12");
+    panelMovieScrapers.add(cbScraperLanguage, "3, 15");
 
     JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
-    panelMovieScrapers.add(lblCountry, "1, 14, right, default");
+    panelMovieScrapers.add(lblCountry, "1, 17, right, default");
 
     cbCertificationCountry = new JComboBox(CountryCode.values());
-    panelMovieScrapers.add(cbCertificationCountry, "3, 14, fill, default");
+    panelMovieScrapers.add(cbCertificationCountry, "3, 17, fill, default");
 
     separator_1 = new JSeparator();
-    panelMovieScrapers.add(separator_1, "1, 15, 3, 1");
+    panelMovieScrapers.add(separator_1, "1, 18, 3, 1");
 
     chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback")); //$NON-NLS-1$
-    panelMovieScrapers.add(chckbxScraperFallback, "1, 16, 3, 1");
+    panelMovieScrapers.add(chckbxScraperFallback, "1, 19, 3, 1");
 
     panelTrailer = new JPanel();
     panelTrailer.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), BUNDLE.getString("scraper.trailer"), TitledBorder.LEADING,
@@ -276,32 +282,47 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         cbMoviemeternl.setSelected(true);
         break;
 
+      case ROTTENTOMATOES:
+        cbRottenTomatoes.setSelected(true);
+        break;
+
       case TMDB:
       default:
         cbScraperTmdb.setSelected(true);
     }
 
     cbScraperImdb.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
       }
     });
     cbScraperTmdb.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
       }
     });
     cbScraperOfdbde.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
       }
     });
     cbZelluloidde.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
       }
     });
     cbMoviemeternl.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        checkChanges();
+      }
+    });
+    cbRottenTomatoes.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         checkChanges();
       }
@@ -327,6 +348,9 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
     }
     if (cbMoviemeternl.isSelected()) {
       settings.getMovieSettings().setMovieScraper(MovieScrapers.MOVIEMETER);
+    }
+    if (cbRottenTomatoes.isSelected()) {
+      settings.getMovieSettings().setMovieScraper(MovieScrapers.ROTTENTOMATOES);
     }
   }
 

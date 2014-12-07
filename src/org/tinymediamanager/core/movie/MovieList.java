@@ -66,6 +66,7 @@ import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNet;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.moviemeternl.MoviemeterMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
+import org.tinymediamanager.scraper.rottentomatoes.RottenTomatoesMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.zelluloid.ZelluloidMetadataProvider;
 import org.tinymediamanager.ui.UTF8Control;
@@ -651,6 +652,16 @@ public class MovieList extends AbstractModelObject {
         metadataProvider = new ImdbMetadataProvider();
         break;
 
+      case ROTTENTOMATOES:
+        LOGGER.debug("get instance of RottenTomatoesMetadataProvider");
+        try {
+          metadataProvider = new RottenTomatoesMetadataProvider();
+        }
+        catch (Exception e) {
+          LOGGER.warn("failed to get instance of RottenTomatoesMetadataProvider", e);
+        }
+        break;
+
       case TMDB:
       default:
         LOGGER.debug("get instance of TmdbMetadataProvider");
@@ -706,6 +717,9 @@ public class MovieList extends AbstractModelObject {
     }
     else if (providerId.equals(Constants.ZELLULOIDID)) {
       return getMetadataProvider(MovieScrapers.ZELLULOID);
+    }
+    else if (providerId.equals(Constants.ROTTENTOMATOESID)) {
+      return getMetadataProvider(MovieScrapers.ROTTENTOMATOES);
     }
     else {
       // default

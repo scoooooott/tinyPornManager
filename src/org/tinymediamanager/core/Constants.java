@@ -109,6 +109,7 @@ public final class Constants {
   public final static String TRAKTTV                = "traktTv";
   public final static String IMDBID                 = "imdbId";
   public final static String TVRAGEID               = "tvrageId";
+  public final static String ROTTENTOMATOESID       = "rottentomatoesId";
 
   private Constants() {
   }
