@@ -376,6 +376,7 @@ public class TinyMediaManager {
             catch (Exception ex) {
               LOGGER.warn(ex.getMessage());
             }
+            System.exit(0);
           }
         }
         catch (javax.persistence.PersistenceException e) {
