@@ -43,8 +43,10 @@ import org.tinymediamanager.core.movie.MovieTrailerQuality;
 import org.tinymediamanager.core.movie.MovieTrailerSources;
 import org.tinymediamanager.scraper.CountryCode;
 import org.tinymediamanager.scraper.MediaLanguages;
+import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.ui.components.JHintCheckBox;
 import org.tinymediamanager.ui.components.ScrollablePanel;
 import org.tinymediamanager.ui.movies.MovieScraperMetadataPanel;
 
@@ -71,22 +73,21 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbScraperLanguage;
   private JComboBox                   cbCertificationCountry;
   private JCheckBox                   cbImdbTranslateableContent;
-  private JCheckBox                   cbScraperImdb;
+  private JHintCheckBox               cbScraperImdb;
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
   private JPanel                      panelScraperMetadata;
   private JPanel                      panelScraperMetadataContainer;
-  private JCheckBox                   cbScraperOfdbde;
-  private JCheckBox                   cbScraperTmdb;
+  private JHintCheckBox               cbScraperOfdbde;
+  private JHintCheckBox               cbScraperTmdb;
   private JPanel                      panelTrailer;
   private JCheckBox                   cbTheMovieDatabase;
   private JCheckBox                   cbHdtrailersnet;
   private JCheckBox                   cbOfdbde;
-  private JCheckBox                   cbZelluloidde;
-  private JCheckBox                   cbMoviemeternl;
+  private JHintCheckBox               cbZelluloidde;
+  private JHintCheckBox               cbMoviemeternl;
   private JTextPane                   lblScraperThresholdHint;
   private JPanel                      panelAutomaticScraper;
   private JSlider                     sliderThreshold;
-  private JSeparator                  separator_1;
   private JCheckBox                   chckbxScraperFallback;
   private JCheckBox                   chckbxUseTrailerPreferences;
   private JLabel                      lblTrailerSource;
@@ -95,7 +96,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
   private JComboBox                   cbTrailerQuality;
   private JSeparator                  separator_2;
   private JCheckBox                   chckbxImageLanguage;
-  private JCheckBox                   cbRottenTomatoes;
+  private JHintCheckBox               cbRottenTomatoes;
 
   /**
    * Instantiates a new movie scraper settings panel.
@@ -117,34 +118,46 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
         FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
         FormFactory.DEFAULT_ROWSPEC, }));
 
-    cbScraperTmdb = new JCheckBox("The Movie Database");
+    cbScraperTmdb = new JHintCheckBox("The Movie Database");
+    cbScraperTmdb.setHintIcon(IconManager.HINT);
+    cbScraperTmdb.setToolTipText(BUNDLE.getString("scraper.tmdb.hint")); //$NON-NLS-1$
     buttonGroupScraper = new ButtonGroup();
     buttonGroupScraper.add(cbScraperTmdb);
     cbScraperTmdb.setSelected(true);
-    panelMovieScrapers.add(cbScraperTmdb, "1, 2");
+    panelMovieScrapers.add(cbScraperTmdb, "1, 2, left, default");
 
-    cbScraperImdb = new JCheckBox("IMDB");
+    cbScraperImdb = new JHintCheckBox("IMDB");
+    cbScraperImdb.setHintIcon(IconManager.HINT);
+    cbScraperImdb.setToolTipText(BUNDLE.getString("scraper.imdb.hint")); //$NON-NLS-1$
     buttonGroupScraper.add(cbScraperImdb);
-    panelMovieScrapers.add(cbScraperImdb, "1, 4");
+    panelMovieScrapers.add(cbScraperImdb, "1, 4, left, default");
 
     cbImdbTranslateableContent = new JCheckBox(BUNDLE.getString("Settings.getfromTMDB")); //$NON-NLS-1$
     panelMovieScrapers.add(cbImdbTranslateableContent, "3, 4");
 
-    cbScraperOfdbde = new JCheckBox("OFDb.de");
+    cbScraperOfdbde = new JHintCheckBox("OFDb.de");
+    cbScraperOfdbde.setHintIcon(IconManager.HINT);
+    cbScraperOfdbde.setToolTipText(BUNDLE.getString("scraper.ofdb.hint")); //$NON-NLS-1$
     buttonGroupScraper.add(cbScraperOfdbde);
-    panelMovieScrapers.add(cbScraperOfdbde, "1, 6");
+    panelMovieScrapers.add(cbScraperOfdbde, "1, 6, left, default");
 
-    cbZelluloidde = new JCheckBox("Zelluloid.de");
+    cbZelluloidde = new JHintCheckBox("Zelluloid.de");
+    cbZelluloidde.setHintIcon(IconManager.HINT);
+    cbZelluloidde.setToolTipText(BUNDLE.getString("scraper.zelluloid.hint")); //$NON-NLS-1$
     buttonGroupScraper.add(cbZelluloidde);
-    panelMovieScrapers.add(cbZelluloidde, "1, 8");
+    panelMovieScrapers.add(cbZelluloidde, "1, 8, left, default");
 
-    cbMoviemeternl = new JCheckBox("MovieMeter.nl");
+    cbMoviemeternl = new JHintCheckBox("MovieMeter.nl");
+    cbMoviemeternl.setHintIcon(IconManager.HINT);
+    cbMoviemeternl.setToolTipText(BUNDLE.getString("scraper.moviemeter.hint")); //$NON-NLS-1$
     buttonGroupScraper.add(cbMoviemeternl);
-    panelMovieScrapers.add(cbMoviemeternl, "1, 10");
+    panelMovieScrapers.add(cbMoviemeternl, "1, 10, left, default");
 
-    cbRottenTomatoes = new JCheckBox("Rotten Tomatoes");
+    cbRottenTomatoes = new JHintCheckBox("Rotten Tomatoes");
+    cbRottenTomatoes.setHintIcon(IconManager.HINT);
+    cbRottenTomatoes.setToolTipText(BUNDLE.getString("scraper.rottentomatoes.hint")); //$NON-NLS-1$
     buttonGroupScraper.add(cbRottenTomatoes);
-    panelMovieScrapers.add(cbRottenTomatoes, "1, 12");
+    panelMovieScrapers.add(cbRottenTomatoes, "1, 12, left, default");
 
     JSeparator separator = new JSeparator();
     panelMovieScrapers.add(separator, "1, 14, 3, 1");
@@ -160,9 +173,7 @@ public class MovieScraperSettingsPanel extends ScrollablePanel {
 
     cbCertificationCountry = new JComboBox(CountryCode.values());
     panelMovieScrapers.add(cbCertificationCountry, "3, 17, fill, default");
-
-    separator_1 = new JSeparator();
-    panelMovieScrapers.add(separator_1, "1, 18, 3, 1");
+    panelMovieScrapers.add(new JSeparator(), "1, 18, 3, 1");
 
     chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback")); //$NON-NLS-1$
     panelMovieScrapers.add(chckbxScraperFallback, "1, 19, 3, 1");

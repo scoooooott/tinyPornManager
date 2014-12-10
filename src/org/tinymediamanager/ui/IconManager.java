@@ -42,6 +42,7 @@ public class IconManager {
   public final static ImageIcon  FEEDBACK          = loadImage("feedback.png");
   public final static ImageIcon  FILE_OPEN         = loadImage("file-open.png");
   public final static ImageIcon  FILTER            = loadImage("filter.png");
+  public final static ImageIcon  HINT              = loadImage("hint.png");
   public final static ImageIcon  IMAGE             = loadImage("image.png");
   public final static ImageIcon  INFO              = loadImage("info.png");
   public final static ImageIcon  LIST_ADD          = loadImage("list-add.png");
