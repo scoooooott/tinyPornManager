@@ -21,9 +21,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.beansbinding.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jdesktop.beansbinding.Converter;
 
 /**
  * The Class ImageIconConverter.
@@ -31,18 +31,9 @@ import org.jdesktop.beansbinding.Converter;
  * @author Manuel Laggner
  */
 public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
-
-  /** The Constant LOGGER. */
   private static final Logger   LOGGER     = LoggerFactory.getLogger(MediaInfoVideoCodecConverter.class);
-
-  /** The Constant emptyImage. */
   public final static ImageIcon emptyImage = new ImageIcon();
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertForward(java.lang.Object)
-   */
   @Override
   public Icon convertForward(String arg0) {
     // try to get the image file
@@ -71,11 +62,6 @@ public class MediaInfoVideoCodecConverter extends Converter<String, Icon> {
     return emptyImage;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jdesktop.beansbinding.Converter#convertReverse(java.lang.Object)
-   */
   @Override
   public String convertReverse(Icon arg0) {
     return null;
