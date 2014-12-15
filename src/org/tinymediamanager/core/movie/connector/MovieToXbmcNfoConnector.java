@@ -357,6 +357,9 @@ public class MovieToXbmcNfoConnector {
     if (xbmc.watched) {
       xbmc.playcount = 1;
     }
+    else {
+      xbmc.playcount = 0;
+    }
 
     xbmc.languages = movie.getSpokenLanguages();
 
