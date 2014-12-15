@@ -134,6 +134,8 @@ public class TvShowEpisodeToXbmcNfoConnector {
    *          the tv show episodes
    */
   public static void setData(List<TvShowEpisode> tvShowEpisodes) {
+    boolean multiEpisode = tvShowEpisodes.size() > 1 ? true : false;
+
     if (context == null) {
       MessageManager.instance.pushMessage(new Message(MessageLevel.ERROR, tvShowEpisodes.get(0), "message.nfo.writeerror", new String[] { ":",
           "Context is null" }));
@@ -205,6 +207,16 @@ public class TvShowEpisodeToXbmcNfoConnector {
       // actors for tv show episode (guests and show sctors)
       for (TvShowActor actor : episode.getActors()) {
         xbmc.addActor(actor.getName(), actor.getCharacter(), actor.getThumb());
+      }
+
+      // write thumb url to multi ep NFOs
+      // since the video file contains two or more EPs, we can only store 1 thumb file; in this
+      // case we write the thumb url to the NFOs that Kodi can display the proper one
+      if (multiEpisode && StringUtils.isNotBlank(episode.getArtworkUrl(MediaFileType.THUMB))) {
+        xbmc.thumb = episode.getArtworkUrl(MediaFileType.THUMB);
+      }
+      else {
+        xbmc.thumb = "";
       }
 
       // // actors for tv show
@@ -688,101 +700,44 @@ public class TvShowEpisodeToXbmcNfoConnector {
   }
 
   // inner class actor to represent actors
-  /**
-   * The Class Actor.
-   * 
-   * @author Manuel Laggner
-   */
   @XmlRootElement(name = "actor")
   public static class Actor {
-
-    /** The name. */
     private String name;
-
-    /** The role. */
     private String role;
-
-    /** The thumb. */
     private String thumb;
 
-    /**
-     * Instantiates a new actor.
-     */
     public Actor() {
     }
 
-    /**
-     * Instantiates a new actor.
-     * 
-     * @param name
-     *          the name
-     * @param role
-     *          the role
-     * @param thumb
-     *          the thumb
-     */
     public Actor(String name, String role, String thumb) {
       this.name = name;
       this.role = role;
       this.thumb = thumb;
     }
 
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
     @XmlElement(name = "name")
     public String getName() {
       return name;
     }
 
-    /**
-     * Sets the name.
-     * 
-     * @param name
-     *          the new name
-     */
     public void setName(String name) {
       this.name = name;
     }
 
-    /**
-     * Gets the role.
-     * 
-     * @return the role
-     */
     @XmlElement(name = "role")
     public String getRole() {
       return role;
     }
 
-    /**
-     * Sets the role.
-     * 
-     * @param role
-     *          the new role
-     */
     public void setRole(String role) {
       this.role = role;
     }
 
-    /**
-     * Gets the thumb.
-     * 
-     * @return the thumb
-     */
     @XmlElement(name = "thumb")
     public String getThumb() {
       return thumb;
     }
 
-    /**
-     * Sets the thumb.
-     * 
-     * @param thumb
-     *          the new thumb
-     */
     public void setThumb(String thumb) {
       this.thumb = thumb;
     }
