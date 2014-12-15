@@ -438,6 +438,8 @@ public class MovieToMpNfoConnector {
 
     // now trying to parse it via string
     String completeNFO = FileUtils.readFileToString(nfoFile, "UTF-8").trim().replaceFirst("^([\\W]+)<", "<");
+    completeNFO = completeNFO.replace("<movie>",
+        "<movie xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
     Reader in = new StringReader(completeNFO);
     return (MovieToMpNfoConnector) um.unmarshal(in);
   }
