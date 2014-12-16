@@ -123,8 +123,8 @@ public class TvShowEpisodeAndSeasonParser {
     String foldername = "";
     if (showname != null && !showname.isEmpty()) {
       // remove string like tvshow name (440, 24, ...)
-      basename = basename.replaceAll("(?i)^" + showname + "", "");
-      basename = basename.replaceAll("(?i) " + showname + " ", "");
+      basename = basename.replaceAll("(?i)^" + Pattern.quote(showname) + "", "");
+      basename = basename.replaceAll("(?i) " + Pattern.quote(showname) + " ", "");
     }
     basename = basename.replaceFirst("\\.\\w{1,4}$", ""); // remove extension if 1-4 chars
     // parse foldername
