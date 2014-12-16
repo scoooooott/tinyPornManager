@@ -779,7 +779,7 @@ public class MovieRenamer {
    *          Former does replace ALL directory separators
    * @return the string
    */
-  private static String createDestination(String template, Movie movie, boolean forFilename) {
+  public static String createDestination(String template, Movie movie, boolean forFilename) {
     String newDestination = template;
 
     // replace token title ($T)
