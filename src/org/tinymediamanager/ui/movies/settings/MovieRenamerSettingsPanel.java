@@ -243,7 +243,7 @@ public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListen
     panelExample.add(txtpntTitle, "2, 8, 3, 1");
     TmmFontHelper.changeFont(txtpntTitle, 0.833);
     txtpntTitle.setBackground(UIManager.getColor("Panel.background"));
-    txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.info")); //$NON-NLS-1$
+    txtpntTitle.setText(BUNDLE.getString("Settings.movie.renamer.optional")); //$NON-NLS-1$
     txtpntTitle.setEditable(false);
     cbMovieForPreview.addActionListener(actionCreateRenamerExample);
 
