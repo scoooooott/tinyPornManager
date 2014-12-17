@@ -326,19 +326,9 @@ public class MovieToXbmcNfoConnector {
 
     xbmc.tagline = movie.getTagline();
     xbmc.runtime = String.valueOf(movie.getRuntime());
-    if (StringUtils.isNotBlank(movie.getArtworkFilename(MediaFileType.POSTER))) {
-      xbmc.thumb = "";
-    }
-    else {
-      xbmc.thumb = movie.getPosterUrl();
-    }
+    xbmc.thumb = movie.getPosterUrl();
+    xbmc.fanart = movie.getFanartUrl();
 
-    if (StringUtils.isNotBlank(movie.getArtworkFilename(MediaFileType.FANART))) {
-      xbmc.fanart = "";
-    }
-    else {
-      xbmc.fanart = movie.getFanartUrl();
-    }
     xbmc.id = movie.getImdbId();
     xbmc.tmdbId = movie.getTmdbId();
 
