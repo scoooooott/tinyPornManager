@@ -92,8 +92,8 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListener {
-
   private static final long                                     serialVersionUID = 7702248909791283043L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle                           BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());           //$NON-NLS-1$
   private static final Logger                                   LOGGER           = LoggerFactory.getLogger(TvShowChooserDialog.class);
   private static final Date                                     INITIAL_DATE     = new Date(0);

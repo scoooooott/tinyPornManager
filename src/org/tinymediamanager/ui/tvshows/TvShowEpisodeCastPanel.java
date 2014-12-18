@@ -58,6 +58,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowEpisodeCastPanel extends JPanel {
   private static final long                   serialVersionUID = 4712144916016763491L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle         BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowEpisodeSelectionModel   selectionModel;

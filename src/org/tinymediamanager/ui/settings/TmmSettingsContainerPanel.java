@@ -31,6 +31,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class TmmSettingsContainerPanel extends JPanel {
   private static final long           serialVersionUID = 2489431064154526834L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   public TmmSettingsContainerPanel() {

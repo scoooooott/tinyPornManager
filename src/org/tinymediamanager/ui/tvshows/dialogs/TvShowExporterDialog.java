@@ -62,6 +62,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowExporterDialog extends TmmDialog {
   private static final long           serialVersionUID = -2197076428245222349L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowExporterDialog.class);
 

@@ -63,6 +63,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowBatchEditorDialog extends TmmDialog {
   private static final long           serialVersionUID = 3527478264068979388L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowList                  tvShowList       = TvShowList.getInstance();

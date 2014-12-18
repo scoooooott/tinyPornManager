@@ -62,6 +62,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListener {
   private static final long               serialVersionUID = 3317576458848699068L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                         //$NON-NLS-1$
 
   private TvShowEpisode                   episode;

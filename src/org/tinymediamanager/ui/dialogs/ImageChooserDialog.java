@@ -92,6 +92,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class ImageChooserDialog extends TmmDialog {
   private static final long           serialVersionUID = 8193355920006275933L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImageChooserDialog.class);
 

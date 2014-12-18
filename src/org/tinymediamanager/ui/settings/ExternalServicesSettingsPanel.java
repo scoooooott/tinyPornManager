@@ -45,6 +45,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class ExternalServicesSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 7266564870819511988L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();

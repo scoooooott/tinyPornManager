@@ -95,6 +95,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID      = 2371518113606870230L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());                  //$NON-NLS-1$
   private static final Logger         LOGGER                = LoggerFactory.getLogger(TvShowChooserDialog.class);
 

@@ -56,6 +56,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieCrewPanel extends JPanel {
   private static final long                     serialVersionUID   = 2972207353452870494L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle           BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSelectionModel                   selectionModel;

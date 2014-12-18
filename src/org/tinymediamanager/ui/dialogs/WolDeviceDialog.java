@@ -45,6 +45,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class WolDeviceDialog extends TmmDialog {
   private static final long           serialVersionUID = -8293021735704401080L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private WolDevice                   device           = null;

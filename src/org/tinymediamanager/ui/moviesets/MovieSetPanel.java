@@ -71,6 +71,7 @@ import com.jtattoo.plaf.JTattooUtilities;
  */
 public class MovieSetPanel extends JPanel {
   private static final long           serialVersionUID     = -7095093579735941697L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   MovieSelectionModel                 movieSelectionModel;

@@ -53,6 +53,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowScrapeMetadataDialog extends TmmDialog {
   private static final long            serialVersionUID            = 6120530120703772160L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle  BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowSearchAndScrapeOptions tvShowSearchAndScrapeConfig = new TvShowSearchAndScrapeOptions();

@@ -51,6 +51,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class WhatsNewDialog extends TmmDialog {
   private static final long           serialVersionUID = -4071143363981892283L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(WhatsNewDialog.class);
 

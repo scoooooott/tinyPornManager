@@ -54,6 +54,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class RegisterDonatorVersionDialog extends TmmDialog {
   private static final long           serialVersionUID = 9111695923659250520L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());    //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(RegisterDonatorVersionDialog.class);
 

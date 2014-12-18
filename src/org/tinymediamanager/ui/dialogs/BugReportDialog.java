@@ -73,6 +73,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class BugReportDialog extends TmmDialog {
   private static final long           serialVersionUID = 1992385114573899815L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(BugReportDialog.class);
 

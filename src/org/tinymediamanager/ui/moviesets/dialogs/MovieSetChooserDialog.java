@@ -83,8 +83,8 @@ import com.omertron.themoviedbapi.model.Collection;
  * @author Manuel Laggner
  */
 public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
-
   private static final long           serialVersionUID = -1023959850452480592L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());                    //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieSetChooserDialog.class);
 

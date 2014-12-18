@@ -62,6 +62,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class FeedbackDialog extends TmmDialog {
   private static final long           serialVersionUID = -6659205003576096326L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(FeedbackDialog.class);
 

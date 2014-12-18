@@ -65,8 +65,8 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class GeneralSettingsPanel extends ScrollablePanel {
-
   private static final long           serialVersionUID   = 500841588272296493L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
 

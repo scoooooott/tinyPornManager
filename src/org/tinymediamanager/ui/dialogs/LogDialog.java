@@ -39,6 +39,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 public class LogDialog extends TmmDialog implements ActionListener {
   private static final long           serialVersionUID = -5054005564554148578L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER           = LoggerFactory.getLogger(LogDialog.class);
   private static final int            REFRESH_PERIOD   = 1000;

@@ -78,6 +78,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieRenamerSettingsPanel extends JPanel implements HierarchyListener {
   private static final long              serialVersionUID           = 5039498266207230875L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle    BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSettings                  settings                   = Settings.getInstance().getMovieSettings();

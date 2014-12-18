@@ -50,6 +50,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 public class FileTypesSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = 9136097757447080369L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();

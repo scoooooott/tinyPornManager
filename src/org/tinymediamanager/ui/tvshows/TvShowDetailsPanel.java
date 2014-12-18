@@ -51,6 +51,7 @@ import com.jgoodies.forms.layout.RowSpec;
 public class TvShowDetailsPanel extends JPanel {
   private static final long           serialVersionUID = -1569492065407109019L;
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowDetailsPanel.class);
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private final TvShowSelectionModel  selectionModel;

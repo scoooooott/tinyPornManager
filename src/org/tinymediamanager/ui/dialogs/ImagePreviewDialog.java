@@ -42,6 +42,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class ImagePreviewDialog extends TmmDialog {
   private static final long                serialVersionUID = -7479476493187235867L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle      BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger              LOGGER           = LoggerFactory.getLogger(ImagePreviewDialog.class);
 

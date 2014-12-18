@@ -62,6 +62,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieScraperSettingsPanel extends ScrollablePanel {
   private static final long           serialVersionUID = -299825914193235308L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private Settings                    settings         = Settings.getInstance();

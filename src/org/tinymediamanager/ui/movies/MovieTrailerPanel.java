@@ -71,6 +71,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieTrailerPanel extends JPanel {
   private static final long                    serialVersionUID  = 2506465845096043845L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle          BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger                  LOGGER            = LoggerFactory.getLogger(MovieTrailerPanel.class);
 

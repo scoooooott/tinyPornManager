@@ -39,6 +39,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowScraperMetadataPanel extends JPanel {
   private static final long           serialVersionUID = 2417066912659769559L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowScraperMetadataConfig config;

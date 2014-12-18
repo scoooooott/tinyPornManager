@@ -61,6 +61,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieMediaFilesPanel extends JPanel {
   private static final long           serialVersionUID = 3181909355114738346L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private final static Logger         LOGGER           = LoggerFactory.getLogger(MovieMediaFilesPanel.class);
 

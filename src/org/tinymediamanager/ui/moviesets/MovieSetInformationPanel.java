@@ -65,7 +65,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieSetInformationPanel extends JPanel {
 
-  /** The Constant BUNDLE. */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   /** The Constant serialVersionUID. */

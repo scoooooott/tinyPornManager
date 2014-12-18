@@ -81,6 +81,7 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MovieSetEditorDialog extends TmmDialog {
   private static final long           serialVersionUID    = -4446433759280691976L;
   private static final Logger         LOGGER              = LoggerFactory.getLogger(MovieSetEditorDialog.class);
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE              = ResourceBundle.getBundle("messages", new UTF8Control());     //$NON-NLS-1$
 
   private MovieList                   movieList           = MovieList.getInstance();

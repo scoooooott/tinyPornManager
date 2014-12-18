@@ -109,6 +109,7 @@ import com.jtattoo.plaf.JTattooUtilities;
  */
 public class TvShowPanel extends JPanel {
   private static final long           serialVersionUID              = -1923811385292825136L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE                        = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   TvShowSelectionModel                tvShowSelectionModel;
@@ -235,7 +236,7 @@ public class TvShowPanel extends JPanel {
     buttonUpdateDatasource.setHorizontalAlignment(JButton.LEFT);
     // buttonScrape.setMargin(new Insets(2, 2, 2, 24));
     buttonUpdateDatasource.setSplitWidth(18);
-    buttonUpdateDatasource.setToolTipText(BUNDLE.getString("update.datasource"));  //$NON-NLS-1$
+    buttonUpdateDatasource.setToolTipText(BUNDLE.getString("update.datasource")); //$NON-NLS-1$
     buttonUpdateDatasource.addSplitButtonActionListener(new SplitButtonActionListener() {
       public void buttonClicked(ActionEvent e) {
         actionUpdateDatasources.actionPerformed(e);

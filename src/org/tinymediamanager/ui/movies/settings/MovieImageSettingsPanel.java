@@ -65,8 +65,8 @@ public class MovieImageSettingsPanel extends ScrollablePanel {
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 7312645402037806284L;
 
-  /** The Constant BUNDLE. */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  /** @wbp.nls.resourceBundle messages */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
 
   /** The settings. */
   private Settings                    settings         = Settings.getInstance();

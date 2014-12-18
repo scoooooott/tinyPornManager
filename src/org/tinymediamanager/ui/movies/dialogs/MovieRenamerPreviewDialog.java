@@ -79,6 +79,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieRenamerPreviewDialog extends TmmDialog {
   private static final long                                    serialVersionUID = -8162631708278089277L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle                          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private EventList<MovieRenamerPreviewContainer>              results;

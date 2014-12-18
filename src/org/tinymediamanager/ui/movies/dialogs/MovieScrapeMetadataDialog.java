@@ -56,6 +56,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MovieScrapeMetadataDialog extends TmmDialog {
   private static final long           serialVersionUID           = 3826984454317979241L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE                     = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private MovieSearchAndScrapeOptions movieSearchAndScrapeConfig = new MovieSearchAndScrapeOptions();

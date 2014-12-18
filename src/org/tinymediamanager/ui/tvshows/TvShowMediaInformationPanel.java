@@ -63,7 +63,7 @@ public class TvShowMediaInformationPanel extends JPanel {
   /** The Constant serialVersionUID. */
   private static final long           serialVersionUID = 1610264727610254912L;
 
-  /** The Constant BUNDLE. */
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());   //$NON-NLS-1$
 
   /** The logger. */

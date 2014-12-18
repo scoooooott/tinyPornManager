@@ -44,8 +44,9 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeMediaInformationPanel extends JPanel {
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final long           serialVersionUID = 2513029074142934502L;
+  /** @wbp.nls.resourceBundle messages */
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private TvShowEpisodeSelectionModel selectionModel;
   private JLabel                      lblRuntime;

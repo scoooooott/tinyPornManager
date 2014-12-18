@@ -49,6 +49,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class MessageDialog extends JDialog {
   private static final long           serialVersionUID = -9035402766767310658L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
 
   private JLabel                      lblImage;

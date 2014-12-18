@@ -70,6 +70,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowRenamerSettingsPanel extends ScrollablePanel implements HierarchyListener {
   private static final long           serialVersionUID = 5189531235704401313L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());          //$NON-NLS-1$
   private static final String         SPACE            = "<space>";
 

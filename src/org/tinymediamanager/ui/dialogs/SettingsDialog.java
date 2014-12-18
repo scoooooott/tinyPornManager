@@ -40,6 +40,7 @@ import org.tinymediamanager.ui.settings.SettingsPanel;
  */
 public class SettingsDialog extends TmmDialog {
   private static final long           serialVersionUID = 2435834806519338339L;
+  /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static JDialog              instance;
 

@@ -96,6 +96,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TvShowEditorDialog extends TmmDialog {
   private static final long                                                                       serialVersionUID = 3270218410302989845L;
+  /** @wbp.nls.resourceBundle messages */
   private final static ResourceBundle                                                             BUNDLE           = ResourceBundle.getBundle(
                                                                                                                        "messages", new UTF8Control());                                //$NON-NLS-1$
   private static final Date                                                                       INITIAL_DATE     = new Date(0);
