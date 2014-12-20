@@ -18,11 +18,14 @@ public class TheTvDbMetadataProviderTest {
     try {
       mp = new TheTvDbMetadataProvider();
 
-      searchShow("Der Mondbär", "de", "81049");
+      searchShow("Der Mondbar", "de", "81049");
       searchShow("Psych", "en", "79335");
       searchShow("You're the Worst", "en", "281776");
       searchShow("America's Book of Secrets", "en", "256002");
       searchShow("Rich Man, Poor Man", "en", "77151");
+      searchShow("Drugs, Inc", "en", "174501");
+      searchShow("Yu-Gi-Oh!", "en", "113561");
+      searchShow("What's the Big Idea?", "en", "268282");
 
     }
     catch (Exception e) {

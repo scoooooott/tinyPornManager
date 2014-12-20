@@ -187,9 +187,12 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
   private String clearSearchString(String searchString) {
     String cleanedString = searchString.replace("\'", "");
     cleanedString = cleanedString.replace(",", "");
+    cleanedString = cleanedString.replace(".", "");
     cleanedString = cleanedString.replace("ä", "a");
     cleanedString = cleanedString.replace("ö", "o");
     cleanedString = cleanedString.replace("ü", "u");
+    cleanedString = cleanedString.replace("!", "");
+    cleanedString = cleanedString.replace("?", "");
     return cleanedString;
   }
 
