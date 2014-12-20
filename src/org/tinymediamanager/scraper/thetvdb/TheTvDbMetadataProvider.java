@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.scraper.thetvdb;
 
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -185,14 +186,15 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
    * clear the search string to minimize search problem with the API
    */
   private String clearSearchString(String searchString) {
-    String cleanedString = searchString.replace("\'", "");
-    cleanedString = cleanedString.replace(",", "");
-    cleanedString = cleanedString.replace(".", "");
-    cleanedString = cleanedString.replace("ä", "a");
-    cleanedString = cleanedString.replace("ö", "o");
-    cleanedString = cleanedString.replace("ü", "u");
-    cleanedString = cleanedString.replace("!", "");
-    cleanedString = cleanedString.replace("?", "");
+
+    // replace all kinds of accent characters with their base variant
+    String cleanedString = Normalizer.normalize(searchString, Normalizer.Form.NFD);
+    cleanedString = cleanedString.replaceAll("\\p{M}", "");
+
+    // cleanedString = cleanedString.replaceAll("\\p{Punct}", ""); // too much?
+    // better: just keep chars which are not a-zA-Z0-9 AND the space and dash
+    cleanedString = cleanedString.replaceAll("[^\\p{Alnum}\\s\\-]", "");
+
     return cleanedString;
   }
 

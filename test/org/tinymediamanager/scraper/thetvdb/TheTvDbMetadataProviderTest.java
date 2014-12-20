@@ -18,7 +18,8 @@ public class TheTvDbMetadataProviderTest {
     try {
       mp = new TheTvDbMetadataProvider();
 
-      searchShow("Der Mondbar", "de", "81049");
+      searchShow("Un village français", "fr", "211941");
+      searchShow("Der Mondbár", "de", "81049");
       searchShow("Psych", "en", "79335");
       searchShow("You're the Worst", "en", "281776");
       searchShow("America's Book of Secrets", "en", "256002");
@@ -30,7 +31,7 @@ public class TheTvDbMetadataProviderTest {
     }
     catch (Exception e) {
       e.printStackTrace();
-      Assert.fail();
+      Assert.fail(e.getMessage());
     }
   }
 
@@ -41,8 +42,11 @@ public class TheTvDbMetadataProviderTest {
     options.set(SearchParam.LANGUAGE, language);
 
     List<MediaSearchResult> results = mp.search(options);
-    if (results.isEmpty() || !id.equals(results.get(0).getId())) {
-      Assert.fail();
+    if (results.isEmpty()) {
+      Assert.fail("Result empty!");
+    }
+    if (!id.equals(results.get(0).getId())) {
+      Assert.fail("ID not as expected! expected: " + id + " was: " + results.get(0).getId());
     }
   }
 }
