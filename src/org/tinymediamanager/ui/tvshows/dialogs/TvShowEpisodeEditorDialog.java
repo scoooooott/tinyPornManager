@@ -182,7 +182,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       contentPanel.add(spEpisode, "8, 6");
 
       JLabel lblDvdSeason = new JLabel(BUNDLE.getString("metatag.dvdseason")); //$NON-NLS-1$
-      contentPanel.add(lblDvdSeason, "2, 8");
+      contentPanel.add(lblDvdSeason, "2, 8, right, default");
 
       spDvdSeason = new JSpinner();
       contentPanel.add(spDvdSeason, "4, 8");
@@ -194,7 +194,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       contentPanel.add(spDvdEpisode, "8, 8");
 
       JLabel lblDvdOrder = new JLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
-      contentPanel.add(lblDvdOrder, "2, 10");
+      contentPanel.add(lblDvdOrder, "2, 10, right, default");
 
       cbDvdOrder = new JCheckBox("");
       contentPanel.add(cbDvdOrder, "4, 10");

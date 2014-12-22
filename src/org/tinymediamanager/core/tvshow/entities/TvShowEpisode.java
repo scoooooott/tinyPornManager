@@ -385,6 +385,8 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
     setPlot(metadata.getStringValue(MediaMetadata.PLOT));
     setIds(metadata.getIds());
 
+    setAiredSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR));
+    setAiredEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR));
     setDvdSeason(metadata.getIntegerValue(MediaMetadata.SEASON_NR_DVD));
     setDvdEpisode(metadata.getIntegerValue(MediaMetadata.EPISODE_NR_DVD));
 

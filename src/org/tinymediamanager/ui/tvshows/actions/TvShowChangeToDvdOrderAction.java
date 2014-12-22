@@ -16,14 +16,16 @@
 package org.tinymediamanager.ui.tvshows.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
@@ -47,14 +49,21 @@ public class TvShowChangeToDvdOrderAction extends AbstractAction {
   @Override
   public void actionPerformed(ActionEvent arg0) {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
-    List<TvShow> selectedTvShows = new ArrayList<TvShow>();
-    List<TvShowEpisode> selectedEpisodes = new ArrayList<TvShowEpisode>();
+    Set<TvShowEpisode> selectedEpisodes = new HashSet<TvShowEpisode>();
 
     for (Object obj : selectedObjects) {
       // display tv show editor
       if (obj instanceof TvShow) {
         TvShow tvShow = (TvShow) obj;
-        selectedTvShows.add(tvShow);
+        for (TvShowEpisode ep : tvShow.getEpisodes()) {
+          selectedEpisodes.add(ep);
+        }
+      }
+      if (obj instanceof TvShowSeason) {
+        TvShowSeason season = (TvShowSeason) obj;
+        for (TvShowEpisode ep : season.getEpisodes()) {
+          selectedEpisodes.add(ep);
+        }
       }
       // display tv episode editor
       if (obj instanceof TvShowEpisode) {

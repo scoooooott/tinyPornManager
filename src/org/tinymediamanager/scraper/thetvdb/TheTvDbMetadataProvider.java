@@ -382,7 +382,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
       if (useDvdOrder) {
         try {
           int s = Integer.parseInt(ep.getDvdSeason());
-          int e = Integer.parseInt(ep.getDvdEpisodeNumber());
+
+          // TVDB provides the EP number as e.g. 2.0
+          int e = (int) Math.floor(Double.parseDouble(ep.getDvdEpisodeNumber()));
           if (s == seasonNr && e == episodeNr) {
             episode = ep;
             break;
@@ -405,8 +407,16 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, IMediaA
 
     md.storeMetadata(MediaMetadata.EPISODE_NR, episode.getEpisodeNumber());
     md.storeMetadata(MediaMetadata.SEASON_NR, episode.getSeasonNumber());
-    md.storeMetadata(MediaMetadata.EPISODE_NR_DVD, episode.getDvdEpisodeNumber());
-    md.storeMetadata(MediaMetadata.SEASON_NR_DVD, episode.getDvdSeason());
+
+    // TVDB provides the EP number as e.g. 2.0
+    try {
+      int s = Integer.parseInt(episode.getDvdSeason());
+      int e = (int) Math.floor(Double.parseDouble(episode.getDvdEpisodeNumber()));
+      md.storeMetadata(MediaMetadata.EPISODE_NR_DVD, e);
+      md.storeMetadata(MediaMetadata.SEASON_NR_DVD, s);
+    }
+    catch (Exception e) {
+    }
     md.storeMetadata(MediaMetadata.EPISODE_NR_COMBINED, episode.getCombinedEpisodeNumber());
     md.storeMetadata(MediaMetadata.SEASON_NR_COMBINED, episode.getCombinedSeason());
     md.storeMetadata(MediaMetadata.ABSOLUTE_NR, episode.getAbsoluteNumber());
