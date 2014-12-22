@@ -207,7 +207,8 @@ public class TvShowBatchEditorDialog extends TmmDialog {
       panelTvShowEpisodes.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+          FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.NARROW_LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
       panelTvShowEpisodes.add(lblWatched, "2, 2, right, default");
@@ -255,6 +256,28 @@ public class TvShowBatchEditorDialog extends TmmDialog {
         }
       });
       panelTvShowEpisodes.add(btnSeason, "6, 4");
+
+      JLabel lblDvdOrder = new JLabel(BUNDLE.getString("metatag.dvdorder"));//$NON-NLS-1$
+      panelTvShowEpisodes.add(lblDvdOrder, "2, 6, right, default");
+
+      final JCheckBox cbDvdOrder = new JCheckBox("");
+      panelTvShowEpisodes.add(cbDvdOrder, "4, 6");
+
+      JButton btnDvdOrder = new JButton("");
+      btnDvdOrder.setIcon(IconManager.APPLY);
+      btnDvdOrder.setMargin(new Insets(2, 2, 2, 2));
+      btnDvdOrder.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          episodesChanged = true;
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          for (TvShowEpisode episode : tvShowEpisodesToEdit) {
+            episode.setDvdOrder(cbDvdOrder.isSelected());
+          }
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+      });
+      panelTvShowEpisodes.add(btnDvdOrder, "6, 6");
     }
 
     {

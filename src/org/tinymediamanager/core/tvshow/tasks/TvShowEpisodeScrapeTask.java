@@ -92,8 +92,14 @@ public class TvShowEpisodeScrapeTask implements Runnable {
       }
 
       options.setType(MediaType.TV_EPISODE);
-      options.setId(MediaMetadata.SEASON_NR, String.valueOf(episode.getSeason()));
-      options.setId(MediaMetadata.EPISODE_NR, String.valueOf(episode.getEpisode()));
+      if (episode.isDvdOrder()) {
+        options.setId(MediaMetadata.SEASON_NR_DVD, String.valueOf(episode.getDvdSeason()));
+        options.setId(MediaMetadata.EPISODE_NR_DVD, String.valueOf(episode.getDvdEpisode()));
+      }
+      else {
+        options.setId(MediaMetadata.SEASON_NR, String.valueOf(episode.getAiredSeason()));
+        options.setId(MediaMetadata.EPISODE_NR, String.valueOf(episode.getAiredEpisode()));
+      }
       if (scrapeThumb) {
         options.setArtworkType(MediaArtworkType.THUMB);
       }

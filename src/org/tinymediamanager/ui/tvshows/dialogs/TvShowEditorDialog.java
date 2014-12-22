@@ -676,6 +676,7 @@ public class TvShowEditorDialog extends TmmDialog {
       for (TvShowEpisode episode : epl) {
         TvShowEpisodeEditorContainer container = new TvShowEpisodeEditorContainer();
         container.tvShowEpisode = episode;
+        container.dvdOrder = episode.isDvdOrder();
         container.season = episode.getSeason();
         container.episode = episode.getEpisode();
         episodes.add(container);
@@ -733,6 +734,7 @@ public class TvShowEditorDialog extends TmmDialog {
     tableEpisodes.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.filename")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+    tableEpisodes.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
     tableEpisodes.getColumnModel().getColumn(2).setMaxWidth(150);
     tableEpisodes.getColumnModel().getColumn(3).setMaxWidth(150);
     tableEpisodes.getColumnModel().getColumn(2).setCellEditor(new TableSpinnerEditor());
@@ -876,13 +878,29 @@ public class TvShowEditorDialog extends TmmDialog {
         boolean found = false;
         boolean shouldStore = false;
 
+        if (container.dvdOrder != container.tvShowEpisode.isDvdOrder()) {
+          container.tvShowEpisode.setDvdOrder(container.dvdOrder);
+          shouldStore = true;
+        }
+
         if (container.episode != container.tvShowEpisode.getEpisode()) {
-          container.tvShowEpisode.setEpisode(container.episode);
+          if (container.dvdOrder) {
+            container.tvShowEpisode.setDvdEpisode(container.episode);
+          }
+          else {
+            container.tvShowEpisode.setAiredEpisode(container.episode);
+          }
+
           shouldStore = true;
         }
 
         if (container.season != container.tvShowEpisode.getSeason()) {
-          container.tvShowEpisode.setSeason(container.season);
+          if (container.dvdOrder) {
+            container.tvShowEpisode.setDvdSeason(container.season);
+          }
+          else {
+            container.tvShowEpisode.setAiredSeason(container.season);
+          }
           shouldStore = true;
         }
 
@@ -1095,6 +1113,7 @@ public class TvShowEditorDialog extends TmmDialog {
     TvShowEpisode tvShowEpisode;
     int           season;
     int           episode;
+    boolean       dvdOrder = false;
 
     public String getEpisodeTitle() {
       return tvShowEpisode.getTitle();
@@ -1124,6 +1143,14 @@ public class TvShowEditorDialog extends TmmDialog {
 
     public void setSeason(int season) {
       this.season = season;
+    }
+
+    public boolean isDvdOrder() {
+      return this.dvdOrder;
+    }
+
+    public void setDvdOrder(boolean dvdOrder) {
+      this.dvdOrder = dvdOrder;
     }
   }
 
@@ -1180,6 +1207,9 @@ public class TvShowEditorDialog extends TmmDialog {
     //
     BeanProperty<TvShowEpisodeEditorContainer, Integer> tvShowEpisodeEditorContainerBeanProperty_3 = BeanProperty.create("episode");
     jTableBinding_2.addColumnBinding(tvShowEpisodeEditorContainerBeanProperty_3);
+    //
+    BeanProperty<TvShowEpisodeEditorContainer, Boolean> tvShowEpisodeEditorContainerBeanProperty_4 = BeanProperty.create("dvdOrder");
+    jTableBinding_2.addColumnBinding(tvShowEpisodeEditorContainerBeanProperty_4).setColumnClass(Boolean.class);
     //
     jTableBinding_2.bind();
   }

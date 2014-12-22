@@ -109,6 +109,9 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
   private JSpinner                                              spEpisode;
   private JSpinner                                              spSeason;
   private JSpinner                                              spRating;
+  private JSpinner                                              spDvdSeason;
+  private JSpinner                                              spDvdEpisode;
+  private JCheckBox                                             cbDvdOrder;
   private JSpinner                                              spFirstAired;
   private JSpinner                                              spDateAdded;
   private JCheckBox                                             chckbxWatched;
@@ -146,6 +149,7 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("300px:grow"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, }, new RowSpec[] {
           FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
           FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
@@ -177,35 +181,53 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       spEpisode = new JSpinner();
       contentPanel.add(spEpisode, "8, 6");
 
+      JLabel lblDvdSeason = new JLabel(BUNDLE.getString("metatag.dvdseason")); //$NON-NLS-1$
+      contentPanel.add(lblDvdSeason, "2, 8");
+
+      spDvdSeason = new JSpinner();
+      contentPanel.add(spDvdSeason, "4, 8");
+
+      JLabel lblDvdEpisode = new JLabel(BUNDLE.getString("metatag.dvdepisode")); //$NON-NLS-1$
+      contentPanel.add(lblDvdEpisode, "6, 8, right, default");
+
+      spDvdEpisode = new JSpinner();
+      contentPanel.add(spDvdEpisode, "8, 8");
+
+      JLabel lblDvdOrder = new JLabel(BUNDLE.getString("metatag.dvdorder")); //$NON-NLS-1$
+      contentPanel.add(lblDvdOrder, "2, 10");
+
+      cbDvdOrder = new JCheckBox("");
+      contentPanel.add(cbDvdOrder, "4, 10");
+
       JLabel lblRating = new JLabel(BUNDLE.getString("metatag.rating")); //$NON-NLS-1$
-      contentPanel.add(lblRating, "2, 8, right, default");
+      contentPanel.add(lblRating, "2, 12, right, default");
 
       spRating = new JSpinner();
-      contentPanel.add(spRating, "4, 8");
+      contentPanel.add(spRating, "4, 12");
 
       JLabel lblFirstAired = new JLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
-      contentPanel.add(lblFirstAired, "6, 8, right, default");
+      contentPanel.add(lblFirstAired, "6, 12, right, default");
 
       spFirstAired = new JSpinner(new SpinnerDateModel());
-      contentPanel.add(spFirstAired, "8, 8");
+      contentPanel.add(spFirstAired, "8, 12");
 
       JLabel lblWatched = new JLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
-      contentPanel.add(lblWatched, "2, 10, right, default");
+      contentPanel.add(lblWatched, "2, 14, right, default");
 
       chckbxWatched = new JCheckBox("");
-      contentPanel.add(chckbxWatched, "4, 10");
+      contentPanel.add(chckbxWatched, "4, 14");
 
       JLabel lblDateAdded = new JLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
-      contentPanel.add(lblDateAdded, "6, 10, right, default");
+      contentPanel.add(lblDateAdded, "6, 14, right, default");
 
       spDateAdded = new JSpinner(new SpinnerDateModel());
-      contentPanel.add(spDateAdded, "8, 10");
+      contentPanel.add(spDateAdded, "8, 14");
 
       JLabel lblPlot = new JLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
-      contentPanel.add(lblPlot, "2, 12, right, top");
+      contentPanel.add(lblPlot, "2, 16, right, top");
 
       JScrollPane scrollPane = new JScrollPane();
-      contentPanel.add(scrollPane, "4, 12, 5, 1, fill, fill");
+      contentPanel.add(scrollPane, "4, 16, 5, 1, fill, fill");
 
       taPlot = new JTextArea();
       taPlot.setLineWrap(true);
@@ -225,38 +247,38 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
         }
       });
       lblThumb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      contentPanel.add(lblThumb, "10, 6, 3, 11");
+      contentPanel.add(lblThumb, "10, 6, 3, 15");
 
       JLabel lblDirector = new JLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
-      contentPanel.add(lblDirector, "2, 14, right, default");
+      contentPanel.add(lblDirector, "2, 18, right, default");
 
       tfDirector = new JTextField();
       tfDirector.setText((String) null);
       tfDirector.setColumns(10);
-      contentPanel.add(tfDirector, "4, 14, 5, 1, fill, default");
+      contentPanel.add(tfDirector, "4, 18, 5, 1, fill, default");
 
       JLabel lblWriter = new JLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
-      contentPanel.add(lblWriter, "2, 16, right, default");
+      contentPanel.add(lblWriter, "2, 20, right, default");
 
       tfWriter = new JTextField();
       tfWriter.setText((String) null);
       tfWriter.setColumns(10);
-      contentPanel.add(tfWriter, "4, 16, 5, 1, fill, default");
+      contentPanel.add(tfWriter, "4, 20, 5, 1, fill, default");
 
       JLabel lblGuests = new JLabel(BUNDLE.getString("metatag.guests")); //$NON-NLS-1$
-      contentPanel.add(lblGuests, "2, 18, right, top");
+      contentPanel.add(lblGuests, "2, 22, right, top");
 
       JScrollPane scrollPaneGuests = new JScrollPane();
-      contentPanel.add(scrollPaneGuests, "4, 18, 5, 7, fill, fill");
+      contentPanel.add(scrollPaneGuests, "4, 22, 5, 7, fill, fill");
 
       tableGuests = new JTable();
       scrollPaneGuests.setViewportView(tableGuests);
 
       JLabel lblTags = new JLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
-      contentPanel.add(lblTags, "10, 18, default, top");
+      contentPanel.add(lblTags, "10, 22, default, top");
 
       JScrollPane scrollPaneTags = new JScrollPane();
-      contentPanel.add(scrollPaneTags, "12, 18, 1, 5, fill, fill");
+      contentPanel.add(scrollPaneTags, "12, 22, 1, 5, fill, fill");
 
       listTags = new JList();
       scrollPaneTags.setViewportView(listTags);
@@ -265,29 +287,29 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       btnAddActor.setMargin(new Insets(2, 2, 2, 2));
       btnAddActor.setAction(new AddActorAction());
       btnAddActor.setIcon(IconManager.LIST_ADD);
-      contentPanel.add(btnAddActor, "2, 20, right, top");
+      contentPanel.add(btnAddActor, "2, 24, right, top");
 
       JButton btnAddTag = new JButton("");
       btnAddTag.setMargin(new Insets(2, 2, 2, 2));
       btnAddTag.setAction(new AddTagAction());
       btnAddTag.setIcon(IconManager.LIST_ADD);
-      contentPanel.add(btnAddTag, "10, 20, right, top");
+      contentPanel.add(btnAddTag, "10, 24, right, top");
 
       JButton btnRemoveActor = new JButton("");
       btnRemoveActor.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveActor.setAction(new RemoveActorAction());
       btnRemoveActor.setIcon(IconManager.LIST_REMOVE);
-      contentPanel.add(btnRemoveActor, "2, 22, right, top");
+      contentPanel.add(btnRemoveActor, "2, 26, right, top");
 
       JButton btnRemoveTag = new JButton("");
       btnRemoveTag.setMargin(new Insets(2, 2, 2, 2));
       btnRemoveTag.setAction(new RemoveTagAction());
       btnRemoveTag.setIcon(IconManager.LIST_REMOVE);
-      contentPanel.add(btnRemoveTag, "10, 22, right, top");
+      contentPanel.add(btnRemoveTag, "10, 26, right, top");
 
       cbTags = new AutocompleteComboBox(tvShowList.getTagsInEpisodes().toArray());
       cbTags.setEditable(true);
-      contentPanel.add(cbTags, "12, 24, fill, default");
+      contentPanel.add(cbTags, "12, 28, fill, default");
     }
 
     {
@@ -358,8 +380,11 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
       lblFilename.setText(mediaFile.getPath() + File.separator + mediaFile.getFilename());
       tfTitle.setText(episodeToEdit.getTitle());
 
-      spSeason.setModel(new SpinnerNumberModel(episodeToEdit.getSeason(), Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
-      spEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getEpisode(), Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
+      spSeason.setModel(new SpinnerNumberModel(episodeToEdit.getAiredSeason(), -1, Integer.MAX_VALUE, 1));
+      spEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getAiredEpisode(), -1, Integer.MAX_VALUE, 1));
+      spDvdSeason.setModel(new SpinnerNumberModel(episodeToEdit.getDvdSeason(), -1, Integer.MAX_VALUE, 1));
+      spDvdEpisode.setModel(new SpinnerNumberModel(episodeToEdit.getDvdEpisode(), -1, Integer.MAX_VALUE, 1));
+      cbDvdOrder.setSelected(episodeToEdit.isDvdOrder());
 
       SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
       // spDateAdded.setEditor(new JSpinner.DateEditor(spDateAdded, dateFormat.toPattern()));
@@ -414,8 +439,12 @@ public class TvShowEpisodeEditorDialog extends TmmDialog implements ActionListen
     // assign scraped data
     if ("OK".equals(e.getActionCommand())) {
       episodeToEdit.setTitle(tfTitle.getText());
-      episodeToEdit.setSeason((Integer) spSeason.getValue());
-      episodeToEdit.setEpisode((Integer) spEpisode.getValue());
+      episodeToEdit.setDvdOrder(cbDvdOrder.isSelected());
+      episodeToEdit.setAiredSeason((Integer) spSeason.getValue());
+      episodeToEdit.setAiredEpisode((Integer) spEpisode.getValue());
+      episodeToEdit.setDvdSeason((Integer) spDvdSeason.getValue());
+      episodeToEdit.setDvdEpisode((Integer) spDvdEpisode.getValue());
+
       episodeToEdit.setPlot(taPlot.getText());
 
       double tempRating = (Double) spRating.getValue();

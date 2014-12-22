@@ -74,6 +74,7 @@ public class TvShowSettings extends AbstractModelObject {
   private boolean             renamerSpaceSubstitution    = false;
   private String              renamerSpaceReplacement     = "_";
   private boolean             syncTrakt                   = false;
+  private boolean             dvdOrder                    = false;
 
   @Enumerated(EnumType.STRING)
   private TvShowEpisodeNaming renamerFormat               = TvShowEpisodeNaming.WITH_SE;
@@ -290,5 +291,15 @@ public class TvShowSettings extends AbstractModelObject {
 
   public boolean getSyncTrakt() {
     return syncTrakt;
+  }
+
+  public boolean isDvdOrder() {
+    return dvdOrder;
+  }
+
+  public void setDvdOrder(boolean newValue) {
+    boolean oldValue = this.dvdOrder;
+    this.dvdOrder = newValue;
+    firePropertyChange("dvdOrder", oldValue, newValue);
   }
 }

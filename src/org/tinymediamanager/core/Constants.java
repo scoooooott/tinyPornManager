@@ -29,6 +29,8 @@ public final class Constants {
   public final static String ADDED_EPISODE          = "addedEpisode";
   public final static String ADDED_SEASON           = "season";
   public final static String ADDED_TV_SHOW          = "addedTvShow";
+  public final static String AIRED_EPISODE          = "airedEpisode";
+  public final static String AIRED_SEASON           = "airedSeason";
   public final static String BANNER                 = "banner";
   public final static String BANNER_URL             = "bannerUrl";
   public final static String CAST                   = "cast";
@@ -39,6 +41,9 @@ public final class Constants {
   public final static String DATE_ADDED             = "dateAdded";
   public final static String DATE_ADDED_AS_STRING   = "dateAddedAsString";
   public final static String DIRECTOR               = "director";
+  public final static String DVD_EPISODE            = "dvdEpisode";
+  public final static String DVD_ORDER              = "dvdOrder";
+  public final static String DVD_SEASON             = "dvdSeason";
   public final static String EPISODE                = "episode";
   public final static String EPISODE_COUNT          = "episodeCount";
   public final static String FANART                 = "fanart";

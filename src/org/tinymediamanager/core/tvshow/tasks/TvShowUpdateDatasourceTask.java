@@ -690,6 +690,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
               // something found with the season detection?
               for (int ep : result.episodes) {
                 TvShowEpisode episode = new TvShowEpisode();
+                episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
                 episode.setEpisode(ep);
                 episode.setSeason(result.season);
                 episode.setFirstAired(result.date);
@@ -711,6 +712,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             else {
               // episode detection found nothing - simply add this file
               TvShowEpisode episode = new TvShowEpisode();
+              episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
               episode.setEpisode(-1);
               episode.setSeason(-1);
               episode.setPath(dir.getPath());
@@ -813,9 +815,10 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
           }
           if (episode == null) {
             episode = new TvShowEpisode();
+            episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
             episode.setEpisode(ep);
-            episode.setNewlyAdded(true);
             episode.setSeason(result.season);
+            episode.setNewlyAdded(true);
             episode.setFirstAired(result.date);
           }
 
@@ -846,6 +849,7 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
         else {
           TvShowEpisode episode = new TvShowEpisode();
           episode.setPath(dir.getPath());
+          episode.setDvdOrder(Globals.settings.getTvShowSettings().isDvdOrder());
           episode.setEpisode(-1);
           episode.setSeason(-1);
           episode.setTvShow(tvShow);

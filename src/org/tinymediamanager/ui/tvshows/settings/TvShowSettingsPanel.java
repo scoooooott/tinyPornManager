@@ -77,6 +77,7 @@ public class TvShowSettingsPanel extends ScrollablePanel {
   private JLabel                      lblImageCacheHint;
   private JCheckBox                   chckbxTraktTv;
   private final JButton               btnClearTraktTvShows;
+  private JCheckBox                   cbDvdOrder;
 
   /**
    * Instantiates a new tv show settings panel.
@@ -95,8 +96,9 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       panelTvShowDataSources.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
           FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("max(40dlu;default)"), FormFactory.RELATED_GAP_COLSPEC,
           ColumnSpec.decode("max(44dlu;default):grow"), FormFactory.RELATED_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("100px:grow"),
-          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+          FormFactory.RELATED_GAP_COLSPEC, }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("160px:grow"),
+          FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+          FormFactory.RELATED_GAP_ROWSPEC, }));
 
       JScrollPane scrollPane = new JScrollPane();
       panelTvShowDataSources.add(scrollPane, "2, 2, 5, 1, fill, fill");
@@ -143,15 +145,21 @@ public class TvShowSettingsPanel extends ScrollablePanel {
       });
       panelTvShowSourcesButtons.add(btnRemove, "2, 3, fill, top");
 
+      JLabel lblDvdOrder = new JLabel(BUNDLE.getString("Settings.dvdorder")); //$NON-NLS-1$
+      panelTvShowDataSources.add(lblDvdOrder, "2, 4, right, default");
+
+      cbDvdOrder = new JCheckBox("");
+      panelTvShowDataSources.add(cbDvdOrder, "4, 4");
+
       lblImageCache = new JLabel(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
-      panelTvShowDataSources.add(lblImageCache, "2, 4");
+      panelTvShowDataSources.add(lblImageCache, "2, 6, right, default");
 
       chckbxImageCache = new JCheckBox("");
-      panelTvShowDataSources.add(chckbxImageCache, "4, 4");
+      panelTvShowDataSources.add(chckbxImageCache, "4, 6");
 
       lblImageCacheHint = new JLabel(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
       TmmFontHelper.changeFont(lblImageCacheHint, 0.833);
-      panelTvShowDataSources.add(lblImageCacheHint, "6, 4, 3, 1");
+      panelTvShowDataSources.add(lblImageCacheHint, "6, 6, 3, 1");
     }
 
     JPanel panel = new JPanel();
@@ -206,5 +214,10 @@ public class TvShowSettingsPanel extends ScrollablePanel {
     AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         settingsBeanProperty, chckbxTraktTv, jCheckBoxBeanProperty);
     autoBinding.bind();
+    //
+    BeanProperty<Settings, Boolean> settingsBeanProperty_1 = BeanProperty.create("tvShowSettings.dvdOrder");
+    AutoBinding<Settings, Boolean, JCheckBox, Boolean> autoBinding_1 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        settingsBeanProperty_1, cbDvdOrder, jCheckBoxBeanProperty);
+    autoBinding_1.bind();
   }
 }

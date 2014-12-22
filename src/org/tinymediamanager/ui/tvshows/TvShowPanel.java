@@ -75,6 +75,8 @@ import org.tinymediamanager.ui.components.ZebraJTree;
 import org.tinymediamanager.ui.tvshows.TvShowExtendedMatcher.SearchOptions;
 import org.tinymediamanager.ui.tvshows.actions.TvShowBulkEditAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowChangeSeasonPosterAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToAiredOrderAction;
+import org.tinymediamanager.ui.tvshows.actions.TvShowChangeToDvdOrderAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowClearImageCacheAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowDeleteAction;
 import org.tinymediamanager.ui.tvshows.actions.TvShowEditAction;
@@ -149,6 +151,8 @@ public class TvShowPanel extends JPanel {
   private final Action                actionExport                  = new TvShowExportAction();
   private final Action                actionSyncTrakt               = new TvShowSyncTraktTvAction();
   private final Action                actionSyncWatchedTrakt        = new TvShowSyncWatchedTraktTvAction();
+  private final Action                actionChangeToDvdOrder        = new TvShowChangeToDvdOrderAction();
+  private final Action                actionChangeToAiredOrder      = new TvShowChangeToAiredOrderAction();
 
   private int                         width                         = 0;
   private JTextField                  textField;
@@ -533,6 +537,8 @@ public class TvShowPanel extends JPanel {
     menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK + ActionEvent.SHIFT_MASK));
     menuItem = menuEdit.add(actionChangeSeasonPoster2);
     menuItem.setMnemonic(KeyEvent.VK_S);
+    menuEdit.add(actionChangeToDvdOrder);
+    menuEdit.add(actionChangeToAiredOrder);
 
     menu.add(menuEdit);
     menu.add(actionRewriteTvShowNfo);
@@ -577,6 +583,8 @@ public class TvShowPanel extends JPanel {
     popupMenu.add(actionChangeSeasonPoster2);
     popupMenu.add(actionBatchEdit);
     popupMenu.add(actionSetWatchedFlag);
+    popupMenu.add(actionChangeToDvdOrder);
+    popupMenu.add(actionChangeToAiredOrder);
     popupMenu.add(actionRewriteTvShowNfo);
     popupMenu.add(actionRewriteTvShowEpisodeNfo);
     // popupMenu.add(actionBatchEdit);
